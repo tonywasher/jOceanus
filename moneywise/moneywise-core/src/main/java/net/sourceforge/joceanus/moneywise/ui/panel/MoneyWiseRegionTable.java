@@ -32,8 +32,8 @@ import net.sourceforge.joceanus.moneywise.views.MoneyWiseView;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataResource;
 import net.sourceforge.joceanus.prometheus.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.profile.TethysProfile;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
 import net.sourceforge.joceanus.tethys.ui.api.button.TethysUIButton;
 import net.sourceforge.joceanus.tethys.ui.api.control.TethysUIControl.TethysUIIconMapSet;
 import net.sourceforge.joceanus.tethys.ui.api.factory.TethysUIFactory;
@@ -141,7 +141,7 @@ public class MoneyWiseRegionTable
     @Override
     protected void refreshData() throws OceanusException {
         /* Obtain the active profile */
-        TethysProfile myTask = getView().getActiveTask();
+        OceanusProfile myTask = getView().getActiveTask();
         myTask = myTask.startTask("Regions");
 
         /* Access list */
@@ -219,7 +219,7 @@ public class MoneyWiseRegionTable
             cancelEditing();
 
             /* Create a new profile */
-            final TethysProfile myTask = getView().getNewProfile("addNewItem");
+            final OceanusProfile myTask = getView().getNewProfile("addNewItem");
 
             /* Create the new region */
             myTask.startTask("buildItem");

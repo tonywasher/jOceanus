@@ -20,7 +20,7 @@ import net.sourceforge.joceanus.metis.field.MetisFieldItem;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.metis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTax.MoneyWiseTaxCredit;
-import net.sourceforge.joceanus.tethys.date.TethysDate;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
 
 /**
@@ -43,18 +43,18 @@ public abstract class MoneyWiseTaxYear
     /**
      * The Date.
      */
-    private final TethysDate theYear;
+    private final OceanusDate theYear;
 
     /**
      * Constructor.
      * @param pDate the tax year end
      */
-    protected MoneyWiseTaxYear(final TethysDate pDate) {
+    protected MoneyWiseTaxYear(final OceanusDate pDate) {
         theYear = pDate;
     }
 
     @Override
-    public TethysDate getYearEnd() {
+    public OceanusDate getYearEnd() {
         return theYear;
     }
 

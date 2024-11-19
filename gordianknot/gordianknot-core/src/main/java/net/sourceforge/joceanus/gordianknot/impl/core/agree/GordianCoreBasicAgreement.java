@@ -22,7 +22,7 @@ import net.sourceforge.joceanus.gordianknot.api.agree.GordianHandshakeAgreement;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianAgreementMessageASN1.GordianMessageType;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
-import net.sourceforge.joceanus.tethys.OceanusException;
+import net.sourceforge.joceanus.oceanus.OceanusException;
 
 /**
  * New Handshake Basic Agreement.

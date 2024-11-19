@@ -41,7 +41,7 @@ import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataResource;
 import net.sourceforge.joceanus.prometheus.data.PrometheusListKey;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
-import net.sourceforge.joceanus.tethys.date.TethysDate;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
 import net.sourceforge.joceanus.tethys.ui.api.button.TethysUIButton;
 import net.sourceforge.joceanus.tethys.ui.api.control.TethysUICheckBox;
 import net.sourceforge.joceanus.tethys.ui.api.control.TethysUIControl.TethysUIIconMapSet;
@@ -245,7 +245,7 @@ public abstract class MoneyWiseAssetTable<T extends MoneyWiseAssetBase>
      * @param pAsset the asset
      * @return the date or null
      */
-    protected TethysDate getLatestTranDate(final T pAsset) {
+    protected OceanusDate getLatestTranDate(final T pAsset) {
         final MoneyWiseTransaction myTran = pAsset.getLatest();
         return myTran == null ? null : myTran.getDate();
     }

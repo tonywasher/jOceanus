@@ -18,8 +18,8 @@ package net.sourceforge.joceanus.prometheus.preference;
 
 import net.sourceforge.joceanus.metis.preference.MetisPreferenceKey;
 import net.sourceforge.joceanus.metis.preference.MetisPreferenceSet;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.resource.TethysBundleId;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.resource.OceanusBundleId;
 
 /**
  * Prometheus PreferenceSet.
@@ -38,7 +38,7 @@ public abstract class PrometheusPreferenceSet
      * @throws OceanusException on error
      */
     protected PrometheusPreferenceSet(final PrometheusPreferenceManager pManager,
-                                      final TethysBundleId pId) throws OceanusException {
+                                      final OceanusBundleId pId) throws OceanusException {
         this(pManager, pId.getValue());
     }
 

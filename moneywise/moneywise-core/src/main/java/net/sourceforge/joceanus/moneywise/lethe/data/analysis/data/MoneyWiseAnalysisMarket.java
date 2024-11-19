@@ -28,7 +28,7 @@ import net.sourceforge.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAn
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrency;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWisePayeeClass;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransCategoryClass;
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
 
 /**
  * Market analysis.
@@ -42,32 +42,32 @@ public class MoneyWiseAnalysisMarket {
     /**
      * Market Payee Income.
      */
-    private final TethysMoney theMarketIncome;
+    private final OceanusMoney theMarketIncome;
 
     /**
      * Market Payee Expense.
      */
-    private final TethysMoney theMarketExpense;
+    private final OceanusMoney theMarketExpense;
 
     /**
      * MarketGrowth Income.
      */
-    private final TethysMoney theGrowthIncome;
+    private final OceanusMoney theGrowthIncome;
 
     /**
      * MarketGrowth Expense.
      */
-    private final TethysMoney theGrowthExpense;
+    private final OceanusMoney theGrowthExpense;
 
     /**
      * CurrencyFluctuation Income.
      */
-    private final TethysMoney theFluctIncome;
+    private final OceanusMoney theFluctIncome;
 
     /**
      * CurrencyFluctuation Expense.
      */
-    private final TethysMoney theFluctExpense;
+    private final OceanusMoney theFluctExpense;
 
     /**
      * Constructor.
@@ -84,12 +84,12 @@ public class MoneyWiseAnalysisMarket {
                 : myCurr.getCurrency();
 
         /* Create buckets */
-        theMarketIncome = new TethysMoney(myCurrency);
-        theMarketExpense = new TethysMoney(myCurrency);
-        theGrowthIncome = new TethysMoney(myCurrency);
-        theGrowthExpense = new TethysMoney(myCurrency);
-        theFluctIncome = new TethysMoney(myCurrency);
-        theFluctExpense = new TethysMoney(myCurrency);
+        theMarketIncome = new OceanusMoney(myCurrency);
+        theMarketExpense = new OceanusMoney(myCurrency);
+        theGrowthIncome = new OceanusMoney(myCurrency);
+        theGrowthExpense = new OceanusMoney(myCurrency);
+        theFluctIncome = new OceanusMoney(myCurrency);
+        theFluctExpense = new OceanusMoney(myCurrency);
     }
 
     /**
@@ -99,13 +99,13 @@ public class MoneyWiseAnalysisMarket {
     protected void processAccount(final MoneyWiseAnalysisAccountBucket<?> pBucket) {
         /* Access market and gains */
         final MoneyWiseAnalysisAccountValues myValues = pBucket.getValues();
-        final TethysMoney myFluct = myValues.getMoneyValue(MoneyWiseAnalysisAccountAttr.CURRENCYFLUCT);
+        final OceanusMoney myFluct = myValues.getMoneyValue(MoneyWiseAnalysisAccountAttr.CURRENCYFLUCT);
 
         /* If there are fluctuations */
         if (myFluct != null) {
             final MoneyWiseAnalysisAccountValues myBaseValues = pBucket.getBaseValues();
-            final TethysMoney myBaseFluct = myBaseValues.getMoneyValue(MoneyWiseAnalysisAccountAttr.CURRENCYFLUCT);
-            final TethysMoney myPeriodFluct = new TethysMoney(myFluct);
+            final OceanusMoney myBaseFluct = myBaseValues.getMoneyValue(MoneyWiseAnalysisAccountAttr.CURRENCYFLUCT);
+            final OceanusMoney myPeriodFluct = new OceanusMoney(myFluct);
             myPeriodFluct.subtractAmount(myBaseFluct);
 
             /* Add to CurrencyFluctuation income/expense */
@@ -126,9 +126,9 @@ public class MoneyWiseAnalysisMarket {
     protected void processSecurity(final MoneyWiseAnalysisSecurityBucket pBucket) {
         /* Access market and gains */
         final MoneyWiseAnalysisSecurityValues myValues = pBucket.getValues();
-        final TethysMoney myMarket = myValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.MARKETGROWTH);
-        final TethysMoney myGains = myValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.REALISEDGAINS);
-        final TethysMoney myFluct = myValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.CURRENCYFLUCT);
+        final OceanusMoney myMarket = myValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.MARKETGROWTH);
+        final OceanusMoney myGains = myValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.REALISEDGAINS);
+        final OceanusMoney myFluct = myValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.CURRENCYFLUCT);
 
         /* If there are gains in the period */
         if (myGains.isNonZero()) {

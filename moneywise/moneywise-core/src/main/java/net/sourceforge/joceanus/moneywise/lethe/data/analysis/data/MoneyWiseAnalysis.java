@@ -48,9 +48,9 @@ import net.sourceforge.joceanus.moneywise.tax.MoneyWiseTaxYear;
 import net.sourceforge.joceanus.moneywise.tax.MoneyWiseTaxYearCache;
 import net.sourceforge.joceanus.moneywise.tax.uk.MoneyWiseUKTaxYearCache;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
-import net.sourceforge.joceanus.tethys.date.TethysDate;
-import net.sourceforge.joceanus.tethys.date.TethysDateRange;
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
 
 /**
@@ -108,7 +108,7 @@ public class MoneyWiseAnalysis
     /**
      * The DataRange.
      */
-    private final TethysDateRange theDateRange;
+    private final OceanusDateRange theDateRange;
 
     /**
      * The deposit buckets.
@@ -241,14 +241,14 @@ public class MoneyWiseAnalysis
      * @param pDate the date for the analysis
      */
     public MoneyWiseAnalysis(final MoneyWiseAnalysisManager pManager,
-                             final TethysDate pDate) {
+                             final OceanusDate pDate) {
         /* Store the data */
         final MoneyWiseAnalysis myBase = pManager.getAnalysis();
         theEditSet = myBase.getEditSet();
         final MoneyWiseDataSet myDataSet = getData();
         theCurrency = myBase.getCurrency();
         thePreferences = myBase.getPreferenceMgr();
-        theDateRange = new TethysDateRange(myDataSet.getDateRange().getStart(), pDate);
+        theDateRange = new OceanusDateRange(myDataSet.getDateRange().getStart(), pDate);
 
         /* Access the TaxYearCache */
         theTaxYearCache = (MoneyWiseUKTaxYearCache) myDataSet.getTaxFactory();
@@ -276,7 +276,7 @@ public class MoneyWiseAnalysis
      * @param pRange the range for the analysis
      */
     public MoneyWiseAnalysis(final MoneyWiseAnalysisManager pManager,
-                             final TethysDateRange pRange) {
+                             final OceanusDateRange pRange) {
         /* Store the data */
         final MoneyWiseAnalysis myBase = pManager.getAnalysis();
         theEditSet = myBase.getEditSet();
@@ -372,7 +372,7 @@ public class MoneyWiseAnalysis
      * Obtain the date range.
      * @return the date range
      */
-    public TethysDateRange getDateRange() {
+    public OceanusDateRange getDateRange() {
         return theDateRange;
     }
 
@@ -491,7 +491,7 @@ public class MoneyWiseAnalysis
             final MoneyWiseDeposit myDeposit = myDepIterator.next();
 
             /* If the deposit has an opening balance */
-            final TethysMoney myBalance = myDeposit.getOpeningBalance();
+            final OceanusMoney myBalance = myDeposit.getOpeningBalance();
             if (myBalance != null) {
                 /* Obtain the actual deposit bucket */
                 final MoneyWiseAnalysisDepositBucket myBucket = theDeposits.getBucket(myDeposit);
@@ -505,7 +505,7 @@ public class MoneyWiseAnalysis
             final MoneyWiseCash myCash = myCashIterator.next();
 
             /* If the cash has an opening balance */
-            final TethysMoney myBalance = myCash.getOpeningBalance();
+            final OceanusMoney myBalance = myCash.getOpeningBalance();
             if (myBalance != null) {
                 /* Obtain the actual cash bucket */
                 final MoneyWiseAnalysisCashBucket myBucket = theCash.getBucket(myCash);
@@ -519,7 +519,7 @@ public class MoneyWiseAnalysis
             final MoneyWiseLoan myLoan = myLoanIterator.next();
 
             /* If the loan has an opening balance */
-            final TethysMoney myBalance = myLoan.getOpeningBalance();
+            final OceanusMoney myBalance = myLoan.getOpeningBalance();
             if (myBalance != null) {
                 /* Obtain the actual loan bucket */
                 final MoneyWiseAnalysisLoanBucket myBucket = theLoans.getBucket(myLoan);

@@ -79,7 +79,7 @@ import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianIOException;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianLogicException;
 import net.sourceforge.joceanus.gordianknot.impl.core.encrypt.GordianCoreEncryptor;
 import net.sourceforge.joceanus.gordianknot.impl.core.keypair.GordianKeyPairValidity;
-import net.sourceforge.joceanus.tethys.OceanusException;
+import net.sourceforge.joceanus.oceanus.OceanusException;
 
 /**
  * EllipticCurve KeyPair classes.

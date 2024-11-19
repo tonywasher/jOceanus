@@ -23,7 +23,7 @@ import net.sourceforge.joceanus.metis.toolkit.MetisToolkit;
 import net.sourceforge.joceanus.prometheus.preference.PrometheusPreferenceManager;
 import net.sourceforge.joceanus.prometheus.preference.PrometheusPreferenceSecurity.PrometheusSecurityPreferences;
 import net.sourceforge.joceanus.prometheus.preference.PrometheusPreferenceView;
-import net.sourceforge.joceanus.tethys.OceanusException;
+import net.sourceforge.joceanus.oceanus.OceanusException;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIProgram;
 import net.sourceforge.joceanus.tethys.ui.api.factory.TethysUIFactory;
 import net.sourceforge.joceanus.tethys.ui.api.thread.TethysUIThreadManager;

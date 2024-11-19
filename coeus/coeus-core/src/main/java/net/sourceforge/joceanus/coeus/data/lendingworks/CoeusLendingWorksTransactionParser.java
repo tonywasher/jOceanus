@@ -23,8 +23,8 @@ import java.util.List;
 import java.util.ListIterator;
 
 import net.sourceforge.joceanus.metis.parser.MetisCSVParser;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.date.TethysDate;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
 
 /**
  * LendingWorks parser.
@@ -51,7 +51,7 @@ public class CoeusLendingWorksTransactionParser
     /**
      * The most recent date.
      */
-    private TethysDate theLastDate;
+    private OceanusDate theLastDate;
 
     /**
      * Parsed fields.

@@ -50,12 +50,12 @@ import javax.swing.KeyStroke;
 import javax.swing.SwingConstants;
 import javax.swing.border.Border;
 
-import net.sourceforge.joceanus.tethys.date.TethysDate;
-import net.sourceforge.joceanus.tethys.date.TethysDateConfig;
-import net.sourceforge.joceanus.tethys.date.TethysDateResource;
-import net.sourceforge.joceanus.tethys.event.TethysEventManager;
-import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar;
-import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.date.OceanusDateConfig;
+import net.sourceforge.joceanus.oceanus.date.OceanusDateResource;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.TethysEventProvider;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.tethys.ui.swing.base.TethysUISwingArrowIcon;
 
@@ -67,7 +67,7 @@ public final class TethysUISwingDateDialog
     /**
      * Null Date selection text.
      */
-    private static final String NLS_NULLSELECT = TethysDateResource.DIALOG_NULL.getValue();
+    private static final String NLS_NULLSELECT = OceanusDateResource.DIALOG_NULL.getValue();
 
     /**
      * Escape action text.
@@ -82,7 +82,7 @@ public final class TethysUISwingDateDialog
     /**
      * The event manager.
      */
-    private final TethysEventManager<TethysUIEvent> theEventManager;
+    private final OceanusEventManager<TethysUIEvent> theEventManager;
 
     /**
      * The month array.
@@ -107,7 +107,7 @@ public final class TethysUISwingDateDialog
     /**
      * The Date Configuration.
      */
-    private final TethysDateConfig theConfig;
+    private final OceanusDateConfig theConfig;
 
     /**
      * Should we build names?
@@ -128,7 +128,7 @@ public final class TethysUISwingDateDialog
      * Constructor.
      * @param pConfig the configuration for the dialog
      */
-    TethysUISwingDateDialog(final TethysDateConfig pConfig) {
+    TethysUISwingDateDialog(final OceanusDateConfig pConfig) {
         /* Initialise the dialog */
         theDialog = new JDialog();
 
@@ -139,7 +139,7 @@ public final class TethysUISwingDateDialog
         theConfig = pConfig;
 
         /* Create the event manager */
-        theEventManager = new TethysEventManager<>();
+        theEventManager = new OceanusEventManager<>();
 
         /* Build the panels */
         theDaysPanel = new PanelMonth(this);
@@ -171,7 +171,7 @@ public final class TethysUISwingDateDialog
     }
 
     @Override
-    public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
+    public OceanusEventRegistrar<TethysUIEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -194,7 +194,7 @@ public final class TethysUISwingDateDialog
      * Obtain Date Configuration.
      * @return the date configuration
      */
-    public TethysDateConfig getConfig() {
+    public OceanusDateConfig getConfig() {
         return theConfig;
     }
 
@@ -371,22 +371,22 @@ public final class TethysUISwingDateDialog
         /**
          * ToolTip for Next Month.
          */
-        private static final String NLS_NEXTMONTH = TethysDateResource.DIALOG_NEXTMONTH.getValue();
+        private static final String NLS_NEXTMONTH = OceanusDateResource.DIALOG_NEXTMONTH.getValue();
 
         /**
          * ToolTip for Previous Month.
          */
-        private static final String NLS_PREVMONTH = TethysDateResource.DIALOG_PREVMONTH.getValue();
+        private static final String NLS_PREVMONTH = OceanusDateResource.DIALOG_PREVMONTH.getValue();
 
         /**
          * ToolTip for Next Year.
          */
-        private static final String NLS_NEXTYEAR = TethysDateResource.DIALOG_NEXTYEAR.getValue();
+        private static final String NLS_NEXTYEAR = OceanusDateResource.DIALOG_NEXTYEAR.getValue();
 
         /**
          * ToolTip for Previous Year.
          */
-        private static final String NLS_PREVYEAR = TethysDateResource.DIALOG_PREVYEAR.getValue();
+        private static final String NLS_PREVYEAR = OceanusDateResource.DIALOG_PREVYEAR.getValue();
 
         /**
          * The Panel.
@@ -401,7 +401,7 @@ public final class TethysUISwingDateDialog
         /**
          * The Date Configuration.
          */
-        private final TethysDateConfig theConfig;
+        private final OceanusDateConfig theConfig;
 
         /**
          * The Date Label.
@@ -507,7 +507,7 @@ public final class TethysUISwingDateDialog
          */
         private void buildMonth() {
             /* Store the active month */
-            final TethysDate myBase = theConfig.getCurrentMonth();
+            final OceanusDate myBase = theConfig.getCurrentMonth();
             final Locale myLocale = theConfig.getLocale();
 
             /* Determine the display for the label */
@@ -520,14 +520,14 @@ public final class TethysUISwingDateDialog
                     + myYear);
 
             /* Access boundary dates */
-            final TethysDate myEarliest = theConfig.getEarliestDate();
-            final TethysDate myLatest = theConfig.getLatestDate();
+            final OceanusDate myEarliest = theConfig.getEarliestDate();
+            final OceanusDate myLatest = theConfig.getLatestDate();
 
             /* Enable/Disable buttons as required */
-            thePrevMonthButton.setEnabled(!TethysDateConfig.isSameMonth(myEarliest, myBase));
-            thePrevYearButton.setEnabled(!TethysDateConfig.isSameYear(myEarliest, myBase));
-            theNextMonthButton.setEnabled(!TethysDateConfig.isSameMonth(myLatest, myBase));
-            theNextYearButton.setEnabled(!TethysDateConfig.isSameYear(myLatest, myBase));
+            thePrevMonthButton.setEnabled(!OceanusDateConfig.isSameMonth(myEarliest, myBase));
+            thePrevYearButton.setEnabled(!OceanusDateConfig.isSameYear(myEarliest, myBase));
+            theNextMonthButton.setEnabled(!OceanusDateConfig.isSameMonth(myLatest, myBase));
+            theNextYearButton.setEnabled(!OceanusDateConfig.isSameYear(myLatest, myBase));
         }
     }
 
@@ -573,7 +573,7 @@ public final class TethysUISwingDateDialog
         /**
          * The Date Configuration.
          */
-        private final TethysDateConfig theConfig;
+        private final OceanusDateConfig theConfig;
 
         /**
          * The number of currently visible rows.
@@ -703,7 +703,7 @@ public final class TethysUISwingDateDialog
             int iCol = 0;
 
             /* Access the current month */
-            final TethysDate myCurr = new TethysDate(theConfig.getCurrentMonth());
+            final OceanusDate myCurr = new OceanusDate(theConfig.getCurrentMonth());
             final int iMonth = myCurr.getMonth();
 
             /* Access the Weekday of the 1st of the month */
@@ -873,12 +873,12 @@ public final class TethysUISwingDateDialog
         /**
          * ToolTip for Current Day.
          */
-        private static final String NLS_CURRENTDAY = TethysDateResource.DIALOG_CURRENT.getValue();
+        private static final String NLS_CURRENTDAY = OceanusDateResource.DIALOG_CURRENT.getValue();
 
         /**
          * ToolTip for Selected Day.
          */
-        private static final String NLS_SELECTEDDAY = TethysDateResource.DIALOG_SELECTED.getValue();
+        private static final String NLS_SELECTEDDAY = OceanusDateResource.DIALOG_SELECTED.getValue();
 
         /**
          * The Label.

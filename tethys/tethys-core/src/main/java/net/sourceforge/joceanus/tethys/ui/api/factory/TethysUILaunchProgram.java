@@ -2,7 +2,7 @@ package net.sourceforge.joceanus.tethys.ui.api.factory;
 
 import java.io.InputStream;
 
-import net.sourceforge.joceanus.tethys.OceanusException;
+import net.sourceforge.joceanus.oceanus.OceanusException;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIProgram;
 
 /**

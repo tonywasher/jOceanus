@@ -19,12 +19,12 @@ package net.sourceforge.joceanus.metis.preference;
 import net.sourceforge.joceanus.metis.field.MetisFieldItem;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.metis.viewer.MetisViewerManager;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.event.TethysEventManager;
-import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar;
-import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar.TethysEventProvider;
-import net.sourceforge.joceanus.tethys.logger.TethysLogManager;
-import net.sourceforge.joceanus.tethys.logger.TethysLogger;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.oceanus.logger.OceanusLogManager;
+import net.sourceforge.joceanus.oceanus.logger.OceanusLogger;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
 
 import java.lang.reflect.Constructor;
@@ -42,7 +42,7 @@ public class MetisPreferenceManager
     /**
      * Logger.
      */
-    private static final TethysLogger LOGGER = TethysLogManager.getLogger(MetisPreferenceManager.class);
+    private static final OceanusLogger LOGGER = OceanusLogManager.getLogger(MetisPreferenceManager.class);
 
     /**
      * Report fields.
@@ -57,7 +57,7 @@ public class MetisPreferenceManager
     /**
      * The Event Manager.
      */
-    private final TethysEventManager<MetisPreferenceEvent> theEventManager;
+    private final OceanusEventManager<MetisPreferenceEvent> theEventManager;
 
     /**
      * Viewer Manager.
@@ -76,7 +76,7 @@ public class MetisPreferenceManager
      */
     public MetisPreferenceManager(final MetisViewerManager pViewer) throws OceanusException {
         theViewerManager = pViewer;
-        theEventManager = new TethysEventManager<>();
+        theEventManager = new OceanusEventManager<>();
         theFields = MetisFieldSet.newFieldSet(this);
     }
 
@@ -91,7 +91,7 @@ public class MetisPreferenceManager
     }
 
     @Override
-    public TethysEventRegistrar<MetisPreferenceEvent> getEventRegistrar() {
+    public OceanusEventRegistrar<MetisPreferenceEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 

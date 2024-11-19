@@ -42,8 +42,8 @@ import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianIOException;
 import net.sourceforge.joceanus.gordianknot.impl.core.keyset.GordianCoreKeySet;
 import net.sourceforge.joceanus.gordianknot.impl.core.stream.GordianStreamManager;
 import net.sourceforge.joceanus.gordianknot.impl.core.zip.GordianCoreZipLock.GordianUnlockNotify;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.TethysDataConverter;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.OceanusDataConverter;
 
 /**
  * Class used to extract from a ZipFile.
@@ -161,7 +161,7 @@ public class GordianCoreZipReadFile
 
         /* Parse the decrypted header */
         final byte[] myBytes = myKeySet.decryptBytes(theHeader);
-        theContents = new GordianCoreZipFileContents(TethysDataConverter.byteArrayToString(myBytes));
+        theContents = new GordianCoreZipFileContents(OceanusDataConverter.byteArrayToString(myBytes));
 
         /* Access the security details */
         final GordianCoreZipFileEntry myHeader = theContents.getHeader();

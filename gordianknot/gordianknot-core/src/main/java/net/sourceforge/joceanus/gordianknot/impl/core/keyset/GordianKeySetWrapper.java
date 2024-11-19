@@ -21,7 +21,7 @@ import net.sourceforge.joceanus.gordianknot.api.cipher.GordianCipherParameters;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.cipher.GordianCoreWrapper;
 import net.sourceforge.joceanus.gordianknot.impl.core.keyset.GordianMultiCipher.GordianSymKeyCipherSet;
-import net.sourceforge.joceanus.tethys.OceanusException;
+import net.sourceforge.joceanus.oceanus.OceanusException;
 
 /**
  * GordianKnot base for KeySetWrapper.

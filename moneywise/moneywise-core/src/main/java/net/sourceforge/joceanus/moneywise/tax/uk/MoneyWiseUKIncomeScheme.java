@@ -24,8 +24,8 @@ import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTaxClass;
 import net.sourceforge.joceanus.moneywise.tax.MoneyWiseTaxBandSet;
 import net.sourceforge.joceanus.moneywise.tax.MoneyWiseTaxBandSet.MoneyWiseTaxBand;
 import net.sourceforge.joceanus.moneywise.tax.MoneyWiseTaxResource;
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
-import net.sourceforge.joceanus.tethys.decimal.TethysRate;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRate;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
 
 /**
@@ -82,9 +82,9 @@ public class MoneyWiseUKIncomeScheme
      */
     protected MoneyWiseTaxBandSet allocateToTaxBands(final MoneyWiseUKTaxConfig pConfig,
                                                      final MoneyWiseTaxClass pBasis,
-                                                     final TethysMoney pAmount) {
+                                                     final OceanusMoney pAmount) {
         /* Handle negative amounts */
-        final TethysMoney myAmount = new TethysMoney(pAmount);
+        final OceanusMoney myAmount = new OceanusMoney(pAmount);
         if (!myAmount.isPositive()) {
             myAmount.setZero();
         }
@@ -93,7 +93,7 @@ public class MoneyWiseUKIncomeScheme
         final MoneyWiseTaxBandSet myTaxBands = determineTaxBands(pConfig, pBasis, myAmount);
 
         /* Adjust allowances and taxBands */
-        final TethysMoney myRemaining = adjustAllowances(pConfig, myAmount);
+        final OceanusMoney myRemaining = adjustAllowances(pConfig, myAmount);
         adjustTaxBands(pConfig, myRemaining);
 
         /* return the taxBands */
@@ -109,15 +109,15 @@ public class MoneyWiseUKIncomeScheme
      */
     private MoneyWiseTaxBandSet determineTaxBands(final MoneyWiseUKTaxConfig pConfig,
                                                    final MoneyWiseTaxClass pBasis,
-                                                   final TethysMoney pAmount) {
+                                                   final OceanusMoney pAmount) {
         /* Create a new taxBand set */
         final MoneyWiseTaxBandSet myTaxBands = new MoneyWiseTaxBandSet();
-        final TethysMoney myRemaining = new TethysMoney(pAmount);
+        final OceanusMoney myRemaining = new OceanusMoney(pAmount);
 
         /* Determine allowance */
-        final TethysMoney myAllowance = new TethysMoney(getAmountInAllowance(pConfig, myRemaining));
+        final OceanusMoney myAllowance = new OceanusMoney(getAmountInAllowance(pConfig, myRemaining));
         if (myAllowance.isNonZero() && reliefAvailable) {
-            myTaxBands.addTaxBand(new MoneyWiseTaxBand(myAllowance, TethysRate.getWholePercentage(0)));
+            myTaxBands.addTaxBand(new MoneyWiseTaxBand(myAllowance, OceanusRate.getWholePercentage(0)));
             myRemaining.subtractAmount(myAllowance);
         }
 
@@ -127,11 +127,11 @@ public class MoneyWiseUKIncomeScheme
                 && myIterator.hasNext()) {
             /* Determine amount in band */
             final MoneyWiseTaxBand myBand = myIterator.next();
-            TethysMoney myAmount = getAmountInBand(myBand.getAmount(), myRemaining);
+            OceanusMoney myAmount = getAmountInBand(myBand.getAmount(), myRemaining);
 
             /* Add any held-over allowance */
             if (!reliefAvailable && myAllowance.isNonZero()) {
-                myAmount = new TethysMoney(myAmount);
+                myAmount = new OceanusMoney(myAmount);
                 myAmount.addAmount(myAllowance);
                 myAllowance.setZero();
             }
@@ -162,8 +162,8 @@ public class MoneyWiseUKIncomeScheme
      * @param pAmount the amount that is to be adjusted
      * @return the amount remaining
      */
-    protected TethysMoney getAmountInAllowance(final MoneyWiseUKTaxConfig pConfig,
-                                               final TethysMoney pAmount) {
+    protected OceanusMoney getAmountInAllowance(final MoneyWiseUKTaxConfig pConfig,
+                                                final OceanusMoney pAmount) {
         /* Obtain the amount covered by the allowance */
         return getAmountInBand(pConfig.getAllowance(), pAmount);
     }
@@ -174,8 +174,8 @@ public class MoneyWiseUKIncomeScheme
      * @param pAmount the amount that is to be adjusted
      * @return the amount remaining
      */
-    protected TethysMoney adjustAllowances(final MoneyWiseUKTaxConfig pConfig,
-                                           final TethysMoney pAmount) {
+    protected OceanusMoney adjustAllowances(final MoneyWiseUKTaxConfig pConfig,
+                                            final OceanusMoney pAmount) {
         /* Adjust the basic allowance */
         return adjustForAllowance(pConfig.getAllowance(), pAmount);
     }
@@ -186,9 +186,9 @@ public class MoneyWiseUKIncomeScheme
      * @param pAmount the amount that is to be adjusted
      */
     protected void adjustTaxBands(final MoneyWiseUKTaxConfig pConfig,
-                                  final TethysMoney pAmount) {
+                                  final OceanusMoney pAmount) {
         /* Loop through the taxBands */
-        TethysMoney myRemaining = pAmount;
+        OceanusMoney myRemaining = pAmount;
         for (MoneyWiseTaxBand myBand : pConfig.getTaxBands()) {
             /* If we have nothing left to adjust, we have finished */
             if (myRemaining.isZero()
@@ -207,10 +207,10 @@ public class MoneyWiseUKIncomeScheme
      * @param pAmount the amount that is to be adjusted
      * @return the amount remaining
      */
-    protected TethysMoney adjustForAllowance(final TethysMoney pAllowance,
-                                             final TethysMoney pAmount) {
+    protected OceanusMoney adjustForAllowance(final OceanusMoney pAllowance,
+                                              final OceanusMoney pAmount) {
         /* Take a copy of the amount */
-        final TethysMoney myRemaining = new TethysMoney(pAmount);
+        final OceanusMoney myRemaining = new OceanusMoney(pAmount);
 
         /* If we have exhausted the allowance */
         if (myRemaining.compareTo(pAllowance) > 0) {
@@ -235,8 +235,8 @@ public class MoneyWiseUKIncomeScheme
      * @param pAmount the amount available
      * @return the amount within the band
      */
-    protected static TethysMoney getAmountInBand(final TethysMoney pBand,
-                                                 final TethysMoney pAmount) {
+    protected static OceanusMoney getAmountInBand(final OceanusMoney pBand,
+                                                  final OceanusMoney pAmount) {
         /* Return the lesser of the two */
         return pBand != null && pAmount.compareTo(pBand) > 0
                 ? pBand

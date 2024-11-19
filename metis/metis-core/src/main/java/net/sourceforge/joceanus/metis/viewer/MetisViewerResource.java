@@ -22,14 +22,14 @@ import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.metis.MetisDataException;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
-import net.sourceforge.joceanus.tethys.resource.TethysBundleId;
-import net.sourceforge.joceanus.tethys.resource.TethysBundleLoader;
+import net.sourceforge.joceanus.oceanus.resource.OceanusBundleId;
+import net.sourceforge.joceanus.oceanus.resource.OceanusBundleLoader;
 
 /**
  * Resource IDs for Metis viewer.
  */
 public enum MetisViewerResource
-        implements TethysBundleId, MetisDataFieldId {
+        implements OceanusBundleId, MetisDataFieldId {
     /**
      * Viewer window title.
      */
@@ -178,12 +178,12 @@ public enum MetisViewerResource
     /**
      * The stdEntry Map.
      */
-    private static final Map<MetisViewerStandardEntry, TethysBundleId> ENTRY_MAP = buildEntryMap();
+    private static final Map<MetisViewerStandardEntry, OceanusBundleId> ENTRY_MAP = buildEntryMap();
 
     /**
      * The Resource Loader.
      */
-    private static final TethysBundleLoader LOADER = TethysBundleLoader.getPackageLoader(MetisDataException.class.getCanonicalName(),
+    private static final OceanusBundleLoader LOADER = OceanusBundleLoader.getPackageLoader(MetisDataException.class.getCanonicalName(),
             ResourceBundle::getBundle);
 
     /**
@@ -235,9 +235,9 @@ public enum MetisViewerResource
      * Build entry map.
      * @return the map
      */
-    private static Map<MetisViewerStandardEntry, TethysBundleId> buildEntryMap() {
+    private static Map<MetisViewerStandardEntry, OceanusBundleId> buildEntryMap() {
         /* Create the map and return it */
-        final Map<MetisViewerStandardEntry, TethysBundleId> myMap = new EnumMap<>(MetisViewerStandardEntry.class);
+        final Map<MetisViewerStandardEntry, OceanusBundleId> myMap = new EnumMap<>(MetisViewerStandardEntry.class);
         myMap.put(MetisViewerStandardEntry.ERROR, VIEWER_ENTRY_ERROR);
         myMap.put(MetisViewerStandardEntry.PROFILE, VIEWER_ENTRY_PROFILE);
         myMap.put(MetisViewerStandardEntry.DATA, VIEWER_ENTRY_DATA);
@@ -252,7 +252,7 @@ public enum MetisViewerResource
      * @param pEntry the entry
      * @return the resource key
      */
-    protected static TethysBundleId getKeyForStdEntry(final MetisViewerStandardEntry pEntry) {
-        return TethysBundleLoader.getKeyForEnum(ENTRY_MAP, pEntry);
+    protected static OceanusBundleId getKeyForStdEntry(final MetisViewerStandardEntry pEntry) {
+        return OceanusBundleLoader.getKeyForEnum(ENTRY_MAP, pEntry);
     }
 }

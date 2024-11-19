@@ -21,9 +21,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import net.sourceforge.joceanus.tethys.date.TethysDate;
-import net.sourceforge.joceanus.tethys.date.TethysDateFormatter;
-import net.sourceforge.joceanus.tethys.date.TethysDateRange;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.date.OceanusDateFormatter;
+import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIAlignment;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
@@ -73,37 +73,37 @@ public class TethysTestDate {
     /**
      * Start sample date.
      */
-    private static final TethysDate DATE_START = makeDate(2007, Month.JANUARY, 25);
+    private static final OceanusDate DATE_START = makeDate(2007, Month.JANUARY, 25);
 
     /**
      * End sample date.
      */
-    private static final TethysDate DATE_END = makeDate(2018, Month.AUGUST, 9);
+    private static final OceanusDate DATE_END = makeDate(2018, Month.AUGUST, 9);
 
     /**
      * First sample date.
      */
-    private static final TethysDate DATE_FIRST = makeDate(2011, Month.JULY, 1);
+    private static final OceanusDate DATE_FIRST = makeDate(2011, Month.JULY, 1);
 
     /**
      * Second sample date.
      */
-    private static final TethysDate DATE_SECOND = makeDate(2012, Month.MARCH, 14);
+    private static final OceanusDate DATE_SECOND = makeDate(2012, Month.MARCH, 14);
 
     /**
      * Third sample date.
      */
-    private static final TethysDate DATE_THIRD = makeDate(2014, Month.NOVEMBER, 19);
+    private static final OceanusDate DATE_THIRD = makeDate(2014, Month.NOVEMBER, 19);
 
     /**
      * Fourth sample date.
      */
-    private static final TethysDate DATE_FOURTH = makeDate(2015, Month.MAY, 31);
+    private static final OceanusDate DATE_FOURTH = makeDate(2015, Month.MAY, 31);
 
     /**
      * Fifth sample date.
      */
-    private static final TethysDate DATE_FIFTH = makeDate(2018, Month.FEBRUARY, 28);
+    private static final OceanusDate DATE_FIFTH = makeDate(2018, Month.FEBRUARY, 28);
 
     /**
      * The first date format.
@@ -188,7 +188,7 @@ public class TethysTestDate {
     /**
      * The formatter.
      */
-    private final TethysDateFormatter theDateFormatter;
+    private final OceanusDateFormatter theDateFormatter;
 
     /**
      * The factory.
@@ -452,10 +452,10 @@ public class TethysTestDate {
      * @param pDay the day
      * @return the requested date
      */
-    private static TethysDate makeDate(final int pYear,
-                                       final Month pMonth,
-                                       final int pDay) {
-        return new TethysDate(pYear, pMonth, pDay);
+    private static OceanusDate makeDate(final int pYear,
+                                        final Month pMonth,
+                                        final int pDay) {
+        return new OceanusDate(pYear, pMonth, pDay);
     }
 
     /**
@@ -528,22 +528,22 @@ public class TethysTestDate {
      */
     private void applyRange() {
         /* Access the Start/End Dates */
-        final TethysDate myStart = theStartDate.getSelectedDate();
-        final TethysDate myEnd = theEndDate.getSelectedDate();
+        final OceanusDate myStart = theStartDate.getSelectedDate();
+        final OceanusDate myEnd = theEndDate.getSelectedDate();
 
         /* Set the select-able range for the start/end buttons */
         theStartDate.setLatestDate(myEnd);
         theEndDate.setEarliestDate(myStart);
 
         /* set the range select range */
-        theRangeSelect.setOverallRange(new TethysDateRange(myStart, myEnd));
+        theRangeSelect.setOverallRange(new OceanusDateRange(myStart, myEnd));
     }
 
     /**
      * Handle the new range.
      */
     private void handleNewRange() {
-        final TethysDateRange myRange = theRangeSelect.getRange();
+        final OceanusDateRange myRange = theRangeSelect.getRange();
         if (theSelectedRange != null) {
             theSelectedRange.setText(theDateFormatter.formatDateRange(myRange));
         }
@@ -566,7 +566,7 @@ public class TethysTestDate {
         /**
          * Date Property.
          */
-        private TethysDate theDate;
+        private OceanusDate theDate;
 
         /**
          * Comments Property.
@@ -578,7 +578,7 @@ public class TethysTestDate {
          * @param pDate the date
          * @param pComments the comments
          */
-        DateItem(final TethysDate pDate,
+        DateItem(final OceanusDate pDate,
                  final String pComments) {
             /* Store parameters */
             theDate = pDate;
@@ -589,7 +589,7 @@ public class TethysTestDate {
          * Obtain the Date.
          * @return the name
          */
-        public TethysDate getDate() {
+        public OceanusDate getDate() {
             return theDate;
         }
 
@@ -597,7 +597,7 @@ public class TethysTestDate {
          * Set the Date.
          * @param pDate the Date
          */
-        public void setDate(final TethysDate pDate) {
+        public void setDate(final OceanusDate pDate) {
             theDate = pDate;
         }
 

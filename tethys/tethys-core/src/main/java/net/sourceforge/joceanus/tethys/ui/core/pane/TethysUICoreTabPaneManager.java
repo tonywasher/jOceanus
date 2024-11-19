@@ -16,8 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.tethys.ui.core.pane;
 
-import net.sourceforge.joceanus.tethys.event.TethysEventManager;
-import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.tethys.ui.api.pane.TethysUITabPaneManager;
 import net.sourceforge.joceanus.tethys.ui.core.base.TethysUICoreComponent;
@@ -42,7 +42,7 @@ public abstract class TethysUICoreTabPaneManager
     /**
      * The Event Manager.
      */
-    private final TethysEventManager<TethysUIEvent> theEventManager;
+    private final OceanusEventManager<TethysUIEvent> theEventManager;
 
     /**
      * The first child item.
@@ -66,7 +66,7 @@ public abstract class TethysUICoreTabPaneManager
     protected TethysUICoreTabPaneManager(final TethysUICoreFactory<?> pFactory) {
         theGuiFactory = pFactory;
         theId = pFactory.getNextId();
-        theEventManager = new TethysEventManager<>();
+        theEventManager = new OceanusEventManager<>();
         isEnabled = true;
     }
 
@@ -76,7 +76,7 @@ public abstract class TethysUICoreTabPaneManager
     }
 
     @Override
-    public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
+    public OceanusEventRegistrar<TethysUIEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 

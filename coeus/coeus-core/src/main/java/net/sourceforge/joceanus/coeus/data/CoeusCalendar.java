@@ -18,8 +18,8 @@ package net.sourceforge.joceanus.coeus.data;
 
 import java.util.Locale;
 
-import net.sourceforge.joceanus.tethys.date.TethysDate;
-import net.sourceforge.joceanus.tethys.date.TethysFiscalYear;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.date.OceanusFiscalYear;
 
 /**
  * Calendar adjuster.
@@ -28,7 +28,7 @@ public class CoeusCalendar {
     /**
      * FiscalYear.
      */
-    private final TethysFiscalYear theFiscalYear;
+    private final OceanusFiscalYear theFiscalYear;
 
     /**
      * Use calendar totals.
@@ -43,7 +43,7 @@ public class CoeusCalendar {
     public CoeusCalendar(final Locale pLocale,
                          final Boolean pCalendar) {
         /* Determine the fiscal year */
-        theFiscalYear = TethysFiscalYear.determineFiscalYear(pLocale);
+        theFiscalYear = OceanusFiscalYear.determineFiscalYear(pLocale);
         makeCalendarTotals = pCalendar;
     }
 
@@ -60,7 +60,7 @@ public class CoeusCalendar {
      * @param pDate the date
      * @return the end of the year
      */
-    public TethysDate getEndOfYear(final TethysDate pDate) {
+    public OceanusDate getEndOfYear(final OceanusDate pDate) {
         /* Determine the end of the year */
         return Boolean.TRUE.equals(makeCalendarTotals)
                                   ? getEndOfCalendarYear(pDate)
@@ -72,7 +72,7 @@ public class CoeusCalendar {
      * @param pDate the date
      * @return the end of the month
      */
-    TethysDate getEndOfMonth(final TethysDate pDate) {
+    OceanusDate getEndOfMonth(final OceanusDate pDate) {
         /* Determine the end of the month */
         return Boolean.TRUE.equals(makeCalendarTotals)
                                   ? getEndOfCalendarMonth(pDate)
@@ -84,7 +84,7 @@ public class CoeusCalendar {
      * @param pDate the date
      * @return the start of the month
      */
-    TethysDate getStartOfMonth(final TethysDate pDate) {
+    OceanusDate getStartOfMonth(final OceanusDate pDate) {
         /* Determine the end of the month */
         return Boolean.TRUE.equals(makeCalendarTotals)
                ? getStartOfCalendarMonth(pDate)
@@ -96,9 +96,9 @@ public class CoeusCalendar {
      * @param pDate the date
      * @return the end of the calendar month
      */
-    private static TethysDate getStartOfCalendarMonth(final TethysDate pDate) {
+    private static OceanusDate getStartOfCalendarMonth(final OceanusDate pDate) {
         /* Determine the start of the calendar month */
-        final TethysDate myDate = new TethysDate(pDate);
+        final OceanusDate myDate = new OceanusDate(pDate);
         myDate.startCalendarMonth();
         return myDate;
     }
@@ -108,9 +108,9 @@ public class CoeusCalendar {
      * @param pDate the date
      * @return the end of the calendar month
      */
-    private static TethysDate getEndOfCalendarMonth(final TethysDate pDate) {
+    private static OceanusDate getEndOfCalendarMonth(final OceanusDate pDate) {
         /* Determine the end of the calendar month */
-        final TethysDate myDate = new TethysDate(pDate);
+        final OceanusDate myDate = new OceanusDate(pDate);
         myDate.endCalendarMonth();
         return myDate;
     }
@@ -120,9 +120,9 @@ public class CoeusCalendar {
      * @param pDate the date
      * @return the end of the calendar month
      */
-    private static TethysDate getEndOfCalendarYear(final TethysDate pDate) {
+    private static OceanusDate getEndOfCalendarYear(final OceanusDate pDate) {
         /* Determine the end of the calendar year */
-        final TethysDate myDate = new TethysDate(pDate);
+        final OceanusDate myDate = new OceanusDate(pDate);
         myDate.endCalendarYear();
         return myDate;
     }

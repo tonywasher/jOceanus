@@ -24,9 +24,9 @@ import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTaxClass;
 import net.sourceforge.joceanus.moneywise.tax.MoneyWiseTaxResource;
 import net.sourceforge.joceanus.moneywise.tax.MoneyWiseTaxSource;
 import net.sourceforge.joceanus.moneywise.tax.MoneyWiseTaxYear;
-import net.sourceforge.joceanus.tethys.date.TethysDate;
-import net.sourceforge.joceanus.tethys.date.TethysFiscalYear;
-import net.sourceforge.joceanus.tethys.decimal.TethysRate;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.date.OceanusFiscalYear;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRate;
 
 /**
  * The UK Tax Year.
@@ -160,9 +160,9 @@ public class MoneyWiseUKTaxYear
      * @param pYear the taxYear as an integer
      * @return the amount
      */
-    private static TethysDate getDate(final int pYear) {
-        final TethysDate myDate = new TethysDate(pYear, Month.JANUARY, 1);
-        return TethysFiscalYear.UK.endOfYear(myDate);
+    private static OceanusDate getDate(final int pYear) {
+        final OceanusDate myDate = new OceanusDate(pYear, Month.JANUARY, 1);
+        return OceanusFiscalYear.UK.endOfYear(myDate);
     }
 
     @Override
@@ -176,12 +176,12 @@ public class MoneyWiseUKTaxYear
     }
 
     @Override
-    public TethysRate getTaxCreditRateForInterest() {
+    public OceanusRate getTaxCreditRateForInterest() {
         return theInterestScheme.getTaxCreditRate(this);
     }
 
     @Override
-    public TethysRate getTaxCreditRateForDividend() {
+    public OceanusRate getTaxCreditRateForDividend() {
         return theDividendScheme.getTaxCreditRate(this);
     }
 

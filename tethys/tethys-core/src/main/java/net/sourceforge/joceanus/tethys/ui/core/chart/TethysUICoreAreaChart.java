@@ -21,11 +21,11 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import net.sourceforge.joceanus.tethys.date.TethysDate;
-import net.sourceforge.joceanus.tethys.decimal.TethysDecimalFormatter;
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
-import net.sourceforge.joceanus.tethys.event.TethysEventManager;
-import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimalFormatter;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.tethys.ui.api.chart.TethysUIAreaChart;
 import net.sourceforge.joceanus.tethys.ui.core.base.TethysUICoreComponent;
@@ -50,7 +50,7 @@ public abstract class TethysUICoreAreaChart
     /**
      * The formatter.
      */
-    private final TethysDecimalFormatter theFormatter;
+    private final OceanusDecimalFormatter theFormatter;
 
     /**
      * The id.
@@ -60,7 +60,7 @@ public abstract class TethysUICoreAreaChart
     /**
      * The Event Manager.
      */
-    private final TethysEventManager<TethysUIEvent> theEventManager;
+    private final OceanusEventManager<TethysUIEvent> theEventManager;
 
     /**
      * The sectionMap.
@@ -74,7 +74,7 @@ public abstract class TethysUICoreAreaChart
     protected TethysUICoreAreaChart(final TethysUICoreFactory<?> pFactory) {
         /* Build standard fields */
         theId = pFactory.getNextId();
-        theEventManager = new TethysEventManager<>();
+        theEventManager = new OceanusEventManager<>();
         theFormatter = pFactory.getDataFormatter().getDecimalFormatter();
 
         /* Create the section map */
@@ -87,7 +87,7 @@ public abstract class TethysUICoreAreaChart
     }
 
     @Override
-    public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
+    public OceanusEventRegistrar<TethysUIEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -95,7 +95,7 @@ public abstract class TethysUICoreAreaChart
      * Obtain the formatter.
      * @return the formatter
      */
-    protected TethysDecimalFormatter getFormatter() {
+    protected OceanusDecimalFormatter getFormatter() {
         return theFormatter;
     }
 
@@ -145,7 +145,7 @@ public abstract class TethysUICoreAreaChart
      * @return the tooltip
      */
     protected String getToolTip(final String pName,
-                                final TethysMoney pValue) {
+                                final OceanusMoney pValue) {
         return pName  + " = " + theFormatter.formatMoney(pValue);
     }
 
@@ -278,7 +278,7 @@ public abstract class TethysUICoreAreaChart
         /**
          * The pointMap of the series.
          */
-        private final Map<TethysDate, TethysUIAreaChartDataPoint> thePointMap;
+        private final Map<OceanusDate, TethysUIAreaChartDataPoint> thePointMap;
 
         /**
          * Constructor.
@@ -293,8 +293,8 @@ public abstract class TethysUICoreAreaChart
         }
 
         @Override
-        public void addPoint(final TethysDate pDate,
-                             final TethysMoney pValue) {
+        public void addPoint(final OceanusDate pDate,
+                             final OceanusMoney pValue) {
             thePointMap.put(pDate, new TethysUICoreAreaChartDataPoint(this, pDate, pValue));
         }
 
@@ -327,12 +327,12 @@ public abstract class TethysUICoreAreaChart
         /**
          * The date of the point.
          */
-        private final TethysDate theDate;
+        private final OceanusDate theDate;
 
         /**
          * The value of the point.
          */
-        private final TethysMoney theValue;
+        private final OceanusMoney theValue;
 
         /**
          * Constructor.
@@ -341,8 +341,8 @@ public abstract class TethysUICoreAreaChart
          * @param pValue the value
          */
         TethysUICoreAreaChartDataPoint(final TethysUIAreaChartSeries pSeries,
-                                       final TethysDate pDate,
-                                       final TethysMoney pValue) {
+                                       final OceanusDate pDate,
+                                       final OceanusMoney pValue) {
             theSeries = pSeries;
             theDate = pDate;
             theValue = pValue;
@@ -354,12 +354,12 @@ public abstract class TethysUICoreAreaChart
         }
 
         @Override
-        public TethysDate getDate() {
+        public OceanusDate getDate() {
             return theDate;
         }
 
         @Override
-        public TethysMoney getValue() {
+        public OceanusMoney getValue() {
             return theValue;
         }
     }

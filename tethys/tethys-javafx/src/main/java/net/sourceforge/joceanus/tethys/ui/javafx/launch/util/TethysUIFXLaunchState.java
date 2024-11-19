@@ -24,7 +24,7 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
-import net.sourceforge.joceanus.tethys.OceanusException;
+import net.sourceforge.joceanus.oceanus.OceanusException;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIIconId;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIProgram;
 import net.sourceforge.joceanus.tethys.ui.api.factory.TethysUILaunchProgram;

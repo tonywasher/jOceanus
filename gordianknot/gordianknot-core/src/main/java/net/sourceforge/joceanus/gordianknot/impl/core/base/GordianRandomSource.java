@@ -16,8 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.core.base;
 
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.TethysDataConverter;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.OceanusDataConverter;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -131,9 +131,9 @@ public class GordianRandomSource {
      */
     private static byte[] createPersonalisation(final byte[] pSeed) {
         /* Create the source arrays */
-        final byte[] myThread = TethysDataConverter.longToByteArray(Thread.currentThread().getId());
-        final byte[] myTime = TethysDataConverter.longToByteArray(System.currentTimeMillis());
-        final byte[] myNanos = TethysDataConverter.longToByteArray(System.nanoTime());
+        final byte[] myThread = OceanusDataConverter.longToByteArray(Thread.currentThread().getId());
+        final byte[] myTime = OceanusDataConverter.longToByteArray(System.currentTimeMillis());
+        final byte[] myNanos = OceanusDataConverter.longToByteArray(System.nanoTime());
 
         /* Create the final initVector */
         int myLen = myThread.length + myTime.length + myNanos.length;

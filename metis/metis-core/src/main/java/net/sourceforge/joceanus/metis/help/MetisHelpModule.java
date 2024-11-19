@@ -19,9 +19,9 @@ package net.sourceforge.joceanus.metis.help;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.resource.TethysResourceId;
-import net.sourceforge.joceanus.tethys.resource.TethysResourceLoader;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.resource.OceanusResourceId;
+import net.sourceforge.joceanus.oceanus.resource.OceanusResourceLoader;
 import net.sourceforge.joceanus.tethys.ui.api.control.TethysUIHTMLManager.TethysUIStyleSheetId;
 
 /**
@@ -31,7 +31,7 @@ public abstract class MetisHelpModule {
     /**
      * HelpId.
      */
-    public interface MetisHelpId extends TethysResourceId {
+    public interface MetisHelpId extends OceanusResourceId {
     }
 
     /**
@@ -206,7 +206,7 @@ public abstract class MetisHelpModule {
             /* If we have a helpId */
             if (myEntry.getHelpId() != null) {
                 /* Reset the builder */
-                final String myPage = TethysResourceLoader.loadResourceToString(myEntry.getHelpId());
+                final String myPage = OceanusResourceLoader.loadResourceToString(myEntry.getHelpId());
 
                 /* Set the HTML for the entry */
                 myEntry.setHtml(myPage);

@@ -23,14 +23,14 @@ import java.util.function.Function;
 import java.util.function.IntSupplier;
 import java.util.function.Supplier;
 
-import net.sourceforge.joceanus.tethys.date.TethysDate;
-import net.sourceforge.joceanus.tethys.decimal.TethysDecimal;
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
-import net.sourceforge.joceanus.tethys.decimal.TethysPrice;
-import net.sourceforge.joceanus.tethys.decimal.TethysRate;
-import net.sourceforge.joceanus.tethys.decimal.TethysRatio;
-import net.sourceforge.joceanus.tethys.decimal.TethysUnits;
-import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimal;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRate;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRatio;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusUnits;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.TethysEventProvider;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.tethys.ui.api.control.TethysUIControl.TethysUIDateButton;
@@ -177,10 +177,10 @@ public interface TethysUIDataEditField<T>
      * RawDecimalTextFieldControl.
      */
     interface TethysUIRawDecimalEditField
-            extends TethysUIValidatedEditField<TethysDecimal>, TethysUIRawDecimalField {
+            extends TethysUIValidatedEditField<OceanusDecimal>, TethysUIRawDecimalField {
         @Override
-        default TethysDecimal getCastValue(final Object pValue) {
-            return (TethysDecimal) pValue;
+        default OceanusDecimal getCastValue(final Object pValue) {
+            return (OceanusDecimal) pValue;
         }
     }
 
@@ -199,7 +199,7 @@ public interface TethysUIDataEditField<T>
      * CurrencyTextFieldControl.
      * @param <T> the data type
      */
-    interface TethysUICurrencyEditField<T extends TethysMoney>
+    interface TethysUICurrencyEditField<T extends OceanusMoney>
             extends TethysUIValidatedEditField<T>, TethysUICurrencyField {
     }
 
@@ -284,10 +284,10 @@ public interface TethysUIDataEditField<T>
      * MoneyTextFieldControl.
      */
     interface TethysUIMoneyEditField
-            extends TethysUIDataEditField<TethysMoney>, TethysUICurrencyEditField<TethysMoney> {
+            extends TethysUIDataEditField<OceanusMoney>, TethysUICurrencyEditField<OceanusMoney> {
         @Override
-        default TethysMoney getCastValue(final Object pValue) {
-            return (TethysMoney) pValue;
+        default OceanusMoney getCastValue(final Object pValue) {
+            return (OceanusMoney) pValue;
         }
     }
 
@@ -295,10 +295,10 @@ public interface TethysUIDataEditField<T>
      * PriceTextFieldControl.
      */
     interface TethysUIPriceEditField
-            extends TethysUIDataEditField<TethysPrice>, TethysUICurrencyEditField<TethysPrice> {
+            extends TethysUIDataEditField<OceanusPrice>, TethysUICurrencyEditField<OceanusPrice> {
         @Override
-        default TethysPrice getCastValue(final Object pValue) {
-            return (TethysPrice) pValue;
+        default OceanusPrice getCastValue(final Object pValue) {
+            return (OceanusPrice) pValue;
         }
     }
 
@@ -306,10 +306,10 @@ public interface TethysUIDataEditField<T>
      * UnitsTextFieldControl.
      */
     interface TethysUIUnitsEditField
-            extends TethysUIDataEditField<TethysUnits>, TethysUIValidatedEditField<TethysUnits> {
+            extends TethysUIDataEditField<OceanusUnits>, TethysUIValidatedEditField<OceanusUnits> {
         @Override
-        default TethysUnits getCastValue(final Object pValue) {
-            return (TethysUnits) pValue;
+        default OceanusUnits getCastValue(final Object pValue) {
+            return (OceanusUnits) pValue;
         }
     }
 
@@ -317,10 +317,10 @@ public interface TethysUIDataEditField<T>
      * RateTextFieldControl.
      */
     interface TethysUIRateEditField
-            extends TethysUIDataEditField<TethysRate>, TethysUIValidatedEditField<TethysRate> {
+            extends TethysUIDataEditField<OceanusRate>, TethysUIValidatedEditField<OceanusRate> {
         @Override
-        default TethysRate getCastValue(final Object pValue) {
-            return (TethysRate) pValue;
+        default OceanusRate getCastValue(final Object pValue) {
+            return (OceanusRate) pValue;
         }
     }
 
@@ -328,10 +328,10 @@ public interface TethysUIDataEditField<T>
      * RatioTextFieldControl.
      */
     interface TethysUIRatioEditField
-            extends TethysUIDataEditField<TethysRatio>, TethysUIValidatedEditField<TethysRatio> {
+            extends TethysUIDataEditField<OceanusRatio>, TethysUIValidatedEditField<OceanusRatio> {
         @Override
-        default TethysRatio getCastValue(final Object pValue) {
-            return (TethysRatio) pValue;
+        default OceanusRatio getCastValue(final Object pValue) {
+            return (OceanusRatio) pValue;
         }
     }
 
@@ -347,10 +347,10 @@ public interface TethysUIDataEditField<T>
      * DateButton Field.
      */
     interface TethysUIDateButtonField
-            extends TethysUIDataEditField<TethysDate>, TethysUIDateButton {
+            extends TethysUIDataEditField<OceanusDate>, TethysUIDateButton {
         @Override
-        default TethysDate getCastValue(final Object pValue) {
-            return (TethysDate) pValue;
+        default OceanusDate getCastValue(final Object pValue) {
+            return (OceanusDate) pValue;
         }
     }
 

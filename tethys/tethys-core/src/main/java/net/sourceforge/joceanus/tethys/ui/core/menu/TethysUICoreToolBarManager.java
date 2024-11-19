@@ -19,10 +19,10 @@ package net.sourceforge.joceanus.tethys.ui.core.menu;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.sourceforge.joceanus.tethys.event.TethysEvent.TethysEventListener;
-import net.sourceforge.joceanus.tethys.event.TethysEventManager;
-import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar;
-import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.oceanus.event.OceanusEvent.TethysEventListener;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.TethysEventProvider;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIConstant;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.tethys.ui.api.menu.TethysUIToolBarManager;
@@ -135,7 +135,7 @@ public abstract class TethysUICoreToolBarManager
         /**
          * Event Manager.
          */
-        private final TethysEventManager<TethysUIEvent> theEventManager;
+        private final OceanusEventManager<TethysUIEvent> theEventManager;
 
         /**
          * Is the element enabled?
@@ -155,7 +155,7 @@ public abstract class TethysUICoreToolBarManager
             isEnabled = true;
 
             /* Access the element map */
-            theEventManager = new TethysEventManager<>();
+            theEventManager = new OceanusEventManager<>();
             final Map<TethysUIToolBarId, TethysUICoreToolElement> myElementMap = pManager.theElementMap;
 
             /* Check uniqueness of item */
@@ -168,7 +168,7 @@ public abstract class TethysUICoreToolBarManager
         }
 
         @Override
-        public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
+        public OceanusEventRegistrar<TethysUIEvent> getEventRegistrar() {
             return theEventManager.getEventRegistrar();
         }
 

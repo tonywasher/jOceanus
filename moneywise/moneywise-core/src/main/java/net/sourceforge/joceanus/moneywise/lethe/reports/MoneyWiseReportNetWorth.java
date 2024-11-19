@@ -65,8 +65,8 @@ import net.sourceforge.joceanus.moneywise.lethe.views.MoneyWiseAnalysisFilter.Mo
 import net.sourceforge.joceanus.moneywise.lethe.views.MoneyWiseAnalysisFilter.MoneyWiseAnalysisLoanFilter;
 import net.sourceforge.joceanus.moneywise.lethe.views.MoneyWiseAnalysisFilter.MoneyWiseAnalysisPortfolioCashFilter;
 import net.sourceforge.joceanus.moneywise.lethe.views.MoneyWiseAnalysisFilter.MoneyWiseAnalysisSecurityFilter;
-import net.sourceforge.joceanus.tethys.date.TethysDate;
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
 
 /**
@@ -152,10 +152,10 @@ public class MoneyWiseReportNetWorth
         final MoneyWiseAnalysisCashCategoryBucketList myCash = theAnalysis.getCashCategories();
         final MoneyWiseAnalysisLoanCategoryBucketList myLoans = theAnalysis.getLoanCategories();
         final MoneyWiseAnalysisPortfolioBucketList myPortfolios = theAnalysis.getPortfolios();
-        final TethysDate myDate = theAnalysis.getDateRange().getEnd();
+        final OceanusDate myDate = theAnalysis.getDateRange().getEnd();
 
         /* Create the totals */
-        final TethysMoney myTotal = new TethysMoney();
+        final OceanusMoney myTotal = new OceanusMoney();
 
         /* Start the report */
         final Element myBody = theBuilder.startReport();
@@ -235,7 +235,7 @@ public class MoneyWiseReportNetWorth
             /* Access totals */
             final MoneyWiseAnalysisPortfolioBucket myTotals = myPortfolios.getTotals();
             final MoneyWiseAnalysisSecurityValues myValues = myTotals.getValues();
-            final TethysMoney myValuation = myValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.VALUATION);
+            final OceanusMoney myValuation = myValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.VALUATION);
 
             /* Format the Portfolios Total */
             theBuilder.startRow(myTable);

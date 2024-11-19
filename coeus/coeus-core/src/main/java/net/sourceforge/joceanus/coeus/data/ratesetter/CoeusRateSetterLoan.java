@@ -20,8 +20,8 @@ import net.sourceforge.joceanus.coeus.CoeusDataException;
 import net.sourceforge.joceanus.coeus.data.CoeusLoan;
 import net.sourceforge.joceanus.coeus.data.CoeusResource;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
-import net.sourceforge.joceanus.tethys.date.TethysDateRange;
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
+import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
 
 /**
  * RateSetter Loan.
@@ -73,7 +73,7 @@ public class CoeusRateSetterLoan
      * @param pRange the dateRange
      */
     CoeusRateSetterLoan(final CoeusRateSetterLoan pLoan,
-                        final TethysDateRange pRange) {
+                        final OceanusDateRange pRange) {
         super(pLoan, pRange);
         theBookItem = pLoan.getLoanBookItem();
     }
@@ -89,8 +89,8 @@ public class CoeusRateSetterLoan
     }
 
     @Override
-    public TethysMoney getInitialLoan() {
-        return (TethysMoney) super.getInitialLoan();
+    public OceanusMoney getInitialLoan() {
+        return (OceanusMoney) super.getInitialLoan();
     }
 
     /**
@@ -108,14 +108,14 @@ public class CoeusRateSetterLoan
 
     @Override
     protected void checkLoan() throws CoeusDataException {
-        final TethysMoney myBookBalance = theBookItem.getBalance();
+        final OceanusMoney myBookBalance = theBookItem.getBalance();
         if (!myBookBalance.equals(getTotals().getLoanBook())) {
             throw new CoeusDataException(this, "Bad Balance");
         }
     }
 
     @Override
-    public TethysMoney getBalance() {
+    public OceanusMoney getBalance() {
         return theBookItem.getBalance();
     }
 

@@ -31,12 +31,12 @@ import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.metis.viewer.MetisViewerEntry;
 import net.sourceforge.joceanus.metis.viewer.MetisViewerManager;
 import net.sourceforge.joceanus.metis.viewer.MetisViewerStandardEntry;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.date.TethysDate;
-import net.sourceforge.joceanus.tethys.event.TethysEventManager;
-import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar;
-import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar.TethysEventProvider;
-import net.sourceforge.joceanus.tethys.resource.TethysBundleId;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.oceanus.resource.OceanusBundleId;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
 
 /**
@@ -69,7 +69,7 @@ public abstract class MetisPreferenceSet
     /**
      * The Event Manager.
      */
-    private final TethysEventManager<MetisPreferenceEvent> theEventManager;
+    private final OceanusEventManager<MetisPreferenceEvent> theEventManager;
 
     /**
      * Report fields.
@@ -118,7 +118,7 @@ public abstract class MetisPreferenceSet
      * @throws OceanusException on error
      */
     protected MetisPreferenceSet(final MetisPreferenceManager pManager,
-                                 final TethysBundleId pId) throws OceanusException {
+                                 final OceanusBundleId pId) throws OceanusException {
         this(pManager, pId.getValue());
     }
 
@@ -141,7 +141,7 @@ public abstract class MetisPreferenceSet
         theHandle = deriveHandle();
 
         /* Create Event Manager */
-        theEventManager = new TethysEventManager<>();
+        theEventManager = new OceanusEventManager<>();
 
         /* Allocate the preference maps */
         theNameMap = new LinkedHashMap<>();
@@ -196,7 +196,7 @@ public abstract class MetisPreferenceSet
     }
 
     @Override
-    public TethysEventRegistrar<MetisPreferenceEvent> getEventRegistrar() {
+    public OceanusEventRegistrar<MetisPreferenceEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -592,7 +592,7 @@ public abstract class MetisPreferenceSet
      * @param pKey the key of the preference
      * @return the Date value
      */
-    public TethysDate getDateValue(final MetisPreferenceKey pKey) {
+    public OceanusDate getDateValue(final MetisPreferenceKey pKey) {
         /* Access preference */
         final MetisDatePreference myPref = getDatePreference(pKey);
 
@@ -1190,7 +1190,7 @@ public abstract class MetisPreferenceSet
                 final String myValue = getHandle().get(getPreferenceName(), null);
 
                 /* Parse the Date */
-                final TethysDate myDate = new TethysDate(myValue);
+                final OceanusDate myDate = new OceanusDate(myValue);
 
                 /* Set as initial value */
                 setTheValue(myDate);
@@ -1198,20 +1198,20 @@ public abstract class MetisPreferenceSet
         }
 
         @Override
-        public TethysDate getValue() {
-            return (TethysDate) super.getValue();
+        public OceanusDate getValue() {
+            return (OceanusDate) super.getValue();
         }
 
         /**
          * Set value.
          * @param pNewValue the new value
          */
-        public void setValue(final TethysDate pNewValue) {
-            TethysDate myNewValue = pNewValue;
+        public void setValue(final OceanusDate pNewValue) {
+            OceanusDate myNewValue = pNewValue;
 
             /* Take a copy if not null */
             if (myNewValue != null) {
-                myNewValue = new TethysDate(myNewValue);
+                myNewValue = new OceanusDate(myNewValue);
             }
 
             /* Set the new value */
@@ -1220,7 +1220,7 @@ public abstract class MetisPreferenceSet
 
         @Override
         protected void storeThePreference(final Object pNewValue) {
-            getHandle().put(getPreferenceName(), ((TethysDate) pNewValue).toString());
+            getHandle().put(getPreferenceName(), ((OceanusDate) pNewValue).toString());
         }
     }
 

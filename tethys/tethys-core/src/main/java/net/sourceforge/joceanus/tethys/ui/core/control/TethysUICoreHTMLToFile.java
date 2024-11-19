@@ -28,10 +28,10 @@ import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Entities.EscapeMode;
 import org.jsoup.select.Elements;
 
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.TethysDataException;
-import net.sourceforge.joceanus.tethys.logger.TethysLogManager;
-import net.sourceforge.joceanus.tethys.logger.TethysLogger;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.OceanusDataException;
+import net.sourceforge.joceanus.oceanus.logger.OceanusLogManager;
+import net.sourceforge.joceanus.oceanus.logger.OceanusLogger;
 import net.sourceforge.joceanus.tethys.ui.api.dialog.TethysUIFileSelector;
 import net.sourceforge.joceanus.tethys.ui.core.factory.TethysUICoreFactory;
 
@@ -42,7 +42,7 @@ public class TethysUICoreHTMLToFile {
     /**
      * The logger.
      */
-    private static final TethysLogger LOGGER = TethysLogManager.getLogger(TethysUICoreHTMLToFile.class);
+    private static final OceanusLogger LOGGER = OceanusLogManager.getLogger(TethysUICoreHTMLToFile.class);
 
     /**
      * Link element name.
@@ -187,7 +187,7 @@ public class TethysUICoreHTMLToFile {
             myWriter.print(myHTML);
 
         } catch (IOException e) {
-            throw new TethysDataException("Failed to output XML", e);
+            throw new OceanusDataException("Failed to output XML", e);
         }
     }
 }

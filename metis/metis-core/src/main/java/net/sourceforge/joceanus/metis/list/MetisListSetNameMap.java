@@ -24,8 +24,8 @@ import java.util.regex.Pattern;
 
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataNamedItem;
 import net.sourceforge.joceanus.metis.field.MetisFieldVersionedItem;
-import net.sourceforge.joceanus.tethys.event.TethysEvent;
-import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar;
+import net.sourceforge.joceanus.oceanus.event.OceanusEvent;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
 
 /**
  * Name Map.
@@ -67,7 +67,7 @@ public class MetisListSetNameMap {
         theListMap = new HashMap<>();
 
         /* Attach listeners */
-        final TethysEventRegistrar<MetisListEvent> myRegistrar = theListSet.getEventRegistrar();
+        final OceanusEventRegistrar<MetisListEvent> myRegistrar = theListSet.getEventRegistrar();
         myRegistrar.addEventListener(MetisListEvent.REFRESH, e -> processRefreshEvent());
         if (pSession) {
             myRegistrar.addEventListener(MetisListEvent.VERSION, this::processVersionEvent);
@@ -195,7 +195,7 @@ public class MetisListSetNameMap {
      * Process a version event.
      * @param pEvent the event
      */
-    private void processVersionEvent(final TethysEvent<MetisListEvent> pEvent) {
+    private void processVersionEvent(final OceanusEvent<MetisListEvent> pEvent) {
         /* Access the change details */
         final MetisListSetChange myChanges = pEvent.getDetails(MetisListSetChange.class);
 

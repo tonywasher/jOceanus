@@ -47,8 +47,8 @@ import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacSpec;
 import net.sourceforge.joceanus.gordianknot.api.random.GordianRandomFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.keyset.GordianCoreKeySet;
 import net.sourceforge.joceanus.gordianknot.util.GordianUtilities;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.TethysDataConverter;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.OceanusDataConverter;
 
 /**
  * Security Test suite - Test KeySet functionality.
@@ -483,7 +483,7 @@ class KeySetTest {
         final GordianCoreKeySet myKeySet = (GordianCoreKeySet) pKeySet.getKeySet();
 
         /* Encrypt string */
-        final byte[] myBytes = TethysDataConverter.stringToByteArray(pData);
+        final byte[] myBytes = OceanusDataConverter.stringToByteArray(pData);
         final byte[] myEncrypted = myKeySet.encryptBytes(myBytes);
 
         /* Check encryption length */
@@ -509,7 +509,7 @@ class KeySetTest {
 
         /* Encrypt string */
         myCipher.initForEncrypt();
-        final byte[] myBytes = TethysDataConverter.stringToByteArray(pData);
+        final byte[] myBytes = OceanusDataConverter.stringToByteArray(pData);
         final byte[] myEncrypted = myCipher.finish(myBytes, 0, myBytes.length);
 
         /* Check encryption length */
@@ -534,7 +534,7 @@ class KeySetTest {
 
         /* Encrypt string */
         myCipher.initForEncrypt();
-        final byte[] myBytes = TethysDataConverter.stringToByteArray(pData);
+        final byte[] myBytes = OceanusDataConverter.stringToByteArray(pData);
         final byte[] myEncrypted = myCipher.finish(myBytes, 0, myBytes.length);
 
         /* Check that a second decryption works */
@@ -568,11 +568,11 @@ class KeySetTest {
         final GordianKeySetAADCipher myCipher = myKeySet.createAADCipher();
         final byte[] myAAD = pAAD == null
                              ? null
-                             : TethysDataConverter.stringToByteArray(pAAD);
+                             : OceanusDataConverter.stringToByteArray(pAAD);
 
         /* Encrypt string */
         myCipher.initForEncrypt(myAAD);
-        final byte[] myBytes = TethysDataConverter.stringToByteArray(pData);
+        final byte[] myBytes = OceanusDataConverter.stringToByteArray(pData);
         final byte[] myEncrypted = myCipher.finish(myBytes, 0, myBytes.length);
 
         /* Check encryption length */
@@ -597,11 +597,11 @@ class KeySetTest {
         final GordianKeySetAADCipher myCipher = pKeySet.getKeySetAADCipher();
         final byte[] myAAD = pAAD == null
                              ? null
-                             : TethysDataConverter.stringToByteArray(pAAD);
+                             : OceanusDataConverter.stringToByteArray(pAAD);
 
         /* Encrypt string */
         myCipher.initForEncrypt(myAAD);
-        final byte[] myBytes = TethysDataConverter.stringToByteArray(pData);
+        final byte[] myBytes = OceanusDataConverter.stringToByteArray(pData);
         final byte[] myEncrypted = myCipher.finish(myBytes, 0, myBytes.length);
 
         /* Check that a second decryption works */
@@ -633,7 +633,7 @@ class KeySetTest {
 
         /* Decrypt string */
         final byte[] myResult = myKeySet.decryptBytes(pData);
-        return TethysDataConverter.byteArrayToString(myResult);
+        return OceanusDataConverter.byteArrayToString(myResult);
     }
 
     /**
@@ -652,7 +652,7 @@ class KeySetTest {
         /* Decrypt string */
         myCipher.initForDecrypt();
         final byte[] myResult = myCipher.finish(pData, 0, pData.length);
-        return TethysDataConverter.byteArrayToString(myResult);
+        return OceanusDataConverter.byteArrayToString(myResult);
     }
 
     /**
@@ -684,7 +684,7 @@ class KeySetTest {
                 () -> myCipher.finish(pData,0, pData.length, myResult2, 1), "Short output");
 
         /* return the result */
-        return TethysDataConverter.byteArrayToString(myResult);
+        return OceanusDataConverter.byteArrayToString(myResult);
     }
 
     /**
@@ -703,12 +703,12 @@ class KeySetTest {
         final GordianKeySetAADCipher myCipher = myKeySet.createAADCipher();
         final byte[] myAAD = pAAD == null
                              ? null
-                             : TethysDataConverter.stringToByteArray(pAAD);
+                             : OceanusDataConverter.stringToByteArray(pAAD);
 
         /* Decrypt string */
         myCipher.initForDecrypt(myAAD);
         final byte[] myResult = myCipher.finish(pData, 0, pData.length);
-        return TethysDataConverter.byteArrayToString(myResult);
+        return OceanusDataConverter.byteArrayToString(myResult);
     }
 
     /**
@@ -726,7 +726,7 @@ class KeySetTest {
         final GordianKeySetAADCipher myCipher = pKeySet.getKeySetAADCipher();
         final byte[] myAAD = pAAD == null
                              ? null
-                             : TethysDataConverter.stringToByteArray(pAAD);
+                             : OceanusDataConverter.stringToByteArray(pAAD);
 
         /* Decrypt string */
         myCipher.initForDecrypt(myAAD);
@@ -745,7 +745,7 @@ class KeySetTest {
                 () -> myCipher.finish(pData,0, pData.length, myResult2, 1), "Short output");
 
         /* return the result */
-        return TethysDataConverter.byteArrayToString(myResult);
+        return OceanusDataConverter.byteArrayToString(myResult);
     }
 
     /**

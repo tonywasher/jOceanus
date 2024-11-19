@@ -22,10 +22,10 @@ import net.sourceforge.joceanus.coeus.ui.CoeusDataEvent;
 import net.sourceforge.joceanus.coeus.ui.CoeusUIResource;
 import net.sourceforge.joceanus.coeus.ui.report.CoeusReportType;
 import net.sourceforge.joceanus.metis.ui.MetisIcon;
-import net.sourceforge.joceanus.tethys.date.TethysDate;
-import net.sourceforge.joceanus.tethys.event.TethysEventManager;
-import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar;
-import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.TethysEventProvider;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.tethys.ui.api.button.TethysUIButton;
@@ -61,7 +61,7 @@ public class CoeusReportSelect
     /**
      * The Event Manager.
      */
-    private final TethysEventManager<CoeusDataEvent> theEventManager;
+    private final OceanusEventManager<CoeusDataEvent> theEventManager;
 
     /**
      * The panel.
@@ -116,7 +116,7 @@ public class CoeusReportSelect
 
         /* Create the DateButton */
         theDateButton = myButtons.newDateButton();
-        theDateButton.setSelectedDate(new TethysDate());
+        theDateButton.setSelectedDate(new OceanusDate());
 
         /* Create initial state */
         theState = new CoeusReportState(this, pCalendar);
@@ -135,7 +135,7 @@ public class CoeusReportSelect
         MetisIcon.configureSaveIconButton(mySaveButton);
 
         /* Create Event Manager */
-        theEventManager = new TethysEventManager<>();
+        theEventManager = new OceanusEventManager<>();
 
         /* Create the selection panel */
         thePanel = pFactory.paneFactory().newHBoxPane();
@@ -173,7 +173,7 @@ public class CoeusReportSelect
     }
 
     @Override
-    public TethysEventRegistrar<CoeusDataEvent> getEventRegistrar() {
+    public OceanusEventRegistrar<CoeusDataEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -197,7 +197,7 @@ public class CoeusReportSelect
      * Obtain the selected date.
      * @return the date
      */
-    public TethysDate getDate() {
+    public OceanusDate getDate() {
         return theState.getActualDate();
     }
 

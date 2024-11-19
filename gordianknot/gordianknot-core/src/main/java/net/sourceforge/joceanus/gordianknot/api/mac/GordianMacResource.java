@@ -21,13 +21,13 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianCipherResource;
-import net.sourceforge.joceanus.tethys.resource.TethysBundleId;
-import net.sourceforge.joceanus.tethys.resource.TethysBundleLoader;
+import net.sourceforge.joceanus.oceanus.resource.OceanusBundleId;
+import net.sourceforge.joceanus.oceanus.resource.OceanusBundleLoader;
 
 /**
  * Resource IDs for Mac package.
  */
-public enum GordianMacResource implements TethysBundleId {
+public enum GordianMacResource implements OceanusBundleId {
     /**
      * MAC HMAC.
      */
@@ -106,12 +106,12 @@ public enum GordianMacResource implements TethysBundleId {
     /**
      * The MAC Map.
      */
-    private static final Map<GordianMacType, TethysBundleId> MAC_MAP = buildMacMap();
+    private static final Map<GordianMacType, OceanusBundleId> MAC_MAP = buildMacMap();
 
     /**
      * The Resource Loader.
      */
-    private static final TethysBundleLoader LOADER = TethysBundleLoader.getLoader(GordianMac.class.getCanonicalName(),
+    private static final OceanusBundleLoader LOADER = OceanusBundleLoader.getLoader(GordianMac.class.getCanonicalName(),
             ResourceBundle::getBundle);
 
     /**
@@ -157,9 +157,9 @@ public enum GordianMacResource implements TethysBundleId {
      * Build MAC map.
      * @return the map
      */
-    private static Map<GordianMacType, TethysBundleId> buildMacMap() {
+    private static Map<GordianMacType, OceanusBundleId> buildMacMap() {
         /* Create the map and return it */
-        final Map<GordianMacType, TethysBundleId> myMap = new EnumMap<>(GordianMacType.class);
+        final Map<GordianMacType, OceanusBundleId> myMap = new EnumMap<>(GordianMacType.class);
         myMap.put(GordianMacType.HMAC, MAC_HMAC);
         myMap.put(GordianMacType.GMAC, MAC_GMAC);
         myMap.put(GordianMacType.CMAC, MAC_CMAC);
@@ -184,7 +184,7 @@ public enum GordianMacResource implements TethysBundleId {
      * @param pMac the MacType
      * @return the resource key
      */
-    protected static TethysBundleId getKeyForMac(final GordianMacType pMac) {
-        return TethysBundleLoader.getKeyForEnum(MAC_MAP, pMac);
+    protected static OceanusBundleId getKeyForMac(final GordianMacType pMac) {
+        return OceanusBundleLoader.getKeyForEnum(MAC_MAP, pMac);
     }
 }

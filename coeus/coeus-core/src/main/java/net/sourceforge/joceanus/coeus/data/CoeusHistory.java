@@ -22,8 +22,8 @@ import java.util.List;
 
 import net.sourceforge.joceanus.metis.field.MetisFieldItem;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
-import net.sourceforge.joceanus.tethys.date.TethysDate;
-import net.sourceforge.joceanus.tethys.date.TethysDateRange;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
 
 /**
  * Transaction Totals History.
@@ -60,7 +60,7 @@ public abstract class CoeusHistory
     /**
      * The range for the totals.
      */
-    private final TethysDateRange theRange;
+    private final OceanusDateRange theRange;
 
     /**
      * The individual totals.
@@ -101,7 +101,7 @@ public abstract class CoeusHistory
      * @param pRange the date range
      */
     protected CoeusHistory(final CoeusHistory pHistory,
-                           final TethysDateRange pRange) {
+                           final OceanusDateRange pRange) {
         /* Record details */
         theMarket = pHistory.getMarket();
         theLoan = pHistory.getLoan();
@@ -149,7 +149,7 @@ public abstract class CoeusHistory
      * Obtain the date.
      * @return the date
      */
-    public TethysDateRange getDateRange() {
+    public OceanusDateRange getDateRange() {
         return theRange;
     }
 
@@ -215,10 +215,10 @@ public abstract class CoeusHistory
      * @return the indices
      */
     private static int[] findIndicesForRange(final CoeusHistory pHistory,
-                                             final TethysDateRange pRange) {
+                                             final OceanusDateRange pRange) {
         /* Determine the dates */
-        final TethysDate myStartDate = pRange.getStart();
-        final TethysDate myEndDate = pRange.getEnd();
+        final OceanusDate myStartDate = pRange.getStart();
+        final OceanusDate myEndDate = pRange.getEnd();
 
         /* Create indices */
         int myIndex = 0;
@@ -228,7 +228,7 @@ public abstract class CoeusHistory
         final Iterator<CoeusTotals> myIterator = pHistory.historyIterator();
         while (myIterator.hasNext()) {
             final CoeusTotals myTotals = myIterator.next();
-            final TethysDate myDate = myTotals.getDate();
+            final OceanusDate myDate = myTotals.getDate();
 
             /* Break loop if we have hit the end */
             if (myEndDate.compareTo(myDate) < 0) {

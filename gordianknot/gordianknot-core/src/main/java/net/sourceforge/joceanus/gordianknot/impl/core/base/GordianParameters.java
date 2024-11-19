@@ -21,8 +21,8 @@ import java.util.Arrays;
 
 import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactoryType;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.TethysDataConverter;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.OceanusDataConverter;
 
 /**
  * Security Parameters.
@@ -122,7 +122,7 @@ public class GordianParameters {
     public void setSecurityPhrase(final char[] pSecurityPhrase) throws OceanusException {
         theSecuritySeed = pSecurityPhrase == null
                                 ? null
-                                : TethysDataConverter.charsToByteArray(pSecurityPhrase);
+                                : OceanusDataConverter.charsToByteArray(pSecurityPhrase);
     }
 
     /**

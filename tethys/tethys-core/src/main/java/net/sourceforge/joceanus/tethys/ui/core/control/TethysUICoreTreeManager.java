@@ -19,10 +19,10 @@ package net.sourceforge.joceanus.tethys.ui.core.control;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.sourceforge.joceanus.tethys.event.TethysEventManager;
-import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar;
-import net.sourceforge.joceanus.tethys.logger.TethysLogManager;
-import net.sourceforge.joceanus.tethys.logger.TethysLogger;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
+import net.sourceforge.joceanus.oceanus.logger.OceanusLogManager;
+import net.sourceforge.joceanus.oceanus.logger.OceanusLogger;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIIcon;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIIconId;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIEvent;
@@ -40,7 +40,7 @@ public abstract class TethysUICoreTreeManager<T>
     /**
      * Logger.
      */
-    private static final TethysLogger LOGGER = TethysLogManager.getLogger(TethysUICoreTreeManager.class);
+    private static final OceanusLogger LOGGER = OceanusLogManager.getLogger(TethysUICoreTreeManager.class);
 
     /**
      * Icon width.
@@ -70,7 +70,7 @@ public abstract class TethysUICoreTreeManager<T>
     /**
      * The Event Manager.
      */
-    private final TethysEventManager<TethysUIEvent> theEventManager;
+    private final OceanusEventManager<TethysUIEvent> theEventManager;
 
     /**
      * Is the tree visible (i.e. part of the actual tree)?
@@ -96,11 +96,11 @@ public abstract class TethysUICoreTreeManager<T>
         theId = theFactory.getNextId();
         theItemMap = new HashMap<>();
         theIconMap = new HashMap<>();
-        theEventManager = new TethysEventManager<>();
+        theEventManager = new OceanusEventManager<>();
     }
 
     @Override
-    public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
+    public OceanusEventRegistrar<TethysUIEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 

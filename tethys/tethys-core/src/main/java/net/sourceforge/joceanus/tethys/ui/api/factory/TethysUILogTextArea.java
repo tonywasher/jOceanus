@@ -16,8 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.tethys.ui.api.factory;
 
-import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar.TethysEventProvider;
-import net.sourceforge.joceanus.tethys.logger.TethysLogSink;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.oceanus.logger.OceanusLogSink;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIEvent;
 
@@ -25,7 +25,7 @@ import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIEvent;
  * Log text area.
  */
 public interface TethysUILogTextArea
-        extends TethysLogSink, TethysEventProvider<TethysUIEvent>, TethysUIComponent {
+        extends OceanusLogSink, TethysEventProvider<TethysUIEvent>, TethysUIComponent {
     /**
      * is the logArea active?
      * @return true/false

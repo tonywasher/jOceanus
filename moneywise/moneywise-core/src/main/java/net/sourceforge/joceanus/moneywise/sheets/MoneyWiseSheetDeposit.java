@@ -30,8 +30,8 @@ import net.sourceforge.joceanus.prometheus.sheets.PrometheusSheetEncrypted;
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetCell;
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetRow;
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetView;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.date.TethysDate;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
 
 /**
  * SheetDataItem extension for Deposit.
@@ -169,7 +169,7 @@ public class MoneyWiseSheetDeposit
 
         /* Handle maturity which may be missing */
         myCell = pView.getRowCellByIndex(pRow, ++iAdjust);
-        TethysDate myMaturity = null;
+        OceanusDate myMaturity = null;
         if (myCell != null) {
             myMaturity = myCell.getDate();
         }

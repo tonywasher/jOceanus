@@ -18,11 +18,11 @@ package net.sourceforge.joceanus.metis.help;
 
 import java.util.List;
 
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.event.TethysEvent;
-import net.sourceforge.joceanus.tethys.event.TethysEventManager;
-import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar;
-import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.event.OceanusEvent;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.TethysEventProvider;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.tethys.ui.api.control.TethysUIHTMLManager;
 import net.sourceforge.joceanus.tethys.ui.api.control.TethysUIHTMLManager.TethysUIStyleSheetId;
@@ -56,7 +56,7 @@ public class MetisHelpWindow
     /**
      * The Event Manager.
      */
-    private final TethysEventManager<TethysUIEvent> theEventManager;
+    private final OceanusEventManager<TethysUIEvent> theEventManager;
 
     /**
      * The split tree.
@@ -87,7 +87,7 @@ public class MetisHelpWindow
         theFactory = pFactory;
 
         /* Create the event manager */
-        theEventManager = new TethysEventManager<>();
+        theEventManager = new OceanusEventManager<>();
 
         /* Create the splitTree manager and obtain details */
         theSplitTree = pFactory.controlFactory().newSplitTreeManager();
@@ -99,7 +99,7 @@ public class MetisHelpWindow
     }
 
     @Override
-    public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
+    public OceanusEventRegistrar<TethysUIEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -214,7 +214,7 @@ public class MetisHelpWindow
      * Handle the split tree action event.
      * @param pEvent the event
      */
-    protected void handleSplitTreeAction(final TethysEvent<TethysUIEvent> pEvent) {
+    protected void handleSplitTreeAction(final OceanusEvent<TethysUIEvent> pEvent) {
         switch (pEvent.getEventId()) {
             case NEWVALUE:
                 handleNewTreeItem(pEvent.getDetails(MetisHelpEntry.class));

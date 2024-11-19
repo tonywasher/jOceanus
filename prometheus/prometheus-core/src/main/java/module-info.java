@@ -23,7 +23,7 @@ module net.sourceforge.joceanus.prometheus.core {
     requires java.sql;
 
     /* Oceanus */
-    requires net.sourceforge.joceanus.core;
+    requires net.sourceforge.joceanus.oceanus;
     requires net.sourceforge.joceanus.tethys.core;
     requires net.sourceforge.joceanus.gordianknot.core;
     requires net.sourceforge.joceanus.metis.core;

@@ -21,9 +21,9 @@ import java.util.Iterator;
 import net.sourceforge.joceanus.metis.data.MetisDataResource;
 import net.sourceforge.joceanus.metis.field.MetisFieldItem;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
-import net.sourceforge.joceanus.tethys.decimal.TethysDecimal;
-import net.sourceforge.joceanus.tethys.profile.TethysProfile;
-import net.sourceforge.joceanus.tethys.profile.TethysProfile.TethysProfileStatus;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimal;
+import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
+import net.sourceforge.joceanus.oceanus.profile.OceanusProfile.TethysProfileStatus;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
 
 /**
@@ -54,20 +54,20 @@ public class MetisViewerProfileWrapper
     /**
      * The wrapped profile.
      */
-    private final TethysProfile theWrapped;
+    private final OceanusProfile theWrapped;
 
     /**
      * Create a new Metis Profile Wrapper for an underlying TethysProfile.
      * @param pProfile the underlying profile
      */
-    public MetisViewerProfileWrapper(final TethysProfile pProfile) {
+    public MetisViewerProfileWrapper(final OceanusProfile pProfile) {
         /* Store details */
         theWrapped = pProfile;
 
         /* Loop through the subtasks */
-        final Iterator<TethysProfile> myIterator = theWrapped.subTaskIterator();
+        final Iterator<OceanusProfile> myIterator = theWrapped.subTaskIterator();
         while (myIterator.hasNext()) {
-            final TethysProfile mySubTask = myIterator.next();
+            final OceanusProfile mySubTask = myIterator.next();
             theFields.declareLocalField(mySubTask.getName(), p -> mySubTask);
         }
     }
@@ -109,7 +109,7 @@ public class MetisViewerProfileWrapper
      * Obtain the elapsed time of the profile.
      * @return the elapsedTime
      */
-    private TethysDecimal getElapsed() {
+    private OceanusDecimal getElapsed() {
         return theWrapped.isRunning()
                 ? null
                 : theWrapped.getElapsed();
@@ -119,7 +119,7 @@ public class MetisViewerProfileWrapper
      * Obtain the hidden time of the profile.
      * @return the hiddenTime
      */
-    private TethysDecimal getHidden() {
+    private OceanusDecimal getHidden() {
         return theWrapped.getHidden();
     }
 }

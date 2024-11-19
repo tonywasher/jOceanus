@@ -18,9 +18,9 @@ package net.sourceforge.joceanus.prometheus.ui;
 
 import net.sourceforge.joceanus.metis.ui.MetisIcon;
 import net.sourceforge.joceanus.prometheus.views.PrometheusUIEvent;
-import net.sourceforge.joceanus.tethys.event.TethysEventManager;
-import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar;
-import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.TethysEventProvider;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.tethys.ui.api.button.TethysUIButton;
 import net.sourceforge.joceanus.tethys.ui.api.button.TethysUIButtonFactory;
@@ -75,7 +75,7 @@ public class PrometheusItemEditActions
     /**
      * The Event Manager.
      */
-    private final TethysEventManager<PrometheusUIEvent> theEventManager;
+    private final OceanusEventManager<PrometheusUIEvent> theEventManager;
 
     /**
      * The parent.
@@ -113,7 +113,7 @@ public class PrometheusItemEditActions
         theParent = pParent;
 
         /* Create the event manager */
-        theEventManager = new TethysEventManager<>();
+        theEventManager = new OceanusEventManager<>();
 
         /* Create the buttons */
         final TethysUIButtonFactory<?> myButtons = pFactory.buttonFactory();
@@ -149,7 +149,7 @@ public class PrometheusItemEditActions
     }
 
     @Override
-    public TethysEventRegistrar<PrometheusUIEvent> getEventRegistrar() {
+    public OceanusEventRegistrar<PrometheusUIEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 

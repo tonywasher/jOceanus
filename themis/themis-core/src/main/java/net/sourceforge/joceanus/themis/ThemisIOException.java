@@ -16,7 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.themis;
 
-import net.sourceforge.joceanus.tethys.OceanusException;
+import net.sourceforge.joceanus.oceanus.OceanusException;
 
 /**
  * Themis IO Exception.

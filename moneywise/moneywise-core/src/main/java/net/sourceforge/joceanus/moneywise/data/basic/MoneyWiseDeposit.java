@@ -47,9 +47,9 @@ import net.sourceforge.joceanus.prometheus.data.PrometheusDataValues;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataValues.PrometheusInfoItem;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataValues.PrometheusInfoSetItem;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.date.TethysDate;
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
 
 /**
@@ -198,9 +198,9 @@ public class MoneyWiseDeposit
      * Obtain Maturity.
      * @return the maturity date
      */
-    public TethysDate getMaturity() {
+    public OceanusDate getMaturity() {
         return hasInfoSet
-                ? theInfoSet.getValue(MoneyWiseAccountInfoClass.MATURITY, TethysDate.class)
+                ? theInfoSet.getValue(MoneyWiseAccountInfoClass.MATURITY, OceanusDate.class)
                 : null;
     }
 
@@ -245,9 +245,9 @@ public class MoneyWiseDeposit
     }
 
     @Override
-    public TethysMoney getOpeningBalance() {
+    public OceanusMoney getOpeningBalance() {
         return hasInfoSet
-                ? theInfoSet.getValue(MoneyWiseAccountInfoClass.OPENINGBALANCE, TethysMoney.class)
+                ? theInfoSet.getValue(MoneyWiseAccountInfoClass.OPENINGBALANCE, OceanusMoney.class)
                 : null;
     }
 
@@ -473,7 +473,7 @@ public class MoneyWiseDeposit
         if (!MoneyWiseDepositCategoryClass.BOND.equals(myClass)) {
             setMaturity(null);
         } else if (getMaturity() == null) {
-            final TethysDate myDate = new TethysDate();
+            final OceanusDate myDate = new OceanusDate();
             myDate.adjustYear(1);
             setMaturity(myDate);
         }
@@ -581,7 +581,7 @@ public class MoneyWiseDeposit
      * @param pMaturity the new maturity
      * @throws OceanusException on error
      */
-    public void setMaturity(final TethysDate pMaturity) throws OceanusException {
+    public void setMaturity(final OceanusDate pMaturity) throws OceanusException {
         setInfoSetValue(MoneyWiseAccountInfoClass.MATURITY, pMaturity);
     }
 
@@ -626,7 +626,7 @@ public class MoneyWiseDeposit
      * @param pBalance the new opening balance
      * @throws OceanusException on error
      */
-    public void setOpeningBalance(final TethysMoney pBalance) throws OceanusException {
+    public void setOpeningBalance(final OceanusMoney pBalance) throws OceanusException {
         setInfoSetValue(MoneyWiseAccountInfoClass.OPENINGBALANCE, pBalance);
     }
 

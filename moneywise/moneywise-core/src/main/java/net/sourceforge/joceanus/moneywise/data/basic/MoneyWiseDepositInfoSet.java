@@ -30,8 +30,8 @@ import net.sourceforge.joceanus.prometheus.data.PrometheusDataInfoClass;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataInfoSet;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
 
 /**
  * DepositInfoSet class.
@@ -258,7 +258,7 @@ public class MoneyWiseDepositInfoSet
      * @param pInfo the info
      */
     private void validateOpeningBalance(final MoneyWiseDepositInfo pInfo) {
-        final TethysMoney myBalance = pInfo.getValue(TethysMoney.class);
+        final OceanusMoney myBalance = pInfo.getValue(OceanusMoney.class);
         if (!myBalance.getCurrency().equals(getOwner().getCurrency())) {
             getOwner().addError(ERROR_CURRENCY, getFieldForClass(MoneyWiseAccountInfoClass.OPENINGBALANCE));
         }

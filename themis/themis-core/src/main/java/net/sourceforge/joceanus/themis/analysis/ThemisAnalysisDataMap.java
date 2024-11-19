@@ -23,9 +23,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.logger.TethysLogManager;
-import net.sourceforge.joceanus.tethys.logger.TethysLogger;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.logger.OceanusLogManager;
+import net.sourceforge.joceanus.oceanus.logger.OceanusLogger;
 import net.sourceforge.joceanus.themis.ThemisDataException;
 import net.sourceforge.joceanus.themis.analysis.ThemisAnalysisFile.ThemisAnalysisObject;
 import net.sourceforge.joceanus.themis.analysis.ThemisAnalysisGeneric.ThemisAnalysisGenericVar;
@@ -50,7 +50,7 @@ public class ThemisAnalysisDataMap {
     /**
      * The logger.
      */
-    private static final TethysLogger LOGGER = TethysLogManager.getLogger(ThemisAnalysisDataMap.class);
+    private static final OceanusLogger LOGGER = OceanusLogManager.getLogger(ThemisAnalysisDataMap.class);
 
     /**
      * The base dataTypes.

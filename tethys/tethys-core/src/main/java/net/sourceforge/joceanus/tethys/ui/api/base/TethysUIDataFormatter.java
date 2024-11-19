@@ -18,9 +18,9 @@ package net.sourceforge.joceanus.tethys.ui.api.base;
 
 import java.util.Locale;
 
-import net.sourceforge.joceanus.tethys.date.TethysDateFormatter;
-import net.sourceforge.joceanus.tethys.decimal.TethysDecimalFormatter;
-import net.sourceforge.joceanus.tethys.decimal.TethysDecimalParser;
+import net.sourceforge.joceanus.oceanus.date.OceanusDateFormatter;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimalFormatter;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimalParser;
 
 /**
  * Tethys Data Formatter.
@@ -42,19 +42,19 @@ public interface TethysUIDataFormatter {
      * Obtain the date formatter.
      * @return the formatter
      */
-    TethysDateFormatter getDateFormatter();
+    OceanusDateFormatter getDateFormatter();
 
     /**
      * Obtain the decimal formatter.
      * @return the formatter
      */
-    TethysDecimalFormatter getDecimalFormatter();
+    OceanusDecimalFormatter getDecimalFormatter();
 
     /**
      * Obtain the decimal parser.
      * @return the parser
      */
-    TethysDecimalParser getDecimalParser();
+    OceanusDecimalParser getDecimalParser();
 
     /**
      * Extend the formatter.

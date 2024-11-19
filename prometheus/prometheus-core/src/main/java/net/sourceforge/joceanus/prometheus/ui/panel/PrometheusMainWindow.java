@@ -36,10 +36,10 @@ import net.sourceforge.joceanus.prometheus.threads.PrometheusThreadUpdatePasswor
 import net.sourceforge.joceanus.prometheus.ui.PrometheusMenuId;
 import net.sourceforge.joceanus.prometheus.ui.PrometheusUIResource;
 import net.sourceforge.joceanus.prometheus.views.PrometheusDataControl;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.logger.TethysLogManager;
-import net.sourceforge.joceanus.tethys.logger.TethysLogger;
-import net.sourceforge.joceanus.tethys.profile.TethysProfile;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.logger.OceanusLogManager;
+import net.sourceforge.joceanus.oceanus.logger.OceanusLogger;
+import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.tethys.ui.api.dialog.TethysUIAlert;
@@ -61,7 +61,7 @@ public abstract class PrometheusMainWindow
     /**
      * Logger.
      */
-    private static final TethysLogger LOGGER = TethysLogManager.getLogger(PrometheusMainWindow.class);
+    private static final OceanusLogger LOGGER = OceanusLogManager.getLogger(PrometheusMainWindow.class);
 
     /**
      * Discard prompt.
@@ -164,7 +164,7 @@ public abstract class PrometheusMainWindow
         theThreadMgr = theToolkit.getThreadManager();
 
         /* Obtain the active profile */
-        final TethysProfile myTask = theView.getActiveTask();
+        final OceanusProfile myTask = theView.getActiveTask();
         myTask.startTask("buildGUI");
 
         /* Create the panel */
@@ -427,7 +427,7 @@ public abstract class PrometheusMainWindow
      */
     private void undoLastEdit() {
         /* Create a new profile */
-        final TethysProfile myTask = theView.getNewProfile("unDoLastEdit");
+        final OceanusProfile myTask = theView.getNewProfile("unDoLastEdit");
 
         /* Undo the last edit */
         theView.undoLastChange();
@@ -444,7 +444,7 @@ public abstract class PrometheusMainWindow
      */
     private void resetEdit() {
         /* Create a new profile */
-        final TethysProfile myTask = theView.getNewProfile("resetEdit");
+        final OceanusProfile myTask = theView.getNewProfile("resetEdit");
 
         /* Reset the edit View */
         theView.resetChanges();

@@ -23,8 +23,8 @@ import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 
-import net.sourceforge.joceanus.tethys.event.TethysEvent;
-import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar;
+import net.sourceforge.joceanus.oceanus.event.OceanusEvent;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.tethys.ui.api.button.TethysUIIconButtonManager;
 import net.sourceforge.joceanus.tethys.ui.api.control.TethysUIControl.TethysUIIconMapSet;
@@ -94,7 +94,7 @@ public final class TethysUISwingIconButtonField<T>
         pLabel.setHorizontalAlignment(SwingConstants.CENTER);
 
         /* Set listener on manager */
-        final TethysEventRegistrar<TethysUIEvent> myRegistrar = pManager.getEventRegistrar();
+        final OceanusEventRegistrar<TethysUIEvent> myRegistrar = pManager.getEventRegistrar();
         myRegistrar.addEventListener(this::handleEvent);
     }
 
@@ -107,7 +107,7 @@ public final class TethysUISwingIconButtonField<T>
      * handle Icon Button event.
      * @param pEvent the even
      */
-    private void handleEvent(final TethysEvent<TethysUIEvent> pEvent) {
+    private void handleEvent(final OceanusEvent<TethysUIEvent> pEvent) {
         switch (pEvent.getEventId()) {
             case NEWVALUE:
                 setValue(theManager.getValue());

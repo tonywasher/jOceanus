@@ -20,14 +20,14 @@ import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisDataResource;
-import net.sourceforge.joceanus.tethys.resource.TethysBundleId;
-import net.sourceforge.joceanus.tethys.resource.TethysBundleLoader;
+import net.sourceforge.joceanus.oceanus.resource.OceanusBundleId;
+import net.sourceforge.joceanus.oceanus.resource.OceanusBundleLoader;
 
 /**
  * Resource IDs for jMoneyWise View Fields.
  */
 public enum MoneyWiseViewResource
-        implements TethysBundleId, MetisDataFieldId {
+        implements OceanusBundleId, MetisDataFieldId {
     /**
      * View Name.
      */
@@ -111,7 +111,7 @@ public enum MoneyWiseViewResource
     /**
      * The Resource Loader.
      */
-    private static final TethysBundleLoader LOADER = TethysBundleLoader.getLoader(MoneyWiseAnalysisDataResource.class.getCanonicalName(),
+    private static final OceanusBundleLoader LOADER = OceanusBundleLoader.getLoader(MoneyWiseAnalysisDataResource.class.getCanonicalName(),
             ResourceBundle::getBundle);
 
     /**

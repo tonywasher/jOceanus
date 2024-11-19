@@ -29,8 +29,8 @@ import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianIdManager;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianPersonalisation;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianPersonalisation.GordianPersonalId;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.TethysDataConverter;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.OceanusDataConverter;
 
 /**
  * Class for assembling/disassembling data encrypted by a KeySet.
@@ -203,7 +203,7 @@ public final class GordianKeySetRecipe {
 
             /* Generate recipe */
             final int mySeed = myRandom.nextInt();
-            theRecipe = TethysDataConverter.integerToByteArray(mySeed);
+            theRecipe = OceanusDataConverter.integerToByteArray(mySeed);
 
             /* Process the recipe */
             processRecipe(pFactory, pSpec, pAEAD);

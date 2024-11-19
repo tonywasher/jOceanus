@@ -28,12 +28,12 @@ import net.sourceforge.joceanus.prometheus.database.PrometheusDatabase.Prometheu
 import net.sourceforge.joceanus.prometheus.preference.PrometheusPreferenceView;
 import net.sourceforge.joceanus.prometheus.ui.PrometheusGoToEvent;
 import net.sourceforge.joceanus.prometheus.views.PrometheusDataEvent;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.event.TethysEvent;
-import net.sourceforge.joceanus.tethys.event.TethysEventManager;
-import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar;
-import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar.TethysEventProvider;
-import net.sourceforge.joceanus.tethys.profile.TethysProfile;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.event.OceanusEvent;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.tethys.ui.api.pane.TethysUITabPaneManager;
 import net.sourceforge.joceanus.tethys.ui.api.pane.TethysUITabPaneManager.TethysUITabItem;
@@ -67,7 +67,7 @@ public class MoneyWiseMaintenance
     /**
      * The Event Manager.
      */
-    private final TethysEventManager<PrometheusDataEvent> theEventManager;
+    private final OceanusEventManager<PrometheusDataEvent> theEventManager;
 
     /**
      * The Data View.
@@ -113,7 +113,7 @@ public class MoneyWiseMaintenance
         theView = pView;
 
         /* Create the event manager */
-        theEventManager = new TethysEventManager<>();
+        theEventManager = new OceanusEventManager<>();
 
         /* Create the Tabbed Pane */
         theTabs = theView.getGuiFactory().paneFactory().newTabPane();
@@ -165,7 +165,7 @@ public class MoneyWiseMaintenance
     }
 
     @Override
-    public TethysEventRegistrar<PrometheusDataEvent> getEventRegistrar() {
+    public OceanusEventRegistrar<PrometheusDataEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -173,7 +173,7 @@ public class MoneyWiseMaintenance
      * setChildListeners.
      * @param pRegistrar the registrar
      */
-    private void setChildListeners(final TethysEventRegistrar<PrometheusDataEvent> pRegistrar) {
+    private void setChildListeners(final OceanusEventRegistrar<PrometheusDataEvent> pRegistrar) {
         pRegistrar.addEventListener(PrometheusDataEvent.ADJUSTVISIBILITY, e -> {
             if (!isRefreshing) {
                 setVisibility();
@@ -195,7 +195,7 @@ public class MoneyWiseMaintenance
      */
     private void refreshData() {
         /* Obtain the active profile */
-        TethysProfile myTask = theView.getActiveTask();
+        OceanusProfile myTask = theView.getActiveTask();
         myTask = myTask.startTask("MaintenanceTab");
 
         /* Protect against exceptions */
@@ -393,7 +393,7 @@ public class MoneyWiseMaintenance
      * @param pEvent the event
      */
     @SuppressWarnings("unchecked")
-    private void handleGoToEvent(final TethysEvent<PrometheusDataEvent> pEvent) {
+    private void handleGoToEvent(final OceanusEvent<PrometheusDataEvent> pEvent) {
         /* Access details */
         final PrometheusGoToEvent<MoneyWiseGoToId> myEvent = pEvent.getDetails(PrometheusGoToEvent.class);
 

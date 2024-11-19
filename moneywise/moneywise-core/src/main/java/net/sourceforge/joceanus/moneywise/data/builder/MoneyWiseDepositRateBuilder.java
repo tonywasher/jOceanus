@@ -20,9 +20,9 @@ import net.sourceforge.joceanus.moneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataSet;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDeposit;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDepositRate;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.date.TethysDate;
-import net.sourceforge.joceanus.tethys.decimal.TethysRate;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRate;
 
 /**
  * DepositRate Builder.
@@ -41,17 +41,17 @@ public class MoneyWiseDepositRateBuilder {
     /**
      * The Date.
      */
-    private TethysDate theEndDate;
+    private OceanusDate theEndDate;
 
     /**
      * The Rate.
      */
-    private TethysRate theRate;
+    private OceanusRate theRate;
 
     /**
      * The Bonus.
      */
-    private TethysRate theBonus;
+    private OceanusRate theBonus;
 
     /**
      * Constructor.
@@ -86,7 +86,7 @@ public class MoneyWiseDepositRateBuilder {
      * @param pRate the rate.
      * @return the builder
      */
-    public MoneyWiseDepositRateBuilder rate(final TethysRate pRate) {
+    public MoneyWiseDepositRateBuilder rate(final OceanusRate pRate) {
         theRate = pRate;
         return this;
     }
@@ -97,7 +97,7 @@ public class MoneyWiseDepositRateBuilder {
      * @return the builder
      */
     public MoneyWiseDepositRateBuilder rate(final String pRate) {
-        return rate(new TethysRate(pRate));
+        return rate(new OceanusRate(pRate));
     }
 
     /**
@@ -105,7 +105,7 @@ public class MoneyWiseDepositRateBuilder {
      * @param pBonus the bonus.
      * @return the builder
      */
-    public MoneyWiseDepositRateBuilder bonus(final TethysRate pBonus) {
+    public MoneyWiseDepositRateBuilder bonus(final OceanusRate pBonus) {
         theBonus = pBonus;
         return this;
     }
@@ -116,7 +116,7 @@ public class MoneyWiseDepositRateBuilder {
      * @return the builder
      */
     public MoneyWiseDepositRateBuilder bonus(final String pBonus) {
-        return bonus(new TethysRate(pBonus));
+        return bonus(new OceanusRate(pBonus));
     }
 
     /**
@@ -124,7 +124,7 @@ public class MoneyWiseDepositRateBuilder {
      * @param pEndDate the endDate of the rate.
      * @return the builder
      */
-    public MoneyWiseDepositRateBuilder endDate(final TethysDate pEndDate) {
+    public MoneyWiseDepositRateBuilder endDate(final OceanusDate pEndDate) {
         theEndDate = pEndDate;
         return this;
     }
@@ -135,7 +135,7 @@ public class MoneyWiseDepositRateBuilder {
      * @return the builder
      */
     public MoneyWiseDepositRateBuilder endDate(final String pEndDate) {
-        return endDate(new TethysDate(pEndDate));
+        return endDate(new OceanusDate(pEndDate));
     }
 
     /**

@@ -42,8 +42,8 @@ import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianLogicException
 import net.sourceforge.joceanus.gordianknot.impl.core.keyset.GordianCoreKeySet;
 import net.sourceforge.joceanus.gordianknot.impl.core.stream.GordianStreamDefinition;
 import net.sourceforge.joceanus.gordianknot.impl.core.stream.GordianStreamManager;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.TethysDataConverter;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.OceanusDataConverter;
 
 /**
  * Class used to build a ZipFile.
@@ -333,7 +333,7 @@ public class GordianCoreZipWriteFile
                     final String myHeader = theContents.encodeContents();
 
                     /* Write the bytes to the Zip file and close the entry */
-                    final byte[] myBytes = TethysDataConverter.stringToByteArray(myHeader);
+                    final byte[] myBytes = OceanusDataConverter.stringToByteArray(myHeader);
                     final GordianKeySet myKeySet = theLock.getKeySet();
                     theStream.write(myKeySet.encryptBytes(myBytes));
                     theStream.closeEntry();

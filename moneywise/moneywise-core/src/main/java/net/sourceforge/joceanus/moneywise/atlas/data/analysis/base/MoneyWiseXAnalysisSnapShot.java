@@ -20,10 +20,10 @@ import net.sourceforge.joceanus.metis.field.MetisFieldItem;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicResource;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataResource;
-import net.sourceforge.joceanus.tethys.date.TethysDate;
-import net.sourceforge.joceanus.tethys.decimal.TethysDecimal;
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
-import net.sourceforge.joceanus.tethys.decimal.TethysUnits;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimal;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusUnits;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
 
 /**
@@ -63,7 +63,7 @@ public class MoneyWiseXAnalysisSnapShot<T extends MoneyWiseXAnalysisValues<T, E>
     /**
      * The date of the event.
      */
-    private final TethysDate theDate;
+    private final OceanusDate theDate;
 
     /**
      * SnapShot Values.
@@ -145,7 +145,7 @@ public class MoneyWiseXAnalysisSnapShot<T extends MoneyWiseXAnalysisValues<T, E>
      * Obtain date.
      * @return the date
      */
-    protected TethysDate getDate() {
+    protected OceanusDate getDate() {
         return theDate;
     }
 
@@ -178,7 +178,7 @@ public class MoneyWiseXAnalysisSnapShot<T extends MoneyWiseXAnalysisValues<T, E>
      * @param pAttr the attribute
      * @return the delta snapShot
      */
-    protected TethysDecimal getDeltaValue(final E pAttr) {
+    protected OceanusDecimal getDeltaValue(final E pAttr) {
         /* return the delta value */
         return theSnapShot.getDeltaValue(thePrevious, pAttr);
     }
@@ -188,7 +188,7 @@ public class MoneyWiseXAnalysisSnapShot<T extends MoneyWiseXAnalysisValues<T, E>
      * @param pAttr the attribute
      * @return the delta snapShot
      */
-    protected TethysMoney getDeltaMoneyValue(final E pAttr) {
+    protected OceanusMoney getDeltaMoneyValue(final E pAttr) {
         /* return the delta value */
         return theSnapShot.getDeltaMoneyValue(thePrevious, pAttr);
     }
@@ -198,7 +198,7 @@ public class MoneyWiseXAnalysisSnapShot<T extends MoneyWiseXAnalysisValues<T, E>
      * @param pAttr the attribute
      * @return the delta snapShot
      */
-    protected TethysUnits getDeltaUnitsValue(final E pAttr) {
+    protected OceanusUnits getDeltaUnitsValue(final E pAttr) {
         /* return the delta value */
         return theSnapShot.getDeltaUnitsValue(thePrevious, pAttr);
     }

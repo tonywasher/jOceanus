@@ -21,13 +21,13 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.prometheus.PrometheusDataException;
-import net.sourceforge.joceanus.tethys.resource.TethysBundleId;
-import net.sourceforge.joceanus.tethys.resource.TethysBundleLoader;
+import net.sourceforge.joceanus.oceanus.resource.OceanusBundleId;
+import net.sourceforge.joceanus.oceanus.resource.OceanusBundleLoader;
 
 /**
  * Resource IDs for jPrometheus Preference Fields.
  */
-public enum PrometheusPreferenceResource implements TethysBundleId {
+public enum PrometheusPreferenceResource implements OceanusBundleId {
     /**
      * Preference type BYTEARRAY.
      */
@@ -86,12 +86,12 @@ public enum PrometheusPreferenceResource implements TethysBundleId {
     /**
      * The PreferenceType Map.
      */
-    private static final Map<PrometheusPreferenceType, TethysBundleId> PREF_MAP = buildPreferenceMap();
+    private static final Map<PrometheusPreferenceType, OceanusBundleId> PREF_MAP = buildPreferenceMap();
 
     /**
      * The Resource Loader.
      */
-    private static final TethysBundleLoader LOADER = TethysBundleLoader.getPackageLoader(PrometheusDataException.class.getCanonicalName(),
+    private static final OceanusBundleLoader LOADER = OceanusBundleLoader.getPackageLoader(PrometheusDataException.class.getCanonicalName(),
             ResourceBundle::getBundle);
 
     /**
@@ -138,9 +138,9 @@ public enum PrometheusPreferenceResource implements TethysBundleId {
      * Build preference map.
      * @return the map
      */
-    private static Map<PrometheusPreferenceType, TethysBundleId> buildPreferenceMap() {
+    private static Map<PrometheusPreferenceType, OceanusBundleId> buildPreferenceMap() {
         /* Create the map and return it */
-        final Map<PrometheusPreferenceType, TethysBundleId> myMap = new EnumMap<>(PrometheusPreferenceType.class);
+        final Map<PrometheusPreferenceType, OceanusBundleId> myMap = new EnumMap<>(PrometheusPreferenceType.class);
         myMap.put(PrometheusPreferenceType.BYTEARRAY, TYPE_BYTEARRAY);
         myMap.put(PrometheusPreferenceType.CHARARRAY, TYPE_CHARARRAY);
         return myMap;
@@ -151,7 +151,7 @@ public enum PrometheusPreferenceResource implements TethysBundleId {
      * @param pType the type
      * @return the resource key
      */
-    public static TethysBundleId getKeyForPrefType(final PrometheusPreferenceType pType) {
-        return TethysBundleLoader.getKeyForEnum(PREF_MAP, pType);
+    public static OceanusBundleId getKeyForPrefType(final PrometheusPreferenceType pType) {
+        return OceanusBundleLoader.getKeyForEnum(PREF_MAP, pType);
     }
 }

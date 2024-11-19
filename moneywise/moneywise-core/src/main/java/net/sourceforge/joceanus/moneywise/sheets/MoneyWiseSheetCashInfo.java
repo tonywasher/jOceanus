@@ -20,7 +20,7 @@ import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseCashInfo;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataSet;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataValues;
 import net.sourceforge.joceanus.prometheus.sheets.PrometheusSheetDataInfo;
-import net.sourceforge.joceanus.tethys.OceanusException;
+import net.sourceforge.joceanus.oceanus.OceanusException;
 
 /**
  * SheetDataInfo extension for CashInfo.

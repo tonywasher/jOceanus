@@ -25,8 +25,8 @@ import net.sourceforge.joceanus.coeus.data.CoeusLoan;
 import net.sourceforge.joceanus.coeus.data.CoeusLoanStatus;
 import net.sourceforge.joceanus.coeus.data.CoeusResource;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
-import net.sourceforge.joceanus.tethys.date.TethysDateRange;
-import net.sourceforge.joceanus.tethys.decimal.TethysDecimal;
+import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimal;
 
 /**
  * Zopa Loan.
@@ -56,17 +56,17 @@ public class CoeusZopaLoan
     /**
      * The MissingCapital.
      */
-    private final TethysDecimal theMissingCapital;
+    private final OceanusDecimal theMissingCapital;
 
     /**
      * The MissingInterest.
      */
-    private final TethysDecimal theMissingInterest;
+    private final OceanusDecimal theMissingInterest;
 
     /**
      * The UpFront interest.
      */
-    private final TethysDecimal theUpFrontInterest;
+    private final OceanusDecimal theUpFrontInterest;
 
     /**
      * The bookItem.
@@ -110,9 +110,9 @@ public class CoeusZopaLoan
         super(pMarket, pId);
         theBookItems = new ArrayList<>();
         theBookItem = pBookItem;
-        theMissingCapital = new TethysDecimal(0, CoeusZopaMarket.DECIMAL_SIZE);
-        theMissingInterest = new TethysDecimal(0, CoeusZopaMarket.DECIMAL_SIZE);
-        theUpFrontInterest = new TethysDecimal(0, CoeusZopaMarket.DECIMAL_SIZE);
+        theMissingCapital = new OceanusDecimal(0, CoeusZopaMarket.DECIMAL_SIZE);
+        theMissingInterest = new OceanusDecimal(0, CoeusZopaMarket.DECIMAL_SIZE);
+        theUpFrontInterest = new OceanusDecimal(0, CoeusZopaMarket.DECIMAL_SIZE);
 
         /* If this is a badDebt, record it */
         if (pBookItem != null
@@ -127,13 +127,13 @@ public class CoeusZopaLoan
      * @param pRange the dateRange
      */
     CoeusZopaLoan(final CoeusZopaLoan pLoan,
-                  final TethysDateRange pRange) {
+                  final OceanusDateRange pRange) {
         super(pLoan, pRange);
         theBookItem = pLoan.getBookItem();
         theBookItems = new ArrayList<>(pLoan.getBookItems());
-        theMissingCapital = new TethysDecimal(0, CoeusZopaMarket.DECIMAL_SIZE);
-        theMissingInterest = new TethysDecimal(0, CoeusZopaMarket.DECIMAL_SIZE);
-        theUpFrontInterest = new TethysDecimal(0, CoeusZopaMarket.DECIMAL_SIZE);
+        theMissingCapital = new OceanusDecimal(0, CoeusZopaMarket.DECIMAL_SIZE);
+        theMissingInterest = new OceanusDecimal(0, CoeusZopaMarket.DECIMAL_SIZE);
+        theUpFrontInterest = new OceanusDecimal(0, CoeusZopaMarket.DECIMAL_SIZE);
     }
 
     @Override
@@ -200,7 +200,7 @@ public class CoeusZopaLoan
      * Obtain the missing capital.
      * @return the missing capital
      */
-    private TethysDecimal getMissingCapital() {
+    private OceanusDecimal getMissingCapital() {
         return theMissingCapital;
     }
 
@@ -208,7 +208,7 @@ public class CoeusZopaLoan
      * Obtain the missing interest.
      * @return the missing interest
      */
-    private TethysDecimal getMissingInterest() {
+    private OceanusDecimal getMissingInterest() {
         return theMissingInterest;
     }
 
@@ -216,7 +216,7 @@ public class CoeusZopaLoan
      * Add upFrontInterest.
      * @param pInterest the upFrontInterest
      */
-    void addUpFrontInterest(final TethysDecimal pInterest) {
+    void addUpFrontInterest(final OceanusDecimal pInterest) {
         theUpFrontInterest.addValue(pInterest);
     }
 
@@ -228,11 +228,11 @@ public class CoeusZopaLoan
     @Override
     protected void checkLoan() throws CoeusDataException {
         /* Obtain the book balance and adjust for missing payments */
-        final TethysDecimal myBookBalance = new TethysDecimal(theBookItem.getBalance());
+        final OceanusDecimal myBookBalance = new OceanusDecimal(theBookItem.getBalance());
 
         /* Access the total capital */
         final CoeusZopaTotals myTotals = getTotals();
-        TethysDecimal myLoanBalance = myTotals.getLoanBook();
+        OceanusDecimal myLoanBalance = myTotals.getLoanBook();
 
         /* If this is a badDebt */
         final CoeusLoanStatus myStatus = theBookItem.getStatus();
@@ -245,14 +245,14 @@ public class CoeusZopaLoan
         /* Check that this matches the book balance */
         if (!myBookBalance.equals(myLoanBalance)) {
             /* Calculate the missing payments */
-            myLoanBalance = new TethysDecimal(myLoanBalance);
+            myLoanBalance = new OceanusDecimal(myLoanBalance);
             myLoanBalance.subtractValue(myBookBalance);
             getMarket().recordMissingCapital(myLoanBalance);
             theMissingCapital.addValue(myLoanBalance);
         }
 
         /* Check bookItem interest */
-        final TethysDecimal myInterest = new TethysDecimal(myTotals.getInterest());
+        final OceanusDecimal myInterest = new OceanusDecimal(myTotals.getInterest());
         myInterest.subtractValue(theUpFrontInterest);
         if (!myInterest.equals(theBookItem.getInterestRepaid())) {
             myInterest.subtractValue(theBookItem.getInterestRepaid());
@@ -279,7 +279,7 @@ public class CoeusZopaLoan
     }
 
     @Override
-    public TethysDecimal getBalance() {
+    public OceanusDecimal getBalance() {
         return theBookItem.getBalance();
     }
 

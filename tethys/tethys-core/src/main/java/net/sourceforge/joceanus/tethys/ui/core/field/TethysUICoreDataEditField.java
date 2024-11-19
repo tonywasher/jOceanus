@@ -20,8 +20,8 @@ import java.util.EnumMap;
 import java.util.Map;
 import java.util.function.Consumer;
 
-import net.sourceforge.joceanus.tethys.event.TethysEventManager;
-import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.tethys.ui.api.field.TethysUIDataEditField;
 import net.sourceforge.joceanus.tethys.ui.api.field.TethysUIFieldAttribute;
@@ -40,7 +40,7 @@ public abstract class TethysUICoreDataEditField<T>
     /**
      * The Event Manager.
      */
-    private final TethysEventManager<TethysUIEvent> theEventManager;
+    private final OceanusEventManager<TethysUIEvent> theEventManager;
 
     /**
      * The Attributes.
@@ -80,7 +80,7 @@ public abstract class TethysUICoreDataEditField<T>
     protected TethysUICoreDataEditField(final TethysUICoreFactory<?> pFactory) {
         /* Create event manager */
         theId = pFactory.getNextId();
-        theEventManager = new TethysEventManager<>();
+        theEventManager = new OceanusEventManager<>();
         theAttributes = new EnumMap<>(TethysUIFieldAttribute.class);
     }
 
@@ -156,7 +156,7 @@ public abstract class TethysUICoreDataEditField<T>
     }
 
     @Override
-    public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
+    public OceanusEventRegistrar<TethysUIEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 

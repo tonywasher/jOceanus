@@ -67,8 +67,8 @@ import net.sourceforge.joceanus.gordianknot.junit.regression.SymmetricStore.Fact
 import net.sourceforge.joceanus.gordianknot.junit.regression.SymmetricStore.FactorySymKeySpec;
 import net.sourceforge.joceanus.gordianknot.junit.regression.SymmetricStore.FactorySymPBECipherSpec;
 import net.sourceforge.joceanus.gordianknot.util.GordianGenerator;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.TethysDataConverter;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.OceanusDataConverter;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.util.Arrays;
 import org.junit.jupiter.api.Assertions;
@@ -1362,7 +1362,7 @@ class SymmetricTest {
      */
     private byte[] getAADData() {
         if (theAADData == null) {
-            theAADData = TethysDataConverter.stringToByteArray("SomeAADBytes");
+            theAADData = OceanusDataConverter.stringToByteArray("SomeAADBytes");
         }
         return theAADData;
     }

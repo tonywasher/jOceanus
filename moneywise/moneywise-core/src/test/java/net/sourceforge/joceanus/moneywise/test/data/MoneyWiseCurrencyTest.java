@@ -17,7 +17,7 @@
 package net.sourceforge.joceanus.moneywise.test.data;
 
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrencyClass;
-import net.sourceforge.joceanus.tethys.OceanusException;
+import net.sourceforge.joceanus.oceanus.OceanusException;
 
 import java.util.ArrayList;
 import java.util.Arrays;

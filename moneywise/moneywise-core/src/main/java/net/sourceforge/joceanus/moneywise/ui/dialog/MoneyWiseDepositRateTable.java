@@ -37,10 +37,10 @@ import net.sourceforge.joceanus.moneywise.views.MoneyWiseView;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataResource;
 import net.sourceforge.joceanus.prometheus.ui.fieldset.PrometheusFieldSetTableTab.PrometheusFieldSetTable;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.date.TethysDate;
-import net.sourceforge.joceanus.tethys.date.TethysDateConfig;
-import net.sourceforge.joceanus.tethys.decimal.TethysRate;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.date.OceanusDateConfig;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRate;
 import net.sourceforge.joceanus.tethys.ui.api.control.TethysUIControl.TethysUIIconMapSet;
 import net.sourceforge.joceanus.tethys.ui.api.table.TethysUITableColumn;
 import net.sourceforge.joceanus.tethys.ui.api.table.TethysUITableManager;
@@ -169,7 +169,7 @@ public class MoneyWiseDepositRateTable
 
         /* Set the item value */
         myRate.setDeposit(theDeposit);
-        myRate.setRate(TethysRate.getWholePercentage(0));
+        myRate.setRate(OceanusRate.getWholePercentage(0));
 
         /* Access iterator */
         final Iterator<MoneyWiseDepositRate> myIterator = getTable().viewIterator();
@@ -188,10 +188,10 @@ public class MoneyWiseDepositRateTable
                     : null;
 
             /* Assume that we can use todays date */
-            TethysDate myDate = new TethysDate();
+            OceanusDate myDate = new OceanusDate();
             if (myLatest != null) {
                 /* Obtain the date that is one after the latest date used */
-                final TethysDate myNew = new TethysDate(myLatest.getEndDate());
+                final OceanusDate myNew = new OceanusDate(myLatest.getEndDate());
                 myNew.adjustDay(1);
 
                 /* Use the latest of the two dates */
@@ -242,9 +242,9 @@ public class MoneyWiseDepositRateTable
      * @param pConfig the dateConfig
      */
     private void handleDateConfig(final MoneyWiseDepositRate pRow,
-                                  final TethysDateConfig pConfig) {
+                                  final OceanusDateConfig pConfig) {
         /* Build a list of used dates */
-        final List<TethysDate> myDates = new ArrayList<>();
+        final List<OceanusDate> myDates = new ArrayList<>();
         final Iterator<MoneyWiseDepositRate> myIterator = getTable().viewIterator();
         while (myIterator.hasNext()) {
             final MoneyWiseDepositRate myRate = myIterator.next();
@@ -252,7 +252,7 @@ public class MoneyWiseDepositRateTable
         }
 
         /* Set filter constraint */
-        final TethysDate myCurrent = pRow.getEndDate();
+        final OceanusDate myCurrent = pRow.getEndDate();
         pConfig.setAllowed((d) -> {
             return d.equals(myCurrent) || !myDates.contains(d);
         });

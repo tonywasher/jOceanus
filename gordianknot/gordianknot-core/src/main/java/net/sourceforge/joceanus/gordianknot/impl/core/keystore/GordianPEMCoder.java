@@ -50,9 +50,9 @@ import net.sourceforge.joceanus.gordianknot.impl.core.keystore.GordianCoreKeySto
 import net.sourceforge.joceanus.gordianknot.impl.core.keystore.GordianPEMObject.GordianPEMObjectType;
 import net.sourceforge.joceanus.gordianknot.impl.core.zip.GordianCoreZipLock;
 import net.sourceforge.joceanus.gordianknot.impl.core.zip.GordianZipLockASN1;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.TethysDataConverter;
-import net.sourceforge.joceanus.tethys.date.TethysDate;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.OceanusDataConverter;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
 
 /**
  * PEM Coder/deCoder.
@@ -217,7 +217,7 @@ public class GordianPEMCoder {
         /* Prepare for loop */
         final List<GordianKeyStoreEntry> myChain = new ArrayList<>();
         final GordianPEMObjectType myType = pObjects.get(0).getObjectType();
-        final TethysDate myDate = new TethysDate();
+        final OceanusDate myDate = new OceanusDate();
 
         /* Loop through the objects */
         for (GordianPEMObject myObject : pObjects) {
@@ -355,7 +355,7 @@ public class GordianPEMCoder {
             final GordianKey<?> myKey = pKey.getKey();
             final GordianKnuthObfuscater myObfuscater = theFactory.getObfuscater();
             final int myId = myObfuscater.deriveExternalIdFromType(myKey.getKeyType());
-            final byte[] myTypeDef = TethysDataConverter.integerToByteArray(myId);
+            final byte[] myTypeDef = OceanusDataConverter.integerToByteArray(myId);
 
             /* Secure the key */
             final GordianKeySet myKeySet = pLock.getKeySet();
@@ -387,7 +387,7 @@ public class GordianPEMCoder {
         checkSingletonList(pObjects);
 
         /* parse the certificate */
-        return new GordianCoreKeyStoreCertificate(decodeCertificate(pObjects.get(0)), new TethysDate());
+        return new GordianCoreKeyStoreCertificate(decodeCertificate(pObjects.get(0)), new OceanusDate());
     }
 
     /**
@@ -492,7 +492,7 @@ public class GordianPEMCoder {
         final GordianKeyPair myPair = mySecuringKeySet.deriveKeyPair(myCert.getX509KeySpec(), myPrivateInfo.getEncryptedData());
 
         /* Return the new keyPair */
-        return new GordianCoreKeyStorePair(myPair, myChain, new TethysDate());
+        return new GordianCoreKeyStorePair(myPair, myChain, new OceanusDate());
     }
 
     /**
@@ -522,7 +522,7 @@ public class GordianPEMCoder {
 
         /* Derive the keySet */
         final GordianKeySet myKeySet = mySecuringKeySet.deriveKeySet(myInfo.getEncryptedData());
-        return new GordianCoreKeyStoreSet(myKeySet, new TethysDate());
+        return new GordianCoreKeyStoreSet(myKeySet, new OceanusDate());
     }
 
     /**
@@ -559,12 +559,12 @@ public class GordianPEMCoder {
 
         /* Obtain the keySpec */
         final GordianKnuthObfuscater myObfuscater = theFactory.getObfuscater();
-        final int myType = TethysDataConverter.byteArrayToInteger(myTypeDef);
+        final int myType = OceanusDataConverter.byteArrayToInteger(myTypeDef);
         final GordianKeySpec myKeyType = (GordianKeySpec) myObfuscater.deriveTypeFromExternalId(myType);
 
         /* Derive the key */
         final GordianKey<?> myKey = mySecuringKeySet.deriveKey(myKeyDef, myKeyType);
-        return new GordianCoreKeyStoreKey<>(myKey, new TethysDate());
+        return new GordianCoreKeyStoreKey<>(myKey, new OceanusDate());
     }
 
     /**

@@ -18,8 +18,8 @@ package net.sourceforge.joceanus.coeus.data;
 
 import net.sourceforge.joceanus.metis.field.MetisFieldItem.MetisFieldTableItem;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
-import net.sourceforge.joceanus.tethys.date.TethysDate;
-import net.sourceforge.joceanus.tethys.decimal.TethysDecimal;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimal;
 
 /**
  * Coeus Transaction.
@@ -198,7 +198,7 @@ public abstract class CoeusTransaction
      * Obtain the date.
      * @return the date
      */
-    public abstract TethysDate getDate();
+    public abstract OceanusDate getDate();
 
     /**
      * Obtain the Description.
@@ -222,73 +222,73 @@ public abstract class CoeusTransaction
      * Obtain the invested.
      * @return the invested
      */
-    public abstract TethysDecimal getInvested();
+    public abstract OceanusDecimal getInvested();
 
     /**
      * Obtain the holding.
      * @return the holding
      */
-    public abstract TethysDecimal getHolding();
+    public abstract OceanusDecimal getHolding();
 
     /**
      * Obtain the loanBook.
      * @return the loanBook
      */
-    public abstract TethysDecimal getLoanBook();
+    public abstract OceanusDecimal getLoanBook();
 
     /**
      * Obtain the interest.
      * @return the interest
      */
-    public abstract TethysDecimal getInterest();
+    public abstract OceanusDecimal getInterest();
 
     /**
      * Obtain the badDebtInterest.
      * @return the interest
      */
-    public abstract TethysDecimal getBadDebtInterest();
+    public abstract OceanusDecimal getBadDebtInterest();
 
     /**
      * Obtain the badDebtCapital.
      * @return the interest
      */
-    public abstract TethysDecimal getBadDebtCapital();
+    public abstract OceanusDecimal getBadDebtCapital();
 
     /**
      * Obtain the fees.
      * @return the fees
      */
-    public abstract TethysDecimal getFees();
+    public abstract OceanusDecimal getFees();
 
     /**
      * Obtain the shield.
      * @return the shield
      */
-    public abstract TethysDecimal getShield();
+    public abstract OceanusDecimal getShield();
 
     /**
      * Obtain the cashBack.
      * @return the cashBack
      */
-    public abstract TethysDecimal getCashBack();
+    public abstract OceanusDecimal getCashBack();
 
     /**
      * Obtain the xferPayment.
      * @return the xferPayment
      */
-    public abstract TethysDecimal getXferPayment();
+    public abstract OceanusDecimal getXferPayment();
 
     /**
      * Obtain the badDebt.
      * @return the badDebt
      */
-    public abstract TethysDecimal getBadDebt();
+    public abstract OceanusDecimal getBadDebt();
 
     /**
      * Obtain the recovered.
      * @return the recovered
      */
-    public abstract TethysDecimal getRecovered();
+    public abstract OceanusDecimal getRecovered();
 
     @Override
     public String toString() {
@@ -328,7 +328,7 @@ public abstract class CoeusTransaction
      */
     static void formatValue(final StringBuilder pBuilder,
                             final String pPrefix,
-                            final TethysDecimal pValue) {
+                            final OceanusDecimal pValue) {
         /* If the value is non-zero */
         if (pValue.isNonZero()) {
             /* If we are not the first value */

@@ -37,9 +37,9 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.border.Border;
 
-import net.sourceforge.joceanus.tethys.TethysDataConverter;
-import net.sourceforge.joceanus.tethys.logger.TethysLogManager;
-import net.sourceforge.joceanus.tethys.logger.TethysLogger;
+import net.sourceforge.joceanus.oceanus.OceanusDataConverter;
+import net.sourceforge.joceanus.oceanus.logger.OceanusLogManager;
+import net.sourceforge.joceanus.oceanus.logger.OceanusLogger;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIIconId;
 
 /**
@@ -49,7 +49,7 @@ public final class TethysUISwingUtils {
     /**
      * Logger.
      */
-    private static final TethysLogger LOGGER = TethysLogManager.getLogger(TethysUISwingUtils.class);
+    private static final OceanusLogger LOGGER = OceanusLogManager.getLogger(TethysUISwingUtils.class);
 
     /**
      * Height adjustment for field.
@@ -413,7 +413,7 @@ public final class TethysUISwingUtils {
     public static String colorToHexString(final Color pValue) {
         /* Access the RGB value */
         int myValue = pValue.getRGB();
-        myValue &= TethysDataConverter.COLOR_MASK;
+        myValue &= OceanusDataConverter.COLOR_MASK;
 
         /* Allocate the string builder */
         final StringBuilder myBuilder = new StringBuilder();
@@ -421,14 +421,14 @@ public final class TethysUISwingUtils {
         /* While we have digits to format */
         while (myValue > 0) {
             /* Access the digit and move to next one */
-            final int myDigit = myValue & TethysDataConverter.NYBBLE_MASK;
-            final char myChar = Character.forDigit(myDigit, TethysDataConverter.HEX_RADIX);
+            final int myDigit = myValue & OceanusDataConverter.NYBBLE_MASK;
+            final char myChar = Character.forDigit(myDigit, OceanusDataConverter.HEX_RADIX);
             myBuilder.insert(0, myChar);
-            myValue >>>= TethysDataConverter.NYBBLE_SHIFT;
+            myValue >>>= OceanusDataConverter.NYBBLE_SHIFT;
         }
 
         /* Add zeros to front if less than 6 digits */
-        while (myBuilder.length() < TethysDataConverter.RGB_LENGTH) {
+        while (myBuilder.length() < OceanusDataConverter.RGB_LENGTH) {
             myBuilder.insert(0, '0');
         }
 

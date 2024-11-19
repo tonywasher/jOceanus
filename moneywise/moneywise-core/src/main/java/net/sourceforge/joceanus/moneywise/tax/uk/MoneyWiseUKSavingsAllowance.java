@@ -22,7 +22,7 @@ import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.moneywise.tax.MoneyWiseMarginalReduction;
 import net.sourceforge.joceanus.moneywise.tax.MoneyWiseTaxBandSet.MoneyWiseTaxBand;
 import net.sourceforge.joceanus.moneywise.tax.MoneyWiseTaxResource;
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
 
 /**
@@ -47,17 +47,17 @@ public class MoneyWiseUKSavingsAllowance
     /**
      * SavingsAllowance.
      */
-    private final TethysMoney theSavingsAllowance;
+    private final OceanusMoney theSavingsAllowance;
 
     /**
      * DividendAllowance.
      */
-    private final TethysMoney theDividendAllowance;
+    private final OceanusMoney theDividendAllowance;
 
     /**
      * AdditionalAllowanceLimit.
      */
-    private final TethysMoney theAddAllowLimit;
+    private final OceanusMoney theAddAllowLimit;
 
     /**
      * Constructor.
@@ -68,12 +68,12 @@ public class MoneyWiseUKSavingsAllowance
      * @param pDividendAllowance the dividend allowance
      * @param pAddAllowLimit the additional allowance limit
      */
-    protected MoneyWiseUKSavingsAllowance(final TethysMoney pAllowance,
-                                          final TethysMoney pRentalAllowance,
-                                          final TethysMoney pCapitalAllowance,
-                                          final TethysMoney pSavingsAllowance,
-                                          final TethysMoney pDividendAllowance,
-                                          final TethysMoney pAddAllowLimit) {
+    protected MoneyWiseUKSavingsAllowance(final OceanusMoney pAllowance,
+                                          final OceanusMoney pRentalAllowance,
+                                          final OceanusMoney pCapitalAllowance,
+                                          final OceanusMoney pSavingsAllowance,
+                                          final OceanusMoney pDividendAllowance,
+                                          final OceanusMoney pAddAllowLimit) {
         super(pAllowance, pRentalAllowance, pCapitalAllowance, MoneyWiseMarginalReduction.ONEINTWO);
         theSavingsAllowance = pSavingsAllowance;
         theDividendAllowance = pDividendAllowance;
@@ -84,7 +84,7 @@ public class MoneyWiseUKSavingsAllowance
      * Obtain the savings allowance.
      * @return the Allowance
      */
-    protected TethysMoney getSavingsAllowance() {
+    protected OceanusMoney getSavingsAllowance() {
         return theSavingsAllowance;
     }
 
@@ -92,7 +92,7 @@ public class MoneyWiseUKSavingsAllowance
      * Obtain the dividend allowance.
      * @return the Allowance
      */
-    protected TethysMoney getDividendAllowance() {
+    protected OceanusMoney getDividendAllowance() {
         return theDividendAllowance;
     }
 
@@ -100,21 +100,21 @@ public class MoneyWiseUKSavingsAllowance
      * Obtain the additional Allowance limit.
      * @return the Limit
      */
-    protected TethysMoney getAdditionalAllowanceLimit() {
+    protected OceanusMoney getAdditionalAllowanceLimit() {
         return theAddAllowLimit;
     }
 
     @Override
-    protected TethysMoney calculateBasicAllowance(final MoneyWiseUKTaxConfig pConfig) {
+    protected OceanusMoney calculateBasicAllowance(final MoneyWiseUKTaxConfig pConfig) {
         /* Determine Basic allowance */
-        TethysMoney myAllowance = getAllowance();
+        OceanusMoney myAllowance = getAllowance();
 
         /* If we have additional tax possible and we are above the allowance limit */
-        final TethysMoney myGross = pConfig.getGrossTaxable();
+        final OceanusMoney myGross = pConfig.getGrossTaxable();
         if (myGross.compareTo(theAddAllowLimit) > 0) {
             /* Calculate and apply the reduction */
-            final TethysMoney myReduction = getMarginalReduction().calculateReduction(myGross, theAddAllowLimit);
-            myAllowance = new TethysMoney(myAllowance);
+            final OceanusMoney myReduction = getMarginalReduction().calculateReduction(myGross, theAddAllowLimit);
+            myAllowance = new OceanusMoney(myAllowance);
             myAllowance.subtractAmount(myReduction);
 
             /* If we have reduced below zero */
@@ -129,10 +129,10 @@ public class MoneyWiseUKSavingsAllowance
     }
 
     @Override
-    protected TethysMoney calculateSavingsAllowance(final MoneyWiseUKTaxConfig pConfig) {
+    protected OceanusMoney calculateSavingsAllowance(final MoneyWiseUKTaxConfig pConfig) {
         /* Obtain the gross taxable and allowance */
-        final TethysMoney myGross = pConfig.getGrossTaxable();
-        final TethysMoney myBoundary = new TethysMoney(pConfig.getAllowance());
+        final OceanusMoney myGross = pConfig.getGrossTaxable();
+        final OceanusMoney myBoundary = new OceanusMoney(pConfig.getAllowance());
 
         /* Obtain the tax bands */
         final MoneyWiseUKTaxBands myBands = pConfig.getTaxYear().getTaxBands();
@@ -148,7 +148,7 @@ public class MoneyWiseUKSavingsAllowance
         }
 
         /* If we have a high band */
-        final TethysMoney myAllowance = new TethysMoney(theSavingsAllowance);
+        final OceanusMoney myAllowance = new OceanusMoney(theSavingsAllowance);
         if (myIterator.hasNext()) {
             /* If we are only a high taxPayer return the half allowance */
             myBoundary.addAmount(myIterator.next().getAmount());
@@ -164,7 +164,7 @@ public class MoneyWiseUKSavingsAllowance
     }
 
     @Override
-    protected TethysMoney calculateDividendAllowance() {
+    protected OceanusMoney calculateDividendAllowance() {
         return theDividendAllowance;
     }
 

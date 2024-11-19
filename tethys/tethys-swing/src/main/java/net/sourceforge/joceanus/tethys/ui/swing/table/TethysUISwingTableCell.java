@@ -27,14 +27,14 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellEditor;
 
-import net.sourceforge.joceanus.tethys.date.TethysDate;
-import net.sourceforge.joceanus.tethys.decimal.TethysDecimal;
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
-import net.sourceforge.joceanus.tethys.decimal.TethysPrice;
-import net.sourceforge.joceanus.tethys.decimal.TethysRate;
-import net.sourceforge.joceanus.tethys.decimal.TethysRatio;
-import net.sourceforge.joceanus.tethys.decimal.TethysUnits;
-import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimal;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRate;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRatio;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusUnits;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.tethys.ui.api.control.TethysUIControl.TethysUIIconMapSet;
 import net.sourceforge.joceanus.tethys.ui.api.field.TethysUIFieldAttribute;
@@ -341,7 +341,7 @@ public abstract class TethysUISwingTableCell<T, C, R>
          */
         TethysUISwingTableCellEditor() {
             /* Add listeners */
-            final TethysEventRegistrar<TethysUIEvent> myRegistrar = getControl().getEventRegistrar();
+            final OceanusEventRegistrar<TethysUIEvent> myRegistrar = getControl().getEventRegistrar();
             myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> stopCellEditing());
             myRegistrar.addEventListener(TethysUIEvent.EDITFOCUSLOST, e -> cancelCellEditing());
         }
@@ -595,7 +595,7 @@ public abstract class TethysUISwingTableCell<T, C, R>
      * @param <R> the table item class
      */
     public static class TethysUISwingTableRawDecimalCell<C, R>
-            extends TethysUISwingTableCell<TethysDecimal, C, R> {
+            extends TethysUISwingTableCell<OceanusDecimal, C, R> {
         /**
          * Constructor.
          *
@@ -604,7 +604,7 @@ public abstract class TethysUISwingTableCell<T, C, R>
          */
         TethysUISwingTableRawDecimalCell(final TethysUISwingTableRawDecimalColumn<C, R> pColumn,
                                          final TethysUICoreFactory<?> pFactory) {
-            super(pColumn, (TethysUISwingRawDecimalTextField) pFactory.fieldFactory().newRawDecimalField(), TethysDecimal.class);
+            super(pColumn, (TethysUISwingRawDecimalTextField) pFactory.fieldFactory().newRawDecimalField(), OceanusDecimal.class);
             getControl().setNumDecimals(() -> getColumn().getNumDecimals().applyAsInt(getActiveRow()));
         }
 
@@ -626,7 +626,7 @@ public abstract class TethysUISwingTableCell<T, C, R>
      * @param <R> the table item class
      */
     public static class TethysUISwingTableMoneyCell<C, R>
-            extends TethysUISwingTableCell<TethysMoney, C, R> {
+            extends TethysUISwingTableCell<OceanusMoney, C, R> {
         /**
          * Constructor.
          *
@@ -635,7 +635,7 @@ public abstract class TethysUISwingTableCell<T, C, R>
          */
         TethysUISwingTableMoneyCell(final TethysUISwingTableMoneyColumn<C, R> pColumn,
                                     final TethysUICoreFactory<?> pFactory) {
-            super(pColumn, (TethysUISwingMoneyTextField) pFactory.fieldFactory().newMoneyField(), TethysMoney.class);
+            super(pColumn, (TethysUISwingMoneyTextField) pFactory.fieldFactory().newMoneyField(), OceanusMoney.class);
             getControl().setDeemedCurrency(() -> getColumn().getDeemedCurrency().apply(getActiveRow()));
         }
 
@@ -657,7 +657,7 @@ public abstract class TethysUISwingTableCell<T, C, R>
      * @param <R> the table item class
      */
     public static class TethysUISwingTablePriceCell<C, R>
-            extends TethysUISwingTableCell<TethysPrice, C, R> {
+            extends TethysUISwingTableCell<OceanusPrice, C, R> {
         /**
          * Constructor.
          *
@@ -666,7 +666,7 @@ public abstract class TethysUISwingTableCell<T, C, R>
          */
         TethysUISwingTablePriceCell(final TethysUISwingTablePriceColumn<C, R> pColumn,
                                     final TethysUICoreFactory<?> pFactory) {
-            super(pColumn, (TethysUISwingPriceTextField) pFactory.fieldFactory().newPriceField(), TethysPrice.class);
+            super(pColumn, (TethysUISwingPriceTextField) pFactory.fieldFactory().newPriceField(), OceanusPrice.class);
             getControl().setDeemedCurrency(() -> getColumn().getDeemedCurrency().apply(getActiveRow()));
         }
 
@@ -688,7 +688,7 @@ public abstract class TethysUISwingTableCell<T, C, R>
      * @param <R> the table item class
      */
     public static class TethysUISwingTableRateCell<C, R>
-            extends TethysUISwingTableCell<TethysRate, C, R> {
+            extends TethysUISwingTableCell<OceanusRate, C, R> {
         /**
          * Constructor.
          *
@@ -697,7 +697,7 @@ public abstract class TethysUISwingTableCell<T, C, R>
          */
         TethysUISwingTableRateCell(final TethysUISwingTableRateColumn<C, R> pColumn,
                                    final TethysUICoreFactory<?> pFactory) {
-            super(pColumn, (TethysUISwingRateTextField) pFactory.fieldFactory().newRateField(), TethysRate.class);
+            super(pColumn, (TethysUISwingRateTextField) pFactory.fieldFactory().newRateField(), OceanusRate.class);
         }
 
         @Override
@@ -713,7 +713,7 @@ public abstract class TethysUISwingTableCell<T, C, R>
      * @param <R> the table item class
      */
     public static class TethysUISwingTableUnitsCell<C, R>
-            extends TethysUISwingTableCell<TethysUnits, C, R> {
+            extends TethysUISwingTableCell<OceanusUnits, C, R> {
         /**
          * Constructor.
          *
@@ -722,7 +722,7 @@ public abstract class TethysUISwingTableCell<T, C, R>
          */
         TethysUISwingTableUnitsCell(final TethysUISwingTableUnitsColumn<C, R> pColumn,
                                     final TethysUICoreFactory<?> pFactory) {
-            super(pColumn, (TethysUISwingUnitsTextField) pFactory.fieldFactory().newUnitsField(), TethysUnits.class);
+            super(pColumn, (TethysUISwingUnitsTextField) pFactory.fieldFactory().newUnitsField(), OceanusUnits.class);
         }
 
         @Override
@@ -738,7 +738,7 @@ public abstract class TethysUISwingTableCell<T, C, R>
      * @param <R> the table item class
      */
     public static class TethysUISwingTableRatioCell<C, R>
-            extends TethysUISwingTableCell<TethysRatio, C, R> {
+            extends TethysUISwingTableCell<OceanusRatio, C, R> {
         /**
          * Constructor.
          *
@@ -747,7 +747,7 @@ public abstract class TethysUISwingTableCell<T, C, R>
          */
         TethysUISwingTableRatioCell(final TethysUISwingTableRatioColumn<C, R> pColumn,
                                     final TethysUICoreFactory<?> pFactory) {
-            super(pColumn, (TethysUISwingRatioTextField) pFactory.fieldFactory().newRatioField(), TethysRatio.class);
+            super(pColumn, (TethysUISwingRatioTextField) pFactory.fieldFactory().newRatioField(), OceanusRatio.class);
         }
 
         @Override
@@ -763,7 +763,7 @@ public abstract class TethysUISwingTableCell<T, C, R>
      * @param <R> the table item class
      */
     public static class TethysUISwingTableDateCell<C, R>
-            extends TethysUISwingTableCell<TethysDate, C, R> {
+            extends TethysUISwingTableCell<OceanusDate, C, R> {
         /**
          * Constructor.
          *
@@ -772,7 +772,7 @@ public abstract class TethysUISwingTableCell<T, C, R>
          */
         TethysUISwingTableDateCell(final TethysUISwingTableDateColumn<C, R> pColumn,
                                    final TethysUICoreFactory<?> pFactory) {
-            super(pColumn, (TethysUISwingDateButtonField) pFactory.fieldFactory().newDateField(), TethysDate.class);
+            super(pColumn, (TethysUISwingDateButtonField) pFactory.fieldFactory().newDateField(), OceanusDate.class);
             useDialogForEdit();
             getControl().setDateConfigurator(c -> getColumn().getDateConfigurator().accept(getActiveRow(), c));
         }

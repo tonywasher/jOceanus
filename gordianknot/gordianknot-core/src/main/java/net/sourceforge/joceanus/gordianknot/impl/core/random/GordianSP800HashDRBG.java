@@ -22,7 +22,7 @@ import org.bouncycastle.util.Arrays;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigest;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianByteArrayInteger;
-import net.sourceforge.joceanus.tethys.TethysDataConverter;
+import net.sourceforge.joceanus.oceanus.OceanusDataConverter;
 
 /**
  * Implementation of HashSP800DRBG based on the BouncyCastle Code.
@@ -254,7 +254,7 @@ public final class GordianSP800HashDRBG
         int mySeedLength = pSeedLength;
         for (int i = mySeed.length - 1; i >= 0; i--) {
             mySeed[i] = (byte) mySeedLength;
-            mySeedLength >>= TethysDataConverter.BYTE_SHIFT;
+            mySeedLength >>= OceanusDataConverter.BYTE_SHIFT;
         }
 
         /* while we need to generate more bytes */

@@ -16,8 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.tethys.ui.core.control;
 
-import net.sourceforge.joceanus.tethys.event.TethysEventManager;
-import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.tethys.ui.api.control.TethysUISlider;
 import net.sourceforge.joceanus.tethys.ui.core.base.TethysUICoreComponent;
@@ -42,7 +42,7 @@ public abstract class TethysUICoreSlider
     /**
      * The event Manager.
      */
-    private final TethysEventManager<TethysUIEvent> theEventManager;
+    private final OceanusEventManager<TethysUIEvent> theEventManager;
 
     /**
      * Constructor.
@@ -50,7 +50,7 @@ public abstract class TethysUICoreSlider
      */
     protected TethysUICoreSlider(final TethysUICoreFactory<?> pFactory) {
         theId = pFactory.getNextId();
-        theEventManager = new TethysEventManager<>();
+        theEventManager = new OceanusEventManager<>();
     }
 
     @Override
@@ -59,7 +59,7 @@ public abstract class TethysUICoreSlider
     }
 
     @Override
-    public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
+    public OceanusEventRegistrar<TethysUIEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 

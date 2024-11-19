@@ -27,7 +27,7 @@ module net.sourceforge.joceanus.metis.core {
     requires org.json;
 
     /* jOceanus */
-    requires net.sourceforge.joceanus.core;
+    requires net.sourceforge.joceanus.oceanus;
     requires net.sourceforge.joceanus.tethys.core;
 
     /* Exports */

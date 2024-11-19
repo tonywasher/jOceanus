@@ -36,9 +36,9 @@ import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransTag;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransaction;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrency;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransCategoryClass;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
-import net.sourceforge.joceanus.tethys.decimal.TethysRatio;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRatio;
 
 import java.util.List;
 
@@ -216,8 +216,8 @@ public class MoneyWiseXAnalysisTransAnalyser {
         /* Access debit and credit accounts and amounts */
         final MoneyWiseAssetBase myDebit = (MoneyWiseAssetBase) theTransaction.getDebitAccount();
         final MoneyWiseAssetBase myCredit = (MoneyWiseAssetBase) theTransaction.getCreditAccount();
-        TethysMoney myDebitAmount = theTransaction.getDebitAmount();
-        TethysMoney myCreditAmount = theTransaction.getCreditAmount();
+        OceanusMoney myDebitAmount = theTransaction.getDebitAmount();
+        OceanusMoney myCreditAmount = theTransaction.getCreditAmount();
 
         /* If the debit account is an asset */
         if (isAsset(myDebit)) {
@@ -232,7 +232,7 @@ public class MoneyWiseXAnalysisTransAnalyser {
         }
 
         /* Adjust for currencyFluctuation */
-        final TethysMoney myFluctuation = new TethysMoney(myDebitAmount);
+        final OceanusMoney myFluctuation = new OceanusMoney(myDebitAmount);
         myFluctuation.addAmount(myCreditAmount);
         if (myFluctuation.isNonZero()) {
             theMarket.adjustTotalsForCurrencyFluctuation(theTransaction.getEvent(), myFluctuation);
@@ -244,10 +244,10 @@ public class MoneyWiseXAnalysisTransAnalyser {
      * @param pDebit the debit asset
      * @return the debitAmount in reporting currency
      */
-    TethysMoney processDebitAsset(final MoneyWiseAssetBase pDebit) {
+    OceanusMoney processDebitAsset(final MoneyWiseAssetBase pDebit) {
         /* Adjust the debit asset bucket */
         final MoneyWiseXAnalysisAccountBucket<?> myBucket = getAccountBucket(pDebit);
-        TethysMoney myDebitAmount = theTransaction.getDebitAmount();
+        OceanusMoney myDebitAmount = theTransaction.getDebitAmount();
         myBucket.addToBalance(myDebitAmount);
         myBucket.adjustValuation();
         theState.registerBucketInterest(myBucket);
@@ -269,10 +269,10 @@ public class MoneyWiseXAnalysisTransAnalyser {
      * @param pCredit the credit asset
      * @return the creditAmount in reporting currency
      */
-    TethysMoney processCreditAsset(final MoneyWiseAssetBase pCredit) {
+    OceanusMoney processCreditAsset(final MoneyWiseAssetBase pCredit) {
         /* Adjust the credit asset bucket */
         final MoneyWiseXAnalysisAccountBucket<?> myBucket = getAccountBucket(pCredit);
-        TethysMoney myCreditAmount = theTransaction.getCreditAmount();
+        OceanusMoney myCreditAmount = theTransaction.getCreditAmount();
         myBucket.addToBalance(myCreditAmount);
         myBucket.adjustValuation();
         theState.registerBucketInterest(myBucket);
@@ -319,7 +319,7 @@ public class MoneyWiseXAnalysisTransAnalyser {
         final MoneyWisePayee myDebit = pDebit.getAutoPayee();
 
         /* Adjust expense for autoPayee bucket */
-        final TethysMoney myAmount = theTransaction.getDebitAmount();
+        final OceanusMoney myAmount = theTransaction.getDebitAmount();
         final MoneyWiseXAnalysisPayeeBucket myPayee = theAnalysis.getPayees().getBucket(myDebit);
         myPayee.addExpense(myAmount);
         theState.registerBucketInterest(myPayee);
@@ -344,7 +344,7 @@ public class MoneyWiseXAnalysisTransAnalyser {
         final MoneyWisePayee myCredit = pCredit.getAutoPayee();
 
         /* Adjust expense for autoPayee bucket */
-        final TethysMoney myAmount = theTransaction.getCreditAmount();
+        final OceanusMoney myAmount = theTransaction.getCreditAmount();
         final MoneyWiseXAnalysisPayeeBucket myPayee = theAnalysis.getPayees().getBucket(myCredit);
         myPayee.addExpense(myAmount);
         theState.registerBucketInterest(myPayee);
@@ -388,7 +388,7 @@ public class MoneyWiseXAnalysisTransAnalyser {
         final boolean isExpense = theTransaction.isExpenseCategory();
 
         /* Adjust expense for Payee bucket */
-        final TethysMoney myAmount = theTransaction.getDebitAmount();
+        final OceanusMoney myAmount = theTransaction.getDebitAmount();
         final MoneyWiseXAnalysisPayeeBucket myPayeeBucket = theAnalysis.getPayees().getBucket(pDebit);
         if (isExpense) {
             myPayeeBucket.addExpense(myAmount);
@@ -410,7 +410,7 @@ public class MoneyWiseXAnalysisTransAnalyser {
         final boolean isExpense = theTransaction.isExpenseCategory();
 
         /* Adjust expense for Payee bucket */
-        final TethysMoney myAmount = theTransaction.getCreditAmount();
+        final OceanusMoney myAmount = theTransaction.getCreditAmount();
         final MoneyWiseXAnalysisPayeeBucket myPayeeBucket = theAnalysis.getPayees().getBucket(pCredit);
         if (isExpense) {
             myPayeeBucket.addExpense(myAmount);
@@ -428,7 +428,7 @@ public class MoneyWiseXAnalysisTransAnalyser {
      */
     void adjustCategoryBucket() {
         /* Access the credit amount and category */
-        final TethysMoney myAmount = theTransaction.getCreditAmount();
+        final OceanusMoney myAmount = theTransaction.getCreditAmount();
         final MoneyWiseTransCategory myCategory = theTransaction.getCategory();
 
         /* Ignore transfers */
@@ -451,15 +451,15 @@ public class MoneyWiseXAnalysisTransAnalyser {
      * @param pExchangeRate the exchangeRate
      * @return the adjusted debitAmount
      */
-    TethysMoney adjustForeignAssetDebit(final TethysRatio pExchangeRate) {
+    OceanusMoney adjustForeignAssetDebit(final OceanusRatio pExchangeRate) {
         /* Calculate the value in the local currency */
-        TethysMoney myAmount = theTransaction.getDebitAmount();
+        OceanusMoney myAmount = theTransaction.getDebitAmount();
         myAmount = myAmount.convertCurrency(theCurrency.getCurrency(), pExchangeRate);
         theTransaction.setDebitAmount(myAmount);
 
         /* Adjust for currencyFluctuation */
-        final TethysMoney myCreditAmount = theTransaction.getCreditAmount();
-        final TethysMoney myFluctuation = new TethysMoney(myCreditAmount);
+        final OceanusMoney myCreditAmount = theTransaction.getCreditAmount();
+        final OceanusMoney myFluctuation = new OceanusMoney(myCreditAmount);
         myFluctuation.addAmount(myAmount);
         if (myFluctuation.isNonZero()) {
             theMarket.adjustTotalsForCurrencyFluctuation(theTransaction.getEvent(), myFluctuation);
@@ -474,15 +474,15 @@ public class MoneyWiseXAnalysisTransAnalyser {
      * @param pExchangeRate the exchangeRate
      * @return the adjusted creditAmount
      */
-    TethysMoney adjustForeignAssetCredit(final TethysRatio pExchangeRate) {
+    OceanusMoney adjustForeignAssetCredit(final OceanusRatio pExchangeRate) {
         /* Calculate the value in the local currency */
-        TethysMoney myAmount = theTransaction.getCreditAmount();
+        OceanusMoney myAmount = theTransaction.getCreditAmount();
         myAmount = myAmount.convertCurrency(theCurrency.getCurrency(), pExchangeRate);
         theTransaction.setCreditAmount(myAmount);
 
         /* Adjust for currencyFluctuation */
-        final TethysMoney myDebitAmount = theTransaction.getDebitAmount();
-        final TethysMoney myFluctuation = new TethysMoney(myDebitAmount);
+        final OceanusMoney myDebitAmount = theTransaction.getDebitAmount();
+        final OceanusMoney myFluctuation = new OceanusMoney(myDebitAmount);
         myFluctuation.addAmount(myAmount);
         if (myFluctuation.isNonZero()) {
             theMarket.adjustTotalsForCurrencyFluctuation(theTransaction.getEvent(), myFluctuation);

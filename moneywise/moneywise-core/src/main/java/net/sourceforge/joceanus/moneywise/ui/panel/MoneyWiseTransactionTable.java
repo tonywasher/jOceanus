@@ -51,16 +51,16 @@ import net.sourceforge.joceanus.prometheus.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
 import net.sourceforge.joceanus.prometheus.views.PrometheusUIEvent;
 import net.sourceforge.joceanus.prometheus.views.PrometheusViewerEntryId;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.date.TethysDate;
-import net.sourceforge.joceanus.tethys.date.TethysDateConfig;
-import net.sourceforge.joceanus.tethys.date.TethysDateRange;
-import net.sourceforge.joceanus.tethys.decimal.TethysDecimal;
-import net.sourceforge.joceanus.tethys.event.TethysEvent;
-import net.sourceforge.joceanus.tethys.event.TethysEventManager;
-import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar;
-import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar.TethysEventProvider;
-import net.sourceforge.joceanus.tethys.profile.TethysProfile;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.date.OceanusDateConfig;
+import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimal;
+import net.sourceforge.joceanus.oceanus.event.OceanusEvent;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.tethys.ui.api.button.TethysUIButton;
 import net.sourceforge.joceanus.tethys.ui.api.control.TethysUIControl.TethysUIIconMapSet;
@@ -128,7 +128,7 @@ public class MoneyWiseTransactionTable
     /**
      * The date range.
      */
-    private TethysDateRange theRange;
+    private OceanusDateRange theRange;
 
     /**
      * The analysis filter.
@@ -453,7 +453,7 @@ public class MoneyWiseTransactionTable
      * handle Date event.
      * @param pConfig the dateConfig
      */
-    private void handleDateEvent(final TethysDateConfig pConfig) {
+    private void handleDateEvent(final OceanusDateConfig pConfig) {
         pConfig.setEarliestDate(theRange == null
                 ? null
                 : theRange.getStart());
@@ -504,7 +504,7 @@ public class MoneyWiseTransactionTable
      * @param pTrans the transaction
      * @return the debit
      */
-    private TethysDecimal getFilteredDebit(final MoneyWiseTransaction pTrans) {
+    private OceanusDecimal getFilteredDebit(final MoneyWiseTransaction pTrans) {
         return theFilter.getDebitForTransaction(pTrans);
     }
 
@@ -513,7 +513,7 @@ public class MoneyWiseTransactionTable
      * @param pTrans the transaction
      * @return the debit
      */
-    private TethysDecimal getFilteredCredit(final MoneyWiseTransaction pTrans) {
+    private OceanusDecimal getFilteredCredit(final MoneyWiseTransaction pTrans) {
         return theFilter.getCreditForTransaction(pTrans);
     }
 
@@ -522,7 +522,7 @@ public class MoneyWiseTransactionTable
      * @param pTrans the transaction
      * @return the debit
      */
-    private TethysDecimal getFilteredBalance(final MoneyWiseTransaction pTrans) {
+    private OceanusDecimal getFilteredBalance(final MoneyWiseTransaction pTrans) {
         return pTrans.isHeader() ? theFilter.getStartingBalance() : theFilter.getBalanceForTransaction(pTrans);
     }
 
@@ -531,7 +531,7 @@ public class MoneyWiseTransactionTable
      * @param pTrans the transaction
      * @return the date value
      */
-    private TethysDate getFilteredDate(final MoneyWiseTransaction pTrans) {
+    private OceanusDate getFilteredDate(final MoneyWiseTransaction pTrans) {
         return pTrans.isHeader() ? theRange.getStart() : pTrans.getDate();
     }
 
@@ -608,7 +608,7 @@ public class MoneyWiseTransactionTable
     @Override
     protected void refreshData() {
         /* Obtain the active profile */
-        TethysProfile myTask = getView().getActiveTask();
+        OceanusProfile myTask = getView().getActiveTask();
         myTask = myTask.startTask("refreshData");
 
         /* Update the selection */
@@ -637,7 +637,7 @@ public class MoneyWiseTransactionTable
                 : MoneyWiseAnalysisColumnSet.BALANCE);
 
         /* Set the selection */
-        final TethysDateRange myRange = theSelect.getRange();
+        final OceanusDateRange myRange = theSelect.getRange();
         if (MetisDataDifference.isEqual(myRange, theRange)) {
             /* Handle a simple filter change */
             theViewerFilter.setObject(theFilter);
@@ -756,7 +756,7 @@ public class MoneyWiseTransactionTable
      * handle Action Buttons.
      * @param pEvent the event
      */
-    private void handleActionButtons(final TethysEvent<PrometheusUIEvent> pEvent) {
+    private void handleActionButtons(final OceanusEvent<PrometheusUIEvent> pEvent) {
         /* Cancel editing */
         cancelEditing();
 
@@ -842,7 +842,7 @@ public class MoneyWiseTransactionTable
         cancelEditing();
 
         /* Create a new profile */
-        final TethysProfile myTask = getView().getNewProfile("addNewItem");
+        final OceanusProfile myTask = getView().getNewProfile("addNewItem");
 
         /* Create the new transaction */
         myTask.startTask("buildItem");
@@ -1069,7 +1069,7 @@ public class MoneyWiseTransactionTable
         /**
          * The Event Manager.
          */
-        private final TethysEventManager<PrometheusDataEvent> theEventManager;
+        private final OceanusEventManager<PrometheusDataEvent> theEventManager;
 
         /**
          * The updateSet.
@@ -1106,7 +1106,7 @@ public class MoneyWiseTransactionTable
             theEditSet = new PrometheusEditSet(pView);
 
             /* Create the event manager */
-            theEventManager = new TethysEventManager<>();
+            theEventManager = new OceanusEventManager<>();
 
             /* Create the top level viewer entry for this view */
             final MetisViewerManager myViewer = pView.getViewerManager();
@@ -1160,7 +1160,7 @@ public class MoneyWiseTransactionTable
         }
 
         @Override
-        public TethysEventRegistrar<PrometheusDataEvent> getEventRegistrar() {
+        public OceanusEventRegistrar<PrometheusDataEvent> getEventRegistrar() {
             return theEventManager.getEventRegistrar();
         }
 
@@ -1193,7 +1193,7 @@ public class MoneyWiseTransactionTable
          * handle Action Buttons.
          * @param pEvent the event
          */
-        private void handleActionButtons(final TethysEvent<PrometheusUIEvent> pEvent) {
+        private void handleActionButtons(final OceanusEvent<PrometheusUIEvent> pEvent) {
             /* Cancel editing */
             theTable.cancelEditing();
 

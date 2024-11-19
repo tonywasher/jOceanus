@@ -22,14 +22,14 @@ import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.metis.MetisDataException;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
-import net.sourceforge.joceanus.tethys.resource.TethysBundleId;
-import net.sourceforge.joceanus.tethys.resource.TethysBundleLoader;
+import net.sourceforge.joceanus.oceanus.resource.OceanusBundleId;
+import net.sourceforge.joceanus.oceanus.resource.OceanusBundleLoader;
 
 /**
  * Resource IDs for JMetis viewer.
  */
 public enum MetisDataResource
-        implements TethysBundleId, MetisDataFieldId {
+        implements OceanusBundleId, MetisDataFieldId {
     /**
      * Difference IDENTICAL.
      */
@@ -143,17 +143,17 @@ public enum MetisDataResource
     /**
      * The Difference Map.
      */
-    private static final Map<MetisDataDifference, TethysBundleId> DIFF_MAP = buildDifferenceMap();
+    private static final Map<MetisDataDifference, OceanusBundleId> DIFF_MAP = buildDifferenceMap();
 
     /**
      * The FieldValue Map.
      */
-    private static final Map<MetisDataFieldValue, TethysBundleId> VALUE_MAP = buildValueMap();
+    private static final Map<MetisDataFieldValue, OceanusBundleId> VALUE_MAP = buildValueMap();
 
     /**
      * The Resource Loader.
      */
-    private static final TethysBundleLoader LOADER = TethysBundleLoader.getPackageLoader(MetisDataException.class.getCanonicalName(),
+    private static final OceanusBundleLoader LOADER = OceanusBundleLoader.getPackageLoader(MetisDataException.class.getCanonicalName(),
             ResourceBundle::getBundle);
 
     /**
@@ -210,9 +210,9 @@ public enum MetisDataResource
      * Build difference map.
      * @return the map
      */
-    private static Map<MetisDataDifference, TethysBundleId> buildDifferenceMap() {
+    private static Map<MetisDataDifference, OceanusBundleId> buildDifferenceMap() {
         /* Create the map and return it */
-        final Map<MetisDataDifference, TethysBundleId> myMap = new EnumMap<>(MetisDataDifference.class);
+        final Map<MetisDataDifference, OceanusBundleId> myMap = new EnumMap<>(MetisDataDifference.class);
         myMap.put(MetisDataDifference.IDENTICAL, DIFFERENCE_IDENTICAL);
         myMap.put(MetisDataDifference.SECURITY, DIFFERENCE_SECURITY);
         myMap.put(MetisDataDifference.DIFFERENT, DIFFERENCE_DIFFERENT);
@@ -224,17 +224,17 @@ public enum MetisDataResource
      * @param pValue the Value
      * @return the resource key
      */
-    protected static TethysBundleId getKeyForDifference(final MetisDataDifference pValue) {
-        return TethysBundleLoader.getKeyForEnum(DIFF_MAP, pValue);
+    protected static OceanusBundleId getKeyForDifference(final MetisDataDifference pValue) {
+        return OceanusBundleLoader.getKeyForEnum(DIFF_MAP, pValue);
     }
 
     /**
      * Build value map.
      * @return the map
      */
-    private static Map<MetisDataFieldValue, TethysBundleId> buildValueMap() {
+    private static Map<MetisDataFieldValue, OceanusBundleId> buildValueMap() {
         /* Create the map and return it */
-        final Map<MetisDataFieldValue, TethysBundleId> myMap = new EnumMap<>(MetisDataFieldValue.class);
+        final Map<MetisDataFieldValue, OceanusBundleId> myMap = new EnumMap<>(MetisDataFieldValue.class);
         myMap.put(MetisDataFieldValue.UNKNOWN, FIELDVALUE_UNKNOWN);
         myMap.put(MetisDataFieldValue.SKIP, FIELDVALUE_SKIP);
         return myMap;
@@ -245,7 +245,7 @@ public enum MetisDataResource
      * @param pValue the Value
      * @return the resource key
      */
-    protected static TethysBundleId getKeyForFieldValue(final MetisDataFieldValue pValue) {
-        return TethysBundleLoader.getKeyForEnum(VALUE_MAP, pValue);
+    protected static OceanusBundleId getKeyForFieldValue(final MetisDataFieldValue pValue) {
+        return OceanusBundleLoader.getKeyForEnum(VALUE_MAP, pValue);
     }
 }

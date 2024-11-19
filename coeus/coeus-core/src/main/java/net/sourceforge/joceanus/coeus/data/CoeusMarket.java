@@ -26,9 +26,9 @@ import java.util.Map;
 import net.sourceforge.joceanus.coeus.CoeusDataException;
 import net.sourceforge.joceanus.metis.field.MetisFieldItem;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.date.TethysDate;
-import net.sourceforge.joceanus.tethys.date.TethysDateRange;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
 
 /**
@@ -302,7 +302,7 @@ public abstract class CoeusMarket
      * @param pDate the date
      * @return the snapshot
      */
-    CoeusMarketSnapShot getSnapshot(final TethysDate pDate) {
+    CoeusMarketSnapShot getSnapshot(final OceanusDate pDate) {
         return new CoeusMarketSnapShot(this, pDate);
     }
 
@@ -313,7 +313,7 @@ public abstract class CoeusMarket
      * @return the annual
      */
     CoeusMarketAnnual getAnnual(final CoeusCalendar pCalendar,
-                                final TethysDate pDate) {
+                                final OceanusDate pDate) {
         return new CoeusMarketAnnual(this, pCalendar, pDate);
     }
 
@@ -334,7 +334,7 @@ public abstract class CoeusMarket
      * @param pRange the date range
      * @return the history
      */
-    protected CoeusHistory viewHistory(final TethysDateRange pRange) {
+    protected CoeusHistory viewHistory(final OceanusDateRange pRange) {
         return viewHistory(getFullHistory(), pRange);
     }
 
@@ -345,7 +345,7 @@ public abstract class CoeusMarket
      * @return the history
      */
     protected abstract CoeusHistory viewHistory(CoeusHistory pHistory,
-                                                TethysDateRange pRange);
+                                                OceanusDateRange pRange);
 
     /**
      * New loan.
@@ -361,7 +361,7 @@ public abstract class CoeusMarket
      * @return the loan
      */
     protected abstract CoeusLoan viewLoan(CoeusLoan pLoan,
-                                          TethysDateRange pRange);
+                                          OceanusDateRange pRange);
 
     /**
      * Does the market use decimal totals rather than money?

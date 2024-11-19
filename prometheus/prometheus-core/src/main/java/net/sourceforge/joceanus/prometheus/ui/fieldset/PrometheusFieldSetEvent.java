@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.prometheus.ui.fieldset;
 
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.prometheus.PrometheusDataException;
-import net.sourceforge.joceanus.tethys.OceanusException;
+import net.sourceforge.joceanus.oceanus.OceanusException;
 
 /**
  * FieldSetEvent.

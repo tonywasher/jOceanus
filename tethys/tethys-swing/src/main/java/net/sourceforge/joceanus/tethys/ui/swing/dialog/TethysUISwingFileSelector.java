@@ -16,8 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.tethys.ui.swing.dialog;
 
-import net.sourceforge.joceanus.tethys.logger.TethysLogManager;
-import net.sourceforge.joceanus.tethys.logger.TethysLogger;
+import net.sourceforge.joceanus.oceanus.logger.OceanusLogManager;
+import net.sourceforge.joceanus.oceanus.logger.OceanusLogger;
 import net.sourceforge.joceanus.tethys.ui.core.dialog.TethysUICoreFileSelector;
 
 import javax.swing.JFileChooser;
@@ -35,7 +35,7 @@ public class TethysUISwingFileSelector
     /**
      * Logger.
      */
-    private static final TethysLogger LOGGER = TethysLogManager.getLogger(TethysUISwingFileSelector.class);
+    private static final OceanusLogger LOGGER = OceanusLogManager.getLogger(TethysUISwingFileSelector.class);
 
     /**
      * Parent frame.

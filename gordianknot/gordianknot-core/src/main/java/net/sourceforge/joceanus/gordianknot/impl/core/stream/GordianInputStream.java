@@ -21,8 +21,8 @@ import java.io.InputStream;
 
 import org.bouncycastle.util.Arrays;
 
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.TethysDataConverter;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.OceanusDataConverter;
 
 /**
  * Input stream base implementation.
@@ -42,7 +42,7 @@ abstract class GordianInputStream
     /**
      * Byte mask.
      */
-    static final int BYTE_MASK = TethysDataConverter.BYTE_MASK;
+    static final int BYTE_MASK = OceanusDataConverter.BYTE_MASK;
 
     /**
      * The underlying input stream.

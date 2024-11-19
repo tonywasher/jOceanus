@@ -34,7 +34,7 @@ import net.sourceforge.joceanus.metis.report.MetisReportHTMLBuilder;
 import net.sourceforge.joceanus.metis.report.MetisReportHTMLBuilder.MetisHTMLTable;
 import net.sourceforge.joceanus.metis.report.MetisReportManager;
 import net.sourceforge.joceanus.metis.report.MetisReportReferenceManager.DelayedTable;
-import net.sourceforge.joceanus.tethys.date.TethysDate;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
 
 /**
@@ -113,7 +113,7 @@ public class CoeusReportLoanBook
         theMarket = pMarket;
 
         /* Access the date and totals */
-        final TethysDate myDate = theMarket.getDate();
+        final OceanusDate myDate = theMarket.getDate();
 
         /* Start the report */
         final Element myBody = theBuilder.startReport();

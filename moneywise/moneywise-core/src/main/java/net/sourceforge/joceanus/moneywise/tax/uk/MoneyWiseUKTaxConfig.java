@@ -25,8 +25,8 @@ import net.sourceforge.joceanus.moneywise.tax.MoneyWiseTaxBandSet.MoneyWiseTaxBa
 import net.sourceforge.joceanus.moneywise.tax.MoneyWiseTaxConfig;
 import net.sourceforge.joceanus.moneywise.tax.MoneyWiseTaxResource;
 import net.sourceforge.joceanus.moneywise.tax.MoneyWiseTaxSource;
-import net.sourceforge.joceanus.tethys.date.TethysDate;
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
 
 /**
@@ -72,17 +72,17 @@ public class MoneyWiseUKTaxConfig
     /**
      * Gross Taxable Income.
      */
-    private final TethysMoney theGrossTaxable;
+    private final OceanusMoney theGrossTaxable;
 
     /**
      * Gross PreSavings.
      */
-    private final TethysMoney theGrossPreSavings;
+    private final OceanusMoney theGrossPreSavings;
 
     /**
      * The client birthday.
      */
-    private final TethysDate theBirthday;
+    private final OceanusDate theBirthday;
 
     /**
      * The client age in the tax year.
@@ -97,27 +97,27 @@ public class MoneyWiseUKTaxConfig
     /**
      * Basic Allowance.
      */
-    private final TethysMoney theAllowance;
+    private final OceanusMoney theAllowance;
 
     /**
      * Rental Allowance.
      */
-    private final TethysMoney theRentalAllowance;
+    private final OceanusMoney theRentalAllowance;
 
     /**
      * Savings Allowance.
      */
-    private final TethysMoney theSavingsAllowance;
+    private final OceanusMoney theSavingsAllowance;
 
     /**
      * Dividend Allowance.
      */
-    private final TethysMoney theDividendAllowance;
+    private final OceanusMoney theDividendAllowance;
 
     /**
      * Capital Allowance.
      */
-    private final TethysMoney theCapitalAllowance;
+    private final OceanusMoney theCapitalAllowance;
 
     /**
      * Tax Bands.
@@ -137,7 +137,7 @@ public class MoneyWiseUKTaxConfig
      */
     protected MoneyWiseUKTaxConfig(final MoneyWiseUKTaxYear pTaxYear,
                                    final MoneyWiseTaxSource pTaxSource,
-                                   final TethysDate pBirthday) {
+                                   final OceanusDate pBirthday) {
         /* Store details */
         theTaxYear = pTaxYear;
         theTaxSource = pTaxSource;
@@ -152,11 +152,11 @@ public class MoneyWiseUKTaxConfig
         final MoneyWiseUKBasicAllowance myAllowances = theTaxYear.getAllowances();
 
         /* Calculate the allowances */
-        theAllowance = new TethysMoney(myAllowances.calculateBasicAllowance(this));
-        theRentalAllowance = new TethysMoney(myAllowances.getRentalAllowance());
-        theSavingsAllowance = new TethysMoney(myAllowances.calculateSavingsAllowance(this));
-        theDividendAllowance = new TethysMoney(myAllowances.calculateDividendAllowance());
-        theCapitalAllowance = new TethysMoney(myAllowances.getCapitalAllowance());
+        theAllowance = new OceanusMoney(myAllowances.calculateBasicAllowance(this));
+        theRentalAllowance = new OceanusMoney(myAllowances.getRentalAllowance());
+        theSavingsAllowance = new OceanusMoney(myAllowances.calculateSavingsAllowance(this));
+        theDividendAllowance = new OceanusMoney(myAllowances.calculateDividendAllowance());
+        theCapitalAllowance = new OceanusMoney(myAllowances.getCapitalAllowance());
 
         /* Access the taxBands */
         final MoneyWiseUKTaxBands myBands = theTaxYear.getTaxBands();
@@ -181,11 +181,11 @@ public class MoneyWiseUKTaxConfig
         hasAgeRelatedAllowance = pSource.hasAgeRelatedAllowance();
 
         /* Copy the allowances */
-        theAllowance = new TethysMoney(pSource.getAllowance());
-        theRentalAllowance = new TethysMoney(pSource.getRentalAllowance());
-        theSavingsAllowance = new TethysMoney(pSource.getSavingsAllowance());
-        theDividendAllowance = new TethysMoney(pSource.getDividendAllowance());
-        theCapitalAllowance = new TethysMoney(pSource.getCapitalAllowance());
+        theAllowance = new OceanusMoney(pSource.getAllowance());
+        theRentalAllowance = new OceanusMoney(pSource.getRentalAllowance());
+        theSavingsAllowance = new OceanusMoney(pSource.getSavingsAllowance());
+        theDividendAllowance = new OceanusMoney(pSource.getDividendAllowance());
+        theCapitalAllowance = new OceanusMoney(pSource.getCapitalAllowance());
 
         /* Copy the taxBands */
         theTaxBands = new MoneyWiseTaxBandSet(pSource.getTaxBands());
@@ -212,7 +212,7 @@ public class MoneyWiseUKTaxConfig
      * Obtain the gross preSavings income.
      * @return the gross preSavings
      */
-    public TethysMoney getGrossPreSavings() {
+    public OceanusMoney getGrossPreSavings() {
         return theGrossPreSavings;
     }
 
@@ -220,7 +220,7 @@ public class MoneyWiseUKTaxConfig
      * Obtain the gross taxable income.
      * @return the gross taxable
      */
-    public TethysMoney getGrossTaxable() {
+    public OceanusMoney getGrossTaxable() {
         return theGrossTaxable;
     }
 
@@ -228,7 +228,7 @@ public class MoneyWiseUKTaxConfig
      * Obtain the client birthday.
      * @return the birthday
      */
-    public TethysDate getBirthday() {
+    public OceanusDate getBirthday() {
         return theBirthday;
     }
 
@@ -260,7 +260,7 @@ public class MoneyWiseUKTaxConfig
      * Obtain the allowance.
      * @return the allowance
      */
-    public TethysMoney getAllowance() {
+    public OceanusMoney getAllowance() {
         return theAllowance;
     }
 
@@ -268,7 +268,7 @@ public class MoneyWiseUKTaxConfig
      * Obtain the rental allowance.
      * @return the rental allowance
      */
-    public TethysMoney getRentalAllowance() {
+    public OceanusMoney getRentalAllowance() {
         return theRentalAllowance;
     }
 
@@ -276,7 +276,7 @@ public class MoneyWiseUKTaxConfig
      * Obtain the savings allowance.
      * @return the allowance
      */
-    public TethysMoney getSavingsAllowance() {
+    public OceanusMoney getSavingsAllowance() {
         return theSavingsAllowance;
     }
 
@@ -284,7 +284,7 @@ public class MoneyWiseUKTaxConfig
      * Obtain the dividend allowance.
      * @return the allowance
      */
-    public TethysMoney getDividendAllowance() {
+    public OceanusMoney getDividendAllowance() {
         return theDividendAllowance;
     }
 
@@ -292,7 +292,7 @@ public class MoneyWiseUKTaxConfig
      * Obtain the capital allowance.
      * @return the allowance
      */
-    public TethysMoney getCapitalAllowance() {
+    public OceanusMoney getCapitalAllowance() {
         return theCapitalAllowance;
     }
 
@@ -331,9 +331,9 @@ public class MoneyWiseUKTaxConfig
      * Determine the gross taxable income.
      * @return the gross taxable income
      */
-    private TethysMoney determineGrossTaxableIncome() {
+    private OceanusMoney determineGrossTaxableIncome() {
         /* Initialise income to preSavings */
-        final TethysMoney myIncome = new TethysMoney(theGrossPreSavings);
+        final OceanusMoney myIncome = new OceanusMoney(theGrossPreSavings);
 
         /* Add taxed interest to income */
         myIncome.addAmount(theTaxSource.getAmountForTaxBasis(MoneyWiseTaxClass.TAXEDINTEREST));
@@ -363,12 +363,12 @@ public class MoneyWiseUKTaxConfig
      * Determine the gross preSavings income.
      * @return the gross preSavings income
      */
-    private TethysMoney determineGrossPreSavings() {
+    private OceanusMoney determineGrossPreSavings() {
         /* Access the basic allowances */
         final MoneyWiseUKBasicAllowance myAllowances = theTaxYear.getAllowances();
 
         /* Initialise income to correct currency */
-        final TethysMoney myIncome = new TethysMoney(myAllowances.getAllowance());
+        final OceanusMoney myIncome = new OceanusMoney(myAllowances.getAllowance());
         myIncome.setZero();
 
         /* Add the salary to income */
@@ -381,10 +381,10 @@ public class MoneyWiseUKTaxConfig
         myIncome.addAmount(theTaxSource.getAmountForTaxBasis(MoneyWiseTaxClass.RENTALINCOME));
 
         /* Access the room rental income */
-        final TethysMoney myChargeable = theTaxSource.getAmountForTaxBasis(MoneyWiseTaxClass.ROOMRENTAL);
+        final OceanusMoney myChargeable = theTaxSource.getAmountForTaxBasis(MoneyWiseTaxClass.ROOMRENTAL);
 
         /* If we have a chargeable element */
-        final TethysMoney myAllowance = myAllowances.getRentalAllowance();
+        final OceanusMoney myAllowance = myAllowances.getRentalAllowance();
         if (myChargeable.compareTo(myAllowance) > 0) {
             /* Add the chargeable element to income */
             myChargeable.subtractAmount(myAllowance);

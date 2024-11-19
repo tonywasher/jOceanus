@@ -36,7 +36,7 @@ import net.sourceforge.joceanus.moneywise.atlas.data.analysis.values.MoneyWiseXA
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.values.MoneyWiseXAnalysisValuesResource;
 import net.sourceforge.joceanus.moneywise.atlas.views.MoneyWiseXAnalysisFilter;
 import net.sourceforge.joceanus.moneywise.atlas.views.MoneyWiseXAnalysisFilter.MoneyWiseXAnalysisSecurityFilter;
-import net.sourceforge.joceanus.tethys.date.TethysDate;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
 
 /**
@@ -88,7 +88,7 @@ public class MoneyWiseXReportAssetGains
     public Document createReport(final MoneyWiseXAnalysis pAnalysis) {
         /* Access the bucket lists */
         final MoneyWiseXAnalysisPortfolioBucketList myPortfolios = pAnalysis.getPortfolios();
-        final TethysDate myDate = pAnalysis.getDateRange().getEnd();
+        final OceanusDate myDate = pAnalysis.getDateRange().getEnd();
 
         /* Access the totals */
         final MoneyWiseXAnalysisPortfolioBucket myTotals = myPortfolios.getTotals();

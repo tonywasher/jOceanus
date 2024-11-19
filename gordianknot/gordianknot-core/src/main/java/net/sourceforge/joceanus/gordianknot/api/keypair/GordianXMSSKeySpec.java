@@ -19,7 +19,7 @@ package net.sourceforge.joceanus.gordianknot.api.keypair;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestSpecBuilder;
-import net.sourceforge.joceanus.tethys.TethysDataConverter;
+import net.sourceforge.joceanus.oceanus.OceanusDataConverter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -256,11 +256,11 @@ public class GordianXMSSKeySpec {
 
     @Override
     public int hashCode() {
-        int hashCode = theKeyType.hashCode() << TethysDataConverter.BYTE_SHIFT;
+        int hashCode = theKeyType.hashCode() << OceanusDataConverter.BYTE_SHIFT;
         hashCode += theDigestType.hashCode();
-        hashCode <<= TethysDataConverter.BYTE_SHIFT;
+        hashCode <<= OceanusDataConverter.BYTE_SHIFT;
         hashCode += theHeight.hashCode();
-        hashCode <<= TethysDataConverter.BYTE_SHIFT;
+        hashCode <<= OceanusDataConverter.BYTE_SHIFT;
         if (theLayers != null) {
             hashCode += theLayers.hashCode();
         }

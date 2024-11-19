@@ -36,7 +36,7 @@ import net.sourceforge.joceanus.moneywise.atlas.views.MoneyWiseXAnalysisFilter;
 import net.sourceforge.joceanus.moneywise.atlas.views.MoneyWiseXAnalysisFilter.MoneyWiseXAnalysisTransCategoryFilter;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransCategory;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransCategoryClass;
-import net.sourceforge.joceanus.tethys.date.TethysDateRange;
+import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
 
 /**
@@ -79,7 +79,7 @@ public class MoneyWiseXReportIncomeExpense
         /* Access the bucket list */
         theAnalysis = pAnalysis;
         final MoneyWiseXAnalysisTransCategoryBucketList myCategories = theAnalysis.getTransCategories();
-        final TethysDateRange myRange = theAnalysis.getDateRange();
+        final OceanusDateRange myRange = theAnalysis.getDateRange();
 
         /* Obtain the totals bucket */
         final MoneyWiseXAnalysisTransCategoryBucket myTotals = myCategories.getTotals();

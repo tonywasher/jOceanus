@@ -33,8 +33,8 @@ import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianPersonalisation;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianRandomSource;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.TethysDataConverter;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.OceanusDataConverter;
 
 /**
  * GordianKnot interface for Key Generators.
@@ -223,9 +223,9 @@ public abstract class GordianCoreKeyGenerator<T extends GordianKeySpec>
         byte[] myAltInput = pInitVector;
 
         /* Create the standard data */
-        final byte[] myAlgo = TethysDataConverter.stringToByteArray(theKeyType.toString());
+        final byte[] myAlgo = OceanusDataConverter.stringToByteArray(theKeyType.toString());
         final GordianPersonalisation myPersonal = theFactory.getPersonalisation();
-        final byte[] myKeyLen = TethysDataConverter.integerToByteArray(theKeyLength);
+        final byte[] myKeyLen = OceanusDataConverter.integerToByteArray(theKeyLength);
 
         /* Protect against exceptions */
         try {

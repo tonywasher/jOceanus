@@ -22,7 +22,7 @@ import java.io.OutputStream;
 
 import org.w3c.dom.Document;
 
-import net.sourceforge.joceanus.tethys.OceanusException;
+import net.sourceforge.joceanus.oceanus.OceanusException;
 
 /**
  * GordianKnot Zip WriteFile API.

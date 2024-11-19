@@ -19,12 +19,12 @@ package net.sourceforge.joceanus.metis.data;
 import java.util.List;
 
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataIndexedItem;
-import net.sourceforge.joceanus.tethys.date.TethysDate;
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
-import net.sourceforge.joceanus.tethys.decimal.TethysPrice;
-import net.sourceforge.joceanus.tethys.decimal.TethysRate;
-import net.sourceforge.joceanus.tethys.decimal.TethysRatio;
-import net.sourceforge.joceanus.tethys.decimal.TethysUnits;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRate;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRatio;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusUnits;
 
 /**
  * Enumeration of data types.
@@ -168,17 +168,17 @@ public enum MetisDataType {
             case LONG:
                 return Long.class;
             case DATE:
-                return TethysDate.class;
+                return OceanusDate.class;
             case MONEY:
-                return TethysMoney.class;
+                return OceanusMoney.class;
             case PRICE:
-                return TethysPrice.class;
+                return OceanusPrice.class;
             case UNITS:
-                return TethysUnits.class;
+                return OceanusUnits.class;
             case RATE:
-                return TethysRate.class;
+                return OceanusRate.class;
             case RATIO:
-                return TethysRatio.class;
+                return OceanusRatio.class;
             case LINK:
             case LINKPAIR:
                 return MetisDataIndexedItem.class;

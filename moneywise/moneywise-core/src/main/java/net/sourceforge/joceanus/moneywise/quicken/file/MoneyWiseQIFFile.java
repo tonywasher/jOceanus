@@ -39,8 +39,8 @@ import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransaction.MoneyW
 import net.sourceforge.joceanus.moneywise.quicken.definitions.MoneyWiseQIFPreference.MoneyWiseQIFPreferenceKey;
 import net.sourceforge.joceanus.moneywise.quicken.definitions.MoneyWiseQIFPreference.MoneyWiseQIFPreferences;
 import net.sourceforge.joceanus.moneywise.quicken.definitions.MoneyWiseQIFType;
-import net.sourceforge.joceanus.tethys.date.TethysDate;
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
 
 /**
  * QIF File representation.
@@ -64,12 +64,12 @@ public class MoneyWiseQIFFile {
     /**
      * Start event Date.
      */
-    private TethysDate theStartDate;
+    private OceanusDate theStartDate;
 
     /**
      * Last event Date.
      */
-    private TethysDate theLastDate;
+    private OceanusDate theLastDate;
 
     /**
      * Map of Accounts with Events.
@@ -297,7 +297,7 @@ public class MoneyWiseQIFFile {
                                                 final MoneyWiseQIFPreferences pPreferences) {
         /* Access preference details */
         final MoneyWiseQIFType myType = pPreferences.getEnumValue(MoneyWiseQIFPreferenceKey.QIFTYPE, MoneyWiseQIFType.class);
-        final TethysDate myLastDate = pPreferences.getDateValue(MoneyWiseQIFPreferenceKey.LASTEVENT);
+        final OceanusDate myLastDate = pPreferences.getDateValue(MoneyWiseQIFPreferenceKey.LASTEVENT);
 
         /* Create new QIF File */
         final MoneyWiseQIFFile myFile = new MoneyWiseQIFFile(myType);
@@ -679,7 +679,7 @@ public class MoneyWiseQIFFile {
      */
     public void buildData(final MoneyWiseDataSet pData,
                           final MoneyWiseAnalysis pAnalysis,
-                          final TethysDate pLastDate) {
+                          final OceanusDate pLastDate) {
         /* Create a builder */
         final MoneyWiseQIFBuilder myBuilder = new MoneyWiseQIFBuilder(this, pData, pAnalysis);
 
@@ -697,7 +697,7 @@ public class MoneyWiseQIFFile {
             final MoneyWiseTransaction myEvent = myIterator.next();
 
             /* Break loop if the event is too late */
-            final TethysDate myDate = myEvent.getDate();
+            final OceanusDate myDate = myEvent.getDate();
             if (myDate.compareTo(pLastDate) > 0) {
                 break;
             }
@@ -723,7 +723,7 @@ public class MoneyWiseQIFFile {
             final MoneyWiseDeposit myDeposit = myIterator.next();
 
             /* Ignore if no opening balance */
-            final TethysMoney myBalance = myDeposit.getOpeningBalance();
+            final OceanusMoney myBalance = myDeposit.getOpeningBalance();
             if (myBalance == null) {
                 continue;
             }
@@ -744,7 +744,7 @@ public class MoneyWiseQIFFile {
             final MoneyWiseSecurityPrice myPrice = myIterator.next();
 
             /* Break loop if the price is too late */
-            final TethysDate myDate = myPrice.getDate();
+            final OceanusDate myDate = myPrice.getDate();
             if (myDate.compareTo(theLastDate) > 0) {
                 break;
             }

@@ -28,7 +28,7 @@ import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseLoan;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseLoanCategory;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrency;
-import net.sourceforge.joceanus.tethys.date.TethysDateRange;
+import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
 
 /**
@@ -262,7 +262,7 @@ public final class MoneyWiseAnalysisLoanCategoryBucket
             pLoans.sortBuckets();
 
             /* Loop through the buckets */
-            final TethysDateRange myRange = theAnalysis.getDateRange();
+            final OceanusDateRange myRange = theAnalysis.getDateRange();
             final Iterator<MoneyWiseAnalysisLoanBucket> myIterator = pLoans.iterator();
             while (myIterator.hasNext()) {
                 /* Access bucket and category */

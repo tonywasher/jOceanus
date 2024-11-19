@@ -20,14 +20,14 @@ import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.metis.MetisDataException;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
-import net.sourceforge.joceanus.tethys.resource.TethysBundleId;
-import net.sourceforge.joceanus.tethys.resource.TethysBundleLoader;
+import net.sourceforge.joceanus.oceanus.resource.OceanusBundleId;
+import net.sourceforge.joceanus.oceanus.resource.OceanusBundleLoader;
 
 /**
  * ResourcesIds for List.
  */
 public enum MetisListResource
-        implements TethysBundleId, MetisDataFieldId {
+        implements OceanusBundleId, MetisDataFieldId {
     /**
      * List Size.
      */
@@ -86,7 +86,7 @@ public enum MetisListResource
     /**
      * The Resource Loader.
      */
-    private static final TethysBundleLoader LOADER = TethysBundleLoader.getPackageLoader(MetisDataException.class.getCanonicalName(),
+    private static final OceanusBundleLoader LOADER = OceanusBundleLoader.getPackageLoader(MetisDataException.class.getCanonicalName(),
             ResourceBundle::getBundle);
 
     /**

@@ -29,8 +29,8 @@ import net.sourceforge.joceanus.metis.field.MetisFieldItem.MetisFieldSetDef;
 import net.sourceforge.joceanus.metis.field.MetisFieldItem.MetisFieldVersionedDef;
 import net.sourceforge.joceanus.metis.field.MetisFieldPairedItem;
 import net.sourceforge.joceanus.metis.field.MetisFieldVersionedItem;
-import net.sourceforge.joceanus.tethys.event.TethysEvent;
-import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar;
+import net.sourceforge.joceanus.oceanus.event.OceanusEvent;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
 
 /**
  * TouchMap implementation.
@@ -56,7 +56,7 @@ public class MetisListSetTouchMap {
         theListMap = new HashMap<>();
 
         /* Attach listeners */
-        final TethysEventRegistrar<MetisListEvent> myRegistrar = theListSet.getEventRegistrar();
+        final OceanusEventRegistrar<MetisListEvent> myRegistrar = theListSet.getEventRegistrar();
         myRegistrar.addEventListener(MetisListEvent.REFRESH, e -> processRefreshEvent());
         myRegistrar.addEventListener(MetisListEvent.VERSION, this::processVersionEvent);
     }
@@ -106,7 +106,7 @@ public class MetisListSetTouchMap {
      * Process a version event.
      * @param pEvent the event
      */
-    private void processVersionEvent(final TethysEvent<MetisListEvent> pEvent) {
+    private void processVersionEvent(final OceanusEvent<MetisListEvent> pEvent) {
         /* Access the change details */
         final MetisListSetChange myChanges = pEvent.getDetails(MetisListSetChange.class);
 

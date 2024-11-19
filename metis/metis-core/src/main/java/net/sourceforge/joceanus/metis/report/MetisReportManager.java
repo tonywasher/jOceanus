@@ -17,12 +17,12 @@
 package net.sourceforge.joceanus.metis.report;
 
 import net.sourceforge.joceanus.metis.MetisIOException;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.event.TethysEventManager;
-import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar;
-import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar.TethysEventProvider;
-import net.sourceforge.joceanus.tethys.logger.TethysLogManager;
-import net.sourceforge.joceanus.tethys.logger.TethysLogger;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.oceanus.logger.OceanusLogManager;
+import net.sourceforge.joceanus.oceanus.logger.OceanusLogger;
 import net.sourceforge.joceanus.tethys.ui.api.control.TethysUIHTMLManager;
 
 import org.w3c.dom.Document;
@@ -51,12 +51,12 @@ public class MetisReportManager<F>
     /**
      * Logger.
      */
-    private static final TethysLogger LOGGER = TethysLogManager.getLogger(MetisReportManager.class);
+    private static final OceanusLogger LOGGER = OceanusLogManager.getLogger(MetisReportManager.class);
 
     /**
      * The Event Manager.
      */
-    private final TethysEventManager<MetisReportEvent> theEventManager;
+    private final OceanusEventManager<MetisReportEvent> theEventManager;
 
     /**
      * The Transformer.
@@ -98,7 +98,7 @@ public class MetisReportManager<F>
         theBuilder = pBuilder;
 
         /* Create event manager */
-        theEventManager = new TethysEventManager<>();
+        theEventManager = new OceanusEventManager<>();
 
         /* Allocate the hashMaps */
         theHiddenMap = new HashMap<>();
@@ -119,7 +119,7 @@ public class MetisReportManager<F>
     }
 
     @Override
-    public TethysEventRegistrar<MetisReportEvent> getEventRegistrar() {
+    public OceanusEventRegistrar<MetisReportEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 

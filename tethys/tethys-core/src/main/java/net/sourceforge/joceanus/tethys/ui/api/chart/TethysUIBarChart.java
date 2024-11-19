@@ -18,8 +18,8 @@ package net.sourceforge.joceanus.tethys.ui.api.chart;
 
 import java.util.Iterator;
 
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
-import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.TethysEventProvider;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIEvent;
 
@@ -99,7 +99,7 @@ public interface TethysUIBarChart
          * @param pValue the value
          */
         void addSection(String pRef,
-                        TethysMoney pValue);
+                        OceanusMoney pValue);
 
         /**
          * Add a dataSection.
@@ -108,7 +108,7 @@ public interface TethysUIBarChart
          * @param pSource the source
          */
         void addSection(String pRef,
-                        TethysMoney pValue,
+                        OceanusMoney pValue,
                         Object pSource);
 
         /**
@@ -144,7 +144,7 @@ public interface TethysUIBarChart
          * Obtain the value.
          * @return the value.
          */
-        TethysMoney getValue();
+        OceanusMoney getValue();
 
         /**
          * Obtain the source.

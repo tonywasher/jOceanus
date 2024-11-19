@@ -37,8 +37,8 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 
-import net.sourceforge.joceanus.tethys.logger.TethysLogManager;
-import net.sourceforge.joceanus.tethys.logger.TethysLogger;
+import net.sourceforge.joceanus.oceanus.logger.OceanusLogManager;
+import net.sourceforge.joceanus.oceanus.logger.OceanusLogger;
 import net.sourceforge.joceanus.tethys.ui.core.factory.TethysUICoreFactory;
 import net.sourceforge.joceanus.tethys.ui.core.control.TethysUICoreHTMLManager;
 import net.sourceforge.joceanus.tethys.ui.javafx.base.TethysUIFXNode;
@@ -53,7 +53,7 @@ public class TethysUIFXHTMLManager
     /**
      * The logger.
      */
-    private static final TethysLogger LOGGER = TethysLogManager.getLogger(TethysUIFXHTMLManager.class);
+    private static final OceanusLogger LOGGER = OceanusLogManager.getLogger(TethysUIFXHTMLManager.class);
 
     /**
      * Click event type.

@@ -27,7 +27,7 @@ import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseX
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWisePayeeClass;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTaxClass;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransCategoryClass;
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
 
 /**
  * Process NatInsurance.
@@ -61,12 +61,12 @@ public class MoneyWiseXAnalysisMarket {
     /**
      * The market income.
      */
-    private final TethysMoney theMarketIncome;
+    private final OceanusMoney theMarketIncome;
 
     /**
      * The market expense.
      */
-    private final TethysMoney theMarketExpense;
+    private final OceanusMoney theMarketExpense;
 
     /**
      * Is there currency fluctuation?
@@ -100,8 +100,8 @@ public class MoneyWiseXAnalysisMarket {
 
         /* Allocate the market counters */
         final Currency myCurrency = myAnalysis.getCurrency().getCurrency();
-        theMarketIncome = new TethysMoney(myCurrency);
-        theMarketExpense = new TethysMoney(myCurrency);
+        theMarketIncome = new OceanusMoney(myCurrency);
+        theMarketExpense = new OceanusMoney(myCurrency);
     }
 
     /**
@@ -110,7 +110,7 @@ public class MoneyWiseXAnalysisMarket {
      * @param pDelta the delta
      */
     void adjustTotalsForMarketGrowth(final MoneyWiseXAnalysisEvent pEvent,
-                                     final TethysMoney pDelta) {
+                                     final OceanusMoney pDelta) {
         /* Adjust marketGrowth for delta */
         theMarketGrowthBucket.adjustForDelta(pDelta);
         if (!isGrowth) {
@@ -132,7 +132,7 @@ public class MoneyWiseXAnalysisMarket {
      * @param pDelta the delta
      */
     void adjustTotalsForCurrencyFluctuation(final MoneyWiseXAnalysisEvent pEvent,
-                                            final TethysMoney pDelta) {
+                                            final OceanusMoney pDelta) {
         /* Adjust currencyFluctuation for delta */
         theCurrencyFluctuationBucket.adjustForDelta(pDelta);
         if (!isFluctuation) {

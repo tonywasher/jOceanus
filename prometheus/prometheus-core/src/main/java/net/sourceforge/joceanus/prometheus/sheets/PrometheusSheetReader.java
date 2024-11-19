@@ -36,8 +36,8 @@ import net.sourceforge.joceanus.prometheus.data.PrometheusDataSet.PrometheusCryp
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetProvider;
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetWorkBook;
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetWorkBookType;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.profile.TethysProfile;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
 import net.sourceforge.joceanus.tethys.ui.api.factory.TethysUIFactory;
 import net.sourceforge.joceanus.tethys.ui.api.thread.TethysUIThreadStatusReport;
 
@@ -148,7 +148,7 @@ public abstract class PrometheusSheetReader {
                            final PrometheusDataSet pData,
                            final String pName) throws OceanusException {
         /* Start the task */
-        TethysProfile myTask = theReport.getActiveTask();
+        OceanusProfile myTask = theReport.getActiveTask();
         myTask = myTask.startTask("Loading");
         theData = pData;
 
@@ -196,7 +196,7 @@ public abstract class PrometheusSheetReader {
         /* Protect the workbook retrieval */
         try (InputStream myStream = pFile.createInputStream(pEntry)) {
             /* Obtain the active profile */
-            final TethysProfile myTask = theReport.getActiveTask();
+            final OceanusProfile myTask = theReport.getActiveTask();
             myTask.startTask("Parsing");
 
             /* Initialise the workbook */
@@ -277,7 +277,7 @@ public abstract class PrometheusSheetReader {
      */
     private void loadWorkBook() throws OceanusException {
         /* Obtain the active profile */
-        final TethysProfile myTask = theReport.getActiveTask();
+        final OceanusProfile myTask = theReport.getActiveTask();
 
         /* Declare the number of stages */
         theReport.setNumStages(theSheets.size() + 1);

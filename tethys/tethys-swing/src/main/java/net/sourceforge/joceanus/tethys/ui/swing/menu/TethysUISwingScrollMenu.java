@@ -45,8 +45,8 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 
-import net.sourceforge.joceanus.tethys.event.TethysEventManager;
-import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIArrowIconId;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIConstant;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIIcon;
@@ -102,7 +102,7 @@ public class TethysUISwingScrollMenu<T>
     /**
      * The Event Manager.
      */
-    private final TethysEventManager<TethysUIEvent> theEventManager;
+    private final OceanusEventManager<TethysUIEvent> theEventManager;
 
     /**
      * The ScrollUp Item.
@@ -213,7 +213,7 @@ public class TethysUISwingScrollMenu<T>
         closeOnToggle = true;
 
         /* Create event manager */
-        theEventManager = new TethysEventManager<>();
+        theEventManager = new OceanusEventManager<>();
 
         /* Create the scroll items */
         theUpItem = new ScrollControl(TethysUISwingArrowIcon.getIconForId(TethysUIArrowIconId.UP), -1);
@@ -232,7 +232,7 @@ public class TethysUISwingScrollMenu<T>
     }
 
     @Override
-    public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
+    public OceanusEventRegistrar<TethysUIEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 

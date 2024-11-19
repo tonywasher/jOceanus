@@ -25,7 +25,7 @@ import net.sourceforge.joceanus.coeus.data.CoeusTotalsField;
 import net.sourceforge.joceanus.metis.field.MetisFieldItem.MetisFieldDef;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.metis.list.MetisListIndexed;
-import net.sourceforge.joceanus.tethys.decimal.TethysDecimal;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimal;
 
 /**
  * Statement calculator.
@@ -102,8 +102,8 @@ public class CoeusStatementCalculator {
      * @param pField the field Id
      * @return the value
      */
-    public TethysDecimal calculateValue(final CoeusTotals pTotals,
-                                        final CoeusTotalsField pField) {
+    public OceanusDecimal calculateValue(final CoeusTotals pTotals,
+                                         final CoeusTotalsField pField) {
         switch (pField) {
             case DELTA:
                 return pTotals.getDelta();

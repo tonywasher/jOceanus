@@ -25,7 +25,7 @@ import java.util.Map;
 
 import javax.swing.Icon;
 
-import net.sourceforge.joceanus.tethys.resource.TethysResourceLoader;
+import net.sourceforge.joceanus.oceanus.resource.OceanusResourceLoader;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIArrowIconId;
 
 /**
@@ -172,6 +172,6 @@ public enum TethysUISwingArrowIcon implements Icon {
      * @return the icon
      */
     public static TethysUISwingIcon getIconForId(final TethysUIArrowIconId pId) {
-        return TethysResourceLoader.getIconForEnum(ICON_MAP, pId);
+        return OceanusResourceLoader.getIconForEnum(ICON_MAP, pId);
     }
 }

@@ -16,8 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.tethys.ui.core.button;
 
-import net.sourceforge.joceanus.tethys.event.TethysEventManager;
-import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIConstant;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.tethys.ui.api.button.TethysUIButton;
@@ -38,7 +38,7 @@ public abstract class TethysUICoreButton
     /**
      * Event Manager.
      */
-    private final TethysEventManager<TethysUIEvent> theEventManager;
+    private final OceanusEventManager<TethysUIEvent> theEventManager;
 
     /**
      * The id.
@@ -56,7 +56,7 @@ public abstract class TethysUICoreButton
      */
     protected TethysUICoreButton(final TethysUICoreFactory<?> pFactory) {
         theId = pFactory.getNextId();
-        theEventManager = new TethysEventManager<>();
+        theEventManager = new OceanusEventManager<>();
         theWidth = DEFAULT_ICONWIDTH;
     }
 
@@ -66,7 +66,7 @@ public abstract class TethysUICoreButton
     }
 
     @Override
-    public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
+    public OceanusEventRegistrar<TethysUIEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 

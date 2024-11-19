@@ -27,11 +27,11 @@ import net.sourceforge.joceanus.moneywise.quicken.file.MoneyWiseQIFLine.MoneyWis
 import net.sourceforge.joceanus.moneywise.quicken.file.MoneyWiseQIFLine.MoneyWiseQIFPayeeLine;
 import net.sourceforge.joceanus.moneywise.quicken.file.MoneyWiseQIFLine.MoneyWiseQIFStringLine;
 import net.sourceforge.joceanus.moneywise.quicken.file.MoneyWiseQIFLine.MoneyWiseQIFXferAccountLine;
-import net.sourceforge.joceanus.tethys.date.TethysDate;
-import net.sourceforge.joceanus.tethys.date.TethysDateFormatter;
-import net.sourceforge.joceanus.tethys.decimal.TethysDecimalParser;
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
-import net.sourceforge.joceanus.tethys.decimal.TethysRate;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.date.OceanusDateFormatter;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimalParser;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRate;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
 
 /**
@@ -42,7 +42,7 @@ public class MoneyWiseQIFEvent
     /**
      * The Date.
      */
-    private final TethysDate theDate;
+    private final OceanusDate theDate;
 
     /**
      * The Cleared Flag.
@@ -86,7 +86,7 @@ public class MoneyWiseQIFEvent
      * @param pStartDate the start date
      */
     protected MoneyWiseQIFEvent(final MoneyWiseQIFFile pFile,
-                                final TethysDate pStartDate) {
+                                final OceanusDate pStartDate) {
         /* Call super-constructor */
         super(pFile, MoneyWiseQEventLineType.class);
 
@@ -113,15 +113,15 @@ public class MoneyWiseQIFEvent
         super(pFile, MoneyWiseQEventLineType.class);
 
         /* Determine details */
-        TethysDate myDate = null;
+        OceanusDate myDate = null;
         Boolean myCleared = null;
 
         /* Current split record */
         MoneyWiseQIFSplitEvent mySplit = null;
 
         /* Obtain parsers */
-        final TethysDateFormatter myDateParser = pFormatter.getDateFormatter();
-        final TethysDecimalParser myDecParser = pFormatter.getDecimalParser();
+        final OceanusDateFormatter myDateParser = pFormatter.getDateFormatter();
+        final OceanusDecimalParser myDecParser = pFormatter.getDecimalParser();
 
         /* Loop through the lines */
         for (String myLine : pLines) {
@@ -134,7 +134,7 @@ public class MoneyWiseQIFEvent
                 /* Switch on line type */
                 switch (myType) {
                     case DATE:
-                        final TethysDate myDateDay = myDateParser.parseDateBase(myData, MoneyWiseQIFWriter.QIF_BASEYEAR);
+                        final OceanusDate myDateDay = myDateParser.parseDateBase(myData, MoneyWiseQIFWriter.QIF_BASEYEAR);
                         addLine(new MoneyWiseQIFEventDateLine(myDateDay));
                         myDate = myDateDay;
                         break;
@@ -144,7 +144,7 @@ public class MoneyWiseQIFEvent
                         myCleared = myFlag;
                         break;
                     case AMOUNT:
-                        TethysMoney myMoney = myDecParser.parseMoneyValue(myData);
+                        OceanusMoney myMoney = myDecParser.parseMoneyValue(myData);
                         addLine(new MoneyWiseQIFEventAmountLine(myMoney));
                         break;
                     case COMMENT:
@@ -194,7 +194,7 @@ public class MoneyWiseQIFEvent
                         mySplit.setSplitAmount(myMoney);
                         break;
                     case SPLITPERCENT:
-                        final TethysRate myRate = myDecParser.parseRateValue(myData);
+                        final OceanusRate myRate = myDecParser.parseRateValue(myData);
                         mySplit.setSplitPercentage(myRate);
                         break;
                     case SPLITCOMMENT:
@@ -212,7 +212,7 @@ public class MoneyWiseQIFEvent
     }
 
     @Override
-    public TethysDate getDate() {
+    public OceanusDate getDate() {
         return theDate;
     }
 
@@ -261,7 +261,7 @@ public class MoneyWiseQIFEvent
      * record amount.
      * @param pAmount the amount
      */
-    protected void recordAmount(final TethysMoney pAmount) {
+    protected void recordAmount(final OceanusMoney pAmount) {
         /* Add amount line */
         addLine(new MoneyWiseQIFEventAmountLine(pAmount));
     }
@@ -313,7 +313,7 @@ public class MoneyWiseQIFEvent
      * @param pComment the comment
      */
     protected void recordSplitRecord(final MoneyWiseQIFAccount pAccount,
-                                     final TethysMoney pAmount,
+                                     final OceanusMoney pAmount,
                                      final String pComment) {
         /* Create new split and add it */
         final MoneyWiseQIFSplitEvent mySplit = new MoneyWiseQIFSplitEvent(getFile(), pAccount);
@@ -333,7 +333,7 @@ public class MoneyWiseQIFEvent
      */
     protected void recordSplitRecord(final MoneyWiseQIFAccount pAccount,
                                      final List<MoneyWiseQIFClass> pClasses,
-                                     final TethysMoney pAmount,
+                                     final OceanusMoney pAmount,
                                      final String pComment) {
         /* Create new split and add it */
         final MoneyWiseQIFSplitEvent mySplit = new MoneyWiseQIFSplitEvent(getFile(), pAccount, pClasses);
@@ -351,7 +351,7 @@ public class MoneyWiseQIFEvent
      * @param pComment the comment
      */
     protected void recordSplitRecord(final MoneyWiseQIFEventCategory pCategory,
-                                     final TethysMoney pAmount,
+                                     final OceanusMoney pAmount,
                                      final String pComment) {
         /* Create new split and add it */
         final MoneyWiseQIFSplitEvent mySplit = new MoneyWiseQIFSplitEvent(getFile(), pCategory);
@@ -371,7 +371,7 @@ public class MoneyWiseQIFEvent
      */
     protected void recordSplitRecord(final MoneyWiseQIFEventCategory pCategory,
                                      final List<MoneyWiseQIFClass> pClasses,
-                                     final TethysMoney pAmount,
+                                     final OceanusMoney pAmount,
                                      final String pComment) {
         /* Create new split and add it */
         final MoneyWiseQIFSplitEvent mySplit = new MoneyWiseQIFSplitEvent(getFile(), pCategory, pClasses);
@@ -408,7 +408,7 @@ public class MoneyWiseQIFEvent
          * Constructor.
          * @param pDate the Date
          */
-        protected MoneyWiseQIFEventDateLine(final TethysDate pDate) {
+        protected MoneyWiseQIFEventDateLine(final OceanusDate pDate) {
             /* Call super-constructor */
             super(pDate);
         }
@@ -544,7 +544,7 @@ public class MoneyWiseQIFEvent
          * Constructor.
          * @param pAmount the amount
          */
-        protected MoneyWiseQIFEventAmountLine(final TethysMoney pAmount) {
+        protected MoneyWiseQIFEventAmountLine(final OceanusMoney pAmount) {
             /* Call super-constructor */
             super(pAmount);
         }
@@ -558,7 +558,7 @@ public class MoneyWiseQIFEvent
          * Obtain Amount.
          * @return the amount
          */
-        public TethysMoney getAmount() {
+        public OceanusMoney getAmount() {
             return getMoney();
         }
     }

@@ -28,8 +28,8 @@ import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestType;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMac;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.TethysDataConverter;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.OceanusDataConverter;
 
 /**
  * Personalisation.
@@ -145,10 +145,10 @@ public class GordianPersonalisation {
         final byte[][] myHashes = new byte[myDigests.length][];
 
         /* Obtain configuration */
-        final byte[] myPersonalBytes = TethysDataConverter.stringToByteArray(BASE_PERSONAL);
+        final byte[] myPersonalBytes = OceanusDataConverter.stringToByteArray(BASE_PERSONAL);
         byte[] myPhraseBytes = pFactory.getSecuritySeed();
         if (myPhraseBytes == null) {
-            myPhraseBytes = TethysDataConverter.stringToByteArray(getHostName());
+            myPhraseBytes = OceanusDataConverter.stringToByteArray(getHostName());
         }
 
         /* Protect against exceptions */
@@ -278,7 +278,7 @@ public class GordianPersonalisation {
         int myVal = 0;
         for (int i = 0, myOffSet = pOffSet; i < Integer.BYTES; i++, myOffSet++) {
             myVal <<= Byte.SIZE;
-            myVal |= thePersonalisation[myOffSet] & TethysDataConverter.BYTE_MASK;
+            myVal |= thePersonalisation[myOffSet] & OceanusDataConverter.BYTE_MASK;
         }
 
         /* Return the value */
@@ -295,7 +295,7 @@ public class GordianPersonalisation {
                                   final byte[] pBaseSeed) {
         /* Build the 48-bit seed and return the seeded random */
         final long myPrefix = ((long) getPersonalisedInteger(pPrefixId)) << Short.SIZE;
-        final long myBaseSeed = Integer.toUnsignedLong(TethysDataConverter.byteArrayToInteger(pBaseSeed));
+        final long myBaseSeed = Integer.toUnsignedLong(OceanusDataConverter.byteArrayToInteger(pBaseSeed));
         final long mySeed = myPrefix ^ myBaseSeed;
         return new Random(mySeed);
     }

@@ -23,7 +23,7 @@ import java.util.function.BiPredicate;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
-import net.sourceforge.joceanus.tethys.OceanusException;
+import net.sourceforge.joceanus.oceanus.OceanusException;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.tethys.ui.api.table.TethysUITableColumn.TethysUITableCharArrayColumn;
 import net.sourceforge.joceanus.tethys.ui.api.table.TethysUITableColumn.TethysUITableDateColumn;

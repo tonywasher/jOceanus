@@ -29,8 +29,8 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 import javafx.util.StringConverter;
 
-import net.sourceforge.joceanus.tethys.date.TethysDate;
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
 import net.sourceforge.joceanus.tethys.ui.core.chart.TethysUICoreAreaChart;
 import net.sourceforge.joceanus.tethys.ui.core.factory.TethysUICoreFactory;
 import net.sourceforge.joceanus.tethys.ui.javafx.base.TethysUIFXNode;
@@ -91,7 +91,7 @@ public class TethysUIFXAreaChart
         myXAxis.setTickLabelFormatter(new StringConverter<>() {
             @Override
             public String toString(final Number pValue) {
-                return new TethysDate(LocalDate.ofEpochDay(pValue.longValue())).toString();
+                return new OceanusDate(LocalDate.ofEpochDay(pValue.longValue())).toString();
             }
 
             @Override
@@ -103,7 +103,7 @@ public class TethysUIFXAreaChart
         myYAxis.setTickLabelFormatter(new StringConverter<>() {
             @Override
             public String toString(final Number pValue) {
-                return getFormatter().formatMoney(new TethysMoney(pValue.toString()));
+                return getFormatter().formatMoney(new OceanusMoney(pValue.toString()));
             }
 
             @Override
@@ -246,7 +246,7 @@ public class TethysUIFXAreaChart
      * @param pDate the date
      * @return the epoch
      */
-    private static long dateToEpoch(final TethysDate pDate) {
+    private static long dateToEpoch(final OceanusDate pDate) {
         return pDate.getDate().toEpochDay();
     }
 }

@@ -29,14 +29,14 @@ import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetCell;
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetCellAddress;
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetCellPosition;
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetException;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.date.TethysDate;
-import net.sourceforge.joceanus.tethys.decimal.TethysDecimal;
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
-import net.sourceforge.joceanus.tethys.decimal.TethysPrice;
-import net.sourceforge.joceanus.tethys.decimal.TethysRate;
-import net.sourceforge.joceanus.tethys.decimal.TethysRatio;
-import net.sourceforge.joceanus.tethys.decimal.TethysUnits;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimal;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRate;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRatio;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusUnits;
 
 /**
  * Hold cells as a list of values.
@@ -324,7 +324,7 @@ class PrometheusOdfCellStore {
      * @param pIndex the index
      * @return the date
      */
-    TethysDate getDateValueAtIndex(final int pIndex) {
+    OceanusDate getDateValueAtIndex(final int pIndex) {
         if (isReadOnly) {
             final PrometheusCellElement myElement = getElementAtIndex(pIndex);
             return myElement == null
@@ -332,8 +332,8 @@ class PrometheusOdfCellStore {
                    : myElement.getDateValue();
         }
         final Object myValue = getValueAtIndex(pIndex);
-        return myValue instanceof TethysDate
-               ? (TethysDate) myValue
+        return myValue instanceof OceanusDate
+               ? (OceanusDate) myValue
                : null;
     }
 
@@ -381,7 +381,7 @@ class PrometheusOdfCellStore {
      * @return the rate
      * @throws OceanusException on error
      */
-    TethysRate getRateValueAtIndex(final int pIndex) throws OceanusException {
+    OceanusRate getRateValueAtIndex(final int pIndex) throws OceanusException {
         if (isReadOnly) {
             final PrometheusCellElement myElement = getElementAtIndex(pIndex);
             return myElement == null
@@ -389,8 +389,8 @@ class PrometheusOdfCellStore {
                    : myElement.getRateValue();
         }
         final Object myValue = getValueAtIndex(pIndex);
-        return myValue instanceof TethysRate
-               ? (TethysRate) myValue
+        return myValue instanceof OceanusRate
+               ? (OceanusRate) myValue
                : null;
     }
 
@@ -400,7 +400,7 @@ class PrometheusOdfCellStore {
      * @return the units
      * @throws OceanusException on error
      */
-    TethysUnits getUnitsValueAtIndex(final int pIndex) throws OceanusException {
+    OceanusUnits getUnitsValueAtIndex(final int pIndex) throws OceanusException {
         if (isReadOnly) {
             final PrometheusCellElement myElement = getElementAtIndex(pIndex);
             return myElement == null
@@ -408,8 +408,8 @@ class PrometheusOdfCellStore {
                    : myElement.getUnitsValue();
         }
         final Object myValue = getValueAtIndex(pIndex);
-        return myValue instanceof TethysUnits
-               ? (TethysUnits) myValue
+        return myValue instanceof OceanusUnits
+               ? (OceanusUnits) myValue
                : null;
     }
 
@@ -419,7 +419,7 @@ class PrometheusOdfCellStore {
      * @return the ratio
      * @throws OceanusException on error
      */
-    TethysRatio getRatioValueAtIndex(final int pIndex) throws OceanusException {
+    OceanusRatio getRatioValueAtIndex(final int pIndex) throws OceanusException {
         if (isReadOnly) {
             final PrometheusCellElement myElement = getElementAtIndex(pIndex);
             return myElement == null
@@ -427,8 +427,8 @@ class PrometheusOdfCellStore {
                    : myElement.getRatioValue();
         }
         final Object myValue = getValueAtIndex(pIndex);
-        return myValue instanceof TethysRatio
-               ? (TethysRatio) myValue
+        return myValue instanceof OceanusRatio
+               ? (OceanusRatio) myValue
                : null;
     }
 
@@ -438,7 +438,7 @@ class PrometheusOdfCellStore {
      * @return the rate
      * @throws OceanusException on error
      */
-    TethysMoney getMoneyValueAtIndex(final int pIndex) throws OceanusException {
+    OceanusMoney getMoneyValueAtIndex(final int pIndex) throws OceanusException {
         if (isReadOnly) {
             final PrometheusCellElement myElement = getElementAtIndex(pIndex);
             return myElement == null
@@ -446,8 +446,8 @@ class PrometheusOdfCellStore {
                    : myElement.getMoneyValue();
         }
         final Object myValue = getValueAtIndex(pIndex);
-        return myValue instanceof TethysMoney
-               ? (TethysMoney) myValue
+        return myValue instanceof OceanusMoney
+               ? (OceanusMoney) myValue
                : null;
     }
 
@@ -457,7 +457,7 @@ class PrometheusOdfCellStore {
      * @return the price
      * @throws OceanusException on error
      */
-    TethysPrice getPriceValueAtIndex(final int pIndex) throws OceanusException {
+    OceanusPrice getPriceValueAtIndex(final int pIndex) throws OceanusException {
         if (isReadOnly) {
             final PrometheusCellElement myElement = getElementAtIndex(pIndex);
             return myElement == null
@@ -465,8 +465,8 @@ class PrometheusOdfCellStore {
                    : myElement.getPriceValue();
         }
         final Object myValue = getValueAtIndex(pIndex);
-        return myValue instanceof TethysPrice
-               ? (TethysPrice) myValue
+        return myValue instanceof OceanusPrice
+               ? (OceanusPrice) myValue
                : null;
     }
 
@@ -677,14 +677,14 @@ class PrometheusOdfCellStore {
             populateBoolean(pElement, (Boolean) pValue);
         } else if (pValue instanceof Number) {
             populateNumber(pElement, (Number) pValue);
-        } else if (pValue instanceof TethysDate) {
-            populateDate(pElement, (TethysDate) pValue);
+        } else if (pValue instanceof OceanusDate) {
+            populateDate(pElement, (OceanusDate) pValue);
         } else if (pValue instanceof String) {
             populateString(pElement, pIndex, (String) pValue);
-        } else if (pValue instanceof TethysMoney) {
-            populateMonetary(pElement, pIndex, (TethysMoney) pValue);
-        } else if (pValue instanceof TethysDecimal) {
-            populateDecimal(pElement, (TethysDecimal) pValue);
+        } else if (pValue instanceof OceanusMoney) {
+            populateMonetary(pElement, pIndex, (OceanusMoney) pValue);
+        } else if (pValue instanceof OceanusDecimal) {
+            populateDecimal(pElement, (OceanusDecimal) pValue);
         }
     }
 
@@ -707,7 +707,7 @@ class PrometheusOdfCellStore {
      * @param pValue the date
      */
     private void populateDate(final Element pElement,
-                              final TethysDate pValue) {
+                              final OceanusDate pValue) {
         /* Set value type and value */
         theParser.setAttribute(pElement, PrometheusOdfOfficeItem.VALUETYPE, PrometheusOdfValue.DATE);
         theParser.setAttribute(pElement, PrometheusOdfOfficeItem.DATEVALUE, theOasisRow.formatValue(pValue));
@@ -757,7 +757,7 @@ class PrometheusOdfCellStore {
      */
     private void populateMonetary(final Element pElement,
                                   final int pIndex,
-                                  final TethysMoney pValue) {
+                                  final OceanusMoney pValue) {
         /* Use decimal style if this is not an alt value */
         final Boolean isAlt = getAlternateAtIndex(pIndex);
         if (isAlt == null) {
@@ -779,10 +779,10 @@ class PrometheusOdfCellStore {
      * @param pValue the string
      */
     private void populateDecimal(final Element pElement,
-                                 final TethysDecimal pValue) {
+                                 final OceanusDecimal pValue) {
         /* Set value type and value */
         theParser.setAttribute(pElement, PrometheusOdfOfficeItem.VALUETYPE,
-                pValue instanceof TethysRate
+                pValue instanceof OceanusRate
                                         ? PrometheusOdfValue.PERCENTAGE
                                         : PrometheusOdfValue.FLOAT);
         theParser.setAttribute(pElement, PrometheusOdfOfficeItem.VALUE, pValue.doubleValue());
@@ -863,10 +863,10 @@ class PrometheusOdfCellStore {
             case PERCENTAGE:
                 String myValue = theParser.getAttribute(pElement, PrometheusOdfOfficeItem.VALUE);
                 String myText = pElement.getTextContent();
-                return new PrometheusCellElement(this, pIndex, myType, parseValue(pIndex, myValue, TethysRate.class), myText);
+                return new PrometheusCellElement(this, pIndex, myType, parseValue(pIndex, myValue, OceanusRate.class), myText);
             case DATE:
                 myValue = theParser.getAttribute(pElement, PrometheusOdfOfficeItem.DATEVALUE);
-                return new PrometheusCellElement(this, pIndex, myType, parseValue(pIndex, myValue, TethysDate.class));
+                return new PrometheusCellElement(this, pIndex, myType, parseValue(pIndex, myValue, OceanusDate.class));
             case FLOAT:
                 myValue = theParser.getAttribute(pElement, PrometheusOdfOfficeItem.VALUE);
                 myText = pElement.getTextContent();
@@ -1085,9 +1085,9 @@ class PrometheusOdfCellStore {
          * Access the value as Date.
          * @return the date
          */
-        TethysDate getDateValue() {
+        OceanusDate getDateValue() {
             return PrometheusOdfValue.DATE.equals(theValueType)
-                   ? (TethysDate) theValue
+                   ? (OceanusDate) theValue
                    : null;
         }
 
@@ -1118,12 +1118,12 @@ class PrometheusOdfCellStore {
          * @return the rate
          * @throws OceanusException on error
          */
-        TethysRate getRateValue() throws OceanusException {
+        OceanusRate getRateValue() throws OceanusException {
             switch (theValueType) {
                 case PERCENTAGE:
-                    return (TethysRate) theValue;
+                    return (OceanusRate) theValue;
                 case FLOAT:
-                    return theStore.parseValue(theIndex, (String) theValue, TethysRate.class);
+                    return theStore.parseValue(theIndex, (String) theValue, OceanusRate.class);
                 default:
                     return null;
             }
@@ -1134,9 +1134,9 @@ class PrometheusOdfCellStore {
          * @return the units
          * @throws OceanusException on error
          */
-        TethysUnits getUnitsValue() throws OceanusException {
+        OceanusUnits getUnitsValue() throws OceanusException {
             return PrometheusOdfValue.FLOAT.equals(theValueType)
-                   ? theStore.parseValue(theIndex, (String) theValue, TethysUnits.class)
+                   ? theStore.parseValue(theIndex, (String) theValue, OceanusUnits.class)
                 : null;
         }
 
@@ -1145,9 +1145,9 @@ class PrometheusOdfCellStore {
          * @return the ratio
          * @throws OceanusException on error
          */
-        TethysRatio getRatioValue() throws OceanusException {
+        OceanusRatio getRatioValue() throws OceanusException {
             return PrometheusOdfValue.FLOAT.equals(theValueType)
-                   ? theStore.parseValue(theIndex, (String) theValue, TethysRatio.class)
+                   ? theStore.parseValue(theIndex, (String) theValue, OceanusRatio.class)
                    : null;
         }
 
@@ -1156,12 +1156,12 @@ class PrometheusOdfCellStore {
          * @return the money
          * @throws OceanusException on error
          */
-        TethysMoney getMoneyValue() throws OceanusException {
+        OceanusMoney getMoneyValue() throws OceanusException {
             switch (theValueType) {
                 case CURRENCY:
-                    return theStore.parseCurrency(theIndex, (Double) theValue, theCurrency, TethysMoney.class);
+                    return theStore.parseCurrency(theIndex, (Double) theValue, theCurrency, OceanusMoney.class);
                 case FLOAT:
-                    return theStore.parseValue(theIndex, theText, TethysMoney.class);
+                    return theStore.parseValue(theIndex, theText, OceanusMoney.class);
                 default:
                     return null;
             }
@@ -1172,12 +1172,12 @@ class PrometheusOdfCellStore {
          * @return the price
          * @throws OceanusException on error
          */
-        TethysPrice getPriceValue() throws OceanusException {
+        OceanusPrice getPriceValue() throws OceanusException {
             switch (theValueType) {
                 case CURRENCY:
-                    return theStore.parseCurrency(theIndex, (Double) theValue, theCurrency, TethysPrice.class);
+                    return theStore.parseCurrency(theIndex, (Double) theValue, theCurrency, OceanusPrice.class);
                 case FLOAT:
-                    return theStore.parseValue(theIndex, theText, TethysPrice.class);
+                    return theStore.parseValue(theIndex, theText, OceanusPrice.class);
                 default:
                     return null;
             }

@@ -36,12 +36,12 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 
-import net.sourceforge.joceanus.tethys.decimal.TethysDecimal;
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
-import net.sourceforge.joceanus.tethys.decimal.TethysPrice;
-import net.sourceforge.joceanus.tethys.decimal.TethysRate;
-import net.sourceforge.joceanus.tethys.decimal.TethysRatio;
-import net.sourceforge.joceanus.tethys.decimal.TethysUnits;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimal;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRate;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRatio;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusUnits;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.tethys.ui.api.field.TethysUIFieldAttribute;
 import net.sourceforge.joceanus.tethys.ui.core.factory.TethysUICoreFactory;
@@ -697,7 +697,7 @@ public abstract class TethysUIFXDataTextField<T>
      * FXRawDecimalTextField class.
      */
     public static class TethysUIFXRawDecimalTextField
-            extends TethysUIFXTextEditField<TethysDecimal, TextField>
+            extends TethysUIFXTextEditField<OceanusDecimal, TextField>
             implements TethysUIRawDecimalEditField {
         /**
          * Constructor.
@@ -725,7 +725,7 @@ public abstract class TethysUIFXDataTextField<T>
      *
      * @param <T> the data type
      */
-    protected abstract static class TethysUIFXCurrencyTextFieldBase<T extends TethysMoney>
+    protected abstract static class TethysUIFXCurrencyTextFieldBase<T extends OceanusMoney>
             extends TethysUIFXTextEditField<T, TextField>
             implements TethysUICurrencyEditField<T> {
         /**
@@ -755,7 +755,7 @@ public abstract class TethysUIFXDataTextField<T>
      * FXMoneyTextField class.
      */
     public static class TethysUIFXMoneyTextField
-            extends TethysUIFXCurrencyTextFieldBase<TethysMoney>
+            extends TethysUIFXCurrencyTextFieldBase<OceanusMoney>
             implements TethysUIMoneyEditField {
         /**
          * Constructor.
@@ -771,7 +771,7 @@ public abstract class TethysUIFXDataTextField<T>
      * FXPriceTextField class.
      */
     public static class TethysUIFXPriceTextField
-            extends TethysUIFXCurrencyTextFieldBase<TethysPrice>
+            extends TethysUIFXCurrencyTextFieldBase<OceanusPrice>
             implements TethysUIPriceEditField {
         /**
          * Constructor.
@@ -787,7 +787,7 @@ public abstract class TethysUIFXDataTextField<T>
      * FXRateTextField class.
      */
     public static class TethysUIFXRateTextField
-            extends TethysUIFXTextEditField<TethysRate, TextField>
+            extends TethysUIFXTextEditField<OceanusRate, TextField>
             implements TethysUIRateEditField {
         /**
          * Constructor.
@@ -804,7 +804,7 @@ public abstract class TethysUIFXDataTextField<T>
      * FXUnitsTextField class.
      */
     public static class TethysUIFXUnitsTextField
-            extends TethysUIFXTextEditField<TethysUnits, TextField>
+            extends TethysUIFXTextEditField<OceanusUnits, TextField>
             implements TethysUIUnitsEditField {
         /**
          * Constructor.
@@ -821,7 +821,7 @@ public abstract class TethysUIFXDataTextField<T>
      * FXRatioTextField class.
      */
     public static class TethysUIFXRatioTextField
-            extends TethysUIFXTextEditField<TethysRatio, TextField>
+            extends TethysUIFXTextEditField<OceanusRatio, TextField>
             implements TethysUIRatioEditField {
         /**
          * Constructor.

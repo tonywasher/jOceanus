@@ -19,9 +19,9 @@ package net.sourceforge.joceanus.metis.viewer;
 import net.sourceforge.joceanus.metis.MetisIOException;
 import net.sourceforge.joceanus.metis.data.MetisDataDelta;
 import net.sourceforge.joceanus.metis.data.MetisDataDifference;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.logger.TethysLogManager;
-import net.sourceforge.joceanus.tethys.logger.TethysLogger;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.logger.OceanusLogManager;
+import net.sourceforge.joceanus.oceanus.logger.OceanusLogger;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
 
 import org.w3c.dom.Document;
@@ -44,7 +44,7 @@ public class MetisViewerBuilder {
     /**
      * Logger.
      */
-    private static final TethysLogger LOGGER = TethysLogManager.getLogger(MetisViewerBuilder.class);
+    private static final OceanusLogger LOGGER = OceanusLogManager.getLogger(MetisViewerBuilder.class);
 
     /**
      * Wrap for hex string.

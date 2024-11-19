@@ -24,11 +24,11 @@ import net.sourceforge.joceanus.metis.field.MetisFieldItem;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.metis.field.MetisFieldVersionValues;
 import net.sourceforge.joceanus.metis.field.MetisFieldVersionedItem;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.event.TethysEvent;
-import net.sourceforge.joceanus.tethys.event.TethysEventManager;
-import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar;
-import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.event.OceanusEvent;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.TethysEventProvider;
 
 /**
  * Metis VersionedList Edit Session.
@@ -53,7 +53,7 @@ public class MetisListEditSession
     /**
      * The Event Manager.
      */
-    private final TethysEventManager<MetisListEvent> theEventManager;
+    private final OceanusEventManager<MetisListEvent> theEventManager;
 
     /**
      * The ListSet.
@@ -95,14 +95,14 @@ public class MetisListEditSession
         theNewVersion = -1;
 
         /* Create the event manager */
-        theEventManager = new TethysEventManager<>();
+        theEventManager = new OceanusEventManager<>();
 
         /* Create the active lists */
         theSessionLists = new ArrayList<>();
         theVersionLists = new ArrayList<>();
 
         /* Listen to list events */
-        final TethysEventRegistrar<MetisListEvent> myRegistrar = theListSet.getEventRegistrar();
+        final OceanusEventRegistrar<MetisListEvent> myRegistrar = theListSet.getEventRegistrar();
         myRegistrar.addEventListener(this::handleListSetEvent);
     }
 
@@ -112,7 +112,7 @@ public class MetisListEditSession
     }
 
     @Override
-    public TethysEventRegistrar<MetisListEvent> getEventRegistrar() {
+    public OceanusEventRegistrar<MetisListEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -769,7 +769,7 @@ public class MetisListEditSession
      * Handle listSetEvent.
      * @param pEvent the event
      */
-    private void handleListSetEvent(final TethysEvent<MetisListEvent> pEvent) {
+    private void handleListSetEvent(final OceanusEvent<MetisListEvent> pEvent) {
         if (MetisListEvent.REFRESH.equals(pEvent.getEventId())) {
             handleRefreshEvent();
         } else {
@@ -798,7 +798,7 @@ public class MetisListEditSession
      * Handle standard Event.
      * @param pEvent the event
      */
-    private void handleStandardEvent(final TethysEvent<MetisListEvent> pEvent) {
+    private void handleStandardEvent(final OceanusEvent<MetisListEvent> pEvent) {
         /* Access the event */
         final MetisListSetChange myChanges = pEvent.getDetails(MetisListSetChange.class);
 

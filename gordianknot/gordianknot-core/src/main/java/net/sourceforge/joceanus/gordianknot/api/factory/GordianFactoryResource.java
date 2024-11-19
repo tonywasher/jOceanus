@@ -20,13 +20,13 @@ import java.util.EnumMap;
 import java.util.Map;
 import java.util.ResourceBundle;
 
-import net.sourceforge.joceanus.tethys.resource.TethysBundleId;
-import net.sourceforge.joceanus.tethys.resource.TethysBundleLoader;
+import net.sourceforge.joceanus.oceanus.resource.OceanusBundleId;
+import net.sourceforge.joceanus.oceanus.resource.OceanusBundleLoader;
 
 /**
  * Resource IDs for Factory package.
  */
-public enum GordianFactoryResource implements TethysBundleId {
+public enum GordianFactoryResource implements OceanusBundleId {
     /**
      * Factory BC.
      */
@@ -40,12 +40,12 @@ public enum GordianFactoryResource implements TethysBundleId {
     /**
      * The Factory Map.
      */
-    private static final Map<GordianFactoryType, TethysBundleId> FACTORY_MAP = buildFactoryMap();
+    private static final Map<GordianFactoryType, OceanusBundleId> FACTORY_MAP = buildFactoryMap();
 
     /**
      * The Resource Loader.
      */
-    private static final TethysBundleLoader LOADER = TethysBundleLoader.getLoader(GordianFactory.class.getCanonicalName(),
+    private static final OceanusBundleLoader LOADER = OceanusBundleLoader.getLoader(GordianFactory.class.getCanonicalName(),
             ResourceBundle::getBundle);
 
     /**
@@ -92,9 +92,9 @@ public enum GordianFactoryResource implements TethysBundleId {
      * Build factory map.
      * @return the map
      */
-    private static Map<GordianFactoryType, TethysBundleId> buildFactoryMap() {
+    private static Map<GordianFactoryType, OceanusBundleId> buildFactoryMap() {
         /* Create the map and return it */
-        final Map<GordianFactoryType, TethysBundleId> myMap = new EnumMap<>(GordianFactoryType.class);
+        final Map<GordianFactoryType, OceanusBundleId> myMap = new EnumMap<>(GordianFactoryType.class);
         myMap.put(GordianFactoryType.BC, FACTORY_BC);
         myMap.put(GordianFactoryType.JCA, FACTORY_JCA);
         return myMap;
@@ -105,7 +105,7 @@ public enum GordianFactoryResource implements TethysBundleId {
      * @param pFactoryType the factoryType
      * @return the resource key
      */
-    protected static TethysBundleId getKeyForFactoryType(final GordianFactoryType pFactoryType) {
-        return TethysBundleLoader.getKeyForEnum(FACTORY_MAP, pFactoryType);
+    protected static OceanusBundleId getKeyForFactoryType(final GordianFactoryType pFactoryType) {
+        return OceanusBundleLoader.getKeyForEnum(FACTORY_MAP, pFactoryType);
     }
 }

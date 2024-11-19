@@ -30,14 +30,14 @@ import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetRow;
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetSheet;
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetView;
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetWorkBook;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.date.TethysDate;
-import net.sourceforge.joceanus.tethys.decimal.TethysDecimal;
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
-import net.sourceforge.joceanus.tethys.decimal.TethysPrice;
-import net.sourceforge.joceanus.tethys.decimal.TethysRate;
-import net.sourceforge.joceanus.tethys.decimal.TethysRatio;
-import net.sourceforge.joceanus.tethys.decimal.TethysUnits;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimal;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRate;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRatio;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusUnits;
 import net.sourceforge.joceanus.tethys.ui.api.thread.TethysUIThreadStatusReport;
 
 /**
@@ -502,7 +502,7 @@ public abstract class PrometheusSheetDataItem<T extends PrometheusDataItem> {
      * @return the date
      * @throws OceanusException on error
      */
-    protected TethysDate loadDate(final int pOffset) throws OceanusException {
+    protected OceanusDate loadDate(final int pOffset) throws OceanusException {
         /* Access the cells by reference */
         final PrometheusSheetCell myCell = theActiveView.getRowCellByIndex(theActiveRow, pOffset);
 
@@ -518,7 +518,7 @@ public abstract class PrometheusSheetDataItem<T extends PrometheusDataItem> {
      * @return the money
      * @throws OceanusException on error
      */
-    protected TethysMoney loadMoney(final int pOffset) throws OceanusException {
+    protected OceanusMoney loadMoney(final int pOffset) throws OceanusException {
         /* Access the cells by reference */
         final PrometheusSheetCell myCell = theActiveView.getRowCellByIndex(theActiveRow, pOffset);
 
@@ -534,7 +534,7 @@ public abstract class PrometheusSheetDataItem<T extends PrometheusDataItem> {
      * @return the price
      * @throws OceanusException on error
      */
-    protected TethysPrice loadPrice(final int pOffset) throws OceanusException {
+    protected OceanusPrice loadPrice(final int pOffset) throws OceanusException {
         /* Access the cells by reference */
         final PrometheusSheetCell myCell = theActiveView.getRowCellByIndex(theActiveRow, pOffset);
 
@@ -550,7 +550,7 @@ public abstract class PrometheusSheetDataItem<T extends PrometheusDataItem> {
      * @return the rate
      * @throws OceanusException on error
      */
-    protected TethysRate loadRate(final int pOffset) throws OceanusException {
+    protected OceanusRate loadRate(final int pOffset) throws OceanusException {
         /* Access the cells by reference */
         final PrometheusSheetCell myCell = theActiveView.getRowCellByIndex(theActiveRow, pOffset);
 
@@ -566,7 +566,7 @@ public abstract class PrometheusSheetDataItem<T extends PrometheusDataItem> {
      * @return the units
      * @throws OceanusException on error
      */
-    protected TethysUnits loadUnits(final int pOffset) throws OceanusException {
+    protected OceanusUnits loadUnits(final int pOffset) throws OceanusException {
         /* Access the cells by reference */
         final PrometheusSheetCell myCell = theActiveView.getRowCellByIndex(theActiveRow, pOffset);
 
@@ -582,7 +582,7 @@ public abstract class PrometheusSheetDataItem<T extends PrometheusDataItem> {
      * @return the ratio
      * @throws OceanusException on error
      */
-    protected TethysRatio loadRatio(final int pOffset) throws OceanusException {
+    protected OceanusRatio loadRatio(final int pOffset) throws OceanusException {
         /* Access the cells by reference */
         final PrometheusSheetCell myCell = theActiveView.getRowCellByIndex(theActiveRow, pOffset);
 
@@ -693,7 +693,7 @@ public abstract class PrometheusSheetDataItem<T extends PrometheusDataItem> {
      * @throws OceanusException on error
      */
     protected void writeDate(final int pOffset,
-                             final TethysDate pValue) throws OceanusException {
+                             final OceanusDate pValue) throws OceanusException {
         /* If we have non-null value */
         if (pValue != null) {
             /* Create the cell and set its value */
@@ -709,7 +709,7 @@ public abstract class PrometheusSheetDataItem<T extends PrometheusDataItem> {
      * @throws OceanusException on error
      */
     protected void writeDecimal(final int pOffset,
-                                final TethysDecimal pValue) throws OceanusException {
+                                final OceanusDecimal pValue) throws OceanusException {
         /* If we have non-null value */
         if (pValue != null) {
             /* Create the cell and set its value */

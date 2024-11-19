@@ -18,14 +18,14 @@ package net.sourceforge.joceanus.moneywise.threads;
 
 import java.util.ResourceBundle;
 
-import net.sourceforge.joceanus.tethys.resource.TethysBundleId;
-import net.sourceforge.joceanus.tethys.resource.TethysBundleLoader;
+import net.sourceforge.joceanus.oceanus.resource.OceanusBundleId;
+import net.sourceforge.joceanus.oceanus.resource.OceanusBundleLoader;
 
 /**
  * Resource IDs for MoneyWise Threads.
  */
 public enum MoneyWiseThreadResource
-        implements TethysBundleId {
+        implements OceanusBundleId {
     /**
      * LoadArchive.
      */
@@ -39,7 +39,7 @@ public enum MoneyWiseThreadResource
     /**
      * The Resource Loader.
      */
-    private static final TethysBundleLoader LOADER = TethysBundleLoader.getLoader(MoneyWiseThreadResource.class.getCanonicalName(),
+    private static final OceanusBundleLoader LOADER = OceanusBundleLoader.getLoader(MoneyWiseThreadResource.class.getCanonicalName(),
             ResourceBundle::getBundle);
 
     /**

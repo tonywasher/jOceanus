@@ -27,13 +27,13 @@ import net.sourceforge.joceanus.prometheus.data.PrometheusDataList.PrometheusDat
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataResource;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataSet;
 import net.sourceforge.joceanus.prometheus.data.PrometheusListKey;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.event.TethysEventManager;
-import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar;
-import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar.TethysEventProvider;
-import net.sourceforge.joceanus.tethys.logger.TethysLogManager;
-import net.sourceforge.joceanus.tethys.logger.TethysLogger;
-import net.sourceforge.joceanus.tethys.profile.TethysProfile;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.oceanus.logger.OceanusLogManager;
+import net.sourceforge.joceanus.oceanus.logger.OceanusLogger;
+import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
 
 import java.util.Iterator;
@@ -61,12 +61,12 @@ public class PrometheusEditSet
     /**
      * Logger.
      */
-    private static final TethysLogger LOGGER = TethysLogManager.getLogger(PrometheusEditSet.class);
+    private static final OceanusLogger LOGGER = OceanusLogManager.getLogger(PrometheusEditSet.class);
 
     /**
      * The Event Manager.
      */
-    private final TethysEventManager<PrometheusDataEvent> theEventManager;
+    private final OceanusEventManager<PrometheusDataEvent> theEventManager;
 
     /**
      * Report fields.
@@ -103,7 +103,7 @@ public class PrometheusEditSet
         theControl = pControl;
 
         /* Create event manager */
-        theEventManager = new TethysEventManager<>();
+        theEventManager = new OceanusEventManager<>();
 
         /* Create local fields */
         theLocalFields = MetisFieldSet.newFieldSet(this);
@@ -124,7 +124,7 @@ public class PrometheusEditSet
     }
 
     @Override
-    public TethysEventRegistrar<PrometheusDataEvent> getEventRegistrar() {
+    public OceanusEventRegistrar<PrometheusDataEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -243,8 +243,8 @@ public class PrometheusEditSet
      */
     public void incrementVersion() {
         /* Obtain the active profile */
-        final TethysProfile myTask = theControl.getActiveTask();
-        final TethysProfile mySubTask = myTask == null
+        final OceanusProfile myTask = theControl.getActiveTask();
+        final OceanusProfile mySubTask = myTask == null
                 ? theControl.getNewProfile("incrementVersion")
                 : myTask.startTask("incrementVersion");
 
@@ -281,8 +281,8 @@ public class PrometheusEditSet
      */
     private void rewindToVersion(final int pVersion) {
         /* Obtain the active profile */
-        final TethysProfile myTask = theControl.getActiveTask();
-        TethysProfile mySubTask = myTask.startTask("reWindToVersion");
+        final OceanusProfile myTask = theControl.getActiveTask();
+        OceanusProfile mySubTask = myTask.startTask("reWindToVersion");
 
         /* Record the version */
         theVersion = pVersion;
@@ -371,8 +371,8 @@ public class PrometheusEditSet
      */
     private void applyChanges() {
         /* Obtain the active profile */
-        final TethysProfile myTask = theControl.getActiveTask();
-        final TethysProfile mySubTask = myTask.startTask("applyChanges");
+        final OceanusProfile myTask = theControl.getActiveTask();
+        final OceanusProfile mySubTask = myTask.startTask("applyChanges");
 
         /* Validate the changes */
         validate();
@@ -426,8 +426,8 @@ public class PrometheusEditSet
      */
     private boolean prepareChanges() {
         /* Obtain the active profile */
-        final TethysProfile myTask = theControl.getActiveTask();
-        final TethysProfile mySubTask = myTask.startTask("prepareChanges");
+        final OceanusProfile myTask = theControl.getActiveTask();
+        final OceanusProfile mySubTask = myTask.startTask("prepareChanges");
         boolean bSuccess = true;
 
         /* Protect against exceptions */
@@ -456,8 +456,8 @@ public class PrometheusEditSet
      */
     private void commitChanges() {
         /* Obtain the active profile */
-        final TethysProfile myTask = theControl.getActiveTask();
-        final TethysProfile mySubTask = myTask.startTask("commitChanges");
+        final OceanusProfile myTask = theControl.getActiveTask();
+        final OceanusProfile mySubTask = myTask.startTask("commitChanges");
 
         /* Loop through the items in the list */
         for (PrometheusEditEntry<?> myEntry : theMap.values()) {
@@ -481,8 +481,8 @@ public class PrometheusEditSet
      */
     private void rollBackChanges() {
         /* Obtain the active profile */
-        final TethysProfile myTask = theControl.getActiveTask();
-        final TethysProfile mySubTask = myTask.startTask("rollBackChanges");
+        final OceanusProfile myTask = theControl.getActiveTask();
+        final OceanusProfile mySubTask = myTask.startTask("rollBackChanges");
 
         /* Loop through the items in the list */
         for (PrometheusEditEntry<?> myEntry : theMap.values()) {
@@ -531,8 +531,8 @@ public class PrometheusEditSet
      */
     public void validate() {
         /* Obtain the active profile */
-        final TethysProfile myTask = theControl.getActiveTask();
-        final TethysProfile mySubTask = myTask.startTask("validate");
+        final OceanusProfile myTask = theControl.getActiveTask();
+        final OceanusProfile mySubTask = myTask.startTask("validate");
 
         /* Loop through the items in the list */
         for (PrometheusEditEntry<?> myEntry : theMap.values()) {
@@ -584,7 +584,7 @@ public class PrometheusEditSet
     public void processCommand(final PrometheusUIEvent pCmd,
                                final MetisErrorPanel pError) {
         /* Create a new profile */
-        final TethysProfile myTask = theControl.getNewProfile("EditCommand");
+        final OceanusProfile myTask = theControl.getNewProfile("EditCommand");
 
         /* Switch on command */
         switch (pCmd) {
@@ -623,7 +623,7 @@ public class PrometheusEditSet
                                    final int pVersion,
                                    final MetisErrorPanel pError) {
         /* Create a new profile */
-        final TethysProfile myTask = theControl.getNewProfile("ItemCommand");
+        final OceanusProfile myTask = theControl.getNewProfile("ItemCommand");
 
         /* Switch on command */
         switch (pCmd) {
@@ -658,8 +658,8 @@ public class PrometheusEditSet
      */
     private void condenseHistory(final int pNewVersion) {
         /* Obtain the active profile */
-        final TethysProfile myTask = theControl.getActiveTask();
-        final TethysProfile mySubTask = myTask.startTask("condenseHistory");
+        final OceanusProfile myTask = theControl.getActiveTask();
+        final OceanusProfile mySubTask = myTask.startTask("condenseHistory");
 
         /* Loop through the items in the list */
         for (PrometheusEditEntry<?> myEntry : theMap.values()) {
@@ -669,7 +669,7 @@ public class PrometheusEditSet
             /* Condense history in the list */
             if (myDataList != null) {
                 /* Note the new step */
-                final TethysProfile myListTask = mySubTask.startTask(myDataList.listName());
+                final OceanusProfile myListTask = mySubTask.startTask(myDataList.listName());
                 myListTask.startTask("Condense");
 
                 /* Condense history */

@@ -25,8 +25,8 @@ import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrency;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrencyClass;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseSecurityClass;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseSecurityType;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.decimal.TethysPrice;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
 
 /**
  * Security Builder.
@@ -75,7 +75,7 @@ public class MoneyWiseSecurityBuilder {
     /**
      * The OptionPrice.
      */
-    private TethysPrice theOptionPrice;
+    private OceanusPrice theOptionPrice;
 
     /**
      * Constructor.
@@ -213,7 +213,7 @@ public class MoneyWiseSecurityBuilder {
      * @param pPrice the optionPrice of the security.
      * @return the builder
      */
-    public MoneyWiseSecurityBuilder optionPrice(final TethysPrice pPrice) {
+    public MoneyWiseSecurityBuilder optionPrice(final OceanusPrice pPrice) {
         theOptionPrice = pPrice;
         return this;
     }

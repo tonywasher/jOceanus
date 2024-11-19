@@ -16,8 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.api.digest;
 
-import net.sourceforge.joceanus.tethys.resource.TethysBundleId;
-import net.sourceforge.joceanus.tethys.resource.TethysBundleLoader;
+import net.sourceforge.joceanus.oceanus.resource.OceanusBundleId;
+import net.sourceforge.joceanus.oceanus.resource.OceanusBundleLoader;
 
 import java.util.EnumMap;
 import java.util.Map;
@@ -26,7 +26,7 @@ import java.util.ResourceBundle;
 /**
  * Resource IDs for Digests package.
  */
-public enum GordianDigestResource implements TethysBundleId {
+public enum GordianDigestResource implements OceanusBundleId {
     /**
      * Digest SHA2.
      */
@@ -170,12 +170,12 @@ public enum GordianDigestResource implements TethysBundleId {
     /**
      * The Digest Map.
      */
-    private static final Map<GordianDigestType, TethysBundleId> DIGEST_MAP = buildDigestMap();
+    private static final Map<GordianDigestType, OceanusBundleId> DIGEST_MAP = buildDigestMap();
 
     /**
      * The Resource Loader.
      */
-    private static final TethysBundleLoader LOADER = TethysBundleLoader.getLoader(GordianDigest.class.getCanonicalName(),
+    private static final OceanusBundleLoader LOADER = OceanusBundleLoader.getLoader(GordianDigest.class.getCanonicalName(),
             ResourceBundle::getBundle);
 
     /**
@@ -222,9 +222,9 @@ public enum GordianDigestResource implements TethysBundleId {
      * Build digest map.
      * @return the map
      */
-    private static Map<GordianDigestType, TethysBundleId> buildDigestMap() {
+    private static Map<GordianDigestType, OceanusBundleId> buildDigestMap() {
         /* Create the map and return it */
-        final Map<GordianDigestType, TethysBundleId> myMap = new EnumMap<>(GordianDigestType.class);
+        final Map<GordianDigestType, OceanusBundleId> myMap = new EnumMap<>(GordianDigestType.class);
         myMap.put(GordianDigestType.SHA2, DIGEST_SHA2);
         myMap.put(GordianDigestType.TIGER, DIGEST_TIGER);
         myMap.put(GordianDigestType.WHIRLPOOL, DIGEST_WHIRLPOOL);
@@ -260,7 +260,7 @@ public enum GordianDigestResource implements TethysBundleId {
      * @param pDigest the DigestType
      * @return the resource key
      */
-    protected static TethysBundleId getKeyForDigest(final GordianDigestType pDigest) {
-        return TethysBundleLoader.getKeyForEnum(DIGEST_MAP, pDigest);
+    protected static OceanusBundleId getKeyForDigest(final GordianDigestType pDigest) {
+        return OceanusBundleLoader.getKeyForEnum(DIGEST_MAP, pDigest);
     }
 }

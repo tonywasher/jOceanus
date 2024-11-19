@@ -52,8 +52,8 @@ import net.sourceforge.joceanus.prometheus.data.PrometheusDataValues;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataValues.PrometheusInfoItem;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataValues.PrometheusInfoSetItem;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.decimal.TethysPrice;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
 
 /**
@@ -242,9 +242,9 @@ public class MoneyWiseSecurity
      * Obtain OptionPrice.
      * @return the price
      */
-    public TethysPrice getOptionPrice() {
+    public OceanusPrice getOptionPrice() {
         return hasInfoSet
-                ? theInfoSet.getValue(MoneyWiseAccountInfoClass.OPTIONPRICE, TethysPrice.class)
+                ? theInfoSet.getValue(MoneyWiseAccountInfoClass.OPTIONPRICE, OceanusPrice.class)
                 : null;
     }
 
@@ -614,7 +614,7 @@ public class MoneyWiseSecurity
      * @param pPrice the new price
      * @throws OceanusException on error
      */
-    public void setOptionPrice(final TethysPrice pPrice) throws OceanusException {
+    public void setOptionPrice(final OceanusPrice pPrice) throws OceanusException {
         setInfoSetValue(MoneyWiseAccountInfoClass.OPTIONPRICE, pPrice);
     }
 

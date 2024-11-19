@@ -20,9 +20,9 @@ import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.values.MoneyWiseXAnalysisAccountAttr;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.values.MoneyWiseXAnalysisAccountValues;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePortfolio;
-import net.sourceforge.joceanus.tethys.date.TethysDate;
-import net.sourceforge.joceanus.tethys.date.TethysDateRange;
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
 
 /**
  * The Portfolio Cash Bucket class.
@@ -64,7 +64,7 @@ public final class MoneyWiseXAnalysisPortfolioCashBucket
      */
     MoneyWiseXAnalysisPortfolioCashBucket(final MoneyWiseXAnalysis pAnalysis,
                                           final MoneyWiseXAnalysisPortfolioCashBucket pBase,
-                                          final TethysDate pDate) {
+                                          final OceanusDate pDate) {
         /* Call super-constructor */
         super(pAnalysis, pBase, pDate);
     }
@@ -77,7 +77,7 @@ public final class MoneyWiseXAnalysisPortfolioCashBucket
      */
     MoneyWiseXAnalysisPortfolioCashBucket(final MoneyWiseXAnalysis pAnalysis,
                                           final MoneyWiseXAnalysisPortfolioCashBucket pBase,
-                                          final TethysDateRange pRange) {
+                                          final OceanusDateRange pRange) {
         /* Call super-constructor */
         super(pAnalysis, pBase, pRange);
     }
@@ -112,9 +112,9 @@ public final class MoneyWiseXAnalysisPortfolioCashBucket
     private static void addValues(final MoneyWiseXAnalysisAccountValues pTotals,
                                   final MoneyWiseXAnalysisAccountValues pSource) {
         /* Add valuation values */
-        TethysMoney myValue = pTotals.getMoneyValue(MoneyWiseXAnalysisAccountAttr.VALUATION);
-        myValue = new TethysMoney(myValue);
-        final TethysMoney mySrcValue = pSource.getMoneyValue(MoneyWiseXAnalysisAccountAttr.VALUATION);
+        OceanusMoney myValue = pTotals.getMoneyValue(MoneyWiseXAnalysisAccountAttr.VALUATION);
+        myValue = new OceanusMoney(myValue);
+        final OceanusMoney mySrcValue = pSource.getMoneyValue(MoneyWiseXAnalysisAccountAttr.VALUATION);
         myValue.addAmount(mySrcValue);
         pTotals.setValue(MoneyWiseXAnalysisAccountAttr.VALUATION, myValue);
     }

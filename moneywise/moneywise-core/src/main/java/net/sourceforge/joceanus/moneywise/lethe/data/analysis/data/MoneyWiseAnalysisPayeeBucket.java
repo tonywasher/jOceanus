@@ -39,10 +39,10 @@ import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrency;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWisePayeeClass;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransCategoryClass;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
-import net.sourceforge.joceanus.tethys.date.TethysDate;
-import net.sourceforge.joceanus.tethys.date.TethysDateRange;
-import net.sourceforge.joceanus.tethys.decimal.TethysDecimal;
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimal;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
 
 /**
@@ -128,7 +128,7 @@ public final class MoneyWiseAnalysisPayeeBucket
      */
     private MoneyWiseAnalysisPayeeBucket(final MoneyWiseAnalysis pAnalysis,
                                          final MoneyWiseAnalysisPayeeBucket pBase,
-                                         final TethysDate pDate) {
+                                         final OceanusDate pDate) {
         /* Copy details from base */
         thePayee = pBase.getPayee();
         theAnalysis = pAnalysis;
@@ -149,7 +149,7 @@ public final class MoneyWiseAnalysisPayeeBucket
      */
     private MoneyWiseAnalysisPayeeBucket(final MoneyWiseAnalysis pAnalysis,
                                          final MoneyWiseAnalysisPayeeBucket pBase,
-                                         final TethysDateRange pRange) {
+                                         final OceanusDateRange pRange) {
         /* Copy details from base */
         thePayee = pBase.getPayee();
         theAnalysis = pAnalysis;
@@ -220,7 +220,7 @@ public final class MoneyWiseAnalysisPayeeBucket
      * Obtain date range.
      * @return the range
      */
-    public TethysDateRange getDateRange() {
+    public OceanusDateRange getDateRange() {
         return theAnalysis.getDateRange();
     }
 
@@ -265,8 +265,8 @@ public final class MoneyWiseAnalysisPayeeBucket
      * @param pAttr the attribute
      * @return the delta (or null)
      */
-    public TethysDecimal getDeltaForTransaction(final MoneyWiseTransaction pTrans,
-                                                final MoneyWiseAnalysisPayeeAttr pAttr) {
+    public OceanusDecimal getDeltaForTransaction(final MoneyWiseTransaction pTrans,
+                                                 final MoneyWiseAnalysisPayeeAttr pAttr) {
         /* Obtain delta for transaction */
         return theHistory.getDeltaValue(pTrans, pAttr);
     }
@@ -321,9 +321,9 @@ public final class MoneyWiseAnalysisPayeeBucket
      * @param pDelta the delta
      */
     void adjustCounter(final MoneyWiseAnalysisPayeeAttr pAttr,
-                       final TethysMoney pDelta) {
-        TethysMoney myValue = theValues.getMoneyValue(pAttr);
-        myValue = new TethysMoney(myValue);
+                       final OceanusMoney pDelta) {
+        OceanusMoney myValue = theValues.getMoneyValue(pAttr);
+        myValue = new OceanusMoney(myValue);
         myValue.addAmount(pDelta);
         setValue(pAttr, myValue);
     }
@@ -336,39 +336,39 @@ public final class MoneyWiseAnalysisPayeeBucket
         /* Access the class */
         final MoneyWiseTransCategoryClass myClass = pTrans.getCategoryClass();
         final boolean isIncome = myClass.isIncome();
-        TethysMoney myIncome = null;
-        TethysMoney myExpense = null;
+        OceanusMoney myIncome = null;
+        OceanusMoney myExpense = null;
 
         /* Access amount */
-        final TethysMoney myAmount = pTrans.getLocalAmount();
+        final OceanusMoney myAmount = pTrans.getLocalAmount();
         if (myAmount.isNonZero()) {
             /* If this is an income */
             if (isIncome) {
                 /* Allocate the income */
-                myIncome = new TethysMoney(myAmount);
+                myIncome = new OceanusMoney(myAmount);
 
                 /* else this is a refunded expense */
             } else {
                 /* Update the expense */
-                myExpense = new TethysMoney(myAmount);
+                myExpense = new OceanusMoney(myAmount);
                 myExpense.negate();
             }
         }
 
         /* If there is a non-zero TaxCredit */
-        final TethysMoney myTaxCred = pTrans.getTaxCredit();
+        final OceanusMoney myTaxCred = pTrans.getTaxCredit();
         if (myTaxCred != null
                 && myTaxCred.isNonZero()) {
             /* Adjust for Tax Credit */
             if (isIncome) {
                 if (myIncome == null) {
-                    myIncome = new TethysMoney(myTaxCred);
+                    myIncome = new OceanusMoney(myTaxCred);
                 } else {
                     myIncome.addAmount(myTaxCred);
                 }
             } else {
                 if (myExpense == null) {
-                    myExpense = new TethysMoney(myTaxCred);
+                    myExpense = new OceanusMoney(myTaxCred);
                     myExpense.negate();
                 } else {
                     myExpense.subtractAmount(myTaxCred);
@@ -377,19 +377,19 @@ public final class MoneyWiseAnalysisPayeeBucket
         }
 
         /* If there is Employee National Insurance */
-        TethysMoney myNatIns = pTrans.getEmployeeNatIns();
+        OceanusMoney myNatIns = pTrans.getEmployeeNatIns();
         if (myNatIns != null
                 && myNatIns.isNonZero()) {
             /* Adjust for National Insurance */
             if (isIncome) {
                 if (myIncome == null) {
-                    myIncome = new TethysMoney(myNatIns);
+                    myIncome = new OceanusMoney(myNatIns);
                 } else {
                     myIncome.addAmount(myNatIns);
                 }
             } else {
                 if (myExpense == null) {
-                    myExpense = new TethysMoney(myNatIns);
+                    myExpense = new OceanusMoney(myNatIns);
                     myExpense.negate();
                 } else {
                     myExpense.subtractAmount(myNatIns);
@@ -404,13 +404,13 @@ public final class MoneyWiseAnalysisPayeeBucket
             /* Adjust for National Insurance */
             if (isIncome) {
                 if (myIncome == null) {
-                    myIncome = new TethysMoney(myNatIns);
+                    myIncome = new OceanusMoney(myNatIns);
                 } else {
                     myIncome.addAmount(myNatIns);
                 }
             } else {
                 if (myExpense == null) {
-                    myExpense = new TethysMoney(myNatIns);
+                    myExpense = new OceanusMoney(myNatIns);
                     myExpense.negate();
                 } else {
                     myExpense.subtractAmount(myNatIns);
@@ -419,22 +419,22 @@ public final class MoneyWiseAnalysisPayeeBucket
         }
 
         /* If there is Withheld */
-        final TethysMoney myWithheld = pTrans.getWithheld();
+        final OceanusMoney myWithheld = pTrans.getWithheld();
         if (myWithheld != null
                 && myWithheld.isNonZero()) {
             /* Adjust for Charity Donation */
             if (isIncome) {
                 if (myIncome == null) {
-                    myIncome = new TethysMoney(myWithheld);
+                    myIncome = new OceanusMoney(myWithheld);
                 } else {
                     myIncome.addAmount(myWithheld);
                 }
-                myExpense = new TethysMoney(myWithheld);
+                myExpense = new OceanusMoney(myWithheld);
             } else {
-                myIncome = new TethysMoney(myWithheld);
+                myIncome = new OceanusMoney(myWithheld);
                 myIncome.negate();
                 if (myExpense == null) {
-                    myExpense = new TethysMoney(myAmount);
+                    myExpense = new OceanusMoney(myAmount);
                     myExpense.negate();
                 } else {
                     myExpense.subtractAmount(myWithheld);
@@ -462,38 +462,38 @@ public final class MoneyWiseAnalysisPayeeBucket
         /* Analyse the transaction */
         final MoneyWiseTransCategoryClass myClass = pTrans.getCategoryClass();
         final boolean isExpense = !myClass.isIncome();
-        TethysMoney myExpense = null;
-        TethysMoney myIncome = null;
+        OceanusMoney myExpense = null;
+        OceanusMoney myIncome = null;
 
         /* Access amount */
-        final TethysMoney myAmount = pTrans.getLocalAmount();
+        final OceanusMoney myAmount = pTrans.getLocalAmount();
         if (myAmount.isNonZero()) {
             /* If this is an expense */
             if (isExpense) {
                 /* Allocate the expense */
-                myExpense = new TethysMoney(myAmount);
+                myExpense = new OceanusMoney(myAmount);
 
                 /* else this is a refunded income */
             } else {
                 /* Update the income */
-                myIncome = new TethysMoney(myAmount);
+                myIncome = new OceanusMoney(myAmount);
                 myIncome.negate();
             }
         }
 
         /* If there is a non-zero TaxCredit */
-        final TethysMoney myTaxCred = pTrans.getTaxCredit();
+        final OceanusMoney myTaxCred = pTrans.getTaxCredit();
         if (myTaxCred != null && myTaxCred.isNonZero()) {
             /* Adjust for Tax Credit */
             if (isExpense) {
                 if (myExpense == null) {
-                    myExpense = new TethysMoney(myTaxCred);
+                    myExpense = new OceanusMoney(myTaxCred);
                 } else {
                     myExpense.addAmount(myTaxCred);
                 }
             } else {
                 if (myIncome == null) {
-                    myIncome = new TethysMoney(myTaxCred);
+                    myIncome = new OceanusMoney(myTaxCred);
                     myIncome.negate();
                 } else {
                     myIncome.subtractAmount(myTaxCred);
@@ -521,7 +521,7 @@ public final class MoneyWiseAnalysisPayeeBucket
      */
     public void adjustForTaxCredit(final MoneyWiseAnalysisTransactionHelper pTrans) {
         /* Access amount */
-        final TethysMoney myTaxCred = pTrans.getTaxCredit();
+        final OceanusMoney myTaxCred = pTrans.getTaxCredit();
         if (myTaxCred.isNonZero()) {
             final MoneyWiseTransCategoryClass myClass = pTrans.getCategoryClass();
             if (myClass.isExpense()) {
@@ -544,13 +544,13 @@ public final class MoneyWiseAnalysisPayeeBucket
     public void adjustForTaxPayments(final MoneyWiseAnalysisTransactionHelper pTrans) {
         /* Determine transaction type */
         final MoneyWiseTransCategoryClass myClass = pTrans.getCategoryClass();
-        TethysMoney myAmount = null;
+        OceanusMoney myAmount = null;
 
         /* Adjust for Tax credit */
-        final TethysMoney myTaxCred = pTrans.getTaxCredit();
+        final OceanusMoney myTaxCred = pTrans.getTaxCredit();
         if (myTaxCred != null
                 && myTaxCred.isNonZero()) {
-            myAmount = new TethysMoney(myTaxCred);
+            myAmount = new OceanusMoney(myTaxCred);
         }
 
         /* If we have payments */
@@ -580,7 +580,7 @@ public final class MoneyWiseAnalysisPayeeBucket
      * Add income value.
      * @param pValue the value to add
      */
-    public void addIncome(final TethysMoney pValue) {
+    public void addIncome(final OceanusMoney pValue) {
         /* Only adjust on non-zero */
         if (pValue.isNonZero()) {
             adjustCounter(MoneyWiseAnalysisPayeeAttr.INCOME, pValue);
@@ -591,10 +591,10 @@ public final class MoneyWiseAnalysisPayeeBucket
      * Subtract income value.
      * @param pValue the value to subtract
      */
-    public void subtractIncome(final TethysMoney pValue) {
+    public void subtractIncome(final OceanusMoney pValue) {
         /* Only adjust on non-zero */
         if (pValue.isNonZero()) {
-            final TethysMoney myIncome = new TethysMoney(pValue);
+            final OceanusMoney myIncome = new OceanusMoney(pValue);
             myIncome.negate();
             setValue(MoneyWiseAnalysisPayeeAttr.INCOME, myIncome);
         }
@@ -606,7 +606,7 @@ public final class MoneyWiseAnalysisPayeeBucket
      * @param pValue the value to add
      */
     public void addExpense(final MoneyWiseAnalysisTransactionHelper pTrans,
-                           final TethysMoney pValue) {
+                           final OceanusMoney pValue) {
         /* Add the expense */
         addExpense(pValue);
 
@@ -618,7 +618,7 @@ public final class MoneyWiseAnalysisPayeeBucket
      * Add expense value.
      * @param pValue the value to add
      */
-    public void addExpense(final TethysMoney pValue) {
+    public void addExpense(final OceanusMoney pValue) {
         /* Only adjust on non-zero */
         if (pValue.isNonZero()) {
             adjustCounter(MoneyWiseAnalysisPayeeAttr.EXPENSE, pValue);
@@ -631,7 +631,7 @@ public final class MoneyWiseAnalysisPayeeBucket
      * @param pValue the value to subtract
      */
     public void subtractExpense(final MoneyWiseAnalysisTransactionHelper pTrans,
-                                final TethysMoney pValue) {
+                                final OceanusMoney pValue) {
         /* Subtract the expense */
         subtractExpense(pValue);
 
@@ -643,10 +643,10 @@ public final class MoneyWiseAnalysisPayeeBucket
      * Subtract expense value.
      * @param pValue the value to subtract
      */
-    public void subtractExpense(final TethysMoney pValue) {
+    public void subtractExpense(final OceanusMoney pValue) {
         /* Only adjust on non-zero */
         if (pValue.isNonZero()) {
-            final TethysMoney myExpense = new TethysMoney(pValue);
+            final OceanusMoney myExpense = new OceanusMoney(pValue);
             myExpense.negate();
             adjustCounter(MoneyWiseAnalysisPayeeAttr.EXPENSE, myExpense);
         }
@@ -661,8 +661,8 @@ public final class MoneyWiseAnalysisPayeeBucket
         final MoneyWiseAnalysisPayeeValues mySource = pSource.getValues();
 
         /* Add income values */
-        TethysMoney myValue = theValues.getMoneyValue(MoneyWiseAnalysisPayeeAttr.INCOME);
-        TethysMoney mySrcValue = mySource.getMoneyValue(MoneyWiseAnalysisPayeeAttr.INCOME);
+        OceanusMoney myValue = theValues.getMoneyValue(MoneyWiseAnalysisPayeeAttr.INCOME);
+        OceanusMoney mySrcValue = mySource.getMoneyValue(MoneyWiseAnalysisPayeeAttr.INCOME);
         myValue.addAmount(mySrcValue);
 
         /* Add expense values */
@@ -747,7 +747,7 @@ public final class MoneyWiseAnalysisPayeeBucket
          */
         MoneyWiseAnalysisPayeeBucketList(final MoneyWiseAnalysis pAnalysis,
                                          final MoneyWiseAnalysisPayeeBucketList pBase,
-                                         final TethysDate pDate) {
+                                         final OceanusDate pDate) {
             /* Initialise class */
             this(pAnalysis);
 
@@ -775,7 +775,7 @@ public final class MoneyWiseAnalysisPayeeBucket
          */
         MoneyWiseAnalysisPayeeBucketList(final MoneyWiseAnalysis pAnalysis,
                                          final MoneyWiseAnalysisPayeeBucketList pBase,
-                                         final TethysDateRange pRange) {
+                                         final OceanusDateRange pRange) {
             /* Initialise class */
             this(pAnalysis);
 

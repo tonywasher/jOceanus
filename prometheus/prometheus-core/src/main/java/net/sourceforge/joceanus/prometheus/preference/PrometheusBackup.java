@@ -22,8 +22,8 @@ import net.sourceforge.joceanus.metis.preference.MetisPreferenceKey;
 import net.sourceforge.joceanus.metis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.metis.preference.MetisPreferenceSet;
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetWorkBookType;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.date.TethysDate;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
 
 /**
  * Backup preferences.
@@ -154,7 +154,7 @@ public interface PrometheusBackup {
             /* Make sure that the date is specified */
             final MetisDatePreference myDatePref = getDatePreference(PrometheusBackupPreferenceKey.LASTEVENT);
             if (!myDatePref.isAvailable()) {
-                myDatePref.setValue(new TethysDate());
+                myDatePref.setValue(new OceanusDate());
             }
 
             /* Make sure that the option is specified */

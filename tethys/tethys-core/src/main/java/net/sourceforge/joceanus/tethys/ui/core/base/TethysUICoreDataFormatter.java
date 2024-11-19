@@ -26,20 +26,20 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.TethysDataConverter;
-import net.sourceforge.joceanus.tethys.date.TethysDate;
-import net.sourceforge.joceanus.tethys.date.TethysDateFormatter;
-import net.sourceforge.joceanus.tethys.date.TethysDateRange;
-import net.sourceforge.joceanus.tethys.decimal.TethysDecimal;
-import net.sourceforge.joceanus.tethys.decimal.TethysDecimalFormatter;
-import net.sourceforge.joceanus.tethys.decimal.TethysDecimalParser;
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
-import net.sourceforge.joceanus.tethys.decimal.TethysPrice;
-import net.sourceforge.joceanus.tethys.decimal.TethysRate;
-import net.sourceforge.joceanus.tethys.decimal.TethysRatio;
-import net.sourceforge.joceanus.tethys.decimal.TethysUnits;
-import net.sourceforge.joceanus.tethys.profile.TethysProfile;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.OceanusDataConverter;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.date.OceanusDateFormatter;
+import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimal;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimalFormatter;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimalParser;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRate;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRatio;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusUnits;
+import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
 
 /**
@@ -55,17 +55,17 @@ public class TethysUICoreDataFormatter
     /**
      * Date Formatter.
      */
-    private final TethysDateFormatter theDateFormatter;
+    private final OceanusDateFormatter theDateFormatter;
 
     /**
      * Decimal Formatter.
      */
-    private final TethysDecimalFormatter theDecimalFormatter;
+    private final OceanusDecimalFormatter theDecimalFormatter;
 
     /**
      * Date Formatter.
      */
-    private final TethysDecimalParser theDecimalParser;
+    private final OceanusDecimalParser theDecimalParser;
 
     /**
      * Constructor.
@@ -84,24 +84,24 @@ public class TethysUICoreDataFormatter
      * @param pLocale the locale
      */
     public TethysUICoreDataFormatter(final Locale pLocale) {
-        theDateFormatter = new TethysDateFormatter(pLocale);
-        theDecimalFormatter = new TethysDecimalFormatter(pLocale);
-        theDecimalParser = new TethysDecimalParser(pLocale);
+        theDateFormatter = new OceanusDateFormatter(pLocale);
+        theDecimalFormatter = new OceanusDecimalFormatter(pLocale);
+        theDecimalParser = new OceanusDecimalParser(pLocale);
         theExtensions = new ArrayList<>();
     }
 
     @Override
-    public TethysDateFormatter getDateFormatter() {
+    public OceanusDateFormatter getDateFormatter() {
         return theDateFormatter;
     }
 
     @Override
-    public TethysDecimalFormatter getDecimalFormatter() {
+    public OceanusDecimalFormatter getDecimalFormatter() {
         return theDecimalFormatter;
     }
 
     @Override
-    public TethysDecimalParser getDecimalParser() {
+    public OceanusDecimalParser getDecimalParser() {
         return theDecimalParser;
     }
 
@@ -195,7 +195,7 @@ public class TethysUICoreDataFormatter
 
         /* Handle Native array classes */
         if (pValue instanceof byte[]) {
-            return TethysDataConverter.bytesToHexString((byte[]) pValue);
+            return OceanusDataConverter.bytesToHexString((byte[]) pValue);
         }
         if (pValue instanceof char[]) {
             return new String((char[]) pValue);
@@ -211,23 +211,23 @@ public class TethysUICoreDataFormatter
         if (pValue instanceof LocalDate) {
             return theDateFormatter.formatLocalDate((LocalDate) pValue);
         }
-        if (pValue instanceof TethysDate) {
-            return theDateFormatter.formatDate((TethysDate) pValue);
+        if (pValue instanceof OceanusDate) {
+            return theDateFormatter.formatDate((OceanusDate) pValue);
         }
-        if (pValue instanceof TethysDateRange) {
-            return theDateFormatter.formatDateRange((TethysDateRange) pValue);
+        if (pValue instanceof OceanusDateRange) {
+            return theDateFormatter.formatDateRange((OceanusDateRange) pValue);
         }
 
         /* Handle decimal classes */
-        if (pValue instanceof TethysDecimal) {
-            return theDecimalFormatter.formatDecimal((TethysDecimal) pValue);
+        if (pValue instanceof OceanusDecimal) {
+            return theDecimalFormatter.formatDecimal((OceanusDecimal) pValue);
         }
 
 
         /* Handle TethysProfile */
-        if (pValue instanceof TethysProfile) {
+        if (pValue instanceof OceanusProfile) {
             /* Format the profile */
-            final TethysProfile myProfile = (TethysProfile) pValue;
+            final OceanusProfile myProfile = (OceanusProfile) pValue;
             return myProfile.getName()
                     + ": "
                     + (myProfile.isRunning()
@@ -275,7 +275,7 @@ public class TethysUICoreDataFormatter
             /* Parse the date */
             return pClazz.cast(theDateFormatter.parseJavaDate(pSource));
         }
-        if (TethysDate.class.equals(pClazz)) {
+        if (OceanusDate.class.equals(pClazz)) {
             /* Parse the date */
             return pClazz.cast(theDateFormatter.parseDate(pSource));
         }
@@ -287,23 +287,23 @@ public class TethysUICoreDataFormatter
             /* Parse the date */
             return pClazz.cast(theDateFormatter.parseLocalDate(pSource));
         }
-        if (TethysPrice.class.equals(pClazz)) {
+        if (OceanusPrice.class.equals(pClazz)) {
             /* Parse the price */
             return pClazz.cast(theDecimalParser.parsePriceValue(pSource));
         }
-        if (TethysMoney.class.equals(pClazz)) {
+        if (OceanusMoney.class.equals(pClazz)) {
             /* Parse the money */
             return pClazz.cast(theDecimalParser.parseMoneyValue(pSource));
         }
-        if (TethysRate.class.equals(pClazz)) {
+        if (OceanusRate.class.equals(pClazz)) {
             /* Parse the rate */
             return pClazz.cast(theDecimalParser.parseRateValue(pSource));
         }
-        if (TethysUnits.class.equals(pClazz)) {
+        if (OceanusUnits.class.equals(pClazz)) {
             /* Parse the units */
             return pClazz.cast(theDecimalParser.parseUnitsValue(pSource));
         }
-        if (TethysRatio.class.equals(pClazz)) {
+        if (OceanusRatio.class.equals(pClazz)) {
             /* Parse the dilution */
             return pClazz.cast(theDecimalParser.parseRatioValue(pSource));
         }
@@ -313,23 +313,23 @@ public class TethysUICoreDataFormatter
     @Override
     public <T> T parseValue(final Double pSource,
                             final Class<T> pClazz) {
-        if (TethysPrice.class.equals(pClazz)) {
+        if (OceanusPrice.class.equals(pClazz)) {
             /* Parse the price */
             return pClazz.cast(theDecimalParser.createPriceFromDouble(pSource));
         }
-        if (TethysMoney.class.equals(pClazz)) {
+        if (OceanusMoney.class.equals(pClazz)) {
             /* Parse the money */
             return pClazz.cast(theDecimalParser.createMoneyFromDouble(pSource));
         }
-        if (TethysRate.class.equals(pClazz)) {
+        if (OceanusRate.class.equals(pClazz)) {
             /* Parse the rate */
             return pClazz.cast(theDecimalParser.createRateFromDouble(pSource));
         }
-        if (TethysUnits.class.equals(pClazz)) {
+        if (OceanusUnits.class.equals(pClazz)) {
             /* Parse the units */
             return pClazz.cast(theDecimalParser.createUnitsFromDouble(pSource));
         }
-        if (TethysRatio.class.equals(pClazz)) {
+        if (OceanusRatio.class.equals(pClazz)) {
             /* Parse the dilution */
             return pClazz.cast(theDecimalParser.createRatioFromDouble(pSource));
         }
@@ -340,11 +340,11 @@ public class TethysUICoreDataFormatter
     public <T> T parseValue(final Double pSource,
                             final String pCurrCode,
                             final Class<T> pClazz) {
-        if (TethysPrice.class.equals(pClazz)) {
+        if (OceanusPrice.class.equals(pClazz)) {
             /* Parse the price */
             return pClazz.cast(theDecimalParser.createPriceFromDouble(pSource, pCurrCode));
         }
-        if (TethysMoney.class.equals(pClazz)) {
+        if (OceanusMoney.class.equals(pClazz)) {
             /* Parse the money */
             return pClazz.cast(theDecimalParser.createMoneyFromDouble(pSource, pCurrCode));
         }

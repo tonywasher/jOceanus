@@ -32,8 +32,8 @@ import org.json.JSONTokener;
 
 import net.sourceforge.joceanus.metis.MetisDataException;
 import net.sourceforge.joceanus.metis.MetisIOException;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.TethysDataConverter;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.OceanusDataConverter;
 
 /**
  * Http client interface.
@@ -445,8 +445,8 @@ public abstract class MetisHTTPDataClient {
         String getAuthString(final String pSecret) {
             switch (this) {
                 case BASIC:
-                    final byte[] myBytes = TethysDataConverter.stringToByteArray(pSecret);
-                    return "Basic " + TethysDataConverter.byteArrayToBase64(myBytes);
+                    final byte[] myBytes = OceanusDataConverter.stringToByteArray(pSecret);
+                    return "Basic " + OceanusDataConverter.byteArrayToBase64(myBytes);
                 case BEARER:
                     return "Bearer " + pSecret;
                 case NONE:

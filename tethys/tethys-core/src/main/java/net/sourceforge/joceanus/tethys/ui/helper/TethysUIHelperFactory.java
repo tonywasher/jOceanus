@@ -16,9 +16,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.tethys.ui.helper;
 
-import net.sourceforge.joceanus.tethys.event.TethysEventManager;
-import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar;
-import net.sourceforge.joceanus.tethys.profile.TethysProfile;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
+import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIEvent;
@@ -63,7 +63,7 @@ public class TethysUIHelperFactory
     /**
      * The Profile.
      */
-    private TethysProfile theProfile;
+    private OceanusProfile theProfile;
 
     /**
      * The LogSink.
@@ -80,7 +80,7 @@ public class TethysUIHelperFactory
      */
     public TethysUIHelperFactory() {
         theFormatter = new TethysUICoreDataFormatter();
-        theProfile = new TethysProfile("Dummy");
+        theProfile = new OceanusProfile("Dummy");
         theValueSet = new TethysUICoreValueSet();
         theLogSink = new SinkStub();
         theThreadFactory = new ThreadFactoryStub();
@@ -128,18 +128,18 @@ public class TethysUIHelperFactory
     }
 
     @Override
-    public TethysProfile getNewProfile(final String pTask) {
-        theProfile = new TethysProfile(pTask);
+    public OceanusProfile getNewProfile(final String pTask) {
+        theProfile = new OceanusProfile(pTask);
         return theProfile;
     }
 
     @Override
-    public TethysProfile getActiveProfile() {
+    public OceanusProfile getActiveProfile() {
         return theProfile;
     }
 
     @Override
-    public TethysProfile getActiveTask() {
+    public OceanusProfile getActiveTask() {
         return getActiveProfile();
     }
 
@@ -207,17 +207,17 @@ public class TethysUIHelperFactory
         /**
          * Event Manager.
          */
-        private final TethysEventManager<TethysUIThreadEvent> theEventManager;
+        private final OceanusEventManager<TethysUIThreadEvent> theEventManager;
 
         /**
          * Constructor.
          */
         ThreadManagerStub() {
-            theEventManager = new TethysEventManager<>();
+            theEventManager = new OceanusEventManager<>();
         }
 
         @Override
-        public TethysEventRegistrar<TethysUIThreadEvent> getEventRegistrar() {
+        public OceanusEventRegistrar<TethysUIThreadEvent> getEventRegistrar() {
             return theEventManager.getEventRegistrar();
         }
 
@@ -272,7 +272,7 @@ public class TethysUIHelperFactory
         }
 
         @Override
-        public TethysProfile getActiveProfile() {
+        public OceanusProfile getActiveProfile() {
             return null;
         }
 
@@ -332,7 +332,7 @@ public class TethysUIHelperFactory
         }
 
         @Override
-        public TethysProfile getActiveTask() {
+        public OceanusProfile getActiveTask() {
             return null;
         }
     }
@@ -343,7 +343,7 @@ public class TethysUIHelperFactory
     private static final class SinkStub
             implements TethysUILogTextArea {
         @Override
-        public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
+        public OceanusEventRegistrar<TethysUIEvent> getEventRegistrar() {
             return null;
         }
 

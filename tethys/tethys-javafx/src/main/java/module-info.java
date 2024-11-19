@@ -28,7 +28,7 @@ module net.sourceforge.joceanus.tethys.javafx {
     requires javafx.web;
 
     /* Oceanus */
-    requires net.sourceforge.joceanus.core;
+    requires net.sourceforge.joceanus.oceanus;
     requires net.sourceforge.joceanus.tethys.core;
 
     /* Exports */

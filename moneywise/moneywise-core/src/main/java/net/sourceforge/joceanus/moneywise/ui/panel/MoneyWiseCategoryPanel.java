@@ -35,12 +35,12 @@ import net.sourceforge.joceanus.prometheus.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
 import net.sourceforge.joceanus.prometheus.views.PrometheusUIEvent;
 import net.sourceforge.joceanus.prometheus.views.PrometheusViewerEntryId;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.event.TethysEvent;
-import net.sourceforge.joceanus.tethys.event.TethysEventManager;
-import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar;
-import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar.TethysEventProvider;
-import net.sourceforge.joceanus.tethys.profile.TethysProfile;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.event.OceanusEvent;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.tethys.ui.api.button.TethysUIScrollButtonManager;
@@ -75,7 +75,7 @@ public class MoneyWiseCategoryPanel
     /**
      * The Event Manager.
      */
-    private final TethysEventManager<PrometheusDataEvent> theEventManager;
+    private final OceanusEventManager<PrometheusDataEvent> theEventManager;
 
     /**
      * The Data View.
@@ -180,7 +180,7 @@ public class MoneyWiseCategoryPanel
         final MetisViewerManager myViewer = pView.getViewerManager();
 
         /* Create the event manager */
-        theEventManager = new TethysEventManager<>();
+        theEventManager = new OceanusEventManager<>();
 
         /* Build the Update set */
         theEditSet = new PrometheusEditSet(pView);
@@ -279,7 +279,7 @@ public class MoneyWiseCategoryPanel
     }
 
     @Override
-    public TethysEventRegistrar<PrometheusDataEvent> getEventRegistrar() {
+    public OceanusEventRegistrar<PrometheusDataEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -287,7 +287,7 @@ public class MoneyWiseCategoryPanel
      * setChildListeners.
      * @param pRegistrar the registrar
      */
-    private void setChildListeners(final TethysEventRegistrar<PrometheusDataEvent> pRegistrar) {
+    private void setChildListeners(final OceanusEventRegistrar<PrometheusDataEvent> pRegistrar) {
         pRegistrar.addEventListener(PrometheusDataEvent.ADJUSTVISIBILITY, e -> {
             if (!isRefreshing) {
                 setVisibility();
@@ -328,7 +328,7 @@ public class MoneyWiseCategoryPanel
      */
     public void refreshData() throws OceanusException {
         /* Obtain the active profile */
-        TethysProfile myTask = theView.getActiveTask();
+        OceanusProfile myTask = theView.getActiveTask();
         myTask = myTask.startTask("Categories");
 
         /* Note that we are refreshing */
@@ -620,7 +620,7 @@ public class MoneyWiseCategoryPanel
      * handle Action Buttons.
      * @param pEvent the event
      */
-    private void handleActionButtons(final TethysEvent<PrometheusUIEvent> pEvent) {
+    private void handleActionButtons(final OceanusEvent<PrometheusUIEvent> pEvent) {
         /* Cancel editing */
         cancelEditing();
 
@@ -632,7 +632,7 @@ public class MoneyWiseCategoryPanel
      * handle GoTo Event.
      * @param pEvent the event
      */
-    private void handleGoToEvent(final TethysEvent<PrometheusDataEvent> pEvent) {
+    private void handleGoToEvent(final OceanusEvent<PrometheusDataEvent> pEvent) {
         /* Access details */
         @SuppressWarnings("unchecked")
         final PrometheusGoToEvent<MoneyWiseGoToId> myEvent = pEvent.getDetails(PrometheusGoToEvent.class);

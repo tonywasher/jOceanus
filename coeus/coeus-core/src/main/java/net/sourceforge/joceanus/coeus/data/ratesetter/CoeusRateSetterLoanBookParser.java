@@ -30,12 +30,12 @@ import org.jsoup.nodes.Node;
 import org.jsoup.select.Elements;
 
 import net.sourceforge.joceanus.coeus.CoeusDataException;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.date.TethysDate;
-import net.sourceforge.joceanus.tethys.date.TethysDateFormatter;
-import net.sourceforge.joceanus.tethys.decimal.TethysDecimalParser;
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
-import net.sourceforge.joceanus.tethys.decimal.TethysRate;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.date.OceanusDateFormatter;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimalParser;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRate;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
 
 /**
@@ -50,12 +50,12 @@ public class CoeusRateSetterLoanBookParser {
     /**
      * Date Parser.
      */
-    private final TethysDateFormatter theDateParser;
+    private final OceanusDateFormatter theDateParser;
 
     /**
      * Decimal Parser.
      */
-    private final TethysDecimalParser theDecimalParser;
+    private final OceanusDecimalParser theDecimalParser;
 
     /**
      * Constructor.
@@ -84,7 +84,7 @@ public class CoeusRateSetterLoanBookParser {
      * @return the parsed date
      * @throws OceanusException on error
      */
-    TethysDate parseDate(final String pInput) throws OceanusException {
+    OceanusDate parseDate(final String pInput) throws OceanusException {
         try {
             return theDateParser.parseDate(pInput);
         } catch (IllegalArgumentException e) {
@@ -98,7 +98,7 @@ public class CoeusRateSetterLoanBookParser {
      * @return the parsed money
      * @throws OceanusException on error
      */
-    TethysMoney parseMoney(final String pInput) throws OceanusException {
+    OceanusMoney parseMoney(final String pInput) throws OceanusException {
         try {
             return theDecimalParser.parseMoneyValue(pInput);
         } catch (IllegalArgumentException e) {
@@ -112,7 +112,7 @@ public class CoeusRateSetterLoanBookParser {
      * @return the parsed rate
      * @throws OceanusException on error
      */
-    TethysRate parseRate(final String pInput) throws OceanusException {
+    OceanusRate parseRate(final String pInput) throws OceanusException {
         try {
             return theDecimalParser.parseRateValue(pInput);
         } catch (IllegalArgumentException e) {

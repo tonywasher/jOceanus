@@ -32,10 +32,10 @@ import net.sourceforge.joceanus.prometheus.toolkit.PrometheusToolkit;
 import net.sourceforge.joceanus.prometheus.ui.PrometheusGoToEvent;
 import net.sourceforge.joceanus.prometheus.ui.panel.PrometheusMainWindow;
 import net.sourceforge.joceanus.prometheus.views.PrometheusDataEvent;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.event.TethysEvent;
-import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar;
-import net.sourceforge.joceanus.tethys.profile.TethysProfile;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.event.OceanusEvent;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
+import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.tethys.ui.api.dialog.TethysUIAboutBox;
@@ -139,7 +139,7 @@ public class MoneyWiseMainTab
     @Override
     protected TethysUIComponent buildMainPanel() throws OceanusException {
         /* Obtain the active profile */
-        TethysProfile myTask = theView.getActiveTask();
+        OceanusProfile myTask = theView.getActiveTask();
         myTask = myTask.startTask("buildMain");
 
         /* Create the Tabbed Pane */
@@ -195,7 +195,7 @@ public class MoneyWiseMainTab
      * setChildListeners.
      * @param pRegistrar the registrar
      */
-    private void setChildListeners(final TethysEventRegistrar<PrometheusDataEvent> pRegistrar) {
+    private void setChildListeners(final OceanusEventRegistrar<PrometheusDataEvent> pRegistrar) {
         pRegistrar.addEventListener(PrometheusDataEvent.ADJUSTVISIBILITY, e -> setVisibility());
         pRegistrar.addEventListener(PrometheusDataEvent.GOTOWINDOW, this::handleGoToEvent);
     }
@@ -380,7 +380,7 @@ public class MoneyWiseMainTab
      * handle GoTo Event.
      * @param pEvent the event
      */
-    private void handleGoToEvent(final TethysEvent<PrometheusDataEvent> pEvent) {
+    private void handleGoToEvent(final OceanusEvent<PrometheusDataEvent> pEvent) {
         /* Access details */
         @SuppressWarnings("unchecked")
         final PrometheusGoToEvent<MoneyWiseGoToId> myEvent = pEvent.getDetails(PrometheusGoToEvent.class);

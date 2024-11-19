@@ -24,8 +24,8 @@ import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransAsset;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransCategory;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransaction;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransCategoryClass;
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
-import net.sourceforge.joceanus.tethys.decimal.TethysUnits;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusUnits;
 
 /**
  * Transaction details.
@@ -49,12 +49,12 @@ public class MoneyWiseXAnalysisTransaction {
     /**
      * The debit amount.
      */
-    private TethysMoney theDebitAmount;
+    private OceanusMoney theDebitAmount;
 
     /**
      * The credit amount.
      */
-    private TethysMoney theCreditAmount;
+    private OceanusMoney theCreditAmount;
 
     /**
      * The debit account.
@@ -79,12 +79,12 @@ public class MoneyWiseXAnalysisTransaction {
     /**
      * The debitUnitsDelta.
      */
-    private final TethysUnits theDebitUnitsDelta;
+    private final OceanusUnits theDebitUnitsDelta;
 
     /**
      * The creditUnitsDelta.
      */
-    private final TethysUnits theCreditUnitsDelta;
+    private final OceanusUnits theCreditUnitsDelta;
 
     /**
      * Constructor.
@@ -104,14 +104,14 @@ public class MoneyWiseXAnalysisTransaction {
         theCategory = theTrans.getCategory();
 
         /* Sort out amounts */
-        final TethysMoney myAmount = theTrans.getAmount();
-        TethysMoney myPartnerAmount = theTrans.getPartnerAmount();
+        final OceanusMoney myAmount = theTrans.getAmount();
+        OceanusMoney myPartnerAmount = theTrans.getPartnerAmount();
         myPartnerAmount = myPartnerAmount == null ? myAmount : myPartnerAmount;
         if (isTo) {
-            theDebitAmount = new TethysMoney(myAmount);
+            theDebitAmount = new OceanusMoney(myAmount);
             theCreditAmount = myPartnerAmount;
         } else {
-            theDebitAmount = new TethysMoney(myPartnerAmount);
+            theDebitAmount = new OceanusMoney(myPartnerAmount);
             theCreditAmount = myAmount;
         }
         theDebitAmount.negate();
@@ -189,7 +189,7 @@ public class MoneyWiseXAnalysisTransaction {
      * Obtain the debit unitsDelta.
      * @return the delta
      */
-    TethysUnits getDebitUnitsDelta() {
+    OceanusUnits getDebitUnitsDelta() {
         return theDebitUnitsDelta;
     }
 
@@ -197,7 +197,7 @@ public class MoneyWiseXAnalysisTransaction {
      * Obtain the credit unitsDelta.
      * @return the delta
      */
-    TethysUnits getCreditUnitsDelta() {
+    OceanusUnits getCreditUnitsDelta() {
         return theCreditUnitsDelta;
     }
 
@@ -231,7 +231,7 @@ public class MoneyWiseXAnalysisTransaction {
      * Obtain the transaction value.
      * @return the value
      */
-    TethysMoney getTransactionValue() {
+    OceanusMoney getTransactionValue() {
         return isRefund() ? theDebitAmount : theCreditAmount;
     }
 
@@ -239,7 +239,7 @@ public class MoneyWiseXAnalysisTransaction {
      * Obtain the debit amount.
      * @return the debit amount
      */
-    TethysMoney getDebitAmount() {
+    OceanusMoney getDebitAmount() {
         return theDebitAmount;
     }
 
@@ -247,7 +247,7 @@ public class MoneyWiseXAnalysisTransaction {
      * Obtain the credit amount.
      * @return the credit amount
      */
-    TethysMoney getCreditAmount() {
+    OceanusMoney getCreditAmount() {
         return theCreditAmount;
     }
 
@@ -255,10 +255,10 @@ public class MoneyWiseXAnalysisTransaction {
      * Set the debit amount.
      * @param pAmount the amount
      */
-    void setDebitAmount(final TethysMoney pAmount) {
+    void setDebitAmount(final OceanusMoney pAmount) {
         theDebitAmount = pAmount;
         if (theCredit instanceof MoneyWisePayee) {
-            theCreditAmount = new TethysMoney(pAmount);
+            theCreditAmount = new OceanusMoney(pAmount);
             theCreditAmount.negate();
         }
     }
@@ -267,10 +267,10 @@ public class MoneyWiseXAnalysisTransaction {
      * Set the credit amount.
      * @param pAmount the amount
      */
-    void setCreditAmount(final TethysMoney pAmount) {
+    void setCreditAmount(final OceanusMoney pAmount) {
         theCreditAmount = pAmount;
         if (theDebit instanceof MoneyWisePayee) {
-            theDebitAmount = new TethysMoney(pAmount);
+            theDebitAmount = new OceanusMoney(pAmount);
             theDebitAmount.negate();
         }
     }

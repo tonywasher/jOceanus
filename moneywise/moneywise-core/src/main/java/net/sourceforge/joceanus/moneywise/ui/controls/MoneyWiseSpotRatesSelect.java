@@ -23,11 +23,11 @@ import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrency;
 import net.sourceforge.joceanus.moneywise.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.moneywise.views.MoneyWiseView;
 import net.sourceforge.joceanus.prometheus.views.PrometheusDataEvent;
-import net.sourceforge.joceanus.tethys.date.TethysDate;
-import net.sourceforge.joceanus.tethys.date.TethysDateRange;
-import net.sourceforge.joceanus.tethys.event.TethysEventManager;
-import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar;
-import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.TethysEventProvider;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIArrowIconId;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIEvent;
@@ -72,7 +72,7 @@ public class MoneyWiseSpotRatesSelect
     /**
      * The Event Manager.
      */
-    private final TethysEventManager<PrometheusDataEvent> theEventManager;
+    private final OceanusEventManager<PrometheusDataEvent> theEventManager;
 
     /**
      * The panel.
@@ -130,7 +130,7 @@ public class MoneyWiseSpotRatesSelect
         theView = pView;
 
         /* Create Event Manager */
-        theEventManager = new TethysEventManager<>();
+        theEventManager = new OceanusEventManager<>();
 
         /* Create Labels */
         final TethysUIControlFactory myControls = pFactory.controlFactory();
@@ -199,7 +199,7 @@ public class MoneyWiseSpotRatesSelect
     }
 
     @Override
-    public TethysEventRegistrar<PrometheusDataEvent> getEventRegistrar() {
+    public OceanusEventRegistrar<PrometheusDataEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -207,7 +207,7 @@ public class MoneyWiseSpotRatesSelect
      * Get the selected date.
      * @return the date
      */
-    public TethysDate getDate() {
+    public OceanusDate getDate() {
         return theState.getDate();
     }
 
@@ -216,7 +216,7 @@ public class MoneyWiseSpotRatesSelect
      */
     public final void refreshData() {
         /* Access the data */
-        final TethysDateRange myRange = theView.getRange();
+        final OceanusDateRange myRange = theView.getRange();
 
         /* Set the range for the Date Button */
         setRange(myRange);
@@ -233,11 +233,11 @@ public class MoneyWiseSpotRatesSelect
      * Set the range for the date box.
      * @param pRange the Range to set
      */
-    private void setRange(final TethysDateRange pRange) {
-        final TethysDate myStart = (pRange == null)
+    private void setRange(final OceanusDateRange pRange) {
+        final OceanusDate myStart = (pRange == null)
                 ? null
                 : pRange.getStart();
-        final TethysDate myEnd = (pRange == null)
+        final OceanusDate myEnd = (pRange == null)
                 ? null
                 : pRange.getEnd();
 
@@ -283,8 +283,8 @@ public class MoneyWiseSpotRatesSelect
      * @param pPrev the previous Date
      * @param pNext the next Date
      */
-    public void setAdjacent(final TethysDate pPrev,
-                            final TethysDate pNext) {
+    public void setAdjacent(final OceanusDate pPrev,
+                            final OceanusDate pNext) {
         /* Record the dates */
         theState.setAdjacent(pPrev, pNext);
     }
@@ -306,23 +306,23 @@ public class MoneyWiseSpotRatesSelect
         /**
          * Selected date.
          */
-        private TethysDate theDate;
+        private OceanusDate theDate;
 
         /**
          * Next date.
          */
-        private TethysDate theNextDate;
+        private OceanusDate theNextDate;
 
         /**
          * Previous date.
          */
-        private TethysDate thePrevDate;
+        private OceanusDate thePrevDate;
 
         /**
          * Constructor.
          */
         private MoneyWiseSpotRatesState() {
-            theDate = new TethysDate();
+            theDate = new OceanusDate();
         }
 
         /**
@@ -330,12 +330,12 @@ public class MoneyWiseSpotRatesSelect
          * @param pState state to copy from
          */
         private MoneyWiseSpotRatesState(final MoneyWiseSpotRatesState pState) {
-            theDate = new TethysDate(pState.getDate());
+            theDate = new OceanusDate(pState.getDate());
             if (pState.getNextDate() != null) {
-                theNextDate = new TethysDate(pState.getNextDate());
+                theNextDate = new OceanusDate(pState.getNextDate());
             }
             if (pState.getPrevDate() != null) {
-                thePrevDate = new TethysDate(pState.getPrevDate());
+                thePrevDate = new OceanusDate(pState.getPrevDate());
             }
         }
 
@@ -343,7 +343,7 @@ public class MoneyWiseSpotRatesSelect
          * Get the selected date.
          * @return the date
          */
-        private TethysDate getDate() {
+        private OceanusDate getDate() {
             return theDate;
         }
 
@@ -351,7 +351,7 @@ public class MoneyWiseSpotRatesSelect
          * Get the next date.
          * @return the date
          */
-        private TethysDate getNextDate() {
+        private OceanusDate getNextDate() {
             return theNextDate;
         }
 
@@ -359,7 +359,7 @@ public class MoneyWiseSpotRatesSelect
          * Get the previous date.
          * @return the date
          */
-        private TethysDate getPrevDate() {
+        private OceanusDate getPrevDate() {
             return thePrevDate;
         }
 
@@ -370,7 +370,7 @@ public class MoneyWiseSpotRatesSelect
          */
         private boolean setDate(final TethysUIDateButtonManager pButton) {
             /* Adjust the date and build the new range */
-            final TethysDate myDate = new TethysDate(pButton.getSelectedDate());
+            final OceanusDate myDate = new OceanusDate(pButton.getSelectedDate());
             if (!MetisDataDifference.isEqual(myDate, theDate)) {
                 theDate = myDate;
                 return true;
@@ -383,7 +383,7 @@ public class MoneyWiseSpotRatesSelect
          */
         private void setNext() {
             /* Copy date */
-            theDate = new TethysDate(theNextDate);
+            theDate = new OceanusDate(theNextDate);
             applyState();
         }
 
@@ -392,7 +392,7 @@ public class MoneyWiseSpotRatesSelect
          */
         private void setPrev() {
             /* Copy date */
-            theDate = new TethysDate(thePrevDate);
+            theDate = new OceanusDate(thePrevDate);
             applyState();
         }
 
@@ -401,8 +401,8 @@ public class MoneyWiseSpotRatesSelect
          * @param pPrev the previous Date
          * @param pNext the next Date
          */
-        private void setAdjacent(final TethysDate pPrev,
-                                 final TethysDate pNext) {
+        private void setAdjacent(final OceanusDate pPrev,
+                                 final OceanusDate pNext) {
             /* Record the dates */
             thePrevDate = pPrev;
             theNextDate = pNext;
@@ -420,7 +420,7 @@ public class MoneyWiseSpotRatesSelect
             theDateButton.setSelectedDate(theDate);
 
             /* Determine whether we are todays date */
-            final boolean isToday = MetisDataDifference.isEqual(theDate, new TethysDate());
+            final boolean isToday = MetisDataDifference.isEqual(theDate, new OceanusDate());
             theDownloadButton.setVisible(isToday);
         }
     }

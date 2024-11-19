@@ -24,8 +24,8 @@ import net.sourceforge.joceanus.coeus.CoeusDataException;
 import net.sourceforge.joceanus.coeus.data.CoeusLoan;
 import net.sourceforge.joceanus.coeus.data.CoeusResource;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
-import net.sourceforge.joceanus.tethys.date.TethysDateRange;
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
+import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
 
 /**
  * FundingCircle Loan.
@@ -91,7 +91,7 @@ public class CoeusFundingCircleLoan
      * @param pRange the dateRange
      */
     CoeusFundingCircleLoan(final CoeusFundingCircleLoan pLoan,
-                           final TethysDateRange pRange) {
+                           final OceanusDateRange pRange) {
         super(pLoan, pRange);
         theBookItem = pLoan.getLoanBookItem();
         theBookItems = new ArrayList<>(pLoan.theBookItems);
@@ -146,8 +146,8 @@ public class CoeusFundingCircleLoan
     }
 
     @Override
-    public TethysMoney getInitialLoan() {
-        return (TethysMoney) super.getInitialLoan();
+    public OceanusMoney getInitialLoan() {
+        return (OceanusMoney) super.getInitialLoan();
     }
 
     @Override
@@ -168,14 +168,14 @@ public class CoeusFundingCircleLoan
     @Override
     protected void checkLoan() throws CoeusDataException {
         /* Access details */
-        final TethysMoney myBookBalance = getBalance();
+        final OceanusMoney myBookBalance = getBalance();
         final CoeusFundingCircleTotals myTotals = getTotals();
-        TethysMoney myLoanBalance = myTotals.getLoanBook();
+        OceanusMoney myLoanBalance = myTotals.getLoanBook();
 
         /* If this is a badDebt */
         if (theBookItem.getStatus().isBadDebt()) {
             /* Loan Balance is badDebt */
-            myLoanBalance = new TethysMoney(myTotals.getBadDebt());
+            myLoanBalance = new OceanusMoney(myTotals.getBadDebt());
             myLoanBalance.negate();
         }
 
@@ -186,7 +186,7 @@ public class CoeusFundingCircleLoan
     }
 
     @Override
-    public TethysMoney getBalance() {
+    public OceanusMoney getBalance() {
         return theBookItem.getBalance();
     }
 

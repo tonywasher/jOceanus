@@ -62,8 +62,8 @@ import net.sourceforge.joceanus.gordianknot.impl.bc.BouncySignature.BouncyDigest
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCryptoException;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianIOException;
 import net.sourceforge.joceanus.gordianknot.impl.core.keypair.GordianKeyPairValidity;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.TethysDataConverter;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.OceanusDataConverter;
 
 /**
  * DSTU KeyPair classes.
@@ -400,8 +400,8 @@ public final class BouncyDSTUKeyPair {
             final byte[] myExpanded = new byte[EXPANDED_LEN];
 
             for (int i = 0; i < myCompressed.length; i++) {
-                myExpanded[i * 2] = (byte) ((myCompressed[i] >> TethysDataConverter.NYBBLE_SHIFT) & TethysDataConverter.NYBBLE_MASK);
-                myExpanded[i * 2 + 1] = (byte) (myCompressed[i] & TethysDataConverter.NYBBLE_MASK);
+                myExpanded[i * 2] = (byte) ((myCompressed[i] >> OceanusDataConverter.NYBBLE_SHIFT) & OceanusDataConverter.NYBBLE_MASK);
+                myExpanded[i * 2 + 1] = (byte) (myCompressed[i] & OceanusDataConverter.NYBBLE_MASK);
             }
             return new GOST3411Digest(myExpanded);
         }

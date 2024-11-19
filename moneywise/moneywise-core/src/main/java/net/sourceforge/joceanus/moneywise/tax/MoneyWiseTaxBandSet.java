@@ -26,8 +26,8 @@ import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataObjectFormat;
 import net.sourceforge.joceanus.metis.field.MetisFieldItem;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.moneywise.tax.MoneyWiseTaxBandSet.MoneyWiseTaxBand;
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
-import net.sourceforge.joceanus.tethys.decimal.TethysRate;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRate;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
 
 /**
@@ -94,9 +94,9 @@ public class MoneyWiseTaxBandSet
      * Obtain a zero amount.
      * @return the zero amount
      */
-    public TethysMoney getZeroAmount() {
-        TethysMoney myAmount = theTaxBands.get(0).getAmount();
-        myAmount = new TethysMoney(myAmount);
+    public OceanusMoney getZeroAmount() {
+        OceanusMoney myAmount = theTaxBands.get(0).getAmount();
+        myAmount = new OceanusMoney(myAmount);
         myAmount.setZero();
         return myAmount;
     }
@@ -130,23 +130,23 @@ public class MoneyWiseTaxBandSet
         /**
          * Amount.
          */
-        private final TethysMoney theAmount;
+        private final OceanusMoney theAmount;
 
         /**
          * Rate.
          */
-        private final TethysRate theRate;
+        private final OceanusRate theRate;
 
         /**
          * Constructor.
          * @param pAmount the amount
          * @param pRate the rate
          */
-        public MoneyWiseTaxBand(final TethysMoney pAmount,
-                                final TethysRate pRate) {
+        public MoneyWiseTaxBand(final OceanusMoney pAmount,
+                                final OceanusRate pRate) {
             theAmount = pAmount == null
                     ? null
-                    : new TethysMoney(pAmount);
+                    : new OceanusMoney(pAmount);
             theRate = pRate;
         }
 
@@ -154,7 +154,7 @@ public class MoneyWiseTaxBandSet
          * Constructor.
          * @param pRate the rate
          */
-        public MoneyWiseTaxBand(final TethysRate pRate) {
+        public MoneyWiseTaxBand(final OceanusRate pRate) {
             this(null, pRate);
         }
 
@@ -163,10 +163,10 @@ public class MoneyWiseTaxBandSet
          * @param pSource the source band
          */
         public MoneyWiseTaxBand(final MoneyWiseTaxBand pSource) {
-            final TethysMoney myAmount = pSource.getAmount();
+            final OceanusMoney myAmount = pSource.getAmount();
             theAmount = myAmount == null
                     ? null
-                    : new TethysMoney(myAmount);
+                    : new OceanusMoney(myAmount);
             theRate = pSource.getRate();
         }
 
@@ -174,7 +174,7 @@ public class MoneyWiseTaxBandSet
          * Obtain the amount.
          * @return the amount
          */
-        public TethysMoney getAmount() {
+        public OceanusMoney getAmount() {
             return theAmount;
         }
 
@@ -182,7 +182,7 @@ public class MoneyWiseTaxBandSet
          * Obtain the rate.
          * @return the rate
          */
-        public TethysRate getRate() {
+        public OceanusRate getRate() {
             return theRate;
         }
 

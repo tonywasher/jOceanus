@@ -20,12 +20,12 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.event.TethysEvent;
-import net.sourceforge.joceanus.tethys.event.TethysEventManager;
-import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar;
-import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar.TethysEventProvider;
-import net.sourceforge.joceanus.tethys.event.TethysEventRegistration;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.event.OceanusEvent;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistration;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.tethys.ui.api.control.TethysUIHTMLManager;
 import net.sourceforge.joceanus.tethys.ui.api.control.TethysUISplitTreeManager;
@@ -68,7 +68,7 @@ public class MetisViewerWindow
     /**
      * The Event Manager.
      */
-    private final TethysEventManager<TethysUIEvent> theEventManager;
+    private final OceanusEventManager<TethysUIEvent> theEventManager;
 
     /**
      * The split tree.
@@ -93,7 +93,7 @@ public class MetisViewerWindow
     /**
      * The Registrations.
      */
-    private final List<TethysEventRegistration<MetisViewerEvent>> theRegistrations;
+    private final List<OceanusEventRegistration<MetisViewerEvent>> theRegistrations;
 
     /**
      * The Control Window.
@@ -123,7 +123,7 @@ public class MetisViewerWindow
         theDataManager = pDataManager;
 
         /* Create the event manager */
-        theEventManager = new TethysEventManager<>();
+        theEventManager = new OceanusEventManager<>();
 
         /* Create the splitTree and obtain details */
         theSplitTree = pFactory.controlFactory().newSplitTreeManager();
@@ -151,7 +151,7 @@ public class MetisViewerWindow
     }
 
     @Override
-    public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
+    public OceanusEventRegistrar<TethysUIEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -202,7 +202,7 @@ public class MetisViewerWindow
         }
 
         /* Listen to the data manager */
-        final TethysEventRegistrar<MetisViewerEvent> myRegistrar = theDataManager.getEventRegistrar();
+        final OceanusEventRegistrar<MetisViewerEvent> myRegistrar = theDataManager.getEventRegistrar();
         theRegistrations.add(myRegistrar.addEventListener(MetisViewerEvent.FOCUS, this::handleFocusEvent));
         theRegistrations.add(myRegistrar.addEventListener(MetisViewerEvent.VISIBILITY, this::handleVisibilityEvent));
         theRegistrations.add(myRegistrar.addEventListener(MetisViewerEvent.VALUE, this::handleValueEvent));
@@ -220,10 +220,10 @@ public class MetisViewerWindow
      */
     protected void terminateTree() {
         /* Loop through registrations */
-        final TethysEventRegistrar<MetisViewerEvent> myRegistrar = theDataManager.getEventRegistrar();
-        final Iterator<TethysEventRegistration<MetisViewerEvent>> myIterator = theRegistrations.iterator();
+        final OceanusEventRegistrar<MetisViewerEvent> myRegistrar = theDataManager.getEventRegistrar();
+        final Iterator<OceanusEventRegistration<MetisViewerEvent>> myIterator = theRegistrations.iterator();
         while (myIterator.hasNext()) {
-            final TethysEventRegistration<MetisViewerEvent> myRegistration = myIterator.next();
+            final OceanusEventRegistration<MetisViewerEvent> myRegistration = myIterator.next();
 
             /* Remove the registration */
             myRegistrar.removeEventListener(myRegistration);
@@ -260,7 +260,7 @@ public class MetisViewerWindow
      * Handle focus event.
      * @param pEvent the event
      */
-    private void handleFocusEvent(final TethysEvent<MetisViewerEvent> pEvent) {
+    private void handleFocusEvent(final OceanusEvent<MetisViewerEvent> pEvent) {
         /* Access item and check whether it is the currently selected item */
         final MetisViewerEntry myEntry = pEvent.getDetails(MetisViewerEntry.class);
         final boolean isSelected = myEntry.equals(theTree.getSelectedItem());
@@ -276,7 +276,7 @@ public class MetisViewerWindow
      * Handle visibility event.
      * @param pEvent the event
      */
-    private void handleVisibilityEvent(final TethysEvent<MetisViewerEvent> pEvent) {
+    private void handleVisibilityEvent(final OceanusEvent<MetisViewerEvent> pEvent) {
         /* Look up item and set visibility */
         final MetisViewerEntry myEntry = pEvent.getDetails(MetisViewerEntry.class);
         final TethysUITreeItem<MetisViewerEntry> myTreeItem = theTree.lookUpItem(myEntry.getUniqueName());
@@ -289,7 +289,7 @@ public class MetisViewerWindow
      * Handle value event.
      * @param pEvent the event
      */
-    private void handleValueEvent(final TethysEvent<MetisViewerEvent> pEvent) {
+    private void handleValueEvent(final OceanusEvent<MetisViewerEvent> pEvent) {
         /* Look up item and rebuild */
         final MetisViewerEntry myEntry = pEvent.getDetails(MetisViewerEntry.class);
         final boolean isSelected = myEntry.equals(theTree.getSelectedItem());
@@ -310,7 +310,7 @@ public class MetisViewerWindow
      * Handle entry event.
      * @param pEvent the event
      */
-    private void handleEntryEvent(final TethysEvent<MetisViewerEvent> pEvent) {
+    private void handleEntryEvent(final OceanusEvent<MetisViewerEvent> pEvent) {
         /* Look up parent item */
         final MetisViewerEntry myEntry = pEvent.getDetails(MetisViewerEntry.class);
         final MetisViewerEntry myParent = myEntry.getParent();
@@ -399,7 +399,7 @@ public class MetisViewerWindow
      * Handle the split tree action event.
      * @param pEvent the event
      */
-    protected void handleSplitTreeAction(final TethysEvent<TethysUIEvent> pEvent) {
+    protected void handleSplitTreeAction(final OceanusEvent<TethysUIEvent> pEvent) {
         switch (pEvent.getEventId()) {
             case NEWVALUE:
                 handleNewTreeItem(pEvent.getDetails(MetisViewerEntry.class));

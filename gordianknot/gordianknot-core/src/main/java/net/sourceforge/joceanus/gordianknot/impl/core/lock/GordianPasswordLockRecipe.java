@@ -37,8 +37,8 @@ import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianPersonalisatio
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianPersonalisation.GordianPersonalId;
 import net.sourceforge.joceanus.gordianknot.impl.core.keyset.GordianCoreKeySet;
 import net.sourceforge.joceanus.gordianknot.impl.core.keyset.GordianCoreKeySetFactory;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.TethysDataConverter;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.OceanusDataConverter;
 
 /**
  * Class for assembling/disassembling PasswordLocks.
@@ -236,7 +236,7 @@ public final class GordianPasswordLockRecipe {
                 + iIterations;
 
         /* Create a byte array of the iterations */
-        final byte[] myLoops = TethysDataConverter.integerToByteArray(iFinal);
+        final byte[] myLoops = OceanusDataConverter.integerToByteArray(iFinal);
 
         /* Access factories */
         final GordianDigestFactory myDigests = pFactory.getDigestFactory();
@@ -409,14 +409,14 @@ public final class GordianPasswordLockRecipe {
 
             /* Generate recipe and derive digestTypes */
             final int mySeed = myRandom.nextInt();
-            theRecipe = TethysDataConverter.integerToByteArray(mySeed);
+            theRecipe = OceanusDataConverter.integerToByteArray(mySeed);
             final Random mySeededRandom = myPersonal.getSeededRandom(GordianPersonalId.HASHRANDOM, theRecipe);
             theSecretDigest = myManager.deriveKeyHashSecretTypeFromSeed(mySeededRandom);
             theDigests = myManager.deriveKeyHashDigestTypesFromSeed(mySeededRandom, NUM_DIGESTS);
             theExternalDigest = myManager.deriveExternalDigestTypeFromSeed(mySeededRandom);
 
             /* Derive random adjustment value */
-            theAdjust = mySeededRandom.nextInt(TethysDataConverter.NYBBLE_MASK + 1);
+            theAdjust = mySeededRandom.nextInt(OceanusDataConverter.NYBBLE_MASK + 1);
         }
 
         /**
@@ -438,7 +438,7 @@ public final class GordianPasswordLockRecipe {
             theExternalDigest = myManager.deriveExternalDigestTypeFromSeed(mySeededRandom);
 
             /* Derive random adjustment value */
-            theAdjust = mySeededRandom.nextInt(TethysDataConverter.NYBBLE_MASK + 1);
+            theAdjust = mySeededRandom.nextInt(OceanusDataConverter.NYBBLE_MASK + 1);
         }
 
         /**

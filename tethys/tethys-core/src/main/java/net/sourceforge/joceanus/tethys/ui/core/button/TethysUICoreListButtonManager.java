@@ -22,8 +22,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.function.Supplier;
 
-import net.sourceforge.joceanus.tethys.event.TethysEventManager;
-import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIArrowIconId;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIConstant;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUINode;
@@ -61,7 +61,7 @@ public abstract class TethysUICoreListButtonManager<T extends Comparable<? super
     /**
      * The Event Manager.
      */
-    private final TethysEventManager<TethysUIEvent> theEventManager;
+    private final OceanusEventManager<TethysUIEvent> theEventManager;
 
     /**
      * The Button.
@@ -105,7 +105,7 @@ public abstract class TethysUICoreListButtonManager<T extends Comparable<? super
     protected TethysUICoreListButtonManager(final TethysUICoreFactory<?> pFactory) {
         /* Allocate resources */
         theGuiFactory = pFactory;
-        theEventManager = new TethysEventManager<>();
+        theEventManager = new OceanusEventManager<>();
         theButton = pFactory.buttonFactory().newButton();
 
         /* Note that the button should be Text and Icon and set down arrow icon */
@@ -142,7 +142,7 @@ public abstract class TethysUICoreListButtonManager<T extends Comparable<? super
     }
 
     @Override
-    public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
+    public OceanusEventRegistrar<TethysUIEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 

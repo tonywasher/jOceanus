@@ -20,14 +20,14 @@ import java.util.EnumMap;
 import java.util.Map;
 import java.util.ResourceBundle;
 
-import net.sourceforge.joceanus.tethys.resource.TethysBundleId;
-import net.sourceforge.joceanus.tethys.resource.TethysBundleLoader;
+import net.sourceforge.joceanus.oceanus.resource.OceanusBundleId;
+import net.sourceforge.joceanus.oceanus.resource.OceanusBundleLoader;
 
 /**
  * Resource IDs for Sheet.
  */
 public enum PrometheusSheetResource
-        implements TethysBundleId {
+        implements OceanusBundleId {
     /**
      * WorkBook ExcelXLS.
      */
@@ -46,12 +46,12 @@ public enum PrometheusSheetResource
     /**
      * The WorkBook Map.
      */
-    private static final Map<PrometheusSheetWorkBookType, TethysBundleId> WORKBOOK_MAP = buildWorkBookMap();
+    private static final Map<PrometheusSheetWorkBookType, OceanusBundleId> WORKBOOK_MAP = buildWorkBookMap();
 
     /**
      * The Resource Loader.
      */
-    private static final TethysBundleLoader LOADER = TethysBundleLoader.getPackageLoader(PrometheusSheetException.class.getCanonicalName(),
+    private static final OceanusBundleLoader LOADER = OceanusBundleLoader.getPackageLoader(PrometheusSheetException.class.getCanonicalName(),
             ResourceBundle::getBundle);
 
     /**
@@ -98,9 +98,9 @@ public enum PrometheusSheetResource
      * Build workBook map.
      * @return the map
      */
-    private static Map<PrometheusSheetWorkBookType, TethysBundleId> buildWorkBookMap() {
+    private static Map<PrometheusSheetWorkBookType, OceanusBundleId> buildWorkBookMap() {
         /* Create the map and return it */
-        final Map<PrometheusSheetWorkBookType, TethysBundleId> myMap = new EnumMap<>(PrometheusSheetWorkBookType.class);
+        final Map<PrometheusSheetWorkBookType, OceanusBundleId> myMap = new EnumMap<>(PrometheusSheetWorkBookType.class);
         myMap.put(PrometheusSheetWorkBookType.EXCELXLS, WORKBOOK_EXCELXLS);
         myMap.put(PrometheusSheetWorkBookType.EXCELXLSX, WORKBOOK_EXCELXLSX);
         myMap.put(PrometheusSheetWorkBookType.OASIS, WORKBOOK_OASIS);
@@ -112,7 +112,7 @@ public enum PrometheusSheetResource
      * @param pType the Type
      * @return the resource key
      */
-    protected static TethysBundleId getKeyForWorkBook(final PrometheusSheetWorkBookType pType) {
-        return TethysBundleLoader.getKeyForEnum(WORKBOOK_MAP, pType);
+    protected static OceanusBundleId getKeyForWorkBook(final PrometheusSheetWorkBookType pType) {
+        return OceanusBundleLoader.getKeyForEnum(WORKBOOK_MAP, pType);
     }
 }

@@ -21,8 +21,8 @@ import net.sourceforge.joceanus.gordianknot.api.password.GordianPasswordManager;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataSet;
 import net.sourceforge.joceanus.moneywise.tax.uk.MoneyWiseUKTaxYearCache;
 import net.sourceforge.joceanus.prometheus.toolkit.PrometheusToolkit;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.profile.TethysProfile;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
 import net.sourceforge.joceanus.tethys.ui.api.thread.TethysUIThreadStatusReport;
 
 /**
@@ -97,13 +97,13 @@ public class MoneyWiseTestSecurity {
         /**
          * The active task.
          */
-        private final TethysProfile theProfile;
+        private final OceanusProfile theProfile;
 
         /**
          * Constructor.
          */
         NullThreadStatusReport() {
-            theProfile = new TethysProfile("Dummy");
+            theProfile = new OceanusProfile("Dummy");
         }
 
         @Override
@@ -147,7 +147,7 @@ public class MoneyWiseTestSecurity {
         }
 
         @Override
-        public TethysProfile getActiveTask() {
+        public OceanusProfile getActiveTask() {
             return theProfile;
         }
     }

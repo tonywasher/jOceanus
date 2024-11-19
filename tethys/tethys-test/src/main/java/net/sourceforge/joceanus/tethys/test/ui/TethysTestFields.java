@@ -19,11 +19,11 @@ package net.sourceforge.joceanus.tethys.test.ui;
 import java.util.Currency;
 import java.util.List;
 
-import net.sourceforge.joceanus.tethys.date.TethysDate;
-import net.sourceforge.joceanus.tethys.date.TethysDateFormatter;
-import net.sourceforge.joceanus.tethys.decimal.TethysDecimal;
-import net.sourceforge.joceanus.tethys.decimal.TethysDecimalFormatter;
-import net.sourceforge.joceanus.tethys.event.TethysEvent;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.date.OceanusDateFormatter;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimal;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimalFormatter;
+import net.sourceforge.joceanus.oceanus.event.OceanusEvent;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIAlignment;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
@@ -180,12 +180,12 @@ public class TethysTestFields {
     /**
      * The Date formatter.
      */
-    private final TethysDateFormatter theDateFormatter;
+    private final OceanusDateFormatter theDateFormatter;
 
     /**
      * The Decimal formatter.
      */
-    private final TethysDecimalFormatter theDecimalFormatter;
+    private final OceanusDecimalFormatter theDecimalFormatter;
 
     /**
      * The Panel.
@@ -418,7 +418,7 @@ public class TethysTestFields {
         myGrid.allowCellGrowth(theDateField);
         myGrid.newRow();
         theDateField.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> processActionEvent(theDateField, e));
-        theDateField.setValue(new TethysDate());
+        theDateField.setValue(new OceanusDate());
 
         /* Create ListButton field line */
         myLabel = myControls.newLabel("ListButton:");
@@ -571,7 +571,7 @@ public class TethysTestFields {
      * @param pEvent the event
      */
     private void processActionEvent(final TethysUIDataEditField<?> pField,
-                                    final TethysEvent<TethysUIEvent> pEvent) {
+                                    final OceanusEvent<TethysUIEvent> pEvent) {
         /* Determine source */
         final String mySource = pField.getClass().getSimpleName();
 
@@ -627,14 +627,14 @@ public class TethysTestFields {
             theValue.setText(theDecimalFormatter.formatInteger((Integer) pResults));
         } else if (pResults instanceof Long) {
             theValue.setText(theDecimalFormatter.formatLong((Long) pResults));
-        } else if (pResults instanceof TethysDecimal) {
-            theValue.setText(theDecimalFormatter.formatDecimal((TethysDecimal) pResults));
+        } else if (pResults instanceof OceanusDecimal) {
+            theValue.setText(theDecimalFormatter.formatDecimal((OceanusDecimal) pResults));
         } else if (pResults instanceof Boolean) {
             theValue.setText(pResults.toString());
         } else if (pResults instanceof List) {
             theValue.setText(pResults.toString());
-        } else if (pResults instanceof TethysDate) {
-            theValue.setText(theDateFormatter.formatDate((TethysDate) pResults));
+        } else if (pResults instanceof OceanusDate) {
+            theValue.setText(theDateFormatter.formatDate((OceanusDate) pResults));
         } else {
             theValue.setText(null);
         }

@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.moneywise.tax;
 
 import java.util.Currency;
 
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
 
 /**
  * Marginal allowance reduction.
@@ -78,16 +78,16 @@ public enum MoneyWiseMarginalReduction {
      * @param pLimit the allowance limit
      * @return the reduction
      */
-    public TethysMoney calculateReduction(final TethysMoney pGrossTaxable,
-                                          final TethysMoney pLimit) {
+    public OceanusMoney calculateReduction(final OceanusMoney pGrossTaxable,
+                                           final OceanusMoney pLimit) {
         /* Determine the amount by which we are over the limit */
-        final TethysMoney myExcess = new TethysMoney(pGrossTaxable);
+        final OceanusMoney myExcess = new OceanusMoney(pGrossTaxable);
         myExcess.subtractAmount(pLimit);
 
         /* Determine the quotient and multiplier in the required currency */
         final Currency myCurrency = myExcess.getCurrency();
-        final TethysMoney myQuotient = TethysMoney.getWholeUnits(theQuotient, myCurrency);
-        final TethysMoney myMultiplier = TethysMoney.getWholeUnits(theMultiplier, myCurrency);
+        final OceanusMoney myQuotient = OceanusMoney.getWholeUnits(theQuotient, myCurrency);
+        final OceanusMoney myMultiplier = OceanusMoney.getWholeUnits(theMultiplier, myCurrency);
 
         /* Calculate the reduction */
         myExcess.divide(myQuotient.unscaledValue());

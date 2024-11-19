@@ -28,11 +28,11 @@ import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnal
 import net.sourceforge.joceanus.moneywise.lethe.reports.MoneyWiseReportType;
 import net.sourceforge.joceanus.moneywise.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.prometheus.views.PrometheusDataEvent;
-import net.sourceforge.joceanus.tethys.date.TethysDatePeriod;
-import net.sourceforge.joceanus.tethys.date.TethysDateRange;
-import net.sourceforge.joceanus.tethys.event.TethysEventManager;
-import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar;
-import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.oceanus.date.OceanusDatePeriod;
+import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.TethysEventProvider;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.tethys.ui.api.button.TethysUIButton;
@@ -64,7 +64,7 @@ public class MoneyWiseReportSelect
     /**
      * The Event Manager.
      */
-    private final TethysEventManager<PrometheusDataEvent> theEventManager;
+    private final OceanusEventManager<PrometheusDataEvent> theEventManager;
 
     /**
      * The panel.
@@ -141,7 +141,7 @@ public class MoneyWiseReportSelect
         theState.setType(MoneyWiseReportType.getDefault());
 
         /* Create Event Manager */
-        theEventManager = new TethysEventManager<>();
+        theEventManager = new OceanusEventManager<>();
 
         /* Create the selection panel */
         thePanel = pFactory.paneFactory().newHBoxPane();
@@ -174,7 +174,7 @@ public class MoneyWiseReportSelect
     }
 
     @Override
-    public TethysEventRegistrar<PrometheusDataEvent> getEventRegistrar() {
+    public OceanusEventRegistrar<PrometheusDataEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -190,7 +190,7 @@ public class MoneyWiseReportSelect
      * Obtain the selected date range.
      * @return the date range
      */
-    public TethysDateRange getDateRange() {
+    public OceanusDateRange getDateRange() {
         return theState.getRange();
     }
 
@@ -279,7 +279,7 @@ public class MoneyWiseReportSelect
      * Set the range for the date box.
      * @param pRange the date range
      */
-    public final void setRange(final TethysDateRange pRange) {
+    public final void setRange(final OceanusDateRange pRange) {
         /* Set up range */
         theRangeSelect.setOverallRange(pRange);
     }
@@ -426,7 +426,7 @@ public class MoneyWiseReportSelect
         /**
          * The selected range.
          */
-        private TethysDateRange theRange;
+        private OceanusDateRange theRange;
 
         /**
          * Do we have securities?
@@ -473,7 +473,7 @@ public class MoneyWiseReportSelect
          * Obtain the selected range.
          * @return the range
          */
-        private TethysDateRange getRange() {
+        private OceanusDateRange getRange() {
             return theRange;
         }
 
@@ -508,9 +508,9 @@ public class MoneyWiseReportSelect
          */
         private boolean setRange(final TethysUIDateRangeSelector pSelect) {
             /* Adjust the date and build the new range */
-            final TethysDateRange myRange = pSelect.getRange();
+            final OceanusDateRange myRange = pSelect.getRange();
             if (!MetisDataDifference.isEqual(myRange, theRange)) {
-                theRange = new TethysDateRange(myRange);
+                theRange = new OceanusDateRange(myRange);
                 return true;
             }
             return false;
@@ -571,14 +571,14 @@ public class MoneyWiseReportSelect
                 if (theType.isPointInTime() != isPointInTime) {
                     /* Switch it appropriately */
                     theRangeSelect.setPeriod(isPointInTime
-                            ? TethysDatePeriod.FISCALYEAR
-                            : TethysDatePeriod.DATESUPTO);
+                            ? OceanusDatePeriod.FISCALYEAR
+                            : OceanusDatePeriod.DATESUPTO);
                     theRangeSelect.lockPeriod(!isPointInTime);
 
                     /* else if we are switching to tax calculation */
                 } else if (theType == MoneyWiseReportType.TAXCALC) {
                     /* Switch explicitly to Fiscal Year */
-                    theRangeSelect.setPeriod(TethysDatePeriod.FISCALYEAR);
+                    theRangeSelect.setPeriod(OceanusDatePeriod.FISCALYEAR);
                 }
 
                 /* Apply the state */

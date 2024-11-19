@@ -33,10 +33,10 @@ import net.sourceforge.joceanus.gordianknot.util.GordianGenerator;
 import net.sourceforge.joceanus.metis.preference.MetisPreferenceKey;
 import net.sourceforge.joceanus.metis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.metis.preference.MetisPreferenceResource;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.TethysDataConverter;
-import net.sourceforge.joceanus.tethys.logger.TethysLogManager;
-import net.sourceforge.joceanus.tethys.logger.TethysLogger;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.OceanusDataConverter;
+import net.sourceforge.joceanus.oceanus.logger.OceanusLogManager;
+import net.sourceforge.joceanus.oceanus.logger.OceanusLogger;
 
 /**
  * Security for Preferences.
@@ -45,7 +45,7 @@ public class PrometheusPreferenceSecurity {
     /**
      * Logger.
      */
-    private static final TethysLogger LOGGER = TethysLogManager.getLogger(PrometheusPreferenceSecurity.class);
+    private static final OceanusLogger LOGGER = OceanusLogManager.getLogger(PrometheusPreferenceSecurity.class);
 
     /**
      * Default KeyLength.
@@ -103,7 +103,7 @@ public class PrometheusPreferenceSecurity {
      * @throws OceanusException on error
      */
     protected byte[] encryptValue(final char[] pValue) throws OceanusException {
-        final byte[] myBytes = TethysDataConverter.charsToByteArray(pValue);
+        final byte[] myBytes = OceanusDataConverter.charsToByteArray(pValue);
         return theKeySet.encryptBytes(myBytes);
     }
 
@@ -116,7 +116,7 @@ public class PrometheusPreferenceSecurity {
      */
     protected char[] decryptValue(final byte[] pValue) throws OceanusException {
         final byte[] myBytes = theKeySet.decryptBytes(pValue);
-        return TethysDataConverter.bytesToCharArray(myBytes);
+        return OceanusDataConverter.bytesToCharArray(myBytes);
     }
 
     /**

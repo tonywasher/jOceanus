@@ -21,9 +21,9 @@ import net.sourceforge.joceanus.moneywise.ui.panel.MoneyWiseMarketPricesTable.Mo
 import net.sourceforge.joceanus.moneywise.ui.panel.MoneyWiseMarketRatesTable.MoneyWiseSpotRatesPanel;
 import net.sourceforge.joceanus.moneywise.views.MoneyWiseView;
 import net.sourceforge.joceanus.prometheus.views.PrometheusDataEvent;
-import net.sourceforge.joceanus.tethys.event.TethysEventManager;
-import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar;
-import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.TethysEventProvider;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.tethys.ui.api.pane.TethysUITabPaneManager;
 import net.sourceforge.joceanus.tethys.ui.api.pane.TethysUITabPaneManager.TethysUITabItem;
@@ -47,7 +47,7 @@ public class MoneyWiseMarketTabs
     /**
      * The Event Manager.
      */
-    private final TethysEventManager<PrometheusDataEvent> theEventManager;
+    private final OceanusEventManager<PrometheusDataEvent> theEventManager;
 
     /**
      * The Data View.
@@ -78,7 +78,7 @@ public class MoneyWiseMarketTabs
         theView = pView;
 
         /* Create the event manager */
-        theEventManager = new TethysEventManager<>();
+        theEventManager = new OceanusEventManager<>();
 
         /* Create the Tabbed Pane */
         theTabs = theView.getGuiFactory().paneFactory().newTabPane();
@@ -103,7 +103,7 @@ public class MoneyWiseMarketTabs
     }
 
     @Override
-    public TethysEventRegistrar<PrometheusDataEvent> getEventRegistrar() {
+    public OceanusEventRegistrar<PrometheusDataEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 

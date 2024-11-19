@@ -16,7 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.tethys.test.ui;
 
-import net.sourceforge.joceanus.tethys.date.TethysDate;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
 import net.sourceforge.joceanus.tethys.test.ui.TethysTestHelper.TethysIconState;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIAlignment;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIComponent;
@@ -260,8 +260,8 @@ public class TethysTestButtons {
         myGrid.newRow();
 
         /* Add listener */
-        theDateButtonMgr.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> setDateValue(e.getDetails(TethysDate.class)));
-        theDateButtonMgr.setSelectedDate(new TethysDate());
+        theDateButtonMgr.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> setDateValue(e.getDetails(OceanusDate.class)));
+        theDateButtonMgr.setSelectedDate(new OceanusDate());
 
         /* Create simple icon button line */
         theSimpleIconButtonMgr.setBorderTitle("SimpleIconButton");
@@ -349,7 +349,7 @@ public class TethysTestButtons {
      * Set the date value.
      * @param pValue the value to set
      */
-    private void setDateValue(final TethysDate pValue) {
+    private void setDateValue(final OceanusDate pValue) {
         /* Record the value */
         theDateValue.setText(pValue == null
                 ? null

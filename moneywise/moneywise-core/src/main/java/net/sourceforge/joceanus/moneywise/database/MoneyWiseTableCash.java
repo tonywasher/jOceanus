@@ -30,7 +30,7 @@ import net.sourceforge.joceanus.prometheus.database.PrometheusDataStore;
 import net.sourceforge.joceanus.prometheus.database.PrometheusTableDefinition;
 import net.sourceforge.joceanus.prometheus.database.PrometheusTableDefinition.PrometheusSortOrder;
 import net.sourceforge.joceanus.prometheus.database.PrometheusTableEncrypted;
-import net.sourceforge.joceanus.tethys.OceanusException;
+import net.sourceforge.joceanus.oceanus.OceanusException;
 
 /**
  * TableEncrypted extension for Cash.

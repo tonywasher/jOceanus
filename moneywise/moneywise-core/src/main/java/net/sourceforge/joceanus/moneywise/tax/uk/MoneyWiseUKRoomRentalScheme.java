@@ -17,7 +17,7 @@
 package net.sourceforge.joceanus.moneywise.tax.uk;
 
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
 
 /**
  * Rental Tax Scheme.
@@ -30,10 +30,10 @@ public class MoneyWiseUKRoomRentalScheme
     private static final MetisFieldSet<MoneyWiseUKRoomRentalScheme> FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseUKRoomRentalScheme.class);
 
     @Override
-    protected TethysMoney adjustAllowances(final MoneyWiseUKTaxConfig pConfig,
-                                           final TethysMoney pAmount) {
+    protected OceanusMoney adjustAllowances(final MoneyWiseUKTaxConfig pConfig,
+                                            final OceanusMoney pAmount) {
         /* Adjust against the rental allowance for room rental */
-        TethysMoney myRemaining = adjustForAllowance(pConfig.getRentalAllowance(), pAmount);
+        OceanusMoney myRemaining = adjustForAllowance(pConfig.getRentalAllowance(), pAmount);
 
         /* If we have any income left */
         if (myRemaining.isNonZero()) {
@@ -46,22 +46,22 @@ public class MoneyWiseUKRoomRentalScheme
     }
 
     @Override
-    protected TethysMoney getAmountInAllowance(final MoneyWiseUKTaxConfig pConfig,
-                                               final TethysMoney pAmount) {
+    protected OceanusMoney getAmountInAllowance(final MoneyWiseUKTaxConfig pConfig,
+                                                final OceanusMoney pAmount) {
         /* Obtain the amount covered by the room rental allowance */
-        TethysMoney myAmount = getAmountInBand(pConfig.getCapitalAllowance(), pAmount);
+        OceanusMoney myAmount = getAmountInBand(pConfig.getCapitalAllowance(), pAmount);
 
         /* If we have income left over */
         if (myAmount.compareTo(pAmount) < 0) {
             /* Calculate remaining amount */
-            final TethysMoney myRemaining = new TethysMoney(pAmount);
+            final OceanusMoney myRemaining = new OceanusMoney(pAmount);
             myRemaining.subtractAmount(myAmount);
 
             /* Calculate the amount covered by basic allowance */
-            final TethysMoney myXtra = super.getAmountInAllowance(pConfig, myRemaining);
+            final OceanusMoney myXtra = super.getAmountInAllowance(pConfig, myRemaining);
 
             /* Determine the total amount covered by the allowance */
-            myAmount = new TethysMoney(myAmount);
+            myAmount = new OceanusMoney(myAmount);
             myAmount.addAmount(myXtra);
         }
 

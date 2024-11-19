@@ -46,12 +46,12 @@ import javax.swing.SwingUtilities;
 import javax.swing.border.Border;
 import javax.swing.text.JTextComponent;
 
-import net.sourceforge.joceanus.tethys.decimal.TethysDecimal;
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
-import net.sourceforge.joceanus.tethys.decimal.TethysPrice;
-import net.sourceforge.joceanus.tethys.decimal.TethysRate;
-import net.sourceforge.joceanus.tethys.decimal.TethysRatio;
-import net.sourceforge.joceanus.tethys.decimal.TethysUnits;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimal;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRate;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRatio;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusUnits;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.tethys.ui.api.field.TethysUIFieldAttribute;
 import net.sourceforge.joceanus.tethys.ui.core.factory.TethysUICoreFactory;
@@ -914,7 +914,7 @@ public abstract class TethysUISwingDataTextField<T>
      * SwingRawDecimalTextField class.
      */
     public static class TethysUISwingRawDecimalTextField
-            extends TethysUISwingTextEditField<TethysDecimal, JTextField>
+            extends TethysUISwingTextEditField<OceanusDecimal, JTextField>
             implements TethysUIRawDecimalEditField {
         /**
          * Constructor.
@@ -954,7 +954,7 @@ public abstract class TethysUISwingDataTextField<T>
      * SwingCurrencyTextField base class.
      * @param <T> the data type
      */
-    protected abstract static class TethysUISwingCurrencyTextFieldBase<T extends TethysMoney>
+    protected abstract static class TethysUISwingCurrencyTextFieldBase<T extends OceanusMoney>
             extends TethysUISwingTextEditField<T, JTextField>
             implements TethysUICurrencyEditField<T> {
         /**
@@ -984,7 +984,7 @@ public abstract class TethysUISwingDataTextField<T>
      * SwingMoneyTextField class.
      */
     public static class TethysUISwingMoneyTextField
-            extends TethysUISwingCurrencyTextFieldBase<TethysMoney>
+            extends TethysUISwingCurrencyTextFieldBase<OceanusMoney>
             implements TethysUIMoneyEditField {
         /**
          * Constructor.
@@ -1014,7 +1014,7 @@ public abstract class TethysUISwingDataTextField<T>
      * SwingPriceTextField class.
      */
     public static class TethysUISwingPriceTextField
-            extends TethysUISwingCurrencyTextFieldBase<TethysPrice>
+            extends TethysUISwingCurrencyTextFieldBase<OceanusPrice>
             implements TethysUIPriceEditField {
         /**
          * Constructor.
@@ -1044,7 +1044,7 @@ public abstract class TethysUISwingDataTextField<T>
      * SwingRateTextField class.
      */
     public static class TethysUISwingRateTextField
-            extends TethysUISwingTextEditField<TethysRate, JTextField>
+            extends TethysUISwingTextEditField<OceanusRate, JTextField>
             implements TethysUIRateEditField {
         /**
          * Constructor.
@@ -1074,7 +1074,7 @@ public abstract class TethysUISwingDataTextField<T>
      * SwingUnitsTextField class.
      */
     public static class TethysUISwingUnitsTextField
-            extends TethysUISwingTextEditField<TethysUnits, JTextField>
+            extends TethysUISwingTextEditField<OceanusUnits, JTextField>
             implements TethysUIUnitsEditField {
         /**
          * Constructor.
@@ -1104,7 +1104,7 @@ public abstract class TethysUISwingDataTextField<T>
      * SwingRatioTextField class.
      */
     public static class TethysUISwingRatioTextField
-            extends TethysUISwingTextEditField<TethysRatio, JTextField>
+            extends TethysUISwingTextEditField<OceanusRatio, JTextField>
             implements TethysUIRatioEditField {
         /**
          * Constructor.

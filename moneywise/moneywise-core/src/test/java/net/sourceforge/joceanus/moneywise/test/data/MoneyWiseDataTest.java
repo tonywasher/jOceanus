@@ -45,10 +45,10 @@ import net.sourceforge.joceanus.moneywise.tax.uk.MoneyWiseUKTaxYearCache;
 import net.sourceforge.joceanus.moneywise.views.MoneyWiseView;
 import net.sourceforge.joceanus.prometheus.toolkit.PrometheusToolkit;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
-import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar;
-import net.sourceforge.joceanus.tethys.profile.TethysProfile;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
+import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
 import net.sourceforge.joceanus.tethys.ui.api.thread.TethysUIThread;
 import net.sourceforge.joceanus.tethys.ui.api.thread.TethysUIThreadEvent;
 import net.sourceforge.joceanus.tethys.ui.api.thread.TethysUIThreadManager;
@@ -116,7 +116,7 @@ public class MoneyWiseDataTest {
 
         /* Create the analysis */
         final MoneyWiseView myView = new MoneyWiseView(pToolkit, new MoneyWiseUKTaxYearCache());
-        final TethysProfile myTask = myView.getNewProfile("Dummy");
+        final OceanusProfile myTask = myView.getNewProfile("Dummy");
         myView.setData(pData);
         final PrometheusEditSet myEditSet = new PrometheusEditSet(myView);
         final MoneyWiseAnalysisTransAnalyser myAnalyser = new MoneyWiseAnalysisTransAnalyser(myTask, myEditSet, pToolkit.getPreferenceManager());
@@ -131,49 +131,49 @@ public class MoneyWiseDataTest {
 
         /* Obtain deposit totals */
         final MoneyWiseAnalysisDepositCategoryBucket myDepCat = myAnalysis.getDepositCategories().getTotals();
-        TethysMoney myDepTotal = myDepCat.getValues().getMoneyValue(MoneyWiseAnalysisAccountAttr.VALUEDELTA);
-        myDepTotal = myDepTotal == null ? new TethysMoney() : new TethysMoney(myDepTotal);
+        OceanusMoney myDepTotal = myDepCat.getValues().getMoneyValue(MoneyWiseAnalysisAccountAttr.VALUEDELTA);
+        myDepTotal = myDepTotal == null ? new OceanusMoney() : new OceanusMoney(myDepTotal);
 
         /* Add in cash totals */
         final MoneyWiseAnalysisCashCategoryBucket myCashCat = myAnalysis.getCashCategories().getTotals();
-        final TethysMoney myCashTotal = myCashCat.getValues().getMoneyValue(MoneyWiseAnalysisAccountAttr.VALUEDELTA);
+        final OceanusMoney myCashTotal = myCashCat.getValues().getMoneyValue(MoneyWiseAnalysisAccountAttr.VALUEDELTA);
         if (myCashTotal != null)  {
             myDepTotal.addAmount(myCashTotal);
         }
 
         /* Add in loan totals */
         final MoneyWiseAnalysisLoanCategoryBucket myLoanCat = myAnalysis.getLoanCategories().getTotals();
-        final TethysMoney myLoanTotal = myLoanCat.getValues().getMoneyValue(MoneyWiseAnalysisAccountAttr.VALUEDELTA);
+        final OceanusMoney myLoanTotal = myLoanCat.getValues().getMoneyValue(MoneyWiseAnalysisAccountAttr.VALUEDELTA);
         if (myLoanTotal != null) {
             myDepTotal.addAmount(myLoanTotal);
         }
 
         /* Add in portfolio totals */
         final MoneyWiseAnalysisPortfolioBucket myPort = myAnalysis.getPortfolios().getTotals();
-        final TethysMoney myPortTotal = myPort.getValues().getMoneyValue(MoneyWiseAnalysisSecurityAttr.VALUEDELTA);
+        final OceanusMoney myPortTotal = myPort.getValues().getMoneyValue(MoneyWiseAnalysisSecurityAttr.VALUEDELTA);
         if (myPortTotal != null) {
             myDepTotal.addAmount(myPortTotal);
         }
 
         /* Validate Payee totals */
         final MoneyWiseAnalysisPayeeBucket myPayeeTotals = myAnalysis.getPayees().getTotals();
-        TethysMoney myPayTotal = myPayeeTotals.getValues().getMoneyValue(MoneyWiseAnalysisPayeeAttr.PROFIT);
+        OceanusMoney myPayTotal = myPayeeTotals.getValues().getMoneyValue(MoneyWiseAnalysisPayeeAttr.PROFIT);
         if (myPayTotal == null) {
-            myPayTotal = new TethysMoney();
+            myPayTotal = new OceanusMoney();
         }
         Assertions.assertEquals(myDepTotal, myPayTotal, "Payee total mismatch");
 
         /* Validate transaction totals */
         final MoneyWiseAnalysisTransCategoryBucket myTransTotals = myAnalysis.getTransCategories().getTotals();
-        TethysMoney myEvtTotal = myTransTotals.getValues().getMoneyValue(MoneyWiseAnalysisTransAttr.PROFIT);
+        OceanusMoney myEvtTotal = myTransTotals.getValues().getMoneyValue(MoneyWiseAnalysisTransAttr.PROFIT);
         if (myEvtTotal == null) {
-            myEvtTotal = new TethysMoney();
+            myEvtTotal = new OceanusMoney();
         }
         Assertions.assertEquals(myDepTotal, myEvtTotal, "Transaction total mismatch");
 
         /* Validate tax totals */
         final MoneyWiseAnalysisTaxBasisBucket myTaxTotals = myAnalysis.getTaxBasis().getTotals();
-        final TethysMoney myTaxTotal = myTaxTotals.getValues().getMoneyValue(MoneyWiseAnalysisTaxBasisAttr.GROSS);
+        final OceanusMoney myTaxTotal = myTaxTotals.getValues().getMoneyValue(MoneyWiseAnalysisTaxBasisAttr.GROSS);
         Assertions.assertEquals(myDepTotal, myTaxTotal, "TaxBasis total mismatch");
     }
 
@@ -191,7 +191,7 @@ public class MoneyWiseDataTest {
 
         /* Create the analysis */
         final MoneyWiseView myView = new MoneyWiseView(pToolkit, new MoneyWiseUKTaxYearCache());
-        final TethysProfile myTask = myView.getNewProfile("Dummy");
+        final OceanusProfile myTask = myView.getNewProfile("Dummy");
         myView.setData(pData);
         final PrometheusEditSet myEditSet = new PrometheusEditSet(myView);
         final MoneyWiseAnalysisTransAnalyser myAnalyser = new MoneyWiseAnalysisTransAnalyser(myTask, myEditSet, pToolkit.getPreferenceManager());
@@ -265,7 +265,7 @@ public class MoneyWiseDataTest {
         /**
          * The active task.
          */
-        private TethysProfile theProfile;
+        private OceanusProfile theProfile;
 
         /**
          * Constructor.
@@ -276,11 +276,11 @@ public class MoneyWiseDataTest {
 
         @Override
         public void setNewProfile(final String pTask) {
-            theProfile = new TethysProfile(pTask);
+            theProfile = new OceanusProfile(pTask);
         }
 
         @Override
-        public TethysEventRegistrar<TethysUIThreadEvent> getEventRegistrar() {
+        public OceanusEventRegistrar<TethysUIThreadEvent> getEventRegistrar() {
             return null;
         }
 
@@ -335,7 +335,7 @@ public class MoneyWiseDataTest {
         }
 
         @Override
-        public TethysProfile getActiveProfile() {
+        public OceanusProfile getActiveProfile() {
             return null;
         }
 
@@ -390,7 +390,7 @@ public class MoneyWiseDataTest {
         }
 
         @Override
-        public TethysProfile getActiveTask() {
+        public OceanusProfile getActiveTask() {
             return theProfile;
         }
     }

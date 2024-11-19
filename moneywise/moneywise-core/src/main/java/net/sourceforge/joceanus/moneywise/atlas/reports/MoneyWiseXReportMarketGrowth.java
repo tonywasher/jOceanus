@@ -31,9 +31,9 @@ import net.sourceforge.joceanus.moneywise.atlas.data.analysis.values.MoneyWiseXA
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.values.MoneyWiseXAnalysisValuesResource;
 import net.sourceforge.joceanus.moneywise.atlas.views.MoneyWiseXAnalysisFilter;
 import net.sourceforge.joceanus.moneywise.atlas.views.MoneyWiseXAnalysisFilter.MoneyWiseXAnalysisSecurityFilter;
-import net.sourceforge.joceanus.tethys.date.TethysDateRange;
-import net.sourceforge.joceanus.tethys.logger.TethysLogManager;
-import net.sourceforge.joceanus.tethys.logger.TethysLogger;
+import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
+import net.sourceforge.joceanus.oceanus.logger.OceanusLogManager;
+import net.sourceforge.joceanus.oceanus.logger.OceanusLogger;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -48,7 +48,7 @@ public class MoneyWiseXReportMarketGrowth
     /**
      * Logger.
      */
-    private static final TethysLogger LOGGER = TethysLogManager.getLogger(MoneyWiseXReportMarketGrowth.class);
+    private static final OceanusLogger LOGGER = OceanusLogManager.getLogger(MoneyWiseXReportMarketGrowth.class);
 
     /**
      * The Title text.
@@ -108,7 +108,7 @@ public class MoneyWiseXReportMarketGrowth
 
         /* Access the totals */
         final MoneyWiseXAnalysisPortfolioBucket myTotals = myPortfolios.getTotals();
-        final TethysDateRange myRange = pAnalysis.getDateRange();
+        final OceanusDateRange myRange = pAnalysis.getDateRange();
 
         /* Start the report */
         final Element myBody = theBuilder.startReport();

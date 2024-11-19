@@ -29,10 +29,10 @@ import net.sourceforge.joceanus.metis.report.MetisReportHTMLBuilder;
 import net.sourceforge.joceanus.metis.report.MetisReportHTMLBuilder.MetisHTMLTable;
 import net.sourceforge.joceanus.metis.report.MetisReportManager;
 import net.sourceforge.joceanus.metis.report.MetisReportReferenceManager.DelayedTable;
-import net.sourceforge.joceanus.tethys.date.TethysDate;
-import net.sourceforge.joceanus.tethys.date.TethysDateRange;
-import net.sourceforge.joceanus.tethys.decimal.TethysDecimal;
-import net.sourceforge.joceanus.tethys.decimal.TethysRatio;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimal;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRatio;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
 
 /**
@@ -71,7 +71,7 @@ public class CoeusReportBalanceSheet
         theMarket = pMarket;
 
         /* Access the date and totals */
-        final TethysDate myDate = theMarket.getDate();
+        final OceanusDate myDate = theMarket.getDate();
         final CoeusTotals myTotals = theMarket.getTotals();
 
         /* Start the report */
@@ -140,11 +140,11 @@ public class CoeusReportBalanceSheet
         makeTableFilterRow(myTable, CoeusTotalSet.LOANBOOK, myTotals.getLoanBook());
 
         /* Determine the number of days in the period */
-        final TethysDateRange myRange = theMarket.getDateRange();
+        final OceanusDateRange myRange = theMarket.getDateRange();
         final long numDays = myRange.getNumDays();
 
         /* Create the AssetRoR row */
-        TethysRatio myRoR = myTotals.getAssetRoR();
+        OceanusRatio myRoR = myTotals.getAssetRoR();
         makeTableFilterRow(myTable, CoeusTotalSet.ASSETROR, myRoR.annualise(numDays));
 
         /* Create the LoanRoR row */
@@ -163,7 +163,7 @@ public class CoeusReportBalanceSheet
      */
     private void makeTableFilterRow(final MetisHTMLTable pTable,
                                     final CoeusTotalSet pTotalSet,
-                                    final TethysDecimal pValue) {
+                                    final OceanusDecimal pValue) {
         /* If the value is non-zero */
         if (pValue.isNonZero()) {
             /* Create the BadDebt row */

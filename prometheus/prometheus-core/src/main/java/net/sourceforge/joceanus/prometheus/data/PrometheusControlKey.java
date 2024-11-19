@@ -32,8 +32,8 @@ import net.sourceforge.joceanus.metis.field.MetisFieldVersionedSet;
 import net.sourceforge.joceanus.prometheus.PrometheusDataException;
 import net.sourceforge.joceanus.prometheus.data.PrometheusControlKeySet.PrometheusControlKeySetList;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataSet.PrometheusCryptographyDataType;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.date.TethysDate;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
 
 /**
@@ -131,10 +131,10 @@ public final class PrometheusControlKey
 
             /* Store the CreationDate */
             myValue = pValues.getValue(PrometheusDataResource.CONTROLKEY_CREATION);
-            if (!(myValue instanceof TethysDate)) {
-                myValue = new TethysDate();
+            if (!(myValue instanceof OceanusDate)) {
+                myValue = new OceanusDate();
             }
-            setValueCreationDate((TethysDate) myValue);
+            setValueCreationDate((OceanusDate) myValue);
 
             /* Catch Exceptions */
         } catch (OceanusException e) {
@@ -171,7 +171,7 @@ public final class PrometheusControlKey
             allocateControlKeySets(myData);
 
             /* Set the creationDate */
-            setValueCreationDate(new TethysDate());
+            setValueCreationDate(new OceanusDate());
 
             /* Catch Exceptions */
         } catch (OceanusException e) {
@@ -251,8 +251,8 @@ public final class PrometheusControlKey
      * Get the CreationDate.
      * @return the creationDate
      */
-    public TethysDate getCreationDate() {
-        return getValues().getValue(PrometheusDataResource.CONTROLKEY_CREATION, TethysDate.class);
+    public OceanusDate getCreationDate() {
+        return getValues().getValue(PrometheusDataResource.CONTROLKEY_CREATION, OceanusDate.class);
     }
 
     /**
@@ -278,7 +278,7 @@ public final class PrometheusControlKey
      * @param pValue the creationDate
      * @throws OceanusException on error
      */
-    private void setValueCreationDate(final TethysDate pValue) throws OceanusException {
+    private void setValueCreationDate(final OceanusDate pValue) throws OceanusException {
         getValues().setValue(PrometheusDataResource.CONTROLKEY_CREATION, pValue);
     }
 

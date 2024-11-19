@@ -21,14 +21,14 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
-import net.sourceforge.joceanus.tethys.resource.TethysBundleId;
-import net.sourceforge.joceanus.tethys.resource.TethysBundleLoader;
+import net.sourceforge.joceanus.oceanus.resource.OceanusBundleId;
+import net.sourceforge.joceanus.oceanus.resource.OceanusBundleLoader;
 
 /**
  * Resource IDs for jMoneyWise Tax Fields.
  */
 public enum MoneyWiseTaxResource
-        implements TethysBundleId, MetisDataFieldId {
+        implements OceanusBundleId, MetisDataFieldId {
     /**
      * Basic Allowance.
      */
@@ -292,17 +292,17 @@ public enum MoneyWiseTaxResource
     /**
      * The Marginal Map.
      */
-    private static final Map<MoneyWiseMarginalReduction, TethysBundleId> MARGINAL_MAP = buildMarginalMap();
+    private static final Map<MoneyWiseMarginalReduction, OceanusBundleId> MARGINAL_MAP = buildMarginalMap();
 
     /**
      * The CashType Map.
      */
-    private static final Map<MoneyWiseCashType, TethysBundleId> CASHTYPE_MAP = buildCashTypeMap();
+    private static final Map<MoneyWiseCashType, OceanusBundleId> CASHTYPE_MAP = buildCashTypeMap();
 
     /**
      * The Resource Loader.
      */
-    private static final TethysBundleLoader LOADER = TethysBundleLoader.getLoader(MoneyWiseTaxResource.class.getCanonicalName(),
+    private static final OceanusBundleLoader LOADER = OceanusBundleLoader.getLoader(MoneyWiseTaxResource.class.getCanonicalName(),
             ResourceBundle::getBundle);
 
     /**
@@ -354,9 +354,9 @@ public enum MoneyWiseTaxResource
      * Build marginal map.
      * @return the map
      */
-    private static Map<MoneyWiseMarginalReduction, TethysBundleId> buildMarginalMap() {
+    private static Map<MoneyWiseMarginalReduction, OceanusBundleId> buildMarginalMap() {
         /* Create the map and return it */
-        final Map<MoneyWiseMarginalReduction, TethysBundleId> myMap = new EnumMap<>(MoneyWiseMarginalReduction.class);
+        final Map<MoneyWiseMarginalReduction, OceanusBundleId> myMap = new EnumMap<>(MoneyWiseMarginalReduction.class);
         myMap.put(MoneyWiseMarginalReduction.ONEINTWO, MARGINAL_ONEINTWO);
         myMap.put(MoneyWiseMarginalReduction.TWOINTHREE, MARGINAL_TWOINTHREE);
         return myMap;
@@ -367,17 +367,17 @@ public enum MoneyWiseTaxResource
      * @param pValue the Value
      * @return the resource key
      */
-    protected static TethysBundleId getKeyForMarginalReduction(final MoneyWiseMarginalReduction pValue) {
-        return TethysBundleLoader.getKeyForEnum(MARGINAL_MAP, pValue);
+    protected static OceanusBundleId getKeyForMarginalReduction(final MoneyWiseMarginalReduction pValue) {
+        return OceanusBundleLoader.getKeyForEnum(MARGINAL_MAP, pValue);
     }
 
     /**
      * Build cashType map.
      * @return the map
      */
-    private static Map<MoneyWiseCashType, TethysBundleId> buildCashTypeMap() {
+    private static Map<MoneyWiseCashType, OceanusBundleId> buildCashTypeMap() {
         /* Create the map and return it */
-        final Map<MoneyWiseCashType, TethysBundleId> myMap = new EnumMap<>(MoneyWiseCashType.class);
+        final Map<MoneyWiseCashType, OceanusBundleId> myMap = new EnumMap<>(MoneyWiseCashType.class);
         myMap.put(MoneyWiseCashType.LARGECASH, CASHTYPE_LARGE);
         myMap.put(MoneyWiseCashType.SMALLCASH, CASHTYPE_SMALL);
         return myMap;
@@ -388,7 +388,7 @@ public enum MoneyWiseTaxResource
      * @param pValue the Value
      * @return the resource key
      */
-    protected static TethysBundleId getKeyForCashType(final MoneyWiseCashType pValue) {
-        return TethysBundleLoader.getKeyForEnum(CASHTYPE_MAP, pValue);
+    protected static OceanusBundleId getKeyForCashType(final MoneyWiseCashType pValue) {
+        return OceanusBundleLoader.getKeyForEnum(CASHTYPE_MAP, pValue);
     }
 }

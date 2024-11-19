@@ -19,7 +19,7 @@ package net.sourceforge.joceanus.moneywise.lethe.data.analysis.values;
 import java.util.Currency;
 
 import net.sourceforge.joceanus.moneywise.lethe.data.analysis.base.MoneyWiseAnalysisValues;
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
 
 /**
  * PayeeValues class.
@@ -35,8 +35,8 @@ public final class MoneyWiseAnalysisPayeeValues
         super(MoneyWiseAnalysisPayeeAttr.class);
 
         /* Initialise income/expense to zero */
-        super.setValue(MoneyWiseAnalysisPayeeAttr.INCOME, new TethysMoney(pCurrency));
-        super.setValue(MoneyWiseAnalysisPayeeAttr.EXPENSE, new TethysMoney(pCurrency));
+        super.setValue(MoneyWiseAnalysisPayeeAttr.INCOME, new OceanusMoney(pCurrency));
+        super.setValue(MoneyWiseAnalysisPayeeAttr.EXPENSE, new OceanusMoney(pCurrency));
     }
 
     /**
@@ -71,14 +71,14 @@ public final class MoneyWiseAnalysisPayeeValues
     @Override
     public void resetBaseValues() {
         /* Create a zero value in the correct currency */
-        TethysMoney myValue = getMoneyValue(MoneyWiseAnalysisPayeeAttr.INCOME);
-        myValue = new TethysMoney(myValue);
+        OceanusMoney myValue = getMoneyValue(MoneyWiseAnalysisPayeeAttr.INCOME);
+        myValue = new OceanusMoney(myValue);
         myValue.setZero();
 
         /* Reset Income and expense values */
         super.setValue(MoneyWiseAnalysisPayeeAttr.INCOME, myValue);
-        super.setValue(MoneyWiseAnalysisPayeeAttr.EXPENSE, new TethysMoney(myValue));
-        super.setValue(MoneyWiseAnalysisPayeeAttr.PROFIT, new TethysMoney(myValue));
+        super.setValue(MoneyWiseAnalysisPayeeAttr.EXPENSE, new OceanusMoney(myValue));
+        super.setValue(MoneyWiseAnalysisPayeeAttr.PROFIT, new OceanusMoney(myValue));
     }
 
     /**
@@ -86,11 +86,11 @@ public final class MoneyWiseAnalysisPayeeValues
      */
     public void calculateDelta() {
         /* Obtain a copy of the value */
-        TethysMoney myDelta = getMoneyValue(MoneyWiseAnalysisPayeeAttr.INCOME);
-        myDelta = new TethysMoney(myDelta);
+        OceanusMoney myDelta = getMoneyValue(MoneyWiseAnalysisPayeeAttr.INCOME);
+        myDelta = new OceanusMoney(myDelta);
 
         /* Subtract the expense value */
-        final TethysMoney myExpense = getMoneyValue(MoneyWiseAnalysisPayeeAttr.EXPENSE);
+        final OceanusMoney myExpense = getMoneyValue(MoneyWiseAnalysisPayeeAttr.EXPENSE);
         myDelta.subtractAmount(myExpense);
 
         /* Set the delta */
@@ -102,8 +102,8 @@ public final class MoneyWiseAnalysisPayeeValues
      * @return true/false
      */
     public boolean isActive() {
-        final TethysMoney myIncome = getMoneyValue(MoneyWiseAnalysisPayeeAttr.INCOME);
-        final TethysMoney myExpense = getMoneyValue(MoneyWiseAnalysisPayeeAttr.EXPENSE);
+        final OceanusMoney myIncome = getMoneyValue(MoneyWiseAnalysisPayeeAttr.INCOME);
+        final OceanusMoney myExpense = getMoneyValue(MoneyWiseAnalysisPayeeAttr.EXPENSE);
         return myIncome.isNonZero() || myExpense.isNonZero();
     }
 }

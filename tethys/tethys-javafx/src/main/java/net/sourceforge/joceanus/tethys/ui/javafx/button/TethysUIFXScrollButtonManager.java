@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.tethys.ui.javafx.button;
 
 import javafx.geometry.Side;
 
-import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIIconId;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.tethys.ui.core.button.TethysUICoreScrollButtonManager;
@@ -60,7 +60,7 @@ public final class TethysUIFXScrollButtonManager<T>
     @Override
     protected void registerListeners() {
         /* Set context menu listener */
-        final TethysEventRegistrar<TethysUIEvent> myRegistrar = getMenu().getEventRegistrar();
+        final OceanusEventRegistrar<TethysUIEvent> myRegistrar = getMenu().getEventRegistrar();
         myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> handleMenuClosed());
         myRegistrar.addEventListener(TethysUIEvent.WINDOWCLOSED, e -> handleMenuClosed());
     }

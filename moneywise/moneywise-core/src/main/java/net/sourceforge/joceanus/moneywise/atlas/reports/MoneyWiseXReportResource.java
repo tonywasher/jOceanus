@@ -21,13 +21,13 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisBucketResource;
-import net.sourceforge.joceanus.tethys.resource.TethysBundleId;
-import net.sourceforge.joceanus.tethys.resource.TethysBundleLoader;
+import net.sourceforge.joceanus.oceanus.resource.OceanusBundleId;
+import net.sourceforge.joceanus.oceanus.resource.OceanusBundleLoader;
 
 /**
  * Resource IDs for jMoneyWise Report Fields.
  */
-public enum MoneyWiseXReportResource implements TethysBundleId {
+public enum MoneyWiseXReportResource implements OceanusBundleId {
     /**
      * NetWorth ReportType.
      */
@@ -141,12 +141,12 @@ public enum MoneyWiseXReportResource implements TethysBundleId {
     /**
      * The Report Map.
      */
-    private static final Map<MoneyWiseXReportType, TethysBundleId> REPORT_MAP = buildReportMap();
+    private static final Map<MoneyWiseXReportType, OceanusBundleId> REPORT_MAP = buildReportMap();
 
     /**
      * The Resource Loader.
      */
-    private static final TethysBundleLoader LOADER = TethysBundleLoader.getLoader(MoneyWiseXAnalysisBucketResource.class.getCanonicalName(),
+    private static final OceanusBundleLoader LOADER = OceanusBundleLoader.getLoader(MoneyWiseXAnalysisBucketResource.class.getCanonicalName(),
             ResourceBundle::getBundle);
 
     /**
@@ -193,9 +193,9 @@ public enum MoneyWiseXReportResource implements TethysBundleId {
      * Build report map.
      * @return the map
      */
-    private static Map<MoneyWiseXReportType, TethysBundleId> buildReportMap() {
+    private static Map<MoneyWiseXReportType, OceanusBundleId> buildReportMap() {
         /* Create the map and return it */
-        final Map<MoneyWiseXReportType, TethysBundleId> myMap = new EnumMap<>(MoneyWiseXReportType.class);
+        final Map<MoneyWiseXReportType, OceanusBundleId> myMap = new EnumMap<>(MoneyWiseXReportType.class);
         myMap.put(MoneyWiseXReportType.NETWORTH, TYPE_NETWORTH);
         myMap.put(MoneyWiseXReportType.BALANCESHEET, TYPE_BALANCESHEET);
         myMap.put(MoneyWiseXReportType.CASHFLOW, TYPE_CASHFLOW);
@@ -214,7 +214,7 @@ public enum MoneyWiseXReportResource implements TethysBundleId {
      * @param pValue the Value
      * @return the resource key
      */
-    static TethysBundleId getKeyForReportType(final MoneyWiseXReportType pValue) {
-        return TethysBundleLoader.getKeyForEnum(REPORT_MAP, pValue);
+    static OceanusBundleId getKeyForReportType(final MoneyWiseXReportType pValue) {
+        return OceanusBundleLoader.getKeyForEnum(REPORT_MAP, pValue);
     }
 }

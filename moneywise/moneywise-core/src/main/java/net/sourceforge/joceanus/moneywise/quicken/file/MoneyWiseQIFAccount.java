@@ -33,7 +33,7 @@ import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseLoanCategoryClas
 import net.sourceforge.joceanus.moneywise.quicken.definitions.MoneyWiseQAccountLineType;
 import net.sourceforge.joceanus.moneywise.quicken.file.MoneyWiseQIFLine.MoneyWiseQIFMoneyLine;
 import net.sourceforge.joceanus.moneywise.quicken.file.MoneyWiseQIFLine.MoneyWiseQIFStringLine;
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
 
 /**
@@ -206,7 +206,7 @@ public class MoneyWiseQIFAccount
                         myClass = myQLine.getAccountClass();
                         break;
                     case CREDITLIMIT:
-                        final TethysMoney myMoney = pFormatter.getDecimalParser().parseMoneyValue(myData);
+                        final OceanusMoney myMoney = pFormatter.getDecimalParser().parseMoneyValue(myData);
                         addLine(new MoneyWiseQIFAccountLimitLine(myMoney));
                         break;
                     default:
@@ -407,7 +407,7 @@ public class MoneyWiseQIFAccount
          * Constructor.
          * @param pLimit the Credit Limit
          */
-        protected MoneyWiseQIFAccountLimitLine(final TethysMoney pLimit) {
+        protected MoneyWiseQIFAccountLimitLine(final OceanusMoney pLimit) {
             /* Call super-constructor */
             super(pLimit);
         }
@@ -421,7 +421,7 @@ public class MoneyWiseQIFAccount
          * Obtain credit limit.
          * @return the credit limit
          */
-        public TethysMoney getCreditLimit() {
+        public OceanusMoney getCreditLimit() {
             return getMoney();
         }
     }

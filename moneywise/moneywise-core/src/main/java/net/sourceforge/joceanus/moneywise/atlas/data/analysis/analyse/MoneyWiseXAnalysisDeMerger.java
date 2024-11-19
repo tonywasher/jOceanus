@@ -22,9 +22,9 @@ import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseX
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.values.MoneyWiseXAnalysisSecurityAttr;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.values.MoneyWiseXAnalysisSecurityValues;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurityHolding;
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
-import net.sourceforge.joceanus.tethys.decimal.TethysRatio;
-import net.sourceforge.joceanus.tethys.decimal.TethysUnits;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRatio;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusUnits;
 
 /**
  * Share deMerge Analysis.
@@ -69,11 +69,11 @@ public class MoneyWiseXAnalysisDeMerger {
         MoneyWiseXAnalysisSecurityValues myValues = myAsset.getValues();
 
         /* Obtain current cost */
-        final TethysMoney myCost = myValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.RESIDUALCOST);
-        final TethysRatio myDilution = pTrans.getTransaction().getDilution();
-        final TethysUnits myDeltaUnits = pTrans.getDebitUnitsDelta();
-        TethysMoney myDeltaValue = myValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.VALUATION);
-        myDeltaValue = new TethysMoney(myDeltaValue);
+        final OceanusMoney myCost = myValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.RESIDUALCOST);
+        final OceanusRatio myDilution = pTrans.getTransaction().getDilution();
+        final OceanusUnits myDeltaUnits = pTrans.getDebitUnitsDelta();
+        OceanusMoney myDeltaValue = myValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.VALUATION);
+        myDeltaValue = new OceanusMoney(myDeltaValue);
 
         /* If we reduced the units */
         if (myDeltaUnits != null) {
@@ -82,11 +82,11 @@ public class MoneyWiseXAnalysisDeMerger {
         }
 
         /* Calculate the cost dilution */
-        final TethysMoney myNewCost = myCost.getDilutedMoney(myDilution);
+        final OceanusMoney myNewCost = myCost.getDilutedMoney(myDilution);
         myValues.setValue(MoneyWiseXAnalysisSecurityAttr.COSTDILUTION, myDilution);
 
         /* Calculate the delta to the cost */
-        TethysMoney myDeltaCost = new TethysMoney(myNewCost);
+        OceanusMoney myDeltaCost = new OceanusMoney(myNewCost);
         myDeltaCost.subtractAmount(myCost);
 
         /* Record the delta cost */
@@ -94,7 +94,7 @@ public class MoneyWiseXAnalysisDeMerger {
 
         /* Adjust the valuation */
         theSecurity.adjustAssetValuation(myAsset);
-        TethysMoney myNewValue = myValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.VALUATION);
+        OceanusMoney myNewValue = myValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.VALUATION);
         myDeltaValue.subtractAmount(myNewValue);
         myValues.setValue(MoneyWiseXAnalysisSecurityAttr.XFERREDVALUE, myDeltaValue);
 
@@ -106,11 +106,11 @@ public class MoneyWiseXAnalysisDeMerger {
         myAsset = thePortfolios.getBucket(myTarget);
         myValues = myAsset.getValues();
         myDeltaValue = myValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.VALUATION);
-        myDeltaValue = new TethysMoney(myDeltaValue);
+        myDeltaValue = new OceanusMoney(myDeltaValue);
         myDeltaValue.negate();
 
         /* The deltaCost is transferred to the credit account */
-        myDeltaCost = new TethysMoney(myDeltaCost);
+        myDeltaCost = new OceanusMoney(myDeltaCost);
         myDeltaCost.negate();
 
         /* Record details */
@@ -120,7 +120,7 @@ public class MoneyWiseXAnalysisDeMerger {
         myAsset.adjustResidualCost(myDeltaCost);
 
         /* Determine value of the stock being deMerged */
-        final TethysUnits myCreditUnits = pTrans.getCreditUnitsDelta();
+        final OceanusUnits myCreditUnits = pTrans.getCreditUnitsDelta();
         myAsset.adjustUnits(myCreditUnits);
 
         /* Adjust the valuation */

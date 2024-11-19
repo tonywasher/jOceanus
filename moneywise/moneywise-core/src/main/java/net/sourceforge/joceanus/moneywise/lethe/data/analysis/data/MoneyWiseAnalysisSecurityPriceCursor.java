@@ -26,8 +26,8 @@ import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurity;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurityPrice;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurityPrice.MoneyWiseSecurityPriceDataMap;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataInstanceMap;
-import net.sourceforge.joceanus.tethys.date.TethysDate;
-import net.sourceforge.joceanus.tethys.decimal.TethysPrice;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
 
 /**
  * Quick access to dated security Prices on an analysis pass.
@@ -61,8 +61,8 @@ public class MoneyWiseAnalysisSecurityPriceCursor {
      * @param pDate the date
      * @return the security price
      */
-    public TethysPrice getSecurityPrice(final MoneyWiseSecurity pSecurity,
-                                        final TethysDate pDate) {
+    public OceanusPrice getSecurityPrice(final MoneyWiseSecurity pSecurity,
+                                         final OceanusDate pDate) {
         /* Access cursor and return rate */
         final MoneyWiseSecurityCursor myCursor = getCursor(pSecurity);
         return myCursor.getSecurityPrice(pDate);
@@ -100,17 +100,17 @@ public class MoneyWiseAnalysisSecurityPriceCursor {
         /**
          * The current price.
          */
-        private TethysPrice theCurrent;
+        private OceanusPrice theCurrent;
 
         /**
          * The next date.
          */
-        private TethysDate theNextDate;
+        private OceanusDate theNextDate;
 
         /**
          * The next price.
          */
-        private TethysPrice theNextPrice;
+        private OceanusPrice theNextPrice;
 
         /**
          * Constructor.
@@ -119,7 +119,7 @@ public class MoneyWiseAnalysisSecurityPriceCursor {
         private MoneyWiseSecurityCursor(final MoneyWiseSecurity pSecurity) {
             /* Create the default price */
             final Currency myCurrency = pSecurity.getCurrency();
-            theCurrent = TethysPrice.getWholeUnits(PrometheusDataInstanceMap.ONE, myCurrency);
+            theCurrent = OceanusPrice.getWholeUnits(PrometheusDataInstanceMap.ONE, myCurrency);
 
             /* Access the Price list */
             theIterator = theDataMap.priceIterator(pSecurity);
@@ -152,7 +152,7 @@ public class MoneyWiseAnalysisSecurityPriceCursor {
          * @param pDate the date
          * @return the security price
          */
-        private TethysPrice getSecurityPrice(final TethysDate pDate) {
+        private OceanusPrice getSecurityPrice(final OceanusDate pDate) {
             /* if we have a later price */
             if (theNextDate != null) {
                 /* while we need to move the cursor */

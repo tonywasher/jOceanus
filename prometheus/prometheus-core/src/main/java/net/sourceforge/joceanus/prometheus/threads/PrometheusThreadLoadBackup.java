@@ -29,7 +29,7 @@ import net.sourceforge.joceanus.prometheus.preference.PrometheusBackup.Prometheu
 import net.sourceforge.joceanus.prometheus.preference.PrometheusBackup.PrometheusBackupPreferences;
 import net.sourceforge.joceanus.prometheus.sheets.PrometheusSpreadSheet;
 import net.sourceforge.joceanus.prometheus.views.PrometheusDataControl;
-import net.sourceforge.joceanus.tethys.OceanusException;
+import net.sourceforge.joceanus.oceanus.OceanusException;
 import net.sourceforge.joceanus.tethys.ui.api.dialog.TethysUIFileSelector;
 import net.sourceforge.joceanus.tethys.ui.api.thread.TethysUIThread;
 import net.sourceforge.joceanus.tethys.ui.api.thread.TethysUIThreadManager;

@@ -21,9 +21,9 @@ import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 
-import net.sourceforge.joceanus.tethys.date.TethysDate;
-import net.sourceforge.joceanus.tethys.date.TethysDateConfig;
-import net.sourceforge.joceanus.tethys.event.TethysEvent;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.date.OceanusDateConfig;
+import net.sourceforge.joceanus.oceanus.event.OceanusEvent;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.tethys.ui.api.button.TethysUIDateButtonManager;
 import net.sourceforge.joceanus.tethys.ui.api.field.TethysUIDataEditField.TethysUIDateButtonField;
@@ -36,7 +36,7 @@ import net.sourceforge.joceanus.tethys.ui.javafx.button.TethysUIFXDateDialog;
  * DateButtonField class.
  */
 public class TethysUIFXDateButtonField
-        extends TethysUIFXDataTextField<TethysDate>
+        extends TethysUIFXDataTextField<OceanusDate>
         implements TethysUIDateButtonField {
     /**
      * The date manager.
@@ -83,7 +83,7 @@ public class TethysUIFXDateButtonField
      *
      * @param pEvent the even
      */
-    private void handleEvent(final TethysEvent<TethysUIEvent> pEvent) {
+    private void handleEvent(final OceanusEvent<TethysUIEvent> pEvent) {
         switch (pEvent.getEventId()) {
             case NEWVALUE:
                 setValue(theManager.getSelectedDate());
@@ -98,7 +98,7 @@ public class TethysUIFXDateButtonField
     }
 
     @Override
-    public void setDateConfigurator(final Consumer<TethysDateConfig> pConfigurator) {
+    public void setDateConfigurator(final Consumer<OceanusDateConfig> pConfigurator) {
         theManager.setDateConfigurator(pConfigurator);
     }
 
@@ -108,7 +108,7 @@ public class TethysUIFXDateButtonField
     }
 
     @Override
-    public void setValue(final TethysDate pValue) {
+    public void setValue(final OceanusDate pValue) {
         /* Store the value */
         super.setValue(pValue);
 

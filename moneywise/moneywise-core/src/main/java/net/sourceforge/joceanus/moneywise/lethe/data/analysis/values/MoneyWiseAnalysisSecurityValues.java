@@ -19,8 +19,8 @@ package net.sourceforge.joceanus.moneywise.lethe.data.analysis.values;
 import java.util.Currency;
 
 import net.sourceforge.joceanus.moneywise.lethe.data.analysis.base.MoneyWiseAnalysisValues;
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
-import net.sourceforge.joceanus.tethys.decimal.TethysUnits;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusUnits;
 
 /**
  * SecurityValues class.
@@ -36,12 +36,12 @@ public final class MoneyWiseAnalysisSecurityValues
         super(MoneyWiseAnalysisSecurityAttr.class);
 
         /* Initialise units etc. to zero */
-        super.setValue(MoneyWiseAnalysisSecurityAttr.UNITS, new TethysUnits());
-        super.setValue(MoneyWiseAnalysisSecurityAttr.RESIDUALCOST, new TethysMoney(pCurrency));
-        super.setValue(MoneyWiseAnalysisSecurityAttr.INVESTED, new TethysMoney(pCurrency));
-        super.setValue(MoneyWiseAnalysisSecurityAttr.REALISEDGAINS, new TethysMoney(pCurrency));
-        super.setValue(MoneyWiseAnalysisSecurityAttr.GROWTHADJUST, new TethysMoney(pCurrency));
-        super.setValue(MoneyWiseAnalysisSecurityAttr.DIVIDEND, new TethysMoney(pCurrency));
+        super.setValue(MoneyWiseAnalysisSecurityAttr.UNITS, new OceanusUnits());
+        super.setValue(MoneyWiseAnalysisSecurityAttr.RESIDUALCOST, new OceanusMoney(pCurrency));
+        super.setValue(MoneyWiseAnalysisSecurityAttr.INVESTED, new OceanusMoney(pCurrency));
+        super.setValue(MoneyWiseAnalysisSecurityAttr.REALISEDGAINS, new OceanusMoney(pCurrency));
+        super.setValue(MoneyWiseAnalysisSecurityAttr.GROWTHADJUST, new OceanusMoney(pCurrency));
+        super.setValue(MoneyWiseAnalysisSecurityAttr.DIVIDEND, new OceanusMoney(pCurrency));
     }
 
     /**
@@ -55,7 +55,7 @@ public final class MoneyWiseAnalysisSecurityValues
         this(pReportingCurrency);
 
         /* Initialise additional values to zero */
-        super.setValue(MoneyWiseAnalysisSecurityAttr.FOREIGNINVESTED, new TethysMoney(pCurrency));
+        super.setValue(MoneyWiseAnalysisSecurityAttr.FOREIGNINVESTED, new OceanusMoney(pCurrency));
     }
 
     /**
@@ -104,21 +104,21 @@ public final class MoneyWiseAnalysisSecurityValues
     @Override
     public void resetBaseValues() {
         /* Create a zero value in the correct currency */
-        TethysMoney myValue = getMoneyValue(MoneyWiseAnalysisSecurityAttr.RESIDUALCOST);
-        myValue = new TethysMoney(myValue);
+        OceanusMoney myValue = getMoneyValue(MoneyWiseAnalysisSecurityAttr.RESIDUALCOST);
+        myValue = new OceanusMoney(myValue);
         myValue.setZero();
 
         /* Reset Growth Adjust values */
         super.setValue(MoneyWiseAnalysisSecurityAttr.GROWTHADJUST, myValue);
-        super.setValue(MoneyWiseAnalysisSecurityAttr.INVESTED, new TethysMoney(myValue));
-        super.setValue(MoneyWiseAnalysisSecurityAttr.REALISEDGAINS, new TethysMoney(myValue));
-        super.setValue(MoneyWiseAnalysisSecurityAttr.DIVIDEND, new TethysMoney(myValue));
+        super.setValue(MoneyWiseAnalysisSecurityAttr.INVESTED, new OceanusMoney(myValue));
+        super.setValue(MoneyWiseAnalysisSecurityAttr.REALISEDGAINS, new OceanusMoney(myValue));
+        super.setValue(MoneyWiseAnalysisSecurityAttr.DIVIDEND, new OceanusMoney(myValue));
 
         /* If we are a foreign security */
         if (isForeignSecurity()) {
             /* Create a zero value in the correct currency */
             myValue = getMoneyValue(MoneyWiseAnalysisSecurityAttr.FOREIGNINVESTED);
-            myValue = new TethysMoney(myValue);
+            myValue = new OceanusMoney(myValue);
             myValue.setZero();
 
             /* Reset Invested values */
@@ -131,7 +131,7 @@ public final class MoneyWiseAnalysisSecurityValues
      * @return true/false
      */
     public boolean isActive() {
-        final TethysUnits myUnits = getUnitsValue(MoneyWiseAnalysisSecurityAttr.UNITS);
+        final OceanusUnits myUnits = getUnitsValue(MoneyWiseAnalysisSecurityAttr.UNITS);
         return myUnits != null && myUnits.isNonZero();
     }
 }

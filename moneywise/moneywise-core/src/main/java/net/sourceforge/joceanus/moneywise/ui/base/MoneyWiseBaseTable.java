@@ -35,13 +35,13 @@ import net.sourceforge.joceanus.prometheus.data.PrometheusListKey;
 import net.sourceforge.joceanus.prometheus.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditEntry;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.TethysDataException;
-import net.sourceforge.joceanus.tethys.event.TethysEventManager;
-import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar;
-import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar.TethysEventProvider;
-import net.sourceforge.joceanus.tethys.logger.TethysLogManager;
-import net.sourceforge.joceanus.tethys.logger.TethysLogger;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.OceanusDataException;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.oceanus.logger.OceanusLogManager;
+import net.sourceforge.joceanus.oceanus.logger.OceanusLogger;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.tethys.ui.api.dialog.TethysUIFileSelector;
 import net.sourceforge.joceanus.tethys.ui.api.factory.TethysUIFactory;
@@ -59,7 +59,7 @@ public abstract class MoneyWiseBaseTable<T extends PrometheusDataItem>
     /**
      * The logger.
      */
-    private static final TethysLogger LOGGER = TethysLogManager.getLogger(MoneyWiseBaseTable.class);
+    private static final OceanusLogger LOGGER = OceanusLogManager.getLogger(MoneyWiseBaseTable.class);
 
     /**
      * Date column standard width.
@@ -129,7 +129,7 @@ public abstract class MoneyWiseBaseTable<T extends PrometheusDataItem>
     /**
      * The Event Manager.
      */
-    private final TethysEventManager<PrometheusDataEvent> theEventManager;
+    private final OceanusEventManager<PrometheusDataEvent> theEventManager;
 
     /**
      * The EditSet associated with the table.
@@ -183,7 +183,7 @@ public abstract class MoneyWiseBaseTable<T extends PrometheusDataItem>
         theItemType = pDataType;
 
         /* Create the event manager */
-        theEventManager = new TethysEventManager<>();
+        theEventManager = new OceanusEventManager<>();
 
         /* Build the Edit set */
         theEditSet = pEditSet;
@@ -228,7 +228,7 @@ public abstract class MoneyWiseBaseTable<T extends PrometheusDataItem>
     }
 
     @Override
-    public TethysEventRegistrar<PrometheusDataEvent> getEventRegistrar() {
+    public OceanusEventRegistrar<PrometheusDataEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -703,7 +703,7 @@ public abstract class MoneyWiseBaseTable<T extends PrometheusDataItem>
             myWriter.print(pData);
 
         } catch (IOException e) {
-            throw new TethysDataException("Failed to output CSV", e);
+            throw new OceanusDataException("Failed to output CSV", e);
         }
     }
 }

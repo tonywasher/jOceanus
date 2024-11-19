@@ -38,8 +38,8 @@ import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianLogicException;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianParameters;
 import net.sourceforge.joceanus.gordianknot.impl.core.keyset.GordianCoreKeySet;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.TethysDataConverter;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.OceanusDataConverter;
 
 /**
  * KeyPair Lock implementation.
@@ -96,7 +96,7 @@ public class GordianKeyPairLockImpl
             final GordianPasswordLockRecipe myRecipe = new GordianPasswordLockRecipe(pLockingFactory, pLockSpec);
 
             /* Generate the keySet */
-            myPassword = TethysDataConverter.charsToByteArray(pPassword);
+            myPassword = OceanusDataConverter.charsToByteArray(pPassword);
             theKeySet = myRecipe.processPassword(myFactory, myPassword);
 
             /* Create lockBytes */
@@ -173,7 +173,7 @@ public class GordianKeyPairLockImpl
             final GordianCoreFactory myFactory = (GordianCoreFactory) myAgreement.getResult();
 
             /* Resolve the recipe */
-            myPassword = TethysDataConverter.charsToByteArray(pPassword);
+            myPassword = OceanusDataConverter.charsToByteArray(pPassword);
             final GordianPasswordLockRecipe myRecipe = new GordianPasswordLockRecipe(pLockingFactory, myPassword.length, theLockASN1.getPasswordLock());
 
             /* Process the password, creating keySet */

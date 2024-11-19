@@ -28,8 +28,8 @@ import net.sourceforge.joceanus.prometheus.database.PrometheusDataStore;
 import net.sourceforge.joceanus.prometheus.database.PrometheusTableDefinition;
 import net.sourceforge.joceanus.prometheus.database.PrometheusTableDefinition.PrometheusSortOrder;
 import net.sourceforge.joceanus.prometheus.database.PrometheusTableEncrypted;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
 
 /**
  * TableEncrypted extension for SecurityPrice.
@@ -53,7 +53,7 @@ public class MoneyWiseTableSecurityPrice
         /* Declare the columns */
         final PrometheusColumnDefinition myActCol = myTableDef.addReferenceColumn(MoneyWiseBasicDataType.SECURITY, MoneyWiseTableSecurity.TABLE_NAME);
         final PrometheusColumnDefinition myDateCol = myTableDef.addDateColumn(MoneyWiseBasicResource.MONEYWISEDATA_FIELD_DATE);
-        myTableDef.addEncryptedColumn(MoneyWiseBasicResource.MONEYWISEDATA_FIELD_PRICE, TethysMoney.BYTE_LEN);
+        myTableDef.addEncryptedColumn(MoneyWiseBasicResource.MONEYWISEDATA_FIELD_PRICE, OceanusMoney.BYTE_LEN);
 
         /* Declare Sort Columns */
         myDateCol.setSortOrder(PrometheusSortOrder.DESCENDING);

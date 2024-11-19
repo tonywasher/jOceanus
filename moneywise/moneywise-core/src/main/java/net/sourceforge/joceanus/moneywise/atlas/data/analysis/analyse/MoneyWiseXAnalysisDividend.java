@@ -26,8 +26,8 @@ import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurity;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurityHolding;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransAsset;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransaction;
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
-import net.sourceforge.joceanus.tethys.decimal.TethysUnits;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusUnits;
 
 /**
  * Dividend Analysis.
@@ -80,8 +80,8 @@ public class MoneyWiseXAnalysisDividend {
         final MoneyWiseSecurityHolding myHolding = (MoneyWiseSecurityHolding) pTrans.getDebitAccount();
         final MoneyWiseSecurity mySecurity = myHolding.getSecurity();
         final MoneyWiseTransAsset myCredit = pTrans.getCreditAccount();
-        final TethysMoney myTaxCredit = myTransaction.getTaxCredit();
-        final TethysUnits myDeltaUnits = pTrans.getCreditUnitsDelta();
+        final OceanusMoney myTaxCredit = myTransaction.getTaxCredit();
+        final OceanusUnits myDeltaUnits = pTrans.getCreditUnitsDelta();
 
         /* True debit account is the parent */
         final MoneyWiseAssetBase myDebit = mySecurity.getParent();
@@ -96,7 +96,7 @@ public class MoneyWiseXAnalysisDividend {
         final boolean isReInvest = myCredit instanceof MoneyWiseSecurityHolding;
 
         /* Determine the debit amount */
-        final TethysMoney myAmount = isForeign
+        final OceanusMoney myAmount = isForeign
                 ? theTransAnalyser.adjustForeignAssetDebit(myValues.getRatioValue(MoneyWiseXAnalysisSecurityAttr.EXCHANGERATE))
                 : pTrans.getDebitAmount();
 
@@ -123,7 +123,7 @@ public class MoneyWiseXAnalysisDividend {
             /* else we are paying out to another account */
         } else {
             /* Adjust the dividend total for this asset */
-            final TethysMoney myAdjust = new TethysMoney(myAmount);
+            final OceanusMoney myAdjust = new OceanusMoney(myAmount);
 
             /* Any tax credit is viewed as a realised dividend from the account */
             if (myTaxCredit != null) {

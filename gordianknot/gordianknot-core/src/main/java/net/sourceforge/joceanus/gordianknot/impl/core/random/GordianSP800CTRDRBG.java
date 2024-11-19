@@ -22,8 +22,8 @@ import org.bouncycastle.util.Arrays;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymKeySpec;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianByteArrayInteger;
 import net.sourceforge.joceanus.gordianknot.impl.core.cipher.GordianCoreCipher;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.TethysDataConverter;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.OceanusDataConverter;
 
 /**
  * Implementation of CTRSP800DRBG based on the BouncyCastle Code.
@@ -124,8 +124,8 @@ public class GordianSP800CTRDRBG
         }
 
         /* Allocate the lengths */
-        final byte[] myL = TethysDataConverter.integerToByteArray(pInput.length);
-        final byte[] myN = TethysDataConverter.integerToByteArray(pNumBits / Byte.SIZE);
+        final byte[] myL = OceanusDataConverter.integerToByteArray(pInput.length);
+        final byte[] myN = OceanusDataConverter.integerToByteArray(pNumBits / Byte.SIZE);
 
         /* Create the input buffer */
         final int myKeyLen = theKey.length;

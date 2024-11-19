@@ -17,7 +17,7 @@
 package net.sourceforge.joceanus.gordianknot.api.keyset;
 
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianAEADCipher;
-import net.sourceforge.joceanus.tethys.OceanusException;
+import net.sourceforge.joceanus.oceanus.OceanusException;
 
 /**
  * KeySet Cipher.

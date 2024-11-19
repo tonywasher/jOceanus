@@ -38,12 +38,12 @@ import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataSet;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseExchangeRate.MoneyWiseExchangeRateDataMap;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransaction;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrency;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.date.TethysDate;
-import net.sourceforge.joceanus.tethys.date.TethysDateRange;
-import net.sourceforge.joceanus.tethys.decimal.TethysDecimal;
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
-import net.sourceforge.joceanus.tethys.decimal.TethysRatio;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimal;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRatio;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
 
 /**
@@ -170,7 +170,7 @@ public abstract class MoneyWiseAnalysisAccountBucket<T extends MoneyWiseAssetBas
      */
     protected MoneyWiseAnalysisAccountBucket(final MoneyWiseAnalysis pAnalysis,
                                              final MoneyWiseAnalysisAccountBucket<T> pBase,
-                                             final TethysDate pDate) {
+                                             final OceanusDate pDate) {
         /* Copy details from base */
         theAccount = pBase.getAccount();
         theAnalysis = pAnalysis;
@@ -192,7 +192,7 @@ public abstract class MoneyWiseAnalysisAccountBucket<T extends MoneyWiseAssetBas
      */
     protected MoneyWiseAnalysisAccountBucket(final MoneyWiseAnalysis pAnalysis,
                                              final MoneyWiseAnalysisAccountBucket<T> pBase,
-                                             final TethysDateRange pRange) {
+                                             final OceanusDateRange pRange) {
         /* Copy details from base */
         theAccount = pBase.getAccount();
         theAnalysis = pAnalysis;
@@ -298,7 +298,7 @@ public abstract class MoneyWiseAnalysisAccountBucket<T extends MoneyWiseAssetBas
      * Obtain date range.
      * @return the range
      */
-    public TethysDateRange getDateRange() {
+    public OceanusDateRange getDateRange() {
         return theAnalysis.getDateRange();
     }
 
@@ -342,8 +342,8 @@ public abstract class MoneyWiseAnalysisAccountBucket<T extends MoneyWiseAssetBas
      * @param pAttr the attribute
      * @return the delta (or null)
      */
-    public TethysDecimal getDeltaForTransaction(final MoneyWiseTransaction pTrans,
-                                                final MoneyWiseAnalysisAccountAttr pAttr) {
+    public OceanusDecimal getDeltaForTransaction(final MoneyWiseTransaction pTrans,
+                                                 final MoneyWiseAnalysisAccountAttr pAttr) {
         /* Obtain delta for transaction */
         return theHistory.getDeltaValue(pTrans, pAttr);
     }
@@ -354,8 +354,8 @@ public abstract class MoneyWiseAnalysisAccountBucket<T extends MoneyWiseAssetBas
      * @param pAttr the attribute
      * @return the delta (or null)
      */
-    public TethysMoney getMoneyDeltaForTransaction(final MoneyWiseTransaction pTrans,
-                                                   final MoneyWiseAnalysisAccountAttr pAttr) {
+    public OceanusMoney getMoneyDeltaForTransaction(final MoneyWiseTransaction pTrans,
+                                                    final MoneyWiseAnalysisAccountAttr pAttr) {
         /* Obtain delta for transaction */
         return theHistory.getDeltaMoneyValue(pTrans, pAttr);
     }
@@ -410,9 +410,9 @@ public abstract class MoneyWiseAnalysisAccountBucket<T extends MoneyWiseAssetBas
      * @param pDelta the delta
      */
     protected void adjustCounter(final MoneyWiseAnalysisAccountAttr pAttr,
-                                 final TethysMoney pDelta) {
-        TethysMoney myValue = theValues.getMoneyValue(pAttr);
-        myValue = new TethysMoney(myValue);
+                                 final OceanusMoney pDelta) {
+        OceanusMoney myValue = theValues.getMoneyValue(pAttr);
+        myValue = new OceanusMoney(myValue);
         myValue.addAmount(pDelta);
         setValue(pAttr, myValue);
     }
@@ -423,33 +423,33 @@ public abstract class MoneyWiseAnalysisAccountBucket<T extends MoneyWiseAssetBas
      */
     public void adjustForDebit(final MoneyWiseAnalysisTransactionHelper pHelper) {
         /* Access event amount */
-        TethysMoney myAmount = pHelper.getDebitAmount();
+        OceanusMoney myAmount = pHelper.getDebitAmount();
 
         /* If we have a non-zero amount */
         if (myAmount.isNonZero()) {
             /* Adjust valuation */
-            myAmount = new TethysMoney(myAmount);
+            myAmount = new OceanusMoney(myAmount);
             myAmount.negate();
 
             /* If we are a foreign account */
             if (Boolean.TRUE.equals(isForeignCurrency)) {
                 /* Access local amount amount */
-                final TethysMoney myLocalAmount = pHelper.getLocalAmount();
+                final OceanusMoney myLocalAmount = pHelper.getLocalAmount();
 
                 /* Adjust counters */
                 adjustCounter(MoneyWiseAnalysisAccountAttr.FOREIGNVALUE, myAmount);
                 adjustCounter(MoneyWiseAnalysisAccountAttr.LOCALVALUE, myLocalAmount);
 
                 /* Obtain the debit exchangeRate and convert the foreign valuation */
-                final TethysRatio myRate = pHelper.getDebitExchangeRate();
-                final TethysMoney myLocalValue = myAmount.convertCurrency(theAnalysis.getCurrency().getCurrency(), myRate);
+                final OceanusRatio myRate = pHelper.getDebitExchangeRate();
+                final OceanusMoney myLocalValue = myAmount.convertCurrency(theAnalysis.getCurrency().getCurrency(), myRate);
 
                 /* Set the valuation */
                 setValue(MoneyWiseAnalysisAccountAttr.VALUATION, myLocalValue);
                 setValue(MoneyWiseAnalysisAccountAttr.EXCHANGERATE, myRate);
 
                 /* Determine currency fluctuation */
-                final TethysMoney myFluct = new TethysMoney(myLocalValue);
+                final OceanusMoney myFluct = new OceanusMoney(myLocalValue);
                 myFluct.subtractAmount(theValues.getMoneyValue(MoneyWiseAnalysisAccountAttr.LOCALVALUE));
                 adjustCounter(MoneyWiseAnalysisAccountAttr.CURRENCYFLUCT, myFluct);
 
@@ -470,29 +470,29 @@ public abstract class MoneyWiseAnalysisAccountBucket<T extends MoneyWiseAssetBas
      */
     public void adjustForCredit(final MoneyWiseAnalysisTransactionHelper pHelper) {
         /* Access event amount */
-        final TethysMoney myAmount = pHelper.getCreditAmount();
+        final OceanusMoney myAmount = pHelper.getCreditAmount();
 
         /* If we have a non-zero amount */
         if (myAmount.isNonZero()) {
             /* If we are a foreign account */
             if (Boolean.TRUE.equals(isForeignCurrency)) {
                 /* Access local amount */
-                final TethysMoney myLocalAmount = pHelper.getLocalAmount();
+                final OceanusMoney myLocalAmount = pHelper.getLocalAmount();
 
                 /* Adjust counters */
                 adjustCounter(MoneyWiseAnalysisAccountAttr.FOREIGNVALUE, myAmount);
                 adjustCounter(MoneyWiseAnalysisAccountAttr.LOCALVALUE, myLocalAmount);
 
                 /* Obtain the credit exchangeRate and convert the foreign valuation */
-                final TethysRatio myRate = pHelper.getCreditExchangeRate();
-                final TethysMoney myLocalValue = myAmount.convertCurrency(theAnalysis.getCurrency().getCurrency(), myRate);
+                final OceanusRatio myRate = pHelper.getCreditExchangeRate();
+                final OceanusMoney myLocalValue = myAmount.convertCurrency(theAnalysis.getCurrency().getCurrency(), myRate);
 
                 /* Set the valuation */
                 setValue(MoneyWiseAnalysisAccountAttr.VALUATION, myLocalValue);
                 setValue(MoneyWiseAnalysisAccountAttr.EXCHANGERATE, myRate);
 
                 /* Determine currency fluctuation */
-                final TethysMoney myFluct = new TethysMoney(myLocalValue);
+                final OceanusMoney myFluct = new OceanusMoney(myLocalValue);
                 myFluct.subtractAmount(theValues.getMoneyValue(MoneyWiseAnalysisAccountAttr.LOCALVALUE));
                 setValue(MoneyWiseAnalysisAccountAttr.CURRENCYFLUCT, myFluct);
 
@@ -513,29 +513,29 @@ public abstract class MoneyWiseAnalysisAccountBucket<T extends MoneyWiseAssetBas
      */
     public void adjustForReturnedCashCredit(final MoneyWiseAnalysisTransactionHelper pHelper) {
         /* Access event amount */
-        final TethysMoney myAmount = pHelper.getReturnedCash();
+        final OceanusMoney myAmount = pHelper.getReturnedCash();
 
         /* If we have a non-zero amount */
         if (myAmount.isNonZero()) {
             /* If we are a foreign account */
             if (Boolean.TRUE.equals(isForeignCurrency)) {
                 /* Access local amount */
-                final TethysMoney myLocalAmount = pHelper.getLocalReturnedCash();
+                final OceanusMoney myLocalAmount = pHelper.getLocalReturnedCash();
 
                 /* Adjust counters */
                 adjustCounter(MoneyWiseAnalysisAccountAttr.FOREIGNVALUE, myAmount);
                 adjustCounter(MoneyWiseAnalysisAccountAttr.LOCALVALUE, myLocalAmount);
 
                 /* Obtain the credit exchangeRate and convert the foreign valuation */
-                final TethysRatio myRate = pHelper.getReturnedCashExchangeRate();
-                final TethysMoney myLocalValue = myAmount.convertCurrency(theAnalysis.getCurrency().getCurrency(), myRate);
+                final OceanusRatio myRate = pHelper.getReturnedCashExchangeRate();
+                final OceanusMoney myLocalValue = myAmount.convertCurrency(theAnalysis.getCurrency().getCurrency(), myRate);
 
                 /* Set the valuation */
                 setValue(MoneyWiseAnalysisAccountAttr.VALUATION, myLocalValue);
                 setValue(MoneyWiseAnalysisAccountAttr.EXCHANGERATE, myRate);
 
                 /* Determine currency fluctuation */
-                final TethysMoney myFluct = new TethysMoney(myLocalValue);
+                final OceanusMoney myFluct = new OceanusMoney(myLocalValue);
                 myFluct.subtractAmount(theValues.getMoneyValue(MoneyWiseAnalysisAccountAttr.LOCALVALUE));
                 setValue(MoneyWiseAnalysisAccountAttr.CURRENCYFLUCT, myFluct);
 
@@ -556,20 +556,20 @@ public abstract class MoneyWiseAnalysisAccountBucket<T extends MoneyWiseAssetBas
      * @param pBalance the opening balance
      */
     protected void setOpeningBalance(final MoneyWiseAnalysisTransactionHelper pHelper,
-                                     final TethysMoney pBalance) {
+                                     final OceanusMoney pBalance) {
         /* Obtain the base valuation */
         final MoneyWiseAnalysisAccountValues myValues = getBaseValues();
-        final TethysMoney myBaseValue = myValues.getMoneyValue(MoneyWiseAnalysisAccountAttr.VALUATION);
+        final OceanusMoney myBaseValue = myValues.getMoneyValue(MoneyWiseAnalysisAccountAttr.VALUATION);
 
         /* If we are a foreign account */
         if (Boolean.TRUE.equals(isForeignCurrency)) {
             /* Obtain the foreign valuation */
-            final TethysMoney myForeignValue = myValues.getMoneyValue(MoneyWiseAnalysisAccountAttr.FOREIGNVALUE);
-            final TethysMoney myLocalValue = myValues.getMoneyValue(MoneyWiseAnalysisAccountAttr.LOCALVALUE);
+            final OceanusMoney myForeignValue = myValues.getMoneyValue(MoneyWiseAnalysisAccountAttr.FOREIGNVALUE);
+            final OceanusMoney myLocalValue = myValues.getMoneyValue(MoneyWiseAnalysisAccountAttr.LOCALVALUE);
 
             /* Obtain exchange rate and reporting value */
-            final TethysRatio myRate = pHelper.getExchangeRate(theAccount.getAssetCurrency(), theAnalysis.getData().getDateRange().getStart());
-            final TethysMoney myLocalAmount = pBalance.convertCurrency(theAnalysis.getCurrency().getCurrency(), myRate);
+            final OceanusRatio myRate = pHelper.getExchangeRate(theAccount.getAssetCurrency(), theAnalysis.getData().getDateRange().getStart());
+            final OceanusMoney myLocalAmount = pBalance.convertCurrency(theAnalysis.getCurrency().getCurrency(), myRate);
 
             /* Record details */
             myBaseValue.addAmount(myLocalAmount);
@@ -606,25 +606,25 @@ public abstract class MoneyWiseAnalysisAccountBucket<T extends MoneyWiseAssetBas
      * calculate currency fluctuations over the range.
      * @param pRange the range of valuation
      */
-    protected void calculateFluctuations(final TethysDateRange pRange) {
+    protected void calculateFluctuations(final OceanusDateRange pRange) {
         /* Obtain the appropriate rates */
         final MoneyWiseDataSet myData = theAnalysis.getData();
         final MoneyWiseExchangeRateDataMap myRateMap = myData.getExchangeRateDataMap();
-        final TethysRatio[] myRates = myRateMap.getRatesForRange(theAccount.getAssetCurrency(), pRange);
+        final OceanusRatio[] myRates = myRateMap.getRatesForRange(theAccount.getAssetCurrency(), pRange);
         final Currency myBaseCurrency = theAnalysis.getCurrency().getCurrency();
 
         /* Access the base value */
-        TethysRatio myRate = myRates[0];
-        TethysMoney myForeignValue = theBaseValues.getMoneyValue(MoneyWiseAnalysisAccountAttr.FOREIGNVALUE);
-        TethysMoney myLocalValue = theBaseValues.getMoneyValue(MoneyWiseAnalysisAccountAttr.LOCALVALUE);
+        OceanusRatio myRate = myRates[0];
+        OceanusMoney myForeignValue = theBaseValues.getMoneyValue(MoneyWiseAnalysisAccountAttr.FOREIGNVALUE);
+        OceanusMoney myLocalValue = theBaseValues.getMoneyValue(MoneyWiseAnalysisAccountAttr.LOCALVALUE);
 
         /* Calculate the base value */
-        TethysMoney myLocalValuation = myForeignValue.convertCurrency(myBaseCurrency, myRate);
+        OceanusMoney myLocalValuation = myForeignValue.convertCurrency(myBaseCurrency, myRate);
         theBaseValues.setValue(MoneyWiseAnalysisAccountAttr.EXCHANGERATE, myRate);
         theBaseValues.setValue(MoneyWiseAnalysisAccountAttr.VALUATION, myLocalValuation);
 
         /* Determine currency fluctuation */
-        TethysMoney myFluct = new TethysMoney(myLocalValuation);
+        OceanusMoney myFluct = new OceanusMoney(myLocalValuation);
         myFluct.subtractAmount(myLocalValue);
         theBaseValues.setValue(MoneyWiseAnalysisAccountAttr.CURRENCYFLUCT, myFluct);
 
@@ -639,7 +639,7 @@ public abstract class MoneyWiseAnalysisAccountBucket<T extends MoneyWiseAssetBas
         theValues.setValue(MoneyWiseAnalysisAccountAttr.VALUATION, myLocalValuation);
 
         /* Determine currency fluctuation */
-        myFluct = new TethysMoney(myLocalValuation);
+        myFluct = new OceanusMoney(myLocalValuation);
         myFluct.subtractAmount(myLocalValue);
         theValues.setValue(MoneyWiseAnalysisAccountAttr.CURRENCYFLUCT, myFluct);
     }
@@ -649,11 +649,11 @@ public abstract class MoneyWiseAnalysisAccountBucket<T extends MoneyWiseAssetBas
      */
     protected void calculateDelta() {
         /* Obtain a copy of the value */
-        TethysMoney myDelta = theValues.getMoneyValue(MoneyWiseAnalysisAccountAttr.VALUATION);
-        myDelta = new TethysMoney(myDelta);
+        OceanusMoney myDelta = theValues.getMoneyValue(MoneyWiseAnalysisAccountAttr.VALUATION);
+        myDelta = new OceanusMoney(myDelta);
 
         /* Subtract any base value */
-        final TethysMoney myBase = theBaseValues.getMoneyValue(MoneyWiseAnalysisAccountAttr.VALUATION);
+        final OceanusMoney myBase = theBaseValues.getMoneyValue(MoneyWiseAnalysisAccountAttr.VALUATION);
         myDelta.subtractAmount(myBase);
 
         /* Set the delta */
@@ -676,7 +676,7 @@ public abstract class MoneyWiseAnalysisAccountBucket<T extends MoneyWiseAssetBas
      * record the rate of the account at a given date.
      * @param pDate the date of valuation
      */
-    protected void recordRate(final TethysDate pDate) {
+    protected void recordRate(final OceanusDate pDate) {
     }
 
     /**
@@ -772,7 +772,7 @@ public abstract class MoneyWiseAnalysisAccountBucket<T extends MoneyWiseAssetBas
          * @param pDate the Date
          */
         protected void constructFromBase(final MoneyWiseAnalysisAccountBucketList<B, T> pBase,
-                                         final TethysDate pDate) {
+                                         final OceanusDate pDate) {
             /* Loop through the buckets */
             final Iterator<B> myIterator = pBase.iterator();
             while (myIterator.hasNext()) {
@@ -797,7 +797,7 @@ public abstract class MoneyWiseAnalysisAccountBucket<T extends MoneyWiseAssetBas
          * @return the new bucket
          */
         protected abstract B newBucket(B pBase,
-                                       TethysDate pDate);
+                                       OceanusDate pDate);
 
         /**
          * Construct a ranged List.
@@ -805,7 +805,7 @@ public abstract class MoneyWiseAnalysisAccountBucket<T extends MoneyWiseAssetBas
          * @param pRange the Date Range
          */
         protected void constructFromBase(final MoneyWiseAnalysisAccountBucketList<B, T> pBase,
-                                         final TethysDateRange pRange) {
+                                         final OceanusDateRange pRange) {
             /* Loop through the buckets */
             final Iterator<B> myIterator = pBase.iterator();
             while (myIterator.hasNext()) {
@@ -840,7 +840,7 @@ public abstract class MoneyWiseAnalysisAccountBucket<T extends MoneyWiseAssetBas
          * @return the new bucket
          */
         protected abstract B newBucket(B pBase,
-                                       TethysDateRange pRange);
+                                       OceanusDateRange pRange);
 
         /**
          * Obtain the AccountBucket for a given account.

@@ -38,8 +38,8 @@ import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianLogicException
 import net.sourceforge.joceanus.gordianknot.impl.core.key.GordianCoreKey;
 import net.sourceforge.joceanus.gordianknot.impl.core.key.GordianCoreKeyGenerator;
 import net.sourceforge.joceanus.gordianknot.impl.core.keypair.GordianCoreKeyPairGenerator;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.TethysDataConverter;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.OceanusDataConverter;
 
 /**
  * GordianKnot base for WrapCipher.
@@ -224,7 +224,7 @@ public class GordianCoreWrapper
         }
 
         /* Determine semantics of the initial block */
-        final byte[] myByteLen = TethysDataConverter.integerToByteArray(myDataLen);
+        final byte[] myByteLen = OceanusDataConverter.integerToByteArray(myDataLen);
         int myCheckLen = theBlockLen - Integer.BYTES;
         int myHdrLen = theBlockLen;
 
@@ -352,7 +352,7 @@ public class GordianCoreWrapper
 
         /* Obtain encoded length */
         final byte[] myByteLen = Arrays.copyOfRange(myData, myCheckLen, myCheckLen + Integer.BYTES);
-        final int myEncodedLen = TethysDataConverter.byteArrayToInteger(myByteLen);
+        final int myEncodedLen = OceanusDataConverter.byteArrayToInteger(myByteLen);
 
         /* Obtain zeroLen and check that it is valid */
         final int myZeroLen = myDataLen - myEncodedLen;

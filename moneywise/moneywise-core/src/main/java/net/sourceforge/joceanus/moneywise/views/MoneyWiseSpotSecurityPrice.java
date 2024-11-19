@@ -37,8 +37,8 @@ import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurityPrice;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataValues;
 import net.sourceforge.joceanus.prometheus.data.PrometheusEncryptedValues;
-import net.sourceforge.joceanus.tethys.date.TethysDate;
-import net.sourceforge.joceanus.tethys.decimal.TethysPrice;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
 
 /**
  * Extension of SecurityPrice to cater for spot prices.
@@ -73,12 +73,12 @@ public final class MoneyWiseSpotSecurityPrice
     /**
      * the previous date.
      */
-    private TethysDate thePrevDate;
+    private OceanusDate thePrevDate;
 
     /**
      * the previous price.
      */
-    private TethysPrice thePrevPrice;
+    private OceanusPrice thePrevPrice;
 
     /**
      * isDisabled.
@@ -107,7 +107,7 @@ public final class MoneyWiseSpotSecurityPrice
      * Obtain previous price.
      * @return the price.
      */
-    public TethysPrice getPrevPrice() {
+    public OceanusPrice getPrevPrice() {
         return thePrevPrice;
     }
 
@@ -115,7 +115,7 @@ public final class MoneyWiseSpotSecurityPrice
      * Set previous price.
      * @param pPrice the price
      */
-    protected void setPrevPrice(final TethysPrice pPrice) {
+    protected void setPrevPrice(final OceanusPrice pPrice) {
         thePrevPrice = pPrice;
     }
 
@@ -123,7 +123,7 @@ public final class MoneyWiseSpotSecurityPrice
      * Obtain previous date.
      * @return the date.
      */
-    public TethysDate getPrevDate() {
+    public OceanusDate getPrevDate() {
         return thePrevDate;
     }
 
@@ -131,7 +131,7 @@ public final class MoneyWiseSpotSecurityPrice
      * Set previous date.
      * @param pDate the date
      */
-    protected void setPrevDate(final TethysDate pDate) {
+    protected void setPrevDate(final OceanusDate pDate) {
         thePrevDate = pDate;
     }
 
@@ -173,7 +173,7 @@ public final class MoneyWiseSpotSecurityPrice
     }
 
     @Override
-    public TethysPrice getPrice() {
+    public OceanusPrice getPrice() {
         /* Switch on state */
         switch (getState()) {
             case NEW:
@@ -234,7 +234,7 @@ public final class MoneyWiseSpotSecurityPrice
         /**
          * The date.
          */
-        private final TethysDate theDate;
+        private final OceanusDate theDate;
 
         /**
          * The view.
@@ -249,12 +249,12 @@ public final class MoneyWiseSpotSecurityPrice
         /**
          * The next date.
          */
-        private TethysDate theNext;
+        private OceanusDate theNext;
 
         /**
          * The previous date.
          */
-        private TethysDate thePrev;
+        private OceanusDate thePrev;
 
         /**
          * Constructor.
@@ -264,7 +264,7 @@ public final class MoneyWiseSpotSecurityPrice
          */
         public MoneyWiseSpotSecurityList(final MoneyWiseView pView,
                                          final MoneyWisePortfolio pPortfolio,
-                                         final TethysDate pDate) {
+                                         final OceanusDate pDate) {
             /* Build initial list */
             super((MoneyWiseDataSet) pView.getData(), MoneyWiseSpotSecurityPrice.class, MoneyWiseBasicDataType.SECURITYPRICE);
             setStyle(PrometheusListStyle.EDIT);
@@ -286,7 +286,7 @@ public final class MoneyWiseSpotSecurityPrice
             final MoneyWiseAnalysisSecurityBucketList mySecurities = myBucket.getSecurities();
 
             /* Loop through the Securities */
-            final TethysDate myDate = new TethysDate(theDate);
+            final OceanusDate myDate = new OceanusDate(theDate);
             final Iterator<MoneyWiseAnalysisSecurityBucket> mySecIterator = mySecurities.iterator();
             while (mySecIterator.hasNext()) {
                 final MoneyWiseAnalysisSecurityBucket mySecBucket = mySecIterator.next();
@@ -390,7 +390,7 @@ public final class MoneyWiseSpotSecurityPrice
          * Obtain the date.
          * @return the date
          */
-        private TethysDate getDate() {
+        private OceanusDate getDate() {
             return theDate;
         }
 
@@ -398,7 +398,7 @@ public final class MoneyWiseSpotSecurityPrice
          * Obtain the next date.
          * @return the date
          */
-        public TethysDate getNext() {
+        public OceanusDate getNext() {
             return theNext;
         }
 
@@ -406,7 +406,7 @@ public final class MoneyWiseSpotSecurityPrice
          * Obtain the previous date.
          * @return the date
          */
-        public TethysDate getPrev() {
+        public OceanusDate getPrev() {
             return thePrev;
         }
 

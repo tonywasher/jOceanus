@@ -20,13 +20,13 @@ import net.sourceforge.joceanus.metis.preference.MetisPreferenceEvent;
 import net.sourceforge.joceanus.metis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.metis.preference.MetisPreferenceResource;
 import net.sourceforge.joceanus.metis.preference.MetisPreferenceSet;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.event.TethysEvent;
-import net.sourceforge.joceanus.tethys.event.TethysEventManager;
-import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar;
-import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar.TethysEventProvider;
-import net.sourceforge.joceanus.tethys.logger.TethysLogManager;
-import net.sourceforge.joceanus.tethys.logger.TethysLogger;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.event.OceanusEvent;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.oceanus.logger.OceanusLogManager;
+import net.sourceforge.joceanus.oceanus.logger.OceanusLogger;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIGenericWrapper;
@@ -84,12 +84,12 @@ public class MetisPreferenceView
     /**
      * Logger.
      */
-    private static final TethysLogger LOGGER = TethysLogManager.getLogger(MetisPreferenceView.class);
+    private static final OceanusLogger LOGGER = OceanusLogManager.getLogger(MetisPreferenceView.class);
 
     /**
      * The Event Manager.
      */
-    private final TethysEventManager<MetisPreferenceEvent> theEventManager;
+    private final OceanusEventManager<MetisPreferenceEvent> theEventManager;
 
     /**
      * The GUI factory.
@@ -137,7 +137,7 @@ public class MetisPreferenceView
         theGuiFactory = pFactory;
 
         /* Create the event manager */
-        theEventManager = new TethysEventManager<>();
+        theEventManager = new OceanusEventManager<>();
 
         /* Create the buttons */
         final TethysUIButtonFactory<?> myButtons = theGuiFactory.buttonFactory();
@@ -192,7 +192,7 @@ public class MetisPreferenceView
         mySelection.addSpacer();
 
         /* Set listeners */
-        final TethysEventRegistrar<TethysUIEvent> myRegistrar = theSelectButton.getEventRegistrar();
+        final OceanusEventRegistrar<TethysUIEvent> myRegistrar = theSelectButton.getEventRegistrar();
         myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> handlePropertySetSelect());
         theSelectButton.setMenuConfigurator(c -> buildPreferenceMenu());
 
@@ -217,7 +217,7 @@ public class MetisPreferenceView
     }
 
     @Override
-    public TethysEventRegistrar<MetisPreferenceEvent> getEventRegistrar() {
+    public OceanusEventRegistrar<MetisPreferenceEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -233,7 +233,7 @@ public class MetisPreferenceView
      * handle new propertySet event.
      * @param pEvent the event
      */
-    private void handleNewPropertySet(final TethysEvent<MetisPreferenceEvent> pEvent) {
+    private void handleNewPropertySet(final OceanusEvent<MetisPreferenceEvent> pEvent) {
         /* Details is the property set that has been added */
         final MetisPreferenceSet mySet = pEvent.getDetails(MetisPreferenceSet.class);
 

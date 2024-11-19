@@ -48,9 +48,9 @@ import net.sourceforge.joceanus.gordianknot.impl.core.keystore.GordianKeyStoreEl
 import net.sourceforge.joceanus.gordianknot.impl.core.keystore.GordianKeyStoreElement.GordianKeyStorePairElement;
 import net.sourceforge.joceanus.gordianknot.impl.core.keystore.GordianKeyStoreElement.GordianKeyStoreSetElement;
 import net.sourceforge.joceanus.gordianknot.impl.core.lock.GordianPasswordLockSpecASN1;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.TethysDataConverter;
-import net.sourceforge.joceanus.tethys.date.TethysDate;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.OceanusDataConverter;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
 
 /**
  * KeyStore Document.
@@ -170,7 +170,7 @@ public final class GordianKeyStoreDocument {
 
             /* Record the keySetSpec */
             final GordianPasswordLockSpecASN1 mySpecASN1 = new GordianPasswordLockSpecASN1(pKeyStore.getPasswordLockSpec());
-            final String myAttrSpec = TethysDataConverter.byteArrayToBase64(mySpecASN1.getEncodedBytes());
+            final String myAttrSpec = OceanusDataConverter.byteArrayToBase64(mySpecASN1.getEncodedBytes());
             myMain.setAttribute(ATTR_KEYSETSPEC, myAttrSpec);
 
             /* Create the aliases */
@@ -206,7 +206,7 @@ public final class GordianKeyStoreDocument {
 
         /* Access the keySetSpec */
         final String myAttrSpec = myDocElement.getAttribute(ATTR_KEYSETSPEC);
-        final byte[] myAttrArray = TethysDataConverter.base64ToByteArray(myAttrSpec);
+        final byte[] myAttrArray = OceanusDataConverter.base64ToByteArray(myAttrSpec);
         final GordianPasswordLockSpecASN1 mySpecASN1 = GordianPasswordLockSpecASN1.getInstance(myAttrArray);
 
         /* Create the empty keyStore */
@@ -302,7 +302,7 @@ public final class GordianKeyStoreDocument {
         /* Build lock entry */
         final Element myLockEl = theDocument.createElement(ELEMENT_LOCK);
         pNode.appendChild(myLockEl);
-        myLockEl.setTextContent(TethysDataConverter.byteArrayToBase64(pEntry.getLock()));
+        myLockEl.setTextContent(OceanusDataConverter.byteArrayToBase64(pEntry.getLock()));
     }
 
     /**
@@ -315,12 +315,12 @@ public final class GordianKeyStoreDocument {
         /* Build securedKey entry */
         final Element myKeyEl = theDocument.createElement(ELEMENT_SECUREDKEY);
         pNode.appendChild(myKeyEl);
-        myKeyEl.setTextContent(TethysDataConverter.byteArrayToBase64(pEntry.getSecuredKeySet()));
+        myKeyEl.setTextContent(OceanusDataConverter.byteArrayToBase64(pEntry.getSecuredKeySet()));
 
         /* Build lock entry */
         final Element myLockEl = theDocument.createElement(ELEMENT_LOCK);
         pNode.appendChild(myLockEl);
-        myLockEl.setTextContent(TethysDataConverter.byteArrayToBase64(pEntry.getSecuringLockBytes()));
+        myLockEl.setTextContent(OceanusDataConverter.byteArrayToBase64(pEntry.getSecuringLockBytes()));
     }
 
     /**
@@ -334,7 +334,7 @@ public final class GordianKeyStoreDocument {
         /* Build securedKey entry */
         final Element myKeyEl = theDocument.createElement(ELEMENT_SECUREDKEY);
         pNode.appendChild(myKeyEl);
-        myKeyEl.setTextContent(TethysDataConverter.byteArrayToBase64(pEntry.getSecuredKey()));
+        myKeyEl.setTextContent(OceanusDataConverter.byteArrayToBase64(pEntry.getSecuredKey()));
 
         /* Add the keySpec */
         final GordianKnuthObfuscater myObfuscater = theKeyStore.getFactory().getObfuscater();
@@ -344,7 +344,7 @@ public final class GordianKeyStoreDocument {
         /* Build lock entry */
         final Element myLockEl = theDocument.createElement(ELEMENT_LOCK);
         pNode.appendChild(myLockEl);
-        myLockEl.setTextContent(TethysDataConverter.byteArrayToBase64(pEntry.getSecuringLockBytes()));
+        myLockEl.setTextContent(OceanusDataConverter.byteArrayToBase64(pEntry.getSecuringLockBytes()));
     }
 
     /**
@@ -358,12 +358,12 @@ public final class GordianKeyStoreDocument {
         /* Build securedKey entry */
         final Element myKeyEl = theDocument.createElement(ELEMENT_SECUREDKEY);
         pNode.appendChild(myKeyEl);
-        myKeyEl.setTextContent(TethysDataConverter.byteArrayToBase64(pEntry.getSecuredKey()));
+        myKeyEl.setTextContent(OceanusDataConverter.byteArrayToBase64(pEntry.getSecuredKey()));
 
         /* Build lock entry */
         final Element myLockEl = theDocument.createElement(ELEMENT_LOCK);
         pNode.appendChild(myLockEl);
-        myLockEl.setTextContent(TethysDataConverter.byteArrayToBase64(pEntry.getSecuringLockBytes()));
+        myLockEl.setTextContent(OceanusDataConverter.byteArrayToBase64(pEntry.getSecuringLockBytes()));
 
         /* Build certificates entry */
         final Element myChainEl = theDocument.createElement(ELEMENT_CERTIFICATES);
@@ -424,12 +424,12 @@ public final class GordianKeyStoreDocument {
             /* Build Name entry */
             final Element myNameEl = theDocument.createElement(ELEMENT_NAME);
             pNode.appendChild(myNameEl);
-            myNameEl.setTextContent(TethysDataConverter.byteArrayToBase64(pId.getName().toASN1Primitive().getEncoded()));
+            myNameEl.setTextContent(OceanusDataConverter.byteArrayToBase64(pId.getName().toASN1Primitive().getEncoded()));
 
             /* Build id entry */
             final Element myIdEl = theDocument.createElement(ELEMENT_ID);
             pNode.appendChild(myIdEl);
-            myIdEl.setTextContent(TethysDataConverter.byteArrayToBase64(pId.getId().getEncoded()));
+            myIdEl.setTextContent(OceanusDataConverter.byteArrayToBase64(pId.getId().getEncoded()));
 
             /* Handle exceptions */
         } catch (IOException e) {
@@ -450,7 +450,7 @@ public final class GordianKeyStoreDocument {
                 pCerts.appendChild(myCertEl);
 
                 /* Build the certificate element */
-                myCertEl.setTextContent(TethysDataConverter.byteArrayToBase64(myCert.getEncoded()));
+                myCertEl.setTextContent(OceanusDataConverter.byteArrayToBase64(myCert.getEncoded()));
             }
         }
     }
@@ -469,7 +469,7 @@ public final class GordianKeyStoreDocument {
 
             /* Access alias and creationDate */
             final String myAlias = ((Element) myNode).getAttribute(ATTR_ALIAS);
-            final TethysDate myDate = new TethysDate(((Element) myNode).getAttribute(ATTR_DATE));
+            final OceanusDate myDate = new OceanusDate(((Element) myNode).getAttribute(ATTR_DATE));
 
             /* Switch on element type */
             switch (myType) {
@@ -504,7 +504,7 @@ public final class GordianKeyStoreDocument {
      */
     private void parseKeySetLockElement(final Node pNode,
                                         final String pAlias,
-                                        final TethysDate pDate) {
+                                        final OceanusDate pDate) {
         /* Loop through the nodes */
         Node myNode = pNode.getFirstChild();
         while (myNode != null) {
@@ -514,7 +514,7 @@ public final class GordianKeyStoreDocument {
             /* If this is a lock node */
             if (ELEMENT_LOCK.equals(myNodeName)) {
                 /* Obtain the hash and build the entry */
-                final byte[] myLock = TethysDataConverter.base64ToByteArray(myNode.getTextContent());
+                final byte[] myLock = OceanusDataConverter.base64ToByteArray(myNode.getTextContent());
                 final GordianKeyStoreLockElement myEntry = new GordianKeyStoreLockElement(myLock, pDate);
                 theKeyStore.getAliasMap().put(pAlias, myEntry);
                 return;
@@ -534,7 +534,7 @@ public final class GordianKeyStoreDocument {
      */
     private void parseKeySetElement(final Node pNode,
                                     final String pAlias,
-                                    final TethysDate pDate) throws OceanusException {
+                                    final OceanusDate pDate) throws OceanusException {
         /* Loop through the nodes */
         byte[] mySecuredKey = null;
         Node myNode = pNode.getFirstChild();
@@ -545,7 +545,7 @@ public final class GordianKeyStoreDocument {
             /* If this is a securedKey node */
             if (ELEMENT_SECUREDKEY.equals(myNodeName)) {
                 /* Obtain the securedKey */
-                mySecuredKey = TethysDataConverter.base64ToByteArray(myNode.getTextContent());
+                mySecuredKey = OceanusDataConverter.base64ToByteArray(myNode.getTextContent());
             }
 
             /* If this is a lock node */
@@ -556,7 +556,7 @@ public final class GordianKeyStoreDocument {
                 }
 
                 /* Obtain the lock and build the entry */
-                final byte[] myLock = TethysDataConverter.base64ToByteArray(myNode.getTextContent());
+                final byte[] myLock = OceanusDataConverter.base64ToByteArray(myNode.getTextContent());
                 final GordianKeyStoreSetElement myEntry = new GordianKeyStoreSetElement(mySecuredKey, myLock, pDate);
                 theKeyStore.getAliasMap().put(pAlias, myEntry);
                 return;
@@ -576,7 +576,7 @@ public final class GordianKeyStoreDocument {
      */
     private void parseKeyElement(final Node pNode,
                                  final String pAlias,
-                                 final TethysDate pDate) throws OceanusException {
+                                 final OceanusDate pDate) throws OceanusException {
         /* Loop through the nodes */
         byte[] mySecuredKey = null;
         GordianKeySpec mySpec = null;
@@ -588,7 +588,7 @@ public final class GordianKeyStoreDocument {
             /* If this is a securedKey node */
             if (ELEMENT_SECUREDKEY.equals(myNodeName)) {
                 /* Obtain the securedKey */
-                mySecuredKey = TethysDataConverter.base64ToByteArray(myNode.getTextContent());
+                mySecuredKey = OceanusDataConverter.base64ToByteArray(myNode.getTextContent());
 
                 /* Obtain the keySpec */
                 final GordianKnuthObfuscater myObfuscater = theKeyStore.getFactory().getObfuscater();
@@ -604,7 +604,7 @@ public final class GordianKeyStoreDocument {
                 }
 
                 /* Obtain the lock and build the entry */
-                final byte[] myLock = TethysDataConverter.base64ToByteArray(myNode.getTextContent());
+                final byte[] myLock = OceanusDataConverter.base64ToByteArray(myNode.getTextContent());
                 final GordianKeyStoreKeyElement<GordianKeySpec> myEntry = new GordianKeyStoreKeyElement<>(mySpec, mySecuredKey, myLock, pDate);
                 theKeyStore.getAliasMap().put(pAlias, myEntry);
                 return;
@@ -625,7 +625,7 @@ public final class GordianKeyStoreDocument {
      */
     private void parsePrivateKeyElement(final Node pNode,
                                         final String pAlias,
-                                        final TethysDate pDate) throws OceanusException {
+                                        final OceanusDate pDate) throws OceanusException {
         /* Loop through the nodes */
         byte[] mySecuredKey = null;
         byte[] myLock = null;
@@ -638,13 +638,13 @@ public final class GordianKeyStoreDocument {
             /* If this is a securedKey node */
             if (ELEMENT_SECUREDKEY.equals(myNodeName)) {
                 /* Obtain the securedKey */
-                mySecuredKey = TethysDataConverter.base64ToByteArray(myNode.getTextContent());
+                mySecuredKey = OceanusDataConverter.base64ToByteArray(myNode.getTextContent());
             }
 
             /* If this is a lock node */
             if (ELEMENT_LOCK.equals(myNodeName)) {
                 /* Obtain the lock */
-                myLock = TethysDataConverter.base64ToByteArray(myNode.getTextContent());
+                myLock = OceanusDataConverter.base64ToByteArray(myNode.getTextContent());
             }
 
             /* If this is a hash node */
@@ -690,7 +690,7 @@ public final class GordianKeyStoreDocument {
      */
     private void parseCertificateElement(final Node pNode,
                                          final String pAlias,
-                                         final TethysDate pDate) throws OceanusException {
+                                         final OceanusDate pDate) throws OceanusException {
         /* Loop through the nodes */
         Node myNode = pNode.getFirstChild();
         while (myNode != null) {
@@ -768,7 +768,7 @@ public final class GordianKeyStoreDocument {
             /* If this is a name node */
             if (ELEMENT_NAME.equals(myNodeName)) {
                 /* Parse the name */
-                final byte[] myNameBytes = TethysDataConverter.base64ToByteArray(myNode.getTextContent());
+                final byte[] myNameBytes = OceanusDataConverter.base64ToByteArray(myNode.getTextContent());
                 myName = X500Name.getInstance(myNameBytes);
             }
 
@@ -780,7 +780,7 @@ public final class GordianKeyStoreDocument {
                 }
 
                 /* Parse the issuer and build the key */
-                final byte[] myIdBytes = TethysDataConverter.base64ToByteArray(myNode.getTextContent());
+                final byte[] myIdBytes = OceanusDataConverter.base64ToByteArray(myNode.getTextContent());
                 final DERBitString myId = DERBitString.convert(ASN1BitString.getInstance(myIdBytes));
                 return new GordianCoreCertificateId(myName, myId);
             }
@@ -808,7 +808,7 @@ public final class GordianKeyStoreDocument {
             /* If this is a pairCertificate node */
             if (ELEMENT_PAIRCERT.equals(myNodeName)) {
                 /* Access the encoded certificate */
-                final byte[] myEncoded = TethysDataConverter.base64ToByteArray(myNode.getTextContent());
+                final byte[] myEncoded = OceanusDataConverter.base64ToByteArray(myNode.getTextContent());
                 final GordianCoreCertificate myCert = new GordianCoreCertificate(theKeyStore.getFactory(), myEncoded);
                 theKeyStore.storeCertificate(myCert);
             }

@@ -21,13 +21,13 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.metis.MetisDataException;
-import net.sourceforge.joceanus.tethys.resource.TethysBundleId;
-import net.sourceforge.joceanus.tethys.resource.TethysBundleLoader;
+import net.sourceforge.joceanus.oceanus.resource.OceanusBundleId;
+import net.sourceforge.joceanus.oceanus.resource.OceanusBundleLoader;
 
 /**
  * Resource IDs for JMetis preferences.
  */
-public enum MetisPreferenceResource implements TethysBundleId {
+public enum MetisPreferenceResource implements OceanusBundleId {
     /**
      * Preference type STRING.
      */
@@ -181,12 +181,12 @@ public enum MetisPreferenceResource implements TethysBundleId {
     /**
      * The PreferenceType Map.
      */
-    private static final Map<MetisPreferenceType, TethysBundleId> PREF_MAP = buildPreferenceMap();
+    private static final Map<MetisPreferenceType, OceanusBundleId> PREF_MAP = buildPreferenceMap();
 
     /**
      * The Resource Loader.
      */
-    private static final TethysBundleLoader LOADER = TethysBundleLoader.getPackageLoader(MetisDataException.class.getCanonicalName(),
+    private static final OceanusBundleLoader LOADER = OceanusBundleLoader.getPackageLoader(MetisDataException.class.getCanonicalName(),
             ResourceBundle::getBundle);
 
     /**
@@ -233,9 +233,9 @@ public enum MetisPreferenceResource implements TethysBundleId {
      * Build preference map.
      * @return the map
      */
-    private static Map<MetisPreferenceType, TethysBundleId> buildPreferenceMap() {
+    private static Map<MetisPreferenceType, OceanusBundleId> buildPreferenceMap() {
         /* Create the map and return it */
-        final Map<MetisPreferenceType, TethysBundleId> myMap = new EnumMap<>(MetisPreferenceType.class);
+        final Map<MetisPreferenceType, OceanusBundleId> myMap = new EnumMap<>(MetisPreferenceType.class);
         myMap.put(MetisPreferenceType.STRING, TYPE_STRING);
         myMap.put(MetisPreferenceType.INTEGER, TYPE_INTEGER);
         myMap.put(MetisPreferenceType.BOOLEAN, TYPE_BOOLEAN);
@@ -252,7 +252,7 @@ public enum MetisPreferenceResource implements TethysBundleId {
      * @param pType the type
      * @return the resource key
      */
-    public static TethysBundleId getKeyForPrefType(final MetisPreferenceType pType) {
-        return TethysBundleLoader.getKeyForEnum(PREF_MAP, pType);
+    public static OceanusBundleId getKeyForPrefType(final MetisPreferenceType pType) {
+        return OceanusBundleLoader.getKeyForEnum(PREF_MAP, pType);
     }
 }

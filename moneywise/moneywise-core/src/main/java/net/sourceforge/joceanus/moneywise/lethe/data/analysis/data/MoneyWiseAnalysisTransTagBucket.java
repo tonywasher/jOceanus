@@ -29,8 +29,8 @@ import net.sourceforge.joceanus.metis.list.MetisListIndexed;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransTag;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransaction;
-import net.sourceforge.joceanus.tethys.date.TethysDate;
-import net.sourceforge.joceanus.tethys.date.TethysDateRange;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
 
 /**
@@ -90,7 +90,7 @@ public final class MoneyWiseAnalysisTransTagBucket
      */
     private MoneyWiseAnalysisTransTagBucket(final MoneyWiseAnalysis pAnalysis,
                                             final MoneyWiseAnalysisTransTagBucket pBase,
-                                            final TethysDate pDate) {
+                                            final OceanusDate pDate) {
         /* Copy details from base */
         this(pAnalysis, pBase.getTransTag());
 
@@ -117,7 +117,7 @@ public final class MoneyWiseAnalysisTransTagBucket
      */
     private MoneyWiseAnalysisTransTagBucket(final MoneyWiseAnalysis pAnalysis,
                                             final MoneyWiseAnalysisTransTagBucket pBase,
-                                            final TethysDateRange pRange) {
+                                            final OceanusDateRange pRange) {
         /* Copy details from base */
         this(pAnalysis, pBase.getTransTag());
 
@@ -185,7 +185,7 @@ public final class MoneyWiseAnalysisTransTagBucket
      * Obtain date range.
      * @return the range
      */
-    public TethysDateRange getDateRange() {
+    public OceanusDateRange getDateRange() {
         return theAnalysis.getDateRange();
     }
 
@@ -277,7 +277,7 @@ public final class MoneyWiseAnalysisTransTagBucket
          */
         MoneyWiseAnalysisTransTagBucketList(final MoneyWiseAnalysis pAnalysis,
                                             final MoneyWiseAnalysisTransTagBucketList pBase,
-                                            final TethysDate pDate) {
+                                            final OceanusDate pDate) {
             /* Initialise class */
             this(pAnalysis);
 
@@ -305,7 +305,7 @@ public final class MoneyWiseAnalysisTransTagBucket
          */
         MoneyWiseAnalysisTransTagBucketList(final MoneyWiseAnalysis pAnalysis,
                                             final MoneyWiseAnalysisTransTagBucketList pBase,
-                                            final TethysDateRange pRange) {
+                                            final OceanusDateRange pRange) {
             /* Initialise class */
             this(pAnalysis);
 

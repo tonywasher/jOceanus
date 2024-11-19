@@ -18,8 +18,8 @@ package net.sourceforge.joceanus.coeus.data;
 
 import java.time.Month;
 
-import net.sourceforge.joceanus.tethys.date.TethysDate;
-import net.sourceforge.joceanus.tethys.date.TethysFiscalYear;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.date.OceanusFiscalYear;
 
 /**
  * Loan Status.
@@ -58,7 +58,7 @@ public enum CoeusLoanStatus {
     /**
      * The Date from which BadDebts are charged against interest.
      */
-    private static final TethysDate BADDEBT_BOUNDARY = TethysFiscalYear.UK.endOfYear(new TethysDate(2015, Month.JANUARY, 1));
+    private static final OceanusDate BADDEBT_BOUNDARY = OceanusFiscalYear.UK.endOfYear(new OceanusDate(2015, Month.JANUARY, 1));
 
     /**
      * The String name.
@@ -90,7 +90,7 @@ public enum CoeusLoanStatus {
      * @param pDate the date
      * @return true/false
      */
-    public static boolean isCapitalBadDebt(final TethysDate pDate) {
+    public static boolean isCapitalBadDebt(final OceanusDate pDate) {
         return BADDEBT_BOUNDARY.compareTo(pDate) >= 0;
     }
 }

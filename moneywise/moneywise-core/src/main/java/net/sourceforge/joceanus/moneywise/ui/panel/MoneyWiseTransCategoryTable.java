@@ -35,8 +35,8 @@ import net.sourceforge.joceanus.moneywise.ui.dialog.MoneyWiseTransCategoryPanel;
 import net.sourceforge.joceanus.moneywise.views.MoneyWiseView;
 import net.sourceforge.joceanus.prometheus.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.profile.TethysProfile;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
 import net.sourceforge.joceanus.tethys.ui.api.factory.TethysUIFactory;
 import net.sourceforge.joceanus.tethys.ui.api.menu.TethysUIScrollMenu;
 import net.sourceforge.joceanus.tethys.ui.api.table.TethysUITableManager;
@@ -109,7 +109,7 @@ public class MoneyWiseTransCategoryTable
     @Override
     protected void refreshData() throws OceanusException {
         /* Obtain the active profile */
-        TethysProfile myTask = getView().getActiveTask();
+        OceanusProfile myTask = getView().getActiveTask();
         myTask = myTask.startTask("TransactionCategories");
 
         /* Access list */
@@ -213,7 +213,7 @@ public class MoneyWiseTransCategoryTable
             cancelEditing();
 
             /* Create a new profile */
-            final TethysProfile myTask = getView().getNewProfile("addNewItem");
+            final OceanusProfile myTask = getView().getNewProfile("addNewItem");
 
             /* Create the new category */
             myTask.startTask("buildItem");

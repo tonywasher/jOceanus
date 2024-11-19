@@ -23,9 +23,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 import net.sourceforge.joceanus.metis.MetisIOException;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.logger.TethysLogManager;
-import net.sourceforge.joceanus.tethys.logger.TethysLogger;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.logger.OceanusLogManager;
+import net.sourceforge.joceanus.oceanus.logger.OceanusLogger;
 
 /**
  * Safe File Create.
@@ -34,7 +34,7 @@ public class MetisSafeFileManager {
     /**
      * The Logger.
      */
-    private static final TethysLogger LOGGER = TethysLogManager.getLogger(MetisSafeFileManager.class);
+    private static final OceanusLogger LOGGER = OceanusLogManager.getLogger(MetisSafeFileManager.class);
 
     /**
      * The temp extension.

@@ -16,7 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.tethys.ui.javafx.button;
 
-import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.tethys.ui.core.button.TethysUICoreDateButtonManager;
 import net.sourceforge.joceanus.tethys.ui.core.factory.TethysUICoreFactory;
@@ -73,7 +73,7 @@ public final class TethysUIFXDateButtonManager
             theDialog = new TethysUIFXDateDialog(getConfig());
 
             /* Add listeners */
-            final TethysEventRegistrar<TethysUIEvent> myRegistrar = theDialog.getEventRegistrar();
+            final OceanusEventRegistrar<TethysUIEvent> myRegistrar = theDialog.getEventRegistrar();
             myRegistrar.addEventListener(TethysUIEvent.PREPAREDIALOG, e -> handleDialogRequest());
             myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewValue());
             myRegistrar.addEventListener(TethysUIEvent.WINDOWCLOSED, e -> handleNewValue());

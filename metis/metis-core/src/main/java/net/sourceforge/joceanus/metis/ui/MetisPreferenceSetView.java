@@ -32,10 +32,10 @@ import net.sourceforge.joceanus.metis.preference.MetisPreferenceSet.MetisPrefere
 import net.sourceforge.joceanus.metis.preference.MetisPreferenceSet.MetisPreferenceItem;
 import net.sourceforge.joceanus.metis.preference.MetisPreferenceSet.MetisStringPreference;
 import net.sourceforge.joceanus.metis.preference.MetisPreferenceType;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.event.TethysEventManager;
-import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar;
-import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.TethysEventProvider;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIAlignment;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIConstant;
@@ -84,7 +84,7 @@ public class MetisPreferenceSetView
     /**
      * The Event Manager.
      */
-    private final TethysEventManager<MetisPreferenceEvent> theEventManager;
+    private final OceanusEventManager<MetisPreferenceEvent> theEventManager;
 
     /**
      * The PreferenceSet for this panel.
@@ -129,7 +129,7 @@ public class MetisPreferenceSetView
         thePreferences = pPreferenceSet;
 
         /* Create the event manager */
-        theEventManager = new TethysEventManager<>();
+        theEventManager = new OceanusEventManager<>();
 
         /* Create the list */
         theElements = new ArrayList<>();
@@ -189,7 +189,7 @@ public class MetisPreferenceSetView
     }
 
     @Override
-    public TethysEventRegistrar<MetisPreferenceEvent> getEventRegistrar() {
+    public OceanusEventRegistrar<MetisPreferenceEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -651,7 +651,7 @@ public class MetisPreferenceSetView
 
             /* Create listeners */
             theField.setMenuConfigurator(this::buildMenu);
-            final TethysEventRegistrar<TethysUIEvent> myRegistrar = theField.getEventRegistrar();
+            final OceanusEventRegistrar<TethysUIEvent> myRegistrar = theField.getEventRegistrar();
             myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> {
                  pItem.setValue((E) theField.getValue().getData());
                 notifyChanges();

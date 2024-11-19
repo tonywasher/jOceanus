@@ -18,10 +18,10 @@ package net.sourceforge.joceanus.coeus.data;
 
 import net.sourceforge.joceanus.metis.field.MetisFieldItem;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.date.TethysDate;
-import net.sourceforge.joceanus.tethys.date.TethysDateRange;
-import net.sourceforge.joceanus.tethys.decimal.TethysDecimal;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimal;
 
 /**
  * Coeus Loan.
@@ -69,22 +69,22 @@ public abstract class CoeusLoan
     /**
      * The Start date.
      */
-    private TethysDate theStartDate;
+    private OceanusDate theStartDate;
 
     /**
      * The InitialLoan.
      */
-    private TethysDecimal theInitialLoan;
+    private OceanusDecimal theInitialLoan;
 
     /**
      * The Last date.
      */
-    private TethysDate theLastDate;
+    private OceanusDate theLastDate;
 
     /**
      * The BadDebt date.
      */
-    private TethysDate theBadDebtDate;
+    private OceanusDate theBadDebtDate;
 
     /**
      * Constructor.
@@ -110,7 +110,7 @@ public abstract class CoeusLoan
      * @param pRange the date range
      */
     protected CoeusLoan(final CoeusLoan pLoan,
-                        final TethysDateRange pRange) {
+                        final OceanusDateRange pRange) {
         /* Record details */
         theMarket = pLoan.getMarket();
         theLoanId = pLoan.getLoanId();
@@ -124,8 +124,8 @@ public abstract class CoeusLoan
         theLastDate = pLoan.getLastDate();
 
         /* Determine badDebtDate */
-        final TethysDate myBadDebtDate = pLoan.getBadDebtDate();
-        final TethysDate myEndDate = pRange.getEnd();
+        final OceanusDate myBadDebtDate = pLoan.getBadDebtDate();
+        final OceanusDate myEndDate = pRange.getEnd();
         theBadDebtDate = myBadDebtDate != null
                                  && myBadDebtDate.compareTo(myEndDate) <= 0
                          ? myBadDebtDate
@@ -194,7 +194,7 @@ public abstract class CoeusLoan
      * Obtain the balance.
      * @return the balance
      */
-    public abstract TethysDecimal getBalance();
+    public abstract OceanusDecimal getBalance();
 
     /**
      * Clear the history.
@@ -207,7 +207,7 @@ public abstract class CoeusLoan
      * Obtain the start date.
      * @return the date
      */
-    public TethysDate getStartDate() {
+    public OceanusDate getStartDate() {
         return theStartDate;
     }
 
@@ -215,7 +215,7 @@ public abstract class CoeusLoan
      * Obtain the initialLoan.
      * @return the loan
      */
-    public TethysDecimal getInitialLoan() {
+    public OceanusDecimal getInitialLoan() {
         return theInitialLoan;
     }
 
@@ -223,7 +223,7 @@ public abstract class CoeusLoan
      * Obtain the last date.
      * @return the date
      */
-    public TethysDate getLastDate() {
+    public OceanusDate getLastDate() {
         return theLastDate;
     }
 
@@ -231,7 +231,7 @@ public abstract class CoeusLoan
      * Set the badDebt date.
      * @param pDate the date
      */
-    public void setBadDebtDate(final TethysDate pDate) {
+    public void setBadDebtDate(final OceanusDate pDate) {
         theBadDebtDate = pDate;
     }
 
@@ -239,7 +239,7 @@ public abstract class CoeusLoan
      * Obtain the badDebt date.
      * @return the date
      */
-    public TethysDate getBadDebtDate() {
+    public OceanusDate getBadDebtDate() {
         return theBadDebtDate;
     }
 
@@ -264,7 +264,7 @@ public abstract class CoeusLoan
         theLastDate = pTrans.getDate();
         if (theStartDate == null) {
             /* Access the loanBook delta */
-            final TethysDecimal myInitLoan = pTrans.getLoanBook();
+            final OceanusDecimal myInitLoan = pTrans.getLoanBook();
 
             /* If we have an initialLoan */
             if (myInitLoan.isNonZero()) {
@@ -287,8 +287,8 @@ public abstract class CoeusLoan
         if (theStartDate != null
                 && myTotals.getLoanBook().isZero()) {
             /* Determine outstanding badDebt */
-            final TethysDecimal myBadDebt = myTotals.getBadDebt();
-            final TethysDecimal myRecovered = myTotals.getRecovered();
+            final OceanusDecimal myBadDebt = myTotals.getBadDebt();
+            final OceanusDecimal myRecovered = myTotals.getRecovered();
 
             /* Check whether this is a rePaid badDebt */
             final boolean isBadDebt = myBadDebt.isNonZero();
@@ -305,9 +305,9 @@ public abstract class CoeusLoan
      * Obtain the dateRange of this loan.
      * @return the dateRange.
      */
-    public TethysDateRange getDateRange() {
+    public OceanusDateRange getDateRange() {
         final CoeusTotals myFirst = theHistory.getHistory().iterator().next();
-        return new TethysDateRange(myFirst.getDate(), theLastDate);
+        return new OceanusDateRange(myFirst.getDate(), theLastDate);
     }
 
     /**

@@ -56,8 +56,8 @@ import net.sourceforge.joceanus.gordianknot.impl.core.keystore.GordianKeyStoreEl
 import net.sourceforge.joceanus.gordianknot.impl.core.keystore.GordianKeyStoreElement.GordianKeyStoreKeyElement;
 import net.sourceforge.joceanus.gordianknot.impl.core.keystore.GordianKeyStoreElement.GordianKeyStorePairElement;
 import net.sourceforge.joceanus.gordianknot.impl.core.keystore.GordianKeyStoreElement.GordianKeyStoreSetElement;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.date.TethysDate;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
 
 /**
  * KeyStore implementation.
@@ -564,7 +564,7 @@ public class GordianCoreKeyStore
     }
 
     @Override
-    public TethysDate getCreationDate(final String pAlias) {
+    public OceanusDate getCreationDate(final String pAlias) {
         final GordianCoreKeyStoreEntry myEntry = theAliases.get(pAlias);
         return myEntry != null ? myEntry.getCreationDate() : null;
     }

@@ -40,10 +40,10 @@ import net.sourceforge.joceanus.prometheus.data.PrometheusEncryptedFieldSet;
 import net.sourceforge.joceanus.prometheus.data.PrometheusEncryptedPair;
 import net.sourceforge.joceanus.prometheus.data.PrometheusEncryptedValues;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.date.TethysDate;
-import net.sourceforge.joceanus.tethys.date.TethysDateFormatter;
-import net.sourceforge.joceanus.tethys.decimal.TethysRate;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.date.OceanusDateFormatter;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRate;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
 
 /**
@@ -127,34 +127,34 @@ public class MoneyWiseDepositRate
 
             /* Store the Rate */
             myValue = pValues.getValue(MoneyWiseBasicResource.MONEYWISEDATA_FIELD_RATE);
-            if (myValue instanceof TethysRate) {
-                setValueRate((TethysRate) myValue);
+            if (myValue instanceof OceanusRate) {
+                setValueRate((OceanusRate) myValue);
             } else if (myValue instanceof byte[]) {
                 setValueRate((byte[]) myValue);
             } else if (myValue instanceof String) {
                 final String myString = (String) myValue;
                 setValueRate(myString);
-                setValueRate(myFormatter.parseValue(myString, TethysRate.class));
+                setValueRate(myFormatter.parseValue(myString, OceanusRate.class));
             }
 
             /* Store the Bonus */
             myValue = pValues.getValue(MoneyWiseBasicResource.DEPOSITRATE_BONUS);
-            if (myValue instanceof TethysRate) {
-                setValueBonus((TethysRate) myValue);
+            if (myValue instanceof OceanusRate) {
+                setValueBonus((OceanusRate) myValue);
             } else if (myValue instanceof byte[]) {
                 setValueBonus((byte[]) myValue);
             } else if (myValue instanceof String) {
                 final String myString = (String) myValue;
                 setValueBonus(myString);
-                setValueBonus(myFormatter.parseValue(myString, TethysRate.class));
+                setValueBonus(myFormatter.parseValue(myString, OceanusRate.class));
             }
 
             /* Store the EndDate */
             myValue = pValues.getValue(MoneyWiseBasicResource.DEPOSITRATE_ENDDATE);
-            if (myValue instanceof TethysDate) {
-                setValueEndDate((TethysDate) myValue);
+            if (myValue instanceof OceanusDate) {
+                setValueEndDate((OceanusDate) myValue);
             } else if (myValue instanceof String) {
-                final TethysDateFormatter myParser = myFormatter.getDateFormatter();
+                final OceanusDateFormatter myParser = myFormatter.getDateFormatter();
                 setValueEndDate(myParser.parseDate((String) myValue));
             }
 
@@ -225,8 +225,8 @@ public class MoneyWiseDepositRate
      * Obtain Rate.
      * @return the rate
      */
-    public TethysRate getRate() {
-        return getValues().getValue(MoneyWiseBasicResource.MONEYWISEDATA_FIELD_RATE, TethysRate.class);
+    public OceanusRate getRate() {
+        return getValues().getValue(MoneyWiseBasicResource.MONEYWISEDATA_FIELD_RATE, OceanusRate.class);
     }
 
     /**
@@ -249,8 +249,8 @@ public class MoneyWiseDepositRate
      * Obtain Bonus.
      * @return the bonus rate
      */
-    public TethysRate getBonus() {
-        return getValues().getValue(MoneyWiseBasicResource.DEPOSITRATE_BONUS, TethysRate.class);
+    public OceanusRate getBonus() {
+        return getValues().getValue(MoneyWiseBasicResource.DEPOSITRATE_BONUS, OceanusRate.class);
     }
 
     /**
@@ -273,7 +273,7 @@ public class MoneyWiseDepositRate
      * Obtain date.
      * @return the date
      */
-    public TethysDate getDate() {
+    public OceanusDate getDate() {
         return getEndDate();
     }
 
@@ -281,8 +281,8 @@ public class MoneyWiseDepositRate
      * Obtain End Date.
      * @return the End Date
      */
-    public TethysDate getEndDate() {
-        return getValues().getValue(MoneyWiseBasicResource.DEPOSITRATE_ENDDATE, TethysDate.class);
+    public OceanusDate getEndDate() {
+        return getValues().getValue(MoneyWiseBasicResource.DEPOSITRATE_ENDDATE, OceanusDate.class);
     }
 
     /**
@@ -344,7 +344,7 @@ public class MoneyWiseDepositRate
      * @param pValue the rate
      * @throws OceanusException on error
      */
-    private void setValueRate(final TethysRate pValue) throws OceanusException {
+    private void setValueRate(final OceanusRate pValue) throws OceanusException {
         setEncryptedValue(MoneyWiseBasicResource.MONEYWISEDATA_FIELD_RATE, pValue);
     }
 
@@ -354,7 +354,7 @@ public class MoneyWiseDepositRate
      * @throws OceanusException on error
      */
     private void setValueRate(final byte[] pBytes) throws OceanusException {
-        setEncryptedValue(MoneyWiseBasicResource.MONEYWISEDATA_FIELD_RATE, pBytes, TethysRate.class);
+        setEncryptedValue(MoneyWiseBasicResource.MONEYWISEDATA_FIELD_RATE, pBytes, OceanusRate.class);
     }
 
     /**
@@ -378,7 +378,7 @@ public class MoneyWiseDepositRate
      * @param pValue the bonus rate
      * @throws OceanusException on error
      */
-    private void setValueBonus(final TethysRate pValue) throws OceanusException {
+    private void setValueBonus(final OceanusRate pValue) throws OceanusException {
         setEncryptedValue(MoneyWiseBasicResource.DEPOSITRATE_BONUS, pValue);
     }
 
@@ -388,7 +388,7 @@ public class MoneyWiseDepositRate
      * @throws OceanusException on error
      */
     private void setValueBonus(final byte[] pBytes) throws OceanusException {
-        setEncryptedValue(MoneyWiseBasicResource.DEPOSITRATE_BONUS, pBytes, TethysRate.class);
+        setEncryptedValue(MoneyWiseBasicResource.DEPOSITRATE_BONUS, pBytes, OceanusRate.class);
     }
 
     /**
@@ -411,7 +411,7 @@ public class MoneyWiseDepositRate
      * Set the end date.
      * @param pValue the date
      */
-    private void setValueEndDate(final TethysDate pValue) {
+    private void setValueEndDate(final OceanusDate pValue) {
         getValues().setUncheckedValue(MoneyWiseBasicResource.DEPOSITRATE_ENDDATE, pValue);
     }
 
@@ -486,9 +486,9 @@ public class MoneyWiseDepositRate
     @Override
     public void validate() {
         final MoneyWiseDepositRateList myList = getList();
-        final TethysDate myDate = getEndDate();
-        final TethysRate myRate = getRate();
-        final TethysRate myBonus = getBonus();
+        final OceanusDate myDate = getEndDate();
+        final OceanusRate myRate = getRate();
+        final OceanusRate myBonus = getBonus();
 
         /* Count instances of this date for the account */
         final MoneyWiseDepositRateDataMap myMap = myList.getDataMap();
@@ -534,7 +534,7 @@ public class MoneyWiseDepositRate
      * @param pRate the rate
      * @throws OceanusException on error
      */
-    public void setRate(final TethysRate pRate) throws OceanusException {
+    public void setRate(final OceanusRate pRate) throws OceanusException {
         setValueRate(pRate);
     }
 
@@ -543,7 +543,7 @@ public class MoneyWiseDepositRate
      * @param pBonus the rate
      * @throws OceanusException on error
      */
-    public void setBonus(final TethysRate pBonus) throws OceanusException {
+    public void setBonus(final OceanusRate pBonus) throws OceanusException {
         setValueBonus(pBonus);
     }
 
@@ -551,10 +551,10 @@ public class MoneyWiseDepositRate
      * Set a new date.
      * @param pDate the new date
      */
-    public void setEndDate(final TethysDate pDate) {
+    public void setEndDate(final OceanusDate pDate) {
         setValueEndDate(pDate == null
                 ? null
-                : new TethysDate(pDate));
+                : new OceanusDate(pDate));
     }
 
     @Override
@@ -772,7 +772,7 @@ public class MoneyWiseDepositRate
         /**
          * Map of Maps.
          */
-        private final Map<MoneyWiseDeposit, Map<TethysDate, Integer>> theMapOfMaps;
+        private final Map<MoneyWiseDeposit, Map<OceanusDate, Integer>> theMapOfMaps;
 
         /**
          * Map of Rates.
@@ -802,7 +802,7 @@ public class MoneyWiseDepositRate
          * Obtain mapOfMaps.
          * @return the map
          */
-        private Map<MoneyWiseDeposit, Map<TethysDate, Integer>> getMapOfMaps() {
+        private Map<MoneyWiseDeposit, Map<OceanusDate, Integer>> getMapOfMaps() {
             return theMapOfMaps;
         }
 
@@ -830,10 +830,10 @@ public class MoneyWiseDepositRate
             }
 
             /* Access the map */
-            final Map<TethysDate, Integer> myMap = theMapOfMaps.computeIfAbsent(myDeposit, m -> new HashMap<>());
+            final Map<OceanusDate, Integer> myMap = theMapOfMaps.computeIfAbsent(myDeposit, m -> new HashMap<>());
 
             /* Adjust rate count */
-            final TethysDate myDate = myItem.getEndDate();
+            final OceanusDate myDate = myItem.getEndDate();
             final Integer myCount = myMap.get(myDate);
             if (myCount == null) {
                 myMap.put(myDate, PrometheusDataInstanceMap.ONE);
@@ -856,10 +856,10 @@ public class MoneyWiseDepositRate
         public boolean validRateCount(final MoneyWiseDepositRate pItem) {
             /* Access the Details */
             final MoneyWiseDeposit myDeposit = pItem.getDeposit();
-            final TethysDate myDate = pItem.getEndDate();
+            final OceanusDate myDate = pItem.getEndDate();
 
             /* Access the map */
-            final Map<TethysDate, Integer> myMap = theMapOfMaps.get(myDeposit);
+            final Map<OceanusDate, Integer> myMap = theMapOfMaps.get(myDeposit);
             if (myMap != null) {
                 final Integer myResult = myMap.get(myDate);
                 return PrometheusDataInstanceMap.ONE.equals(myResult);
@@ -874,9 +874,9 @@ public class MoneyWiseDepositRate
          * @return true/false
          */
         public boolean availableDate(final MoneyWiseDeposit pDeposit,
-                                     final TethysDate pDate) {
+                                     final OceanusDate pDate) {
             /* Access the map */
-            final Map<TethysDate, Integer> myMap = theMapOfMaps.get(pDeposit);
+            final Map<OceanusDate, Integer> myMap = theMapOfMaps.get(pDeposit);
             return myMap == null
                     || myMap.get(pDate) == null;
         }
@@ -888,7 +888,7 @@ public class MoneyWiseDepositRate
          * @return the latest rate for the date.
          */
         public MoneyWiseDepositRate getRateForDate(final MoneyWiseDeposit pDeposit,
-                                                   final TethysDate pDate) {
+                                                   final OceanusDate pDate) {
             /* Access list for deposit */
             final MoneyWiseRateList myList = theMapOfRates.get(pDeposit);
             if (myList != null) {
@@ -898,7 +898,7 @@ public class MoneyWiseDepositRate
                     final MoneyWiseDepositRate myCurr = myIterator.previous();
 
                     /* Access the date */
-                    final TethysDate myDate = myCurr.getDate();
+                    final OceanusDate myDate = myCurr.getDate();
 
                     /* break loop if we have the correct record */
                     if (myDate == null

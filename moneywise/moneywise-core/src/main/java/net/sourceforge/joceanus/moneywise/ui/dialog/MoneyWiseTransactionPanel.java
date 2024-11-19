@@ -62,14 +62,14 @@ import net.sourceforge.joceanus.moneywise.lethe.views.MoneyWiseTransactionFilter
 import net.sourceforge.joceanus.prometheus.ui.fieldset.PrometheusFieldSet;
 import net.sourceforge.joceanus.prometheus.ui.fieldset.PrometheusFieldSetEvent;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.date.TethysDate;
-import net.sourceforge.joceanus.tethys.date.TethysDateConfig;
-import net.sourceforge.joceanus.tethys.date.TethysDateRange;
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
-import net.sourceforge.joceanus.tethys.decimal.TethysPrice;
-import net.sourceforge.joceanus.tethys.decimal.TethysRatio;
-import net.sourceforge.joceanus.tethys.decimal.TethysUnits;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.date.OceanusDateConfig;
+import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRatio;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusUnits;
 import net.sourceforge.joceanus.tethys.ui.api.control.TethysUIControl.TethysUIIconMapSet;
 import net.sourceforge.joceanus.tethys.ui.api.factory.TethysUIFactory;
 import net.sourceforge.joceanus.tethys.ui.api.field.TethysUIDataEditField.TethysUIDateButtonField;
@@ -130,7 +130,7 @@ public class MoneyWiseTransactionPanel
     /**
      * dateRange.
      */
-    private TethysDateRange theRange;
+    private OceanusDateRange theRange;
 
     /**
      * reconciledState.
@@ -353,7 +353,7 @@ public class MoneyWiseTransactionPanel
      * Update editors.
      * @param pRange the date range.
      */
-    public void updateEditors(final TethysDateRange pRange) {
+    public void updateEditors(final OceanusDateRange pRange) {
         /* Update the range */
         theRange = pRange;
     }
@@ -362,7 +362,7 @@ public class MoneyWiseTransactionPanel
      * Handle dateConfig.
      * @param pConfig the dateConfig
      */
-    private void handleDateConfig(final TethysDateConfig pConfig) {
+    private void handleDateConfig(final OceanusDateConfig pConfig) {
         /* Update Date button */
         pConfig.setEarliestDate(theRange != null
                 ? theRange.getStart()
@@ -540,10 +540,10 @@ public class MoneyWiseTransactionPanel
         /* Process updates */
         if (MoneyWiseBasicResource.MONEYWISEDATA_FIELD_DATE.equals(myField)) {
             /* Update the Date */
-            myTrans.setDate(pUpdate.getValue(TethysDate.class));
+            myTrans.setDate(pUpdate.getValue(OceanusDate.class));
         } else if (MoneyWiseBasicResource.TRANSACTION_AMOUNT.equals(myField)) {
             /* Update the Amount */
-            myTrans.setAmount(pUpdate.getValue(TethysMoney.class));
+            myTrans.setAmount(pUpdate.getValue(OceanusMoney.class));
             theBuilder.autoCorrect(myTrans);
         } else if (MoneyWiseBasicResource.TRANSACTION_ACCOUNT.equals(myField)) {
             /* Update the Account */
@@ -575,25 +575,25 @@ public class MoneyWiseTransactionPanel
             myTrans.setTransactionTags(pUpdate.getValue(List.class));
         } else if (MoneyWiseTransInfoClass.PARTNERAMOUNT.equals(myField)) {
             /* Update the PartnerAmount */
-            myTrans.setPartnerAmount(pUpdate.getValue(TethysMoney.class));
+            myTrans.setPartnerAmount(pUpdate.getValue(OceanusMoney.class));
         } else if (MoneyWiseTransInfoClass.XCHANGERATE.equals(myField)) {
             /* Update the ExchangeRate */
-            myTrans.setExchangeRate(pUpdate.getValue(TethysRatio.class));
+            myTrans.setExchangeRate(pUpdate.getValue(OceanusRatio.class));
         } else if (MoneyWiseTransInfoClass.ACCOUNTDELTAUNITS.equals(myField)) {
             /* Update the AccountDeltaUnits */
-            myTrans.setAccountDeltaUnits(pUpdate.getValue(TethysUnits.class));
+            myTrans.setAccountDeltaUnits(pUpdate.getValue(OceanusUnits.class));
         } else if (MoneyWiseTransInfoClass.PARTNERDELTAUNITS.equals(myField)) {
             /* Update the PartnerDeltaUnits */
-            myTrans.setPartnerDeltaUnits(pUpdate.getValue(TethysUnits.class));
+            myTrans.setPartnerDeltaUnits(pUpdate.getValue(OceanusUnits.class));
         } else if (MoneyWiseTransInfoClass.PRICE.equals(myField)) {
             /* Update the Price */
-            myTrans.setPrice(pUpdate.getValue(TethysPrice.class));
+            myTrans.setPrice(pUpdate.getValue(OceanusPrice.class));
         } else if (MoneyWiseTransInfoClass.COMMISSION.equals(myField)) {
             /* Update the Commission */
-            myTrans.setCommission(pUpdate.getValue(TethysMoney.class));
+            myTrans.setCommission(pUpdate.getValue(OceanusMoney.class));
         } else if (MoneyWiseTransInfoClass.DILUTION.equals(myField)) {
             /* Update the Dilution */
-            myTrans.setDilution(pUpdate.getValue(TethysRatio.class));
+            myTrans.setDilution(pUpdate.getValue(OceanusRatio.class));
         } else if (MoneyWiseTransInfoClass.QUALIFYYEARS.equals(myField)) {
             /* Update the QualifyYears */
             myTrans.setYears(pUpdate.getValue(Integer.class));
@@ -603,22 +603,22 @@ public class MoneyWiseTransactionPanel
             theBuilder.autoCorrect(myTrans);
         } else if (MoneyWiseTransInfoClass.RETURNEDCASH.equals(myField)) {
             /* Update the ReturnedCash */
-            myTrans.setReturnedCash(pUpdate.getValue(TethysMoney.class));
+            myTrans.setReturnedCash(pUpdate.getValue(OceanusMoney.class));
         } else if (MoneyWiseTransInfoClass.TAXCREDIT.equals(myField)) {
             /* Update the TaxCredit */
-            myTrans.setTaxCredit(pUpdate.getValue(TethysMoney.class));
+            myTrans.setTaxCredit(pUpdate.getValue(OceanusMoney.class));
         } else if (MoneyWiseTransInfoClass.EMPLOYEENATINS.equals(myField)) {
             /* Update the EmployeeNatIns */
-            myTrans.setEmployeeNatIns(pUpdate.getValue(TethysMoney.class));
+            myTrans.setEmployeeNatIns(pUpdate.getValue(OceanusMoney.class));
         } else if (MoneyWiseTransInfoClass.EMPLOYERNATINS.equals(myField)) {
             /* Update the EmployerNayIns */
-            myTrans.setEmployerNatIns(pUpdate.getValue(TethysMoney.class));
+            myTrans.setEmployerNatIns(pUpdate.getValue(OceanusMoney.class));
         } else if (MoneyWiseTransInfoClass.DEEMEDBENEFIT.equals(myField)) {
             /* Update the Benefit */
-            myTrans.setBenefit(pUpdate.getValue(TethysMoney.class));
+            myTrans.setBenefit(pUpdate.getValue(OceanusMoney.class));
         } else if (MoneyWiseTransInfoClass.WITHHELD.equals(myField)) {
             /* Update the Withheld */
-            myTrans.setWithheld(pUpdate.getValue(TethysMoney.class));
+            myTrans.setWithheld(pUpdate.getValue(OceanusMoney.class));
         }
     }
 
@@ -629,7 +629,7 @@ public class MoneyWiseTransactionPanel
 
         /* Access the analysis and the relevant filters */
         final MoneyWiseAnalysis myAnalysis = theAnalysisSelect.getAnalysis();
-        final TethysDateRange myDateRange = theAnalysisSelect.getRange();
+        final OceanusDateRange myDateRange = theAnalysisSelect.getRange();
         final MoneyWiseTransactionFilters myFilters = new MoneyWiseTransactionFilters(myAnalysis, myDateRange, myItem);
 
         /* Remove the current filter */

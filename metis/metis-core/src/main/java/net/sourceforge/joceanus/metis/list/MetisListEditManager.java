@@ -25,8 +25,8 @@ import net.sourceforge.joceanus.metis.field.MetisFieldItem.MetisFieldVersionedDe
 import net.sourceforge.joceanus.metis.field.MetisFieldPairedItem;
 import net.sourceforge.joceanus.metis.field.MetisFieldVersionValues;
 import net.sourceforge.joceanus.metis.field.MetisFieldVersionedItem;
-import net.sourceforge.joceanus.tethys.event.TethysEvent;
-import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar;
+import net.sourceforge.joceanus.oceanus.event.OceanusEvent;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
 
 /**
  * List Edit Methods.
@@ -71,7 +71,7 @@ public final class MetisListEditManager {
         }
 
         /* Register event handlers */
-        final TethysEventRegistrar<MetisListEvent> myRegistrar = pBaseSet.getEventRegistrar();
+        final OceanusEventRegistrar<MetisListEvent> myRegistrar = pBaseSet.getEventRegistrar();
         myRegistrar.addEventListener(MetisListEvent.REFRESH, e -> deriveEdits(myEditSet));
         myRegistrar.addEventListener(MetisListEvent.VERSION, e -> handleReWindOfBase(myEditSet, e));
 
@@ -144,7 +144,7 @@ public final class MetisListEditManager {
      * @param pEvent the event
      */
     private static void handleReWindOfBase(final MetisListSetVersioned pEditSet,
-                                           final TethysEvent<MetisListEvent> pEvent) {
+                                           final OceanusEvent<MetisListEvent> pEvent) {
         /* Access the change details */
         final MetisListSetChange myChanges = pEvent.getDetails(MetisListSetChange.class);
 

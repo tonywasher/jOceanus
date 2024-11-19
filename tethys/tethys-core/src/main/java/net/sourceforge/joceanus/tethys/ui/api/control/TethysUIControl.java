@@ -20,7 +20,7 @@ import java.util.Iterator;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-import net.sourceforge.joceanus.tethys.date.TethysDateConfig;
+import net.sourceforge.joceanus.oceanus.date.OceanusDateConfig;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIIconId;
 import net.sourceforge.joceanus.tethys.ui.api.menu.TethysUIScrollMenu;
 
@@ -36,7 +36,7 @@ public interface TethysUIControl {
          * Set the dateConfig configurator.
          * @param pConfigurator the configurator
          */
-        void setDateConfigurator(Consumer<TethysDateConfig> pConfigurator);
+        void setDateConfigurator(Consumer<OceanusDateConfig> pConfigurator);
     }
 
     /**

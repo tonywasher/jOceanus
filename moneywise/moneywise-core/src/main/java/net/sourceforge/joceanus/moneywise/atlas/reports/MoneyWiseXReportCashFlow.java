@@ -33,7 +33,7 @@ import net.sourceforge.joceanus.moneywise.atlas.data.analysis.values.MoneyWiseXA
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.values.MoneyWiseXAnalysisPayeeValues;
 import net.sourceforge.joceanus.moneywise.atlas.views.MoneyWiseXAnalysisFilter;
 import net.sourceforge.joceanus.moneywise.atlas.views.MoneyWiseXAnalysisFilter.MoneyWiseXAnalysisPayeeFilter;
-import net.sourceforge.joceanus.tethys.date.TethysDateRange;
+import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
 
 /**
@@ -70,7 +70,7 @@ public class MoneyWiseXReportCashFlow
     public Document createReport(final MoneyWiseXAnalysis pAnalysis) {
         /* Access the bucket lists */
         final MoneyWiseXAnalysisPayeeBucketList myPayees = pAnalysis.getPayees();
-        final TethysDateRange myRange = pAnalysis.getDateRange();
+        final OceanusDateRange myRange = pAnalysis.getDateRange();
 
         /* Obtain the totals bucket */
         final MoneyWiseXAnalysisPayeeBucket myTotals = myPayees.getTotals();

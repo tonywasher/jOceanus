@@ -21,10 +21,10 @@ import net.sourceforge.joceanus.metis.viewer.MetisViewerErrorList;
 import net.sourceforge.joceanus.metis.viewer.MetisViewerExceptionWrapper;
 import net.sourceforge.joceanus.metis.viewer.MetisViewerManager;
 import net.sourceforge.joceanus.metis.viewer.MetisViewerStandardEntry;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.event.TethysEventManager;
-import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar;
-import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.TethysEventProvider;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.tethys.ui.api.button.TethysUIButton;
 import net.sourceforge.joceanus.tethys.ui.api.control.TethysUILabel;
@@ -49,7 +49,7 @@ public class MetisErrorPanel
     /**
      * The Event Manager.
      */
-    private final TethysEventManager<MetisUIEvent> theEventManager;
+    private final OceanusEventManager<MetisUIEvent> theEventManager;
 
     /**
      * The Panel.
@@ -90,7 +90,7 @@ public class MetisErrorPanel
         theViewerError.setVisible(false);
 
         /* Create the event manager */
-        theEventManager = new TethysEventManager<>();
+        theEventManager = new OceanusEventManager<>();
 
         /* Create the error list */
         theErrors = new MetisViewerErrorList();
@@ -121,7 +121,7 @@ public class MetisErrorPanel
     }
 
     @Override
-    public TethysEventRegistrar<MetisUIEvent> getEventRegistrar() {
+    public OceanusEventRegistrar<MetisUIEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 

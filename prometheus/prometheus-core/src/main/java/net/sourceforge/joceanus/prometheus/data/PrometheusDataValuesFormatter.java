@@ -53,8 +53,8 @@ import net.sourceforge.joceanus.metis.toolkit.MetisToolkit;
 import net.sourceforge.joceanus.prometheus.PrometheusDataException;
 import net.sourceforge.joceanus.prometheus.PrometheusIOException;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataValues.PrometheusGroupedItem;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.profile.TethysProfile;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
 import net.sourceforge.joceanus.tethys.ui.api.thread.TethysUIThreadStatusReport;
 
@@ -162,8 +162,8 @@ public class PrometheusDataValuesFormatter {
     public void createBackup(final PrometheusDataSet pData,
                              final OutputStream pZipStream) throws OceanusException {
         /* Obtain the active profile */
-        final TethysProfile myTask = theReport.getActiveTask();
-        final TethysProfile myStage = myTask.startTask("Writing");
+        final OceanusProfile myTask = theReport.getActiveTask();
+        final OceanusProfile myStage = myTask.startTask("Writing");
 
         /* Create a similar security control */
         final GordianPasswordManager myPasswordMgr = pData.getPasswordMgr();
@@ -237,8 +237,8 @@ public class PrometheusDataValuesFormatter {
     public void createExtract(final PrometheusDataSet pData,
                               final OutputStream pZipStream) throws OceanusException {
         /* Obtain the active profile */
-        final TethysProfile myTask = theReport.getActiveTask();
-        final TethysProfile myStage = myTask.startTask("Writing");
+        final OceanusProfile myTask = theReport.getActiveTask();
+        final OceanusProfile myStage = myTask.startTask("Writing");
 
         /* Access the data version */
         theVersion = pData.getControl().getDataVersion();
@@ -386,8 +386,8 @@ public class PrometheusDataValuesFormatter {
                             final InputStream pInStream,
                             final String pName) throws OceanusException {
         /* Obtain the active profile */
-        final TethysProfile myTask = theReport.getActiveTask();
-        final TethysProfile myStage = myTask.startTask("Loading");
+        final OceanusProfile myTask = theReport.getActiveTask();
+        final OceanusProfile myStage = myTask.startTask("Loading");
         myStage.startTask("Parsing");
 
         /* Access the zip file */
@@ -417,11 +417,11 @@ public class PrometheusDataValuesFormatter {
      * @param pZipFile the file to parse
      * @throws OceanusException on error
      */
-    private void parseZipFile(final TethysProfile pProfile,
+    private void parseZipFile(final OceanusProfile pProfile,
                               final PrometheusDataSet pData,
                               final GordianZipReadFile pZipFile) throws OceanusException {
         /* Start new stage */
-        final TethysProfile myStage = pProfile.startTask("Loading");
+        final OceanusProfile myStage = pProfile.startTask("Loading");
 
         /* Declare the number of stages */
         theReport.setNumStages(pData.getListMap().size());

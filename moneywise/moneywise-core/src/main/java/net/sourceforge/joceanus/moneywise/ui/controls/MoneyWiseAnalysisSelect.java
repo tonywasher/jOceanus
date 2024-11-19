@@ -32,11 +32,11 @@ import net.sourceforge.joceanus.moneywise.lethe.views.MoneyWiseAnalysisFilter.Mo
 import net.sourceforge.joceanus.moneywise.views.MoneyWiseAnalysisView;
 import net.sourceforge.joceanus.moneywise.views.MoneyWiseView;
 import net.sourceforge.joceanus.prometheus.views.PrometheusDataEvent;
-import net.sourceforge.joceanus.tethys.date.TethysDateRange;
-import net.sourceforge.joceanus.tethys.date.TethysDateResource;
-import net.sourceforge.joceanus.tethys.event.TethysEventManager;
-import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar;
-import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
+import net.sourceforge.joceanus.oceanus.date.OceanusDateResource;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.TethysEventProvider;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIArrowIconId;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIEvent;
@@ -100,12 +100,12 @@ public class MoneyWiseAnalysisSelect
     /**
      * Text for Box Title.
      */
-    private static final String NLS_RANGETITLE = TethysDateResource.TITLE_BOX.getValue();
+    private static final String NLS_RANGETITLE = OceanusDateResource.TITLE_BOX.getValue();
 
     /**
      * The Event Manager.
      */
-    private final TethysEventManager<PrometheusDataEvent> theEventManager;
+    private final OceanusEventManager<PrometheusDataEvent> theEventManager;
 
     /**
      * View.
@@ -293,7 +293,7 @@ public class MoneyWiseAnalysisSelect
         theAnalysisView = pAnalysisView;
 
         /* Create Event Manager */
-        theEventManager = new TethysEventManager<>();
+        theEventManager = new OceanusEventManager<>();
 
         /* Create the range button */
         final TethysUIButtonFactory<?> myButtons = pFactory.buttonFactory();
@@ -372,7 +372,7 @@ public class MoneyWiseAnalysisSelect
         theColumnMenu = theColumnButton.getMenu();
 
         /* Create the listeners */
-        TethysEventRegistrar<TethysUIEvent> myRegistrar = theFilterTypeButton.getEventRegistrar();
+        OceanusEventRegistrar<TethysUIEvent> myRegistrar = theFilterTypeButton.getEventRegistrar();
         myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> handleFilterType());
         theFilterTypeButton.setMenuConfigurator(e -> buildAnalysisTypeMenu());
         myRegistrar = theBucketButton.getEventRegistrar();
@@ -406,7 +406,7 @@ public class MoneyWiseAnalysisSelect
     }
 
     @Override
-    public TethysEventRegistrar<PrometheusDataEvent> getEventRegistrar() {
+    public OceanusEventRegistrar<PrometheusDataEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -414,7 +414,7 @@ public class MoneyWiseAnalysisSelect
      * Obtain the DateDayRange.
      * @return the range.
      */
-    public TethysDateRange getRange() {
+    public OceanusDateRange getRange() {
         return theState.getRange();
     }
 
@@ -479,7 +479,7 @@ public class MoneyWiseAnalysisSelect
         myPanel.addNode(pNewButton);
 
         /* Pass through the save event */
-        final TethysEventRegistrar<TethysUIEvent> myRegistrar = mySave.getEventRegistrar();
+        final OceanusEventRegistrar<TethysUIEvent> myRegistrar = mySave.getEventRegistrar();
         myRegistrar.addEventListener(e -> theEventManager.fireEvent(PrometheusDataEvent.SAVETOFILE));
 
         /* Return the panel */
@@ -600,7 +600,7 @@ public class MoneyWiseAnalysisSelect
      */
     public void refreshData() {
         /* Update the range selection */
-        final TethysDateRange myRange = theView.getRange();
+        final OceanusDateRange myRange = theView.getRange();
         theRangeSelect.setOverallRange(myRange);
 
         /* Refresh the analysisView */
@@ -1074,7 +1074,7 @@ public class MoneyWiseAnalysisSelect
         /**
          * The Range.
          */
-        private TethysDateRange theRange;
+        private OceanusDateRange theRange;
 
         /**
          * The AnalysisType.
@@ -1130,7 +1130,7 @@ public class MoneyWiseAnalysisSelect
          * Obtain the DateDayRange.
          * @return the range.
          */
-        private TethysDateRange getRange() {
+        private OceanusDateRange getRange() {
             return theRange;
         }
 
@@ -1195,7 +1195,7 @@ public class MoneyWiseAnalysisSelect
          */
         private boolean setRange(final TethysUIDateRangeSelector pSelect) {
             /* Adjust the selected account */
-            final TethysDateRange myRange = pSelect.getRange();
+            final OceanusDateRange myRange = pSelect.getRange();
             if (!MetisDataDifference.isEqual(myRange, theRange)) {
                 theRange = myRange;
                 return true;

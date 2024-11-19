@@ -24,8 +24,8 @@ import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataSet;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseExchangeRate;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseExchangeRate.MoneyWiseExchangeRateDataMap;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrency;
-import net.sourceforge.joceanus.tethys.date.TethysDate;
-import net.sourceforge.joceanus.tethys.decimal.TethysRatio;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRatio;
 
 /**
  * Quick access to dated exchange Rates on an analysis pass.
@@ -59,8 +59,8 @@ public class MoneyWiseAnalysisExchangeRateCursor {
      * @param pDate the date
      * @return the exchange rate
      */
-    public TethysRatio getExchangeRate(final MoneyWiseCurrency pCurrency,
-                                       final TethysDate pDate) {
+    public OceanusRatio getExchangeRate(final MoneyWiseCurrency pCurrency,
+                                        final OceanusDate pDate) {
         /* Access cursor and return rate */
         final CurrencyCursor myCursor = getCursor(pCurrency);
         return myCursor.getExchangeRate(pDate);
@@ -98,17 +98,17 @@ public class MoneyWiseAnalysisExchangeRateCursor {
         /**
          * The current exchange rate.
          */
-        private TethysRatio theCurrent = TethysRatio.ONE;
+        private OceanusRatio theCurrent = OceanusRatio.ONE;
 
         /**
          * The next date.
          */
-        private TethysDate theNextDate;
+        private OceanusDate theNextDate;
 
         /**
          * The next exchange rate.
          */
-        private TethysRatio theNextRate;
+        private OceanusRatio theNextRate;
 
         /**
          * Constructor.
@@ -146,7 +146,7 @@ public class MoneyWiseAnalysisExchangeRateCursor {
          * @param pDate the date
          * @return the exchange rate
          */
-        private TethysRatio getExchangeRate(final TethysDate pDate) {
+        private OceanusRatio getExchangeRate(final OceanusDate pDate) {
             /* if we have a later rate */
             if (theNextDate != null) {
                 /* while we need to move the cursor */

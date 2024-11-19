@@ -18,13 +18,13 @@ package net.sourceforge.joceanus.metis.ui;
 
 import java.util.ResourceBundle;
 
-import net.sourceforge.joceanus.tethys.resource.TethysBundleId;
-import net.sourceforge.joceanus.tethys.resource.TethysBundleLoader;
+import net.sourceforge.joceanus.oceanus.resource.OceanusBundleId;
+import net.sourceforge.joceanus.oceanus.resource.OceanusBundleLoader;
 
 /**
  * Resource IDs for jMetis UI Fields.
  */
-public enum MetisUIResource implements TethysBundleId {
+public enum MetisUIResource implements OceanusBundleId {
     /**
      * Download ToolTip.
      */
@@ -98,7 +98,7 @@ public enum MetisUIResource implements TethysBundleId {
     /**
      * The Resource Loader.
      */
-    private static final TethysBundleLoader LOADER = TethysBundleLoader.getLoader(MetisUIResource.class.getCanonicalName(),
+    private static final OceanusBundleLoader LOADER = OceanusBundleLoader.getLoader(MetisUIResource.class.getCanonicalName(),
             ResourceBundle::getBundle);
 
     /**

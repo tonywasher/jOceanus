@@ -24,8 +24,8 @@ import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTaxClass;
 import net.sourceforge.joceanus.moneywise.tax.MoneyWiseTaxBandSet.MoneyWiseTaxBand;
 import net.sourceforge.joceanus.moneywise.tax.MoneyWiseTaxResource;
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
-import net.sourceforge.joceanus.tethys.decimal.TethysRate;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRate;
 
 /**
  * Dividend Tax Scheme.
@@ -59,13 +59,13 @@ public abstract class MoneyWiseUKDividendScheme
      * @param pTaxYear the taxYear
      * @return the taxCredit rate
      */
-    protected abstract TethysRate getTaxCreditRate(MoneyWiseUKTaxYear pTaxYear);
+    protected abstract OceanusRate getTaxCreditRate(MoneyWiseUKTaxYear pTaxYear);
 
     @Override
-    protected TethysMoney adjustAllowances(final MoneyWiseUKTaxConfig pConfig,
-                                           final TethysMoney pAmount) {
+    protected OceanusMoney adjustAllowances(final MoneyWiseUKTaxConfig pConfig,
+                                            final OceanusMoney pAmount) {
         /* Adjust against the basic allowance */
-        final TethysMoney myRemaining = super.adjustAllowances(pConfig, pAmount);
+        final OceanusMoney myRemaining = super.adjustAllowances(pConfig, pAmount);
 
         /* If we have any dividends left */
         if (myRemaining.isNonZero()) {
@@ -78,22 +78,22 @@ public abstract class MoneyWiseUKDividendScheme
     }
 
     @Override
-    protected TethysMoney getAmountInAllowance(final MoneyWiseUKTaxConfig pConfig,
-                                               final TethysMoney pAmount) {
+    protected OceanusMoney getAmountInAllowance(final MoneyWiseUKTaxConfig pConfig,
+                                                final OceanusMoney pAmount) {
         /* Obtain the amount covered by the basic allowance */
-        TethysMoney myAmount = super.getAmountInAllowance(pConfig, pAmount);
+        OceanusMoney myAmount = super.getAmountInAllowance(pConfig, pAmount);
 
         /* If we have income left over */
         if (myAmount.compareTo(pAmount) < 0) {
             /* Calculate remaining amount */
-            final TethysMoney myRemaining = new TethysMoney(pAmount);
+            final OceanusMoney myRemaining = new OceanusMoney(pAmount);
             myRemaining.subtractAmount(myAmount);
 
             /* Calculate the amount covered by dividend allowance */
-            final TethysMoney myXtra = getAmountInBand(pConfig.getDividendAllowance(), myRemaining);
+            final OceanusMoney myXtra = getAmountInBand(pConfig.getDividendAllowance(), myRemaining);
 
             /* Determine the total amount covered by the allowance */
-            myAmount = new TethysMoney(myAmount);
+            myAmount = new OceanusMoney(myAmount);
             myAmount.addAmount(myXtra);
         }
 
@@ -105,7 +105,7 @@ public abstract class MoneyWiseUKDividendScheme
      * Obtain the base rate.
      * @return the base rate
      */
-    protected TethysRate getBaseRate() {
+    protected OceanusRate getBaseRate() {
         return null;
     }
 
@@ -113,7 +113,7 @@ public abstract class MoneyWiseUKDividendScheme
      * Obtain the higher rate.
      * @return the higher rate
      */
-    protected TethysRate getHigherRate() {
+    protected OceanusRate getHigherRate() {
         return null;
     }
 
@@ -121,7 +121,7 @@ public abstract class MoneyWiseUKDividendScheme
      * Obtain the additional rate.
      * @return the additional rate
      */
-    protected TethysRate getAdditionalRate() {
+    protected OceanusRate getAdditionalRate() {
         return null;
     }
 
@@ -135,14 +135,14 @@ public abstract class MoneyWiseUKDividendScheme
         /* Access underlying iterator */
         final Iterator<MoneyWiseTaxBand> myIterator = super.taxBandIterator(pConfig, pBasis);
         MoneyWiseTaxBand myBand = myIterator.next();
-        TethysMoney myAmount = myBand.getAmount();
-        TethysRate myRate = getBaseRate();
+        OceanusMoney myAmount = myBand.getAmount();
+        OceanusRate myRate = getBaseRate();
 
         /* If we are a LoHigher instance */
         if (this instanceof MoneyWiseUKDividendLoHigherRateScheme) {
             /* Access the true basic band and merge in the lower rate */
             myBand = myIterator.next();
-            myAmount = new TethysMoney(myAmount);
+            myAmount = new OceanusMoney(myAmount);
             myAmount.addAmount(myBand.getAmount());
         }
 
@@ -195,7 +195,7 @@ public abstract class MoneyWiseUKDividendScheme
         private static final MetisFieldSet<MoneyWiseUKDividendAsIncomeScheme> FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseUKDividendAsIncomeScheme.class);
 
         @Override
-        protected TethysRate getTaxCreditRate(final MoneyWiseUKTaxYear pTaxYear) {
+        protected OceanusRate getTaxCreditRate(final MoneyWiseUKTaxYear pTaxYear) {
             return pTaxYear.getTaxBands().getBasicTaxRate();
         }
 
@@ -225,14 +225,14 @@ public abstract class MoneyWiseUKDividendScheme
         /**
          * The Base Rate.
          */
-        private final TethysRate theBaseRate;
+        private final OceanusRate theBaseRate;
 
         /**
          * Constructor.
          * @param pRate the base rate
          * @param pReliefAvailable Is tax relief available?
          */
-        protected MoneyWiseUKDividendBaseRateScheme(final TethysRate pRate,
+        protected MoneyWiseUKDividendBaseRateScheme(final OceanusRate pRate,
                                                     final Boolean pReliefAvailable) {
             super(pReliefAvailable);
             theBaseRate = pRate;
@@ -242,17 +242,17 @@ public abstract class MoneyWiseUKDividendScheme
          * Constructor.
          * @param pRate the base rate
          */
-        protected MoneyWiseUKDividendBaseRateScheme(final TethysRate pRate) {
+        protected MoneyWiseUKDividendBaseRateScheme(final OceanusRate pRate) {
             this(pRate, Boolean.TRUE);
         }
 
         @Override
-        protected TethysRate getBaseRate() {
+        protected OceanusRate getBaseRate() {
             return theBaseRate;
         }
 
         @Override
-        protected TethysRate getTaxCreditRate(final MoneyWiseUKTaxYear pTaxYear) {
+        protected OceanusRate getTaxCreditRate(final MoneyWiseUKTaxYear pTaxYear) {
             return theBaseRate;
         }
 
@@ -282,15 +282,15 @@ public abstract class MoneyWiseUKDividendScheme
         /**
          * The Higher Rate.
          */
-        private final TethysRate theHighRate;
+        private final OceanusRate theHighRate;
 
         /**
          * Constructor.
          * @param pRate the base rate
          * @param pHighRate the higher rate
          */
-        protected MoneyWiseUKDividendHigherRateScheme(final TethysRate pRate,
-                                                      final TethysRate pHighRate) {
+        protected MoneyWiseUKDividendHigherRateScheme(final OceanusRate pRate,
+                                                      final OceanusRate pHighRate) {
             this(pRate, pHighRate, Boolean.FALSE);
         }
 
@@ -300,15 +300,15 @@ public abstract class MoneyWiseUKDividendScheme
          * @param pHighRate the higher rate
          * @param pReliefAvailable Is tax relief available?
          */
-        protected MoneyWiseUKDividendHigherRateScheme(final TethysRate pRate,
-                                                      final TethysRate pHighRate,
+        protected MoneyWiseUKDividendHigherRateScheme(final OceanusRate pRate,
+                                                      final OceanusRate pHighRate,
                                                       final Boolean pReliefAvailable) {
             super(pRate, pReliefAvailable);
             theHighRate = pHighRate;
         }
 
         @Override
-        protected TethysRate getHigherRate() {
+        protected OceanusRate getHigherRate() {
             return theHighRate;
         }
 
@@ -333,8 +333,8 @@ public abstract class MoneyWiseUKDividendScheme
          * @param pRate the base rate
          * @param pHigherRate the higher rate
          */
-        protected MoneyWiseUKDividendLoHigherRateScheme(final TethysRate pRate,
-                                                        final TethysRate pHigherRate) {
+        protected MoneyWiseUKDividendLoHigherRateScheme(final OceanusRate pRate,
+                                                        final OceanusRate pHigherRate) {
             super(pRate, pHigherRate);
         }
 
@@ -364,7 +364,7 @@ public abstract class MoneyWiseUKDividendScheme
         /**
          * The Additional Rate.
          */
-        private final TethysRate theAdditionalRate;
+        private final OceanusRate theAdditionalRate;
 
         /**
          * Constructor.
@@ -372,9 +372,9 @@ public abstract class MoneyWiseUKDividendScheme
          * @param pHighRate the higher rate
          * @param pAddRate the additional rate
          */
-        protected MoneyWiseUKDividendAdditionalRateScheme(final TethysRate pRate,
-                                                          final TethysRate pHighRate,
-                                                          final TethysRate pAddRate) {
+        protected MoneyWiseUKDividendAdditionalRateScheme(final OceanusRate pRate,
+                                                          final OceanusRate pHighRate,
+                                                          final OceanusRate pAddRate) {
             this(pRate, pHighRate, pAddRate, Boolean.FALSE);
         }
 
@@ -385,16 +385,16 @@ public abstract class MoneyWiseUKDividendScheme
          * @param pAddRate the additional rate
          * @param pReliefAvailable Is tax relief available?
          */
-        protected MoneyWiseUKDividendAdditionalRateScheme(final TethysRate pRate,
-                                                          final TethysRate pHighRate,
-                                                          final TethysRate pAddRate,
+        protected MoneyWiseUKDividendAdditionalRateScheme(final OceanusRate pRate,
+                                                          final OceanusRate pHighRate,
+                                                          final OceanusRate pAddRate,
                                                           final Boolean pReliefAvailable) {
             super(pRate, pHighRate, pReliefAvailable);
             theAdditionalRate = pAddRate;
         }
 
         @Override
-        protected TethysRate getAdditionalRate() {
+        protected OceanusRate getAdditionalRate() {
             return theAdditionalRate;
         }
 

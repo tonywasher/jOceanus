@@ -24,7 +24,7 @@ import org.junit.jupiter.api.DynamicNode;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 
-import net.sourceforge.joceanus.tethys.OceanusException;
+import net.sourceforge.joceanus.oceanus.OceanusException;
 import net.sourceforge.joceanus.themis.dsm.ThemisDSMProject;
 import net.sourceforge.joceanus.themis.dsm.ThemisDSMReport;
 import net.sourceforge.joceanus.themis.statistics.ThemisStatsParser;

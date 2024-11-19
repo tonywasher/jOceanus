@@ -28,10 +28,10 @@ import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
 import net.sourceforge.joceanus.moneywise.lethe.views.MoneyWiseAnalysisFilter;
 import net.sourceforge.joceanus.moneywise.lethe.views.MoneyWiseAnalysisFilter.MoneyWiseAnalysisTaxBasisFilter;
 import net.sourceforge.joceanus.prometheus.views.PrometheusDataEvent;
-import net.sourceforge.joceanus.tethys.date.TethysDateRange;
-import net.sourceforge.joceanus.tethys.event.TethysEventManager;
-import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar;
-import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.TethysEventProvider;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIConstant;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIEvent;
@@ -67,7 +67,7 @@ public class MoneyWiseTaxBasisAnalysisSelect
     /**
      * The Event Manager.
      */
-    private final TethysEventManager<PrometheusDataEvent> theEventManager;
+    private final OceanusEventManager<PrometheusDataEvent> theEventManager;
 
     /**
      * The panel.
@@ -120,7 +120,7 @@ public class MoneyWiseTaxBasisAnalysisSelect
         theAccountButton = myButtons.newScrollButton(MoneyWiseAnalysisTaxBasisAccountBucket.class);
 
         /* Create Event Manager */
-        theEventManager = new TethysEventManager<>();
+        theEventManager = new OceanusEventManager<>();
 
         /* Create the labels */
         final TethysUIControlFactory myControls = pFactory.controlFactory();
@@ -145,7 +145,7 @@ public class MoneyWiseTaxBasisAnalysisSelect
         theAccountMenu = theAccountButton.getMenu();
 
         /* Create the listener */
-        TethysEventRegistrar<TethysUIEvent> myRegistrar = theBasisButton.getEventRegistrar();
+        OceanusEventRegistrar<TethysUIEvent> myRegistrar = theBasisButton.getEventRegistrar();
         myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewBasis());
         theBasisButton.setMenuConfigurator(e -> buildBasisMenu());
         myRegistrar = theAccountButton.getEventRegistrar();
@@ -159,7 +159,7 @@ public class MoneyWiseTaxBasisAnalysisSelect
     }
 
     @Override
-    public TethysEventRegistrar<PrometheusDataEvent> getEventRegistrar() {
+    public OceanusEventRegistrar<PrometheusDataEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -352,7 +352,7 @@ public class MoneyWiseTaxBasisAnalysisSelect
         /**
          * The dateRange.
          */
-        private TethysDateRange theDateRange;
+        private OceanusDateRange theDateRange;
 
         /**
          * The active filter.
@@ -397,7 +397,7 @@ public class MoneyWiseTaxBasisAnalysisSelect
          * Obtain the dateRange.
          * @return the dateRange
          */
-        private TethysDateRange getDateRange() {
+        private OceanusDateRange getDateRange() {
             return theDateRange;
         }
 
@@ -450,7 +450,7 @@ public class MoneyWiseTaxBasisAnalysisSelect
          * Set the dateRange.
          * @param pRange the dateRange
          */
-        private void setDateRange(final TethysDateRange pRange) {
+        private void setDateRange(final OceanusDateRange pRange) {
             /* Store the dateRange */
             theDateRange = pRange;
             if (theFilter != null) {

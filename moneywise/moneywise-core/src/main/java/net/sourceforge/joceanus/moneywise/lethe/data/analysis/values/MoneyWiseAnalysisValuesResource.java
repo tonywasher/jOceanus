@@ -23,14 +23,14 @@ import java.util.ResourceBundle;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicResource;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseStaticResource;
-import net.sourceforge.joceanus.tethys.resource.TethysBundleId;
-import net.sourceforge.joceanus.tethys.resource.TethysBundleLoader;
+import net.sourceforge.joceanus.oceanus.resource.OceanusBundleId;
+import net.sourceforge.joceanus.oceanus.resource.OceanusBundleLoader;
 
 /**
  * Resource IDs for MoneyWise Analysis Fields.
  */
 public enum MoneyWiseAnalysisValuesResource
-        implements TethysBundleId, MetisDataFieldId {
+        implements OceanusBundleId, MetisDataFieldId {
     /**
      * AccountAttr Valuation.
      */
@@ -234,32 +234,32 @@ public enum MoneyWiseAnalysisValuesResource
     /**
      * The AccountAttr Map.
      */
-    private static final Map<MoneyWiseAnalysisAccountAttr, TethysBundleId> ACCOUNT_MAP = buildAccountMap();
+    private static final Map<MoneyWiseAnalysisAccountAttr, OceanusBundleId> ACCOUNT_MAP = buildAccountMap();
 
     /**
      * The TransactionAttr Map.
      */
-    private static final Map<MoneyWiseAnalysisTransAttr, TethysBundleId> TRANSACTION_MAP = buildTransMap();
+    private static final Map<MoneyWiseAnalysisTransAttr, OceanusBundleId> TRANSACTION_MAP = buildTransMap();
 
     /**
      * The PayeeAttr Map.
      */
-    private static final Map<MoneyWiseAnalysisPayeeAttr, TethysBundleId> PAYEE_MAP = buildPayeeMap();
+    private static final Map<MoneyWiseAnalysisPayeeAttr, OceanusBundleId> PAYEE_MAP = buildPayeeMap();
 
     /**
      * The SecurityAttr Map.
      */
-    private static final Map<MoneyWiseAnalysisSecurityAttr, TethysBundleId> SECURITY_MAP = buildSecurityMap();
+    private static final Map<MoneyWiseAnalysisSecurityAttr, OceanusBundleId> SECURITY_MAP = buildSecurityMap();
 
     /**
      * The TaxAttr Map.
      */
-    private static final Map<MoneyWiseAnalysisTaxBasisAttr, TethysBundleId> TAX_MAP = buildTaxMap();
+    private static final Map<MoneyWiseAnalysisTaxBasisAttr, OceanusBundleId> TAX_MAP = buildTaxMap();
 
     /**
      * The Resource Loader.
      */
-    private static final TethysBundleLoader LOADER = TethysBundleLoader.getLoader(MoneyWiseAnalysisValuesResource.class.getCanonicalName(),
+    private static final OceanusBundleLoader LOADER = OceanusBundleLoader.getLoader(MoneyWiseAnalysisValuesResource.class.getCanonicalName(),
             ResourceBundle::getBundle);
 
     /**
@@ -284,7 +284,7 @@ public enum MoneyWiseAnalysisValuesResource
      * Constructor.
      * @param pResource the underlying resource
      */
-    MoneyWiseAnalysisValuesResource(final TethysBundleId pResource) {
+    MoneyWiseAnalysisValuesResource(final OceanusBundleId pResource) {
         theKeyName = null;
         theValue = pResource.getValue();
     }
@@ -320,9 +320,9 @@ public enum MoneyWiseAnalysisValuesResource
      * Build account map.
      * @return the map
      */
-    private static Map<MoneyWiseAnalysisAccountAttr, TethysBundleId> buildAccountMap() {
+    private static Map<MoneyWiseAnalysisAccountAttr, OceanusBundleId> buildAccountMap() {
         /* Create the map and return it */
-        final Map<MoneyWiseAnalysisAccountAttr, TethysBundleId> myMap = new EnumMap<>(MoneyWiseAnalysisAccountAttr.class);
+        final Map<MoneyWiseAnalysisAccountAttr, OceanusBundleId> myMap = new EnumMap<>(MoneyWiseAnalysisAccountAttr.class);
         myMap.put(MoneyWiseAnalysisAccountAttr.VALUATION, ACCOUNTATTR_VALUATION);
         myMap.put(MoneyWiseAnalysisAccountAttr.FOREIGNVALUE, ACCOUNTATTR_FOREIGNVALUE);
         myMap.put(MoneyWiseAnalysisAccountAttr.LOCALVALUE, ACCOUNTATTR_LOCALVALUE);
@@ -342,17 +342,17 @@ public enum MoneyWiseAnalysisValuesResource
      * @param pValue the Value
      * @return the resource key
      */
-    static TethysBundleId getKeyForAccountAttr(final MoneyWiseAnalysisAccountAttr pValue) {
-        return TethysBundleLoader.getKeyForEnum(ACCOUNT_MAP, pValue);
+    static OceanusBundleId getKeyForAccountAttr(final MoneyWiseAnalysisAccountAttr pValue) {
+        return OceanusBundleLoader.getKeyForEnum(ACCOUNT_MAP, pValue);
     }
 
     /**
      * Build transaction map.
      * @return the map
      */
-    private static Map<MoneyWiseAnalysisTransAttr, TethysBundleId> buildTransMap() {
+    private static Map<MoneyWiseAnalysisTransAttr, OceanusBundleId> buildTransMap() {
         /* Create the map and return it */
-        final Map<MoneyWiseAnalysisTransAttr, TethysBundleId> myMap = new EnumMap<>(MoneyWiseAnalysisTransAttr.class);
+        final Map<MoneyWiseAnalysisTransAttr, OceanusBundleId> myMap = new EnumMap<>(MoneyWiseAnalysisTransAttr.class);
         myMap.put(MoneyWiseAnalysisTransAttr.INCOME, PAYEEATTR_INCOME);
         myMap.put(MoneyWiseAnalysisTransAttr.EXPENSE, PAYEEATTR_EXPENSE);
         myMap.put(MoneyWiseAnalysisTransAttr.PROFIT, ACCOUNTATTR_PROFIT);
@@ -364,17 +364,17 @@ public enum MoneyWiseAnalysisValuesResource
      * @param pValue the Value
      * @return the resource key
      */
-    protected static TethysBundleId getKeyForTransactionAttr(final MoneyWiseAnalysisTransAttr pValue) {
-        return TethysBundleLoader.getKeyForEnum(TRANSACTION_MAP, pValue);
+    protected static OceanusBundleId getKeyForTransactionAttr(final MoneyWiseAnalysisTransAttr pValue) {
+        return OceanusBundleLoader.getKeyForEnum(TRANSACTION_MAP, pValue);
     }
 
     /**
      * Build payee map.
      * @return the map
      */
-    private static Map<MoneyWiseAnalysisPayeeAttr, TethysBundleId> buildPayeeMap() {
+    private static Map<MoneyWiseAnalysisPayeeAttr, OceanusBundleId> buildPayeeMap() {
         /* Create the map and return it */
-        final Map<MoneyWiseAnalysisPayeeAttr, TethysBundleId> myMap = new EnumMap<>(MoneyWiseAnalysisPayeeAttr.class);
+        final Map<MoneyWiseAnalysisPayeeAttr, OceanusBundleId> myMap = new EnumMap<>(MoneyWiseAnalysisPayeeAttr.class);
         myMap.put(MoneyWiseAnalysisPayeeAttr.INCOME, PAYEEATTR_INCOME);
         myMap.put(MoneyWiseAnalysisPayeeAttr.EXPENSE, PAYEEATTR_EXPENSE);
         myMap.put(MoneyWiseAnalysisPayeeAttr.PROFIT, ACCOUNTATTR_PROFIT);
@@ -386,17 +386,17 @@ public enum MoneyWiseAnalysisValuesResource
      * @param pValue the Value
      * @return the resource key
      */
-    static TethysBundleId getKeyForPayeeAttr(final MoneyWiseAnalysisPayeeAttr pValue) {
-        return TethysBundleLoader.getKeyForEnum(PAYEE_MAP, pValue);
+    static OceanusBundleId getKeyForPayeeAttr(final MoneyWiseAnalysisPayeeAttr pValue) {
+        return OceanusBundleLoader.getKeyForEnum(PAYEE_MAP, pValue);
     }
 
     /**
      * Build security map.
      * @return the map
      */
-    private static Map<MoneyWiseAnalysisSecurityAttr, TethysBundleId> buildSecurityMap() {
+    private static Map<MoneyWiseAnalysisSecurityAttr, OceanusBundleId> buildSecurityMap() {
         /* Create the map and return it */
-        final Map<MoneyWiseAnalysisSecurityAttr, TethysBundleId> myMap = new EnumMap<>(MoneyWiseAnalysisSecurityAttr.class);
+        final Map<MoneyWiseAnalysisSecurityAttr, OceanusBundleId> myMap = new EnumMap<>(MoneyWiseAnalysisSecurityAttr.class);
         myMap.put(MoneyWiseAnalysisSecurityAttr.VALUATION, ACCOUNTATTR_VALUATION);
         myMap.put(MoneyWiseAnalysisSecurityAttr.FOREIGNVALUE, ACCOUNTATTR_FOREIGNVALUE);
         myMap.put(MoneyWiseAnalysisSecurityAttr.VALUEDELTA, ACCOUNTATTR_VALUEDELTA);
@@ -433,17 +433,17 @@ public enum MoneyWiseAnalysisValuesResource
      * @param pValue the Value
      * @return the resource key
      */
-    static TethysBundleId getKeyForSecurityAttr(final MoneyWiseAnalysisSecurityAttr pValue) {
-        return TethysBundleLoader.getKeyForEnum(SECURITY_MAP, pValue);
+    static OceanusBundleId getKeyForSecurityAttr(final MoneyWiseAnalysisSecurityAttr pValue) {
+        return OceanusBundleLoader.getKeyForEnum(SECURITY_MAP, pValue);
     }
 
     /**
      * Build taxBasis map.
      * @return the map
      */
-    private static Map<MoneyWiseAnalysisTaxBasisAttr, TethysBundleId> buildTaxMap() {
+    private static Map<MoneyWiseAnalysisTaxBasisAttr, OceanusBundleId> buildTaxMap() {
         /* Create the map and return it */
-        final Map<MoneyWiseAnalysisTaxBasisAttr, TethysBundleId> myMap = new EnumMap<>(MoneyWiseAnalysisTaxBasisAttr.class);
+        final Map<MoneyWiseAnalysisTaxBasisAttr, OceanusBundleId> myMap = new EnumMap<>(MoneyWiseAnalysisTaxBasisAttr.class);
         myMap.put(MoneyWiseAnalysisTaxBasisAttr.GROSS, TAXATTR_GROSS);
         myMap.put(MoneyWiseAnalysisTaxBasisAttr.NETT, TAXATTR_NETT);
         myMap.put(MoneyWiseAnalysisTaxBasisAttr.TAXCREDIT, TAXATTR_TAX);
@@ -455,7 +455,7 @@ public enum MoneyWiseAnalysisValuesResource
      * @param pValue the Value
      * @return the resource key
      */
-    static TethysBundleId getKeyForTaxAttr(final MoneyWiseAnalysisTaxBasisAttr pValue) {
-        return TethysBundleLoader.getKeyForEnum(TAX_MAP, pValue);
+    static OceanusBundleId getKeyForTaxAttr(final MoneyWiseAnalysisTaxBasisAttr pValue) {
+        return OceanusBundleLoader.getKeyForEnum(TAX_MAP, pValue);
     }
 }

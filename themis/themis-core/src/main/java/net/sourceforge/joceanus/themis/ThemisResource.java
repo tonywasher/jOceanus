@@ -19,14 +19,14 @@ package net.sourceforge.joceanus.themis;
 import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
-import net.sourceforge.joceanus.tethys.resource.TethysBundleId;
-import net.sourceforge.joceanus.tethys.resource.TethysBundleLoader;
+import net.sourceforge.joceanus.oceanus.resource.OceanusBundleId;
+import net.sourceforge.joceanus.oceanus.resource.OceanusBundleLoader;
 
 /**
  * Resource IDs for Themis.
  */
 public enum ThemisResource
-        implements TethysBundleId, MetisDataFieldId {
+        implements OceanusBundleId, MetisDataFieldId {
     /**
      * List Size.
      */
@@ -420,7 +420,7 @@ public enum ThemisResource
     /**
      * The Resource Builder.
      */
-    private static final TethysBundleLoader LOADER = TethysBundleLoader.getPackageLoader(ThemisDataException.class.getCanonicalName(),
+    private static final OceanusBundleLoader LOADER = OceanusBundleLoader.getPackageLoader(ThemisDataException.class.getCanonicalName(),
             ResourceBundle::getBundle);
 
     /**
@@ -445,7 +445,7 @@ public enum ThemisResource
      * Constructor.
      * @param pSource the source key
      */
-    ThemisResource(final TethysBundleId pSource) {
+    ThemisResource(final OceanusBundleId pSource) {
         theKeyName = pSource.getKeyName();
     }
 

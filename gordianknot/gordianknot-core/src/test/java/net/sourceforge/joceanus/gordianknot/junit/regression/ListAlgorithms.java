@@ -24,8 +24,8 @@ import java.util.Set;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
 
-import net.sourceforge.joceanus.tethys.logger.TethysLogManager;
-import net.sourceforge.joceanus.tethys.logger.TethysLogger;
+import net.sourceforge.joceanus.oceanus.logger.OceanusLogManager;
+import net.sourceforge.joceanus.oceanus.logger.OceanusLogger;
 
 /**
  * Security Test suite - List Algorithms.
@@ -34,7 +34,7 @@ public final class ListAlgorithms {
     /**
      * Create a logger.
      */
-    private static final TethysLogger LOGGER = TethysLogManager.getLogger(ListAlgorithms.class);
+    private static final OceanusLogger LOGGER = OceanusLogManager.getLogger(ListAlgorithms.class);
 
     /**
      * List the supported algorithms.

@@ -51,7 +51,7 @@ import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianPersonalisatio
 import net.sourceforge.joceanus.gordianknot.impl.core.cipher.GordianCoreWrapper;
 import net.sourceforge.joceanus.gordianknot.impl.core.key.GordianCoreKeyGenerator;
 import net.sourceforge.joceanus.gordianknot.impl.core.keyset.GordianKeySetRecipe.GordianKeySetParameters;
-import net.sourceforge.joceanus.tethys.OceanusException;
+import net.sourceforge.joceanus.oceanus.OceanusException;
 
 /**
  * A full set of symmetric keys, subject to the relevant predicate.

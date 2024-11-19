@@ -16,16 +16,16 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.tethys.ui.core.thread;
 
-import java.util.ResourceBundle;
+import net.sourceforge.joceanus.oceanus.resource.OceanusBundleId;
+import net.sourceforge.joceanus.oceanus.resource.OceanusBundleLoader;
+import net.sourceforge.joceanus.tethys.ui.core.base.TethysUIResource;
 
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.resource.TethysBundleId;
-import net.sourceforge.joceanus.tethys.resource.TethysBundleLoader;
+import java.util.ResourceBundle;
 
 /**
  * Thread Resources.
  */
-public enum TethysUIThreadResource implements TethysBundleId {
+public enum TethysUIThreadResource implements OceanusBundleId {
     /**
      * StatusBar Cancel Button.
      */
@@ -64,7 +64,7 @@ public enum TethysUIThreadResource implements TethysBundleId {
     /**
      * The Resource Loader.
      */
-    private static final TethysBundleLoader LOADER = TethysBundleLoader.getPackageLoader(OceanusException.class.getCanonicalName(),
+    private static final OceanusBundleLoader LOADER = OceanusBundleLoader.getLoader(TethysUIResource.class.getCanonicalName(),
             ResourceBundle::getBundle);
 
     /**

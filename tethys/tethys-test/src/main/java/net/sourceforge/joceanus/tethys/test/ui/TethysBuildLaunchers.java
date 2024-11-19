@@ -18,10 +18,10 @@ package net.sourceforge.joceanus.tethys.test.ui;
 
 import java.io.File;
 
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.jar.TethysLauncher;
-import net.sourceforge.joceanus.tethys.logger.TethysLogManager;
-import net.sourceforge.joceanus.tethys.logger.TethysLogger;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.jar.OceanusLauncher;
+import net.sourceforge.joceanus.oceanus.logger.OceanusLogManager;
+import net.sourceforge.joceanus.oceanus.logger.OceanusLogger;
 
 /**
  * Harness to build launcher scripts.
@@ -30,7 +30,7 @@ public final class TethysBuildLaunchers {
     /**
      * Create Logger.
      */
-    private static final TethysLogger LOGGER = TethysLogManager.getLogger(TethysBuildLaunchers.class);
+    private static final OceanusLogger LOGGER = OceanusLogManager.getLogger(TethysBuildLaunchers.class);
 
     /**
      * Private constructor.
@@ -48,7 +48,7 @@ public final class TethysBuildLaunchers {
         try {
             /* Access the Backup location */
             final String myBackup = System.getenv("BACKUPDIR");
-            TethysLauncher.processJarFiles(new File(myBackup + "/bin"));
+            OceanusLauncher.processJarFiles(new File(myBackup + "/bin"));
 
             /* Handle exceptions */
         } catch (OceanusException e) {

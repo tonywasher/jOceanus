@@ -24,8 +24,8 @@ import net.sourceforge.joceanus.gordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.gordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySet;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.date.TethysDate;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
 
 /**
  * KeyStore.
@@ -236,7 +236,7 @@ public interface GordianKeyStore {
      * @param pAlias the alias
      * @return the creation date
      */
-    TethysDate getCreationDate(String pAlias);
+    OceanusDate getCreationDate(String pAlias);
 
     /**
      * Obtain the alias for this certificate.

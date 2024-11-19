@@ -18,14 +18,14 @@
 /**
  * Oceanus Core.
  */
-module net.sourceforge.joceanus.core {
+module net.sourceforge.joceanus.oceanus {
     /* Exports */
-    exports net.sourceforge.joceanus.tethys;
-    exports net.sourceforge.joceanus.tethys.date;
-    exports net.sourceforge.joceanus.tethys.decimal;
-    exports net.sourceforge.joceanus.tethys.event;
-    exports net.sourceforge.joceanus.tethys.jar;
-    exports net.sourceforge.joceanus.tethys.logger;
-    exports net.sourceforge.joceanus.tethys.profile;
-    exports net.sourceforge.joceanus.tethys.resource;
+    exports net.sourceforge.joceanus.oceanus;
+    exports net.sourceforge.joceanus.oceanus.date;
+    exports net.sourceforge.joceanus.oceanus.decimal;
+    exports net.sourceforge.joceanus.oceanus.event;
+    exports net.sourceforge.joceanus.oceanus.jar;
+    exports net.sourceforge.joceanus.oceanus.logger;
+    exports net.sourceforge.joceanus.oceanus.profile;
+    exports net.sourceforge.joceanus.oceanus.resource;
 }

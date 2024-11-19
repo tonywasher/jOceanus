@@ -27,10 +27,10 @@ import net.sourceforge.joceanus.coeus.ui.CoeusFilter;
 import net.sourceforge.joceanus.coeus.ui.CoeusMarketCache;
 import net.sourceforge.joceanus.coeus.ui.CoeusUIResource;
 import net.sourceforge.joceanus.metis.ui.MetisIcon;
-import net.sourceforge.joceanus.tethys.date.TethysDate;
-import net.sourceforge.joceanus.tethys.event.TethysEventManager;
-import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar;
-import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.TethysEventProvider;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.tethys.ui.api.button.TethysUIButton;
@@ -88,7 +88,7 @@ public final class CoeusStatementSelect
     /**
      * The Event Manager.
      */
-    private final TethysEventManager<CoeusDataEvent> theEventManager;
+    private final OceanusEventManager<CoeusDataEvent> theEventManager;
 
     /**
      * The market cache.
@@ -209,7 +209,7 @@ public final class CoeusStatementSelect
         theCardPane.addCard(CoeusMarketType.ANNUAL.toString(), myBox);
 
         /* Create Event Manager */
-        theEventManager = new TethysEventManager<>();
+        theEventManager = new OceanusEventManager<>();
 
         /* Create the selection panel */
         thePanel = myPanes.newHBoxPane();
@@ -234,7 +234,7 @@ public final class CoeusStatementSelect
         /* Initialise the current state */
         theState.setProvider(CoeusMarketProvider.FUNDINGCIRCLE);
         theState.setMarketType(CoeusMarketType.SNAPSHOT);
-        theState.setDate(new TethysDate());
+        theState.setDate(new OceanusDate());
         theState.setTotalSet(CoeusTotalSet.LOANBOOK);
         applyState();
 
@@ -260,7 +260,7 @@ public final class CoeusStatementSelect
     }
 
     @Override
-    public TethysEventRegistrar<CoeusDataEvent> getEventRegistrar() {
+    public OceanusEventRegistrar<CoeusDataEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 

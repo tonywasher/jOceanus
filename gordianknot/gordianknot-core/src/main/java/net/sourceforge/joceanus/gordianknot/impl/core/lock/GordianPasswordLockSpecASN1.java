@@ -32,7 +32,7 @@ import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianASN1Util.Gordi
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianIOException;
 import net.sourceforge.joceanus.gordianknot.impl.core.keyset.GordianKeySetSpecASN1;
-import net.sourceforge.joceanus.tethys.OceanusException;
+import net.sourceforge.joceanus.oceanus.OceanusException;
 
 /**
  * ASN1 Encoding of passwordLockSpec.

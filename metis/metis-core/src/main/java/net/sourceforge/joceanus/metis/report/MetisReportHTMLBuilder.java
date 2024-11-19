@@ -25,8 +25,8 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 import net.sourceforge.joceanus.metis.MetisIOException;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.decimal.TethysDecimal;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimal;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
 
 /**
@@ -494,9 +494,9 @@ public class MetisReportHTMLBuilder {
         String myClass = CLASS_DATAVALUE;
 
         /* If this is an instance of JDecimal */
-        if (myValue instanceof TethysDecimal) {
+        if (myValue instanceof OceanusDecimal) {
             /* Access as decimal */
-            final TethysDecimal myDec = (TethysDecimal) myValue;
+            final OceanusDecimal myDec = (OceanusDecimal) myValue;
 
             /* Ignore value if zero */
             if (myDec.isZero()) {

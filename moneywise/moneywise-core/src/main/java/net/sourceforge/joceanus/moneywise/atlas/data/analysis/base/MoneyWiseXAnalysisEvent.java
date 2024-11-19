@@ -34,11 +34,11 @@ import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransAsset;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransCategory;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransTag;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransaction;
-import net.sourceforge.joceanus.tethys.date.TethysDate;
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
-import net.sourceforge.joceanus.tethys.decimal.TethysPrice;
-import net.sourceforge.joceanus.tethys.decimal.TethysRatio;
-import net.sourceforge.joceanus.tethys.decimal.TethysUnits;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRatio;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusUnits;
 
 /**
  * Analysis Event.
@@ -82,7 +82,7 @@ public class MoneyWiseXAnalysisEvent
     /**
      * The Date.
      */
-    private final TethysDate theDate;
+    private final OceanusDate theDate;
 
     /**
      * The securityPrice List.
@@ -125,7 +125,7 @@ public class MoneyWiseXAnalysisEvent
      * @param pDate the date
      */
     public MoneyWiseXAnalysisEvent(final MoneyWiseXAnalysisEventType pType,
-                                   final TethysDate pDate) {
+                                   final OceanusDate pDate) {
         theEventType = pType;
         theTransaction = null;
         theDate = pDate;
@@ -349,7 +349,7 @@ public class MoneyWiseXAnalysisEvent
      * Obtain the date.
      * @return the date
      */
-    public TethysDate getDate() {
+    public OceanusDate getDate() {
         return theDate;
     }
 
@@ -397,7 +397,7 @@ public class MoneyWiseXAnalysisEvent
      * Obtain the amount.
      * @return the amount
      */
-    public TethysMoney getAmount() {
+    public OceanusMoney getAmount() {
         return theTransaction == null ? null : theTransaction.getAmount();
     }
 
@@ -429,7 +429,7 @@ public class MoneyWiseXAnalysisEvent
      * Obtain the taxCredit.
      * @return the taxCredit
      */
-    public TethysMoney getTaxCredit() {
+    public OceanusMoney getTaxCredit() {
         return theTransaction == null ? null : theTransaction.getTaxCredit();
     }
 
@@ -437,7 +437,7 @@ public class MoneyWiseXAnalysisEvent
      * Obtain the employeesNI.
      * @return the employeesNI
      */
-    public TethysMoney getEmployeeNatIns() {
+    public OceanusMoney getEmployeeNatIns() {
         return theTransaction == null ? null : theTransaction.getEmployeeNatIns();
     }
 
@@ -445,7 +445,7 @@ public class MoneyWiseXAnalysisEvent
      * Obtain the employerNI.
      * @return the employerNI
      */
-    public TethysMoney getEmployerNatIns() {
+    public OceanusMoney getEmployerNatIns() {
         return theTransaction == null ? null : theTransaction.getEmployerNatIns();
     }
 
@@ -453,7 +453,7 @@ public class MoneyWiseXAnalysisEvent
      * Obtain the deemedBenefit.
      * @return the deemedBenefit
      */
-    public TethysMoney getDeemedBenefit() {
+    public OceanusMoney getDeemedBenefit() {
         return theTransaction == null ? null : theTransaction.getDeemedBenefit();
     }
 
@@ -461,7 +461,7 @@ public class MoneyWiseXAnalysisEvent
      * Obtain the withheld.
      * @return the withheld
      */
-    public TethysMoney getWithheld() {
+    public OceanusMoney getWithheld() {
         return theTransaction == null ? null : theTransaction.getWithheld();
     }
 
@@ -477,7 +477,7 @@ public class MoneyWiseXAnalysisEvent
      * Obtain the partnerAmount.
      * @return the partnerAmount
      */
-    public TethysMoney getPartnerAmount() {
+    public OceanusMoney getPartnerAmount() {
         return theTransaction == null ? null : theTransaction.getPartnerAmount();
     }
 
@@ -493,7 +493,7 @@ public class MoneyWiseXAnalysisEvent
      * Obtain the partnerAmount.
      * @return the partnerAmount
      */
-    public TethysMoney getReturnedCash() {
+    public OceanusMoney getReturnedCash() {
         return theTransaction == null ? null : theTransaction.getReturnedCash();
     }
 
@@ -501,7 +501,7 @@ public class MoneyWiseXAnalysisEvent
      * Obtain the exchangeRate.
      * @return the exchangeRate
      */
-    public TethysRatio getExchangeRate() {
+    public OceanusRatio getExchangeRate() {
         return theTransaction == null ? null : theTransaction.getExchangeRate();
     }
 
@@ -509,7 +509,7 @@ public class MoneyWiseXAnalysisEvent
      * Obtain the accountDeltaUnits.
      * @return the accountDeltaUnits
      */
-    public TethysUnits getAccountDeltaUnits() {
+    public OceanusUnits getAccountDeltaUnits() {
         return theTransaction == null ? null : theTransaction.getAccountDeltaUnits();
     }
 
@@ -517,7 +517,7 @@ public class MoneyWiseXAnalysisEvent
      * Obtain the partnerDeltaUnits.
      * @return the partnerDeltaUnits
      */
-    public TethysUnits getPartnerDeltaUnits() {
+    public OceanusUnits getPartnerDeltaUnits() {
         return theTransaction == null ? null : theTransaction.getPartnerDeltaUnits();
     }
 
@@ -525,7 +525,7 @@ public class MoneyWiseXAnalysisEvent
      * Obtain the dilution.
      * @return the dilution
      */
-    public TethysRatio getDilution() {
+    public OceanusRatio getDilution() {
         return theTransaction == null ? null : theTransaction.getDilution();
     }
 
@@ -533,7 +533,7 @@ public class MoneyWiseXAnalysisEvent
      * Obtain the price.
      * @return the price
      */
-    public TethysPrice getPrice() {
+    public OceanusPrice getPrice() {
         return theTransaction == null ? null : theTransaction.getPrice();
     }
 
@@ -541,7 +541,7 @@ public class MoneyWiseXAnalysisEvent
      * Obtain the commission.
      * @return the commission
      */
-    public TethysMoney getCommission() {
+    public OceanusMoney getCommission() {
         return theTransaction == null ? null : theTransaction.getCommission();
     }
 

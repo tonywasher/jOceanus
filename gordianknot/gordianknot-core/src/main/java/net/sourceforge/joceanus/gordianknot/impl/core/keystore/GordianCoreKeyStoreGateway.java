@@ -41,8 +41,8 @@ import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.keystore.GordianPEMObject.GordianPEMObjectType;
 import net.sourceforge.joceanus.gordianknot.impl.core.zip.GordianCoreZipLock;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.TethysDataConverter;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.OceanusDataConverter;
 
 /**
  * keyStoreGateway implementation.
@@ -181,7 +181,7 @@ public class GordianCoreKeyStoreGateway
      */
     byte[] getMACSecret(final X500Name pName) {
         final String mySecret = theMACSecretResolver.apply(pName);
-        return mySecret == null ? null : TethysDataConverter.stringToByteArray(mySecret);
+        return mySecret == null ? null : OceanusDataConverter.stringToByteArray(mySecret);
     }
 
     /**

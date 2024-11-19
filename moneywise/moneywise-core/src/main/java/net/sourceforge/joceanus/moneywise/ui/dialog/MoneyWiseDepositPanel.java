@@ -43,9 +43,9 @@ import net.sourceforge.joceanus.prometheus.data.PrometheusDataResource;
 import net.sourceforge.joceanus.prometheus.ui.fieldset.PrometheusFieldSet;
 import net.sourceforge.joceanus.prometheus.ui.fieldset.PrometheusFieldSetEvent;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.date.TethysDate;
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
 import net.sourceforge.joceanus.tethys.ui.api.control.TethysUIControl.TethysUIIconMapSet;
 import net.sourceforge.joceanus.tethys.ui.api.factory.TethysUIFactory;
 import net.sourceforge.joceanus.tethys.ui.api.field.TethysUIDataEditField.TethysUICharArrayEditField;
@@ -302,7 +302,7 @@ public class MoneyWiseDepositPanel
             myDeposit.setClosed(pUpdate.getValue(Boolean.class));
         } else if (MoneyWiseAccountInfoClass.MATURITY.equals(myField)) {
             /* Update the Maturity */
-            myDeposit.setMaturity(pUpdate.getValue(TethysDate.class));
+            myDeposit.setMaturity(pUpdate.getValue(OceanusDate.class));
         } else if (MoneyWiseAccountInfoClass.SORTCODE.equals(myField)) {
             /* Update the SortCode */
             myDeposit.setSortCode(pUpdate.getValue(char[].class));
@@ -314,7 +314,7 @@ public class MoneyWiseDepositPanel
             myDeposit.setReference(pUpdate.getValue(char[].class));
         } else if (MoneyWiseAccountInfoClass.OPENINGBALANCE.equals(myField)) {
             /* Update the OpeningBalance */
-            myDeposit.setOpeningBalance(pUpdate.getValue(TethysMoney.class));
+            myDeposit.setOpeningBalance(pUpdate.getValue(OceanusMoney.class));
         } else if (MoneyWiseAccountInfoClass.NOTES.equals(myField)) {
             /* Update the Notes */
             myDeposit.setNotes(pUpdate.getValue(char[].class));

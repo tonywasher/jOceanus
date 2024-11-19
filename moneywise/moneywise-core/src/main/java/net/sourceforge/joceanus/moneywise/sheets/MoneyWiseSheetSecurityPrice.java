@@ -28,8 +28,8 @@ import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetCell;
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetRow;
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetView;
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetWorkBook;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.date.TethysDate;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
 import net.sourceforge.joceanus.tethys.ui.api.thread.TethysUIThreadCancelException;
 import net.sourceforge.joceanus.tethys.ui.api.thread.TethysUIThreadStatusReport;
 
@@ -161,7 +161,7 @@ public class MoneyWiseSheetSecurityPrice
 
                 /* Access date */
                 PrometheusSheetCell myCell = myView.getRowCellByIndex(myRow, 0);
-                final TethysDate myDate = myCell.getDate();
+                final OceanusDate myDate = myCell.getDate();
 
                 /* If the price is too late */
                 if (!pLoader.checkDate(myDate)) {

@@ -40,8 +40,8 @@ import net.sourceforge.joceanus.prometheus.data.PrometheusEncryptedDataItem.Prom
 import net.sourceforge.joceanus.prometheus.preference.PrometheusPreferenceManager;
 import net.sourceforge.joceanus.prometheus.preference.PrometheusPreferenceSecurity.PrometheusSecurityPreferenceKey;
 import net.sourceforge.joceanus.prometheus.preference.PrometheusPreferenceSecurity.PrometheusSecurityPreferences;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.profile.TethysProfile;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
 import net.sourceforge.joceanus.tethys.ui.api.thread.TethysUIThreadStatusReport;
 
@@ -402,8 +402,8 @@ public abstract class PrometheusDataSet
                                      final PrometheusDataSet pNew,
                                      final PrometheusDataSet pOld) throws OceanusException {
         /* Access current profile */
-        final TethysProfile myTask = pReport.getActiveTask();
-        final TethysProfile myStage = myTask.startTask(TASK_DATADIFF);
+        final OceanusProfile myTask = pReport.getActiveTask();
+        final OceanusProfile myStage = myTask.startTask(TASK_DATADIFF);
 
         /* Obtain listMaps */
         final Map<PrometheusListKey, PrometheusDataList<?>> myOldMap = pOld.getListMap();
@@ -436,8 +436,8 @@ public abstract class PrometheusDataSet
     public void reBase(final TethysUIThreadStatusReport pReport,
                        final PrometheusDataSet pOld) throws OceanusException {
         /* Access current profile */
-        final TethysProfile myTask = pReport.getActiveTask();
-        final TethysProfile myStage = myTask.startTask(TASK_DATAREBASE);
+        final OceanusProfile myTask = pReport.getActiveTask();
+        final OceanusProfile myStage = myTask.startTask(TASK_DATAREBASE);
 
         /* Obtain old listMap */
         final Map<PrometheusListKey, PrometheusDataList<?>> myMap = pOld.getListMap();
@@ -707,8 +707,8 @@ public abstract class PrometheusDataSet
     public void initialiseSecurity(final TethysUIThreadStatusReport pReport,
                                    final PrometheusDataSet pBase) throws OceanusException {
         /* Access current profile */
-        final TethysProfile myTask = pReport.getActiveTask();
-        final TethysProfile myStage = myTask.startTask(TASK_SECINIT);
+        final OceanusProfile myTask = pReport.getActiveTask();
+        final OceanusProfile myStage = myTask.startTask(TASK_SECINIT);
 
         /* Set the number of stages */
         pReport.initTask(TASK_SECINIT);
@@ -749,8 +749,8 @@ public abstract class PrometheusDataSet
      */
     public void renewSecurity(final TethysUIThreadStatusReport pReport) throws OceanusException {
         /* Access current profile */
-        final TethysProfile myTask = pReport.getActiveTask();
-        final TethysProfile myStage = myTask.startTask(TASK_SECRENEW);
+        final OceanusProfile myTask = pReport.getActiveTask();
+        final OceanusProfile myStage = myTask.startTask(TASK_SECRENEW);
 
         /* Access ControlData */
         final PrometheusControlData myControl = getControl();
@@ -775,8 +775,8 @@ public abstract class PrometheusDataSet
      */
     public void checkSecurity(final TethysUIThreadStatusReport pReport) throws OceanusException {
         /* Access current profile */
-        final TethysProfile myTask = pReport.getActiveTask();
-        final TethysProfile myStage = myTask.startTask(TASK_SECCHECK);
+        final OceanusProfile myTask = pReport.getActiveTask();
+        final OceanusProfile myStage = myTask.startTask(TASK_SECCHECK);
 
         /* If there is more than one controlKey */
         if (getControlKeys().size() > 1) {

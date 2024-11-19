@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.tethys.ui.api.base;
 
 import java.util.Map;
 
-import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.TethysEventProvider;
 
 /**
  * A set of keyed values.

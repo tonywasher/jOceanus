@@ -17,7 +17,7 @@
 package net.sourceforge.joceanus.gordianknot.api.cipher;
 
 import net.sourceforge.joceanus.gordianknot.api.base.GordianKeySpec;
-import net.sourceforge.joceanus.tethys.OceanusException;
+import net.sourceforge.joceanus.oceanus.OceanusException;
 
 /**
  * GordianKnot Keyed Cipher.

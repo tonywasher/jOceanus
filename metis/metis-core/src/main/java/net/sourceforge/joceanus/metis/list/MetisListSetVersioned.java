@@ -28,9 +28,9 @@ import net.sourceforge.joceanus.metis.field.MetisFieldItem;
 import net.sourceforge.joceanus.metis.field.MetisFieldPairedItem;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.metis.field.MetisFieldVersionedItem;
-import net.sourceforge.joceanus.tethys.event.TethysEventManager;
-import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar;
-import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.TethysEventProvider;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
 
 /**
@@ -92,7 +92,7 @@ public class MetisListSetVersioned
     /**
      * The Event Manager.
      */
-    private final TethysEventManager<MetisListEvent> theEventManager;
+    private final OceanusEventManager<MetisListEvent> theEventManager;
 
     /**
      * The Underlying list (if any).
@@ -131,7 +131,7 @@ public class MetisListSetVersioned
         theFields = MetisFieldSet.newFieldSet(this);
 
         /* Create the event manager */
-        theEventManager = new TethysEventManager<>();
+        theEventManager = new OceanusEventManager<>();
     }
 
     @Override
@@ -140,7 +140,7 @@ public class MetisListSetVersioned
     }
 
     @Override
-    public TethysEventRegistrar<MetisListEvent> getEventRegistrar() {
+    public OceanusEventRegistrar<MetisListEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 

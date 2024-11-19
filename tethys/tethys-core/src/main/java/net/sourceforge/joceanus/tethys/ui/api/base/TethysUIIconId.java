@@ -19,12 +19,12 @@ package net.sourceforge.joceanus.tethys.ui.api.base;
 import java.io.IOException;
 import java.io.InputStream;
 
-import net.sourceforge.joceanus.tethys.resource.TethysResourceId;
+import net.sourceforge.joceanus.oceanus.resource.OceanusResourceId;
 
 /**
  * IconId.
  */
-public interface TethysUIIconId extends TethysResourceId {
+public interface TethysUIIconId extends OceanusResourceId {
     /**
      * Obtain resource as bytes.
      * @return the bytes

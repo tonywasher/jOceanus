@@ -23,7 +23,7 @@ import net.sourceforge.joceanus.gordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.gordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySet;
-import net.sourceforge.joceanus.tethys.date.TethysDate;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
 
 /**
  * KeyStore Entry API.
@@ -34,7 +34,7 @@ public interface GordianKeyStoreEntry
      * Obtain the creation date.
      * @return the creation date
      */
-    TethysDate getCreationDate();
+    OceanusDate getCreationDate();
 
     /**
      * KeyStore Certificate API.

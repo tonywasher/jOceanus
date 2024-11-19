@@ -38,11 +38,11 @@ import net.sourceforge.joceanus.moneywise.views.MoneyWiseView;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataResource;
 import net.sourceforge.joceanus.prometheus.ui.fieldset.PrometheusFieldSetTableTab.PrometheusFieldSetTable;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.date.TethysDate;
-import net.sourceforge.joceanus.tethys.date.TethysDateConfig;
-import net.sourceforge.joceanus.tethys.date.TethysDateRange;
-import net.sourceforge.joceanus.tethys.decimal.TethysPrice;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.date.OceanusDateConfig;
+import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
 import net.sourceforge.joceanus.tethys.ui.api.control.TethysUIControl.TethysUIIconMapSet;
 import net.sourceforge.joceanus.tethys.ui.api.table.TethysUITableColumn;
 import net.sourceforge.joceanus.tethys.ui.api.table.TethysUITableManager;
@@ -165,13 +165,13 @@ public class MoneyWiseSecurityPriceTable
 
         /* Set the item value */
         myPrice.setSecurity(pSecurity);
-        myPrice.setPrice(TethysPrice.getWholeUnits(1, pSecurity.getCurrency()));
+        myPrice.setPrice(OceanusPrice.getWholeUnits(1, pSecurity.getCurrency()));
 
         /* Access iterator */
         final Iterator<MoneyWiseSecurityPrice> myIterator = getTable().viewIterator();
 
         /* Assume that we can use todays date */
-        TethysDate myDate = new TethysDate();
+        OceanusDate myDate = new OceanusDate();
 
         /* Access the last price */
         final MoneyWiseSecurityPrice myLast = myIterator.hasNext()
@@ -181,7 +181,7 @@ public class MoneyWiseSecurityPriceTable
         /* If we have a most recent price */
         if (myLast != null) {
             /* Obtain the date that is one after the latest date used */
-            final TethysDate myNew = new TethysDate(myLast.getDate());
+            final OceanusDate myNew = new OceanusDate(myLast.getDate());
             myNew.adjustDay(1);
 
             /* Use the latest of the two dates */
@@ -227,9 +227,9 @@ public class MoneyWiseSecurityPriceTable
      * @param pConfig the dateConfig
      */
     private void handleDateConfig(final MoneyWiseSecurityPrice pRow,
-                                  final TethysDateConfig pConfig) {
+                                  final OceanusDateConfig pConfig) {
         /* Build a list of used dates */
-        final List<TethysDate> myDates = new ArrayList<>();
+        final List<OceanusDate> myDates = new ArrayList<>();
         final Iterator<MoneyWiseSecurityPrice> myIterator = getTable().viewIterator();
         while (myIterator.hasNext()) {
             final MoneyWiseSecurityPrice myPrice = myIterator.next();
@@ -237,14 +237,14 @@ public class MoneyWiseSecurityPriceTable
         }
 
         /* Set filter constraint */
-        final TethysDate myCurrent = pRow.getDate();
+        final OceanusDate myCurrent = pRow.getDate();
         pConfig.setAllowed((d) -> {
             return myCurrent.equals(d) || !myDates.contains(d);
         });
 
         /* Set range constraint */
         final MoneyWiseDataSet myDataSet = pRow.getDataSet();
-        final TethysDateRange myRange = myDataSet.getDateRange();
+        final OceanusDateRange myRange = myDataSet.getDateRange();
         pConfig.setEarliestDate(myRange.getStart());
         pConfig.setLatestDate(myRange.getEnd());
     }

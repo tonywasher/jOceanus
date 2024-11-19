@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.gordianknot.api.password;
 
 import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySet;
 import net.sourceforge.joceanus.gordianknot.api.lock.GordianKeySetLock;
-import net.sourceforge.joceanus.tethys.OceanusException;
+import net.sourceforge.joceanus.oceanus.OceanusException;
 
 /**
  * KeySetLock Manager.

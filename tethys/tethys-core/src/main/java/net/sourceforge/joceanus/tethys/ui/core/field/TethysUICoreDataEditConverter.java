@@ -21,14 +21,14 @@ import java.util.Currency;
 import java.util.function.IntSupplier;
 import java.util.function.Supplier;
 
-import net.sourceforge.joceanus.tethys.decimal.TethysDecimal;
-import net.sourceforge.joceanus.tethys.decimal.TethysDecimalFormatter;
-import net.sourceforge.joceanus.tethys.decimal.TethysDecimalParser;
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
-import net.sourceforge.joceanus.tethys.decimal.TethysPrice;
-import net.sourceforge.joceanus.tethys.decimal.TethysRate;
-import net.sourceforge.joceanus.tethys.decimal.TethysRatio;
-import net.sourceforge.joceanus.tethys.decimal.TethysUnits;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimal;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimalFormatter;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimalParser;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRate;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRatio;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusUnits;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
 import net.sourceforge.joceanus.tethys.ui.core.control.TethysUICorePasswordField;
 
@@ -135,12 +135,12 @@ public interface TethysUICoreDataEditConverter<T> {
         /**
          * Decimal formatter.
          */
-        private final TethysDecimalFormatter theFormatter;
+        private final OceanusDecimalFormatter theFormatter;
 
         /**
          * Decimal parser.
          */
-        private final TethysDecimalParser theParser;
+        private final OceanusDecimalParser theParser;
 
         /**
          * Constructor.
@@ -155,7 +155,7 @@ public interface TethysUICoreDataEditConverter<T> {
          * Obtain the formatter.
          * @return the formatter
          */
-        protected TethysDecimalFormatter getFormatter() {
+        protected OceanusDecimalFormatter getFormatter() {
             return theFormatter;
         }
 
@@ -163,7 +163,7 @@ public interface TethysUICoreDataEditConverter<T> {
          * Obtain the parser.
          * @return the parser
          */
-        protected TethysDecimalParser getParser() {
+        protected OceanusDecimalParser getParser() {
             return theParser;
         }
 
@@ -256,7 +256,7 @@ public interface TethysUICoreDataEditConverter<T> {
      * DecimalEditConverter class.
      */
     class TethysUICoreRawDecimalEditConverter
-            extends TethysUICoreNumberEditConverter<TethysDecimal> {
+            extends TethysUICoreNumberEditConverter<OceanusDecimal> {
         /**
          * The default number of decimals.
          */
@@ -276,12 +276,12 @@ public interface TethysUICoreDataEditConverter<T> {
         }
 
         @Override
-        public String formatDisplayValue(final TethysDecimal pValue) {
+        public String formatDisplayValue(final OceanusDecimal pValue) {
             return getFormatter().formatDecimal(pValue);
         }
 
         @Override
-        public TethysDecimal parseEditedValue(final String pValue) {
+        public OceanusDecimal parseEditedValue(final String pValue) {
             final int myNumDecimals = theNumDecimals.getAsInt();
             return getParser().parseDecimalValue(pValue, myNumDecimals);
         }
@@ -299,7 +299,7 @@ public interface TethysUICoreDataEditConverter<T> {
      * RateEditConverter class.
      */
     class TethysUICoreRateEditConverter
-            extends TethysUICoreNumberEditConverter<TethysRate> {
+            extends TethysUICoreNumberEditConverter<OceanusRate> {
         /**
          * Constructor.
          * @param pFormatter the formatter
@@ -309,12 +309,12 @@ public interface TethysUICoreDataEditConverter<T> {
         }
 
         @Override
-        public String formatDisplayValue(final TethysRate pValue) {
+        public String formatDisplayValue(final OceanusRate pValue) {
             return getFormatter().formatRate(pValue);
         }
 
         @Override
-        public TethysRate parseEditedValue(final String pValue) {
+        public OceanusRate parseEditedValue(final String pValue) {
             return getParser().parseRateValue(pValue);
         }
     }
@@ -323,7 +323,7 @@ public interface TethysUICoreDataEditConverter<T> {
      * UnitsEditConverter class.
      */
     class TethysUICoreUnitsEditConverter
-            extends TethysUICoreNumberEditConverter<TethysUnits> {
+            extends TethysUICoreNumberEditConverter<OceanusUnits> {
         /**
          * Constructor.
          * @param pFormatter the formatter
@@ -333,12 +333,12 @@ public interface TethysUICoreDataEditConverter<T> {
         }
 
         @Override
-        public String formatDisplayValue(final TethysUnits pValue) {
+        public String formatDisplayValue(final OceanusUnits pValue) {
             return getFormatter().formatUnits(pValue);
         }
 
         @Override
-        public TethysUnits parseEditedValue(final String pValue) {
+        public OceanusUnits parseEditedValue(final String pValue) {
             return getParser().parseUnitsValue(pValue);
         }
     }
@@ -347,7 +347,7 @@ public interface TethysUICoreDataEditConverter<T> {
      * RatioEditConverter class.
      */
     class TethysUICoreRatioEditConverter
-            extends TethysUICoreNumberEditConverter<TethysRatio> {
+            extends TethysUICoreNumberEditConverter<OceanusRatio> {
         /**
          * Constructor.
          * @param pFormatter the formatter
@@ -357,12 +357,12 @@ public interface TethysUICoreDataEditConverter<T> {
         }
 
         @Override
-        public String formatDisplayValue(final TethysRatio pValue) {
+        public String formatDisplayValue(final OceanusRatio pValue) {
             return getFormatter().formatRatio(pValue);
         }
 
         @Override
-        public TethysRatio parseEditedValue(final String pValue) {
+        public OceanusRatio parseEditedValue(final String pValue) {
             return getParser().parseRatioValue(pValue);
         }
     }
@@ -371,7 +371,7 @@ public interface TethysUICoreDataEditConverter<T> {
      * MoneyEditConverter class.
      * @param <T> the data type
      */
-    abstract class TethysUICoreMoneyEditConverterBase<T extends TethysMoney>
+    abstract class TethysUICoreMoneyEditConverterBase<T extends OceanusMoney>
             extends TethysUICoreNumberEditConverter<T> {
         /**
          * Default currency.
@@ -412,7 +412,7 @@ public interface TethysUICoreDataEditConverter<T> {
      * MoneyEditConverter class.
      */
     class TethysUICoreMoneyEditConverter
-            extends TethysUICoreMoneyEditConverterBase<TethysMoney> {
+            extends TethysUICoreMoneyEditConverterBase<OceanusMoney> {
         /**
          * Constructor.
          * @param pFormatter the formatter
@@ -422,7 +422,7 @@ public interface TethysUICoreDataEditConverter<T> {
         }
 
         @Override
-        public TethysMoney parseEditedValue(final String pValue) {
+        public OceanusMoney parseEditedValue(final String pValue) {
             return getParser().parseMoneyValue(pValue, getCurrency());
         }
     }
@@ -431,7 +431,7 @@ public interface TethysUICoreDataEditConverter<T> {
      * PriceEditConverter class.
      */
     class TethysUICorePriceEditConverter
-            extends TethysUICoreMoneyEditConverterBase<TethysPrice> {
+            extends TethysUICoreMoneyEditConverterBase<OceanusPrice> {
         /**
          * Constructor.
          * @param pFormatter the formatter
@@ -441,7 +441,7 @@ public interface TethysUICoreDataEditConverter<T> {
         }
 
         @Override
-        public TethysPrice parseEditedValue(final String pValue) {
+        public OceanusPrice parseEditedValue(final String pValue) {
             return getParser().parsePriceValue(pValue, getCurrency());
         }
     }

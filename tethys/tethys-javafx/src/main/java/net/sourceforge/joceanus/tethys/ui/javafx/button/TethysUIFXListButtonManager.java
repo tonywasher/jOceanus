@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.tethys.ui.javafx.button;
 
 import javafx.geometry.Side;
 
-import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.tethys.ui.core.button.TethysUICoreListButtonManager;
 import net.sourceforge.joceanus.tethys.ui.core.factory.TethysUICoreFactory;
@@ -56,7 +56,7 @@ public final class TethysUIFXListButtonManager<T extends Comparable<? super T>>
     @Override
     protected void registerListeners() {
         /* Set context menu listener */
-        final TethysEventRegistrar<TethysUIEvent> myRegistrar = getMenu().getEventRegistrar();
+        final OceanusEventRegistrar<TethysUIEvent> myRegistrar = getMenu().getEventRegistrar();
         myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> handleToggleItem());
         myRegistrar.addEventListener(TethysUIEvent.WINDOWCLOSED, e -> handleMenuClosed());
     }

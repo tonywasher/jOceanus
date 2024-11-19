@@ -35,8 +35,8 @@ import net.sourceforge.joceanus.prometheus.data.PrometheusDataSet.PrometheusCryp
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetProvider;
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetWorkBook;
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetWorkBookType;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.profile.TethysProfile;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
 import net.sourceforge.joceanus.tethys.ui.api.factory.TethysUIFactory;
 import net.sourceforge.joceanus.tethys.ui.api.thread.TethysUIThreadStatusReport;
 
@@ -149,7 +149,7 @@ public abstract class PrometheusSheetWriter {
                              final OutputStream pZipStream,
                              final PrometheusSheetWorkBookType pType) throws OceanusException {
         /* Obtain the active profile */
-        TethysProfile myTask = theReport.getActiveTask();
+        OceanusProfile myTask = theReport.getActiveTask();
         myTask = myTask.startTask("Writing");
 
         /* Create a similar security control */
@@ -239,7 +239,7 @@ public abstract class PrometheusSheetWriter {
      */
     private void writeWorkBook(final OutputStream pStream) throws OceanusException {
         /* Obtain the active profile */
-        final TethysProfile myTask = theReport.getActiveTask();
+        final OceanusProfile myTask = theReport.getActiveTask();
 
         /* Declare the number of stages */
         theReport.setNumStages(theSheets.size() + 1);

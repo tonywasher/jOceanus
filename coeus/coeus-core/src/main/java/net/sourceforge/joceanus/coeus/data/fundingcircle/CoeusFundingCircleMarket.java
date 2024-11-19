@@ -29,8 +29,8 @@ import net.sourceforge.joceanus.coeus.data.CoeusMarket;
 import net.sourceforge.joceanus.coeus.data.CoeusMarketProvider;
 import net.sourceforge.joceanus.coeus.data.CoeusResource;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.date.TethysDateRange;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
 
 /**
@@ -240,7 +240,7 @@ public class CoeusFundingCircleMarket
 
     @Override
     protected CoeusFundingCircleHistory viewHistory(final CoeusHistory pHistory,
-                                                    final TethysDateRange pRange) {
+                                                    final OceanusDateRange pRange) {
         return new CoeusFundingCircleHistory(pHistory, pRange);
     }
 
@@ -251,7 +251,7 @@ public class CoeusFundingCircleMarket
 
     @Override
     protected CoeusFundingCircleLoan viewLoan(final CoeusLoan pLoan,
-                                              final TethysDateRange pRange) {
+                                              final OceanusDateRange pRange) {
         return new CoeusFundingCircleLoan((CoeusFundingCircleLoan) pLoan, pRange);
     }
 

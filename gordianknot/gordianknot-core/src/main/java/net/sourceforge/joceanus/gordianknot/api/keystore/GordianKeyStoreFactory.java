@@ -20,7 +20,7 @@ import java.io.File;
 import java.io.InputStream;
 
 import net.sourceforge.joceanus.gordianknot.api.lock.GordianPasswordLockSpec;
-import net.sourceforge.joceanus.tethys.OceanusException;
+import net.sourceforge.joceanus.oceanus.OceanusException;
 
 /**
  * KeyStore Factory.

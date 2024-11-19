@@ -16,16 +16,15 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.tethys.ui.core.base;
 
-import java.util.ResourceBundle;
+import net.sourceforge.joceanus.oceanus.resource.OceanusBundleId;
+import net.sourceforge.joceanus.oceanus.resource.OceanusBundleLoader;
 
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.resource.TethysBundleId;
-import net.sourceforge.joceanus.tethys.resource.TethysBundleLoader;
+import java.util.ResourceBundle;
 
 /**
  * Resource IDs for TethysUI package.
  */
-public enum TethysUIResource implements TethysBundleId {
+public enum TethysUIResource implements OceanusBundleId {
     /**
      * Bad value on parse.
      */
@@ -104,7 +103,7 @@ public enum TethysUIResource implements TethysBundleId {
     /**
      * The Resource Loader.
      */
-    private static final TethysBundleLoader LOADER = TethysBundleLoader.getPackageLoader(OceanusException.class.getCanonicalName(),
+    private static final OceanusBundleLoader LOADER = OceanusBundleLoader.getLoader(TethysUIResource.class.getCanonicalName(),
             ResourceBundle::getBundle);
 
     /**

@@ -22,8 +22,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianDataException;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.TethysDataConverter;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.OceanusDataConverter;
 
 /**
  * Class represents the properties of an encrypted file in the Zip file.
@@ -105,7 +105,7 @@ public class GordianZipFileProperties {
     protected void setProperty(final String pName,
                                final String pValue) {
         /* Set the new value */
-        setProperty(pName, TethysDataConverter.stringToByteArray(pValue));
+        setProperty(pName, OceanusDataConverter.stringToByteArray(pValue));
     }
 
     /**
@@ -194,7 +194,7 @@ public class GordianZipFileProperties {
         /* Return the value */
         return (myValue == null)
                ? null
-               : TethysDataConverter.byteArrayToString(myValue);
+               : OceanusDataConverter.byteArrayToString(myValue);
     }
 
     /**
@@ -279,7 +279,7 @@ public class GordianZipFileProperties {
             /* If we have a byte value */
             if (myProperty.getByteValue() != null) {
                 /* Add the byte value as a Hex String */
-                myValue.append(TethysDataConverter.bytesToHexString(myProperty.getByteValue()));
+                myValue.append(OceanusDataConverter.bytesToHexString(myProperty.getByteValue()));
             }
 
             /* Add the value separator */
@@ -288,7 +288,7 @@ public class GordianZipFileProperties {
             /* If we have a long value */
             if (myProperty.getLongValue() != null) {
                 /* Add the long value as a Hex String */
-                myValue.append(TethysDataConverter.longToHexString(myProperty.getLongValue()));
+                myValue.append(OceanusDataConverter.longToHexString(myProperty.getLongValue()));
             }
 
             /* Add the value to the string */
@@ -358,13 +358,13 @@ public class GordianZipFileProperties {
         /* If we have a bytes array */
         if (myBytes != null) {
             /* Set the bytes value */
-            myProperty.setByteValue(TethysDataConverter.hexStringToBytes(myBytes));
+            myProperty.setByteValue(OceanusDataConverter.hexStringToBytes(myBytes));
         }
 
         /* If we have a long value */
         if (myLong != null) {
             /* Access the bytes value */
-            myProperty.setLongValue(TethysDataConverter.hexStringToLong(myLong));
+            myProperty.setLongValue(OceanusDataConverter.hexStringToLong(myLong));
         }
     }
 

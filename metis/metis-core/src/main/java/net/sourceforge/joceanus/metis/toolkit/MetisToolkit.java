@@ -27,11 +27,11 @@ import net.sourceforge.joceanus.metis.viewer.MetisViewerEntry;
 import net.sourceforge.joceanus.metis.viewer.MetisViewerManager;
 import net.sourceforge.joceanus.metis.viewer.MetisViewerStandardEntry;
 import net.sourceforge.joceanus.metis.viewer.MetisViewerWindow;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar;
-import net.sourceforge.joceanus.tethys.logger.TethysLogManager;
-import net.sourceforge.joceanus.tethys.logger.TethysLogger;
-import net.sourceforge.joceanus.tethys.profile.TethysProfile;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
+import net.sourceforge.joceanus.oceanus.logger.OceanusLogManager;
+import net.sourceforge.joceanus.oceanus.logger.OceanusLogger;
+import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIProgram;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIValueSet;
@@ -51,7 +51,7 @@ public class MetisToolkit {
     /**
      * Logger.
      */
-    private static final TethysLogger LOGGER = TethysLogManager.getLogger(MetisToolkit.class);
+    private static final OceanusLogger LOGGER = OceanusLogManager.getLogger(MetisToolkit.class);
 
     /**
      * Viewer Manager.
@@ -156,7 +156,7 @@ public class MetisToolkit {
         processColorPreferences();
 
         /* Create listener */
-        final TethysEventRegistrar<MetisPreferenceEvent> myRegistrar = theColorPreferences.getEventRegistrar();
+        final OceanusEventRegistrar<MetisPreferenceEvent> myRegistrar = theColorPreferences.getEventRegistrar();
         myRegistrar.addEventListener(e -> processColorPreferences());
     }
 
@@ -256,7 +256,7 @@ public class MetisToolkit {
      * Set profile.
      * @param pProfile the profile
      */
-    private void setProfile(final TethysProfile pProfile) {
+    private void setProfile(final OceanusProfile pProfile) {
         /* Update the Profile Viewer entry */
         theProfileEntry.setObject(pProfile);
     }
@@ -266,9 +266,9 @@ public class MetisToolkit {
      * @param pTask the name of the task
      * @return the new profile
      */
-    public TethysProfile getNewProfile(final String pTask) {
+    public OceanusProfile getNewProfile(final String pTask) {
         /* Create a new profile */
-        final TethysProfile myProfile = theGuiFactory.getNewProfile(pTask);
+        final OceanusProfile myProfile = theGuiFactory.getNewProfile(pTask);
         setProfile(myProfile);
 
         /* Return the new profile */
@@ -279,7 +279,7 @@ public class MetisToolkit {
      * Obtain the active profile.
      * @return the active profile
      */
-    public TethysProfile getActiveProfile() {
+    public OceanusProfile getActiveProfile() {
         return theGuiFactory.getActiveProfile();
     }
 
@@ -287,7 +287,7 @@ public class MetisToolkit {
      * Obtain the active task.
      * @return the active task
      */
-    public TethysProfile getActiveTask() {
+    public OceanusProfile getActiveTask() {
         return theGuiFactory.getActiveTask();
     }
 
@@ -309,7 +309,7 @@ public class MetisToolkit {
      */
     private void attachToThreadManager() {
         /* Access the event registrar */
-        final TethysEventRegistrar<TethysUIThreadEvent> myRegistrar = theThreadManager.getEventRegistrar();
+        final OceanusEventRegistrar<TethysUIThreadEvent> myRegistrar = theThreadManager.getEventRegistrar();
 
         /* Add Thread start support */
         myRegistrar.addEventListener(TethysUIThreadEvent.THREADSTART, e -> {

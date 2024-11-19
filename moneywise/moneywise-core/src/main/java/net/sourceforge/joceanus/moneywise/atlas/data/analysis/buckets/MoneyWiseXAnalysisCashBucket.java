@@ -23,8 +23,8 @@ import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseCash;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseCashCategory;
-import net.sourceforge.joceanus.tethys.date.TethysDate;
-import net.sourceforge.joceanus.tethys.date.TethysDateRange;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
 
 /**
  * The Cash Bucket class.
@@ -84,7 +84,7 @@ public final class MoneyWiseXAnalysisCashBucket
      */
     private MoneyWiseXAnalysisCashBucket(final MoneyWiseXAnalysis pAnalysis,
                                          final MoneyWiseXAnalysisCashBucket pBase,
-                                         final TethysDate pDate) {
+                                         final OceanusDate pDate) {
         /* Call super-constructor */
         super(pAnalysis, pBase, pDate);
 
@@ -100,7 +100,7 @@ public final class MoneyWiseXAnalysisCashBucket
      */
     private MoneyWiseXAnalysisCashBucket(final MoneyWiseXAnalysis pAnalysis,
                                          final MoneyWiseXAnalysisCashBucket pBase,
-                                         final TethysDateRange pRange) {
+                                         final OceanusDateRange pRange) {
         /* Call super-constructor */
         super(pAnalysis, pBase, pRange);
 
@@ -153,7 +153,7 @@ public final class MoneyWiseXAnalysisCashBucket
          */
         MoneyWiseXAnalysisCashBucketList(final MoneyWiseXAnalysis pAnalysis,
                                          final MoneyWiseXAnalysisCashBucketList pBase,
-                                         final TethysDate pDate) {
+                                         final OceanusDate pDate) {
             /* Initialise class */
             this(pAnalysis);
 
@@ -169,7 +169,7 @@ public final class MoneyWiseXAnalysisCashBucket
          */
         MoneyWiseXAnalysisCashBucketList(final MoneyWiseXAnalysis pAnalysis,
                                          final MoneyWiseXAnalysisCashBucketList pBase,
-                                         final TethysDateRange pRange) {
+                                         final OceanusDateRange pRange) {
             /* Initialise class */
             this(pAnalysis);
 
@@ -242,13 +242,13 @@ public final class MoneyWiseXAnalysisCashBucket
 
         @Override
         protected MoneyWiseXAnalysisCashBucket newBucket(final MoneyWiseXAnalysisCashBucket pBase,
-                                                         final TethysDate pDate) {
+                                                         final OceanusDate pDate) {
             return new MoneyWiseXAnalysisCashBucket(getAnalysis(), pBase, pDate);
         }
 
         @Override
         protected MoneyWiseXAnalysisCashBucket newBucket(final MoneyWiseXAnalysisCashBucket pBase,
-                                                         final TethysDateRange pRange) {
+                                                         final OceanusDateRange pRange) {
             return new MoneyWiseXAnalysisCashBucket(getAnalysis(), pBase, pRange);
         }
     }

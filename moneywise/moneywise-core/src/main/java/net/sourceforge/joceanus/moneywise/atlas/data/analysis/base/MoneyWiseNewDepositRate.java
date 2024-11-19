@@ -27,8 +27,8 @@ import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDeposit;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDepositRate;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDepositRate.MoneyWiseDepositRateList;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
-import net.sourceforge.joceanus.tethys.date.TethysDate;
-import net.sourceforge.joceanus.tethys.decimal.TethysRate;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRate;
 
 /**
  * New format of DepositRate.
@@ -37,7 +37,7 @@ public class MoneyWiseNewDepositRate {
     /**
      * The date.
      */
-    private final TethysDate theDate;
+    private final OceanusDate theDate;
 
     /**
      * The Deposit.
@@ -47,7 +47,7 @@ public class MoneyWiseNewDepositRate {
     /**
      * The RAte.
      */
-    private final TethysRate theRate;
+    private final OceanusRate theRate;
 
     /**
      * Constructor.
@@ -55,9 +55,9 @@ public class MoneyWiseNewDepositRate {
      * @param pDeposit the deposit
      * @param pRate the rate
      */
-    MoneyWiseNewDepositRate(final TethysDate pDate,
+    MoneyWiseNewDepositRate(final OceanusDate pDate,
                             final MoneyWiseDeposit pDeposit,
-                            final TethysRate pRate) {
+                            final OceanusRate pRate) {
         theDate = pDate;
         theDeposit = pDeposit;
         theRate = pRate;
@@ -67,7 +67,7 @@ public class MoneyWiseNewDepositRate {
      * Obtain the date.
      * @return the date
      */
-    public TethysDate getDate() {
+    public OceanusDate getDate() {
         return theDate;
     }
 
@@ -83,7 +83,7 @@ public class MoneyWiseNewDepositRate {
      * Obtain the rate.
      * @return the rate
      */
-    public TethysRate getRate() {
+    public OceanusRate getRate() {
         return theRate;
     }
 
@@ -98,10 +98,10 @@ public class MoneyWiseNewDepositRate {
          */
         public MoneyWiseNewDepositRateList(final PrometheusEditSet pEditSet) {
             /* Create the map */
-            final Map<MoneyWiseDeposit, TethysDate> myPending = new HashMap<>();
+            final Map<MoneyWiseDeposit, OceanusDate> myPending = new HashMap<>();
 
             /* Determine the starting date */
-            final TethysDate myStart = ((MoneyWiseDataSet) pEditSet.getDataSet()).getDateRange().getStart();
+            final OceanusDate myStart = ((MoneyWiseDataSet) pEditSet.getDataSet()).getDateRange().getStart();
 
             /* Loop through the depositRates */
             final MoneyWiseDepositRateList mySource = pEditSet.getDataList(MoneyWiseBasicDataType.DEPOSITRATE, MoneyWiseDepositRateList.class);
@@ -110,7 +110,7 @@ public class MoneyWiseNewDepositRate {
                 /* Access pending date */
                 final MoneyWiseDepositRate myRate = myIterator.previous();
                 final MoneyWiseDeposit myDeposit = myRate.getDeposit();
-                TethysDate myDate = myPending.get(myDeposit);
+                OceanusDate myDate = myPending.get(myDeposit);
                 if (myDate == null) {
                     myDate = myStart;
                 }

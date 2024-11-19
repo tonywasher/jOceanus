@@ -25,9 +25,9 @@ import net.sourceforge.joceanus.coeus.data.CoeusLoanStatus;
 import net.sourceforge.joceanus.coeus.data.CoeusResource;
 import net.sourceforge.joceanus.metis.field.MetisFieldItem;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
-import net.sourceforge.joceanus.tethys.decimal.TethysRate;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRate;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
 
 /**
@@ -86,12 +86,12 @@ public class CoeusFundingCircleLoanBookItem
     /**
      * The Outstanding Balance.
      */
-    private final TethysMoney theBalance;
+    private final OceanusMoney theBalance;
 
     /**
      * The rate.
      */
-    private final TethysRate theRate;
+    private final OceanusRate theRate;
 
     /**
      * The status.
@@ -194,7 +194,7 @@ public class CoeusFundingCircleLoanBookItem
         theAuctionId = pBase.getAuctionId();
 
         /* Calculate the new balance */
-        theBalance = new TethysMoney(pBase.getBalance());
+        theBalance = new OceanusMoney(pBase.getBalance());
         theBalance.addAmount(pNew.getBalance());
     }
 
@@ -234,7 +234,7 @@ public class CoeusFundingCircleLoanBookItem
      * Obtain the outstanding balance.
      * @return the balance
      */
-    public TethysMoney getBalance() {
+    public OceanusMoney getBalance() {
         return theBalance;
     }
 
@@ -242,7 +242,7 @@ public class CoeusFundingCircleLoanBookItem
      * Obtain the rate.
      * @return the rate
      */
-    public TethysRate getRate() {
+    public OceanusRate getRate() {
         return theRate;
     }
 

@@ -25,7 +25,7 @@ import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySet;
 import net.sourceforge.joceanus.gordianknot.api.keystore.GordianCertificate;
 import net.sourceforge.joceanus.gordianknot.api.keystore.GordianKeyStoreEntry;
-import net.sourceforge.joceanus.tethys.date.TethysDate;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
 
 /**
  * Core KeyStoreEntry.
@@ -38,26 +38,26 @@ public class GordianCoreKeyStoreEntry
     /**
      * The Creation Date.
      */
-    private final TethysDate theDate;
+    private final OceanusDate theDate;
 
     /**
      * Constructor.
      */
     GordianCoreKeyStoreEntry() {
 
-        this(new TethysDate());
+        this(new OceanusDate());
     }
 
     /**
      * Constructor.
      * @param pDate the creation date
      */
-    GordianCoreKeyStoreEntry(final TethysDate pDate) {
+    GordianCoreKeyStoreEntry(final OceanusDate pDate) {
         theDate = pDate;
     }
 
     @Override
-    public TethysDate getCreationDate() {
+    public OceanusDate getCreationDate() {
         return theDate;
     }
 
@@ -103,7 +103,7 @@ public class GordianCoreKeyStoreEntry
          * @param pDate the creation date
          */
         GordianCoreKeyStoreCertificate(final GordianCoreCertificate pCertificate,
-                                       final TethysDate pDate) {
+                                       final OceanusDate pDate) {
             super(pDate);
             theCertificate = pCertificate;
         }
@@ -164,7 +164,7 @@ public class GordianCoreKeyStoreEntry
          */
         GordianCoreKeyStorePair(final GordianKeyPair pKeyPair,
                                 final List<GordianCertificate> pChain,
-                                final TethysDate pDate) {
+                                final OceanusDate pDate) {
             super(pDate);
             theKeyPair = pKeyPair;
             theChain = new ArrayList<>(pChain);
@@ -228,7 +228,7 @@ public class GordianCoreKeyStoreEntry
          * @param pDate the creation date
          */
         GordianCoreKeyStoreKey(final GordianKey<T> pKey,
-                               final TethysDate pDate) {
+                               final OceanusDate pDate) {
             super(pDate);
             theKey = pKey;
         }
@@ -282,7 +282,7 @@ public class GordianCoreKeyStoreEntry
          * @param pDate the creation date
          */
         GordianCoreKeyStoreSet(final GordianKeySet pKeySet,
-                               final TethysDate pDate) {
+                               final OceanusDate pDate) {
             super(pDate);
             theKeySet = pKeySet;
         }

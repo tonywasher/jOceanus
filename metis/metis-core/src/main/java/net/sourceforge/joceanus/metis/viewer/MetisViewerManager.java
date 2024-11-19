@@ -23,9 +23,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import net.sourceforge.joceanus.tethys.event.TethysEventManager;
-import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar;
-import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.TethysEventProvider;
 
 /**
  * Viewer Data Manager.
@@ -35,7 +35,7 @@ public class MetisViewerManager
     /**
      * The Event Manager.
      */
-    private final TethysEventManager<MetisViewerEvent> theEventManager;
+    private final OceanusEventManager<MetisViewerEvent> theEventManager;
 
     /**
      * The Root List.
@@ -62,7 +62,7 @@ public class MetisViewerManager
      */
     public MetisViewerManager() {
         /* Create the event manager */
-        theEventManager = new TethysEventManager<>();
+        theEventManager = new OceanusEventManager<>();
 
         /* Create the root list */
         theRootList = new ArrayList<>();
@@ -73,7 +73,7 @@ public class MetisViewerManager
     }
 
     @Override
-    public TethysEventRegistrar<MetisViewerEvent> getEventRegistrar() {
+    public OceanusEventRegistrar<MetisViewerEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 

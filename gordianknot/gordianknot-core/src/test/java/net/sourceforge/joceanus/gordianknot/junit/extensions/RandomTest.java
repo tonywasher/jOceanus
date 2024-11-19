@@ -51,7 +51,7 @@ import net.sourceforge.joceanus.gordianknot.impl.core.random.GordianSP800CTRDRBG
 import net.sourceforge.joceanus.gordianknot.impl.core.random.GordianSP800HMacDRBG;
 import net.sourceforge.joceanus.gordianknot.impl.core.random.GordianSP800HashDRBG;
 import net.sourceforge.joceanus.gordianknot.impl.core.random.GordianX931CipherDRBG;
-import net.sourceforge.joceanus.tethys.OceanusException;
+import net.sourceforge.joceanus.oceanus.OceanusException;
 
 /**
  * GordianKnot DRBG testCases.

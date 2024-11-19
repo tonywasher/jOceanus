@@ -45,10 +45,10 @@ import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransCategoryCla
 import net.sourceforge.joceanus.moneywise.tax.MoneyWiseChargeableGainSlice.MoneyWiseChargeableGainSliceList;
 import net.sourceforge.joceanus.moneywise.tax.MoneyWiseTaxSource;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
-import net.sourceforge.joceanus.tethys.date.TethysDate;
-import net.sourceforge.joceanus.tethys.date.TethysDateRange;
-import net.sourceforge.joceanus.tethys.decimal.TethysDecimal;
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimal;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
 
 /**
@@ -160,7 +160,7 @@ public class MoneyWiseAnalysisTaxBasisBucket
      */
     protected MoneyWiseAnalysisTaxBasisBucket(final MoneyWiseAnalysis pAnalysis,
                                               final MoneyWiseAnalysisTaxBasisBucket pBase,
-                                              final TethysDate pDate) {
+                                              final OceanusDate pDate) {
         /* Copy details from base */
         theTaxBasis = pBase.getTaxBasis();
         theAnalysis = pAnalysis;
@@ -188,7 +188,7 @@ public class MoneyWiseAnalysisTaxBasisBucket
      */
     protected MoneyWiseAnalysisTaxBasisBucket(final MoneyWiseAnalysis pAnalysis,
                                               final MoneyWiseAnalysisTaxBasisBucket pBase,
-                                              final TethysDateRange pRange) {
+                                              final OceanusDateRange pRange) {
         /* Copy details from base */
         theTaxBasis = pBase.getTaxBasis();
         theAnalysis = pAnalysis;
@@ -312,7 +312,7 @@ public class MoneyWiseAnalysisTaxBasisBucket
      * @param pAttr the attribute
      * @return the value
      */
-    public TethysMoney getMoneyValue(final MoneyWiseAnalysisTaxBasisAttr pAttr) {
+    public OceanusMoney getMoneyValue(final MoneyWiseAnalysisTaxBasisAttr pAttr) {
         return theValues.getMoneyValue(pAttr);
     }
 
@@ -349,8 +349,8 @@ public class MoneyWiseAnalysisTaxBasisBucket
      * @param pAttr the attribute
      * @return the delta (or null)
      */
-    public TethysDecimal getDeltaForTransaction(final MoneyWiseTransaction pTrans,
-                                                final MoneyWiseAnalysisTaxBasisAttr pAttr) {
+    public OceanusDecimal getDeltaForTransaction(final MoneyWiseTransaction pTrans,
+                                                 final MoneyWiseAnalysisTaxBasisAttr pAttr) {
         /* Obtain delta for event */
         return theHistory.getDeltaValue(pTrans, pAttr);
     }
@@ -375,7 +375,7 @@ public class MoneyWiseAnalysisTaxBasisBucket
      * Obtain date range.
      * @return the range
      */
-    public TethysDateRange getDateRange() {
+    public OceanusDateRange getDateRange() {
         return theAnalysis.getDateRange();
     }
 
@@ -385,7 +385,7 @@ public class MoneyWiseAnalysisTaxBasisBucket
      * @param pValue the value of the attribute
      */
     protected void setValue(final MoneyWiseAnalysisTaxBasisAttr pAttr,
-                            final TethysMoney pValue) {
+                            final OceanusMoney pValue) {
         /* Set the value into the list */
         theValues.setValue(pAttr, pValue);
     }
@@ -421,11 +421,11 @@ public class MoneyWiseAnalysisTaxBasisBucket
      */
     protected void addIncomeTransaction(final MoneyWiseAnalysisTransactionHelper pTrans) {
         /* Access details */
-        final TethysMoney myAmount = pTrans.getCreditAmount();
-        final TethysMoney myTaxCredit = pTrans.getTaxCredit();
-        final TethysMoney myNatIns = pTrans.getEmployeeNatIns();
-        final TethysMoney myBenefit = pTrans.getDeemedBenefit();
-        final TethysMoney myWithheld = pTrans.getWithheld();
+        final OceanusMoney myAmount = pTrans.getCreditAmount();
+        final OceanusMoney myTaxCredit = pTrans.getTaxCredit();
+        final OceanusMoney myNatIns = pTrans.getEmployeeNatIns();
+        final OceanusMoney myBenefit = pTrans.getDeemedBenefit();
+        final OceanusMoney myWithheld = pTrans.getWithheld();
 
         /* Determine style of transaction */
         MoneyWiseAssetDirection myDir = pTrans.getDirection();
@@ -438,11 +438,11 @@ public class MoneyWiseAnalysisTaxBasisBucket
         }
 
         /* Obtain zeroed counters */
-        TethysMoney myGross = theValues.getMoneyValue(MoneyWiseAnalysisTaxBasisAttr.GROSS);
-        myGross = new TethysMoney(myGross);
+        OceanusMoney myGross = theValues.getMoneyValue(MoneyWiseAnalysisTaxBasisAttr.GROSS);
+        myGross = new OceanusMoney(myGross);
         myGross.setZero();
-        final TethysMoney myNett = new TethysMoney(myGross);
-        final TethysMoney myTax = new TethysMoney(myGross);
+        final OceanusMoney myNett = new OceanusMoney(myGross);
+        final OceanusMoney myTax = new OceanusMoney(myGross);
 
         /* If this is an expense */
         if (myDir.isTo()) {
@@ -533,18 +533,18 @@ public class MoneyWiseAnalysisTaxBasisBucket
      */
     protected void addExpenseTransaction(final MoneyWiseAnalysisTransactionHelper pTrans) {
         /* Access details */
-        final TethysMoney myAmount = pTrans.getDebitAmount();
-        final TethysMoney myTaxCredit = pTrans.getTaxCredit();
+        final OceanusMoney myAmount = pTrans.getDebitAmount();
+        final OceanusMoney myTaxCredit = pTrans.getTaxCredit();
 
         /* Determine style of event */
         final MoneyWiseAssetDirection myDir = pTrans.getDirection();
 
         /* Obtain zeroed counters */
-        TethysMoney myGross = theValues.getMoneyValue(MoneyWiseAnalysisTaxBasisAttr.GROSS);
-        myGross = new TethysMoney(myGross);
+        OceanusMoney myGross = theValues.getMoneyValue(MoneyWiseAnalysisTaxBasisAttr.GROSS);
+        myGross = new OceanusMoney(myGross);
         myGross.setZero();
-        final TethysMoney myNett = new TethysMoney(myGross);
-        final TethysMoney myTax = new TethysMoney(myGross);
+        final OceanusMoney myNett = new OceanusMoney(myGross);
+        final OceanusMoney myTax = new OceanusMoney(myGross);
 
         /* If this is a refunded expense */
         if (myDir.isFrom()) {
@@ -595,14 +595,14 @@ public class MoneyWiseAnalysisTaxBasisBucket
      * @param pTax the tax delta value
      */
     protected void registerDeltaValues(final MoneyWiseAnalysisTransactionHelper pTrans,
-                                       final TethysMoney pGross,
-                                       final TethysMoney pNett,
-                                       final TethysMoney pTax) {
+                                       final OceanusMoney pGross,
+                                       final OceanusMoney pNett,
+                                       final OceanusMoney pTax) {
         /* If we have a change to the gross value */
         if (pGross.isNonZero()) {
             /* Adjust Gross figure */
-            TethysMoney myGross = theValues.getMoneyValue(MoneyWiseAnalysisTaxBasisAttr.GROSS);
-            myGross = new TethysMoney(myGross);
+            OceanusMoney myGross = theValues.getMoneyValue(MoneyWiseAnalysisTaxBasisAttr.GROSS);
+            myGross = new OceanusMoney(myGross);
             myGross.addAmount(pGross);
             setValue(MoneyWiseAnalysisTaxBasisAttr.GROSS, myGross);
         }
@@ -610,8 +610,8 @@ public class MoneyWiseAnalysisTaxBasisBucket
         /* If we have a change to the net value */
         if (pNett.isNonZero()) {
             /* Adjust Net figure */
-            TethysMoney myNett = theValues.getMoneyValue(MoneyWiseAnalysisTaxBasisAttr.NETT);
-            myNett = new TethysMoney(myNett);
+            OceanusMoney myNett = theValues.getMoneyValue(MoneyWiseAnalysisTaxBasisAttr.NETT);
+            myNett = new OceanusMoney(myNett);
             myNett.addAmount(pNett);
             setValue(MoneyWiseAnalysisTaxBasisAttr.NETT, myNett);
         }
@@ -619,8 +619,8 @@ public class MoneyWiseAnalysisTaxBasisBucket
         /* If we have a change to the tax value */
         if (pTax.isNonZero()) {
             /* Adjust Tax figure */
-            TethysMoney myTax = theValues.getMoneyValue(MoneyWiseAnalysisTaxBasisAttr.TAXCREDIT);
-            myTax = new TethysMoney(myTax);
+            OceanusMoney myTax = theValues.getMoneyValue(MoneyWiseAnalysisTaxBasisAttr.TAXCREDIT);
+            myTax = new OceanusMoney(myTax);
             myTax.addAmount(pTax);
             setValue(MoneyWiseAnalysisTaxBasisAttr.TAXCREDIT, myTax);
         }
@@ -636,7 +636,7 @@ public class MoneyWiseAnalysisTaxBasisBucket
      * @param pAdjust adjustment control
      */
     protected void adjustValue(final MoneyWiseAnalysisTransactionHelper pTrans,
-                               final TethysMoney pValue,
+                               final OceanusMoney pValue,
                                final MoneyWiseTaxBasisAdjust pAdjust) {
         /* Adjust the value */
         adjustValue(pValue, pAdjust);
@@ -656,13 +656,13 @@ public class MoneyWiseAnalysisTaxBasisBucket
      * @param pValue the value
      * @param pAdjust adjustment control
      */
-    protected void adjustValue(final TethysMoney pValue,
+    protected void adjustValue(final OceanusMoney pValue,
                                final MoneyWiseTaxBasisAdjust pAdjust) {
         /* If we are adjusting Gross */
         if (pAdjust.adjustGross()) {
             /* Access the existing value */
-            TethysMoney myGross = theValues.getMoneyValue(MoneyWiseAnalysisTaxBasisAttr.GROSS);
-            myGross = new TethysMoney(myGross);
+            OceanusMoney myGross = theValues.getMoneyValue(MoneyWiseAnalysisTaxBasisAttr.GROSS);
+            myGross = new OceanusMoney(myGross);
 
             /* Subtract or add the value depending as to whether we are an expense bucket */
             if (isExpense) {
@@ -678,8 +678,8 @@ public class MoneyWiseAnalysisTaxBasisBucket
         /* If we are adjusting Nett */
         if (pAdjust.adjustNett()) {
             /* Access the existing value */
-            TethysMoney myNett = theValues.getMoneyValue(MoneyWiseAnalysisTaxBasisAttr.NETT);
-            myNett = new TethysMoney(myNett);
+            OceanusMoney myNett = theValues.getMoneyValue(MoneyWiseAnalysisTaxBasisAttr.NETT);
+            myNett = new OceanusMoney(myNett);
 
             /* Subtract or add the value depending as to whether we are an expense bucket */
             if (isExpense) {
@@ -708,7 +708,7 @@ public class MoneyWiseAnalysisTaxBasisBucket
      */
     protected void addValues(final MoneyWiseAnalysisTaxBasisBucket pBucket) {
         /* Add the values */
-        TethysMoney myAmount = theValues.getMoneyValue(MoneyWiseAnalysisTaxBasisAttr.GROSS);
+        OceanusMoney myAmount = theValues.getMoneyValue(MoneyWiseAnalysisTaxBasisAttr.GROSS);
         myAmount.addAmount(pBucket.getMoneyValue(MoneyWiseAnalysisTaxBasisAttr.GROSS));
         myAmount = theValues.getMoneyValue(MoneyWiseAnalysisTaxBasisAttr.NETT);
         myAmount.addAmount(pBucket.getMoneyValue(MoneyWiseAnalysisTaxBasisAttr.NETT));
@@ -842,7 +842,7 @@ public class MoneyWiseAnalysisTaxBasisBucket
          */
         protected MoneyWiseAnalysisTaxBasisBucketList(final MoneyWiseAnalysis pAnalysis,
                                                       final MoneyWiseAnalysisTaxBasisBucketList pBase,
-                                                      final TethysDate pDate) {
+                                                      final OceanusDate pDate) {
             /* Initialise class */
             this(pAnalysis, new MoneyWiseChargeableGainSliceList(pBase.getGainSlices(), pAnalysis.getDateRange()));
 
@@ -870,7 +870,7 @@ public class MoneyWiseAnalysisTaxBasisBucket
          */
         protected MoneyWiseAnalysisTaxBasisBucketList(final MoneyWiseAnalysis pAnalysis,
                                                       final MoneyWiseAnalysisTaxBasisBucketList pBase,
-                                                      final TethysDateRange pRange) {
+                                                      final OceanusDateRange pRange) {
             /* Initialise class */
             this(pAnalysis, new MoneyWiseChargeableGainSliceList(pBase.getGainSlices(), pAnalysis.getDateRange()));
 
@@ -1134,7 +1134,7 @@ public class MoneyWiseAnalysisTaxBasisBucket
          */
         protected void adjustValue(final MoneyWiseAnalysisTransactionHelper pTrans,
                                    final MoneyWiseTaxClass pClass,
-                                   final TethysMoney pIncome) {
+                                   final OceanusMoney pIncome) {
             /* Access the bucket and adjust it */
             final MoneyWiseAnalysisTaxBasisBucket myBucket = getBucket(pClass);
             myBucket.adjustValue(pTrans, pIncome, MoneyWiseTaxBasisAdjust.STANDARD);
@@ -1148,7 +1148,7 @@ public class MoneyWiseAnalysisTaxBasisBucket
          */
         protected void adjustGrossValue(final MoneyWiseAnalysisTransactionHelper pTrans,
                                         final MoneyWiseTaxClass pClass,
-                                        final TethysMoney pIncome) {
+                                        final OceanusMoney pIncome) {
             /* Access the bucket and adjust it */
             final MoneyWiseAnalysisTaxBasisBucket myBucket = getBucket(pClass);
             myBucket.adjustValue(pTrans, pIncome, MoneyWiseTaxBasisAdjust.GROSS);
@@ -1162,7 +1162,7 @@ public class MoneyWiseAnalysisTaxBasisBucket
          */
         protected void adjustNettValue(final MoneyWiseAnalysisTransactionHelper pTrans,
                                        final MoneyWiseTaxClass pClass,
-                                       final TethysMoney pIncome) {
+                                       final OceanusMoney pIncome) {
             /* Access the bucket and adjust it */
             final MoneyWiseAnalysisTaxBasisBucket myBucket = getBucket(pClass);
             myBucket.adjustValue(pTrans, pIncome, MoneyWiseTaxBasisAdjust.NETT);
@@ -1176,9 +1176,9 @@ public class MoneyWiseAnalysisTaxBasisBucket
         public void adjustAutoExpense(final MoneyWiseAnalysisTransactionHelper pTrans,
                                       final boolean isExpense) {
             /* Determine value */
-            TethysMoney myAmount = pTrans.getLocalAmount();
+            OceanusMoney myAmount = pTrans.getLocalAmount();
             if (!isExpense) {
-                myAmount = new TethysMoney(myAmount);
+                myAmount = new OceanusMoney(myAmount);
                 myAmount.negate();
             }
 
@@ -1192,10 +1192,10 @@ public class MoneyWiseAnalysisTaxBasisBucket
          * @param pIncome the income
          * @param pExpense the expense
          */
-        protected void adjustMarket(final TethysMoney pIncome,
-                                    final TethysMoney pExpense) {
+        protected void adjustMarket(final OceanusMoney pIncome,
+                                    final OceanusMoney pExpense) {
             /* Calculate the delta */
-            final TethysMoney myDelta = new TethysMoney(pIncome);
+            final OceanusMoney myDelta = new OceanusMoney(pIncome);
             myDelta.subtractAmount(pExpense);
 
             /* Access the bucket and adjust it */
@@ -1209,7 +1209,7 @@ public class MoneyWiseAnalysisTaxBasisBucket
          * @param pGain the gain
          */
         public void recordChargeableGain(final MoneyWiseTransaction pTrans,
-                                         final TethysMoney pGain) {
+                                         final OceanusMoney pGain) {
             /* record the chargeable gain */
             theCharges.addTransaction(pTrans, pGain);
         }
@@ -1253,7 +1253,7 @@ public class MoneyWiseAnalysisTaxBasisBucket
         }
 
         @Override
-        public TethysMoney getAmountForTaxBasis(final MoneyWiseTaxClass pBasis) {
+        public OceanusMoney getAmountForTaxBasis(final MoneyWiseTaxClass pBasis) {
             /* Access the bucket */
             final MoneyWiseAnalysisTaxBasisBucket myItem = findItemById(pBasis.getClassId());
 
@@ -1263,7 +1263,7 @@ public class MoneyWiseAnalysisTaxBasisBucket
                 final Currency myCurrency = myAssetCurrency == null
                         ? Currency.getInstance(Locale.getDefault())
                         : myAssetCurrency.getCurrency();
-                return new TethysMoney(myCurrency);
+                return new OceanusMoney(myCurrency);
             }
 
             return myItem.getMoneyValue(MoneyWiseAnalysisTaxBasisAttr.GROSS);

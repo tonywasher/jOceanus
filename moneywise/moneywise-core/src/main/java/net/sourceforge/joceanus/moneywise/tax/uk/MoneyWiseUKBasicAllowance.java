@@ -21,8 +21,8 @@ import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.moneywise.tax.MoneyWiseMarginalReduction;
 import net.sourceforge.joceanus.moneywise.tax.MoneyWiseTaxBandSet.MoneyWiseTaxBand;
 import net.sourceforge.joceanus.moneywise.tax.MoneyWiseTaxResource;
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
-import net.sourceforge.joceanus.tethys.decimal.TethysRate;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRate;
 
 /**
  * Basic UK Tax Allowance.
@@ -47,17 +47,17 @@ public abstract class MoneyWiseUKBasicAllowance
     /**
      * Allowance.
      */
-    private final TethysMoney theAllowance;
+    private final OceanusMoney theAllowance;
 
     /**
      * Rental Allowance.
      */
-    private final TethysMoney theRentalAllowance;
+    private final OceanusMoney theRentalAllowance;
 
     /**
      * Capital Allowance.
      */
-    private final TethysMoney theCapitalAllowance;
+    private final OceanusMoney theCapitalAllowance;
 
     /**
      * Marginal Reduction Type.
@@ -71,9 +71,9 @@ public abstract class MoneyWiseUKBasicAllowance
      * @param pCapitalAllowance the capital allowance
      * @param pReduction the marginal reduction
      */
-    protected MoneyWiseUKBasicAllowance(final TethysMoney pAllowance,
-                                        final TethysMoney pRentalAllowance,
-                                        final TethysMoney pCapitalAllowance,
+    protected MoneyWiseUKBasicAllowance(final OceanusMoney pAllowance,
+                                        final OceanusMoney pRentalAllowance,
+                                        final OceanusMoney pCapitalAllowance,
                                         final MoneyWiseMarginalReduction pReduction) {
         theAllowance = pAllowance;
         theRentalAllowance = pRentalAllowance;
@@ -87,9 +87,9 @@ public abstract class MoneyWiseUKBasicAllowance
      * @param pRentalAllowance the rental allowance
      * @param pCapitalAllowance the capital allowance
      */
-    protected MoneyWiseUKBasicAllowance(final TethysMoney pAllowance,
-                                        final TethysMoney pRentalAllowance,
-                                        final TethysMoney pCapitalAllowance) {
+    protected MoneyWiseUKBasicAllowance(final OceanusMoney pAllowance,
+                                        final OceanusMoney pRentalAllowance,
+                                        final OceanusMoney pCapitalAllowance) {
         this(pAllowance, pRentalAllowance, pCapitalAllowance, MoneyWiseMarginalReduction.TWOINTHREE);
     }
 
@@ -97,7 +97,7 @@ public abstract class MoneyWiseUKBasicAllowance
      * Obtain the allowance.
      * @return the Allowance
      */
-    protected TethysMoney getAllowance() {
+    protected OceanusMoney getAllowance() {
         return theAllowance;
     }
 
@@ -105,7 +105,7 @@ public abstract class MoneyWiseUKBasicAllowance
      * Obtain the rental allowance.
      * @return the Allowance
      */
-    protected TethysMoney getRentalAllowance() {
+    protected OceanusMoney getRentalAllowance() {
         return theRentalAllowance;
     }
 
@@ -113,7 +113,7 @@ public abstract class MoneyWiseUKBasicAllowance
      * Obtain the capital allowance.
      * @return the Allowance
      */
-    protected TethysMoney getCapitalAllowance() {
+    protected OceanusMoney getCapitalAllowance() {
         return theCapitalAllowance;
     }
 
@@ -130,7 +130,7 @@ public abstract class MoneyWiseUKBasicAllowance
      * @param pConfig the tax configuration
      * @return the calculated allowance
      */
-    protected TethysMoney calculateBasicAllowance(final MoneyWiseUKTaxConfig pConfig) {
+    protected OceanusMoney calculateBasicAllowance(final MoneyWiseUKTaxConfig pConfig) {
         return getAllowance();
     }
 
@@ -139,7 +139,7 @@ public abstract class MoneyWiseUKBasicAllowance
      * @param pConfig the tax configuration
      * @return the savings allowance
      */
-    protected TethysMoney calculateSavingsAllowance(final MoneyWiseUKTaxConfig pConfig) {
+    protected OceanusMoney calculateSavingsAllowance(final MoneyWiseUKTaxConfig pConfig) {
         return getZeroAmount();
     }
 
@@ -147,7 +147,7 @@ public abstract class MoneyWiseUKBasicAllowance
      * Calculate the dividend allowance.
      * @return the dividend allowance
      */
-    protected TethysMoney calculateDividendAllowance() {
+    protected OceanusMoney calculateDividendAllowance() {
         return getZeroAmount();
     }
 
@@ -161,13 +161,13 @@ public abstract class MoneyWiseUKBasicAllowance
                                                       final MoneyWiseTaxBand pLoSavings) {
         /* Obtain the loSavings band */
         if (pLoSavings == null) {
-            return new MoneyWiseTaxBand(getZeroAmount(), TethysRate.getWholePercentage(0));
+            return new MoneyWiseTaxBand(getZeroAmount(), OceanusRate.getWholePercentage(0));
         }
         final MoneyWiseTaxBand myBand = new MoneyWiseTaxBand(pLoSavings);
-        final TethysMoney myAmount = myBand.getAmount();
+        final OceanusMoney myAmount = myBand.getAmount();
 
         /* Obtain the preSavings income remaining after the allowance */
-        final TethysMoney myPreSavings = new TethysMoney(pConfig.getGrossPreSavings());
+        final OceanusMoney myPreSavings = new OceanusMoney(pConfig.getGrossPreSavings());
         myPreSavings.subtractAmount(pConfig.getAllowance());
 
         /* If we have allowance left over, return the full loSavings band */
@@ -191,9 +191,9 @@ public abstract class MoneyWiseUKBasicAllowance
      * Obtain zero amount.
      * @return the zero amount
      */
-    protected TethysMoney getZeroAmount() {
+    protected OceanusMoney getZeroAmount() {
         /* Return a zero allowance */
-        final TethysMoney myAllowance = new TethysMoney(theAllowance);
+        final OceanusMoney myAllowance = new OceanusMoney(theAllowance);
         myAllowance.setZero();
         return myAllowance;
     }

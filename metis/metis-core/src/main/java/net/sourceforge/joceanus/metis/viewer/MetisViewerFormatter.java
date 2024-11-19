@@ -32,9 +32,9 @@ import net.sourceforge.joceanus.metis.field.MetisFieldItem.MetisFieldVersionedDe
 import net.sourceforge.joceanus.metis.field.MetisFieldValidation;
 import net.sourceforge.joceanus.metis.field.MetisFieldVersionHistory;
 import net.sourceforge.joceanus.metis.field.MetisFieldVersionedItem;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.decimal.TethysDecimal;
-import net.sourceforge.joceanus.tethys.profile.TethysProfile;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimal;
+import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
 
 /**
@@ -141,8 +141,8 @@ public class MetisViewerFormatter {
             formatHTMLStackTrace((StackTraceElement[]) myObject);
 
             /* If we are TethysProfile */
-        } else if (myObject instanceof TethysProfile) {
-            formatHTMLEosFieldItem(new MetisViewerProfileWrapper((TethysProfile) myObject));
+        } else if (myObject instanceof OceanusProfile) {
+            formatHTMLEosFieldItem(new MetisViewerProfileWrapper((OceanusProfile) myObject));
 
             /* If we are Throwable */
         } else if (myObject instanceof Throwable) {
@@ -287,8 +287,8 @@ public class MetisViewerFormatter {
         }
 
         /* Skip zero decimals */
-        if (myValue instanceof TethysDecimal) {
-            return ((TethysDecimal) myValue).isZero();
+        if (myValue instanceof OceanusDecimal) {
+            return ((OceanusDecimal) myValue).isZero();
         }
         if (myValue instanceof Number) {
             return ((Number) myValue).longValue() == 0;

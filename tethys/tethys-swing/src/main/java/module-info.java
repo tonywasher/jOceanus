@@ -25,7 +25,7 @@ module net.sourceforge.joceanus.tethys.swing {
     requires org.jfree.jfreechart;
 
     /* Oceanus */
-    requires net.sourceforge.joceanus.core;
+    requires net.sourceforge.joceanus.oceanus;
     requires net.sourceforge.joceanus.tethys.core;
 
     /* Exports */

@@ -27,15 +27,15 @@ import java.util.function.ToIntFunction;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.date.TethysDate;
-import net.sourceforge.joceanus.tethys.date.TethysDateConfig;
-import net.sourceforge.joceanus.tethys.decimal.TethysDecimal;
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
-import net.sourceforge.joceanus.tethys.decimal.TethysPrice;
-import net.sourceforge.joceanus.tethys.decimal.TethysRate;
-import net.sourceforge.joceanus.tethys.decimal.TethysRatio;
-import net.sourceforge.joceanus.tethys.decimal.TethysUnits;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.date.OceanusDateConfig;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimal;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRate;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRatio;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusUnits;
 import net.sourceforge.joceanus.tethys.ui.api.control.TethysUIControl.TethysUIIconMapSet;
 import net.sourceforge.joceanus.tethys.ui.api.field.TethysUIFieldType;
 import net.sourceforge.joceanus.tethys.ui.api.menu.TethysUIScrollMenu;
@@ -390,7 +390,7 @@ public abstract class TethysUISwingTableColumn<T, C, R>
      * @param <R> the table item class
      */
     public static class TethysUISwingTableRawDecimalColumn<C, R>
-            extends TethysUISwingTableValidatedColumn<TethysDecimal, C, R>
+            extends TethysUISwingTableValidatedColumn<OceanusDecimal, C, R>
             implements TethysUITableRawDecimalColumn<C, R> {
         /**
          * Raw decimals supplier.
@@ -411,7 +411,7 @@ public abstract class TethysUISwingTableColumn<T, C, R>
         }
 
         @Override
-        public TethysUISwingTableRawDecimalColumn<C, R> setValidator(final BiFunction<TethysDecimal, R, String> pValidator) {
+        public TethysUISwingTableRawDecimalColumn<C, R> setValidator(final BiFunction<OceanusDecimal, R, String> pValidator) {
             return (TethysUISwingTableRawDecimalColumn<C, R>) super.setValidator(pValidator);
         }
 
@@ -438,7 +438,7 @@ public abstract class TethysUISwingTableColumn<T, C, R>
      * @param <R> the table item class
      */
     public static class TethysUISwingTableMoneyColumn<C, R>
-            extends TethysUISwingTableValidatedColumn<TethysMoney, C, R>
+            extends TethysUISwingTableValidatedColumn<OceanusMoney, C, R>
             implements TethysUITableMoneyColumn<C, R> {
         /**
          * Currency supplier.
@@ -459,7 +459,7 @@ public abstract class TethysUISwingTableColumn<T, C, R>
         }
 
         @Override
-        public TethysUISwingTableMoneyColumn<C, R> setValidator(final BiFunction<TethysMoney, R, String> pValidator) {
+        public TethysUISwingTableMoneyColumn<C, R> setValidator(final BiFunction<OceanusMoney, R, String> pValidator) {
             return (TethysUISwingTableMoneyColumn<C, R>) super.setValidator(pValidator);
         }
 
@@ -486,7 +486,7 @@ public abstract class TethysUISwingTableColumn<T, C, R>
      * @param <R> the table item class
      */
     public static class TethysUISwingTablePriceColumn<C, R>
-            extends TethysUISwingTableValidatedColumn<TethysPrice, C, R>
+            extends TethysUISwingTableValidatedColumn<OceanusPrice, C, R>
             implements TethysUITablePriceColumn<C, R> {
         /**
          * Currency supplier.
@@ -507,7 +507,7 @@ public abstract class TethysUISwingTableColumn<T, C, R>
         }
 
         @Override
-        public TethysUISwingTablePriceColumn<C, R> setValidator(final BiFunction<TethysPrice, R, String> pValidator) {
+        public TethysUISwingTablePriceColumn<C, R> setValidator(final BiFunction<OceanusPrice, R, String> pValidator) {
             return (TethysUISwingTablePriceColumn<C, R>) super.setValidator(pValidator);
         }
 
@@ -534,7 +534,7 @@ public abstract class TethysUISwingTableColumn<T, C, R>
      * @param <R> the table item class
      */
     public static class TethysUISwingTableRateColumn<C, R>
-            extends TethysUISwingTableValidatedColumn<TethysRate, C, R>
+            extends TethysUISwingTableValidatedColumn<OceanusRate, C, R>
             implements TethysUITableRateColumn<C, R> {
         /**
          * Constructor.
@@ -549,7 +549,7 @@ public abstract class TethysUISwingTableColumn<T, C, R>
         }
 
         @Override
-        public TethysUISwingTableRateColumn<C, R> setValidator(final BiFunction<TethysRate, R, String> pValidator) {
+        public TethysUISwingTableRateColumn<C, R> setValidator(final BiFunction<OceanusRate, R, String> pValidator) {
             return (TethysUISwingTableRateColumn<C, R>) super.setValidator(pValidator);
         }
     }
@@ -561,7 +561,7 @@ public abstract class TethysUISwingTableColumn<T, C, R>
      * @param <R> the table item class
      */
     public static class TethysUISwingTableUnitsColumn<C, R>
-            extends TethysUISwingTableValidatedColumn<TethysUnits, C, R>
+            extends TethysUISwingTableValidatedColumn<OceanusUnits, C, R>
             implements TethysUITableUnitsColumn<C, R> {
         /**
          * Constructor.
@@ -576,7 +576,7 @@ public abstract class TethysUISwingTableColumn<T, C, R>
         }
 
         @Override
-        public TethysUISwingTableUnitsColumn<C, R> setValidator(final BiFunction<TethysUnits, R, String> pValidator) {
+        public TethysUISwingTableUnitsColumn<C, R> setValidator(final BiFunction<OceanusUnits, R, String> pValidator) {
             return (TethysUISwingTableUnitsColumn<C, R>) super.setValidator(pValidator);
         }
     }
@@ -588,7 +588,7 @@ public abstract class TethysUISwingTableColumn<T, C, R>
      * @param <R> the table item class
      */
     public static class TethysUISwingTableRatioColumn<C, R>
-            extends TethysUISwingTableValidatedColumn<TethysRatio, C, R>
+            extends TethysUISwingTableValidatedColumn<OceanusRatio, C, R>
             implements TethysUITableRatioColumn<C, R> {
         /**
          * Constructor.
@@ -603,7 +603,7 @@ public abstract class TethysUISwingTableColumn<T, C, R>
         }
 
         @Override
-        public TethysUISwingTableRatioColumn<C, R> setValidator(final BiFunction<TethysRatio, R, String> pValidator) {
+        public TethysUISwingTableRatioColumn<C, R> setValidator(final BiFunction<OceanusRatio, R, String> pValidator) {
             return (TethysUISwingTableRatioColumn<C, R>) super.setValidator(pValidator);
         }
     }
@@ -615,12 +615,12 @@ public abstract class TethysUISwingTableColumn<T, C, R>
      * @param <R> the table item class
      */
     public static class TethysUISwingTableDateColumn<C, R>
-            extends TethysUISwingTableColumn<TethysDate, C, R>
+            extends TethysUISwingTableColumn<OceanusDate, C, R>
             implements TethysUITableDateColumn<C, R> {
         /**
          * Date configurator.
          */
-        private BiConsumer<R, TethysDateConfig> theConfigurator;
+        private BiConsumer<R, OceanusDateConfig> theConfigurator;
 
         /**
          * Constructor.
@@ -637,7 +637,7 @@ public abstract class TethysUISwingTableColumn<T, C, R>
         }
 
         @Override
-        public TethysUISwingTableDateColumn<C, R> setDateConfigurator(final BiConsumer<R, TethysDateConfig> pConfigurator) {
+        public TethysUISwingTableDateColumn<C, R> setDateConfigurator(final BiConsumer<R, OceanusDateConfig> pConfigurator) {
             theConfigurator = pConfigurator;
             return this;
         }
@@ -647,7 +647,7 @@ public abstract class TethysUISwingTableColumn<T, C, R>
          *
          * @return the configurator
          */
-        BiConsumer<R, TethysDateConfig> getDateConfigurator() {
+        BiConsumer<R, OceanusDateConfig> getDateConfigurator() {
             return theConfigurator;
         }
     }

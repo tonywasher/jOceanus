@@ -27,11 +27,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import net.sourceforge.joceanus.metis.MetisDataException;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.decimal.TethysDecimal;
-import net.sourceforge.joceanus.tethys.decimal.TethysDecimalParser;
-import net.sourceforge.joceanus.tethys.decimal.TethysPrice;
-import net.sourceforge.joceanus.tethys.decimal.TethysRatio;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimal;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimalParser;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRatio;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
 
 /**
@@ -133,7 +133,7 @@ public class MetisHTTPYQLClient
     /**
      * Decimal parser.
      */
-    private final TethysDecimalParser theParser;
+    private final OceanusDecimalParser theParser;
 
     /**
      * Constructor.
@@ -151,8 +151,8 @@ public class MetisHTTPYQLClient
      * @return the price
      * @throws OceanusException on error
      */
-    public TethysPrice obtainSecurityPrice(final String pSymbol,
-                                           final Currency pCurrency) throws OceanusException {
+    public OceanusPrice obtainSecurityPrice(final String pSymbol,
+                                            final Currency pCurrency) throws OceanusException {
         /* Build the query string */
         final StringBuilder myBuilder = new StringBuilder();
         myBuilder.append(YQL_SELECT);
@@ -164,7 +164,7 @@ public class MetisHTTPYQLClient
         /* Determine price divisor */
         int myDivisor = 1;
         for (int iNumDigits = pCurrency.getDefaultFractionDigits(); iNumDigits > 0; iNumDigits--) {
-            myDivisor *= TethysDecimal.RADIX_TEN;
+            myDivisor *= OceanusDecimal.RADIX_TEN;
         }
 
         /* Perform the query */
@@ -184,7 +184,7 @@ public class MetisHTTPYQLClient
             /* If we found the price */
             if (myStrPrice != null) {
                 /* Parse the price and convert from minor units */
-                final TethysPrice myPrice = theParser.parsePriceValue(myStrPrice, pCurrency);
+                final OceanusPrice myPrice = theParser.parsePriceValue(myStrPrice, pCurrency);
                 myPrice.divide(myDivisor);
                 return myPrice;
             }
@@ -205,8 +205,8 @@ public class MetisHTTPYQLClient
      * @return the price
      * @throws OceanusException on error
      */
-    public Map<String, TethysPrice> obtainSecurityPrices(final List<String> pSymbols,
-                                                         final Currency pCurrency) throws OceanusException {
+    public Map<String, OceanusPrice> obtainSecurityPrices(final List<String> pSymbols,
+                                                          final Currency pCurrency) throws OceanusException {
         /* Build the query string */
         final StringBuilder myBuilder = new StringBuilder();
         myBuilder.append(YQL_SELECT);
@@ -216,7 +216,7 @@ public class MetisHTTPYQLClient
         /* Determine price divisor */
         int myDivisor = 1;
         for (int iNumDigits = pCurrency.getDefaultFractionDigits(); iNumDigits > 0; iNumDigits--) {
-            myDivisor *= TethysDecimal.RADIX_TEN;
+            myDivisor *= OceanusDecimal.RADIX_TEN;
         }
 
         /* Build the symbol set */
@@ -233,7 +233,7 @@ public class MetisHTTPYQLClient
         myBuilder.append(YQLSEL_END);
 
         /* Create the result map */
-        final Map<String, TethysPrice> myMap = new HashMap<>();
+        final Map<String, OceanusPrice> myMap = new HashMap<>();
 
         /* Perform the query */
         JSONObject myJSON = queryJSONObjectWithTrailer(myBuilder.toString(), YQL_TAIL);
@@ -255,7 +255,7 @@ public class MetisHTTPYQLClient
                 /* If we have a price */
                 if (myStrPrice != null) {
                     /* Parse and convert to proper units */
-                    final TethysPrice myPrice = theParser.parsePriceValue(myStrPrice, pCurrency);
+                    final OceanusPrice myPrice = theParser.parsePriceValue(myStrPrice, pCurrency);
                     myPrice.divide(myDivisor);
 
                     /* Add the the map */
@@ -280,8 +280,8 @@ public class MetisHTTPYQLClient
      * @return the price
      * @throws OceanusException on error
      */
-    public TethysRatio obtainExchangeRate(final Currency pFrom,
-                                          final Currency pTo) throws OceanusException {
+    public OceanusRatio obtainExchangeRate(final Currency pFrom,
+                                           final Currency pTo) throws OceanusException {
         /* Build the query string */
         final StringBuilder myBuilder = new StringBuilder();
         myBuilder.append(YQL_SELECT);
@@ -307,7 +307,7 @@ public class MetisHTTPYQLClient
 
             /* return parsed rate if possible */
             return (myRate != null)
-                                    ? new TethysRatio(myRate)
+                                    ? new OceanusRatio(myRate)
                                     : null;
 
         } catch (JSONException e) {
@@ -323,8 +323,8 @@ public class MetisHTTPYQLClient
      * @return the price
      * @throws OceanusException on error
      */
-    public Map<Currency, TethysRatio> obtainExchangeRates(final Currency pFrom,
-                                                          final List<Currency> pToList) throws OceanusException {
+    public Map<Currency, OceanusRatio> obtainExchangeRates(final Currency pFrom,
+                                                           final List<Currency> pToList) throws OceanusException {
         /* Build the query string */
         final StringBuilder myBuilder = new StringBuilder();
         myBuilder.append(YQL_SELECT);
@@ -347,7 +347,7 @@ public class MetisHTTPYQLClient
         myBuilder.append(YQLSEL_END);
 
         /* Create the result map */
-        final Map<Currency, TethysRatio> myMap = new HashMap<>();
+        final Map<Currency, OceanusRatio> myMap = new HashMap<>();
 
         /* Perform the query */
         JSONObject myJSON = queryJSONObjectWithTrailer(myBuilder.toString(), YQL_TAIL);
@@ -372,7 +372,7 @@ public class MetisHTTPYQLClient
                     String myId = myEntry.getString(YQLFLD_ID);
                     myId = myId.substring(myFrom.length());
                     final Currency myCurr = Currency.getInstance(myId);
-                    final TethysRatio myRate = new TethysRatio(myStrRate);
+                    final OceanusRatio myRate = new OceanusRatio(myStrRate);
 
                     /* Add the the map */
                     myMap.put(myCurr, myRate);

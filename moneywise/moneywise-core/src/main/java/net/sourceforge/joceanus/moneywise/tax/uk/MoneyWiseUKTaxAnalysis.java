@@ -34,9 +34,9 @@ import net.sourceforge.joceanus.moneywise.tax.MoneyWiseTaxDueBucket;
 import net.sourceforge.joceanus.moneywise.tax.MoneyWiseTaxResource;
 import net.sourceforge.joceanus.moneywise.tax.MoneyWiseTaxSource;
 import net.sourceforge.joceanus.moneywise.tax.uk.MoneyWiseUKChargeableGainsScheme.MoneyWiseUKSlicedTaxDueBucket;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.date.TethysDate;
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
 
 /**
@@ -85,22 +85,22 @@ public class MoneyWiseUKTaxAnalysis
     /**
      * The Total TaxableIncome.
      */
-    private final TethysMoney theTaxableIncome;
+    private final OceanusMoney theTaxableIncome;
 
     /**
      * The Total TaxDue.
      */
-    private final TethysMoney theTaxDue;
+    private final OceanusMoney theTaxDue;
 
     /**
      * The Total Tax Paid.
      */
-    private final TethysMoney theTaxPaid;
+    private final OceanusMoney theTaxPaid;
 
     /**
      * The TaxProfit/Loss.
      */
-    private final TethysMoney theTaxProfit;
+    private final OceanusMoney theTaxProfit;
 
     /**
      * TaxPreferenceKeys.
@@ -172,7 +172,7 @@ public class MoneyWiseUKTaxAnalysis
             /* Make sure that the birthDate is specified */
             final MetisDatePreference myPref = getDatePreference(MoneyWiseUKTaxPreferenceKey.BIRTHDATE);
             if (!myPref.isAvailable()) {
-                myPref.setValue(new TethysDate(YEAR, Month.JANUARY, 1));
+                myPref.setValue(new OceanusDate(YEAR, Month.JANUARY, 1));
             }
         }
     }
@@ -195,16 +195,16 @@ public class MoneyWiseUKTaxAnalysis
 
         /* Determine the client birthday */
         final MoneyWiseUKTaxPreferences myPreferences = pPrefMgr.getPreferenceSet(MoneyWiseUKTaxPreferences.class);
-        final TethysDate myBirthday = myPreferences.getDateValue(MoneyWiseUKTaxPreferenceKey.BIRTHDATE);
+        final OceanusDate myBirthday = myPreferences.getDateValue(MoneyWiseUKTaxPreferenceKey.BIRTHDATE);
         theTaxConfig = new MoneyWiseUKTaxConfig(theTaxYear, theTaxSource, myBirthday);
 
         /* Create the totals */
         theTaxPaid = pTaxSource.getAmountForTaxBasis(MoneyWiseTaxClass.TAXPAID);
-        theTaxableIncome = new TethysMoney(theTaxPaid);
+        theTaxableIncome = new OceanusMoney(theTaxPaid);
         theTaxableIncome.setZero();
-        theTaxDue = new TethysMoney(theTaxPaid);
+        theTaxDue = new OceanusMoney(theTaxPaid);
         theTaxDue.setZero();
-        theTaxProfit = new TethysMoney(theTaxPaid);
+        theTaxProfit = new OceanusMoney(theTaxPaid);
         theTaxProfit.setZero();
     }
 
@@ -235,22 +235,22 @@ public class MoneyWiseUKTaxAnalysis
     }
 
     @Override
-    public TethysMoney getTaxableIncome() {
+    public OceanusMoney getTaxableIncome() {
         return theTaxableIncome;
     }
 
     @Override
-    public TethysMoney getTaxDue() {
+    public OceanusMoney getTaxDue() {
         return theTaxDue;
     }
 
     @Override
-    public TethysMoney getTaxPaid() {
+    public OceanusMoney getTaxPaid() {
         return theTaxPaid;
     }
 
     @Override
-    public TethysMoney getTaxProfit() {
+    public OceanusMoney getTaxProfit() {
         return theTaxProfit;
     }
 
@@ -298,7 +298,7 @@ public class MoneyWiseUKTaxAnalysis
     protected void processItem(final MoneyWiseTaxClass pBasis,
                                final MoneyWiseUKIncomeScheme pScheme) {
         /* Obtain the amount */
-        final TethysMoney myAmount = theTaxSource.getAmountForTaxBasis(pBasis);
+        final OceanusMoney myAmount = theTaxSource.getAmountForTaxBasis(pBasis);
 
         /* Ignore zero or negative amounts */
         if (myAmount.isZero()

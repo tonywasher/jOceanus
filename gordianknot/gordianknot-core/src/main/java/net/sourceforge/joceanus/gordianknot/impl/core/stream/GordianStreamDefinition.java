@@ -40,8 +40,8 @@ import net.sourceforge.joceanus.gordianknot.impl.core.digest.GordianCoreDigestFa
 import net.sourceforge.joceanus.gordianknot.impl.core.keyset.GordianCoreKeySet;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreKnuthObfuscater;
 import net.sourceforge.joceanus.gordianknot.impl.core.mac.GordianCoreMacFactory;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.TethysDataConverter;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.OceanusDataConverter;
 
 /**
  * Stream definition.
@@ -89,9 +89,9 @@ public final class GordianStreamDefinition {
                                    final byte[] pTypeDef,
                                    final byte[] pInitVector,
                                    final byte[] pValue) throws OceanusException {
-        final int myStreamId = (int) (pExternalId & TethysDataConverter.NYBBLE_MASK);
+        final int myStreamId = (int) (pExternalId & OceanusDataConverter.NYBBLE_MASK);
         theType = GordianStreamType.fromId(myStreamId);
-        theTypeId = (int) (pExternalId >> TethysDataConverter.NYBBLE_SHIFT);
+        theTypeId = (int) (pExternalId >> OceanusDataConverter.NYBBLE_SHIFT);
         theTypeDefinition = pTypeDef == null
                             ? null
                             : Arrays.copyOf(pTypeDef, pTypeDef.length);
@@ -196,7 +196,7 @@ public final class GordianStreamDefinition {
      * @return the encoded value
      */
     public long getExternalId() {
-        return ((long) theTypeId << TethysDataConverter.NYBBLE_SHIFT)
+        return ((long) theTypeId << OceanusDataConverter.NYBBLE_SHIFT)
                 + theType.getId();
     }
 

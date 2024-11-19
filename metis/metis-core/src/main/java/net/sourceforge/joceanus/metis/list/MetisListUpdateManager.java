@@ -22,8 +22,8 @@ import java.util.Iterator;
 import net.sourceforge.joceanus.metis.data.MetisDataState;
 import net.sourceforge.joceanus.metis.field.MetisFieldVersionValues;
 import net.sourceforge.joceanus.metis.field.MetisFieldVersionedItem;
-import net.sourceforge.joceanus.tethys.event.TethysEvent;
-import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar;
+import net.sourceforge.joceanus.oceanus.event.OceanusEvent;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
 
 /**
  * List Update Generator.
@@ -74,7 +74,7 @@ public final class MetisListUpdateManager {
         }
 
         /* Register event handlers */
-        final TethysEventRegistrar<MetisListEvent> myRegistrar = pBase.getEventRegistrar();
+        final OceanusEventRegistrar<MetisListEvent> myRegistrar = pBase.getEventRegistrar();
         myRegistrar.addEventListener(MetisListEvent.REFRESH, e -> deriveUpdates(myUpdates));
         myRegistrar.addEventListener(MetisListEvent.UPDATE, e -> handleChangesInBaseSet(myUpdates, e));
         myRegistrar.addEventListener(MetisListEvent.VERSION, e -> handleChangesInBaseSet(myUpdates, e));
@@ -245,7 +245,7 @@ public final class MetisListUpdateManager {
      * @param pEvent the event
      */
     private static void handleChangesInBaseSet(final MetisListSetVersioned pUpdates,
-                                               final TethysEvent<MetisListEvent> pEvent) {
+                                               final OceanusEvent<MetisListEvent> pEvent) {
         /* Access the change details */
         final MetisListSetChange myChanges = pEvent.getDetails(MetisListSetChange.class);
 

@@ -19,13 +19,13 @@ package net.sourceforge.joceanus.metis.ui;
 import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.metis.MetisDataException;
-import net.sourceforge.joceanus.tethys.resource.TethysBundleId;
-import net.sourceforge.joceanus.tethys.resource.TethysBundleLoader;
+import net.sourceforge.joceanus.oceanus.resource.OceanusBundleId;
+import net.sourceforge.joceanus.oceanus.resource.OceanusBundleLoader;
 
 /**
  * Resource IDs for JMetis Field.
  */
-public enum MetisColorResource implements TethysBundleId {
+public enum MetisColorResource implements OceanusBundleId {
     /**
      * FieldColor Standard.
      */
@@ -94,7 +94,7 @@ public enum MetisColorResource implements TethysBundleId {
     /**
      * The Resource Loader.
      */
-    private static final TethysBundleLoader LOADER = TethysBundleLoader.getPackageLoader(MetisDataException.class.getCanonicalName(),
+    private static final OceanusBundleLoader LOADER = OceanusBundleLoader.getPackageLoader(MetisDataException.class.getCanonicalName(),
             ResourceBundle::getBundle);
 
     /**

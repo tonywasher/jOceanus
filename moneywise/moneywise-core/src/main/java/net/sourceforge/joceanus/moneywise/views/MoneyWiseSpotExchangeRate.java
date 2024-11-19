@@ -32,8 +32,8 @@ import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrency.MoneyWi
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataValues;
-import net.sourceforge.joceanus.tethys.date.TethysDate;
-import net.sourceforge.joceanus.tethys.decimal.TethysRatio;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRatio;
 
 /**
  * Extension of ExchangeRate to cater for spot rates.
@@ -67,12 +67,12 @@ public final class MoneyWiseSpotExchangeRate
     /**
      * the previous date.
      */
-    private TethysDate thePrevDate;
+    private OceanusDate thePrevDate;
 
     /**
      * the previous rate.
      */
-    private TethysRatio thePrevRate;
+    private OceanusRatio thePrevRate;
 
     /**
      * Constructor for a new SpotRate where no rate data exists.
@@ -98,7 +98,7 @@ public final class MoneyWiseSpotExchangeRate
      * Obtain previous rate.
      * @return the rate.
      */
-    public TethysRatio getPrevRate() {
+    public OceanusRatio getPrevRate() {
         return thePrevRate;
     }
 
@@ -106,7 +106,7 @@ public final class MoneyWiseSpotExchangeRate
      * Obtain previous date.
      * @return the date.
      */
-    public TethysDate getPrevDate() {
+    public OceanusDate getPrevDate() {
         return thePrevDate;
     }
 
@@ -135,7 +135,7 @@ public final class MoneyWiseSpotExchangeRate
     }
 
     @Override
-    public TethysRatio getExchangeRate() {
+    public OceanusRatio getExchangeRate() {
         /* Switch on state */
         switch (getState()) {
             case NEW:
@@ -196,7 +196,7 @@ public final class MoneyWiseSpotExchangeRate
         /**
          * The date.
          */
-        private final TethysDate theDate;
+        private final OceanusDate theDate;
 
         /**
          * The view.
@@ -211,12 +211,12 @@ public final class MoneyWiseSpotExchangeRate
         /**
          * The next date.
          */
-        private TethysDate theNext;
+        private OceanusDate theNext;
 
         /**
          * The previous date.
          */
-        private TethysDate thePrev;
+        private OceanusDate thePrev;
 
         /**
          * Constructor.
@@ -224,7 +224,7 @@ public final class MoneyWiseSpotExchangeRate
          * @param pDate the date
          */
         public MoneyWiseSpotExchangeList(final MoneyWiseView pView,
-                                         final TethysDate pDate) {
+                                         final OceanusDate pDate) {
             /* Build initial list */
             super((MoneyWiseDataSet) pView.getData(), MoneyWiseSpotExchangeRate.class, MoneyWiseBasicDataType.SECURITYPRICE);
             setStyle(PrometheusListStyle.EDIT);
@@ -240,7 +240,7 @@ public final class MoneyWiseSpotExchangeRate
             final MoneyWiseCurrencyList myCurrencies = myData.getAccountCurrencies();
 
             /* Loop through the Currencies */
-            final TethysDate myDate = new TethysDate(theDate);
+            final OceanusDate myDate = new OceanusDate(theDate);
             final Iterator<MoneyWiseCurrency> myCurIterator = myCurrencies.iterator();
             while (myCurIterator.hasNext()) {
                 final MoneyWiseCurrency myCurrency = myCurIterator.next();
@@ -348,7 +348,7 @@ public final class MoneyWiseSpotExchangeRate
          * Obtain the date.
          * @return the date
          */
-        private TethysDate getDate() {
+        private OceanusDate getDate() {
             return theDate;
         }
 
@@ -356,7 +356,7 @@ public final class MoneyWiseSpotExchangeRate
          * Obtain the next date.
          * @return the date
          */
-        public TethysDate getNext() {
+        public OceanusDate getNext() {
             return theNext;
         }
 
@@ -364,7 +364,7 @@ public final class MoneyWiseSpotExchangeRate
          * Obtain the previous date.
          * @return the date
          */
-        public TethysDate getPrev() {
+        public OceanusDate getPrev() {
             return thePrev;
         }
 

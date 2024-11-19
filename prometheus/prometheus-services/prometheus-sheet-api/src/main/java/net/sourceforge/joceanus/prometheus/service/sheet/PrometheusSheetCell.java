@@ -16,15 +16,15 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.prometheus.service.sheet;
 
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.TethysDataConverter;
-import net.sourceforge.joceanus.tethys.date.TethysDate;
-import net.sourceforge.joceanus.tethys.decimal.TethysDecimal;
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
-import net.sourceforge.joceanus.tethys.decimal.TethysPrice;
-import net.sourceforge.joceanus.tethys.decimal.TethysRate;
-import net.sourceforge.joceanus.tethys.decimal.TethysRatio;
-import net.sourceforge.joceanus.tethys.decimal.TethysUnits;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.OceanusDataConverter;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimal;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRate;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRatio;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusUnits;
 
 /**
  * Class representing a cell within a sheet or a view.
@@ -125,7 +125,7 @@ public abstract class PrometheusSheetCell {
      * @return the date value
      * @throws OceanusException on error
      */
-    public abstract TethysDate getDate() throws OceanusException;
+    public abstract OceanusDate getDate() throws OceanusException;
 
     /**
      * Obtain integer value of the cell.
@@ -160,35 +160,35 @@ public abstract class PrometheusSheetCell {
      * @return the money value
      * @throws OceanusException on error
      */
-    public abstract TethysMoney getMoney() throws OceanusException;
+    public abstract OceanusMoney getMoney() throws OceanusException;
 
     /**
      * Obtain price value of the cell.
      * @return the price value
      * @throws OceanusException on error
      */
-    public abstract TethysPrice getPrice() throws OceanusException;
+    public abstract OceanusPrice getPrice() throws OceanusException;
 
     /**
      * Obtain rate value of the cell.
      * @return the rate value
      * @throws OceanusException on error
      */
-    public abstract TethysRate getRate() throws OceanusException;
+    public abstract OceanusRate getRate() throws OceanusException;
 
     /**
      * Obtain units value of the cell.
      * @return the units value
      * @throws OceanusException on error
      */
-    public abstract TethysUnits getUnits() throws OceanusException;
+    public abstract OceanusUnits getUnits() throws OceanusException;
 
     /**
      * Obtain ratio value of the cell.
      * @return the ratio value
      * @throws OceanusException on error
      */
-    public abstract TethysRatio getRatio() throws OceanusException;
+    public abstract OceanusRatio getRatio() throws OceanusException;
 
     /**
      * Obtain string value of the cell.
@@ -204,7 +204,7 @@ public abstract class PrometheusSheetCell {
         final String myValue = getString();
         return myValue == null
                                ? null
-                               : TethysDataConverter.base64ToByteArray(myValue);
+                               : OceanusDataConverter.base64ToByteArray(myValue);
     }
 
     /**
@@ -216,7 +216,7 @@ public abstract class PrometheusSheetCell {
         final byte[] myValue = getBytes();
         return myValue == null
                                ? null
-                               : TethysDataConverter.bytesToCharArray(myValue);
+                               : OceanusDataConverter.bytesToCharArray(myValue);
     }
 
     /**
@@ -267,7 +267,7 @@ public abstract class PrometheusSheetCell {
      * @param pValue the date value
      * @throws OceanusException on error
      */
-    public void setDate(final TethysDate pValue) throws OceanusException {
+    public void setDate(final OceanusDate pValue) throws OceanusException {
         /* Ignore readOnly */
         if (isReadOnly) {
             return;
@@ -286,7 +286,7 @@ public abstract class PrometheusSheetCell {
      * @param pValue the integer value
      * @throws OceanusException on error
      */
-    protected abstract void setDateValue(TethysDate pValue) throws OceanusException;
+    protected abstract void setDateValue(OceanusDate pValue) throws OceanusException;
 
     /**
      * Set integer value of the cell.
@@ -390,7 +390,7 @@ public abstract class PrometheusSheetCell {
      * @param pValue the decimal value
      * @throws OceanusException on error
      */
-    public void setDecimal(final TethysDecimal pValue) throws OceanusException {
+    public void setDecimal(final OceanusDecimal pValue) throws OceanusException {
         /* Ignore readOnly */
         if (isReadOnly) {
             return;
@@ -409,14 +409,14 @@ public abstract class PrometheusSheetCell {
      * @param pValue the decimal value
      * @throws OceanusException on error
      */
-    protected abstract void setDecimalValue(TethysDecimal pValue) throws OceanusException;
+    protected abstract void setDecimalValue(OceanusDecimal pValue) throws OceanusException;
 
     /**
      * Set monetary value of the cell.
      * @param pValue the monetary value
      * @throws OceanusException on error
      */
-    public void setMonetary(final TethysMoney pValue) throws OceanusException {
+    public void setMonetary(final OceanusMoney pValue) throws OceanusException {
         /* Ignore readOnly */
         if (isReadOnly) {
             return;
@@ -435,7 +435,7 @@ public abstract class PrometheusSheetCell {
      * @param pValue the monetary value
      * @throws OceanusException on error
      */
-    protected abstract void setMonetaryValue(TethysMoney pValue) throws OceanusException;
+    protected abstract void setMonetaryValue(OceanusMoney pValue) throws OceanusException;
 
     /**
      * Set header value of the cell.
@@ -474,7 +474,7 @@ public abstract class PrometheusSheetCell {
         if (pValue == null) {
             setNullValue();
         } else {
-            setStringValue(TethysDataConverter.byteArrayToBase64(pValue));
+            setStringValue(OceanusDataConverter.byteArrayToBase64(pValue));
         }
     }
 
@@ -493,8 +493,8 @@ public abstract class PrometheusSheetCell {
         if (pValue == null) {
             setNullValue();
         } else {
-            final byte[] myBytes = TethysDataConverter.charsToByteArray(pValue);
-            setStringValue(TethysDataConverter.byteArrayToBase64(myBytes));
+            final byte[] myBytes = OceanusDataConverter.charsToByteArray(pValue);
+            setStringValue(OceanusDataConverter.byteArrayToBase64(myBytes));
         }
     }
 
@@ -504,19 +504,19 @@ public abstract class PrometheusSheetCell {
      * @return the required CellStyle
      */
     protected static PrometheusSheetCellStyleType getCellStyle(final Object pValue) {
-        if (pValue instanceof TethysPrice) {
+        if (pValue instanceof OceanusPrice) {
             return PrometheusSheetCellStyleType.PRICE;
         }
-        if (pValue instanceof TethysMoney) {
+        if (pValue instanceof OceanusMoney) {
             return PrometheusSheetCellStyleType.MONEY;
         }
-        if (pValue instanceof TethysUnits) {
+        if (pValue instanceof OceanusUnits) {
             return PrometheusSheetCellStyleType.UNITS;
         }
-        if (pValue instanceof TethysRate) {
+        if (pValue instanceof OceanusRate) {
             return PrometheusSheetCellStyleType.RATE;
         }
-        if (pValue instanceof TethysRatio) {
+        if (pValue instanceof OceanusRatio) {
             return PrometheusSheetCellStyleType.RATIO;
         }
         if (pValue instanceof Boolean) {
@@ -525,7 +525,7 @@ public abstract class PrometheusSheetCell {
         if (pValue instanceof Number) {
             return PrometheusSheetCellStyleType.INTEGER;
         }
-        if (pValue instanceof TethysDate) {
+        if (pValue instanceof OceanusDate) {
             return PrometheusSheetCellStyleType.DATE;
         }
         if (pValue instanceof String) {

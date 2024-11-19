@@ -16,9 +16,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.tethys.ui.api.button;
 
-import net.sourceforge.joceanus.tethys.date.TethysDate;
-import net.sourceforge.joceanus.tethys.date.TethysDateConfig;
-import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.date.OceanusDateConfig;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.TethysEventProvider;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.tethys.ui.api.control.TethysUIControl.TethysUIDateButton;
@@ -38,31 +38,31 @@ public interface TethysUIDateButtonManager
      * Obtain the configuration.
      * @return the configuration
      */
-    TethysDateConfig getConfig();
+    OceanusDateConfig getConfig();
 
     /**
      * Obtain the selected Date.
      * @return the selected Date
      */
-    TethysDate getSelectedDate();
+    OceanusDate getSelectedDate();
 
     /**
      * Obtain the earliest Date.
      * @return the earliest Date
      */
-    TethysDate getEarliestDate();
+    OceanusDate getEarliestDate();
 
     /**
      * Obtain the latest Date.
      * @return the latest Date
      */
-    TethysDate getLatestDate();
+    OceanusDate getLatestDate();
 
     /**
      * Set selected Date.
      * @param pDate the selected date
      */
-    void setSelectedDate(TethysDate pDate);
+    void setSelectedDate(OceanusDate pDate);
 
     /**
      * Get button text.
@@ -74,13 +74,13 @@ public interface TethysUIDateButtonManager
      * Set earliest Date.
      * @param pDate the earliest date
      */
-    void setEarliestDate(TethysDate pDate);
+    void setEarliestDate(OceanusDate pDate);
 
     /**
      * Set latest Date.
      * @param pDate the latest date
      */
-    void setLatestDate(TethysDate pDate);
+    void setLatestDate(OceanusDate pDate);
 
     /**
      * Allow Null Date selection.

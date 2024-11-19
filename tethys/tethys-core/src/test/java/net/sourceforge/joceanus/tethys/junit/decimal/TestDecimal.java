@@ -1,39 +1,22 @@
 package net.sourceforge.joceanus.tethys.junit.decimal;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.stream.Stream;
-
-/* *****************************************************************************
- * Tethys: Java Utilities
- * Copyright 2012,2024 Tony Washer
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- ******************************************************************************/
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.date.OceanusDateFormatter;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimal;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRate;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRatio;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusUnits;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DynamicNode;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.date.TethysDate;
-import net.sourceforge.joceanus.tethys.date.TethysDateFormatter;
-import net.sourceforge.joceanus.tethys.decimal.TethysDecimal;
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
-import net.sourceforge.joceanus.tethys.decimal.TethysPrice;
-import net.sourceforge.joceanus.tethys.decimal.TethysRate;
-import net.sourceforge.joceanus.tethys.decimal.TethysRatio;
-import net.sourceforge.joceanus.tethys.decimal.TethysUnits;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.stream.Stream;
 
 /**
  * Decimal JUnit Tests.
@@ -104,8 +87,8 @@ class TestDecimal {
     private static void checkAddition(final String pFirst,
                                       final String pSecond) {
         /* Obtain the two decimals */
-        final TethysDecimal myD1 = new TethysDecimal(pFirst);
-        final TethysDecimal myD2 = new TethysDecimal(pSecond);
+        final OceanusDecimal myD1 = new OceanusDecimal(pFirst);
+        final OceanusDecimal myD2 = new OceanusDecimal(pSecond);
         final int myScale = Math.max(myD1.scale(), myD2.scale());
 
         /* Obtain the two BigDecimals */
@@ -116,7 +99,7 @@ class TestDecimal {
         final BigDecimal myB3 = myB1.add(myB2);
 
         /* Check addition with rounding */
-        final TethysDecimal myD4 = new TethysDecimal(myD1);
+        final OceanusDecimal myD4 = new OceanusDecimal(myD1);
         myD4.addValue(myD2);
 
         /* Assert equality */
@@ -124,7 +107,7 @@ class TestDecimal {
                 "Failed Rounded Addition: " + pFirst + " + " + pSecond);
 
         /* Check addition with rounding */
-        final TethysDecimal myD5 = new TethysDecimal(myD2);
+        final OceanusDecimal myD5 = new OceanusDecimal(myD2);
         myD5.addValue(myD1);
 
         /* Assert equality */
@@ -132,7 +115,7 @@ class TestDecimal {
                 "Failed Rounded Addition: " + pFirst + " + " + pSecond);
 
         /* Assert equality */
-        final TethysDecimal myD3 = myD1.scale() > myD2.scale() ? myD4 : myD5;
+        final OceanusDecimal myD3 = myD1.scale() > myD2.scale() ? myD4 : myD5;
         Assertions.assertEquals(myB3, myD3.toBigDecimal(), "Failed Addition: " + pFirst + " + " + pSecond);
     }
 
@@ -144,8 +127,8 @@ class TestDecimal {
     private static void checkSubtraction(final String pFirst,
                                          final String pSecond) {
         /* Obtain the two decimals */
-        final TethysDecimal myD1 = new TethysDecimal(pFirst);
-        final TethysDecimal myD2 = new TethysDecimal(pSecond);
+        final OceanusDecimal myD1 = new OceanusDecimal(pFirst);
+        final OceanusDecimal myD2 = new OceanusDecimal(pSecond);
 
         /* Obtain the two BigDecimals */
         final BigDecimal myB1 = new BigDecimal(pFirst);
@@ -155,7 +138,7 @@ class TestDecimal {
         final BigDecimal myB3 = myB1.subtract(myB2);
 
         /* Check subtraction with rounding */
-        final TethysDecimal myD4 = new TethysDecimal(myD1);
+        final OceanusDecimal myD4 = new OceanusDecimal(myD1);
         myD4.subtractValue(myD2);
 
         /* Assert equality */
@@ -163,7 +146,7 @@ class TestDecimal {
                 "Failed Rounded Subtraction: " + pFirst + " - " + pSecond);
 
         /* Check subtraction with rounding */
-        final TethysDecimal myD5 = new TethysDecimal(myD2);
+        final OceanusDecimal myD5 = new OceanusDecimal(myD2);
         myD5.subtractValue(myD1);
         myD5.negate();
 
@@ -172,7 +155,7 @@ class TestDecimal {
                 "Failed Rounded Subtraction: -" + pSecond + " + " + pFirst);
 
         /* Assert equality */
-        final TethysDecimal myD3 = myD1.scale() > myD2.scale() ? myD4 : myD5;
+        final OceanusDecimal myD3 = myD1.scale() > myD2.scale() ? myD4 : myD5;
         Assertions.assertEquals(myB3, myD3.toBigDecimal(), "Failed Subtraction: " + pFirst + " - " + pSecond);
     }
 
@@ -184,15 +167,15 @@ class TestDecimal {
     private static void checkMultiplication(final String pFirst,
                                             final String pSecond) {
         /* Obtain the two decimals */
-        final TethysDecimal myD1 = new TethysDecimal(pFirst);
-        final TethysDecimal myD2 = new TethysDecimal(pSecond);
+        final OceanusDecimal myD1 = new OceanusDecimal(pFirst);
+        final OceanusDecimal myD2 = new OceanusDecimal(pSecond);
 
         /* Obtain the two BigDecimals */
         final BigDecimal myB1 = new BigDecimal(pFirst);
         final BigDecimal myB2 = new BigDecimal(pSecond);
 
         /* Multiply the two values */
-        final TethysDecimal myD3 = new TethysDecimal(myD1).multiply(myD2);
+        final OceanusDecimal myD3 = new OceanusDecimal(myD1).multiply(myD2);
         final BigDecimal myB3 = myB1.multiply(myB2);
 
         /* Assert equality */
@@ -207,15 +190,15 @@ class TestDecimal {
     private static void checkDivision(final String pFirst,
                                       final String pSecond) {
         /* Obtain the two decimals */
-        final TethysDecimal myD1 = new TethysDecimal(pFirst);
-        final TethysDecimal myD2 = new TethysDecimal(pSecond);
+        final OceanusDecimal myD1 = new OceanusDecimal(pFirst);
+        final OceanusDecimal myD2 = new OceanusDecimal(pSecond);
 
         /* Obtain the two BigDecimals */
         final BigDecimal myB1 = new BigDecimal(pFirst);
         final BigDecimal myB2 = new BigDecimal(pSecond);
 
         /* Divide the two values */
-        final TethysDecimal myD3 = new TethysDecimal(myD1).divide(myD2);
+        final OceanusDecimal myD3 = new OceanusDecimal(myD1).divide(myD2);
         final BigDecimal myB3 = myB1.divide(myB2, RoundingMode.HALF_UP);
 
         /* Assert equality */
@@ -227,36 +210,36 @@ class TestDecimal {
      */
     private static void checkBytes() {
         /* Obtain the two values */
-        final TethysRate myRate = new TethysRate("0.25");
-        final TethysUnits myUnits = new TethysUnits("25.678");
-        final TethysRatio myRatio = new TethysRatio("5425.68");
-        final TethysMoney myMoney = new TethysMoney("76.90");
-        final TethysPrice myPrice = new TethysPrice("0.9856");
-        final TethysDate myDate = new TethysDate();
+        final OceanusRate myRate = new OceanusRate("0.25");
+        final OceanusUnits myUnits = new OceanusUnits("25.678");
+        final OceanusRatio myRatio = new OceanusRatio("5425.68");
+        final OceanusMoney myMoney = new OceanusMoney("76.90");
+        final OceanusPrice myPrice = new OceanusPrice("0.9856");
+        final OceanusDate myDate = new OceanusDate();
 
         /* Check Rate */
-        final TethysRate myRate2 = new TethysRate(myRate.toBytes());
+        final OceanusRate myRate2 = new OceanusRate(myRate.toBytes());
         Assertions.assertEquals(myRate, myRate2, "Failed Rate");
 
         /* Check Units */
-        final TethysUnits myUnits2 = new TethysUnits(myUnits.toBytes());
+        final OceanusUnits myUnits2 = new OceanusUnits(myUnits.toBytes());
         Assertions.assertEquals(myUnits, myUnits2, "Failed Units");
 
         /* Check Ratio */
-        final TethysRatio myRatio2 = new TethysRatio(myRatio.toBytes());
+        final OceanusRatio myRatio2 = new OceanusRatio(myRatio.toBytes());
         Assertions.assertEquals(myRatio, myRatio2, "Failed Ratio");
 
         /* Check Money */
-        final TethysMoney myMoney2 = new TethysMoney(myMoney.toBytes());
+        final OceanusMoney myMoney2 = new OceanusMoney(myMoney.toBytes());
         Assertions.assertEquals(myMoney, myMoney2, "Failed Money");
 
         /* Check Price */
-        final TethysPrice myPrice2 = new TethysPrice(myPrice.toBytes());
+        final OceanusPrice myPrice2 = new OceanusPrice(myPrice.toBytes());
         Assertions.assertEquals(myPrice, myPrice2, "Failed Price");
 
         /* Check Date */
-        final TethysDateFormatter myFormatter = new TethysDateFormatter();
-        final TethysDate myDate2 = myFormatter.fromBytes(myFormatter.toBytes(myDate));
+        final OceanusDateFormatter myFormatter = new OceanusDateFormatter();
+        final OceanusDate myDate2 = myFormatter.fromBytes(myFormatter.toBytes(myDate));
         Assertions.assertEquals(myDate, myDate2, "Failed Date");
     }
 }

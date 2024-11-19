@@ -29,8 +29,8 @@ import net.sourceforge.joceanus.prometheus.data.PrometheusDataValuesFormatter;
 import net.sourceforge.joceanus.prometheus.preference.PrometheusBackup.PrometheusBackupPreferenceKey;
 import net.sourceforge.joceanus.prometheus.preference.PrometheusBackup.PrometheusBackupPreferences;
 import net.sourceforge.joceanus.prometheus.views.PrometheusDataControl;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.date.TethysDate;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
 import net.sourceforge.joceanus.tethys.ui.api.thread.TethysUIThread;
 import net.sourceforge.joceanus.tethys.ui.api.thread.TethysUIThreadManager;
 
@@ -114,7 +114,7 @@ public class PrometheusThreadCreateXMLFile
             /* If we are doing time-stamps */
             if (doTimeStamp) {
                 /* Obtain the current date/time */
-                final TethysDate myNow = new TethysDate();
+                final OceanusDate myNow = new OceanusDate();
 
                 myName.append(myNow.getYear());
                 if (myNow.getMonth() < TEN) {

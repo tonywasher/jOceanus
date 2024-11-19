@@ -25,9 +25,9 @@ import java.util.ListIterator;
 import net.sourceforge.joceanus.coeus.CoeusDataException;
 import net.sourceforge.joceanus.coeus.data.CoeusLoan;
 import net.sourceforge.joceanus.coeus.data.CoeusLoanStatus;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.date.TethysDate;
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
 
 /**
  * RateSetter class to repair data structures.
@@ -154,7 +154,7 @@ public class CoeusRateSetterRepair {
             final CoeusRateSetterLoanBookItem myItem = myLoan.getLoanBookItem();
             if (CoeusLoanStatus.ACTIVE.equals(myItem.getStatus())) {
                 /* Add repayments to the amount of the loan which is currently the balance */
-                final TethysMoney myLent = myItem.getLent();
+                final OceanusMoney myLent = myItem.getLent();
                 final CoeusRateSetterTotals myTotals = myLoan.getTotals();
                 myLent.subtractAmount(myTotals.getLoanBook());
             }
@@ -182,8 +182,8 @@ public class CoeusRateSetterRepair {
         while (myLoanIterator.hasNext()) {
             final CoeusRateSetterLoan myLoan = myLoanIterator.next();
             final CoeusRateSetterLoanBookItem myBookItem = myLoan.getLoanBookItem();
-            final TethysDate myDate = myBookItem.getStartDate();
-            final TethysMoney myLent = myBookItem.getLent();
+            final OceanusDate myDate = myBookItem.getStartDate();
+            final OceanusMoney myLent = myBookItem.getLent();
 
             /* Loop through all the initial loans */
             boolean doLoop = true;
@@ -224,17 +224,17 @@ public class CoeusRateSetterRepair {
         final Iterator<CoeusRateSetterTransaction> myInitIterator = theInitialLoans.iterator();
         while (myInitIterator.hasNext()) {
             final CoeusRateSetterTransaction myTrans = myInitIterator.next();
-            final TethysDate myDate = myTrans.getDate();
-            TethysDate myMatch = null;
+            final OceanusDate myDate = myTrans.getDate();
+            OceanusDate myMatch = null;
 
             /* Look for loans on the same date */
             myLoans.clear();
-            final TethysMoney myLoanAmount = new TethysMoney();
+            final OceanusMoney myLoanAmount = new OceanusMoney();
             final Iterator<CoeusRateSetterLoan> myLoanIterator = pLoans.iterator();
             while (myLoanIterator.hasNext()) {
                 final CoeusRateSetterLoan myLoan = myLoanIterator.next();
                 final CoeusRateSetterLoanBookItem myBookItem = myLoan.getLoanBookItem();
-                final TethysDate myStartDate = myBookItem.getStartDate();
+                final OceanusDate myStartDate = myBookItem.getStartDate();
                 final long myDays = myDate.daysUntil(myStartDate);
 
                 /* If the loan has a start date later than the initial loan */
@@ -289,7 +289,7 @@ public class CoeusRateSetterRepair {
      */
     private void handleCancellation(final CoeusRateSetterTransaction pLoan) throws OceanusException {
         /* Access value of loan */
-        final TethysMoney myLoanValue = pLoan.getHolding();
+        final OceanusMoney myLoanValue = pLoan.getHolding();
 
         /* Loop through the loans in reverse order */
         final int mySize = theInitialLoans.size();
