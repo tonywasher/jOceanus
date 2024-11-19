@@ -22,7 +22,7 @@ import net.sourceforge.joceanus.prometheus.data.PrometheusDataResource;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataValues;
 import net.sourceforge.joceanus.prometheus.data.PrometheusStaticDataItem;
 import net.sourceforge.joceanus.prometheus.database.PrometheusTableDefinition.PrometheusSortOrder;
-import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.tethys.OceanusException;
 
 /**
  * Database table class for Static Data Items. Each data type that represents Static Data should

@@ -19,9 +19,9 @@ package net.sourceforge.joceanus.prometheus.threads;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataSet;
 import net.sourceforge.joceanus.prometheus.database.PrometheusDataStore;
 import net.sourceforge.joceanus.prometheus.views.PrometheusDataControl;
-import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThread;
-import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadManager;
+import net.sourceforge.joceanus.tethys.OceanusException;
+import net.sourceforge.joceanus.tethys.ui.api.thread.TethysUIThread;
+import net.sourceforge.joceanus.tethys.ui.api.thread.TethysUIThreadManager;
 
 /**
  * Thread to purge tables in a database that represent a data set. Existing loaded data will be

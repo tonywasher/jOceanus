@@ -1,6 +1,6 @@
 /* Dependencies */
 dependencies {
-    implementation project(':jtethys-core')
+    implementation project(':tethys-core')
 }
 
 /* Description */

@@ -24,8 +24,8 @@ import java.util.regex.Pattern;
 
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataNamedItem;
 import net.sourceforge.joceanus.metis.field.MetisFieldVersionedItem;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent;
-import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
+import net.sourceforge.joceanus.tethys.event.TethysEvent;
+import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar;
 
 /**
  * Name Map.

@@ -23,7 +23,7 @@ import net.sourceforge.joceanus.gordianknot.api.cipher.GordianKeyedCipher;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymKeySpec;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.gordianknot.impl.core.cipher.GordianCoreCipher;
-import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.tethys.OceanusException;
 
 /**
  * Output stream cipher implementation.

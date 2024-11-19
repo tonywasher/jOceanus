@@ -18,8 +18,8 @@ package net.sourceforge.joceanus.metis.ui;
 
 import java.util.ResourceBundle;
 
-import net.sourceforge.joceanus.jtethys.resource.TethysBundleId;
-import net.sourceforge.joceanus.jtethys.resource.TethysBundleLoader;
+import net.sourceforge.joceanus.tethys.resource.TethysBundleId;
+import net.sourceforge.joceanus.tethys.resource.TethysBundleLoader;
 
 /**
  * Resource IDs for jMetis UI Fields.

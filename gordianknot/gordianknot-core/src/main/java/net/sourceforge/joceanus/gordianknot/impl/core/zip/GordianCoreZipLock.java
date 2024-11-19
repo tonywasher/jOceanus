@@ -31,7 +31,7 @@ import net.sourceforge.joceanus.gordianknot.api.zip.GordianZipLock;
 import net.sourceforge.joceanus.gordianknot.api.zip.GordianZipLockType;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianLogicException;
 import net.sourceforge.joceanus.gordianknot.impl.core.lock.GordianCoreLockFactory;
-import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.tethys.OceanusException;
 
 /**
  * Lock implementation.

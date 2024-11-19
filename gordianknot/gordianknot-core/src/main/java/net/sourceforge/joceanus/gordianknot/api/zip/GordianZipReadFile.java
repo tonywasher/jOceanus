@@ -20,7 +20,7 @@ import java.io.InputStream;
 
 import org.w3c.dom.Document;
 
-import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.tethys.OceanusException;
 
 /**
  * GordianKnot Zip ReadFile API.

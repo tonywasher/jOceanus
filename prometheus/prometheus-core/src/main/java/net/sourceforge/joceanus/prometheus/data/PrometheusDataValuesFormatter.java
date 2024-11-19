@@ -53,10 +53,10 @@ import net.sourceforge.joceanus.metis.toolkit.MetisToolkit;
 import net.sourceforge.joceanus.prometheus.PrometheusDataException;
 import net.sourceforge.joceanus.prometheus.PrometheusIOException;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataValues.PrometheusGroupedItem;
-import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.profile.TethysProfile;
-import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
-import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadStatusReport;
+import net.sourceforge.joceanus.tethys.OceanusException;
+import net.sourceforge.joceanus.tethys.profile.TethysProfile;
+import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
+import net.sourceforge.joceanus.tethys.ui.api.thread.TethysUIThreadStatusReport;
 
 /**
  * Formatter/Parser class for DataValues.

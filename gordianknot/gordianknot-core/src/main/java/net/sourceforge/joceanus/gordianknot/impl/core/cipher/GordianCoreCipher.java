@@ -33,7 +33,7 @@ import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianLogicException
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianRandomSource;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
 
-import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.tethys.OceanusException;
 
 /**
  * Core Cipher implementation.

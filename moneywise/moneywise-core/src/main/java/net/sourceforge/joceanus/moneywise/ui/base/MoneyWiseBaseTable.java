@@ -35,20 +35,20 @@ import net.sourceforge.joceanus.prometheus.data.PrometheusListKey;
 import net.sourceforge.joceanus.prometheus.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditEntry;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
-import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.TethysDataException;
-import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
-import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
-import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
-import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
-import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
-import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIComponent;
-import net.sourceforge.joceanus.jtethys.ui.api.dialog.TethysUIFileSelector;
-import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
-import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIBorderPaneManager;
-import net.sourceforge.joceanus.jtethys.ui.api.table.TethysUITableColumn;
-import net.sourceforge.joceanus.jtethys.ui.api.table.TethysUITableColumn.TethysUIOnCellCommit;
-import net.sourceforge.joceanus.jtethys.ui.api.table.TethysUITableManager;
+import net.sourceforge.joceanus.tethys.OceanusException;
+import net.sourceforge.joceanus.tethys.TethysDataException;
+import net.sourceforge.joceanus.tethys.event.TethysEventManager;
+import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar;
+import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.tethys.logger.TethysLogManager;
+import net.sourceforge.joceanus.tethys.logger.TethysLogger;
+import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIComponent;
+import net.sourceforge.joceanus.tethys.ui.api.dialog.TethysUIFileSelector;
+import net.sourceforge.joceanus.tethys.ui.api.factory.TethysUIFactory;
+import net.sourceforge.joceanus.tethys.ui.api.pane.TethysUIBorderPaneManager;
+import net.sourceforge.joceanus.tethys.ui.api.table.TethysUITableColumn;
+import net.sourceforge.joceanus.tethys.ui.api.table.TethysUITableColumn.TethysUIOnCellCommit;
+import net.sourceforge.joceanus.tethys.ui.api.table.TethysUITableManager;
 
 /**
  * MoneyWise Base Table.

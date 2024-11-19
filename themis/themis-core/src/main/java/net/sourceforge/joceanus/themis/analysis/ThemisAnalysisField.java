@@ -21,7 +21,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
-import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.tethys.OceanusException;
 import net.sourceforge.joceanus.themis.analysis.ThemisAnalysisIf.ThemisIteratorChain;
 import net.sourceforge.joceanus.themis.analysis.ThemisAnalysisStatement.ThemisAnalysisStatementHolder;
 

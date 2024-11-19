@@ -24,8 +24,8 @@ import java.util.Set;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
 
-import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
-import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
+import net.sourceforge.joceanus.tethys.logger.TethysLogManager;
+import net.sourceforge.joceanus.tethys.logger.TethysLogger;
 
 /**
  * Security Test suite - List Algorithms.

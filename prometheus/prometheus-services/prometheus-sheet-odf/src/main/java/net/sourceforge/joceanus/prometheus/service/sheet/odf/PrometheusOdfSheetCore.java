@@ -25,8 +25,8 @@ import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetCellPosi
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetCellRange;
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetCellStyleType;
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetRow;
-import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
+import net.sourceforge.joceanus.tethys.OceanusException;
+import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
 
 /**
  * Sheet definition.

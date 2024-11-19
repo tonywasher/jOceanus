@@ -23,9 +23,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 import net.sourceforge.joceanus.metis.MetisIOException;
-import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
-import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
+import net.sourceforge.joceanus.tethys.OceanusException;
+import net.sourceforge.joceanus.tethys.logger.TethysLogManager;
+import net.sourceforge.joceanus.tethys.logger.TethysLogger;
 
 /**
  * Safe File Create.

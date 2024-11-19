@@ -27,7 +27,7 @@ module net.sourceforge.joceanus.gordianknot.core {
     requires org.bouncycastle.pg;
 
     /* jOceanus */
-    requires net.sourceforge.joceanus.jtethys.core;
+    requires net.sourceforge.joceanus.tethys.core;
 
     /* Exports */
     exports net.sourceforge.joceanus.gordianknot.api.agree;

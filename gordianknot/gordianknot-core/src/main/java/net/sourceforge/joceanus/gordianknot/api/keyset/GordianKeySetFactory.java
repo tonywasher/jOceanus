@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.gordianknot.api.keyset;
 
 import java.util.function.Predicate;
 
-import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.tethys.OceanusException;
 
 /**
  * GordianKnot KeySet API.

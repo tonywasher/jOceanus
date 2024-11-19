@@ -19,7 +19,7 @@ package net.sourceforge.joceanus.gordianknot.api.keypair;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 
-import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.tethys.OceanusException;
 
 /**
  * KeyPair Generator API.

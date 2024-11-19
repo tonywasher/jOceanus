@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.moneywise.help;
 
 import java.io.InputStream;
 
-import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUIHTMLManager.TethysUIStyleSheetId;
+import net.sourceforge.joceanus.tethys.ui.api.control.TethysUIHTMLManager.TethysUIStyleSheetId;
 
 /**
  * StyleSheetIds.

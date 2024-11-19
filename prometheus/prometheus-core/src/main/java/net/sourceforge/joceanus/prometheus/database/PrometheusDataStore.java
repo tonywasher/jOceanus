@@ -19,11 +19,11 @@ package net.sourceforge.joceanus.prometheus.database;
 import net.sourceforge.joceanus.prometheus.PrometheusIOException;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataSet;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataSet.PrometheusCryptographyDataType;
-import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
-import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
-import net.sourceforge.joceanus.jtethys.profile.TethysProfile;
-import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadStatusReport;
+import net.sourceforge.joceanus.tethys.OceanusException;
+import net.sourceforge.joceanus.tethys.logger.TethysLogManager;
+import net.sourceforge.joceanus.tethys.logger.TethysLogger;
+import net.sourceforge.joceanus.tethys.profile.TethysProfile;
+import net.sourceforge.joceanus.tethys.ui.api.thread.TethysUIThreadStatusReport;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

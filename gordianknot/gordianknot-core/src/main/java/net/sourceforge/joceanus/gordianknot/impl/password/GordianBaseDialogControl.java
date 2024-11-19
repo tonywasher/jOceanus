@@ -17,8 +17,8 @@
 package net.sourceforge.joceanus.gordianknot.impl.password;
 
 import net.sourceforge.joceanus.gordianknot.api.password.GordianDialogController;
-import net.sourceforge.joceanus.jtethys.ui.api.dialog.TethysUIPasswordDialog;
-import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
+import net.sourceforge.joceanus.tethys.ui.api.dialog.TethysUIPasswordDialog;
+import net.sourceforge.joceanus.tethys.ui.api.factory.TethysUIFactory;
 
 /**
  * DialogControl.

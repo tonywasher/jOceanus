@@ -44,7 +44,7 @@ import net.sourceforge.joceanus.gordianknot.impl.core.cipher.GordianCoreCipherFa
 import net.sourceforge.joceanus.gordianknot.impl.core.digest.GordianCoreDigestFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.mac.GordianCoreMacFactory;
 import net.sourceforge.joceanus.gordianknot.util.GordianGenerator;
-import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.tethys.OceanusException;
 
 /**
  * Security Test suite - Test Symmetric/Stream and Digest/MAC Algorithms.

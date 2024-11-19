@@ -19,7 +19,7 @@ package net.sourceforge.joceanus.gordianknot.impl.core.kdf;
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianLogicException;
-import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.tethys.OceanusException;
 
 import java.util.ArrayList;
 import java.util.List;

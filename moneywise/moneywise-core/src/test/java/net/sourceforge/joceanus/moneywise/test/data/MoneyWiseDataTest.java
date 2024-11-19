@@ -45,15 +45,15 @@ import net.sourceforge.joceanus.moneywise.tax.uk.MoneyWiseUKTaxYearCache;
 import net.sourceforge.joceanus.moneywise.views.MoneyWiseView;
 import net.sourceforge.joceanus.prometheus.toolkit.PrometheusToolkit;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
-import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
-import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
-import net.sourceforge.joceanus.jtethys.profile.TethysProfile;
-import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThread;
-import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadEvent;
-import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadManager;
-import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadStatusManager;
-import net.sourceforge.joceanus.jtethys.ui.helper.TethysUIHelperFactory;
+import net.sourceforge.joceanus.tethys.OceanusException;
+import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
+import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar;
+import net.sourceforge.joceanus.tethys.profile.TethysProfile;
+import net.sourceforge.joceanus.tethys.ui.api.thread.TethysUIThread;
+import net.sourceforge.joceanus.tethys.ui.api.thread.TethysUIThreadEvent;
+import net.sourceforge.joceanus.tethys.ui.api.thread.TethysUIThreadManager;
+import net.sourceforge.joceanus.tethys.ui.api.thread.TethysUIThreadStatusManager;
+import net.sourceforge.joceanus.tethys.ui.helper.TethysUIHelperFactory;
 
 /**
  * Test security.

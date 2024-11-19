@@ -24,7 +24,7 @@ import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
 
 import net.sourceforge.joceanus.moneywise.MoneyWiseIOException;
-import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.tethys.OceanusException;
 
 /**
  * Wrapper for stream writer.

@@ -17,7 +17,7 @@
 package net.sourceforge.joceanus.gordianknot.api.agree;
 
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
-import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.tethys.OceanusException;
 
 /**
  * Handshake Two/ThreeShot Agreement.

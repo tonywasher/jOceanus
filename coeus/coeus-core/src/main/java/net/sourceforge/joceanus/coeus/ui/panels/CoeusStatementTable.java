@@ -34,17 +34,17 @@ import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.metis.list.MetisListBaseManager;
 import net.sourceforge.joceanus.metis.list.MetisListIndexed;
 import net.sourceforge.joceanus.metis.toolkit.MetisToolkit;
-import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.TethysDataException;
-import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
-import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
-import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
-import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIComponent;
-import net.sourceforge.joceanus.jtethys.ui.api.dialog.TethysUIFileSelector;
-import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
-import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIBorderPaneManager;
-import net.sourceforge.joceanus.jtethys.ui.api.table.TethysUITableColumn.TethysUITableScrollColumn;
-import net.sourceforge.joceanus.jtethys.ui.api.table.TethysUITableManager;
+import net.sourceforge.joceanus.tethys.OceanusException;
+import net.sourceforge.joceanus.tethys.TethysDataException;
+import net.sourceforge.joceanus.tethys.decimal.TethysDecimal;
+import net.sourceforge.joceanus.tethys.logger.TethysLogManager;
+import net.sourceforge.joceanus.tethys.logger.TethysLogger;
+import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIComponent;
+import net.sourceforge.joceanus.tethys.ui.api.dialog.TethysUIFileSelector;
+import net.sourceforge.joceanus.tethys.ui.api.factory.TethysUIFactory;
+import net.sourceforge.joceanus.tethys.ui.api.pane.TethysUIBorderPaneManager;
+import net.sourceforge.joceanus.tethys.ui.api.table.TethysUITableColumn.TethysUITableScrollColumn;
+import net.sourceforge.joceanus.tethys.ui.api.table.TethysUITableManager;
 
 /**
  * Statement Panel.

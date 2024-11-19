@@ -17,7 +17,7 @@
 package net.sourceforge.joceanus.gordianknot.api.password;
 
 import net.sourceforge.joceanus.gordianknot.api.zip.GordianZipLock;
-import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.tethys.OceanusException;
 
 /**
  * ZipLock Manager.

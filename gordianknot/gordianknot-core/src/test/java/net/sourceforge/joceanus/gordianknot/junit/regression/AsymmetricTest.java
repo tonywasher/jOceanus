@@ -70,7 +70,7 @@ import net.sourceforge.joceanus.gordianknot.junit.regression.AsymmetricStore.Fac
 import net.sourceforge.joceanus.gordianknot.junit.regression.AsymmetricStore.FactoryKeySpec;
 import net.sourceforge.joceanus.gordianknot.junit.regression.AsymmetricStore.FactorySignature;
 import net.sourceforge.joceanus.gordianknot.util.GordianGenerator;
-import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.tethys.OceanusException;
 
 /**
  * Security Test suite - Test Asymmetric functionality.

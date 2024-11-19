@@ -16,7 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.metis;
 
-import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.tethys.OceanusException;
 
 /**
  * Metis Data Exception.

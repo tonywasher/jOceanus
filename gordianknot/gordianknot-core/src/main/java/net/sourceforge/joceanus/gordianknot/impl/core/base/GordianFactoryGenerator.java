@@ -17,7 +17,7 @@
 package net.sourceforge.joceanus.gordianknot.impl.core.base;
 
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactory;
-import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.tethys.OceanusException;
 
 /**
  * FactoryGenerator.

@@ -35,22 +35,22 @@ import net.sourceforge.joceanus.prometheus.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
 import net.sourceforge.joceanus.prometheus.views.PrometheusUIEvent;
 import net.sourceforge.joceanus.prometheus.views.PrometheusViewerEntryId;
-import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent;
-import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
-import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
-import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
-import net.sourceforge.joceanus.jtethys.profile.TethysProfile;
-import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIComponent;
-import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIEvent;
-import net.sourceforge.joceanus.jtethys.ui.api.button.TethysUIScrollButtonManager;
-import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUILabel;
-import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
-import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollMenu;
-import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIBorderPaneManager;
-import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIBoxPaneManager;
-import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUICardPaneManager;
-import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIPaneFactory;
+import net.sourceforge.joceanus.tethys.OceanusException;
+import net.sourceforge.joceanus.tethys.event.TethysEvent;
+import net.sourceforge.joceanus.tethys.event.TethysEventManager;
+import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar;
+import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.tethys.profile.TethysProfile;
+import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIComponent;
+import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIEvent;
+import net.sourceforge.joceanus.tethys.ui.api.button.TethysUIScrollButtonManager;
+import net.sourceforge.joceanus.tethys.ui.api.control.TethysUILabel;
+import net.sourceforge.joceanus.tethys.ui.api.factory.TethysUIFactory;
+import net.sourceforge.joceanus.tethys.ui.api.menu.TethysUIScrollMenu;
+import net.sourceforge.joceanus.tethys.ui.api.pane.TethysUIBorderPaneManager;
+import net.sourceforge.joceanus.tethys.ui.api.pane.TethysUIBoxPaneManager;
+import net.sourceforge.joceanus.tethys.ui.api.pane.TethysUICardPaneManager;
+import net.sourceforge.joceanus.tethys.ui.api.pane.TethysUIPaneFactory;
 
 public class MoneyWiseCategoryPanel
         implements TethysEventProvider<PrometheusDataEvent>, TethysUIComponent {

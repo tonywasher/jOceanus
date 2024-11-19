@@ -1,13 +1,13 @@
 /* Dependencies */
 dependencies {
     implementation project(':moneywise-core')
-    implementation project(':jtethys-swing')
-    implementation project(':jtethys-core')
+    implementation project(':tethys-swing')
+    implementation project(':tethys-core')
 }
 
 /* Details */
 description = 'MoneyWise Personal Finance - Swing'
-mainClass = "net.sourceforge.joceanus.moneywise.lethe.ui.swing.Control"
+mainClass = "net.sourceforge.joceanus.moneywise.ui.swing.MoneyWise4Swing"
 moduleName = "net.sourceforge.joceanus.moneywise.swing"
 splashScreen = "net/sourceforge/joceanus/moneywise/ui/icons/swing/MoneyWiseSplash.png"
 

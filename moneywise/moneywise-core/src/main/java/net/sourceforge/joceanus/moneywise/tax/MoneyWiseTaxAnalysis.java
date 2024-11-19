@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.moneywise.tax;
 
 import java.util.Iterator;
 
-import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
+import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
 
 /**
  * UK Tax Analysis.

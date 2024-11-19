@@ -17,7 +17,7 @@
 package net.sourceforge.joceanus.metis.field;
 
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
-import net.sourceforge.joceanus.jtethys.resource.TethysBundleId;
+import net.sourceforge.joceanus.tethys.resource.TethysBundleId;
 
 /**
  * Simple class to convert a string into a FieldId.

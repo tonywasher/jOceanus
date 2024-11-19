@@ -19,7 +19,7 @@ package net.sourceforge.joceanus.gordianknot.api.keypair;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestSpecBuilder;
-import net.sourceforge.joceanus.jtethys.TethysDataConverter;
+import net.sourceforge.joceanus.tethys.TethysDataConverter;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -50,9 +50,9 @@ import net.sourceforge.joceanus.gordianknot.impl.core.keystore.GordianCoreKeySto
 import net.sourceforge.joceanus.gordianknot.impl.core.keystore.GordianPEMObject.GordianPEMObjectType;
 import net.sourceforge.joceanus.gordianknot.impl.core.zip.GordianCoreZipLock;
 import net.sourceforge.joceanus.gordianknot.impl.core.zip.GordianZipLockASN1;
-import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.TethysDataConverter;
-import net.sourceforge.joceanus.jtethys.date.TethysDate;
+import net.sourceforge.joceanus.tethys.OceanusException;
+import net.sourceforge.joceanus.tethys.TethysDataConverter;
+import net.sourceforge.joceanus.tethys.date.TethysDate;
 
 /**
  * PEM Coder/deCoder.

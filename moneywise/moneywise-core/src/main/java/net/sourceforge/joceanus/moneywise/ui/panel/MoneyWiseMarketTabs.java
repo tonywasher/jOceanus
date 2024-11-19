@@ -21,12 +21,12 @@ import net.sourceforge.joceanus.moneywise.ui.panel.MoneyWiseMarketPricesTable.Mo
 import net.sourceforge.joceanus.moneywise.ui.panel.MoneyWiseMarketRatesTable.MoneyWiseSpotRatesPanel;
 import net.sourceforge.joceanus.moneywise.views.MoneyWiseView;
 import net.sourceforge.joceanus.prometheus.views.PrometheusDataEvent;
-import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
-import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
-import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
-import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIComponent;
-import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUITabPaneManager;
-import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUITabPaneManager.TethysUITabItem;
+import net.sourceforge.joceanus.tethys.event.TethysEventManager;
+import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar;
+import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIComponent;
+import net.sourceforge.joceanus.tethys.ui.api.pane.TethysUITabPaneManager;
+import net.sourceforge.joceanus.tethys.ui.api.pane.TethysUITabPaneManager.TethysUITabItem;
 
 /**
  * Market Tab panel.

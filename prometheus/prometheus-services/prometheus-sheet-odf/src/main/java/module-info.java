@@ -23,7 +23,7 @@ module net.sourceforge.joceanus.prometheus.sheet.odf {
     requires java.xml;
 
     /* jOceanus */
-    requires net.sourceforge.joceanus.jtethys.core;
+    requires net.sourceforge.joceanus.tethys.core;
     requires net.sourceforge.joceanus.prometheus.sheet.api;
 
     /* Services provided */

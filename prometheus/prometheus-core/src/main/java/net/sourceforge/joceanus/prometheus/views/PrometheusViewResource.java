@@ -22,8 +22,8 @@ import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.metis.viewer.MetisViewerResource;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataSet;
-import net.sourceforge.joceanus.jtethys.resource.TethysBundleId;
-import net.sourceforge.joceanus.jtethys.resource.TethysBundleLoader;
+import net.sourceforge.joceanus.tethys.resource.TethysBundleId;
+import net.sourceforge.joceanus.tethys.resource.TethysBundleLoader;
 
 /**
  * Resource IDs for jPrometheus View Fields.

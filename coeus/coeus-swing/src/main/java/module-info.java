@@ -23,8 +23,8 @@ module net.sourceforge.joceanus.coeus.swing {
 
     /* jOceanus */
     requires net.sourceforge.joceanus.coeus.core;
-    requires net.sourceforge.joceanus.jtethys.core;
-    requires net.sourceforge.joceanus.jtethys.swing;
+    requires net.sourceforge.joceanus.tethys.core;
+    requires net.sourceforge.joceanus.tethys.swing;
 
     /* Exports */
     exports net.sourceforge.joceanus.coeus.ui.swing;

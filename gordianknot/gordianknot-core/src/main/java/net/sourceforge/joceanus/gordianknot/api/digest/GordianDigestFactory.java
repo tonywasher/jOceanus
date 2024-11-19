@@ -19,7 +19,7 @@ package net.sourceforge.joceanus.gordianknot.api.digest;
 import java.util.List;
 import java.util.function.Predicate;
 
-import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.tethys.OceanusException;
 
 /**
  * Digest factory.

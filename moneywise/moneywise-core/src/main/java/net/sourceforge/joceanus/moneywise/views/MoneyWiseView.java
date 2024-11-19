@@ -35,9 +35,9 @@ import net.sourceforge.joceanus.prometheus.sheets.PrometheusSpreadSheet;
 import net.sourceforge.joceanus.prometheus.views.PrometheusDataControl;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
 import net.sourceforge.joceanus.prometheus.views.PrometheusViewerEntryId;
-import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
-import net.sourceforge.joceanus.jtethys.profile.TethysProfile;
+import net.sourceforge.joceanus.tethys.OceanusException;
+import net.sourceforge.joceanus.tethys.date.TethysDateRange;
+import net.sourceforge.joceanus.tethys.profile.TethysProfile;
 
 /**
  * Data Control for MoneyWiseApp.

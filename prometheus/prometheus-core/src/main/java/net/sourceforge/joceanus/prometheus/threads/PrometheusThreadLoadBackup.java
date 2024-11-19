@@ -29,10 +29,10 @@ import net.sourceforge.joceanus.prometheus.preference.PrometheusBackup.Prometheu
 import net.sourceforge.joceanus.prometheus.preference.PrometheusBackup.PrometheusBackupPreferences;
 import net.sourceforge.joceanus.prometheus.sheets.PrometheusSpreadSheet;
 import net.sourceforge.joceanus.prometheus.views.PrometheusDataControl;
-import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.ui.api.dialog.TethysUIFileSelector;
-import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThread;
-import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadManager;
+import net.sourceforge.joceanus.tethys.OceanusException;
+import net.sourceforge.joceanus.tethys.ui.api.dialog.TethysUIFileSelector;
+import net.sourceforge.joceanus.tethys.ui.api.thread.TethysUIThread;
+import net.sourceforge.joceanus.tethys.ui.api.thread.TethysUIThreadManager;
 
 /**
  * Thread to load changes from an encrypted backup. Once the backup is loaded, the current database

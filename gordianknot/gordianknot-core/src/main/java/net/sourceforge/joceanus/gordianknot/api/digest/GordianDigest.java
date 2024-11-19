@@ -17,7 +17,7 @@
 package net.sourceforge.joceanus.gordianknot.api.digest;
 
 import net.sourceforge.joceanus.gordianknot.api.base.GordianConsumer;
-import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.tethys.OceanusException;
 
 /**
  * GordianKnot interface for Message Digests.

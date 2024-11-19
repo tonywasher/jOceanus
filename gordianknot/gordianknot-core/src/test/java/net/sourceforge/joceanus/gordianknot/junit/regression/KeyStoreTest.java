@@ -69,7 +69,7 @@ import net.sourceforge.joceanus.gordianknot.impl.core.keystore.GordianCoreKeySto
 import net.sourceforge.joceanus.gordianknot.impl.core.keystore.GordianCoreKeyStoreGateway;
 import net.sourceforge.joceanus.gordianknot.impl.core.keystore.GordianCoreKeyStoreManager;
 import net.sourceforge.joceanus.gordianknot.util.GordianGenerator;
-import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.tethys.OceanusException;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x500.X500NameBuilder;
 import org.bouncycastle.asn1.x500.style.BCStyle;

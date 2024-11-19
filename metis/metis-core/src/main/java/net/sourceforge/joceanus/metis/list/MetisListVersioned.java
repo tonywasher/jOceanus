@@ -20,7 +20,7 @@ import java.security.InvalidParameterException;
 
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.metis.field.MetisFieldVersionedItem;
-import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar.TethysEventProvider;
 
 /**
  * Versioned List implementation.

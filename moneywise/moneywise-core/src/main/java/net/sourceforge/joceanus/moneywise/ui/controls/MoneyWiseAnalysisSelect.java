@@ -32,25 +32,25 @@ import net.sourceforge.joceanus.moneywise.lethe.views.MoneyWiseAnalysisFilter.Mo
 import net.sourceforge.joceanus.moneywise.views.MoneyWiseAnalysisView;
 import net.sourceforge.joceanus.moneywise.views.MoneyWiseView;
 import net.sourceforge.joceanus.prometheus.views.PrometheusDataEvent;
-import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
-import net.sourceforge.joceanus.jtethys.date.TethysDateResource;
-import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
-import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
-import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
-import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIArrowIconId;
-import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIComponent;
-import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIEvent;
-import net.sourceforge.joceanus.jtethys.ui.api.button.TethysUIButton;
-import net.sourceforge.joceanus.jtethys.ui.api.button.TethysUIButtonFactory;
-import net.sourceforge.joceanus.jtethys.ui.api.button.TethysUIDateRangeSelector;
-import net.sourceforge.joceanus.jtethys.ui.api.button.TethysUIScrollButtonManager;
-import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUIControlFactory;
-import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUILabel;
-import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
-import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollMenu;
-import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIBoxPaneManager;
-import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUICardPaneManager;
-import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIPaneFactory;
+import net.sourceforge.joceanus.tethys.date.TethysDateRange;
+import net.sourceforge.joceanus.tethys.date.TethysDateResource;
+import net.sourceforge.joceanus.tethys.event.TethysEventManager;
+import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar;
+import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIArrowIconId;
+import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIComponent;
+import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIEvent;
+import net.sourceforge.joceanus.tethys.ui.api.button.TethysUIButton;
+import net.sourceforge.joceanus.tethys.ui.api.button.TethysUIButtonFactory;
+import net.sourceforge.joceanus.tethys.ui.api.button.TethysUIDateRangeSelector;
+import net.sourceforge.joceanus.tethys.ui.api.button.TethysUIScrollButtonManager;
+import net.sourceforge.joceanus.tethys.ui.api.control.TethysUIControlFactory;
+import net.sourceforge.joceanus.tethys.ui.api.control.TethysUILabel;
+import net.sourceforge.joceanus.tethys.ui.api.factory.TethysUIFactory;
+import net.sourceforge.joceanus.tethys.ui.api.menu.TethysUIScrollMenu;
+import net.sourceforge.joceanus.tethys.ui.api.pane.TethysUIBoxPaneManager;
+import net.sourceforge.joceanus.tethys.ui.api.pane.TethysUICardPaneManager;
+import net.sourceforge.joceanus.tethys.ui.api.pane.TethysUIPaneFactory;
 
 /**
  * Selection panel for Analysis Statement.

@@ -18,8 +18,8 @@ package net.sourceforge.joceanus.prometheus.preference;
 
 import net.sourceforge.joceanus.metis.preference.MetisPreferenceKey;
 import net.sourceforge.joceanus.metis.preference.MetisPreferenceSet;
-import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.resource.TethysBundleId;
+import net.sourceforge.joceanus.tethys.OceanusException;
+import net.sourceforge.joceanus.tethys.resource.TethysBundleId;
 
 /**
  * Prometheus PreferenceSet.

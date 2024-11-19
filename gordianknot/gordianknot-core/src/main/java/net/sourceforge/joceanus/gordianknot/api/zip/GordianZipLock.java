@@ -17,7 +17,7 @@
 package net.sourceforge.joceanus.gordianknot.api.zip;
 
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
-import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.tethys.OceanusException;
 
 /**
  * Lock interface.

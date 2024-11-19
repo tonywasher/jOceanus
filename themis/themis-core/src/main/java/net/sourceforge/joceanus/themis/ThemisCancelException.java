@@ -16,7 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.themis;
 
-import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.tethys.OceanusException;
 
 /**
  * Themis Cancel Exception.

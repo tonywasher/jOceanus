@@ -19,7 +19,7 @@ package net.sourceforge.joceanus.prometheus.sheets;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataSet.PrometheusCryptographyDataType;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataValues;
 import net.sourceforge.joceanus.prometheus.data.PrometheusEncryptedDataItem;
-import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.tethys.OceanusException;
 
 /**
  * Extension of SheetDataItem class for accessing a sheet that is related to an encrypted data type.

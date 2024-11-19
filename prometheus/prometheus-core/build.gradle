@@ -3,7 +3,7 @@ dependencies {
     implementation project(':prometheus-sheet-api')
     implementation project(':metis-core')
     implementation project(':gordianknot-core')
-    implementation project(':jtethys-core')
+    implementation project(':tethys-core')
     runtimeOnly "com.mysql:mysql-connector-j:$mySQLVersion"
     runtimeOnly "org.mariadb.jdbc:mariadb-java-client:$MariaDBVersion"
     runtimeOnly "org.postgresql:postgresql:$postGreSQLVersion"

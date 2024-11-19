@@ -32,20 +32,20 @@ import net.sourceforge.joceanus.prometheus.toolkit.PrometheusToolkit;
 import net.sourceforge.joceanus.prometheus.ui.PrometheusGoToEvent;
 import net.sourceforge.joceanus.prometheus.ui.panel.PrometheusMainWindow;
 import net.sourceforge.joceanus.prometheus.views.PrometheusDataEvent;
-import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent;
-import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
-import net.sourceforge.joceanus.jtethys.profile.TethysProfile;
-import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIComponent;
-import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIEvent;
-import net.sourceforge.joceanus.jtethys.ui.api.dialog.TethysUIAboutBox;
-import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
-import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUILogTextArea;
-import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIMainPanel;
-import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIMenuBarManager;
-import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIMenuBarManager.TethysUIMenuSubMenu;
-import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUITabPaneManager;
-import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUITabPaneManager.TethysUITabItem;
+import net.sourceforge.joceanus.tethys.OceanusException;
+import net.sourceforge.joceanus.tethys.event.TethysEvent;
+import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar;
+import net.sourceforge.joceanus.tethys.profile.TethysProfile;
+import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIComponent;
+import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIEvent;
+import net.sourceforge.joceanus.tethys.ui.api.dialog.TethysUIAboutBox;
+import net.sourceforge.joceanus.tethys.ui.api.factory.TethysUIFactory;
+import net.sourceforge.joceanus.tethys.ui.api.factory.TethysUILogTextArea;
+import net.sourceforge.joceanus.tethys.ui.api.factory.TethysUIMainPanel;
+import net.sourceforge.joceanus.tethys.ui.api.menu.TethysUIMenuBarManager;
+import net.sourceforge.joceanus.tethys.ui.api.menu.TethysUIMenuBarManager.TethysUIMenuSubMenu;
+import net.sourceforge.joceanus.tethys.ui.api.pane.TethysUITabPaneManager;
+import net.sourceforge.joceanus.tethys.ui.api.pane.TethysUITabPaneManager.TethysUITabItem;
 
 /**
  * Main Window for MoneyWise.

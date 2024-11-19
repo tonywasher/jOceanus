@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.moneywise.tax;
 
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTaxClass;
 import net.sourceforge.joceanus.moneywise.tax.MoneyWiseChargeableGainSlice.MoneyWiseChargeableGainSliceList;
-import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
+import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
 
 /**
  * Tax Source.

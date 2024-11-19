@@ -1,7 +1,7 @@
 /* Dependencies */
 dependencies {
     implementation project(':prometheus-sheet-api')
-    implementation project(':jtethys-core')
+    implementation project(':tethys-core')
     implementation "org.apache.poi:poi:$apachePOIVersion"
 }
 

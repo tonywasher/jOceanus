@@ -19,7 +19,7 @@ package net.sourceforge.joceanus.prometheus.preference;
 import net.sourceforge.joceanus.metis.preference.MetisPreferenceSet;
 import net.sourceforge.joceanus.metis.ui.MetisPreferenceSetView;
 import net.sourceforge.joceanus.metis.ui.MetisPreferenceView;
-import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
+import net.sourceforge.joceanus.tethys.ui.api.factory.TethysUIFactory;
 
 /**
  * Panel for editing preference Sets.

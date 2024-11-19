@@ -20,7 +20,7 @@ import net.sourceforge.joceanus.coeus.data.CoeusHistory;
 import net.sourceforge.joceanus.coeus.data.CoeusTotals;
 import net.sourceforge.joceanus.coeus.data.CoeusTransaction;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
-import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
+import net.sourceforge.joceanus.tethys.date.TethysDateRange;
 
 /**
  * RateSetter Transaction Totals History.

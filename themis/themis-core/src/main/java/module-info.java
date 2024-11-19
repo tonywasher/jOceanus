@@ -25,7 +25,7 @@ module net.sourceforge.joceanus.themis.core {
 
     /* jOceanus */
     requires net.sourceforge.joceanus.metis.core;
-    requires net.sourceforge.joceanus.jtethys.core;
+    requires net.sourceforge.joceanus.tethys.core;
 
     /* Exports */
     exports net.sourceforge.joceanus.themis.ui.launch;

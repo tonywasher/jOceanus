@@ -22,8 +22,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.sourceforge.joceanus.moneywise.quicken.definitions.MoneyWiseQIFType;
-import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
-import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
+import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
+import net.sourceforge.joceanus.tethys.ui.api.factory.TethysUIFactory;
 
 /**
  * Class to parse a QIFFile.

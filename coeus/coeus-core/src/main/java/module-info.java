@@ -26,7 +26,7 @@ module net.sourceforge.joceanus.coeus.core {
 
     /* jOceanus */
     requires net.sourceforge.joceanus.metis.core;
-    requires net.sourceforge.joceanus.jtethys.core;
+    requires net.sourceforge.joceanus.tethys.core;
 
     /* Exports */
     exports net.sourceforge.joceanus.coeus.ui.launch;

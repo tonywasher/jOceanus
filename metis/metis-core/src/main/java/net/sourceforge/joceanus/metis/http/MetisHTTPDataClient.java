@@ -32,8 +32,8 @@ import org.json.JSONTokener;
 
 import net.sourceforge.joceanus.metis.MetisDataException;
 import net.sourceforge.joceanus.metis.MetisIOException;
-import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.TethysDataConverter;
+import net.sourceforge.joceanus.tethys.OceanusException;
+import net.sourceforge.joceanus.tethys.TethysDataConverter;
 
 /**
  * Http client interface.

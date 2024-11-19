@@ -23,8 +23,8 @@ import java.util.List;
 import java.util.ListIterator;
 
 import net.sourceforge.joceanus.metis.parser.MetisCSVParser;
-import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.date.TethysDate;
+import net.sourceforge.joceanus.tethys.OceanusException;
+import net.sourceforge.joceanus.tethys.date.TethysDate;
 
 /**
  * LendingWorks parser.

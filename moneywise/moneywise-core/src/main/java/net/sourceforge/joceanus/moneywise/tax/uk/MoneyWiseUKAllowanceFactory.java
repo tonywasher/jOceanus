@@ -20,7 +20,7 @@ import java.util.Currency;
 import java.util.Locale;
 
 import net.sourceforge.joceanus.moneywise.tax.MoneyWiseMarginalReduction;
-import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
+import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
 
 /**
  * The allowance factory.

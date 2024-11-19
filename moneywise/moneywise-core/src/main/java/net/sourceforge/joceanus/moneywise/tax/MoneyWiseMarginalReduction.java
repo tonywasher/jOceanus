@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.moneywise.tax;
 
 import java.util.Currency;
 
-import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
+import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
 
 /**
  * Marginal allowance reduction.

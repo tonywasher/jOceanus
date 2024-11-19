@@ -23,7 +23,7 @@ module net.sourceforge.joceanus.prometheus.sheet.hssf {
     requires org.apache.poi.poi;
 
     /* jOceanus */
-    requires net.sourceforge.joceanus.jtethys.core;
+    requires net.sourceforge.joceanus.tethys.core;
     requires net.sourceforge.joceanus.prometheus.sheet.api;
 
     /* Services provided */

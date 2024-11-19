@@ -21,8 +21,8 @@ import java.util.Iterator;
 import java.util.Map;
 
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataMap;
-import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.date.TethysDate;
+import net.sourceforge.joceanus.tethys.OceanusException;
+import net.sourceforge.joceanus.tethys.date.TethysDate;
 
 /**
  * Loan MarketSet.

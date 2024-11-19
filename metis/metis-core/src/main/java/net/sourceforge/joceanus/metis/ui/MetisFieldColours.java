@@ -21,9 +21,9 @@ import java.util.HashMap;
 import net.sourceforge.joceanus.metis.preference.MetisPreferenceKey;
 import net.sourceforge.joceanus.metis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.metis.preference.MetisPreferenceSet;
-import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIValueKey;
-import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIValueSet;
+import net.sourceforge.joceanus.tethys.OceanusException;
+import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIValueKey;
+import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIValueSet;
 
 /**
  * Preferences for colours.

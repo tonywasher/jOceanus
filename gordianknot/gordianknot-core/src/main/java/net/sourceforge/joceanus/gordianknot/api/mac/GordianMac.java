@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.gordianknot.api.mac;
 
 import net.sourceforge.joceanus.gordianknot.api.base.GordianConsumer;
 import net.sourceforge.joceanus.gordianknot.api.key.GordianKey;
-import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.tethys.OceanusException;
 
 /**
  * GordianKnot interface for Message Authentication Codes.

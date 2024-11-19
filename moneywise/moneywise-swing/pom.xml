@@ -16,12 +16,12 @@
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>jtethys-swing</artifactId>
+      <artifactId>tethys-swing</artifactId>
       <version>${project.version}</version>
     </dependency>
   </dependencies>
   <properties>
-    <packageMain>${packageName}.lethe.ui.swing.MoneyWise4Swing</packageMain>
+    <packageMain>${packageName}.ui.swing.MoneyWise4Swing</packageMain>
     <moduleName>${packageName}.swing</moduleName>
     <packageSplash>net/sourceforge/joceanus/jmoneywise/ui/icons/swing/MoneyWiseSplash.png</packageSplash>
   </properties>

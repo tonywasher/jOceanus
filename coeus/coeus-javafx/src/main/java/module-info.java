@@ -23,8 +23,8 @@ module net.sourceforge.joceanus.coeus.javafx {
 
     /* jOceanus */
     requires net.sourceforge.joceanus.coeus.core;
-    requires net.sourceforge.joceanus.jtethys.core;
-    requires net.sourceforge.joceanus.jtethys.javafx;
+    requires net.sourceforge.joceanus.tethys.core;
+    requires net.sourceforge.joceanus.tethys.javafx;
 
     /* Exports */
     exports net.sourceforge.joceanus.coeus.ui.javafx to javafx.graphics;

@@ -20,15 +20,15 @@ package net.sourceforge.joceanus.prometheus.ui.fieldset;
 import java.util.function.Consumer;
 
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
-import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIAlignment;
-import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIComponent;
-import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUILabel;
-import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
-import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField;
-import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIDataEditField.TethysUIValidatedField;
-import net.sourceforge.joceanus.jtethys.ui.api.field.TethysUIFieldAttribute;
-import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIBorderPaneManager;
-import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIPaneFactory;
+import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIAlignment;
+import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIComponent;
+import net.sourceforge.joceanus.tethys.ui.api.control.TethysUILabel;
+import net.sourceforge.joceanus.tethys.ui.api.factory.TethysUIFactory;
+import net.sourceforge.joceanus.tethys.ui.api.field.TethysUIDataEditField;
+import net.sourceforge.joceanus.tethys.ui.api.field.TethysUIDataEditField.TethysUIValidatedField;
+import net.sourceforge.joceanus.tethys.ui.api.field.TethysUIFieldAttribute;
+import net.sourceforge.joceanus.tethys.ui.api.pane.TethysUIBorderPaneManager;
+import net.sourceforge.joceanus.tethys.ui.api.pane.TethysUIPaneFactory;
 
 /**
  * FieldSet Element.

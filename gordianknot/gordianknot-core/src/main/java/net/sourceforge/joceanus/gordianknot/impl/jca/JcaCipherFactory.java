@@ -43,7 +43,7 @@ import net.sourceforge.joceanus.gordianknot.impl.jca.JcaAEADCipher.JcaStreamAEAD
 import net.sourceforge.joceanus.gordianknot.impl.jca.JcaAEADCipher.JcaSymAEADCipher;
 import net.sourceforge.joceanus.gordianknot.impl.jca.JcaCipher.JcaStreamCipher;
 import net.sourceforge.joceanus.gordianknot.impl.jca.JcaCipher.JcaSymCipher;
-import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.tethys.OceanusException;
 
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;

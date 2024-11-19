@@ -17,7 +17,7 @@
 package net.sourceforge.joceanus.gordianknot.api.encrypt;
 
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
-import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.tethys.OceanusException;
 
 /**
  * Asymmetric Encryptor.

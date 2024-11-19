@@ -17,7 +17,7 @@
 package net.sourceforge.joceanus.coeus.ui.swing;
 
 import net.sourceforge.joceanus.coeus.ui.launch.CoeusApp;
-import net.sourceforge.joceanus.jtethys.ui.swing.launch.TethysUISwingLaunch;
+import net.sourceforge.joceanus.tethys.ui.swing.launch.TethysUISwingLaunch;
 
 /**
  * Coeus Swing StartUp.

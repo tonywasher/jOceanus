@@ -19,10 +19,10 @@ package net.sourceforge.joceanus.metis.help;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.resource.TethysResourceId;
-import net.sourceforge.joceanus.jtethys.resource.TethysResourceLoader;
-import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUIHTMLManager.TethysUIStyleSheetId;
+import net.sourceforge.joceanus.tethys.OceanusException;
+import net.sourceforge.joceanus.tethys.resource.TethysResourceId;
+import net.sourceforge.joceanus.tethys.resource.TethysResourceLoader;
+import net.sourceforge.joceanus.tethys.ui.api.control.TethysUIHTMLManager.TethysUIStyleSheetId;
 
 /**
  * The help module that is implemented by each Help System.

@@ -34,8 +34,8 @@ import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetCellStyl
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetFormats;
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetRow;
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetSheet;
-import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIDataFormatter;
+import net.sourceforge.joceanus.tethys.OceanusException;
+import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
 
 /**
  * Class representing an Excel sheet within a workBook.

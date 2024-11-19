@@ -20,7 +20,7 @@
  */
 module net.sourceforge.joceanus.prometheus.sheet.api {
     /* jOceanus */
-    requires net.sourceforge.joceanus.jtethys.core;
+    requires net.sourceforge.joceanus.tethys.core;
 
     /* Exports */
     exports net.sourceforge.joceanus.prometheus.service.sheet;

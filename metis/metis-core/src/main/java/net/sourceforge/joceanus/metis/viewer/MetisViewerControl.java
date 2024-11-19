@@ -16,20 +16,20 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.metis.viewer;
 
-import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIComponent;
-import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIEvent;
-import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIIconId;
-import net.sourceforge.joceanus.jtethys.ui.api.button.TethysUIButton;
-import net.sourceforge.joceanus.jtethys.ui.api.button.TethysUIButtonFactory;
-import net.sourceforge.joceanus.jtethys.ui.api.button.TethysUIScrollButtonManager;
-import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUIControlFactory;
-import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUILabel;
-import net.sourceforge.joceanus.jtethys.ui.api.control.TethysUISlider;
-import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
-import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollMenu;
-import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIBorderPaneManager;
-import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIBoxPaneManager;
-import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIPaneFactory;
+import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIComponent;
+import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIEvent;
+import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIIconId;
+import net.sourceforge.joceanus.tethys.ui.api.button.TethysUIButton;
+import net.sourceforge.joceanus.tethys.ui.api.button.TethysUIButtonFactory;
+import net.sourceforge.joceanus.tethys.ui.api.button.TethysUIScrollButtonManager;
+import net.sourceforge.joceanus.tethys.ui.api.control.TethysUIControlFactory;
+import net.sourceforge.joceanus.tethys.ui.api.control.TethysUILabel;
+import net.sourceforge.joceanus.tethys.ui.api.control.TethysUISlider;
+import net.sourceforge.joceanus.tethys.ui.api.factory.TethysUIFactory;
+import net.sourceforge.joceanus.tethys.ui.api.menu.TethysUIScrollMenu;
+import net.sourceforge.joceanus.tethys.ui.api.pane.TethysUIBorderPaneManager;
+import net.sourceforge.joceanus.tethys.ui.api.pane.TethysUIBoxPaneManager;
+import net.sourceforge.joceanus.tethys.ui.api.pane.TethysUIPaneFactory;
 
 /**
  * Viewer Control bar.

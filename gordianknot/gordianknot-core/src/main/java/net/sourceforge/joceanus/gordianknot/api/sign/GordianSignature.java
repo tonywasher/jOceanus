@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.gordianknot.api.sign;
 
 import net.sourceforge.joceanus.gordianknot.api.base.GordianConsumer;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
-import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.tethys.OceanusException;
 
 /**
  * GordianKnot base for signature.

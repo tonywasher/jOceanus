@@ -33,7 +33,7 @@ import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianCompositeAgre
 import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianCompositeAgreement.GordianCompositeSignedAgreement;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianDataException;
-import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.tethys.OceanusException;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 
 import java.util.ArrayList;

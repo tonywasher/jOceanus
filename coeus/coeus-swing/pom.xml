@@ -16,7 +16,7 @@
     </dependency>
     <dependency>
       <groupId>net.sourceforge.joceanus</groupId>
-      <artifactId>jtethys-swing</artifactId>
+      <artifactId>tethys-swing</artifactId>
       <version>${project.version}</version>
     </dependency>
   </dependencies>

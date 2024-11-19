@@ -28,7 +28,7 @@ import net.sourceforge.joceanus.moneywise.tax.uk.MoneyWiseUKDividendScheme.Money
 import net.sourceforge.joceanus.moneywise.tax.uk.MoneyWiseUKInterestScheme.MoneyWiseUKInterestAsIncomeScheme;
 import net.sourceforge.joceanus.moneywise.tax.uk.MoneyWiseUKInterestScheme.MoneyWiseUKInterestBaseRateScheme;
 import net.sourceforge.joceanus.moneywise.tax.uk.MoneyWiseUKInterestScheme.MoneyWiseUKInterestLoBaseRateScheme;
-import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
+import net.sourceforge.joceanus.tethys.decimal.TethysRate;
 
 /**
  * The scheme factory.

@@ -17,7 +17,7 @@
 package net.sourceforge.joceanus.gordianknot.api.factory;
 
 import net.sourceforge.joceanus.gordianknot.api.base.GordianIdSpec;
-import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.tethys.OceanusException;
 
 /**
  * GordianKnot Knuth Obfuscator API.

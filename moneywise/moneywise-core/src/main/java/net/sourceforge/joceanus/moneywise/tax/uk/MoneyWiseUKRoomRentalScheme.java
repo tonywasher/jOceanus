@@ -17,7 +17,7 @@
 package net.sourceforge.joceanus.moneywise.tax.uk;
 
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
-import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
+import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
 
 /**
  * Rental Tax Scheme.

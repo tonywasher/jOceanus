@@ -17,8 +17,8 @@
 package net.sourceforge.joceanus.moneywise.ui.javafx;
 
 import net.sourceforge.joceanus.moneywise.launch.MoneyWiseApp;
-import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUILaunchProgram;
-import net.sourceforge.joceanus.jtethys.ui.javafx.launch.TethysUIFXLaunch;
+import net.sourceforge.joceanus.tethys.ui.api.factory.TethysUILaunchProgram;
+import net.sourceforge.joceanus.tethys.ui.javafx.launch.TethysUIFXLaunch;
 
 /**
  * MoneyWise javaFX StartUp.

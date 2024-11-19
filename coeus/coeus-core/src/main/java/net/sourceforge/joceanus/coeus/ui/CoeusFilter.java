@@ -26,7 +26,7 @@ import net.sourceforge.joceanus.coeus.data.CoeusMarketProvider;
 import net.sourceforge.joceanus.coeus.data.CoeusMarketSnapShot;
 import net.sourceforge.joceanus.coeus.data.CoeusMarketType;
 import net.sourceforge.joceanus.coeus.data.CoeusTotalSet;
-import net.sourceforge.joceanus.jtethys.date.TethysDate;
+import net.sourceforge.joceanus.tethys.date.TethysDate;
 
 /**
  * Coeus Filter.

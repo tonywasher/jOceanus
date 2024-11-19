@@ -38,10 +38,10 @@ import net.sourceforge.joceanus.prometheus.data.PrometheusStaticDataItem;
 import net.sourceforge.joceanus.prometheus.ui.panel.PrometheusDataItemPanel;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
 import net.sourceforge.joceanus.prometheus.ui.PrometheusGoToEvent;
-import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIGenericWrapper;
-import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
-import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollMenu;
-import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollSubMenu;
+import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIGenericWrapper;
+import net.sourceforge.joceanus.tethys.ui.api.factory.TethysUIFactory;
+import net.sourceforge.joceanus.tethys.ui.api.menu.TethysUIScrollMenu;
+import net.sourceforge.joceanus.tethys.ui.api.menu.TethysUIScrollSubMenu;
 
 /**
  * MoneyWise Data Item Panel.

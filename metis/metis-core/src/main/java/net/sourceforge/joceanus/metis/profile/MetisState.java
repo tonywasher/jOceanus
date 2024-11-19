@@ -16,8 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.metis.profile;
 
-import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIProgram;
-import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
+import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIProgram;
+import net.sourceforge.joceanus.tethys.ui.api.factory.TethysUIFactory;
 
 /**
  * Program definition.

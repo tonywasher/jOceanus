@@ -23,8 +23,8 @@ module net.sourceforge.joceanus.moneywise.javafx {
 
     /* Exports */
     requires net.sourceforge.joceanus.moneywise.core;
-    requires net.sourceforge.joceanus.jtethys.core;
-    requires net.sourceforge.joceanus.jtethys.javafx;
+    requires net.sourceforge.joceanus.tethys.core;
+    requires net.sourceforge.joceanus.tethys.javafx;
 
     /* Exports */
     exports net.sourceforge.joceanus.moneywise.ui.javafx to javafx.graphics;

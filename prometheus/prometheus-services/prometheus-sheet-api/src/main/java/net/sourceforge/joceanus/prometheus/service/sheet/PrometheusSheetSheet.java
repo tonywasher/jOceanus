@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.prometheus.service.sheet;
 
 import java.util.ListIterator;
 
-import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.tethys.OceanusException;
 
 /**
  * Class representing a sheet within a workBook.

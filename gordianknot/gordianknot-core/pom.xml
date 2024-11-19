@@ -42,7 +42,7 @@
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>jtethys-core</artifactId>
+      <artifactId>tethys-core</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>

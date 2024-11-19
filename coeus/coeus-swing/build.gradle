@@ -1,8 +1,8 @@
 /* Dependencies */
 dependencies {
     implementation project(':coeus-core')
-    implementation project(':jtethys-swing')
-    implementation project(':jtethys-core')
+    implementation project(':tethys-swing')
+    implementation project(':tethys-core')
 }
 
 /* Details */

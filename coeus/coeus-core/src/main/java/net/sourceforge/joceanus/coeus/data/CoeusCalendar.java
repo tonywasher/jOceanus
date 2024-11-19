@@ -18,8 +18,8 @@ package net.sourceforge.joceanus.coeus.data;
 
 import java.util.Locale;
 
-import net.sourceforge.joceanus.jtethys.date.TethysDate;
-import net.sourceforge.joceanus.jtethys.date.TethysFiscalYear;
+import net.sourceforge.joceanus.tethys.date.TethysDate;
+import net.sourceforge.joceanus.tethys.date.TethysFiscalYear;
 
 /**
  * Calendar adjuster.

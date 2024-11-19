@@ -29,8 +29,8 @@ import net.sourceforge.joceanus.coeus.ui.CoeusFilter.CoeusAnnualFilter;
 import net.sourceforge.joceanus.coeus.ui.CoeusFilter.CoeusSnapShotFilter;
 import net.sourceforge.joceanus.coeus.ui.CoeusMarketCache;
 import net.sourceforge.joceanus.metis.data.MetisDataDifference;
-import net.sourceforge.joceanus.jtethys.date.TethysDate;
-import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIScrollMenu;
+import net.sourceforge.joceanus.tethys.date.TethysDate;
+import net.sourceforge.joceanus.tethys.ui.api.menu.TethysUIScrollMenu;
 
 /**
  * Statement Select State.

@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.themis.ui;
 
 import java.io.InputStream;
 
-import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIIconId;
+import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIIconId;
 import net.sourceforge.joceanus.themis.analysis.ThemisAnalysisAnnotation;
 import net.sourceforge.joceanus.themis.analysis.ThemisAnalysisAnonClass;
 import net.sourceforge.joceanus.themis.analysis.ThemisAnalysisArrayInit;

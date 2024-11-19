@@ -25,7 +25,7 @@ import net.sourceforge.joceanus.coeus.data.CoeusTotalsField;
 import net.sourceforge.joceanus.metis.field.MetisFieldItem.MetisFieldDef;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.metis.list.MetisListIndexed;
-import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
+import net.sourceforge.joceanus.tethys.decimal.TethysDecimal;
 
 /**
  * Statement calculator.

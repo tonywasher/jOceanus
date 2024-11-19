@@ -27,8 +27,8 @@ import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianParameters;
 import net.sourceforge.joceanus.gordianknot.impl.jca.JcaFactory;
 import net.sourceforge.joceanus.gordianknot.impl.password.GordianBaseDialogControl;
 import net.sourceforge.joceanus.gordianknot.impl.password.GordianBasePasswordManager;
-import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
+import net.sourceforge.joceanus.tethys.OceanusException;
+import net.sourceforge.joceanus.tethys.ui.api.factory.TethysUIFactory;
 
 /**
  * Factory generator.

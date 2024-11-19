@@ -36,22 +36,22 @@ import net.sourceforge.joceanus.prometheus.threads.PrometheusThreadUpdatePasswor
 import net.sourceforge.joceanus.prometheus.ui.PrometheusMenuId;
 import net.sourceforge.joceanus.prometheus.ui.PrometheusUIResource;
 import net.sourceforge.joceanus.prometheus.views.PrometheusDataControl;
-import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.logger.TethysLogManager;
-import net.sourceforge.joceanus.jtethys.logger.TethysLogger;
-import net.sourceforge.joceanus.jtethys.profile.TethysProfile;
-import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIComponent;
-import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIEvent;
-import net.sourceforge.joceanus.jtethys.ui.api.dialog.TethysUIAlert;
-import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIFactory;
-import net.sourceforge.joceanus.jtethys.ui.api.factory.TethysUIMainPanel;
-import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIMenuBarManager;
-import net.sourceforge.joceanus.jtethys.ui.api.menu.TethysUIMenuBarManager.TethysUIMenuSubMenu;
-import net.sourceforge.joceanus.jtethys.ui.api.pane.TethysUIBorderPaneManager;
-import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThread;
-import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadEvent;
-import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadManager;
-import net.sourceforge.joceanus.jtethys.ui.api.thread.TethysUIThreadStatusManager;
+import net.sourceforge.joceanus.tethys.OceanusException;
+import net.sourceforge.joceanus.tethys.logger.TethysLogManager;
+import net.sourceforge.joceanus.tethys.logger.TethysLogger;
+import net.sourceforge.joceanus.tethys.profile.TethysProfile;
+import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIComponent;
+import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIEvent;
+import net.sourceforge.joceanus.tethys.ui.api.dialog.TethysUIAlert;
+import net.sourceforge.joceanus.tethys.ui.api.factory.TethysUIFactory;
+import net.sourceforge.joceanus.tethys.ui.api.factory.TethysUIMainPanel;
+import net.sourceforge.joceanus.tethys.ui.api.menu.TethysUIMenuBarManager;
+import net.sourceforge.joceanus.tethys.ui.api.menu.TethysUIMenuBarManager.TethysUIMenuSubMenu;
+import net.sourceforge.joceanus.tethys.ui.api.pane.TethysUIBorderPaneManager;
+import net.sourceforge.joceanus.tethys.ui.api.thread.TethysUIThread;
+import net.sourceforge.joceanus.tethys.ui.api.thread.TethysUIThreadEvent;
+import net.sourceforge.joceanus.tethys.ui.api.thread.TethysUIThreadManager;
+import net.sourceforge.joceanus.tethys.ui.api.thread.TethysUIThreadStatusManager;
 
 /**
  * Main window for application.

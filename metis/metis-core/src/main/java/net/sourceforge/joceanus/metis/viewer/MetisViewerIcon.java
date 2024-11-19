@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.metis.viewer;
 
 import java.io.InputStream;
 
-import net.sourceforge.joceanus.jtethys.ui.api.base.TethysUIIconId;
+import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIIconId;
 
 /**
  * Viewer Icon IDs.
