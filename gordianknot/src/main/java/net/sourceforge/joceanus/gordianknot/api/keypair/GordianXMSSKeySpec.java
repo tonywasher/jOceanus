@@ -19,10 +19,10 @@ package net.sourceforge.joceanus.gordianknot.api.keypair;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestSpecBuilder;
-import net.sourceforge.joceanus.oceanus.OceanusDataConverter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * XMSS KeySpec.
@@ -256,15 +256,7 @@ public class GordianXMSSKeySpec {
 
     @Override
     public int hashCode() {
-        int hashCode = theKeyType.hashCode() << OceanusDataConverter.BYTE_SHIFT;
-        hashCode += theDigestType.hashCode();
-        hashCode <<= OceanusDataConverter.BYTE_SHIFT;
-        hashCode += theHeight.hashCode();
-        hashCode <<= OceanusDataConverter.BYTE_SHIFT;
-        if (theLayers != null) {
-            hashCode += theLayers.hashCode();
-        }
-        return hashCode;
+        return Objects.hash(theKeyType, theDigestType, theHeight, theLayers);
     }
 
     /**

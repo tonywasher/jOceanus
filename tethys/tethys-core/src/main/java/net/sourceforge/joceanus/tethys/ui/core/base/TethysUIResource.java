@@ -26,6 +26,36 @@ import java.util.ResourceBundle;
  */
 public enum TethysUIResource implements OceanusBundleId {
     /**
+     * tip NextDate.
+     */
+    TIP_NEXTDATE("tooltip.nextDate"),
+
+    /**
+     * tip PreviousDate.
+     */
+    TIP_PREVDATE("tooltip.prevDate"),
+
+    /**
+     * Label Starting.
+     */
+    LABEL_STARTING("label.starting"),
+
+    /**
+     * Label Ending.
+     */
+    LABEL_ENDING("label.ending"),
+
+    /**
+     * Label Containing.
+     */
+    LABEL_CONTAINING("label.containing"),
+
+    /**
+     * Label Period.
+     */
+    LABEL_PERIOD("label.period"),
+
+    /**
      * Bad value on parse.
      */
     PARSE_BADVALUE("parse.BadValue"),
@@ -98,7 +128,42 @@ public enum TethysUIResource implements OceanusBundleId {
     /**
      * Error length 2.
      */
-    PASS_ERROR_LENGTH2("pass.error.length2");
+    PASS_ERROR_LENGTH2("pass.error.length2"),
+
+    /**
+     * CurrentDay.
+     */
+    DIALOG_CURRENT("dialog.CurrentDay"),
+
+    /**
+     * SelectedDay.
+     */
+    DIALOG_SELECTED("dialog.SelectedDay"),
+
+    /**
+     * NextMonth.
+     */
+    DIALOG_NEXTMONTH("dialog.NextMonth"),
+
+    /**
+     * PreviousMonth.
+     */
+    DIALOG_PREVMONTH("dialog.PreviousMonth"),
+
+    /**
+     * NextYear.
+     */
+    DIALOG_NEXTYEAR("dialog.NextYear"),
+
+    /**
+     * PreviousYear.
+     */
+    DIALOG_PREVYEAR("dialog.PreviousYear"),
+
+    /**
+     * NullSelect.
+     */
+    DIALOG_NULL("dialog.NullSelect");
 
     /**
      * The Resource Loader.

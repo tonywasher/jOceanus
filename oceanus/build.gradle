@@ -5,7 +5,7 @@ dependencies {
 }
 
 /* Dependencies */
-description = 'Tethys Java Core Utilities'
+description = 'Oceanus Core Utilities'
 
 /* Register the project */
 registerProject(project) 

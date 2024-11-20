@@ -1,4 +1,4 @@
-package net.sourceforge.joceanus.tethys.junit.decimal;
+package net.sourceforge.joceanus.oceanus.junit.decimal;
 
 import net.sourceforge.joceanus.oceanus.OceanusException;
 import net.sourceforge.joceanus.oceanus.date.OceanusDate;

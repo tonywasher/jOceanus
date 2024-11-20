@@ -44,41 +44,6 @@ public enum OceanusDateResource implements OceanusBundleId {
     ERROR_BADFORMAT("error.badFormat"),
 
     /**
-     * tip NextDate.
-     */
-    TIP_NEXTDATE("tooltip.nextDate"),
-
-    /**
-     * tip PreviousDate.
-     */
-    TIP_PREVDATE("tooltip.prevDate"),
-
-    /**
-     * Label Starting.
-     */
-    LABEL_STARTING("label.starting"),
-
-    /**
-     * Label Ending.
-     */
-    LABEL_ENDING("label.ending"),
-
-    /**
-     * Label Containing.
-     */
-    LABEL_CONTAINING("label.containing"),
-
-    /**
-     * Label Period.
-     */
-    LABEL_PERIOD("label.period"),
-
-    /**
-     * Title Box.
-     */
-    TITLE_BOX("title.box"),
-
-    /**
      * Period OneWeek.
      */
     PERIOD_ONEWEEK("period.oneWeek"),
@@ -154,39 +119,9 @@ public enum OceanusDateResource implements OceanusBundleId {
     RANGE_TO("range.to"),
 
     /**
-     * CurrentDay.
+     * Title Box.
      */
-    DIALOG_CURRENT("dialog.CurrentDay"),
-
-    /**
-     * SelectedDay.
-     */
-    DIALOG_SELECTED("dialog.SelectedDay"),
-
-    /**
-     * NextMonth.
-     */
-    DIALOG_NEXTMONTH("dialog.NextMonth"),
-
-    /**
-     * PreviousMonth.
-     */
-    DIALOG_PREVMONTH("dialog.PreviousMonth"),
-
-    /**
-     * NextYear.
-     */
-    DIALOG_NEXTYEAR("dialog.NextYear"),
-
-    /**
-     * PreviousYear.
-     */
-    DIALOG_PREVYEAR("dialog.PreviousYear"),
-
-    /**
-     * NullSelect.
-     */
-    DIALOG_NULL("dialog.NullSelect");
+    TITLE_BOX("title.box");
 
     /**
      * The Period Map.

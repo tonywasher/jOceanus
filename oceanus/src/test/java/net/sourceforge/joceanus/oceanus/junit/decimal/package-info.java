@@ -18,4 +18,4 @@
 /**
  * Decimal JUnit tests.
  */
-package net.sourceforge.joceanus.tethys.junit.decimal;
+package net.sourceforge.joceanus.oceanus.junit.decimal;

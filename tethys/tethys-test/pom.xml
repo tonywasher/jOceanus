@@ -6,8 +6,8 @@
     <version>1.6.3-SNAPSHOT</version>
   </parent>
   <artifactId>tethys-test</artifactId>
-  <name>Tethys Java Test</name>
-  <description>Tethys Java Test</description>
+  <name>Tethys UI Test</name>
+  <description>Tethys UI Test</description>
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>

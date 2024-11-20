@@ -16,8 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.tethys.ui.core.button;
 
-import java.util.Locale;
-
 import net.sourceforge.joceanus.oceanus.date.OceanusDate;
 import net.sourceforge.joceanus.oceanus.date.OceanusDateFormatter;
 import net.sourceforge.joceanus.oceanus.date.OceanusDatePeriod;
@@ -39,7 +37,10 @@ import net.sourceforge.joceanus.tethys.ui.api.menu.TethysUIScrollMenu;
 import net.sourceforge.joceanus.tethys.ui.api.pane.TethysUIBoxPaneManager;
 import net.sourceforge.joceanus.tethys.ui.api.pane.TethysUIPaneFactory;
 import net.sourceforge.joceanus.tethys.ui.core.base.TethysUICoreComponent;
+import net.sourceforge.joceanus.tethys.ui.core.base.TethysUIResource;
 import net.sourceforge.joceanus.tethys.ui.core.factory.TethysUICoreFactory;
+
+import java.util.Locale;
 
 /**
  * DateRange Selector.
@@ -50,32 +51,32 @@ public abstract class TethysUICoreDateRangeSelector
     /**
      * ToolTip for Next Button.
      */
-    private static final String NLS_NEXTTIP = OceanusDateResource.TIP_NEXTDATE.getValue();
+    private static final String NLS_NEXTTIP = TethysUIResource.TIP_NEXTDATE.getValue();
 
     /**
      * ToolTip for Previous Button.
      */
-    private static final String NLS_PREVTIP = OceanusDateResource.TIP_PREVDATE.getValue();
+    private static final String NLS_PREVTIP = TethysUIResource.TIP_PREVDATE.getValue();
 
     /**
      * Text for Start Label.
      */
-    private static final String NLS_START = OceanusDateResource.LABEL_STARTING.getValue();
+    private static final String NLS_START = TethysUIResource.LABEL_STARTING.getValue();
 
     /**
      * Text for End Label.
      */
-    private static final String NLS_END = OceanusDateResource.LABEL_ENDING.getValue();
+    private static final String NLS_END = TethysUIResource.LABEL_ENDING.getValue();
 
     /**
      * Text for Containing Label.
      */
-    private static final String NLS_CONTAIN = OceanusDateResource.LABEL_CONTAINING.getValue();
+    private static final String NLS_CONTAIN = TethysUIResource.LABEL_CONTAINING.getValue();
 
     /**
      * Text for Period Label.
      */
-    private static final String NLS_PERIOD = OceanusDateResource.LABEL_PERIOD.getValue();
+    private static final String NLS_PERIOD = TethysUIResource.LABEL_PERIOD.getValue();
 
     /**
      * Text for Box Title.
