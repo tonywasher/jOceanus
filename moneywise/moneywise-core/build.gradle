@@ -2,8 +2,8 @@
 dependencies {
     implementation project(':prometheus-core')
     implementation project(':prometheus-sheet-api')
-    implementation project(':metis-core')
-    implementation project(':gordianknot-core')
+    implementation project(':metis')
+    implementation project(':gordianknot')
     implementation project(':tethys-core')
     implementation project(':oceanus')
     testImplementation "org.junit.jupiter:junit-jupiter-api:$jUnitVersion"

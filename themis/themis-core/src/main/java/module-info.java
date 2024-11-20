@@ -24,7 +24,7 @@ module net.sourceforge.joceanus.themis.core {
     requires java.prefs;
 
     /* Oceanus */
-    requires net.sourceforge.joceanus.metis.core;
+    requires net.sourceforge.joceanus.metis;
     requires net.sourceforge.joceanus.tethys.core;
     requires net.sourceforge.joceanus.oceanus;
 
@@ -32,5 +32,5 @@ module net.sourceforge.joceanus.themis.core {
     exports net.sourceforge.joceanus.themis.ui.launch;
 
     /* Allow properties to be read */
-    opens net.sourceforge.joceanus.themis.ui to net.sourceforge.joceanus.metis.core;
+    opens net.sourceforge.joceanus.themis.ui to net.sourceforge.joceanus.metis;
 }

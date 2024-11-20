@@ -25,7 +25,7 @@ module net.sourceforge.joceanus.coeus.core {
     requires org.jsoup;
 
     /* Oceanus */
-    requires net.sourceforge.joceanus.metis.core;
+    requires net.sourceforge.joceanus.metis;
     requires net.sourceforge.joceanus.tethys.core;
     requires net.sourceforge.joceanus.oceanus;
 
@@ -33,5 +33,5 @@ module net.sourceforge.joceanus.coeus.core {
     exports net.sourceforge.joceanus.coeus.ui.launch;
 
     /* Allow properties to be read */
-    opens net.sourceforge.joceanus.coeus.ui to net.sourceforge.joceanus.metis.core;
+    opens net.sourceforge.joceanus.coeus.ui to net.sourceforge.joceanus.metis;
 }

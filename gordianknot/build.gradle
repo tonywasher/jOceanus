@@ -10,7 +10,7 @@ dependencies {
 }
 
 /* Description */
-description = 'GordianKnot Core Security Framework'
+description = 'GordianKnot Security Framework'
 
 /* Register the project */
 registerProject(project) 

@@ -15,9 +15,9 @@
  * the License.
  ******************************************************************************/
 /**
- * Metis Core.
+ * Metis.
  */
-module net.sourceforge.joceanus.metis.core {
+module net.sourceforge.joceanus.metis {
     /* Java libraries */
     requires java.prefs;
     requires java.xml;

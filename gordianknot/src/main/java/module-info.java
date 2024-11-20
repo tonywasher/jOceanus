@@ -15,9 +15,9 @@
  * the License.
  ******************************************************************************/
 /**
- * GordianKnot core.
+ * GordianKnot.
  */
-module net.sourceforge.joceanus.gordianknot.core {
+module net.sourceforge.joceanus.gordianknot {
     /* Java libraries */
     requires java.xml;
 

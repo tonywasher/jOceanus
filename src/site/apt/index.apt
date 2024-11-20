@@ -10,12 +10,14 @@ with no pre-built downloadable files available.
 
   * a Personal Finance application providing functionality similar to <<Quicken>> and <<MoneyDance>>
 
-* Utility classes (<<Tethys>>)
+* Utility classes (<<Oceanus>>)
 
   * a basic decimal class allowing values with fixed numbers of decimals to be manipulated without resorting to
 the <<BigDecimal>> class
 
   * a set of data conversion utilities
+
+* Gui classes (<<Tethys>>)
 
   * a set of classes providing an abstraction layer on top of the Gui allowing both Swing and JavaFX implementations.
 

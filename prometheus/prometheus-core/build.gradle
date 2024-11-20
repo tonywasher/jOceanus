@@ -1,8 +1,8 @@
 /* Dependencies */
 dependencies {
     implementation project(':prometheus-sheet-api')
-    implementation project(':metis-core')
-    implementation project(':gordianknot-core')
+    implementation project(':metis')
+    implementation project(':gordianknot')
     implementation project(':tethys-core')
     implementation project(':oceanus')
     runtimeOnly "com.mysql:mysql-connector-j:$mySQLVersion"

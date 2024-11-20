@@ -6,7 +6,7 @@ dependencies {
 }
 
 /* Description */
-description = 'Metis Core Data Framework'
+description = 'Metis Data Framework'
 
 /* Register the project */
 registerProject(project) 
