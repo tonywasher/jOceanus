@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Tethys: Java Utilities
+ * Tethys: GUI Utilities
  * Copyright 2012,2024 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
