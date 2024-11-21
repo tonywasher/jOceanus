@@ -12,13 +12,22 @@ dependencies {
     runtimeOnly "com.h2database:h2:$h2Version"
     runtimeOnly project(':prometheus-sheet-hssf')
     runtimeOnly project(':prometheus-sheet-odf')
+    testImplementation "org.junit.jupiter:junit-jupiter-api:$jUnitVersion"
+    testImplementation "org.junit.jupiter:junit-jupiter-engine:$jUnitVersion"
 }
 
 /* Description */
 description = 'Prometheus Core Application Framework'
 
 /* Register the project */
-registerProject(project) 
+registerProject(project)
+
+/* Test jar details */
+tasks.register('testsJar', Jar) {
+    archiveClassifier = 'tests'
+    from(sourceSets.test.output)
+}
+publishing.publications.maven.artifact(testsJar)
 
 /* Specific Manifest details */
 jar {

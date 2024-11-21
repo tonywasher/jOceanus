@@ -16,9 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.core.lock;
 
-import java.util.Arrays;
-import java.util.Objects;
-
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementFactory;
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementSpec;
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementType;
@@ -38,8 +35,11 @@ import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianLogicException;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianParameters;
 import net.sourceforge.joceanus.gordianknot.impl.core.keyset.GordianCoreKeySet;
-import net.sourceforge.joceanus.oceanus.OceanusException;
 import net.sourceforge.joceanus.oceanus.OceanusDataConverter;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+
+import java.util.Arrays;
+import java.util.Objects;
 
 /**
  * KeyPair Lock implementation.
@@ -201,10 +201,7 @@ public class GordianKeyPairLockImpl
         return theLockBytes;
     }
 
-    /**
-     * Obtain the keyPair.
-     * @return the keyPair
-     */
+    @Override
     public GordianKeyPair getKeyPair() {
         return theKeyPair;
     }

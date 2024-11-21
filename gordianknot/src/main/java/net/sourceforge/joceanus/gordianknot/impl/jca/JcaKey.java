@@ -16,16 +16,15 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.jca;
 
-import javax.crypto.SecretKey;
-
-import org.bouncycastle.util.Arrays;
-
-import net.sourceforge.joceanus.gordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianKeySpec;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.gordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.key.GordianCoreKey;
 import net.sourceforge.joceanus.oceanus.OceanusException;
+import org.bouncycastle.util.Arrays;
+
+import javax.crypto.SecretKey;
+import java.util.Objects;
 
 /**
  * Wrapper for JCA key.
@@ -109,7 +108,6 @@ public final class JcaKey<T extends GordianKeySpec>
 
     @Override
     public int hashCode() {
-        return GordianCoreFactory.HASH_PRIME * getKeyType().hashCode()
-                + Arrays.hashCode(getKey().getEncoded());
+        return Objects.hash(getKeyType(),  Arrays.hashCode(getKey().getEncoded()));
     }
 }

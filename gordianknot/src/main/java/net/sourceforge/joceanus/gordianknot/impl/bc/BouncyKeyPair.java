@@ -16,18 +16,18 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.bc;
 
-import org.bouncycastle.crypto.params.AsymmetricKeyParameter;
-
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianStateAwareKeyPair;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.keypair.GordianCoreKeyPair;
 import net.sourceforge.joceanus.gordianknot.impl.core.keypair.GordianPrivateKey;
 import net.sourceforge.joceanus.gordianknot.impl.core.keypair.GordianPrivateKey.GordianStateAwarePrivateKey;
 import net.sourceforge.joceanus.gordianknot.impl.core.keypair.GordianPublicKey;
 import net.sourceforge.joceanus.oceanus.OceanusException;
+import org.bouncycastle.crypto.params.AsymmetricKeyParameter;
+
+import java.util.Objects;
 
 /**
  * BouncyCastle Asymmetric KeyPair.
@@ -160,8 +160,7 @@ public class BouncyKeyPair
 
         @Override
         public int hashCode() {
-            return GordianCoreFactory.HASH_PRIME * getKeySpec().hashCode()
-                    + theKey.hashCode();
+            return Objects.hash(getKeySpec().hashCode(), theKey);
         }
     }
 
@@ -227,8 +226,7 @@ public class BouncyKeyPair
 
         @Override
         public int hashCode() {
-            return GordianCoreFactory.HASH_PRIME * getKeySpec().hashCode()
-                    + theKey.hashCode();
+            return Objects.hash(getKeySpec(), theKey);
         }
     }
 
@@ -288,8 +286,7 @@ public class BouncyKeyPair
 
         @Override
         public int hashCode() {
-            return GordianCoreFactory.HASH_PRIME * getKeySpec().hashCode()
-                    + thePrivateKey.hashCode();
+            return Objects.hash(getKeySpec(), thePrivateKey);
         }
     }
 

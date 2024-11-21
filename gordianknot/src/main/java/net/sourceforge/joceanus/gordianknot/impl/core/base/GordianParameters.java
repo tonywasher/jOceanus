@@ -16,13 +16,14 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.core.base;
 
-import java.security.SecureRandom;
-import java.util.Arrays;
-
 import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactoryType;
-import net.sourceforge.joceanus.oceanus.OceanusException;
 import net.sourceforge.joceanus.oceanus.OceanusDataConverter;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+
+import java.security.SecureRandom;
+import java.util.Arrays;
+import java.util.Objects;
 
 /**
  * Security Parameters.
@@ -235,18 +236,7 @@ public class GordianParameters {
 
     @Override
     public int hashCode() {
-        /* Access multiplier */
-        final int myPrime = GordianCoreFactory.HASH_PRIME;
-
-        /* Calculate hash from types */
-        int myCode = theFactoryType.hashCode();
-        if (isInternal) {
-            myCode++;
-        }
-        myCode *= myPrime;
-
-        /* Calculate hash from seeds */
-        return myCode + Arrays.hashCode(theSecuritySeed) + Arrays.hashCode(theKeySetSeed);
+        return Objects.hash(theFactoryType, isInternal, Arrays.hashCode(theSecuritySeed), Arrays.hashCode(theKeySetSeed));
     }
 
     /**

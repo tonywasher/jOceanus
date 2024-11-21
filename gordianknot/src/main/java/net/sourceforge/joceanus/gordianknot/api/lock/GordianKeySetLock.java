@@ -24,8 +24,8 @@ import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySet;
 public interface GordianKeySetLock
         extends GordianLock<GordianKeySet> {
     /**
-     * Obtain the factory.
-     * @return the factory
+     * Obtain the keySet.
+     * @return the keySet
      */
     default GordianKeySet getKeySet() {
         return getLockedObject();

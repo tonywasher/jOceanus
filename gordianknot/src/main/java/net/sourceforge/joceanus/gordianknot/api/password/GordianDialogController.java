@@ -46,7 +46,7 @@ public interface GordianDialogController {
     char[] getPassword();
 
     /**
-     * report bas password.
+     * report bad password.
      */
     void reportBadPassword();
 }

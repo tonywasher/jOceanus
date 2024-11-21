@@ -16,10 +16,15 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.jca;
 
-import java.security.PrivateKey;
-import java.security.PublicKey;
-import javax.crypto.spec.DHParameterSpec;
-
+import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
+import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
+import net.sourceforge.joceanus.gordianknot.api.keypair.GordianStateAwareKeyPair;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianDataException;
+import net.sourceforge.joceanus.gordianknot.impl.core.keypair.GordianCoreKeyPair;
+import net.sourceforge.joceanus.gordianknot.impl.core.keypair.GordianPrivateKey;
+import net.sourceforge.joceanus.gordianknot.impl.core.keypair.GordianPrivateKey.GordianStateAwarePrivateKey;
+import net.sourceforge.joceanus.gordianknot.impl.core.keypair.GordianPublicKey;
+import net.sourceforge.joceanus.oceanus.OceanusException;
 import org.bouncycastle.jcajce.provider.asymmetric.dh.BCDHPrivateKey;
 import org.bouncycastle.jcajce.provider.asymmetric.dh.BCDHPublicKey;
 import org.bouncycastle.jcajce.spec.DHDomainParameterSpec;
@@ -27,16 +32,10 @@ import org.bouncycastle.pqc.jcajce.interfaces.LMSPrivateKey;
 import org.bouncycastle.pqc.jcajce.interfaces.XMSSMTPrivateKey;
 import org.bouncycastle.pqc.jcajce.interfaces.XMSSPrivateKey;
 
-import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
-import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
-import net.sourceforge.joceanus.gordianknot.api.keypair.GordianStateAwareKeyPair;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianDataException;
-import net.sourceforge.joceanus.gordianknot.impl.core.keypair.GordianCoreKeyPair;
-import net.sourceforge.joceanus.gordianknot.impl.core.keypair.GordianPrivateKey;
-import net.sourceforge.joceanus.gordianknot.impl.core.keypair.GordianPrivateKey.GordianStateAwarePrivateKey;
-import net.sourceforge.joceanus.gordianknot.impl.core.keypair.GordianPublicKey;
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import javax.crypto.spec.DHParameterSpec;
+import java.security.PrivateKey;
+import java.security.PublicKey;
+import java.util.Objects;
 
 /**
  * BouncyCastle Asymmetric KeyPair.
@@ -161,8 +160,7 @@ public class JcaKeyPair
 
         @Override
         public int hashCode() {
-            return GordianCoreFactory.HASH_PRIME * getKeySpec().hashCode()
-                    + theKey.hashCode();
+            return Objects.hash(getKeySpec(), theKey);
         }
     }
 
@@ -220,8 +218,7 @@ public class JcaKeyPair
 
         @Override
         public int hashCode() {
-            return GordianCoreFactory.HASH_PRIME * getKeySpec().hashCode()
-                    + theKey.hashCode();
+            return Objects.hash(getKeySpec(), theKey);
         }
     }
 
@@ -303,8 +300,7 @@ public class JcaKeyPair
 
         @Override
         public int hashCode() {
-            return GordianCoreFactory.HASH_PRIME * getKeySpec().hashCode()
-                    + thePrivateKey.hashCode();
+            return Objects.hash(getKeySpec(), thePrivateKey);
         }
     }
 
@@ -360,9 +356,7 @@ public class JcaKeyPair
 
         @Override
         public int hashCode() {
-            return GordianCoreFactory.HASH_PRIME * getKeySpec().hashCode()
-                    + theKey.getY().hashCode()
-                    + theKey.getParams().hashCode();
+            return Objects.hash(getKeySpec(), theKey);
         }
     }
 
@@ -433,9 +427,7 @@ public class JcaKeyPair
 
         @Override
         public int hashCode() {
-            return GordianCoreFactory.HASH_PRIME * getKeySpec().hashCode()
-                        + thePrivateKey.getX().hashCode()
-                        + thePrivateKey.getParams().hashCode();
+            return Objects.hash(getKeySpec(), thePrivateKey);
         }
     }
 

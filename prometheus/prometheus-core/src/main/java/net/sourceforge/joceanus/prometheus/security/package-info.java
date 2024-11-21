@@ -1,5 +1,5 @@
-/*******************************************************************************
- * GordianKnot: Security Suite
+/* *****************************************************************************
+ * Prometheus: Application Framework
  * Copyright 2012,2024 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
@@ -14,27 +14,8 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.gordianknot.api.lock;
-
-import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
-import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySet;
 
 /**
- * KeyPair Lock.
+ * Security Lock Manager.
  */
-public interface GordianKeyPairLock
-        extends GordianLock<GordianKeySet> {
-    /**
-     * Obtain the keySet.
-     * @return the keySet
-     */
-    default GordianKeySet getKeySet() {
-        return getLockedObject();
-    }
-
-    /**
-     * Obtain the keyPair.
-     * @return the keyPair
-     */
-    GordianKeyPair getKeyPair();
-}
+package net.sourceforge.joceanus.prometheus.security;

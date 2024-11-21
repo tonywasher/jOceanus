@@ -17,6 +17,7 @@
 package net.sourceforge.joceanus.gordianknot.api.zip;
 
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
+import net.sourceforge.joceanus.gordianknot.api.lock.GordianLock;
 import net.sourceforge.joceanus.oceanus.OceanusException;
 
 /**
@@ -40,6 +41,20 @@ public interface GordianZipLock {
      * @return the lockType
      */
     GordianZipLockType getLockType();
+
+    /**
+     * Obtain lockBytes.
+     * @return the lockBytes
+     * @throws OceanusException on error
+     */
+    byte[] getLockBytes() throws OceanusException;
+
+    /**
+     * Unlock with resolved lock.
+     * @param pLock the resolved lock
+     * @throws OceanusException on error
+     */
+    void unlock(GordianLock<?> pLock) throws OceanusException;
 
     /**
      * Unlock with password.

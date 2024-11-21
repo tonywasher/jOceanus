@@ -16,15 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.core.keyset;
 
-import java.io.IOException;
-import java.security.spec.PKCS8EncodedKeySpec;
-import java.security.spec.X509EncodedKeySpec;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
-import java.util.function.Predicate;
-
 import net.sourceforge.joceanus.gordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianCipherFactory;
@@ -52,6 +43,16 @@ import net.sourceforge.joceanus.gordianknot.impl.core.cipher.GordianCoreWrapper;
 import net.sourceforge.joceanus.gordianknot.impl.core.key.GordianCoreKeyGenerator;
 import net.sourceforge.joceanus.gordianknot.impl.core.keyset.GordianKeySetRecipe.GordianKeySetParameters;
 import net.sourceforge.joceanus.oceanus.OceanusException;
+
+import java.io.IOException;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Random;
+import java.util.function.Predicate;
 
 /**
  * A full set of symmetric keys, subject to the relevant predicate.
@@ -644,8 +645,6 @@ public final class GordianCoreKeySet
 
     @Override
     public int hashCode() {
-        return GordianCoreFactory.HASH_PRIME * theFactory.hashCode()
-                + theSpec.hashCode()
-                + theSymKeyMap.hashCode();
+        return Objects.hash(theFactory, theSpec, theSymKeyMap);
     }
 }

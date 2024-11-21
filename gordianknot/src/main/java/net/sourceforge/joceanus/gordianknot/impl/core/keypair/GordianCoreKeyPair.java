@@ -18,7 +18,8 @@ package net.sourceforge.joceanus.gordianknot.impl.core.keypair;
 
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
+
+import java.util.Objects;
 
 /**
  * KeyPair implementation.
@@ -143,12 +144,6 @@ public abstract class GordianCoreKeyPair
 
     @Override
     public int hashCode() {
-        int myHash = isPublicOnly()
-                     ? 1
-                     : thePrivateKey.hashCode();
-        myHash *= GordianCoreFactory.HASH_PRIME;
-        myHash += getKeyPairSpec().hashCode();
-        myHash *= GordianCoreFactory.HASH_PRIME;
-        return myHash + thePublicKey.hashCode();
+        return Objects.hash(getKeyPairSpec(), thePublicKey, thePrivateKey);
     }
 }

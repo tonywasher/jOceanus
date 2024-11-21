@@ -16,10 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.tethys.ui.javafx.button;
 
-import java.time.DayOfWeek;
-import java.time.format.TextStyle;
-import java.util.Calendar;
-import java.util.Locale;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.geometry.Bounds;
@@ -38,16 +34,20 @@ import javafx.scene.layout.Region;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-
 import net.sourceforge.joceanus.oceanus.date.OceanusDate;
 import net.sourceforge.joceanus.oceanus.date.OceanusDateConfig;
-import net.sourceforge.joceanus.oceanus.date.OceanusDateResource;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.TethysEventProvider;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIEvent;
+import net.sourceforge.joceanus.tethys.ui.core.base.TethysUIResource;
 import net.sourceforge.joceanus.tethys.ui.javafx.base.TethysUIFXArrowIcon;
 import net.sourceforge.joceanus.tethys.ui.javafx.base.TethysUIFXUtils;
+
+import java.time.DayOfWeek;
+import java.time.format.TextStyle;
+import java.util.Calendar;
+import java.util.Locale;
 
 /**
  * FX Date Dialog.
@@ -72,7 +72,7 @@ public final class TethysUIFXDateDialog
     /**
      * Null Date selection text.
      */
-    private static final String NLS_NULLSELECT = OceanusDateResource.DIALOG_NULL.getValue();
+    private static final String NLS_NULLSELECT = TethysUIResource.DIALOG_NULL.getValue();
 
     /**
      * The stage.
@@ -313,22 +313,22 @@ public final class TethysUIFXDateDialog
         /**
          * ToolTip for Next Month.
          */
-        private static final String NLS_NEXTMONTH = OceanusDateResource.DIALOG_NEXTMONTH.getValue();
+        private static final String NLS_NEXTMONTH = TethysUIResource.DIALOG_NEXTMONTH.getValue();
 
         /**
          * ToolTip for Previous Month.
          */
-        private static final String NLS_PREVMONTH = OceanusDateResource.DIALOG_PREVMONTH.getValue();
+        private static final String NLS_PREVMONTH = TethysUIResource.DIALOG_PREVMONTH.getValue();
 
         /**
          * ToolTip for Next Year.
          */
-        private static final String NLS_NEXTYEAR = OceanusDateResource.DIALOG_NEXTYEAR.getValue();
+        private static final String NLS_NEXTYEAR = TethysUIResource.DIALOG_NEXTYEAR.getValue();
 
         /**
          * ToolTip for Previous Year.
          */
-        private static final String NLS_PREVYEAR = OceanusDateResource.DIALOG_PREVYEAR.getValue();
+        private static final String NLS_PREVYEAR = TethysUIResource.DIALOG_PREVYEAR.getValue();
 
         /**
          * The button style.
@@ -809,12 +809,12 @@ public final class TethysUIFXDateDialog
         /**
          * ToolTip for Current Day.
          */
-        private static final String NLS_CURRENTDAY = OceanusDateResource.DIALOG_CURRENT.getValue();
+        private static final String NLS_CURRENTDAY = TethysUIResource.DIALOG_CURRENT.getValue();
 
         /**
          * ToolTip for Selected Day.
          */
-        private static final String NLS_SELECTEDDAY = OceanusDateResource.DIALOG_SELECTED.getValue();
+        private static final String NLS_SELECTEDDAY = TethysUIResource.DIALOG_SELECTED.getValue();
 
         /**
          * The panel style.

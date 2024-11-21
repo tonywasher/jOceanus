@@ -1,5 +1,5 @@
 /*******************************************************************************
- * GordianKnot: Security Suite
+ * Prometheus: Application Framework
  * Copyright 2012,2024 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
@@ -14,27 +14,39 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.gordianknot.api.lock;
-
-import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
-import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySet;
+package net.sourceforge.joceanus.prometheus.security;
 
 /**
- * KeyPair Lock.
+ * Dialogue Controller class.
  */
-public interface GordianKeyPairLock
-        extends GordianLock<GordianKeySet> {
+public interface PrometheusSecurityDialogController {
     /**
-     * Obtain the keySet.
-     * @return the keySet
+     * Create the dialog.
+     * @param pTitle the title
+     * @param pNeedConfirm true/false
      */
-    default GordianKeySet getKeySet() {
-        return getLockedObject();
-    }
+    void createTheDialog(String pTitle,
+                         boolean pNeedConfirm);
 
     /**
-     * Obtain the keyPair.
-     * @return the keyPair
+     * Show the dialog under an invokeAndWait clause.
+     * @return successful dialog usage true/false
      */
-    GordianKeyPair getKeyPair();
+    boolean showTheDialog();
+
+    /**
+     * Release dialog.
+     */
+    void releaseDialog();
+
+    /**
+     * Obtain the password.
+     * @return the password
+     */
+    char[] getPassword();
+
+    /**
+     * report bad password.
+     */
+    void reportBadPassword();
 }

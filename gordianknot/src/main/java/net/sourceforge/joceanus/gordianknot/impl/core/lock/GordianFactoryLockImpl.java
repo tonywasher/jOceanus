@@ -16,8 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.core.lock;
 
-import java.util.Arrays;
-
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactoryLock;
 import net.sourceforge.joceanus.gordianknot.api.lock.GordianPasswordLockSpec;
@@ -25,8 +23,11 @@ import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianParameters;
 import net.sourceforge.joceanus.gordianknot.impl.core.keyset.GordianCoreKeySet;
-import net.sourceforge.joceanus.oceanus.OceanusException;
 import net.sourceforge.joceanus.oceanus.OceanusDataConverter;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+
+import java.util.Arrays;
+import java.util.Objects;
 
 /**
  * Factory Lock implementation.
@@ -196,7 +197,6 @@ public class GordianFactoryLockImpl
 
     @Override
     public int hashCode() {
-        return GordianCoreFactory.HASH_PRIME * theFactory.hashCode()
-                + Arrays.hashCode(theLockBytes);
+        return Objects.hash(theFactory, Arrays.hashCode(theLockBytes));
     }
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * GordianKnot: Security Suite
+ * Prometheus: Application Framework
  * Copyright 2012,2024 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.gordianknot.impl.password;
+package net.sourceforge.joceanus.prometheus.security;
 
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactoryLock;
@@ -27,12 +27,11 @@ import net.sourceforge.joceanus.gordianknot.api.lock.GordianKeyPairLock;
 import net.sourceforge.joceanus.gordianknot.api.lock.GordianKeySetLock;
 import net.sourceforge.joceanus.gordianknot.api.lock.GordianLock;
 import net.sourceforge.joceanus.gordianknot.api.lock.GordianPasswordLockSpec;
-import net.sourceforge.joceanus.gordianknot.api.password.GordianPasswordManager;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.oceanus.OceanusDataConverter;
 import net.sourceforge.joceanus.oceanus.OceanusException;
 import net.sourceforge.joceanus.oceanus.logger.OceanusLogManager;
 import net.sourceforge.joceanus.oceanus.logger.OceanusLogger;
+import net.sourceforge.joceanus.prometheus.PrometheusDataException;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -43,11 +42,11 @@ import java.util.Objects;
 /**
  * Password Cache.
  */
-public class GordianPasswordCache {
+public class PrometheusSecurityPasswordCache {
     /**
      * Logger.
      */
-    private static final OceanusLogger LOGGER = OceanusLogManager.getLogger(GordianPasswordCache.class);
+    private static final OceanusLogger LOGGER = OceanusLogManager.getLogger(PrometheusSecurityPasswordCache.class);
 
     /**
      * Password failed message.
@@ -57,7 +56,7 @@ public class GordianPasswordCache {
     /**
      * List of resolved Locks.
      */
-    private final List<GordianLockCache<?>> theLocks;
+    private final List<PrometheusLockCache<?>> theLocks;
 
     /**
      * List of successful passwords.
@@ -90,8 +89,8 @@ public class GordianPasswordCache {
      * @param pLockSpec the passwordLockSpec
      * @throws OceanusException on error
      */
-    GordianPasswordCache(final GordianPasswordManager pManager,
-                         final GordianPasswordLockSpec pLockSpec) throws OceanusException {
+    PrometheusSecurityPasswordCache(final PrometheusSecurityPasswordManager pManager,
+                                    final GordianPasswordLockSpec pLockSpec) throws OceanusException {
         /* Store factory and lockSpec*/
         final GordianFactory myFactory = pManager.getSecurityFactory();
         theKeySetFactory = myFactory.getKeySetFactory();
@@ -122,7 +121,7 @@ public class GordianPasswordCache {
 
             /* Add the entry to the lists */
             final ByteBuffer myBuffer = ByteBuffer.wrap(myEncrypted);
-            theLocks.add(new GordianLockCache<>(pFactory, myBuffer));
+            theLocks.add(new PrometheusLockCache<>(pFactory, myBuffer));
             thePasswords.add(myBuffer);
 
         } finally {
@@ -149,7 +148,7 @@ public class GordianPasswordCache {
 
             /* Add the entry to the lists */
             final ByteBuffer myBuffer = ByteBuffer.wrap(myEncrypted);
-            theLocks.add(new GordianLockCache<>(pKeySet, myBuffer));
+            theLocks.add(new PrometheusLockCache<>(pKeySet, myBuffer));
             thePasswords.add(myBuffer);
 
         } finally {
@@ -176,7 +175,7 @@ public class GordianPasswordCache {
 
             /* Add the entry to the lists */
             final ByteBuffer myBuffer = ByteBuffer.wrap(myEncrypted);
-            theLocks.add(new GordianLockCache<>(pKeyPair, myBuffer));
+            theLocks.add(new PrometheusLockCache<>(pKeyPair, myBuffer));
             thePasswords.add(myBuffer);
 
         } finally {
@@ -194,7 +193,7 @@ public class GordianPasswordCache {
      */
     GordianFactoryLock lookUpResolvedFactoryLock(final byte[] pLockBytes) {
         /* Look for the factory in the list */
-        for (GordianLockCache<?> myCurr : theLocks) {
+        for (PrometheusLockCache<?> myCurr : theLocks) {
             /* If this is the factoryLock we are looking for, return it */
             if (myCurr.getLock() instanceof GordianFactoryLock
                     && Arrays.equals(pLockBytes, myCurr.getLock().getLockBytes())) {
@@ -213,7 +212,7 @@ public class GordianPasswordCache {
      */
     GordianKeySetLock lookUpResolvedKeySetLock(final byte[] pLockBytes) {
         /* Look for the keySet in the list */
-        for (GordianLockCache<?> myCurr : theLocks) {
+        for (PrometheusLockCache<?> myCurr : theLocks) {
             /* If this is the keySetLock we are looking for, return it */
             if (myCurr.getLock() instanceof GordianKeySetLock
                     && Arrays.equals(pLockBytes, myCurr.getLock().getLockBytes())) {
@@ -234,7 +233,7 @@ public class GordianPasswordCache {
     GordianKeyPairLock lookUpResolvedKeyPairLock(final byte[] pLockBytes,
                                                  final GordianKeyPair pKeyPair) {
         /* Look for the keyPair in the list */
-        for (GordianLockCache<?> myCurr : theLocks) {
+        for (PrometheusLockCache<?> myCurr : theLocks) {
             /* If this is the keyPairLock we are looking for, return it */
             if (myCurr.getLock() instanceof GordianKeyPairLock
                     && Arrays.equals(pLockBytes, myCurr.getLock().getLockBytes())
@@ -258,7 +257,7 @@ public class GordianPasswordCache {
         if (pReference instanceof GordianLock) {
             /* Look for the lock in the list */
             final GordianLock<?> myReference = (GordianLock<?>) pReference;
-            for (GordianLockCache<?> myCurr : theLocks) {
+            for (PrometheusLockCache<?> myCurr : theLocks) {
                 /* If this is the lock are looking for, return it */
                 if (Objects.equals(myReference, myCurr.getLock())) {
                     return myCurr.getPassword();
@@ -267,7 +266,7 @@ public class GordianPasswordCache {
         }
 
         /* Throw error */
-        throw new GordianDataException("Referenced Object not known");
+        throw new PrometheusDataException("Referenced Object not known");
     }
 
     /**
@@ -284,7 +283,7 @@ public class GordianPasswordCache {
             /* If we succeeded */
             if (myFactory != null) {
                 /* Add the factory to the list and return it */
-                theLocks.add(new GordianLockCache<>(myFactory, myCurr));
+                theLocks.add(new PrometheusLockCache<>(myFactory, myCurr));
                 return myFactory;
             }
         }
@@ -345,7 +344,7 @@ public class GordianPasswordCache {
             /* If we succeeded */
             if (myKeySet != null) {
                 /* Add the factory to the list and return it */
-                theLocks.add(new GordianLockCache<>(myKeySet, myCurr));
+                theLocks.add(new PrometheusLockCache<>(myKeySet, myCurr));
                 return myKeySet;
             }
         }
@@ -408,7 +407,7 @@ public class GordianPasswordCache {
             /* If we succeeded */
             if (myKeyPair != null) {
                 /* Add the factory to the list and return it */
-                theLocks.add(new GordianLockCache<>(myKeyPair, myCurr));
+                theLocks.add(new PrometheusLockCache<>(myKeyPair, myCurr));
                 return myKeyPair;
             }
         }
@@ -478,7 +477,7 @@ public class GordianPasswordCache {
             final GordianFactoryLock myLock = theLockFactory.newFactoryLock(pFactory, theLockSpec, myPasswordChars);
 
             /* Add the entry to the list and return the hash */
-            theLocks.add(new GordianLockCache<>(myLock, pPassword));
+            theLocks.add(new PrometheusLockCache<>(myLock, pPassword));
             return myLock;
 
         } finally {
@@ -513,7 +512,7 @@ public class GordianPasswordCache {
             final GordianKeySetLock myLock = theLockFactory.newKeySetLock(pKeySet, theLockSpec, myPasswordChars);
 
             /* Add the entry to the list and return the hash */
-            theLocks.add(new GordianLockCache<>(myLock, pPassword));
+            theLocks.add(new PrometheusLockCache<>(myLock, pPassword));
             return myLock;
 
         } finally {
@@ -563,7 +562,7 @@ public class GordianPasswordCache {
      * @param <T> the locked object
      *
      */
-    static class GordianLockCache<T> {
+    static class PrometheusLockCache<T> {
         /**
          * The FactoryLock.
          */
@@ -579,8 +578,8 @@ public class GordianPasswordCache {
          * @param pLock the Lock
          * @param pPassword the encrypted password
          */
-        GordianLockCache(final GordianLock<T> pLock,
-                         final ByteBuffer pPassword) {
+        PrometheusLockCache(final GordianLock<T> pLock,
+                            final ByteBuffer pPassword) {
             theLock = pLock;
             thePassword = pPassword;
         }

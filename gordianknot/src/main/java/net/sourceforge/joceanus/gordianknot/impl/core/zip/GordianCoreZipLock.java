@@ -16,22 +16,24 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.core.zip;
 
-import java.util.Objects;
-
-import org.bouncycastle.asn1.ASN1Encodable;
-import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
-
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactory;
+import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactoryLock;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySet;
-import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactoryLock;
 import net.sourceforge.joceanus.gordianknot.api.lock.GordianKeyPairLock;
 import net.sourceforge.joceanus.gordianknot.api.lock.GordianKeySetLock;
+import net.sourceforge.joceanus.gordianknot.api.lock.GordianLock;
 import net.sourceforge.joceanus.gordianknot.api.zip.GordianZipLock;
 import net.sourceforge.joceanus.gordianknot.api.zip.GordianZipLockType;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianLogicException;
 import net.sourceforge.joceanus.gordianknot.impl.core.lock.GordianCoreLockFactory;
 import net.sourceforge.joceanus.oceanus.OceanusException;
+import org.bouncycastle.asn1.ASN1Encodable;
+import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
+
+import java.util.Arrays;
+import java.util.Objects;
 
 /**
  * Lock implementation.
@@ -207,12 +209,36 @@ public class GordianCoreZipLock
         return theZipLock.getLockType();
     }
 
+    @Override
+    public byte[] getLockBytes() throws OceanusException {
+        return theZipLock.getPasswordLockASN1().getEncodedBytes();
+    }
+
     /**
      * Obtain LockASN1.
      * @return the lockASN1
      */
     public GordianZipLockASN1 getZipLockASN1() {
         return theZipLock;
+    }
+
+    @Override
+    public void unlock(final GordianLock<?> pLock) throws OceanusException {
+        /* Check that this is the correct lock */
+        if (!Arrays.equals(pLock.getLockBytes(), getLockBytes())) {
+            throw new GordianDataException("Lock doesn't match");
+        }
+
+        /* Store the relevant keySet */
+        if (pLock instanceof GordianKeySetLock) {
+            theKeySet = ((GordianKeySetLock) pLock).getKeySet();
+        } else if (pLock instanceof GordianFactoryLock) {
+            theKeySet = ((GordianFactoryLock) pLock).getFactory().getEmbeddedKeySet();
+        } else if (pLock instanceof GordianKeyPairLock) {
+            theKeySet = ((GordianKeyPairLock) pLock).getKeySet();
+        } else {
+            throw new GordianDataException("Unsupported lockType");
+        }
     }
 
     @Override
