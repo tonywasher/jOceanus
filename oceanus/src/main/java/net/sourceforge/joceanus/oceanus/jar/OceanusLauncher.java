@@ -16,6 +16,11 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.oceanus.jar;
 
+import net.sourceforge.joceanus.oceanus.OceanusDataException;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.logger.OceanusLogManager;
+import net.sourceforge.joceanus.oceanus.logger.OceanusLogger;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -30,13 +35,15 @@ import java.util.jar.Manifest;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import net.sourceforge.joceanus.oceanus.OceanusException;
-import net.sourceforge.joceanus.oceanus.OceanusDataException;
-
 /**
  * Launcher utilities.
  */
 public final class OceanusLauncher {
+    /**
+     * Create Logger.
+     */
+    private static final OceanusLogger LOGGER = OceanusLogManager.getLogger(OceanusLauncher.class);
+
     /**
      * Are we windows?
      */
@@ -56,6 +63,24 @@ public final class OceanusLauncher {
      * Private constructor.
      */
     private OceanusLauncher() {
+    }
+
+    /**
+     * Main entry point.
+     *
+     * @param pArgs the program arguments
+     */
+    public static void main(final String[] pArgs) {
+        /* Protect against exceptions */
+        try {
+            /* Access the Backup location */
+            final String myBackup = "dist";
+            OceanusLauncher.processJarFiles(new File(myBackup + "/bin"));
+
+            /* Handle exceptions */
+        } catch (OceanusException e) {
+            LOGGER.fatal("Failed to create launch scripts", e);
+        }
     }
 
     /**
