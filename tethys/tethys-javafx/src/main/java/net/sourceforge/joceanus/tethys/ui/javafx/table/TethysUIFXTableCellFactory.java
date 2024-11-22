@@ -21,13 +21,13 @@ import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.util.Callback;
 
-import net.sourceforge.joceanus.tethys.date.TethysDate;
-import net.sourceforge.joceanus.tethys.decimal.TethysDecimal;
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
-import net.sourceforge.joceanus.tethys.decimal.TethysPrice;
-import net.sourceforge.joceanus.tethys.decimal.TethysRate;
-import net.sourceforge.joceanus.tethys.decimal.TethysRatio;
-import net.sourceforge.joceanus.tethys.decimal.TethysUnits;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimal;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRate;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRatio;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusUnits;
 import net.sourceforge.joceanus.tethys.ui.core.factory.TethysUICoreFactory;
 import net.sourceforge.joceanus.tethys.ui.javafx.table.TethysUIFXTableCell.TethysUIFXTableCharArrayCell;
 import net.sourceforge.joceanus.tethys.ui.javafx.table.TethysUIFXTableCell.TethysUIFXTableDateCell;
@@ -137,7 +137,7 @@ public class TethysUIFXTableCellFactory<C, R> {
      * @param pColumn the column
      * @return the rawDecimal cell factory
      */
-    Callback<TableColumn<R, TethysDecimal>, TableCell<R, TethysDecimal>> rawDecimalCellFactory(final TethysUIFXTableRawDecimalColumn<C, R> pColumn) {
+    Callback<TableColumn<R, OceanusDecimal>, TableCell<R, OceanusDecimal>> rawDecimalCellFactory(final TethysUIFXTableRawDecimalColumn<C, R> pColumn) {
         return e -> new TethysUIFXTableRawDecimalCell<>(pColumn, theGuiFactory);
     }
 
@@ -147,7 +147,7 @@ public class TethysUIFXTableCellFactory<C, R> {
      * @param pColumn the column
      * @return the money cell factory
      */
-    Callback<TableColumn<R, TethysMoney>, TableCell<R, TethysMoney>> moneyCellFactory(final TethysUIFXTableMoneyColumn<C, R> pColumn) {
+    Callback<TableColumn<R, OceanusMoney>, TableCell<R, OceanusMoney>> moneyCellFactory(final TethysUIFXTableMoneyColumn<C, R> pColumn) {
         return e -> new TethysUIFXTableMoneyCell<>(pColumn, theGuiFactory);
     }
 
@@ -157,7 +157,7 @@ public class TethysUIFXTableCellFactory<C, R> {
      * @param pColumn the column
      * @return the price cell factory
      */
-    Callback<TableColumn<R, TethysPrice>, TableCell<R, TethysPrice>> priceCellFactory(final TethysUIFXTablePriceColumn<C, R> pColumn) {
+    Callback<TableColumn<R, OceanusPrice>, TableCell<R, OceanusPrice>> priceCellFactory(final TethysUIFXTablePriceColumn<C, R> pColumn) {
         return e -> new TethysUIFXTablePriceCell<>(pColumn, theGuiFactory);
     }
 
@@ -167,7 +167,7 @@ public class TethysUIFXTableCellFactory<C, R> {
      * @param pColumn the column
      * @return the rate cell factory
      */
-    Callback<TableColumn<R, TethysRate>, TableCell<R, TethysRate>> rateCellFactory(final TethysUIFXTableRateColumn<C, R> pColumn) {
+    Callback<TableColumn<R, OceanusRate>, TableCell<R, OceanusRate>> rateCellFactory(final TethysUIFXTableRateColumn<C, R> pColumn) {
         return e -> new TethysUIFXTableRateCell<>(pColumn, theGuiFactory);
     }
 
@@ -177,7 +177,7 @@ public class TethysUIFXTableCellFactory<C, R> {
      * @param pColumn the column
      * @return the units cell factory
      */
-    Callback<TableColumn<R, TethysUnits>, TableCell<R, TethysUnits>> unitsCellFactory(final TethysUIFXTableUnitsColumn<C, R> pColumn) {
+    Callback<TableColumn<R, OceanusUnits>, TableCell<R, OceanusUnits>> unitsCellFactory(final TethysUIFXTableUnitsColumn<C, R> pColumn) {
         return e -> new TethysUIFXTableUnitsCell<>(pColumn, theGuiFactory);
     }
 
@@ -187,7 +187,7 @@ public class TethysUIFXTableCellFactory<C, R> {
      * @param pColumn the column
      * @return the ratio cell factory
      */
-    Callback<TableColumn<R, TethysRatio>, TableCell<R, TethysRatio>> ratioCellFactory(final TethysUIFXTableRatioColumn<C, R> pColumn) {
+    Callback<TableColumn<R, OceanusRatio>, TableCell<R, OceanusRatio>> ratioCellFactory(final TethysUIFXTableRatioColumn<C, R> pColumn) {
         return e -> new TethysUIFXTableRatioCell<>(pColumn, theGuiFactory);
     }
 
@@ -221,7 +221,7 @@ public class TethysUIFXTableCellFactory<C, R> {
      * @param pColumn the column
      * @return the date cell factory
      */
-    Callback<TableColumn<R, TethysDate>, TableCell<R, TethysDate>> dateCellFactory(final TethysUIFXTableDateColumn<C, R> pColumn) {
+    Callback<TableColumn<R, OceanusDate>, TableCell<R, OceanusDate>> dateCellFactory(final TethysUIFXTableDateColumn<C, R> pColumn) {
         return e -> new TethysUIFXTableDateCell<>(pColumn, theGuiFactory);
     }
 

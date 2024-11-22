@@ -21,10 +21,10 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import net.sourceforge.joceanus.tethys.decimal.TethysDecimalFormatter;
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
-import net.sourceforge.joceanus.tethys.event.TethysEventManager;
-import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimalFormatter;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.tethys.ui.api.chart.TethysUIBarChart;
 import net.sourceforge.joceanus.tethys.ui.core.base.TethysUICoreComponent;
@@ -45,7 +45,7 @@ public abstract class TethysUICoreBarChart
     /**
      * The formatter.
      */
-    private final TethysDecimalFormatter theFormatter;
+    private final OceanusDecimalFormatter theFormatter;
 
     /**
      * The id.
@@ -55,7 +55,7 @@ public abstract class TethysUICoreBarChart
     /**
      * The Event Manager.
      */
-    private final TethysEventManager<TethysUIEvent> theEventManager;
+    private final OceanusEventManager<TethysUIEvent> theEventManager;
 
     /**
      * The sectionMap.
@@ -69,7 +69,7 @@ public abstract class TethysUICoreBarChart
     protected TethysUICoreBarChart(final TethysUICoreFactory<?> pFactory) {
         /* Build standard fields */
         theId = pFactory.getNextId();
-        theEventManager = new TethysEventManager<>();
+        theEventManager = new OceanusEventManager<>();
         theFormatter = pFactory.getDataFormatter().getDecimalFormatter();
 
         /* Create the section map */
@@ -82,7 +82,7 @@ public abstract class TethysUICoreBarChart
     }
 
     @Override
-    public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
+    public OceanusEventRegistrar<TethysUIEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -90,7 +90,7 @@ public abstract class TethysUICoreBarChart
      * Obtain the formatter.
      * @return the formatter
      */
-    protected TethysDecimalFormatter getFormatter() {
+    protected OceanusDecimalFormatter getFormatter() {
         return theFormatter;
     }
 
@@ -142,7 +142,7 @@ public abstract class TethysUICoreBarChart
      */
     protected String getToolTip(final String pName) {
         final TethysUIBarChartDataSection mySection = theSectionMap.get(pName);
-        final TethysMoney myValue = mySection.getValue();
+        final OceanusMoney myValue = mySection.getValue();
         return pName + " = " + theFormatter.formatMoney(myValue);
     }
 
@@ -282,13 +282,13 @@ public abstract class TethysUICoreBarChart
 
         @Override
         public void addSection(final String pRef,
-                               final TethysMoney pValue) {
+                               final OceanusMoney pValue) {
             addSection(pRef, pValue, theName + ":" + pRef);
         }
 
         @Override
         public void addSection(final String pRef,
-                               final TethysMoney pValue,
+                               final OceanusMoney pValue,
                                final Object pSource) {
             theSectionMap.put(pRef, new TethysUICoreBarChartDataSection(this, pRef, pValue, pSource));
         }
@@ -322,7 +322,7 @@ public abstract class TethysUICoreBarChart
         /**
          * The value of the section.
          */
-        private final TethysMoney theValue;
+        private final OceanusMoney theValue;
 
         /**
          * The source of the section.
@@ -338,7 +338,7 @@ public abstract class TethysUICoreBarChart
          */
         TethysUICoreBarChartDataSection(final TethysUIBarChartSeries pSeries,
                                         final String pRef,
-                                        final TethysMoney pValue,
+                                        final OceanusMoney pValue,
                                        final Object pSource) {
             theSeries = pSeries;
             theRef = pRef;
@@ -357,7 +357,7 @@ public abstract class TethysUICoreBarChart
         }
 
         @Override
-        public TethysMoney getValue() {
+        public OceanusMoney getValue() {
             return theValue;
         }
 

@@ -25,15 +25,15 @@ import net.sourceforge.joceanus.metis.data.MetisDataType;
 import net.sourceforge.joceanus.metis.field.MetisFieldItem.MetisFieldDef;
 import net.sourceforge.joceanus.prometheus.PrometheusDataException;
 import net.sourceforge.joceanus.prometheus.PrometheusLogicException;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.TethysDataConverter;
-import net.sourceforge.joceanus.tethys.date.TethysDate;
-import net.sourceforge.joceanus.tethys.decimal.TethysDecimal;
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
-import net.sourceforge.joceanus.tethys.decimal.TethysPrice;
-import net.sourceforge.joceanus.tethys.decimal.TethysRate;
-import net.sourceforge.joceanus.tethys.decimal.TethysRatio;
-import net.sourceforge.joceanus.tethys.decimal.TethysUnits;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.OceanusDataConverter;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimal;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRate;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRatio;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusUnits;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
 
 /**
@@ -233,22 +233,22 @@ public class PrometheusEncryptor {
         }
 
         /* Handle decimal instances */
-        if (pValue instanceof TethysDate) {
+        if (pValue instanceof OceanusDate) {
             return MetisDataType.DATE;
         }
-        if (pValue instanceof TethysUnits) {
+        if (pValue instanceof OceanusUnits) {
             return MetisDataType.UNITS;
         }
-        if (pValue instanceof TethysRate) {
+        if (pValue instanceof OceanusRate) {
             return MetisDataType.RATE;
         }
-        if (pValue instanceof TethysPrice) {
+        if (pValue instanceof OceanusPrice) {
             return MetisDataType.PRICE;
         }
-        if (pValue instanceof TethysMoney) {
+        if (pValue instanceof OceanusMoney) {
             return MetisDataType.MONEY;
         }
-        if (pValue instanceof TethysRatio) {
+        if (pValue instanceof OceanusRatio) {
             return MetisDataType.RATIO;
         }
 
@@ -284,22 +284,22 @@ public class PrometheusEncryptor {
         }
 
         /* Handle decimal instances */
-        if (TethysDate.class.equals(pClazz)) {
+        if (OceanusDate.class.equals(pClazz)) {
             return MetisDataType.DATE;
         }
-        if (TethysUnits.class.equals(pClazz)) {
+        if (OceanusUnits.class.equals(pClazz)) {
             return MetisDataType.UNITS;
         }
-        if (TethysRate.class.equals(pClazz)) {
+        if (OceanusRate.class.equals(pClazz)) {
             return MetisDataType.RATE;
         }
-        if (TethysPrice.class.equals(pClazz)) {
+        if (OceanusPrice.class.equals(pClazz)) {
             return MetisDataType.PRICE;
         }
-        if (TethysMoney.class.equals(pClazz)) {
+        if (OceanusMoney.class.equals(pClazz)) {
             return MetisDataType.MONEY;
         }
-        if (TethysRatio.class.equals(pClazz)) {
+        if (OceanusRatio.class.equals(pClazz)) {
             return MetisDataType.RATIO;
         }
 
@@ -374,7 +374,7 @@ public class PrometheusEncryptor {
         @Override
         public byte[] convertValue(final TethysUIDataFormatter pFormatter,
                                    final Object pValue) {
-            return pFormatter.getDateFormatter().toBytes((TethysDate) pValue);
+            return pFormatter.getDateFormatter().toBytes((OceanusDate) pValue);
         }
 
         @Override
@@ -396,13 +396,13 @@ public class PrometheusEncryptor {
         @Override
         public byte[] convertValue(final TethysUIDataFormatter pFormatter,
                                    final Object pValue) {
-            return TethysDataConverter.shortToByteArray((short) pValue);
+            return OceanusDataConverter.shortToByteArray((short) pValue);
         }
 
         @Override
         public Object parseValue(final TethysUIDataFormatter pFormatter,
                                  final byte[] pBytes) throws OceanusException {
-            return TethysDataConverter.byteArrayToShort(pBytes);
+            return OceanusDataConverter.byteArrayToShort(pBytes);
         }
     }
 
@@ -414,13 +414,13 @@ public class PrometheusEncryptor {
         @Override
         public byte[] convertValue(final TethysUIDataFormatter pFormatter,
                                    final Object pValue) {
-            return TethysDataConverter.integerToByteArray((int) pValue);
+            return OceanusDataConverter.integerToByteArray((int) pValue);
         }
 
         @Override
         public Object parseValue(final TethysUIDataFormatter pFormatter,
                                  final byte[] pBytes) throws OceanusException {
-            return TethysDataConverter.byteArrayToInteger(pBytes);
+            return OceanusDataConverter.byteArrayToInteger(pBytes);
         }
     }
 
@@ -432,13 +432,13 @@ public class PrometheusEncryptor {
         @Override
         public byte[] convertValue(final TethysUIDataFormatter pFormatter,
                                    final Object pValue) {
-            return TethysDataConverter.longToByteArray((long) pValue);
+            return OceanusDataConverter.longToByteArray((long) pValue);
         }
 
         @Override
         public Object parseValue(final TethysUIDataFormatter pFormatter,
                                  final byte[] pBytes) throws OceanusException {
-            return TethysDataConverter.byteArrayToLong(pBytes);
+            return OceanusDataConverter.byteArrayToLong(pBytes);
         }
     }
 
@@ -450,13 +450,13 @@ public class PrometheusEncryptor {
         @Override
         public byte[] convertValue(final TethysUIDataFormatter pFormatter,
                                    final Object pValue) {
-            return TethysDataConverter.stringToByteArray(pValue.toString());
+            return OceanusDataConverter.stringToByteArray(pValue.toString());
         }
 
         @Override
         public Object parseValue(final TethysUIDataFormatter pFormatter,
                                  final byte[] pBytes) {
-            final String myBoolString = TethysDataConverter.byteArrayToString(pBytes);
+            final String myBoolString = OceanusDataConverter.byteArrayToString(pBytes);
             return Boolean.parseBoolean(myBoolString);
         }
     }
@@ -469,13 +469,13 @@ public class PrometheusEncryptor {
         @Override
         public byte[] convertValue(final TethysUIDataFormatter pFormatter,
                                    final Object pValue) {
-            return TethysDataConverter.stringToByteArray((String) pValue);
+            return OceanusDataConverter.stringToByteArray((String) pValue);
         }
 
         @Override
         public Object parseValue(final TethysUIDataFormatter pFormatter,
                                  final byte[] pBytes) {
-            return TethysDataConverter.byteArrayToString(pBytes);
+            return OceanusDataConverter.byteArrayToString(pBytes);
         }
     }
 
@@ -487,13 +487,13 @@ public class PrometheusEncryptor {
         @Override
         public byte[] convertValue(final TethysUIDataFormatter pFormatter,
                                    final Object pValue) throws OceanusException {
-            return TethysDataConverter.charsToByteArray((char[]) pValue);
+            return OceanusDataConverter.charsToByteArray((char[]) pValue);
         }
 
         @Override
         public Object parseValue(final TethysUIDataFormatter pFormatter,
                                  final byte[] pBytes) throws OceanusException {
-            return TethysDataConverter.bytesToCharArray(pBytes);
+            return OceanusDataConverter.bytesToCharArray(pBytes);
         }
     }
 
@@ -505,7 +505,7 @@ public class PrometheusEncryptor {
         @Override
         public byte[] convertValue(final TethysUIDataFormatter pFormatter,
                                    final Object pValue) {
-            return ((TethysDecimal) pValue).toBytes();
+            return ((OceanusDecimal) pValue).toBytes();
         }
     }
 
@@ -517,7 +517,7 @@ public class PrometheusEncryptor {
         @Override
         public Object parseValue(final TethysUIDataFormatter pFormatter,
                                  final byte[] pBytes) throws OceanusException {
-            return new TethysMoney(pBytes);
+            return new OceanusMoney(pBytes);
         }
     }
 
@@ -529,7 +529,7 @@ public class PrometheusEncryptor {
         @Override
         public Object parseValue(final TethysUIDataFormatter pFormatter,
                                  final byte[] pBytes) throws OceanusException {
-            return new TethysPrice(pBytes);
+            return new OceanusPrice(pBytes);
         }
     }
 
@@ -541,7 +541,7 @@ public class PrometheusEncryptor {
         @Override
         public Object parseValue(final TethysUIDataFormatter pFormatter,
                                  final byte[] pBytes) throws OceanusException {
-            return new TethysRatio(pBytes);
+            return new OceanusRatio(pBytes);
         }
     }
 
@@ -553,7 +553,7 @@ public class PrometheusEncryptor {
         @Override
         public Object parseValue(final TethysUIDataFormatter pFormatter,
                                  final byte[] pBytes) throws OceanusException {
-            return new TethysUnits(pBytes);
+            return new OceanusUnits(pBytes);
         }
     }
 
@@ -565,7 +565,7 @@ public class PrometheusEncryptor {
         @Override
         public Object parseValue(final TethysUIDataFormatter pFormatter,
                                  final byte[] pBytes) throws OceanusException {
-            return new TethysRate(pBytes);
+            return new OceanusRate(pBytes);
         }
     }
 }

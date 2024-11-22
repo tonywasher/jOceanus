@@ -25,8 +25,8 @@ import net.sourceforge.joceanus.moneywise.tax.MoneyWiseTaxBandSet.MoneyWiseTaxBa
 import net.sourceforge.joceanus.moneywise.tax.MoneyWiseTaxDueBucket;
 import net.sourceforge.joceanus.moneywise.tax.MoneyWiseTaxResource;
 import net.sourceforge.joceanus.moneywise.tax.MoneyWiseTaxSource;
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
-import net.sourceforge.joceanus.tethys.decimal.TethysRatio;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRatio;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
 
 /**
@@ -66,17 +66,17 @@ public class MoneyWiseUKChargeableGainsScheme
         /**
          * The total gains.
          */
-        private final TethysMoney theTotalGains;
+        private final OceanusMoney theTotalGains;
 
         /**
          * The total slices.
          */
-        private final TethysMoney theTotalSlices;
+        private final OceanusMoney theTotalSlices;
 
         /**
          * The ratio.
          */
-        private final TethysRatio theRatio;
+        private final OceanusRatio theRatio;
 
         /**
          * The slices taxDueBucket.
@@ -86,12 +86,12 @@ public class MoneyWiseUKChargeableGainsScheme
         /**
          * The taxRelief.
          */
-        private final TethysMoney theTaxRelief;
+        private final OceanusMoney theTaxRelief;
 
         /**
          * The nett taxDue.
          */
-        private final TethysMoney theNettTaxDue;
+        private final OceanusMoney theNettTaxDue;
 
         /**
          * Constructor.
@@ -104,11 +104,11 @@ public class MoneyWiseUKChargeableGainsScheme
             super(pBase);
 
             /* Create the totals */
-            final TethysMoney myZero = new TethysMoney(pBase.getTaxDue());
-            theTotalGains = new TethysMoney(myZero);
-            theTotalSlices = new TethysMoney(myZero);
-            theTaxRelief = new TethysMoney(myZero);
-            theNettTaxDue = new TethysMoney(myZero);
+            final OceanusMoney myZero = new OceanusMoney(pBase.getTaxDue());
+            theTotalGains = new OceanusMoney(myZero);
+            theTotalSlices = new OceanusMoney(myZero);
+            theTaxRelief = new OceanusMoney(myZero);
+            theNettTaxDue = new OceanusMoney(myZero);
 
             /* Process the slices */
             for (MoneyWiseChargeableGainSlice mySlice : pSource.getGainSlices().getUnderlyingList()) {
@@ -116,7 +116,7 @@ public class MoneyWiseUKChargeableGainsScheme
             }
 
             /* Calculate the ratio */
-            theRatio = new TethysRatio(theTotalGains, theTotalSlices);
+            theRatio = new OceanusRatio(theTotalGains, theTotalSlices);
 
             /* Determine tax due on slices */
             theSliceBucket = buildSliceBucket();
@@ -127,7 +127,7 @@ public class MoneyWiseUKChargeableGainsScheme
          * Obtain the total gains.
          * @return the gains
          */
-        public TethysMoney getTotalGains() {
+        public OceanusMoney getTotalGains() {
             return theTotalGains;
         }
 
@@ -135,7 +135,7 @@ public class MoneyWiseUKChargeableGainsScheme
          * Obtain the total slices.
          * @return the slices
          */
-        public TethysMoney getTotalSlices() {
+        public OceanusMoney getTotalSlices() {
             return theTotalSlices;
         }
 
@@ -143,7 +143,7 @@ public class MoneyWiseUKChargeableGainsScheme
          * Obtain the ratio.
          * @return the ratio
          */
-        public TethysRatio getRatio() {
+        public OceanusRatio getRatio() {
             return theRatio;
         }
 
@@ -159,7 +159,7 @@ public class MoneyWiseUKChargeableGainsScheme
          * Obtain the tax due.
          * @return the tax due
          */
-        public TethysMoney getNettTaxDue() {
+        public OceanusMoney getNettTaxDue() {
             return theNettTaxDue;
         }
 
@@ -167,7 +167,7 @@ public class MoneyWiseUKChargeableGainsScheme
          * Obtain the tax relief.
          * @return the tax relief
          */
-        public TethysMoney getTaxRelief() {
+        public OceanusMoney getTaxRelief() {
             return theTaxRelief;
         }
 
@@ -188,7 +188,7 @@ public class MoneyWiseUKChargeableGainsScheme
         private MoneyWiseTaxDueBucket buildSliceBucket() {
             /* Create a new taxBand set */
             final MoneyWiseTaxBandSet myTaxBands = new MoneyWiseTaxBandSet();
-            final TethysMoney myRemaining = new TethysMoney(theTotalSlices);
+            final OceanusMoney myRemaining = new OceanusMoney(theTotalSlices);
 
             /* Calculate new tax allocation */
             final Iterator<MoneyWiseTaxBandBucket> myIterator = taxBandIterator();
@@ -197,8 +197,8 @@ public class MoneyWiseUKChargeableGainsScheme
                 final MoneyWiseTaxBandBucket myBucket = myIterator.next();
 
                 /* Determine amount in band */
-                TethysMoney myAmount = getAmountInBand(myBucket.getAmount(), myRemaining);
-                myAmount = new TethysMoney(myAmount);
+                OceanusMoney myAmount = getAmountInBand(myBucket.getAmount(), myRemaining);
+                myAmount = new OceanusMoney(myAmount);
 
                 /* allocate band and adjust */
                 myTaxBands.addTaxBand(new MoneyWiseTaxBand(myAmount, myBucket.getRate()));

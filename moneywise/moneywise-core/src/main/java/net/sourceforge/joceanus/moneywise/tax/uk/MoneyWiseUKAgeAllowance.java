@@ -21,9 +21,9 @@ import java.time.Month;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.moneywise.tax.MoneyWiseMarginalReduction;
 import net.sourceforge.joceanus.moneywise.tax.MoneyWiseTaxResource;
-import net.sourceforge.joceanus.tethys.date.TethysDate;
-import net.sourceforge.joceanus.tethys.date.TethysFiscalYear;
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.date.OceanusFiscalYear;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
 
 /**
@@ -48,12 +48,12 @@ public class MoneyWiseUKAgeAllowance
     /**
      * Age Allowance minimum.
      */
-    private static final TethysDate BIRTHDAY_MINIMUM = TethysFiscalYear.UK.endOfYear(new TethysDate(1948, Month.JANUARY, 1));
+    private static final OceanusDate BIRTHDAY_MINIMUM = OceanusFiscalYear.UK.endOfYear(new OceanusDate(1948, Month.JANUARY, 1));
 
     /**
      * HiAge Allowance minimum.
      */
-    private static final TethysDate HI_BIRTHDAY_MINIMUM = TethysFiscalYear.UK.endOfYear(new TethysDate(1938, Month.JANUARY, 1));
+    private static final OceanusDate HI_BIRTHDAY_MINIMUM = OceanusFiscalYear.UK.endOfYear(new OceanusDate(1938, Month.JANUARY, 1));
 
     /**
      * Low Age Limit.
@@ -78,17 +78,17 @@ public class MoneyWiseUKAgeAllowance
     /**
      * LoAgeAllowance.
      */
-    private final TethysMoney theLoAgeAllowance;
+    private final OceanusMoney theLoAgeAllowance;
 
     /**
      * HiAgeAllowance.
      */
-    private final TethysMoney theHiAgeAllowance;
+    private final OceanusMoney theHiAgeAllowance;
 
     /**
      * AgeAllowanceLimit.
      */
-    private final TethysMoney theAgeAllowanceLimit;
+    private final OceanusMoney theAgeAllowanceLimit;
 
     /**
      * Constructor.
@@ -100,12 +100,12 @@ public class MoneyWiseUKAgeAllowance
      * @param pAgeAllowanceLimit the age allowance limit
      * @param pReduction the marginal reduction
      */
-    protected MoneyWiseUKAgeAllowance(final TethysMoney pAllowance,
-                                      final TethysMoney pRentalAllowance,
-                                      final TethysMoney pCapitalAllowance,
-                                      final TethysMoney pLoAgeAllowance,
-                                      final TethysMoney pHiAgeAllowance,
-                                      final TethysMoney pAgeAllowanceLimit,
+    protected MoneyWiseUKAgeAllowance(final OceanusMoney pAllowance,
+                                      final OceanusMoney pRentalAllowance,
+                                      final OceanusMoney pCapitalAllowance,
+                                      final OceanusMoney pLoAgeAllowance,
+                                      final OceanusMoney pHiAgeAllowance,
+                                      final OceanusMoney pAgeAllowanceLimit,
                                       final MoneyWiseMarginalReduction pReduction) {
         super(pAllowance, pRentalAllowance, pCapitalAllowance, pReduction);
         theLoAgeAllowance = pLoAgeAllowance;
@@ -125,12 +125,12 @@ public class MoneyWiseUKAgeAllowance
      * @param pHiAgeAllowance the high age allowance
      * @param pAgeAllowanceLimit the age allowance limit
      */
-    protected MoneyWiseUKAgeAllowance(final TethysMoney pAllowance,
-                                      final TethysMoney pRentalAllowance,
-                                      final TethysMoney pCapitalAllowance,
-                                      final TethysMoney pLoAgeAllowance,
-                                      final TethysMoney pHiAgeAllowance,
-                                      final TethysMoney pAgeAllowanceLimit) {
+    protected MoneyWiseUKAgeAllowance(final OceanusMoney pAllowance,
+                                      final OceanusMoney pRentalAllowance,
+                                      final OceanusMoney pCapitalAllowance,
+                                      final OceanusMoney pLoAgeAllowance,
+                                      final OceanusMoney pHiAgeAllowance,
+                                      final OceanusMoney pAgeAllowanceLimit) {
         this(pAllowance, pRentalAllowance, pCapitalAllowance, pLoAgeAllowance,
                 pHiAgeAllowance, pAgeAllowanceLimit, MoneyWiseMarginalReduction.ONEINTWO);
     }
@@ -143,11 +143,11 @@ public class MoneyWiseUKAgeAllowance
      * @param pLoAgeAllowance the low age allowance
      * @param pAgeAllowanceLimit the age allowance limit
      */
-    protected MoneyWiseUKAgeAllowance(final TethysMoney pAllowance,
-                                      final TethysMoney pRentalAllowance,
-                                      final TethysMoney pCapitalAllowance,
-                                      final TethysMoney pLoAgeAllowance,
-                                      final TethysMoney pAgeAllowanceLimit) {
+    protected MoneyWiseUKAgeAllowance(final OceanusMoney pAllowance,
+                                      final OceanusMoney pRentalAllowance,
+                                      final OceanusMoney pCapitalAllowance,
+                                      final OceanusMoney pLoAgeAllowance,
+                                      final OceanusMoney pAgeAllowanceLimit) {
         this(pAllowance, pRentalAllowance, pCapitalAllowance, pLoAgeAllowance, null, pAgeAllowanceLimit, MoneyWiseMarginalReduction.TWOINTHREE);
     }
 
@@ -155,7 +155,7 @@ public class MoneyWiseUKAgeAllowance
      * Obtain the loAgeAllowance.
      * @return the Allowance
      */
-    protected TethysMoney getLoAgeAllowance() {
+    protected OceanusMoney getLoAgeAllowance() {
         return theLoAgeAllowance;
     }
 
@@ -163,7 +163,7 @@ public class MoneyWiseUKAgeAllowance
      * Obtain the hiAgeAllowance.
      * @return the Allowance
      */
-    protected TethysMoney getHiAgeAllowance() {
+    protected OceanusMoney getHiAgeAllowance() {
         return theHiAgeAllowance;
     }
 
@@ -171,20 +171,20 @@ public class MoneyWiseUKAgeAllowance
      * Obtain the ageAllowanceLimit.
      * @return the Limit
      */
-    protected TethysMoney getAgeAllowanceLimit() {
+    protected OceanusMoney getAgeAllowanceLimit() {
         return theAgeAllowanceLimit;
     }
 
     @Override
-    protected TethysMoney calculateBasicAllowance(final MoneyWiseUKTaxConfig pConfig) {
+    protected OceanusMoney calculateBasicAllowance(final MoneyWiseUKTaxConfig pConfig) {
         /* Access the client age */
-        final TethysDate myBirthday = pConfig.getBirthday();
+        final OceanusDate myBirthday = pConfig.getBirthday();
         final Integer myAge = pConfig.getClientAge();
         boolean hasAgeAllowance = false;
 
         /* Determine the allowance */
-        final TethysMoney myBaseAllowance = getAllowance();
-        TethysMoney myAllowance = myBaseAllowance;
+        final OceanusMoney myBaseAllowance = getAllowance();
+        OceanusMoney myAllowance = myBaseAllowance;
         if ((myBirthday.compareTo(HI_BIRTHDAY_MINIMUM) < 0)
                 && (theHiAgeAllowance != null)
                 && (myAge >= theHiAgeBoundary)) {
@@ -197,12 +197,12 @@ public class MoneyWiseUKAgeAllowance
         }
 
         /* If we have an age related allowance and we are above the allowance limit */
-        final TethysMoney myGross = pConfig.getGrossTaxable();
+        final OceanusMoney myGross = pConfig.getGrossTaxable();
         if (hasAgeAllowance
                 && (myGross.compareTo(theAgeAllowanceLimit) > 0)) {
             /* Calculate and apply the reduction */
-            final TethysMoney myReduction = getMarginalReduction().calculateReduction(myGross, theAgeAllowanceLimit);
-            myAllowance = new TethysMoney(myAllowance);
+            final OceanusMoney myReduction = getMarginalReduction().calculateReduction(myGross, theAgeAllowanceLimit);
+            myAllowance = new OceanusMoney(myAllowance);
             myAllowance.subtractAmount(myReduction);
 
             /* If we have reduced below the Base Allowance */

@@ -22,7 +22,7 @@ import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetFactory;
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetService;
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetWorkBook;
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetWorkBookType;
-import net.sourceforge.joceanus.tethys.OceanusException;
+import net.sourceforge.joceanus.oceanus.OceanusException;
 import net.sourceforge.joceanus.tethys.ui.api.factory.TethysUIFactory;
 
 /**

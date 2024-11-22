@@ -23,11 +23,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
-import net.sourceforge.joceanus.tethys.decimal.TethysPrice;
-import net.sourceforge.joceanus.tethys.decimal.TethysRate;
-import net.sourceforge.joceanus.tethys.decimal.TethysRatio;
-import net.sourceforge.joceanus.tethys.decimal.TethysUnits;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRate;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRatio;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusUnits;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIIconId;
 import net.sourceforge.joceanus.tethys.ui.api.button.TethysUIButtonFactory;
 import net.sourceforge.joceanus.tethys.ui.api.button.TethysUIScrollButtonManager;
@@ -63,27 +63,27 @@ public class TethysTestHelper {
     /**
      * The default money value.
      */
-    public static final TethysMoney MONEY_DEF = new TethysMoney("12.45");
+    public static final OceanusMoney MONEY_DEF = new OceanusMoney("12.45");
 
     /**
      * The default price value.
      */
-    public static final TethysPrice PRICE_DEF = new TethysPrice("2.2");
+    public static final OceanusPrice PRICE_DEF = new OceanusPrice("2.2");
 
     /**
      * The default units value.
      */
-    public static final TethysUnits UNITS_DEF = new TethysUnits("1");
+    public static final OceanusUnits UNITS_DEF = new OceanusUnits("1");
 
     /**
      * The default rate value.
      */
-    public static final TethysRate RATE_DEF = new TethysRate(".10");
+    public static final OceanusRate RATE_DEF = new OceanusRate(".10");
 
     /**
      * The default ratio value.
      */
-    public static final TethysRatio RATIO_DEF = new TethysRatio("1.6");
+    public static final OceanusRatio RATIO_DEF = new OceanusRatio("1.6");
 
     /**
      * The factory.

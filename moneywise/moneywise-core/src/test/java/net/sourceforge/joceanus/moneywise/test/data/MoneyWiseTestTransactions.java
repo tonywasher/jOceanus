@@ -39,8 +39,8 @@ import net.sourceforge.joceanus.moneywise.data.builder.MoneyWiseTransactionBuild
 import net.sourceforge.joceanus.moneywise.data.builder.MoneyWiseXchgRateBuilder;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrencyClass;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTaxClass;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
 
 /**
  * Transactions builder.
@@ -360,7 +360,7 @@ public class MoneyWiseTestTransactions {
     private void checkAccountValue(final String pAccount,
                                    final String pValue) {
         /* Obtain the value */
-        final TethysMoney myAmount = new TethysMoney(pValue);
+        final OceanusMoney myAmount = new OceanusMoney(pValue);
         final MoneyWiseAssetBase myAsset = (MoneyWiseAssetBase) theTransBuilder.resolveTransactionAsset(pAccount);
         final MoneyWiseXAnalysisAccountBucket<?> myBucket = getAccountBucket(myAsset);
         Assertions.assertEquals(myAmount, myBucket.getValues().getMoneyValue(MoneyWiseXAnalysisAccountAttr.VALUATION),
@@ -377,8 +377,8 @@ public class MoneyWiseTestTransactions {
                                  final String pIncome,
                                  final String pExpense) {
         /* Obtain the value */
-        final TethysMoney myIncome = new TethysMoney(pIncome);
-        final TethysMoney myExpense = new TethysMoney(pExpense);
+        final OceanusMoney myIncome = new OceanusMoney(pIncome);
+        final OceanusMoney myExpense = new OceanusMoney(pExpense);
         final MoneyWiseAssetBase myAsset = (MoneyWiseAssetBase) theTransBuilder.resolveTransactionAsset(pPayee);
         final MoneyWiseXAnalysisPayeeBucket myBucket = theAnalysis.getPayees().getBucket(myAsset);
         Assertions.assertEquals(myIncome, myBucket.getValues().getMoneyValue(MoneyWiseXAnalysisPayeeAttr.INCOME),
@@ -397,8 +397,8 @@ public class MoneyWiseTestTransactions {
                                     final String pIncome,
                                     final String pExpense) {
         /* Obtain the value */
-        final TethysMoney myIncome = new TethysMoney(pIncome);
-        final TethysMoney myExpense = new TethysMoney(pExpense);
+        final OceanusMoney myIncome = new OceanusMoney(pIncome);
+        final OceanusMoney myExpense = new OceanusMoney(pExpense);
         final MoneyWiseTransCategory myCategory = theAnalysis.getData().getTransCategories().findItemByName(pCategory);
         final MoneyWiseXAnalysisTransCategoryBucket myBucket = theAnalysis.getTransCategories().getBucket(myCategory);
         Assertions.assertEquals(myIncome, myBucket.getValues().getMoneyValue(MoneyWiseXAnalysisTransAttr.INCOME),
@@ -415,7 +415,7 @@ public class MoneyWiseTestTransactions {
     private void checkTaxBasisValue(final MoneyWiseTaxClass pTaxBasis,
                                     final String pValue) {
         /* Obtain the value */
-        final TethysMoney myAmount = new TethysMoney(pValue);
+        final OceanusMoney myAmount = new OceanusMoney(pValue);
         final MoneyWiseXAnalysisTaxBasisBucket myBucket = theAnalysis.getTaxBasis().getBucket(pTaxBasis);
         Assertions.assertEquals(myAmount, myBucket.getValues().getMoneyValue(MoneyWiseXAnalysisTaxBasisAttr.NETT),
                 "Bad value for " + pTaxBasis);

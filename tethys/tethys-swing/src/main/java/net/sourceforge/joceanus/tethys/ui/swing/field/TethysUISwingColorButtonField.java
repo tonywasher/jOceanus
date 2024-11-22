@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Tethys: Java Utilities
+ * Tethys: GUI Utilities
  * Copyright 2012,2024 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,7 +21,7 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 
-import net.sourceforge.joceanus.tethys.event.TethysEvent;
+import net.sourceforge.joceanus.oceanus.event.OceanusEvent;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.tethys.ui.api.field.TethysUIDataEditField.TethysUIColorButtonField;
 import net.sourceforge.joceanus.tethys.ui.core.factory.TethysUICoreFactory;
@@ -88,7 +88,7 @@ public class TethysUISwingColorButtonField
      * handle Date Button event.
      * @param pEvent the even
      */
-    private void handleEvent(final TethysEvent<TethysUIEvent> pEvent) {
+    private void handleEvent(final OceanusEvent<TethysUIEvent> pEvent) {
         switch (pEvent.getEventId()) {
             case NEWVALUE:
                 setValue(thePicker.getValue());

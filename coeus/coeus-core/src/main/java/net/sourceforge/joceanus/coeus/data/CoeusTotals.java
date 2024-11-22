@@ -20,10 +20,10 @@ import java.util.Objects;
 
 import net.sourceforge.joceanus.metis.field.MetisFieldItem.MetisFieldTableItem;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
-import net.sourceforge.joceanus.tethys.date.TethysDate;
-import net.sourceforge.joceanus.tethys.decimal.TethysDecimal;
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
-import net.sourceforge.joceanus.tethys.decimal.TethysRatio;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimal;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRatio;
 
 /**
  * Transaction Totals.
@@ -93,22 +93,22 @@ public abstract class CoeusTotals
     /**
      * The loan RateOfReturn.
      */
-    private TethysRatio theLoanRor;
+    private OceanusRatio theLoanRor;
 
     /**
      * The asset RateOfReturn.
      */
-    private TethysRatio theAssetRor;
+    private OceanusRatio theAssetRor;
 
     /**
      * The delta.
      */
-    private TethysDecimal theDelta;
+    private OceanusDecimal theDelta;
 
     /**
      * The balance.
      */
-    private TethysDecimal theBalance;
+    private OceanusDecimal theBalance;
 
     /**
      * Constructor.
@@ -124,8 +124,8 @@ public abstract class CoeusTotals
         thePrevious = null;
 
         /* Set rate of return ratios disabling Asset for Loan totals */
-        theAssetRor = pLoan == null ? TethysRatio.ONE : null;
-        theLoanRor = TethysRatio.ONE;
+        theAssetRor = pLoan == null ? OceanusRatio.ONE : null;
+        theLoanRor = OceanusRatio.ONE;
     }
 
     /**
@@ -141,9 +141,9 @@ public abstract class CoeusTotals
         thePrevious = pPrevious;
 
         /* Clone the rate of returns */
-        final TethysRatio myAssetRor = thePrevious.getAssetRoR();
-        theAssetRor = myAssetRor == null ? null : new TethysRatio(myAssetRor);
-        theLoanRor = new TethysRatio(thePrevious.getLoanRoR());
+        final OceanusRatio myAssetRor = thePrevious.getAssetRoR();
+        theAssetRor = myAssetRor == null ? null : new OceanusRatio(myAssetRor);
+        theLoanRor = new OceanusRatio(thePrevious.getLoanRoR());
     }
 
     /**
@@ -153,9 +153,9 @@ public abstract class CoeusTotals
     protected void calculateDelta(final CoeusTotals pBase) {
         /* Calculate the delta rate of returns */
         if (theAssetRor != null) {
-            theAssetRor = new TethysRatio(theAssetRor, pBase.getAssetRoR());
+            theAssetRor = new OceanusRatio(theAssetRor, pBase.getAssetRoR());
         }
-        theLoanRor = new TethysRatio(theLoanRor, pBase.getLoanRoR());
+        theLoanRor = new OceanusRatio(theLoanRor, pBase.getLoanRoR());
     }
 
     /**
@@ -175,7 +175,7 @@ public abstract class CoeusTotals
      * Calculate the rateOfReturn.
      * @param pDelta the delta
      */
-    protected void calculateRateOfReturn(final TethysDecimal pDelta) {
+    protected void calculateRateOfReturn(final OceanusDecimal pDelta) {
         /* No need to calculate if there is no delta */
         if (pDelta.isNonZero())  {
             /* Calculate the delta rate of returns */
@@ -198,17 +198,17 @@ public abstract class CoeusTotals
      * @param pDelta the delta
      * @return the rate of return
      */
-    private static TethysRatio calculateRateOfReturn(final TethysDecimal pBase,
-                                                     final TethysDecimal pDelta) {
+    private static OceanusRatio calculateRateOfReturn(final OceanusDecimal pBase,
+                                                      final OceanusDecimal pDelta) {
         /* If base is zero, just return one */
         if (pBase.isZero()) {
-            return TethysRatio.ONE;
+            return OceanusRatio.ONE;
         }
 
         /* Calculate the delta rate of returns */
-        final TethysDecimal myNew = new TethysDecimal(pBase);
+        final OceanusDecimal myNew = new OceanusDecimal(pBase);
         myNew.addValue(pDelta);
-        return new TethysRatio(myNew, pBase);
+        return new OceanusRatio(myNew, pBase);
     }
 
     /**
@@ -256,7 +256,7 @@ public abstract class CoeusTotals
      * Obtain the date.
      * @return the date
      */
-    public TethysDate getDate() {
+    public OceanusDate getDate() {
         return theTransaction != null
                ? theTransaction.getDate()
                : null;
@@ -302,115 +302,115 @@ public abstract class CoeusTotals
      * Obtain the total source value.
      * @return the value
      */
-    public abstract TethysDecimal getSourceValue();
+    public abstract OceanusDecimal getSourceValue();
 
     /**
      * Obtain the total asset value.
      * @return the value
      */
-    public abstract TethysDecimal getAssetValue();
+    public abstract OceanusDecimal getAssetValue();
 
     /**
      * Obtain the total invested.
      * @return the invested
      */
-    public abstract TethysDecimal getInvested();
+    public abstract OceanusDecimal getInvested();
 
     /**
      * Obtain the total holding.
      * @return the holding
      */
-    public abstract TethysDecimal getHolding();
+    public abstract OceanusDecimal getHolding();
 
     /**
      * Obtain the total loanBook.
      * @return the loanBook
      */
-    public abstract TethysDecimal getLoanBook();
+    public abstract OceanusDecimal getLoanBook();
 
     /**
      * Obtain the total earnings.
      * @return the earnings
      */
-    public abstract TethysDecimal getEarnings();
+    public abstract OceanusDecimal getEarnings();
 
     /**
      * Obtain the total taxable interest.
      * @return the interest
      */
-    public abstract TethysDecimal getTaxableEarnings();
+    public abstract OceanusDecimal getTaxableEarnings();
 
     /**
      * Obtain the total interest.
      * @return the interest
      */
-    public abstract TethysDecimal getInterest();
+    public abstract OceanusDecimal getInterest();
 
     /**
      * Obtain the total nettInterest.
      * @return the interest
      */
-    public abstract TethysDecimal getNettInterest();
+    public abstract OceanusDecimal getNettInterest();
 
     /**
      * Obtain the total badDebt interest.
      * @return the interest
      */
-    public abstract TethysDecimal getBadDebtInterest();
+    public abstract OceanusDecimal getBadDebtInterest();
 
     /**
      * Obtain the total badDebt capital.
      * @return the capital
      */
-    public abstract TethysDecimal getBadDebtCapital();
+    public abstract OceanusDecimal getBadDebtCapital();
 
     /**
      * Obtain the total fees.
      * @return the fees
      */
-    public abstract TethysDecimal getFees();
+    public abstract OceanusDecimal getFees();
 
     /**
      * Obtain the total shield.
      * @return the shield
      */
-    public abstract TethysDecimal getShield();
+    public abstract OceanusDecimal getShield();
 
     /**
      * Obtain the total cashBack.
      * @return the cashBack
      */
-    public abstract TethysDecimal getCashBack();
+    public abstract OceanusDecimal getCashBack();
 
     /**
      * Obtain the total xferPayment.
      * @return the xferPayment
      */
-    public abstract TethysDecimal getXferPayment();
+    public abstract OceanusDecimal getXferPayment();
 
     /**
      * Obtain the total losses.
      * @return the losses
      */
-    public abstract TethysDecimal getLosses();
+    public abstract OceanusDecimal getLosses();
 
     /**
      * Obtain the total badDebt.
      * @return the badDebt
      */
-    public abstract TethysDecimal getBadDebt();
+    public abstract OceanusDecimal getBadDebt();
 
     /**
      * Obtain the total recovered.
      * @return the recovered
      */
-    public abstract TethysDecimal getRecovered();
+    public abstract OceanusDecimal getRecovered();
 
     /**
      * Obtain the Delta.
      * @return the delta
      */
-    public TethysDecimal getDelta() {
+    public OceanusDecimal getDelta() {
         return theDelta;
     }
 
@@ -418,7 +418,7 @@ public abstract class CoeusTotals
      * Obtain the Balance.
      * @return the balance
      */
-    public TethysDecimal getBalance() {
+    public OceanusDecimal getBalance() {
         return theBalance;
     }
 
@@ -426,7 +426,7 @@ public abstract class CoeusTotals
      * Obtain the LoanRateOfReturn.
      * @return the rateOfReturn
      */
-    public TethysRatio getLoanRoR() {
+    public OceanusRatio getLoanRoR() {
         return theLoanRor;
     }
 
@@ -434,7 +434,7 @@ public abstract class CoeusTotals
      * Obtain the AssetRateOfReturn.
      * @return the rateOfReturn
      */
-    public TethysRatio getAssetRoR() {
+    public OceanusRatio getAssetRoR() {
         return theAssetRor;
     }
 
@@ -456,14 +456,14 @@ public abstract class CoeusTotals
         final Object myBase = pField.getFieldValue(pInitial);
 
         /* Make sure that balance is Decimal */
-        if (!(myBalance instanceof TethysDecimal)) {
+        if (!(myBalance instanceof OceanusDecimal)) {
             /* Null values */
             theBalance = null;
             theDelta = null;
         } else {
             /* Store new values */
-            theBalance = calculateDelta((TethysDecimal) myBalance, myBase, false);
-            theDelta = calculateDelta(pField, (TethysDecimal) myBalance);
+            theBalance = calculateDelta((OceanusDecimal) myBalance, myBase, false);
+            theDelta = calculateDelta(pField, (OceanusDecimal) myBalance);
         }
     }
 
@@ -473,8 +473,8 @@ public abstract class CoeusTotals
      * @param pBalance the balance
      * @return the delta
      */
-    private TethysDecimal calculateDelta(final MetisFieldDef pField,
-                                         final TethysDecimal pBalance) {
+    private OceanusDecimal calculateDelta(final MetisFieldDef pField,
+                                          final OceanusDecimal pBalance) {
         /* Obtain the previous field value */
         final Object myPrevious = thePrevious == null
                                                       ? null
@@ -491,11 +491,11 @@ public abstract class CoeusTotals
      * @param pNullIfEqual return null if the values are equal
      * @return the delta
      */
-    private static TethysDecimal calculateDelta(final TethysDecimal pBalance,
-                                                final Object pPrevious,
-                                                final boolean pNullIfEqual) {
+    private static OceanusDecimal calculateDelta(final OceanusDecimal pBalance,
+                                                 final Object pPrevious,
+                                                 final boolean pNullIfEqual) {
         /* If we do not have a preceding total */
-        if (!(pPrevious instanceof TethysDecimal)) {
+        if (!(pPrevious instanceof OceanusDecimal)) {
             /* Set delta as balance or null */
             return pBalance.isNonZero() || !pNullIfEqual
                    ? pBalance
@@ -508,22 +508,22 @@ public abstract class CoeusTotals
         }
 
         /* If this is a money value */
-        if (pBalance instanceof TethysMoney
-                && pPrevious instanceof TethysMoney) {
-            final TethysMoney myResult = new TethysMoney((TethysMoney) pBalance);
-            myResult.subtractAmount((TethysMoney) pPrevious);
+        if (pBalance instanceof OceanusMoney
+                && pPrevious instanceof OceanusMoney) {
+            final OceanusMoney myResult = new OceanusMoney((OceanusMoney) pBalance);
+            myResult.subtractAmount((OceanusMoney) pPrevious);
             return myResult;
         }
 
         /* If this is a ratio value */
-        if (pBalance instanceof TethysRatio
-                && pPrevious instanceof TethysRatio) {
-            return new TethysRatio(pBalance, (TethysDecimal) pPrevious);
+        if (pBalance instanceof OceanusRatio
+                && pPrevious instanceof OceanusRatio) {
+            return new OceanusRatio(pBalance, (OceanusDecimal) pPrevious);
         }
 
         /* Handle standard result */
-        final TethysDecimal myResult = new TethysDecimal(pBalance);
-        myResult.subtractValue((TethysDecimal) pPrevious);
+        final OceanusDecimal myResult = new OceanusDecimal(pBalance);
+        myResult.subtractValue((OceanusDecimal) pPrevious);
         return myResult;
     }
 
@@ -576,7 +576,7 @@ public abstract class CoeusTotals
      * Obtain zero total.
      * @return zero total
      */
-    protected abstract TethysDecimal getZero();
+    protected abstract OceanusDecimal getZero();
 
     @Override
     public String toString() {

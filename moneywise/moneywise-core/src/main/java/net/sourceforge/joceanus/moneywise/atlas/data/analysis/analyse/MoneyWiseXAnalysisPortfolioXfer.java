@@ -16,8 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.moneywise.atlas.data.analysis.analyse;
 
-import java.util.Iterator;
-
 import net.sourceforge.joceanus.moneywise.MoneyWiseLogicException;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisPortfolioBucket;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisPortfolioBucket.MoneyWiseXAnalysisPortfolioBucketList;
@@ -30,9 +28,11 @@ import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePortfolio;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurityHolding;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurityHolding.MoneyWiseSecurityHoldingMap;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransAsset;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
-import net.sourceforge.joceanus.tethys.decimal.TethysUnits;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusUnits;
+
+import java.util.Iterator;
 
 /**
  * Portfolio Xfer support.
@@ -117,7 +117,7 @@ public class MoneyWiseXAnalysisPortfolioXfer {
         final MoneyWiseXAnalysisPortfolioCashBucket mySourceCash = mySource.getPortfolioCash();
         if (mySourceCash.isActive()) {
             /* Adjust target bucket */
-            final TethysMoney myCashValue = mySourceCash.getValues().getMoneyValue(MoneyWiseXAnalysisAccountAttr.BALANCE);
+            final OceanusMoney myCashValue = mySourceCash.getValues().getMoneyValue(MoneyWiseXAnalysisAccountAttr.BALANCE);
             mySourceCash.addToBalance(myCashValue);
             mySourceCash.adjustValuation();
             theState.registerBucketInterest(mySourceCash);
@@ -178,13 +178,13 @@ public class MoneyWiseXAnalysisPortfolioXfer {
     private void processPortfolioXfer(final MoneyWiseXAnalysisSecurityBucket pSource,
                                       final MoneyWiseXAnalysisSecurityBucket pTarget) {
         /* Access source details */
-        MoneyWiseXAnalysisSecurityValues mySourceValues = pSource.getValues();
-        TethysUnits myUnits = mySourceValues.getUnitsValue(MoneyWiseXAnalysisSecurityAttr.UNITS);
-        TethysMoney myCost = mySourceValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.RESIDUALCOST);
-        TethysMoney myGains = mySourceValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.REALISEDGAINS);
+        final MoneyWiseXAnalysisSecurityValues mySourceValues = pSource.getValues();
+        final OceanusUnits myUnits = mySourceValues.getUnitsValue(MoneyWiseXAnalysisSecurityAttr.UNITS);
+        final OceanusMoney myCost = mySourceValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.RESIDUALCOST);
+        final OceanusMoney myGains = mySourceValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.REALISEDGAINS);
 
         /* Determine value of the stock being transferred */
-        final TethysMoney myStockValue = mySourceValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.VALUATION);
+        final OceanusMoney myStockValue = mySourceValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.VALUATION);
 
         /* Transfer Units/Cost/Gains to target */
         pTarget.adjustUnits(myUnits);

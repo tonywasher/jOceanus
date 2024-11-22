@@ -19,11 +19,11 @@ package net.sourceforge.joceanus.tethys.ui.core.thread;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.event.TethysEventManager;
-import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar;
-import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar.TethysEventProvider;
-import net.sourceforge.joceanus.tethys.profile.TethysProfile;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
 import net.sourceforge.joceanus.tethys.ui.api.thread.TethysUIThread;
 import net.sourceforge.joceanus.tethys.ui.api.thread.TethysUIThreadCancelException;
 import net.sourceforge.joceanus.tethys.ui.api.thread.TethysUIThreadEvent;
@@ -49,7 +49,7 @@ public abstract class TethysUICoreThreadManager
     /**
      * The Event Manager.
      */
-    private final TethysEventManager<TethysUIThreadEvent> theEventManager;
+    private final OceanusEventManager<TethysUIThreadEvent> theEventManager;
 
     /**
      * The Toolkit.
@@ -79,7 +79,7 @@ public abstract class TethysUICoreThreadManager
     /**
      * The Active thread.
      */
-    private TethysProfile theProfile;
+    private OceanusProfile theProfile;
 
     /**
      * The Error.
@@ -102,7 +102,7 @@ public abstract class TethysUICoreThreadManager
         theFactory = pFactory;
 
         /* Create the event manager */
-        theEventManager = new TethysEventManager<>();
+        theEventManager = new OceanusEventManager<>();
 
         /* Create the executor */
         theExecutor = Executors.newSingleThreadExecutor();
@@ -121,7 +121,7 @@ public abstract class TethysUICoreThreadManager
     }
 
     @Override
-    public TethysEventRegistrar<TethysUIThreadEvent> getEventRegistrar() {
+    public OceanusEventRegistrar<TethysUIThreadEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -381,12 +381,12 @@ public abstract class TethysUICoreThreadManager
     }
 
     @Override
-    public TethysProfile getActiveProfile() {
+    public OceanusProfile getActiveProfile() {
         return theProfile;
     }
 
     @Override
-    public TethysProfile getActiveTask() {
+    public OceanusProfile getActiveTask() {
         return theProfile == null
                 ? null
                 : theProfile.getActiveTask();

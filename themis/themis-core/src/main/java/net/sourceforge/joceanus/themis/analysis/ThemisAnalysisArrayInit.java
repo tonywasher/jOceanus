@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.themis.analysis;
 
 import java.util.Deque;
 
-import net.sourceforge.joceanus.tethys.OceanusException;
+import net.sourceforge.joceanus.oceanus.OceanusException;
 import net.sourceforge.joceanus.themis.analysis.ThemisAnalysisContainer.ThemisAnalysisAdoptable;
 
 /**

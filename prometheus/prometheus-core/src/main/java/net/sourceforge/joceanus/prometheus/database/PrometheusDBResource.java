@@ -21,13 +21,13 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.prometheus.PrometheusDataException;
-import net.sourceforge.joceanus.tethys.resource.TethysBundleId;
-import net.sourceforge.joceanus.tethys.resource.TethysBundleLoader;
+import net.sourceforge.joceanus.oceanus.resource.OceanusBundleId;
+import net.sourceforge.joceanus.oceanus.resource.OceanusBundleLoader;
 
 /**
  * Resource IDs for jPrometheus Preference Fields.
  */
-public enum PrometheusDBResource implements TethysBundleId {
+public enum PrometheusDBResource implements OceanusBundleId {
     /**
      * DBDriver SQLServer.
      */
@@ -101,12 +101,12 @@ public enum PrometheusDBResource implements TethysBundleId {
     /**
      * The Driver Map.
      */
-    private static final Map<PrometheusJDBCDriver, TethysBundleId> DRIVER_MAP = buildDriverMap();
+    private static final Map<PrometheusJDBCDriver, OceanusBundleId> DRIVER_MAP = buildDriverMap();
 
     /**
      * The Resource Loader.
      */
-    private static final TethysBundleLoader LOADER = TethysBundleLoader.getPackageLoader(PrometheusDataException.class.getCanonicalName(),
+    private static final OceanusBundleLoader LOADER = OceanusBundleLoader.getPackageLoader(PrometheusDataException.class.getCanonicalName(),
             ResourceBundle::getBundle);
 
     /**
@@ -153,9 +153,9 @@ public enum PrometheusDBResource implements TethysBundleId {
      * Build driver map.
      * @return the map
      */
-    private static Map<PrometheusJDBCDriver, TethysBundleId> buildDriverMap() {
+    private static Map<PrometheusJDBCDriver, OceanusBundleId> buildDriverMap() {
         /* Create the map and return it */
-        final Map<PrometheusJDBCDriver, TethysBundleId> myMap = new EnumMap<>(PrometheusJDBCDriver.class);
+        final Map<PrometheusJDBCDriver, OceanusBundleId> myMap = new EnumMap<>(PrometheusJDBCDriver.class);
         myMap.put(PrometheusJDBCDriver.SQLSERVER, DRIVER_SQLSERVER);
         myMap.put(PrometheusJDBCDriver.POSTGRESQL, DRIVER_POSTGRESQL);
         myMap.put(PrometheusJDBCDriver.MYSQL, DRIVER_MYSQL);
@@ -169,7 +169,7 @@ public enum PrometheusDBResource implements TethysBundleId {
      * @param pValue the Value
      * @return the resource key
      */
-    static TethysBundleId getKeyForDriver(final PrometheusJDBCDriver pValue) {
-        return TethysBundleLoader.getKeyForEnum(DRIVER_MAP, pValue);
+    static OceanusBundleId getKeyForDriver(final PrometheusJDBCDriver pValue) {
+        return OceanusBundleLoader.getKeyForEnum(DRIVER_MAP, pValue);
     }
 }

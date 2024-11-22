@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Tethys: Java Utilities
+ * Tethys: GUI Utilities
  * Copyright 2012,2024 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.tethys.ui.swing.button;
 
 import javax.swing.SwingConstants;
 
-import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.tethys.ui.core.button.TethysUICoreListButtonManager;
 import net.sourceforge.joceanus.tethys.ui.core.factory.TethysUICoreFactory;
@@ -53,7 +53,7 @@ public final class TethysUISwingListButtonManager<T extends Comparable<? super T
     @Override
     protected void registerListeners() {
         /* Set context menu listener */
-        final TethysEventRegistrar<TethysUIEvent> myRegistrar = getMenu().getEventRegistrar();
+        final OceanusEventRegistrar<TethysUIEvent> myRegistrar = getMenu().getEventRegistrar();
         myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> handleToggleItem());
         myRegistrar.addEventListener(TethysUIEvent.WINDOWCLOSED, e -> handleMenuClosed());
     }

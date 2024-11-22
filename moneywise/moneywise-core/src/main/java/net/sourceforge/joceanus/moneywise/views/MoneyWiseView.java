@@ -35,9 +35,9 @@ import net.sourceforge.joceanus.prometheus.sheets.PrometheusSpreadSheet;
 import net.sourceforge.joceanus.prometheus.views.PrometheusDataControl;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
 import net.sourceforge.joceanus.prometheus.views.PrometheusViewerEntryId;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.date.TethysDateRange;
-import net.sourceforge.joceanus.tethys.profile.TethysProfile;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
+import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
 
 /**
  * Data Control for MoneyWiseApp.
@@ -90,7 +90,7 @@ public class MoneyWiseView
      * Obtain the date range.
      * @return the date range
      */
-    public TethysDateRange getRange() {
+    public OceanusDateRange getRange() {
         return theTaxFactory.getDateRange();
     }
 
@@ -180,7 +180,7 @@ public class MoneyWiseView
      */
     public final MoneyWiseAnalysisTransAnalyser analyseData(final MoneyWiseDataSet pData) throws OceanusException {
         /* Obtain the active profile */
-        TethysProfile myTask = getActiveTask();
+        OceanusProfile myTask = getActiveTask();
         myTask = myTask.startTask("analyseData");
 
         /* Initialise the analysis */
@@ -204,7 +204,7 @@ public class MoneyWiseView
     @Override
     protected boolean analyseData(final boolean bPreserve) {
         /* Obtain the active profile */
-        TethysProfile myTask = getActiveTask();
+        OceanusProfile myTask = getActiveTask();
         myTask = myTask.startTask("analyseTheData");
 
         /* Clear the errors */

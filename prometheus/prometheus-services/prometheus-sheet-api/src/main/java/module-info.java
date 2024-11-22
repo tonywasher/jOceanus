@@ -19,7 +19,8 @@
  * Prometheus Sheet API.
  */
 module net.sourceforge.joceanus.prometheus.sheet.api {
-    /* jOceanus */
+    /* Oceanus */
+    requires net.sourceforge.joceanus.oceanus;
     requires net.sourceforge.joceanus.tethys.core;
 
     /* Exports */

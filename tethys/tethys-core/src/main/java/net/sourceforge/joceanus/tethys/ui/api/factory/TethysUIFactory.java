@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Tethys: Java Utilities
+ * Tethys: GUI Utilities
  * Copyright 2012,2024 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,7 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.tethys.ui.api.factory;
 
-import net.sourceforge.joceanus.tethys.profile.TethysProfile;
+import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIIcon;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIIconId;
@@ -92,19 +92,19 @@ public interface TethysUIFactory<C> {
      * @param pTask the name of the task
      * @return the new profile
      */
-    TethysProfile getNewProfile(String pTask);
+    OceanusProfile getNewProfile(String pTask);
 
     /**
      * Obtain the active profile.
      * @return the active profile
      */
-    TethysProfile getActiveProfile();
+    OceanusProfile getActiveProfile();
 
     /**
      * Obtain the active task.
      * @return the active task
      */
-    TethysProfile getActiveTask();
+    OceanusProfile getActiveTask();
 
     /**
      * Obtain the button factory.

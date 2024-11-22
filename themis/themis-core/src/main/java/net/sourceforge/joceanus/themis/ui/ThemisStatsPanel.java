@@ -19,8 +19,8 @@ package net.sourceforge.joceanus.themis.ui;
 import java.util.Iterator;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.event.TethysEvent;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.event.OceanusEvent;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.tethys.ui.api.control.TethysUIHTMLManager;
@@ -141,7 +141,7 @@ public class ThemisStatsPanel {
      * Handle the split tree action event.
      * @param pEvent the event
      */
-    protected void handleSplitTreeAction(final TethysEvent<TethysUIEvent> pEvent) {
+    protected void handleSplitTreeAction(final OceanusEvent<TethysUIEvent> pEvent) {
         /* If this is a new value */
         if (pEvent.getEventId() == TethysUIEvent.NEWVALUE) {
             handleNewTreeItem(pEvent.getDetails(ThemisStatsEntry.class));

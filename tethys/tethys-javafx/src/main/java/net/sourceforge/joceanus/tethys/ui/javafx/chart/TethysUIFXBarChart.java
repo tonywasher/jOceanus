@@ -29,7 +29,7 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 import javafx.util.StringConverter;
 
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
 import net.sourceforge.joceanus.tethys.ui.core.chart.TethysUICoreBarChart;
 import net.sourceforge.joceanus.tethys.ui.core.factory.TethysUICoreFactory;
 import net.sourceforge.joceanus.tethys.ui.javafx.base.TethysUIFXNode;
@@ -68,7 +68,7 @@ public class TethysUIFXBarChart
         myYAxis.setTickLabelFormatter(new StringConverter<>() {
             @Override
             public String toString(final Number pValue) {
-                return getFormatter().formatMoney(new TethysMoney(pValue.toString()));
+                return getFormatter().formatMoney(new OceanusMoney(pValue.toString()));
             }
 
             @Override

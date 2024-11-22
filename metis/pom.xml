@@ -8,12 +8,26 @@
   <artifactId>metis</artifactId>
   <name>Metis Data Framework</name>
   <description>Metis Data Framework</description>
-  <packaging>pom</packaging>
-  <modules>
-    <module>metis-core</module>
-  </modules>
+  <dependencies>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>tethys-core</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>oceanus</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.json</groupId>
+      <artifactId>json</artifactId>
+      <version>${JSONVersion}</version>
+    </dependency>
+  </dependencies>
   <properties>
     <scmComponent>metis</scmComponent>
     <packageName>${packageKey}.${scmComponent}</packageName>
+    <moduleName>${packageName}.core</moduleName>
   </properties>
 </project>

@@ -22,8 +22,8 @@ import java.util.List;
 
 import net.sourceforge.joceanus.metis.field.MetisFieldItem;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
-import net.sourceforge.joceanus.tethys.date.TethysDate;
-import net.sourceforge.joceanus.tethys.date.TethysDateRange;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
 
 /**
  * Loan Market SnapShot.
@@ -53,7 +53,7 @@ public class CoeusMarketSnapShot
     /**
      * Date.
      */
-    private final TethysDate theDate;
+    private final OceanusDate theDate;
 
     /**
      * LoanList.
@@ -76,11 +76,11 @@ public class CoeusMarketSnapShot
      * @param pDate the snapshot date
      */
     CoeusMarketSnapShot(final CoeusMarket pMarket,
-                        final TethysDate pDate) {
+                        final OceanusDate pDate) {
         /* Store parameters */
         theMarket = pMarket;
         theDate = pDate;
-        final TethysDateRange myRange = new TethysDateRange(null, pDate);
+        final OceanusDateRange myRange = new OceanusDateRange(null, pDate);
 
         /* Create loan list */
         theLoanList = new ArrayList<>();
@@ -112,7 +112,7 @@ public class CoeusMarketSnapShot
      * Obtain the date.
      * @return the date
      */
-    public TethysDate getDate() {
+    public OceanusDate getDate() {
         return theDate;
     }
 
@@ -177,9 +177,9 @@ public class CoeusMarketSnapShot
      * Obtain the dateRange of this snapshot.
      * @return the dateRange.
      */
-    public TethysDateRange getDateRange() {
+    public OceanusDateRange getDateRange() {
         final CoeusTotals myFirst = theHistory.getHistory().iterator().next();
-        return new TethysDateRange(myFirst.getDate(), theDate);
+        return new OceanusDateRange(myFirst.getDate(), theDate);
     }
 
     @Override

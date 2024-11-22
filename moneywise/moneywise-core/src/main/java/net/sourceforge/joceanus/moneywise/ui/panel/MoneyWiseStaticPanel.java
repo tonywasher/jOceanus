@@ -42,12 +42,12 @@ import net.sourceforge.joceanus.prometheus.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
 import net.sourceforge.joceanus.prometheus.views.PrometheusUIEvent;
 import net.sourceforge.joceanus.prometheus.views.PrometheusViewerEntryId;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.event.TethysEvent;
-import net.sourceforge.joceanus.tethys.event.TethysEventManager;
-import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar;
-import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar.TethysEventProvider;
-import net.sourceforge.joceanus.tethys.profile.TethysProfile;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.event.OceanusEvent;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIGenericWrapper;
@@ -76,7 +76,7 @@ public class MoneyWiseStaticPanel
     /**
      * The Event Manager.
      */
-    private final TethysEventManager<PrometheusDataEvent> theEventManager;
+    private final OceanusEventManager<PrometheusDataEvent> theEventManager;
 
     /**
      * The UpdateSet associated with the panel.
@@ -148,7 +148,7 @@ public class MoneyWiseStaticPanel
         theView = pView;
 
         /* Create the event manager */
-        theEventManager = new TethysEventManager<>();
+        theEventManager = new OceanusEventManager<>();
 
         /* Build the Update set */
         theEditSet = new PrometheusEditSet(theView);
@@ -181,7 +181,7 @@ public class MoneyWiseStaticPanel
         theSelectButton = myGuiFactory.buttonFactory().newScrollButton(TethysUIGenericWrapper.class);
         theDataMenu = theSelectButton.getMenu();
         theSelectButton.setMenuConfigurator(e -> buildDataMenu());
-        final TethysEventRegistrar<TethysUIEvent> myRegistrar = theSelectButton.getEventRegistrar();
+        final OceanusEventRegistrar<TethysUIEvent> myRegistrar = theSelectButton.getEventRegistrar();
         myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> handlePanelSelection());
 
         /* Create the selection panel */
@@ -242,7 +242,7 @@ public class MoneyWiseStaticPanel
     }
 
     @Override
-    public TethysEventRegistrar<PrometheusDataEvent> getEventRegistrar() {
+    public OceanusEventRegistrar<PrometheusDataEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -279,7 +279,7 @@ public class MoneyWiseStaticPanel
      */
     public void refreshData() throws OceanusException {
         /* Obtain the active profile */
-        TethysProfile myTask = theView.getActiveTask();
+        OceanusProfile myTask = theView.getActiveTask();
         myTask = myTask.startTask("StaticData");
 
         /* Loop through the panels */
@@ -451,7 +451,7 @@ public class MoneyWiseStaticPanel
      * Handle action buttons.
      * @param pEvent the event
      */
-    private void handleActionButtons(final TethysEvent<PrometheusUIEvent> pEvent) {
+    private void handleActionButtons(final OceanusEvent<PrometheusUIEvent> pEvent) {
         /* Cancel Editing */
         cancelEditing();
 

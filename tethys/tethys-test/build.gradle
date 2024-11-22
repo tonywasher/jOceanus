@@ -12,11 +12,12 @@ dependencies {
     implementation project(':tethys-core')
     implementation project(':tethys-javafx')
     implementation project(':tethys-swing')
+    implementation project(':oceanus')
     implementation "org.jfree:jfreechart:$jFreeChartVersion"
 }
 
 /* Description */
-description = 'Tethys Java Test'
+description = 'Tethys UI Test'
 
 /* Register the project */
 registerProject(project) 

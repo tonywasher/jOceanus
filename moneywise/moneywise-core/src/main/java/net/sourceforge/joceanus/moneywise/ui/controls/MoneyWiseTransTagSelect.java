@@ -26,10 +26,10 @@ import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
 import net.sourceforge.joceanus.moneywise.lethe.views.MoneyWiseAnalysisFilter;
 import net.sourceforge.joceanus.moneywise.lethe.views.MoneyWiseAnalysisFilter.MoneyWiseAnalysisTagFilter;
 import net.sourceforge.joceanus.prometheus.views.PrometheusDataEvent;
-import net.sourceforge.joceanus.tethys.date.TethysDateRange;
-import net.sourceforge.joceanus.tethys.event.TethysEventManager;
-import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar;
-import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.TethysEventProvider;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIConstant;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIEvent;
@@ -53,7 +53,7 @@ public class MoneyWiseTransTagSelect
     /**
      * The Event Manager.
      */
-    private final TethysEventManager<PrometheusDataEvent> theEventManager;
+    private final OceanusEventManager<PrometheusDataEvent> theEventManager;
 
     /**
      * The panel.
@@ -94,7 +94,7 @@ public class MoneyWiseTransTagSelect
         theTagButton = pFactory.buttonFactory().newScrollButton(MoneyWiseAnalysisTransTagBucket.class);
 
         /* Create Event Manager */
-        theEventManager = new TethysEventManager<>();
+        theEventManager = new OceanusEventManager<>();
 
         /* Create the label */
         final TethysUILabel myTagLabel = pFactory.controlFactory().newLabel(NLS_TAG + TethysUIConstant.STR_COLON);
@@ -110,7 +110,7 @@ public class MoneyWiseTransTagSelect
         theState.applyState();
 
         /* Create the listener */
-        final TethysEventRegistrar<TethysUIEvent> myRegistrar = theTagButton.getEventRegistrar();
+        final OceanusEventRegistrar<TethysUIEvent> myRegistrar = theTagButton.getEventRegistrar();
         myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewTag());
         theTagButton.setMenuConfigurator(e -> buildTagMenu());
         theTagMenu = theTagButton.getMenu();
@@ -122,7 +122,7 @@ public class MoneyWiseTransTagSelect
     }
 
     @Override
-    public TethysEventRegistrar<PrometheusDataEvent> getEventRegistrar() {
+    public OceanusEventRegistrar<PrometheusDataEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -267,7 +267,7 @@ public class MoneyWiseTransTagSelect
         /**
          * The dateRange.
          */
-        private TethysDateRange theDateRange;
+        private OceanusDateRange theDateRange;
 
         /**
          * The active filter.
@@ -303,7 +303,7 @@ public class MoneyWiseTransTagSelect
          * Obtain the dateRange.
          * @return the dateRange
          */
-        private TethysDateRange getDateRange() {
+        private OceanusDateRange getDateRange() {
             return theDateRange;
         }
 
@@ -349,7 +349,7 @@ public class MoneyWiseTransTagSelect
          * Set the dateRange.
          * @param pRange the dateRange
          */
-        private void setDateRange(final TethysDateRange pRange) {
+        private void setDateRange(final OceanusDateRange pRange) {
             /* Store the dateRange */
             theDateRange = pRange;
             if (theFilter != null) {

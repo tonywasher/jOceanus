@@ -31,9 +31,9 @@ import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDepositRate;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDepositRate.MoneyWiseDepositRateDataMap;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseDepositCategoryClass;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransCategoryClass;
-import net.sourceforge.joceanus.tethys.date.TethysDate;
-import net.sourceforge.joceanus.tethys.date.TethysDateRange;
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
 
 /**
  * The Deposit Bucket class.
@@ -109,7 +109,7 @@ public final class MoneyWiseAnalysisDepositBucket
      */
     private MoneyWiseAnalysisDepositBucket(final MoneyWiseAnalysis pAnalysis,
                                            final MoneyWiseAnalysisDepositBucket pBase,
-                                           final TethysDate pDate) {
+                                           final OceanusDate pDate) {
         /* Call super-constructor */
         super(pAnalysis, pBase, pDate);
 
@@ -127,7 +127,7 @@ public final class MoneyWiseAnalysisDepositBucket
      */
     private MoneyWiseAnalysisDepositBucket(final MoneyWiseAnalysis pAnalysis,
                                            final MoneyWiseAnalysisDepositBucket pBase,
-                                           final TethysDateRange pRange) {
+                                           final OceanusDateRange pRange) {
         /* Call super-constructor */
         super(pAnalysis, pBase, pRange);
 
@@ -174,13 +174,13 @@ public final class MoneyWiseAnalysisDepositBucket
     }
 
     @Override
-    protected void recordRate(final TethysDate pDate) {
+    protected void recordRate(final OceanusDate pDate) {
         /* Obtain the appropriate rate record */
         final MoneyWiseDataSet myData = theAnalysis.getData();
         final MoneyWiseDepositRateDataMap myRateMap = myData.getDepositRateDataMap();
         final MoneyWiseDeposit myDeposit = getAccount();
         final MoneyWiseDepositRate myRate = myRateMap.getRateForDate(myDeposit, pDate);
-        TethysDate myDate = myDeposit.getMaturity();
+        OceanusDate myDate = myDeposit.getMaturity();
 
         /* If we have a rate */
         if (myRate != null) {
@@ -205,7 +205,7 @@ public final class MoneyWiseAnalysisDepositBucket
         if (Boolean.TRUE.equals(isPeer2Peer)
                 && isBadDebt(pHelper)) {
             /* Access the amount */
-            final TethysMoney myAmount = pHelper.getDebitAmount();
+            final OceanusMoney myAmount = pHelper.getDebitAmount();
             final MoneyWiseAnalysisAccountAttr myAttr = badDebtAttr(pHelper);
 
             /* If we have a non-zero amount */
@@ -225,13 +225,13 @@ public final class MoneyWiseAnalysisDepositBucket
         if (Boolean.TRUE.equals(isPeer2Peer)
                 && isBadDebt(pHelper)) {
             /* Access the amount */
-            TethysMoney myAmount = pHelper.getCreditAmount();
+            OceanusMoney myAmount = pHelper.getCreditAmount();
             final MoneyWiseAnalysisAccountAttr myAttr = badDebtAttr(pHelper);
 
             /* If we have a non-zero amount */
             if (myAmount.isNonZero()) {
                 /* Adjust bad debt */
-                myAmount = new TethysMoney(myAmount);
+                myAmount = new OceanusMoney(myAmount);
                 myAmount.negate();
                 adjustCounter(myAttr, myAmount);
             }
@@ -276,8 +276,8 @@ public final class MoneyWiseAnalysisDepositBucket
             super(pCurrency);
 
             /* Initialise BadDebt to zero */
-            setValue(MoneyWiseAnalysisAccountAttr.BADDEBTCAPITAL, new TethysMoney(pCurrency));
-            setValue(MoneyWiseAnalysisAccountAttr.BADDEBTINTEREST, new TethysMoney(pCurrency));
+            setValue(MoneyWiseAnalysisAccountAttr.BADDEBTCAPITAL, new OceanusMoney(pCurrency));
+            setValue(MoneyWiseAnalysisAccountAttr.BADDEBTINTEREST, new OceanusMoney(pCurrency));
         }
 
         /**
@@ -291,8 +291,8 @@ public final class MoneyWiseAnalysisDepositBucket
             super(pCurrency, pReportingCurrency);
 
             /* Initialise BadDebt to zero */
-            setValue(MoneyWiseAnalysisAccountAttr.BADDEBTCAPITAL, new TethysMoney(pCurrency));
-            setValue(MoneyWiseAnalysisAccountAttr.BADDEBTINTEREST, new TethysMoney(pCurrency));
+            setValue(MoneyWiseAnalysisAccountAttr.BADDEBTCAPITAL, new OceanusMoney(pCurrency));
+            setValue(MoneyWiseAnalysisAccountAttr.BADDEBTINTEREST, new OceanusMoney(pCurrency));
         }
 
         /**
@@ -358,7 +358,7 @@ public final class MoneyWiseAnalysisDepositBucket
          */
         MoneyWiseAnalysisDepositBucketList(final MoneyWiseAnalysis pAnalysis,
                                            final MoneyWiseAnalysisDepositBucketList pBase,
-                                           final TethysDate pDate) {
+                                           final OceanusDate pDate) {
             /* Initialise class */
             this(pAnalysis);
 
@@ -374,7 +374,7 @@ public final class MoneyWiseAnalysisDepositBucket
          */
         MoneyWiseAnalysisDepositBucketList(final MoneyWiseAnalysis pAnalysis,
                                            final MoneyWiseAnalysisDepositBucketList pBase,
-                                           final TethysDateRange pRange) {
+                                           final OceanusDateRange pRange) {
             /* Initialise class */
             this(pAnalysis);
 
@@ -457,13 +457,13 @@ public final class MoneyWiseAnalysisDepositBucket
 
         @Override
         protected MoneyWiseAnalysisDepositBucket newBucket(final MoneyWiseAnalysisDepositBucket pBase,
-                                                           final TethysDate pDate) {
+                                                           final OceanusDate pDate) {
             return new MoneyWiseAnalysisDepositBucket(getAnalysis(), pBase, pDate);
         }
 
         @Override
         protected MoneyWiseAnalysisDepositBucket newBucket(final MoneyWiseAnalysisDepositBucket pBase,
-                                                          final TethysDateRange pRange) {
+                                                          final OceanusDateRange pRange) {
             return new MoneyWiseAnalysisDepositBucket(getAnalysis(), pBase, pRange);
         }
     }

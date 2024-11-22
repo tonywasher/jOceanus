@@ -22,14 +22,14 @@ import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataSet.PrometheusCryptographyDataType;
-import net.sourceforge.joceanus.tethys.resource.TethysBundleId;
-import net.sourceforge.joceanus.tethys.resource.TethysBundleLoader;
+import net.sourceforge.joceanus.oceanus.resource.OceanusBundleId;
+import net.sourceforge.joceanus.oceanus.resource.OceanusBundleLoader;
 
 /**
  * Resource IDs for jPrometheus Data Fields.
  */
 public enum PrometheusDataResource
-        implements TethysBundleId, MetisDataFieldId {
+        implements OceanusBundleId, MetisDataFieldId {
     /**
      * DataSet Name.
      */
@@ -498,17 +498,17 @@ public enum PrometheusDataResource
     /**
      * The Name Map.
      */
-    private static final Map<PrometheusCryptographyDataType, TethysBundleId> NAME_MAP = buildNameMap();
+    private static final Map<PrometheusCryptographyDataType, OceanusBundleId> NAME_MAP = buildNameMap();
 
     /**
      * The List Map.
      */
-    private static final Map<PrometheusCryptographyDataType, TethysBundleId> LIST_MAP = buildListMap();
+    private static final Map<PrometheusCryptographyDataType, OceanusBundleId> LIST_MAP = buildListMap();
 
     /**
      * The Resource Loader.
      */
-    private static final TethysBundleLoader LOADER = TethysBundleLoader.getLoader(PrometheusDataSet.class.getCanonicalName(),
+    private static final OceanusBundleLoader LOADER = OceanusBundleLoader.getLoader(PrometheusDataSet.class.getCanonicalName(),
             ResourceBundle::getBundle);
 
     /**
@@ -565,9 +565,9 @@ public enum PrometheusDataResource
      * Build item map.
      * @return the map
      */
-    private static Map<PrometheusCryptographyDataType, TethysBundleId> buildNameMap() {
+    private static Map<PrometheusCryptographyDataType, OceanusBundleId> buildNameMap() {
         /* Create the map and return it */
-        final Map<PrometheusCryptographyDataType, TethysBundleId> myMap = new EnumMap<>(PrometheusCryptographyDataType.class);
+        final Map<PrometheusCryptographyDataType, OceanusBundleId> myMap = new EnumMap<>(PrometheusCryptographyDataType.class);
         myMap.put(PrometheusCryptographyDataType.CONTROLKEY, CONTROLKEY_NAME);
         myMap.put(PrometheusCryptographyDataType.CONTROLKEYSET, CONTROLKEYSET_NAME);
         myMap.put(PrometheusCryptographyDataType.DATAKEYSET, DATAKEYSET_NAME);
@@ -580,17 +580,17 @@ public enum PrometheusDataResource
      * @param pValue the Value
      * @return the resource key
      */
-    protected static TethysBundleId getKeyForCryptoItem(final PrometheusCryptographyDataType pValue) {
-        return TethysBundleLoader.getKeyForEnum(NAME_MAP, pValue);
+    protected static OceanusBundleId getKeyForCryptoItem(final PrometheusCryptographyDataType pValue) {
+        return OceanusBundleLoader.getKeyForEnum(NAME_MAP, pValue);
     }
 
     /**
      * Build list map.
      * @return the map
      */
-    private static Map<PrometheusCryptographyDataType, TethysBundleId> buildListMap() {
+    private static Map<PrometheusCryptographyDataType, OceanusBundleId> buildListMap() {
         /* Create the map and return it */
-        final Map<PrometheusCryptographyDataType, TethysBundleId> myMap = new EnumMap<>(PrometheusCryptographyDataType.class);
+        final Map<PrometheusCryptographyDataType, OceanusBundleId> myMap = new EnumMap<>(PrometheusCryptographyDataType.class);
         myMap.put(PrometheusCryptographyDataType.CONTROLKEY, CONTROLKEY_LIST);
         myMap.put(PrometheusCryptographyDataType.CONTROLKEYSET, CONTROLKEYSET_LIST);
         myMap.put(PrometheusCryptographyDataType.DATAKEYSET, DATAKEYSET_LIST);
@@ -603,7 +603,7 @@ public enum PrometheusDataResource
      * @param pValue the Value
      * @return the resource key
      */
-    protected static TethysBundleId getKeyForCryptoList(final PrometheusCryptographyDataType pValue) {
-        return TethysBundleLoader.getKeyForEnum(LIST_MAP, pValue);
+    protected static OceanusBundleId getKeyForCryptoList(final PrometheusCryptographyDataType pValue) {
+        return OceanusBundleLoader.getKeyForEnum(LIST_MAP, pValue);
     }
 }

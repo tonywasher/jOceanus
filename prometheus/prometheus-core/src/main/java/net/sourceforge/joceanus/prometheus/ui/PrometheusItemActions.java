@@ -19,9 +19,9 @@ package net.sourceforge.joceanus.prometheus.ui;
 import net.sourceforge.joceanus.metis.ui.MetisIcon;
 import net.sourceforge.joceanus.prometheus.ui.PrometheusItemEditActions.PrometheusItemEditParent;
 import net.sourceforge.joceanus.prometheus.views.PrometheusUIEvent;
-import net.sourceforge.joceanus.tethys.event.TethysEventManager;
-import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar;
-import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.TethysEventProvider;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIGenericWrapper;
@@ -45,7 +45,7 @@ public class PrometheusItemActions<G extends Enum<G>>
     /**
      * The Event Manager.
      */
-    private final TethysEventManager<PrometheusUIEvent> theEventManager;
+    private final OceanusEventManager<PrometheusUIEvent> theEventManager;
 
     /**
      * The parent.
@@ -83,7 +83,7 @@ public class PrometheusItemActions<G extends Enum<G>>
         theParent = pParent;
 
         /* Create the event manager */
-        theEventManager = new TethysEventManager<>();
+        theEventManager = new OceanusEventManager<>();
 
         /* Create the buttons */
         final TethysUIButtonFactory<?> myButtons = pFactory.buttonFactory();
@@ -106,7 +106,7 @@ public class PrometheusItemActions<G extends Enum<G>>
         thePanel.addNode(theDeleteButton);
 
         /* Add the listener for item changes */
-        final TethysEventRegistrar<TethysUIEvent> myRegistrar = theGoToButton.getEventRegistrar();
+        final OceanusEventRegistrar<TethysUIEvent> myRegistrar = theGoToButton.getEventRegistrar();
         theGoToButton.setMenuConfigurator(c -> theEventManager.fireEvent(PrometheusUIEvent.BUILDGOTO, c));
         myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> theEventManager.fireEvent(PrometheusUIEvent.GOTO, theGoToButton.getValue().getData()));
         theEditButton.getEventRegistrar().addEventListener(e -> theEventManager.fireEvent(PrometheusUIEvent.EDIT));
@@ -122,7 +122,7 @@ public class PrometheusItemActions<G extends Enum<G>>
     }
 
     @Override
-    public TethysEventRegistrar<PrometheusUIEvent> getEventRegistrar() {
+    public OceanusEventRegistrar<PrometheusUIEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 

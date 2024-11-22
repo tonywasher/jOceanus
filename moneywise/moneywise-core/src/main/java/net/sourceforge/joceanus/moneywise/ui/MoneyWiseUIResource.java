@@ -21,14 +21,14 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
-import net.sourceforge.joceanus.tethys.resource.TethysBundleId;
-import net.sourceforge.joceanus.tethys.resource.TethysBundleLoader;
+import net.sourceforge.joceanus.oceanus.resource.OceanusBundleId;
+import net.sourceforge.joceanus.oceanus.resource.OceanusBundleLoader;
 
 /**
  * Resource IDs for jMoneyWise UI Fields.
  */
 public enum MoneyWiseUIResource
-        implements TethysBundleId, MetisDataFieldId {
+        implements OceanusBundleId, MetisDataFieldId {
     /**
      * Frozen ToolTip.
      */
@@ -462,12 +462,12 @@ public enum MoneyWiseUIResource
     /**
      * The ColumnSet Map.
      */
-    private static final Map<MoneyWiseAnalysisColumnSet, TethysBundleId> COLUMN_MAP = buildColumnMap();
+    private static final Map<MoneyWiseAnalysisColumnSet, OceanusBundleId> COLUMN_MAP = buildColumnMap();
 
     /**
      * The Resource Loader.
      */
-    private static final TethysBundleLoader LOADER = TethysBundleLoader.getLoader(MoneyWiseUIResource.class.getCanonicalName(),
+    private static final OceanusBundleLoader LOADER = OceanusBundleLoader.getLoader(MoneyWiseUIResource.class.getCanonicalName(),
             ResourceBundle::getBundle);
 
     /**
@@ -519,9 +519,9 @@ public enum MoneyWiseUIResource
      * Build column map.
      * @return the map
      */
-    private static Map<MoneyWiseAnalysisColumnSet, TethysBundleId> buildColumnMap() {
+    private static Map<MoneyWiseAnalysisColumnSet, OceanusBundleId> buildColumnMap() {
         /* Create the map and return it */
-        final Map<MoneyWiseAnalysisColumnSet, TethysBundleId> myMap = new EnumMap<>(MoneyWiseAnalysisColumnSet.class);
+        final Map<MoneyWiseAnalysisColumnSet, OceanusBundleId> myMap = new EnumMap<>(MoneyWiseAnalysisColumnSet.class);
         myMap.put(MoneyWiseAnalysisColumnSet.BALANCE, COLUMNSET_BALANCE);
         myMap.put(MoneyWiseAnalysisColumnSet.STANDARD, COLUMNSET_STANDARD);
         myMap.put(MoneyWiseAnalysisColumnSet.SALARY, COLUMNSET_SALARY);
@@ -537,7 +537,7 @@ public enum MoneyWiseUIResource
      * @param pValue the Value
      * @return the resource key
      */
-    static TethysBundleId getKeyForColumnSet(final MoneyWiseAnalysisColumnSet pValue) {
-        return TethysBundleLoader.getKeyForEnum(COLUMN_MAP, pValue);
+    static OceanusBundleId getKeyForColumnSet(final MoneyWiseAnalysisColumnSet pValue) {
+        return OceanusBundleLoader.getKeyForEnum(COLUMN_MAP, pValue);
     }
 }

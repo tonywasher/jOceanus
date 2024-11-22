@@ -16,20 +16,15 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.prometheus.data;
 
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Map.Entry;
-
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactoryLock;
-import net.sourceforge.joceanus.gordianknot.api.password.GordianPasswordManager;
 import net.sourceforge.joceanus.metis.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.metis.field.MetisFieldItem;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.metis.field.MetisFieldVersionedItem;
 import net.sourceforge.joceanus.metis.toolkit.MetisToolkit;
-import net.sourceforge.joceanus.prometheus.toolkit.PrometheusToolkit;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
 import net.sourceforge.joceanus.prometheus.data.PrometheusControlData.PrometheusControlDataList;
 import net.sourceforge.joceanus.prometheus.data.PrometheusControlKey.PrometheusControlKeyList;
 import net.sourceforge.joceanus.prometheus.data.PrometheusControlKeySet.PrometheusControlKeySetList;
@@ -40,10 +35,15 @@ import net.sourceforge.joceanus.prometheus.data.PrometheusEncryptedDataItem.Prom
 import net.sourceforge.joceanus.prometheus.preference.PrometheusPreferenceManager;
 import net.sourceforge.joceanus.prometheus.preference.PrometheusPreferenceSecurity.PrometheusSecurityPreferenceKey;
 import net.sourceforge.joceanus.prometheus.preference.PrometheusPreferenceSecurity.PrometheusSecurityPreferences;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.profile.TethysProfile;
+import net.sourceforge.joceanus.prometheus.security.PrometheusSecurityPasswordManager;
+import net.sourceforge.joceanus.prometheus.toolkit.PrometheusToolkit;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
 import net.sourceforge.joceanus.tethys.ui.api.thread.TethysUIThreadStatusReport;
+
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  * DataSet definition and list. A DataSet is a set of DataLists backed by the three security lists.
@@ -102,7 +102,7 @@ public abstract class PrometheusDataSet
     /**
      * Password Manager.
      */
-    private final GordianPasswordManager thePasswordMgr;
+    private final PrometheusSecurityPasswordManager thePasswordMgr;
 
     /**
      * Number of activeKeySets.
@@ -197,7 +197,7 @@ public abstract class PrometheusDataSet
      * Get Password Manager.
      * @return the password manager
      */
-    public GordianPasswordManager getPasswordMgr() {
+    public PrometheusSecurityPasswordManager getPasswordMgr() {
         return thePasswordMgr;
     }
 
@@ -402,8 +402,8 @@ public abstract class PrometheusDataSet
                                      final PrometheusDataSet pNew,
                                      final PrometheusDataSet pOld) throws OceanusException {
         /* Access current profile */
-        final TethysProfile myTask = pReport.getActiveTask();
-        final TethysProfile myStage = myTask.startTask(TASK_DATADIFF);
+        final OceanusProfile myTask = pReport.getActiveTask();
+        final OceanusProfile myStage = myTask.startTask(TASK_DATADIFF);
 
         /* Obtain listMaps */
         final Map<PrometheusListKey, PrometheusDataList<?>> myOldMap = pOld.getListMap();
@@ -436,8 +436,8 @@ public abstract class PrometheusDataSet
     public void reBase(final TethysUIThreadStatusReport pReport,
                        final PrometheusDataSet pOld) throws OceanusException {
         /* Access current profile */
-        final TethysProfile myTask = pReport.getActiveTask();
-        final TethysProfile myStage = myTask.startTask(TASK_DATAREBASE);
+        final OceanusProfile myTask = pReport.getActiveTask();
+        final OceanusProfile myStage = myTask.startTask(TASK_DATAREBASE);
 
         /* Obtain old listMap */
         final Map<PrometheusListKey, PrometheusDataList<?>> myMap = pOld.getListMap();
@@ -707,8 +707,8 @@ public abstract class PrometheusDataSet
     public void initialiseSecurity(final TethysUIThreadStatusReport pReport,
                                    final PrometheusDataSet pBase) throws OceanusException {
         /* Access current profile */
-        final TethysProfile myTask = pReport.getActiveTask();
-        final TethysProfile myStage = myTask.startTask(TASK_SECINIT);
+        final OceanusProfile myTask = pReport.getActiveTask();
+        final OceanusProfile myStage = myTask.startTask(TASK_SECINIT);
 
         /* Set the number of stages */
         pReport.initTask(TASK_SECINIT);
@@ -749,8 +749,8 @@ public abstract class PrometheusDataSet
      */
     public void renewSecurity(final TethysUIThreadStatusReport pReport) throws OceanusException {
         /* Access current profile */
-        final TethysProfile myTask = pReport.getActiveTask();
-        final TethysProfile myStage = myTask.startTask(TASK_SECRENEW);
+        final OceanusProfile myTask = pReport.getActiveTask();
+        final OceanusProfile myStage = myTask.startTask(TASK_SECRENEW);
 
         /* Access ControlData */
         final PrometheusControlData myControl = getControl();
@@ -775,8 +775,8 @@ public abstract class PrometheusDataSet
      */
     public void checkSecurity(final TethysUIThreadStatusReport pReport) throws OceanusException {
         /* Access current profile */
-        final TethysProfile myTask = pReport.getActiveTask();
-        final TethysProfile myStage = myTask.startTask(TASK_SECCHECK);
+        final OceanusProfile myTask = pReport.getActiveTask();
+        final OceanusProfile myStage = myTask.startTask(TASK_SECCHECK);
 
         /* If there is more than one controlKey */
         if (getControlKeys().size() > 1) {

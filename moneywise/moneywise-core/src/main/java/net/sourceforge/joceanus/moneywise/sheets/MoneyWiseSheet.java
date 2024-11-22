@@ -16,7 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.moneywise.sheets;
 
-import net.sourceforge.joceanus.gordianknot.api.password.GordianPasswordManager;
+import net.sourceforge.joceanus.prometheus.security.PrometheusSecurityPasswordManager;
 import net.sourceforge.joceanus.prometheus.sheets.PrometheusSheetReader;
 import net.sourceforge.joceanus.prometheus.sheets.PrometheusSheetWriter;
 import net.sourceforge.joceanus.prometheus.sheets.PrometheusSpreadSheet;
@@ -44,7 +44,7 @@ public class MoneyWiseSheet
 
     @Override
     protected PrometheusSheetReader getSheetReader(final TethysUIThreadStatusReport pReport,
-                                                   final GordianPasswordManager pPasswordMgr) {
+                                                   final PrometheusSecurityPasswordManager pPasswordMgr) {
         /* Create a MoneyWise Reader object and return it */
         return new MoneyWiseReader(theGuiFactory, pReport, pPasswordMgr);
     }

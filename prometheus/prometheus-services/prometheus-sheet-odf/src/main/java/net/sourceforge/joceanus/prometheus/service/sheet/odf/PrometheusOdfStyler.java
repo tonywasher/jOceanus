@@ -23,10 +23,10 @@ import org.w3c.dom.Element;
 
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetCellStyleType;
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetFormats;
-import net.sourceforge.joceanus.tethys.decimal.TethysDecimal;
-import net.sourceforge.joceanus.tethys.decimal.TethysDecimalParser;
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
-import net.sourceforge.joceanus.tethys.decimal.TethysRate;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimal;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimalParser;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRate;
 
 /**
  * Odf Styles.
@@ -328,18 +328,18 @@ public class PrometheusOdfStyler {
                 break;
             case MONEY:
             case PRICE:
-                createMoneyStyle(pStyleName, (TethysMoney) pValue);
+                createMoneyStyle(pStyleName, (OceanusMoney) pValue);
                 break;
             case INTEGER:
                 createIntegerStyle(pStyleName);
                 break;
             case RATE:
-                createRateStyle(pStyleName, (TethysRate) pValue);
+                createRateStyle(pStyleName, (OceanusRate) pValue);
                 break;
             case UNITS:
             case RATIO:
             default:
-                createDecimalStyle(pStyleName, (TethysDecimal) pValue);
+                createDecimalStyle(pStyleName, (OceanusDecimal) pValue);
                 break;
         }
     }
@@ -423,7 +423,7 @@ public class PrometheusOdfStyler {
      * @param pValue the value
      */
     private void createDecimalStyle(final String pStyleName,
-                                    final TethysDecimal pValue) {
+                                    final OceanusDecimal pValue) {
         /* Create the Ratio Cell Style */
         final Element myStyle = theParser.newElement(PrometheusOdfNumberItem.NUMBERSTYLE);
         theParser.setAttribute(myStyle, PrometheusOdfStyleItem.NAME, pStyleName);
@@ -443,7 +443,7 @@ public class PrometheusOdfStyler {
      * @param pValue the value
      */
     private void createRateStyle(final String pStyleName,
-                                 final TethysRate pValue) {
+                                 final OceanusRate pValue) {
         /* Create the Rate Cell Style */
         final Element myStyle = theParser.newElement(PrometheusOdfNumberItem.PERCENTAGESTYLE);
         theParser.setAttribute(myStyle, PrometheusOdfStyleItem.NAME, pStyleName);
@@ -452,7 +452,7 @@ public class PrometheusOdfStyler {
         /* Define the number properties */
         final Element myNumber = theParser.newElement(PrometheusOdfNumberItem.NUMBER);
         myStyle.appendChild(myNumber);
-        final int myDecimals = pValue.scale() - TethysDecimalParser.ADJUST_PERCENT;
+        final int myDecimals = pValue.scale() - OceanusDecimalParser.ADJUST_PERCENT;
         theParser.setAttribute(myNumber, PrometheusOdfNumberItem.DECPLACES, myDecimals);
         theParser.setAttribute(myNumber, PrometheusOdfNumberItem.MININTDIGITS, 1);
 
@@ -468,7 +468,7 @@ public class PrometheusOdfStyler {
      * @param pValue the value
      */
     private void createMoneyStyle(final String pStyleName,
-                                  final TethysMoney pValue) {
+                                  final OceanusMoney pValue) {
         /* Create the Price Cell Style */
         final Element myStyle = theParser.newElement(PrometheusOdfNumberItem.NUMBERSTYLE);
         theParser.setAttribute(myStyle, PrometheusOdfStyleItem.NAME, pStyleName);
@@ -502,7 +502,7 @@ public class PrometheusOdfStyler {
      * @return the
      */
     private String createCurrencyStyle(final String pStyleName,
-                                       final TethysMoney pValue,
+                                       final OceanusMoney pValue,
                                         final boolean pNegative) {
         /* Determine the prefix */
         final String myPrefix = pNegative ? "n" : "p";

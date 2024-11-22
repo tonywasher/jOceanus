@@ -28,7 +28,7 @@ import net.sourceforge.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAn
 import net.sourceforge.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisSecurityValues;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseAssetBase;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrency;
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
 
 /**
@@ -129,7 +129,7 @@ public abstract class MoneyWiseAnalysisAccountCategoryBucket<T extends MoneyWise
      * @param pValue the value of the attribute
      */
     protected void setValue(final MoneyWiseAnalysisAccountAttr pAttr,
-                            final TethysMoney pValue) {
+                            final OceanusMoney pValue) {
         /* Set the value into the list */
         theValues.setValue(pAttr, pValue);
     }
@@ -172,11 +172,11 @@ public abstract class MoneyWiseAnalysisAccountCategoryBucket<T extends MoneyWise
      */
     protected void calculateDelta() {
         /* Obtain a copy of the value */
-        TethysMoney myValue = theValues.getMoneyValue(MoneyWiseAnalysisAccountAttr.VALUATION);
-        myValue = new TethysMoney(myValue);
+        OceanusMoney myValue = theValues.getMoneyValue(MoneyWiseAnalysisAccountAttr.VALUATION);
+        myValue = new OceanusMoney(myValue);
 
         /* Subtract any base value */
-        final TethysMoney myBase = theBaseValues.getMoneyValue(MoneyWiseAnalysisAccountAttr.VALUATION);
+        final OceanusMoney myBase = theBaseValues.getMoneyValue(MoneyWiseAnalysisAccountAttr.VALUATION);
         myValue.subtractAmount(myBase);
 
         /* Set the delta */
@@ -230,8 +230,8 @@ public abstract class MoneyWiseAnalysisAccountCategoryBucket<T extends MoneyWise
     private static void addValues(final MoneyWiseAnalysisAccountValues pTotals,
                                   final MoneyWiseAnalysisAccountValues pSource) {
         /* Add base values */
-        final TethysMoney myValue = pTotals.getMoneyValue(MoneyWiseAnalysisAccountAttr.VALUATION);
-        final TethysMoney mySrcValue = pSource.getMoneyValue(MoneyWiseAnalysisAccountAttr.VALUATION);
+        final OceanusMoney myValue = pTotals.getMoneyValue(MoneyWiseAnalysisAccountAttr.VALUATION);
+        final OceanusMoney mySrcValue = pSource.getMoneyValue(MoneyWiseAnalysisAccountAttr.VALUATION);
         myValue.addAmount(mySrcValue);
     }
 
@@ -243,8 +243,8 @@ public abstract class MoneyWiseAnalysisAccountCategoryBucket<T extends MoneyWise
     private static void addValues(final MoneyWiseAnalysisAccountValues pTotals,
                                   final MoneyWiseAnalysisSecurityValues pSource) {
         /* Add base values */
-        final TethysMoney myValue = pTotals.getMoneyValue(MoneyWiseAnalysisAccountAttr.VALUATION);
-        final TethysMoney mySrcValue = pSource.getMoneyValue(MoneyWiseAnalysisSecurityAttr.VALUATION);
+        final OceanusMoney myValue = pTotals.getMoneyValue(MoneyWiseAnalysisAccountAttr.VALUATION);
+        final OceanusMoney mySrcValue = pSource.getMoneyValue(MoneyWiseAnalysisSecurityAttr.VALUATION);
         myValue.addAmount(mySrcValue);
     }
 }

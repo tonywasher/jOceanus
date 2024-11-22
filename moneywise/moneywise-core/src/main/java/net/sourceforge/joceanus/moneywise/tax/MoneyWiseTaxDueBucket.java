@@ -25,8 +25,8 @@ import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTaxClass;
 import net.sourceforge.joceanus.moneywise.tax.MoneyWiseTaxBandSet.MoneyWiseTaxBand;
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
-import net.sourceforge.joceanus.tethys.decimal.TethysRate;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRate;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
 
 /**
@@ -68,12 +68,12 @@ public class MoneyWiseTaxDueBucket
     /**
      * Taxable income.
      */
-    private final TethysMoney theTaxableIncome;
+    private final OceanusMoney theTaxableIncome;
 
     /**
      * Tax Due.
      */
-    private final TethysMoney theTaxDue;
+    private final OceanusMoney theTaxDue;
 
     /**
      * Constructor.
@@ -160,7 +160,7 @@ public class MoneyWiseTaxDueBucket
      * Obtain the taxableIncome.
      * @return the taxableIncome
      */
-    public TethysMoney getTaxableIncome() {
+    public OceanusMoney getTaxableIncome() {
         return theTaxableIncome;
     }
 
@@ -168,7 +168,7 @@ public class MoneyWiseTaxDueBucket
      * Obtain the taxDue.
      * @return the taxDue
      */
-    public TethysMoney getTaxDue() {
+    public OceanusMoney getTaxDue() {
         return theTaxDue;
     }
 
@@ -228,17 +228,17 @@ public class MoneyWiseTaxDueBucket
         /**
          * Amount in Band.
          */
-        private final TethysMoney theAmount;
+        private final OceanusMoney theAmount;
 
         /**
          * Rate for Band.
          */
-        private final TethysRate theRate;
+        private final OceanusRate theRate;
 
         /**
          * TaxDue for Band.
          */
-        private final TethysMoney theTaxDue;
+        private final OceanusMoney theTaxDue;
 
         /**
          * Constructor.
@@ -257,7 +257,7 @@ public class MoneyWiseTaxDueBucket
          * Obtain the amount.
          * @return the amount
          */
-        public TethysMoney getAmount() {
+        public OceanusMoney getAmount() {
             return theAmount;
         }
 
@@ -265,7 +265,7 @@ public class MoneyWiseTaxDueBucket
          * Obtain the rate.
          * @return the rate
          */
-        public TethysRate getRate() {
+        public OceanusRate getRate() {
             return theRate;
         }
 
@@ -273,7 +273,7 @@ public class MoneyWiseTaxDueBucket
          * Obtain the taxDue.
          * @return the taxDue
          */
-        public TethysMoney getTaxDue() {
+        public OceanusMoney getTaxDue() {
             return theTaxDue;
         }
 

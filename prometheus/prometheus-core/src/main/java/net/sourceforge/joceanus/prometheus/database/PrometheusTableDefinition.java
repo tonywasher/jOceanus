@@ -41,13 +41,13 @@ import net.sourceforge.joceanus.prometheus.database.PrometheusColumnDefinition.P
 import net.sourceforge.joceanus.prometheus.database.PrometheusColumnDefinition.PrometheusReferenceColumn;
 import net.sourceforge.joceanus.prometheus.database.PrometheusColumnDefinition.PrometheusStringColumn;
 import net.sourceforge.joceanus.prometheus.database.PrometheusColumnDefinition.PrometheusUnitsColumn;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.date.TethysDate;
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
-import net.sourceforge.joceanus.tethys.decimal.TethysPrice;
-import net.sourceforge.joceanus.tethys.decimal.TethysRate;
-import net.sourceforge.joceanus.tethys.decimal.TethysRatio;
-import net.sourceforge.joceanus.tethys.decimal.TethysUnits;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRate;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRatio;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusUnits;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
 
 /**
@@ -643,7 +643,7 @@ public class PrometheusTableDefinition {
      * @return the Date value
      * @throws OceanusException on error
      */
-    public TethysDate getDateValue(final MetisDataFieldId pId) throws OceanusException {
+    public OceanusDate getDateValue(final MetisDataFieldId pId) throws OceanusException {
         /* Obtain the correct id */
         final PrometheusColumnDefinition myCol = getColumnForId(pId);
 
@@ -704,8 +704,8 @@ public class PrometheusTableDefinition {
      * @return the Money value
      * @throws OceanusException on error
      */
-    public TethysMoney getMoneyValue(final MetisDataFieldId pId,
-                                     final TethysUIDataFormatter pFormatter) throws OceanusException {
+    public OceanusMoney getMoneyValue(final MetisDataFieldId pId,
+                                      final TethysUIDataFormatter pFormatter) throws OceanusException {
         /* Obtain the correct id */
         final PrometheusColumnDefinition myCol = getColumnForId(pId);
 
@@ -726,8 +726,8 @@ public class PrometheusTableDefinition {
      * @return the price value
      * @throws OceanusException on error
      */
-    public TethysPrice getPriceValue(final MetisDataFieldId pId,
-                                     final TethysUIDataFormatter pFormatter) throws OceanusException {
+    public OceanusPrice getPriceValue(final MetisDataFieldId pId,
+                                      final TethysUIDataFormatter pFormatter) throws OceanusException {
         /* Obtain the correct id */
         final PrometheusColumnDefinition myCol = getColumnForId(pId);
 
@@ -748,8 +748,8 @@ public class PrometheusTableDefinition {
      * @return the rate value
      * @throws OceanusException on error
      */
-    public TethysRate getRateValue(final MetisDataFieldId pId,
-                                   final TethysUIDataFormatter pFormatter) throws OceanusException {
+    public OceanusRate getRateValue(final MetisDataFieldId pId,
+                                    final TethysUIDataFormatter pFormatter) throws OceanusException {
         /* Obtain the correct id */
         final PrometheusColumnDefinition myCol = getColumnForId(pId);
 
@@ -770,8 +770,8 @@ public class PrometheusTableDefinition {
      * @return the Units value
      * @throws OceanusException on error
      */
-    public TethysUnits getUnitsValue(final MetisDataFieldId pId,
-                                     final TethysUIDataFormatter pFormatter) throws OceanusException {
+    public OceanusUnits getUnitsValue(final MetisDataFieldId pId,
+                                      final TethysUIDataFormatter pFormatter) throws OceanusException {
         /* Obtain the correct id */
         final PrometheusColumnDefinition myCol = getColumnForId(pId);
 
@@ -792,8 +792,8 @@ public class PrometheusTableDefinition {
      * @return the Ratio value
      * @throws OceanusException on error
      */
-    public TethysRatio getRatioValue(final MetisDataFieldId pId,
-                                     final TethysUIDataFormatter pFormatter) throws OceanusException {
+    public OceanusRatio getRatioValue(final MetisDataFieldId pId,
+                                      final TethysUIDataFormatter pFormatter) throws OceanusException {
         /* Obtain the correct id */
         final PrometheusColumnDefinition myCol = getColumnForId(pId);
 
@@ -897,7 +897,7 @@ public class PrometheusTableDefinition {
      * @throws OceanusException on error
      */
     public void setDateValue(final MetisDataFieldId pId,
-                             final TethysDate pValue) throws OceanusException {
+                             final OceanusDate pValue) throws OceanusException {
         /* Obtain the correct id */
         final PrometheusColumnDefinition myCol = getColumnForId(pId);
 
@@ -960,7 +960,7 @@ public class PrometheusTableDefinition {
      * @throws OceanusException on error
      */
     public void setMoneyValue(final MetisDataFieldId pId,
-                              final TethysMoney pValue) throws OceanusException {
+                              final OceanusMoney pValue) throws OceanusException {
         /* Obtain the correct id */
         final PrometheusColumnDefinition myCol = getColumnForId(pId);
 
@@ -981,7 +981,7 @@ public class PrometheusTableDefinition {
      * @throws OceanusException on error
      */
     public void setRateValue(final MetisDataFieldId pId,
-                             final TethysRate pValue) throws OceanusException {
+                             final OceanusRate pValue) throws OceanusException {
         /* Obtain the correct id */
         final PrometheusColumnDefinition myCol = getColumnForId(pId);
 
@@ -1002,7 +1002,7 @@ public class PrometheusTableDefinition {
      * @throws OceanusException on error
      */
     public void setRatioValue(final MetisDataFieldId pId,
-                              final TethysRatio pValue) throws OceanusException {
+                              final OceanusRatio pValue) throws OceanusException {
         /* Obtain the correct id */
         final PrometheusColumnDefinition myCol = getColumnForId(pId);
 

@@ -51,7 +51,7 @@ import net.sourceforge.joceanus.moneywise.lethe.views.MoneyWiseAnalysisFilter.Mo
 import net.sourceforge.joceanus.moneywise.lethe.views.MoneyWiseAnalysisFilter.MoneyWiseAnalysisTagFilter;
 import net.sourceforge.joceanus.moneywise.lethe.views.MoneyWiseAnalysisFilter.MoneyWiseAnalysisTaxBasisFilter;
 import net.sourceforge.joceanus.moneywise.lethe.views.MoneyWiseAnalysisFilter.MoneyWiseAnalysisTransCategoryFilter;
-import net.sourceforge.joceanus.tethys.date.TethysDateRange;
+import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
 
 /**
  * List of filters for a transaction within an analysis.
@@ -71,7 +71,7 @@ public class MoneyWiseTransactionFilters
     /**
      * The dateRange.
      */
-    private final TethysDateRange theDateRange;
+    private final OceanusDateRange theDateRange;
 
     /**
      * Constructor.
@@ -80,7 +80,7 @@ public class MoneyWiseTransactionFilters
      * @param pTrans the transaction
      */
     public MoneyWiseTransactionFilters(final MoneyWiseAnalysis pAnalysis,
-                                       final TethysDateRange pDateRange,
+                                       final OceanusDateRange pDateRange,
                                        final MoneyWiseTransaction pTrans) {
         /* Store dateRange and transaction */
         theDateRange = pDateRange;

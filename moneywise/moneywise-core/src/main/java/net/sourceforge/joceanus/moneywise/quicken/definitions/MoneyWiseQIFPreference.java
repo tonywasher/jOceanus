@@ -19,8 +19,8 @@ package net.sourceforge.joceanus.moneywise.quicken.definitions;
 import net.sourceforge.joceanus.metis.preference.MetisPreferenceKey;
 import net.sourceforge.joceanus.metis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.metis.preference.MetisPreferenceSet;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.date.TethysDate;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
 
 /**
  * Quicken Preferences.
@@ -121,7 +121,7 @@ public final class MoneyWiseQIFPreference {
             /* Make sure that the eventDate is specified */
             final MetisDatePreference myPref = getDatePreference(MoneyWiseQIFPreferenceKey.LASTEVENT);
             if (!myPref.isAvailable()) {
-                myPref.setValue(new TethysDate());
+                myPref.setValue(new OceanusDate());
             }
         }
     }

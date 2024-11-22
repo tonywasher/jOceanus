@@ -35,9 +35,9 @@ import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePortfolio.MoneyWis
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurityHolding.MoneyWiseSecurityHoldingMap;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurityPrice;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
-import net.sourceforge.joceanus.tethys.profile.TethysProfile;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
+import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
 
 /**
  * Evebt Analyser.
@@ -46,7 +46,7 @@ public class MoneyWiseXAnalysisEventAnalyser {
     /**
      * The profile.
      */
-    private final TethysProfile theProfile;
+    private final OceanusProfile theProfile;
 
     /**
      * The analysis.
@@ -90,12 +90,12 @@ public class MoneyWiseXAnalysisEventAnalyser {
      * @param pPreferenceMgr the preference manager
      * @throws OceanusException on error
      */
-    public MoneyWiseXAnalysisEventAnalyser(final TethysProfile pTask,
+    public MoneyWiseXAnalysisEventAnalyser(final OceanusProfile pTask,
                                            final PrometheusEditSet pEditSet,
                                            final MetisPreferenceManager pPreferenceMgr) throws OceanusException {
         /* Initialise the task */
         theProfile = pTask;
-        final TethysProfile myTask = theProfile.startTask("analyseEvents");
+        final OceanusProfile myTask = theProfile.startTask("analyseEvents");
 
         /* Create the new Analysis */
         myTask.startTask("Initialise");
@@ -207,7 +207,7 @@ public class MoneyWiseXAnalysisEventAnalyser {
      */
     public void postProcessAnalysis() throws OceanusException {
         /* Start a new task */
-        final TethysProfile myTask = theProfile.startTask("postProcessAnalysis1");
+        final OceanusProfile myTask = theProfile.startTask("postProcessAnalysis1");
         myTask.startTask("markActiveAccounts");
 
         /* Mark relevant accounts */
@@ -240,7 +240,7 @@ public class MoneyWiseXAnalysisEventAnalyser {
                 /* update the price and determine the value delta */
                 myBucket.recordSecurityPrice();
                 myBucket.adjustValuation();
-                final TethysMoney myDelta = myBucket.getDeltaValuation();
+                final OceanusMoney myDelta = myBucket.getDeltaValuation();
 
                 /* Register the bucket for the event */
                 theState.registerBucketInterest(myBucket);
@@ -273,7 +273,7 @@ public class MoneyWiseXAnalysisEventAnalyser {
                 /* update the rate and determine the value delta */
                 myBucket.recordExchangeRate();
                 myBucket.adjustValuation();
-                final TethysMoney myDelta = myBucket.getDeltaValuation();
+                final OceanusMoney myDelta = myBucket.getDeltaValuation();
 
                 /* Register the bucket for the event */
                 theState.registerBucketInterest(myBucket);

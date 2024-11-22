@@ -21,7 +21,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import net.sourceforge.joceanus.metis.parser.MetisCSVParser;
-import net.sourceforge.joceanus.tethys.OceanusException;
+import net.sourceforge.joceanus.oceanus.OceanusException;
 
 /**
  * FundingCircle BadDebt Parser.

@@ -19,8 +19,8 @@ package net.sourceforge.joceanus.tethys.ui.core.button;
 import java.util.Objects;
 import java.util.function.Consumer;
 
-import net.sourceforge.joceanus.tethys.event.TethysEventManager;
-import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIArrowIconId;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIIconId;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUINode;
@@ -56,7 +56,7 @@ public abstract class TethysUICoreScrollButtonManager<T>
     /**
      * The Event Manager.
      */
-    private final TethysEventManager<TethysUIEvent> theEventManager;
+    private final OceanusEventManager<TethysUIEvent> theEventManager;
 
     /**
      * The Button.
@@ -104,7 +104,7 @@ public abstract class TethysUICoreScrollButtonManager<T>
         /* Allocate resources */
         theGuiFactory = pFactory;
         theClazz = pClazz;
-        theEventManager = new TethysEventManager<>();
+        theEventManager = new OceanusEventManager<>();
         theButton = pFactory.buttonFactory().newButton();
         isFixedText = false;
 
@@ -171,7 +171,7 @@ public abstract class TethysUICoreScrollButtonManager<T>
     protected abstract void registerListeners();
 
     @Override
-    public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
+    public OceanusEventRegistrar<TethysUIEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 

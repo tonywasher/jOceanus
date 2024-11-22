@@ -24,11 +24,11 @@ import java.util.Map.Entry;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataMap;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataObjectFormat;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransaction;
-import net.sourceforge.joceanus.tethys.date.TethysDate;
-import net.sourceforge.joceanus.tethys.date.TethysDateRange;
-import net.sourceforge.joceanus.tethys.decimal.TethysDecimal;
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
-import net.sourceforge.joceanus.tethys.decimal.TethysUnits;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimal;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusUnits;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
 
 /**
@@ -93,7 +93,7 @@ public class MoneyWiseAnalysisHistory<T extends MoneyWiseAnalysisValues<T, E>, E
      * @param pDate the date for history cut-off
      */
     public MoneyWiseAnalysisHistory(final MoneyWiseAnalysisHistory<T, E> pHistory,
-                                    final TethysDate pDate) {
+                                    final OceanusDate pDate) {
         /* Copy the base values */
         theBaseValues = pHistory.getBaseValues().getFullSnapShot();
         theLastValues = theBaseValues;
@@ -140,7 +140,7 @@ public class MoneyWiseAnalysisHistory<T extends MoneyWiseAnalysisValues<T, E>, E
      * @param pRange the date range for history cut-off
      */
     public MoneyWiseAnalysisHistory(final MoneyWiseAnalysisHistory<T, E> pHistory,
-                                    final TethysDateRange pRange) {
+                                    final OceanusDateRange pRange) {
         /* Create the history map */
         theHistoryMap = new LinkedHashMap<>();
 
@@ -301,8 +301,8 @@ public class MoneyWiseAnalysisHistory<T extends MoneyWiseAnalysisValues<T, E>, E
      * @param pAttr the attribute
      * @return the delta (or null)
      */
-    public TethysDecimal getDeltaValue(final MoneyWiseTransaction pTrans,
-                                       final E pAttr) {
+    public OceanusDecimal getDeltaValue(final MoneyWiseTransaction pTrans,
+                                        final E pAttr) {
         /* Locate the transaction in the map */
         final MoneyWiseAnalysisSnapShot<T, E> myTrans = theHistoryMap.get(pTrans.getIndexedId());
         return myTrans == null
@@ -316,8 +316,8 @@ public class MoneyWiseAnalysisHistory<T extends MoneyWiseAnalysisValues<T, E>, E
      * @param pAttr the attribute
      * @return the delta (or null)
      */
-    public TethysMoney getDeltaMoneyValue(final MoneyWiseTransaction pTrans,
-                                          final E pAttr) {
+    public OceanusMoney getDeltaMoneyValue(final MoneyWiseTransaction pTrans,
+                                           final E pAttr) {
         /* Locate the transaction in the map */
         final MoneyWiseAnalysisSnapShot<T, E> myTrans = theHistoryMap.get(pTrans.getIndexedId());
         return myTrans == null
@@ -331,8 +331,8 @@ public class MoneyWiseAnalysisHistory<T extends MoneyWiseAnalysisValues<T, E>, E
      * @param pAttr the attribute
      * @return the delta (or null)
      */
-    public TethysUnits getDeltaUnitsValue(final MoneyWiseTransaction pTrans,
-                                          final E pAttr) {
+    public OceanusUnits getDeltaUnitsValue(final MoneyWiseTransaction pTrans,
+                                           final E pAttr) {
         /* Locate the transaction in the map */
         final MoneyWiseAnalysisSnapShot<T, E> myTrans = theHistoryMap.get(pTrans.getIndexedId());
         return myTrans == null

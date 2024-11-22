@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.moneywise.tax.uk;
 
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.moneywise.tax.MoneyWiseTaxResource;
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
 
 /**
@@ -41,7 +41,7 @@ public class MoneyWiseUKAdditionalAllowance
     /**
      * IncomeBoundary.
      */
-    private final TethysMoney theAddAllowLimit;
+    private final OceanusMoney theAddAllowLimit;
 
     /**
      * Constructor.
@@ -53,13 +53,13 @@ public class MoneyWiseUKAdditionalAllowance
      * @param pAgeAllowanceLimit the age allowance limit
      * @param pAddAllowLimit the additional allowance limit
      */
-    protected MoneyWiseUKAdditionalAllowance(final TethysMoney pAllowance,
-                                             final TethysMoney pRentalAllowance,
-                                             final TethysMoney pCapitalAllowance,
-                                             final TethysMoney pLoAgeAllowance,
-                                             final TethysMoney pHiAgeAllowance,
-                                             final TethysMoney pAgeAllowanceLimit,
-                                             final TethysMoney pAddAllowLimit) {
+    protected MoneyWiseUKAdditionalAllowance(final OceanusMoney pAllowance,
+                                             final OceanusMoney pRentalAllowance,
+                                             final OceanusMoney pCapitalAllowance,
+                                             final OceanusMoney pLoAgeAllowance,
+                                             final OceanusMoney pHiAgeAllowance,
+                                             final OceanusMoney pAgeAllowanceLimit,
+                                             final OceanusMoney pAddAllowLimit) {
         super(pAllowance, pRentalAllowance, pCapitalAllowance, pLoAgeAllowance, pHiAgeAllowance, pAgeAllowanceLimit);
         theAddAllowLimit = pAddAllowLimit;
     }
@@ -68,21 +68,21 @@ public class MoneyWiseUKAdditionalAllowance
      * Obtain the additional Allowance limit.
      * @return the Limit
      */
-    protected TethysMoney getAdditionalAllowanceLimit() {
+    protected OceanusMoney getAdditionalAllowanceLimit() {
         return theAddAllowLimit;
     }
 
     @Override
-    protected TethysMoney calculateBasicAllowance(final MoneyWiseUKTaxConfig pConfig) {
+    protected OceanusMoney calculateBasicAllowance(final MoneyWiseUKTaxConfig pConfig) {
         /* Determine AgeRelated allowance */
-        TethysMoney myAllowance = super.calculateBasicAllowance(pConfig);
+        OceanusMoney myAllowance = super.calculateBasicAllowance(pConfig);
 
         /* If we have additional tax possible and we are above the allowance limit */
-        final TethysMoney myGross = pConfig.getGrossTaxable();
+        final OceanusMoney myGross = pConfig.getGrossTaxable();
         if (myGross.compareTo(theAddAllowLimit) > 0) {
             /* Calculate and apply the reduction */
-            final TethysMoney myReduction = getMarginalReduction().calculateReduction(myGross, theAddAllowLimit);
-            myAllowance = new TethysMoney(myAllowance);
+            final OceanusMoney myReduction = getMarginalReduction().calculateReduction(myGross, theAddAllowLimit);
+            myAllowance = new OceanusMoney(myAllowance);
             myAllowance.subtractAmount(myReduction);
 
             /* If we have reduced below zero */

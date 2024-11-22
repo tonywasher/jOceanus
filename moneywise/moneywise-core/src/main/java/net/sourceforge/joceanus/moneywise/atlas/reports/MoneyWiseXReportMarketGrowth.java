@@ -16,11 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.moneywise.atlas.reports;
 
-import java.util.Iterator;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-
 import net.sourceforge.joceanus.metis.report.MetisReportBase;
 import net.sourceforge.joceanus.metis.report.MetisReportHTMLBuilder;
 import net.sourceforge.joceanus.metis.report.MetisReportHTMLBuilder.MetisHTMLTable;
@@ -36,10 +31,14 @@ import net.sourceforge.joceanus.moneywise.atlas.data.analysis.values.MoneyWiseXA
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.values.MoneyWiseXAnalysisValuesResource;
 import net.sourceforge.joceanus.moneywise.atlas.views.MoneyWiseXAnalysisFilter;
 import net.sourceforge.joceanus.moneywise.atlas.views.MoneyWiseXAnalysisFilter.MoneyWiseXAnalysisSecurityFilter;
-import net.sourceforge.joceanus.tethys.date.TethysDateRange;
-import net.sourceforge.joceanus.tethys.logger.TethysLogManager;
-import net.sourceforge.joceanus.tethys.logger.TethysLogger;
+import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
+import net.sourceforge.joceanus.oceanus.logger.OceanusLogManager;
+import net.sourceforge.joceanus.oceanus.logger.OceanusLogger;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
+import java.util.Iterator;
 
 /**
  * MarketGrowth report builder.
@@ -49,7 +48,7 @@ public class MoneyWiseXReportMarketGrowth
     /**
      * Logger.
      */
-    private static final TethysLogger LOGGER = TethysLogManager.getLogger(MoneyWiseXReportMarketGrowth.class);
+    private static final OceanusLogger LOGGER = OceanusLogManager.getLogger(MoneyWiseXReportMarketGrowth.class);
 
     /**
      * The Title text.
@@ -62,16 +61,6 @@ public class MoneyWiseXReportMarketGrowth
     private static final String TEXT_VALUE = MoneyWiseXAnalysisValuesResource.ACCOUNTATTR_VALUATION.getValue();
 
     /**
-     * The Invested text.
-     */
-    //private static final String TEXT_INVEST = MoneyWiseXAnalysisValuesResource.SECURITYATTR_INVESTED.getValue();
-
-    /**
-     * The Adjustment text.
-     */
-    //private static final String TEXT_ADJUST = MoneyWiseXAnalysisValuesResource.SECURITYATTR_GROWTHADJUST.getValue();
-
-    /**
      * The Adjustment text.
      */
     private static final String TEXT_GAINS = MoneyWiseXAnalysisValuesResource.SECURITYATTR_REALISEDGAINS.getValue();
@@ -80,16 +69,6 @@ public class MoneyWiseXReportMarketGrowth
      * The Base text.
      */
     private static final String TEXT_BASE = MoneyWiseXReportResource.MARKETGROWTH_BASE.getValue();
-
-    /**
-     * The Growth text.
-     */
-    //private static final String TEXT_GROWTH = MoneyWiseXAnalysisValuesResource.SECURITYATTR_MARKETGROWTH.getValue();
-
-    /**
-     * The CurrenctFluctuation text.
-     */
-    //private static final String TEXT_CURRENCY = MoneyWiseXAnalysisValuesResource.ACCOUNTATTR_CURRENCYFLUCT.getValue();
 
     /**
      * The Profit text.
@@ -129,7 +108,7 @@ public class MoneyWiseXReportMarketGrowth
 
         /* Access the totals */
         final MoneyWiseXAnalysisPortfolioBucket myTotals = myPortfolios.getTotals();
-        final TethysDateRange myRange = pAnalysis.getDateRange();
+        final OceanusDateRange myRange = pAnalysis.getDateRange();
 
         /* Start the report */
         final Element myBody = theBuilder.startReport();

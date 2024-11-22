@@ -30,8 +30,8 @@ import net.sourceforge.joceanus.moneywise.data.statics.MoneyWisePayeeClass;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTaxClass;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransCategoryClass;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransInfoClass;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
 
 /**
  * Tax Analysis.
@@ -156,7 +156,7 @@ public class MoneyWiseXAnalysisTax {
     }
 
     /**
-     * Declare the Security analyser
+     * Declare the Security analyser.
      * @param pSecurity the securityAnalyser
      */
     void declareSecurityAnalyser(final MoneyWiseXAnalysisSecurity pSecurity) {
@@ -200,7 +200,7 @@ public class MoneyWiseXAnalysisTax {
      * Process an autoExpense amount.
      * @param pAmount the amount
      */
-    void processAutoExpense(final TethysMoney pAmount) {
+    void processAutoExpense(final OceanusMoney pAmount) {
         /* Adjust the expense taxBasis by amount */
         theExpenseTax.adjustGrossAndNett(pAmount);
         theState.registerBucketInterest(theExpenseTax);
@@ -229,7 +229,7 @@ public class MoneyWiseXAnalysisTax {
      */
     private void adjustForTaxCredit() throws OceanusException {
         /* If we have taxCredit */
-        TethysMoney myTaxCredit = theTransaction.getTransaction().getTaxCredit();
+        OceanusMoney myTaxCredit = theTransaction.getTransaction().getTaxCredit();
         if (myTaxCredit != null && myTaxCredit.isNonZero()) {
             /* Determine whether this is income or expense */
             final boolean isIncome = theTransaction.isIncomeCategory();
@@ -239,7 +239,7 @@ public class MoneyWiseXAnalysisTax {
 
             /* If this is a refund, negate the taxCredit */
             if (theTransaction.isRefund()) {
-                myTaxCredit = new TethysMoney(myTaxCredit);
+                myTaxCredit = new OceanusMoney(myTaxCredit);
                 myTaxCredit.negate();
             }
 
@@ -291,7 +291,7 @@ public class MoneyWiseXAnalysisTax {
      */
     private void adjustForTaxRelief() throws OceanusException {
         /* If we have taxCredit */
-        TethysMoney myTaxCredit = theTransaction.getTransaction().getTaxCredit();
+        OceanusMoney myTaxCredit = theTransaction.getTransaction().getTaxCredit();
         if (myTaxCredit != null && myTaxCredit.isNonZero()) {
             /* Determine whether this is income or expense */
             final boolean isIncome = theTransaction.isIncomeCategory();
@@ -301,7 +301,7 @@ public class MoneyWiseXAnalysisTax {
 
             /* If this is a refund, negate the taxCredit */
             if (theTransaction.isRefund()) {
-                myTaxCredit = new TethysMoney(myTaxCredit);
+                myTaxCredit = new OceanusMoney(myTaxCredit);
                 myTaxCredit.negate();
             }
 
@@ -353,7 +353,7 @@ public class MoneyWiseXAnalysisTax {
      */
     private void adjustForEmployeeNI() throws OceanusException {
         /* If we have NatIns */
-        TethysMoney myNatIns = theTransaction.getTransaction().getEmployeeNatIns();
+        OceanusMoney myNatIns = theTransaction.getTransaction().getEmployeeNatIns();
         if (myNatIns != null && myNatIns.isNonZero()) {
             /* Determine whether this is income or expense */
             final boolean isIncome = theTransaction.isIncomeCategory();
@@ -365,7 +365,7 @@ public class MoneyWiseXAnalysisTax {
 
             /* If this is a refund, negate the withheld */
             if (theTransaction.isRefund()) {
-                myNatIns = new TethysMoney(myNatIns);
+                myNatIns = new OceanusMoney(myNatIns);
                 myNatIns.negate();
             }
 
@@ -408,7 +408,7 @@ public class MoneyWiseXAnalysisTax {
      */
     private void adjustForEmployerNI() throws OceanusException {
         /* If we have NatIns */
-        TethysMoney myNatIns = theTransaction.getTransaction().getEmployerNatIns();
+        OceanusMoney myNatIns = theTransaction.getTransaction().getEmployerNatIns();
         if (myNatIns != null && myNatIns.isNonZero()) {
             /* Determine whether this is income or expense */
             final boolean isIncome = theTransaction.isIncomeCategory();
@@ -420,7 +420,7 @@ public class MoneyWiseXAnalysisTax {
 
             /* If this is a refund, negate the withheld */
             if (theTransaction.isRefund()) {
-                myNatIns = new TethysMoney(myNatIns);
+                myNatIns = new OceanusMoney(myNatIns);
                 myNatIns.negate();
             }
 
@@ -466,7 +466,7 @@ public class MoneyWiseXAnalysisTax {
      */
     private void adjustForBenefit() throws OceanusException {
         /* If we have benefit */
-        TethysMoney myBenefit = theTransaction.getTransaction().getDeemedBenefit();
+        OceanusMoney myBenefit = theTransaction.getTransaction().getDeemedBenefit();
         if (myBenefit != null && myBenefit.isNonZero()) {
             /* Determine whether this is income or expense */
             final boolean isIncome = theTransaction.isIncomeCategory();
@@ -476,7 +476,7 @@ public class MoneyWiseXAnalysisTax {
 
             /* If this is a refund, negate the withheld */
             if (theTransaction.isRefund()) {
-                myBenefit = new TethysMoney(myBenefit);
+                myBenefit = new OceanusMoney(myBenefit);
                 myBenefit.negate();
             }
 
@@ -527,7 +527,7 @@ public class MoneyWiseXAnalysisTax {
      */
     private void adjustForWithheld() throws OceanusException {
         /* If we have withheld */
-        TethysMoney myWithheld = theTransaction.getTransaction().getWithheld();
+        OceanusMoney myWithheld = theTransaction.getTransaction().getWithheld();
         if (myWithheld != null && myWithheld.isNonZero()) {
             /* Determine whether this is income or expense */
             final boolean isIncome = theTransaction.isIncomeCategory();
@@ -537,7 +537,7 @@ public class MoneyWiseXAnalysisTax {
 
             /* If this is a refund, negate the withheld */
             if (theTransaction.isRefund()) {
-                myWithheld = new TethysMoney(myWithheld);
+                myWithheld = new OceanusMoney(myWithheld);
                 myWithheld.negate();
             }
 
@@ -628,9 +628,6 @@ public class MoneyWiseXAnalysisTax {
      * @throws OceanusException on error
      */
     private MoneyWiseTaxClass determineTaxClass(final MoneyWiseXAnalysisTransaction pTrans) throws OceanusException {
-        if (pTrans == null) {
-            int i = 0;
-        }
         /* Switch on the category type */
         switch (pTrans.getCategoryClass()) {
             case TAXEDINCOME:

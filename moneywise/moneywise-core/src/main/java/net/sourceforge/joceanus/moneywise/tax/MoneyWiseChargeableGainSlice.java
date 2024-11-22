@@ -16,10 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.moneywise.tax;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataList;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataObjectFormat;
 import net.sourceforge.joceanus.metis.field.MetisFieldItem;
@@ -28,15 +24,19 @@ import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicResource;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransaction;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseStaticResource;
-import net.sourceforge.joceanus.tethys.date.TethysDate;
-import net.sourceforge.joceanus.tethys.date.TethysDateRange;
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * Chargeable Gains Slice record.
  */
-public class MoneyWiseChargeableGainSlice
+public final class MoneyWiseChargeableGainSlice
         implements MetisFieldItem {
     /**
      * Local Report fields.
@@ -57,12 +57,12 @@ public class MoneyWiseChargeableGainSlice
     /**
      * The Date.
      */
-    private final TethysDate theDate;
+    private final OceanusDate theDate;
 
     /**
      * The Gain.
      */
-    private final TethysMoney theGain;
+    private final OceanusMoney theGain;
 
     /**
      * The Years.
@@ -72,7 +72,7 @@ public class MoneyWiseChargeableGainSlice
     /**
      * The Slice.
      */
-    private final TethysMoney theSlice;
+    private final OceanusMoney theSlice;
 
     /**
      * The Transaction.
@@ -85,7 +85,7 @@ public class MoneyWiseChargeableGainSlice
      * @param pGain the gain
      */
     private MoneyWiseChargeableGainSlice(final MoneyWiseTransaction pTrans,
-                                         final TethysMoney pGain) {
+                                         final OceanusMoney pGain) {
         /* Store the parameters */
         theDate = pTrans.getDate();
         theGain = pGain;
@@ -93,7 +93,7 @@ public class MoneyWiseChargeableGainSlice
         theYears = Objects.requireNonNull(pTrans.getYears());
 
         /* Calculate slice */
-        theSlice = new TethysMoney(pGain);
+        theSlice = new OceanusMoney(pGain);
         theSlice.divide(theYears);
     }
 
@@ -105,14 +105,14 @@ public class MoneyWiseChargeableGainSlice
      * @param pYears the years
      */
     private MoneyWiseChargeableGainSlice(final MoneyWiseTransaction pTrans,
-                                         final TethysMoney pGain,
-                                         final TethysMoney pSlice,
+                                         final OceanusMoney pGain,
+                                         final OceanusMoney pSlice,
                                          final Integer pYears) {
         /* Store the parameters */
         theTrans = pTrans;
         theDate = theTrans.getDate();
         theGain = pGain;
-        theSlice= pSlice;
+        theSlice = pSlice;
         theYears = pYears;
     }
 
@@ -120,7 +120,7 @@ public class MoneyWiseChargeableGainSlice
      * Obtain the date.
      * @return the date
      */
-    public TethysDate getDate() {
+    public OceanusDate getDate() {
         return theDate;
     }
 
@@ -128,7 +128,7 @@ public class MoneyWiseChargeableGainSlice
      * Obtain the gain.
      * @return the gain
      */
-    public TethysMoney getGain() {
+    public OceanusMoney getGain() {
         return theGain;
     }
 
@@ -144,7 +144,7 @@ public class MoneyWiseChargeableGainSlice
      * Obtain the slice.
      * @return the slice
      */
-    public TethysMoney getSlice() {
+    public OceanusMoney getSlice() {
         return theSlice;
     }
 
@@ -189,7 +189,7 @@ public class MoneyWiseChargeableGainSlice
          * @param pRange the range of events to copy
          */
         public MoneyWiseChargeableGainSliceList(final MoneyWiseChargeableGainSliceList pSource,
-                                                final TethysDateRange pRange) {
+                                                final OceanusDateRange pRange) {
             /* Call standard constructor */
             this();
 
@@ -222,7 +222,7 @@ public class MoneyWiseChargeableGainSlice
          * @param pGains the gains
          */
         public void addTransaction(final MoneyWiseTransaction pTrans,
-                                   final TethysMoney pGains) {
+                                   final OceanusMoney pGains) {
             /* Create the chargeable event */
             final MoneyWiseChargeableGainSlice mySlice = new MoneyWiseChargeableGainSlice(pTrans, pGains);
 
@@ -238,8 +238,8 @@ public class MoneyWiseChargeableGainSlice
          * @param pYears the years
          */
         public void addTransaction(final MoneyWiseTransaction pTrans,
-                                   final TethysMoney pGains,
-                                   final TethysMoney pSlice,
+                                   final OceanusMoney pGains,
+                                   final OceanusMoney pSlice,
                                    final Integer pYears) {
             /* Create the chargeable event */
             final MoneyWiseChargeableGainSlice mySlice = new MoneyWiseChargeableGainSlice(pTrans, pGains, pSlice, pYears);

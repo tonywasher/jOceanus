@@ -21,14 +21,14 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.coeus.CoeusDataException;
-import net.sourceforge.joceanus.tethys.resource.TethysBundleId;
-import net.sourceforge.joceanus.tethys.resource.TethysBundleLoader;
+import net.sourceforge.joceanus.oceanus.resource.OceanusBundleId;
+import net.sourceforge.joceanus.oceanus.resource.OceanusBundleLoader;
 
 /**
  * Resource IDs for Coeus Reports.
  */
 public enum CoeusReportResource
-        implements TethysBundleId {
+        implements OceanusBundleId {
     /**
      * BalanceSheet ReportType.
      */
@@ -47,12 +47,12 @@ public enum CoeusReportResource
     /**
      * The Report Map.
      */
-    private static final Map<CoeusReportType, TethysBundleId> REPORT_MAP = buildReportMap();
+    private static final Map<CoeusReportType, OceanusBundleId> REPORT_MAP = buildReportMap();
 
     /**
      * The Resource Loader.
      */
-    private static final TethysBundleLoader LOADER = TethysBundleLoader.getPackageLoader(CoeusDataException.class.getCanonicalName(),
+    private static final OceanusBundleLoader LOADER = OceanusBundleLoader.getPackageLoader(CoeusDataException.class.getCanonicalName(),
             ResourceBundle::getBundle);
 
     /**
@@ -99,9 +99,9 @@ public enum CoeusReportResource
      * Build report map.
      * @return the map
      */
-    private static Map<CoeusReportType, TethysBundleId> buildReportMap() {
+    private static Map<CoeusReportType, OceanusBundleId> buildReportMap() {
         /* Create the map and return it */
-        final Map<CoeusReportType, TethysBundleId> myMap = new EnumMap<>(CoeusReportType.class);
+        final Map<CoeusReportType, OceanusBundleId> myMap = new EnumMap<>(CoeusReportType.class);
         myMap.put(CoeusReportType.BALANCESHEET, REPORTTYPE_BALANCESHEET);
         myMap.put(CoeusReportType.LOANBOOK, REPORTTYPE_LOANBOOK);
         myMap.put(CoeusReportType.ANNUAL, REPORTTYPE_ANNUAL);
@@ -113,7 +113,7 @@ public enum CoeusReportResource
      * @param pValue the Value
      * @return the resource key
      */
-    protected static TethysBundleId getKeyForReportType(final CoeusReportType pValue) {
-        return TethysBundleLoader.getKeyForEnum(REPORT_MAP, pValue);
+    protected static OceanusBundleId getKeyForReportType(final CoeusReportType pValue) {
+        return OceanusBundleLoader.getKeyForEnum(REPORT_MAP, pValue);
     }
 }

@@ -41,13 +41,13 @@ import net.sourceforge.joceanus.moneywise.views.MoneyWiseView;
 import net.sourceforge.joceanus.prometheus.ui.PrometheusGoToEvent;
 import net.sourceforge.joceanus.prometheus.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.prometheus.views.PrometheusViewerEntryId;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.date.TethysDateRange;
-import net.sourceforge.joceanus.tethys.event.TethysEvent;
-import net.sourceforge.joceanus.tethys.event.TethysEventManager;
-import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar;
-import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar.TethysEventProvider;
-import net.sourceforge.joceanus.tethys.profile.TethysProfile;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
+import net.sourceforge.joceanus.oceanus.event.OceanusEvent;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.tethys.ui.api.button.TethysUIDateRangeSelector;
@@ -70,7 +70,7 @@ public class MoneyWiseReportTab
     /**
      * The Event Manager.
      */
-    private final TethysEventManager<PrometheusDataEvent> theEventManager;
+    private final OceanusEventManager<PrometheusDataEvent> theEventManager;
 
     /**
      * The Data View.
@@ -125,7 +125,7 @@ public class MoneyWiseReportTab
         final TethysUIFactory<?> myFactory = pView.getGuiFactory();
 
         /* Create the event manager */
-        theEventManager = new TethysEventManager<>();
+        theEventManager = new OceanusEventManager<>();
 
         /* Create the Panel */
         final TethysUIPaneFactory myPanes = myFactory.paneFactory();
@@ -173,7 +173,7 @@ public class MoneyWiseReportTab
         theView.getEventRegistrar().addEventListener(e -> refreshData());
         theManager.getEventRegistrar().addEventListener(this::handleGoToRequest);
         theError.getEventRegistrar().addEventListener(e -> handleErrorPane());
-        final TethysEventRegistrar<PrometheusDataEvent> myRegistrar = theSelect.getEventRegistrar();
+        final OceanusEventRegistrar<PrometheusDataEvent> myRegistrar = theSelect.getEventRegistrar();
         myRegistrar.addEventListener(PrometheusDataEvent.SELECTIONCHANGED, e -> handleReportRequest());
         myRegistrar.addEventListener(PrometheusDataEvent.PRINT, e -> theHTMLPane.printIt());
         myRegistrar.addEventListener(PrometheusDataEvent.SAVETOFILE, e -> theHTMLPane.saveToFile());
@@ -189,7 +189,7 @@ public class MoneyWiseReportTab
     }
 
     @Override
-    public TethysEventRegistrar<PrometheusDataEvent> getEventRegistrar() {
+    public OceanusEventRegistrar<PrometheusDataEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -211,7 +211,7 @@ public class MoneyWiseReportTab
      */
     private void refreshData() {
         /* Obtain the active profile */
-        TethysProfile myTask = theView.getActiveTask();
+        OceanusProfile myTask = theView.getActiveTask();
         myTask = myTask.startTask("Reports");
 
         /* Protect against exceptions */
@@ -245,7 +245,7 @@ public class MoneyWiseReportTab
     private void buildReport() throws OceanusException {
         /* Access the values from the selection */
         final MoneyWiseReportType myReportType = theSelect.getReportType();
-        final TethysDateRange myRange = theSelect.getDateRange();
+        final OceanusDateRange myRange = theSelect.getDateRange();
         final MoneyWiseAnalysisManager myManager = theView.getAnalysisManager();
         final MoneyWiseAnalysisSecurityBucket mySecurity = theSelect.getSecurity();
 
@@ -297,7 +297,7 @@ public class MoneyWiseReportTab
      * handleGoToRequest.
      * @param pEvent the event
      */
-    private void handleGoToRequest(final TethysEvent<MetisReportEvent> pEvent) {
+    private void handleGoToRequest(final OceanusEvent<MetisReportEvent> pEvent) {
         /* Access the filter */
         final MoneyWiseAnalysisFilter<?, ?> myFilter = pEvent.getDetails(MoneyWiseAnalysisFilter.class);
 

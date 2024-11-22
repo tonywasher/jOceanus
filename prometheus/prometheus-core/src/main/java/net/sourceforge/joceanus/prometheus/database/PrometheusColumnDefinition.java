@@ -31,13 +31,13 @@ import net.sourceforge.joceanus.metis.data.MetisDataResource;
 import net.sourceforge.joceanus.prometheus.PrometheusDataException;
 import net.sourceforge.joceanus.prometheus.database.PrometheusTableDefinition.PrometheusSortOrder;
 import net.sourceforge.joceanus.prometheus.preference.PrometheusColumnType;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.date.TethysDate;
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
-import net.sourceforge.joceanus.tethys.decimal.TethysPrice;
-import net.sourceforge.joceanus.tethys.decimal.TethysRate;
-import net.sourceforge.joceanus.tethys.decimal.TethysRatio;
-import net.sourceforge.joceanus.tethys.decimal.TethysUnits;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRate;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRatio;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusUnits;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
 
 /**
@@ -679,7 +679,7 @@ public abstract class PrometheusColumnDefinition {
          * Set the value.
          * @param pValue the value
          */
-        void setValue(final TethysDate pValue) {
+        void setValue(final OceanusDate pValue) {
             super.setObject(pValue);
         }
 
@@ -687,8 +687,8 @@ public abstract class PrometheusColumnDefinition {
          * Get the value.
          * @return the value
          */
-        TethysDate getValue() {
-            return (TethysDate) super.getObject();
+        OceanusDate getValue() {
+            return (OceanusDate) super.getObject();
         }
 
         @Override
@@ -697,13 +697,13 @@ public abstract class PrometheusColumnDefinition {
             final Date myValue = pResults.getDate(pIndex);
             setValue((myValue == null)
                     ? null
-                    : new TethysDate(myValue));
+                    : new OceanusDate(myValue));
         }
 
         @Override
         protected void storeValue(final PreparedStatement pStatement,
                                   final int pIndex) throws SQLException {
-            final TethysDate myValue = getValue();
+            final OceanusDate myValue = getValue();
 
             /* Build the date as a SQL date */
             if (myValue == null) {
@@ -871,7 +871,7 @@ public abstract class PrometheusColumnDefinition {
          * Set the value.
          * @param pValue the value
          */
-        void setValue(final TethysMoney pValue) {
+        void setValue(final OceanusMoney pValue) {
             String myString = null;
             if (pValue != null) {
                 myString = pValue.toString();
@@ -897,9 +897,9 @@ public abstract class PrometheusColumnDefinition {
          * @return the money value
          * @throws OceanusException on error
          */
-        public TethysMoney getValue(final TethysUIDataFormatter pFormatter) throws OceanusException {
+        public OceanusMoney getValue(final TethysUIDataFormatter pFormatter) throws OceanusException {
             try {
-                return pFormatter.parseValue(getValue(), TethysMoney.class);
+                return pFormatter.parseValue(getValue(), OceanusMoney.class);
             } catch (IllegalArgumentException e) {
                 throw new PrometheusDataException(getValue(), "Bad Money Value", e);
             }
@@ -937,7 +937,7 @@ public abstract class PrometheusColumnDefinition {
          * Set the value.
          * @param pValue the value
          */
-        void setValue(final TethysRate pValue) {
+        void setValue(final OceanusRate pValue) {
             String myString = null;
             if (pValue != null) {
                 myString = pValue.toString();
@@ -963,9 +963,9 @@ public abstract class PrometheusColumnDefinition {
          * @return the money value
          * @throws OceanusException on error
          */
-        public TethysRate getValue(final TethysUIDataFormatter pFormatter) throws OceanusException {
+        public OceanusRate getValue(final TethysUIDataFormatter pFormatter) throws OceanusException {
             try {
-                return pFormatter.parseValue(getValue(), TethysRate.class);
+                return pFormatter.parseValue(getValue(), OceanusRate.class);
             } catch (IllegalArgumentException e) {
                 throw new PrometheusDataException(getValue(), "Bad Rate Value", e);
             }
@@ -1003,7 +1003,7 @@ public abstract class PrometheusColumnDefinition {
          * Set the value.
          * @param pValue the value
          */
-        void setValue(final TethysPrice pValue) {
+        void setValue(final OceanusPrice pValue) {
             String myString = null;
             if (pValue != null) {
                 myString = pValue.toString();
@@ -1029,9 +1029,9 @@ public abstract class PrometheusColumnDefinition {
          * @return the money value
          * @throws OceanusException on error
          */
-        public TethysPrice getValue(final TethysUIDataFormatter pFormatter) throws OceanusException {
+        public OceanusPrice getValue(final TethysUIDataFormatter pFormatter) throws OceanusException {
             try {
-                return pFormatter.parseValue(getValue(), TethysPrice.class);
+                return pFormatter.parseValue(getValue(), OceanusPrice.class);
             } catch (IllegalArgumentException e) {
                 throw new PrometheusDataException(getValue(), "Bad Price Value", e);
             }
@@ -1069,7 +1069,7 @@ public abstract class PrometheusColumnDefinition {
          * Set the value.
          * @param pValue the value
          */
-        void setValue(final TethysUnits pValue) {
+        void setValue(final OceanusUnits pValue) {
             String myString = null;
             if (pValue != null) {
                 myString = pValue.toString();
@@ -1095,9 +1095,9 @@ public abstract class PrometheusColumnDefinition {
          * @return the money value
          * @throws OceanusException on error
          */
-        public TethysUnits getValue(final TethysUIDataFormatter pFormatter) throws OceanusException {
+        public OceanusUnits getValue(final TethysUIDataFormatter pFormatter) throws OceanusException {
             try {
-                return pFormatter.parseValue(getValue(), TethysUnits.class);
+                return pFormatter.parseValue(getValue(), OceanusUnits.class);
             } catch (IllegalArgumentException e) {
                 throw new PrometheusDataException(getValue(), "Bad Units Value", e);
             }
@@ -1135,7 +1135,7 @@ public abstract class PrometheusColumnDefinition {
          * Set the value.
          * @param pValue the value
          */
-        void setValue(final TethysRatio pValue) {
+        void setValue(final OceanusRatio pValue) {
             String myString = null;
             if (pValue != null) {
                 myString = pValue.toString();
@@ -1161,9 +1161,9 @@ public abstract class PrometheusColumnDefinition {
          * @return the money value
          * @throws OceanusException on error
          */
-        public TethysRatio getValue(final TethysUIDataFormatter pFormatter) throws OceanusException {
+        public OceanusRatio getValue(final TethysUIDataFormatter pFormatter) throws OceanusException {
             try {
-                return pFormatter.parseValue(getValue(), TethysRatio.class);
+                return pFormatter.parseValue(getValue(), OceanusRatio.class);
             } catch (IllegalArgumentException e) {
                 throw new PrometheusDataException(getValue(), "Bad Ratio Value", e);
             }

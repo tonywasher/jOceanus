@@ -20,7 +20,7 @@ import net.sourceforge.joceanus.coeus.data.CoeusCalendar;
 import net.sourceforge.joceanus.coeus.data.CoeusMarketProvider;
 import net.sourceforge.joceanus.coeus.ui.report.CoeusReportType;
 import net.sourceforge.joceanus.metis.data.MetisDataDifference;
-import net.sourceforge.joceanus.tethys.date.TethysDate;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
 import net.sourceforge.joceanus.tethys.ui.api.button.TethysUIDateButtonManager;
 
 /**
@@ -45,12 +45,12 @@ public final class CoeusReportState {
     /**
      * The actual date.
      */
-    private TethysDate theActualDate;
+    private OceanusDate theActualDate;
 
     /**
      * The selected date.
      */
-    private TethysDate theSelectedDate;
+    private OceanusDate theSelectedDate;
 
     /**
      * The report type.
@@ -94,7 +94,7 @@ public final class CoeusReportState {
      * Obtain the selected date.
      * @return the date
      */
-    TethysDate getSelectedDate() {
+    OceanusDate getSelectedDate() {
         return theSelectedDate;
     }
 
@@ -102,7 +102,7 @@ public final class CoeusReportState {
      * Obtain the actual date.
      * @return the date
      */
-    TethysDate getActualDate() {
+    OceanusDate getActualDate() {
         return theActualDate;
     }
 
@@ -130,10 +130,10 @@ public final class CoeusReportState {
      */
     boolean setDate(final TethysUIDateButtonManager pSelect) {
         /* Obtain the date and adjust it */
-        final TethysDate mySelected = pSelect.getSelectedDate();
-        final TethysDate myDate = mySelected == null
+        final OceanusDate mySelected = pSelect.getSelectedDate();
+        final OceanusDate myDate = mySelected == null
                                                      ? null
-                                                     : new TethysDate(mySelected);
+                                                     : new OceanusDate(mySelected);
 
         /* Record any change and report change */
         if (!MetisDataDifference.isEqual(myDate, theSelectedDate)) {

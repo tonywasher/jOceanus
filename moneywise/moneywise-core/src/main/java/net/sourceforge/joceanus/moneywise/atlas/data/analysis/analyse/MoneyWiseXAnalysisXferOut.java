@@ -16,8 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.moneywise.atlas.data.analysis.analyse;
 
-import java.time.temporal.ChronoUnit;
-
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysis;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisPortfolioBucket.MoneyWiseXAnalysisPortfolioBucketList;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisSecurityBucket;
@@ -27,11 +25,13 @@ import net.sourceforge.joceanus.moneywise.atlas.data.analysis.values.MoneyWiseXA
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseAssetBase;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurityHolding;
 import net.sourceforge.joceanus.moneywise.tax.MoneyWiseCashType;
-import net.sourceforge.joceanus.tethys.date.TethysDate;
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
-import net.sourceforge.joceanus.tethys.decimal.TethysRate;
-import net.sourceforge.joceanus.tethys.decimal.TethysRatio;
-import net.sourceforge.joceanus.tethys.decimal.TethysUnits;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRate;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRatio;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusUnits;
+
+import java.time.temporal.ChronoUnit;
 
 /**
  * Debit XferOut Analysis.
@@ -40,12 +40,12 @@ public class MoneyWiseXAnalysisXferOut {
     /**
      * The Amount Tax threshold for "small" transactions (£3000).
      */
-    static final TethysMoney LIMIT_VALUE = TethysMoney.getWholeUnits(3000);
+    static final OceanusMoney LIMIT_VALUE = OceanusMoney.getWholeUnits(3000);
 
     /**
      * The Rate Tax threshold for "small" transactions (5%).
      */
-    static final TethysRate LIMIT_RATE = TethysRate.getWholePercentage(5);
+    static final OceanusRate LIMIT_RATE = OceanusRate.getWholePercentage(5);
 
     /**
      * The portfolioBuckets.
@@ -137,20 +137,20 @@ public class MoneyWiseXAnalysisXferOut {
         final MoneyWiseXAnalysisSecurityValues myValues = myAsset.getValues();
 
         /* Determine the stock value of the asset */
-        final TethysMoney myStockValue = myValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.VALUATION);
+        final OceanusMoney myStockValue = myValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.VALUATION);
 
         /* Determine the debit amount */
-        final TethysMoney myAmount = myAsset.isForeignCurrency()
+        final OceanusMoney myAmount = myAsset.isForeignCurrency()
                 ? theTransAnalyser.adjustForeignAssetDebit(myValues.getRatioValue(MoneyWiseXAnalysisSecurityAttr.EXCHANGERATE))
                 : theTransaction.getDebitAmount();
 
         /* Assume that the allowed cost is the full value */
-        TethysUnits myUnits = myValues.getUnitsValue(MoneyWiseXAnalysisSecurityAttr.UNITS);
-        TethysMoney myAllowedCost;
-        final TethysMoney myCost = myValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.RESIDUALCOST);
+        final OceanusUnits myUnits = myValues.getUnitsValue(MoneyWiseXAnalysisSecurityAttr.UNITS);
+        final OceanusMoney myAllowedCost;
+        final OceanusMoney myCost = myValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.RESIDUALCOST);
 
         /* Determine the delta units */
-        TethysUnits myDeltaUnits = theTransaction.getCategoryClass().isSecurityClosure()
+        OceanusUnits myDeltaUnits = theTransaction.getCategoryClass().isSecurityClosure()
                 ? myUnits
                 : theTransaction.getDebitUnitsDelta();
         final boolean isCapitalDistribution = myDeltaUnits == null;
@@ -161,29 +161,29 @@ public class MoneyWiseXAnalysisXferOut {
             myAllowedCost = myCost.valueAtWeight(myDeltaUnits, myUnits);
 
             /* Access units as negative value */
-            myDeltaUnits = new TethysUnits(myDeltaUnits);
+            myDeltaUnits = new OceanusUnits(myDeltaUnits);
             myDeltaUnits.negate();
 
             /* Record delta to units and costDilution */
             myAsset.adjustUnits(myDeltaUnits);
-            final TethysUnits myNewUnits = myValues.getUnitsValue(MoneyWiseXAnalysisSecurityAttr.UNITS);
-            final TethysRatio myCostDilution = new TethysRatio(myNewUnits, myUnits);
+            final OceanusUnits myNewUnits = myValues.getUnitsValue(MoneyWiseXAnalysisSecurityAttr.UNITS);
+            final OceanusRatio myCostDilution = new OceanusRatio(myNewUnits, myUnits);
             myValues.setValue(MoneyWiseXAnalysisSecurityAttr.COSTDILUTION, myCostDilution);
 
         /* else we are performing a capital distribution */
         } else {
             /* Determine whether this is a large cash transaction */
-            final TethysMoney myPortion = myStockValue.valueAtRate(LIMIT_RATE);
+            final OceanusMoney myPortion = myStockValue.valueAtRate(LIMIT_RATE);
             final boolean isLargeCash = myAmount.compareTo(LIMIT_VALUE) > 0
                     && myAmount.compareTo(myPortion) > 0;
 
             /* If this is large cash */
             if (isLargeCash) {
                 /* Determine the consideration and costDilution */
-                final TethysMoney myConsideration = new TethysMoney(myAmount);
+                final OceanusMoney myConsideration = new OceanusMoney(myAmount);
                 myConsideration.addAmount(myStockValue);
                 myValues.setValue(MoneyWiseXAnalysisSecurityAttr.CONSIDERATION, myConsideration);
-                final TethysRatio myCostDilution = new TethysRatio(myStockValue, myConsideration);
+                final OceanusRatio myCostDilution = new OceanusRatio(myStockValue, myConsideration);
                 myValues.setValue(MoneyWiseXAnalysisSecurityAttr.COSTDILUTION, myCostDilution);
 
                 /* Determine the allowedCost as a proportion of the consideration */
@@ -193,8 +193,8 @@ public class MoneyWiseXAnalysisXferOut {
             } else {
                 /* Set the allowed cost to be the least of the cost or the returned cash */
                 myAllowedCost = myAmount.compareTo(myCost) > 0
-                        ? new TethysMoney(myCost)
-                        : new TethysMoney(myAmount);
+                        ? new OceanusMoney(myCost)
+                        : new OceanusMoney(myAmount);
             }
 
             /* Record details */
@@ -204,7 +204,7 @@ public class MoneyWiseXAnalysisXferOut {
         }
 
         /* Determine the delta to the cost */
-        final TethysMoney myDeltaCost = new TethysMoney(myAllowedCost);
+        final OceanusMoney myDeltaCost = new OceanusMoney(myAllowedCost);
         myDeltaCost.negate();
 
         /* If we have a delta to the cost */
@@ -214,7 +214,7 @@ public class MoneyWiseXAnalysisXferOut {
         }
 
         /* Determine the gain */
-        final TethysMoney myCapitalGain = new TethysMoney(myAmount);
+        final OceanusMoney myCapitalGain = new OceanusMoney(myAmount);
         myCapitalGain.addAmount(myDeltaCost);
 
         /* If we have a delta to the gains */
@@ -226,11 +226,11 @@ public class MoneyWiseXAnalysisXferOut {
             /* If this is a chargeable Gain */
             if (myAsset.getSecurity().getCategoryClass().isChargeableGains()) {
                 /* Determine the # of years that the bond has been open */
-                final TethysDate myCurrent = theTransaction.getTransaction().getDate();
-                final TethysDate myStart = myValues.getDateValue(MoneyWiseXAnalysisSecurityAttr.STARTDATE);
+                final OceanusDate myCurrent = theTransaction.getTransaction().getDate();
+                final OceanusDate myStart = myValues.getDateValue(MoneyWiseXAnalysisSecurityAttr.STARTDATE);
                 final int myYears = (int) ChronoUnit.YEARS.between(myStart.getDate(), myCurrent.getDate()) + 1;
-                final TethysRatio myRatio = new TethysRatio(String.valueOf(myYears)).getInverseRatio();
-                final TethysMoney mySlice = myCapitalGain.valueAtRatio(myRatio);
+                final OceanusRatio myRatio = new OceanusRatio(String.valueOf(myYears)).getInverseRatio();
+                final OceanusMoney mySlice = myCapitalGain.valueAtRatio(myRatio);
 
                 /* Record details */
                 myValues.setValue(MoneyWiseXAnalysisSecurityAttr.SLICEYEARS, myYears);

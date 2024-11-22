@@ -18,8 +18,8 @@ package net.sourceforge.joceanus.moneywise.tax.uk;
 
 import net.sourceforge.joceanus.moneywise.tax.MoneyWiseTaxBandSet;
 import net.sourceforge.joceanus.moneywise.tax.MoneyWiseTaxBandSet.MoneyWiseTaxBand;
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
-import net.sourceforge.joceanus.tethys.decimal.TethysRate;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRate;
 
 /**
  * The taxBands factory.
@@ -386,7 +386,7 @@ public final class MoneyWiseUKTaxBandsFactory {
      * @param pUnits the number of whole units
      * @return the amount
      */
-    private static TethysMoney getAmount(final int pUnits) {
+    private static OceanusMoney getAmount(final int pUnits) {
         return MoneyWiseUKAllowanceFactory.getAmount(pUnits);
     }
 
@@ -395,7 +395,7 @@ public final class MoneyWiseUKTaxBandsFactory {
      * @param pUnits the number of whole units
      * @return the amount
      */
-    static TethysRate getRate(final int pUnits) {
-        return TethysRate.getWholePercentage(pUnits);
+    static OceanusRate getRate(final int pUnits) {
+        return OceanusRate.getWholePercentage(pUnits);
     }
 }

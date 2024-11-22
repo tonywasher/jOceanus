@@ -30,8 +30,8 @@ import net.sourceforge.joceanus.prometheus.data.PrometheusDataInfoClass;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataInfoSet;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.decimal.TethysPrice;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
 
 /**
  * SecurityInfoSet class.
@@ -349,7 +349,7 @@ public class MoneyWiseSecurityInfoSet
      * @param pInfo the info
      */
     private void validateOptionPrice(final MoneyWiseSecurityInfo pInfo) {
-        final TethysPrice myPrice = pInfo.getValue(TethysPrice.class);
+        final OceanusPrice myPrice = pInfo.getValue(OceanusPrice.class);
         if (myPrice.isZero()) {
             getOwner().addError(PrometheusDataItem.ERROR_ZERO, getFieldForClass(MoneyWiseAccountInfoClass.OPTIONPRICE));
         } else if (!myPrice.isPositive()) {

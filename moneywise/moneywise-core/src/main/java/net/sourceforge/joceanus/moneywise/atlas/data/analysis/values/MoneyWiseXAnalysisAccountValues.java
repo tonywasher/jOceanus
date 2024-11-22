@@ -19,7 +19,7 @@ package net.sourceforge.joceanus.moneywise.atlas.data.analysis.values;
 import java.util.Currency;
 
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.base.MoneyWiseXAnalysisValues;
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
 
 /**
  * AccountValues class.
@@ -35,7 +35,7 @@ public class MoneyWiseXAnalysisAccountValues
         super(MoneyWiseXAnalysisAccountAttr.class);
 
         /* Initialise valuation to zero */
-        final TethysMoney myValue = new TethysMoney(pCurrency);
+        final OceanusMoney myValue = new OceanusMoney(pCurrency);
         setValue(MoneyWiseXAnalysisAccountAttr.BALANCE, myValue);
         setValue(MoneyWiseXAnalysisAccountAttr.VALUATION, myValue);
     }
@@ -59,7 +59,7 @@ public class MoneyWiseXAnalysisAccountValues
      * @return true/false
      */
     public boolean isActive() {
-        final TethysMoney myValuation = getMoneyValue(MoneyWiseXAnalysisAccountAttr.BALANCE);
+        final OceanusMoney myValuation = getMoneyValue(MoneyWiseXAnalysisAccountAttr.BALANCE);
         return myValuation != null && myValuation.isNonZero();
     }
 }

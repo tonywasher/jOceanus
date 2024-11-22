@@ -16,28 +16,28 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.prometheus.views;
 
-import java.util.EnumMap;
-import java.util.Map;
-
-import net.sourceforge.joceanus.gordianknot.api.password.GordianPasswordManager;
 import net.sourceforge.joceanus.metis.toolkit.MetisToolkit;
 import net.sourceforge.joceanus.metis.viewer.MetisViewerEntry;
 import net.sourceforge.joceanus.metis.viewer.MetisViewerErrorList;
 import net.sourceforge.joceanus.metis.viewer.MetisViewerExceptionWrapper;
 import net.sourceforge.joceanus.metis.viewer.MetisViewerManager;
 import net.sourceforge.joceanus.metis.viewer.MetisViewerStandardEntry;
-import net.sourceforge.joceanus.prometheus.toolkit.PrometheusToolkit;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataSet;
 import net.sourceforge.joceanus.prometheus.database.PrometheusDataStore;
 import net.sourceforge.joceanus.prometheus.preference.PrometheusPreferenceManager;
+import net.sourceforge.joceanus.prometheus.security.PrometheusSecurityPasswordManager;
 import net.sourceforge.joceanus.prometheus.sheets.PrometheusSpreadSheet;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.event.TethysEventManager;
-import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar;
-import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar.TethysEventProvider;
-import net.sourceforge.joceanus.tethys.profile.TethysProfile;
+import net.sourceforge.joceanus.prometheus.toolkit.PrometheusToolkit;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
 import net.sourceforge.joceanus.tethys.ui.api.factory.TethysUIFactory;
+
+import java.util.EnumMap;
+import java.util.Map;
 
 /**
  * Provides top-level control of data.
@@ -47,7 +47,7 @@ public abstract class PrometheusDataControl
     /**
      * The Event Manager.
      */
-    private final TethysEventManager<PrometheusDataEvent> theEventManager;
+    private final OceanusEventManager<PrometheusDataEvent> theEventManager;
 
     /**
      * The DataSet.
@@ -93,14 +93,14 @@ public abstract class PrometheusDataControl
         initViewerMap();
 
         /* Create event manager */
-        theEventManager = new TethysEventManager<>();
+        theEventManager = new OceanusEventManager<>();
 
         /* Create the error list */
         theErrors = new MetisViewerErrorList();
     }
 
     @Override
-    public TethysEventRegistrar<PrometheusDataEvent> getEventRegistrar() {
+    public OceanusEventRegistrar<PrometheusDataEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -210,7 +210,7 @@ public abstract class PrometheusDataControl
      * Obtain SecurityManager.
      * @return the SecurityManager
      */
-    public GordianPasswordManager getPasswordManager() {
+    public PrometheusSecurityPasswordManager getPasswordManager() {
         return theToolkit.getPasswordManager();
     }
 
@@ -322,7 +322,7 @@ public abstract class PrometheusDataControl
      */
     final void refreshViews() {
         /* Obtain the active profile */
-        TethysProfile myTask = getActiveTask();
+        OceanusProfile myTask = getActiveTask();
         myTask = myTask.startTask("refreshViews");
 
         /* Refresh the Control */
@@ -337,7 +337,7 @@ public abstract class PrometheusDataControl
      */
     public void undoLastChange() {
         /* Obtain the active profile */
-        TethysProfile myTask = getActiveTask();
+        OceanusProfile myTask = getActiveTask();
         myTask = myTask.startTask("unDoLastChange");
 
         /* UndoLastChange */
@@ -359,7 +359,7 @@ public abstract class PrometheusDataControl
      */
     public void resetChanges() {
         /* Obtain the active profile */
-        TethysProfile myTask = getActiveTask();
+        OceanusProfile myTask = getActiveTask();
         myTask = myTask.startTask("resetChanges");
 
         /* Rewind the data */
@@ -381,7 +381,7 @@ public abstract class PrometheusDataControl
      * @param pTask the name of the task
      * @return the new profile
      */
-    public TethysProfile getNewProfile(final String pTask) {
+    public OceanusProfile getNewProfile(final String pTask) {
         return theMetisToolkit.getNewProfile(pTask);
     }
 
@@ -389,7 +389,7 @@ public abstract class PrometheusDataControl
      * Obtain the active profile.
      * @return the active profile
      */
-    public TethysProfile getActiveProfile() {
+    public OceanusProfile getActiveProfile() {
         return theMetisToolkit.getActiveProfile();
     }
 
@@ -397,7 +397,7 @@ public abstract class PrometheusDataControl
      * Obtain the active task.
      * @return the active task
      */
-    public TethysProfile getActiveTask() {
+    public OceanusProfile getActiveTask() {
         return theMetisToolkit.getActiveTask();
     }
 }

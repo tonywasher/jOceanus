@@ -29,8 +29,8 @@ import net.sourceforge.joceanus.metis.field.MetisFieldVersionValues;
 import net.sourceforge.joceanus.metis.field.MetisFieldVersionedItem;
 import net.sourceforge.joceanus.prometheus.PrometheusDataException;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataList.PrometheusListStyle;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.TethysDataConverter;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.OceanusDataConverter;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
 
 /**
@@ -794,7 +794,7 @@ public abstract class PrometheusDataItem
      * @return the length
      */
     public static int byteLength(final String pString) {
-        return TethysDataConverter.stringToByteArray(pString).length;
+        return OceanusDataConverter.stringToByteArray(pString).length;
     }
 
     /**

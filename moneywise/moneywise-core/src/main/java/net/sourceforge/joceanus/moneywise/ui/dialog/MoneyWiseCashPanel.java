@@ -44,8 +44,8 @@ import net.sourceforge.joceanus.prometheus.data.PrometheusDataResource;
 import net.sourceforge.joceanus.prometheus.ui.fieldset.PrometheusFieldSet;
 import net.sourceforge.joceanus.prometheus.ui.fieldset.PrometheusFieldSetEvent;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
 import net.sourceforge.joceanus.tethys.ui.api.control.TethysUIControl.TethysUIIconMapSet;
 import net.sourceforge.joceanus.tethys.ui.api.factory.TethysUIFactory;
 import net.sourceforge.joceanus.tethys.ui.api.field.TethysUIDataEditField.TethysUICharArrayTextAreaField;
@@ -264,7 +264,7 @@ public class MoneyWiseCashPanel
             myCash.setAutoPayee(pUpdate.getValue(MoneyWisePayee.class));
         } else if (MoneyWiseAccountInfoClass.OPENINGBALANCE.equals(myField)) {
             /* Update the OpeningBalance */
-            myCash.setOpeningBalance(pUpdate.getValue(TethysMoney.class));
+            myCash.setOpeningBalance(pUpdate.getValue(OceanusMoney.class));
         } else if (MoneyWiseAccountInfoClass.NOTES.equals(myField)) {
             /* Update the OpeningBalance */
             myCash.setNotes(pUpdate.getValue(char[].class));

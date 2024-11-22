@@ -11,12 +11,17 @@
   <dependencies>
     <dependency>
       <groupId>net.sourceforge.joceanus</groupId>
-      <artifactId>metis-core</artifactId>
+      <artifactId>metis</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>net.sourceforge.joceanus</groupId>
       <artifactId>tethys-core</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>oceanus</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>

@@ -24,14 +24,14 @@ import org.apache.poi.ss.usermodel.CellValue;
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetCell;
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetCellAddress;
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetException;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.date.TethysDate;
-import net.sourceforge.joceanus.tethys.decimal.TethysDecimal;
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
-import net.sourceforge.joceanus.tethys.decimal.TethysPrice;
-import net.sourceforge.joceanus.tethys.decimal.TethysRate;
-import net.sourceforge.joceanus.tethys.decimal.TethysRatio;
-import net.sourceforge.joceanus.tethys.decimal.TethysUnits;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimal;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRate;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRatio;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusUnits;
 
 /**
  * Class representing a cell within a sheet or a view.
@@ -102,9 +102,9 @@ public class PrometheusExcelHSSFCell
     }
 
     @Override
-    public TethysDate getDate() {
+    public OceanusDate getDate() {
         return CellType.NUMERIC == theExcelCell.getCellType()
-                                                              ? new TethysDate(theExcelCell.getDateCellValue())
+                                                              ? new OceanusDate(theExcelCell.getDateCellValue())
                                                               : null;
     }
 
@@ -174,28 +174,28 @@ public class PrometheusExcelHSSFCell
     }
 
     @Override
-    public TethysMoney getMoney() throws OceanusException {
-        return parseValue(getString(), TethysMoney.class);
+    public OceanusMoney getMoney() throws OceanusException {
+        return parseValue(getString(), OceanusMoney.class);
     }
 
     @Override
-    public TethysPrice getPrice() throws OceanusException {
-        return parseValue(getString(), TethysPrice.class);
+    public OceanusPrice getPrice() throws OceanusException {
+        return parseValue(getString(), OceanusPrice.class);
     }
 
     @Override
-    public TethysRate getRate() throws OceanusException {
-        return parseValue(getString(), TethysRate.class);
+    public OceanusRate getRate() throws OceanusException {
+        return parseValue(getString(), OceanusRate.class);
     }
 
     @Override
-    public TethysUnits getUnits() throws OceanusException {
-        return parseValue(getString(), TethysUnits.class);
+    public OceanusUnits getUnits() throws OceanusException {
+        return parseValue(getString(), OceanusUnits.class);
     }
 
     @Override
-    public TethysRatio getRatio() throws OceanusException {
-        return parseValue(getString(), TethysRatio.class);
+    public OceanusRatio getRatio() throws OceanusException {
+        return parseValue(getString(), OceanusRatio.class);
     }
 
     @Override
@@ -213,7 +213,7 @@ public class PrometheusExcelHSSFCell
     }
 
     @Override
-    protected void setDateValue(final TethysDate pValue) {
+    protected void setDateValue(final OceanusDate pValue) {
         /* Set the value */
         theExcelCell.setCellValue(pValue.toDate());
 
@@ -258,7 +258,7 @@ public class PrometheusExcelHSSFCell
     }
 
     @Override
-    protected void setDecimalValue(final TethysDecimal pValue) {
+    protected void setDecimalValue(final OceanusDecimal pValue) {
         /* Set the value */
         theExcelCell.setCellValue(pValue.doubleValue());
 
@@ -267,7 +267,7 @@ public class PrometheusExcelHSSFCell
     }
 
     @Override
-    protected void setMonetaryValue(final TethysMoney pValue) {
+    protected void setMonetaryValue(final OceanusMoney pValue) {
         /* Pass through as decimal */
         setDecimalValue(pValue);
     }

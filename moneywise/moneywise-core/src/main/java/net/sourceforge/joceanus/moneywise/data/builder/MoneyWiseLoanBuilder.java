@@ -23,8 +23,8 @@ import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseLoanCategory;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePayee;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrency;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrencyClass;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
 
 /**
  * Loan Builder.
@@ -58,7 +58,7 @@ public class MoneyWiseLoanBuilder {
     /**
      * The Opening Balance.
      */
-    private TethysMoney theOpeningBalance;
+    private OceanusMoney theOpeningBalance;
 
     /**
      * Constructor.
@@ -157,7 +157,7 @@ public class MoneyWiseLoanBuilder {
      * @param pOpening the opening Balance
      * @return the builder
      */
-    public MoneyWiseLoanBuilder openingBalance(final TethysMoney pOpening) {
+    public MoneyWiseLoanBuilder openingBalance(final OceanusMoney pOpening) {
         theOpeningBalance = pOpening;
         return this;
     }
@@ -168,7 +168,7 @@ public class MoneyWiseLoanBuilder {
      * @return the builder
      */
     public MoneyWiseLoanBuilder openingBalance(final String pOpening) {
-        return openingBalance(new TethysMoney(pOpening, theCurrency.getCurrency()));
+        return openingBalance(new OceanusMoney(pOpening, theCurrency.getCurrency()));
     }
 
     /**

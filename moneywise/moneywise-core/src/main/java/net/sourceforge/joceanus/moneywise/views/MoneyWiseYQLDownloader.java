@@ -28,9 +28,9 @@ import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurity;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrency;
 import net.sourceforge.joceanus.moneywise.views.MoneyWiseSpotExchangeRate.MoneyWiseSpotExchangeList;
 import net.sourceforge.joceanus.moneywise.views.MoneyWiseSpotSecurityPrice.MoneyWiseSpotSecurityList;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.decimal.TethysPrice;
-import net.sourceforge.joceanus.tethys.decimal.TethysRatio;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRatio;
 
 /**
  * YQL DownLoader.
@@ -74,7 +74,7 @@ public final class MoneyWiseYQLDownloader {
             }
 
             /* Access the prices */
-            final Map<String, TethysPrice> myPrices = myClient.obtainSecurityPrices(mySymbols, myCurrency.getCurrency());
+            final Map<String, OceanusPrice> myPrices = myClient.obtainSecurityPrices(mySymbols, myCurrency.getCurrency());
 
             /* re-loop through the securities */
             myIterator = pPrices.iterator();
@@ -85,7 +85,7 @@ public final class MoneyWiseYQLDownloader {
                 if (!mySpot.isDisabled()) {
                     /* Lookup the price */
                     final MoneyWiseSecurity mySecurity = mySpot.getSecurity();
-                    final TethysPrice myPrice = myPrices.get(mySecurity.getSymbol());
+                    final OceanusPrice myPrice = myPrices.get(mySecurity.getSymbol());
 
                     /* If we found a price */
                     if (myPrice != null) {
@@ -133,7 +133,7 @@ public final class MoneyWiseYQLDownloader {
             }
 
             /* Access the rates */
-            final Map<Currency, TethysRatio> myRates = myClient.obtainExchangeRates(myCurrency.getCurrency(), myCurrencies);
+            final Map<Currency, OceanusRatio> myRates = myClient.obtainExchangeRates(myCurrency.getCurrency(), myCurrencies);
 
             /* re-loop through the rates */
             myIterator = pRates.iterator();
@@ -142,7 +142,7 @@ public final class MoneyWiseYQLDownloader {
 
                 /* Lookup the rate */
                 final MoneyWiseCurrency myCurr = mySpot.getToCurrency();
-                final TethysRatio myRate = myRates.get(myCurr.getCurrency());
+                final OceanusRatio myRate = myRates.get(myCurr.getCurrency());
 
                 /* If we found a rate */
                 if (myRate != null) {

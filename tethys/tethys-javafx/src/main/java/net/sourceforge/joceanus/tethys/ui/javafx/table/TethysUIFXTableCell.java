@@ -22,18 +22,18 @@ import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableRow;
 
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.date.TethysDate;
-import net.sourceforge.joceanus.tethys.decimal.TethysDecimal;
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
-import net.sourceforge.joceanus.tethys.decimal.TethysPrice;
-import net.sourceforge.joceanus.tethys.decimal.TethysRate;
-import net.sourceforge.joceanus.tethys.decimal.TethysRatio;
-import net.sourceforge.joceanus.tethys.decimal.TethysUnits;
-import net.sourceforge.joceanus.tethys.event.TethysEvent;
-import net.sourceforge.joceanus.tethys.event.TethysEventManager;
-import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar;
-import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimal;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRate;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRatio;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusUnits;
+import net.sourceforge.joceanus.oceanus.event.OceanusEvent;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.TethysEventProvider;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.tethys.ui.api.control.TethysUIControl.TethysUIIconMapSet;
 import net.sourceforge.joceanus.tethys.ui.api.field.TethysUIFieldAttribute;
@@ -108,7 +108,7 @@ public abstract class TethysUIFXTableCell<T, C, R>
     /**
      * The Event Manager.
      */
-    private final TethysEventManager<TethysUIEvent> theEventManager;
+    private final OceanusEventManager<TethysUIEvent> theEventManager;
 
     /**
      * Constructor.
@@ -138,14 +138,14 @@ public abstract class TethysUIFXTableCell<T, C, R>
         theClass = pClazz;
 
         /* Create the event manager */
-        theEventManager = new TethysEventManager<>();
+        theEventManager = new OceanusEventManager<>();
 
         /* Set the field as the graphic */
         setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
         setGraphic(TethysUIFXNode.getNode(theControl));
 
         /* Add listener to the edit field */
-        final TethysEventRegistrar<TethysUIEvent> myRegistrar = theControl.getEventRegistrar();
+        final OceanusEventRegistrar<TethysUIEvent> myRegistrar = theControl.getEventRegistrar();
         myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, this::handleCommit);
         myRegistrar.addEventListener(TethysUIEvent.EDITFOCUSLOST, e -> handleCancel());
 
@@ -160,7 +160,7 @@ public abstract class TethysUIFXTableCell<T, C, R>
     }
 
     @Override
-    public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
+    public OceanusEventRegistrar<TethysUIEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -301,7 +301,7 @@ public abstract class TethysUIFXTableCell<T, C, R>
      *
      * @param pEvent the event
      */
-    protected void handleCommit(final TethysEvent<TethysUIEvent> pEvent) {
+    protected void handleCommit(final OceanusEvent<TethysUIEvent> pEvent) {
         commitEdit(pEvent.getDetails(theClass));
     }
 
@@ -460,7 +460,7 @@ public abstract class TethysUIFXTableCell<T, C, R>
      * @param <R> the table item class
      */
     public static class TethysUIFXTableRawDecimalCell<C, R>
-            extends TethysUIFXTableCell<TethysDecimal, C, R> {
+            extends TethysUIFXTableCell<OceanusDecimal, C, R> {
         /**
          * Constructor.
          *
@@ -469,7 +469,7 @@ public abstract class TethysUIFXTableCell<T, C, R>
          */
         TethysUIFXTableRawDecimalCell(final TethysUIFXTableRawDecimalColumn<C, R> pColumn,
                                       final TethysUICoreFactory<?> pFactory) {
-            super(pColumn, (TethysUIFXRawDecimalTextField) pFactory.fieldFactory().newRawDecimalField(), TethysDecimal.class);
+            super(pColumn, (TethysUIFXRawDecimalTextField) pFactory.fieldFactory().newRawDecimalField(), OceanusDecimal.class);
             getControl().setNumDecimals(() -> getColumn().getNumDecimals().applyAsInt(getActiveRow()));
         }
 
@@ -491,7 +491,7 @@ public abstract class TethysUIFXTableCell<T, C, R>
      * @param <R> the table item class
      */
     public static class TethysUIFXTableMoneyCell<C, R>
-            extends TethysUIFXTableCell<TethysMoney, C, R> {
+            extends TethysUIFXTableCell<OceanusMoney, C, R> {
         /**
          * Constructor.
          *
@@ -500,7 +500,7 @@ public abstract class TethysUIFXTableCell<T, C, R>
          */
         TethysUIFXTableMoneyCell(final TethysUIFXTableMoneyColumn<C, R> pColumn,
                                  final TethysUICoreFactory<?> pFactory) {
-            super(pColumn, (TethysUIFXMoneyTextField) pFactory.fieldFactory().newMoneyField(), TethysMoney.class);
+            super(pColumn, (TethysUIFXMoneyTextField) pFactory.fieldFactory().newMoneyField(), OceanusMoney.class);
             getControl().setDeemedCurrency(() -> getColumn().getDeemedCurrency().apply(getActiveRow()));
         }
 
@@ -522,7 +522,7 @@ public abstract class TethysUIFXTableCell<T, C, R>
      * @param <R> the table item class
      */
     public static class TethysUIFXTablePriceCell<C, R>
-            extends TethysUIFXTableCell<TethysPrice, C, R> {
+            extends TethysUIFXTableCell<OceanusPrice, C, R> {
         /**
          * Constructor.
          *
@@ -531,7 +531,7 @@ public abstract class TethysUIFXTableCell<T, C, R>
          */
         TethysUIFXTablePriceCell(final TethysUIFXTablePriceColumn<C, R> pColumn,
                                  final TethysUICoreFactory<?> pFactory) {
-            super(pColumn, (TethysUIFXPriceTextField) pFactory.fieldFactory().newPriceField(), TethysPrice.class);
+            super(pColumn, (TethysUIFXPriceTextField) pFactory.fieldFactory().newPriceField(), OceanusPrice.class);
             getControl().setDeemedCurrency(() -> getColumn().getDeemedCurrency().apply(getActiveRow()));
         }
 
@@ -553,7 +553,7 @@ public abstract class TethysUIFXTableCell<T, C, R>
      * @param <R> the table item class
      */
     public static class TethysUIFXTableRateCell<C, R>
-            extends TethysUIFXTableCell<TethysRate, C, R> {
+            extends TethysUIFXTableCell<OceanusRate, C, R> {
         /**
          * Constructor.
          *
@@ -562,7 +562,7 @@ public abstract class TethysUIFXTableCell<T, C, R>
          */
         TethysUIFXTableRateCell(final TethysUIFXTableRateColumn<C, R> pColumn,
                                 final TethysUICoreFactory<?> pFactory) {
-            super(pColumn, (TethysUIFXRateTextField) pFactory.fieldFactory().newRateField(), TethysRate.class);
+            super(pColumn, (TethysUIFXRateTextField) pFactory.fieldFactory().newRateField(), OceanusRate.class);
         }
 
         @Override
@@ -578,7 +578,7 @@ public abstract class TethysUIFXTableCell<T, C, R>
      * @param <R> the table item class
      */
     public static class TethysUIFXTableUnitsCell<C, R>
-            extends TethysUIFXTableCell<TethysUnits, C, R> {
+            extends TethysUIFXTableCell<OceanusUnits, C, R> {
         /**
          * Constructor.
          *
@@ -587,7 +587,7 @@ public abstract class TethysUIFXTableCell<T, C, R>
          */
         TethysUIFXTableUnitsCell(final TethysUIFXTableUnitsColumn<C, R> pColumn,
                                  final TethysUICoreFactory<?> pFactory) {
-            super(pColumn, (TethysUIFXUnitsTextField) pFactory.fieldFactory().newUnitsField(), TethysUnits.class);
+            super(pColumn, (TethysUIFXUnitsTextField) pFactory.fieldFactory().newUnitsField(), OceanusUnits.class);
         }
 
         @Override
@@ -603,7 +603,7 @@ public abstract class TethysUIFXTableCell<T, C, R>
      * @param <R> the table item class
      */
     public static class TethysUIFXTableRatioCell<C, R>
-            extends TethysUIFXTableCell<TethysRatio, C, R> {
+            extends TethysUIFXTableCell<OceanusRatio, C, R> {
         /**
          * Constructor.
          *
@@ -612,7 +612,7 @@ public abstract class TethysUIFXTableCell<T, C, R>
          */
         TethysUIFXTableRatioCell(final TethysUIFXTableRatioColumn<C, R> pColumn,
                                  final TethysUICoreFactory<?> pFactory) {
-            super(pColumn, (TethysUIFXRatioTextField) pFactory.fieldFactory().newRatioField(), TethysRatio.class);
+            super(pColumn, (TethysUIFXRatioTextField) pFactory.fieldFactory().newRatioField(), OceanusRatio.class);
         }
 
         @Override
@@ -628,7 +628,7 @@ public abstract class TethysUIFXTableCell<T, C, R>
      * @param <R> the table item class
      */
     public static class TethysUIFXTableDateCell<C, R>
-            extends TethysUIFXTableCell<TethysDate, C, R> {
+            extends TethysUIFXTableCell<OceanusDate, C, R> {
         /**
          * Constructor.
          *
@@ -637,7 +637,7 @@ public abstract class TethysUIFXTableCell<T, C, R>
          */
         TethysUIFXTableDateCell(final TethysUIFXTableDateColumn<C, R> pColumn,
                                 final TethysUICoreFactory<?> pFactory) {
-            super(pColumn, (TethysUIFXDateButtonField) pFactory.fieldFactory().newDateField(), TethysDate.class);
+            super(pColumn, (TethysUIFXDateButtonField) pFactory.fieldFactory().newDateField(), OceanusDate.class);
             getControl().setDateConfigurator(c -> getColumn().getDateConfigurator().accept(getActiveRow(), c));
         }
 
@@ -721,7 +721,7 @@ public abstract class TethysUIFXTableCell<T, C, R>
 
         @SuppressWarnings("unchecked")
         @Override
-        protected void handleCommit(final TethysEvent<TethysUIEvent> pEvent) {
+        protected void handleCommit(final OceanusEvent<TethysUIEvent> pEvent) {
             commitEdit(pEvent.getDetails(List.class));
         }
     }

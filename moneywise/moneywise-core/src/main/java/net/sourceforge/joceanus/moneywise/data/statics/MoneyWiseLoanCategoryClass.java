@@ -17,7 +17,7 @@
 package net.sourceforge.joceanus.moneywise.data.statics;
 
 import net.sourceforge.joceanus.moneywise.MoneyWiseDataException;
-import net.sourceforge.joceanus.tethys.OceanusException;
+import net.sourceforge.joceanus.oceanus.OceanusException;
 
 /**
  * Enumeration of LoanCategory Type Classes.
@@ -37,7 +37,7 @@ public enum MoneyWiseLoanCategoryClass
      * <p>
      * This is a PrivateLoan account, which is a specialised form of a {@link #LOAN} account. It
      * represents a loan to/from the client from/to an individual represented by a
-     * {@link PayeeTypeClass#INDIVIDUAL} account.
+     * {@link MoneyWisePayeeClass#INDIVIDUAL} account.
      */
     PRIVATELOAN(2, 2),
 
@@ -45,7 +45,7 @@ public enum MoneyWiseLoanCategoryClass
      * Generic Loan.
      * <p>
      * This is a Loan account which represents a loan to/from the client from/to a
-     * {@link PayeeTypeClass#INSTITUTION} account.
+     * {@link MoneyWisePayeeClass#INSTITUTION} account.
      */
     LOAN(3, 3),
 

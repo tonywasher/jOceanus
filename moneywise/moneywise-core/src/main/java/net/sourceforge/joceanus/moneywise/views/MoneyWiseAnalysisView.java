@@ -36,14 +36,14 @@ import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransInfoType.Mo
 import net.sourceforge.joceanus.prometheus.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditEntry;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.date.TethysDateRange;
-import net.sourceforge.joceanus.tethys.event.TethysEventManager;
-import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar;
-import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar.TethysEventProvider;
-import net.sourceforge.joceanus.tethys.logger.TethysLogManager;
-import net.sourceforge.joceanus.tethys.logger.TethysLogger;
-import net.sourceforge.joceanus.tethys.profile.TethysProfile;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.oceanus.logger.OceanusLogManager;
+import net.sourceforge.joceanus.oceanus.logger.OceanusLogger;
+import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
 
 /**
@@ -67,12 +67,12 @@ public class MoneyWiseAnalysisView
     /**
      * Logger.
      */
-    private static final TethysLogger LOGGER = TethysLogManager.getLogger(MoneyWiseAnalysisView.class);
+    private static final OceanusLogger LOGGER = OceanusLogManager.getLogger(MoneyWiseAnalysisView.class);
 
     /**
      * The Event Manager.
      */
-    private final TethysEventManager<PrometheusDataEvent> theEventManager;
+    private final OceanusEventManager<PrometheusDataEvent> theEventManager;
 
     /**
      * The View.
@@ -112,7 +112,7 @@ public class MoneyWiseAnalysisView
     /**
      * The current range.
      */
-    private TethysDateRange theRange;
+    private OceanusDateRange theRange;
 
     /**
      * Constructor.
@@ -130,7 +130,7 @@ public class MoneyWiseAnalysisView
         theInfoEntry = theEditSet.registerType(MoneyWiseBasicDataType.TRANSACTIONINFO);
 
         /* Create event manager */
-        theEventManager = new TethysEventManager<>();
+        theEventManager = new OceanusEventManager<>();
     }
 
     @Override
@@ -144,7 +144,7 @@ public class MoneyWiseAnalysisView
     }
 
     @Override
-    public TethysEventRegistrar<PrometheusDataEvent> getEventRegistrar() {
+    public OceanusEventRegistrar<PrometheusDataEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -176,7 +176,7 @@ public class MoneyWiseAnalysisView
      * Obtain the range.
      * @return the range
      */
-    public TethysDateRange getRange() {
+    public OceanusDateRange getRange() {
         return theRange;
     }
 
@@ -220,7 +220,7 @@ public class MoneyWiseAnalysisView
      * Set the selected date range.
      * @param pRange the date range
      */
-    public void setRange(final TethysDateRange pRange) {
+    public void setRange(final OceanusDateRange pRange) {
         /* If we have changed the range */
         if (!MetisDataDifference.isEqual(theRange, pRange)) {
             /* Obtain the required analysis and reset to it */
@@ -298,7 +298,7 @@ public class MoneyWiseAnalysisView
             super.postProcessOnUpdate();
 
             /* Obtain the active profile */
-            TethysProfile myTask = theView.getActiveTask();
+            OceanusProfile myTask = theView.getActiveTask();
             myTask = myTask.startTask("updateAnalysis");
 
             /* Protect against exceptions */

@@ -16,9 +16,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.tethys.ui.core.control;
 
-import net.sourceforge.joceanus.tethys.event.TethysEvent;
-import net.sourceforge.joceanus.tethys.event.TethysEventManager;
-import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar;
+import net.sourceforge.joceanus.oceanus.event.OceanusEvent;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.tethys.ui.api.control.TethysUIHTMLManager;
@@ -48,7 +48,7 @@ public abstract class TethysUICoreSplitTreeManager<T>
     /**
      * The Event Manager.
      */
-    private final TethysEventManager<TethysUIEvent> theEventManager;
+    private final OceanusEventManager<TethysUIEvent> theEventManager;
 
     /**
      * The HTMLPane.
@@ -82,7 +82,7 @@ public abstract class TethysUICoreSplitTreeManager<T>
         theHTMLPane = pFactory.paneFactory().newBorderPane();
 
         /* Create the event manager */
-        theEventManager = new TethysEventManager<>();
+        theEventManager = new OceanusEventManager<>();
 
         /* Listen to the TreeManager */
         theTreeManager.getEventRegistrar().addEventListener(theEventManager::cascadeEvent);
@@ -115,7 +115,7 @@ public abstract class TethysUICoreSplitTreeManager<T>
     }
 
     @Override
-    public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
+    public OceanusEventRegistrar<TethysUIEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -138,7 +138,7 @@ public abstract class TethysUICoreSplitTreeManager<T>
      * Handle HTML reference lookUp.
      * @param pEvent the action event
      */
-    private void handleReferenceLookup(final TethysEvent<TethysUIEvent> pEvent) {
+    private void handleReferenceLookup(final OceanusEvent<TethysUIEvent> pEvent) {
         /* Obtain the reference */
         final String myRef = pEvent.getDetails(String.class);
 

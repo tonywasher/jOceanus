@@ -18,8 +18,8 @@ package net.sourceforge.joceanus.tethys.test.ui;
 
 import java.time.Month;
 
-import net.sourceforge.joceanus.tethys.date.TethysDate;
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.tethys.ui.api.chart.TethysUIBarChart;
 import net.sourceforge.joceanus.tethys.ui.api.chart.TethysUIBarChart.TethysUIBarChartData;
@@ -107,16 +107,16 @@ public class TethysTestBarChart {
         int i = 0;
 
         final TethysUIBarChartSeries mySeries1 = pData.createSeries("Base");
-        mySeries1.addSection(dateToString(new TethysDate(YEAR_2010, Month.APRIL, DAY_5)), TethysMoney.getWholeUnits(BAR_VALUES[i++]));
-        mySeries1.addSection(dateToString(new TethysDate(YEAR_2011, Month.APRIL, DAY_5)), TethysMoney.getWholeUnits(BAR_VALUES[i++]));
-        mySeries1.addSection(dateToString(new TethysDate(YEAR_2012, Month.APRIL, DAY_5)), TethysMoney.getWholeUnits(BAR_VALUES[i++]));
-        mySeries1.addSection(dateToString(new TethysDate(YEAR_2013, Month.APRIL, DAY_5)), TethysMoney.getWholeUnits(BAR_VALUES[i++]));
+        mySeries1.addSection(dateToString(new OceanusDate(YEAR_2010, Month.APRIL, DAY_5)), OceanusMoney.getWholeUnits(BAR_VALUES[i++]));
+        mySeries1.addSection(dateToString(new OceanusDate(YEAR_2011, Month.APRIL, DAY_5)), OceanusMoney.getWholeUnits(BAR_VALUES[i++]));
+        mySeries1.addSection(dateToString(new OceanusDate(YEAR_2012, Month.APRIL, DAY_5)), OceanusMoney.getWholeUnits(BAR_VALUES[i++]));
+        mySeries1.addSection(dateToString(new OceanusDate(YEAR_2013, Month.APRIL, DAY_5)), OceanusMoney.getWholeUnits(BAR_VALUES[i++]));
 
         final TethysUIBarChartSeries mySeries2 = pData.createSeries("Extra");
-        mySeries2.addSection(dateToString(new TethysDate(YEAR_2010, Month.APRIL, DAY_5)), TethysMoney.getWholeUnits(BAR_VALUES[i++]));
-        mySeries2.addSection(dateToString(new TethysDate(YEAR_2011, Month.APRIL, DAY_5)), TethysMoney.getWholeUnits(BAR_VALUES[i++]));
-        mySeries2.addSection(dateToString(new TethysDate(YEAR_2012, Month.APRIL, DAY_5)), TethysMoney.getWholeUnits(BAR_VALUES[i++]));
-        mySeries2.addSection(dateToString(new TethysDate(YEAR_2013, Month.APRIL, DAY_5)), TethysMoney.getWholeUnits(BAR_VALUES[i]));
+        mySeries2.addSection(dateToString(new OceanusDate(YEAR_2010, Month.APRIL, DAY_5)), OceanusMoney.getWholeUnits(BAR_VALUES[i++]));
+        mySeries2.addSection(dateToString(new OceanusDate(YEAR_2011, Month.APRIL, DAY_5)), OceanusMoney.getWholeUnits(BAR_VALUES[i++]));
+        mySeries2.addSection(dateToString(new OceanusDate(YEAR_2012, Month.APRIL, DAY_5)), OceanusMoney.getWholeUnits(BAR_VALUES[i++]));
+        mySeries2.addSection(dateToString(new OceanusDate(YEAR_2013, Month.APRIL, DAY_5)), OceanusMoney.getWholeUnits(BAR_VALUES[i]));
     }
 
     /**
@@ -124,7 +124,7 @@ public class TethysTestBarChart {
      * @param pDate the date
      * @return the string representation
      */
-    private static String dateToString(final TethysDate pDate) {
+    private static String dateToString(final OceanusDate pDate) {
         return pDate.toString();
     }
 }

@@ -31,10 +31,10 @@ import net.sourceforge.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAn
 import net.sourceforge.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisValuesResource;
 import net.sourceforge.joceanus.moneywise.lethe.views.MoneyWiseAnalysisFilter;
 import net.sourceforge.joceanus.moneywise.lethe.views.MoneyWiseAnalysisFilter.MoneyWiseAnalysisSecurityFilter;
-import net.sourceforge.joceanus.tethys.date.TethysDate;
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
-import net.sourceforge.joceanus.tethys.logger.TethysLogManager;
-import net.sourceforge.joceanus.tethys.logger.TethysLogger;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
+import net.sourceforge.joceanus.oceanus.logger.OceanusLogManager;
+import net.sourceforge.joceanus.oceanus.logger.OceanusLogger;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
 
 import org.w3c.dom.Document;
@@ -50,7 +50,7 @@ public class MoneyWiseReportPortfolioView
     /**
      * Logger.
      */
-    private static final TethysLogger LOGGER = TethysLogManager.getLogger(MoneyWiseReportPortfolioView.class);
+    private static final OceanusLogger LOGGER = OceanusLogManager.getLogger(MoneyWiseReportPortfolioView.class);
 
     /**
      * The Title text.
@@ -109,7 +109,7 @@ public class MoneyWiseReportPortfolioView
 
         /* Access the totals */
         final MoneyWiseAnalysisPortfolioBucket myTotals = myPortfolios.getTotals();
-        final TethysDate myDate = pAnalysis.getDateRange().getEnd();
+        final OceanusDate myDate = pAnalysis.getDateRange().getEnd();
 
         /* Start the report */
         final Element myBody = theBuilder.startReport();
@@ -237,12 +237,12 @@ public class MoneyWiseReportPortfolioView
      */
     private static void checkPortfolioProfit(final MoneyWiseAnalysisPortfolioBucket pBucket) {
         final MoneyWiseAnalysisSecurityValues myValues = pBucket.getValues();
-        final TethysMoney myCalcProfit = pBucket.getNonCashValue(false);
+        final OceanusMoney myCalcProfit = pBucket.getNonCashValue(false);
         myCalcProfit.subtractAmount(myValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.RESIDUALCOST));
         myCalcProfit.addAmount(myValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.REALISEDGAINS));
         myCalcProfit.addAmount(myValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.DIVIDEND));
         myCalcProfit.addAmount(myValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.GROWTHADJUST));
-        final TethysMoney myProfit = myValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.PROFIT);
+        final OceanusMoney myProfit = myValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.PROFIT);
         if (!myProfit.equals(myCalcProfit)) {
             LOGGER.error("Incorrect profit calculation for portfolio <%s>", pBucket.getName());
         }
@@ -254,12 +254,12 @@ public class MoneyWiseReportPortfolioView
      */
     private static void checkSecurityProfit(final MoneyWiseAnalysisSecurityBucket pBucket) {
         final MoneyWiseAnalysisSecurityValues myValues = pBucket.getValues();
-        final TethysMoney myCalcProfit = new TethysMoney(myValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.VALUATION));
+        final OceanusMoney myCalcProfit = new OceanusMoney(myValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.VALUATION));
         myCalcProfit.subtractAmount(myValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.RESIDUALCOST));
         myCalcProfit.addAmount(myValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.REALISEDGAINS));
         myCalcProfit.addAmount(myValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.DIVIDEND));
         myCalcProfit.addAmount(myValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.GROWTHADJUST));
-        final TethysMoney myProfit = myValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.PROFIT);
+        final OceanusMoney myProfit = myValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.PROFIT);
         if (!myProfit.equals(myCalcProfit)) {
             LOGGER.error("Incorrect profit calculation for security <%s>", pBucket.getDecoratedName());
         }

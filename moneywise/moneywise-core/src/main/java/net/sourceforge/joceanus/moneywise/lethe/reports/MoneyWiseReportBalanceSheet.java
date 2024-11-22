@@ -63,8 +63,8 @@ import net.sourceforge.joceanus.moneywise.lethe.views.MoneyWiseAnalysisFilter.Mo
 import net.sourceforge.joceanus.moneywise.lethe.views.MoneyWiseAnalysisFilter.MoneyWiseAnalysisLoanFilter;
 import net.sourceforge.joceanus.moneywise.lethe.views.MoneyWiseAnalysisFilter.MoneyWiseAnalysisPortfolioCashFilter;
 import net.sourceforge.joceanus.moneywise.lethe.views.MoneyWiseAnalysisFilter.MoneyWiseAnalysisSecurityFilter;
-import net.sourceforge.joceanus.tethys.date.TethysDateRange;
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
+import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
 
 /**
@@ -115,12 +115,12 @@ public class MoneyWiseReportBalanceSheet
         final MoneyWiseAnalysisCashCategoryBucketList myCash = theAnalysis.getCashCategories();
         final MoneyWiseAnalysisLoanCategoryBucketList myLoans = theAnalysis.getLoanCategories();
         final MoneyWiseAnalysisPortfolioBucketList myPortfolios = theAnalysis.getPortfolios();
-        final TethysDateRange myDateRange = theAnalysis.getDateRange();
+        final OceanusDateRange myDateRange = theAnalysis.getDateRange();
 
         /* Create the totals */
-        final TethysMoney myTotal = new TethysMoney();
-        final TethysMoney myBase = new TethysMoney();
-        final TethysMoney myDelta = new TethysMoney();
+        final OceanusMoney myTotal = new OceanusMoney();
+        final OceanusMoney myBase = new OceanusMoney();
+        final OceanusMoney myDelta = new OceanusMoney();
 
         /* Start the report */
         final Element myBody = theBuilder.startReport();
@@ -218,9 +218,9 @@ public class MoneyWiseReportBalanceSheet
             final MoneyWiseAnalysisSecurityValues myBaseValues = myTotals.getBaseValues();
 
             /* Access interesting values */
-            final TethysMoney myValuation = myValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.VALUATION);
-            final TethysMoney myBaseValuation = myBaseValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.VALUATION);
-            final TethysMoney myDeltaValuation = myValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.VALUEDELTA);
+            final OceanusMoney myValuation = myValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.VALUATION);
+            final OceanusMoney myBaseValuation = myBaseValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.VALUATION);
+            final OceanusMoney myDeltaValuation = myValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.VALUEDELTA);
 
             /* Format the Portfolios Total */
             theBuilder.startRow(myTable);

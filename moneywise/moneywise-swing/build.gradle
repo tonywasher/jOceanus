@@ -3,6 +3,7 @@ dependencies {
     implementation project(':moneywise-core')
     implementation project(':tethys-swing')
     implementation project(':tethys-core')
+    implementation project(':oceanus')
 }
 
 /* Details */

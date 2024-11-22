@@ -18,14 +18,14 @@ package net.sourceforge.joceanus.prometheus.threads;
 
 import java.util.ResourceBundle;
 
-import net.sourceforge.joceanus.tethys.resource.TethysBundleId;
-import net.sourceforge.joceanus.tethys.resource.TethysBundleLoader;
+import net.sourceforge.joceanus.oceanus.resource.OceanusBundleId;
+import net.sourceforge.joceanus.oceanus.resource.OceanusBundleLoader;
 
 /**
  * Resource IDs for Prometheus Threads.
  */
 public enum PrometheusThreadResource
-        implements TethysBundleId {
+        implements OceanusBundleId {
     /**
      * LoadDB.
      */
@@ -94,7 +94,7 @@ public enum PrometheusThreadResource
     /**
      * The Resource Loader.
      */
-    private static final TethysBundleLoader LOADER = TethysBundleLoader.getLoader(PrometheusThreadResource.class.getCanonicalName(),
+    private static final OceanusBundleLoader LOADER = OceanusBundleLoader.getLoader(PrometheusThreadResource.class.getCanonicalName(),
             ResourceBundle::getBundle);
 
     /**

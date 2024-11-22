@@ -25,10 +25,10 @@ import net.sourceforge.joceanus.coeus.data.CoeusLoanStatus;
 import net.sourceforge.joceanus.coeus.data.CoeusResource;
 import net.sourceforge.joceanus.metis.field.MetisFieldItem;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.date.TethysDate;
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
-import net.sourceforge.joceanus.tethys.decimal.TethysRate;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRate;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
 
 /**
@@ -67,27 +67,27 @@ public class CoeusRateSetterLoanBookItem
     /**
      * The StartDate.
      */
-    private final TethysDate theStartDate;
+    private final OceanusDate theStartDate;
 
     /**
      * The Original Loan.
      */
-    private final TethysMoney theLent;
+    private final OceanusMoney theLent;
 
     /**
      * The Outstanding Balance.
      */
-    private final TethysMoney theBalance;
+    private final OceanusMoney theBalance;
 
     /**
      * The rate.
      */
-    private final TethysRate theRate;
+    private final OceanusRate theRate;
 
     /**
      * The LastDate.
      */
-    private final TethysDate theLastDate;
+    private final OceanusDate theLastDate;
 
     /**
      * The status.
@@ -128,8 +128,8 @@ public class CoeusRateSetterLoanBookItem
 
         /* Obtain the amount */
         final String myAmountText = pParser.childElementText(myNext);
-        final TethysMoney myAmount = pParser.parseMoney(myAmountText);
-        final TethysMoney myZero = new TethysMoney(myAmount);
+        final OceanusMoney myAmount = pParser.parseMoney(myAmountText);
+        final OceanusMoney myZero = new OceanusMoney(myAmount);
         myZero.setZero();
 
         /* Set balance and loan */
@@ -167,7 +167,7 @@ public class CoeusRateSetterLoanBookItem
      * Obtain the startDate.
      * @return the startDate
      */
-    TethysDate getStartDate() {
+    OceanusDate getStartDate() {
         return theStartDate;
     }
 
@@ -175,7 +175,7 @@ public class CoeusRateSetterLoanBookItem
      * Obtain the lent amount.
      * @return the lent
      */
-    TethysMoney getLent() {
+    OceanusMoney getLent() {
         return theLent;
     }
 
@@ -183,7 +183,7 @@ public class CoeusRateSetterLoanBookItem
      * Obtain the loan.
      * @return the loan
      */
-    public TethysMoney getBalance() {
+    public OceanusMoney getBalance() {
         return theBalance;
     }
 
@@ -191,7 +191,7 @@ public class CoeusRateSetterLoanBookItem
      * Obtain the rate.
      * @return the rate
      */
-    public TethysRate getRate() {
+    public OceanusRate getRate() {
         return theRate;
     }
 
@@ -199,7 +199,7 @@ public class CoeusRateSetterLoanBookItem
      * Obtain the lastDate.
      * @return the startDate
      */
-    private TethysDate getLastDate() {
+    private OceanusDate getLastDate() {
         return theLastDate;
     }
 

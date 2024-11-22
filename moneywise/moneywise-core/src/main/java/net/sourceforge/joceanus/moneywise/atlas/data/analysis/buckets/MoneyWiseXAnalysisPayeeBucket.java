@@ -39,10 +39,10 @@ import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePayee.MoneyWisePay
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrency;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWisePayeeClass;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
-import net.sourceforge.joceanus.tethys.date.TethysDate;
-import net.sourceforge.joceanus.tethys.date.TethysDateRange;
-import net.sourceforge.joceanus.tethys.decimal.TethysDecimal;
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimal;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
 
 /**
@@ -128,7 +128,7 @@ public final class MoneyWiseXAnalysisPayeeBucket
      */
     private MoneyWiseXAnalysisPayeeBucket(final MoneyWiseXAnalysis pAnalysis,
                                           final MoneyWiseXAnalysisPayeeBucket pBase,
-                                          final TethysDate pDate) {
+                                          final OceanusDate pDate) {
         /* Copy details from base */
         thePayee = pBase.getPayee();
         theAnalysis = pAnalysis;
@@ -149,7 +149,7 @@ public final class MoneyWiseXAnalysisPayeeBucket
      */
     private MoneyWiseXAnalysisPayeeBucket(final MoneyWiseXAnalysis pAnalysis,
                                           final MoneyWiseXAnalysisPayeeBucket pBase,
-                                          final TethysDateRange pRange) {
+                                          final OceanusDateRange pRange) {
         /* Copy details from base */
         thePayee = pBase.getPayee();
         theAnalysis = pAnalysis;
@@ -225,7 +225,7 @@ public final class MoneyWiseXAnalysisPayeeBucket
      * Obtain date range.
      * @return the range
      */
-    public TethysDateRange getDateRange() {
+    public OceanusDateRange getDateRange() {
         return theAnalysis.getDateRange();
     }
 
@@ -270,8 +270,8 @@ public final class MoneyWiseXAnalysisPayeeBucket
      * @param pAttr the attribute
      * @return the delta (or null)
      */
-    public TethysDecimal getDeltaForEvent(final MoneyWiseXAnalysisEvent pEvent,
-                                          final MoneyWiseXAnalysisPayeeAttr pAttr) {
+    public OceanusDecimal getDeltaForEvent(final MoneyWiseXAnalysisEvent pEvent,
+                                           final MoneyWiseXAnalysisPayeeAttr pAttr) {
         /* Obtain delta for event */
         return theHistory.getDeltaValue(pEvent, pAttr);
     }
@@ -326,9 +326,9 @@ public final class MoneyWiseXAnalysisPayeeBucket
      * @param pDelta the delta
      */
     void adjustCounter(final MoneyWiseXAnalysisPayeeAttr pAttr,
-                       final TethysMoney pDelta) {
-        TethysMoney myValue = theValues.getMoneyValue(pAttr);
-        myValue = new TethysMoney(myValue);
+                       final OceanusMoney pDelta) {
+        OceanusMoney myValue = theValues.getMoneyValue(pAttr);
+        myValue = new OceanusMoney(myValue);
         myValue.addAmount(pDelta);
         setValue(pAttr, myValue);
     }
@@ -343,7 +343,7 @@ public final class MoneyWiseXAnalysisPayeeBucket
      * Add income value.
      * @param pValue the value to add
      */
-    public void addIncome(final TethysMoney pValue) {
+    public void addIncome(final OceanusMoney pValue) {
         /* Only adjust on non-zero */
         if (pValue.isNonZero()) {
             adjustCounter(MoneyWiseXAnalysisPayeeAttr.INCOME, pValue);
@@ -354,10 +354,10 @@ public final class MoneyWiseXAnalysisPayeeBucket
      * Subtract income value.
      * @param pValue the value to subtract
      */
-    public void subtractIncome(final TethysMoney pValue) {
+    public void subtractIncome(final OceanusMoney pValue) {
         /* Only adjust on non-zero */
         if (pValue.isNonZero()) {
-            final TethysMoney myIncome = new TethysMoney(pValue);
+            final OceanusMoney myIncome = new OceanusMoney(pValue);
             myIncome.negate();
             setValue(MoneyWiseXAnalysisPayeeAttr.INCOME, myIncome);
         }
@@ -367,7 +367,7 @@ public final class MoneyWiseXAnalysisPayeeBucket
      * Add expense value.
      * @param pValue the value to add
      */
-    public void addExpense(final TethysMoney pValue) {
+    public void addExpense(final OceanusMoney pValue) {
         /* Only adjust on non-zero */
         if (pValue.isNonZero()) {
             adjustCounter(MoneyWiseXAnalysisPayeeAttr.EXPENSE, pValue);
@@ -378,10 +378,10 @@ public final class MoneyWiseXAnalysisPayeeBucket
      * Subtract expense value.
      * @param pValue the value to subtract
      */
-    public void subtractExpense(final TethysMoney pValue) {
+    public void subtractExpense(final OceanusMoney pValue) {
         /* Only adjust on non-zero */
         if (pValue.isNonZero()) {
-            final TethysMoney myExpense = new TethysMoney(pValue);
+            final OceanusMoney myExpense = new OceanusMoney(pValue);
             myExpense.negate();
             adjustCounter(MoneyWiseXAnalysisPayeeAttr.EXPENSE, myExpense);
         }
@@ -396,8 +396,8 @@ public final class MoneyWiseXAnalysisPayeeBucket
         final MoneyWiseXAnalysisPayeeValues mySource = pSource.getValues();
 
         /* Add income values */
-        TethysMoney myValue = theValues.getMoneyValue(MoneyWiseXAnalysisPayeeAttr.INCOME);
-        TethysMoney mySrcValue = mySource.getMoneyValue(MoneyWiseXAnalysisPayeeAttr.INCOME);
+        OceanusMoney myValue = theValues.getMoneyValue(MoneyWiseXAnalysisPayeeAttr.INCOME);
+        OceanusMoney mySrcValue = mySource.getMoneyValue(MoneyWiseXAnalysisPayeeAttr.INCOME);
         myValue.addAmount(mySrcValue);
 
         /* Add expense values */
@@ -482,7 +482,7 @@ public final class MoneyWiseXAnalysisPayeeBucket
          */
         MoneyWiseXAnalysisPayeeBucketList(final MoneyWiseXAnalysis pAnalysis,
                                           final MoneyWiseXAnalysisPayeeBucketList pBase,
-                                          final TethysDate pDate) {
+                                          final OceanusDate pDate) {
             /* Initialise class */
             this(pAnalysis);
 
@@ -510,7 +510,7 @@ public final class MoneyWiseXAnalysisPayeeBucket
          */
         MoneyWiseXAnalysisPayeeBucketList(final MoneyWiseXAnalysis pAnalysis,
                                           final MoneyWiseXAnalysisPayeeBucketList pBase,
-                                          final TethysDateRange pRange) {
+                                          final OceanusDateRange pRange) {
             /* Initialise class */
             this(pAnalysis);
 

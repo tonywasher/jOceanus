@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Tethys: Java Utilities
+ * Tethys: GUI Utilities
  * Copyright 2012,2024 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,9 +18,9 @@ package net.sourceforge.joceanus.tethys.ui.api.chart;
 
 import java.util.Iterator;
 
-import net.sourceforge.joceanus.tethys.date.TethysDate;
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
-import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.TethysEventProvider;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIEvent;
 
@@ -110,8 +110,8 @@ public interface TethysUIAreaChart
          * @param pDate the date
          * @param pValue the value
          */
-        void addPoint(TethysDate pDate,
-                      TethysMoney pValue);
+        void addPoint(OceanusDate pDate,
+                      OceanusMoney pValue);
 
         /**
          * Obtain the name.
@@ -146,12 +146,12 @@ public interface TethysUIAreaChart
          * Obtain the date.
          * @return the date.
          */
-        TethysDate getDate();
+        OceanusDate getDate();
 
         /**
          * Obtain the value.
          * @return the value.
          */
-        TethysMoney getValue();
+        OceanusMoney getValue();
     }
 }

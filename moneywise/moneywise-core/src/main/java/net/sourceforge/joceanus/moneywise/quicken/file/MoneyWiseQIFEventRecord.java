@@ -17,7 +17,7 @@
 package net.sourceforge.joceanus.moneywise.quicken.file;
 
 import net.sourceforge.joceanus.moneywise.quicken.definitions.MoneyWiseQLineType;
-import net.sourceforge.joceanus.tethys.date.TethysDate;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
 
 /**
  * Class representing a QIF Event record.
@@ -41,7 +41,7 @@ public abstract class MoneyWiseQIFEventRecord<T extends Enum<T> & MoneyWiseQLine
      * Obtain the date.
      * @return the date.
      */
-    public abstract TethysDate getDate();
+    public abstract OceanusDate getDate();
 
     /**
      * Is the record cleared.

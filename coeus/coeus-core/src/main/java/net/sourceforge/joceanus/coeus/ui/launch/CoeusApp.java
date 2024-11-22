@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.coeus.ui.launch;
 
 import net.sourceforge.joceanus.coeus.ui.CoeusIcon;
 import net.sourceforge.joceanus.coeus.ui.panels.CoeusMainPanel;
-import net.sourceforge.joceanus.tethys.OceanusException;
+import net.sourceforge.joceanus.oceanus.OceanusException;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIIconId;
 import net.sourceforge.joceanus.tethys.ui.api.factory.TethysUIFactory;
 import net.sourceforge.joceanus.tethys.ui.api.factory.TethysUILaunchProgram;

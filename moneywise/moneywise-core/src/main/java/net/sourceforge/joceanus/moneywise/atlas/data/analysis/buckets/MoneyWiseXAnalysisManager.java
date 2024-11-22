@@ -38,22 +38,22 @@ import net.sourceforge.joceanus.moneywise.atlas.data.analysis.values.MoneyWiseXA
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.values.MoneyWiseXAnalysisSecurityAttr;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.values.MoneyWiseXAnalysisTaxBasisAttr;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.values.MoneyWiseXAnalysisTransAttr;
-import net.sourceforge.joceanus.tethys.date.TethysDate;
-import net.sourceforge.joceanus.tethys.date.TethysDateRange;
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
-import net.sourceforge.joceanus.tethys.logger.TethysLogManager;
-import net.sourceforge.joceanus.tethys.logger.TethysLogger;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
+import net.sourceforge.joceanus.oceanus.logger.OceanusLogManager;
+import net.sourceforge.joceanus.oceanus.logger.OceanusLogger;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
 
 /**
  * Analysis manager.
  */
 public class MoneyWiseXAnalysisManager
-        implements MetisFieldItem, MetisDataMap<TethysDateRange, MoneyWiseXAnalysis> {
+        implements MetisFieldItem, MetisDataMap<OceanusDateRange, MoneyWiseXAnalysis> {
     /**
      * Logger.
      */
-    private static final TethysLogger LOGGER = TethysLogManager.getLogger(MoneyWiseXAnalysisManager.class);
+    private static final OceanusLogger LOGGER = OceanusLogManager.getLogger(MoneyWiseXAnalysisManager.class);
 
     /**
      * Local Report fields.
@@ -70,7 +70,7 @@ public class MoneyWiseXAnalysisManager
     /**
      * The analysis map.
      */
-    private final Map<TethysDateRange, MoneyWiseXAnalysis> theAnalysisMap;
+    private final Map<OceanusDateRange, MoneyWiseXAnalysis> theAnalysisMap;
 
     /**
      * The base analysis.
@@ -110,7 +110,7 @@ public class MoneyWiseXAnalysisManager
     }
 
     @Override
-    public Map<TethysDateRange, MoneyWiseXAnalysis> getUnderlyingMap() {
+    public Map<OceanusDateRange, MoneyWiseXAnalysis> getUnderlyingMap() {
         return theAnalysisMap;
     }
 
@@ -151,9 +151,9 @@ public class MoneyWiseXAnalysisManager
      * @param pDate the date for the analysis.
      * @return the analysis
      */
-    public MoneyWiseXAnalysis getDatedAnalysis(final TethysDate pDate) {
+    public MoneyWiseXAnalysis getDatedAnalysis(final OceanusDate pDate) {
         /* Create the new Range */
-        final TethysDateRange myRange = new TethysDateRange(null, pDate);
+        final OceanusDateRange myRange = new OceanusDateRange(null, pDate);
 
         /* Look for the existing analysis */
         MoneyWiseXAnalysis myAnalysis = theAnalysisMap.get(myRange);
@@ -178,7 +178,7 @@ public class MoneyWiseXAnalysisManager
      * @param pRange the date range for the analysis.
      * @return the analysis
      */
-    public MoneyWiseXAnalysis getRangedAnalysis(final TethysDateRange pRange) {
+    public MoneyWiseXAnalysis getRangedAnalysis(final OceanusDateRange pRange) {
         /* Look for the existing analysis */
         return theAnalysisMap.computeIfAbsent(pRange, r -> {
             /* Create the new event analysis */
@@ -270,16 +270,16 @@ public class MoneyWiseXAnalysisManager
         }
 
         /* Access totals */
-        TethysMoney myDepTotal = myDepCat.getValues().getMoneyValue(MoneyWiseXAnalysisAccountAttr.VALUEDELTA);
-        final TethysMoney myCashTotal = myCashCat.getValues().getMoneyValue(MoneyWiseXAnalysisAccountAttr.VALUEDELTA);
-        final TethysMoney myLoanTotal = myLoanCat.getValues().getMoneyValue(MoneyWiseXAnalysisAccountAttr.VALUEDELTA);
-        final TethysMoney myPortTotal = myPort.getValues().getMoneyValue(MoneyWiseXAnalysisSecurityAttr.VALUEDELTA);
-        final TethysMoney myPayTotal = myPayee.getValues().getMoneyValue(MoneyWiseXAnalysisPayeeAttr.PROFIT);
-        final TethysMoney myEvtTotal = myTrans.getValues().getMoneyValue(MoneyWiseXAnalysisTransAttr.PROFIT);
-        final TethysMoney myTaxTotal = myTax.getValues().getMoneyValue(MoneyWiseXAnalysisTaxBasisAttr.GROSS);
+        OceanusMoney myDepTotal = myDepCat.getValues().getMoneyValue(MoneyWiseXAnalysisAccountAttr.VALUEDELTA);
+        final OceanusMoney myCashTotal = myCashCat.getValues().getMoneyValue(MoneyWiseXAnalysisAccountAttr.VALUEDELTA);
+        final OceanusMoney myLoanTotal = myLoanCat.getValues().getMoneyValue(MoneyWiseXAnalysisAccountAttr.VALUEDELTA);
+        final OceanusMoney myPortTotal = myPort.getValues().getMoneyValue(MoneyWiseXAnalysisSecurityAttr.VALUEDELTA);
+        final OceanusMoney myPayTotal = myPayee.getValues().getMoneyValue(MoneyWiseXAnalysisPayeeAttr.PROFIT);
+        final OceanusMoney myEvtTotal = myTrans.getValues().getMoneyValue(MoneyWiseXAnalysisTransAttr.PROFIT);
+        final OceanusMoney myTaxTotal = myTax.getValues().getMoneyValue(MoneyWiseXAnalysisTaxBasisAttr.GROSS);
 
         /* Create a copy */
-        myDepTotal = new TethysMoney(myDepTotal);
+        myDepTotal = new OceanusMoney(myDepTotal);
 
         /* Add sub-accounts */
         myDepTotal.addAmount(myCashTotal);

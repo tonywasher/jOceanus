@@ -33,10 +33,10 @@ import net.sourceforge.joceanus.prometheus.ui.PrometheusItemEditActions.Promethe
 import net.sourceforge.joceanus.prometheus.ui.PrometheusUIResource;
 import net.sourceforge.joceanus.prometheus.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.prometheus.views.PrometheusUIEvent;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.event.TethysEventManager;
-import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar;
-import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.TethysEventProvider;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIGenericWrapper;
@@ -84,7 +84,7 @@ public abstract class PrometheusDataItemPanel<T extends PrometheusTableItem & Co
     /**
      * The Event Manager.
      */
-    private final TethysEventManager<PrometheusDataEvent> theEventManager;
+    private final OceanusEventManager<PrometheusDataEvent> theEventManager;
 
     /**
      * The Panel.
@@ -167,7 +167,7 @@ public abstract class PrometheusDataItemPanel<T extends PrometheusTableItem & Co
         theError = pError;
 
         /* Create the event manager */
-        theEventManager = new TethysEventManager<>();
+        theEventManager = new OceanusEventManager<>();
 
         /* Access the formatter */
         theFormatter = pFactory.getDataFormatter();
@@ -196,7 +196,7 @@ public abstract class PrometheusDataItemPanel<T extends PrometheusTableItem & Co
         thePanel.setVisible(false);
 
         /* Listen to the EditActions */
-        TethysEventRegistrar<PrometheusUIEvent> myRegistrar = theEditActions.getEventRegistrar();
+        OceanusEventRegistrar<PrometheusUIEvent> myRegistrar = theEditActions.getEventRegistrar();
         myRegistrar.addEventListener(PrometheusUIEvent.OK, e -> requestCommit());
         myRegistrar.addEventListener(PrometheusUIEvent.UNDO, e -> requestUndo());
         myRegistrar.addEventListener(PrometheusUIEvent.RESET, e -> requestReset());
@@ -219,7 +219,7 @@ public abstract class PrometheusDataItemPanel<T extends PrometheusTableItem & Co
     }
 
     @Override
-    public TethysEventRegistrar<PrometheusDataEvent> getEventRegistrar() {
+    public OceanusEventRegistrar<PrometheusDataEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 

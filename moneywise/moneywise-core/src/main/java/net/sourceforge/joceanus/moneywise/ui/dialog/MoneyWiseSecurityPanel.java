@@ -46,8 +46,8 @@ import net.sourceforge.joceanus.prometheus.data.PrometheusDataResource;
 import net.sourceforge.joceanus.prometheus.ui.fieldset.PrometheusFieldSet;
 import net.sourceforge.joceanus.prometheus.ui.fieldset.PrometheusFieldSetEvent;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.decimal.TethysPrice;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
 import net.sourceforge.joceanus.tethys.ui.api.control.TethysUIControl.TethysUIIconMapSet;
 import net.sourceforge.joceanus.tethys.ui.api.factory.TethysUIFactory;
 import net.sourceforge.joceanus.tethys.ui.api.field.TethysUIDataEditField.TethysUICharArrayTextAreaField;
@@ -334,7 +334,7 @@ public class MoneyWiseSecurityPanel
             mySecurity.setUnderlyingStock(pUpdate.getValue(MoneyWiseSecurity.class));
         } else if (MoneyWiseAccountInfoClass.OPTIONPRICE.equals(myField)) {
             /* Update the OptionPrice */
-            mySecurity.setOptionPrice(pUpdate.getValue(TethysPrice.class));
+            mySecurity.setOptionPrice(pUpdate.getValue(OceanusPrice.class));
         } else if (MoneyWiseAccountInfoClass.NOTES.equals(myField)) {
             /* Update the Notes */
             mySecurity.setNotes(pUpdate.getValue(char[].class));

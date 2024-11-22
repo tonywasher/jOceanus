@@ -51,8 +51,8 @@ import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseLoan;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransDefaults;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransaction;
 import net.sourceforge.joceanus.moneywise.views.MoneyWiseViewResource;
-import net.sourceforge.joceanus.tethys.date.TethysDateRange;
-import net.sourceforge.joceanus.tethys.decimal.TethysDecimal;
+import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimal;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
 
 /**
@@ -90,7 +90,7 @@ public abstract class MoneyWiseAnalysisFilter<B, T extends Enum<T> & MoneyWiseAn
     /**
      * The Date Range.
      */
-    private TethysDateRange theDateRange;
+    private OceanusDateRange theDateRange;
 
     /**
      * The Current Attribute.
@@ -106,7 +106,7 @@ public abstract class MoneyWiseAnalysisFilter<B, T extends Enum<T> & MoneyWiseAn
                                       final Class<T> pClass) {
         theBucket = pBucket;
         theClass = pClass;
-        theDateRange = new TethysDateRange();
+        theDateRange = new OceanusDateRange();
     }
 
     @SuppressWarnings("rawtypes")
@@ -154,7 +154,7 @@ public abstract class MoneyWiseAnalysisFilter<B, T extends Enum<T> & MoneyWiseAn
      * Obtain the dateRange.
      * @return the dateRange
      */
-    public TethysDateRange getDateRange() {
+    public OceanusDateRange getDateRange() {
         return theDateRange;
     }
 
@@ -162,7 +162,7 @@ public abstract class MoneyWiseAnalysisFilter<B, T extends Enum<T> & MoneyWiseAn
      * Obtain the dateRange.
      * @param pRange the dateRange
      */
-    public void setDateRange(final TethysDateRange pRange) {
+    public void setDateRange(final OceanusDateRange pRange) {
         theDateRange = pRange;
     }
 
@@ -196,7 +196,7 @@ public abstract class MoneyWiseAnalysisFilter<B, T extends Enum<T> & MoneyWiseAn
      * @param pTrans the transaction
      * @return the delta value
      */
-    public abstract TethysDecimal getDeltaForTransaction(MoneyWiseTransaction pTrans);
+    public abstract OceanusDecimal getDeltaForTransaction(MoneyWiseTransaction pTrans);
 
     /**
      * Populate new transaction.
@@ -218,7 +218,7 @@ public abstract class MoneyWiseAnalysisFilter<B, T extends Enum<T> & MoneyWiseAn
      * Obtain starting value for attribute.
      * @return the value
      */
-    public TethysDecimal getStartingBalance() {
+    public OceanusDecimal getStartingBalance() {
         final MoneyWiseAnalysisValues<?, T> myValues = getBaseValues();
         return myValues.getDecimalValue(getCurrentAttribute());
     }
@@ -228,7 +228,7 @@ public abstract class MoneyWiseAnalysisFilter<B, T extends Enum<T> & MoneyWiseAn
      * @param pTrans the transaction to check
      * @return the value
      */
-    public TethysDecimal getBalanceForTransaction(final MoneyWiseTransaction pTrans) {
+    public OceanusDecimal getBalanceForTransaction(final MoneyWiseTransaction pTrans) {
         final MoneyWiseAnalysisValues<?, T> myValues = getValuesForTransaction(pTrans);
         return myValues == null
                 ? null
@@ -240,8 +240,8 @@ public abstract class MoneyWiseAnalysisFilter<B, T extends Enum<T> & MoneyWiseAn
      * @param pTrans the transaction to check
      * @return the value
      */
-    public TethysDecimal getDebitForTransaction(final MoneyWiseTransaction pTrans) {
-        TethysDecimal myValue = getDeltaValueForTransaction(pTrans);
+    public OceanusDecimal getDebitForTransaction(final MoneyWiseTransaction pTrans) {
+        OceanusDecimal myValue = getDeltaValueForTransaction(pTrans);
         if (myValue != null) {
             if (myValue.isPositive()
                     || myValue.isZero()) {
@@ -258,8 +258,8 @@ public abstract class MoneyWiseAnalysisFilter<B, T extends Enum<T> & MoneyWiseAn
      * @param pTrans the transaction to check
      * @return the value
      */
-    public TethysDecimal getCreditForTransaction(final MoneyWiseTransaction pTrans) {
-        final TethysDecimal myValue = getDeltaValueForTransaction(pTrans);
+    public OceanusDecimal getCreditForTransaction(final MoneyWiseTransaction pTrans) {
+        final OceanusDecimal myValue = getDeltaValueForTransaction(pTrans);
         return (myValue != null
                 && myValue.isPositive() && myValue.isNonZero())
                 ? myValue
@@ -271,7 +271,7 @@ public abstract class MoneyWiseAnalysisFilter<B, T extends Enum<T> & MoneyWiseAn
      * @param pTrans the transaction to check
      * @return the value
      */
-    private TethysDecimal getDeltaValueForTransaction(final MoneyWiseTransaction pTrans) {
+    private OceanusDecimal getDeltaValueForTransaction(final MoneyWiseTransaction pTrans) {
         return getDeltaForTransaction(pTrans);
     }
 
@@ -341,7 +341,7 @@ public abstract class MoneyWiseAnalysisFilter<B, T extends Enum<T> & MoneyWiseAn
         }
 
         @Override
-        public TethysDecimal getDeltaForTransaction(final MoneyWiseTransaction pTrans) {
+        public OceanusDecimal getDeltaForTransaction(final MoneyWiseTransaction pTrans) {
             return getBucket().getDeltaForTransaction(pTrans, getCurrentAttribute());
         }
 
@@ -503,7 +503,7 @@ public abstract class MoneyWiseAnalysisFilter<B, T extends Enum<T> & MoneyWiseAn
         }
 
         @Override
-        public TethysDecimal getDeltaForTransaction(final MoneyWiseTransaction pTrans) {
+        public OceanusDecimal getDeltaForTransaction(final MoneyWiseTransaction pTrans) {
             return getBucket().getDeltaForTransaction(pTrans, getCurrentAttribute());
         }
 
@@ -584,7 +584,7 @@ public abstract class MoneyWiseAnalysisFilter<B, T extends Enum<T> & MoneyWiseAn
         }
 
         @Override
-        public TethysDecimal getDeltaForTransaction(final MoneyWiseTransaction pTrans) {
+        public OceanusDecimal getDeltaForTransaction(final MoneyWiseTransaction pTrans) {
             return getBucket().getDeltaForTransaction(pTrans, getCurrentAttribute());
         }
 
@@ -650,7 +650,7 @@ public abstract class MoneyWiseAnalysisFilter<B, T extends Enum<T> & MoneyWiseAn
         }
 
         @Override
-        public TethysDecimal getDeltaForTransaction(final MoneyWiseTransaction pTrans) {
+        public OceanusDecimal getDeltaForTransaction(final MoneyWiseTransaction pTrans) {
             return getBucket().getDeltaForTransaction(pTrans, getCurrentAttribute());
         }
 
@@ -699,7 +699,7 @@ public abstract class MoneyWiseAnalysisFilter<B, T extends Enum<T> & MoneyWiseAn
         }
 
         @Override
-        public TethysDecimal getDeltaForTransaction(final MoneyWiseTransaction pTrans) {
+        public OceanusDecimal getDeltaForTransaction(final MoneyWiseTransaction pTrans) {
             return getBucket().getDeltaForTransaction(pTrans, getCurrentAttribute());
         }
 
@@ -745,7 +745,7 @@ public abstract class MoneyWiseAnalysisFilter<B, T extends Enum<T> & MoneyWiseAn
         }
 
         @Override
-        public TethysDecimal getDeltaForTransaction(final MoneyWiseTransaction pTrans) {
+        public OceanusDecimal getDeltaForTransaction(final MoneyWiseTransaction pTrans) {
             return getBucket().getDeltaForTransaction(pTrans, getCurrentAttribute());
         }
 
@@ -797,7 +797,7 @@ public abstract class MoneyWiseAnalysisFilter<B, T extends Enum<T> & MoneyWiseAn
         }
 
         @Override
-        public TethysDecimal getDeltaForTransaction(final MoneyWiseTransaction pTrans) {
+        public OceanusDecimal getDeltaForTransaction(final MoneyWiseTransaction pTrans) {
             return null;
         }
 
@@ -852,7 +852,7 @@ public abstract class MoneyWiseAnalysisFilter<B, T extends Enum<T> & MoneyWiseAn
         }
 
         @Override
-        public TethysDecimal getDeltaForTransaction(final MoneyWiseTransaction pTrans) {
+        public OceanusDecimal getDeltaForTransaction(final MoneyWiseTransaction pTrans) {
             return null;
         }
 

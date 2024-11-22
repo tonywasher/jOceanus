@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Tethys: Java Utilities
+ * Tethys: GUI Utilities
  * Copyright 2012,2024 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,13 +18,13 @@ package net.sourceforge.joceanus.tethys.ui.swing.table;
 
 import java.util.List;
 
-import net.sourceforge.joceanus.tethys.date.TethysDate;
-import net.sourceforge.joceanus.tethys.decimal.TethysDecimal;
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
-import net.sourceforge.joceanus.tethys.decimal.TethysPrice;
-import net.sourceforge.joceanus.tethys.decimal.TethysRate;
-import net.sourceforge.joceanus.tethys.decimal.TethysRatio;
-import net.sourceforge.joceanus.tethys.decimal.TethysUnits;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimal;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRate;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRatio;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusUnits;
 import net.sourceforge.joceanus.tethys.ui.core.factory.TethysUICoreFactory;
 import net.sourceforge.joceanus.tethys.ui.swing.table.TethysUISwingTableCell.TethysUISwingTableCharArrayCell;
 import net.sourceforge.joceanus.tethys.ui.swing.table.TethysUISwingTableCell.TethysUISwingTableDateCell;
@@ -134,7 +134,7 @@ public class TethysUISwingTableCellFactory<C, R> {
      * @param pColumn the column
      * @return the money cell
      */
-    TethysUISwingTableCell<TethysDecimal, C, R> rawDecimalCell(final TethysUISwingTableRawDecimalColumn<C, R> pColumn) {
+    TethysUISwingTableCell<OceanusDecimal, C, R> rawDecimalCell(final TethysUISwingTableRawDecimalColumn<C, R> pColumn) {
         return new TethysUISwingTableRawDecimalCell<>(pColumn, theGuiFactory);
     }
 
@@ -144,7 +144,7 @@ public class TethysUISwingTableCellFactory<C, R> {
      * @param pColumn the column
      * @return the money cell
      */
-    TethysUISwingTableCell<TethysMoney, C, R> moneyCell(final TethysUISwingTableMoneyColumn<C, R> pColumn) {
+    TethysUISwingTableCell<OceanusMoney, C, R> moneyCell(final TethysUISwingTableMoneyColumn<C, R> pColumn) {
         return new TethysUISwingTableMoneyCell<>(pColumn, theGuiFactory);
     }
 
@@ -154,7 +154,7 @@ public class TethysUISwingTableCellFactory<C, R> {
      * @param pColumn the column
      * @return the price cell
      */
-    TethysUISwingTableCell<TethysPrice, C, R> priceCell(final TethysUISwingTablePriceColumn<C, R> pColumn) {
+    TethysUISwingTableCell<OceanusPrice, C, R> priceCell(final TethysUISwingTablePriceColumn<C, R> pColumn) {
         return new TethysUISwingTablePriceCell<>(pColumn, theGuiFactory);
     }
 
@@ -164,7 +164,7 @@ public class TethysUISwingTableCellFactory<C, R> {
      * @param pColumn the column
      * @return the rate cell
      */
-    TethysUISwingTableCell<TethysRate, C, R> rateCell(final TethysUISwingTableRateColumn<C, R> pColumn) {
+    TethysUISwingTableCell<OceanusRate, C, R> rateCell(final TethysUISwingTableRateColumn<C, R> pColumn) {
         return new TethysUISwingTableRateCell<>(pColumn, theGuiFactory);
     }
 
@@ -174,7 +174,7 @@ public class TethysUISwingTableCellFactory<C, R> {
      * @param pColumn the column
      * @return the units cell
      */
-    TethysUISwingTableCell<TethysUnits, C, R> unitsCell(final TethysUISwingTableUnitsColumn<C, R> pColumn) {
+    TethysUISwingTableCell<OceanusUnits, C, R> unitsCell(final TethysUISwingTableUnitsColumn<C, R> pColumn) {
         return new TethysUISwingTableUnitsCell<>(pColumn, theGuiFactory);
     }
 
@@ -184,7 +184,7 @@ public class TethysUISwingTableCellFactory<C, R> {
      * @param pColumn the column
      * @return the ratio cell
      */
-    TethysUISwingTableCell<TethysRatio, C, R> ratioCell(final TethysUISwingTableRatioColumn<C, R> pColumn) {
+    TethysUISwingTableCell<OceanusRatio, C, R> ratioCell(final TethysUISwingTableRatioColumn<C, R> pColumn) {
         return new TethysUISwingTableRatioCell<>(pColumn, theGuiFactory);
     }
 
@@ -218,7 +218,7 @@ public class TethysUISwingTableCellFactory<C, R> {
      * @param pColumn the column
      * @return the date cell
      */
-    TethysUISwingTableCell<TethysDate, C, R> dateCell(final TethysUISwingTableDateColumn<C, R> pColumn) {
+    TethysUISwingTableCell<OceanusDate, C, R> dateCell(final TethysUISwingTableDateColumn<C, R> pColumn) {
         return new TethysUISwingTableDateCell<>(pColumn, theGuiFactory);
     }
 

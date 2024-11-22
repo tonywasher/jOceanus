@@ -28,9 +28,9 @@ import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicResource;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePayee;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransAsset;
-import net.sourceforge.joceanus.tethys.date.TethysDate;
-import net.sourceforge.joceanus.tethys.date.TethysDateRange;
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
 
 /**
@@ -91,7 +91,7 @@ public final class MoneyWiseAnalysisTaxBasisAccountBucket
     private MoneyWiseAnalysisTaxBasisAccountBucket(final MoneyWiseAnalysis pAnalysis,
                                                    final MoneyWiseAnalysisTaxBasisBucket pParent,
                                                    final MoneyWiseAnalysisTaxBasisAccountBucket pBase,
-                                                   final TethysDate pDate) {
+                                                   final OceanusDate pDate) {
         /* Copy details from base */
         super(pAnalysis, pBase, pDate);
         theAssetId = pBase.getAssetId();
@@ -109,7 +109,7 @@ public final class MoneyWiseAnalysisTaxBasisAccountBucket
     private MoneyWiseAnalysisTaxBasisAccountBucket(final MoneyWiseAnalysis pAnalysis,
                                                    final MoneyWiseAnalysisTaxBasisBucket pParent,
                                                    final MoneyWiseAnalysisTaxBasisAccountBucket pBase,
-                                                   final TethysDateRange pRange) {
+                                                   final OceanusDateRange pRange) {
         /* Copy details from base */
         super(pAnalysis, pBase, pRange);
         theAssetId = pBase.getAssetId();
@@ -238,7 +238,7 @@ public final class MoneyWiseAnalysisTaxBasisAccountBucket
         protected MoneyWiseAnalysisTaxBasisAccountBucketList(final MoneyWiseAnalysis pAnalysis,
                                                              final MoneyWiseAnalysisTaxBasisBucket pParent,
                                                              final MoneyWiseAnalysisTaxBasisAccountBucketList pBase,
-                                                             final TethysDate pDate) {
+                                                             final OceanusDate pDate) {
             /* Initialise class */
             this(pAnalysis, pParent);
 
@@ -269,7 +269,7 @@ public final class MoneyWiseAnalysisTaxBasisAccountBucket
         protected MoneyWiseAnalysisTaxBasisAccountBucketList(final MoneyWiseAnalysis pAnalysis,
                                                              final MoneyWiseAnalysisTaxBasisBucket pParent,
                                                              final MoneyWiseAnalysisTaxBasisAccountBucketList pBase,
-                                                             final TethysDateRange pRange) {
+                                                             final OceanusDateRange pRange) {
             /* Initialise class */
             this(pAnalysis, pParent);
 
@@ -324,9 +324,9 @@ public final class MoneyWiseAnalysisTaxBasisAccountBucket
          * @param pTax the tax delta value
          */
         protected void registerDeltaValues(final MoneyWiseAnalysisTransactionHelper pTrans,
-                                           final TethysMoney pGross,
-                                           final TethysMoney pNett,
-                                           final TethysMoney pTax) {
+                                           final OceanusMoney pGross,
+                                           final OceanusMoney pNett,
+                                           final OceanusMoney pTax) {
             /* Determine required asset */
             final MoneyWiseTransAsset myAsset = deriveAsset(pTrans);
 
@@ -344,7 +344,7 @@ public final class MoneyWiseAnalysisTaxBasisAccountBucket
          * @param pAdjust adjustment control
          */
         protected void adjustValue(final MoneyWiseAnalysisTransactionHelper pTrans,
-                                   final TethysMoney pGross,
+                                   final OceanusMoney pGross,
                                    final MoneyWiseTaxBasisAdjust pAdjust) {
             /* Determine required asset */
             final MoneyWiseTransAsset myAsset = deriveAsset(pTrans);

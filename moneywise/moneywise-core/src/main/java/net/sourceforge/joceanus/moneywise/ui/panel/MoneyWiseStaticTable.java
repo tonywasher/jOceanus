@@ -32,9 +32,9 @@ import net.sourceforge.joceanus.prometheus.data.PrometheusStaticDataItem;
 import net.sourceforge.joceanus.prometheus.data.PrometheusStaticDataItem.PrometheusStaticList;
 import net.sourceforge.joceanus.prometheus.ui.PrometheusIcon;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar;
-import net.sourceforge.joceanus.tethys.profile.TethysProfile;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
+import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIGenericWrapper;
 import net.sourceforge.joceanus.tethys.ui.api.button.TethysUIScrollButtonManager;
@@ -155,7 +155,7 @@ public class MoneyWiseStaticTable<L extends PrometheusStaticList<T>, T extends P
                 .setOnCommit((r, v) -> updateField(this::deleteRow, r, v));
 
         /* Add listeners */
-        final TethysEventRegistrar<TethysUIEvent> myRegistrar = theNewButton.getEventRegistrar();
+        final OceanusEventRegistrar<TethysUIEvent> myRegistrar = theNewButton.getEventRegistrar();
         myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewClass());
         theNewButton.setMenuConfigurator(e -> buildNewMenu());
         setShowAll(false);
@@ -185,7 +185,7 @@ public class MoneyWiseStaticTable<L extends PrometheusStaticList<T>, T extends P
      */
     private void handleNewClass() {
         /* Create a new profile */
-        final TethysProfile myTask = getView().getNewProfile("addNewClass");
+        final OceanusProfile myTask = getView().getNewProfile("addNewClass");
 
         /* Access the new class */
         cancelEditing();

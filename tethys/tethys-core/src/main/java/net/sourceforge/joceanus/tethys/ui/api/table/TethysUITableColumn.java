@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Tethys: Java Utilities
+ * Tethys: GUI Utilities
  * Copyright 2012,2024 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -25,16 +25,16 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.ToIntFunction;
 
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.date.TethysDate;
-import net.sourceforge.joceanus.tethys.date.TethysDateConfig;
-import net.sourceforge.joceanus.tethys.decimal.TethysDecimal;
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
-import net.sourceforge.joceanus.tethys.decimal.TethysPrice;
-import net.sourceforge.joceanus.tethys.decimal.TethysRate;
-import net.sourceforge.joceanus.tethys.decimal.TethysRatio;
-import net.sourceforge.joceanus.tethys.decimal.TethysUnits;
-import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.date.OceanusDateConfig;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimal;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRate;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRatio;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusUnits;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.TethysEventProvider;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.tethys.ui.api.control.TethysUIControl.TethysUIIconMapSet;
 import net.sourceforge.joceanus.tethys.ui.api.field.TethysUIFieldType;
@@ -268,7 +268,7 @@ public interface TethysUITableColumn<T, C, R>
      * @param <R> the row type
      */
     interface TethysUITableDecimalColumn<R>
-            extends TethysUITableValidatedColumn<TethysDecimal, R> {
+            extends TethysUITableValidatedColumn<OceanusDecimal, R> {
         /**
          * Set the Number of decimals supplier.
          * @param pSupplier the supplier
@@ -282,7 +282,7 @@ public interface TethysUITableColumn<T, C, R>
      * @param <T> the money type
      * @param <R> the row type
      */
-    interface TethysUITableCurrencyColumn<T extends TethysMoney, R>
+    interface TethysUITableCurrencyColumn<T extends OceanusMoney, R>
             extends TethysUITableValidatedColumn<T, R> {
         /**
          * Set the Deemed Currency supplier.
@@ -299,9 +299,9 @@ public interface TethysUITableColumn<T, C, R>
      */
     interface TethysUITableRawDecimalColumn<C, R>
             extends TethysUITableDecimalColumn<R>,
-            TethysUITableColumn<TethysDecimal, C, R> {
+            TethysUITableColumn<OceanusDecimal, C, R> {
         @Override
-        TethysUITableRawDecimalColumn<C, R> setValidator(BiFunction<TethysDecimal, R, String> pValidator);
+        TethysUITableRawDecimalColumn<C, R> setValidator(BiFunction<OceanusDecimal, R, String> pValidator);
 
         @Override
         TethysUITableRawDecimalColumn<C, R> setNumDecimals(ToIntFunction<R> pSupplier);
@@ -313,10 +313,10 @@ public interface TethysUITableColumn<T, C, R>
      * @param <R> the row type
      */
     interface TethysUITableMoneyColumn<C, R>
-            extends TethysUITableCurrencyColumn<TethysMoney, R>,
-            TethysUITableColumn<TethysMoney, C, R> {
+            extends TethysUITableCurrencyColumn<OceanusMoney, R>,
+            TethysUITableColumn<OceanusMoney, C, R> {
         @Override
-        TethysUITableMoneyColumn<C, R> setValidator(BiFunction<TethysMoney, R, String> pValidator);
+        TethysUITableMoneyColumn<C, R> setValidator(BiFunction<OceanusMoney, R, String> pValidator);
 
         @Override
         TethysUITableMoneyColumn<C, R> setDeemedCurrency(Function<R, Currency> pSupplier);
@@ -328,10 +328,10 @@ public interface TethysUITableColumn<T, C, R>
      * @param <R> the row type
      */
     interface TethysUITablePriceColumn<C, R>
-            extends TethysUITableCurrencyColumn<TethysPrice, R>,
-            TethysUITableColumn<TethysPrice, C, R> {
+            extends TethysUITableCurrencyColumn<OceanusPrice, R>,
+            TethysUITableColumn<OceanusPrice, C, R> {
         @Override
-        TethysUITablePriceColumn<C, R> setValidator(BiFunction<TethysPrice, R, String> pValidator);
+        TethysUITablePriceColumn<C, R> setValidator(BiFunction<OceanusPrice, R, String> pValidator);
 
         @Override
         TethysUITablePriceColumn<C, R> setDeemedCurrency(Function<R, Currency> pSupplier);
@@ -343,10 +343,10 @@ public interface TethysUITableColumn<T, C, R>
      * @param <R> the row type
      */
     interface TethysUITableUnitsColumn<C, R>
-            extends TethysUITableValidatedColumn<TethysUnits, R>,
-            TethysUITableColumn<TethysUnits, C, R> {
+            extends TethysUITableValidatedColumn<OceanusUnits, R>,
+            TethysUITableColumn<OceanusUnits, C, R> {
         @Override
-        TethysUITableUnitsColumn<C, R> setValidator(BiFunction<TethysUnits, R, String> pValidator);
+        TethysUITableUnitsColumn<C, R> setValidator(BiFunction<OceanusUnits, R, String> pValidator);
     }
 
     /**
@@ -355,10 +355,10 @@ public interface TethysUITableColumn<T, C, R>
      * @param <R> the row type
      */
     interface TethysUITableRateColumn<C, R>
-            extends TethysUITableValidatedColumn<TethysRate, R>,
-            TethysUITableColumn<TethysRate, C, R> {
+            extends TethysUITableValidatedColumn<OceanusRate, R>,
+            TethysUITableColumn<OceanusRate, C, R> {
         @Override
-        TethysUITableRateColumn<C, R> setValidator(BiFunction<TethysRate, R, String> pValidator);
+        TethysUITableRateColumn<C, R> setValidator(BiFunction<OceanusRate, R, String> pValidator);
     }
 
     /**
@@ -367,10 +367,10 @@ public interface TethysUITableColumn<T, C, R>
      * @param <R> the row type
      */
     interface TethysUITableRatioColumn<C, R>
-            extends TethysUITableValidatedColumn<TethysRatio, R>,
-            TethysUITableColumn<TethysRatio, C, R> {
+            extends TethysUITableValidatedColumn<OceanusRatio, R>,
+            TethysUITableColumn<OceanusRatio, C, R> {
         @Override
-        TethysUITableRatioColumn<C, R> setValidator(BiFunction<TethysRatio, R, String> pValidator);
+        TethysUITableRatioColumn<C, R> setValidator(BiFunction<OceanusRatio, R, String> pValidator);
     }
 
     /**
@@ -410,7 +410,7 @@ public interface TethysUITableColumn<T, C, R>
          * @param pConfigurator the configurator
          * @return the configurator
          */
-        TethysUITableDateConfig<R> setDateConfigurator(BiConsumer<R, TethysDateConfig> pConfigurator);
+        TethysUITableDateConfig<R> setDateConfigurator(BiConsumer<R, OceanusDateConfig> pConfigurator);
     }
 
     /**
@@ -420,9 +420,9 @@ public interface TethysUITableColumn<T, C, R>
      */
     interface TethysUITableDateColumn<C, R>
             extends TethysUITableDateConfig<R>,
-            TethysUITableColumn<TethysDate, C, R> {
+            TethysUITableColumn<OceanusDate, C, R> {
         @Override
-        TethysUITableDateColumn<C, R> setDateConfigurator(BiConsumer<R, TethysDateConfig> pConfigurator);
+        TethysUITableDateColumn<C, R> setDateConfigurator(BiConsumer<R, OceanusDateConfig> pConfigurator);
     }
 
     /**

@@ -28,9 +28,9 @@ import net.sourceforge.joceanus.coeus.data.CoeusMarket;
 import net.sourceforge.joceanus.coeus.data.CoeusMarketProvider;
 import net.sourceforge.joceanus.coeus.data.CoeusResource;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.date.TethysDateRange;
-import net.sourceforge.joceanus.tethys.decimal.TethysDecimal;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimal;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
 
 /**
@@ -72,22 +72,22 @@ public class CoeusZopaMarket
     /**
      * The Missing LoanBook Balance.
      */
-    private final TethysDecimal theMissingLoanBook;
+    private final OceanusDecimal theMissingLoanBook;
 
     /**
      * The Missing Capital.
      */
-    private final TethysDecimal theMissingCapital;
+    private final OceanusDecimal theMissingCapital;
 
     /**
      * The Missing Interest.
      */
-    private final TethysDecimal theMissingInterest;
+    private final OceanusDecimal theMissingInterest;
 
     /**
      * The ZombieLoans.
      */
-    private final TethysDecimal theZombieLoans;
+    private final OceanusDecimal theZombieLoans;
 
     /**
      * The Interesting loans.
@@ -107,10 +107,10 @@ public class CoeusZopaMarket
         theXactionParser = new CoeusZopaTransactionParser(this);
 
         /* Create missing counters */
-        theMissingLoanBook = new TethysDecimal(0, DECIMAL_SIZE);
-        theMissingCapital = new TethysDecimal(0, DECIMAL_SIZE);
-        theMissingInterest = new TethysDecimal(0, DECIMAL_SIZE);
-        theZombieLoans = new TethysDecimal(0, DECIMAL_SIZE);
+        theMissingLoanBook = new OceanusDecimal(0, DECIMAL_SIZE);
+        theMissingCapital = new OceanusDecimal(0, DECIMAL_SIZE);
+        theMissingInterest = new OceanusDecimal(0, DECIMAL_SIZE);
+        theZombieLoans = new OceanusDecimal(0, DECIMAL_SIZE);
         theInterestingLoans = new ArrayList<>();
     }
 
@@ -184,7 +184,7 @@ public class CoeusZopaMarket
      * Obtain the missing LoanBook.
      * @return the missing loanBook
      */
-    private TethysDecimal getMissingLoanBook() {
+    private OceanusDecimal getMissingLoanBook() {
         return theMissingLoanBook;
     }
 
@@ -192,7 +192,7 @@ public class CoeusZopaMarket
      * Obtain the missing Capital.
      * @return the missing Capital
      */
-    private TethysDecimal getMissingCapital() {
+    private OceanusDecimal getMissingCapital() {
         return theMissingCapital;
     }
 
@@ -200,7 +200,7 @@ public class CoeusZopaMarket
      * Obtain the missing Interest.
      * @return the missing Interest
      */
-    private TethysDecimal getMissingInterest() {
+    private OceanusDecimal getMissingInterest() {
         return theMissingInterest;
     }
 
@@ -208,7 +208,7 @@ public class CoeusZopaMarket
      * Obtain the zombieLoans.
      * @return the zombieLoans
      */
-    private TethysDecimal getZombieLoans() {
+    private OceanusDecimal getZombieLoans() {
         return theZombieLoans;
     }
 
@@ -252,7 +252,7 @@ public class CoeusZopaMarket
 
     @Override
     protected CoeusZopaHistory viewHistory(final CoeusHistory pHistory,
-                                           final TethysDateRange pRange) {
+                                           final OceanusDateRange pRange) {
         return new CoeusZopaHistory(pHistory, pRange);
     }
 
@@ -263,7 +263,7 @@ public class CoeusZopaMarket
 
     @Override
     protected CoeusZopaLoan viewLoan(final CoeusLoan pLoan,
-                                     final TethysDateRange pRange) {
+                                     final OceanusDateRange pRange) {
         return new CoeusZopaLoan((CoeusZopaLoan) pLoan, pRange);
     }
 
@@ -278,7 +278,7 @@ public class CoeusZopaMarket
      * Record missing book details.
      * @param pMissing the missing amount
      */
-    void recordMissingBook(final TethysDecimal pMissing) {
+    void recordMissingBook(final OceanusDecimal pMissing) {
         theMissingLoanBook.addValue(pMissing);
     }
 
@@ -286,7 +286,7 @@ public class CoeusZopaMarket
      * Record missing capital.
      * @param pMissing the missing amount
      */
-    void recordMissingCapital(final TethysDecimal pMissing) {
+    void recordMissingCapital(final OceanusDecimal pMissing) {
         theMissingCapital.addValue(pMissing);
     }
 
@@ -294,7 +294,7 @@ public class CoeusZopaMarket
      * Record missing loan interest.
      * @param pMissing the missing amount
      */
-    void recordMissingInterest(final TethysDecimal pMissing) {
+    void recordMissingInterest(final OceanusDecimal pMissing) {
         theMissingInterest.addValue(pMissing);
     }
 
@@ -302,7 +302,7 @@ public class CoeusZopaMarket
      * Record zombieLoan.
      * @param pZombie the zombie amount
      */
-    void recordZombieLoan(final TethysDecimal pZombie) {
+    void recordZombieLoan(final OceanusDecimal pZombie) {
         theZombieLoans.addValue(pZombie);
     }
 

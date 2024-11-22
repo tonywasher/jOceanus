@@ -25,8 +25,8 @@ import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
 
-import net.sourceforge.joceanus.tethys.logger.TethysLogManager;
-import net.sourceforge.joceanus.tethys.logger.TethysLogger;
+import net.sourceforge.joceanus.oceanus.logger.OceanusLogManager;
+import net.sourceforge.joceanus.oceanus.logger.OceanusLogger;
 import net.sourceforge.joceanus.tethys.ui.core.dialog.TethysUICoreFileSelector;
 
 /**
@@ -37,7 +37,7 @@ public class TethysUIFXFileSelector
     /**
      * Logger.
      */
-    private static final TethysLogger LOGGER = TethysLogManager.getLogger(TethysUIFXFileSelector.class);
+    private static final OceanusLogger LOGGER = OceanusLogManager.getLogger(TethysUIFXFileSelector.class);
 
     /**
      * Parent stage.

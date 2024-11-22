@@ -17,13 +17,13 @@
 package net.sourceforge.joceanus.prometheus.toolkit;
 
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactoryType;
-import net.sourceforge.joceanus.gordianknot.api.password.GordianPasswordManager;
-import net.sourceforge.joceanus.gordianknot.util.GordianGenerator;
 import net.sourceforge.joceanus.metis.toolkit.MetisToolkit;
+import net.sourceforge.joceanus.oceanus.OceanusException;
 import net.sourceforge.joceanus.prometheus.preference.PrometheusPreferenceManager;
 import net.sourceforge.joceanus.prometheus.preference.PrometheusPreferenceSecurity.PrometheusSecurityPreferences;
 import net.sourceforge.joceanus.prometheus.preference.PrometheusPreferenceView;
-import net.sourceforge.joceanus.tethys.OceanusException;
+import net.sourceforge.joceanus.prometheus.security.PrometheusSecurityGenerator;
+import net.sourceforge.joceanus.prometheus.security.PrometheusSecurityPasswordManager;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIProgram;
 import net.sourceforge.joceanus.tethys.ui.api.factory.TethysUIFactory;
 import net.sourceforge.joceanus.tethys.ui.api.thread.TethysUIThreadManager;
@@ -45,7 +45,7 @@ public class PrometheusToolkit {
     /**
      * Password Manager.
      */
-    private final GordianPasswordManager thePasswordMgr;
+    private final PrometheusSecurityPasswordManager thePasswordMgr;
 
     /**
      * Constructor.
@@ -81,7 +81,7 @@ public class PrometheusToolkit {
      * Obtain the password manager.
      * @return the password manager
      */
-    public GordianPasswordManager getPasswordManager() {
+    public PrometheusSecurityPasswordManager getPasswordManager() {
         return thePasswordMgr;
     }
 
@@ -108,9 +108,9 @@ public class PrometheusToolkit {
      * @return the manager
      * @throws OceanusException on error
      */
-    private GordianPasswordManager newPasswordManager(final GordianFactoryType pFactoryType,
-                                                      final char[] pSecurityPhrase) throws OceanusException {
-        return GordianGenerator.newPasswordManager(getToolkit().getGuiFactory(), pFactoryType, pSecurityPhrase);
+    private PrometheusSecurityPasswordManager newPasswordManager(final GordianFactoryType pFactoryType,
+                                                                 final char[] pSecurityPhrase) throws OceanusException {
+        return PrometheusSecurityGenerator.newPasswordManager(getToolkit().getGuiFactory(), pFactoryType, pSecurityPhrase);
     }
 
     /**

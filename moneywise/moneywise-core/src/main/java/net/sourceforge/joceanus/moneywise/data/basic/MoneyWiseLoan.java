@@ -44,8 +44,8 @@ import net.sourceforge.joceanus.prometheus.data.PrometheusDataValues;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataValues.PrometheusInfoItem;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataValues.PrometheusInfoSetItem;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
 
 /**
@@ -231,9 +231,9 @@ public class MoneyWiseLoan
     }
 
     @Override
-    public TethysMoney getOpeningBalance() {
+    public OceanusMoney getOpeningBalance() {
         return hasInfoSet
-                ? theInfoSet.getValue(MoneyWiseAccountInfoClass.OPENINGBALANCE, TethysMoney.class)
+                ? theInfoSet.getValue(MoneyWiseAccountInfoClass.OPENINGBALANCE, OceanusMoney.class)
                 : null;
     }
 
@@ -580,7 +580,7 @@ public class MoneyWiseLoan
      * @param pBalance the new opening balance
      * @throws OceanusException on error
      */
-    public void setOpeningBalance(final TethysMoney pBalance) throws OceanusException {
+    public void setOpeningBalance(final OceanusMoney pBalance) throws OceanusException {
         setInfoSetValue(MoneyWiseAccountInfoClass.OPENINGBALANCE, pBalance);
     }
 

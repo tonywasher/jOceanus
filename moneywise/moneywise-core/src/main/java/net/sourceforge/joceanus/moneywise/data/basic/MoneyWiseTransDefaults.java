@@ -30,12 +30,12 @@ import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransCategory.Mone
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransaction.MoneyWiseTransactionList;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransCategoryClass;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.date.TethysDate;
-import net.sourceforge.joceanus.tethys.date.TethysDateRange;
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
-import net.sourceforge.joceanus.tethys.logger.TethysLogManager;
-import net.sourceforge.joceanus.tethys.logger.TethysLogger;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
+import net.sourceforge.joceanus.oceanus.logger.OceanusLogManager;
+import net.sourceforge.joceanus.oceanus.logger.OceanusLogger;
 
 /**
  * Transaction builder.
@@ -45,7 +45,7 @@ public class MoneyWiseTransDefaults {
     /**
      * Logger.
      */
-    private static final TethysLogger LOGGER = TethysLogManager.getLogger(MoneyWiseTransDefaults.class);
+    private static final OceanusLogger LOGGER = OceanusLogManager.getLogger(MoneyWiseTransDefaults.class);
 
     /**
      * The updateSet.
@@ -55,7 +55,7 @@ public class MoneyWiseTransDefaults {
     /**
      * The Date Range.
      */
-    private TethysDateRange theRange;
+    private OceanusDateRange theRange;
 
     /**
      * The Transaction list.
@@ -74,7 +74,7 @@ public class MoneyWiseTransDefaults {
      * Obtain range.
      * @return the date range
      */
-    public TethysDateRange getRange() {
+    public OceanusDateRange getRange() {
         return theRange;
     }
 
@@ -84,7 +84,7 @@ public class MoneyWiseTransDefaults {
      * @param pRange the date range
      */
     public void setParameters(final MoneyWiseTransactionList pList,
-                              final TethysDateRange pRange) {
+                              final OceanusDateRange pRange) {
         theList = pList;
         theRange = pRange;
     }
@@ -100,7 +100,7 @@ public class MoneyWiseTransDefaults {
         MoneyWiseTransAsset myPartner = pTrans.getPartner();
         MoneyWiseTransCategory myCategory = pTrans.getCategory();
         final MoneyWiseAssetDirection myDir = pTrans.getDirection();
-        final TethysMoney myAmount = pTrans.getAmount();
+        final OceanusMoney myAmount = pTrans.getAmount();
         final Currency myCurrency = myAccount.getCurrency();
 
         /* Check that category is valid */
@@ -134,7 +134,7 @@ public class MoneyWiseTransDefaults {
         } else {
             if (myAmount == null) {
                 /* Create a zero amount */
-                pTrans.setAmount(new TethysMoney(myCurrency));
+                pTrans.setAmount(new OceanusMoney(myCurrency));
 
                 /* If we need to change currency */
             } else if (!myCurrency.equals(myAmount.getCurrency())) {
@@ -200,13 +200,13 @@ public class MoneyWiseTransDefaults {
      */
     private void buildStandardDetails(final MoneyWiseTransaction pTrans) throws OceanusException {
         /* Access standard range */
-        final TethysDateRange myRange = theRange;
+        final OceanusDateRange myRange = theRange;
 
         /* Set default direction */
         pTrans.setDirection(MoneyWiseAssetDirection.TO);
 
         /* Determine date */
-        TethysDate myDate = new TethysDate();
+        OceanusDate myDate = new OceanusDate();
         final int iResult = myRange.compareToDate(myDate);
         if (iResult < 0) {
             myDate = myRange.getEnd();
@@ -218,7 +218,7 @@ public class MoneyWiseTransDefaults {
         /* Create a zero amount */
         final MoneyWiseTransAsset myAccount = pTrans.getAccount();
         final Currency myCurrency = myAccount.getCurrency();
-        pTrans.setAmount(new TethysMoney(myCurrency));
+        pTrans.setAmount(new OceanusMoney(myCurrency));
     }
 
     /**

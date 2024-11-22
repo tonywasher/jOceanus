@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Tethys: Java Utilities
+ * Tethys: GUI Utilities
  * Copyright 2012,2024 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,8 +18,8 @@ package net.sourceforge.joceanus.tethys.ui.api.chart;
 
 import java.util.Iterator;
 
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
-import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.TethysEventProvider;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIEvent;
 
@@ -50,7 +50,7 @@ public interface TethysUIPieChart
          * @param pValue the value
          */
         default void addSection(final String pName,
-                                final TethysMoney pValue) {
+                                final OceanusMoney pValue) {
             addSection(pName, pValue, pName);
         }
 
@@ -61,7 +61,7 @@ public interface TethysUIPieChart
          * @param pSource the source
          */
         void addSection(String pName,
-                        TethysMoney pValue,
+                        OceanusMoney pValue,
                         Object pSource);
 
         /**
@@ -85,7 +85,7 @@ public interface TethysUIPieChart
          * Obtain the value.
          * @return the value.
          */
-        TethysMoney getValue();
+        OceanusMoney getValue();
 
         /**
          * Obtain the source.

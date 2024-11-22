@@ -38,12 +38,12 @@ import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransaction.MoneyW
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransCategoryClass;
 import net.sourceforge.joceanus.moneywise.tax.MoneyWiseCashType;
 import net.sourceforge.joceanus.moneywise.lethe.views.MoneyWiseAnalysisFilter;
-import net.sourceforge.joceanus.tethys.date.TethysDate;
-import net.sourceforge.joceanus.tethys.decimal.TethysDecimal;
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
-import net.sourceforge.joceanus.tethys.decimal.TethysPrice;
-import net.sourceforge.joceanus.tethys.decimal.TethysRatio;
-import net.sourceforge.joceanus.tethys.decimal.TethysUnits;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimal;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRatio;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusUnits;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
 
 /**
@@ -84,7 +84,7 @@ public class MoneyWiseReportCapitalGains
     /**
      * The EndDate.
      */
-    private TethysDate theEndDate;
+    private OceanusDate theEndDate;
 
     /**
      * The table.
@@ -277,8 +277,8 @@ public class MoneyWiseReportCapitalGains
      */
     private void formatDivision(final MoneyWiseAnalysisSecurityAttr pAttr,
                                 final Object pValue,
-                                final TethysDecimal pNumerator,
-                                final TethysDecimal pDivisor) {
+                                final OceanusDecimal pNumerator,
+                                final OceanusDecimal pDivisor) {
         /* Ensure that we have an attribute table */
         ensureAttrTable();
 
@@ -295,8 +295,8 @@ public class MoneyWiseReportCapitalGains
      * @param pDivisor the divisor
      * @return the formatted division
      */
-    private String formatDivision(final TethysDecimal pNumerator,
-                                  final TethysDecimal pDivisor) {
+    private String formatDivision(final OceanusDecimal pNumerator,
+                                  final OceanusDecimal pDivisor) {
         return formatCombination(pNumerator, pDivisor, '/');
     }
 
@@ -310,9 +310,9 @@ public class MoneyWiseReportCapitalGains
      */
     private void formatValuation(final MoneyWiseAnalysisSecurityAttr pAttr,
                                  final Object pValue,
-                                 final TethysUnits pUnits,
-                                 final TethysPrice pPrice,
-                                 final TethysRatio pXchangeRate) {
+                                 final OceanusUnits pUnits,
+                                 final OceanusPrice pPrice,
+                                 final OceanusRatio pXchangeRate) {
         /* Ensure that we have an attribute table */
         ensureAttrTable();
 
@@ -330,9 +330,9 @@ public class MoneyWiseReportCapitalGains
      * @param pXchangeRate the exchange rate
      * @return the formatted valuation
      */
-    private String formatValuation(final TethysUnits pUnits,
-                                   final TethysPrice pPrice,
-                                   final TethysRatio pXchangeRate) {
+    private String formatValuation(final OceanusUnits pUnits,
+                                   final OceanusPrice pPrice,
+                                   final OceanusRatio pXchangeRate) {
         theStringBuilder.setLength(0);
         theStringBuilder.append(theFormatter.formatObject(pUnits));
         theStringBuilder.append('@');
@@ -353,8 +353,8 @@ public class MoneyWiseReportCapitalGains
      */
     private void formatMultiplication(final MoneyWiseAnalysisSecurityAttr pAttr,
                                       final Object pValue,
-                                      final TethysDecimal pFirst,
-                                      final TethysDecimal pSecond) {
+                                      final OceanusDecimal pFirst,
+                                      final OceanusDecimal pSecond) {
         /* Ensure that we have an attribute table */
         ensureAttrTable();
 
@@ -371,8 +371,8 @@ public class MoneyWiseReportCapitalGains
      * @param pSecond the second item
      * @return the formatted multiplication
      */
-    private String formatMultiplication(final TethysDecimal pFirst,
-                                        final TethysDecimal pSecond) {
+    private String formatMultiplication(final OceanusDecimal pFirst,
+                                        final OceanusDecimal pSecond) {
         return formatCombination(pFirst, pSecond, '*');
     }
 
@@ -385,8 +385,8 @@ public class MoneyWiseReportCapitalGains
      */
     private void formatAddition(final MoneyWiseAnalysisSecurityAttr pAttr,
                                 final Object pValue,
-                                final TethysDecimal pFirst,
-                                final TethysDecimal pSecond) {
+                                final OceanusDecimal pFirst,
+                                final OceanusDecimal pSecond) {
         /* Ensure that we have an attribute table */
         ensureAttrTable();
 
@@ -403,8 +403,8 @@ public class MoneyWiseReportCapitalGains
      * @param pSecond the second item
      * @return the formatted addition
      */
-    private String formatAddition(final TethysDecimal pFirst,
-                                  final TethysDecimal pSecond) {
+    private String formatAddition(final OceanusDecimal pFirst,
+                                  final OceanusDecimal pSecond) {
         return formatCombination(pFirst, pSecond, '+');
     }
 
@@ -417,8 +417,8 @@ public class MoneyWiseReportCapitalGains
      */
     private void formatSubtraction(final MoneyWiseAnalysisSecurityAttr pAttr,
                                    final Object pValue,
-                                   final TethysDecimal pFirst,
-                                   final TethysDecimal pSecond) {
+                                   final OceanusDecimal pFirst,
+                                   final OceanusDecimal pSecond) {
         /* Ensure that we have an attribute table */
         ensureAttrTable();
 
@@ -435,8 +435,8 @@ public class MoneyWiseReportCapitalGains
      * @param pSecond the second item
      * @return the formatted subtraction
      */
-    private String formatSubtraction(final TethysDecimal pFirst,
-                                     final TethysDecimal pSecond) {
+    private String formatSubtraction(final OceanusDecimal pFirst,
+                                     final OceanusDecimal pSecond) {
         return formatCombination(pFirst, pSecond, '-');
     }
 
@@ -447,8 +447,8 @@ public class MoneyWiseReportCapitalGains
      * @param pSymbol the symbol
      * @return the formatted combination
      */
-    private String formatCombination(final TethysDecimal pFirst,
-                                     final TethysDecimal pSecond,
+    private String formatCombination(final OceanusDecimal pFirst,
+                                     final OceanusDecimal pSecond,
                                      final char pSymbol) {
         theStringBuilder.setLength(0);
         theStringBuilder.append(theFormatter.formatObject(pFirst));
@@ -501,20 +501,20 @@ public class MoneyWiseReportCapitalGains
                                   final MoneyWiseAnalysisSecurityValues pValues) {
 
         /* Access interesting values */
-        final TethysUnits myUnits = pValues.getUnitsValue(MoneyWiseAnalysisSecurityAttr.UNITS);
-        TethysUnits myDeltaUnits = pTrans.getAccountDeltaUnits();
+        final OceanusUnits myUnits = pValues.getUnitsValue(MoneyWiseAnalysisSecurityAttr.UNITS);
+        OceanusUnits myDeltaUnits = pTrans.getAccountDeltaUnits();
         if (myDeltaUnits == null) {
             myDeltaUnits = pTrans.getPartnerDeltaUnits();
         }
-        final TethysMoney myCost = pValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.RESIDUALCOST);
-        final TethysMoney myAmount = theSecurity.getMoneyDeltaForTransaction(pTrans, MoneyWiseAnalysisSecurityAttr.RESIDUALCOST);
-        final TethysPrice myPrice = pValues.getPriceValue(MoneyWiseAnalysisSecurityAttr.PRICE);
-        final TethysRatio myXchangeRate = pValues.getRatioValue(MoneyWiseAnalysisSecurityAttr.EXCHANGERATE);
+        final OceanusMoney myCost = pValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.RESIDUALCOST);
+        final OceanusMoney myAmount = theSecurity.getMoneyDeltaForTransaction(pTrans, MoneyWiseAnalysisSecurityAttr.RESIDUALCOST);
+        final OceanusPrice myPrice = pValues.getPriceValue(MoneyWiseAnalysisSecurityAttr.PRICE);
+        final OceanusRatio myXchangeRate = pValues.getRatioValue(MoneyWiseAnalysisSecurityAttr.EXCHANGERATE);
 
         /* Obtain the original units/cost */
         final MoneyWiseAnalysisSecurityValues myPreviousValues = theSecurity.getPreviousValuesForTransaction(pTrans);
-        final TethysUnits myOriginalUnits = myPreviousValues.getUnitsValue(MoneyWiseAnalysisSecurityAttr.UNITS);
-        final TethysMoney myOriginalCost = myPreviousValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.RESIDUALCOST);
+        final OceanusUnits myOriginalUnits = myPreviousValues.getUnitsValue(MoneyWiseAnalysisSecurityAttr.UNITS);
+        final OceanusMoney myOriginalCost = myPreviousValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.RESIDUALCOST);
 
         /* If this is an inheritance */
         if (pTrans.isCategoryClass(MoneyWiseTransCategoryClass.INHERITED)) {
@@ -538,24 +538,24 @@ public class MoneyWiseReportCapitalGains
     private void formatTransferOut(final MoneyWiseTransaction pTrans,
                                    final MoneyWiseAnalysisSecurityValues pValues) {
         /* Access interesting values */
-        final TethysMoney myGain = pValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.CAPITALGAIN);
-        final TethysMoney myAllowedCost = pValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.ALLOWEDCOST);
-        final TethysRatio myCostDilution = pValues.getRatioValue(MoneyWiseAnalysisSecurityAttr.COSTDILUTION);
-        final TethysMoney myTotalGains = pValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.REALISEDGAINS);
-        final TethysMoney myCost = pValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.RESIDUALCOST);
-        final TethysUnits myUnits = pValues.getUnitsValue(MoneyWiseAnalysisSecurityAttr.UNITS);
-        final TethysMoney myCash = pValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.RETURNEDCASH);
-        final TethysMoney myConsideration = pValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.CONSIDERATION);
+        final OceanusMoney myGain = pValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.CAPITALGAIN);
+        final OceanusMoney myAllowedCost = pValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.ALLOWEDCOST);
+        final OceanusRatio myCostDilution = pValues.getRatioValue(MoneyWiseAnalysisSecurityAttr.COSTDILUTION);
+        final OceanusMoney myTotalGains = pValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.REALISEDGAINS);
+        final OceanusMoney myCost = pValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.RESIDUALCOST);
+        final OceanusUnits myUnits = pValues.getUnitsValue(MoneyWiseAnalysisSecurityAttr.UNITS);
+        final OceanusMoney myCash = pValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.RETURNEDCASH);
+        final OceanusMoney myConsideration = pValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.CONSIDERATION);
         final MoneyWiseCashType myCashType = pValues.getEnumValue(MoneyWiseAnalysisSecurityAttr.CASHTYPE, MoneyWiseCashType.class);
 
         /* Obtain the original values */
         final MoneyWiseAnalysisSecurityValues myPreviousValues = theSecurity.getPreviousValuesForTransaction(pTrans);
-        final TethysMoney myOriginalCost = myPreviousValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.RESIDUALCOST);
-        final TethysUnits myOriginalUnits = myPreviousValues.getUnitsValue(MoneyWiseAnalysisSecurityAttr.UNITS);
+        final OceanusMoney myOriginalCost = myPreviousValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.RESIDUALCOST);
+        final OceanusUnits myOriginalUnits = myPreviousValues.getUnitsValue(MoneyWiseAnalysisSecurityAttr.UNITS);
 
         /* Obtain the delta in units/money */
-        TethysUnits myDeltaUnits = theSecurity.getUnitsDeltaForTransaction(pTrans, MoneyWiseAnalysisSecurityAttr.UNITS);
-        final TethysMoney myAmount = new TethysMoney(myCash);
+        OceanusUnits myDeltaUnits = theSecurity.getUnitsDeltaForTransaction(pTrans, MoneyWiseAnalysisSecurityAttr.UNITS);
+        final OceanusMoney myAmount = new OceanusMoney(myCash);
         myAmount.negate();
 
         /* Report the returned cash */
@@ -567,7 +567,7 @@ public class MoneyWiseReportCapitalGains
         /* If we have changed the number of units */
         if (myDeltaUnits.isNonZero()) {
             /* Obtain the various values */
-            myDeltaUnits = new TethysUnits(myDeltaUnits);
+            myDeltaUnits = new OceanusUnits(myDeltaUnits);
             myDeltaUnits.negate();
 
             /* Format the units */
@@ -579,9 +579,9 @@ public class MoneyWiseReportCapitalGains
             /* Else we need to format the cost dilution */
         } else if (myConsideration != null) {
             /* Format the valuation */
-            final TethysMoney myValuation = pValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.VALUATION);
-            final TethysPrice myPrice = pValues.getPriceValue(MoneyWiseAnalysisSecurityAttr.PRICE);
-            final TethysRatio myXchangeRate = pValues.getRatioValue(MoneyWiseAnalysisSecurityAttr.EXCHANGERATE);
+            final OceanusMoney myValuation = pValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.VALUATION);
+            final OceanusPrice myPrice = pValues.getPriceValue(MoneyWiseAnalysisSecurityAttr.PRICE);
+            final OceanusRatio myXchangeRate = pValues.getRatioValue(MoneyWiseAnalysisSecurityAttr.EXCHANGERATE);
             formatValuation(MoneyWiseAnalysisSecurityAttr.VALUATION, myValuation, myUnits, myPrice, myXchangeRate);
             formatAddition(MoneyWiseAnalysisSecurityAttr.CONSIDERATION, myConsideration, myCash, myValuation);
 
@@ -616,18 +616,18 @@ public class MoneyWiseReportCapitalGains
         formatBasicTransaction(pTrans);
 
         /* Access interesting values */
-        final TethysUnits myUnits = pValues.getUnitsValue(MoneyWiseAnalysisSecurityAttr.UNITS);
-        TethysUnits myDeltaUnits = pTrans.getAccountDeltaUnits();
+        final OceanusUnits myUnits = pValues.getUnitsValue(MoneyWiseAnalysisSecurityAttr.UNITS);
+        OceanusUnits myDeltaUnits = pTrans.getAccountDeltaUnits();
 
         /* Obtain the original units */
         final MoneyWiseAnalysisSecurityValues myPreviousValues = theSecurity.getPreviousValuesForTransaction(pTrans);
-        final TethysUnits myOriginalUnits = myPreviousValues.getUnitsValue(MoneyWiseAnalysisSecurityAttr.UNITS);
+        final OceanusUnits myOriginalUnits = myPreviousValues.getUnitsValue(MoneyWiseAnalysisSecurityAttr.UNITS);
 
         /* Record the details */
         if (myDeltaUnits.isPositive()) {
             formatAddition(MoneyWiseAnalysisSecurityAttr.UNITS, myUnits, myOriginalUnits, myDeltaUnits);
         } else {
-            myDeltaUnits = new TethysUnits(myDeltaUnits);
+            myDeltaUnits = new OceanusUnits(myDeltaUnits);
             myDeltaUnits.negate();
             formatSubtraction(MoneyWiseAnalysisSecurityAttr.UNITS, myUnits, myOriginalUnits, myDeltaUnits);
         }
@@ -659,24 +659,24 @@ public class MoneyWiseReportCapitalGains
     private void formatDebitStockDeMerger(final MoneyWiseTransaction pTrans,
                                           final MoneyWiseAnalysisSecurityValues pValues) {
         /* Access interesting values */
-        final TethysRatio myCostDilution = pValues.getRatioValue(MoneyWiseAnalysisSecurityAttr.COSTDILUTION);
-        final TethysMoney myResidualCost = pValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.RESIDUALCOST);
-        final TethysMoney myXferredCost = pValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.XFERREDCOST);
-        TethysUnits myDeltaUnits = theSecurity.getUnitsDeltaForTransaction(pTrans, MoneyWiseAnalysisSecurityAttr.UNITS);
+        final OceanusRatio myCostDilution = pValues.getRatioValue(MoneyWiseAnalysisSecurityAttr.COSTDILUTION);
+        final OceanusMoney myResidualCost = pValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.RESIDUALCOST);
+        final OceanusMoney myXferredCost = pValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.XFERREDCOST);
+        OceanusUnits myDeltaUnits = theSecurity.getUnitsDeltaForTransaction(pTrans, MoneyWiseAnalysisSecurityAttr.UNITS);
 
         /* Check whether the units have changed */
         final boolean isDeltaUnits = myDeltaUnits.isNonZero();
 
         /* Obtain the original cost */
         final MoneyWiseAnalysisSecurityValues myPreviousValues = theSecurity.getPreviousValuesForTransaction(pTrans);
-        final TethysMoney myOriginalCost = myPreviousValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.RESIDUALCOST);
+        final OceanusMoney myOriginalCost = myPreviousValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.RESIDUALCOST);
 
         /* If we have changed the number of units */
         if (isDeltaUnits) {
             /* Obtain the various values */
-            final TethysUnits myOriginalUnits = myPreviousValues.getUnitsValue(MoneyWiseAnalysisSecurityAttr.UNITS);
-            final TethysUnits myUnits = pValues.getUnitsValue(MoneyWiseAnalysisSecurityAttr.UNITS);
-            myDeltaUnits = new TethysUnits(myDeltaUnits);
+            final OceanusUnits myOriginalUnits = myPreviousValues.getUnitsValue(MoneyWiseAnalysisSecurityAttr.UNITS);
+            final OceanusUnits myUnits = pValues.getUnitsValue(MoneyWiseAnalysisSecurityAttr.UNITS);
+            myDeltaUnits = new OceanusUnits(myDeltaUnits);
             myDeltaUnits.negate();
 
             /* Format the units/dilution */
@@ -701,12 +701,12 @@ public class MoneyWiseReportCapitalGains
     private void formatCreditStockDeMerger(final MoneyWiseTransaction pTrans,
                                            final MoneyWiseAnalysisSecurityValues pValues) {
         /* Access interesting values */
-        final TethysMoney myResidualCost = pValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.RESIDUALCOST);
-        final TethysMoney myXferredCost = pValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.XFERREDCOST);
-        final TethysMoney myValueXfer = pValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.XFERREDVALUE);
-        final TethysUnits myUnits = theSecurity.getUnitsDeltaForTransaction(pTrans, MoneyWiseAnalysisSecurityAttr.UNITS);
-        final TethysPrice myPrice = pValues.getPriceValue(MoneyWiseAnalysisSecurityAttr.PRICE);
-        final TethysRatio myXchangeRate = pValues.getRatioValue(MoneyWiseAnalysisSecurityAttr.EXCHANGERATE);
+        final OceanusMoney myResidualCost = pValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.RESIDUALCOST);
+        final OceanusMoney myXferredCost = pValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.XFERREDCOST);
+        final OceanusMoney myValueXfer = pValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.XFERREDVALUE);
+        final OceanusUnits myUnits = theSecurity.getUnitsDeltaForTransaction(pTrans, MoneyWiseAnalysisSecurityAttr.UNITS);
+        final OceanusPrice myPrice = pValues.getPriceValue(MoneyWiseAnalysisSecurityAttr.PRICE);
+        final OceanusRatio myXchangeRate = pValues.getRatioValue(MoneyWiseAnalysisSecurityAttr.EXCHANGERATE);
 
         /* Record the details */
         formatValuation(MoneyWiseAnalysisSecurityAttr.XFERREDVALUE, myValueXfer, myUnits, myPrice, myXchangeRate);
@@ -725,14 +725,14 @@ public class MoneyWiseReportCapitalGains
         formatBasicTransaction(pTrans);
 
         /* Split out Stock and Cash TakeOver */
-        final TethysMoney myCash = pValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.RETURNEDCASH);
+        final OceanusMoney myCash = pValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.RETURNEDCASH);
         if (myCash != null) {
             formatStockAndCashTakeOver(pTrans, pValues, myCash);
 
             /* Split workings for credit and debit */
         } else if (isDebit(pTrans)) {
             /* Record the transfer of cost for simple replacement takeOver */
-            final TethysMoney myCostXfer = pValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.XFERREDCOST);
+            final OceanusMoney myCostXfer = pValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.XFERREDCOST);
             formatValue(MoneyWiseAnalysisSecurityAttr.XFERREDCOST, myCostXfer);
         } else {
             formatCreditStockTakeOver(pTrans, pValues);
@@ -747,7 +747,7 @@ public class MoneyWiseReportCapitalGains
      */
     private void formatStockAndCashTakeOver(final MoneyWiseTransaction pTrans,
                                             final MoneyWiseAnalysisSecurityValues pValues,
-                                            final TethysMoney pCash) {
+                                            final OceanusMoney pCash) {
         /* Split workings for credit and debit */
         if (isDebit(pTrans)) {
             formatDebitStockAndCashTakeOver(pTrans, pValues, pCash);
@@ -764,15 +764,15 @@ public class MoneyWiseReportCapitalGains
      */
     private void formatDebitStockAndCashTakeOver(final MoneyWiseTransaction pTrans,
                                                  final MoneyWiseAnalysisSecurityValues pValues,
-                                                 final TethysMoney pCash) {
+                                                 final OceanusMoney pCash) {
         /* Access interesting values */
-        final TethysMoney myStock = pValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.XFERREDVALUE);
-        final TethysMoney myConsideration = pValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.CONSIDERATION);
-        final TethysMoney myCostXfer = pValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.XFERREDCOST);
-        final TethysRatio myCostDilution = pValues.getRatioValue(MoneyWiseAnalysisSecurityAttr.COSTDILUTION);
-        final TethysMoney myAllowedCost = pValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.ALLOWEDCOST);
-        final TethysMoney myGain = pValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.CAPITALGAIN);
-        final TethysMoney myTotalGains = pValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.REALISEDGAINS);
+        final OceanusMoney myStock = pValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.XFERREDVALUE);
+        final OceanusMoney myConsideration = pValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.CONSIDERATION);
+        final OceanusMoney myCostXfer = pValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.XFERREDCOST);
+        final OceanusRatio myCostDilution = pValues.getRatioValue(MoneyWiseAnalysisSecurityAttr.COSTDILUTION);
+        final OceanusMoney myAllowedCost = pValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.ALLOWEDCOST);
+        final OceanusMoney myGain = pValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.CAPITALGAIN);
+        final OceanusMoney myTotalGains = pValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.REALISEDGAINS);
         final MoneyWiseCashType myCashType = pValues.getEnumValue(MoneyWiseAnalysisSecurityAttr.CASHTYPE, MoneyWiseCashType.class);
 
         /* Record the calculation of total consideration */
@@ -783,7 +783,7 @@ public class MoneyWiseReportCapitalGains
 
         /* Obtain the original cost */
         final MoneyWiseAnalysisSecurityValues myPreviousValues = theSecurity.getPreviousValuesForTransaction(pTrans);
-        final TethysMoney myOriginalCost = myPreviousValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.RESIDUALCOST);
+        final OceanusMoney myOriginalCost = myPreviousValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.RESIDUALCOST);
 
         /* Format the cost dilution */
         if (myCostDilution != null) {
@@ -809,17 +809,17 @@ public class MoneyWiseReportCapitalGains
     private void formatCreditStockTakeOver(final MoneyWiseTransaction pTrans,
                                            final MoneyWiseAnalysisSecurityValues pValues) {
         /* Access interesting values */
-        final TethysPrice myPrice = pValues.getPriceValue(MoneyWiseAnalysisSecurityAttr.PRICE);
-        final TethysUnits myUnits = theSecurity.getUnitsDeltaForTransaction(pTrans, MoneyWiseAnalysisSecurityAttr.UNITS);
-        final TethysMoney myValueXfer = pValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.XFERREDVALUE);
-        final TethysMoney myCostXfer = pValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.XFERREDCOST);
-        final TethysMoney myResidualCost = pValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.RESIDUALCOST);
-        final TethysRatio myXchangeRate = pValues.getRatioValue(MoneyWiseAnalysisSecurityAttr.EXCHANGERATE);
+        final OceanusPrice myPrice = pValues.getPriceValue(MoneyWiseAnalysisSecurityAttr.PRICE);
+        final OceanusUnits myUnits = theSecurity.getUnitsDeltaForTransaction(pTrans, MoneyWiseAnalysisSecurityAttr.UNITS);
+        final OceanusMoney myValueXfer = pValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.XFERREDVALUE);
+        final OceanusMoney myCostXfer = pValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.XFERREDCOST);
+        final OceanusMoney myResidualCost = pValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.RESIDUALCOST);
+        final OceanusRatio myXchangeRate = pValues.getRatioValue(MoneyWiseAnalysisSecurityAttr.EXCHANGERATE);
 
         /* Detail the new units and cost */
         final MoneyWiseAnalysisSecurityValues myPreviousValues = theSecurity.getPreviousValuesForTransaction(pTrans);
-        final TethysUnits myNewUnits = pValues.getUnitsValue(MoneyWiseAnalysisSecurityAttr.UNITS);
-        final TethysUnits myOriginalUnits = myPreviousValues.getUnitsValue(MoneyWiseAnalysisSecurityAttr.UNITS);
+        final OceanusUnits myNewUnits = pValues.getUnitsValue(MoneyWiseAnalysisSecurityAttr.UNITS);
+        final OceanusUnits myOriginalUnits = myPreviousValues.getUnitsValue(MoneyWiseAnalysisSecurityAttr.UNITS);
         formatAddition(MoneyWiseAnalysisSecurityAttr.UNITS, myNewUnits, myOriginalUnits, myUnits);
 
         /* Record the transfer of value and cost */
@@ -839,18 +839,18 @@ public class MoneyWiseReportCapitalGains
         formatBasicTransaction(pTrans);
 
         /* Determine the direction of transfer */
-        final TethysMoney myCostXfer = pValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.XFERREDCOST);
+        final OceanusMoney myCostXfer = pValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.XFERREDCOST);
         formatValue(MoneyWiseAnalysisSecurityAttr.XFERREDCOST, myCostXfer);
 
-        final TethysUnits myUnits = theSecurity.getUnitsDeltaForTransaction(pTrans, MoneyWiseAnalysisSecurityAttr.UNITS);
+        final OceanusUnits myUnits = theSecurity.getUnitsDeltaForTransaction(pTrans, MoneyWiseAnalysisSecurityAttr.UNITS);
         if (myUnits.isPositive()) {
             /* Detail the new units and cost */
             final MoneyWiseAnalysisSecurityValues myPreviousValues = theSecurity.getPreviousValuesForTransaction(pTrans);
-            final TethysUnits myNewUnits = pValues.getUnitsValue(MoneyWiseAnalysisSecurityAttr.UNITS);
-            final TethysUnits myOriginalUnits = myPreviousValues.getUnitsValue(MoneyWiseAnalysisSecurityAttr.UNITS);
+            final OceanusUnits myNewUnits = pValues.getUnitsValue(MoneyWiseAnalysisSecurityAttr.UNITS);
+            final OceanusUnits myOriginalUnits = myPreviousValues.getUnitsValue(MoneyWiseAnalysisSecurityAttr.UNITS);
             formatAddition(MoneyWiseAnalysisSecurityAttr.UNITS, myNewUnits, myOriginalUnits, myUnits);
-            final TethysMoney myCost = pValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.RESIDUALCOST);
-            final TethysMoney myOriginalCost = myPreviousValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.RESIDUALCOST);
+            final OceanusMoney myCost = pValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.RESIDUALCOST);
+            final OceanusMoney myOriginalCost = myPreviousValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.RESIDUALCOST);
             formatAddition(MoneyWiseAnalysisSecurityAttr.RESIDUALCOST, myCost, myOriginalCost, myCostXfer);
         }
     }

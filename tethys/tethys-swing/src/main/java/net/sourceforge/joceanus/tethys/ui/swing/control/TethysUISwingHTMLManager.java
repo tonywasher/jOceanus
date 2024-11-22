@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Tethys: Java Utilities
+ * Tethys: GUI Utilities
  * Copyright 2012,2024 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,8 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.tethys.ui.swing.control;
 
-import net.sourceforge.joceanus.tethys.logger.TethysLogManager;
-import net.sourceforge.joceanus.tethys.logger.TethysLogger;
+import net.sourceforge.joceanus.oceanus.logger.OceanusLogManager;
+import net.sourceforge.joceanus.oceanus.logger.OceanusLogger;
 import net.sourceforge.joceanus.tethys.ui.core.factory.TethysUICoreFactory;
 import net.sourceforge.joceanus.tethys.ui.core.control.TethysUICoreHTMLManager;
 import net.sourceforge.joceanus.tethys.ui.swing.base.TethysUISwingNode;
@@ -42,7 +42,7 @@ public class TethysUISwingHTMLManager
     /**
      * The logger.
      */
-    private static final TethysLogger LOGGER = TethysLogManager.getLogger(TethysUISwingHTMLManager.class);
+    private static final OceanusLogger LOGGER = OceanusLogManager.getLogger(TethysUISwingHTMLManager.class);
 
     /**
      * The stream close error.

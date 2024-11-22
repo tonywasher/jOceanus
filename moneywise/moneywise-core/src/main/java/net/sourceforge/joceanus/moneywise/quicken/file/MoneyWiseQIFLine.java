@@ -21,13 +21,13 @@ import java.util.Iterator;
 import java.util.List;
 
 import net.sourceforge.joceanus.moneywise.quicken.definitions.MoneyWiseQLineType;
-import net.sourceforge.joceanus.tethys.date.TethysDate;
-import net.sourceforge.joceanus.tethys.decimal.TethysDecimal;
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
-import net.sourceforge.joceanus.tethys.decimal.TethysPrice;
-import net.sourceforge.joceanus.tethys.decimal.TethysRate;
-import net.sourceforge.joceanus.tethys.decimal.TethysRatio;
-import net.sourceforge.joceanus.tethys.decimal.TethysUnits;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimal;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRate;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRatio;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusUnits;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
 
 /**
@@ -204,13 +204,13 @@ public abstract class MoneyWiseQIFLine<T extends MoneyWiseQLineType> {
         /**
          * The money.
          */
-        private final TethysMoney theMoney;
+        private final OceanusMoney theMoney;
 
         /**
          * Constructor.
          * @param pMoney the Money
          */
-        protected MoneyWiseQIFMoneyLine(final TethysMoney pMoney) {
+        protected MoneyWiseQIFMoneyLine(final OceanusMoney pMoney) {
             /* Store data */
             theMoney = pMoney;
         }
@@ -224,7 +224,7 @@ public abstract class MoneyWiseQIFLine<T extends MoneyWiseQLineType> {
          * Obtain Money.
          * @return the money
          */
-        protected TethysMoney getMoney() {
+        protected OceanusMoney getMoney() {
             return theMoney;
         }
 
@@ -232,7 +232,7 @@ public abstract class MoneyWiseQIFLine<T extends MoneyWiseQLineType> {
         protected void formatData(final TethysUIDataFormatter pFormatter,
                                   final StringBuilder pBuilder) {
             /* Convert to Decimal */
-            final TethysDecimal myDecimal = new TethysDecimal(theMoney);
+            final OceanusDecimal myDecimal = new OceanusDecimal(theMoney);
 
             /* Append the string data */
             pBuilder.append(pFormatter.formatObject(myDecimal));
@@ -281,13 +281,13 @@ public abstract class MoneyWiseQIFLine<T extends MoneyWiseQLineType> {
         /**
          * The date.
          */
-        private final TethysDate theDate;
+        private final OceanusDate theDate;
 
         /**
          * Constructor.
          * @param pDate the Date
          */
-        protected MoneyWiseQIFDateLine(final TethysDate pDate) {
+        protected MoneyWiseQIFDateLine(final OceanusDate pDate) {
             /* Store the date */
             theDate = pDate;
         }
@@ -301,7 +301,7 @@ public abstract class MoneyWiseQIFLine<T extends MoneyWiseQLineType> {
          * Obtain Date.
          * @return the date
          */
-        public TethysDate getDate() {
+        public OceanusDate getDate() {
             return theDate;
         }
 
@@ -456,13 +456,13 @@ public abstract class MoneyWiseQIFLine<T extends MoneyWiseQLineType> {
         /**
          * The price.
          */
-        private final TethysPrice thePrice;
+        private final OceanusPrice thePrice;
 
         /**
          * Constructor.
          * @param pPrice the Price
          */
-        protected MoneyWiseQIFPriceLine(final TethysPrice pPrice) {
+        protected MoneyWiseQIFPriceLine(final OceanusPrice pPrice) {
             /* Store data */
             thePrice = pPrice;
         }
@@ -476,7 +476,7 @@ public abstract class MoneyWiseQIFLine<T extends MoneyWiseQLineType> {
          * Obtain price.
          * @return the price
          */
-        protected TethysPrice getPrice() {
+        protected OceanusPrice getPrice() {
             return thePrice;
         }
 
@@ -484,7 +484,7 @@ public abstract class MoneyWiseQIFLine<T extends MoneyWiseQLineType> {
         protected void formatData(final TethysUIDataFormatter pFormatter,
                                   final StringBuilder pBuilder) {
             /* Convert to Decimal */
-            final TethysDecimal myDecimal = new TethysDecimal(thePrice);
+            final OceanusDecimal myDecimal = new OceanusDecimal(thePrice);
 
             /* Append the string data */
             pBuilder.append(pFormatter.formatObject(myDecimal));
@@ -533,13 +533,13 @@ public abstract class MoneyWiseQIFLine<T extends MoneyWiseQLineType> {
         /**
          * The units.
          */
-        private final TethysUnits theUnits;
+        private final OceanusUnits theUnits;
 
         /**
          * Constructor.
          * @param pUnits the Units
          */
-        protected MoneyWiseQIFUnitsLine(final TethysUnits pUnits) {
+        protected MoneyWiseQIFUnitsLine(final OceanusUnits pUnits) {
             /* Store data */
             theUnits = pUnits;
         }
@@ -553,7 +553,7 @@ public abstract class MoneyWiseQIFLine<T extends MoneyWiseQLineType> {
          * Obtain units.
          * @return the units
          */
-        protected TethysUnits getUnits() {
+        protected OceanusUnits getUnits() {
             return theUnits;
         }
 
@@ -607,13 +607,13 @@ public abstract class MoneyWiseQIFLine<T extends MoneyWiseQLineType> {
         /**
          * The Rate.
          */
-        private final TethysRate theRate;
+        private final OceanusRate theRate;
 
         /**
          * Constructor.
          * @param pPercent the percentage
          */
-        protected MoneyWiseQIFRateLine(final TethysRate pPercent) {
+        protected MoneyWiseQIFRateLine(final OceanusRate pPercent) {
             /* Store data */
             theRate = pPercent;
         }
@@ -627,7 +627,7 @@ public abstract class MoneyWiseQIFLine<T extends MoneyWiseQLineType> {
          * Obtain rate.
          * @return the rate
          */
-        protected TethysRate getRate() {
+        protected OceanusRate getRate() {
             return theRate;
         }
 
@@ -681,13 +681,13 @@ public abstract class MoneyWiseQIFLine<T extends MoneyWiseQLineType> {
         /**
          * The ratio.
          */
-        private final TethysRatio theRatio;
+        private final OceanusRatio theRatio;
 
         /**
          * Constructor.
          * @param pRatio the Ratio
          */
-        protected MoneyWiseQIFRatioLine(final TethysRatio pRatio) {
+        protected MoneyWiseQIFRatioLine(final OceanusRatio pRatio) {
             /* Store data */
             theRatio = pRatio;
         }
@@ -701,7 +701,7 @@ public abstract class MoneyWiseQIFLine<T extends MoneyWiseQLineType> {
          * Obtain ratio.
          * @return the ratio
          */
-        protected TethysRatio getRatio() {
+        protected OceanusRatio getRatio() {
             return theRatio;
         }
 

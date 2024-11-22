@@ -28,11 +28,11 @@ import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransCategory;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransaction;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrency;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransCategoryClass;
-import net.sourceforge.joceanus.tethys.date.TethysDate;
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
-import net.sourceforge.joceanus.tethys.decimal.TethysPrice;
-import net.sourceforge.joceanus.tethys.decimal.TethysRatio;
-import net.sourceforge.joceanus.tethys.decimal.TethysUnits;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRatio;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusUnits;
 
 /**
  * Transaction Analysis Helper.
@@ -61,7 +61,7 @@ public class MoneyWiseAnalysisTransactionHelper {
     /**
      * The current date.
      */
-    private TethysDate theDate;
+    private OceanusDate theDate;
 
     /**
      * The account detail.
@@ -71,7 +71,7 @@ public class MoneyWiseAnalysisTransactionHelper {
     /**
      * The debit XchangeRate.
      */
-    private TethysRatio theDebitXchangeRate;
+    private OceanusRatio theDebitXchangeRate;
 
     /**
      * Constructor.
@@ -122,7 +122,7 @@ public class MoneyWiseAnalysisTransactionHelper {
      * Obtain date.
      * @return the date
      */
-    public TethysDate getDate() {
+    public OceanusDate getDate() {
         return theDate;
     }
 
@@ -195,7 +195,7 @@ public class MoneyWiseAnalysisTransactionHelper {
      * Obtain debit amount.
      * @return the debit amount.
      */
-    public TethysMoney getDebitAmount() {
+    public OceanusMoney getDebitAmount() {
         return theAccountDetail.getDebitAmount();
     }
 
@@ -203,7 +203,7 @@ public class MoneyWiseAnalysisTransactionHelper {
      * Obtain local amount.
      * @return the amount.
      */
-    public TethysMoney getLocalAmount() {
+    public OceanusMoney getLocalAmount() {
         return theAccountDetail.getLocalAmount();
     }
 
@@ -211,7 +211,7 @@ public class MoneyWiseAnalysisTransactionHelper {
      * Obtain credit amount.
      * @return the credit amount.
      */
-    public TethysMoney getCreditAmount() {
+    public OceanusMoney getCreditAmount() {
         return theAccountDetail.getCreditAmount();
     }
 
@@ -219,7 +219,7 @@ public class MoneyWiseAnalysisTransactionHelper {
      * Obtain local returnedCash.
      * @return the returnedCash.
      */
-    public TethysMoney getLocalReturnedCash() {
+    public OceanusMoney getLocalReturnedCash() {
         return theAccountDetail.getLocalReturnedCash();
     }
 
@@ -227,7 +227,7 @@ public class MoneyWiseAnalysisTransactionHelper {
      * Obtain returnedCash.
      * @return the returned cash.
      */
-    public TethysMoney getReturnedCash() {
+    public OceanusMoney getReturnedCash() {
         return theAccountDetail.getReturnedCash();
     }
 
@@ -235,7 +235,7 @@ public class MoneyWiseAnalysisTransactionHelper {
      * Obtain tax credit.
      * @return the tax credit.
      */
-    public TethysMoney getTaxCredit() {
+    public OceanusMoney getTaxCredit() {
         return theAccountDetail.getTaxCredit();
     }
 
@@ -243,7 +243,7 @@ public class MoneyWiseAnalysisTransactionHelper {
      * Obtain employer national insurance.
      * @return the national insurance.
      */
-    public TethysMoney getEmployerNatIns() {
+    public OceanusMoney getEmployerNatIns() {
         return theAccountDetail.getEmployerNatIns();
     }
 
@@ -251,7 +251,7 @@ public class MoneyWiseAnalysisTransactionHelper {
      * Obtain employee national insurance.
      * @return the national insurance.
      */
-    public TethysMoney getEmployeeNatIns() {
+    public OceanusMoney getEmployeeNatIns() {
         return theAccountDetail.getEmployeeNatIns();
     }
 
@@ -259,7 +259,7 @@ public class MoneyWiseAnalysisTransactionHelper {
      * Obtain benefit.
      * @return the benefit.
      */
-    public TethysMoney getDeemedBenefit() {
+    public OceanusMoney getDeemedBenefit() {
         return theAccountDetail.getBenefit();
     }
 
@@ -267,7 +267,7 @@ public class MoneyWiseAnalysisTransactionHelper {
      * Obtain withheld.
      * @return the withheld.
      */
-    public TethysMoney getWithheld() {
+    public OceanusMoney getWithheld() {
         return theAccountDetail.getWithheld();
     }
 
@@ -283,12 +283,12 @@ public class MoneyWiseAnalysisTransactionHelper {
      * Obtain debit units.
      * @return the debit units
      */
-    public TethysUnits getDebitUnits() {
-        TethysUnits myUnits = getDirection().isTo()
+    public OceanusUnits getDebitUnits() {
+        OceanusUnits myUnits = getDirection().isTo()
                 ? getAccountDeltaUnits()
                 : getPartnerDeltaUnits();
         if (myUnits != null) {
-            myUnits = new TethysUnits(myUnits);
+            myUnits = new OceanusUnits(myUnits);
             myUnits.negate();
         }
         return myUnits;
@@ -298,7 +298,7 @@ public class MoneyWiseAnalysisTransactionHelper {
      * Obtain credit units.
      * @return the debit units
      */
-    public TethysUnits getCreditUnits() {
+    public OceanusUnits getCreditUnits() {
         return getDirection().isFrom()
                 ? getAccountDeltaUnits()
                 : getPartnerDeltaUnits();
@@ -308,7 +308,7 @@ public class MoneyWiseAnalysisTransactionHelper {
      * Obtain account delta units.
      * @return the delta units
      */
-    public TethysUnits getAccountDeltaUnits() {
+    public OceanusUnits getAccountDeltaUnits() {
         return theAccountDetail.getAccountDeltaUnits();
     }
 
@@ -316,7 +316,7 @@ public class MoneyWiseAnalysisTransactionHelper {
      * Obtain partner delta units.
      * @return the delta units
      */
-    public TethysUnits getPartnerDeltaUnits() {
+    public OceanusUnits getPartnerDeltaUnits() {
         return theAccountDetail.getPartnerDeltaUnits();
     }
 
@@ -324,7 +324,7 @@ public class MoneyWiseAnalysisTransactionHelper {
      * Obtain dilution.
      * @return the dilution
      */
-    public TethysRatio getDilution() {
+    public OceanusRatio getDilution() {
         return theAccountDetail.getDilution();
     }
 
@@ -332,7 +332,7 @@ public class MoneyWiseAnalysisTransactionHelper {
      * Obtain debit price.
      * @return the debit price
      */
-    public TethysPrice getDebitPrice() {
+    public OceanusPrice getDebitPrice() {
         return theAccountDetail.getDebitPrice();
     }
 
@@ -340,7 +340,7 @@ public class MoneyWiseAnalysisTransactionHelper {
      * Obtain credit price.
      * @return the credit price
      */
-    public TethysPrice getCreditPrice() {
+    public OceanusPrice getCreditPrice() {
         return theAccountDetail.getCreditPrice();
     }
 
@@ -348,7 +348,7 @@ public class MoneyWiseAnalysisTransactionHelper {
      * Obtain debit exchangeRate.
      * @return the rate
      */
-    public TethysRatio getDebitExchangeRate() {
+    public OceanusRatio getDebitExchangeRate() {
         return theDebitXchangeRate;
     }
 
@@ -356,7 +356,7 @@ public class MoneyWiseAnalysisTransactionHelper {
      * Obtain credit exchangeRate.
      * @return the rate
      */
-    public TethysRatio getCreditExchangeRate() {
+    public OceanusRatio getCreditExchangeRate() {
         return theAccountDetail.getCreditExchangeRate();
     }
 
@@ -364,7 +364,7 @@ public class MoneyWiseAnalysisTransactionHelper {
      * Obtain returnedCash exchangeRate.
      * @return the rate
      */
-    public TethysRatio getReturnedCashExchangeRate() {
+    public OceanusRatio getReturnedCashExchangeRate() {
         return theAccountDetail.getReturnedCashExchangeRate();
     }
 
@@ -374,8 +374,8 @@ public class MoneyWiseAnalysisTransactionHelper {
      * @param pDate the date for the conversion
      * @return the reporting amount
      */
-    protected TethysRatio getExchangeRate(final MoneyWiseCurrency pCurrency,
-                                          final TethysDate pDate) {
+    protected OceanusRatio getExchangeRate(final MoneyWiseCurrency pCurrency,
+                                           final OceanusDate pDate) {
         return theRateCursor.getExchangeRate(pCurrency, pDate);
     }
 
@@ -406,7 +406,7 @@ public class MoneyWiseAnalysisTransactionHelper {
         /**
          * The amount.
          */
-        private final TethysMoney theAmount;
+        private final OceanusMoney theAmount;
 
         /**
          * The ReturnedCashAccount.
@@ -416,57 +416,57 @@ public class MoneyWiseAnalysisTransactionHelper {
         /**
          * The returnedCash.
          */
-        private final TethysMoney theReturnedCash;
+        private final OceanusMoney theReturnedCash;
 
         /**
          * The tax credit.
          */
-        private final TethysMoney theTaxCredit;
+        private final OceanusMoney theTaxCredit;
 
         /**
          * The Employer natIns.
          */
-        private final TethysMoney theEmployerNatIns;
+        private final OceanusMoney theEmployerNatIns;
 
         /**
          * The Employee natIns.
          */
-        private final TethysMoney theEmployeeNatIns;
+        private final OceanusMoney theEmployeeNatIns;
 
         /**
          * The benefit amount.
          */
-        private final TethysMoney theBenefit;
+        private final OceanusMoney theBenefit;
 
         /**
          * The withheld amount.
          */
-        private final TethysMoney theWithheld;
+        private final OceanusMoney theWithheld;
 
         /**
          * The account delta units.
          */
-        private final TethysUnits theAccountUnits;
+        private final OceanusUnits theAccountUnits;
 
         /**
          * The partner delta units.
          */
-        private final TethysUnits thePartnerUnits;
+        private final OceanusUnits thePartnerUnits;
 
         /**
          * The dilution.
          */
-        private final TethysRatio theDilution;
+        private final OceanusRatio theDilution;
 
         /**
          * The account price.
          */
-        private final TethysPrice theAccountPrice;
+        private final OceanusPrice theAccountPrice;
 
         /**
          * The partner price.
          */
-        private final TethysPrice thePartnerPrice;
+        private final OceanusPrice thePartnerPrice;
 
         /**
          * The foreign account details.
@@ -503,9 +503,9 @@ public class MoneyWiseAnalysisTransactionHelper {
             theDilution = theCurrent.getDilution();
 
             /* Obtain the amounts */
-            final TethysMoney myAmount = theCurrent.getAmount();
-            final TethysMoney myPartnerAmount = theCurrent.getPartnerAmount();
-            final TethysMoney myReturnedCash = theCurrent.getReturnedCash();
+            final OceanusMoney myAmount = theCurrent.getAmount();
+            final OceanusMoney myPartnerAmount = theCurrent.getPartnerAmount();
+            final OceanusMoney myReturnedCash = theCurrent.getReturnedCash();
 
             /* Determine account prices */
             theAccountPrice = theAccount instanceof MoneyWiseSecurityHolding
@@ -631,7 +631,7 @@ public class MoneyWiseAnalysisTransactionHelper {
          * Obtain debit amount.
          * @return the debit amount
          */
-        private TethysMoney getDebitAmount() {
+        private OceanusMoney getDebitAmount() {
             return theDirection.isFrom()
                     ? theForeignPartner == null
                     ? theAmount
@@ -645,7 +645,7 @@ public class MoneyWiseAnalysisTransactionHelper {
          * Obtain local debit amount.
          * @return the local debit amount
          */
-        private TethysMoney getLocalAmount() {
+        private OceanusMoney getLocalAmount() {
             return theAmount;
         }
 
@@ -653,7 +653,7 @@ public class MoneyWiseAnalysisTransactionHelper {
          * Obtain credit amount.
          * @return the credit amount
          */
-        private TethysMoney getCreditAmount() {
+        private OceanusMoney getCreditAmount() {
             return theDirection.isTo()
                     ? theForeignPartner == null
                     ? theAmount
@@ -667,7 +667,7 @@ public class MoneyWiseAnalysisTransactionHelper {
          * Obtain local returnedCash.
          * @return the local returnedCash
          */
-        private TethysMoney getLocalReturnedCash() {
+        private OceanusMoney getLocalReturnedCash() {
             return theReturnedCash;
         }
 
@@ -675,7 +675,7 @@ public class MoneyWiseAnalysisTransactionHelper {
          * Obtain returnedCash.
          * @return the returnedCash
          */
-        private TethysMoney getReturnedCash() {
+        private OceanusMoney getReturnedCash() {
             return theForeignReturnedCash == null
                     ? theReturnedCash
                     : theForeignReturnedCash.theBase;
@@ -685,7 +685,7 @@ public class MoneyWiseAnalysisTransactionHelper {
          * Obtain debit price.
          * @return the debit price
          */
-        private TethysPrice getDebitPrice() {
+        private OceanusPrice getDebitPrice() {
             return theDirection.isFrom()
                     ? thePartnerPrice
                     : theAccountPrice;
@@ -695,7 +695,7 @@ public class MoneyWiseAnalysisTransactionHelper {
          * Obtain credit price.
          * @return the credit price
          */
-        private TethysPrice getCreditPrice() {
+        private OceanusPrice getCreditPrice() {
             return theDirection.isTo()
                     ? thePartnerPrice
                     : theAccountPrice;
@@ -705,7 +705,7 @@ public class MoneyWiseAnalysisTransactionHelper {
          * Obtain debit exchangeRate.
          * @return the rate
          */
-        private TethysRatio getDebitExchangeRate() {
+        private OceanusRatio getDebitExchangeRate() {
             return theDirection.isTo()
                     ? theForeignAccount == null
                     ? null
@@ -719,7 +719,7 @@ public class MoneyWiseAnalysisTransactionHelper {
          * Obtain credit exchangeRate.
          * @return the rate
          */
-        private TethysRatio getCreditExchangeRate() {
+        private OceanusRatio getCreditExchangeRate() {
             return theDirection.isTo()
                     ? theForeignPartner == null
                     ? null
@@ -733,7 +733,7 @@ public class MoneyWiseAnalysisTransactionHelper {
          * Obtain thirdParty exchangeRate.
          * @return the rate
          */
-        private TethysRatio getReturnedCashExchangeRate() {
+        private OceanusRatio getReturnedCashExchangeRate() {
             return theForeignReturnedCash == null
                     ? null
                     : theForeignReturnedCash.theExchangeRate;
@@ -743,7 +743,7 @@ public class MoneyWiseAnalysisTransactionHelper {
          * Obtain taxCredit.
          * @return the tax credit
          */
-        private TethysMoney getTaxCredit() {
+        private OceanusMoney getTaxCredit() {
             return theForeignAccount != null
                     ? theForeignAccount.theTaxCredit
                     : theTaxCredit;
@@ -753,7 +753,7 @@ public class MoneyWiseAnalysisTransactionHelper {
          * Obtain employer natInsurance.
          * @return the national insurance
          */
-        private TethysMoney getEmployerNatIns() {
+        private OceanusMoney getEmployerNatIns() {
             return theForeignAccount != null
                     ? theForeignAccount.theEmployerNatIns
                     : theEmployerNatIns;
@@ -763,7 +763,7 @@ public class MoneyWiseAnalysisTransactionHelper {
          * Obtain employee natInsurance.
          * @return the national insurance
          */
-        private TethysMoney getEmployeeNatIns() {
+        private OceanusMoney getEmployeeNatIns() {
             return theForeignAccount != null
                     ? theForeignAccount.theEmployeeNatIns
                     : theEmployeeNatIns;
@@ -773,7 +773,7 @@ public class MoneyWiseAnalysisTransactionHelper {
          * Obtain benefit.
          * @return the benefit
          */
-        private TethysMoney getBenefit() {
+        private OceanusMoney getBenefit() {
             return theForeignAccount != null
                     ? theForeignAccount.theBenefit
                     : theBenefit;
@@ -783,7 +783,7 @@ public class MoneyWiseAnalysisTransactionHelper {
          * Obtain donation.
          * @return the donation
          */
-        private TethysMoney getWithheld() {
+        private OceanusMoney getWithheld() {
             return theForeignAccount != null
                     ? theForeignAccount.theWithheld
                     : theWithheld;
@@ -793,7 +793,7 @@ public class MoneyWiseAnalysisTransactionHelper {
          * Obtain account delta units.
          * @return the delta units
          */
-        private TethysUnits getAccountDeltaUnits() {
+        private OceanusUnits getAccountDeltaUnits() {
             return theAccountUnits;
         }
 
@@ -801,7 +801,7 @@ public class MoneyWiseAnalysisTransactionHelper {
          * Obtain partner delta units.
          * @return the partner delta units
          */
-        private TethysUnits getPartnerDeltaUnits() {
+        private OceanusUnits getPartnerDeltaUnits() {
             return thePartnerUnits;
         }
 
@@ -809,7 +809,7 @@ public class MoneyWiseAnalysisTransactionHelper {
          * Obtain dilution.
          * @return the dilution
          */
-        private TethysRatio getDilution() {
+        private OceanusRatio getDilution() {
             return theDilution;
         }
     }
@@ -821,42 +821,42 @@ public class MoneyWiseAnalysisTransactionHelper {
         /**
          * The exchange rate.
          */
-        private final TethysRatio theExchangeRate;
+        private final OceanusRatio theExchangeRate;
 
         /**
          * The base amount.
          */
-        private final TethysMoney theBase;
+        private final OceanusMoney theBase;
 
         /**
          * The amount.
          */
-        private final TethysMoney theAmount;
+        private final OceanusMoney theAmount;
 
         /**
          * The tax credit.
          */
-        private final TethysMoney theTaxCredit;
+        private final OceanusMoney theTaxCredit;
 
         /**
          * The employer natInsurance.
          */
-        private final TethysMoney theEmployerNatIns;
+        private final OceanusMoney theEmployerNatIns;
 
         /**
          * The employee natInsurance.
          */
-        private final TethysMoney theEmployeeNatIns;
+        private final OceanusMoney theEmployeeNatIns;
 
         /**
          * The benefit amount.
          */
-        private final TethysMoney theBenefit;
+        private final OceanusMoney theBenefit;
 
         /**
          * The withheld amount.
          */
-        private final TethysMoney theWithheld;
+        private final OceanusMoney theWithheld;
 
         /**
          * Constructor.
@@ -866,11 +866,11 @@ public class MoneyWiseAnalysisTransactionHelper {
          */
         private ForeignAccountDetail(final TransactionDetail pTrans,
                                      final MoneyWiseCurrency pCurrency,
-                                     final TethysMoney pAmount) {
+                                     final OceanusMoney pAmount) {
             /* Obtain the required exchange rate */
             theBase = pAmount;
-            final TethysRatio myEventRate = theCurrent.getExchangeRate();
-            final TethysRatio myRate = myEventRate == null
+            final OceanusRatio myEventRate = theCurrent.getExchangeRate();
+            final OceanusRatio myRate = myEventRate == null
                     ? theRateCursor.getExchangeRate(pCurrency, theDate)
                     : myEventRate;
             theExchangeRate = myRate;
@@ -882,7 +882,7 @@ public class MoneyWiseAnalysisTransactionHelper {
                     : null;
 
             /* Obtain tax value */
-            TethysMoney myValue = pTrans.theTaxCredit;
+            OceanusMoney myValue = pTrans.theTaxCredit;
             theTaxCredit = myValue != null
                     ? myValue.convertCurrency(myCurrency, myRate)
                     : null;
@@ -919,17 +919,17 @@ public class MoneyWiseAnalysisTransactionHelper {
         /**
          * The exchange rate.
          */
-        private final TethysRatio theExchangeRate;
+        private final OceanusRatio theExchangeRate;
 
         /**
          * The base amount.
          */
-        private final TethysMoney theBase;
+        private final OceanusMoney theBase;
 
         /**
          * The local amount.
          */
-        private final TethysMoney theAmount;
+        private final OceanusMoney theAmount;
 
         /**
          * Constructor.
@@ -937,11 +937,11 @@ public class MoneyWiseAnalysisTransactionHelper {
          * @param pAmount the amount
          */
         private ForeignPartnerDetail(final MoneyWiseCurrency pCurrency,
-                                     final TethysMoney pAmount) {
+                                     final OceanusMoney pAmount) {
             /* Obtain the required exchange rate */
             theBase = pAmount;
             theExchangeRate = theRateCursor.getExchangeRate(pCurrency, theDate);
-            final TethysRatio myRate = theExchangeRate;
+            final OceanusRatio myRate = theExchangeRate;
             final Currency myCurrency = theCurrency.getCurrency();
 
             /* Obtain local amount */

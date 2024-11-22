@@ -32,10 +32,10 @@ import net.sourceforge.joceanus.metis.field.MetisFieldItem;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.metis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.metis.toolkit.MetisToolkit;
-import net.sourceforge.joceanus.tethys.date.TethysDate;
-import net.sourceforge.joceanus.tethys.event.TethysEventManager;
-import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar;
-import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.TethysEventProvider;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
 
 /**
@@ -65,17 +65,17 @@ public class CoeusMarketCache
     /**
      * The Event Manager.
      */
-    private final TethysEventManager<CoeusDataEvent> theEventManager;
+    private final OceanusEventManager<CoeusDataEvent> theEventManager;
 
     /**
      * The Map of MarketSnapShots.
      */
-    private final Map<CoeusMarketProvider, Map<TethysDate, CoeusMarketSnapShot>> theSnapShotMap;
+    private final Map<CoeusMarketProvider, Map<OceanusDate, CoeusMarketSnapShot>> theSnapShotMap;
 
     /**
      * The Map of MarketAnnuals.
      */
-    private final Map<CoeusMarketProvider, Map<TethysDate, CoeusMarketAnnual>> theAnnualMap;
+    private final Map<CoeusMarketProvider, Map<OceanusDate, CoeusMarketAnnual>> theAnnualMap;
 
     /**
      * Preferences.
@@ -98,7 +98,7 @@ public class CoeusMarketCache
      */
     public CoeusMarketCache(final MetisToolkit pToolkit) {
         /* Create Event Manager */
-        theEventManager = new TethysEventManager<>();
+        theEventManager = new OceanusEventManager<>();
 
         /* Create the maps */
         theSnapShotMap = new EnumMap<>(CoeusMarketProvider.class);
@@ -115,7 +115,7 @@ public class CoeusMarketCache
     }
 
     @Override
-    public TethysEventRegistrar<CoeusDataEvent> getEventRegistrar() {
+    public OceanusEventRegistrar<CoeusDataEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -131,7 +131,7 @@ public class CoeusMarketCache
      * Obtain the snapShotMap.
      * @return the map
      */
-    private Map<CoeusMarketProvider, Map<TethysDate, CoeusMarketSnapShot>> snapShotMap() {
+    private Map<CoeusMarketProvider, Map<OceanusDate, CoeusMarketSnapShot>> snapShotMap() {
         return theSnapShotMap;
     }
 
@@ -139,7 +139,7 @@ public class CoeusMarketCache
      * Obtain the annualMap.
      * @return the map
      */
-    private Map<CoeusMarketProvider, Map<TethysDate, CoeusMarketAnnual>> annualMap() {
+    private Map<CoeusMarketProvider, Map<OceanusDate, CoeusMarketAnnual>> annualMap() {
         return theAnnualMap;
     }
 
@@ -150,9 +150,9 @@ public class CoeusMarketCache
      * @return the snapShot
      */
     public CoeusMarketSnapShot getSnapShot(final CoeusMarketProvider pProvider,
-                                           final TethysDate pDate) {
+                                           final OceanusDate pDate) {
         /* Obtain the map for the snapShot */
-        final Map<TethysDate, CoeusMarketSnapShot> myMap = theSnapShotMap.computeIfAbsent(pProvider, p -> new HashMap<>());
+        final Map<OceanusDate, CoeusMarketSnapShot> myMap = theSnapShotMap.computeIfAbsent(pProvider, p -> new HashMap<>());
 
         /* Obtain the snapShot */
         CoeusMarketSnapShot mySnapShot = myMap.get(pDate);
@@ -173,9 +173,9 @@ public class CoeusMarketCache
      * @return the year
      */
     public CoeusMarketAnnual getAnnual(final CoeusMarketProvider pProvider,
-                                       final TethysDate pDate) {
+                                       final OceanusDate pDate) {
         /* Obtain the map for the annual */
-        final Map<TethysDate, CoeusMarketAnnual> myMap = theAnnualMap.computeIfAbsent(pProvider, p -> new HashMap<>());
+        final Map<OceanusDate, CoeusMarketAnnual> myMap = theAnnualMap.computeIfAbsent(pProvider, p -> new HashMap<>());
 
         /* Obtain the annual */
         CoeusMarketAnnual myAnnual = myMap.get(pDate);

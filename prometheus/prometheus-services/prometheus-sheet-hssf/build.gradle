@@ -2,6 +2,7 @@
 dependencies {
     implementation project(':prometheus-sheet-api')
     implementation project(':tethys-core')
+    implementation project(':oceanus')
     implementation "org.apache.poi:poi:$apachePOIVersion"
 }
 

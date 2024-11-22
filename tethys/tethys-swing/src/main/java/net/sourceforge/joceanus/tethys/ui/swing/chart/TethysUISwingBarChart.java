@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Tethys: Java Utilities
+ * Tethys: GUI Utilities
  * Copyright 2012,2024 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -33,7 +33,7 @@ import org.jfree.chart.renderer.category.CategoryItemRenderer;
 import org.jfree.chart.util.HexNumberFormat;
 import org.jfree.data.category.DefaultCategoryDataset;
 
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
 import net.sourceforge.joceanus.tethys.ui.core.chart.TethysUICoreBarChart;
 import net.sourceforge.joceanus.tethys.ui.core.factory.TethysUICoreFactory;
 import net.sourceforge.joceanus.tethys.ui.swing.base.TethysUISwingNode;
@@ -187,7 +187,7 @@ public class TethysUISwingBarChart
         public StringBuffer format(final double pValue,
                                    final StringBuffer pBuffer,
                                    final FieldPosition pLoc) {
-            final TethysMoney myMoney = new TethysMoney(Double.toString(pValue));
+            final OceanusMoney myMoney = new OceanusMoney(Double.toString(pValue));
             return new StringBuffer(getFormatter().formatMoney(myMoney));
         }
     }

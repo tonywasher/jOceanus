@@ -16,8 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.tethys.ui.core.thread;
 
-import net.sourceforge.joceanus.tethys.logger.TethysLogManager;
-import net.sourceforge.joceanus.tethys.logger.TethysLogger;
+import net.sourceforge.joceanus.oceanus.logger.OceanusLogManager;
+import net.sourceforge.joceanus.oceanus.logger.OceanusLogger;
 import net.sourceforge.joceanus.tethys.ui.api.thread.TethysUIThreadStatus;
 
 /**
@@ -28,7 +28,7 @@ public class TethysUICoreThreadStatus
     /**
      * Logger.
      */
-    private static final TethysLogger LOGGER = TethysLogManager.getLogger(TethysUICoreThreadStatus.class);
+    private static final OceanusLogger LOGGER = OceanusLogManager.getLogger(TethysUICoreThreadStatus.class);
 
     /**
      * Default Number of steps/stages.

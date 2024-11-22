@@ -1,0 +1,26 @@
+/* Dependencies */
+dependencies {
+    testImplementation "org.junit.jupiter:junit-jupiter-api:$jUnitVersion"
+    testImplementation "org.junit.jupiter:junit-jupiter-engine:$jUnitVersion"
+}
+
+/* Dependencies */
+description = 'Oceanus Core Utilities'
+
+/* Register the project */
+registerProject(project) 
+
+/* Test jar details */
+tasks.register('testsJar', Jar) {
+    archiveClassifier = 'tests'
+    from(sourceSets.test.output)
+}
+publishing.publications.maven.artifact(testsJar)
+
+/* Specific Manifest details */
+jar {
+    manifest {
+        attributes(manifestAttrs)
+    }
+}
+

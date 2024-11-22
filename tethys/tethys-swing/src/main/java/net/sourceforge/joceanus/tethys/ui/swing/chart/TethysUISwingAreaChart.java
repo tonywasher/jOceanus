@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Tethys: Java Utilities
+ * Tethys: GUI Utilities
  * Copyright 2012,2024 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -41,8 +41,8 @@ import org.jfree.chart.util.HexNumberFormat;
 import org.jfree.data.time.Day;
 import org.jfree.data.time.TimeTableXYDataset;
 
-import net.sourceforge.joceanus.tethys.date.TethysDate;
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
 import net.sourceforge.joceanus.tethys.ui.core.chart.TethysUICoreAreaChart;
 import net.sourceforge.joceanus.tethys.ui.core.factory.TethysUICoreFactory;
 import net.sourceforge.joceanus.tethys.ui.swing.base.TethysUISwingNode;
@@ -93,7 +93,7 @@ public class TethysUISwingAreaChart
         final XYPlot myPlot = (XYPlot) theChart.getPlot();
         final StackedXYAreaRenderer2 myRenderer = new StackedXYAreaRenderer2();
         myRenderer.setDefaultToolTipGenerator((pDataset, pSeries, pItem) -> {
-            final TethysMoney myValue = new TethysMoney(pDataset.getY(pSeries, pItem).toString());
+            final OceanusMoney myValue = new OceanusMoney(pDataset.getY(pSeries, pItem).toString());
             return getToolTip(pDataset.getSeriesKey(pSeries).toString(), myValue);
         });
         myPlot.setRenderer(0, myRenderer);
@@ -185,7 +185,7 @@ public class TethysUISwingAreaChart
         theDataSet.add(dateToDay(pPoint.getDate()), pPoint.getValue().doubleValue(), pName);
     }
 
-    private static Day dateToDay(final TethysDate pDate) {
+    private static Day dateToDay(final OceanusDate pDate) {
         return new Day(pDate.getDay(), pDate.getMonth(), pDate.getYear());
     }
 
@@ -199,7 +199,7 @@ public class TethysUISwingAreaChart
         public StringBuffer format(final double pValue,
                                    final StringBuffer pBuffer,
                                    final FieldPosition pLoc) {
-            final TethysMoney myMoney = new TethysMoney(Double.toString(pValue));
+            final OceanusMoney myMoney = new OceanusMoney(Double.toString(pValue));
             return new StringBuffer(getFormatter().formatMoney(myMoney));
         }
     }

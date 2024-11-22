@@ -31,10 +31,10 @@ import net.sourceforge.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAn
 import net.sourceforge.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisValuesResource;
 import net.sourceforge.joceanus.moneywise.lethe.views.MoneyWiseAnalysisFilter;
 import net.sourceforge.joceanus.moneywise.lethe.views.MoneyWiseAnalysisFilter.MoneyWiseAnalysisSecurityFilter;
-import net.sourceforge.joceanus.tethys.date.TethysDateRange;
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
-import net.sourceforge.joceanus.tethys.logger.TethysLogManager;
-import net.sourceforge.joceanus.tethys.logger.TethysLogger;
+import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
+import net.sourceforge.joceanus.oceanus.logger.OceanusLogManager;
+import net.sourceforge.joceanus.oceanus.logger.OceanusLogger;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
 
 import org.w3c.dom.Document;
@@ -50,7 +50,7 @@ public class MoneyWiseReportMarketGrowth
     /**
      * Logger.
      */
-    private static final TethysLogger LOGGER = TethysLogManager.getLogger(MoneyWiseReportMarketGrowth.class);
+    private static final OceanusLogger LOGGER = OceanusLogManager.getLogger(MoneyWiseReportMarketGrowth.class);
 
     /**
      * The Title text.
@@ -130,7 +130,7 @@ public class MoneyWiseReportMarketGrowth
 
         /* Access the totals */
         final MoneyWiseAnalysisPortfolioBucket myTotals = myPortfolios.getTotals();
-        final TethysDateRange myRange = pAnalysis.getDateRange();
+        final OceanusDateRange myRange = pAnalysis.getDateRange();
 
         /* Start the report */
         final Element myBody = theBuilder.startReport();
@@ -277,12 +277,12 @@ public class MoneyWiseReportMarketGrowth
     private static void checkPortfolioGrowth(final MoneyWiseAnalysisPortfolioBucket pBucket) {
         /* Check market profit */
         final MoneyWiseAnalysisSecurityValues myValues = pBucket.getValues();
-        final TethysMoney myAdjust = myValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.GROWTHADJUST);
-        final TethysMoney myCalcGrowth = pBucket.getNonCashValue(false);
+        final OceanusMoney myAdjust = myValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.GROWTHADJUST);
+        final OceanusMoney myCalcGrowth = pBucket.getNonCashValue(false);
         myCalcGrowth.subtractAmount(pBucket.getNonCashValue(true));
         myCalcGrowth.subtractAmount(myValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.INVESTED));
         myCalcGrowth.addAmount(myAdjust);
-        final TethysMoney myProfit = myValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.MARKETPROFIT);
+        final OceanusMoney myProfit = myValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.MARKETPROFIT);
         if (!myProfit.equals(myCalcGrowth)) {
             LOGGER.error("Incorrect profit calculation for security <%s> of <%s>", pBucket.getName(), myCalcGrowth);
         }
@@ -291,7 +291,7 @@ public class MoneyWiseReportMarketGrowth
         myCalcGrowth.subtractAmount(myValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.REALISEDGAINS));
         myCalcGrowth.subtractAmount(myAdjust);
         myCalcGrowth.subtractAmount(myValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.CURRENCYFLUCT));
-        final TethysMoney myGrowth = myValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.MARKETGROWTH);
+        final OceanusMoney myGrowth = myValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.MARKETGROWTH);
         if (!myGrowth.equals(myCalcGrowth)) {
             LOGGER.error("Incorrect growth calculation for portfolio <%s> of <%s>", pBucket.getName(), myCalcGrowth);
         }
@@ -305,12 +305,12 @@ public class MoneyWiseReportMarketGrowth
         /* Check market profit */
         final MoneyWiseAnalysisSecurityValues myValues = pBucket.getValues();
         final MoneyWiseAnalysisSecurityValues myBaseValues = pBucket.getBaseValues();
-        final TethysMoney myAdjust = myValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.GROWTHADJUST);
-        final TethysMoney myCalcGrowth = new TethysMoney(myValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.VALUATION));
+        final OceanusMoney myAdjust = myValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.GROWTHADJUST);
+        final OceanusMoney myCalcGrowth = new OceanusMoney(myValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.VALUATION));
         myCalcGrowth.subtractAmount(myBaseValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.VALUATION));
         myCalcGrowth.subtractAmount(myValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.INVESTED));
         myCalcGrowth.addAmount(myAdjust);
-        final TethysMoney myProfit = myValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.MARKETPROFIT);
+        final OceanusMoney myProfit = myValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.MARKETPROFIT);
         if (!myProfit.equals(myCalcGrowth)) {
             LOGGER.error("Incorrect profit calculation for security <%s> of <%s>", pBucket.getDecoratedName(), myCalcGrowth);
         }
@@ -318,11 +318,11 @@ public class MoneyWiseReportMarketGrowth
         /* Check market growth */
         myCalcGrowth.subtractAmount(myValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.REALISEDGAINS));
         myCalcGrowth.subtractAmount(myAdjust);
-        final TethysMoney myFluct = myValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.CURRENCYFLUCT);
+        final OceanusMoney myFluct = myValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.CURRENCYFLUCT);
         if (myFluct != null) {
             myCalcGrowth.subtractAmount(myFluct);
         }
-        final TethysMoney myGrowth = myValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.MARKETGROWTH);
+        final OceanusMoney myGrowth = myValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.MARKETGROWTH);
         if (!myGrowth.equals(myCalcGrowth)) {
             LOGGER.error("Incorrect growth calculation for security <%s> of <%s>", pBucket.getDecoratedName(), myCalcGrowth);
         }

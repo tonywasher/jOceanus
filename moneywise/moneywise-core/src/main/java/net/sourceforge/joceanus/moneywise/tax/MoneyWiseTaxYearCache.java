@@ -17,9 +17,9 @@
 package net.sourceforge.joceanus.moneywise.tax;
 
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTax.MoneyWiseTaxFactory;
-import net.sourceforge.joceanus.tethys.date.TethysDate;
-import net.sourceforge.joceanus.tethys.date.TethysDateRange;
-import net.sourceforge.joceanus.tethys.date.TethysFiscalYear;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
+import net.sourceforge.joceanus.oceanus.date.OceanusFiscalYear;
 
 /**
  * Tax Year cache.
@@ -29,13 +29,13 @@ public abstract class MoneyWiseTaxYearCache
     /**
      * The Fiscal Year.
      */
-    private final TethysFiscalYear theFiscalYear;
+    private final OceanusFiscalYear theFiscalYear;
 
     /**
      * Constructor.
      * @param pYear the fiscal year
      */
-    protected MoneyWiseTaxYearCache(final TethysFiscalYear pYear) {
+    protected MoneyWiseTaxYearCache(final OceanusFiscalYear pYear) {
         theFiscalYear = pYear;
     }
 
@@ -44,7 +44,7 @@ public abstract class MoneyWiseTaxYearCache
      * @param pDate the date
      * @return the date
      */
-    protected TethysDate getTaxYearDate(final TethysDate pDate) {
+    protected OceanusDate getTaxYearDate(final OceanusDate pDate) {
         return theFiscalYear.endOfYear(pDate);
     }
 
@@ -53,16 +53,16 @@ public abstract class MoneyWiseTaxYearCache
      * @param pRange the range
      * @return true/false
      */
-    protected boolean checkTaxYearRange(final TethysDateRange pRange) {
+    protected boolean checkTaxYearRange(final OceanusDateRange pRange) {
         /* Check that the range ends of a tax year boundary */
-        final TethysDate myEnd = pRange.getEnd();
+        final OceanusDate myEnd = pRange.getEnd();
         if ((myEnd == null)
                 || !myEnd.equals(getTaxYearDate(myEnd))) {
             return false;
         }
 
         /* Check that the range starts on the correct taxYear boundary */
-        final TethysDate myStart = new TethysDate(myEnd);
+        final OceanusDate myStart = new OceanusDate(myEnd);
         myStart.adjustYear(-1);
         myStart.adjustDay(1);
         return myStart.equals(pRange.getStart());

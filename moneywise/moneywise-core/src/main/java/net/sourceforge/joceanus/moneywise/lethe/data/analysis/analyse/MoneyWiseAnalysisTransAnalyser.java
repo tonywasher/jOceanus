@@ -68,14 +68,14 @@ import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseSecurityClass;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransCategoryClass;
 import net.sourceforge.joceanus.moneywise.tax.MoneyWiseCashType;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.date.TethysDate;
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
-import net.sourceforge.joceanus.tethys.decimal.TethysPrice;
-import net.sourceforge.joceanus.tethys.decimal.TethysRate;
-import net.sourceforge.joceanus.tethys.decimal.TethysRatio;
-import net.sourceforge.joceanus.tethys.decimal.TethysUnits;
-import net.sourceforge.joceanus.tethys.profile.TethysProfile;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRate;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRatio;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusUnits;
+import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
 
 /**
@@ -104,12 +104,12 @@ public class MoneyWiseAnalysisTransAnalyser
     /**
      * The Amount Tax threshold for "small" transactions (£3000).
      */
-    private static final TethysMoney LIMIT_VALUE = TethysMoney.getWholeUnits(3000);
+    private static final OceanusMoney LIMIT_VALUE = OceanusMoney.getWholeUnits(3000);
 
     /**
      * The Rate Tax threshold for "small" transactions (5%).
      */
-    private static final TethysRate LIMIT_RATE = TethysRate.getWholePercentage(5);
+    private static final OceanusRate LIMIT_RATE = OceanusRate.getWholePercentage(5);
 
     /**
      * The security holding map.
@@ -184,7 +184,7 @@ public class MoneyWiseAnalysisTransAnalyser
     /**
      * The profile.
      */
-    private final TethysProfile theProfile;
+    private final OceanusProfile theProfile;
 
     /**
      * Constructor for a complete set of accounts.
@@ -193,12 +193,12 @@ public class MoneyWiseAnalysisTransAnalyser
      * @param pPreferenceMgr the preference manager
      * @throws OceanusException on error
      */
-    public MoneyWiseAnalysisTransAnalyser(final TethysProfile pTask,
+    public MoneyWiseAnalysisTransAnalyser(final OceanusProfile pTask,
                                           final PrometheusEditSet pEditSet,
                                           final MetisPreferenceManager pPreferenceMgr) throws OceanusException {
         /* Start a new task */
         theProfile = pTask;
-        final TethysProfile myTask = theProfile.startTask("analyseTransactions");
+        final OceanusProfile myTask = theProfile.startTask("analyseTransactions");
         final MoneyWiseDataSet myDataSet = (MoneyWiseDataSet) pEditSet.getDataSet();
 
         /* Store the parameters */
@@ -297,7 +297,7 @@ public class MoneyWiseAnalysisTransAnalyser
      */
     public void postProcessAnalysis() throws OceanusException {
         /* Start a new task */
-        final TethysProfile myTask = theProfile.startTask("postProcessAnalysis");
+        final OceanusProfile myTask = theProfile.startTask("postProcessAnalysis");
         myTask.startTask("markActiveAccounts");
 
         /* Mark relevant accounts */
@@ -358,7 +358,7 @@ public class MoneyWiseAnalysisTransAnalyser
             MoneyWiseAssetBase myDebit = (MoneyWiseAssetBase) myDebitAsset;
             MoneyWiseAssetBase myCredit = (MoneyWiseAssetBase) myCreditAsset;
             MoneyWiseAssetBase myChild = null;
-            final TethysMoney myAmount = pTrans.getAmount();
+            final OceanusMoney myAmount = pTrans.getAmount();
             MoneyWiseTransCategory myCat = pTrans.getCategory();
 
             /* Switch on category class */
@@ -657,18 +657,18 @@ public class MoneyWiseAnalysisTransAnalyser
                                       final MoneyWiseAnalysisSecurityBucket pTarget) {
         /* Access source details */
         MoneyWiseAnalysisSecurityValues mySourceValues = pSource.getValues();
-        TethysUnits myUnits = mySourceValues.getUnitsValue(MoneyWiseAnalysisSecurityAttr.UNITS);
-        TethysMoney myCost = mySourceValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.RESIDUALCOST);
-        TethysMoney myGains = mySourceValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.REALISEDGAINS);
-        TethysMoney myInvested = mySourceValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.INVESTED);
-        TethysMoney myForeignInvested = mySourceValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.FOREIGNINVESTED);
+        OceanusUnits myUnits = mySourceValues.getUnitsValue(MoneyWiseAnalysisSecurityAttr.UNITS);
+        OceanusMoney myCost = mySourceValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.RESIDUALCOST);
+        OceanusMoney myGains = mySourceValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.REALISEDGAINS);
+        OceanusMoney myInvested = mySourceValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.INVESTED);
+        OceanusMoney myForeignInvested = mySourceValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.FOREIGNINVESTED);
         final boolean isForeign = pSource.isForeignCurrency();
 
         /* Determine value of the stock being transferred */
-        final TethysPrice myPrice = thePriceMap.getPriceForDate(pSource.getSecurity(), theHelper.getDate());
-        TethysMoney myStockValue = myUnits.valueAtPrice(myPrice);
-        TethysMoney myForeignValue = null;
-        TethysRatio myRate = null;
+        final OceanusPrice myPrice = thePriceMap.getPriceForDate(pSource.getSecurity(), theHelper.getDate());
+        OceanusMoney myStockValue = myUnits.valueAtPrice(myPrice);
+        OceanusMoney myForeignValue = null;
+        OceanusRatio myRate = null;
 
         /* If we are foreign */
         if (isForeign) {
@@ -679,10 +679,10 @@ public class MoneyWiseAnalysisTransAnalyser
         }
 
         /* Allocate current profit between the two stocks */
-        TethysMoney myProfit = new TethysMoney(myStockValue);
+        OceanusMoney myProfit = new OceanusMoney(myStockValue);
         myProfit.subtractAmount(myCost);
         pSource.adjustCounter(MoneyWiseAnalysisSecurityAttr.GROWTHADJUST, myProfit);
-        myProfit = new TethysMoney(myProfit);
+        myProfit = new OceanusMoney(myProfit);
         myProfit.negate();
         pTarget.adjustCounter(MoneyWiseAnalysisSecurityAttr.GROWTHADJUST, myProfit);
 
@@ -702,17 +702,17 @@ public class MoneyWiseAnalysisTransAnalyser
         }
 
         /* Adjust the Source Units/Cost/Invested to zero */
-        myUnits = new TethysUnits(myUnits);
+        myUnits = new OceanusUnits(myUnits);
         myUnits.negate();
         pSource.adjustCounter(MoneyWiseAnalysisSecurityAttr.UNITS, myUnits);
-        myCost = new TethysMoney(myCost);
+        myCost = new OceanusMoney(myCost);
         myCost.negate();
         pSource.adjustCounter(MoneyWiseAnalysisSecurityAttr.RESIDUALCOST, myCost);
         myCost.negate();
-        myInvested = new TethysMoney(myInvested);
+        myInvested = new OceanusMoney(myInvested);
         myInvested.negate();
         pSource.adjustCounter(MoneyWiseAnalysisSecurityAttr.INVESTED, myInvested);
-        myGains = new TethysMoney(myGains);
+        myGains = new OceanusMoney(myGains);
         myGains.negate();
         pSource.adjustCounter(MoneyWiseAnalysisSecurityAttr.REALISEDGAINS, myGains);
         mySourceValues = pSource.registerTransaction(theHelper);
@@ -722,7 +722,7 @@ public class MoneyWiseAnalysisTransAnalyser
         if (isForeign) {
             mySourceValues.setValue(MoneyWiseAnalysisSecurityAttr.FOREIGNVALUE, myForeignValue);
             mySourceValues.setValue(MoneyWiseAnalysisSecurityAttr.EXCHANGERATE, myRate);
-            myForeignInvested = new TethysMoney(myForeignInvested);
+            myForeignInvested = new OceanusMoney(myForeignInvested);
             myForeignInvested.negate();
             pTarget.adjustCounter(MoneyWiseAnalysisSecurityAttr.FOREIGNINVESTED, myForeignInvested);
         }
@@ -765,7 +765,7 @@ public class MoneyWiseAnalysisTransAnalyser
      */
     private void processUnitsAdjust(final MoneyWiseSecurityHolding pHolding) {
         /* Access the units */
-        final TethysUnits myDelta = theHelper.getAccountDeltaUnits();
+        final OceanusUnits myDelta = theHelper.getAccountDeltaUnits();
 
         /* Adjust the Security Units */
         final MoneyWiseAnalysisSecurityBucket myAsset = thePortfolioBuckets.getBucket(pHolding);
@@ -820,8 +820,8 @@ public class MoneyWiseAnalysisTransAnalyser
      */
     private void processCreditXferIn(final MoneyWiseSecurityHolding pHolding) {
         /* Transfer is to the credit account and may or may not have a change to the units */
-        TethysMoney myAmount = theHelper.getCreditAmount();
-        final TethysRatio myExchangeRate = theHelper.getCreditExchangeRate();
+        OceanusMoney myAmount = theHelper.getCreditAmount();
+        final OceanusRatio myExchangeRate = theHelper.getCreditExchangeRate();
         final MoneyWiseSecurity mySecurity = pHolding.getSecurity();
 
         /* Access the Asset Security Bucket */
@@ -843,10 +843,10 @@ public class MoneyWiseAnalysisTransAnalyser
 
         /* Determine the delta units */
         final MoneyWiseSecurityClass mySecClass = mySecurity.getCategoryClass();
-        TethysUnits myDeltaUnits = theHelper.getCreditUnits();
-        TethysUnits myUnits = myAsset.getValues().getUnitsValue(MoneyWiseAnalysisSecurityAttr.UNITS);
+        OceanusUnits myDeltaUnits = theHelper.getCreditUnits();
+        OceanusUnits myUnits = myAsset.getValues().getUnitsValue(MoneyWiseAnalysisSecurityAttr.UNITS);
         if (mySecClass.isAutoUnits() && myUnits.isZero()) {
-            myDeltaUnits = TethysUnits.getWholeUnits(mySecClass.getAutoUnits());
+            myDeltaUnits = OceanusUnits.getWholeUnits(mySecClass.getAutoUnits());
         }
 
         /* If we have new units */
@@ -859,11 +859,11 @@ public class MoneyWiseAnalysisTransAnalyser
         myAsset.adjustForNIPayments(theHelper);
 
         /* Get the appropriate price for the account */
-        final TethysPrice myPrice = thePriceMap.getPriceForDate(mySecurity, theHelper.getDate());
+        final OceanusPrice myPrice = thePriceMap.getPriceForDate(mySecurity, theHelper.getDate());
 
         /* Determine value of this stock after the transaction */
         myUnits = myAsset.getValues().getUnitsValue(MoneyWiseAnalysisSecurityAttr.UNITS);
-        TethysMoney myValue = myUnits.valueAtPrice(myPrice);
+        OceanusMoney myValue = myUnits.valueAtPrice(myPrice);
 
         /* If we are foreign */
         if (isForeign) {
@@ -894,9 +894,9 @@ public class MoneyWiseAnalysisTransAnalyser
         /* The main security that we are interested in is the debit account */
         final MoneyWisePortfolio myPortfolio = pHolding.getPortfolio();
         final MoneyWiseSecurity mySecurity = pHolding.getSecurity();
-        TethysMoney myAmount = theHelper.getDebitAmount();
-        final TethysMoney myTaxCredit = theHelper.getTaxCredit();
-        final TethysUnits myDeltaUnits = theHelper.getAccountDeltaUnits();
+        OceanusMoney myAmount = theHelper.getDebitAmount();
+        final OceanusMoney myTaxCredit = theHelper.getTaxCredit();
+        final OceanusUnits myDeltaUnits = theHelper.getAccountDeltaUnits();
         final MoneyWiseTaxCredit myYear = theHelper.getTransaction().getTaxYear();
 
         /* Obtain detailed category */
@@ -951,7 +951,7 @@ public class MoneyWiseAnalysisTransAnalyser
             /* else we are paying out to another account */
         } else {
             /* Adjust the dividend total for this asset */
-            final TethysMoney myAdjust = new TethysMoney(myAmount);
+            final OceanusMoney myAdjust = new OceanusMoney(myAmount);
 
             /* Any tax credit is viewed as a realised dividend from the account */
             if (myTaxCredit != null) {
@@ -1011,19 +1011,19 @@ public class MoneyWiseAnalysisTransAnalyser
     private void processDebitXferOut(final MoneyWiseSecurityHolding pHolding) {
         /* Transfer out is from the debit account and may or may not have units */
         final MoneyWiseSecurity myDebit = pHolding.getSecurity();
-        TethysMoney myAmount = theHelper.getDebitAmount();
+        OceanusMoney myAmount = theHelper.getDebitAmount();
         boolean isLargeCash = false;
 
         /* Access the Asset Security Bucket */
         final MoneyWiseAnalysisSecurityBucket myAsset = thePortfolioBuckets.getBucket(pHolding);
         MoneyWiseAnalysisSecurityValues myValues = myAsset.getValues();
-        final TethysRatio myXchangeRate = theHelper.getDebitExchangeRate();
+        final OceanusRatio myXchangeRate = theHelper.getDebitExchangeRate();
         final boolean isForeign = myAsset.isForeignCurrency();
 
         /* If this is a foreign currency asset */
         if (isForeign) {
             /* Adjust foreign invested amount */
-            final TethysMoney myDelta = new TethysMoney(myAmount);
+            final OceanusMoney myDelta = new OceanusMoney(myAmount);
             myDelta.negate();
             myAsset.adjustCounter(MoneyWiseAnalysisSecurityAttr.FOREIGNINVESTED, myDelta);
 
@@ -1032,22 +1032,22 @@ public class MoneyWiseAnalysisTransAnalyser
         }
 
         /* Record the delta investment */
-        final TethysMoney myDelta = new TethysMoney(myAmount);
+        final OceanusMoney myDelta = new OceanusMoney(myAmount);
         myDelta.negate();
         myAsset.adjustCounter(MoneyWiseAnalysisSecurityAttr.INVESTED, myDelta);
 
         /* Get the appropriate price for the account */
-        final TethysPrice myPrice = thePriceMap.getPriceForDate(myDebit, theHelper.getDate());
+        final OceanusPrice myPrice = thePriceMap.getPriceForDate(myDebit, theHelper.getDate());
 
         /* Assume that the allowed cost is the full value */
-        TethysUnits myUnits = myValues.getUnitsValue(MoneyWiseAnalysisSecurityAttr.UNITS);
-        TethysMoney myAllowedCost = new TethysMoney(myAmount);
-        final TethysMoney myCost = myValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.RESIDUALCOST);
-        TethysRatio myCostDilution = null;
-        TethysMoney myConsideration = null;
+        OceanusUnits myUnits = myValues.getUnitsValue(MoneyWiseAnalysisSecurityAttr.UNITS);
+        OceanusMoney myAllowedCost = new OceanusMoney(myAmount);
+        final OceanusMoney myCost = myValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.RESIDUALCOST);
+        OceanusRatio myCostDilution = null;
+        OceanusMoney myConsideration = null;
 
         /* Determine the delta units */
-        TethysUnits myDeltaUnits = theHelper.getCategoryClass().isSecurityClosure()
+        OceanusUnits myDeltaUnits = theHelper.getCategoryClass().isSecurityClosure()
                 ? myUnits
                 : theHelper.getDebitUnits();
         final boolean isCapitalDistribution = myDeltaUnits == null;
@@ -1058,20 +1058,20 @@ public class MoneyWiseAnalysisTransAnalyser
             myAllowedCost = myCost.valueAtWeight(myDeltaUnits, myUnits);
 
             /* Access units as negative value */
-            myDeltaUnits = new TethysUnits(myDeltaUnits);
+            myDeltaUnits = new OceanusUnits(myDeltaUnits);
             myDeltaUnits.negate();
 
             /* Record delta to units */
             myAsset.adjustCounter(MoneyWiseAnalysisSecurityAttr.UNITS, myDeltaUnits);
-            final TethysUnits myNewUnits = myValues.getUnitsValue(MoneyWiseAnalysisSecurityAttr.UNITS);
+            final OceanusUnits myNewUnits = myValues.getUnitsValue(MoneyWiseAnalysisSecurityAttr.UNITS);
 
             /* Determine the cost dilution */
-            myCostDilution = new TethysRatio(myNewUnits, myUnits);
+            myCostDilution = new OceanusRatio(myNewUnits, myUnits);
             myUnits = myNewUnits;
         }
 
         /* Determine value of this stock after the transaction */
-        TethysMoney myValue = myUnits.valueAtPrice(myPrice);
+        OceanusMoney myValue = myUnits.valueAtPrice(myPrice);
 
         /* If we are foreign */
         if (isForeign) {
@@ -1082,33 +1082,33 @@ public class MoneyWiseAnalysisTransAnalyser
         /* If we are performing a capital distribution */
         if (isCapitalDistribution) {
             /* Determine condition as to whether this is a large cash transaction */
-            final TethysMoney myPortion = myValue.valueAtRate(LIMIT_RATE);
+            final OceanusMoney myPortion = myValue.valueAtRate(LIMIT_RATE);
             isLargeCash = (myAmount.compareTo(LIMIT_VALUE) > 0)
                     && (myAmount.compareTo(myPortion) > 0);
 
             /* If this is large cash */
             if (isLargeCash) {
                 /* Determine the total value of rights plus share value */
-                myConsideration = new TethysMoney(myAmount);
+                myConsideration = new OceanusMoney(myAmount);
                 myConsideration.addAmount(myValue);
 
                 /* Determine the allowedCost as a proportion of the total value */
                 myAllowedCost = myCost.valueAtWeight(myAmount, myConsideration);
 
                 /* Determine the cost dilution */
-                myCostDilution = new TethysRatio(myValue, myConsideration);
+                myCostDilution = new OceanusRatio(myValue, myConsideration);
 
                 /* else this is viewed as small and is taken out of the cost */
             } else {
                 /* Set the allowed cost to be the least of the cost or the returned cash */
                 myAllowedCost = myAmount.compareTo(myCost) > 0
-                        ? new TethysMoney(myCost)
-                        : new TethysMoney(myAmount);
+                        ? new OceanusMoney(myCost)
+                        : new OceanusMoney(myAmount);
             }
         }
 
         /* Determine the delta to the cost */
-        final TethysMoney myDeltaCost = new TethysMoney(myAllowedCost);
+        final OceanusMoney myDeltaCost = new OceanusMoney(myAllowedCost);
         myDeltaCost.negate();
 
         /* If we have a delta to the cost */
@@ -1118,7 +1118,7 @@ public class MoneyWiseAnalysisTransAnalyser
         }
 
         /* Determine the capital gain */
-        final TethysMoney myCapitalGain = new TethysMoney(myAmount);
+        final OceanusMoney myCapitalGain = new OceanusMoney(myAmount);
         myCapitalGain.addAmount(myDeltaCost);
 
         /* If we have a delta to the gains */
@@ -1184,8 +1184,8 @@ public class MoneyWiseAnalysisTransAnalyser
                                        final MoneyWiseAssetBase pCredit) {
         /* Chargeable Gain is from the debit account and may or may not have units */
         final MoneyWiseSecurity myDebit = pHolding.getSecurity();
-        TethysMoney myAmount = theHelper.getDebitAmount();
-        TethysUnits myDeltaUnits = theHelper.getDebitUnits();
+        OceanusMoney myAmount = theHelper.getDebitAmount();
+        OceanusUnits myDeltaUnits = theHelper.getDebitUnits();
 
         /* Access the Asset Security Bucket */
         final MoneyWiseAnalysisSecurityBucket myAsset = thePortfolioBuckets.getBucket(pHolding);
@@ -1194,7 +1194,7 @@ public class MoneyWiseAnalysisTransAnalyser
         /* If this is a foreign currency asset */
         if (Boolean.TRUE.equals(myAsset.isForeignCurrency())) {
             /* Adjust foreign invested amount */
-            final TethysMoney myDelta = new TethysMoney(myAmount);
+            final OceanusMoney myDelta = new OceanusMoney(myAmount);
             myDelta.negate();
             myValues.setValue(MoneyWiseAnalysisSecurityAttr.EXCHANGERATE, theHelper.getDebitExchangeRate());
             myAsset.adjustCounter(MoneyWiseAnalysisSecurityAttr.FOREIGNINVESTED, myDelta);
@@ -1204,22 +1204,22 @@ public class MoneyWiseAnalysisTransAnalyser
         }
 
         /* Record the delta investment */
-        final TethysMoney myDelta = new TethysMoney(myAmount);
+        final OceanusMoney myDelta = new OceanusMoney(myAmount);
         myDelta.negate();
         myAsset.adjustCounter(MoneyWiseAnalysisSecurityAttr.INVESTED, myDelta);
 
         /* Assume the cost reduction is the full value */
-        TethysMoney myReduction = new TethysMoney(myAmount);
-        final TethysMoney myCost = myValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.RESIDUALCOST);
+        OceanusMoney myReduction = new OceanusMoney(myAmount);
+        final OceanusMoney myCost = myValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.RESIDUALCOST);
 
         /* If we are reducing units in the account */
         if (myDeltaUnits != null) {
             /* The reduction is the relevant fraction of the cost */
-            final TethysUnits myUnits = myValues.getUnitsValue(MoneyWiseAnalysisSecurityAttr.UNITS);
+            final OceanusUnits myUnits = myValues.getUnitsValue(MoneyWiseAnalysisSecurityAttr.UNITS);
             myReduction = myCost.valueAtWeight(myDeltaUnits, myUnits);
 
             /* Access units as negative value */
-            myDeltaUnits = new TethysUnits(myDeltaUnits);
+            myDeltaUnits = new OceanusUnits(myDeltaUnits);
             myDeltaUnits.negate();
 
             /* Record delta to units */
@@ -1229,11 +1229,11 @@ public class MoneyWiseAnalysisTransAnalyser
         /* If the reduction is greater than the total cost */
         if (myReduction.compareTo(myCost) > 0) {
             /* Reduction is the total cost */
-            myReduction = new TethysMoney(myCost);
+            myReduction = new OceanusMoney(myCost);
         }
 
         /* Determine the delta to the cost */
-        final TethysMoney myDeltaCost = new TethysMoney(myReduction);
+        final OceanusMoney myDeltaCost = new OceanusMoney(myReduction);
         myDeltaCost.negate();
 
         /* If we have a delta to the cost */
@@ -1243,7 +1243,7 @@ public class MoneyWiseAnalysisTransAnalyser
         }
 
         /* Determine the delta to the gains */
-        final TethysMoney myDeltaGains = new TethysMoney(myAmount);
+        final OceanusMoney myDeltaGains = new OceanusMoney(myAmount);
         myDeltaGains.addAmount(myDeltaCost);
 
         /* If we have a delta to the gains */
@@ -1288,12 +1288,12 @@ public class MoneyWiseAnalysisTransAnalyser
         /* Access the Debit Asset Security Bucket */
         MoneyWiseAnalysisSecurityBucket myAsset = thePortfolioBuckets.getBucket(pDebit);
         MoneyWiseAnalysisSecurityValues myValues = myAsset.getValues();
-        final TethysRatio myDebitRate = theHelper.getDebitExchangeRate();
+        final OceanusRatio myDebitRate = theHelper.getDebitExchangeRate();
 
         /* Obtain current cost */
-        final TethysMoney myCost = myValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.RESIDUALCOST);
-        final TethysRatio myDilution = theHelper.getDilution();
-        final TethysUnits myDeltaUnits = theHelper.getAccountDeltaUnits();
+        final OceanusMoney myCost = myValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.RESIDUALCOST);
+        final OceanusRatio myDilution = theHelper.getDilution();
+        final OceanusUnits myDeltaUnits = theHelper.getAccountDeltaUnits();
 
         /* If we reduced the units */
         if (myDeltaUnits != null) {
@@ -1302,11 +1302,11 @@ public class MoneyWiseAnalysisTransAnalyser
         }
 
         /* Calculate the cost dilution */
-        final TethysMoney myNewCost = myCost.getDilutedMoney(myDilution);
-        final TethysRatio myCostDilution = new TethysRatio(myNewCost, myCost);
+        final OceanusMoney myNewCost = myCost.getDilutedMoney(myDilution);
+        final OceanusRatio myCostDilution = new OceanusRatio(myNewCost, myCost);
 
         /* Calculate the delta to the cost */
-        TethysMoney myDeltaCost = new TethysMoney(myNewCost);
+        OceanusMoney myDeltaCost = new OceanusMoney(myNewCost);
         myDeltaCost.subtractAmount(myCost);
 
         /* Record the delta cost/investment */
@@ -1314,7 +1314,7 @@ public class MoneyWiseAnalysisTransAnalyser
         myAsset.adjustCounter(MoneyWiseAnalysisSecurityAttr.INVESTED, myDeltaCost);
         final boolean isForeignDebit = myAsset.isForeignCurrency();
         if (isForeignDebit) {
-            final TethysMoney myInvested = myDeltaCost.convertCurrency(myAsset.getCurrency().getCurrency(), myDebitRate);
+            final OceanusMoney myInvested = myDeltaCost.convertCurrency(myAsset.getCurrency().getCurrency(), myDebitRate);
             myAsset.adjustCounter(MoneyWiseAnalysisSecurityAttr.FOREIGNINVESTED, myInvested);
         }
 
@@ -1325,7 +1325,7 @@ public class MoneyWiseAnalysisTransAnalyser
         myAsset = thePortfolioBuckets.getBucket(pCredit);
 
         /* The deltaCost is transferred to the credit account */
-        myDeltaCost = new TethysMoney(myDeltaCost);
+        myDeltaCost = new OceanusMoney(myDeltaCost);
         myDeltaCost.negate();
 
         /* Record details */
@@ -1339,20 +1339,20 @@ public class MoneyWiseAnalysisTransAnalyser
         myAsset.adjustCounter(MoneyWiseAnalysisSecurityAttr.RESIDUALCOST, myDeltaCost);
         myAsset.adjustCounter(MoneyWiseAnalysisSecurityAttr.INVESTED, myDeltaCost);
         final boolean isForeignCredit = myAsset.isForeignCurrency();
-        final TethysRatio myCreditRate = theHelper.getCreditExchangeRate();
+        final OceanusRatio myCreditRate = theHelper.getCreditExchangeRate();
         if (isForeignCredit) {
-            final TethysMoney myInvested = myDeltaCost.convertCurrency(myAsset.getCurrency().getCurrency(), myCreditRate);
+            final OceanusMoney myInvested = myDeltaCost.convertCurrency(myAsset.getCurrency().getCurrency(), myCreditRate);
             myAsset.adjustCounter(MoneyWiseAnalysisSecurityAttr.FOREIGNINVESTED, myInvested);
         }
 
         /* Get the appropriate prices/rates for the stock */
-        final TethysDate myDate = theHelper.getDate();
-        final TethysPrice myCreditPrice = thePriceMap.getPriceForDate(myAsset.getSecurity(), myDate);
+        final OceanusDate myDate = theHelper.getDate();
+        final OceanusPrice myCreditPrice = thePriceMap.getPriceForDate(myAsset.getSecurity(), myDate);
         final Currency myCurrency = theAnalysis.getCurrency().getCurrency();
 
         /* Determine value of the stock being deMerged */
-        final TethysUnits myCreditUnits = theHelper.getPartnerDeltaUnits();
-        TethysMoney myCreditXferValue = myCreditUnits.valueAtPrice(myCreditPrice);
+        final OceanusUnits myCreditUnits = theHelper.getPartnerDeltaUnits();
+        OceanusMoney myCreditXferValue = myCreditUnits.valueAtPrice(myCreditPrice);
         if (isForeignCredit) {
             myCreditXferValue = myCreditXferValue.convertCurrency(myCurrency, myCreditRate);
         }
@@ -1384,7 +1384,7 @@ public class MoneyWiseAnalysisTransAnalyser
      */
     private void processStockTakeover(final MoneyWiseSecurityHolding pDebit,
                                       final MoneyWiseSecurityHolding pCredit) {
-        final TethysMoney myAmount = theHelper.getReturnedCash();
+        final OceanusMoney myAmount = theHelper.getReturnedCash();
         final MoneyWiseTransAsset myReturnedCashAct = theHelper.getReturnedCashAccount();
 
         /* If we have a returned cash part of the transaction */
@@ -1415,21 +1415,21 @@ public class MoneyWiseAnalysisTransAnalyser
         final MoneyWiseAnalysisSecurityBucket myDebitAsset = thePortfolioBuckets.getBucket(pDebit);
         MoneyWiseAnalysisSecurityValues myDebitValues = myDebitAsset.getValues();
         final MoneyWiseAnalysisSecurityBucket myCreditAsset = thePortfolioBuckets.getBucket(pCredit);
-        final TethysDate myDate = theHelper.getDate();
+        final OceanusDate myDate = theHelper.getDate();
 
         /* Get the appropriate prices/rates for the stock */
-        final TethysPrice myCreditPrice = thePriceMap.getPriceForDate(myCredit, myDate);
-        final TethysPrice myDebitPrice = thePriceMap.getPriceForDate(myDebit, myDate);
-        final TethysRatio myDebitRate = theHelper.getDebitExchangeRate();
-        final TethysRatio myCreditRate = theHelper.getCreditExchangeRate();
+        final OceanusPrice myCreditPrice = thePriceMap.getPriceForDate(myCredit, myDate);
+        final OceanusPrice myDebitPrice = thePriceMap.getPriceForDate(myDebit, myDate);
+        final OceanusRatio myDebitRate = theHelper.getDebitExchangeRate();
+        final OceanusRatio myCreditRate = theHelper.getCreditExchangeRate();
         final Currency myCurrency = theAnalysis.getCurrency().getCurrency();
 
         /* Determine value of the stock in both parts of the takeOver */
-        TethysUnits myCreditUnits = theHelper.getPartnerDeltaUnits();
-        TethysMoney myCreditXferValue = myCreditUnits.valueAtPrice(myCreditPrice);
-        TethysUnits myDebitUnits = myDebitValues.getUnitsValue(MoneyWiseAnalysisSecurityAttr.UNITS);
-        TethysMoney myDebitValue = myDebitUnits.valueAtPrice(myDebitPrice);
-        TethysMoney myInvested = myDebitValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.INVESTED);
+        OceanusUnits myCreditUnits = theHelper.getPartnerDeltaUnits();
+        OceanusMoney myCreditXferValue = myCreditUnits.valueAtPrice(myCreditPrice);
+        OceanusUnits myDebitUnits = myDebitValues.getUnitsValue(MoneyWiseAnalysisSecurityAttr.UNITS);
+        OceanusMoney myDebitValue = myDebitUnits.valueAtPrice(myDebitPrice);
+        OceanusMoney myInvested = myDebitValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.INVESTED);
 
         /* Handle foreign debit */
         final boolean isForeignDebit = myDebitAsset.isForeignCurrency();
@@ -1444,13 +1444,13 @@ public class MoneyWiseAnalysisTransAnalyser
         }
 
         /* Determine the residual cost of the old stock */
-        final TethysMoney myDebitCost = myDebitValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.RESIDUALCOST);
+        final OceanusMoney myDebitCost = myDebitValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.RESIDUALCOST);
 
         /* Allocate current profit between the two stocks */
-        TethysMoney myProfit = new TethysMoney(myDebitValue);
+        OceanusMoney myProfit = new OceanusMoney(myDebitValue);
         myProfit.subtractAmount(myDebitCost);
         myDebitAsset.adjustCounter(MoneyWiseAnalysisSecurityAttr.GROWTHADJUST, myProfit);
-        myProfit = new TethysMoney(myProfit);
+        myProfit = new OceanusMoney(myProfit);
         myProfit.negate();
         myCreditAsset.adjustCounter(MoneyWiseAnalysisSecurityAttr.GROWTHADJUST, myProfit);
 
@@ -1459,13 +1459,13 @@ public class MoneyWiseAnalysisTransAnalyser
         myCreditAsset.adjustCounter(MoneyWiseAnalysisSecurityAttr.UNITS, myCreditUnits);
         myCreditAsset.adjustCounter(MoneyWiseAnalysisSecurityAttr.INVESTED, myInvested);
         if (isForeignCredit) {
-            final TethysMoney myForeign = myInvested.convertCurrency(myCreditAsset.getCurrency().getCurrency(), myCreditRate);
+            final OceanusMoney myForeign = myInvested.convertCurrency(myCreditAsset.getCurrency().getCurrency(), myCreditRate);
             myCreditAsset.adjustCounter(MoneyWiseAnalysisSecurityAttr.FOREIGNINVESTED, myForeign);
         }
 
         /* Determine final value of the credit stock after the takeOver */
         myCreditUnits = myCreditAsset.getValues().getUnitsValue(MoneyWiseAnalysisSecurityAttr.UNITS);
-        TethysMoney myCreditValue = myCreditUnits.valueAtPrice(myCreditPrice);
+        OceanusMoney myCreditValue = myCreditUnits.valueAtPrice(myCreditPrice);
         if (isForeignCredit) {
             myCreditValue = myCreditValue.convertCurrency(myCurrency, myCreditRate);
         }
@@ -1481,22 +1481,22 @@ public class MoneyWiseAnalysisTransAnalyser
         }
 
         /* Drive debit cost down to zero */
-        final TethysMoney myDeltaCost = new TethysMoney(myDebitCost);
+        final OceanusMoney myDeltaCost = new OceanusMoney(myDebitCost);
         myDeltaCost.negate();
         myDebitAsset.adjustCounter(MoneyWiseAnalysisSecurityAttr.RESIDUALCOST, myDeltaCost);
         myDeltaCost.negate();
 
         /* Drive debit units down to zero */
-        myDebitUnits = new TethysUnits(myDebitUnits);
+        myDebitUnits = new OceanusUnits(myDebitUnits);
         myDebitUnits.negate();
         myDebitAsset.adjustCounter(MoneyWiseAnalysisSecurityAttr.UNITS, myDebitUnits);
 
         /* Adjust debit Invested amount */
-        myInvested = new TethysMoney(myInvested);
+        myInvested = new OceanusMoney(myInvested);
         myInvested.negate();
         myDebitAsset.adjustCounter(MoneyWiseAnalysisSecurityAttr.INVESTED, myInvested);
         if (isForeignDebit) {
-            myInvested = new TethysMoney(myDebitValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.FOREIGNINVESTED));
+            myInvested = new OceanusMoney(myDebitValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.FOREIGNINVESTED));
             myInvested.negate();
             myDebitAsset.adjustCounter(MoneyWiseAnalysisSecurityAttr.FOREIGNINVESTED, myInvested);
         }
@@ -1525,9 +1525,9 @@ public class MoneyWiseAnalysisTransAnalyser
         /* Access details */
         final MoneyWiseSecurity myDebit = pDebit.getSecurity();
         final MoneyWiseSecurity myCredit = pCredit.getSecurity();
-        final TethysDate myDate = theHelper.getDate();
+        final OceanusDate myDate = theHelper.getDate();
         final MoneyWiseTransAsset myReturnedCashAccount = theHelper.getReturnedCashAccount();
-        final TethysMoney myAmount = theHelper.getLocalReturnedCash();
+        final OceanusMoney myAmount = theHelper.getLocalReturnedCash();
 
         /* Access the Asset Security Buckets */
         final MoneyWiseAnalysisSecurityBucket myDebitAsset = thePortfolioBuckets.getBucket(pDebit);
@@ -1535,19 +1535,19 @@ public class MoneyWiseAnalysisTransAnalyser
         final MoneyWiseAnalysisSecurityBucket myCreditAsset = thePortfolioBuckets.getBucket(pCredit);
 
         /* Get the appropriate prices for the assets */
-        final TethysPrice myDebitPrice = thePriceMap.getPriceForDate(myDebit, myDate);
-        final TethysPrice myCreditPrice = thePriceMap.getPriceForDate(myCredit, myDate);
-        final TethysRatio myDebitRate = theHelper.getDebitExchangeRate();
-        final TethysRatio myCreditRate = theHelper.getCreditExchangeRate();
+        final OceanusPrice myDebitPrice = thePriceMap.getPriceForDate(myDebit, myDate);
+        final OceanusPrice myCreditPrice = thePriceMap.getPriceForDate(myCredit, myDate);
+        final OceanusRatio myDebitRate = theHelper.getDebitExchangeRate();
+        final OceanusRatio myCreditRate = theHelper.getCreditExchangeRate();
         final Currency myCurrency = theAnalysis.getCurrency().getCurrency();
 
         /* Determine value of the base stock */
-        TethysUnits myDebitUnits = myDebitValues.getUnitsValue(MoneyWiseAnalysisSecurityAttr.UNITS);
-        TethysMoney myDebitValue = myDebitUnits.valueAtPrice(myDebitPrice);
+        OceanusUnits myDebitUnits = myDebitValues.getUnitsValue(MoneyWiseAnalysisSecurityAttr.UNITS);
+        OceanusMoney myDebitValue = myDebitUnits.valueAtPrice(myDebitPrice);
 
         /* Determine value of the stock part of the takeOver */
-        TethysUnits myCreditUnits = theHelper.getPartnerDeltaUnits();
-        TethysMoney myCreditXferValue = myCreditUnits.valueAtPrice(myCreditPrice);
+        OceanusUnits myCreditUnits = theHelper.getPartnerDeltaUnits();
+        OceanusMoney myCreditXferValue = myCreditUnits.valueAtPrice(myCreditPrice);
 
         /* Handle foreign debit */
         final boolean isForeignDebit = myDebitAsset.isForeignCurrency();
@@ -1562,17 +1562,17 @@ public class MoneyWiseAnalysisTransAnalyser
         }
 
         /* Calculate the total consideration */
-        final TethysMoney myConsideration = new TethysMoney(myAmount);
+        final OceanusMoney myConsideration = new OceanusMoney(myAmount);
         myConsideration.addAmount(myCreditXferValue);
 
         /* Access the current debit cost */
-        final TethysMoney myCost = myDebitValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.RESIDUALCOST);
-        TethysRatio myCostDilution = null;
-        final TethysMoney myCostXfer;
-        final TethysMoney myAllowedCost;
+        final OceanusMoney myCost = myDebitValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.RESIDUALCOST);
+        OceanusRatio myCostDilution = null;
+        final OceanusMoney myCostXfer;
+        final OceanusMoney myAllowedCost;
 
         /* Determine condition as to whether this is a large cash transaction */
-        final TethysMoney myPortion = myDebitValue.valueAtRate(LIMIT_RATE);
+        final OceanusMoney myPortion = myDebitValue.valueAtRate(LIMIT_RATE);
         final boolean isLargeCash = (myAmount.compareTo(LIMIT_VALUE) > 0)
                 && (myAmount.compareTo(myPortion) > 0);
 
@@ -1582,26 +1582,26 @@ public class MoneyWiseAnalysisTransAnalyser
             myCostXfer = myCost.valueAtWeight(myCreditXferValue, myConsideration);
 
             /* Determine the cost dilution */
-            myCostDilution = new TethysRatio(myAmount, myConsideration);
+            myCostDilution = new OceanusRatio(myAmount, myConsideration);
 
             /* Determine the allowed cost */
-            myAllowedCost = new TethysMoney(myCost);
+            myAllowedCost = new OceanusMoney(myCost);
             myAllowedCost.subtractAmount(myCostXfer);
 
             /* else this is viewed as small and is taken out of the cost */
         } else {
             /* Set the allowed cost to be the least of the cost or the returned cash */
             myAllowedCost = myAmount.compareTo(myCost) > 0
-                    ? new TethysMoney(myCost)
-                    : new TethysMoney(myAmount);
+                    ? new OceanusMoney(myCost)
+                    : new OceanusMoney(myAmount);
 
             /* Transferred cost is cost minus the allowed cost */
-            myCostXfer = new TethysMoney(myCost);
+            myCostXfer = new OceanusMoney(myCost);
             myCostXfer.subtractAmount(myAllowedCost);
         }
 
         /* Determine the capital gain */
-        final TethysMoney myCapitalGain = new TethysMoney(myAmount);
+        final OceanusMoney myCapitalGain = new OceanusMoney(myAmount);
         myCapitalGain.subtractAmount(myAllowedCost);
         if (myCapitalGain.isNonZero()) {
             /* Record the delta gains */
@@ -1612,10 +1612,10 @@ public class MoneyWiseAnalysisTransAnalyser
         }
 
         /* Allocate current profit between the two stocks */
-        TethysMoney myProfit = new TethysMoney(myCreditXferValue);
+        OceanusMoney myProfit = new OceanusMoney(myCreditXferValue);
         myProfit.subtractAmount(myCostXfer);
         myDebitAsset.adjustCounter(MoneyWiseAnalysisSecurityAttr.GROWTHADJUST, myProfit);
-        myProfit = new TethysMoney(myProfit);
+        myProfit = new OceanusMoney(myProfit);
         myProfit.negate();
         myCreditAsset.adjustCounter(MoneyWiseAnalysisSecurityAttr.GROWTHADJUST, myProfit);
 
@@ -1624,13 +1624,13 @@ public class MoneyWiseAnalysisTransAnalyser
         myCreditAsset.adjustCounter(MoneyWiseAnalysisSecurityAttr.UNITS, myCreditUnits);
         myCreditAsset.adjustCounter(MoneyWiseAnalysisSecurityAttr.INVESTED, myCostXfer);
         if (isForeignCredit) {
-            final TethysMoney myForeign = myCostXfer.convertCurrency(myCreditAsset.getCurrency().getCurrency(), myCreditRate);
+            final OceanusMoney myForeign = myCostXfer.convertCurrency(myCreditAsset.getCurrency().getCurrency(), myCreditRate);
             myCreditAsset.adjustCounter(MoneyWiseAnalysisSecurityAttr.FOREIGNINVESTED, myForeign);
         }
 
         /* Determine final value of the credit stock after the takeOver */
         myCreditUnits = myCreditAsset.getValues().getUnitsValue(MoneyWiseAnalysisSecurityAttr.UNITS);
-        TethysMoney myCreditValue = myCreditUnits.valueAtPrice(myCreditPrice);
+        OceanusMoney myCreditValue = myCreditUnits.valueAtPrice(myCreditPrice);
         if (isForeignCredit) {
             myCreditValue = myCreditValue.convertCurrency(myCurrency, myCreditRate);
         }
@@ -1646,18 +1646,18 @@ public class MoneyWiseAnalysisTransAnalyser
         }
 
         /* Drive debit cost down to zero */
-        final TethysMoney myDeltaCost = new TethysMoney(myCost);
+        final OceanusMoney myDeltaCost = new OceanusMoney(myCost);
         myDeltaCost.negate();
         myDebitAsset.adjustCounter(MoneyWiseAnalysisSecurityAttr.RESIDUALCOST, myDeltaCost);
 
         /* Drive debit units down to zero */
-        myDebitUnits = new TethysUnits(myDebitUnits);
+        myDebitUnits = new OceanusUnits(myDebitUnits);
         myDebitUnits.negate();
         myDebitAsset.adjustCounter(MoneyWiseAnalysisSecurityAttr.UNITS, myDebitUnits);
 
         /* Adjust debit Invested amount */
-        TethysMoney myInvested = myDebitValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.INVESTED);
-        myInvested = new TethysMoney(myInvested);
+        OceanusMoney myInvested = myDebitValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.INVESTED);
+        myInvested = new OceanusMoney(myInvested);
         myInvested.setZero();
         myInvested.subtractAmount(myAmount);
         myInvested.subtractAmount(myCostXfer);

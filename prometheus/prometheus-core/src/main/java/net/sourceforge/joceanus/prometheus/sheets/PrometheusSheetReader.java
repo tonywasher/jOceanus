@@ -16,6 +16,23 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.prometheus.sheets;
 
+import net.sourceforge.joceanus.gordianknot.api.zip.GordianZipFactory;
+import net.sourceforge.joceanus.gordianknot.api.zip.GordianZipFileContents;
+import net.sourceforge.joceanus.gordianknot.api.zip.GordianZipFileEntry;
+import net.sourceforge.joceanus.gordianknot.api.zip.GordianZipLock;
+import net.sourceforge.joceanus.gordianknot.api.zip.GordianZipReadFile;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
+import net.sourceforge.joceanus.prometheus.PrometheusIOException;
+import net.sourceforge.joceanus.prometheus.data.PrometheusDataSet;
+import net.sourceforge.joceanus.prometheus.data.PrometheusDataSet.PrometheusCryptographyDataType;
+import net.sourceforge.joceanus.prometheus.security.PrometheusSecurityPasswordManager;
+import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetProvider;
+import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetWorkBook;
+import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetWorkBookType;
+import net.sourceforge.joceanus.tethys.ui.api.factory.TethysUIFactory;
+import net.sourceforge.joceanus.tethys.ui.api.thread.TethysUIThreadStatusReport;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -23,23 +40,6 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
-import net.sourceforge.joceanus.gordianknot.api.password.GordianPasswordManager;
-import net.sourceforge.joceanus.gordianknot.api.zip.GordianZipLock;
-import net.sourceforge.joceanus.gordianknot.api.zip.GordianZipFactory;
-import net.sourceforge.joceanus.gordianknot.api.zip.GordianZipFileContents;
-import net.sourceforge.joceanus.gordianknot.api.zip.GordianZipFileEntry;
-import net.sourceforge.joceanus.gordianknot.api.zip.GordianZipReadFile;
-import net.sourceforge.joceanus.prometheus.PrometheusIOException;
-import net.sourceforge.joceanus.prometheus.data.PrometheusDataSet;
-import net.sourceforge.joceanus.prometheus.data.PrometheusDataSet.PrometheusCryptographyDataType;
-import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetProvider;
-import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetWorkBook;
-import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetWorkBookType;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.profile.TethysProfile;
-import net.sourceforge.joceanus.tethys.ui.api.factory.TethysUIFactory;
-import net.sourceforge.joceanus.tethys.ui.api.thread.TethysUIThreadStatusReport;
 
 /**
  * Load control for spreadsheets.
@@ -59,7 +59,7 @@ public abstract class PrometheusSheetReader {
     /**
      * The password manager.
      */
-    private final GordianPasswordManager thePasswordMgr;
+    private final PrometheusSecurityPasswordManager thePasswordMgr;
 
     /**
      * Spreadsheet.
@@ -84,7 +84,7 @@ public abstract class PrometheusSheetReader {
      */
     protected PrometheusSheetReader(final TethysUIFactory<?> pFactory,
                                     final TethysUIThreadStatusReport pReport,
-                                    final GordianPasswordManager pPasswordMgr) {
+                                    final PrometheusSecurityPasswordManager pPasswordMgr) {
         theGuiFactory = pFactory;
         theReport = pReport;
         thePasswordMgr = pPasswordMgr;
@@ -148,7 +148,7 @@ public abstract class PrometheusSheetReader {
                            final PrometheusDataSet pData,
                            final String pName) throws OceanusException {
         /* Start the task */
-        TethysProfile myTask = theReport.getActiveTask();
+        OceanusProfile myTask = theReport.getActiveTask();
         myTask = myTask.startTask("Loading");
         theData = pData;
 
@@ -196,7 +196,7 @@ public abstract class PrometheusSheetReader {
         /* Protect the workbook retrieval */
         try (InputStream myStream = pFile.createInputStream(pEntry)) {
             /* Obtain the active profile */
-            final TethysProfile myTask = theReport.getActiveTask();
+            final OceanusProfile myTask = theReport.getActiveTask();
             myTask.startTask("Parsing");
 
             /* Initialise the workbook */
@@ -277,7 +277,7 @@ public abstract class PrometheusSheetReader {
      */
     private void loadWorkBook() throws OceanusException {
         /* Obtain the active profile */
-        final TethysProfile myTask = theReport.getActiveTask();
+        final OceanusProfile myTask = theReport.getActiveTask();
 
         /* Declare the number of stages */
         theReport.setNumStages(theSheets.size() + 1);

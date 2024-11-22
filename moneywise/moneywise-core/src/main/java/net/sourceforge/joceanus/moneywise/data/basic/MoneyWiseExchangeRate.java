@@ -40,12 +40,12 @@ import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataList;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataMapItem;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataValues;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.date.TethysDate;
-import net.sourceforge.joceanus.tethys.date.TethysDateFormatter;
-import net.sourceforge.joceanus.tethys.date.TethysDateRange;
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
-import net.sourceforge.joceanus.tethys.decimal.TethysRatio;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.date.OceanusDateFormatter;
+import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRatio;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
 
 /**
@@ -125,10 +125,10 @@ public class MoneyWiseExchangeRate
         try {
             /* Store the Date */
             Object myValue = pValues.getValue(MoneyWiseBasicResource.MONEYWISEDATA_FIELD_DATE);
-            if (myValue instanceof TethysDate) {
-                setValueDate((TethysDate) myValue);
+            if (myValue instanceof OceanusDate) {
+                setValueDate((OceanusDate) myValue);
             } else if (myValue instanceof String) {
-                final TethysDateFormatter myParser = myFormatter.getDateFormatter();
+                final OceanusDateFormatter myParser = myFormatter.getDateFormatter();
                 setValueDate(myParser.parseDate((String) myValue));
             }
 
@@ -150,12 +150,12 @@ public class MoneyWiseExchangeRate
 
             /* Store the Rate */
             myValue = pValues.getValue(MoneyWiseBasicResource.XCHGRATE_RATE);
-            if (myValue instanceof TethysRatio) {
-                setValueExchangeRate((TethysRatio) myValue);
+            if (myValue instanceof OceanusRatio) {
+                setValueExchangeRate((OceanusRatio) myValue);
             } else if (myValue instanceof String) {
                 final String myString = (String) myValue;
                 setValueExchangeRate(myString);
-                setValueExchangeRate(myFormatter.parseValue(myString, TethysRatio.class));
+                setValueExchangeRate(myFormatter.parseValue(myString, OceanusRatio.class));
             }
 
             /* Catch Exceptions */
@@ -224,8 +224,8 @@ public class MoneyWiseExchangeRate
      * Obtain Date.
      * @return the name
      */
-    public TethysDate getDate() {
-        return getValues().getValue(MoneyWiseBasicResource.MONEYWISEDATA_FIELD_DATE, TethysDate.class);
+    public OceanusDate getDate() {
+        return getValues().getValue(MoneyWiseBasicResource.MONEYWISEDATA_FIELD_DATE, OceanusDate.class);
     }
 
     /**
@@ -292,16 +292,16 @@ public class MoneyWiseExchangeRate
      * Obtain ExchangeRate.
      * @return the rate
      */
-    public TethysRatio getExchangeRate() {
-        return getValues().getValue(MoneyWiseBasicResource.XCHGRATE_RATE, TethysRatio.class);
+    public OceanusRatio getExchangeRate() {
+        return getValues().getValue(MoneyWiseBasicResource.XCHGRATE_RATE, OceanusRatio.class);
     }
 
     /**
      * Obtain InverseRate.
      * @return the inverse rate
      */
-    public TethysRatio getInverseRate() {
-        final TethysRatio myRate = getExchangeRate();
+    public OceanusRatio getInverseRate() {
+        final OceanusRatio myRate = getExchangeRate();
         return myRate == null
                 ? null
                 : myRate.getInverseRatio();
@@ -311,7 +311,7 @@ public class MoneyWiseExchangeRate
      * Set date value.
      * @param pValue the value
      */
-    private void setValueDate(final TethysDate pValue) {
+    private void setValueDate(final OceanusDate pValue) {
         getValues().setUncheckedValue(MoneyWiseBasicResource.MONEYWISEDATA_FIELD_DATE, pValue);
     }
 
@@ -367,7 +367,7 @@ public class MoneyWiseExchangeRate
      * Set exchange rate value.
      * @param pValue the value
      */
-    protected void setValueExchangeRate(final TethysRatio pValue) {
+    protected void setValueExchangeRate(final OceanusRatio pValue) {
         getValues().setUncheckedValue(MoneyWiseBasicResource.XCHGRATE_RATE, pValue);
     }
 
@@ -433,7 +433,7 @@ public class MoneyWiseExchangeRate
      * Set a new date.
      * @param pDate the new date
      */
-    public void setDate(final TethysDate pDate) {
+    public void setDate(final OceanusDate pDate) {
         setValueDate(pDate);
     }
 
@@ -457,7 +457,7 @@ public class MoneyWiseExchangeRate
      * Set a new exchange rate.
      * @param pRate the new rate
      */
-    public void setExchangeRate(final TethysRatio pRate) {
+    public void setExchangeRate(final OceanusRatio pRate) {
         setValueExchangeRate(pRate);
     }
 
@@ -473,9 +473,9 @@ public class MoneyWiseExchangeRate
         final MoneyWiseExchangeRateBaseList<? extends MoneyWiseExchangeRate> myList = getList();
         final MoneyWiseCurrency myFrom = getFromCurrency();
         final MoneyWiseCurrency myTo = getToCurrency();
-        final TethysDate myDate = getDate();
-        final TethysRatio myRate = getExchangeRate();
-        final TethysDateRange myRange = getDataSet().getDateRange();
+        final OceanusDate myDate = getDate();
+        final OceanusRatio myRate = getExchangeRate();
+        final OceanusDateRange myRange = getDataSet().getDateRange();
 
         /* Date must be non-null */
         if (myDate == null) {
@@ -758,11 +758,11 @@ public class MoneyWiseExchangeRate
          * @param pDate the date of the conversion
          * @return the converted value
          */
-        public TethysMoney convertCurrency(final TethysMoney pValue,
-                                           final MoneyWiseCurrency pCurrency,
-                                           final TethysDate pDate) {
+        public OceanusMoney convertCurrency(final OceanusMoney pValue,
+                                            final MoneyWiseCurrency pCurrency,
+                                            final OceanusDate pDate) {
             /* Obtain the existing currency */
-            TethysMoney myValue = pValue;
+            OceanusMoney myValue = pValue;
             final MoneyWiseCurrencyList myCurrencies = getDataSet().getAccountCurrencies();
             final Currency myCurrent = pValue.getCurrency();
             final Currency myReporting = theReporting.getCurrency();
@@ -776,7 +776,7 @@ public class MoneyWiseExchangeRate
             /* If the value is not already the reporting currency */
             if (!myCurrent.equals(myReporting)) {
                 /* Find the required exchange rate */
-                final TethysRatio myRate = findRate(myCurrencies.findCurrency(myCurrent), pDate);
+                final OceanusRatio myRate = findRate(myCurrencies.findCurrency(myCurrent), pDate);
 
                 /* Convert the currency */
                 myValue = myValue.convertCurrency(myReporting, myRate);
@@ -785,7 +785,7 @@ public class MoneyWiseExchangeRate
             /* If we need to convert to a non-default currency */
             if (!myReporting.equals(myTarget)) {
                 /* Find the required exchange rate */
-                final TethysRatio myRate = findRate(pCurrency, pDate);
+                final OceanusRatio myRate = findRate(pCurrency, pDate);
 
                 /* Convert the currency */
                 myValue = myValue.convertCurrency(myTarget, myRate);
@@ -801,8 +801,8 @@ public class MoneyWiseExchangeRate
          * @param pDate the date to find the exchange rate for
          * @return the exchange rate
          */
-        private TethysRatio findRate(final MoneyWiseCurrency pCurrency,
-                                     final TethysDate pDate) {
+        private OceanusRatio findRate(final MoneyWiseCurrency pCurrency,
+                                      final OceanusDate pDate) {
             /* pass call to data map */
             return getDataMap().getRateForDate(pCurrency, pDate);
         }
@@ -814,17 +814,17 @@ public class MoneyWiseExchangeRate
         public void setReportingCurrency(final MoneyWiseCurrency pCurrency) {
             /* Access the iterator */
             final Iterator<MoneyWiseExchangeRate> myIterator = iterator();
-            TethysRatio myCurrRate = null;
-            TethysDate myCurrDate = null;
+            OceanusRatio myCurrRate = null;
+            OceanusDate myCurrDate = null;
 
             /* Loop through the items to find the entry */
             while (myIterator.hasNext()) {
                 final MoneyWiseExchangeRate myCurr = myIterator.next();
 
                 /* Access details */
-                final TethysDate myDate = myCurr.getDate();
+                final OceanusDate myDate = myCurr.getDate();
                 final MoneyWiseCurrency myTo = myCurr.getToCurrency();
-                final TethysRatio myRatio = myCurr.getExchangeRate();
+                final OceanusRatio myRatio = myCurr.getExchangeRate();
 
                 /* If this is a new date */
                 if (myCurrDate == null || !myDate.equals(myCurrDate)) {
@@ -851,7 +851,7 @@ public class MoneyWiseExchangeRate
                     /* Else does not currently involve the new currency */
                 } else {
                     /* Need to combine the rates */
-                    myCurr.setExchangeRate(new TethysRatio(myRatio, myCurrRate));
+                    myCurr.setExchangeRate(new OceanusRatio(myRatio, myCurrRate));
                 }
 
                 /* Set from currency */
@@ -885,7 +885,7 @@ public class MoneyWiseExchangeRate
         /**
          * Map of Maps.
          */
-        private final Map<MoneyWiseCurrency, Map<TethysDate, Integer>> theMapOfMaps;
+        private final Map<MoneyWiseCurrency, Map<OceanusDate, Integer>> theMapOfMaps;
 
         /**
          * Map of Rates.
@@ -916,7 +916,7 @@ public class MoneyWiseExchangeRate
          * Obtain mapOfMaps.
          * @return the map
          */
-        private Map<MoneyWiseCurrency, Map<TethysDate, Integer>> getMapOfMaps() {
+        private Map<MoneyWiseCurrency, Map<OceanusDate, Integer>> getMapOfMaps() {
             return theMapOfMaps;
         }
 
@@ -944,10 +944,10 @@ public class MoneyWiseExchangeRate
             }
 
             /* Access the map */
-            final Map<TethysDate, Integer> myMap = theMapOfMaps.computeIfAbsent(myCurrency, c -> new HashMap<>());
+            final Map<OceanusDate, Integer> myMap = theMapOfMaps.computeIfAbsent(myCurrency, c -> new HashMap<>());
 
             /* Adjust rate count */
-            final TethysDate myDate = myItem.getDate();
+            final OceanusDate myDate = myItem.getDate();
             final Integer myCount = myMap.get(myDate);
             if (myCount == null) {
                 myMap.put(myDate, PrometheusDataInstanceMap.ONE);
@@ -970,10 +970,10 @@ public class MoneyWiseExchangeRate
         public boolean validRateCount(final MoneyWiseExchangeRate pItem) {
             /* Access the Details */
             final MoneyWiseCurrency myCurrency = pItem.getToCurrency();
-            final TethysDate myDate = pItem.getDate();
+            final OceanusDate myDate = pItem.getDate();
 
             /* Access the map */
-            final Map<TethysDate, Integer> myMap = theMapOfMaps.get(myCurrency);
+            final Map<OceanusDate, Integer> myMap = theMapOfMaps.get(myCurrency);
             if (myMap != null) {
                 final Integer myResult = myMap.get(myDate);
                 return PrometheusDataInstanceMap.ONE.equals(myResult);
@@ -988,9 +988,9 @@ public class MoneyWiseExchangeRate
          * @return true/false
          */
         public boolean availableDate(final MoneyWiseCurrency pCurrency,
-                                     final TethysDate pDate) {
+                                     final OceanusDate pDate) {
             /* Access the map */
-            final Map<TethysDate, Integer> myMap = theMapOfMaps.get(pCurrency);
+            final Map<OceanusDate, Integer> myMap = theMapOfMaps.get(pCurrency);
             return myMap == null
                     || myMap.get(pDate) == null;
         }
@@ -1001,8 +1001,8 @@ public class MoneyWiseExchangeRate
          * @param pDate the date
          * @return the latest rate for the date.
          */
-        public TethysRatio getRateForDate(final MoneyWiseCurrency pCurrency,
-                                          final TethysDate pDate) {
+        public OceanusRatio getRateForDate(final MoneyWiseCurrency pCurrency,
+                                           final OceanusDate pDate) {
             /* Access list for currency */
             final MoneyWiseRateList myList = theMapOfRates.get(pCurrency);
             if (myList != null) {
@@ -1012,7 +1012,7 @@ public class MoneyWiseExchangeRate
                     final MoneyWiseExchangeRate myCurr = myIterator.next();
 
                     /* Access the date */
-                    final TethysDate myDate = myCurr.getDate();
+                    final OceanusDate myDate = myCurr.getDate();
 
                     /* break loop if we have the correct record */
                     if (myDate.compareTo(pDate) >= 0) {
@@ -1031,12 +1031,12 @@ public class MoneyWiseExchangeRate
          * @param pRange the date range
          * @return the two deep array of rates for the range.
          */
-        public TethysRatio[] getRatesForRange(final MoneyWiseCurrency pCurrency,
-                                              final TethysDateRange pRange) {
+        public OceanusRatio[] getRatesForRange(final MoneyWiseCurrency pCurrency,
+                                               final OceanusDateRange pRange) {
             /* Set rate */
-            TethysRatio myFirst = TethysRatio.ONE;
-            TethysRatio myLatest = TethysRatio.ONE;
-            final TethysDate myStart = pRange.getStart();
+            OceanusRatio myFirst = OceanusRatio.ONE;
+            OceanusRatio myLatest = OceanusRatio.ONE;
+            final OceanusDate myStart = pRange.getStart();
 
             /* Access list for security */
             final MoneyWiseRateList myList = theMapOfRates.get(pCurrency);
@@ -1047,7 +1047,7 @@ public class MoneyWiseExchangeRate
                     final MoneyWiseExchangeRate myCurr = myIterator.previous();
 
                     /* Check for the range of the date */
-                    final TethysDate myDate = myCurr.getDate();
+                    final OceanusDate myDate = myCurr.getDate();
                     final int iComp = pRange.compareToDate(myDate);
 
                     /* If this is later than the range we are finished */
@@ -1067,7 +1067,7 @@ public class MoneyWiseExchangeRate
             }
 
             /* Return the rates */
-            return new TethysRatio[]
+            return new OceanusRatio[]
                     { myFirst, myLatest };
         }
 

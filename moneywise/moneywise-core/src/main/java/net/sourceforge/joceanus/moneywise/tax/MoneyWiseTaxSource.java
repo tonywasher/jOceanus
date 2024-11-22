@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.moneywise.tax;
 
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTaxClass;
 import net.sourceforge.joceanus.moneywise.tax.MoneyWiseChargeableGainSlice.MoneyWiseChargeableGainSliceList;
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
 
 /**
  * Tax Source.
@@ -29,7 +29,7 @@ public interface MoneyWiseTaxSource {
      * @param pBasis the taxBasis
      * @return the amount
      */
-    TethysMoney getAmountForTaxBasis(MoneyWiseTaxClass pBasis);
+    OceanusMoney getAmountForTaxBasis(MoneyWiseTaxClass pBasis);
 
     /**
      * Obtain the charges.

@@ -21,14 +21,14 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.coeus.CoeusDataException;
-import net.sourceforge.joceanus.tethys.resource.TethysBundleId;
-import net.sourceforge.joceanus.tethys.resource.TethysBundleLoader;
+import net.sourceforge.joceanus.oceanus.resource.OceanusBundleId;
+import net.sourceforge.joceanus.oceanus.resource.OceanusBundleLoader;
 
 /**
  * Resource IDs for Coeus UI.
  */
 public enum CoeusUIResource
-        implements TethysBundleId {
+        implements OceanusBundleId {
     /**
      * Filter Selection Title.
      */
@@ -122,13 +122,13 @@ public enum CoeusUIResource
     /**
      * The Resource Loader.
      */
-    private static final TethysBundleLoader LOADER = TethysBundleLoader.getPackageLoader(CoeusDataException.class.getCanonicalName(),
+    private static final OceanusBundleLoader LOADER = OceanusBundleLoader.getPackageLoader(CoeusDataException.class.getCanonicalName(),
             ResourceBundle::getBundle);
 
     /**
      * The MenuItem Map.
      */
-    private static final Map<CoeusMenuItem, TethysBundleId> MENUITEM_MAP = buildMenuItemMap();
+    private static final Map<CoeusMenuItem, OceanusBundleId> MENUITEM_MAP = buildMenuItemMap();
 
     /**
      * The Id.
@@ -174,9 +174,9 @@ public enum CoeusUIResource
      * Build menuItem map.
      * @return the map
      */
-    private static Map<CoeusMenuItem, TethysBundleId> buildMenuItemMap() {
+    private static Map<CoeusMenuItem, OceanusBundleId> buildMenuItemMap() {
         /* Create the map and return it */
-        final Map<CoeusMenuItem, TethysBundleId> myMap = new EnumMap<>(CoeusMenuItem.class);
+        final Map<CoeusMenuItem, OceanusBundleId> myMap = new EnumMap<>(CoeusMenuItem.class);
         myMap.put(CoeusMenuItem.HELP, MENU_HELP);
         myMap.put(CoeusMenuItem.DATAVIEWER, MENU_DATAVIEWER);
         myMap.put(CoeusMenuItem.ABOUT, MENU_ABOUT);
@@ -188,7 +188,7 @@ public enum CoeusUIResource
      * @param pMenuItem the menuItem
      * @return the resource key
      */
-    public static TethysBundleId getKeyForMenuItem(final CoeusMenuItem pMenuItem) {
-        return TethysBundleLoader.getKeyForEnum(MENUITEM_MAP, pMenuItem);
+    public static OceanusBundleId getKeyForMenuItem(final CoeusMenuItem pMenuItem) {
+        return OceanusBundleLoader.getKeyForEnum(MENUITEM_MAP, pMenuItem);
     }
 }

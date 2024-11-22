@@ -19,8 +19,8 @@ package net.sourceforge.joceanus.moneywise.atlas.data.analysis.values;
 import java.util.Currency;
 
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.base.MoneyWiseXAnalysisValues;
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
-import net.sourceforge.joceanus.tethys.decimal.TethysUnits;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusUnits;
 
 /**
  * SecurityValues class.
@@ -46,13 +46,13 @@ public final class MoneyWiseXAnalysisSecurityValues
         super(MoneyWiseXAnalysisSecurityAttr.class);
 
         /* Initialise units etc. to zero */
-        setValue(MoneyWiseXAnalysisSecurityAttr.UNITS, new TethysUnits());
-        setValue(MoneyWiseXAnalysisSecurityAttr.VALUE, new TethysMoney(pCurrency));
-        setValue(MoneyWiseXAnalysisSecurityAttr.RESIDUALCOST, new TethysMoney(pReportingCurrency));
-        setValue(MoneyWiseXAnalysisSecurityAttr.REALISEDGAINS, new TethysMoney(pReportingCurrency));
-        setValue(MoneyWiseXAnalysisSecurityAttr.UNREALISEDGAINS, new TethysMoney(pReportingCurrency));
-        setValue(MoneyWiseXAnalysisSecurityAttr.DIVIDEND, new TethysMoney(pReportingCurrency));
-        setValue(MoneyWiseXAnalysisSecurityAttr.FUNDED, new TethysMoney(pReportingCurrency));
+        setValue(MoneyWiseXAnalysisSecurityAttr.UNITS, new OceanusUnits());
+        setValue(MoneyWiseXAnalysisSecurityAttr.VALUE, new OceanusMoney(pCurrency));
+        setValue(MoneyWiseXAnalysisSecurityAttr.RESIDUALCOST, new OceanusMoney(pReportingCurrency));
+        setValue(MoneyWiseXAnalysisSecurityAttr.REALISEDGAINS, new OceanusMoney(pReportingCurrency));
+        setValue(MoneyWiseXAnalysisSecurityAttr.UNREALISEDGAINS, new OceanusMoney(pReportingCurrency));
+        setValue(MoneyWiseXAnalysisSecurityAttr.DIVIDEND, new OceanusMoney(pReportingCurrency));
+        setValue(MoneyWiseXAnalysisSecurityAttr.FUNDED, new OceanusMoney(pReportingCurrency));
     }
 
     /**
@@ -80,14 +80,14 @@ public final class MoneyWiseXAnalysisSecurityValues
     @Override
     public void resetBaseValues() {
         /* Create a zero value in the correct currency */
-        TethysMoney myValue = getMoneyValue(MoneyWiseXAnalysisSecurityAttr.RESIDUALCOST);
-        myValue = new TethysMoney(myValue);
+        OceanusMoney myValue = getMoneyValue(MoneyWiseXAnalysisSecurityAttr.RESIDUALCOST);
+        myValue = new OceanusMoney(myValue);
         myValue.setZero();
 
         /* Reset Growth Adjust values */
         setValue(MoneyWiseXAnalysisSecurityAttr.UNREALISEDGAINS, myValue);
-        setValue(MoneyWiseXAnalysisSecurityAttr.REALISEDGAINS, new TethysMoney(myValue));
-        setValue(MoneyWiseXAnalysisSecurityAttr.DIVIDEND, new TethysMoney(myValue));
+        setValue(MoneyWiseXAnalysisSecurityAttr.REALISEDGAINS, new OceanusMoney(myValue));
+        setValue(MoneyWiseXAnalysisSecurityAttr.DIVIDEND, new OceanusMoney(myValue));
     }
 
     /**
@@ -95,8 +95,8 @@ public final class MoneyWiseXAnalysisSecurityValues
      * @param pAttr the attribute
      */
     public void setZeroMoney(final MoneyWiseXAnalysisSecurityAttr pAttr) {
-        TethysMoney myValue = getMoneyValue(pAttr);
-        myValue = new TethysMoney(myValue);
+        OceanusMoney myValue = getMoneyValue(pAttr);
+        myValue = new OceanusMoney(myValue);
         myValue.setZero();
         setValue(pAttr, myValue);
     }
@@ -106,7 +106,7 @@ public final class MoneyWiseXAnalysisSecurityValues
      * @param pAttr the attribute
      */
     public void setZeroUnits(final MoneyWiseXAnalysisSecurityAttr pAttr) {
-         setValue(pAttr, new TethysUnits());
+         setValue(pAttr, new OceanusUnits());
     }
 
     /**
@@ -114,7 +114,7 @@ public final class MoneyWiseXAnalysisSecurityValues
      * @return true/false
      */
     public boolean isActive() {
-        final TethysUnits myUnits = getUnitsValue(MoneyWiseXAnalysisSecurityAttr.UNITS);
+        final OceanusUnits myUnits = getUnitsValue(MoneyWiseXAnalysisSecurityAttr.UNITS);
         return myUnits != null && myUnits.isNonZero();
     }
 }

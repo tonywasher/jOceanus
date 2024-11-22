@@ -1,0 +1,15 @@
+Oceanus Core
+
+  Oceanus Core provides utility classes including the following.
+
+* A simple date class representing a financial Date, with additional utility classes involving date ranges and finacial periods.
+
+* A simple decimal class representing exact values (i.e. not floating point) with fixed numbers of decimals.
+
+* Simple event classes
+
+* A simple logger class
+
+* A simple profile class
+
+* Simple properties bundle classes

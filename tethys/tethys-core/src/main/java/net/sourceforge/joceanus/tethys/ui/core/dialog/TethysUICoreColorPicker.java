@@ -18,8 +18,8 @@ package net.sourceforge.joceanus.tethys.ui.core.dialog;
 
 import java.util.Objects;
 
-import net.sourceforge.joceanus.tethys.event.TethysEventManager;
-import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.tethys.ui.api.button.TethysUIColorPicker;
 import net.sourceforge.joceanus.tethys.ui.core.base.TethysUICoreComponent;
@@ -40,7 +40,7 @@ public abstract class TethysUICoreColorPicker<C>
     /**
      * The Event Manager.
      */
-    private final TethysEventManager<TethysUIEvent> theEventManager;
+    private final OceanusEventManager<TethysUIEvent> theEventManager;
 
     /**
      * The Value.
@@ -53,7 +53,7 @@ public abstract class TethysUICoreColorPicker<C>
      */
     protected TethysUICoreColorPicker(final TethysUICoreFactory<?> pFactory) {
         theId = pFactory.getNextId();
-        theEventManager = new TethysEventManager<>();
+        theEventManager = new OceanusEventManager<>();
     }
 
     @Override
@@ -62,7 +62,7 @@ public abstract class TethysUICoreColorPicker<C>
     }
 
     @Override
-    public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
+    public OceanusEventRegistrar<TethysUIEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 

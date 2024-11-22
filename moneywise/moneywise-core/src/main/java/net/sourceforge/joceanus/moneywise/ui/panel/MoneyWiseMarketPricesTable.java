@@ -40,13 +40,13 @@ import net.sourceforge.joceanus.prometheus.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
 import net.sourceforge.joceanus.prometheus.views.PrometheusUIEvent;
 import net.sourceforge.joceanus.prometheus.views.PrometheusViewerEntryId;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.date.TethysDate;
-import net.sourceforge.joceanus.tethys.event.TethysEvent;
-import net.sourceforge.joceanus.tethys.event.TethysEventManager;
-import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar;
-import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar.TethysEventProvider;
-import net.sourceforge.joceanus.tethys.profile.TethysProfile;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.event.OceanusEvent;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.tethys.ui.api.button.TethysUIButton;
 import net.sourceforge.joceanus.tethys.ui.api.control.TethysUIControl.TethysUIIconMapSet;
@@ -73,7 +73,7 @@ public class MoneyWiseMarketPricesTable
     /**
      * The selected date.
      */
-    private TethysDate theDate;
+    private OceanusDate theDate;
 
     /**
      * The Portfolio.
@@ -164,7 +164,7 @@ public class MoneyWiseMarketPricesTable
     @Override
     protected void refreshData() {
         /* Obtain the active profile */
-        TethysProfile myTask = getView().getActiveTask();
+        OceanusProfile myTask = getView().getActiveTask();
         myTask = myTask.startTask("SpotPrices1");
 
         /* Refresh the data */
@@ -186,7 +186,7 @@ public class MoneyWiseMarketPricesTable
      * @param pDate the Date for the extract
      */
     public void setSelection(final MoneyWisePortfolio pPortfolio,
-                             final TethysDate pDate) {
+                             final OceanusDate pDate) {
         /* Record selection */
         theDate = pDate;
         thePortfolio = pPortfolio;
@@ -222,7 +222,7 @@ public class MoneyWiseMarketPricesTable
 
         /* Access selection */
         final MoneyWisePortfolio myPortfolio = theSelect.getPortfolio();
-        final TethysDate myDate = theSelect.getDate();
+        final OceanusDate myDate = theSelect.getDate();
 
         /* If the selection differs */
         if (!MetisDataDifference.isEqual(theDate, myDate)
@@ -306,7 +306,7 @@ public class MoneyWiseMarketPricesTable
         /**
          * The Event Manager.
          */
-        private final TethysEventManager<PrometheusDataEvent> theEventManager;
+        private final OceanusEventManager<PrometheusDataEvent> theEventManager;
 
         /**
          * The updateSet.
@@ -348,7 +348,7 @@ public class MoneyWiseMarketPricesTable
             theEditSet = new PrometheusEditSet(pView);
 
             /* Create the event manager */
-            theEventManager = new TethysEventManager<>();
+            theEventManager = new OceanusEventManager<>();
 
             /* Create the top level viewer entry for this view */
             final MetisViewerEntry mySection = pView.getViewerEntry(PrometheusViewerEntryId.VIEW);
@@ -391,7 +391,7 @@ public class MoneyWiseMarketPricesTable
         }
 
         @Override
-        public TethysEventRegistrar<PrometheusDataEvent> getEventRegistrar() {
+        public OceanusEventRegistrar<PrometheusDataEvent> getEventRegistrar() {
             return theEventManager.getEventRegistrar();
         }
 
@@ -416,7 +416,7 @@ public class MoneyWiseMarketPricesTable
          * handle Action Buttons.
          * @param pEvent the event
          */
-        private void handleActionButtons(final TethysEvent<PrometheusUIEvent> pEvent) {
+        private void handleActionButtons(final OceanusEvent<PrometheusUIEvent> pEvent) {
             /* Cancel editing */
             theTable.cancelEditing();
 

@@ -31,9 +31,9 @@ import net.sourceforge.joceanus.metis.viewer.MetisViewerEntry;
 import net.sourceforge.joceanus.metis.viewer.MetisViewerManager;
 import net.sourceforge.joceanus.metis.viewer.MetisViewerStandardEntry;
 import net.sourceforge.joceanus.metis.viewer.MetisViewerWindow;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.event.TethysEvent;
-import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.event.OceanusEvent;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.tethys.ui.api.dialog.TethysUIAboutBox;
 import net.sourceforge.joceanus.tethys.ui.api.factory.TethysUIFactory;
@@ -119,7 +119,7 @@ public class CoeusMainPanel
         theTabs.addTabItem(CoeusUIResource.TAB_REPORTS.getValue(), myReports);
 
         /* Listen to filter requests */
-        final TethysEventRegistrar<CoeusDataEvent> myRegistrar = myReports.getEventRegistrar();
+        final OceanusEventRegistrar<CoeusDataEvent> myRegistrar = myReports.getEventRegistrar();
         myRegistrar.addEventListener(CoeusDataEvent.GOTOSTATEMENT, this::handleGoToEvent);
 
         /* Create the totals table */
@@ -189,7 +189,7 @@ public class CoeusMainPanel
      * Handle a GoTo event.
      * @param pEvent the event
      */
-    private void handleGoToEvent(final TethysEvent<CoeusDataEvent> pEvent) {
+    private void handleGoToEvent(final OceanusEvent<CoeusDataEvent> pEvent) {
         /* Obtain the filter and pass to the statement panel */
         final CoeusFilter myFilter = pEvent.getDetails(CoeusFilter.class);
         theTotalsTable.processFilter(myFilter);

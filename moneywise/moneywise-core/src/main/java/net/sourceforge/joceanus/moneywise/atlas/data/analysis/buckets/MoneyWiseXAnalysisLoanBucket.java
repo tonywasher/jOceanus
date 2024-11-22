@@ -24,8 +24,8 @@ import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseLoan;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseLoanCategory;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseLoanCategoryClass;
-import net.sourceforge.joceanus.tethys.date.TethysDate;
-import net.sourceforge.joceanus.tethys.date.TethysDateRange;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
 
 /**
  * The Loan Bucket class.
@@ -95,7 +95,7 @@ public final class MoneyWiseXAnalysisLoanBucket
      */
     private MoneyWiseXAnalysisLoanBucket(final MoneyWiseXAnalysis pAnalysis,
                                          final MoneyWiseXAnalysisLoanBucket pBase,
-                                         final TethysDate pDate) {
+                                         final OceanusDate pDate) {
         /* Call super-constructor */
         super(pAnalysis, pBase, pDate);
 
@@ -112,7 +112,7 @@ public final class MoneyWiseXAnalysisLoanBucket
      */
     private MoneyWiseXAnalysisLoanBucket(final MoneyWiseXAnalysis pAnalysis,
                                          final MoneyWiseXAnalysisLoanBucket pBase,
-                                         final TethysDateRange pRange) {
+                                         final OceanusDateRange pRange) {
         /* Call super-constructor */
         super(pAnalysis, pBase, pRange);
 
@@ -174,7 +174,7 @@ public final class MoneyWiseXAnalysisLoanBucket
          */
         MoneyWiseXAnalysisLoanBucketList(final MoneyWiseXAnalysis pAnalysis,
                                          final MoneyWiseXAnalysisLoanBucketList pBase,
-                                         final TethysDate pDate) {
+                                         final OceanusDate pDate) {
             /* Initialise class */
             this(pAnalysis);
 
@@ -190,7 +190,7 @@ public final class MoneyWiseXAnalysisLoanBucket
          */
         MoneyWiseXAnalysisLoanBucketList(final MoneyWiseXAnalysis pAnalysis,
                                          final MoneyWiseXAnalysisLoanBucketList pBase,
-                                         final TethysDateRange pRange) {
+                                         final OceanusDateRange pRange) {
             /* Initialise class */
             this(pAnalysis);
 
@@ -263,13 +263,13 @@ public final class MoneyWiseXAnalysisLoanBucket
 
         @Override
         protected MoneyWiseXAnalysisLoanBucket newBucket(final MoneyWiseXAnalysisLoanBucket pBase,
-                                                         final TethysDate pDate) {
+                                                         final OceanusDate pDate) {
             return new MoneyWiseXAnalysisLoanBucket(getAnalysis(), pBase, pDate);
         }
 
         @Override
         protected MoneyWiseXAnalysisLoanBucket newBucket(final MoneyWiseXAnalysisLoanBucket pBase,
-                                                         final TethysDateRange pRange) {
+                                                         final OceanusDateRange pRange) {
             return new MoneyWiseXAnalysisLoanBucket(getAnalysis(), pBase, pRange);
         }
     }

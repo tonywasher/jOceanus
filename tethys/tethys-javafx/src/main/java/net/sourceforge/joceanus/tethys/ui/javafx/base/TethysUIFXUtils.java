@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Tethys: Java Utilities
+ * Tethys: GUI Utilities
  * Copyright 2012,2024 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -37,7 +37,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Screen;
 import javafx.stage.Window;
-import net.sourceforge.joceanus.tethys.TethysDataConverter;
+import net.sourceforge.joceanus.oceanus.OceanusDataConverter;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIIconId;
 
 /**
@@ -103,7 +103,7 @@ public final class TethysUIFXUtils {
     private static void appendColorPart(final StringBuilder pBuilder,
                                         final double pValue) {
         /* Convert to integer */
-        final int myMax = TethysDataConverter.BYTE_MASK + 1;
+        final int myMax = OceanusDataConverter.BYTE_MASK + 1;
         int myValue = (int) (pValue * myMax);
 
         /* Handle boundary issue */
@@ -112,14 +112,14 @@ public final class TethysUIFXUtils {
         }
 
         /* Format the high nibble */
-        int myDigit = myValue >>> TethysDataConverter.NYBBLE_SHIFT;
-        char myChar = Character.forDigit(myDigit, TethysDataConverter.HEX_RADIX);
+        int myDigit = myValue >>> OceanusDataConverter.NYBBLE_SHIFT;
+        char myChar = Character.forDigit(myDigit, OceanusDataConverter.HEX_RADIX);
         pBuilder.append(myChar);
 
         /* Access the low nibble */
         myDigit = myValue
-                & TethysDataConverter.NYBBLE_MASK;
-        myChar = Character.forDigit(myDigit, TethysDataConverter.HEX_RADIX);
+                & OceanusDataConverter.NYBBLE_MASK;
+        myChar = Character.forDigit(myDigit, OceanusDataConverter.HEX_RADIX);
         pBuilder.append(myChar);
     }
 

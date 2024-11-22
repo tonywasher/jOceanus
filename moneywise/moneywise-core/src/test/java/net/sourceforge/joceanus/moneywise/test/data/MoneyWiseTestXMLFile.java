@@ -16,19 +16,18 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.moneywise.test.data;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-
-import org.junit.jupiter.api.Assertions;
-
-import net.sourceforge.joceanus.gordianknot.api.password.GordianPasswordManager;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataSet;
 import net.sourceforge.joceanus.moneywise.tax.uk.MoneyWiseUKTaxYearCache;
 import net.sourceforge.joceanus.moneywise.test.data.MoneyWiseTestSecurity.NullPasswordDialog;
-import net.sourceforge.joceanus.prometheus.toolkit.PrometheusToolkit;
+import net.sourceforge.joceanus.oceanus.OceanusException;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataValuesFormatter;
-import net.sourceforge.joceanus.tethys.OceanusException;
+import net.sourceforge.joceanus.prometheus.security.PrometheusSecurityPasswordManager;
+import net.sourceforge.joceanus.prometheus.toolkit.PrometheusToolkit;
 import net.sourceforge.joceanus.tethys.ui.api.thread.TethysUIThreadManager;
+import org.junit.jupiter.api.Assertions;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 
 /**
  * Test XML File.
@@ -56,7 +55,7 @@ public class MoneyWiseTestXMLFile {
     public void performTest(final MoneyWiseDataSet pData,
                             final PrometheusToolkit pToolkit) throws OceanusException {
         /* Access the Password manager and disable prompting */
-        final GordianPasswordManager myManager = pData.getPasswordMgr();
+        final PrometheusSecurityPasswordManager myManager = pData.getPasswordMgr();
         myManager.setDialogController(new NullPasswordDialog());
 
         /* Create a new formatter */

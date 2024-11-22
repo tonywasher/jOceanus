@@ -16,16 +16,14 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.tethys.ui.core.button;
 
-import java.util.Locale;
-
-import net.sourceforge.joceanus.tethys.date.TethysDate;
-import net.sourceforge.joceanus.tethys.date.TethysDateFormatter;
-import net.sourceforge.joceanus.tethys.date.TethysDatePeriod;
-import net.sourceforge.joceanus.tethys.date.TethysDateRange;
-import net.sourceforge.joceanus.tethys.date.TethysDateRangeState;
-import net.sourceforge.joceanus.tethys.date.TethysDateResource;
-import net.sourceforge.joceanus.tethys.event.TethysEventManager;
-import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.date.OceanusDateFormatter;
+import net.sourceforge.joceanus.oceanus.date.OceanusDatePeriod;
+import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
+import net.sourceforge.joceanus.oceanus.date.OceanusDateRangeState;
+import net.sourceforge.joceanus.oceanus.date.OceanusDateResource;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIArrowIconId;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.tethys.ui.api.button.TethysUIButton;
@@ -39,7 +37,10 @@ import net.sourceforge.joceanus.tethys.ui.api.menu.TethysUIScrollMenu;
 import net.sourceforge.joceanus.tethys.ui.api.pane.TethysUIBoxPaneManager;
 import net.sourceforge.joceanus.tethys.ui.api.pane.TethysUIPaneFactory;
 import net.sourceforge.joceanus.tethys.ui.core.base.TethysUICoreComponent;
+import net.sourceforge.joceanus.tethys.ui.core.base.TethysUIResource;
 import net.sourceforge.joceanus.tethys.ui.core.factory.TethysUICoreFactory;
+
+import java.util.Locale;
 
 /**
  * DateRange Selector.
@@ -50,37 +51,37 @@ public abstract class TethysUICoreDateRangeSelector
     /**
      * ToolTip for Next Button.
      */
-    private static final String NLS_NEXTTIP = TethysDateResource.TIP_NEXTDATE.getValue();
+    private static final String NLS_NEXTTIP = TethysUIResource.TIP_NEXTDATE.getValue();
 
     /**
      * ToolTip for Previous Button.
      */
-    private static final String NLS_PREVTIP = TethysDateResource.TIP_PREVDATE.getValue();
+    private static final String NLS_PREVTIP = TethysUIResource.TIP_PREVDATE.getValue();
 
     /**
      * Text for Start Label.
      */
-    private static final String NLS_START = TethysDateResource.LABEL_STARTING.getValue();
+    private static final String NLS_START = TethysUIResource.LABEL_STARTING.getValue();
 
     /**
      * Text for End Label.
      */
-    private static final String NLS_END = TethysDateResource.LABEL_ENDING.getValue();
+    private static final String NLS_END = TethysUIResource.LABEL_ENDING.getValue();
 
     /**
      * Text for Containing Label.
      */
-    private static final String NLS_CONTAIN = TethysDateResource.LABEL_CONTAINING.getValue();
+    private static final String NLS_CONTAIN = TethysUIResource.LABEL_CONTAINING.getValue();
 
     /**
      * Text for Period Label.
      */
-    private static final String NLS_PERIOD = TethysDateResource.LABEL_PERIOD.getValue();
+    private static final String NLS_PERIOD = TethysUIResource.LABEL_PERIOD.getValue();
 
     /**
      * Text for Box Title.
      */
-    protected static final String NLS_TITLE = TethysDateResource.TITLE_BOX.getValue();
+    protected static final String NLS_TITLE = OceanusDateResource.TITLE_BOX.getValue();
 
     /**
      * The GUI Factory.
@@ -90,12 +91,12 @@ public abstract class TethysUICoreDateRangeSelector
     /**
      * The Event Manager.
      */
-    private final TethysEventManager<TethysUIEvent> theEventManager;
+    private final OceanusEventManager<TethysUIEvent> theEventManager;
 
     /**
      * The formatter.
      */
-    private final TethysDateFormatter theFormatter;
+    private final OceanusDateFormatter theFormatter;
 
     /**
      * The Control.
@@ -150,22 +151,22 @@ public abstract class TethysUICoreDateRangeSelector
     /**
      * The Period Button.
      */
-    private final TethysUIScrollButtonManager<TethysDatePeriod> thePeriodButton;
+    private final TethysUIScrollButtonManager<OceanusDatePeriod> thePeriodButton;
 
     /**
      * The Published DateRange.
      */
-    private TethysDateRange thePublishedRange;
+    private OceanusDateRange thePublishedRange;
 
     /**
      * The DateRange State.
      */
-    private TethysDateRangeState theState;
+    private OceanusDateRangeState theState;
 
     /**
      * The Saved state.
      */
-    private TethysDateRangeState theSavePoint;
+    private OceanusDateRangeState theSavePoint;
 
     /**
      * Constructor.
@@ -181,10 +182,10 @@ public abstract class TethysUICoreDateRangeSelector
         theGuiFactory = pFactory;
 
         /* Create event manager */
-        theEventManager = new TethysEventManager<>();
+        theEventManager = new OceanusEventManager<>();
 
         /* Create initial state */
-        theState = new TethysDateRangeState(pBaseIsStart);
+        theState = new OceanusDateRangeState(pBaseIsStart);
 
         /* Access the factories */
         final TethysUIButtonFactory<?> myButtonFactory = pFactory.buttonFactory();
@@ -195,7 +196,7 @@ public abstract class TethysUICoreDateRangeSelector
         theStartButton = myButtonFactory.newDateButton();
         theEndButton = myButtonFactory.newDateButton();
         theBaseButton = myButtonFactory.newDateButton();
-        thePeriodButton = myButtonFactory.newScrollButton(TethysDatePeriod.class);
+        thePeriodButton = myButtonFactory.newScrollButton(OceanusDatePeriod.class);
         buildPeriodMenu(thePeriodButton.getMenu());
 
         /* Create the period box */
@@ -243,9 +244,9 @@ public abstract class TethysUICoreDateRangeSelector
         theControl.addNode(theCustomBox);
 
         /* Add the listeners */
-        theStartButton.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewStartDate(e.getDetails(TethysDate.class)));
-        theEndButton.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewEndDate(e.getDetails(TethysDate.class)));
-        theBaseButton.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewBaseDate(e.getDetails(TethysDate.class)));
+        theStartButton.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewStartDate(e.getDetails(OceanusDate.class)));
+        theEndButton.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewEndDate(e.getDetails(OceanusDate.class)));
+        theBaseButton.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewBaseDate(e.getDetails(OceanusDate.class)));
         thePeriodButton.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> setPeriod(thePeriodButton.getValue()));
     }
 
@@ -255,7 +256,7 @@ public abstract class TethysUICoreDateRangeSelector
     }
 
     @Override
-    public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
+    public OceanusEventRegistrar<TethysUIEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -271,16 +272,16 @@ public abstract class TethysUICoreDateRangeSelector
      * Build period menu.
      * @param pMenu the menu
      */
-    private static void buildPeriodMenu(final TethysUIScrollMenu<TethysDatePeriod> pMenu) {
+    private static void buildPeriodMenu(final TethysUIScrollMenu<OceanusDatePeriod> pMenu) {
         /* Loop through the periods */
-        for (TethysDatePeriod myPeriod : TethysDatePeriod.values()) {
+        for (OceanusDatePeriod myPeriod : OceanusDatePeriod.values()) {
             /* Create a new MenuItem for the period */
             pMenu.addItem(myPeriod);
         }
     }
 
     @Override
-    public TethysDateRange getRange() {
+    public OceanusDateRange getRange() {
         return theState.getRange();
     }
 
@@ -288,12 +289,12 @@ public abstract class TethysUICoreDateRangeSelector
      * Obtain current state.
      * @return the current state
      */
-    private TethysDateRangeState getState() {
+    private OceanusDateRangeState getState() {
         return theState;
     }
 
     @Override
-    public final void setOverallRange(final TethysDateRange pRange) {
+    public final void setOverallRange(final OceanusDateRange pRange) {
         theState.adjustOverallRange(pRange);
         applyState();
     }
@@ -306,7 +307,7 @@ public abstract class TethysUICoreDateRangeSelector
     }
 
     @Override
-    public void setPeriod(final TethysDatePeriod pPeriod) {
+    public void setPeriod(final OceanusDatePeriod pPeriod) {
         theState.setPeriod(pPeriod);
         applyState();
     }
@@ -320,10 +321,10 @@ public abstract class TethysUICoreDateRangeSelector
     @Override
     public void setSelection(final TethysUIDateRangeSelector pSource) {
         /* Access the state */
-        final TethysDateRangeState myState = ((TethysUICoreDateRangeSelector) pSource).getState();
+        final OceanusDateRangeState myState = ((TethysUICoreDateRangeSelector) pSource).getState();
 
         /* Accept this state */
-        theState = new TethysDateRangeState(myState);
+        theState = new OceanusDateRangeState(myState);
 
         /* Build the range */
         applyState();
@@ -332,13 +333,13 @@ public abstract class TethysUICoreDateRangeSelector
     @Override
     public void createSavePoint() {
         /* Create the savePoint */
-        theSavePoint = new TethysDateRangeState(theState);
+        theSavePoint = new OceanusDateRangeState(theState);
     }
 
     @Override
     public void restoreSavePoint() {
         /* Restore the savePoint */
-        theState = new TethysDateRangeState(theSavePoint);
+        theState = new OceanusDateRangeState(theSavePoint);
         applyState();
     }
 
@@ -346,7 +347,7 @@ public abstract class TethysUICoreDateRangeSelector
      * Handle new startDate.
      * @param pDate the new date
      */
-    private void handleNewStartDate(final TethysDate pDate) {
+    private void handleNewStartDate(final OceanusDate pDate) {
         theState.setStartDate(pDate);
         applyState();
     }
@@ -355,7 +356,7 @@ public abstract class TethysUICoreDateRangeSelector
      * Handle new endDate.
      * @param pDate the new date
      */
-    private void handleNewEndDate(final TethysDate pDate) {
+    private void handleNewEndDate(final OceanusDate pDate) {
         theState.setEndDate(pDate);
         applyState();
     }
@@ -364,7 +365,7 @@ public abstract class TethysUICoreDateRangeSelector
      * Handle new baseDate.
      * @param pDate the new date
      */
-    private void handleNewBaseDate(final TethysDate pDate) {
+    private void handleNewBaseDate(final OceanusDate pDate) {
         theState.setBaseDate(pDate);
         applyState();
     }
@@ -405,7 +406,7 @@ public abstract class TethysUICoreDateRangeSelector
         applyState(theState);
 
         /* Access overall range */
-        final TethysDateRange myOverallRange = theState.getOverallRange();
+        final OceanusDateRange myOverallRange = theState.getOverallRange();
 
         /* Set the period value */
         thePeriodButton.setValue(theState.getPeriod());
@@ -429,11 +430,11 @@ public abstract class TethysUICoreDateRangeSelector
         }
 
         /* Determine whether a change has occurred */
-        TethysDateRange myNew = getRange();
-        if (TethysDateRange.isDifferent(thePublishedRange, myNew)) {
+        OceanusDateRange myNew = getRange();
+        if (OceanusDateRange.isDifferent(thePublishedRange, myNew)) {
             /* Record the new range and create a copy */
             thePublishedRange = myNew;
-            myNew = new TethysDateRange(myNew);
+            myNew = new OceanusDateRange(myNew);
 
             /* Fire the value change */
             theEventManager.fireEvent(TethysUIEvent.NEWVALUE, myNew);
@@ -444,7 +445,7 @@ public abstract class TethysUICoreDateRangeSelector
      * Apply the state.
      * @param pState the state
      */
-    protected void applyState(final TethysDateRangeState pState) {
+    protected void applyState(final OceanusDateRangeState pState) {
         /* Determine flags */
         final boolean isUpTo = pState.isUpTo()
                 && pState.isLocked();

@@ -37,12 +37,12 @@ import net.sourceforge.joceanus.metis.toolkit.MetisToolkit;
 import net.sourceforge.joceanus.metis.viewer.MetisViewerEntry;
 import net.sourceforge.joceanus.metis.viewer.MetisViewerManager;
 import net.sourceforge.joceanus.metis.viewer.MetisViewerStandardEntry;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.date.TethysDate;
-import net.sourceforge.joceanus.tethys.event.TethysEvent;
-import net.sourceforge.joceanus.tethys.event.TethysEventManager;
-import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar;
-import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.event.OceanusEvent;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.TethysEventProvider;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.tethys.ui.api.control.TethysUIHTMLManager;
@@ -58,7 +58,7 @@ public class CoeusReportPanel
     /**
      * The Event Manager.
      */
-    private final TethysEventManager<CoeusDataEvent> theEventManager;
+    private final OceanusEventManager<CoeusDataEvent> theEventManager;
 
     /**
      * The MarketCache.
@@ -115,7 +115,7 @@ public class CoeusReportPanel
         final TethysUIFactory<?> myFactory = pToolkit.getGuiFactory();
 
         /* Create the event manager */
-        theEventManager = new TethysEventManager<>();
+        theEventManager = new OceanusEventManager<>();
 
         /* Create the Panel */
         thePanel = myFactory.paneFactory().newBorderPane();
@@ -157,7 +157,7 @@ public class CoeusReportPanel
         theCache.getEventRegistrar().addEventListener(e -> refreshData());
         theError.getEventRegistrar().addEventListener(e -> handleErrorPane());
         theManager.getEventRegistrar().addEventListener(this::handleGoToRequest);
-        final TethysEventRegistrar<CoeusDataEvent> myRegistrar = theSelect.getEventRegistrar();
+        final OceanusEventRegistrar<CoeusDataEvent> myRegistrar = theSelect.getEventRegistrar();
         myRegistrar.addEventListener(CoeusDataEvent.SELECTIONCHANGED, e -> handleReportRequest());
         myRegistrar.addEventListener(CoeusDataEvent.PRINT, e -> theHTMLPane.printIt());
         myRegistrar.addEventListener(CoeusDataEvent.SAVETOFILE, e -> theHTMLPane.saveToFile());
@@ -173,7 +173,7 @@ public class CoeusReportPanel
     }
 
     @Override
-    public TethysEventRegistrar<CoeusDataEvent> getEventRegistrar() {
+    public OceanusEventRegistrar<CoeusDataEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -225,7 +225,7 @@ public class CoeusReportPanel
         /* Access the values from the selection */
         final CoeusReportType myReportType = theSelect.getReportType();
         final CoeusMarketProvider myProvider = theSelect.getProvider();
-        final TethysDate myDate = theSelect.getDate();
+        final OceanusDate myDate = theSelect.getDate();
         final Document myDoc;
 
         /* Switch on report type */
@@ -276,7 +276,7 @@ public class CoeusReportPanel
      * handleGoToRequest.
      * @param pEvent the event
      */
-    private void handleGoToRequest(final TethysEvent<MetisReportEvent> pEvent) {
+    private void handleGoToRequest(final OceanusEvent<MetisReportEvent> pEvent) {
         /* Create the details of the request */
         final CoeusFilter myFilter = pEvent.getDetails(CoeusFilter.class);
 

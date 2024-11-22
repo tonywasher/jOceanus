@@ -33,9 +33,9 @@ import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurityHolding;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWisePortfolioClass;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseSecurityClass;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
-import net.sourceforge.joceanus.tethys.decimal.TethysUnits;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusUnits;
 
 /**
  * Credit XferIn Analysis.
@@ -164,14 +164,14 @@ public class MoneyWiseXAnalysisXferIn {
      */
     private void processCreditXferIn(final MoneyWiseSecurityHolding pHolding) {
         /* Obtain credit amount and credit delta units */
-        TethysUnits myDeltaUnits = theTransaction.getCreditUnitsDelta();
+        final OceanusUnits myDeltaUnits = theTransaction.getCreditUnitsDelta();
 
         /* Access the Asset Security Bucket */
         final MoneyWiseXAnalysisSecurityBucket myAsset = thePortfolios.getBucket(pHolding);
         final MoneyWiseXAnalysisSecurityValues myValues = myAsset.getValues();
 
         /* If this is a foreign asset */
-        final TethysMoney myAmount = myAsset.isForeignCurrency()
+        final OceanusMoney myAmount = myAsset.isForeignCurrency()
                 ? theTransAnalyser.adjustForeignAssetCredit(myValues.getRatioValue(MoneyWiseXAnalysisSecurityAttr.EXCHANGERATE))
                 : theTransaction.getCreditAmount();
 
@@ -200,7 +200,7 @@ public class MoneyWiseXAnalysisXferIn {
      * Process statePension contribution.
      * @param pAmount the statePension contribution
      */
-    void processStatePensionContribution(final TethysMoney pAmount) {
+    void processStatePensionContribution(final OceanusMoney pAmount) {
         /* Adjust the cost and investment */
         theStatePension.adjustResidualCost(pAmount);
         theStatePension.adjustFunded(pAmount);

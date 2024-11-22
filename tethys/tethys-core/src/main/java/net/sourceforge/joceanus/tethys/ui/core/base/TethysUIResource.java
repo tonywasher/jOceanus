@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Tethys: Java Utilities
+ * Tethys: GUI Utilities
  * Copyright 2012,2024 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,16 +16,45 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.tethys.ui.core.base;
 
-import java.util.ResourceBundle;
+import net.sourceforge.joceanus.oceanus.resource.OceanusBundleId;
+import net.sourceforge.joceanus.oceanus.resource.OceanusBundleLoader;
 
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.resource.TethysBundleId;
-import net.sourceforge.joceanus.tethys.resource.TethysBundleLoader;
+import java.util.ResourceBundle;
 
 /**
  * Resource IDs for TethysUI package.
  */
-public enum TethysUIResource implements TethysBundleId {
+public enum TethysUIResource implements OceanusBundleId {
+    /**
+     * tip NextDate.
+     */
+    TIP_NEXTDATE("tooltip.nextDate"),
+
+    /**
+     * tip PreviousDate.
+     */
+    TIP_PREVDATE("tooltip.prevDate"),
+
+    /**
+     * Label Starting.
+     */
+    LABEL_STARTING("label.starting"),
+
+    /**
+     * Label Ending.
+     */
+    LABEL_ENDING("label.ending"),
+
+    /**
+     * Label Containing.
+     */
+    LABEL_CONTAINING("label.containing"),
+
+    /**
+     * Label Period.
+     */
+    LABEL_PERIOD("label.period"),
+
     /**
      * Bad value on parse.
      */
@@ -99,12 +128,47 @@ public enum TethysUIResource implements TethysBundleId {
     /**
      * Error length 2.
      */
-    PASS_ERROR_LENGTH2("pass.error.length2");
+    PASS_ERROR_LENGTH2("pass.error.length2"),
+
+    /**
+     * CurrentDay.
+     */
+    DIALOG_CURRENT("dialog.CurrentDay"),
+
+    /**
+     * SelectedDay.
+     */
+    DIALOG_SELECTED("dialog.SelectedDay"),
+
+    /**
+     * NextMonth.
+     */
+    DIALOG_NEXTMONTH("dialog.NextMonth"),
+
+    /**
+     * PreviousMonth.
+     */
+    DIALOG_PREVMONTH("dialog.PreviousMonth"),
+
+    /**
+     * NextYear.
+     */
+    DIALOG_NEXTYEAR("dialog.NextYear"),
+
+    /**
+     * PreviousYear.
+     */
+    DIALOG_PREVYEAR("dialog.PreviousYear"),
+
+    /**
+     * NullSelect.
+     */
+    DIALOG_NULL("dialog.NullSelect");
 
     /**
      * The Resource Loader.
      */
-    private static final TethysBundleLoader LOADER = TethysBundleLoader.getPackageLoader(OceanusException.class.getCanonicalName(),
+    private static final OceanusBundleLoader LOADER = OceanusBundleLoader.getLoader(TethysUIResource.class.getCanonicalName(),
             ResourceBundle::getBundle);
 
     /**

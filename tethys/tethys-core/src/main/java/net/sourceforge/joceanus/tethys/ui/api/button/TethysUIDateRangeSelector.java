@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Tethys: Java Utilities
+ * Tethys: GUI Utilities
  * Copyright 2012,2024 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,9 +18,9 @@ package net.sourceforge.joceanus.tethys.ui.api.button;
 
 import java.util.Locale;
 
-import net.sourceforge.joceanus.tethys.date.TethysDatePeriod;
-import net.sourceforge.joceanus.tethys.date.TethysDateRange;
-import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.oceanus.date.OceanusDatePeriod;
+import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.TethysEventProvider;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIEvent;
 
@@ -39,13 +39,13 @@ public interface TethysUIDateRangeSelector
      * Obtain selected DateRange.
      * @return the selected date range
      */
-    TethysDateRange getRange();
+    OceanusDateRange getRange();
 
     /**
      * Set the overall range for the control.
      * @param pRange the range
      */
-    void setOverallRange(TethysDateRange pRange);
+    void setOverallRange(OceanusDateRange pRange);
 
     /**
      * Set the locale.
@@ -57,7 +57,7 @@ public interface TethysUIDateRangeSelector
      * Set period.
      * @param pPeriod the new period
      */
-    void setPeriod(TethysDatePeriod pPeriod);
+    void setPeriod(OceanusDatePeriod pPeriod);
 
     /**
      * Lock period.

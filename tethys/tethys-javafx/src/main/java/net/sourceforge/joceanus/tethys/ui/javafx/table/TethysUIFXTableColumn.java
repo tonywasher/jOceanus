@@ -29,14 +29,14 @@ import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.util.Callback;
 
-import net.sourceforge.joceanus.tethys.date.TethysDate;
-import net.sourceforge.joceanus.tethys.date.TethysDateConfig;
-import net.sourceforge.joceanus.tethys.decimal.TethysDecimal;
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
-import net.sourceforge.joceanus.tethys.decimal.TethysPrice;
-import net.sourceforge.joceanus.tethys.decimal.TethysRate;
-import net.sourceforge.joceanus.tethys.decimal.TethysRatio;
-import net.sourceforge.joceanus.tethys.decimal.TethysUnits;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.date.OceanusDateConfig;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimal;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRate;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRatio;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusUnits;
 import net.sourceforge.joceanus.tethys.ui.api.control.TethysUIControl.TethysUIIconMapSet;
 import net.sourceforge.joceanus.tethys.ui.api.field.TethysUIFieldType;
 import net.sourceforge.joceanus.tethys.ui.api.menu.TethysUIScrollMenu;
@@ -323,7 +323,7 @@ public class TethysUIFXTableColumn<T, C, R>
      * @param <R> the table item class
      */
     public static class TethysUIFXTableRawDecimalColumn<C, R>
-            extends TethysUIFXTableValidatedColumn<TethysDecimal, C, R>
+            extends TethysUIFXTableValidatedColumn<OceanusDecimal, C, R>
             implements TethysUITableRawDecimalColumn<C, R> {
         /**
          * Raw decimals supplier.
@@ -344,7 +344,7 @@ public class TethysUIFXTableColumn<T, C, R>
         }
 
         @Override
-        public TethysUIFXTableRawDecimalColumn<C, R> setValidator(final BiFunction<TethysDecimal, R, String> pValidator) {
+        public TethysUIFXTableRawDecimalColumn<C, R> setValidator(final BiFunction<OceanusDecimal, R, String> pValidator) {
             return (TethysUIFXTableRawDecimalColumn<C, R>) super.setValidator(pValidator);
         }
 
@@ -371,7 +371,7 @@ public class TethysUIFXTableColumn<T, C, R>
      * @param <R> the table item class
      */
     public static class TethysUIFXTableMoneyColumn<C, R>
-            extends TethysUIFXTableValidatedColumn<TethysMoney, C, R>
+            extends TethysUIFXTableValidatedColumn<OceanusMoney, C, R>
             implements TethysUITableMoneyColumn<C, R> {
         /**
          * Currency supplier.
@@ -392,7 +392,7 @@ public class TethysUIFXTableColumn<T, C, R>
         }
 
         @Override
-        public TethysUIFXTableMoneyColumn<C, R> setValidator(final BiFunction<TethysMoney, R, String> pValidator) {
+        public TethysUIFXTableMoneyColumn<C, R> setValidator(final BiFunction<OceanusMoney, R, String> pValidator) {
             return (TethysUIFXTableMoneyColumn<C, R>) super.setValidator(pValidator);
         }
 
@@ -419,7 +419,7 @@ public class TethysUIFXTableColumn<T, C, R>
      * @param <R> the table item class
      */
     public static class TethysUIFXTablePriceColumn<C, R>
-            extends TethysUIFXTableValidatedColumn<TethysPrice, C, R>
+            extends TethysUIFXTableValidatedColumn<OceanusPrice, C, R>
             implements TethysUITablePriceColumn<C, R> {
         /**
          * Currency supplier.
@@ -440,7 +440,7 @@ public class TethysUIFXTableColumn<T, C, R>
         }
 
         @Override
-        public TethysUIFXTablePriceColumn<C, R> setValidator(final BiFunction<TethysPrice, R, String> pValidator) {
+        public TethysUIFXTablePriceColumn<C, R> setValidator(final BiFunction<OceanusPrice, R, String> pValidator) {
             return (TethysUIFXTablePriceColumn<C, R>) super.setValidator(pValidator);
         }
 
@@ -467,7 +467,7 @@ public class TethysUIFXTableColumn<T, C, R>
      * @param <R> the table item class
      */
     public static class TethysUIFXTableRateColumn<C, R>
-            extends TethysUIFXTableValidatedColumn<TethysRate, C, R>
+            extends TethysUIFXTableValidatedColumn<OceanusRate, C, R>
             implements TethysUITableRateColumn<C, R> {
         /**
          * Constructor.
@@ -482,7 +482,7 @@ public class TethysUIFXTableColumn<T, C, R>
         }
 
         @Override
-        public TethysUIFXTableRateColumn<C, R> setValidator(final BiFunction<TethysRate, R, String> pValidator) {
+        public TethysUIFXTableRateColumn<C, R> setValidator(final BiFunction<OceanusRate, R, String> pValidator) {
             return (TethysUIFXTableRateColumn<C, R>) super.setValidator(pValidator);
         }
     }
@@ -494,7 +494,7 @@ public class TethysUIFXTableColumn<T, C, R>
      * @param <R> the table item class
      */
     public static class TethysUIFXTableUnitsColumn<C, R>
-            extends TethysUIFXTableValidatedColumn<TethysUnits, C, R>
+            extends TethysUIFXTableValidatedColumn<OceanusUnits, C, R>
             implements TethysUITableUnitsColumn<C, R> {
         /**
          * Constructor.
@@ -509,7 +509,7 @@ public class TethysUIFXTableColumn<T, C, R>
         }
 
         @Override
-        public TethysUIFXTableUnitsColumn<C, R> setValidator(final BiFunction<TethysUnits, R, String> pValidator) {
+        public TethysUIFXTableUnitsColumn<C, R> setValidator(final BiFunction<OceanusUnits, R, String> pValidator) {
             return (TethysUIFXTableUnitsColumn<C, R>) super.setValidator(pValidator);
         }
     }
@@ -521,7 +521,7 @@ public class TethysUIFXTableColumn<T, C, R>
      * @param <R> the table item class
      */
     public static class TethysUIFXTableRatioColumn<C, R>
-            extends TethysUIFXTableValidatedColumn<TethysRatio, C, R>
+            extends TethysUIFXTableValidatedColumn<OceanusRatio, C, R>
             implements TethysUITableRatioColumn<C, R> {
         /**
          * Constructor.
@@ -536,7 +536,7 @@ public class TethysUIFXTableColumn<T, C, R>
         }
 
         @Override
-        public TethysUIFXTableRatioColumn<C, R> setValidator(final BiFunction<TethysRatio, R, String> pValidator) {
+        public TethysUIFXTableRatioColumn<C, R> setValidator(final BiFunction<OceanusRatio, R, String> pValidator) {
             return (TethysUIFXTableRatioColumn<C, R>) super.setValidator(pValidator);
         }
     }
@@ -548,12 +548,12 @@ public class TethysUIFXTableColumn<T, C, R>
      * @param <R> the table item class
      */
     public static class TethysUIFXTableDateColumn<C, R>
-            extends TethysUIFXTableColumn<TethysDate, C, R>
+            extends TethysUIFXTableColumn<OceanusDate, C, R>
             implements TethysUITableDateColumn<C, R> {
         /**
          * Date configurator.
          */
-        private BiConsumer<R, TethysDateConfig> theConfigurator;
+        private BiConsumer<R, OceanusDateConfig> theConfigurator;
 
         /**
          * Constructor.
@@ -570,7 +570,7 @@ public class TethysUIFXTableColumn<T, C, R>
         }
 
         @Override
-        public TethysUIFXTableDateColumn<C, R> setDateConfigurator(final BiConsumer<R, TethysDateConfig> pConfigurator) {
+        public TethysUIFXTableDateColumn<C, R> setDateConfigurator(final BiConsumer<R, OceanusDateConfig> pConfigurator) {
             theConfigurator = pConfigurator;
             return this;
         }
@@ -580,7 +580,7 @@ public class TethysUIFXTableColumn<T, C, R>
          *
          * @return the configurator
          */
-        BiConsumer<R, TethysDateConfig> getDateConfigurator() {
+        BiConsumer<R, OceanusDateConfig> getDateConfigurator() {
             return theConfigurator;
         }
     }

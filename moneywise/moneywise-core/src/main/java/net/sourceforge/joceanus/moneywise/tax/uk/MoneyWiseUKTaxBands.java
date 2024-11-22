@@ -23,7 +23,7 @@ import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.moneywise.tax.MoneyWiseTaxBandSet;
 import net.sourceforge.joceanus.moneywise.tax.MoneyWiseTaxBandSet.MoneyWiseTaxBand;
 import net.sourceforge.joceanus.moneywise.tax.MoneyWiseTaxResource;
-import net.sourceforge.joceanus.tethys.decimal.TethysRate;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRate;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
 
 /**
@@ -143,7 +143,7 @@ public class MoneyWiseUKTaxBands
      * Obtain the basic rate of income tax.
      * @return the rate
      */
-    protected TethysRate getBasicTaxRate() {
+    protected OceanusRate getBasicTaxRate() {
         final Iterator<MoneyWiseTaxBand> myIterator = theStandard.iterator();
         if (hasLoTaxBand && myIterator.hasNext()) {
             myIterator.next();

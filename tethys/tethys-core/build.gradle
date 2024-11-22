@@ -1,5 +1,6 @@
 /* Dependencies */
 dependencies {
+    implementation project(':oceanus')
     implementation "org.jsoup:jsoup:$jsoupVersion"
     testImplementation "org.junit.jupiter:junit-jupiter-api:$jUnitVersion"
     testImplementation "org.junit.jupiter:junit-jupiter-engine:$jUnitVersion"

@@ -22,8 +22,8 @@ import java.util.List;
 
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurityPrice;
 import net.sourceforge.joceanus.moneywise.quicken.definitions.MoneyWiseQIFType;
-import net.sourceforge.joceanus.tethys.date.TethysDate;
-import net.sourceforge.joceanus.tethys.decimal.TethysPrice;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
 
 /**
@@ -59,12 +59,12 @@ public class MoneyWiseQIFPrice
     /**
      * The date.
      */
-    private final TethysDate theDate;
+    private final OceanusDate theDate;
 
     /**
      * The price.
      */
-    private final TethysPrice thePrice;
+    private final OceanusPrice thePrice;
 
     /**
      * The element list.
@@ -157,7 +157,7 @@ public class MoneyWiseQIFPrice
      * Obtain the date.
      * @return the date
      */
-    public TethysDate getDate() {
+    public OceanusDate getDate() {
         return theDate;
     }
 
@@ -165,7 +165,7 @@ public class MoneyWiseQIFPrice
      * Obtain the price.
      * @return the security
      */
-    public TethysPrice getPrice() {
+    public OceanusPrice getPrice() {
         return thePrice;
     }
 

@@ -19,8 +19,8 @@ package net.sourceforge.joceanus.coeus.data.lendingworks;
 import net.sourceforge.joceanus.coeus.CoeusDataException;
 import net.sourceforge.joceanus.coeus.data.CoeusLoan;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
-import net.sourceforge.joceanus.tethys.date.TethysDateRange;
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
+import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
 
 /**
  * LendingWorks Loan.
@@ -54,7 +54,7 @@ public class CoeusLendingWorksLoan
      * @param pRange the dateRange
      */
     CoeusLendingWorksLoan(final CoeusLendingWorksLoan pLoan,
-                          final TethysDateRange pRange) {
+                          final OceanusDateRange pRange) {
         super(pLoan, pRange);
         theLoanIdNo = pLoan.theLoanIdNo;
     }
@@ -80,7 +80,7 @@ public class CoeusLendingWorksLoan
     }
 
     @Override
-    public TethysMoney getBalance() {
+    public OceanusMoney getBalance() {
         return null;
     }
 

@@ -26,7 +26,7 @@ import net.sourceforge.joceanus.coeus.data.CoeusMarketProvider;
 import net.sourceforge.joceanus.coeus.data.CoeusMarketSnapShot;
 import net.sourceforge.joceanus.coeus.data.CoeusMarketType;
 import net.sourceforge.joceanus.coeus.data.CoeusTotalSet;
-import net.sourceforge.joceanus.tethys.date.TethysDate;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
 
 /**
  * Coeus Filter.
@@ -60,7 +60,7 @@ public interface CoeusFilter {
      * Obtain the selected date.
      * @return the selected date
      */
-    TethysDate getSelectedDate();
+    OceanusDate getSelectedDate();
 
     /**
      * ,/ Obtain the history.
@@ -141,7 +141,7 @@ public interface CoeusFilter {
         }
 
         @Override
-        public TethysDate getSelectedDate() {
+        public OceanusDate getSelectedDate() {
             return theSnapShot.getDate();
         }
 
@@ -166,7 +166,7 @@ public interface CoeusFilter {
         /**
          * The Selected Date.
          */
-        private final TethysDate theSelectedDate;
+        private final OceanusDate theSelectedDate;
 
         /**
          * The TotalSet.
@@ -184,7 +184,7 @@ public interface CoeusFilter {
          * @param pDate the selected date
          */
         public CoeusAnnualFilter(final CoeusMarketAnnual pAnnual,
-                                 final TethysDate pDate) {
+                                 final OceanusDate pDate) {
             theAnnual = pAnnual;
             theSelectedDate = pDate;
         }
@@ -235,7 +235,7 @@ public interface CoeusFilter {
         }
 
         @Override
-        public TethysDate getSelectedDate() {
+        public OceanusDate getSelectedDate() {
             return theSelectedDate;
         }
 

@@ -19,9 +19,9 @@ package net.sourceforge.joceanus.tethys.ui.javafx.launch;
 import javafx.application.Preloader;
 import javafx.stage.Stage;
 
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.logger.TethysLogManager;
-import net.sourceforge.joceanus.tethys.logger.TethysLogger;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.logger.OceanusLogManager;
+import net.sourceforge.joceanus.oceanus.logger.OceanusLogger;
 import net.sourceforge.joceanus.tethys.ui.api.factory.TethysUILaunchProgram;
 import net.sourceforge.joceanus.tethys.ui.javafx.launch.util.TethysUIFXLaunchState;
 
@@ -33,7 +33,7 @@ public abstract class TethysUIFXPreLoader
     /**
      * Logger.
      */
-    private static final TethysLogger LOGGER = TethysLogManager.getLogger(TethysUIFXPreLoader.class);
+    private static final OceanusLogger LOGGER = OceanusLogManager.getLogger(TethysUIFXPreLoader.class);
 
     /**
      * javaFXState.

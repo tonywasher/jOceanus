@@ -20,7 +20,7 @@ import java.util.Deque;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import net.sourceforge.joceanus.tethys.OceanusException;
+import net.sourceforge.joceanus.oceanus.OceanusException;
 import net.sourceforge.joceanus.themis.ThemisDataException;
 
 /**

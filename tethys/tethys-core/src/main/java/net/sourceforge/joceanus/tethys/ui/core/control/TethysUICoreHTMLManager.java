@@ -16,12 +16,12 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.tethys.ui.core.control;
 
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.event.TethysEventManager;
-import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar;
-import net.sourceforge.joceanus.tethys.logger.TethysLogManager;
-import net.sourceforge.joceanus.tethys.logger.TethysLogger;
-import net.sourceforge.joceanus.tethys.resource.TethysResourceLoader;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
+import net.sourceforge.joceanus.oceanus.logger.OceanusLogManager;
+import net.sourceforge.joceanus.oceanus.logger.OceanusLogger;
+import net.sourceforge.joceanus.oceanus.resource.OceanusResourceLoader;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIValueSet;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.tethys.ui.api.control.TethysUIHTMLManager;
@@ -37,7 +37,7 @@ public abstract class TethysUICoreHTMLManager
     /**
      * The logger.
      */
-    private static final TethysLogger LOGGER = TethysLogManager.getLogger(TethysUICoreHTMLManager.class);
+    private static final OceanusLogger LOGGER = OceanusLogManager.getLogger(TethysUICoreHTMLManager.class);
 
     /**
      * Reference Separator.
@@ -52,7 +52,7 @@ public abstract class TethysUICoreHTMLManager
     /**
      * The Event Manager.
      */
-    private final TethysEventManager<TethysUIEvent> theEventManager;
+    private final OceanusEventManager<TethysUIEvent> theEventManager;
 
     /**
      * The HTMLToFile Manager.
@@ -91,7 +91,7 @@ public abstract class TethysUICoreHTMLManager
     protected TethysUICoreHTMLManager(final TethysUICoreFactory<?> pFactory) {
         /* Build standard fields */
         theId = pFactory.getNextId();
-        theEventManager = new TethysEventManager<>();
+        theEventManager = new OceanusEventManager<>();
 
         /* Create the HTMLtoFile Manager */
         theHTMLToFile = new TethysUICoreHTMLToFile(pFactory, this);
@@ -109,7 +109,7 @@ public abstract class TethysUICoreHTMLManager
     }
 
     @Override
-    public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
+    public OceanusEventRegistrar<TethysUIEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -194,7 +194,7 @@ public abstract class TethysUICoreHTMLManager
     @Override
     public void setCSSContent(final TethysUIStyleSheetId pStyleSheet) throws OceanusException {
         /* Store the base sheet */
-        theCSSBase = TethysResourceLoader.loadResourceToString(pStyleSheet);
+        theCSSBase = OceanusResourceLoader.loadResourceToString(pStyleSheet);
         theCSSProcessed = null;
 
         /* Process the CSS */

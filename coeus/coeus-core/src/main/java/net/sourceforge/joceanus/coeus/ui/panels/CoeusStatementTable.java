@@ -34,11 +34,11 @@ import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.metis.list.MetisListBaseManager;
 import net.sourceforge.joceanus.metis.list.MetisListIndexed;
 import net.sourceforge.joceanus.metis.toolkit.MetisToolkit;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.TethysDataException;
-import net.sourceforge.joceanus.tethys.decimal.TethysDecimal;
-import net.sourceforge.joceanus.tethys.logger.TethysLogManager;
-import net.sourceforge.joceanus.tethys.logger.TethysLogger;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.OceanusDataException;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimal;
+import net.sourceforge.joceanus.oceanus.logger.OceanusLogManager;
+import net.sourceforge.joceanus.oceanus.logger.OceanusLogger;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.tethys.ui.api.dialog.TethysUIFileSelector;
 import net.sourceforge.joceanus.tethys.ui.api.factory.TethysUIFactory;
@@ -54,7 +54,7 @@ public class CoeusStatementTable
     /**
      * The logger.
      */
-    private static final TethysLogger LOGGER = TethysLogManager.getLogger(CoeusStatementTable.class);
+    private static final OceanusLogger LOGGER = OceanusLogManager.getLogger(CoeusStatementTable.class);
 
     /**
      * The logger.
@@ -183,7 +183,7 @@ public class CoeusStatementTable
      * @param pTotals the totals
      * @return the delta
      */
-    private TethysDecimal getFilteredDelta(final CoeusTotals pTotals) {
+    private OceanusDecimal getFilteredDelta(final CoeusTotals pTotals) {
         return theCalculator.calculateValue(pTotals, CoeusTotalsField.DELTA);
     }
 
@@ -192,7 +192,7 @@ public class CoeusStatementTable
      * @param pTotals the totals
      * @return the balance
      */
-    private TethysDecimal getFilteredBalance(final CoeusTotals pTotals) {
+    private OceanusDecimal getFilteredBalance(final CoeusTotals pTotals) {
         return theCalculator.calculateValue(pTotals, CoeusTotalsField.BALANCE);
     }
 
@@ -308,7 +308,7 @@ public class CoeusStatementTable
             myWriter.print(pData);
 
         } catch (IOException e) {
-            throw new TethysDataException("Failed to output XML", e);
+            throw new OceanusDataException("Failed to output XML", e);
         }
     }
 }

@@ -27,8 +27,8 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.stage.Window;
 
-import net.sourceforge.joceanus.tethys.logger.TethysLogManager;
-import net.sourceforge.joceanus.tethys.logger.TethysLogger;
+import net.sourceforge.joceanus.oceanus.logger.OceanusLogManager;
+import net.sourceforge.joceanus.oceanus.logger.OceanusLogger;
 import net.sourceforge.joceanus.tethys.ui.core.dialog.TethysUICorePasswordDialog;
 import net.sourceforge.joceanus.tethys.ui.core.factory.TethysUICoreFactory;
 import net.sourceforge.joceanus.tethys.ui.javafx.base.TethysUIFXNode;
@@ -52,7 +52,7 @@ public class TethysUIFXPasswordDialog
     /**
      * Logger.
      */
-    private static final TethysLogger LOGGER = TethysLogManager.getLogger(TethysUIFXPasswordDialog.class);
+    private static final OceanusLogger LOGGER = OceanusLogManager.getLogger(TethysUIFXPasswordDialog.class);
 
     /**
      * The stage.

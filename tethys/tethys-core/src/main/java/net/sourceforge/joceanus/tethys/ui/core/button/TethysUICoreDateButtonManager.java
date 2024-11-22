@@ -18,11 +18,11 @@ package net.sourceforge.joceanus.tethys.ui.core.button;
 
 import java.util.function.Consumer;
 
-import net.sourceforge.joceanus.tethys.date.TethysDate;
-import net.sourceforge.joceanus.tethys.date.TethysDateConfig;
-import net.sourceforge.joceanus.tethys.date.TethysDateFormatter;
-import net.sourceforge.joceanus.tethys.event.TethysEventManager;
-import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.date.OceanusDateConfig;
+import net.sourceforge.joceanus.oceanus.date.OceanusDateFormatter;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIArrowIconId;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUINode;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIEvent;
@@ -46,7 +46,7 @@ public abstract class TethysUICoreDateButtonManager
     /**
      * The Event Manager.
      */
-    private final TethysEventManager<TethysUIEvent> theEventManager;
+    private final OceanusEventManager<TethysUIEvent> theEventManager;
 
     /**
      * The button.
@@ -56,23 +56,23 @@ public abstract class TethysUICoreDateButtonManager
     /**
      * The date formatter.
      */
-    private final TethysDateFormatter theFormatter;
+    private final OceanusDateFormatter theFormatter;
 
     /**
      * The Configuration.
      */
-    private final TethysDateConfig theConfig;
+    private final OceanusDateConfig theConfig;
 
     /**
      * The DateConfigurator.
      */
-    private Consumer<TethysDateConfig> theDateConfigurator = p -> {
+    private Consumer<OceanusDateConfig> theDateConfigurator = p -> {
     };
 
     /**
      * The Value.
      */
-    private TethysDate theValue;
+    private OceanusDate theValue;
 
     /**
      * Is the menu showing?
@@ -86,10 +86,10 @@ public abstract class TethysUICoreDateButtonManager
     protected TethysUICoreDateButtonManager(final TethysUICoreFactory<?> pFactory) {
         /* Create configuration */
         theFormatter = pFactory.getDataFormatter().getDateFormatter();
-        theConfig = new TethysDateConfig(theFormatter);
+        theConfig = new OceanusDateConfig(theFormatter);
 
         /* Create resources */
-        theEventManager = new TethysEventManager<>();
+        theEventManager = new OceanusEventManager<>();
         theButton = pFactory.buttonFactory().newButton();
 
         /* Note that the button should be Text and Icon and set down Icon */
@@ -125,7 +125,7 @@ public abstract class TethysUICoreDateButtonManager
     }
 
     @Override
-    public TethysDateConfig getConfig() {
+    public OceanusDateConfig getConfig() {
         return theConfig;
     }
 
@@ -140,7 +140,7 @@ public abstract class TethysUICoreDateButtonManager
     }
 
     @Override
-    public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
+    public OceanusEventRegistrar<TethysUIEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -150,22 +150,22 @@ public abstract class TethysUICoreDateButtonManager
     protected abstract void showDialog();
 
     @Override
-    public TethysDate getSelectedDate() {
+    public OceanusDate getSelectedDate() {
         return theValue;
     }
 
     @Override
-    public TethysDate getEarliestDate() {
+    public OceanusDate getEarliestDate() {
         return theConfig.getEarliestDate();
     }
 
     @Override
-    public TethysDate getLatestDate() {
+    public OceanusDate getLatestDate() {
         return theConfig.getLatestDate();
     }
 
     @Override
-    public void setSelectedDate(final TethysDate pDate) {
+    public void setSelectedDate(final OceanusDate pDate) {
         theValue = pDate;
         theConfig.setSelectedDate(pDate);
         setButtonText();
@@ -184,12 +184,12 @@ public abstract class TethysUICoreDateButtonManager
     }
 
     @Override
-    public void setEarliestDate(final TethysDate pDate) {
+    public void setEarliestDate(final OceanusDate pDate) {
         theConfig.setEarliestDate(pDate);
     }
 
     @Override
-    public void setLatestDate(final TethysDate pDate) {
+    public void setLatestDate(final OceanusDate pDate) {
         theConfig.setLatestDate(pDate);
     }
 
@@ -209,7 +209,7 @@ public abstract class TethysUICoreDateButtonManager
     }
 
     @Override
-    public void setDateConfigurator(final Consumer<TethysDateConfig> pConfigurator) {
+    public void setDateConfigurator(final Consumer<OceanusDateConfig> pConfigurator) {
         theDateConfigurator = pConfigurator;
     }
 
@@ -225,7 +225,7 @@ public abstract class TethysUICoreDateButtonManager
      * handleNewValue.
      */
     protected void handleNewValue() {
-        final TethysDate myNewValue = theConfig.getSelectedDate();
+        final OceanusDate myNewValue = theConfig.getSelectedDate();
         if (valueChanged(myNewValue)) {
             theValue = myNewValue;
             theEventManager.fireEvent(TethysUIEvent.NEWVALUE, myNewValue);
@@ -241,7 +241,7 @@ public abstract class TethysUICoreDateButtonManager
      * @param pNew the new value
      * @return true/false
      */
-    private boolean valueChanged(final TethysDate pNew) {
+    private boolean valueChanged(final OceanusDate pNew) {
         return theValue == null
                 ? pNew != null
                 : !theValue.equals(pNew);

@@ -16,7 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.tethys.test.ui;
 
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.tethys.ui.api.chart.TethysUIChartFactory;
 import net.sourceforge.joceanus.tethys.ui.api.chart.TethysUIPieChart;
@@ -74,9 +74,9 @@ public class TethysTestPieChart {
      */
     public static void createTestPieData(final TethysUIPieChartData pData) {
         int i = 0;
-        pData.addSection("Banking", TethysMoney.getWholeUnits(PIE_VALUES[i++]));
-        pData.addSection("Cash", TethysMoney.getWholeUnits(PIE_VALUES[i++]));
-        pData.addSection("Portfolios", TethysMoney.getWholeUnits(PIE_VALUES[i++]));
-        pData.addSection("Loans", TethysMoney.getWholeUnits(PIE_VALUES[i]));
+        pData.addSection("Banking", OceanusMoney.getWholeUnits(PIE_VALUES[i++]));
+        pData.addSection("Cash", OceanusMoney.getWholeUnits(PIE_VALUES[i++]));
+        pData.addSection("Portfolios", OceanusMoney.getWholeUnits(PIE_VALUES[i++]));
+        pData.addSection("Loans", OceanusMoney.getWholeUnits(PIE_VALUES[i]));
     }
 }

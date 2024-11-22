@@ -47,15 +47,15 @@ import net.sourceforge.joceanus.prometheus.data.PrometheusDataValues.PrometheusI
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataValues.PrometheusInfoSetItem;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditEntry;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.date.TethysDate;
-import net.sourceforge.joceanus.tethys.date.TethysDateFormatter;
-import net.sourceforge.joceanus.tethys.date.TethysDateRange;
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
-import net.sourceforge.joceanus.tethys.decimal.TethysPrice;
-import net.sourceforge.joceanus.tethys.decimal.TethysRate;
-import net.sourceforge.joceanus.tethys.decimal.TethysRatio;
-import net.sourceforge.joceanus.tethys.decimal.TethysUnits;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.date.OceanusDateFormatter;
+import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRate;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRatio;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusUnits;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
 
 /**
@@ -177,10 +177,10 @@ public class MoneyWiseTransaction
         try {
             /* Store the Date */
             final Object myValue = pValues.getValue(MoneyWiseBasicResource.MONEYWISEDATA_FIELD_DATE);
-            if (myValue instanceof TethysDate) {
-                setValueDate((TethysDate) myValue);
+            if (myValue instanceof OceanusDate) {
+                setValueDate((OceanusDate) myValue);
             } else if (myValue instanceof String) {
-                final TethysDateFormatter myParser = myFormatter.getDateFormatter();
+                final OceanusDateFormatter myParser = myFormatter.getDateFormatter();
                 setValueDate(myParser.parseDate((String) myValue));
             }
             /* Catch Exceptions */
@@ -218,15 +218,15 @@ public class MoneyWiseTransaction
      * Obtain Date.
      * @return the date
      */
-    public TethysDate getDate() {
-        return getValues().getValue(MoneyWiseBasicResource.MONEYWISEDATA_FIELD_DATE, TethysDate.class);
+    public OceanusDate getDate() {
+        return getValues().getValue(MoneyWiseBasicResource.MONEYWISEDATA_FIELD_DATE, OceanusDate.class);
     }
 
     /**
      * Set date value.
      * @param pValue the value
      */
-    private void setValueDate(final TethysDate pValue) {
+    private void setValueDate(final OceanusDate pValue) {
         getValues().setUncheckedValue(MoneyWiseBasicResource.MONEYWISEDATA_FIELD_DATE, pValue);
         final MoneyWiseTaxFactory myFactory = getDataSet().getTaxFactory();
         setValueTaxYear(myFactory.findTaxYearForDate(pValue));
@@ -257,9 +257,9 @@ public class MoneyWiseTransaction
      * Obtain Account Delta Units.
      * @return the Account Delta Units
      */
-    public final TethysUnits getAccountDeltaUnits() {
+    public final OceanusUnits getAccountDeltaUnits() {
         return hasInfoSet
-                ? theInfoSet.getValue(MoneyWiseTransInfoClass.ACCOUNTDELTAUNITS, TethysUnits.class)
+                ? theInfoSet.getValue(MoneyWiseTransInfoClass.ACCOUNTDELTAUNITS, OceanusUnits.class)
                 : null;
     }
 
@@ -267,9 +267,9 @@ public class MoneyWiseTransaction
      * Obtain Partner Delta Units.
      * @return the Partner Delta Units
      */
-    public final TethysUnits getPartnerDeltaUnits() {
+    public final OceanusUnits getPartnerDeltaUnits() {
         return hasInfoSet
-                ? theInfoSet.getValue(MoneyWiseTransInfoClass.PARTNERDELTAUNITS, TethysUnits.class)
+                ? theInfoSet.getValue(MoneyWiseTransInfoClass.PARTNERDELTAUNITS, OceanusUnits.class)
                 : null;
     }
 
@@ -277,9 +277,9 @@ public class MoneyWiseTransaction
      * Obtain Tax Credit.
      * @return the Tax Credit
      */
-    public final TethysMoney getTaxCredit() {
+    public final OceanusMoney getTaxCredit() {
         return hasInfoSet
-                ? theInfoSet.getValue(MoneyWiseTransInfoClass.TAXCREDIT, TethysMoney.class)
+                ? theInfoSet.getValue(MoneyWiseTransInfoClass.TAXCREDIT, OceanusMoney.class)
                 : null;
     }
 
@@ -287,9 +287,9 @@ public class MoneyWiseTransaction
      * Obtain Price.
      * @return the Price
      */
-    public final TethysPrice getPrice() {
+    public final OceanusPrice getPrice() {
         return hasInfoSet
-                ? theInfoSet.getValue(MoneyWiseTransInfoClass.PRICE, TethysPrice.class)
+                ? theInfoSet.getValue(MoneyWiseTransInfoClass.PRICE, OceanusPrice.class)
                 : null;
     }
 
@@ -297,9 +297,9 @@ public class MoneyWiseTransaction
      * Obtain Commission.
      * @return the Commission
      */
-    public final TethysMoney getCommission() {
+    public final OceanusMoney getCommission() {
         return hasInfoSet
-                ? theInfoSet.getValue(MoneyWiseTransInfoClass.COMMISSION, TethysMoney.class)
+                ? theInfoSet.getValue(MoneyWiseTransInfoClass.COMMISSION, OceanusMoney.class)
                 : null;
     }
 
@@ -307,9 +307,9 @@ public class MoneyWiseTransaction
      * Obtain Dilution.
      * @return the Dilution
      */
-    public final TethysRatio getDilution() {
+    public final OceanusRatio getDilution() {
         return hasInfoSet
-                ? theInfoSet.getValue(MoneyWiseTransInfoClass.DILUTION, TethysRatio.class)
+                ? theInfoSet.getValue(MoneyWiseTransInfoClass.DILUTION, OceanusRatio.class)
                 : null;
     }
 
@@ -327,9 +327,9 @@ public class MoneyWiseTransaction
      * Obtain Employer National Insurance.
      * @return the NatInsurance
      */
-    public final TethysMoney getEmployerNatIns() {
+    public final OceanusMoney getEmployerNatIns() {
         return hasInfoSet
-                ? theInfoSet.getValue(MoneyWiseTransInfoClass.EMPLOYERNATINS, TethysMoney.class)
+                ? theInfoSet.getValue(MoneyWiseTransInfoClass.EMPLOYERNATINS, OceanusMoney.class)
                 : null;
     }
 
@@ -337,9 +337,9 @@ public class MoneyWiseTransaction
      * Obtain Employee National Insurance.
      * @return the NatInsurance
      */
-    public final TethysMoney getEmployeeNatIns() {
+    public final OceanusMoney getEmployeeNatIns() {
         return hasInfoSet
-                ? theInfoSet.getValue(MoneyWiseTransInfoClass.EMPLOYEENATINS, TethysMoney.class)
+                ? theInfoSet.getValue(MoneyWiseTransInfoClass.EMPLOYEENATINS, OceanusMoney.class)
                 : null;
     }
 
@@ -347,9 +347,9 @@ public class MoneyWiseTransaction
      * Obtain Deemed Benefit.
      * @return the Benefit
      */
-    public final TethysMoney getDeemedBenefit() {
+    public final OceanusMoney getDeemedBenefit() {
         return hasInfoSet
-                ? theInfoSet.getValue(MoneyWiseTransInfoClass.DEEMEDBENEFIT, TethysMoney.class)
+                ? theInfoSet.getValue(MoneyWiseTransInfoClass.DEEMEDBENEFIT, OceanusMoney.class)
                 : null;
     }
 
@@ -357,9 +357,9 @@ public class MoneyWiseTransaction
      * Obtain Withheld amount.
      * @return the Withheld
      */
-    public final TethysMoney getWithheld() {
+    public final OceanusMoney getWithheld() {
         return hasInfoSet
-                ? theInfoSet.getValue(MoneyWiseTransInfoClass.WITHHELD, TethysMoney.class)
+                ? theInfoSet.getValue(MoneyWiseTransInfoClass.WITHHELD, OceanusMoney.class)
                 : null;
     }
 
@@ -397,9 +397,9 @@ public class MoneyWiseTransaction
      * Obtain Partner Amount.
      * @return the Partner Amount
      */
-    public final TethysMoney getPartnerAmount() {
+    public final OceanusMoney getPartnerAmount() {
         return hasInfoSet
-                ? theInfoSet.getValue(MoneyWiseTransInfoClass.PARTNERAMOUNT, TethysMoney.class)
+                ? theInfoSet.getValue(MoneyWiseTransInfoClass.PARTNERAMOUNT, OceanusMoney.class)
                 : null;
     }
 
@@ -407,9 +407,9 @@ public class MoneyWiseTransaction
      * Obtain ExchangeRate.
      * @return the ExchangeRate
      */
-    public final TethysRatio getExchangeRate() {
+    public final OceanusRatio getExchangeRate() {
         return hasInfoSet
-                ? theInfoSet.getValue(MoneyWiseTransInfoClass.XCHANGERATE, TethysRatio.class)
+                ? theInfoSet.getValue(MoneyWiseTransInfoClass.XCHANGERATE, OceanusRatio.class)
                 : null;
     }
 
@@ -417,9 +417,9 @@ public class MoneyWiseTransaction
      * Obtain ReturnedCash.
      * @return the ReturnedCash
      */
-    public final TethysMoney getReturnedCash() {
+    public final OceanusMoney getReturnedCash() {
         return hasInfoSet
-                ? theInfoSet.getValue(MoneyWiseTransInfoClass.RETURNEDCASH, TethysMoney.class)
+                ? theInfoSet.getValue(MoneyWiseTransInfoClass.RETURNEDCASH, OceanusMoney.class)
                 : null;
     }
 
@@ -637,12 +637,12 @@ public class MoneyWiseTransaction
      */
     @Override
     public void validate() {
-        final TethysDate myDate = getDate();
+        final OceanusDate myDate = getDate();
         final MoneyWiseTransAsset myAccount = getAccount();
         final MoneyWiseTransAsset myPartner = getPartner();
         final MoneyWiseTransCategory myCategory = getCategory();
-        final TethysUnits myAccountUnits = getAccountDeltaUnits();
-        final TethysUnits myPartnerUnits = getPartnerDeltaUnits();
+        final OceanusUnits myAccountUnits = getAccountDeltaUnits();
+        final OceanusUnits myPartnerUnits = getPartnerDeltaUnits();
 
         /* Header is always valid */
         if (isHeader()) {
@@ -651,7 +651,7 @@ public class MoneyWiseTransaction
         }
 
         /* Determine date range to check for */
-        final TethysDateRange myRange = getDataSet().getDateRange();
+        final OceanusDateRange myRange = getDataSet().getDateRange();
 
         /* The date must be non-null */
         if (myDate == null) {
@@ -709,9 +709,9 @@ public class MoneyWiseTransaction
      * Calculate the tax credit for a transaction.
      * @return the calculated tax credit
      */
-    public final TethysMoney calculateTaxCredit() {
+    public final OceanusMoney calculateTaxCredit() {
         final MoneyWiseTaxCredit myTax = getTaxYear();
-        final TethysMoney myCredit = getTaxCredit();
+        final OceanusMoney myCredit = getTaxCredit();
 
         /* Ignore unless tax credit is null/zero */
         if (myCredit != null
@@ -727,7 +727,7 @@ public class MoneyWiseTransaction
         }
 
         /* Determine the tax credit rate */
-        final TethysRate myRate = isInterest()
+        final OceanusRate myRate = isInterest()
                 ? myTax.getTaxCreditRateForInterest()
                 : myTax.getTaxCreditRateForDividend();
 
@@ -739,10 +739,10 @@ public class MoneyWiseTransaction
      * Set a new date.
      * @param pDate the new date
      */
-    public void setDate(final TethysDate pDate) {
+    public void setDate(final OceanusDate pDate) {
         setValueDate((pDate == null)
                 ? null
-                : new TethysDate(pDate));
+                : new OceanusDate(pDate));
     }
 
     /**
@@ -750,7 +750,7 @@ public class MoneyWiseTransaction
      * @param pUnits the new units
      * @throws OceanusException on error
      */
-    public final void setAccountDeltaUnits(final TethysUnits pUnits) throws OceanusException {
+    public final void setAccountDeltaUnits(final OceanusUnits pUnits) throws OceanusException {
         setInfoSetValue(MoneyWiseTransInfoClass.ACCOUNTDELTAUNITS, pUnits);
     }
 
@@ -759,7 +759,7 @@ public class MoneyWiseTransaction
      * @param pUnits the new units
      * @throws OceanusException on error
      */
-    public final void setPartnerDeltaUnits(final TethysUnits pUnits) throws OceanusException {
+    public final void setPartnerDeltaUnits(final OceanusUnits pUnits) throws OceanusException {
         setInfoSetValue(MoneyWiseTransInfoClass.PARTNERDELTAUNITS, pUnits);
     }
 
@@ -768,7 +768,7 @@ public class MoneyWiseTransaction
      * @param pCredit the new credit
      * @throws OceanusException on error
      */
-    public final void setTaxCredit(final TethysMoney pCredit) throws OceanusException {
+    public final void setTaxCredit(final OceanusMoney pCredit) throws OceanusException {
         setInfoSetValue(MoneyWiseTransInfoClass.TAXCREDIT, pCredit);
     }
 
@@ -777,7 +777,7 @@ public class MoneyWiseTransaction
      * @param pPrice the new price
      * @throws OceanusException on error
      */
-    public final void setPrice(final TethysPrice pPrice) throws OceanusException {
+    public final void setPrice(final OceanusPrice pPrice) throws OceanusException {
         setInfoSetValue(MoneyWiseTransInfoClass.PRICE, pPrice);
     }
 
@@ -786,7 +786,7 @@ public class MoneyWiseTransaction
      * @param pCommission the new commission
      * @throws OceanusException on error
      */
-    public final void setCommission(final TethysMoney pCommission) throws OceanusException {
+    public final void setCommission(final OceanusMoney pCommission) throws OceanusException {
         setInfoSetValue(MoneyWiseTransInfoClass.COMMISSION, pCommission);
     }
 
@@ -795,7 +795,7 @@ public class MoneyWiseTransaction
      * @param pDilution the new dilution
      * @throws OceanusException on error
      */
-    public final void setDilution(final TethysRatio pDilution) throws OceanusException {
+    public final void setDilution(final OceanusRatio pDilution) throws OceanusException {
         setInfoSetValue(MoneyWiseTransInfoClass.DILUTION, pDilution);
     }
 
@@ -813,7 +813,7 @@ public class MoneyWiseTransaction
      * @param pNatIns the new insurance
      * @throws OceanusException on error
      */
-    public final void setEmployerNatIns(final TethysMoney pNatIns) throws OceanusException {
+    public final void setEmployerNatIns(final OceanusMoney pNatIns) throws OceanusException {
         setInfoSetValue(MoneyWiseTransInfoClass.EMPLOYERNATINS, pNatIns);
     }
 
@@ -822,7 +822,7 @@ public class MoneyWiseTransaction
      * @param pNatIns the new insurance
      * @throws OceanusException on error
      */
-    public final void setEmployeeNatIns(final TethysMoney pNatIns) throws OceanusException {
+    public final void setEmployeeNatIns(final OceanusMoney pNatIns) throws OceanusException {
         setInfoSetValue(MoneyWiseTransInfoClass.EMPLOYEENATINS, pNatIns);
     }
 
@@ -831,7 +831,7 @@ public class MoneyWiseTransaction
      * @param pBenefit the new benefit
      * @throws OceanusException on error
      */
-    public final void setBenefit(final TethysMoney pBenefit) throws OceanusException {
+    public final void setBenefit(final OceanusMoney pBenefit) throws OceanusException {
         setInfoSetValue(MoneyWiseTransInfoClass.DEEMEDBENEFIT, pBenefit);
     }
 
@@ -840,7 +840,7 @@ public class MoneyWiseTransaction
      * @param pWithheld the new withheld
      * @throws OceanusException on error
      */
-    public final void setWithheld(final TethysMoney pWithheld) throws OceanusException {
+    public final void setWithheld(final OceanusMoney pWithheld) throws OceanusException {
         setInfoSetValue(MoneyWiseTransInfoClass.WITHHELD, pWithheld);
     }
 
@@ -849,7 +849,7 @@ public class MoneyWiseTransaction
      * @param pValue the new partner amount
      * @throws OceanusException on error
      */
-    public final void setPartnerAmount(final TethysMoney pValue) throws OceanusException {
+    public final void setPartnerAmount(final OceanusMoney pValue) throws OceanusException {
         setInfoSetValue(MoneyWiseTransInfoClass.PARTNERAMOUNT, pValue);
     }
 
@@ -858,7 +858,7 @@ public class MoneyWiseTransaction
      * @param pRate the new rate
      * @throws OceanusException on error
      */
-    public final void setExchangeRate(final TethysRatio pRate) throws OceanusException {
+    public final void setExchangeRate(final OceanusRatio pRate) throws OceanusException {
         setInfoSetValue(MoneyWiseTransInfoClass.XCHANGERATE, pRate);
     }
 
@@ -867,7 +867,7 @@ public class MoneyWiseTransaction
      * @param pValue the new returned cash
      * @throws OceanusException on error
      */
-    public final void setReturnedCash(final TethysMoney pValue) throws OceanusException {
+    public final void setReturnedCash(final OceanusMoney pValue) throws OceanusException {
         setInfoSetValue(MoneyWiseTransInfoClass.RETURNEDCASH, pValue);
     }
 
@@ -973,8 +973,8 @@ public class MoneyWiseTransaction
         super.flipAssets();
 
         /* Flip deltas */
-        final TethysUnits myActDelta = getAccountDeltaUnits();
-        final TethysUnits myPartDelta = getPartnerDeltaUnits();
+        final OceanusUnits myActDelta = getAccountDeltaUnits();
+        final OceanusUnits myPartDelta = getPartnerDeltaUnits();
         setAccountDeltaUnits(myPartDelta);
         setPartnerDeltaUnits(myActDelta);
 
@@ -1197,8 +1197,8 @@ public class MoneyWiseTransaction
             final MoneyWiseTransaction myTrans = new MoneyWiseTransaction(this);
 
             /* Set the Date as the start of the range */
-            TethysDate myDate = new TethysDate();
-            final TethysDateRange myRange = getDataSet().getDateRange();
+            OceanusDate myDate = new OceanusDate();
+            final OceanusDateRange myRange = getDataSet().getDateRange();
             if (myRange.compareToDate(myDate) != 0) {
                 myDate = myRange.getStart();
             }

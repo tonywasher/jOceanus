@@ -18,8 +18,8 @@ package net.sourceforge.joceanus.tethys.test.ui;
 
 import java.time.Month;
 
-import net.sourceforge.joceanus.tethys.date.TethysDate;
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.tethys.ui.api.chart.TethysUIAreaChart;
 import net.sourceforge.joceanus.tethys.ui.api.chart.TethysUIAreaChart.TethysUIAreaChartData;
@@ -106,15 +106,15 @@ public class TethysTestAreaChart {
         int i = 0;
 
         final TethysUIAreaChartSeries mySeries1 = pData.createSeries("Base");
-        mySeries1.addPoint(new TethysDate(YEAR_2010, Month.APRIL, DAY_5), TethysMoney.getWholeUnits(AREA_VALUES[i++]));
-        mySeries1.addPoint(new TethysDate(YEAR_2011, Month.APRIL, DAY_5), TethysMoney.getWholeUnits(AREA_VALUES[i++]));
-        mySeries1.addPoint(new TethysDate(YEAR_2012, Month.APRIL, DAY_5), TethysMoney.getWholeUnits(AREA_VALUES[i++]));
-        mySeries1.addPoint(new TethysDate(YEAR_2013, Month.APRIL, DAY_5), TethysMoney.getWholeUnits(AREA_VALUES[i++]));
+        mySeries1.addPoint(new OceanusDate(YEAR_2010, Month.APRIL, DAY_5), OceanusMoney.getWholeUnits(AREA_VALUES[i++]));
+        mySeries1.addPoint(new OceanusDate(YEAR_2011, Month.APRIL, DAY_5), OceanusMoney.getWholeUnits(AREA_VALUES[i++]));
+        mySeries1.addPoint(new OceanusDate(YEAR_2012, Month.APRIL, DAY_5), OceanusMoney.getWholeUnits(AREA_VALUES[i++]));
+        mySeries1.addPoint(new OceanusDate(YEAR_2013, Month.APRIL, DAY_5), OceanusMoney.getWholeUnits(AREA_VALUES[i++]));
 
         final TethysUIAreaChartSeries mySeries2 = pData.createSeries("Extra");
-        mySeries2.addPoint(new TethysDate(YEAR_2010, Month.APRIL, DAY_5), TethysMoney.getWholeUnits(AREA_VALUES[i++]));
-        mySeries2.addPoint(new TethysDate(YEAR_2011, Month.APRIL, DAY_5), TethysMoney.getWholeUnits(AREA_VALUES[i++]));
-        mySeries2.addPoint(new TethysDate(YEAR_2012, Month.APRIL, DAY_5), TethysMoney.getWholeUnits(AREA_VALUES[i++]));
-        mySeries2.addPoint(new TethysDate(YEAR_2013, Month.APRIL, DAY_5), TethysMoney.getWholeUnits(AREA_VALUES[i]));
+        mySeries2.addPoint(new OceanusDate(YEAR_2010, Month.APRIL, DAY_5), OceanusMoney.getWholeUnits(AREA_VALUES[i++]));
+        mySeries2.addPoint(new OceanusDate(YEAR_2011, Month.APRIL, DAY_5), OceanusMoney.getWholeUnits(AREA_VALUES[i++]));
+        mySeries2.addPoint(new OceanusDate(YEAR_2012, Month.APRIL, DAY_5), OceanusMoney.getWholeUnits(AREA_VALUES[i++]));
+        mySeries2.addPoint(new OceanusDate(YEAR_2013, Month.APRIL, DAY_5), OceanusMoney.getWholeUnits(AREA_VALUES[i]));
     }
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Tethys: Java Utilities
+ * Tethys: GUI Utilities
  * Copyright 2012,2024 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,9 +18,9 @@ package net.sourceforge.joceanus.tethys.ui.swing.launch;
 
 import javax.swing.SwingUtilities;
 
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.logger.TethysLogManager;
-import net.sourceforge.joceanus.tethys.logger.TethysLogger;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.logger.OceanusLogManager;
+import net.sourceforge.joceanus.oceanus.logger.OceanusLogger;
 import net.sourceforge.joceanus.tethys.ui.api.factory.TethysUILaunchProgram;
 import net.sourceforge.joceanus.tethys.ui.swing.launch.util.TethysUISwingLaunchState;
 
@@ -31,7 +31,7 @@ public class TethysUISwingLaunch {
     /**
      * Logger.
      */
-    private static final TethysLogger LOGGER = TethysLogManager.getLogger(TethysUISwingLaunch.class);
+    private static final OceanusLogger LOGGER = OceanusLogManager.getLogger(TethysUISwingLaunch.class);
 
     /**
      * Private constructor.

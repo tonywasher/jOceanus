@@ -24,8 +24,8 @@ import net.sourceforge.joceanus.moneywise.quicken.file.MoneyWiseQIFLine.MoneyWis
 import net.sourceforge.joceanus.moneywise.quicken.file.MoneyWiseQIFLine.MoneyWiseQIFRateLine;
 import net.sourceforge.joceanus.moneywise.quicken.file.MoneyWiseQIFLine.MoneyWiseQIFStringLine;
 import net.sourceforge.joceanus.moneywise.quicken.file.MoneyWiseQIFLine.MoneyWiseQIFXferAccountLine;
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
-import net.sourceforge.joceanus.tethys.decimal.TethysRate;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRate;
 
 /**
  * Split Event Record.
@@ -45,12 +45,12 @@ public class MoneyWiseQIFSplitEvent
     /**
      * The Amount.
      */
-    private TethysMoney theAmount;
+    private OceanusMoney theAmount;
 
     /**
      * The Percentage.
      */
-    private TethysRate thePercentage;
+    private OceanusRate thePercentage;
 
     /**
      * The Comment.
@@ -144,7 +144,7 @@ public class MoneyWiseQIFSplitEvent
      * Obtain the amount.
      * @return the amount.
      */
-    public TethysMoney getAmount() {
+    public OceanusMoney getAmount() {
         return theAmount;
     }
 
@@ -152,7 +152,7 @@ public class MoneyWiseQIFSplitEvent
      * Obtain the percentage.
      * @return the percentage.
      */
-    public TethysRate getPercentage() {
+    public OceanusRate getPercentage() {
         return thePercentage;
     }
 
@@ -168,7 +168,7 @@ public class MoneyWiseQIFSplitEvent
      * Set the split amount.
      * @param pAmount the amount
      */
-    protected void setSplitAmount(final TethysMoney pAmount) {
+    protected void setSplitAmount(final OceanusMoney pAmount) {
         /* Add the line */
         addLine(new MoneyWiseQIFEventSplitAmountLine(pAmount));
         theAmount = pAmount;
@@ -178,7 +178,7 @@ public class MoneyWiseQIFSplitEvent
      * Set the split percentage.
      * @param pPercent the percentage
      */
-    protected void setSplitPercentage(final TethysRate pPercent) {
+    protected void setSplitPercentage(final OceanusRate pPercent) {
         /* Add the line */
         addLine(new MoneyWiseQIFEventSplitPercentLine(pPercent));
         thePercentage = pPercent;
@@ -265,7 +265,7 @@ public class MoneyWiseQIFSplitEvent
          * Constructor.
          * @param pAmount the amount
          */
-        protected MoneyWiseQIFEventSplitAmountLine(final TethysMoney pAmount) {
+        protected MoneyWiseQIFEventSplitAmountLine(final OceanusMoney pAmount) {
             /* Call super-constructor */
             super(pAmount);
         }
@@ -274,7 +274,7 @@ public class MoneyWiseQIFSplitEvent
          * Obtain Amount.
          * @return the amount
          */
-        public TethysMoney getAmount() {
+        public OceanusMoney getAmount() {
             return getMoney();
         }
 
@@ -293,7 +293,7 @@ public class MoneyWiseQIFSplitEvent
          * Constructor.
          * @param pPercent the percentage
          */
-        protected MoneyWiseQIFEventSplitPercentLine(final TethysRate pPercent) {
+        protected MoneyWiseQIFEventSplitPercentLine(final OceanusRate pPercent) {
             /* Call super-constructor */
             super(pPercent);
         }
@@ -302,7 +302,7 @@ public class MoneyWiseQIFSplitEvent
          * Obtain Percentage.
          * @return the percentage
          */
-        public TethysRate getPercentage() {
+        public OceanusRate getPercentage() {
             return getRate();
         }
 

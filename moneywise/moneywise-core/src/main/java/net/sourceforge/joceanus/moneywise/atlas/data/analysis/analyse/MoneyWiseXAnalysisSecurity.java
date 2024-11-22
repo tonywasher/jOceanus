@@ -30,10 +30,10 @@ import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurityHolding;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseSecurityClass;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTaxClass;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransCategoryClass;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
-import net.sourceforge.joceanus.tethys.decimal.TethysPrice;
-import net.sourceforge.joceanus.tethys.decimal.TethysUnits;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusUnits;
 
 /**
  * Security analysis.
@@ -173,7 +173,7 @@ public class MoneyWiseXAnalysisSecurity {
     }
 
     /**
-     * Obtain the trans analyser
+     * Obtain the trans analyser.
      * @return the transAnalyser
      */
     MoneyWiseXAnalysisTransAnalyser getTransAnalyser() {
@@ -181,7 +181,7 @@ public class MoneyWiseXAnalysisSecurity {
     }
 
     /**
-     * Obtain the xferIn analyser
+     * Obtain the xferIn analyser.
      * @return the xferInAnalyser
      */
     MoneyWiseXAnalysisXferIn getXferInAnalyser() {
@@ -297,6 +297,7 @@ public class MoneyWiseXAnalysisSecurity {
 
     /**
      * adjust Asset Valuation.
+     * @param pAsset the asset
      */
     void adjustAssetValuation(final MoneyWiseXAnalysisSecurityBucket pAsset) {
         /* Value the asset and calculate unrealised gains */
@@ -305,7 +306,7 @@ public class MoneyWiseXAnalysisSecurity {
         pAsset.calculateUnrealisedGains();
 
         /* determine the MarketGrowth */
-        final TethysMoney myDeltaValue = pAsset.getDeltaUnrealisedGains();
+        final OceanusMoney myDeltaValue = pAsset.getDeltaUnrealisedGains();
         theMarket.adjustTotalsForMarketGrowth(theTransaction.getEvent(), myDeltaValue);
     }
 
@@ -315,7 +316,7 @@ public class MoneyWiseXAnalysisSecurity {
      * @param pGains the gains
      */
     void adjustStandardGain(final MoneyWiseSecurityHolding pSource,
-                            final TethysMoney pGains) {
+                            final OceanusMoney pGains) {
         /* Access security and portfolio */
         final MoneyWiseSecurity mySecurity = pSource.getSecurity();
         final MoneyWisePortfolio myPortfolio = pSource.getPortfolio();
@@ -353,7 +354,7 @@ public class MoneyWiseXAnalysisSecurity {
      */
     void processUnitsAdjust() {
         /* Access the units */
-        final TethysUnits myDelta = theTransaction.getDebitUnitsDelta();
+        final OceanusUnits myDelta = theTransaction.getDebitUnitsDelta();
 
         /* Adjust the Security Units */
         final MoneyWiseSecurityHolding myHolding = (MoneyWiseSecurityHolding) theTransaction.getDebitAccount();
@@ -361,7 +362,7 @@ public class MoneyWiseXAnalysisSecurity {
         myAsset.adjustUnits(myDelta);
 
         /* Record the price of the asset if we have a price */
-        final TethysPrice myPrice = theTransaction.getTransaction().getPrice();
+        final OceanusPrice myPrice = theTransaction.getTransaction().getPrice();
         if (myPrice != null) {
             /* Record the new price and update the bucket */
             theState.setNewPriceViaTransaction(myHolding.getSecurity(), myPrice);

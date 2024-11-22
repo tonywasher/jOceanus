@@ -19,14 +19,14 @@ package net.sourceforge.joceanus.moneywise.atlas.data.analysis.base;
 import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
-import net.sourceforge.joceanus.tethys.resource.TethysBundleId;
-import net.sourceforge.joceanus.tethys.resource.TethysBundleLoader;
+import net.sourceforge.joceanus.oceanus.resource.OceanusBundleId;
+import net.sourceforge.joceanus.oceanus.resource.OceanusBundleLoader;
 
 /**
  * Resource IDs for MoneyWise Analysis Base Fields.
  */
 public enum MoneyWiseXAnalysisBaseResource
-        implements TethysBundleId, MetisDataFieldId {
+        implements OceanusBundleId, MetisDataFieldId {
     /**
      * Bucket Owner.
      */
@@ -125,7 +125,7 @@ public enum MoneyWiseXAnalysisBaseResource
     /**
      * The Resource Loader.
      */
-    private static final TethysBundleLoader LOADER = TethysBundleLoader.getLoader(MoneyWiseXAnalysisBaseResource.class.getCanonicalName(),
+    private static final OceanusBundleLoader LOADER = OceanusBundleLoader.getLoader(MoneyWiseXAnalysisBaseResource.class.getCanonicalName(),
             ResourceBundle::getBundle);
 
     /**

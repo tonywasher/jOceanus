@@ -24,8 +24,8 @@ import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTaxClass;
 import net.sourceforge.joceanus.moneywise.tax.MoneyWiseTaxBandSet.MoneyWiseTaxBand;
 import net.sourceforge.joceanus.moneywise.tax.MoneyWiseTaxResource;
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
-import net.sourceforge.joceanus.tethys.decimal.TethysRate;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRate;
 
 /**
  * Capital Gains Tax Scheme.
@@ -40,10 +40,10 @@ public abstract class MoneyWiseUKCapitalScheme
     }
 
     @Override
-    protected TethysMoney adjustAllowances(final MoneyWiseUKTaxConfig pConfig,
-                                           final TethysMoney pAmount) {
+    protected OceanusMoney adjustAllowances(final MoneyWiseUKTaxConfig pConfig,
+                                            final OceanusMoney pAmount) {
         /* Adjust against the capital allowance */
-        TethysMoney myRemaining = adjustForAllowance(pConfig.getCapitalAllowance(), pAmount);
+        OceanusMoney myRemaining = adjustForAllowance(pConfig.getCapitalAllowance(), pAmount);
 
         /* If we have any gains left */
         if (myRemaining.isNonZero()) {
@@ -56,22 +56,22 @@ public abstract class MoneyWiseUKCapitalScheme
     }
 
     @Override
-    protected TethysMoney getAmountInAllowance(final MoneyWiseUKTaxConfig pConfig,
-                                               final TethysMoney pAmount) {
+    protected OceanusMoney getAmountInAllowance(final MoneyWiseUKTaxConfig pConfig,
+                                                final OceanusMoney pAmount) {
         /* Obtain the amount covered by the capital allowance */
-        TethysMoney myAmount = getAmountInBand(pConfig.getCapitalAllowance(), pAmount);
+        OceanusMoney myAmount = getAmountInBand(pConfig.getCapitalAllowance(), pAmount);
 
         /* If we have income left over */
         if (myAmount.compareTo(pAmount) < 0) {
             /* Calculate remaining amount */
-            final TethysMoney myRemaining = new TethysMoney(pAmount);
+            final OceanusMoney myRemaining = new OceanusMoney(pAmount);
             myRemaining.subtractAmount(myAmount);
 
             /* Calculate the amount covered by basic allowance */
-            final TethysMoney myXtra = super.getAmountInAllowance(pConfig, myRemaining);
+            final OceanusMoney myXtra = super.getAmountInAllowance(pConfig, myRemaining);
 
             /* Determine the total amount covered by the allowance */
-            myAmount = new TethysMoney(myAmount);
+            myAmount = new OceanusMoney(myAmount);
             myAmount.addAmount(myXtra);
         }
 
@@ -99,13 +99,13 @@ public abstract class MoneyWiseUKCapitalScheme
         /**
          * The Base Rate.
          */
-        private final TethysRate theBaseRate;
+        private final OceanusRate theBaseRate;
 
         /**
          * Constructor.
          * @param pRate the base rate
          */
-        protected MoneyWiseUKCapitalFlatRateScheme(final TethysRate pRate) {
+        protected MoneyWiseUKCapitalFlatRateScheme(final OceanusRate pRate) {
             theBaseRate = pRate;
         }
 
@@ -113,7 +113,7 @@ public abstract class MoneyWiseUKCapitalScheme
          * Obtain the base rate.
          * @return the base rate
          */
-        protected TethysRate getBasicRate() {
+        protected OceanusRate getBasicRate() {
             return theBaseRate;
         }
 
@@ -156,15 +156,15 @@ public abstract class MoneyWiseUKCapitalScheme
         /**
          * The High Rate.
          */
-        private final TethysRate theHighRate;
+        private final OceanusRate theHighRate;
 
         /**
          * Constructor.
          * @param pRate the base rate
          * @param pHighRate the high rate
          */
-        protected MoneyWiseUKCapitalSplitRateScheme(final TethysRate pRate,
-                                                    final TethysRate pHighRate) {
+        protected MoneyWiseUKCapitalSplitRateScheme(final OceanusRate pRate,
+                                                    final OceanusRate pHighRate) {
             super(pRate);
             theHighRate = pHighRate;
         }
@@ -173,7 +173,7 @@ public abstract class MoneyWiseUKCapitalScheme
          * Obtain the high rate.
          * @return the high rate
          */
-        protected TethysRate getHighRate() {
+        protected OceanusRate getHighRate() {
             return theHighRate;
         }
 
@@ -246,10 +246,10 @@ public abstract class MoneyWiseUKCapitalScheme
          * @param pResRate the base rate
          * @param pHighResRate the high rate
          */
-        protected MoneyWiseUKCapitalResidentialScheme(final TethysRate pRate,
-                                                      final TethysRate pHighRate,
-                                                      final TethysRate pResRate,
-                                                      final TethysRate pHighResRate) {
+        protected MoneyWiseUKCapitalResidentialScheme(final OceanusRate pRate,
+                                                      final OceanusRate pHighRate,
+                                                      final OceanusRate pResRate,
+                                                      final OceanusRate pHighResRate) {
             super(pRate, pHighRate);
             theResidential = new MoneyWiseUKCapitalSplitRateScheme(pResRate, pHighResRate);
         }

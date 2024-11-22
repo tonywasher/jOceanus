@@ -28,8 +28,8 @@ import net.sourceforge.joceanus.prometheus.database.PrometheusDataStore;
 import net.sourceforge.joceanus.prometheus.database.PrometheusTableDefinition;
 import net.sourceforge.joceanus.prometheus.database.PrometheusTableDefinition.PrometheusSortOrder;
 import net.sourceforge.joceanus.prometheus.database.PrometheusTableEncrypted;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
 
 /**
  * TableEncrypted extension for Transaction.
@@ -55,7 +55,7 @@ public class MoneyWiseTableTransaction
         myTableDef.addBooleanColumn(MoneyWiseBasicResource.TRANSACTION_DIRECTION);
         myTableDef.addLongColumn(MoneyWiseBasicResource.TRANSACTION_ACCOUNT);
         myTableDef.addLongColumn(MoneyWiseBasicResource.TRANSACTION_PARTNER);
-        myTableDef.addNullEncryptedColumn(MoneyWiseBasicResource.TRANSACTION_AMOUNT, TethysMoney.BYTE_LEN);
+        myTableDef.addNullEncryptedColumn(MoneyWiseBasicResource.TRANSACTION_AMOUNT, OceanusMoney.BYTE_LEN);
         myTableDef.addReferenceColumn(MoneyWiseBasicDataType.TRANSCATEGORY, MoneyWiseTableTransCategory.TABLE_NAME);
         myTableDef.addBooleanColumn(MoneyWiseBasicResource.TRANSACTION_RECONCILED);
 

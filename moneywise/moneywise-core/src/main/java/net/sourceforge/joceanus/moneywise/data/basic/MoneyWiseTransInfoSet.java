@@ -36,10 +36,10 @@ import net.sourceforge.joceanus.prometheus.data.PrometheusDataInfoSet;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataList.PrometheusDataListSet;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
-import net.sourceforge.joceanus.tethys.decimal.TethysRatio;
-import net.sourceforge.joceanus.tethys.decimal.TethysUnits;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRatio;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusUnits;
 
 /**
  * TransactionInfoSet class.
@@ -723,16 +723,16 @@ public class MoneyWiseTransInfoSet
         switch ((MoneyWiseTransInfoClass) pClass) {
             case ACCOUNTDELTAUNITS:
             case PARTNERDELTAUNITS:
-                setValue(pClass, TethysUnits.getWholeUnits(1));
+                setValue(pClass, OceanusUnits.getWholeUnits(1));
                 break;
             case DILUTION:
-                setValue(pClass, TethysRatio.ONE);
+                setValue(pClass, OceanusRatio.ONE);
                 break;
             case QUALIFYYEARS:
                 setValue(pClass, 1);
                 break;
             case TAXCREDIT:
-                setValue(pClass, TethysMoney.getWholeUnits(0));
+                setValue(pClass, OceanusMoney.getWholeUnits(0));
                 break;
             case RETURNEDCASHACCOUNT:
                 setValue(pClass, getOwner().getDefaultReturnedCashAccount());
@@ -760,7 +760,7 @@ public class MoneyWiseTransInfoSet
      * @param pInfo the info
      */
     private void validateTaxCredit(final MoneyWiseTransInfo pInfo) {
-        final TethysMoney myAmount = pInfo.getValue(TethysMoney.class);
+        final OceanusMoney myAmount = pInfo.getValue(OceanusMoney.class);
         final Currency myCurrency = getOwner().getAccount().getCurrency();
         if (!myAmount.isPositive()) {
             getOwner().addError(PrometheusDataItem.ERROR_NEGATIVE, getFieldForClass(MoneyWiseTransInfoClass.TAXCREDIT));
@@ -774,7 +774,7 @@ public class MoneyWiseTransInfoSet
      * @param pInfo the info
      */
     private void validateOptionalTaxCredit(final MoneyWiseTransInfo pInfo) {
-        final TethysMoney myAmount = pInfo.getValue(TethysMoney.class);
+        final OceanusMoney myAmount = pInfo.getValue(OceanusMoney.class);
         final Currency myCurrency = getOwner().getAccount().getCurrency();
         if (myAmount.isZero()) {
             getOwner().addError(PrometheusDataItem.ERROR_ZERO, getFieldForClass(pInfo.getInfoClass()));
@@ -792,7 +792,7 @@ public class MoneyWiseTransInfoSet
      */
     private void validatePartnerAmount(final MoneyWiseTransInfo pInfo) {
         final MoneyWiseTransAsset myPartner = getOwner().getPartner();
-        final TethysMoney myAmount = pInfo.getValue(TethysMoney.class);
+        final OceanusMoney myAmount = pInfo.getValue(OceanusMoney.class);
         if (!myAmount.isPositive()) {
             getOwner().addError(PrometheusDataItem.ERROR_NEGATIVE, getFieldForClass(MoneyWiseTransInfoClass.RETURNEDCASH));
         } else if (!myAmount.getCurrency().equals(myPartner.getCurrency())) {
@@ -818,7 +818,7 @@ public class MoneyWiseTransInfoSet
      */
     private void validateReturnedCash(final MoneyWiseTransInfo pInfo) {
         final MoneyWiseTransAsset myThirdParty = getOwner().getReturnedCashAccount();
-        final TethysMoney myAmount = pInfo.getValue(TethysMoney.class);
+        final OceanusMoney myAmount = pInfo.getValue(OceanusMoney.class);
         if (myAmount.isZero()) {
             getOwner().addError(PrometheusDataItem.ERROR_ZERO, getFieldForClass(MoneyWiseTransInfoClass.RETURNEDCASH));
         } else if (!myAmount.isPositive()) {
@@ -840,7 +840,7 @@ public class MoneyWiseTransInfoSet
         final MetisFieldRequired isRequired = myInfoClass == MoneyWiseTransInfoClass.ACCOUNTDELTAUNITS
                 ? isAccountUnitsPositive(myDir, myCatClass)
                 : isPartnerUnitsPositive(myDir, myCatClass);
-        final TethysUnits myUnits = pInfo.getValue(TethysUnits.class);
+        final OceanusUnits myUnits = pInfo.getValue(OceanusUnits.class);
         if (myUnits.isZero()) {
             getOwner().addError(PrometheusDataItem.ERROR_ZERO, getFieldForClass(myInfoClass));
         } else if (myUnits.isPositive() && isRequired.notAllowed()) {

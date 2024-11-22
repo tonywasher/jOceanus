@@ -35,8 +35,8 @@ import net.sourceforge.joceanus.moneywise.atlas.data.analysis.values.MoneyWiseXA
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.values.MoneyWiseXAnalysisValuesResource;
 import net.sourceforge.joceanus.moneywise.atlas.views.MoneyWiseXAnalysisFilter;
 import net.sourceforge.joceanus.moneywise.atlas.views.MoneyWiseXAnalysisFilter.MoneyWiseXAnalysisTaxBasisFilter;
-import net.sourceforge.joceanus.tethys.date.TethysDateRange;
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
+import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
 
 /**
@@ -83,7 +83,7 @@ public class MoneyWiseXReportTaxationBasis
     public Document createReport(final MoneyWiseXAnalysis pAnalysis) {
         /* Access the bucket lists */
         final MoneyWiseXAnalysisTaxBasisBucketList myTaxBasis = pAnalysis.getTaxBasis();
-        final TethysDateRange myRange = pAnalysis.getDateRange();
+        final OceanusDateRange myRange = pAnalysis.getDateRange();
 
         /* Obtain the totals bucket */
         final MoneyWiseXAnalysisTaxBasisBucket myTotals = myTaxBasis.getTotals();
@@ -109,8 +109,8 @@ public class MoneyWiseXReportTaxationBasis
 
             /* Access the amount */
             final MoneyWiseXAnalysisTaxBasisValues myValues = myBucket.getValues();
-            final TethysMoney myGross = myValues.getMoneyValue(MoneyWiseXAnalysisTaxBasisAttr.GROSS);
-            final TethysMoney myNett = myValues.getMoneyValue(MoneyWiseXAnalysisTaxBasisAttr.NETT);
+            final OceanusMoney myGross = myValues.getMoneyValue(MoneyWiseXAnalysisTaxBasisAttr.GROSS);
+            final OceanusMoney myNett = myValues.getMoneyValue(MoneyWiseXAnalysisTaxBasisAttr.NETT);
 
             /* If we have a non-zero value */
             if (myGross.isNonZero()) {

@@ -17,14 +17,14 @@
 package net.sourceforge.joceanus.prometheus.service.sheet.odf;
 
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetCell;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.date.TethysDate;
-import net.sourceforge.joceanus.tethys.decimal.TethysDecimal;
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
-import net.sourceforge.joceanus.tethys.decimal.TethysPrice;
-import net.sourceforge.joceanus.tethys.decimal.TethysRate;
-import net.sourceforge.joceanus.tethys.decimal.TethysRatio;
-import net.sourceforge.joceanus.tethys.decimal.TethysUnits;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimal;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRate;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRatio;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusUnits;
 
 /**
  * Cell implementation.
@@ -63,7 +63,7 @@ public class PrometheusOdfCell
     }
 
     @Override
-    public TethysDate getDate() {
+    public OceanusDate getDate() {
         return theStore.getDateValueAtIndex(getCellIndex());
     }
 
@@ -78,27 +78,27 @@ public class PrometheusOdfCell
     }
 
     @Override
-    public TethysMoney getMoney() throws OceanusException {
+    public OceanusMoney getMoney() throws OceanusException {
         return theStore.getMoneyValueAtIndex(getCellIndex());
     }
 
     @Override
-    public TethysPrice getPrice() throws OceanusException {
+    public OceanusPrice getPrice() throws OceanusException {
         return theStore.getPriceValueAtIndex(getCellIndex());
     }
 
     @Override
-    public TethysUnits getUnits() throws OceanusException {
+    public OceanusUnits getUnits() throws OceanusException {
         return theStore.getUnitsValueAtIndex(getCellIndex());
     }
 
     @Override
-    public TethysRate getRate() throws OceanusException {
+    public OceanusRate getRate() throws OceanusException {
         return theStore.getRateValueAtIndex(getCellIndex());
     }
 
     @Override
-    public TethysRatio getRatio() throws OceanusException {
+    public OceanusRatio getRatio() throws OceanusException {
         return theStore.getRatioValueAtIndex(getCellIndex());
     }
 
@@ -118,7 +118,7 @@ public class PrometheusOdfCell
     }
 
     @Override
-    protected void setDateValue(final TethysDate pValue) {
+    protected void setDateValue(final OceanusDate pValue) {
         theStore.setValueAtIndex(pValue, getCellIndex());
      }
 
@@ -138,12 +138,12 @@ public class PrometheusOdfCell
     }
 
     @Override
-    protected void setDecimalValue(final TethysDecimal pValue) {
+    protected void setDecimalValue(final OceanusDecimal pValue) {
         theStore.setValueAtIndex(pValue, getCellIndex());
     }
 
     @Override
-    protected void setMonetaryValue(final TethysMoney pValue) {
+    protected void setMonetaryValue(final OceanusMoney pValue) {
         theStore.setAlternateAtIndex(pValue, getCellIndex());
     }
 

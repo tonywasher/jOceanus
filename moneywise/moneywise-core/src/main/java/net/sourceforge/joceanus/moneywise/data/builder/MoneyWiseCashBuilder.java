@@ -24,8 +24,8 @@ import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePayee;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransCategory;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrency;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrencyClass;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
 
 /**
  * Cash Builder.
@@ -54,7 +54,7 @@ public class MoneyWiseCashBuilder {
     /**
      * The Opening Balance.
      */
-    private TethysMoney theOpeningBalance;
+    private OceanusMoney theOpeningBalance;
 
     /**
      * The AutoPayee.
@@ -170,7 +170,7 @@ public class MoneyWiseCashBuilder {
      * @param pOpening the opening Balance
      * @return the builder
      */
-    public MoneyWiseCashBuilder openingBalance(final TethysMoney pOpening) {
+    public MoneyWiseCashBuilder openingBalance(final OceanusMoney pOpening) {
         theOpeningBalance = pOpening;
         return this;
     }
@@ -181,7 +181,7 @@ public class MoneyWiseCashBuilder {
      * @return the builder
      */
     public MoneyWiseCashBuilder openingBalance(final String pOpening) {
-        return openingBalance(new TethysMoney(pOpening, theCurrency.getCurrency()));
+        return openingBalance(new OceanusMoney(pOpening, theCurrency.getCurrency()));
     }
 
     /**

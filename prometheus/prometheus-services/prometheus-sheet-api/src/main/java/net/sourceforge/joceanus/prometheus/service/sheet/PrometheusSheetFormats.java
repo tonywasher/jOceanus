@@ -16,15 +16,15 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.prometheus.service.sheet;
 
-import net.sourceforge.joceanus.tethys.date.TethysDate;
-import net.sourceforge.joceanus.tethys.decimal.TethysDecimal;
-import net.sourceforge.joceanus.tethys.decimal.TethysDecimalFormatter;
-import net.sourceforge.joceanus.tethys.decimal.TethysDecimalParser;
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
-import net.sourceforge.joceanus.tethys.decimal.TethysPrice;
-import net.sourceforge.joceanus.tethys.decimal.TethysRate;
-import net.sourceforge.joceanus.tethys.decimal.TethysRatio;
-import net.sourceforge.joceanus.tethys.decimal.TethysUnits;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimal;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimalFormatter;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimalParser;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRate;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRatio;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusUnits;
 
 /**
  * Excel/Oasis format string builder class.
@@ -165,7 +165,7 @@ public final class PrometheusSheetFormats {
         final StringBuilder myBuilder = new StringBuilder();
 
         /* Start with zero */
-        myBuilder.append(TethysDecimalFormatter.CHAR_ZERO);
+        myBuilder.append(OceanusDecimalFormatter.CHAR_ZERO);
 
         /* Return the format */
         return myBuilder.toString();
@@ -176,21 +176,21 @@ public final class PrometheusSheetFormats {
      * @param pValue the example decimal
      * @return the format
      */
-    private static String getStandardFormat(final TethysDecimal pValue) {
+    private static String getStandardFormat(final OceanusDecimal pValue) {
         /* Create String builder */
         final StringBuilder myBuilder = new StringBuilder();
 
         /* Start with zero */
-        myBuilder.append(TethysDecimalFormatter.CHAR_ZERO);
+        myBuilder.append(OceanusDecimalFormatter.CHAR_ZERO);
 
         /* Determine scale */
         final int myScale = pValue.scale();
         if (myScale > 0) {
             /* Append the decimal point */
-            myBuilder.append(TethysDecimalFormatter.STR_DEC);
+            myBuilder.append(OceanusDecimalFormatter.STR_DEC);
 
             /* Append the decimal places */
-            myBuilder.append(String.valueOf(TethysDecimalFormatter.CHAR_ZERO).repeat(myScale));
+            myBuilder.append(String.valueOf(OceanusDecimalFormatter.CHAR_ZERO).repeat(myScale));
         }
 
         /* Return the format */
@@ -202,22 +202,22 @@ public final class PrometheusSheetFormats {
      * @param pValue the example rate
      * @return the format
      */
-    private static String getRateFormat(final TethysRate pValue) {
+    private static String getRateFormat(final OceanusRate pValue) {
         /* Create String builder */
         final StringBuilder myBuilder = new StringBuilder();
 
         /* Start with zero */
-        myBuilder.append(TethysDecimalFormatter.CHAR_ZERO);
+        myBuilder.append(OceanusDecimalFormatter.CHAR_ZERO);
 
         /* Determine scale */
         final int myScale = pValue.scale()
-                            - TethysDecimalParser.ADJUST_PERCENT;
+                            - OceanusDecimalParser.ADJUST_PERCENT;
         if (myScale > 0) {
             /* Append the decimal point */
-            myBuilder.append(TethysDecimalFormatter.STR_DEC);
+            myBuilder.append(OceanusDecimalFormatter.STR_DEC);
 
             /* Append the decimal places */
-            myBuilder.append(String.valueOf(TethysDecimalFormatter.CHAR_ZERO).repeat(myScale));
+            myBuilder.append(String.valueOf(OceanusDecimalFormatter.CHAR_ZERO).repeat(myScale));
         }
 
         /* Append the percent */
@@ -232,7 +232,7 @@ public final class PrometheusSheetFormats {
      * @param pValue the example decimal
      * @return the format
      */
-    private static String getExtendedFormat(final TethysDecimal pValue) {
+    private static String getExtendedFormat(final OceanusDecimal pValue) {
         /* Create String builder */
         final StringBuilder myBuilder = new StringBuilder();
 
@@ -242,7 +242,7 @@ public final class PrometheusSheetFormats {
         /* Insert initial values */
         myBuilder.insert(0, CHAR_DIGIT);
         myBuilder.insert(0, CHAR_DIGIT);
-        myBuilder.insert(0, TethysDecimalFormatter.CHAR_GROUP);
+        myBuilder.insert(0, OceanusDecimalFormatter.CHAR_GROUP);
         myBuilder.insert(0, CHAR_DIGIT);
 
         /* Return the format */
@@ -254,7 +254,7 @@ public final class PrometheusSheetFormats {
      * @param pValue the example currency
      * @return the format
      */
-    private static String getCurrencyFormat(final TethysMoney pValue) {
+    private static String getCurrencyFormat(final OceanusMoney pValue) {
         /* Create String builder */
         final StringBuilder myBuilder = new StringBuilder();
 
@@ -270,7 +270,7 @@ public final class PrometheusSheetFormats {
         myBuilder.append(myFormat);
         myBuilder.append(CHAR_SEP);
         myBuilder.append(STR_RED);
-        myBuilder.append(TethysDecimalFormatter.CHAR_MINUS);
+        myBuilder.append(OceanusDecimalFormatter.CHAR_MINUS);
         myBuilder.append(myCurrency);
         myBuilder.append(myFormat);
 
@@ -283,7 +283,7 @@ public final class PrometheusSheetFormats {
      * @param pValue the example currency
      * @return the format
      */
-    private static String getAccountingFormat(final TethysMoney pValue) {
+    private static String getAccountingFormat(final OceanusMoney pValue) {
         /* Create String builder */
         final StringBuilder myBuilder = new StringBuilder();
 
@@ -298,8 +298,8 @@ public final class PrometheusSheetFormats {
         myBuilder.append(myFormat);
         myBuilder.append(CHAR_SEP);
         myBuilder.append(myCurrency);
-        myBuilder.append(TethysDecimalFormatter.CHAR_BLANK);
-        myBuilder.append(TethysDecimalFormatter.CHAR_MINUS);
+        myBuilder.append(OceanusDecimalFormatter.CHAR_BLANK);
+        myBuilder.append(OceanusDecimalFormatter.CHAR_MINUS);
 
         /* Return the format */
         return myBuilder.toString();
@@ -324,21 +324,21 @@ public final class PrometheusSheetFormats {
             case STRING:
                 return STR_NULL;
             case DATE:
-                return new TethysDate();
+                return new OceanusDate();
             case BOOLEAN:
                 return Boolean.TRUE;
             case INTEGER:
                 return 0;
             case MONEY:
-                return new TethysMoney(STR_ZERO);
+                return new OceanusMoney(STR_ZERO);
             case PRICE:
-                return new TethysPrice(STR_ZERO);
+                return new OceanusPrice(STR_ZERO);
             case RATE:
-                return new TethysRate(STR_ZERO);
+                return new OceanusRate(STR_ZERO);
             case UNITS:
-                return new TethysUnits(STR_ZERO);
+                return new OceanusUnits(STR_ZERO);
             case RATIO:
-                return new TethysRatio(STR_ZERO);
+                return new OceanusRatio(STR_ZERO);
             default:
                 return null;
         }
@@ -350,7 +350,7 @@ public final class PrometheusSheetFormats {
      * @return the format string
      */
     public static String getDataFormatString(final Object pValue) {
-        if (pValue instanceof TethysDate) {
+        if (pValue instanceof OceanusDate) {
             return FORMAT_DATE;
         }
         if (pValue instanceof Boolean) {
@@ -360,17 +360,17 @@ public final class PrometheusSheetFormats {
             || pValue instanceof Long) {
             return getIntegerFormat();
         }
-        if (pValue instanceof TethysMoney) {
-            return getAccountingFormat((TethysMoney) pValue);
+        if (pValue instanceof OceanusMoney) {
+            return getAccountingFormat((OceanusMoney) pValue);
         }
-        if (pValue instanceof TethysRate) {
-            return getRateFormat((TethysRate) pValue);
+        if (pValue instanceof OceanusRate) {
+            return getRateFormat((OceanusRate) pValue);
         }
-        if (pValue instanceof TethysUnits) {
-            return getExtendedFormat((TethysUnits) pValue);
+        if (pValue instanceof OceanusUnits) {
+            return getExtendedFormat((OceanusUnits) pValue);
         }
-        if (pValue instanceof TethysDecimal) {
-            return getStandardFormat((TethysDecimal) pValue);
+        if (pValue instanceof OceanusDecimal) {
+            return getStandardFormat((OceanusDecimal) pValue);
         }
         return null;
     }
@@ -381,8 +381,8 @@ public final class PrometheusSheetFormats {
      * @return the format string
      */
     public static String getAlternateFormatString(final Object pValue) {
-        if (pValue instanceof TethysMoney) {
-            return getCurrencyFormat((TethysMoney) pValue);
+        if (pValue instanceof OceanusMoney) {
+            return getCurrencyFormat((OceanusMoney) pValue);
         }
         return null;
     }
@@ -420,31 +420,31 @@ public final class PrometheusSheetFormats {
         if (pValue instanceof Boolean) {
             return getStyleName(Boolean.class.getSimpleName());
         }
-        if (pValue instanceof TethysDate) {
-            return getStyleName(TethysDate.class.getSimpleName());
+        if (pValue instanceof OceanusDate) {
+            return getStyleName(OceanusDate.class.getSimpleName());
         }
         if (pValue instanceof Integer
             || pValue instanceof Long) {
             return getStyleName(Integer.class.getSimpleName());
         }
-        if (pValue instanceof TethysPrice) {
-            final String myCurr = ((TethysPrice) pValue).getCurrency().getCurrencyCode();
-            return getStyleName(TethysPrice.class.getSimpleName()
+        if (pValue instanceof OceanusPrice) {
+            final String myCurr = ((OceanusPrice) pValue).getCurrency().getCurrencyCode();
+            return getStyleName(OceanusPrice.class.getSimpleName()
                                 + myCurr);
         }
-        if (pValue instanceof TethysMoney) {
-            final String myCurr = ((TethysMoney) pValue).getCurrency().getCurrencyCode();
-            return getStyleName(TethysMoney.class.getSimpleName()
+        if (pValue instanceof OceanusMoney) {
+            final String myCurr = ((OceanusMoney) pValue).getCurrency().getCurrencyCode();
+            return getStyleName(OceanusMoney.class.getSimpleName()
                                 + myCurr);
         }
-        if (pValue instanceof TethysRate) {
-            return getStyleName(TethysRate.class.getSimpleName());
+        if (pValue instanceof OceanusRate) {
+            return getStyleName(OceanusRate.class.getSimpleName());
         }
-        if (pValue instanceof TethysUnits) {
-            return getStyleName(TethysUnits.class.getSimpleName());
+        if (pValue instanceof OceanusUnits) {
+            return getStyleName(OceanusUnits.class.getSimpleName());
         }
-        if (pValue instanceof TethysRatio) {
-            return getStyleName(TethysRatio.class.getSimpleName());
+        if (pValue instanceof OceanusRatio) {
+            return getStyleName(OceanusRatio.class.getSimpleName());
         }
         return null;
     }
@@ -458,15 +458,15 @@ public final class PrometheusSheetFormats {
         if (pValue instanceof String) {
             return getStyleName(PrometheusSheetCellStyleType.HEADER.toString());
         }
-        if (pValue instanceof TethysPrice) {
-            final String myCurr = ((TethysPrice) pValue).getCurrency().getCurrencyCode();
-            return getStyleName(TethysPrice.class.getSimpleName()
+        if (pValue instanceof OceanusPrice) {
+            final String myCurr = ((OceanusPrice) pValue).getCurrency().getCurrencyCode();
+            return getStyleName(OceanusPrice.class.getSimpleName()
                                 + FORMAT_CURR
                                 + myCurr);
         }
-        if (pValue instanceof TethysMoney) {
-            final String myCurr = ((TethysMoney) pValue).getCurrency().getCurrencyCode();
-            return getStyleName(TethysMoney.class.getSimpleName()
+        if (pValue instanceof OceanusMoney) {
+            final String myCurr = ((OceanusMoney) pValue).getCurrency().getCurrencyCode();
+            return getStyleName(OceanusMoney.class.getSimpleName()
                                 + FORMAT_CURR
                                 + myCurr);
         }
@@ -503,7 +503,7 @@ public final class PrometheusSheetFormats {
         if (pValue instanceof String) {
             return PrometheusSheetCellStyleType.STRING;
         }
-        if (pValue instanceof TethysDate) {
+        if (pValue instanceof OceanusDate) {
             return PrometheusSheetCellStyleType.DATE;
         }
         if (pValue instanceof Boolean) {
@@ -513,19 +513,19 @@ public final class PrometheusSheetFormats {
             || pValue instanceof Long) {
             return PrometheusSheetCellStyleType.INTEGER;
         }
-        if (pValue instanceof TethysPrice) {
+        if (pValue instanceof OceanusPrice) {
             return PrometheusSheetCellStyleType.PRICE;
         }
-        if (pValue instanceof TethysMoney) {
+        if (pValue instanceof OceanusMoney) {
             return PrometheusSheetCellStyleType.MONEY;
         }
-        if (pValue instanceof TethysRate) {
+        if (pValue instanceof OceanusRate) {
             return PrometheusSheetCellStyleType.RATE;
         }
-        if (pValue instanceof TethysUnits) {
+        if (pValue instanceof OceanusUnits) {
             return PrometheusSheetCellStyleType.UNITS;
         }
-        if (pValue instanceof TethysRatio) {
+        if (pValue instanceof OceanusRatio) {
             return PrometheusSheetCellStyleType.RATIO;
         }
         return null;

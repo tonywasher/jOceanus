@@ -74,10 +74,10 @@ import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetProvider
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetView;
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetWorkBook;
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetWorkBookType;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.date.TethysDate;
-import net.sourceforge.joceanus.tethys.date.TethysFiscalYear;
-import net.sourceforge.joceanus.tethys.profile.TethysProfile;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.date.OceanusFiscalYear;
+import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
 import net.sourceforge.joceanus.tethys.ui.api.factory.TethysUIFactory;
 import net.sourceforge.joceanus.tethys.ui.api.thread.TethysUIThreadStatusReport;
 
@@ -134,7 +134,7 @@ public class MoneyWiseArchiveLoader {
     /**
      * The last event.
      */
-    private TethysDate theLastEvent;
+    private OceanusDate theLastEvent;
 
     /**
      * The ParentCache.
@@ -208,7 +208,7 @@ public class MoneyWiseArchiveLoader {
      * @param pDate the date to check
      * @return in range true/false
      */
-    protected boolean checkDate(final TethysDate pDate) {
+    protected boolean checkDate(final OceanusDate pDate) {
         return theLastEvent.compareTo(pDate) >= 0;
     }
 
@@ -296,7 +296,7 @@ public class MoneyWiseArchiveLoader {
         /* Protect the workbook retrieval */
         try {
             /* Access current profile */
-            TethysProfile myTask = pReport.getActiveTask();
+            OceanusProfile myTask = pReport.getActiveTask();
             myTask = myTask.startTask("LoadArchive");
             myTask.startTask("ParseWorkBook");
 
@@ -308,7 +308,7 @@ public class MoneyWiseArchiveLoader {
             pReport.checkForCancellation();
 
             /* Determine Year Range */
-            final TethysProfile myStage = myTask.startTask("LoadSheets");
+            final OceanusProfile myStage = myTask.startTask("LoadSheets");
             myStage.startTask("Range");
             loadArchive(pReport, myWorkbook, pData);
 
@@ -531,7 +531,7 @@ public class MoneyWiseArchiveLoader {
         /**
          * The date.
          */
-        private final TethysDate theDate;
+        private final OceanusDate theDate;
 
         /**
          * The range name.
@@ -558,8 +558,8 @@ public class MoneyWiseArchiveLoader {
             }
 
             /* Create the date */
-            final TethysFiscalYear myFiscal = TethysFiscalYear.UK;
-            theDate = new TethysDate(myYear, myFiscal.getFirstMonth(), myFiscal.getFirstDay());
+            final OceanusFiscalYear myFiscal = OceanusFiscalYear.UK;
+            theDate = new OceanusDate(myYear, myFiscal.getFirstMonth(), myFiscal.getFirstDay());
             theDate.adjustDay(-1);
         }
 
@@ -567,7 +567,7 @@ public class MoneyWiseArchiveLoader {
          * Get the date.
          * @return the date
          */
-        protected TethysDate getDate() {
+        protected OceanusDate getDate() {
             return theDate;
         }
 
@@ -665,7 +665,7 @@ public class MoneyWiseArchiveLoader {
         /**
          * Resolved Date.
          */
-        private TethysDate theDate;
+        private OceanusDate theDate;
 
         /**
          * AssetPair Id.
@@ -766,7 +766,7 @@ public class MoneyWiseArchiveLoader {
          * @return continue true/false
          * @throws OceanusException on error
          */
-        protected boolean resolveValues(final TethysDate pDate,
+        protected boolean resolveValues(final OceanusDate pDate,
                                         final String pDebit,
                                         final String pCredit,
                                         final String pCategory) throws OceanusException {

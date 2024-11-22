@@ -45,11 +45,11 @@ import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransaction;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransaction.MoneyWiseTransactionList;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrency;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
-import net.sourceforge.joceanus.tethys.date.TethysDate;
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
-import net.sourceforge.joceanus.tethys.decimal.TethysPrice;
-import net.sourceforge.joceanus.tethys.decimal.TethysRate;
-import net.sourceforge.joceanus.tethys.decimal.TethysRatio;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRate;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRatio;
 
 /**
  * Analysis Cursor.
@@ -79,17 +79,17 @@ public class MoneyWiseXAnalysisState
     /**
      * The price map.
      */
-    private final Map<MoneyWiseSecurity, TethysPrice> thePriceMap;
+    private final Map<MoneyWiseSecurity, OceanusPrice> thePriceMap;
 
     /**
      * The xchgRate map.
      */
-    private final Map<MoneyWiseCurrency, TethysRatio> theXchgRateMap;
+    private final Map<MoneyWiseCurrency, OceanusRatio> theXchgRateMap;
 
     /**
      * The depositRate map.
      */
-    private final Map<MoneyWiseDeposit, TethysRate> theDepRateMap;
+    private final Map<MoneyWiseDeposit, OceanusRate> theDepRateMap;
 
     /**
      * The pricedBucketMap.
@@ -114,7 +114,7 @@ public class MoneyWiseXAnalysisState
     /**
      * The startDate.
      */
-    private final TethysDate theStartDate;
+    private final OceanusDate theStartDate;
 
     /**
      * Have balances been built?.
@@ -220,7 +220,7 @@ public class MoneyWiseXAnalysisState
      */
     private MoneyWiseXAnalysisEventType nextEventType() {
         /* Look for a price event */
-        TethysDate myDate = null;
+        OceanusDate myDate = null;
         MoneyWiseXAnalysisEventType myType = null;
         if (theNextPrice != null) {
             myDate = theNextPrice.getDate();
@@ -266,7 +266,7 @@ public class MoneyWiseXAnalysisState
      * Build next price event.
      */
     private void nextSecurityPrice() {
-        final TethysDate myDate = theNextPrice.getDate();
+        final OceanusDate myDate = theNextPrice.getDate();
         theNextEvent = new MoneyWiseXAnalysisEvent(MoneyWiseXAnalysisEventType.SECURITYPRICE, myDate);
         do {
             processSecurityPrice();
@@ -286,7 +286,7 @@ public class MoneyWiseXAnalysisState
      * Build next xchangeRate event.
      */
     private void nextXchgRate() {
-        final TethysDate myDate = theNextXchgRate.getDate();
+        final OceanusDate myDate = theNextXchgRate.getDate();
         theNextEvent = new MoneyWiseXAnalysisEvent(MoneyWiseXAnalysisEventType.XCHANGERATE, myDate);
         do {
             processXchgRate();
@@ -306,7 +306,7 @@ public class MoneyWiseXAnalysisState
      * Build next depositRate event.
      */
     private void nextDepRate() {
-        final TethysDate myDate = theNextDepRate.getDate();
+        final OceanusDate myDate = theNextDepRate.getDate();
         theNextEvent = new MoneyWiseXAnalysisEvent(MoneyWiseXAnalysisEventType.DEPOSITRATE, myDate);
         do {
             processDepRate();
@@ -331,21 +331,21 @@ public class MoneyWiseXAnalysisState
     }
 
     @Override
-    public TethysPrice getCurrentPrice(final MoneyWiseSecurity pSecurity) {
-        final TethysPrice myPrice = thePriceMap.get(pSecurity);
+    public OceanusPrice getCurrentPrice(final MoneyWiseSecurity pSecurity) {
+        final OceanusPrice myPrice = thePriceMap.get(pSecurity);
         return myPrice == null
-                ? TethysPrice.getWholeUnits(1, pSecurity.getCurrency())
+                ? OceanusPrice.getWholeUnits(1, pSecurity.getCurrency())
                 : myPrice;
     }
 
     @Override
-    public TethysRatio getCurrentXchgRate(final MoneyWiseCurrency pCurrency) {
-        final TethysRatio myRate = theXchgRateMap.get(pCurrency);
-        return myRate == null ? TethysRatio.ONE : myRate;
+    public OceanusRatio getCurrentXchgRate(final MoneyWiseCurrency pCurrency) {
+        final OceanusRatio myRate = theXchgRateMap.get(pCurrency);
+        return myRate == null ? OceanusRatio.ONE : myRate;
     }
 
     @Override
-    public TethysRate getCurrentDepositRate(final MoneyWiseDeposit pDeposit) {
+    public OceanusRate getCurrentDepositRate(final MoneyWiseDeposit pDeposit) {
         return theDepRateMap.get(pDeposit);
     }
 
@@ -387,7 +387,7 @@ public class MoneyWiseXAnalysisState
      * @param pPrice the new price
      */
     public void setNewPriceViaTransaction(final MoneyWiseSecurity pSecurity,
-                                          final TethysPrice pPrice) {
+                                          final OceanusPrice pPrice) {
         thePriceMap.put(pSecurity, pPrice);
     }
 
@@ -460,7 +460,7 @@ public class MoneyWiseXAnalysisState
         final Iterator<? extends MoneyWiseAssetBase> myIterator = myList.iterator();
         while (myIterator.hasNext()) {
             final MoneyWiseAssetBase myAsset = myIterator.next();
-            final TethysMoney myBalance = myAsset.getOpeningBalance();
+            final OceanusMoney myBalance = myAsset.getOpeningBalance();
             if (myBalance != null) {
                 theNextEvent.declareOpeningBalance(myAsset);
             }

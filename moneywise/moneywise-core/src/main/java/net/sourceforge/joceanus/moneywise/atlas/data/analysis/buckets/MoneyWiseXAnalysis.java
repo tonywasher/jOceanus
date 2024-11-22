@@ -41,8 +41,8 @@ import net.sourceforge.joceanus.moneywise.tax.MoneyWiseTaxYear;
 import net.sourceforge.joceanus.moneywise.tax.MoneyWiseTaxYearCache;
 import net.sourceforge.joceanus.moneywise.tax.uk.MoneyWiseUKTaxYearCache;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
-import net.sourceforge.joceanus.tethys.date.TethysDate;
-import net.sourceforge.joceanus.tethys.date.TethysDateRange;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
 
 /**
@@ -105,7 +105,7 @@ public class MoneyWiseXAnalysis
     /**
      * The DataRange.
      */
-    private final TethysDateRange theDateRange;
+    private final OceanusDateRange theDateRange;
 
     /**
      * The deposit buckets.
@@ -210,14 +210,14 @@ public class MoneyWiseXAnalysis
      * @param pDate the date for the analysis
      */
     public MoneyWiseXAnalysis(final MoneyWiseXAnalysisManager pManager,
-                              final TethysDate pDate) {
+                              final OceanusDate pDate) {
         /* Store the data */
         final MoneyWiseXAnalysis myBase = pManager.getAnalysis();
         theEditSet = myBase.getEditSet();
         final MoneyWiseDataSet myDataSet = getData();
         theCurrency = myBase.getCurrency();
         thePreferences = myBase.getPreferenceMgr();
-        theDateRange = new TethysDateRange(myDataSet.getDateRange().getStart(), pDate);
+        theDateRange = new OceanusDateRange(myDataSet.getDateRange().getStart(), pDate);
         theCursor = null;
 
         /* Access the TaxYearCache */
@@ -246,7 +246,7 @@ public class MoneyWiseXAnalysis
      * @param pRange the range for the analysis
      */
     public MoneyWiseXAnalysis(final MoneyWiseXAnalysisManager pManager,
-                              final TethysDateRange pRange) {
+                              final OceanusDateRange pRange) {
         /* Store the data */
         final MoneyWiseXAnalysis myBase = pManager.getAnalysis();
         theEditSet = myBase.getEditSet();
@@ -351,7 +351,7 @@ public class MoneyWiseXAnalysis
      * Obtain the date range.
      * @return the date range
      */
-    public TethysDateRange getDateRange() {
+    public OceanusDateRange getDateRange() {
         return theDateRange;
     }
 

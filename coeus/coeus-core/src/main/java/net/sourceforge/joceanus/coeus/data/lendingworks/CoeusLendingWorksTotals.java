@@ -21,7 +21,7 @@ import java.util.Objects;
 import net.sourceforge.joceanus.coeus.data.CoeusTotals;
 import net.sourceforge.joceanus.coeus.data.CoeusTransaction;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
-import net.sourceforge.joceanus.tethys.decimal.TethysDecimal;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimal;
 
 /**
  * LendingWorks Transaction Totals.
@@ -36,47 +36,47 @@ public final class CoeusLendingWorksTotals
     /**
      * AssetValue.
      */
-    private TethysDecimal theAssetValue;
+    private OceanusDecimal theAssetValue;
 
     /**
      * Holding.
      */
-    private TethysDecimal theHolding;
+    private OceanusDecimal theHolding;
 
     /**
      * LoanBook.
      */
-    private TethysDecimal theLoanBook;
+    private OceanusDecimal theLoanBook;
 
     /**
      * SourceValue.
      */
-    private TethysDecimal theSourceValue;
+    private OceanusDecimal theSourceValue;
 
     /**
      * Invested.
      */
-    private TethysDecimal theInvested;
+    private OceanusDecimal theInvested;
 
     /**
      * Earnings.
      */
-    private TethysDecimal theEarnings;
+    private OceanusDecimal theEarnings;
 
     /**
      * Interest.
      */
-    private TethysDecimal theInterest;
+    private OceanusDecimal theInterest;
 
     /**
      * CashBack.
      */
-    private TethysDecimal theCashBack;
+    private OceanusDecimal theCashBack;
 
     /**
      * Shield.
      */
-    private TethysDecimal theShield;
+    private OceanusDecimal theShield;
 
     /**
      * Constructor for zeroed totals.
@@ -105,15 +105,15 @@ public final class CoeusLendingWorksTotals
         super(pMarket, pLoan);
 
         /* Initialise values */
-        theAssetValue = new TethysDecimal(getZero());
-        theHolding = new TethysDecimal(getZero());
-        theLoanBook = new TethysDecimal(getZero());
-        theSourceValue = new TethysDecimal(getZero());
-        theInvested = new TethysDecimal(getZero());
-        theEarnings = new TethysDecimal(getZero());
-        theInterest = new TethysDecimal(getZero());
-        theCashBack = new TethysDecimal(getZero());
-        theShield = new TethysDecimal(getZero());
+        theAssetValue = new OceanusDecimal(getZero());
+        theHolding = new OceanusDecimal(getZero());
+        theLoanBook = new OceanusDecimal(getZero());
+        theSourceValue = new OceanusDecimal(getZero());
+        theInvested = new OceanusDecimal(getZero());
+        theEarnings = new OceanusDecimal(getZero());
+        theInterest = new OceanusDecimal(getZero());
+        theCashBack = new OceanusDecimal(getZero());
+        theShield = new OceanusDecimal(getZero());
     }
 
     /**
@@ -127,15 +127,15 @@ public final class CoeusLendingWorksTotals
         super(pUnderlying, pTotals);
 
         /* Initialise values from previous totals */
-        theAssetValue = new TethysDecimal(pTotals.getAssetValue());
-        theHolding = new TethysDecimal(pTotals.getHolding());
-        theLoanBook = new TethysDecimal(pTotals.getLoanBook());
-        theSourceValue = new TethysDecimal(pTotals.getSourceValue());
-        theInvested = new TethysDecimal(pTotals.getInvested());
-        theEarnings = new TethysDecimal(pTotals.getEarnings());
-        theInterest = new TethysDecimal(pTotals.getInterest());
-        theCashBack = new TethysDecimal(pTotals.getCashBack());
-        theShield = new TethysDecimal(pTotals.getShield());
+        theAssetValue = new OceanusDecimal(pTotals.getAssetValue());
+        theHolding = new OceanusDecimal(pTotals.getHolding());
+        theLoanBook = new OceanusDecimal(pTotals.getLoanBook());
+        theSourceValue = new OceanusDecimal(pTotals.getSourceValue());
+        theInvested = new OceanusDecimal(pTotals.getInvested());
+        theEarnings = new OceanusDecimal(pTotals.getEarnings());
+        theInterest = new OceanusDecimal(pTotals.getInterest());
+        theCashBack = new OceanusDecimal(pTotals.getCashBack());
+        theShield = new OceanusDecimal(pTotals.getShield());
     }
 
     @Override
@@ -166,7 +166,7 @@ public final class CoeusLendingWorksTotals
         theShield.addValue(pTransaction.getShield());
 
         /* Adjust earnings */
-        final TethysDecimal myIncome = new TethysDecimal(pTransaction.getInterest());
+        final OceanusDecimal myIncome = new OceanusDecimal(pTransaction.getInterest());
         myIncome.addValue(pTransaction.getFees());
         myIncome.addValue(pTransaction.getCashBack());
         myIncome.addValue(pTransaction.getShield());
@@ -224,97 +224,97 @@ public final class CoeusLendingWorksTotals
     }
 
     @Override
-    protected TethysDecimal getZero() {
+    protected OceanusDecimal getZero() {
         return CoeusLendingWorksTransaction.ZERO_MONEY;
     }
 
     @Override
-    public TethysDecimal getAssetValue() {
+    public OceanusDecimal getAssetValue() {
         return theAssetValue;
     }
 
     @Override
-    public TethysDecimal getHolding() {
+    public OceanusDecimal getHolding() {
         return theHolding;
     }
 
     @Override
-    public TethysDecimal getLoanBook() {
+    public OceanusDecimal getLoanBook() {
         return theLoanBook;
     }
 
     @Override
-    public TethysDecimal getSourceValue() {
+    public OceanusDecimal getSourceValue() {
         return theSourceValue;
     }
 
     @Override
-    public TethysDecimal getInvested() {
+    public OceanusDecimal getInvested() {
         return theInvested;
     }
 
     @Override
-    public TethysDecimal getEarnings() {
+    public OceanusDecimal getEarnings() {
         return theEarnings;
     }
 
     @Override
-    public TethysDecimal getTaxableEarnings() {
+    public OceanusDecimal getTaxableEarnings() {
         return getEarnings();
     }
 
     @Override
-    public TethysDecimal getInterest() {
+    public OceanusDecimal getInterest() {
         return theInterest;
     }
 
     @Override
-    public TethysDecimal getNettInterest() {
+    public OceanusDecimal getNettInterest() {
         return getInterest();
     }
 
     @Override
-    public TethysDecimal getFees() {
+    public OceanusDecimal getFees() {
         return getZero();
     }
 
     @Override
-    public TethysDecimal getShield() {
+    public OceanusDecimal getShield() {
         return theShield;
     }
 
     @Override
-    public TethysDecimal getBadDebtInterest() {
+    public OceanusDecimal getBadDebtInterest() {
         return getZero();
     }
 
     @Override
-    public TethysDecimal getBadDebtCapital() {
+    public OceanusDecimal getBadDebtCapital() {
         return getZero();
     }
 
     @Override
-    public TethysDecimal getCashBack() {
+    public OceanusDecimal getCashBack() {
         return theCashBack;
     }
 
     @Override
-    public TethysDecimal getXferPayment() {
+    public OceanusDecimal getXferPayment() {
         return getZero();
     }
 
     @Override
-    public TethysDecimal getLosses() {
+    public OceanusDecimal getLosses() {
         return getZero();
     }
 
     @Override
-    public TethysDecimal getBadDebt() {
+    public OceanusDecimal getBadDebt() {
         return getZero();
     }
 
     @Override
-    public TethysDecimal getRecovered() {
+    public OceanusDecimal getRecovered() {
         return getZero();
     }
 

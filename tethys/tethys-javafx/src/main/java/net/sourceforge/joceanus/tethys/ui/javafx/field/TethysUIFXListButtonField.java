@@ -24,7 +24,7 @@ import javafx.geometry.Side;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 
-import net.sourceforge.joceanus.tethys.event.TethysEvent;
+import net.sourceforge.joceanus.oceanus.event.OceanusEvent;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.tethys.ui.api.button.TethysUIListButtonManager;
 import net.sourceforge.joceanus.tethys.ui.api.field.TethysUIDataEditField.TethysUIListButtonField;
@@ -92,7 +92,7 @@ public class TethysUIFXListButtonField<T extends Comparable<? super T>>
      *
      * @param pEvent the even
      */
-    private void handleEvent(final TethysEvent<TethysUIEvent> pEvent) {
+    private void handleEvent(final OceanusEvent<TethysUIEvent> pEvent) {
         switch (pEvent.getEventId()) {
             case NEWVALUE:
                 setValue(theManager.getValue());

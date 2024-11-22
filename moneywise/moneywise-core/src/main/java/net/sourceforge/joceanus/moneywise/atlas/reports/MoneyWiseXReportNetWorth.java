@@ -65,8 +65,8 @@ import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCashCategoryClas
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseDepositCategoryClass;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseLoanCategoryClass;
 import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisDataResource;
-import net.sourceforge.joceanus.tethys.date.TethysDate;
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
 
 /**
@@ -152,10 +152,10 @@ public class MoneyWiseXReportNetWorth
         final MoneyWiseXAnalysisCashCategoryBucketList myCash = theAnalysis.getCashCategories();
         final MoneyWiseXAnalysisLoanCategoryBucketList myLoans = theAnalysis.getLoanCategories();
         final MoneyWiseXAnalysisPortfolioBucketList myPortfolios = theAnalysis.getPortfolios();
-        final TethysDate myDate = theAnalysis.getDateRange().getEnd();
+        final OceanusDate myDate = theAnalysis.getDateRange().getEnd();
 
         /* Create the totals */
-        final TethysMoney myTotal = new TethysMoney();
+        final OceanusMoney myTotal = new OceanusMoney();
 
         /* Start the report */
         final Element myBody = theBuilder.startReport();
@@ -235,7 +235,7 @@ public class MoneyWiseXReportNetWorth
             /* Access totals */
             final MoneyWiseXAnalysisPortfolioBucket myTotals = myPortfolios.getTotals();
             final MoneyWiseXAnalysisSecurityValues myValues = myTotals.getValues();
-            final TethysMoney myValuation = myValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.VALUATION);
+            final OceanusMoney myValuation = myValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.VALUATION);
 
             /* Format the Portfolios Total */
             theBuilder.startRow(myTable);

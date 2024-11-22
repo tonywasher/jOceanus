@@ -22,10 +22,11 @@ module net.sourceforge.joceanus.prometheus.core {
     requires java.prefs;
     requires java.sql;
 
-    /* jOceanus */
+    /* Oceanus */
+    requires net.sourceforge.joceanus.oceanus;
     requires net.sourceforge.joceanus.tethys.core;
-    requires net.sourceforge.joceanus.gordianknot.core;
-    requires net.sourceforge.joceanus.metis.core;
+    requires net.sourceforge.joceanus.gordianknot;
+    requires net.sourceforge.joceanus.metis;
     requires net.sourceforge.joceanus.prometheus.sheet.api;
 
     /* Exports */
@@ -34,6 +35,7 @@ module net.sourceforge.joceanus.prometheus.core {
     exports net.sourceforge.joceanus.prometheus.data;
     exports net.sourceforge.joceanus.prometheus.database;
     exports net.sourceforge.joceanus.prometheus.preference;
+    exports net.sourceforge.joceanus.prometheus.security;
     exports net.sourceforge.joceanus.prometheus.sheets;
     exports net.sourceforge.joceanus.prometheus.views;
     exports net.sourceforge.joceanus.prometheus.threads;

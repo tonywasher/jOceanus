@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Tethys: Java Utilities
+ * Tethys: GUI Utilities
  * Copyright 2012,2024 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,8 +19,8 @@ package net.sourceforge.joceanus.tethys.ui.core.base;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.sourceforge.joceanus.tethys.event.TethysEventManager;
-import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIValueKey;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIValueSet;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIEvent;
@@ -43,7 +43,7 @@ public class TethysUICoreValueSet
     /**
      * The event manager.
      */
-    private final TethysEventManager<TethysUIEvent> theEventManager;
+    private final OceanusEventManager<TethysUIEvent> theEventManager;
 
     /**
      * The map of the default values.
@@ -60,7 +60,7 @@ public class TethysUICoreValueSet
      */
     public TethysUICoreValueSet() {
         /* Create the event manager */
-        theEventManager = new TethysEventManager<>();
+        theEventManager = new OceanusEventManager<>();
 
         /* Create the default map */
         theDefaultMap = new HashMap<>();
@@ -89,7 +89,7 @@ public class TethysUICoreValueSet
     }
 
     @Override
-    public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
+    public OceanusEventRegistrar<TethysUIEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 

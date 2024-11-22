@@ -21,15 +21,15 @@ import java.util.Date;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.prometheus.PrometheusDataException;
 import net.sourceforge.joceanus.prometheus.PrometheusLogicException;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.date.TethysDate;
-import net.sourceforge.joceanus.tethys.date.TethysDateFormatter;
-import net.sourceforge.joceanus.tethys.decimal.TethysDecimalParser;
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
-import net.sourceforge.joceanus.tethys.decimal.TethysPrice;
-import net.sourceforge.joceanus.tethys.decimal.TethysRate;
-import net.sourceforge.joceanus.tethys.decimal.TethysRatio;
-import net.sourceforge.joceanus.tethys.decimal.TethysUnits;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.date.OceanusDateFormatter;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimalParser;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRate;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRatio;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusUnits;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
 
 /**
@@ -471,7 +471,7 @@ public abstract class PrometheusDataInfoItem
         /* Access the DataSet and parser */
         final PrometheusDataSet myDataSet = getDataSet();
         final TethysUIDataFormatter myFormatter = myDataSet.getDataFormatter();
-        final TethysDecimalParser myParser = myFormatter.getDecimalParser();
+        final OceanusDecimalParser myParser = myFormatter.getDecimalParser();
 
         /* Switch on Info Class */
         boolean bValueOK = false;
@@ -527,18 +527,18 @@ public abstract class PrometheusDataInfoItem
      * @return is value valid true/false
      * @throws OceanusException on error
      */
-    private boolean setDateValue(final TethysDateFormatter pFormatter,
+    private boolean setDateValue(final OceanusDateFormatter pFormatter,
                                  final Object pValue) throws OceanusException {
         try {
             /* Handle various forms */
             if (pValue instanceof Date) {
-                setValueValue(new TethysDate((Date) pValue));
+                setValueValue(new OceanusDate((Date) pValue));
                 return true;
-            } else if (pValue instanceof TethysDate) {
+            } else if (pValue instanceof OceanusDate) {
                 setValueValue(pValue);
                 return true;
             } else if (pValue instanceof byte[]) {
-                setValueBytes((byte[]) pValue, TethysDate.class);
+                setValueBytes((byte[]) pValue, OceanusDate.class);
                 return true;
             } else if (pValue instanceof String) {
                 setValueValue(pFormatter.parseDate((String) pValue));
@@ -687,14 +687,14 @@ public abstract class PrometheusDataInfoItem
      * @return is value valid true/false
      * @throws OceanusException on error
      */
-    private boolean setMoneyValue(final TethysDecimalParser pParser,
+    private boolean setMoneyValue(final OceanusDecimalParser pParser,
                                   final Object pValue) throws OceanusException {
         /* Handle various forms */
-        if (pValue instanceof TethysMoney) {
+        if (pValue instanceof OceanusMoney) {
             setValueValue(pValue);
             return true;
         } else if (pValue instanceof byte[]) {
-            setValueBytes((byte[]) pValue, TethysMoney.class);
+            setValueBytes((byte[]) pValue, OceanusMoney.class);
             return true;
         } else if (pValue instanceof String) {
             setValueValue(pParser.parseMoneyValue((String) pValue));
@@ -710,14 +710,14 @@ public abstract class PrometheusDataInfoItem
      * @return is value valid true/false
      * @throws OceanusException on error
      */
-    private boolean setRateValue(final TethysDecimalParser pParser,
+    private boolean setRateValue(final OceanusDecimalParser pParser,
                                  final Object pValue) throws OceanusException {
         /* Handle various forms */
-        if (pValue instanceof TethysRate) {
+        if (pValue instanceof OceanusRate) {
             setValueValue(pValue);
             return true;
         } else if (pValue instanceof byte[]) {
-            setValueBytes((byte[]) pValue, TethysRate.class);
+            setValueBytes((byte[]) pValue, OceanusRate.class);
             return true;
         } else if (pValue instanceof String) {
             setValueValue(pParser.parseRateValue((String) pValue));
@@ -733,14 +733,14 @@ public abstract class PrometheusDataInfoItem
      * @return is value valid true/false
      * @throws OceanusException on error
      */
-    private boolean setRatioValue(final TethysDecimalParser pParser,
+    private boolean setRatioValue(final OceanusDecimalParser pParser,
                                   final Object pValue) throws OceanusException {
         /* Handle various forms */
-        if (pValue instanceof TethysRatio) {
+        if (pValue instanceof OceanusRatio) {
             setValueValue(pValue);
             return true;
         } else if (pValue instanceof byte[]) {
-            setValueBytes((byte[]) pValue, TethysRatio.class);
+            setValueBytes((byte[]) pValue, OceanusRatio.class);
             return true;
         } else if (pValue instanceof String) {
             setValueValue(pParser.parseRatioValue((String) pValue));
@@ -756,14 +756,14 @@ public abstract class PrometheusDataInfoItem
      * @return is value valid true/false
      * @throws OceanusException on error
      */
-    private boolean setUnitsValue(final TethysDecimalParser pParser,
+    private boolean setUnitsValue(final OceanusDecimalParser pParser,
                                   final Object pValue) throws OceanusException {
         /* Handle various forms */
-        if (pValue instanceof TethysUnits) {
+        if (pValue instanceof OceanusUnits) {
             setValueValue(pValue);
             return true;
         } else if (pValue instanceof byte[]) {
-            setValueBytes((byte[]) pValue, TethysUnits.class);
+            setValueBytes((byte[]) pValue, OceanusUnits.class);
             return true;
         } else if (pValue instanceof String) {
             setValueValue(pParser.parseUnitsValue((String) pValue));
@@ -779,14 +779,14 @@ public abstract class PrometheusDataInfoItem
      * @return is value valid true/false
      * @throws OceanusException on error
      */
-    private boolean setPriceValue(final TethysDecimalParser pParser,
+    private boolean setPriceValue(final OceanusDecimalParser pParser,
                                   final Object pValue) throws OceanusException {
         /* Handle various forms */
-        if (pValue instanceof TethysPrice) {
+        if (pValue instanceof OceanusPrice) {
             setValueValue(pValue);
             return true;
         } else if (pValue instanceof byte[]) {
-            setValueBytes((byte[]) pValue, TethysPrice.class);
+            setValueBytes((byte[]) pValue, OceanusPrice.class);
             return true;
         } else if (pValue instanceof String) {
             setValueValue(pParser.parsePriceValue((String) pValue));

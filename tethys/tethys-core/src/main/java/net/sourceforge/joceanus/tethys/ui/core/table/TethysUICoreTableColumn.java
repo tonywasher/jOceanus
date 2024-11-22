@@ -19,9 +19,9 @@ package net.sourceforge.joceanus.tethys.ui.core.table;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.event.TethysEventManager;
-import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.tethys.ui.api.field.TethysUIFieldType;
 import net.sourceforge.joceanus.tethys.ui.api.table.TethysUITableColumn;
@@ -42,7 +42,7 @@ public abstract class TethysUICoreTableColumn<T, C, R>
     /**
      * The event manager.
      */
-    private final TethysEventManager<TethysUIEvent> theEventManager;
+    private final OceanusEventManager<TethysUIEvent> theEventManager;
 
     /**
      * The id of the column.
@@ -117,7 +117,7 @@ public abstract class TethysUICoreTableColumn<T, C, R>
         isEditable = true;
 
         /* Create the event manager */
-        theEventManager = new TethysEventManager<>();
+        theEventManager = new OceanusEventManager<>();
 
         /* If the table already has children */
         final TethysUICoreTableColumn<?, C, R> myChild = theTable.getLastChild();
@@ -140,7 +140,7 @@ public abstract class TethysUICoreTableColumn<T, C, R>
     }
 
     @Override
-    public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
+    public OceanusEventRegistrar<TethysUIEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 

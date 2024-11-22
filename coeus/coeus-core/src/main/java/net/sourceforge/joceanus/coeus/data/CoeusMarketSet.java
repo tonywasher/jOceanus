@@ -21,8 +21,8 @@ import java.util.Iterator;
 import java.util.Map;
 
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataMap;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.date.TethysDate;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
 
 /**
  * Loan MarketSet.
@@ -85,7 +85,7 @@ public class CoeusMarketSet
      * @return the snapshot
      */
     public CoeusMarketSnapShot getSnapshot(final CoeusMarketProvider pProvider,
-                                           final TethysDate pDate) {
+                                           final OceanusDate pDate) {
         final CoeusMarket myMarket = theMarketMap.get(pProvider);
         return myMarket == null
                                 ? null
@@ -101,7 +101,7 @@ public class CoeusMarketSet
      */
     public CoeusMarketAnnual getAnnual(final CoeusMarketProvider pProvider,
                                        final CoeusCalendar pCalendar,
-                                       final TethysDate pDate) {
+                                       final OceanusDate pDate) {
         final CoeusMarket myMarket = theMarketMap.get(pProvider);
         return myMarket == null
                                 ? null

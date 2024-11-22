@@ -28,9 +28,9 @@ import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseAssetType;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicResource;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransAsset;
-import net.sourceforge.joceanus.tethys.date.TethysDate;
-import net.sourceforge.joceanus.tethys.date.TethysDateRange;
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
 
 /**
@@ -91,7 +91,7 @@ public final class MoneyWiseXAnalysisTaxBasisAccountBucket
     private MoneyWiseXAnalysisTaxBasisAccountBucket(final MoneyWiseXAnalysis pAnalysis,
                                                     final MoneyWiseXAnalysisTaxBasisBucket pParent,
                                                     final MoneyWiseXAnalysisTaxBasisAccountBucket pBase,
-                                                    final TethysDate pDate) {
+                                                    final OceanusDate pDate) {
         /* Copy details from base */
         super(pAnalysis, pBase, pDate);
         theAssetId = pBase.getBucketId();
@@ -109,7 +109,7 @@ public final class MoneyWiseXAnalysisTaxBasisAccountBucket
     private MoneyWiseXAnalysisTaxBasisAccountBucket(final MoneyWiseXAnalysis pAnalysis,
                                                     final MoneyWiseXAnalysisTaxBasisBucket pParent,
                                                     final MoneyWiseXAnalysisTaxBasisAccountBucket pBase,
-                                                    final TethysDateRange pRange) {
+                                                    final OceanusDateRange pRange) {
         /* Copy details from base */
         super(pAnalysis, pBase, pRange);
         theAssetId = pBase.getBucketId();
@@ -233,7 +233,7 @@ public final class MoneyWiseXAnalysisTaxBasisAccountBucket
         protected MoneyWiseXAnalysisTaxBasisAccountBucketList(final MoneyWiseXAnalysis pAnalysis,
                                                               final MoneyWiseXAnalysisTaxBasisBucket pParent,
                                                               final MoneyWiseXAnalysisTaxBasisAccountBucketList pBase,
-                                                              final TethysDate pDate) {
+                                                              final OceanusDate pDate) {
             /* Initialise class */
             this(pAnalysis, pParent);
 
@@ -264,7 +264,7 @@ public final class MoneyWiseXAnalysisTaxBasisAccountBucket
         protected MoneyWiseXAnalysisTaxBasisAccountBucketList(final MoneyWiseXAnalysis pAnalysis,
                                                               final MoneyWiseXAnalysisTaxBasisBucket pParent,
                                                               final MoneyWiseXAnalysisTaxBasisAccountBucketList pBase,
-                                                              final TethysDateRange pRange) {
+                                                              final OceanusDateRange pRange) {
             /* Initialise class */
             this(pAnalysis, pParent);
 
@@ -319,7 +319,7 @@ public final class MoneyWiseXAnalysisTaxBasisAccountBucket
          * @return the adjusted taxBasisAccountBucket (or null)
          */
         MoneyWiseXAnalysisTaxBasisAccountBucket  adjustValue(final MoneyWiseTransAsset pAccount,
-                                                             final TethysMoney pValue,
+                                                             final OceanusMoney pValue,
                                                              final MoneyWiseXTaxBasisAdjust pAdjust) {
             /* Access the relevant account bucket */
             final MoneyWiseXAnalysisTaxBasisAccountBucket myBucket = getBucket(pAccount);

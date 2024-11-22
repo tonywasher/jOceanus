@@ -38,9 +38,9 @@ import net.sourceforge.joceanus.prometheus.data.PrometheusEncryptedFieldSet;
 import net.sourceforge.joceanus.prometheus.data.PrometheusEncryptedPair;
 import net.sourceforge.joceanus.prometheus.data.PrometheusEncryptedValues;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.date.TethysDate;
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
 
 /**
@@ -98,7 +98,7 @@ public abstract class MoneyWiseAssetBase
     /**
      * Close Date.
      */
-    private TethysDate theCloseDate;
+    private OceanusDate theCloseDate;
 
     /**
      * Earliest Transaction.
@@ -315,7 +315,7 @@ public abstract class MoneyWiseAssetBase
      * Obtain Opening Balance.
      * @return the Opening balance
      */
-    public TethysMoney getOpeningBalance() {
+    public OceanusMoney getOpeningBalance() {
         return null;
     }
 
@@ -338,7 +338,7 @@ public abstract class MoneyWiseAssetBase
      * Get the close Date of the account.
      * @return the closeDate
      */
-    public TethysDate getCloseDate() {
+    public OceanusDate getCloseDate() {
         return theCloseDate;
     }
 

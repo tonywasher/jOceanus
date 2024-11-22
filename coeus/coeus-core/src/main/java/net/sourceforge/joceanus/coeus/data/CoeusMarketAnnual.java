@@ -23,8 +23,8 @@ import java.util.Map;
 
 import net.sourceforge.joceanus.metis.field.MetisFieldItem;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
-import net.sourceforge.joceanus.tethys.date.TethysDate;
-import net.sourceforge.joceanus.tethys.date.TethysDateRange;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
 
 /**
  * Annual Market Totals.
@@ -54,7 +54,7 @@ public class CoeusMarketAnnual
     /**
      * Date.
      */
-    private final TethysDateRange theDateRange;
+    private final OceanusDateRange theDateRange;
 
     /**
      * The Map of MonthlyHistories.
@@ -94,15 +94,15 @@ public class CoeusMarketAnnual
      */
     CoeusMarketAnnual(final CoeusMarket pMarket,
                       final CoeusCalendar pCalendar,
-                      final TethysDate pDate) {
+                      final OceanusDate pDate) {
         /* Store parameters */
         theMarket = pMarket;
 
         /* Determine the initial date */
-        final TethysDate myInitial = new TethysDate(pDate);
+        final OceanusDate myInitial = new OceanusDate(pDate);
         myInitial.adjustYear(-1);
         myInitial.adjustDay(1);
-        theDateRange = new TethysDateRange(myInitial, pDate);
+        theDateRange = new OceanusDateRange(myInitial, pDate);
 
         /* Create monthly history map */
         theMonthlyHistories = new LinkedHashMap<>();
@@ -112,12 +112,12 @@ public class CoeusMarketAnnual
         setFlags();
 
         /* Create the monthly views */
-        final TethysDate myDate = new TethysDate(myInitial);
+        final OceanusDate myDate = new OceanusDate(myInitial);
         while (myDate.compareTo(pDate) < 0) {
-            final TethysDate myStart = pCalendar.getStartOfMonth(myDate);
-            final TethysDate myEnd = pCalendar.getEndOfMonth(myDate);
+            final OceanusDate myStart = pCalendar.getStartOfMonth(myDate);
+            final OceanusDate myEnd = pCalendar.getEndOfMonth(myDate);
             final Month myMonth = myEnd.getMonthValue();
-            final TethysDateRange myRange = new TethysDateRange(myStart, myEnd);
+            final OceanusDateRange myRange = new OceanusDateRange(myStart, myEnd);
             final CoeusHistory myHistory = pMarket.viewHistory(theHistory, myRange);
 
             /* Store a non-zero month */
@@ -142,7 +142,7 @@ public class CoeusMarketAnnual
      * Obtain the date.
      * @return the date
      */
-    public TethysDateRange getDateRange() {
+    public OceanusDateRange getDateRange() {
         return theDateRange;
     }
 

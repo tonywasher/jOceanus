@@ -16,7 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.themis.ui.launch;
 
-import net.sourceforge.joceanus.tethys.OceanusException;
+import net.sourceforge.joceanus.oceanus.OceanusException;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIIconId;
 import net.sourceforge.joceanus.tethys.ui.api.factory.TethysUIFactory;
 import net.sourceforge.joceanus.tethys.ui.api.factory.TethysUILaunchProgram;

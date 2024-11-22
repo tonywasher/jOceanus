@@ -24,8 +24,8 @@ import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTaxClass;
 import net.sourceforge.joceanus.moneywise.tax.MoneyWiseTaxBandSet.MoneyWiseTaxBand;
 import net.sourceforge.joceanus.moneywise.tax.MoneyWiseTaxResource;
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
-import net.sourceforge.joceanus.tethys.decimal.TethysRate;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRate;
 
 /**
  * Interest Tax Scheme.
@@ -44,18 +44,18 @@ public abstract class MoneyWiseUKInterestScheme
      * @param pTaxYear the taxYear
      * @return the taxCredit rate
      */
-    protected abstract TethysRate getTaxCreditRate(MoneyWiseUKTaxYear pTaxYear);
+    protected abstract OceanusRate getTaxCreditRate(MoneyWiseUKTaxYear pTaxYear);
 
     @Override
-    protected TethysMoney adjustAllowances(final MoneyWiseUKTaxConfig pConfig,
-                                           final TethysMoney pAmount) {
+    protected OceanusMoney adjustAllowances(final MoneyWiseUKTaxConfig pConfig,
+                                            final OceanusMoney pAmount) {
         /* Adjust against the basic allowance */
-        final TethysMoney myRemaining = super.adjustAllowances(pConfig, pAmount);
+        final OceanusMoney myRemaining = super.adjustAllowances(pConfig, pAmount);
 
         /* If we have any interest left */
         if (myRemaining.isNonZero()) {
             /* Adjust the savings allowance noting that it still counts against the taxBand */
-            final TethysMoney myInterest = adjustForAllowance(pConfig.getSavingsAllowance(), myRemaining);
+            final OceanusMoney myInterest = adjustForAllowance(pConfig.getSavingsAllowance(), myRemaining);
 
             /* Adjust any loSavings band noting that it still counts against the taxBand */
             adjustForAllowance(pConfig.getLoSavingsBand().getAmount(), myInterest);
@@ -66,22 +66,22 @@ public abstract class MoneyWiseUKInterestScheme
     }
 
     @Override
-    protected TethysMoney getAmountInAllowance(final MoneyWiseUKTaxConfig pConfig,
-                                               final TethysMoney pAmount) {
+    protected OceanusMoney getAmountInAllowance(final MoneyWiseUKTaxConfig pConfig,
+                                                final OceanusMoney pAmount) {
         /* Obtain the amount covered by the basic allowance */
-        TethysMoney myAmount = super.getAmountInAllowance(pConfig, pAmount);
+        OceanusMoney myAmount = super.getAmountInAllowance(pConfig, pAmount);
 
         /* If we have income left over */
         if (myAmount.compareTo(pAmount) < 0) {
             /* Calculate remaining amount */
-            final TethysMoney myRemaining = new TethysMoney(pAmount);
+            final OceanusMoney myRemaining = new OceanusMoney(pAmount);
             myRemaining.subtractAmount(myAmount);
 
             /* Calculate the amount covered by savings allowance */
-            final TethysMoney myXtra = getAmountInBand(pConfig.getSavingsAllowance(), myRemaining);
+            final OceanusMoney myXtra = getAmountInBand(pConfig.getSavingsAllowance(), myRemaining);
 
             /* Determine the total amount covered by the allowance */
-            myAmount = new TethysMoney(myAmount);
+            myAmount = new OceanusMoney(myAmount);
             myAmount.addAmount(myXtra);
         }
 
@@ -93,7 +93,7 @@ public abstract class MoneyWiseUKInterestScheme
      * Obtain the base rate.
      * @return the base rate
      */
-    protected TethysRate getBaseRate() {
+    protected OceanusRate getBaseRate() {
         return null;
     }
 
@@ -102,8 +102,8 @@ public abstract class MoneyWiseUKInterestScheme
                                                          final MoneyWiseTaxClass pBasis) {
         /* Obtain the loSavingsBand and the basicRate */
         final MoneyWiseTaxBand myLoBand = pConfig.getLoSavingsBand();
-        final TethysMoney myLoAmount = myLoBand.getAmount();
-        TethysRate myRate = getBaseRate();
+        final OceanusMoney myLoAmount = myLoBand.getAmount();
+        OceanusRate myRate = getBaseRate();
 
         /* Create a new List */
         final List<MoneyWiseTaxBand> myList = new ArrayList<>();
@@ -111,7 +111,7 @@ public abstract class MoneyWiseUKInterestScheme
         /* Access underlying iterator and obtain first band */
         final Iterator<MoneyWiseTaxBand> myIterator = super.taxBandIterator(pConfig, pBasis);
         MoneyWiseTaxBand myBasicBand = myIterator.next();
-        TethysMoney myAmount = myBasicBand.getAmount();
+        OceanusMoney myAmount = myBasicBand.getAmount();
 
         /* If we are a LoBase instance */
         if (this instanceof MoneyWiseUKInterestLoBaseRateScheme) {
@@ -125,7 +125,7 @@ public abstract class MoneyWiseUKInterestScheme
             /* Add low band if required */
         } else if (myLoAmount.isNonZero()) {
             myList.add(myLoBand);
-            myAmount = new TethysMoney(myAmount);
+            myAmount = new OceanusMoney(myAmount);
             myAmount.subtract(myLoAmount);
         }
 
@@ -156,7 +156,7 @@ public abstract class MoneyWiseUKInterestScheme
         private static final MetisFieldSet<MoneyWiseUKInterestAsIncomeScheme> FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseUKInterestAsIncomeScheme.class);
 
         @Override
-        protected TethysRate getTaxCreditRate(final MoneyWiseUKTaxYear pTaxYear) {
+        protected OceanusRate getTaxCreditRate(final MoneyWiseUKTaxYear pTaxYear) {
             return pTaxYear.getTaxBands().getBasicTaxRate();
         }
 
@@ -186,23 +186,23 @@ public abstract class MoneyWiseUKInterestScheme
         /**
          * The Base Rate.
          */
-        private final TethysRate theBaseRate;
+        private final OceanusRate theBaseRate;
 
         /**
          * Constructor.
          * @param pRate the base rate
          */
-        protected MoneyWiseUKInterestBaseRateScheme(final TethysRate pRate) {
+        protected MoneyWiseUKInterestBaseRateScheme(final OceanusRate pRate) {
             theBaseRate = pRate;
         }
 
         @Override
-        protected TethysRate getBaseRate() {
+        protected OceanusRate getBaseRate() {
             return theBaseRate;
         }
 
         @Override
-        protected TethysRate getTaxCreditRate(final MoneyWiseUKTaxYear pTaxYear) {
+        protected OceanusRate getTaxCreditRate(final MoneyWiseUKTaxYear pTaxYear) {
             return theBaseRate;
         }
 
@@ -226,7 +226,7 @@ public abstract class MoneyWiseUKInterestScheme
          * Constructor.
          * @param pRate the base rate
          */
-        protected MoneyWiseUKInterestLoBaseRateScheme(final TethysRate pRate) {
+        protected MoneyWiseUKInterestLoBaseRateScheme(final OceanusRate pRate) {
             super(pRate);
         }
 

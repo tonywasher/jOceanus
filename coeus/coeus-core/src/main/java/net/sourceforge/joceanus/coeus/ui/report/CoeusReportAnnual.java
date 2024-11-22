@@ -33,10 +33,10 @@ import net.sourceforge.joceanus.metis.report.MetisReportHTMLBuilder;
 import net.sourceforge.joceanus.metis.report.MetisReportHTMLBuilder.MetisHTMLTable;
 import net.sourceforge.joceanus.metis.report.MetisReportManager;
 import net.sourceforge.joceanus.metis.report.MetisReportReferenceManager.DelayedTable;
-import net.sourceforge.joceanus.tethys.date.TethysDate;
-import net.sourceforge.joceanus.tethys.date.TethysDateRange;
-import net.sourceforge.joceanus.tethys.decimal.TethysDecimal;
-import net.sourceforge.joceanus.tethys.decimal.TethysRatio;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimal;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRatio;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
 
 /**
@@ -75,7 +75,7 @@ public class CoeusReportAnnual
         theMarket = pMarket;
 
         /* Access the date and totals */
-        TethysDate myDate = theMarket.getDateRange().getEnd();
+        OceanusDate myDate = theMarket.getDateRange().getEnd();
         final boolean hasFees = theMarket.hasFees();
         final boolean hasCashBack = theMarket.hasCashBack();
         final boolean hasShield = theMarket.hasShield();
@@ -117,7 +117,7 @@ public class CoeusReportAnnual
         while (myIterator.hasNext()) {
             final CoeusHistory myHistory = myIterator.next();
             final CoeusTotals myTotals = myHistory.getTotals();
-            final TethysDateRange myRange = myHistory.getDateRange();
+            final OceanusDateRange myRange = myHistory.getDateRange();
             myDate = myRange.getEnd();
             final Month myMonth = myDate.getMonthValue();
 
@@ -149,7 +149,7 @@ public class CoeusReportAnnual
             }
 
             /* Create RoR cell */
-            final TethysRatio myRoR = myTotals.getAssetRoR();
+            final OceanusRatio myRoR = myTotals.getAssetRoR();
             makeTableFilterCell(myTable, CoeusTotalSet.ASSETROR, myMonth, myRoR.annualise(numDays));
         }
 
@@ -179,11 +179,11 @@ public class CoeusReportAnnual
         }
 
         /* Determine the number of days in the period */
-        final TethysDateRange myRange = theMarket.getDateRange();
+        final OceanusDateRange myRange = theMarket.getDateRange();
         final long numDays = myRange.getNumDays();
 
         /* Create RoR cell */
-        final TethysRatio myRoR = myTotals.getAssetRoR();
+        final OceanusRatio myRoR = myTotals.getAssetRoR();
         makeTableFilterCell(myTable, CoeusTotalSet.ASSETROR, myRoR.annualise(numDays));
 
         /* Return the document */
@@ -198,7 +198,7 @@ public class CoeusReportAnnual
      */
     private void makeTableFilterCell(final MetisHTMLTable pTable,
                                      final CoeusTotalSet pTotalSet,
-                                     final TethysDecimal pValue) {
+                                     final OceanusDecimal pValue) {
         makeTableFilterCell(pTable, pTotalSet, null, pValue);
     }
 
@@ -212,7 +212,7 @@ public class CoeusReportAnnual
     private void makeTableFilterCell(final MetisHTMLTable pTable,
                                      final CoeusTotalSet pTotalSet,
                                      final Month pMonth,
-                                     final TethysDecimal pValue) {
+                                     final OceanusDecimal pValue) {
         /* Create the filter definition */
         final CoeusFilterDefinition myDef = new CoeusFilterDefinition(pTotalSet, pMonth);
         final String myId = myDef.getFilterId();

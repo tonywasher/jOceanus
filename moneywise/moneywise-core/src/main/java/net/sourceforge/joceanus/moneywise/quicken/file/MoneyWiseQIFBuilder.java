@@ -37,8 +37,8 @@ import net.sourceforge.joceanus.moneywise.data.statics.MoneyWisePayeeClass;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransCategoryClass;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransInfoClass;
 import net.sourceforge.joceanus.moneywise.quicken.definitions.MoneyWiseQIFType;
-import net.sourceforge.joceanus.tethys.date.TethysDate;
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
 
 /**
  * Builder class for QIF File.
@@ -194,8 +194,8 @@ public class MoneyWiseQIFBuilder {
      * @param pBalance the opening balance
      */
     protected void processBalance(final MoneyWiseDeposit pDeposit,
-                                  final TethysDate pStartDate,
-                                  final TethysMoney pBalance) {
+                                  final OceanusDate pStartDate,
+                                  final OceanusMoney pBalance) {
         /* Access the Account details */
         final MoneyWiseQIFAccountEvents myAccount = theFile.registerAccount(pDeposit);
 
@@ -452,7 +452,7 @@ public class MoneyWiseQIFBuilder {
         final List<MoneyWiseQIFClass> myList = getTransactionClasses(pTrans);
 
         /* Obtain basic amount */
-        TethysMoney myAmount = pTrans.getAmount();
+        OceanusMoney myAmount = pTrans.getAmount();
 
         /* Create a new event */
         final MoneyWiseQIFEvent myEvent = new MoneyWiseQIFEvent(theFile, pTrans);
@@ -460,15 +460,15 @@ public class MoneyWiseQIFBuilder {
         myEvent.recordAmount(myAmount);
 
         /* Add Split event */
-        myAmount = new TethysMoney(myAmount);
+        myAmount = new OceanusMoney(myAmount);
         myEvent.recordSplitRecord(myCategory, myList, myAmount, myPayee.getName());
 
         /* Handle Tax Credit */
-        TethysMoney myTaxCredit = pTrans.getTaxCredit();
+        OceanusMoney myTaxCredit = pTrans.getTaxCredit();
         if (myTaxCredit != null) {
             /* Add to amount */
             myAmount.addAmount(myTaxCredit);
-            myTaxCredit = new TethysMoney(myTaxCredit);
+            myTaxCredit = new OceanusMoney(myTaxCredit);
             myTaxCredit.negate();
 
             /* Access the Category details */
@@ -479,11 +479,11 @@ public class MoneyWiseQIFBuilder {
         }
 
         /* Handle National Insurance */
-        TethysMoney myNatIns = pTrans.getEmployeeNatIns();
+        OceanusMoney myNatIns = pTrans.getEmployeeNatIns();
         if (myNatIns != null) {
             /* Add to amount */
             myAmount.addAmount(myNatIns);
-            myNatIns = new TethysMoney(myNatIns);
+            myNatIns = new OceanusMoney(myNatIns);
             myNatIns.negate();
 
             /* Access the Category details */
@@ -494,7 +494,7 @@ public class MoneyWiseQIFBuilder {
         }
 
         /* Handle Deemed Benefit */
-        TethysMoney myBenefit = pTrans.getDeemedBenefit();
+        OceanusMoney myBenefit = pTrans.getDeemedBenefit();
         if (myBenefit != null) {
             /* Access the Category details */
             final MoneyWiseQIFEventCategory myBenCategory = theFile.registerCategory(theBenefitCategory);
@@ -503,7 +503,7 @@ public class MoneyWiseQIFBuilder {
             myEvent.recordSplitRecord(myBenCategory, myBenefit, myPayee.getName());
 
             /* Add to amount */
-            myBenefit = new TethysMoney(myBenefit);
+            myBenefit = new OceanusMoney(myBenefit);
             myBenefit.negate();
 
             /* Access the Category details */
@@ -514,11 +514,11 @@ public class MoneyWiseQIFBuilder {
         }
 
         /* Handle Withheld */
-        TethysMoney myWithheld = pTrans.getWithheld();
+        OceanusMoney myWithheld = pTrans.getWithheld();
         if (myWithheld != null) {
             /* Add to amount */
             myAmount.addAmount(myWithheld);
-            myWithheld = new TethysMoney(myWithheld);
+            myWithheld = new OceanusMoney(myWithheld);
             myWithheld.negate();
 
             /* Access the Category details */
@@ -554,7 +554,7 @@ public class MoneyWiseQIFBuilder {
         final List<MoneyWiseQIFClass> myList = getTransactionClasses(pTrans);
 
         /* Access the amount */
-        final TethysMoney myAmount = new TethysMoney(pTrans.getAmount());
+        final OceanusMoney myAmount = new OceanusMoney(pTrans.getAmount());
         myAmount.negate();
 
         /* Create a new event */
@@ -590,7 +590,7 @@ public class MoneyWiseQIFBuilder {
         final List<MoneyWiseQIFClass> myList = getTransactionClasses(pTrans);
 
         /* Obtain basic amount */
-        TethysMoney myAmount = new TethysMoney(pTrans.getAmount());
+        OceanusMoney myAmount = new OceanusMoney(pTrans.getAmount());
         myAmount.negate();
 
         /* Create a new event */
@@ -599,11 +599,11 @@ public class MoneyWiseQIFBuilder {
         myEvent.recordAmount(myAmount);
 
         /* Add Split event */
-        myAmount = new TethysMoney(myAmount);
+        myAmount = new OceanusMoney(myAmount);
         myEvent.recordSplitRecord(myCategory, myList, myAmount, myPayee.getName());
 
         /* Handle Tax Credit */
-        final TethysMoney myTaxCredit = pTrans.getTaxCredit();
+        final OceanusMoney myTaxCredit = pTrans.getTaxCredit();
         if (myTaxCredit != null) {
             /* Subtract from amount */
             myAmount.subtractAmount(myTaxCredit);
@@ -616,7 +616,7 @@ public class MoneyWiseQIFBuilder {
         }
 
         /* Handle National Insurance */
-        final TethysMoney myNatIns = pTrans.getEmployeeNatIns();
+        final OceanusMoney myNatIns = pTrans.getEmployeeNatIns();
         if (myNatIns != null) {
             /* Subtract from amount */
             myAmount.subtractAmount(myNatIns);
@@ -629,7 +629,7 @@ public class MoneyWiseQIFBuilder {
         }
 
         /* Handle Deemed Benefit */
-        final TethysMoney myBenefit = pTrans.getDeemedBenefit();
+        final OceanusMoney myBenefit = pTrans.getDeemedBenefit();
         if (myBenefit != null) {
             /* Subtract from amount */
             myAmount.subtractAmount(myBenefit);
@@ -655,7 +655,7 @@ public class MoneyWiseQIFBuilder {
                                            final MoneyWiseTransAsset pCredit,
                                            final MoneyWiseTransaction pTrans) {
         /* Access details */
-        final TethysMoney myAmount = pTrans.getAmount();
+        final OceanusMoney myAmount = pTrans.getAmount();
 
         /* Access the Account details */
         final MoneyWiseQIFAccountEvents myDebitAccount = theFile.registerAccount(pDebit);
@@ -676,7 +676,7 @@ public class MoneyWiseQIFBuilder {
         myCreditAccount.addEvent(myEvent);
 
         /* Build out amount */
-        final TethysMoney myOutAmount = new TethysMoney(myAmount);
+        final OceanusMoney myOutAmount = new OceanusMoney(myAmount);
         myOutAmount.negate();
 
         /* Create a new event */
@@ -743,7 +743,7 @@ public class MoneyWiseQIFBuilder {
                                    final MoneyWiseTransAsset pCredit,
                                    final MoneyWiseTransaction pTrans) {
         /* Access details */
-        TethysMoney myAmount = pTrans.getAmount();
+        OceanusMoney myAmount = pTrans.getAmount();
 
         /* Determine mode */
         final boolean isRecursive = pDebit.equals(pCredit);
@@ -783,22 +783,22 @@ public class MoneyWiseQIFBuilder {
             /* Record basic details */
             myEvent.recordAmount(isRecursive
                     ? myAmount
-                    : new TethysMoney());
+                    : new OceanusMoney());
             myEvent.recordPayee(myPayee);
 
             /* Add Split event */
-            myAmount = new TethysMoney(myAmount);
+            myAmount = new OceanusMoney(myAmount);
             myEvent.recordSplitRecord(myCategory, myList, myAmount, myPayee.getName());
 
             /* Handle Tax Credit */
-            TethysMoney myTaxCredit = pTrans.getTaxCredit();
+            OceanusMoney myTaxCredit = pTrans.getTaxCredit();
             if (myTaxCredit != null) {
                 /* Access tax payee */
                 final MoneyWiseQIFPayee myTaxPayee = theFile.registerPayee(theTaxMan);
 
                 /* Add to amount */
                 myAmount.addAmount(myTaxCredit);
-                myTaxCredit = new TethysMoney(myTaxCredit);
+                myTaxCredit = new OceanusMoney(myTaxCredit);
                 myTaxCredit.negate();
 
                 /* Access the Category details */
@@ -809,11 +809,11 @@ public class MoneyWiseQIFBuilder {
             }
 
             /* Handle Withheld */
-            TethysMoney myWithheld = pTrans.getWithheld();
+            OceanusMoney myWithheld = pTrans.getWithheld();
             if (myWithheld != null) {
                 /* Add to amount */
                 myAmount.addAmount(myWithheld);
-                myWithheld = new TethysMoney(myWithheld);
+                myWithheld = new OceanusMoney(myWithheld);
                 myWithheld.negate();
 
                 /* Access the Category details */
@@ -826,7 +826,7 @@ public class MoneyWiseQIFBuilder {
             /* Handle Non-Recursion */
             if (!isRecursive) {
                 /* Add to amount */
-                final TethysMoney myOutAmount = new TethysMoney(pTrans.getAmount());
+                final OceanusMoney myOutAmount = new OceanusMoney(pTrans.getAmount());
                 myOutAmount.negate();
 
                 /* Access the Account details */
@@ -870,7 +870,7 @@ public class MoneyWiseQIFBuilder {
                                    final MoneyWiseTransAsset pCredit,
                                    final MoneyWiseTransaction pTrans) {
         /* Access details */
-        TethysMoney myAmount = pTrans.getAmount();
+        OceanusMoney myAmount = pTrans.getAmount();
 
         /* Determine mode */
         final boolean isRecursive = pDebit.equals(pCredit);
@@ -907,15 +907,15 @@ public class MoneyWiseQIFBuilder {
             final MoneyWiseQIFEvent myEvent = new MoneyWiseQIFEvent(theFile, pTrans);
 
             /* Record basic details */
-            myEvent.recordAmount(new TethysMoney());
+            myEvent.recordAmount(new OceanusMoney());
             myEvent.recordPayee(myPayee);
 
             /* Add Split event */
-            myAmount = new TethysMoney(myAmount);
+            myAmount = new OceanusMoney(myAmount);
             myEvent.recordSplitRecord(myCategory, myList, myAmount, myPayee.getName());
 
             /* Add to amount */
-            final TethysMoney myOutAmount = new TethysMoney(pTrans.getAmount());
+            final OceanusMoney myOutAmount = new OceanusMoney(pTrans.getAmount());
             myOutAmount.negate();
 
             /* Access the Account details */
@@ -971,13 +971,13 @@ public class MoneyWiseQIFBuilder {
         final List<MoneyWiseQIFClass> myList = getTransactionClasses(pTrans);
 
         /* Access the amount */
-        final TethysMoney myInAmount = pTrans.getAmount();
-        final TethysMoney myOutAmount = new TethysMoney(myInAmount);
+        final OceanusMoney myInAmount = pTrans.getAmount();
+        final OceanusMoney myOutAmount = new OceanusMoney(myInAmount);
         myOutAmount.negate();
 
         /* Create a new event */
         final MoneyWiseQIFEvent myEvent = new MoneyWiseQIFEvent(theFile, pTrans);
-        myEvent.recordAmount(new TethysMoney());
+        myEvent.recordAmount(new OceanusMoney());
         myEvent.recordPayee(myPayee);
         myEvent.recordSplitRecord(myCategory, myList, myInAmount, myPayee.getName());
         myEvent.recordSplitRecord(myAutoCategory, myList, myOutAmount, pCash.getAutoPayee().getName());
@@ -1009,13 +1009,13 @@ public class MoneyWiseQIFBuilder {
         final List<MoneyWiseQIFClass> myList = getTransactionClasses(pTrans);
 
         /* Access the amount */
-        final TethysMoney myInAmount = pTrans.getAmount();
-        final TethysMoney myOutAmount = new TethysMoney(myInAmount);
+        final OceanusMoney myInAmount = pTrans.getAmount();
+        final OceanusMoney myOutAmount = new OceanusMoney(myInAmount);
         myOutAmount.negate();
 
         /* Create a new event */
         final MoneyWiseQIFEvent myEvent = new MoneyWiseQIFEvent(theFile, pTrans);
-        myEvent.recordAmount(new TethysMoney());
+        myEvent.recordAmount(new OceanusMoney());
         myEvent.recordPayee(myPayee);
         myEvent.recordSplitRecord(myAutoCategory, myList, myInAmount, pCash.getAutoPayee().getName());
         myEvent.recordSplitRecord(myCategory, myList, myOutAmount, myPayee.getName());
@@ -1046,7 +1046,7 @@ public class MoneyWiseQIFBuilder {
         final MoneyWiseQIFAccountEvents myAccount = theFile.registerAccount(pDebit);
 
         /* Access the amount */
-        final TethysMoney myAmount = new TethysMoney(pTrans.getAmount());
+        final OceanusMoney myAmount = new OceanusMoney(pTrans.getAmount());
         myAmount.negate();
 
         /* Create a new event */

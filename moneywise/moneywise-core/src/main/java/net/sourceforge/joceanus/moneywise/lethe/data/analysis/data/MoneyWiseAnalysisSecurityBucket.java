@@ -42,14 +42,14 @@ import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransaction;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrency;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseSecurityType;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.date.TethysDate;
-import net.sourceforge.joceanus.tethys.date.TethysDateRange;
-import net.sourceforge.joceanus.tethys.decimal.TethysDecimal;
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
-import net.sourceforge.joceanus.tethys.decimal.TethysPrice;
-import net.sourceforge.joceanus.tethys.decimal.TethysRatio;
-import net.sourceforge.joceanus.tethys.decimal.TethysUnits;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimal;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRatio;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusUnits;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
 
 /**
@@ -194,7 +194,7 @@ public final class MoneyWiseAnalysisSecurityBucket
      */
     private MoneyWiseAnalysisSecurityBucket(final MoneyWiseAnalysis pAnalysis,
                                             final MoneyWiseAnalysisSecurityBucket pBase,
-                                            final TethysDate pDate) {
+                                            final OceanusDate pDate) {
         /* Copy details from base */
         theHolding = pBase.getSecurityHolding();
         theCurrency = pBase.getCurrency();
@@ -220,7 +220,7 @@ public final class MoneyWiseAnalysisSecurityBucket
      */
     private MoneyWiseAnalysisSecurityBucket(final MoneyWiseAnalysis pAnalysis,
                                             final MoneyWiseAnalysisSecurityBucket pBase,
-                                            final TethysDateRange pRange) {
+                                            final OceanusDateRange pRange) {
         /* Copy details from base */
         theHolding = pBase.getSecurityHolding();
         theCurrency = pBase.getCurrency();
@@ -342,7 +342,7 @@ public final class MoneyWiseAnalysisSecurityBucket
      * Obtain date range.
      * @return the range
      */
-    public TethysDateRange getDateRange() {
+    public OceanusDateRange getDateRange() {
         return theAnalysis.getDateRange();
     }
 
@@ -386,8 +386,8 @@ public final class MoneyWiseAnalysisSecurityBucket
      * @param pAttr the attribute
      * @return the delta (or null)
      */
-    public TethysDecimal getDeltaForTransaction(final MoneyWiseTransaction pTrans,
-                                                final MoneyWiseAnalysisSecurityAttr pAttr) {
+    public OceanusDecimal getDeltaForTransaction(final MoneyWiseTransaction pTrans,
+                                                 final MoneyWiseAnalysisSecurityAttr pAttr) {
         /* Obtain delta for transaction */
         return theHistory.getDeltaValue(pTrans, pAttr);
     }
@@ -398,8 +398,8 @@ public final class MoneyWiseAnalysisSecurityBucket
      * @param pAttr the attribute
      * @return the delta (or null)
      */
-    public TethysMoney getMoneyDeltaForTransaction(final MoneyWiseTransaction pTrans,
-                                                   final MoneyWiseAnalysisSecurityAttr pAttr) {
+    public OceanusMoney getMoneyDeltaForTransaction(final MoneyWiseTransaction pTrans,
+                                                    final MoneyWiseAnalysisSecurityAttr pAttr) {
         /* Obtain delta for transaction */
         return theHistory.getDeltaMoneyValue(pTrans, pAttr);
     }
@@ -410,8 +410,8 @@ public final class MoneyWiseAnalysisSecurityBucket
      * @param pAttr the attribute
      * @return the delta (or null)
      */
-    public TethysUnits getUnitsDeltaForTransaction(final MoneyWiseTransaction pTrans,
-                                                   final MoneyWiseAnalysisSecurityAttr pAttr) {
+    public OceanusUnits getUnitsDeltaForTransaction(final MoneyWiseTransaction pTrans,
+                                                    final MoneyWiseAnalysisSecurityAttr pAttr) {
         /* Obtain delta for transaction */
         return theHistory.getDeltaUnitsValue(pTrans, pAttr);
     }
@@ -466,9 +466,9 @@ public final class MoneyWiseAnalysisSecurityBucket
      * @param pDelta the delta
      */
     public void adjustCounter(final MoneyWiseAnalysisSecurityAttr pAttr,
-                              final TethysMoney pDelta) {
-        TethysMoney myValue = theValues.getMoneyValue(pAttr);
-        myValue = new TethysMoney(myValue);
+                              final OceanusMoney pDelta) {
+        OceanusMoney myValue = theValues.getMoneyValue(pAttr);
+        myValue = new OceanusMoney(myValue);
         myValue.addAmount(pDelta);
         setValue(pAttr, myValue);
     }
@@ -479,9 +479,9 @@ public final class MoneyWiseAnalysisSecurityBucket
      * @param pDelta the delta
      */
     public void adjustCounter(final MoneyWiseAnalysisSecurityAttr pAttr,
-                              final TethysUnits pDelta) {
-        TethysUnits myValue = theValues.getUnitsValue(pAttr);
-        myValue = new TethysUnits(myValue);
+                              final OceanusUnits pDelta) {
+        OceanusUnits myValue = theValues.getUnitsValue(pAttr);
+        myValue = new OceanusUnits(myValue);
         myValue.addUnits(pDelta);
         setValue(pAttr, myValue);
     }
@@ -500,15 +500,15 @@ public final class MoneyWiseAnalysisSecurityBucket
      * value the asset for a particular range.
      * @param pRange the range of valuation
      */
-    private void valueAsset(final TethysDateRange pRange) {
+    private void valueAsset(final OceanusDateRange pRange) {
         /* Obtain the appropriate price */
         final MoneyWiseDataSet myData = theAnalysis.getData();
         final MoneyWiseSecurityPriceDataMap myPriceMap = myData.getSecurityPriceDataMap();
-        final TethysPrice[] myPrices = myPriceMap.getPricesForRange(theSecurity, pRange);
+        final OceanusPrice[] myPrices = myPriceMap.getPricesForRange(theSecurity, pRange);
 
         /* Access base units */
-        TethysUnits myUnits = theBaseValues.getUnitsValue(MoneyWiseAnalysisSecurityAttr.UNITS);
-        TethysPrice myPrice = myPrices[0];
+        OceanusUnits myUnits = theBaseValues.getUnitsValue(MoneyWiseAnalysisSecurityAttr.UNITS);
+        OceanusPrice myPrice = myPrices[0];
 
         /* Calculate the value */
         theBaseValues.setValue(MoneyWiseAnalysisSecurityAttr.PRICE, myPrice);
@@ -527,23 +527,23 @@ public final class MoneyWiseAnalysisSecurityBucket
      * value the foreign asset for a particular range.
      * @param pRange the range of valuation
      */
-    private void valueForeignAsset(final TethysDateRange pRange) {
+    private void valueForeignAsset(final OceanusDateRange pRange) {
         /* Obtain the appropriate price */
         final MoneyWiseDataSet myData = theAnalysis.getData();
         final MoneyWiseSecurityPriceDataMap myPriceMap = myData.getSecurityPriceDataMap();
-        final TethysPrice[] myPrices = myPriceMap.getPricesForRange(theSecurity, pRange);
+        final OceanusPrice[] myPrices = myPriceMap.getPricesForRange(theSecurity, pRange);
         final MoneyWiseExchangeRateDataMap myRateMap = myData.getExchangeRateDataMap();
-        final TethysRatio[] myRates = myRateMap.getRatesForRange(theSecurity.getAssetCurrency(), pRange);
+        final OceanusRatio[] myRates = myRateMap.getRatesForRange(theSecurity.getAssetCurrency(), pRange);
         final Currency myCurrency = theAnalysis.getCurrency().getCurrency();
 
         /* Access base units */
-        TethysUnits myUnits = theBaseValues.getUnitsValue(MoneyWiseAnalysisSecurityAttr.UNITS);
-        TethysPrice myPrice = myPrices[0];
-        TethysRatio myRate = myRates[0];
+        OceanusUnits myUnits = theBaseValues.getUnitsValue(MoneyWiseAnalysisSecurityAttr.UNITS);
+        OceanusPrice myPrice = myPrices[0];
+        OceanusRatio myRate = myRates[0];
 
         /* Calculate the value */
-        TethysMoney myValue = myUnits.valueAtPrice(myPrice);
-        TethysMoney myLocalValue = myValue.convertCurrency(myCurrency, myRate);
+        OceanusMoney myValue = myUnits.valueAtPrice(myPrice);
+        OceanusMoney myLocalValue = myValue.convertCurrency(myCurrency, myRate);
 
         /* Record it */
         theBaseValues.setValue(MoneyWiseAnalysisSecurityAttr.PRICE, myPrice);
@@ -572,8 +572,8 @@ public final class MoneyWiseAnalysisSecurityBucket
      */
     private void calculateProfit() {
         /* Calculate the profit */
-        final TethysMoney myValuation = theValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.VALUEDELTA);
-        final TethysMoney myProfit = new TethysMoney(myValuation);
+        final OceanusMoney myValuation = theValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.VALUEDELTA);
+        final OceanusMoney myProfit = new OceanusMoney(myValuation);
         myProfit.subtractAmount(theValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.INVESTED));
         myProfit.addAmount(theValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.DIVIDEND));
         myProfit.addAmount(theValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.GROWTHADJUST));
@@ -582,7 +582,7 @@ public final class MoneyWiseAnalysisSecurityBucket
         setValue(MoneyWiseAnalysisSecurityAttr.PROFIT, myProfit);
 
         /* Calculate the profit minus the dividend */
-        final TethysMoney myMarketProfit = new TethysMoney(myProfit);
+        final OceanusMoney myMarketProfit = new OceanusMoney(myProfit);
         myMarketProfit.subtractAmount(theValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.DIVIDEND));
         setValue(MoneyWiseAnalysisSecurityAttr.MARKETPROFIT, myMarketProfit);
     }
@@ -592,8 +592,8 @@ public final class MoneyWiseAnalysisSecurityBucket
      */
     private void calculateDeltas() {
         /* Obtain a copy of the value */
-        TethysMoney myValue = theValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.VALUATION);
-        myValue = new TethysMoney(myValue);
+        OceanusMoney myValue = theValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.VALUATION);
+        myValue = new OceanusMoney(myValue);
 
         /* Subtract any base value */
         myValue.subtractAmount(theBaseValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.VALUATION));
@@ -604,7 +604,7 @@ public final class MoneyWiseAnalysisSecurityBucket
         if (Boolean.TRUE.equals(isForeignCurrency)) {
             /* Obtain a copy of the value */
             myValue = theValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.FOREIGNVALUE);
-            myValue = new TethysMoney(myValue);
+            myValue = new OceanusMoney(myValue);
 
             /* Subtract any base value */
             myValue.subtractAmount(theBaseValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.FOREIGNVALUE));
@@ -618,7 +618,7 @@ public final class MoneyWiseAnalysisSecurityBucket
      * Analyse the bucket.
      * @param pRange the range of valuation
      */
-    void analyseBucket(final TethysDateRange pRange) {
+    void analyseBucket(final OceanusDateRange pRange) {
         /* Value the asset over the range */
         if (Boolean.TRUE.equals(isForeignCurrency)) {
             valueForeignAsset(pRange);
@@ -654,8 +654,8 @@ public final class MoneyWiseAnalysisSecurityBucket
      */
     private void calculateMarket() {
         /* Obtain the delta value */
-        TethysMoney myValue = theValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.VALUEDELTA);
-        myValue = new TethysMoney(myValue);
+        OceanusMoney myValue = theValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.VALUEDELTA);
+        myValue = new OceanusMoney(myValue);
 
         /* Subtract the investment */
         myValue.subtractAmount(theValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.INVESTED));
@@ -669,8 +669,8 @@ public final class MoneyWiseAnalysisSecurityBucket
      */
     private void calculateForeignMarket() {
         /* Obtain the local market growth */
-        TethysMoney myBaseValue = theValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.VALUEDELTA);
-        myBaseValue = new TethysMoney(myBaseValue);
+        OceanusMoney myBaseValue = theValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.VALUEDELTA);
+        myBaseValue = new OceanusMoney(myBaseValue);
 
         /* Subtract the investment */
         myBaseValue.subtractAmount(theValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.INVESTED));
@@ -679,8 +679,8 @@ public final class MoneyWiseAnalysisSecurityBucket
         setValue(MoneyWiseAnalysisSecurityAttr.LOCALMARKETGROWTH, myBaseValue);
 
         /* Obtain the foreign growth */
-        TethysMoney myValue = theValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.FOREIGNVALUEDELTA);
-        myValue = new TethysMoney(myValue);
+        OceanusMoney myValue = theValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.FOREIGNVALUEDELTA);
+        myValue = new OceanusMoney(myValue);
 
         /* Subtract the investment */
         myValue.subtractAmount(theValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.FOREIGNINVESTED));
@@ -690,14 +690,14 @@ public final class MoneyWiseAnalysisSecurityBucket
 
         /* Calculate the local equivalent */
         final Currency myCurrency = theAnalysis.getCurrency().getCurrency();
-        final TethysRatio myRate = theValues.getRatioValue(MoneyWiseAnalysisSecurityAttr.EXCHANGERATE);
+        final OceanusRatio myRate = theValues.getRatioValue(MoneyWiseAnalysisSecurityAttr.EXCHANGERATE);
         myValue = myValue.convertCurrency(myCurrency, myRate);
 
         /* Set the market growth */
         setValue(MoneyWiseAnalysisSecurityAttr.MARKETGROWTH, myValue);
 
         /* Calculate the fluctuation */
-        final TethysMoney myFluct = new TethysMoney(myBaseValue);
+        final OceanusMoney myFluct = new OceanusMoney(myBaseValue);
         myFluct.subtractAmount(myValue);
         setValue(MoneyWiseAnalysisSecurityAttr.CURRENCYFLUCT, myFluct);
     }
@@ -708,13 +708,13 @@ public final class MoneyWiseAnalysisSecurityBucket
      */
     public void adjustForNIPayments(final MoneyWiseAnalysisTransactionHelper pTrans) {
         /* Assume no NatInsurance */
-        TethysMoney myAmount = null;
+        OceanusMoney myAmount = null;
 
         /* Access Employer NatInsurance */
-        TethysMoney myNatIns = pTrans.getEmployerNatIns();
+        OceanusMoney myNatIns = pTrans.getEmployerNatIns();
         if (myNatIns != null
                 && myNatIns.isNonZero()) {
-            myAmount = new TethysMoney(myNatIns);
+            myAmount = new OceanusMoney(myNatIns);
         }
 
         /* Access Employee natInsurance */
@@ -722,7 +722,7 @@ public final class MoneyWiseAnalysisSecurityBucket
         if (myNatIns != null
                 && myNatIns.isNonZero()) {
             if (myAmount == null) {
-                myAmount = new TethysMoney(myNatIns);
+                myAmount = new OceanusMoney(myNatIns);
             } else {
                 myAmount.addAmount(myNatIns);
             }
@@ -731,9 +731,9 @@ public final class MoneyWiseAnalysisSecurityBucket
         /* If we have natInsurance */
         if (myAmount != null) {
             /* Handle autoUnits */
-            TethysUnits myUnits = getValues().getUnitsValue(MoneyWiseAnalysisSecurityAttr.UNITS);
+            OceanusUnits myUnits = getValues().getUnitsValue(MoneyWiseAnalysisSecurityAttr.UNITS);
             if (myUnits.isZero()) {
-                myUnits = TethysUnits.getWholeUnits(theSecurity.getCategoryClass().getAutoUnits());
+                myUnits = OceanusUnits.getWholeUnits(theSecurity.getCategoryClass().getAutoUnits());
                 setValue(MoneyWiseAnalysisSecurityAttr.UNITS, myUnits);
             }
 
@@ -828,7 +828,7 @@ public final class MoneyWiseAnalysisSecurityBucket
          */
         MoneyWiseAnalysisSecurityBucketList(final MoneyWiseAnalysis pAnalysis,
                                             final MoneyWiseAnalysisSecurityBucketList pBase,
-                                            final TethysDate pDate) {
+                                            final OceanusDate pDate) {
             /* Initialise class */
             this(pAnalysis);
 
@@ -859,7 +859,7 @@ public final class MoneyWiseAnalysisSecurityBucket
          */
         MoneyWiseAnalysisSecurityBucketList(final MoneyWiseAnalysis pAnalysis,
                                             final MoneyWiseAnalysisSecurityBucketList pBase,
-                                            final TethysDateRange pRange) {
+                                            final OceanusDateRange pRange) {
             /* Initialise class */
             this(pAnalysis);
 

@@ -21,9 +21,9 @@ import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataSet;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseExchangeRate;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrency;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrencyClass;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.date.TethysDate;
-import net.sourceforge.joceanus.tethys.decimal.TethysRatio;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRatio;
 
 /**
  * ExchangeRate Builder.
@@ -42,12 +42,12 @@ public class MoneyWiseXchgRateBuilder {
     /**
      * The Date.
      */
-    private TethysDate theDate;
+    private OceanusDate theDate;
 
     /**
      * The Rate.
      */
-    private TethysRatio theRate;
+    private OceanusRatio theRate;
 
     /**
      * Constructor.
@@ -92,7 +92,7 @@ public class MoneyWiseXchgRateBuilder {
      * @param pRate the rate.
      * @return the builder
      */
-    public MoneyWiseXchgRateBuilder rate(final TethysRatio pRate) {
+    public MoneyWiseXchgRateBuilder rate(final OceanusRatio pRate) {
         theRate = pRate;
         return this;
     }
@@ -103,7 +103,7 @@ public class MoneyWiseXchgRateBuilder {
      * @return the builder
      */
     public MoneyWiseXchgRateBuilder rate(final String pRate) {
-        return rate(new TethysRatio(pRate));
+        return rate(new OceanusRatio(pRate));
     }
 
     /**
@@ -111,7 +111,7 @@ public class MoneyWiseXchgRateBuilder {
      * @param pDate the Date of the rate.
      * @return the builder
      */
-    public MoneyWiseXchgRateBuilder date(final TethysDate pDate) {
+    public MoneyWiseXchgRateBuilder date(final OceanusDate pDate) {
         theDate = pDate;
         return this;
     }
@@ -122,7 +122,7 @@ public class MoneyWiseXchgRateBuilder {
      * @return the builder
      */
     public MoneyWiseXchgRateBuilder date(final String pDate) {
-        return date(new TethysDate(pDate));
+        return date(new OceanusDate(pDate));
     }
 
     /**

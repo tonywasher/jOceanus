@@ -26,7 +26,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 
-import net.sourceforge.joceanus.tethys.OceanusException;
+import net.sourceforge.joceanus.oceanus.OceanusException;
 import net.sourceforge.joceanus.themis.ThemisIOException;
 import net.sourceforge.joceanus.themis.analysis.ThemisAnalysisMaven;
 

@@ -25,10 +25,10 @@ import net.sourceforge.joceanus.coeus.data.CoeusLoanStatus;
 import net.sourceforge.joceanus.coeus.data.CoeusResource;
 import net.sourceforge.joceanus.metis.field.MetisFieldItem;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.date.TethysDate;
-import net.sourceforge.joceanus.tethys.decimal.TethysDecimal;
-import net.sourceforge.joceanus.tethys.decimal.TethysRate;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimal;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRate;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
 
 /**
@@ -71,7 +71,7 @@ public class CoeusZopaLoanBookItem
     /**
      * The Acquired Date.
      */
-    private final TethysDate theDate;
+    private final OceanusDate theDate;
 
     /**
      * The risk.
@@ -81,7 +81,7 @@ public class CoeusZopaLoanBookItem
     /**
      * The rate.
      */
-    private final TethysRate theRate;
+    private final OceanusRate theRate;
 
     /**
      * The status.
@@ -91,47 +91,47 @@ public class CoeusZopaLoanBookItem
     /**
      * The Total Lent.
      */
-    private final TethysDecimal theLent;
+    private final OceanusDecimal theLent;
 
     /**
      * The Outstanding Balance.
      */
-    private final TethysDecimal theBalance;
+    private final OceanusDecimal theBalance;
 
     /**
      * The Total Repaid.
      */
-    private final TethysDecimal theRepaid;
+    private final OceanusDecimal theRepaid;
 
     /**
      * The Capital Repaid.
      */
-    private final TethysDecimal theCapital;
+    private final OceanusDecimal theCapital;
 
     /**
      * The Interest Repaid.
      */
-    private final TethysDecimal theInterest;
+    private final OceanusDecimal theInterest;
 
     /**
      * The Arrears.
      */
-    private final TethysDecimal theArrears;
+    private final OceanusDecimal theArrears;
 
     /**
      * The Missing.
      */
-    private final TethysDecimal theMissing;
+    private final OceanusDecimal theMissing;
 
     /**
      * The portion repaid.
      */
-    private final TethysRate thePortionRepaid;
+    private final OceanusRate thePortionRepaid;
 
     /**
      * The badDebt date.
      */
-    private final TethysDate theBadDebtDate;
+    private final OceanusDate theBadDebtDate;
 
     /**
      * Is the loan safeGuarded.
@@ -191,12 +191,12 @@ public class CoeusZopaLoanBookItem
         theArrears = pParser.parseDecimal(myIterator.next());
 
         /* Determine any missing capital */
-        theMissing = new TethysDecimal(theLent);
+        theMissing = new OceanusDecimal(theLent);
         theMissing.subtractValue(theCapital);
         theMissing.subtractValue(theBalance);
 
         /* Check that repaid is the total of capital and interest */
-        final TethysDecimal myRepaid = new TethysDecimal(theRepaid);
+        final OceanusDecimal myRepaid = new OceanusDecimal(theRepaid);
         myRepaid.subtractValue(theCapital);
         myRepaid.subtractValue(theInterest);
         if (myRepaid.isNonZero()) {
@@ -258,13 +258,13 @@ public class CoeusZopaLoanBookItem
         theBadDebtDate = myRecent.getBadDebtDate();
 
         /* Parse the outstanding balances */
-        theLent = new TethysDecimal(pBase.getLent());
-        theBalance = new TethysDecimal(pBase.getBalance());
-        theRepaid = new TethysDecimal(pBase.getRepaid());
-        theCapital = new TethysDecimal(pBase.getCapitalRepaid());
-        theInterest = new TethysDecimal(pBase.getInterestRepaid());
-        theArrears = new TethysDecimal(pBase.getArrears());
-        theMissing = new TethysDecimal(pBase.getMissing());
+        theLent = new OceanusDecimal(pBase.getLent());
+        theBalance = new OceanusDecimal(pBase.getBalance());
+        theRepaid = new OceanusDecimal(pBase.getRepaid());
+        theCapital = new OceanusDecimal(pBase.getCapitalRepaid());
+        theInterest = new OceanusDecimal(pBase.getInterestRepaid());
+        theArrears = new OceanusDecimal(pBase.getArrears());
+        theMissing = new OceanusDecimal(pBase.getMissing());
 
         /* Add the new totals */
         theLent.addValue(pNew.getLent());
@@ -296,7 +296,7 @@ public class CoeusZopaLoanBookItem
      * Obtain the date.
      * @return the date
      */
-    public TethysDate getDate() {
+    public OceanusDate getDate() {
         return theDate;
     }
 
@@ -304,7 +304,7 @@ public class CoeusZopaLoanBookItem
      * Obtain the rate.
      * @return the rate
      */
-    public TethysRate getRate() {
+    public OceanusRate getRate() {
         return theRate;
     }
 
@@ -320,7 +320,7 @@ public class CoeusZopaLoanBookItem
      * Obtain the amount lent.
      * @return the balance
      */
-    private TethysDecimal getLent() {
+    private OceanusDecimal getLent() {
         return theLent;
     }
 
@@ -328,7 +328,7 @@ public class CoeusZopaLoanBookItem
      * Obtain the balance.
      * @return the balance
      */
-    public TethysDecimal getBalance() {
+    public OceanusDecimal getBalance() {
         return theBalance;
     }
 
@@ -336,7 +336,7 @@ public class CoeusZopaLoanBookItem
      * Obtain the total repaid.
      * @return the repaid
      */
-    public TethysDecimal getRepaid() {
+    public OceanusDecimal getRepaid() {
         return theRepaid;
     }
 
@@ -344,7 +344,7 @@ public class CoeusZopaLoanBookItem
      * Obtain the capital repaid.
      * @return the capital repaid
      */
-    private TethysDecimal getCapitalRepaid() {
+    private OceanusDecimal getCapitalRepaid() {
         return theCapital;
     }
 
@@ -352,7 +352,7 @@ public class CoeusZopaLoanBookItem
      * Obtain the interest repaid.
      * @return the interest repaid
      */
-    TethysDecimal getInterestRepaid() {
+    OceanusDecimal getInterestRepaid() {
         return theInterest;
     }
 
@@ -360,7 +360,7 @@ public class CoeusZopaLoanBookItem
      * Obtain the arrears.
      * @return the arrears
      */
-    private TethysDecimal getArrears() {
+    private OceanusDecimal getArrears() {
         return theArrears;
     }
 
@@ -368,7 +368,7 @@ public class CoeusZopaLoanBookItem
      * Obtain the missing.
      * @return the missing capital
      */
-    TethysDecimal getMissing() {
+    OceanusDecimal getMissing() {
         return theMissing;
     }
 
@@ -376,7 +376,7 @@ public class CoeusZopaLoanBookItem
      * Obtain the portion repaid.
      * @return the portion repaid
      */
-    private TethysRate getPortionRepaid() {
+    private OceanusRate getPortionRepaid() {
         return thePortionRepaid;
     }
 
@@ -384,7 +384,7 @@ public class CoeusZopaLoanBookItem
      * Obtain the badDebt date.
      * @return the badDebt date
      */
-    TethysDate getBadDebtDate() {
+    OceanusDate getBadDebtDate() {
         return theBadDebtDate;
     }
 

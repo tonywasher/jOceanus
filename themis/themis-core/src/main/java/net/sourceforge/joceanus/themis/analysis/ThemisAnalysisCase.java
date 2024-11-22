@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.Deque;
 import java.util.List;
 
-import net.sourceforge.joceanus.tethys.OceanusException;
+import net.sourceforge.joceanus.oceanus.OceanusException;
 
 /**
  * Case construct.

@@ -28,8 +28,8 @@ import net.sourceforge.joceanus.prometheus.database.PrometheusDataStore;
 import net.sourceforge.joceanus.prometheus.database.PrometheusTableDefinition;
 import net.sourceforge.joceanus.prometheus.database.PrometheusTableDefinition.PrometheusSortOrder;
 import net.sourceforge.joceanus.prometheus.database.PrometheusTableEncrypted;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.decimal.TethysDecimal;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimal;
 
 /**
  * TableEncrypted extension for DepositRate.
@@ -52,8 +52,8 @@ public class MoneyWiseTableDepositRate
 
         /* Declare the columns */
         final PrometheusColumnDefinition myActCol = myTableDef.addReferenceColumn(MoneyWiseBasicDataType.DEPOSIT, MoneyWiseTableDeposit.TABLE_NAME);
-        myTableDef.addEncryptedColumn(MoneyWiseBasicResource.MONEYWISEDATA_FIELD_RATE, TethysDecimal.BYTE_LEN);
-        myTableDef.addNullEncryptedColumn(MoneyWiseBasicResource.DEPOSITRATE_BONUS, TethysDecimal.BYTE_LEN);
+        myTableDef.addEncryptedColumn(MoneyWiseBasicResource.MONEYWISEDATA_FIELD_RATE, OceanusDecimal.BYTE_LEN);
+        myTableDef.addNullEncryptedColumn(MoneyWiseBasicResource.DEPOSITRATE_BONUS, OceanusDecimal.BYTE_LEN);
         final PrometheusColumnDefinition myDateCol = myTableDef.addNullDateColumn(MoneyWiseBasicResource.DEPOSITRATE_ENDDATE);
 
         /* Declare Sort Columns */

@@ -18,12 +18,12 @@ package net.sourceforge.joceanus.tethys.test.ui;
 
 import java.util.List;
 
-import net.sourceforge.joceanus.tethys.date.TethysDate;
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
-import net.sourceforge.joceanus.tethys.decimal.TethysPrice;
-import net.sourceforge.joceanus.tethys.decimal.TethysRate;
-import net.sourceforge.joceanus.tethys.decimal.TethysRatio;
-import net.sourceforge.joceanus.tethys.decimal.TethysUnits;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRate;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRatio;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusUnits;
 
 /**
  * Tethys Table item.
@@ -67,32 +67,32 @@ public class TethysTestTableItem {
     /**
      * Date property.
      */
-    private TethysDate theDate;
+    private OceanusDate theDate;
 
     /**
      * Money property.
      */
-    private TethysMoney theMoney;
+    private OceanusMoney theMoney;
 
     /**
      * Price property.
      */
-    private TethysPrice thePrice;
+    private OceanusPrice thePrice;
 
     /**
      * Units property.
      */
-    private TethysUnits theUnits;
+    private OceanusUnits theUnits;
 
     /**
      * Rate property.
      */
-    private TethysRate theRate;
+    private OceanusRate theRate;
 
     /**
      * Ratio property.
      */
-    private TethysRatio theRatio;
+    private OceanusRatio theRatio;
 
     /**
      * Scroll property.
@@ -117,7 +117,7 @@ public class TethysTestTableItem {
     TethysTestTableItem(final TethysTestHelper pHelper,
                         final String pName) {
         theName = pName;
-        theDate = new TethysDate();
+        theDate = new OceanusDate();
         theBoolean = Boolean.FALSE;
         theXtraBoolean = Boolean.FALSE;
         theShort = TethysTestHelper.SHORT_DEF;
@@ -248,7 +248,7 @@ public class TethysTestTableItem {
      * Obtain the money property.
      * @return the money property
      */
-    public TethysMoney getMoney() {
+    public OceanusMoney getMoney() {
         return theMoney;
     }
 
@@ -256,7 +256,7 @@ public class TethysTestTableItem {
      * Set the money property.
      * @param pValue the new value
      */
-    public void setMoney(final TethysMoney pValue) {
+    public void setMoney(final OceanusMoney pValue) {
         theMoney = pValue;
     }
 
@@ -264,7 +264,7 @@ public class TethysTestTableItem {
      * Obtain the price property.
      * @return the price property
      */
-    public TethysPrice getPrice() {
+    public OceanusPrice getPrice() {
         return thePrice;
     }
 
@@ -272,7 +272,7 @@ public class TethysTestTableItem {
      * Set the price property.
      * @param pValue the new value
      */
-    public void setPrice(final TethysPrice pValue) {
+    public void setPrice(final OceanusPrice pValue) {
         thePrice = pValue;
     }
 
@@ -280,7 +280,7 @@ public class TethysTestTableItem {
      * Obtain the units property.
      * @return the units property
      */
-    public TethysUnits getUnits() {
+    public OceanusUnits getUnits() {
         return theUnits;
     }
 
@@ -288,7 +288,7 @@ public class TethysTestTableItem {
      * Set the units property.
      * @param pValue the new value
      */
-    public void setUnits(final TethysUnits pValue) {
+    public void setUnits(final OceanusUnits pValue) {
         theUnits = pValue;
     }
 
@@ -296,7 +296,7 @@ public class TethysTestTableItem {
      * Obtain the rate property.
      * @return the rate property
      */
-    public TethysRate getRate() {
+    public OceanusRate getRate() {
         return theRate;
     }
 
@@ -304,7 +304,7 @@ public class TethysTestTableItem {
      * Set the rate property.
      * @param pValue the new value
      */
-    public void setRate(final TethysRate pValue) {
+    public void setRate(final OceanusRate pValue) {
         theRate = pValue;
     }
 
@@ -312,7 +312,7 @@ public class TethysTestTableItem {
      * Obtain the ratio property.
      * @return the ratio property
      */
-    public TethysRatio getRatio() {
+    public OceanusRatio getRatio() {
         return theRatio;
     }
 
@@ -320,7 +320,7 @@ public class TethysTestTableItem {
      * Set the ratio property.
      * @param pValue the new value
      */
-    public void setRatio(final TethysRatio pValue) {
+    public void setRatio(final OceanusRatio pValue) {
         theRatio = pValue;
     }
 
@@ -329,7 +329,7 @@ public class TethysTestTableItem {
      * Obtain the date property.
      * @return the date property
      */
-    public TethysDate getDate() {
+    public OceanusDate getDate() {
         return theDate;
     }
 
@@ -337,7 +337,7 @@ public class TethysTestTableItem {
      * Set the date property.
      * @param pValue the new value
      */
-    public void setDate(final TethysDate pValue) {
+    public void setDate(final OceanusDate pValue) {
         theDate = pValue;
     }
 

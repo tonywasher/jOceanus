@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Tethys: Java Utilities
+ * Tethys: GUI Utilities
  * Copyright 2012,2024 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,12 +19,12 @@ package net.sourceforge.joceanus.tethys.ui.api.base;
 import java.io.IOException;
 import java.io.InputStream;
 
-import net.sourceforge.joceanus.tethys.resource.TethysResourceId;
+import net.sourceforge.joceanus.oceanus.resource.OceanusResourceId;
 
 /**
  * IconId.
  */
-public interface TethysUIIconId extends TethysResourceId {
+public interface TethysUIIconId extends OceanusResourceId {
     /**
      * Obtain resource as bytes.
      * @return the bytes

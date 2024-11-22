@@ -29,7 +29,7 @@ import net.sourceforge.joceanus.coeus.ui.CoeusFilter.CoeusAnnualFilter;
 import net.sourceforge.joceanus.coeus.ui.CoeusFilter.CoeusSnapShotFilter;
 import net.sourceforge.joceanus.coeus.ui.CoeusMarketCache;
 import net.sourceforge.joceanus.metis.data.MetisDataDifference;
-import net.sourceforge.joceanus.tethys.date.TethysDate;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
 import net.sourceforge.joceanus.tethys.ui.api.menu.TethysUIScrollMenu;
 
 /**
@@ -64,7 +64,7 @@ public final class CoeusStatementState {
     /**
      * The selectedDate.
      */
-    private TethysDate theSelectedDate;
+    private OceanusDate theSelectedDate;
 
     /**
      * The loan.
@@ -159,7 +159,7 @@ public final class CoeusStatementState {
      * Obtain the selected Date.
      * @return the date
      */
-    TethysDate getSelectedDate() {
+    OceanusDate getSelectedDate() {
         return theSelectedDate;
     }
 
@@ -192,11 +192,11 @@ public final class CoeusStatementState {
      * @param pDate the date
      * @return true/false did a change occur
      */
-    boolean setDate(final TethysDate pDate) {
+    boolean setDate(final OceanusDate pDate) {
         /* Obtain the date and adjust it */
-        final TethysDate myDate = pDate == null
+        final OceanusDate myDate = pDate == null
                                                 ? null
-                                                : new TethysDate(pDate);
+                                                : new OceanusDate(pDate);
 
         /* Record any change and report change */
         if (!MetisDataDifference.isEqual(pDate, theSelectedDate)) {
@@ -315,7 +315,7 @@ public final class CoeusStatementState {
      * Allocate new annual filter.
      */
     void allocateNewAnnualFilter() {
-        final TethysDate myAnnualDate = theCalendar.getEndOfYear(theSelectedDate);
+        final OceanusDate myAnnualDate = theCalendar.getEndOfYear(theSelectedDate);
         final CoeusMarketCache myCache = theSelect.getCache();
         final CoeusAnnualFilter myFilter = new CoeusAnnualFilter(myCache.getAnnual(theProvider, myAnnualDate), theSelectedDate);
         if (theMonth != null

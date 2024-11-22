@@ -42,11 +42,11 @@ import net.sourceforge.joceanus.prometheus.data.PrometheusEncryptedFieldSet;
 import net.sourceforge.joceanus.prometheus.data.PrometheusEncryptedPair;
 import net.sourceforge.joceanus.prometheus.data.PrometheusEncryptedValues;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.date.TethysDate;
-import net.sourceforge.joceanus.tethys.date.TethysDateFormatter;
-import net.sourceforge.joceanus.tethys.date.TethysDateRange;
-import net.sourceforge.joceanus.tethys.decimal.TethysPrice;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.date.OceanusDateFormatter;
+import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
 
 /**
@@ -122,10 +122,10 @@ public class MoneyWiseSecurityPrice
         try {
             /* Store the Date */
             Object myValue = pValues.getValue(MoneyWiseBasicResource.MONEYWISEDATA_FIELD_DATE);
-            if (myValue instanceof TethysDate) {
-                setValueDate((TethysDate) myValue);
+            if (myValue instanceof OceanusDate) {
+                setValueDate((OceanusDate) myValue);
             } else if (myValue instanceof String) {
-                final TethysDateFormatter myParser = myFormatter.getDateFormatter();
+                final OceanusDateFormatter myParser = myFormatter.getDateFormatter();
                 setValueDate(myParser.parseDate((String) myValue));
             }
 
@@ -139,14 +139,14 @@ public class MoneyWiseSecurityPrice
 
             /* Store the Price */
             myValue = pValues.getValue(MoneyWiseBasicResource.MONEYWISEDATA_FIELD_PRICE);
-            if (myValue instanceof TethysPrice) {
-                setValuePrice((TethysPrice) myValue);
+            if (myValue instanceof OceanusPrice) {
+                setValuePrice((OceanusPrice) myValue);
             } else if (myValue instanceof byte[]) {
                 setValuePrice((byte[]) myValue);
             } else if (myValue instanceof String) {
                 final String myString = (String) myValue;
                 setValuePrice(myString);
-                setValuePrice(myFormatter.parseValue(myString, TethysPrice.class));
+                setValuePrice(myFormatter.parseValue(myString, OceanusPrice.class));
             }
 
             /* Catch Exceptions */
@@ -185,7 +185,7 @@ public class MoneyWiseSecurityPrice
         final PrometheusEncryptedValues myValues = getValues();
         final Object mySecurity = myValues.getValue(MoneyWiseBasicDataType.SECURITY);
         final Object myDate = myValues.getValue(MoneyWiseBasicResource.MONEYWISEDATA_FIELD_DATE);
-        final Object myPrice = myValues.getValue(MoneyWiseBasicResource.MONEYWISEDATA_FIELD_PRICE, TethysPrice.class);
+        final Object myPrice = myValues.getValue(MoneyWiseBasicResource.MONEYWISEDATA_FIELD_PRICE, OceanusPrice.class);
 
         /* Access formatter */
         final TethysUIDataFormatter myFormatter = getDataSet().getDataFormatter();
@@ -211,8 +211,8 @@ public class MoneyWiseSecurityPrice
      * Obtain Price.
      * @return the price
      */
-    public TethysPrice getPrice() {
-        return getValues().getValue(MoneyWiseBasicResource.MONEYWISEDATA_FIELD_PRICE, TethysPrice.class);
+    public OceanusPrice getPrice() {
+        return getValues().getValue(MoneyWiseBasicResource.MONEYWISEDATA_FIELD_PRICE, OceanusPrice.class);
     }
 
     /**
@@ -235,8 +235,8 @@ public class MoneyWiseSecurityPrice
      * Obtain Date.
      * @return the date
      */
-    public TethysDate getDate() {
-        return getValues().getValue(MoneyWiseBasicResource.MONEYWISEDATA_FIELD_DATE, TethysDate.class);
+    public OceanusDate getDate() {
+        return getValues().getValue(MoneyWiseBasicResource.MONEYWISEDATA_FIELD_DATE, OceanusDate.class);
     }
 
     /**
@@ -298,7 +298,7 @@ public class MoneyWiseSecurityPrice
      * @param pValue the price
      * @throws OceanusException on error
      */
-    private void setValuePrice(final TethysPrice pValue) throws OceanusException {
+    private void setValuePrice(final OceanusPrice pValue) throws OceanusException {
         setEncryptedValue(MoneyWiseBasicResource.MONEYWISEDATA_FIELD_PRICE, pValue);
     }
 
@@ -308,7 +308,7 @@ public class MoneyWiseSecurityPrice
      * @throws OceanusException on error
      */
     private void setValuePrice(final byte[] pBytes) throws OceanusException {
-        setEncryptedValue(MoneyWiseBasicResource.MONEYWISEDATA_FIELD_PRICE, pBytes, TethysPrice.class);
+        setEncryptedValue(MoneyWiseBasicResource.MONEYWISEDATA_FIELD_PRICE, pBytes, OceanusPrice.class);
     }
 
     /**
@@ -331,7 +331,7 @@ public class MoneyWiseSecurityPrice
      * Set the date.
      * @param pValue the date
      */
-    private void setValueDate(final TethysDate pValue) {
+    private void setValueDate(final OceanusDate pValue) {
         getValues().setUncheckedValue(MoneyWiseBasicResource.MONEYWISEDATA_FIELD_DATE, pValue);
     }
 
@@ -401,8 +401,8 @@ public class MoneyWiseSecurityPrice
     @Override
     public void validate() {
         final MoneyWiseSecurity mySecurity = getSecurity();
-        final TethysDate myDate = getDate();
-        final TethysPrice myPrice = getPrice();
+        final OceanusDate myDate = getDate();
+        final OceanusPrice myPrice = getPrice();
         final MoneyWiseSecurityPriceBaseList<? extends MoneyWiseSecurityPrice> myList = getList();
         final MoneyWiseDataSet mySet = getDataSet();
 
@@ -470,7 +470,7 @@ public class MoneyWiseSecurityPrice
      * @param pPrice the price
      * @throws OceanusException on error
      */
-    public void setPrice(final TethysPrice pPrice) throws OceanusException {
+    public void setPrice(final OceanusPrice pPrice) throws OceanusException {
         setValuePrice(pPrice);
     }
 
@@ -478,7 +478,7 @@ public class MoneyWiseSecurityPrice
      * Set a new date.
      * @param pDate the new date
      */
-    public void setDate(final TethysDate pDate) {
+    public void setDate(final OceanusDate pDate) {
         setValueDate(pDate);
     }
 
@@ -723,7 +723,7 @@ public class MoneyWiseSecurityPrice
         /**
          * Map of Maps.
          */
-        private final Map<MoneyWiseSecurity, Map<TethysDate, Integer>> theMapOfMaps;
+        private final Map<MoneyWiseSecurity, Map<OceanusDate, Integer>> theMapOfMaps;
 
         /**
          * Map of Prices.
@@ -754,7 +754,7 @@ public class MoneyWiseSecurityPrice
          * Obtain mapOfMaps.
          * @return the map
          */
-        private Map<MoneyWiseSecurity, Map<TethysDate, Integer>> getMapOfMaps() {
+        private Map<MoneyWiseSecurity, Map<OceanusDate, Integer>> getMapOfMaps() {
             return theMapOfMaps;
         }
 
@@ -782,10 +782,10 @@ public class MoneyWiseSecurityPrice
             }
 
             /* Access the map */
-            final Map<TethysDate, Integer> myMap = theMapOfMaps.computeIfAbsent(mySecurity, s -> new HashMap<>());
+            final Map<OceanusDate, Integer> myMap = theMapOfMaps.computeIfAbsent(mySecurity, s -> new HashMap<>());
 
             /* Adjust price count */
-            final TethysDate myDate = myItem.getDate();
+            final OceanusDate myDate = myItem.getDate();
             final Integer myCount = myMap.get(myDate);
             if (myCount == null) {
                 myMap.put(myDate, PrometheusDataInstanceMap.ONE);
@@ -808,10 +808,10 @@ public class MoneyWiseSecurityPrice
         public boolean validPriceCount(final MoneyWiseSecurityPrice pItem) {
             /* Access the Details */
             final MoneyWiseSecurity mySecurity = pItem.getSecurity();
-            final TethysDate myDate = pItem.getDate();
+            final OceanusDate myDate = pItem.getDate();
 
             /* Access the map */
-            final Map<TethysDate, Integer> myMap = theMapOfMaps.get(mySecurity);
+            final Map<OceanusDate, Integer> myMap = theMapOfMaps.get(mySecurity);
             if (myMap != null) {
                 final Integer myResult = myMap.get(myDate);
                 return PrometheusDataInstanceMap.ONE.equals(myResult);
@@ -826,9 +826,9 @@ public class MoneyWiseSecurityPrice
          * @return true/false
          */
         public boolean availableDate(final MoneyWiseSecurity pSecurity,
-                                     final TethysDate pDate) {
+                                     final OceanusDate pDate) {
             /* Access the map */
-            final Map<TethysDate, Integer> myMap = theMapOfMaps.get(pSecurity);
+            final Map<OceanusDate, Integer> myMap = theMapOfMaps.get(pSecurity);
             return myMap == null
                     || myMap.get(pDate) == null;
         }
@@ -839,8 +839,8 @@ public class MoneyWiseSecurityPrice
          * @param pDate the date
          * @return the latest price for the date.
          */
-        public TethysPrice getPriceForDate(final MoneyWiseAssetBase pSecurity,
-                                           final TethysDate pDate) {
+        public OceanusPrice getPriceForDate(final MoneyWiseAssetBase pSecurity,
+                                            final OceanusDate pDate) {
             /* Access as security */
             final MoneyWiseSecurity mySecurity = MoneyWiseSecurity.class.cast(pSecurity);
 
@@ -861,7 +861,7 @@ public class MoneyWiseSecurityPrice
 
             /* return single unit price */
             final Currency myCurrency = mySecurity.getCurrency();
-            return TethysPrice.getWholeUnits(PrometheusDataInstanceMap.ONE, myCurrency);
+            return OceanusPrice.getWholeUnits(PrometheusDataInstanceMap.ONE, myCurrency);
         }
 
         /**
@@ -870,13 +870,13 @@ public class MoneyWiseSecurityPrice
          * @param pRange the date range
          * @return the two deep array of prices for the range.
          */
-        public TethysPrice[] getPricesForRange(final MoneyWiseSecurity pSecurity,
-                                               final TethysDateRange pRange) {
+        public OceanusPrice[] getPricesForRange(final MoneyWiseSecurity pSecurity,
+                                                final OceanusDateRange pRange) {
             /* Set price */
             final Currency myCurrency = pSecurity.getCurrency();
-            TethysPrice myFirst = TethysPrice.getWholeUnits(PrometheusDataInstanceMap.ONE, myCurrency);
-            TethysPrice myLatest = myFirst;
-            final TethysDate myStart = pRange.getStart();
+            OceanusPrice myFirst = OceanusPrice.getWholeUnits(PrometheusDataInstanceMap.ONE, myCurrency);
+            OceanusPrice myLatest = myFirst;
+            final OceanusDate myStart = pRange.getStart();
 
             /* Access list for security */
             final MoneyWiseSecurityPriceList myList = theMapOfPrices.get(pSecurity);
@@ -887,7 +887,7 @@ public class MoneyWiseSecurityPrice
                     final MoneyWiseSecurityPrice myCurr = myIterator.previous();
 
                     /* Check for the range of the date */
-                    final TethysDate myDate = myCurr.getDate();
+                    final OceanusDate myDate = myCurr.getDate();
                     final int iComp = pRange.compareToDate(myDate);
 
                     /* If this is later than the range we are finished */
@@ -907,7 +907,7 @@ public class MoneyWiseSecurityPrice
             }
 
             /* Return the prices */
-            return new TethysPrice[]
+            return new OceanusPrice[]
                     { myFirst, myLatest };
         }
 

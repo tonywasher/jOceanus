@@ -20,7 +20,7 @@ import java.util.Currency;
 import java.util.Locale;
 
 import net.sourceforge.joceanus.moneywise.tax.MoneyWiseMarginalReduction;
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
 
 /**
  * The allowance factory.
@@ -34,17 +34,17 @@ public final class MoneyWiseUKAllowanceFactory {
     /**
      * The Basic rental allowance.
      */
-    private static final TethysMoney BASE_RENTAL = getAmount(4250);
+    private static final OceanusMoney BASE_RENTAL = getAmount(4250);
 
     /**
      * The New rental allowance.
      */
-    private static final TethysMoney NEW_RENTAL = getAmount(7500);
+    private static final OceanusMoney NEW_RENTAL = getAmount(7500);
 
     /**
      * The Additional Income Threshold.
      */
-    private static final TethysMoney ADDITIONAL_THRESHOLD = getAmount(100000);
+    private static final OceanusMoney ADDITIONAL_THRESHOLD = getAmount(100000);
 
     /**
      * The 1981/82 Allowance.
@@ -309,7 +309,7 @@ public final class MoneyWiseUKAllowanceFactory {
      * @param pUnits the number of whole units
      * @return the amount
      */
-    protected static TethysMoney getAmount(final int pUnits) {
-        return TethysMoney.getWholeUnits(pUnits, CURRENCY);
+    protected static OceanusMoney getAmount(final int pUnits) {
+        return OceanusMoney.getWholeUnits(pUnits, CURRENCY);
     }
 }

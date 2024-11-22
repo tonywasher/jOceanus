@@ -20,10 +20,10 @@ import net.sourceforge.joceanus.moneywise.atlas.data.analysis.base.MoneyWiseXAna
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDeposit;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurity;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrency;
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
-import net.sourceforge.joceanus.tethys.decimal.TethysPrice;
-import net.sourceforge.joceanus.tethys.decimal.TethysRate;
-import net.sourceforge.joceanus.tethys.decimal.TethysRatio;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRate;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRatio;
 
 /**
  * Analysis Interfaces.
@@ -65,7 +65,7 @@ public abstract class MoneyWiseXAnalysisInterfaces {
          * Obtain the delta valuation.
          * @return the delta
          */
-        TethysMoney getDeltaValuation();
+        OceanusMoney getDeltaValuation();
 
         /**
          * Obtain currency for bucket.
@@ -107,7 +107,7 @@ public abstract class MoneyWiseXAnalysisInterfaces {
          * @param pSecurity the security
          * @return the price
          */
-        TethysPrice getCurrentPrice(MoneyWiseSecurity pSecurity);
+        OceanusPrice getCurrentPrice(MoneyWiseSecurity pSecurity);
 
         /**
          * Obtain the current rate for a currency.
@@ -115,7 +115,7 @@ public abstract class MoneyWiseXAnalysisInterfaces {
          * @param pCurrency the currency
          * @return the rate
          */
-        TethysRatio getCurrentXchgRate(MoneyWiseCurrency pCurrency);
+        OceanusRatio getCurrentXchgRate(MoneyWiseCurrency pCurrency);
 
         /**
          * Obtain the depositRate for a deposit.
@@ -123,7 +123,7 @@ public abstract class MoneyWiseXAnalysisInterfaces {
          * @param pDeposit the deposit
          * @return the rate
          */
-        TethysRate getCurrentDepositRate(MoneyWiseDeposit pDeposit);
+        OceanusRate getCurrentDepositRate(MoneyWiseDeposit pDeposit);
 
         /**
          * Register a securityBucket for price updates.

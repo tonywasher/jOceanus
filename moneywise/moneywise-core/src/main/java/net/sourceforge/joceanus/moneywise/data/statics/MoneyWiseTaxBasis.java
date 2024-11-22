@@ -24,7 +24,7 @@ import net.sourceforge.joceanus.prometheus.data.PrometheusDataSet;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataValues;
 import net.sourceforge.joceanus.prometheus.data.PrometheusStaticDataClass;
 import net.sourceforge.joceanus.prometheus.data.PrometheusStaticDataItem;
-import net.sourceforge.joceanus.tethys.OceanusException;
+import net.sourceforge.joceanus.oceanus.OceanusException;
 
 /**
  * TaxBasis data type.
@@ -128,7 +128,7 @@ public class MoneyWiseTaxBasis
     }
 
     /**
-     * Represents a list of {@link TaxBasis} objects.
+     * Represents a list of {@link MoneyWiseTaxBasis} objects.
      */
     public static class MoneyWiseTaxBasisList
             extends PrometheusStaticList<MoneyWiseTaxBasis> {

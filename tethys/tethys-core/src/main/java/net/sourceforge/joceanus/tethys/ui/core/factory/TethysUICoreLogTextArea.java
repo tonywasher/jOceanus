@@ -16,8 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.tethys.ui.core.factory;
 
-import net.sourceforge.joceanus.tethys.event.TethysEventManager;
-import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
 import net.sourceforge.joceanus.tethys.ui.api.factory.TethysUILogTextArea;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUINode;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIEvent;
@@ -44,7 +44,7 @@ public class TethysUICoreLogTextArea
     /**
      * The Event Manager.
      */
-    private final TethysEventManager<TethysUIEvent> theEventManager;
+    private final OceanusEventManager<TethysUIEvent> theEventManager;
 
     /**
      * Pane.
@@ -62,7 +62,7 @@ public class TethysUICoreLogTextArea
      */
     TethysUICoreLogTextArea(final TethysUICoreFactory<?> pFactory) {
         /* Create basics */
-        theEventManager = new TethysEventManager<>();
+        theEventManager = new OceanusEventManager<>();
         theTextArea = pFactory.controlFactory().newTextArea();
 
         /* Create the clear button */
@@ -119,7 +119,7 @@ public class TethysUICoreLogTextArea
     }
 
     @Override
-    public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
+    public OceanusEventRegistrar<TethysUIEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 

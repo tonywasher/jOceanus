@@ -23,13 +23,14 @@ module net.sourceforge.joceanus.themis.core {
     requires java.desktop;
     requires java.prefs;
 
-    /* jOceanus */
-    requires net.sourceforge.joceanus.metis.core;
+    /* Oceanus */
+    requires net.sourceforge.joceanus.metis;
     requires net.sourceforge.joceanus.tethys.core;
+    requires net.sourceforge.joceanus.oceanus;
 
     /* Exports */
     exports net.sourceforge.joceanus.themis.ui.launch;
 
     /* Allow properties to be read */
-    opens net.sourceforge.joceanus.themis.ui to net.sourceforge.joceanus.metis.core;
+    opens net.sourceforge.joceanus.themis.ui to net.sourceforge.joceanus.metis;
 }

@@ -1,9 +1,10 @@
 /* Dependencies */
 dependencies {
     implementation project(':prometheus-sheet-api')
-    implementation project(':metis-core')
-    implementation project(':gordianknot-core')
+    implementation project(':metis')
+    implementation project(':gordianknot')
     implementation project(':tethys-core')
+    implementation project(':oceanus')
     runtimeOnly "com.mysql:mysql-connector-j:$mySQLVersion"
     runtimeOnly "org.mariadb.jdbc:mariadb-java-client:$MariaDBVersion"
     runtimeOnly "org.postgresql:postgresql:$postGreSQLVersion"
@@ -11,13 +12,22 @@ dependencies {
     runtimeOnly "com.h2database:h2:$h2Version"
     runtimeOnly project(':prometheus-sheet-hssf')
     runtimeOnly project(':prometheus-sheet-odf')
+    testImplementation "org.junit.jupiter:junit-jupiter-api:$jUnitVersion"
+    testImplementation "org.junit.jupiter:junit-jupiter-engine:$jUnitVersion"
 }
 
 /* Description */
 description = 'Prometheus Core Application Framework'
 
 /* Register the project */
-registerProject(project) 
+registerProject(project)
+
+/* Test jar details */
+tasks.register('testsJar', Jar) {
+    archiveClassifier = 'tests'
+    from(sourceSets.test.output)
+}
+publishing.publications.maven.artifact(testsJar)
 
 /* Specific Manifest details */
 jar {

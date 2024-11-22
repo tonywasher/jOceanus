@@ -22,9 +22,9 @@ import java.util.Map;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataMap;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataObjectFormat;
 import net.sourceforge.joceanus.moneywise.tax.MoneyWiseTaxYearCache;
-import net.sourceforge.joceanus.tethys.date.TethysDate;
-import net.sourceforge.joceanus.tethys.date.TethysDateRange;
-import net.sourceforge.joceanus.tethys.date.TethysFiscalYear;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
+import net.sourceforge.joceanus.oceanus.date.OceanusFiscalYear;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
 
 /**
@@ -32,23 +32,23 @@ import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
  */
 public class MoneyWiseUKTaxYearCache
         extends MoneyWiseTaxYearCache
-        implements MetisDataMap<TethysDate, MoneyWiseUKTaxYear>, MetisDataObjectFormat {
+        implements MetisDataMap<OceanusDate, MoneyWiseUKTaxYear>, MetisDataObjectFormat {
     /**
      * The cache.
      */
-    private final Map<TethysDate, MoneyWiseUKTaxYear> theCache;
+    private final Map<OceanusDate, MoneyWiseUKTaxYear> theCache;
 
     /**
      * The date range.
      */
-    private final TethysDateRange theDateRange;
+    private final OceanusDateRange theDateRange;
 
     /**
      * Constructor.
      */
     public MoneyWiseUKTaxYearCache() {
         /* Initialise underlying class */
-        super(TethysFiscalYear.UK);
+        super(OceanusFiscalYear.UK);
 
         /* Create the map */
         theCache = new LinkedHashMap<>();
@@ -101,12 +101,12 @@ public class MoneyWiseUKTaxYearCache
         setTaxYearInCache(MoneyWiseUKTaxYearFactory.YEAR_2025);
 
         /* Determine the dateRange */
-        final TethysDate myEnd = MoneyWiseUKTaxYearFactory.YEAR_2025.getYearEnd();
-        TethysDate myStart = MoneyWiseUKTaxYearFactory.YEAR_1981.getYearEnd();
-        myStart = new TethysDate(myStart);
+        final OceanusDate myEnd = MoneyWiseUKTaxYearFactory.YEAR_2025.getYearEnd();
+        OceanusDate myStart = MoneyWiseUKTaxYearFactory.YEAR_1981.getYearEnd();
+        myStart = new OceanusDate(myStart);
         myStart.adjustDay(1);
         myStart.adjustYear(-1);
-        theDateRange = new TethysDateRange(myStart, myEnd);
+        theDateRange = new OceanusDateRange(myStart, myEnd);
     }
 
     /**
@@ -118,25 +118,25 @@ public class MoneyWiseUKTaxYearCache
     }
 
     @Override
-    public TethysDateRange getDateRange() {
+    public OceanusDateRange getDateRange() {
         return theDateRange;
     }
 
     @Override
-    public MoneyWiseUKTaxYear findTaxYearForRange(final TethysDateRange pRange) {
+    public MoneyWiseUKTaxYear findTaxYearForRange(final OceanusDateRange pRange) {
         return checkTaxYearRange(pRange)
                 ? findTaxYearForDate(pRange.getEnd())
                 : null;
     }
 
     @Override
-    public MoneyWiseUKTaxYear findTaxYearForDate(final TethysDate pDate) {
-        final TethysDate myDate = getTaxYearDate(pDate);
+    public MoneyWiseUKTaxYear findTaxYearForDate(final OceanusDate pDate) {
+        final OceanusDate myDate = getTaxYearDate(pDate);
         return theCache.get(myDate);
     }
 
     @Override
-    public Map<TethysDate, MoneyWiseUKTaxYear> getUnderlyingMap() {
+    public Map<OceanusDate, MoneyWiseUKTaxYear> getUnderlyingMap() {
         return theCache;
     }
 

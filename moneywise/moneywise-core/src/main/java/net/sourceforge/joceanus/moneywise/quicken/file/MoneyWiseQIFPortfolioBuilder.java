@@ -36,14 +36,14 @@ import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransaction;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransCategoryClass;
 import net.sourceforge.joceanus.moneywise.quicken.definitions.MoneyWiseQActionType;
 import net.sourceforge.joceanus.moneywise.quicken.definitions.MoneyWiseQIFType;
-import net.sourceforge.joceanus.tethys.date.TethysDate;
-import net.sourceforge.joceanus.tethys.decimal.TethysDecimal;
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
-import net.sourceforge.joceanus.tethys.decimal.TethysPrice;
-import net.sourceforge.joceanus.tethys.decimal.TethysRatio;
-import net.sourceforge.joceanus.tethys.decimal.TethysUnits;
-import net.sourceforge.joceanus.tethys.logger.TethysLogManager;
-import net.sourceforge.joceanus.tethys.logger.TethysLogger;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimal;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRatio;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusUnits;
+import net.sourceforge.joceanus.oceanus.logger.OceanusLogManager;
+import net.sourceforge.joceanus.oceanus.logger.OceanusLogger;
 
 import java.util.Iterator;
 import java.util.List;
@@ -55,7 +55,7 @@ public class MoneyWiseQIFPortfolioBuilder {
     /**
      * Logger.
      */
-    private static final TethysLogger LOGGER = TethysLogManager.getLogger(MoneyWiseQIFPortfolioBuilder.class);
+    private static final OceanusLogger LOGGER = OceanusLogManager.getLogger(MoneyWiseQIFPortfolioBuilder.class);
 
     /**
      * The QIF File.
@@ -105,8 +105,8 @@ public class MoneyWiseQIFPortfolioBuilder {
      * @param pDate the date
      * @return the price
      */
-    private TethysPrice getPriceForDate(final MoneyWiseSecurity pSecurity,
-                                        final TethysDate pDate) {
+    private OceanusPrice getPriceForDate(final MoneyWiseSecurity pSecurity,
+                                         final OceanusDate pDate) {
         /* Add the price */
         final MoneyWiseSecurityPriceDataMap myPriceMap = theData.getSecurityPriceDataMap();
         return myPriceMap.getPriceForDate(pSecurity, pDate);
@@ -118,8 +118,8 @@ public class MoneyWiseQIFPortfolioBuilder {
      * @param pTrans the transaction
      * @return the units
      */
-    private TethysUnits getUnitsForHoldingEvent(final MoneyWiseSecurityHolding pHolding,
-                                                final MoneyWiseTransaction pTrans) {
+    private OceanusUnits getUnitsForHoldingEvent(final MoneyWiseSecurityHolding pHolding,
+                                                 final MoneyWiseTransaction pTrans) {
         /* Access the relevant bucket */
         final MoneyWiseAnalysisPortfolioBucketList myPortfolios = theAnalysis.getPortfolios();
         final MoneyWiseAnalysisSecurityBucket myBucket = myPortfolios.getBucket(pHolding);
@@ -135,8 +135,8 @@ public class MoneyWiseQIFPortfolioBuilder {
      * @param pTrans the transaction
      * @return the units
      */
-    protected TethysUnits getBaseUnitsForHolding(final MoneyWiseSecurityHolding pHolding,
-                                                 final MoneyWiseTransaction pTrans) {
+    protected OceanusUnits getBaseUnitsForHolding(final MoneyWiseSecurityHolding pHolding,
+                                                  final MoneyWiseTransaction pTrans) {
         /* Access the relevant bucket */
         final MoneyWiseAnalysisPortfolioBucketList myPortfolios = theAnalysis.getPortfolios();
         final MoneyWiseAnalysisSecurityBucket myBucket = myPortfolios.getBucket(pHolding);
@@ -144,17 +144,17 @@ public class MoneyWiseQIFPortfolioBuilder {
         /* Access the base values */
         final MoneyWiseAnalysisSecurityValues myValues = myBucket.getValuesForTransaction(pTrans);
         if (myValues != null) {
-            TethysUnits myUnits = myValues.getUnitsValue(MoneyWiseAnalysisSecurityAttr.UNITS);
-            myUnits = new TethysUnits(myUnits);
+            OceanusUnits myUnits = myValues.getUnitsValue(MoneyWiseAnalysisSecurityAttr.UNITS);
+            myUnits = new OceanusUnits(myUnits);
 
             /* Determine the delta in units */
-            final TethysUnits myDelta = myBucket.getUnitsDeltaForTransaction(pTrans, MoneyWiseAnalysisSecurityAttr.UNITS);
+            final OceanusUnits myDelta = myBucket.getUnitsDeltaForTransaction(pTrans, MoneyWiseAnalysisSecurityAttr.UNITS);
             if (myDelta != null) {
                 myUnits.subtractUnits(myDelta);
             }
             return myUnits;
         } else {
-            return TethysUnits.getWholeUnits(0);
+            return OceanusUnits.getWholeUnits(0);
         }
     }
 
@@ -164,8 +164,8 @@ public class MoneyWiseQIFPortfolioBuilder {
      * @param pTrans the transaction
      * @return the delta cost
      */
-    private TethysMoney getDeltaCostForHolding(final MoneyWiseSecurityHolding pHolding,
-                                               final MoneyWiseTransaction pTrans) {
+    private OceanusMoney getDeltaCostForHolding(final MoneyWiseSecurityHolding pHolding,
+                                                final MoneyWiseTransaction pTrans) {
         /* Access the relevant bucket */
         final MoneyWiseAnalysisPortfolioBucketList myPortfolios = theAnalysis.getPortfolios();
         final MoneyWiseAnalysisSecurityBucket myBucket = myPortfolios.getBucket(pHolding);
@@ -180,16 +180,16 @@ public class MoneyWiseQIFPortfolioBuilder {
      * @param pTrans the transaction
      * @return the cash value (or null if none)
      */
-    private TethysMoney getPortfolioCashValue(final MoneyWisePortfolio pPortfolio,
-                                              final MoneyWiseTransaction pTrans) {
+    private OceanusMoney getPortfolioCashValue(final MoneyWisePortfolio pPortfolio,
+                                               final MoneyWiseTransaction pTrans) {
         /* Access the relevant bucket */
         final MoneyWiseAnalysisPortfolioBucketList myPortfolios = theAnalysis.getPortfolios();
         final MoneyWiseAnalysisPortfolioCashBucket myBucket = myPortfolios.getCashBucket(pPortfolio);
 
         /* Obtain the value delta for the transaction */
-        TethysMoney myValue = myBucket.getMoneyDeltaForTransaction(pTrans, MoneyWiseAnalysisAccountAttr.VALUATION);
+        OceanusMoney myValue = myBucket.getMoneyDeltaForTransaction(pTrans, MoneyWiseAnalysisAccountAttr.VALUATION);
         if (myValue != null) {
-            myValue = new TethysMoney(myValue);
+            myValue = new OceanusMoney(myValue);
             myValue.negate();
         }
         return myValue;
@@ -221,9 +221,9 @@ public class MoneyWiseQIFPortfolioBuilder {
         final List<MoneyWiseQIFClass> myList = theBuilder.getTransactionClasses(pTrans);
 
         /* Access details */
-        final TethysMoney myAmount = pTrans.getAmount();
-        final TethysUnits myUnits = pTrans.getAccountDeltaUnits();
-        final TethysPrice myPrice = getPriceForDate(mySecurity, pTrans.getDate());
+        final OceanusMoney myAmount = pTrans.getAmount();
+        final OceanusUnits myUnits = pTrans.getAccountDeltaUnits();
+        final OceanusPrice myPrice = getPriceForDate(mySecurity, pTrans.getDate());
 
         /* If we are using a holding account */
         if (useHoldingAccount) {
@@ -231,12 +231,12 @@ public class MoneyWiseQIFPortfolioBuilder {
             final MoneyWiseQIFAccountEvents myHolding = theFile.registerHoldingAccount(myPort);
 
             /* Create output amount */
-            final TethysMoney myOutAmount = new TethysMoney(myAmount);
+            final OceanusMoney myOutAmount = new OceanusMoney(myAmount);
             myOutAmount.negate();
 
             /* Create an event */
             final MoneyWiseQIFEvent myEvent = new MoneyWiseQIFEvent(theFile, pTrans);
-            myEvent.recordAmount(new TethysMoney());
+            myEvent.recordAmount(new OceanusMoney());
             myEvent.recordPayee(myQPayee);
 
             /* record the splits */
@@ -295,11 +295,11 @@ public class MoneyWiseQIFPortfolioBuilder {
         final List<MoneyWiseQIFClass> myList = theBuilder.getTransactionClasses(pTrans);
 
         /* Access details */
-        final TethysMoney myAmount = pTrans.getAmount();
-        TethysUnits myUnits = pTrans.getAccountDeltaUnits();
-        myUnits = new TethysUnits(myUnits);
+        final OceanusMoney myAmount = pTrans.getAmount();
+        OceanusUnits myUnits = pTrans.getAccountDeltaUnits();
+        myUnits = new OceanusUnits(myUnits);
         myUnits.negate();
-        final TethysPrice myPrice = getPriceForDate(mySecurity, pTrans.getDate());
+        final OceanusPrice myPrice = getPriceForDate(mySecurity, pTrans.getDate());
 
         /* Create a sell shares event */
         MoneyWiseQIFPortfolioEvent myEvent = new MoneyWiseQIFPortfolioEvent(theFile, pTrans, MoneyWiseQActionType.SELL);
@@ -312,7 +312,7 @@ public class MoneyWiseQIFPortfolioBuilder {
         myPortfolio.addEvent(myEvent);
 
         /* Create output amount */
-        final TethysMoney myOutAmount = new TethysMoney(myAmount);
+        final OceanusMoney myOutAmount = new OceanusMoney(myAmount);
         myOutAmount.negate();
 
         /* If we are using a holding account */
@@ -322,7 +322,7 @@ public class MoneyWiseQIFPortfolioBuilder {
 
             /* Create an event */
             final MoneyWiseQIFEvent myHoldEvent = new MoneyWiseQIFEvent(theFile, pTrans);
-            myHoldEvent.recordAmount(new TethysMoney());
+            myHoldEvent.recordAmount(new OceanusMoney());
             myHoldEvent.recordPayee(myQPayee);
 
             /* record the splits */
@@ -389,21 +389,21 @@ public class MoneyWiseQIFPortfolioBuilder {
         final List<MoneyWiseQIFClass> myList = theBuilder.getTransactionClasses(pTrans);
 
         /* Access details */
-        final TethysMoney myAmount = pTrans.getAmount();
-        TethysUnits myUnits = pTrans.getAccountDeltaUnits();
+        final OceanusMoney myAmount = pTrans.getAmount();
+        OceanusUnits myUnits = pTrans.getAccountDeltaUnits();
         if (myUnits == null) {
             myUnits = pTrans.getPartnerDeltaUnits();
         }
-        final TethysPrice myPrice = getPriceForDate(mySecurity, pTrans.getDate());
+        final OceanusPrice myPrice = getPriceForDate(mySecurity, pTrans.getDate());
 
         /* Handle zero units */
         boolean autoCorrectZeroUnits = false;
         if (myUnits == null) {
             if (!canTradeZeroShares) {
-                myUnits = TethysUnits.getWholeUnits(1);
+                myUnits = OceanusUnits.getWholeUnits(1);
                 autoCorrectZeroUnits = true;
             } else {
-                myUnits = new TethysUnits();
+                myUnits = new OceanusUnits();
             }
         }
 
@@ -436,7 +436,7 @@ public class MoneyWiseQIFPortfolioBuilder {
         /* If we are not hiding the balancing transfer */
         if (!hideBalancingSplitXfer) {
             /* Build output amount */
-            final TethysMoney myOutAmount = new TethysMoney(myAmount);
+            final OceanusMoney myOutAmount = new OceanusMoney(myAmount);
             myOutAmount.negate();
 
             /* Build the source transfer */
@@ -533,18 +533,18 @@ public class MoneyWiseQIFPortfolioBuilder {
         final MoneyWiseQIFSecurity myQSecurity = theFile.registerSecurity(mySecurity);
 
         /* Obtain number of units after this event */
-        final TethysUnits myTotalUnits = getUnitsForHoldingEvent(pHolding, pTrans);
+        final OceanusUnits myTotalUnits = getUnitsForHoldingEvent(pHolding, pTrans);
 
         /* Access the delta units */
-        final TethysUnits myDeltaUnits = pTrans.getAccountDeltaUnits();
+        final OceanusUnits myDeltaUnits = pTrans.getAccountDeltaUnits();
 
         /* Obtain number of units before event */
-        final TethysUnits myBaseUnits = new TethysUnits(myTotalUnits);
+        final OceanusUnits myBaseUnits = new OceanusUnits(myTotalUnits);
         myBaseUnits.subtractUnits(myDeltaUnits);
 
         /* Obtain split ratio */
-        final TethysRatio mySplit = new TethysRatio(myTotalUnits, myBaseUnits);
-        mySplit.multiply(TethysDecimal.RADIX_TEN);
+        final OceanusRatio mySplit = new OceanusRatio(myTotalUnits, myBaseUnits);
+        mySplit.multiply(OceanusDecimal.RADIX_TEN);
 
         /* Create a stock split event */
         final MoneyWiseQIFPortfolioEvent myEvent = new MoneyWiseQIFPortfolioEvent(theFile, pTrans, MoneyWiseQActionType.STKSPLIT);
@@ -571,10 +571,10 @@ public class MoneyWiseQIFPortfolioBuilder {
         final MoneyWiseQIFSecurity myQSecurity = theFile.registerSecurity(mySecurity);
 
         /* Access the delta units */
-        TethysUnits myUnits = pTrans.getAccountDeltaUnits();
+        OceanusUnits myUnits = pTrans.getAccountDeltaUnits();
         final boolean isCredit = myUnits.isPositive();
         if (!isCredit) {
-            myUnits = new TethysUnits(myUnits);
+            myUnits = new OceanusUnits(myUnits);
             myUnits.negate();
         }
 
@@ -610,9 +610,9 @@ public class MoneyWiseQIFPortfolioBuilder {
         /* Access Transaction details */
         final MoneyWiseQIFSecurity myQSecurity = theFile.registerSecurity(mySecurity);
         final MoneyWiseQIFAccountEvents myTarget = theFile.registerAccount(pCredit);
-        TethysMoney myAmount = pTrans.getAmount();
-        final TethysMoney myTaxCredit = pTrans.getTaxCredit();
-        final TethysMoney myFullAmount = new TethysMoney(myAmount);
+        OceanusMoney myAmount = pTrans.getAmount();
+        final OceanusMoney myTaxCredit = pTrans.getTaxCredit();
+        final OceanusMoney myFullAmount = new OceanusMoney(myAmount);
         if (myTaxCredit != null) {
             myFullAmount.addAmount(myTaxCredit);
         }
@@ -693,7 +693,7 @@ public class MoneyWiseQIFPortfolioBuilder {
             final MoneyWiseQIFPayee myTaxPayee = theBuilder.getTaxMan();
 
             /* Create output amount */
-            final TethysMoney myOutAmount = new TethysMoney(myTaxCredit);
+            final OceanusMoney myOutAmount = new OceanusMoney(myTaxCredit);
             myOutAmount.negate();
 
             /* If we are using a holding account */
@@ -703,7 +703,7 @@ public class MoneyWiseQIFPortfolioBuilder {
 
                 /* Create an event */
                 final MoneyWiseQIFEvent myHoldEvent = new MoneyWiseQIFEvent(theFile, pTrans);
-                myHoldEvent.recordAmount(new TethysMoney());
+                myHoldEvent.recordAmount(new OceanusMoney());
                 myHoldEvent.recordPayee(myTaxPayee);
 
                 /* record the splits */
@@ -744,10 +744,10 @@ public class MoneyWiseQIFPortfolioBuilder {
 
         /* Access Transaction details */
         final MoneyWiseQIFSecurity myQSecurity = theFile.registerSecurity(mySecurity);
-        TethysMoney myAmount = pTrans.getAmount();
-        TethysUnits myUnits = pTrans.getAccountDeltaUnits();
-        final TethysMoney myTaxCredit = pTrans.getTaxCredit();
-        myAmount = new TethysMoney(myAmount);
+        OceanusMoney myAmount = pTrans.getAmount();
+        OceanusUnits myUnits = pTrans.getAccountDeltaUnits();
+        final OceanusMoney myTaxCredit = pTrans.getTaxCredit();
+        myAmount = new OceanusMoney(myAmount);
         if (myTaxCredit != null) {
             myAmount.addAmount(myTaxCredit);
         }
@@ -756,10 +756,10 @@ public class MoneyWiseQIFPortfolioBuilder {
         boolean autoCorrectZeroUnits = false;
         if (myUnits == null) {
             if (!canTradeZeroShares) {
-                myUnits = TethysUnits.getWholeUnits(1);
+                myUnits = OceanusUnits.getWholeUnits(1);
                 autoCorrectZeroUnits = true;
             } else {
-                myUnits = new TethysUnits();
+                myUnits = new OceanusUnits();
             }
         }
 
@@ -810,7 +810,7 @@ public class MoneyWiseQIFPortfolioBuilder {
             /* If we need further elements */
             if (!useMiscIncX) {
                 /* Create output amount */
-                final TethysMoney myOutAmount = new TethysMoney(myTaxCredit);
+                final OceanusMoney myOutAmount = new OceanusMoney(myTaxCredit);
                 myOutAmount.negate();
 
                 /* If we are using a holding account */
@@ -820,7 +820,7 @@ public class MoneyWiseQIFPortfolioBuilder {
 
                     /* Create an event */
                     final MoneyWiseQIFEvent myHoldEvent = new MoneyWiseQIFEvent(theFile, pTrans);
-                    myHoldEvent.recordAmount(new TethysMoney());
+                    myHoldEvent.recordAmount(new OceanusMoney());
                     myHoldEvent.recordPayee(myTaxPayee);
 
                     /* record the splits */
@@ -869,18 +869,18 @@ public class MoneyWiseQIFPortfolioBuilder {
         final MoneyWiseQIFSecurity myCreditSecurity = theFile.registerSecurity(myCredit);
 
         /* Access details */
-        final TethysDate myDate = pTrans.getDate();
-        TethysUnits myUnits = pTrans.getAccountDeltaUnits();
+        final OceanusDate myDate = pTrans.getDate();
+        OceanusUnits myUnits = pTrans.getAccountDeltaUnits();
         if (myUnits != null) {
-            myUnits = new TethysUnits(myUnits);
+            myUnits = new OceanusUnits(myUnits);
             myUnits.negate();
         }
-        final TethysPrice myDebitPrice = getPriceForDate(mySecurity, myDate);
-        final TethysPrice myCreditPrice = getPriceForDate(myCredit, myDate);
+        final OceanusPrice myDebitPrice = getPriceForDate(mySecurity, myDate);
+        final OceanusPrice myCreditPrice = getPriceForDate(myCredit, myDate);
 
         /* Obtain the delta cost (i.e. value transferred) */
-        TethysMoney myValue = getDeltaCostForHolding(pHolding, pTrans);
-        myValue = new TethysMoney(myValue);
+        OceanusMoney myValue = getDeltaCostForHolding(pHolding, pTrans);
+        myValue = new OceanusMoney(myValue);
         myValue.negate();
 
         /* Determine whether we use return capital */
@@ -890,10 +890,10 @@ public class MoneyWiseQIFPortfolioBuilder {
         boolean autoCorrectZeroUnits = false;
         if (!canReturnCapital && myUnits == null) {
             if (!canTradeZeroShares) {
-                myUnits = TethysUnits.getWholeUnits(1);
+                myUnits = OceanusUnits.getWholeUnits(1);
                 autoCorrectZeroUnits = true;
             } else {
-                myUnits = new TethysUnits();
+                myUnits = new OceanusUnits();
             }
         }
 
@@ -953,21 +953,21 @@ public class MoneyWiseQIFPortfolioBuilder {
         final MoneyWiseQIFSecurity myCreditSecurity = theFile.registerSecurity(myTarget);
 
         /* Access details */
-        final TethysDate myDate = pTrans.getDate();
-        final TethysUnits myUnits = pTrans.getPartnerDeltaUnits();
-        final TethysPrice myDebitPrice = getPriceForDate(mySource, myDate);
-        final TethysPrice myCreditPrice = getPriceForDate(myTarget, myDate);
+        final OceanusDate myDate = pTrans.getDate();
+        final OceanusUnits myUnits = pTrans.getPartnerDeltaUnits();
+        final OceanusPrice myDebitPrice = getPriceForDate(mySource, myDate);
+        final OceanusPrice myCreditPrice = getPriceForDate(myTarget, myDate);
         final MoneyWiseDeposit myThirdParty = (MoneyWiseDeposit) pTrans.getReturnedCashAccount();
-        final TethysMoney myAmount = pTrans.getReturnedCash();
+        final OceanusMoney myAmount = pTrans.getReturnedCash();
 
         /* Obtain the number of units that we are selling */
-        final TethysUnits myBaseUnits = getBaseUnitsForHolding(pSource, pTrans);
+        final OceanusUnits myBaseUnits = getBaseUnitsForHolding(pSource, pTrans);
 
         /* Obtain the delta cost (i.e. value transferred) */
-        final TethysMoney myStockCost = getDeltaCostForHolding(pSource, pTrans);
+        final OceanusMoney myStockCost = getDeltaCostForHolding(pSource, pTrans);
 
         /* Determine the total sale value */
-        final TethysMoney mySaleValue = new TethysMoney(myStockCost);
+        final OceanusMoney mySaleValue = new OceanusMoney(myStockCost);
         mySaleValue.addAmount(myAmount);
 
         /* Create a sellShares event for the share reduction */
@@ -1058,16 +1058,16 @@ public class MoneyWiseQIFPortfolioBuilder {
         final List<MoneyWiseQIFClass> myList = theBuilder.getTransactionClasses(pTrans);
 
         /* Access details */
-        final TethysMoney myAmount = pTrans.getAmount();
-        TethysUnits myUnits = pTrans.getAccountDeltaUnits();
+        final OceanusMoney myAmount = pTrans.getAmount();
+        OceanusUnits myUnits = pTrans.getAccountDeltaUnits();
         if (myUnits == null) {
             myUnits = pTrans.getPartnerDeltaUnits();
         }
         if (myUnits != null) {
-            myUnits = new TethysUnits(myUnits);
+            myUnits = new OceanusUnits(myUnits);
             myUnits.negate();
         }
-        final TethysPrice myPrice = getPriceForDate(mySecurity, pTrans.getDate());
+        final OceanusPrice myPrice = getPriceForDate(mySecurity, pTrans.getDate());
 
         /* Determine whether we use return capital */
         final boolean doReturnCapital = canReturnCapital && myUnits == null;
@@ -1076,10 +1076,10 @@ public class MoneyWiseQIFPortfolioBuilder {
         boolean autoCorrectZeroUnits = false;
         if (!canReturnCapital && myUnits == null) {
             if (!canTradeZeroShares) {
-                myUnits = TethysUnits.getWholeUnits(1);
+                myUnits = OceanusUnits.getWholeUnits(1);
                 autoCorrectZeroUnits = true;
             } else {
-                myUnits = new TethysUnits();
+                myUnits = new OceanusUnits();
             }
         }
 
@@ -1150,14 +1150,14 @@ public class MoneyWiseQIFPortfolioBuilder {
         final MoneyWiseQIFSecurity myQTarget = theFile.registerSecurity(myTarget);
 
         /* Access details */
-        final TethysDate myDate = pTrans.getDate();
-        final TethysMoney myAmount = pTrans.getAmount();
-        TethysUnits mySourceUnits = pTrans.getAccountDeltaUnits();
-        mySourceUnits = new TethysUnits(mySourceUnits);
+        final OceanusDate myDate = pTrans.getDate();
+        final OceanusMoney myAmount = pTrans.getAmount();
+        OceanusUnits mySourceUnits = pTrans.getAccountDeltaUnits();
+        mySourceUnits = new OceanusUnits(mySourceUnits);
         mySourceUnits.negate();
-        final TethysUnits myTargetUnits = pTrans.getPartnerDeltaUnits();
-        final TethysPrice mySourcePrice = getPriceForDate(mySource, myDate);
-        final TethysPrice myTargetPrice = getPriceForDate(myTarget, myDate);
+        final OceanusUnits myTargetUnits = pTrans.getPartnerDeltaUnits();
+        final OceanusPrice mySourcePrice = getPriceForDate(mySource, myDate);
+        final OceanusPrice myTargetPrice = getPriceForDate(myTarget, myDate);
 
         /* Create a sellShares/returnCapital event */
         MoneyWiseQIFPortfolioEvent myPortEvent = new MoneyWiseQIFPortfolioEvent(theFile, pTrans, MoneyWiseQActionType.SELL);
@@ -1217,7 +1217,7 @@ public class MoneyWiseQIFPortfolioBuilder {
                                                          final MoneyWisePortfolio pTarget,
                                                          final MoneyWiseTransaction pTrans) {
         /* If there is cash to transfer */
-        final TethysMoney myAmount = getPortfolioCashValue(pSource, pTrans);
+        final OceanusMoney myAmount = getPortfolioCashValue(pSource, pTrans);
         if (myAmount != null) {
             /* Access details */
             final MoneyWiseQIFAccountEvents mySource = theFile.registerAccount(pSource);
@@ -1269,7 +1269,7 @@ public class MoneyWiseQIFPortfolioBuilder {
                                                   final MoneyWisePortfolio pTarget,
                                                   final MoneyWiseTransaction pTrans) {
         /* Determine if this holding was transferred */
-        final TethysUnits myUnits = getBaseUnitsForHolding(pSource, pTrans);
+        final OceanusUnits myUnits = getBaseUnitsForHolding(pSource, pTrans);
         if (myUnits.isNonZero()) {
             /* Access details */
             final MoneyWisePortfolio mySourcePortfolio = pSource.getPortfolio();
@@ -1277,16 +1277,16 @@ public class MoneyWiseQIFPortfolioBuilder {
             final MoneyWiseQIFAccountEvents mySource = theFile.registerAccount(mySourcePortfolio);
             final MoneyWiseQIFAccountEvents myTarget = theFile.registerAccount(pTarget);
             final MoneyWiseQIFSecurity myQSecurity = theFile.registerSecurity(mySecurity);
-            TethysMoney myCost = getDeltaCostForHolding(pSource, pTrans);
+            OceanusMoney myCost = getDeltaCostForHolding(pSource, pTrans);
 
             /* If there is an associated cost */
             if (myCost != null) {
                 /* Convert cost to positive */
-                myCost = new TethysMoney(myCost);
+                myCost = new OceanusMoney(myCost);
                 myCost.negate();
 
                 /* Obtain price for the date */
-                final TethysPrice myPrice = getPriceForDate(mySecurity, pTrans.getDate());
+                final OceanusPrice myPrice = getPriceForDate(mySecurity, pTrans.getDate());
 
                 /* Obtain classes */
                 final List<MoneyWiseQIFClass> myList = theBuilder.getTransactionClasses(pTrans);
@@ -1362,7 +1362,7 @@ public class MoneyWiseQIFPortfolioBuilder {
         /* Access details */
         final MoneyWiseQIFAccountEvents mySource = theFile.registerAccount(pSource);
         final MoneyWiseQIFAccountEvents myTarget = theFile.registerAccount(pTarget);
-        final TethysMoney myAmount = pTrans.getAmount();
+        final OceanusMoney myAmount = pTrans.getAmount();
 
         /* Obtain classes */
         final List<MoneyWiseQIFClass> myList = theBuilder.getTransactionClasses(pTrans);
@@ -1418,7 +1418,7 @@ public class MoneyWiseQIFPortfolioBuilder {
         /* Access details */
         final MoneyWiseQIFAccountEvents myPortfolio = theFile.registerAccount(pPortfolio);
         final MoneyWiseQIFAccountEvents mySource = theFile.registerAccount(pSource);
-        TethysMoney myAmount = pTrans.getAmount();
+        OceanusMoney myAmount = pTrans.getAmount();
 
         /* Obtain classes */
         final List<MoneyWiseQIFClass> myList = theBuilder.getTransactionClasses(pTrans);
@@ -1434,7 +1434,7 @@ public class MoneyWiseQIFPortfolioBuilder {
 
         /* Create the sending transfer event */
         final MoneyWiseQIFEvent myXferEvent = new MoneyWiseQIFEvent(theFile, pTrans);
-        myAmount = new TethysMoney(myAmount);
+        myAmount = new OceanusMoney(myAmount);
         myAmount.negate();
         myXferEvent.recordAmount(myAmount);
         myXferEvent.recordPayee(theBuilder.buildXferFromPayee(pPortfolio));
@@ -1476,7 +1476,7 @@ public class MoneyWiseQIFPortfolioBuilder {
         /* Access details */
         final MoneyWiseQIFAccountEvents myPortfolio = theFile.registerAccount(pPortfolio);
         final MoneyWiseQIFAccountEvents myTarget = theFile.registerAccount(pTarget);
-        final TethysMoney myAmount = pTrans.getAmount();
+        final OceanusMoney myAmount = pTrans.getAmount();
 
         /* Obtain classes */
         final List<MoneyWiseQIFClass> myList = theBuilder.getTransactionClasses(pTrans);
@@ -1513,7 +1513,7 @@ public class MoneyWiseQIFPortfolioBuilder {
         final MoneyWiseQIFAccountEvents myPortfolio = theFile.registerAccount(pPortfolio);
         final MoneyWiseQIFPayee myPayee = theFile.registerPayee(pCredit);
         final MoneyWiseQIFEventCategory myCategory = theFile.registerCategory(pTrans.getCategory());
-        final TethysMoney myAmount = new TethysMoney(pTrans.getAmount());
+        final OceanusMoney myAmount = new OceanusMoney(pTrans.getAmount());
         myAmount.negate();
 
         /* Create an expense event */
@@ -1539,7 +1539,7 @@ public class MoneyWiseQIFPortfolioBuilder {
         final MoneyWiseQIFAccountEvents myPortfolio = theFile.registerAccount(pPortfolio);
         final MoneyWiseQIFPayee myPayee = theFile.registerPayee(pDebit);
         final MoneyWiseQIFEventCategory myCategory = theFile.registerCategory(pTrans.getCategory());
-        final TethysMoney myAmount = pTrans.getAmount();
+        final OceanusMoney myAmount = pTrans.getAmount();
 
         /* Create an income event */
         final MoneyWiseQIFPortfolioEvent myEvent = new MoneyWiseQIFPortfolioEvent(theFile, pTrans, MoneyWiseQActionType.CASH);

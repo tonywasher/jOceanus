@@ -21,8 +21,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.Supplier;
 
-import net.sourceforge.joceanus.tethys.event.TethysEventManager;
-import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIConstant;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIIcon;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIIconId;
@@ -56,7 +56,7 @@ public abstract class TethysUICoreIconButtonManager<T>
     /**
      * The Event Manager.
      */
-    private final TethysEventManager<TethysUIEvent> theEventManager;
+    private final OceanusEventManager<TethysUIEvent> theEventManager;
 
     /**
      * The icon button.
@@ -100,7 +100,7 @@ public abstract class TethysUICoreIconButtonManager<T>
         theClazz = pClazz;
 
         /* Allocate resources */
-        theEventManager = new TethysEventManager<>();
+        theEventManager = new OceanusEventManager<>();
         theButton = theFactory.buttonFactory().newButton();
         theIconMap = new HashMap<>();
 
@@ -140,7 +140,7 @@ public abstract class TethysUICoreIconButtonManager<T>
     }
 
     @Override
-    public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
+    public OceanusEventRegistrar<TethysUIEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 

@@ -20,9 +20,9 @@ import net.sourceforge.joceanus.moneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataSet;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurity;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurityPrice;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.date.TethysDate;
-import net.sourceforge.joceanus.tethys.decimal.TethysPrice;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
 
 /**
  * SecurityPrice Builder.
@@ -41,12 +41,12 @@ public class MoneyWiseSecurityPriceBuilder {
     /**
      * The Date.
      */
-    private TethysDate theDate;
+    private OceanusDate theDate;
 
     /**
      * The Price.
      */
-    private TethysPrice thePrice;
+    private OceanusPrice thePrice;
 
     /**
      * Constructor.
@@ -81,7 +81,7 @@ public class MoneyWiseSecurityPriceBuilder {
      * @param pPrice the price.
      * @return the builder
      */
-    public MoneyWiseSecurityPriceBuilder price(final TethysPrice pPrice) {
+    public MoneyWiseSecurityPriceBuilder price(final OceanusPrice pPrice) {
         thePrice = pPrice;
         return this;
     }
@@ -92,7 +92,7 @@ public class MoneyWiseSecurityPriceBuilder {
      * @return the builder
      */
     public MoneyWiseSecurityPriceBuilder price(final String pPrice) {
-        return price(new TethysPrice(pPrice, theSecurity.getAssetCurrency().getCurrency()));
+        return price(new OceanusPrice(pPrice, theSecurity.getAssetCurrency().getCurrency()));
     }
 
     /**
@@ -100,7 +100,7 @@ public class MoneyWiseSecurityPriceBuilder {
      * @param pDate the date of the price.
      * @return the builder
      */
-    public MoneyWiseSecurityPriceBuilder date(final TethysDate pDate) {
+    public MoneyWiseSecurityPriceBuilder date(final OceanusDate pDate) {
         theDate = pDate;
         return this;
     }
@@ -111,7 +111,7 @@ public class MoneyWiseSecurityPriceBuilder {
      * @return the builder
      */
     public MoneyWiseSecurityPriceBuilder date(final String pDate) {
-        return date(new TethysDate(pDate));
+        return date(new OceanusDate(pDate));
     }
 
     /**

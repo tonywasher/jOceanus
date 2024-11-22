@@ -12,6 +12,7 @@ dependencies {
     implementation project(':themis-core')
     implementation project(':tethys-javafx')
     implementation project(':tethys-core')
+    implementation project(':oceanus')
 }
 
 /* Details */

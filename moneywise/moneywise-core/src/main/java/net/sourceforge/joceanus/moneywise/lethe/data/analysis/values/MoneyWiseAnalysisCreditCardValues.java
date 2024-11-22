@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.moneywise.lethe.data.analysis.values;
 
 import java.util.Currency;
 
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
 
 /**
  * CreditCardValues class.
@@ -34,7 +34,7 @@ public final class MoneyWiseAnalysisCreditCardValues
         super(pCurrency);
 
         /* Initialise spend to zero */
-        setValue(MoneyWiseAnalysisAccountAttr.SPEND, new TethysMoney(pCurrency));
+        setValue(MoneyWiseAnalysisAccountAttr.SPEND, new OceanusMoney(pCurrency));
     }
 
     /**
@@ -48,7 +48,7 @@ public final class MoneyWiseAnalysisCreditCardValues
         super(pCurrency, pReportingCurrency);
 
         /* Initialise spend to zero */
-        setValue(MoneyWiseAnalysisAccountAttr.SPEND, new TethysMoney(pCurrency));
+        setValue(MoneyWiseAnalysisAccountAttr.SPEND, new OceanusMoney(pCurrency));
     }
 
     /**
@@ -81,9 +81,9 @@ public final class MoneyWiseAnalysisCreditCardValues
     @Override
     public void resetBaseValues() {
         /* Reset spend values */
-        TethysMoney mySpend = getMoneyValue(MoneyWiseAnalysisAccountAttr.SPEND);
+        OceanusMoney mySpend = getMoneyValue(MoneyWiseAnalysisAccountAttr.SPEND);
         if (mySpend.isNonZero()) {
-            mySpend = new TethysMoney(mySpend);
+            mySpend = new OceanusMoney(mySpend);
             mySpend.setZero();
             setValue(MoneyWiseAnalysisAccountAttr.SPEND, mySpend);
         }

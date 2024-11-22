@@ -38,8 +38,8 @@ import net.sourceforge.joceanus.prometheus.data.PrometheusEncryptedDataItem;
 import net.sourceforge.joceanus.prometheus.data.PrometheusEncryptedFieldSet;
 import net.sourceforge.joceanus.prometheus.data.PrometheusEncryptedPair;
 import net.sourceforge.joceanus.prometheus.data.PrometheusEncryptedValues;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
 
 /**
@@ -169,14 +169,14 @@ public abstract class MoneyWiseTransBase
 
             /* Store the Amount */
             myValue = pValues.getValue(MoneyWiseBasicResource.TRANSACTION_AMOUNT);
-            if (myValue instanceof TethysMoney) {
-                setValueAmount((TethysMoney) myValue);
+            if (myValue instanceof OceanusMoney) {
+                setValueAmount((OceanusMoney) myValue);
             } else if (myValue instanceof byte[]) {
                 setValueAmount((byte[]) myValue);
             } else if (myValue instanceof String) {
                 final String myString = (String) myValue;
                 setValueAmount(myString);
-                setValueAmount(myFormatter.parseValue(myString, TethysMoney.class));
+                setValueAmount(myFormatter.parseValue(myString, OceanusMoney.class));
             }
 
             /* Store the reconciled flag */
@@ -311,8 +311,8 @@ public abstract class MoneyWiseTransBase
      * Obtain Amount.
      * @return the amount
      */
-    public TethysMoney getAmount() {
-        return getValues().getValue(MoneyWiseBasicResource.TRANSACTION_AMOUNT, TethysMoney.class);
+    public OceanusMoney getAmount() {
+        return getValues().getValue(MoneyWiseBasicResource.TRANSACTION_AMOUNT, OceanusMoney.class);
     }
 
     /**
@@ -414,7 +414,7 @@ public abstract class MoneyWiseTransBase
      * @param pValue the value
      * @throws OceanusException on error
      */
-    private void setValueAmount(final TethysMoney pValue) throws OceanusException {
+    private void setValueAmount(final OceanusMoney pValue) throws OceanusException {
         setEncryptedValue(MoneyWiseBasicResource.TRANSACTION_AMOUNT, pValue);
     }
 
@@ -424,7 +424,7 @@ public abstract class MoneyWiseTransBase
      * @throws OceanusException on error
      */
     private void setValueAmount(final byte[] pBytes) throws OceanusException {
-        setEncryptedValue(MoneyWiseBasicResource.TRANSACTION_AMOUNT, pBytes, TethysMoney.class);
+        setEncryptedValue(MoneyWiseBasicResource.TRANSACTION_AMOUNT, pBytes, OceanusMoney.class);
     }
 
     /**
@@ -730,7 +730,7 @@ public abstract class MoneyWiseTransBase
      * @param pAmount the amount
      * @throws OceanusException on error
      */
-    public void setAmount(final TethysMoney pAmount) throws OceanusException {
+    public void setAmount(final OceanusMoney pAmount) throws OceanusException {
         setValueAmount(pAmount);
     }
 
@@ -865,7 +865,7 @@ public abstract class MoneyWiseTransBase
         final MoneyWiseTransAsset myAccount = getAccount();
         final MoneyWiseTransAsset myPartner = getPartner();
         final MoneyWiseAssetDirection myDir = getDirection();
-        final TethysMoney myAmount = getAmount();
+        final OceanusMoney myAmount = getAmount();
         final MoneyWiseTransCategory myCategory = getCategory();
         boolean doCheckCombo = true;
 

@@ -16,9 +16,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.moneywise.sheets;
 
-import net.sourceforge.joceanus.gordianknot.api.password.GordianPasswordManager;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
+import net.sourceforge.joceanus.prometheus.security.PrometheusSecurityPasswordManager;
 import net.sourceforge.joceanus.prometheus.sheets.PrometheusSheetDataItem;
 import net.sourceforge.joceanus.prometheus.sheets.PrometheusSheetReader;
 import net.sourceforge.joceanus.tethys.ui.api.factory.TethysUIFactory;
@@ -38,7 +38,7 @@ public class MoneyWiseReader
      */
     public MoneyWiseReader(final TethysUIFactory<?> pFactory,
                            final TethysUIThreadStatusReport pReport,
-                           final GordianPasswordManager pPasswordMgr) {
+                           final PrometheusSecurityPasswordManager pPasswordMgr) {
         /* Call super-constructor */
         super(pFactory, pReport, pPasswordMgr);
     }

@@ -20,11 +20,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import net.sourceforge.joceanus.tethys.event.TethysEventManager;
-import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar;
-import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar.TethysEventProvider;
-import net.sourceforge.joceanus.tethys.logger.TethysLogManager;
-import net.sourceforge.joceanus.tethys.profile.TethysProfile;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.oceanus.logger.OceanusLogManager;
+import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIProgram;
 import net.sourceforge.joceanus.tethys.ui.api.factory.TethysUIFactory;
@@ -83,7 +83,7 @@ public abstract class TethysUICoreFactory<C>
     /**
      * The event manager.
      */
-    private final TethysEventManager<TethysUIEvent> theEventManager;
+    private final OceanusEventManager<TethysUIEvent> theEventManager;
 
     /**
      * LogSink.
@@ -93,7 +93,7 @@ public abstract class TethysUICoreFactory<C>
     /**
      * The Active Profile.
      */
-    private TethysProfile theProfile;
+    private OceanusProfile theProfile;
 
     /**
      * Constructor.
@@ -102,14 +102,14 @@ public abstract class TethysUICoreFactory<C>
     protected TethysUICoreFactory(final TethysUIProgram pProgram) {
         /* Store the program */
         theProgram = pProgram;
-        theProfile = new TethysProfile("StartUp");
+        theProfile = new OceanusProfile("StartUp");
 
         /* Create base items */
         theFormatter = new TethysUICoreDataFormatter();
         theNextNodeId = new AtomicInteger(1);
         theParentMap = new HashMap<>();
         theValueSet = new TethysUICoreValueSet();
-        theEventManager = new TethysEventManager<>();
+        theEventManager = new OceanusEventManager<>();
     }
 
     /**
@@ -120,7 +120,7 @@ public abstract class TethysUICoreFactory<C>
     }
 
     @Override
-    public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
+    public OceanusEventRegistrar<TethysUIEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -154,25 +154,25 @@ public abstract class TethysUICoreFactory<C>
 
     @Override
     public void activateLogSink() {
-        TethysLogManager.setSink(theLogSink);
+        OceanusLogManager.setSink(theLogSink);
     }
 
     @Override
-    public TethysProfile getNewProfile(final String pTask) {
+    public OceanusProfile getNewProfile(final String pTask) {
         /* Create a new profile */
-        theProfile = new TethysProfile(pTask);
+        theProfile = new OceanusProfile(pTask);
 
         /* Return the new profile */
         return theProfile;
     }
 
     @Override
-    public TethysProfile getActiveProfile() {
+    public OceanusProfile getActiveProfile() {
         return theProfile;
     }
 
     @Override
-    public TethysProfile getActiveTask() {
+    public OceanusProfile getActiveTask() {
         /* Create a new profile */
         return theProfile == null
                 ? null

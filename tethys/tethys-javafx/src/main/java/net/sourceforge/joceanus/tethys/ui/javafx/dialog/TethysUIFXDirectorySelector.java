@@ -24,8 +24,8 @@ import javafx.application.Platform;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 
-import net.sourceforge.joceanus.tethys.logger.TethysLogManager;
-import net.sourceforge.joceanus.tethys.logger.TethysLogger;
+import net.sourceforge.joceanus.oceanus.logger.OceanusLogManager;
+import net.sourceforge.joceanus.oceanus.logger.OceanusLogger;
 import net.sourceforge.joceanus.tethys.ui.core.dialog.TethysUICoreDirectorySelector;
 
 /**
@@ -36,7 +36,7 @@ public class TethysUIFXDirectorySelector
     /**
      * Logger.
      */
-    private static final TethysLogger LOGGER = TethysLogManager.getLogger(TethysUIFXDirectorySelector.class);
+    private static final OceanusLogger LOGGER = OceanusLogManager.getLogger(TethysUIFXDirectorySelector.class);
 
     /**
      * Parent stage.

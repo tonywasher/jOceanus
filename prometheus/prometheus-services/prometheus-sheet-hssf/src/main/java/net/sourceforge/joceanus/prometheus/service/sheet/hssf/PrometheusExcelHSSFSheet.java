@@ -34,7 +34,7 @@ import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetCellStyl
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetFormats;
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetRow;
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetSheet;
-import net.sourceforge.joceanus.tethys.OceanusException;
+import net.sourceforge.joceanus.oceanus.OceanusException;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
 
 /**

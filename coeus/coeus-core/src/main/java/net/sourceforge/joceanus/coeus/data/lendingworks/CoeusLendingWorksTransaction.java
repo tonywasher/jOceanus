@@ -23,10 +23,10 @@ import net.sourceforge.joceanus.coeus.CoeusDataException;
 import net.sourceforge.joceanus.coeus.data.CoeusTransaction;
 import net.sourceforge.joceanus.coeus.data.CoeusTransactionType;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
-import net.sourceforge.joceanus.tethys.OceanusException;
-import net.sourceforge.joceanus.tethys.TethysDataException;
-import net.sourceforge.joceanus.tethys.date.TethysDate;
-import net.sourceforge.joceanus.tethys.decimal.TethysDecimal;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.OceanusDataException;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimal;
 
 /**
  * LendingWorks Transaction.
@@ -96,12 +96,12 @@ public final class CoeusLendingWorksTransaction
     /**
      * ZERO for BadDebt/CashBack.
      */
-    static final TethysDecimal ZERO_MONEY = new TethysDecimal(0, CoeusLendingWorksMarket.DECIMAL_SIZE);
+    static final OceanusDecimal ZERO_MONEY = new OceanusDecimal(0, CoeusLendingWorksMarket.DECIMAL_SIZE);
 
     /**
      * Date of transaction.
      */
-    private final TethysDate theDate;
+    private final OceanusDate theDate;
 
     /**
      * Type of Loan.
@@ -126,32 +126,32 @@ public final class CoeusLendingWorksTransaction
     /**
      * Invested.
      */
-    private final TethysDecimal theInvested;
+    private final OceanusDecimal theInvested;
 
     /**
      * Holding.
      */
-    private final TethysDecimal theHolding;
+    private final OceanusDecimal theHolding;
 
     /**
      * LoanBook.
      */
-    private final TethysDecimal theLoanBook;
+    private final OceanusDecimal theLoanBook;
 
     /**
      * Interest.
      */
-    private final TethysDecimal theInterest;
+    private final OceanusDecimal theInterest;
 
     /**
      * CashBack.
      */
-    private final TethysDecimal theCashBack;
+    private final OceanusDecimal theCashBack;
 
     /**
      * Shield.
      */
-    private final TethysDecimal theShield;
+    private final OceanusDecimal theShield;
 
     /**
      * Constructor.
@@ -214,7 +214,7 @@ public final class CoeusLendingWorksTransaction
      */
     private void checkValidity() throws OceanusException {
         /* Obtain the holding */
-        final TethysDecimal myMoney = new TethysDecimal(theHolding);
+        final OceanusDecimal myMoney = new OceanusDecimal(theHolding);
 
         /* Add Capital */
         myMoney.addValue(theLoanBook);
@@ -244,7 +244,7 @@ public final class CoeusLendingWorksTransaction
     }
 
     @Override
-    public TethysDate getDate() {
+    public OceanusDate getDate() {
         return theDate;
     }
 
@@ -279,62 +279,62 @@ public final class CoeusLendingWorksTransaction
     }
 
     @Override
-    public TethysDecimal getInvested() {
+    public OceanusDecimal getInvested() {
         return theInvested;
     }
 
     @Override
-    public TethysDecimal getHolding() {
+    public OceanusDecimal getHolding() {
         return theHolding;
     }
 
     @Override
-    public TethysDecimal getLoanBook() {
+    public OceanusDecimal getLoanBook() {
         return theLoanBook;
     }
 
     @Override
-    public TethysDecimal getInterest() {
+    public OceanusDecimal getInterest() {
         return theInterest;
     }
 
     @Override
-    public TethysDecimal getFees() {
+    public OceanusDecimal getFees() {
         return ZERO_MONEY;
     }
 
     @Override
-    public TethysDecimal getShield() {
+    public OceanusDecimal getShield() {
         return theShield;
     }
 
     @Override
-    public TethysDecimal getCashBack() {
+    public OceanusDecimal getCashBack() {
         return theCashBack;
     }
 
     @Override
-    public TethysDecimal getXferPayment() {
+    public OceanusDecimal getXferPayment() {
         return ZERO_MONEY;
     }
 
     @Override
-    public TethysDecimal getBadDebtInterest() {
+    public OceanusDecimal getBadDebtInterest() {
         return ZERO_MONEY;
     }
 
     @Override
-    public TethysDecimal getBadDebtCapital() {
+    public OceanusDecimal getBadDebtCapital() {
         return ZERO_MONEY;
     }
 
     @Override
-    public TethysDecimal getBadDebt() {
+    public OceanusDecimal getBadDebt() {
         return ZERO_MONEY;
     }
 
     @Override
-    public TethysDecimal getRecovered() {
+    public OceanusDecimal getRecovered() {
         return ZERO_MONEY;
     }
 
@@ -384,7 +384,7 @@ public final class CoeusLendingWorksTransaction
         }
 
         /* Not recognised */
-        throw new TethysDataException("Unrecognised transaction");
+        throw new OceanusDataException("Unrecognised transaction");
     }
 
     /**
@@ -432,9 +432,9 @@ public final class CoeusLendingWorksTransaction
      * determine capital delta.
      * @return the delta
      */
-    private TethysDecimal determineLoanBookDelta() {
+    private OceanusDecimal determineLoanBookDelta() {
         /* Obtain change in holding account */
-        final TethysDecimal myInvested = new TethysDecimal(theHolding);
+        final OceanusDecimal myInvested = new OceanusDecimal(theHolding);
 
         /* Capital are increased by any capitalLoan */
         if (CoeusTransactionType.CAPITALLOAN.equals(theTransType)) {
@@ -462,9 +462,9 @@ public final class CoeusLendingWorksTransaction
      * determine interest delta.
      * @return the delta
      */
-    private TethysDecimal determineInterestDelta() {
+    private OceanusDecimal determineInterestDelta() {
         /* Obtain change in holding account */
-        final TethysDecimal myInvested = new TethysDecimal(theHolding);
+        final OceanusDecimal myInvested = new OceanusDecimal(theHolding);
 
         /* Interest are increased by any increase the holding account */
         if (!CoeusTransactionType.INTEREST.equals(theTransType)) {
@@ -479,9 +479,9 @@ public final class CoeusLendingWorksTransaction
      * determine shield delta.
      * @return the delta
      */
-    private TethysDecimal determineShieldDelta() {
+    private OceanusDecimal determineShieldDelta() {
         /* Obtain change in loanBook */
-        final TethysDecimal myInvested = new TethysDecimal(theLoanBook);
+        final OceanusDecimal myInvested = new OceanusDecimal(theLoanBook);
 
         /* Interest are increased by any increase the holding account */
         if (!CoeusTransactionType.SHIELD.equals(theTransType)) {
@@ -496,9 +496,9 @@ public final class CoeusLendingWorksTransaction
      * determine cashBack delta.
      * @return the delta
      */
-    private TethysDecimal determineCashBackDelta() {
+    private OceanusDecimal determineCashBackDelta() {
         /* Obtain change in holding account */
-        final TethysDecimal myCashBack = new TethysDecimal(theHolding);
+        final OceanusDecimal myCashBack = new OceanusDecimal(theHolding);
 
         /* Interest are increased by any increase the holding account */
         if (!CoeusTransactionType.CASHBACK.equals(theTransType)) {
@@ -513,9 +513,9 @@ public final class CoeusLendingWorksTransaction
      * determine invested delta.
      * @return the delta
      */
-    private TethysDecimal determineInvestedDelta() {
+    private OceanusDecimal determineInvestedDelta() {
         /* Obtain change in holding account */
-        final TethysDecimal myInvested = new TethysDecimal(theHolding);
+        final OceanusDecimal myInvested = new OceanusDecimal(theHolding);
 
         /* Invested are increased by any increase the holding account */
         if (!CoeusTransactionType.TRANSFER.equals(theTransType)) {

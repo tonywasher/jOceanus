@@ -19,7 +19,7 @@ package net.sourceforge.joceanus.moneywise.lethe.data.analysis.values;
 import java.util.Currency;
 
 import net.sourceforge.joceanus.moneywise.lethe.data.analysis.base.MoneyWiseAnalysisValues;
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
 
 /**
  * AccountValues class.
@@ -35,7 +35,7 @@ public class MoneyWiseAnalysisAccountValues
         super(MoneyWiseAnalysisAccountAttr.class);
 
         /* Initialise valuation to zero */
-        super.setValue(MoneyWiseAnalysisAccountAttr.VALUATION, new TethysMoney(pCurrency));
+        super.setValue(MoneyWiseAnalysisAccountAttr.VALUATION, new OceanusMoney(pCurrency));
     }
 
     /**
@@ -49,9 +49,9 @@ public class MoneyWiseAnalysisAccountValues
         this(pReportingCurrency);
 
         /* Initialise valuation to zero */
-        super.setValue(MoneyWiseAnalysisAccountAttr.FOREIGNVALUE, new TethysMoney(pCurrency));
-        super.setValue(MoneyWiseAnalysisAccountAttr.LOCALVALUE, new TethysMoney(pReportingCurrency));
-        super.setValue(MoneyWiseAnalysisAccountAttr.CURRENCYFLUCT, new TethysMoney(pReportingCurrency));
+        super.setValue(MoneyWiseAnalysisAccountAttr.FOREIGNVALUE, new OceanusMoney(pCurrency));
+        super.setValue(MoneyWiseAnalysisAccountAttr.LOCALVALUE, new OceanusMoney(pReportingCurrency));
+        super.setValue(MoneyWiseAnalysisAccountAttr.CURRENCYFLUCT, new OceanusMoney(pReportingCurrency));
     }
 
     /**
@@ -80,7 +80,7 @@ public class MoneyWiseAnalysisAccountValues
      * @return true/false
      */
     public boolean isActive() {
-        final TethysMoney myValuation = getMoneyValue(MoneyWiseAnalysisAccountAttr.VALUATION);
+        final OceanusMoney myValuation = getMoneyValue(MoneyWiseAnalysisAccountAttr.VALUATION);
         return myValuation != null && myValuation.isNonZero();
     }
 
@@ -96,10 +96,10 @@ public class MoneyWiseAnalysisAccountValues
     @Override
     public void resetBaseValues() {
         /* If we have a currency fluctuation */
-        TethysMoney myValue = getMoneyValue(MoneyWiseAnalysisAccountAttr.CURRENCYFLUCT);
+        OceanusMoney myValue = getMoneyValue(MoneyWiseAnalysisAccountAttr.CURRENCYFLUCT);
         if (myValue != null) {
             /* Create zero value */
-            myValue = new TethysMoney(myValue);
+            myValue = new OceanusMoney(myValue);
             myValue.setZero();
 
             /* Adjust currency fluctuation values */

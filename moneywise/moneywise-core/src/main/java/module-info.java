@@ -21,15 +21,16 @@ module net.sourceforge.joceanus.moneywise.core {
     /* Java libraries */
     requires java.xml;
 
-    /* jOceanus */
+    /* Oceanus */
     requires net.sourceforge.joceanus.prometheus.core;
-    requires net.sourceforge.joceanus.metis.core;
-    requires net.sourceforge.joceanus.gordianknot.core;
+    requires net.sourceforge.joceanus.metis;
+    requires net.sourceforge.joceanus.gordianknot;
     requires net.sourceforge.joceanus.tethys.core;
+    requires net.sourceforge.joceanus.oceanus;
     requires net.sourceforge.joceanus.prometheus.sheet.api;
 
     /* Exports */
-    exports net.sourceforge.joceanus.moneywise.quicken.definitions to net.sourceforge.joceanus.metis.core;
-    exports net.sourceforge.joceanus.moneywise.tax.uk to net.sourceforge.joceanus.metis.core;
+    exports net.sourceforge.joceanus.moneywise.quicken.definitions to net.sourceforge.joceanus.metis;
+    exports net.sourceforge.joceanus.moneywise.tax.uk to net.sourceforge.joceanus.metis;
     exports net.sourceforge.joceanus.moneywise.launch;
 }

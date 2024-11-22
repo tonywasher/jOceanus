@@ -21,11 +21,11 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import net.sourceforge.joceanus.tethys.decimal.TethysDecimalFormatter;
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
-import net.sourceforge.joceanus.tethys.decimal.TethysRate;
-import net.sourceforge.joceanus.tethys.event.TethysEventManager;
-import net.sourceforge.joceanus.tethys.event.TethysEventRegistrar;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimalFormatter;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRate;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.tethys.ui.api.chart.TethysUIPieChart;
 import net.sourceforge.joceanus.tethys.ui.core.base.TethysUICoreComponent;
@@ -40,7 +40,7 @@ public abstract class TethysUICorePieChart
     /**
      * The formatter.
      */
-    private final TethysDecimalFormatter theFormatter;
+    private final OceanusDecimalFormatter theFormatter;
 
     /**
      * The sectionMap.
@@ -55,12 +55,12 @@ public abstract class TethysUICorePieChart
     /**
      * The Event Manager.
      */
-    private final TethysEventManager<TethysUIEvent> theEventManager;
+    private final OceanusEventManager<TethysUIEvent> theEventManager;
 
     /**
      * The total.
      */
-    private TethysMoney theTotal;
+    private OceanusMoney theTotal;
 
     /**
      * Constructor.
@@ -69,7 +69,7 @@ public abstract class TethysUICorePieChart
     protected TethysUICorePieChart(final TethysUICoreFactory<?> pFactory) {
         /* Build standard fields */
         theId = pFactory.getNextId();
-        theEventManager = new TethysEventManager<>();
+        theEventManager = new OceanusEventManager<>();
         theFormatter = pFactory.getDataFormatter().getDecimalFormatter();
 
         /* Create the section map */
@@ -82,7 +82,7 @@ public abstract class TethysUICorePieChart
     }
 
     @Override
-    public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
+    public OceanusEventRegistrar<TethysUIEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -120,7 +120,7 @@ public abstract class TethysUICorePieChart
 
         /* Adjust the total */
         if (theTotal == null) {
-            theTotal = new TethysMoney(pSection.getValue());
+            theTotal = new OceanusMoney(pSection.getValue());
         } else {
             theTotal.addAmount(pSection.getValue());
         }
@@ -133,8 +133,8 @@ public abstract class TethysUICorePieChart
      */
     protected String getToolTip(final String pName) {
         final TethysUIPieChartSection mySection = theSectionMap.get(pName);
-        final TethysMoney myValue = mySection.getValue();
-        final TethysRate myPerCent = new TethysRate(myValue, theTotal);
+        final OceanusMoney myValue = mySection.getValue();
+        final OceanusRate myPerCent = new OceanusRate(myValue, theTotal);
         return pName + ": ("
                 + theFormatter.formatMoney(myValue) + ", "
                 + theFormatter.formatRate(myPerCent) + ")";
@@ -185,7 +185,7 @@ public abstract class TethysUICorePieChart
 
         @Override
         public void addSection(final String pName,
-                               final TethysMoney pValue,
+                               final OceanusMoney pValue,
                                final Object pSource) {
             final TethysUIPieChartSection mySection = new TethysUICorePieChartSection(pName, pValue, pSource);
             theSectionMap.put(pName, mySection);
@@ -205,7 +205,7 @@ public abstract class TethysUICorePieChart
         /**
          * The value of the section.
          */
-        private final TethysMoney theValue;
+        private final OceanusMoney theValue;
 
         /**
          * The source of the section.
@@ -219,7 +219,7 @@ public abstract class TethysUICorePieChart
          * @param pSource the source
          */
         private TethysUICorePieChartSection(final String pName,
-                                            final TethysMoney pValue,
+                                            final OceanusMoney pValue,
                                             final Object pSource) {
             theName = pName;
             theValue = pValue;
@@ -232,7 +232,7 @@ public abstract class TethysUICorePieChart
         }
 
         @Override
-        public TethysMoney getValue() {
+        public OceanusMoney getValue() {
             return theValue;
         }
 

@@ -23,14 +23,14 @@ import java.util.ResourceBundle;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicResource;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseStaticResource;
-import net.sourceforge.joceanus.tethys.resource.TethysBundleId;
-import net.sourceforge.joceanus.tethys.resource.TethysBundleLoader;
+import net.sourceforge.joceanus.oceanus.resource.OceanusBundleId;
+import net.sourceforge.joceanus.oceanus.resource.OceanusBundleLoader;
 
 /**
  * Resource IDs for MoneyWise Analysis Fields.
  */
 public enum MoneyWiseXAnalysisBucketResource
-        implements TethysBundleId, MetisDataFieldId {
+        implements OceanusBundleId, MetisDataFieldId {
     /**
      * Analysis Name.
      */
@@ -279,12 +279,12 @@ public enum MoneyWiseXAnalysisBucketResource
     /**
      * The AnalysisType Map.
      */
-    private static final Map<MoneyWiseXAnalysisType, TethysBundleId> ANALYSIS_MAP = buildAnalysisMap();
+    private static final Map<MoneyWiseXAnalysisType, OceanusBundleId> ANALYSIS_MAP = buildAnalysisMap();
 
     /**
      * The Resource Loader.
      */
-    private static final TethysBundleLoader LOADER = TethysBundleLoader.getLoader(MoneyWiseXAnalysisBucketResource.class.getCanonicalName(),
+    private static final OceanusBundleLoader LOADER = OceanusBundleLoader.getLoader(MoneyWiseXAnalysisBucketResource.class.getCanonicalName(),
             ResourceBundle::getBundle);
 
     /**
@@ -336,9 +336,9 @@ public enum MoneyWiseXAnalysisBucketResource
      * Build analysis map.
      * @return the map
      */
-    private static Map<MoneyWiseXAnalysisType, TethysBundleId> buildAnalysisMap() {
+    private static Map<MoneyWiseXAnalysisType, OceanusBundleId> buildAnalysisMap() {
         /* Create the map and return it */
-        final Map<MoneyWiseXAnalysisType, TethysBundleId> myMap = new EnumMap<>(MoneyWiseXAnalysisType.class);
+        final Map<MoneyWiseXAnalysisType, OceanusBundleId> myMap = new EnumMap<>(MoneyWiseXAnalysisType.class);
         myMap.put(MoneyWiseXAnalysisType.DEPOSIT, MoneyWiseBasicResource.DEPOSIT_NAME);
         myMap.put(MoneyWiseXAnalysisType.CASH, MoneyWiseBasicResource.CASH_NAME);
         myMap.put(MoneyWiseXAnalysisType.LOAN, MoneyWiseBasicResource.LOAN_NAME);
@@ -357,7 +357,7 @@ public enum MoneyWiseXAnalysisBucketResource
      * @param pValue the Value
      * @return the resource key
      */
-    static TethysBundleId getKeyForAnalysisType(final MoneyWiseXAnalysisType pValue) {
-        return TethysBundleLoader.getKeyForEnum(ANALYSIS_MAP, pValue);
+    static OceanusBundleId getKeyForAnalysisType(final MoneyWiseXAnalysisType pValue) {
+        return OceanusBundleLoader.getKeyForEnum(ANALYSIS_MAP, pValue);
     }
 }

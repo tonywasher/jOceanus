@@ -19,7 +19,7 @@ package net.sourceforge.joceanus.moneywise.lethe.data.analysis.values;
 import java.util.Currency;
 
 import net.sourceforge.joceanus.moneywise.lethe.data.analysis.base.MoneyWiseAnalysisValues;
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
 
 /**
  * TaxBasisValues class.
@@ -35,9 +35,9 @@ public final class MoneyWiseAnalysisTaxBasisValues
         super(MoneyWiseAnalysisTaxBasisAttr.class);
 
         /* Create all possible values */
-        super.setValue(MoneyWiseAnalysisTaxBasisAttr.GROSS, new TethysMoney(pCurrency));
-        super.setValue(MoneyWiseAnalysisTaxBasisAttr.NETT, new TethysMoney(pCurrency));
-        super.setValue(MoneyWiseAnalysisTaxBasisAttr.TAXCREDIT, new TethysMoney(pCurrency));
+        super.setValue(MoneyWiseAnalysisTaxBasisAttr.GROSS, new OceanusMoney(pCurrency));
+        super.setValue(MoneyWiseAnalysisTaxBasisAttr.NETT, new OceanusMoney(pCurrency));
+        super.setValue(MoneyWiseAnalysisTaxBasisAttr.TAXCREDIT, new OceanusMoney(pCurrency));
     }
 
     /**
@@ -72,14 +72,14 @@ public final class MoneyWiseAnalysisTaxBasisValues
     @Override
     public void resetBaseValues() {
         /* Create a zero value in the correct currency */
-        TethysMoney myValue = super.getMoneyValue(MoneyWiseAnalysisTaxBasisAttr.GROSS);
-        myValue = new TethysMoney(myValue);
+        OceanusMoney myValue = super.getMoneyValue(MoneyWiseAnalysisTaxBasisAttr.GROSS);
+        myValue = new OceanusMoney(myValue);
         myValue.setZero();
 
         /* Reset Income and expense values */
         super.setValue(MoneyWiseAnalysisTaxBasisAttr.GROSS, myValue);
-        super.setValue(MoneyWiseAnalysisTaxBasisAttr.NETT, new TethysMoney(myValue));
-        super.setValue(MoneyWiseAnalysisTaxBasisAttr.TAXCREDIT, new TethysMoney(myValue));
+        super.setValue(MoneyWiseAnalysisTaxBasisAttr.NETT, new OceanusMoney(myValue));
+        super.setValue(MoneyWiseAnalysisTaxBasisAttr.TAXCREDIT, new OceanusMoney(myValue));
     }
 
     /**
@@ -87,9 +87,9 @@ public final class MoneyWiseAnalysisTaxBasisValues
      * @return true/false
      */
     public boolean isActive() {
-        final TethysMoney myGross = super.getMoneyValue(MoneyWiseAnalysisTaxBasisAttr.GROSS);
-        final TethysMoney myNet = super.getMoneyValue(MoneyWiseAnalysisTaxBasisAttr.NETT);
-        final TethysMoney myTax = super.getMoneyValue(MoneyWiseAnalysisTaxBasisAttr.TAXCREDIT);
+        final OceanusMoney myGross = super.getMoneyValue(MoneyWiseAnalysisTaxBasisAttr.GROSS);
+        final OceanusMoney myNet = super.getMoneyValue(MoneyWiseAnalysisTaxBasisAttr.NETT);
+        final OceanusMoney myTax = super.getMoneyValue(MoneyWiseAnalysisTaxBasisAttr.TAXCREDIT);
         return myGross.isNonZero() || myNet.isNonZero() || myTax.isNonZero();
     }
 }

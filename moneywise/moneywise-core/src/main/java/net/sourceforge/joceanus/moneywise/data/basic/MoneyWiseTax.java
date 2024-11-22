@@ -16,9 +16,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.moneywise.data.basic;
 
-import net.sourceforge.joceanus.tethys.date.TethysDate;
-import net.sourceforge.joceanus.tethys.date.TethysDateRange;
-import net.sourceforge.joceanus.tethys.decimal.TethysRate;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRate;
 
 /**
  * Tax related interfaces.
@@ -32,7 +32,7 @@ public class MoneyWiseTax {
          * Obtain the yearEnd.
          * @return the tax year end
          */
-        TethysDate getYearEnd();
+        OceanusDate getYearEnd();
 
         /**
          * Is a taxCredit required for interest/dividend?
@@ -44,13 +44,13 @@ public class MoneyWiseTax {
          * Obtain the taxCredit rate for interest.
          * @return the rate
          */
-        TethysRate getTaxCreditRateForInterest();
+        OceanusRate getTaxCreditRateForInterest();
 
         /**
          * Obtain the taxCredit rate for dividend.
          * @return the rate
          */
-        TethysRate getTaxCreditRateForDividend();
+        OceanusRate getTaxCreditRateForDividend();
     }
 
     /**
@@ -62,19 +62,19 @@ public class MoneyWiseTax {
          * @param pRange the range
          * @return the taxYear or null if not a taxYear period
          */
-        MoneyWiseTaxCredit findTaxYearForRange(TethysDateRange pRange);
+        MoneyWiseTaxCredit findTaxYearForRange(OceanusDateRange pRange);
 
         /**
          * Obtain the taxYear for the date.
          * @param pDate the date
          * @return the taxYear
          */
-        MoneyWiseTaxCredit findTaxYearForDate(TethysDate pDate);
+        MoneyWiseTaxCredit findTaxYearForDate(OceanusDate pDate);
 
         /**
          * Obtain the range of supported dates.
          * @return the date range
          */
-        TethysDateRange getDateRange();
+        OceanusDateRange getDateRange();
     }
 }

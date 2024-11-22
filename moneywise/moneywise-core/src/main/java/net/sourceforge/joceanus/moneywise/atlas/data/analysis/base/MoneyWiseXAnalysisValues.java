@@ -16,19 +16,19 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.moneywise.atlas.data.analysis.base;
 
-import java.util.EnumMap;
-import java.util.Map;
-
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataMap;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataObjectFormat;
-import net.sourceforge.joceanus.tethys.date.TethysDate;
-import net.sourceforge.joceanus.tethys.decimal.TethysDecimal;
-import net.sourceforge.joceanus.tethys.decimal.TethysMoney;
-import net.sourceforge.joceanus.tethys.decimal.TethysPrice;
-import net.sourceforge.joceanus.tethys.decimal.TethysRate;
-import net.sourceforge.joceanus.tethys.decimal.TethysRatio;
-import net.sourceforge.joceanus.tethys.decimal.TethysUnits;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimal;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRate;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRatio;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusUnits;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
+
+import java.util.EnumMap;
+import java.util.Map;
 
 /**
  * Values for a bucket.
@@ -66,7 +66,7 @@ public abstract class MoneyWiseXAnalysisValues<T extends MoneyWiseXAnalysisValue
     }
 
     /**
-     * Reset nonPreserved items
+     * Reset nonPreserved items.
      */
     void resetNonPreserved() {
         /* Loop through the constants */
@@ -116,8 +116,8 @@ public abstract class MoneyWiseXAnalysisValues<T extends MoneyWiseXAnalysisValue
      * @param pAttr the attribute
      * @return the delta
      */
-    protected TethysDecimal getDeltaValue(final T pPrevious,
-                                          final E pAttr) {
+    protected OceanusDecimal getDeltaValue(final T pPrevious,
+                                           final E pAttr) {
         switch (pAttr.getDataType()) {
             case MONEY:
                 return getDeltaMoneyValue(pPrevious, pAttr);
@@ -134,15 +134,15 @@ public abstract class MoneyWiseXAnalysisValues<T extends MoneyWiseXAnalysisValue
      * @param pAttr the attribute
      * @return the delta
      */
-    protected TethysMoney getDeltaMoneyValue(final T pPrevious,
-                                             final E pAttr) {
+    protected OceanusMoney getDeltaMoneyValue(final T pPrevious,
+                                              final E pAttr) {
         /* Access current and previous values */
-        TethysMoney myCurr = getMoneyValue(pAttr);
+        OceanusMoney myCurr = getMoneyValue(pAttr);
         if (pPrevious != null) {
-            final TethysMoney myPrev = pPrevious.getMoneyValue(pAttr);
+            final OceanusMoney myPrev = pPrevious.getMoneyValue(pAttr);
 
             /* Calculate delta */
-            myCurr = new TethysMoney(myCurr);
+            myCurr = new OceanusMoney(myCurr);
             myCurr.subtractAmount(myPrev);
         }
         return myCurr;
@@ -154,15 +154,15 @@ public abstract class MoneyWiseXAnalysisValues<T extends MoneyWiseXAnalysisValue
      * @param pAttr the attribute
      * @return the delta
      */
-    protected TethysUnits getDeltaUnitsValue(final T pPrevious,
-                                             final E pAttr) {
+    protected OceanusUnits getDeltaUnitsValue(final T pPrevious,
+                                              final E pAttr) {
         /* Access current and previous values */
-        TethysUnits myCurr = getUnitsValue(pAttr);
+        OceanusUnits myCurr = getUnitsValue(pAttr);
         if (pPrevious != null) {
-            final TethysUnits myPrev = pPrevious.getUnitsValue(pAttr);
+            final OceanusUnits myPrev = pPrevious.getUnitsValue(pAttr);
 
             /* Calculate delta */
-            myCurr = new TethysUnits(myCurr);
+            myCurr = new OceanusUnits(myCurr);
             myCurr.subtractUnits(myPrev);
         }
         return myCurr;
@@ -176,9 +176,9 @@ public abstract class MoneyWiseXAnalysisValues<T extends MoneyWiseXAnalysisValue
     protected void adjustMoneyToBase(final T pBase,
                                      final E pAttr) {
         /* Adjust spend values */
-        TethysMoney myValue = getMoneyValue(pAttr);
-        myValue = new TethysMoney(myValue);
-        final TethysMoney myBaseValue = pBase.getMoneyValue(pAttr);
+        OceanusMoney myValue = getMoneyValue(pAttr);
+        myValue = new OceanusMoney(myValue);
+        final OceanusMoney myBaseValue = pBase.getMoneyValue(pAttr);
         myValue.subtractAmount(myBaseValue);
         theMap.put(pAttr, myValue);
     }
@@ -228,9 +228,9 @@ public abstract class MoneyWiseXAnalysisValues<T extends MoneyWiseXAnalysisValue
      * @param pAttr the attribute
      * @return the value of the attribute or null
      */
-    public TethysDecimal getDecimalValue(final E pAttr) {
+    public OceanusDecimal getDecimalValue(final E pAttr) {
         /* Obtain the attribute value */
-        return getValue(pAttr, TethysDecimal.class);
+        return getValue(pAttr, OceanusDecimal.class);
     }
 
     /**
@@ -238,9 +238,9 @@ public abstract class MoneyWiseXAnalysisValues<T extends MoneyWiseXAnalysisValue
      * @param pAttr the attribute
      * @return the value of the attribute or null
      */
-    public TethysUnits getUnitsValue(final E pAttr) {
+    public OceanusUnits getUnitsValue(final E pAttr) {
         /* Obtain the attribute value */
-        return getValue(pAttr, TethysUnits.class);
+        return getValue(pAttr, OceanusUnits.class);
     }
 
     /**
@@ -248,9 +248,9 @@ public abstract class MoneyWiseXAnalysisValues<T extends MoneyWiseXAnalysisValue
      * @param pAttr the attribute
      * @return the value of the attribute or null
      */
-    public TethysPrice getPriceValue(final E pAttr) {
+    public OceanusPrice getPriceValue(final E pAttr) {
         /* Obtain the attribute value */
-        return getValue(pAttr, TethysPrice.class);
+        return getValue(pAttr, OceanusPrice.class);
     }
 
     /**
@@ -258,9 +258,9 @@ public abstract class MoneyWiseXAnalysisValues<T extends MoneyWiseXAnalysisValue
      * @param pAttr the attribute
      * @return the value of the attribute or null
      */
-    public TethysMoney getMoneyValue(final E pAttr) {
+    public OceanusMoney getMoneyValue(final E pAttr) {
         /* Obtain the attribute value */
-        return getValue(pAttr, TethysMoney.class);
+        return getValue(pAttr, OceanusMoney.class);
     }
 
     /**
@@ -268,9 +268,9 @@ public abstract class MoneyWiseXAnalysisValues<T extends MoneyWiseXAnalysisValue
      * @param pAttr the attribute
      * @return the value of the attribute or null
      */
-    public TethysRate getRateValue(final E pAttr) {
+    public OceanusRate getRateValue(final E pAttr) {
         /* Obtain the attribute value */
-        return getValue(pAttr, TethysRate.class);
+        return getValue(pAttr, OceanusRate.class);
     }
 
     /**
@@ -278,9 +278,9 @@ public abstract class MoneyWiseXAnalysisValues<T extends MoneyWiseXAnalysisValue
      * @param pAttr the attribute
      * @return the value of the attribute or null
      */
-    public TethysRatio getRatioValue(final E pAttr) {
+    public OceanusRatio getRatioValue(final E pAttr) {
         /* Obtain the attribute value */
-        return getValue(pAttr, TethysRatio.class);
+        return getValue(pAttr, OceanusRatio.class);
     }
 
     /**
@@ -288,9 +288,9 @@ public abstract class MoneyWiseXAnalysisValues<T extends MoneyWiseXAnalysisValue
      * @param pAttr the attribute
      * @return the value of the attribute or null
      */
-    public TethysDate getDateValue(final E pAttr) {
+    public OceanusDate getDateValue(final E pAttr) {
         /* Obtain the attribute value */
-        return getValue(pAttr, TethysDate.class);
+        return getValue(pAttr, OceanusDate.class);
     }
 
     /**

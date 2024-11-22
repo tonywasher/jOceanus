@@ -28,7 +28,7 @@ import net.sourceforge.joceanus.moneywise.tax.uk.MoneyWiseUKDividendScheme.Money
 import net.sourceforge.joceanus.moneywise.tax.uk.MoneyWiseUKInterestScheme.MoneyWiseUKInterestAsIncomeScheme;
 import net.sourceforge.joceanus.moneywise.tax.uk.MoneyWiseUKInterestScheme.MoneyWiseUKInterestBaseRateScheme;
 import net.sourceforge.joceanus.moneywise.tax.uk.MoneyWiseUKInterestScheme.MoneyWiseUKInterestLoBaseRateScheme;
-import net.sourceforge.joceanus.tethys.decimal.TethysRate;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRate;
 
 /**
  * The scheme factory.
@@ -141,7 +141,7 @@ public final class MoneyWiseUKSchemeFactory {
      * @param pUnits the number of whole units
      * @return the amount
      */
-    private static TethysRate getRate(final int pUnits) {
+    private static OceanusRate getRate(final int pUnits) {
         return MoneyWiseUKTaxBandsFactory.getRate(pUnits);
     }
 
@@ -150,8 +150,8 @@ public final class MoneyWiseUKSchemeFactory {
      * @param pUnits the number of whole units
      * @return the amount
      */
-    private static TethysRate getFractionalRate(final int pUnits) {
-        return TethysRate.getWholePermille(pUnits);
+    private static OceanusRate getFractionalRate(final int pUnits) {
+        return OceanusRate.getWholePermille(pUnits);
     }
 
     /**
@@ -159,7 +159,7 @@ public final class MoneyWiseUKSchemeFactory {
      * @param pUnits the number of tenth units
      * @return the amount
      */
-    private static TethysRate getTenthFractionalRate(final int pUnits) {
-        return TethysRate.getTenthPermille(pUnits);
+    private static OceanusRate getTenthFractionalRate(final int pUnits) {
+        return OceanusRate.getTenthPermille(pUnits);
     }
 }

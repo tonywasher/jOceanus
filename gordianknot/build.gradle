@@ -1,0 +1,43 @@
+/* Dependencies */
+dependencies {
+    implementation "org.bouncycastle:bcprov-jdk18on:$bouncyCastleVersion"
+    implementation "org.bouncycastle:bcutil-jdk18on:$bouncyCastleVersion"
+    implementation project(':tethys-core')
+    implementation project(':oceanus')
+    implementation "org.bouncycastle:bcpg-jdk18on:$bouncyCastleVersion"
+    testImplementation "org.junit.jupiter:junit-jupiter-api:$jUnitVersion"
+    testImplementation "org.junit.jupiter:junit-jupiter-engine:$jUnitVersion"
+}
+
+/* Description */
+description = 'GordianKnot Security Framework'
+
+/* Register the project */
+registerProject(project) 
+
+/* Additional sourceSets */
+sourceSets {
+    main {
+        java {
+            srcDir 'src/embedded/java'
+            srcDir 'src/patch/java'
+            srcDir 'src/extension/java'
+        }
+    }
+}
+
+/* Test jar details */
+tasks.register('testsJar', Jar) {
+    archiveClassifier = 'tests'
+    from(sourceSets.test.output)    
+}
+publishing.publications.maven.artifact(testsJar)
+
+/* Exclude various files from checkStyle */
+checkstyleMain
+    .exclude('**/SevenZip/**/*.java')
+    .exclude('**/patch/**/*.java')
+    .exclude('**/ext/**/*.java')
+checkstyleTest
+    .exclude('**/junit/**/*.java')
+

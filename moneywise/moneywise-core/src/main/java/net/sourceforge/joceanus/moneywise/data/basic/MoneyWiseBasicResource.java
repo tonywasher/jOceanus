@@ -22,14 +22,14 @@ import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseStaticResource;
-import net.sourceforge.joceanus.tethys.resource.TethysBundleId;
-import net.sourceforge.joceanus.tethys.resource.TethysBundleLoader;
+import net.sourceforge.joceanus.oceanus.resource.OceanusBundleId;
+import net.sourceforge.joceanus.oceanus.resource.OceanusBundleLoader;
 
 /**
  * Resource IDs for jMoneyWise Data Fields.
  */
 public enum MoneyWiseBasicResource
-        implements TethysBundleId, MetisDataFieldId {
+        implements OceanusBundleId, MetisDataFieldId {
     /**
      * MoneyWiseData Name.
      */
@@ -818,27 +818,27 @@ public enum MoneyWiseBasicResource
     /**
      * The Name Map.
      */
-    private static final Map<MoneyWiseBasicDataType, TethysBundleId> NAME_MAP = buildNameMap();
+    private static final Map<MoneyWiseBasicDataType, OceanusBundleId> NAME_MAP = buildNameMap();
 
     /**
      * The List Map.
      */
-    private static final Map<MoneyWiseBasicDataType, TethysBundleId> LIST_MAP = buildListMap();
+    private static final Map<MoneyWiseBasicDataType, OceanusBundleId> LIST_MAP = buildListMap();
 
     /**
      * The Asset Type Map.
      */
-    private static final Map<MoneyWiseAssetType, TethysBundleId> TYPE_MAP = buildTypeMap();
+    private static final Map<MoneyWiseAssetType, OceanusBundleId> TYPE_MAP = buildTypeMap();
 
     /**
      * The Asset Direction Map.
      */
-    private static final Map<MoneyWiseAssetDirection, TethysBundleId> DIRECTION_MAP = buildDirectionMap();
+    private static final Map<MoneyWiseAssetDirection, OceanusBundleId> DIRECTION_MAP = buildDirectionMap();
 
     /**
      * The Resource Loader.
      */
-    private static final TethysBundleLoader LOADER = TethysBundleLoader.getLoader(MoneyWiseBasicResource.class.getCanonicalName(),
+    private static final OceanusBundleLoader LOADER = OceanusBundleLoader.getLoader(MoneyWiseBasicResource.class.getCanonicalName(),
             ResourceBundle::getBundle);
 
     /**
@@ -863,7 +863,7 @@ public enum MoneyWiseBasicResource
      * Constructor.
      * @param pResource the underlying resource
      */
-    MoneyWiseBasicResource(final TethysBundleId pResource) {
+    MoneyWiseBasicResource(final OceanusBundleId pResource) {
         theKeyName = null;
         theValue = pResource.getValue();
     }
@@ -904,9 +904,9 @@ public enum MoneyWiseBasicResource
      * Build asset type map.
      * @return the map
      */
-    private static Map<MoneyWiseAssetType, TethysBundleId> buildTypeMap() {
+    private static Map<MoneyWiseAssetType, OceanusBundleId> buildTypeMap() {
         /* Create the map and return it */
-        final Map<MoneyWiseAssetType, TethysBundleId> myMap = new EnumMap<>(MoneyWiseAssetType.class);
+        final Map<MoneyWiseAssetType, OceanusBundleId> myMap = new EnumMap<>(MoneyWiseAssetType.class);
         myMap.put(MoneyWiseAssetType.PAYEE, ASSETTYPE_PAYEE);
         myMap.put(MoneyWiseAssetType.SECURITY, ASSETTYPE_SECURITY);
         myMap.put(MoneyWiseAssetType.DEPOSIT, ASSETTYPE_DEPOSIT);
@@ -923,17 +923,17 @@ public enum MoneyWiseBasicResource
      * @param pValue the Value
      * @return the resource key
      */
-    protected static TethysBundleId getKeyForAssetType(final MoneyWiseAssetType pValue) {
-        return TethysBundleLoader.getKeyForEnum(TYPE_MAP, pValue);
+    protected static OceanusBundleId getKeyForAssetType(final MoneyWiseAssetType pValue) {
+        return OceanusBundleLoader.getKeyForEnum(TYPE_MAP, pValue);
     }
 
     /**
      * Build asset direction map.
      * @return the map
      */
-    private static Map<MoneyWiseAssetDirection, TethysBundleId> buildDirectionMap() {
+    private static Map<MoneyWiseAssetDirection, OceanusBundleId> buildDirectionMap() {
         /* Create the map and return it */
-        final Map<MoneyWiseAssetDirection, TethysBundleId> myMap = new EnumMap<>(MoneyWiseAssetDirection.class);
+        final Map<MoneyWiseAssetDirection, OceanusBundleId> myMap = new EnumMap<>(MoneyWiseAssetDirection.class);
         myMap.put(MoneyWiseAssetDirection.TO, ASSETDIRECTION_TO);
         myMap.put(MoneyWiseAssetDirection.FROM, ASSETDIRECTION_FROM);
         return myMap;
@@ -944,17 +944,17 @@ public enum MoneyWiseBasicResource
      * @param pValue the Value
      * @return the resource key
      */
-    protected static TethysBundleId getKeyForAssetDirection(final MoneyWiseAssetDirection pValue) {
-        return TethysBundleLoader.getKeyForEnum(DIRECTION_MAP, pValue);
+    protected static OceanusBundleId getKeyForAssetDirection(final MoneyWiseAssetDirection pValue) {
+        return OceanusBundleLoader.getKeyForEnum(DIRECTION_MAP, pValue);
     }
 
     /**
      * Build name map.
      * @return the map
      */
-    private static Map<MoneyWiseBasicDataType, TethysBundleId> buildNameMap() {
+    private static Map<MoneyWiseBasicDataType, OceanusBundleId> buildNameMap() {
         /* Create the map and return it */
-        final Map<MoneyWiseBasicDataType, TethysBundleId> myMap = new EnumMap<>(MoneyWiseBasicDataType.class);
+        final Map<MoneyWiseBasicDataType, OceanusBundleId> myMap = new EnumMap<>(MoneyWiseBasicDataType.class);
         myMap.put(MoneyWiseBasicDataType.DEPOSITCATEGORY, DEPOSITCAT_NAME);
         myMap.put(MoneyWiseBasicDataType.CASHCATEGORY, CASHCAT_NAME);
         myMap.put(MoneyWiseBasicDataType.LOANCATEGORY, LOANCAT_NAME);
@@ -986,17 +986,17 @@ public enum MoneyWiseBasicResource
      * @param pValue the Value
      * @return the resource key
      */
-    protected static TethysBundleId getKeyForDataType(final MoneyWiseBasicDataType pValue) {
-        return TethysBundleLoader.getKeyForEnum(NAME_MAP, pValue);
+    protected static OceanusBundleId getKeyForDataType(final MoneyWiseBasicDataType pValue) {
+        return OceanusBundleLoader.getKeyForEnum(NAME_MAP, pValue);
     }
 
     /**
      * Build list map.
      * @return the map
      */
-    private static Map<MoneyWiseBasicDataType, TethysBundleId> buildListMap() {
+    private static Map<MoneyWiseBasicDataType, OceanusBundleId> buildListMap() {
         /* Create the map and return it */
-        final Map<MoneyWiseBasicDataType, TethysBundleId> myMap = new EnumMap<>(MoneyWiseBasicDataType.class);
+        final Map<MoneyWiseBasicDataType, OceanusBundleId> myMap = new EnumMap<>(MoneyWiseBasicDataType.class);
         myMap.put(MoneyWiseBasicDataType.DEPOSITCATEGORY, DEPOSITCAT_LIST);
         myMap.put(MoneyWiseBasicDataType.CASHCATEGORY, CASHCAT_LIST);
         myMap.put(MoneyWiseBasicDataType.LOANCATEGORY, LOANCAT_LIST);
@@ -1028,7 +1028,7 @@ public enum MoneyWiseBasicResource
      * @param pValue the Value
      * @return the resource key
      */
-    protected static TethysBundleId getKeyForDataList(final MoneyWiseBasicDataType pValue) {
-        return TethysBundleLoader.getKeyForEnum(LIST_MAP, pValue);
+    protected static OceanusBundleId getKeyForDataList(final MoneyWiseBasicDataType pValue) {
+        return OceanusBundleLoader.getKeyForEnum(LIST_MAP, pValue);
     }
 }
