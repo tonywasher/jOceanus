@@ -206,6 +206,11 @@ public abstract class GordianCoreSignatureFactory
             return validRSASignature(pSignSpec);
         }
 
+        /* Check DDSA signatures */
+        if (GordianSignatureType.DDSA.equals(pSignSpec.getSignatureType())) {
+            return validDDSASignature(pSignSpec);
+        }
+
         /* Only allow SM3 for SM2 signature */
         if (GordianKeyPairType.SM2.equals(myType)) {
             return GordianDigestType.SM3.equals(mySpec.getDigestType());
@@ -262,6 +267,26 @@ public abstract class GordianCoreSignatureFactory
 
         /* Otherwise OK */
         return true;
+    }
+
+    /**
+     * Check RSASignature.
+     * @param pSpec the signatureSpec
+     * @return true/false
+     */
+    private static boolean validDDSASignature(final GordianSignatureSpec pSpec) {
+        /* Switch on DigestType */
+        final GordianDigestSpec myDigest = pSpec.getDigestSpec();
+        switch (myDigest.getDigestType()) {
+            case ASCON:
+            case ISAP:
+            case PHOTONBEETLE:
+            case SPARKLE:
+            case XOODYAK:
+                return false;
+            default:
+                return true;
+        }
     }
 
     /**
