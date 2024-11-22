@@ -28,7 +28,6 @@ module net.sourceforge.joceanus.gordianknot {
 
     /* Oceanus */
     requires net.sourceforge.joceanus.oceanus;
-    requires net.sourceforge.joceanus.tethys.core;
 
     /* Exports */
     exports net.sourceforge.joceanus.gordianknot.api.agree;
@@ -43,7 +42,6 @@ module net.sourceforge.joceanus.gordianknot {
     exports net.sourceforge.joceanus.gordianknot.api.keystore;
     exports net.sourceforge.joceanus.gordianknot.api.lock;
     exports net.sourceforge.joceanus.gordianknot.api.mac;
-    exports net.sourceforge.joceanus.gordianknot.api.password;
     exports net.sourceforge.joceanus.gordianknot.api.random;
     exports net.sourceforge.joceanus.gordianknot.api.sign;
     exports net.sourceforge.joceanus.gordianknot.api.zip;

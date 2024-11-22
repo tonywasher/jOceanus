@@ -18,17 +18,11 @@ package net.sourceforge.joceanus.gordianknot.util;
 
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactoryType;
-import net.sourceforge.joceanus.gordianknot.api.password.GordianDialogController;
-import net.sourceforge.joceanus.gordianknot.api.lock.GordianPasswordLockSpec;
-import net.sourceforge.joceanus.gordianknot.api.password.GordianPasswordManager;
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianFactoryGenerator;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianParameters;
 import net.sourceforge.joceanus.gordianknot.impl.jca.JcaFactory;
-import net.sourceforge.joceanus.gordianknot.impl.password.GordianBaseDialogControl;
-import net.sourceforge.joceanus.gordianknot.impl.password.GordianBasePasswordManager;
 import net.sourceforge.joceanus.oceanus.OceanusException;
-import net.sourceforge.joceanus.tethys.ui.api.factory.TethysUIFactory;
 
 /**
  * Factory generator.
@@ -77,87 +71,6 @@ public final class GordianGenerator {
         final GordianFactoryGenerator myGenerator = new GordianUtilGenerator();
         final GordianParameters myParams = GordianParameters.randomParams();
         return myGenerator.newFactory(myParams);
-    }
-
-    /**
-     * Create a password Manager.
-     * @param pGuiFactory the GUI Factory
-     * @return the password Manager
-     * @throws OceanusException on error
-     */
-    public static GordianPasswordManager newPasswordManager(final TethysUIFactory<?> pGuiFactory) throws OceanusException {
-         return newPasswordManager(pGuiFactory, new GordianPasswordLockSpec());
-    }
-
-    /**
-     * Create a password Manager.
-     * @param pGuiFactory the GUI Factory
-     * @param pSecurityFactory the securityFactory
-     * @return the password Manager
-     * @throws OceanusException on error
-     */
-    public static GordianPasswordManager newPasswordManager(final TethysUIFactory<?> pGuiFactory,
-                                                            final GordianFactory pSecurityFactory) throws OceanusException {
-        return newPasswordManager(pGuiFactory, pSecurityFactory, new GordianPasswordLockSpec());
-    }
-
-    /**
-     * Create a password Manager.
-     * @param pGuiFactory the GUI Factory
-     * @param pLockSpec the passwordLockSpec
-     * @return the password Manager
-     * @throws OceanusException on error
-     */
-    public static GordianPasswordManager newPasswordManager(final TethysUIFactory<?> pGuiFactory,
-                                                            final GordianPasswordLockSpec pLockSpec) throws OceanusException {
-        final GordianFactory mySecurityFactory = createRandomFactory();
-        return newPasswordManager(pGuiFactory, mySecurityFactory, pLockSpec);
-    }
-
-    /**
-     * Create a password Manager.
-     * @param pGuiFactory the GUI Factory
-     * @param pFactoryType the factoryType
-     * @param pSecurityPhrase the security phrase
-     * @return the password Manager
-     * @throws OceanusException on error
-     */
-    public static GordianPasswordManager newPasswordManager(final TethysUIFactory<?> pGuiFactory,
-                                                            final GordianFactoryType pFactoryType,
-                                                            final char[] pSecurityPhrase) throws OceanusException {
-        return newPasswordManager(pGuiFactory, new GordianPasswordLockSpec(), pFactoryType, pSecurityPhrase);
-    }
-
-    /**
-     * Create a password Manager.
-     * @param pGuiFactory the GUI Factory
-     * @param pLockSpec the passwordLockSpec
-     * @param pFactoryType the factoryType
-     * @param pSecurityPhrase the security phrase
-     * @return the password Manager
-     * @throws OceanusException on error
-     */
-    public static GordianPasswordManager newPasswordManager(final TethysUIFactory<?> pGuiFactory,
-                                                            final GordianPasswordLockSpec pLockSpec,
-                                                            final GordianFactoryType pFactoryType,
-                                                            final char[] pSecurityPhrase) throws OceanusException {
-        final GordianFactory mySecurityFactory = createFactory(pFactoryType, pSecurityPhrase);
-        return newPasswordManager(pGuiFactory, mySecurityFactory, pLockSpec);
-    }
-
-    /**
-     * Create a password Manager.
-     * @param pGuiFactory the GUI Factory
-     * @param pSecurityFactory the securityFactory
-     * @param pLockSpec the passwordLockSpec
-     * @return the password Manager
-     * @throws OceanusException on error
-     */
-    public static GordianPasswordManager newPasswordManager(final TethysUIFactory<?> pGuiFactory,
-                                                            final GordianFactory pSecurityFactory,
-                                                            final GordianPasswordLockSpec pLockSpec) throws OceanusException {
-        final GordianDialogController myController = new GordianBaseDialogControl(pGuiFactory);
-        return new GordianBasePasswordManager(pSecurityFactory, pLockSpec, myController);
     }
 
     /**

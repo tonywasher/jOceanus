@@ -108,7 +108,7 @@ public class PrometheusSecurityPasswordManager {
      * Set the dialog controller
      * @param pDialog the controller
      */
-    public void setDialogController(final PrometheusSecurityDefaultDialog pDialog) {
+    public void setDialogController(final PrometheusSecurityDialogController pDialog) {
         theDialog = pDialog;
     }
 

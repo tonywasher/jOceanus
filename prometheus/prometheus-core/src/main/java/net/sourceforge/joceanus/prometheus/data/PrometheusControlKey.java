@@ -16,25 +16,25 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.prometheus.data;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactoryLock;
-import net.sourceforge.joceanus.gordianknot.api.password.GordianPasswordManager;
 import net.sourceforge.joceanus.gordianknot.util.GordianUtilities;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataList;
 import net.sourceforge.joceanus.metis.data.MetisDataResource;
 import net.sourceforge.joceanus.metis.field.MetisFieldItem;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.metis.field.MetisFieldVersionedSet;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
 import net.sourceforge.joceanus.prometheus.PrometheusDataException;
 import net.sourceforge.joceanus.prometheus.data.PrometheusControlKeySet.PrometheusControlKeySetList;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataSet.PrometheusCryptographyDataType;
-import net.sourceforge.joceanus.oceanus.OceanusException;
-import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.prometheus.security.PrometheusSecurityPasswordManager;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * ControlKey definition and list. The Control Key represents the passwordHash that controls
@@ -120,7 +120,7 @@ public final class PrometheusControlKey
             } else if (getLockBytes() != null) {
                 /* Access the Security manager */
                 final PrometheusDataSet myData = getDataSet();
-                final GordianPasswordManager myPasswordMgr = myData.getPasswordMgr();
+                final PrometheusSecurityPasswordManager myPasswordMgr = myData.getPasswordMgr();
 
                 /* Resolve the factoryLock */
                 final GordianFactoryLock myLock = myPasswordMgr.resolveFactoryLock(getLockBytes(), NAME_DATABASE);
@@ -158,7 +158,7 @@ public final class PrometheusControlKey
         try {
             /* Access the Security manager */
             final PrometheusDataSet myData = getDataSet();
-            final GordianPasswordManager myPasswordMgr = myData.getPasswordMgr();
+            final PrometheusSecurityPasswordManager myPasswordMgr = myData.getPasswordMgr();
 
             /* Create a new factoryLock with new password */
             final GordianFactoryLock myLock = myPasswordMgr.newFactoryLock(NAME_DATABASE);
@@ -195,7 +195,7 @@ public final class PrometheusControlKey
         try {
             /* Access the Security manager */
             final PrometheusDataSet myData = getDataSet();
-            final GordianPasswordManager myPasswordMgr = myData.getPasswordMgr();
+            final PrometheusSecurityPasswordManager myPasswordMgr = myData.getPasswordMgr();
 
             /* ReSeed the security generator */
             final GordianFactory myFactory = myPasswordMgr.getSecurityFactory();
@@ -348,7 +348,7 @@ public final class PrometheusControlKey
     void updateFactoryLock(final String pSource) throws OceanusException {
         /* Access the Security manager */
         final PrometheusDataSet myData = getDataSet();
-        final GordianPasswordManager myPasswordMgr = myData.getPasswordMgr();
+        final PrometheusSecurityPasswordManager myPasswordMgr = myData.getPasswordMgr();
 
         /* Obtain a new factoryLock */
         final GordianFactoryLock myLock = myPasswordMgr.newFactoryLock(getFactoryLock().getFactory(), pSource);

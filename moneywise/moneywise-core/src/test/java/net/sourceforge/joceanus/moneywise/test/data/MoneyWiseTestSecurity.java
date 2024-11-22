@@ -16,13 +16,13 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.moneywise.test.data;
 
-import net.sourceforge.joceanus.gordianknot.api.password.GordianDialogController;
-import net.sourceforge.joceanus.gordianknot.api.password.GordianPasswordManager;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataSet;
 import net.sourceforge.joceanus.moneywise.tax.uk.MoneyWiseUKTaxYearCache;
-import net.sourceforge.joceanus.prometheus.toolkit.PrometheusToolkit;
 import net.sourceforge.joceanus.oceanus.OceanusException;
 import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
+import net.sourceforge.joceanus.prometheus.security.PrometheusSecurityDialogController;
+import net.sourceforge.joceanus.prometheus.security.PrometheusSecurityPasswordManager;
+import net.sourceforge.joceanus.prometheus.toolkit.PrometheusToolkit;
 import net.sourceforge.joceanus.tethys.ui.api.thread.TethysUIThreadStatusReport;
 
 /**
@@ -48,7 +48,7 @@ public class MoneyWiseTestSecurity {
      */
     public void initSecurity(final PrometheusToolkit pToolkit) throws OceanusException {
         /* Access the Password manager and disable prompting */
-        final GordianPasswordManager myManager = theDataSet.getPasswordMgr();
+        final PrometheusSecurityPasswordManager myManager = theDataSet.getPasswordMgr();
         myManager.setDialogController(new NullPasswordDialog());
 
         /* Create the cloneSet and initialise security */
@@ -65,7 +65,7 @@ public class MoneyWiseTestSecurity {
      * Dialog stub.
      */
     static class NullPasswordDialog
-            implements GordianDialogController {
+            implements PrometheusSecurityDialogController {
         @Override
         public void createTheDialog(String pTitle, boolean pNeedConfirm) {
         }

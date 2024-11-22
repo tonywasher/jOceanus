@@ -16,15 +16,15 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.prometheus.sheets;
 
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.prometheus.data.PrometheusDataSet;
+import net.sourceforge.joceanus.prometheus.security.PrometheusSecurityPasswordManager;
+import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetWorkBookType;
+import net.sourceforge.joceanus.tethys.ui.api.thread.TethysUIThreadStatusReport;
+
 import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
-
-import net.sourceforge.joceanus.gordianknot.api.password.GordianPasswordManager;
-import net.sourceforge.joceanus.prometheus.data.PrometheusDataSet;
-import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetWorkBookType;
-import net.sourceforge.joceanus.oceanus.OceanusException;
-import net.sourceforge.joceanus.tethys.ui.api.thread.TethysUIThreadStatusReport;
 
 /**
  * Spreadsheet control.
@@ -43,7 +43,7 @@ public abstract class PrometheusSpreadSheet {
      * @return the sheet reader
      */
     protected abstract PrometheusSheetReader getSheetReader(TethysUIThreadStatusReport pReport,
-                                                            GordianPasswordManager pPasswordMgr);
+                                                            PrometheusSecurityPasswordManager pPasswordMgr);
 
     /**
      * Obtain a sheet writer.
@@ -61,7 +61,7 @@ public abstract class PrometheusSpreadSheet {
      * @throws OceanusException on error
      */
     public void loadBackup(final TethysUIThreadStatusReport pReport,
-                           final GordianPasswordManager pPasswordMgr,
+                           final PrometheusSecurityPasswordManager pPasswordMgr,
                            final PrometheusDataSet pData,
                            final File pFile) throws OceanusException {
         /* Create a sheet reader object */
@@ -81,7 +81,7 @@ public abstract class PrometheusSpreadSheet {
      * @throws OceanusException on error
      */
     public void loadBackup(final TethysUIThreadStatusReport pReport,
-                           final GordianPasswordManager pPasswordMgr,
+                           final PrometheusSecurityPasswordManager pPasswordMgr,
                            final PrometheusDataSet pData,
                            final InputStream pInStream,
                            final String pName) throws OceanusException {

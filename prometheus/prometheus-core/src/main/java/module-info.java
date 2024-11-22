@@ -35,6 +35,7 @@ module net.sourceforge.joceanus.prometheus.core {
     exports net.sourceforge.joceanus.prometheus.data;
     exports net.sourceforge.joceanus.prometheus.database;
     exports net.sourceforge.joceanus.prometheus.preference;
+    exports net.sourceforge.joceanus.prometheus.security;
     exports net.sourceforge.joceanus.prometheus.sheets;
     exports net.sourceforge.joceanus.prometheus.views;
     exports net.sourceforge.joceanus.prometheus.threads;

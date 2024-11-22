@@ -16,13 +16,29 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.prometheus.data;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.Iterator;
+import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactoryLock;
+import net.sourceforge.joceanus.gordianknot.api.zip.GordianZipFactory;
+import net.sourceforge.joceanus.gordianknot.api.zip.GordianZipFileContents;
+import net.sourceforge.joceanus.gordianknot.api.zip.GordianZipFileEntry;
+import net.sourceforge.joceanus.gordianknot.api.zip.GordianZipLock;
+import net.sourceforge.joceanus.gordianknot.api.zip.GordianZipReadFile;
+import net.sourceforge.joceanus.gordianknot.api.zip.GordianZipWriteFile;
+import net.sourceforge.joceanus.metis.data.MetisDataDifference;
+import net.sourceforge.joceanus.metis.field.MetisFieldItem.MetisFieldSetDef;
+import net.sourceforge.joceanus.metis.toolkit.MetisToolkit;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
+import net.sourceforge.joceanus.prometheus.PrometheusDataException;
+import net.sourceforge.joceanus.prometheus.PrometheusIOException;
+import net.sourceforge.joceanus.prometheus.data.PrometheusDataValues.PrometheusGroupedItem;
+import net.sourceforge.joceanus.prometheus.security.PrometheusSecurityPasswordManager;
+import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
+import net.sourceforge.joceanus.tethys.ui.api.thread.TethysUIThreadStatusReport;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.xml.sax.SAXException;
+
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -33,30 +49,13 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.xml.sax.SAXException;
-
-import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactoryLock;
-import net.sourceforge.joceanus.gordianknot.api.password.GordianPasswordManager;
-import net.sourceforge.joceanus.gordianknot.api.zip.GordianZipLock;
-import net.sourceforge.joceanus.gordianknot.api.zip.GordianZipFactory;
-import net.sourceforge.joceanus.gordianknot.api.zip.GordianZipFileContents;
-import net.sourceforge.joceanus.gordianknot.api.zip.GordianZipFileEntry;
-import net.sourceforge.joceanus.gordianknot.api.zip.GordianZipReadFile;
-import net.sourceforge.joceanus.gordianknot.api.zip.GordianZipWriteFile;
-import net.sourceforge.joceanus.metis.data.MetisDataDifference;
-import net.sourceforge.joceanus.metis.field.MetisFieldItem.MetisFieldSetDef;
-import net.sourceforge.joceanus.metis.toolkit.MetisToolkit;
-import net.sourceforge.joceanus.prometheus.PrometheusDataException;
-import net.sourceforge.joceanus.prometheus.PrometheusIOException;
-import net.sourceforge.joceanus.prometheus.data.PrometheusDataValues.PrometheusGroupedItem;
-import net.sourceforge.joceanus.oceanus.OceanusException;
-import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
-import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
-import net.sourceforge.joceanus.tethys.ui.api.thread.TethysUIThreadStatusReport;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.Iterator;
 
 /**
  * Formatter/Parser class for DataValues.
@@ -80,7 +79,7 @@ public class PrometheusDataValuesFormatter {
     /**
      * The password manager.
      */
-    private final GordianPasswordManager thePasswordMgr;
+    private final PrometheusSecurityPasswordManager thePasswordMgr;
 
     /**
      * The document builder.
@@ -104,7 +103,7 @@ public class PrometheusDataValuesFormatter {
      * @throws PrometheusIOException on error
      */
     public PrometheusDataValuesFormatter(final TethysUIThreadStatusReport pReport,
-                                         final GordianPasswordManager pPasswordMgr) throws PrometheusIOException {
+                                         final PrometheusSecurityPasswordManager pPasswordMgr) throws PrometheusIOException {
         /* Store values */
         theReport = pReport;
         thePasswordMgr = pPasswordMgr;
@@ -166,7 +165,7 @@ public class PrometheusDataValuesFormatter {
         final OceanusProfile myStage = myTask.startTask("Writing");
 
         /* Create a similar security control */
-        final GordianPasswordManager myPasswordMgr = pData.getPasswordMgr();
+        final PrometheusSecurityPasswordManager myPasswordMgr = pData.getPasswordMgr();
         final GordianFactoryLock myBase = pData.getFactoryLock();
         final GordianFactoryLock myLock = myPasswordMgr.similarFactoryLock(myBase);
         final GordianZipFactory myZips = myPasswordMgr.getSecurityFactory().getZipFactory();
