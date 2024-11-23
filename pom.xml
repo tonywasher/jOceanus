@@ -70,7 +70,7 @@
     <packageMain/>
     <packageName/>
     <moduleName>jOceanus</moduleName>
-    <appDir>${env.BACKUPDIR}</appDir>
+    <appDir>${session.executionRootDirectory}/dist</appDir>
     <appBinDir>bin/</appBinDir>
     <appLibDir>lib/</appLibDir>
     <BouncyCastleVersion>1.79</BouncyCastleVersion>
@@ -422,6 +422,20 @@
             </execution>
           </executions>
         </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-gpg-plugin</artifactId>
+          <version>${GPGPluginVersion}</version>
+          <executions>
+            <execution>
+              <id>sign-artifacts</id>
+              <phase>verify</phase>
+              <goals>
+                <goal>sign</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
       </plugins>
     </pluginManagement>
   </build>
@@ -557,24 +571,6 @@
       <properties>
         <jOceanusEnv>-Djoceanus.fullBuild</jOceanusEnv>
       </properties>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-gpg-plugin</artifactId>
-            <version>${GPGPluginVersion}</version>
-            <executions>
-              <execution>
-                <id>sign-artifacts</id>
-                <phase>verify</phase>
-                <goals>
-                  <goal>sign</goal>
-                </goals>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
     </profile>
   </profiles>
 </project>
