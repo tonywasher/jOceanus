@@ -971,7 +971,7 @@ class SymmetricTest {
         /* Create the Cipher */
         final GordianStreamCipherSpec myCipherSpec = GordianStreamCipherSpecBuilder.stream(myKeySpec);
         final GordianStreamCipher myCipher = myCipherFactory.createStreamKeyCipher(myCipherSpec);
-         GordianCipherParameters myParms = GordianCipherParameters.keyWithRandomNonce(myStreamKey);
+        GordianCipherParameters myParms = GordianCipherParameters.keyWithRandomNonce(myStreamKey);
         myCipher.initForEncrypt(myParms);
         final byte[] myIV = myCipher.getInitVector();
         myParms = GordianCipherParameters.keyAndNonce(myStreamKey, myIV);

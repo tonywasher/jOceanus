@@ -19,9 +19,9 @@ package net.sourceforge.joceanus.gordianknot.api.cipher;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
 import org.bouncycastle.crypto.engines.AsconEngine.AsconParameters;
-import org.bouncycastle.crypto.engines.ElephantEngine.ElephantParameters;
-import org.bouncycastle.crypto.engines.ISAPEngine.IsapType;
 import org.bouncycastle.crypto.engines.SparkleEngine.SparkleParameters;
+import org.bouncycastle.crypto.patch.engines.ElephantXEngine.ElephantParameters;
+import org.bouncycastle.crypto.patch.engines.ISAPXEngine.IsapType;
 
 import java.util.Objects;
 
@@ -333,7 +333,7 @@ public class GordianStreamKeySpec
                 return GordianLength.LEN_96.getByteLength();
             case SOSEMANUK:
             case SNOW3G:
-             case BLAKE3XOF:
+            case BLAKE3XOF:
             case SKEINXOF:
             case ASCON:
             case ISAP:
