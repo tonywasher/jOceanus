@@ -16,6 +16,6 @@
  ******************************************************************************/
 
 /**
- * New engine implementations.
+ * New mode implementations.
  */
-package org.bouncycastle.crypto.ext.engines;
+package net.sourceforge.joceanus.gordianknot.impl.ext.modes;

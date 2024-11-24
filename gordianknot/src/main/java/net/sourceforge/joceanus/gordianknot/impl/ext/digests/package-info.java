@@ -16,6 +16,6 @@
  ******************************************************************************/
 
 /**
- * New engine implementations.
+ * New digest implementations.
  */
-package org.bouncycastle.crypto.ext.engines;
+package net.sourceforge.joceanus.gordianknot.impl.ext.digests;
