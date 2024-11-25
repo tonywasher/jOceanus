@@ -239,6 +239,11 @@ public class GordianCoreZipLock
         } else {
             throw new GordianDataException("Unsupported lockType");
         }
+
+        /* notify if required */
+        if (theNotify != null) {
+            theNotify.notifyUnlock();
+        }
     }
 
     @Override
