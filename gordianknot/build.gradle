@@ -20,7 +20,6 @@ sourceSets {
         java {
             srcDir 'src/embedded/java'
             srcDir 'src/patch/java'
-            srcDir 'src/extension/java'
         }
     }
 }
@@ -36,7 +35,6 @@ publishing.publications.maven.artifact(testsJar)
 checkstyleMain
     .exclude('**/SevenZip/**/*.java')
     .exclude('**/patch/**/*.java')
-    .exclude('**/ext/**/*.java')
 checkstyleTest
     .exclude('**/junit/**/*.java')
 

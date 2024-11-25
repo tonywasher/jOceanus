@@ -16,21 +16,20 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.junit.extensions;
 
-import java.util.stream.Stream;
-
+import net.sourceforge.joceanus.gordianknot.impl.ext.digests.GordianBlake2Base;
+import net.sourceforge.joceanus.gordianknot.impl.ext.digests.GordianBlake2Xof;
+import net.sourceforge.joceanus.gordianknot.impl.ext.digests.GordianBlake2bDigest;
+import net.sourceforge.joceanus.gordianknot.impl.ext.digests.GordianBlake2sDigest;
+import net.sourceforge.joceanus.gordianknot.impl.ext.digests.GordianSkeinBase;
+import net.sourceforge.joceanus.gordianknot.impl.ext.digests.GordianSkeinXof;
+import net.sourceforge.joceanus.gordianknot.impl.ext.engines.GordianBlake2XEngine;
+import net.sourceforge.joceanus.gordianknot.impl.ext.engines.GordianSkeinXofEngine;
+import net.sourceforge.joceanus.gordianknot.impl.ext.params.GordianBlake2Parameters;
+import net.sourceforge.joceanus.gordianknot.impl.ext.params.GordianSkeinParameters;
+import net.sourceforge.joceanus.oceanus.OceanusException;
 import org.bouncycastle.crypto.CipherParameters;
 import org.bouncycastle.crypto.StreamCipher;
 import org.bouncycastle.crypto.Xof;
-import org.bouncycastle.crypto.ext.digests.Blake2;
-import org.bouncycastle.crypto.ext.digests.Blake2X;
-import org.bouncycastle.crypto.ext.digests.Blake2b;
-import org.bouncycastle.crypto.ext.digests.Blake2s;
-import org.bouncycastle.crypto.ext.digests.SkeinBase;
-import org.bouncycastle.crypto.ext.digests.SkeinXof;
-import org.bouncycastle.crypto.ext.engines.Blake2XEngine;
-import org.bouncycastle.crypto.ext.engines.SkeinXofEngine;
-import org.bouncycastle.crypto.ext.params.Blake2Parameters;
-import org.bouncycastle.crypto.ext.params.SkeinXParameters;
 import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.crypto.params.ParametersWithIV;
 import org.bouncycastle.util.encoders.Hex;
@@ -40,7 +39,7 @@ import org.junit.jupiter.api.DynamicNode;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import java.util.stream.Stream;
 
 /**
  * Test Cases for Xof-based Stream Ciphers.
@@ -152,9 +151,9 @@ class XofStreamCipherTest {
                                 final byte[] pKey,
                                 final byte[] pIV) {
         /* Handle Blake2X */
-        if (pXof instanceof Blake2X) {
-            final Blake2X myXof = (Blake2X) pXof;
-            final Blake2Parameters.Builder myBuilder = new Blake2Parameters.Builder()
+        if (pXof instanceof GordianBlake2Xof) {
+            final GordianBlake2Xof myXof = (GordianBlake2Xof) pXof;
+            final GordianBlake2Parameters.Builder myBuilder = new GordianBlake2Parameters.Builder()
                     .setKey(pKey)
                     .setMaxOutputLen(-1);
             if (pIV != null) {
@@ -164,9 +163,9 @@ class XofStreamCipherTest {
         }
 
         /* Handle SkeinXof */
-        if (pXof instanceof SkeinXof) {
-            final SkeinXof myXof = (SkeinXof) pXof;
-            final SkeinXParameters.Builder myBuilder = new SkeinXParameters.Builder()
+        if (pXof instanceof GordianSkeinXof) {
+            final GordianSkeinXof myXof = (GordianSkeinXof) pXof;
+            final GordianSkeinParameters.Builder myBuilder = new GordianSkeinParameters.Builder()
                     .setKey(pKey)
                     .setMaxOutputLen(-1);
             if (pIV != null) {
@@ -186,9 +185,9 @@ class XofStreamCipherTest {
          */
         void runTests(final boolean pBlake2b) {
             /* Create the cipher and Xof */
-            final Blake2 myDigest = pBlake2b ? new Blake2b(512) : new Blake2s(256);
-            final Blake2XEngine myCipher = new Blake2XEngine(myDigest);
-            final Blake2X myXof = new Blake2X((Blake2) myDigest.copy());
+            final GordianBlake2Base myDigest = pBlake2b ? new GordianBlake2bDigest(512) : new GordianBlake2sDigest(256);
+            final GordianBlake2XEngine myCipher = new GordianBlake2XEngine(myDigest);
+            final GordianBlake2Xof myXof = new GordianBlake2Xof((GordianBlake2Base) myDigest.copy());
 
             /* Select IVs */
             final String IV1 = pBlake2b ? IV128_1 : IV64_1;
@@ -212,8 +211,8 @@ class XofStreamCipherTest {
          */
         void runTests(final int pState) {
             /* Create the cipher and Xof */
-            final SkeinXofEngine myCipher = new SkeinXofEngine(pState);
-            final SkeinXof myXof = new SkeinXof(new SkeinBase(pState, pState));
+            final GordianSkeinXofEngine myCipher = new GordianSkeinXofEngine(pState);
+            final GordianSkeinXof myXof = new GordianSkeinXof(new GordianSkeinBase(pState, pState));
 
             /* Run tests */
             testXofStream(myCipher, KEY128_1, IV64_1, myXof);

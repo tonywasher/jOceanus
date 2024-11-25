@@ -24,7 +24,7 @@ import org.bouncycastle.util.Pack;
 /**
  * Implementation of DSTU7624 GCM mode.
  */
-public class KGCMXBlockCipher
+public class GordianKGCMBlockCipher
         implements AEADBlockCipher {
     private static final int MIN_MAC_BITS = 64;
 
@@ -59,7 +59,7 @@ public class KGCMXBlockCipher
     private ExposedByteArrayOutputStream associatedText = new ExposedByteArrayOutputStream();
     private ExposedByteArrayOutputStream data = new ExposedByteArrayOutputStream();
 
-    public KGCMXBlockCipher(BlockCipher dstu7624Engine) {
+    public GordianKGCMBlockCipher(BlockCipher dstu7624Engine) {
         this.engine = dstu7624Engine;
         this.ctrEngine = new DefaultBufferedBlockCipher(new KCTRBlockCipher(this.engine));
         this.macSize = -1;

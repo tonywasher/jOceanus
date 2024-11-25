@@ -21,6 +21,7 @@ import org.bouncycastle.util.Arrays;
 
 /**
  * Blake3 Parameters.
+ * Donated to BouncyCastle.
  */
 public class GordianBlake3Parameters
         implements CipherParameters {

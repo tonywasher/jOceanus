@@ -20,7 +20,7 @@ import java.io.ByteArrayOutputStream;
  * </p>
  */
 
-public class XoodyakXEngine
+public class GordianXoodyakEngine
         implements AEADCipher
 {
     private boolean forEncryption;

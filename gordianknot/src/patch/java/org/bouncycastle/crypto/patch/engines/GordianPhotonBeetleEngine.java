@@ -18,7 +18,7 @@ import java.io.ByteArrayOutputStream;
  * </p>
  */
 
-public class PhotonXEngine
+public class GordianPhotonBeetleEngine
         implements AEADCipher
 {
     public enum PhotonBeetleParameters
@@ -76,7 +76,7 @@ public class PhotonXEngine
 
     private final byte[] sbox = {12, 5, 6, 11, 9, 0, 10, 13, 3, 14, 15, 8, 4, 7, 1, 2};
 
-    public PhotonXEngine(PhotonBeetleParameters pbp)
+    public GordianPhotonBeetleEngine(PhotonBeetleParameters pbp)
     {
         int CAPACITY_INBITS = 0, RATE_INBITS = 0;
         switch (pbp)

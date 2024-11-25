@@ -61,7 +61,7 @@
   <properties>
     <scmComponent>gordianknot</scmComponent>
     <packageName>${packageKey}.${scmComponent}</packageName>
-    <moduleName>${packageName}.core</moduleName>
+    <moduleName>${packageName}</moduleName>
   </properties>
   <build>
     <plugins>
@@ -79,7 +79,6 @@
             <configuration>
               <sources>
                 <source>src/embedded/java</source>
-                <source>src/extension/java</source>
                 <source>src/patch/java</source>
               </sources>
             </configuration>

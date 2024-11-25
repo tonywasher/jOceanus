@@ -15,7 +15,7 @@ import org.bouncycastle.util.Arrays;
 /**
  * Implementation of DSTU7624 CCM mode.
  */
-public class KCCMXBlockCipher
+public class GordianKCCMBlockCipher
         implements AEADBlockCipher {
 
     private static final int BYTES_IN_INT = 4;
@@ -59,7 +59,7 @@ public class KCCMXBlockCipher
      *
      * @param engine base cipher to use under CCM.
      */
-    public KCCMXBlockCipher(BlockCipher engine) {
+    public GordianKCCMBlockCipher(BlockCipher engine) {
         this(engine, 4);
     }
 
@@ -74,8 +74,8 @@ public class KCCMXBlockCipher
      * @param engine base cipher to use under CCM.
      * @param nB Nb value to use.
      */
-    public KCCMXBlockCipher(BlockCipher engine,
-                            int nB) {
+    public GordianKCCMBlockCipher(BlockCipher engine,
+                                  int nB) {
         this.engine = engine;
         this.macSize = engine.getBlockSize();
         this.nonce = new byte[engine.getBlockSize()];

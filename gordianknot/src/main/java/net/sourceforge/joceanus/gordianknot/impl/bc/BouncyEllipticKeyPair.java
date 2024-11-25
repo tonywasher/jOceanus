@@ -16,47 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.bc;
 
-import java.io.IOException;
-import java.math.BigInteger;
-import java.security.spec.PKCS8EncodedKeySpec;
-import java.security.spec.X509EncodedKeySpec;
-
-import javax.security.auth.DestroyFailedException;
-
-import org.bouncycastle.asn1.ASN1ObjectIdentifier;
-import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
-import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
-import org.bouncycastle.asn1.x9.ECNamedCurveTable;
-import org.bouncycastle.asn1.x9.X9ECParameters;
-import org.bouncycastle.crypto.AsymmetricCipherKeyPair;
-import org.bouncycastle.crypto.DSA;
-import org.bouncycastle.crypto.DerivationFunction;
-import org.bouncycastle.crypto.InvalidCipherTextException;
-import org.bouncycastle.crypto.SecretWithEncapsulation;
-import org.bouncycastle.crypto.agreement.ECDHCBasicAgreement;
-import org.bouncycastle.crypto.agreement.ECDHCUnifiedAgreement;
-import org.bouncycastle.crypto.agreement.ECMQVBasicAgreement;
-import org.bouncycastle.crypto.ext.engines.EllipticEncryptor;
-import org.bouncycastle.crypto.generators.ECKeyPairGenerator;
-import org.bouncycastle.crypto.kems.ECIESKEMExtractor;
-import org.bouncycastle.crypto.kems.ECIESKEMGenerator;
-import org.bouncycastle.crypto.params.AsymmetricKeyParameter;
-import org.bouncycastle.crypto.params.ECDHUPrivateParameters;
-import org.bouncycastle.crypto.params.ECDHUPublicParameters;
-import org.bouncycastle.crypto.params.ECKeyGenerationParameters;
-import org.bouncycastle.crypto.params.ECNamedDomainParameters;
-import org.bouncycastle.crypto.params.ECPrivateKeyParameters;
-import org.bouncycastle.crypto.params.ECPublicKeyParameters;
-import org.bouncycastle.crypto.params.MQVPrivateParameters;
-import org.bouncycastle.crypto.params.MQVPublicParameters;
-import org.bouncycastle.crypto.params.ParametersWithRandom;
-import org.bouncycastle.crypto.util.PrivateKeyFactory;
-import org.bouncycastle.crypto.util.PrivateKeyInfoFactory;
-import org.bouncycastle.crypto.util.PublicKeyFactory;
-import org.bouncycastle.crypto.util.SubjectPublicKeyInfoFactory;
-import org.bouncycastle.jcajce.provider.asymmetric.util.ECUtil;
-import org.bouncycastle.util.BigIntegers;
-
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementSpec;
 import net.sourceforge.joceanus.gordianknot.api.encrypt.GordianEncryptorSpec;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianKeyPairFactory;
@@ -79,7 +38,46 @@ import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianIOException;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianLogicException;
 import net.sourceforge.joceanus.gordianknot.impl.core.encrypt.GordianCoreEncryptor;
 import net.sourceforge.joceanus.gordianknot.impl.core.keypair.GordianKeyPairValidity;
+import net.sourceforge.joceanus.gordianknot.impl.ext.engines.GordianEllipticEncryptor;
 import net.sourceforge.joceanus.oceanus.OceanusException;
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
+import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
+import org.bouncycastle.asn1.x9.ECNamedCurveTable;
+import org.bouncycastle.asn1.x9.X9ECParameters;
+import org.bouncycastle.crypto.AsymmetricCipherKeyPair;
+import org.bouncycastle.crypto.DSA;
+import org.bouncycastle.crypto.DerivationFunction;
+import org.bouncycastle.crypto.InvalidCipherTextException;
+import org.bouncycastle.crypto.SecretWithEncapsulation;
+import org.bouncycastle.crypto.agreement.ECDHCBasicAgreement;
+import org.bouncycastle.crypto.agreement.ECDHCUnifiedAgreement;
+import org.bouncycastle.crypto.agreement.ECMQVBasicAgreement;
+import org.bouncycastle.crypto.generators.ECKeyPairGenerator;
+import org.bouncycastle.crypto.kems.ECIESKEMExtractor;
+import org.bouncycastle.crypto.kems.ECIESKEMGenerator;
+import org.bouncycastle.crypto.params.AsymmetricKeyParameter;
+import org.bouncycastle.crypto.params.ECDHUPrivateParameters;
+import org.bouncycastle.crypto.params.ECDHUPublicParameters;
+import org.bouncycastle.crypto.params.ECKeyGenerationParameters;
+import org.bouncycastle.crypto.params.ECNamedDomainParameters;
+import org.bouncycastle.crypto.params.ECPrivateKeyParameters;
+import org.bouncycastle.crypto.params.ECPublicKeyParameters;
+import org.bouncycastle.crypto.params.MQVPrivateParameters;
+import org.bouncycastle.crypto.params.MQVPublicParameters;
+import org.bouncycastle.crypto.params.ParametersWithRandom;
+import org.bouncycastle.crypto.util.PrivateKeyFactory;
+import org.bouncycastle.crypto.util.PrivateKeyInfoFactory;
+import org.bouncycastle.crypto.util.PublicKeyFactory;
+import org.bouncycastle.crypto.util.SubjectPublicKeyInfoFactory;
+import org.bouncycastle.jcajce.provider.asymmetric.util.ECUtil;
+import org.bouncycastle.util.BigIntegers;
+
+import javax.security.auth.DestroyFailedException;
+import java.io.IOException;
+import java.math.BigInteger;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
 
 /**
  * EllipticCurve KeyPair classes.
@@ -871,7 +869,7 @@ public final class BouncyEllipticKeyPair {
         /**
          * The underlying encryptor.
          */
-        private final EllipticEncryptor theEncryptor;
+        private final GordianEllipticEncryptor theEncryptor;
 
         /**
          * Constructor.
@@ -882,7 +880,7 @@ public final class BouncyEllipticKeyPair {
                           final GordianEncryptorSpec pSpec) {
             /* Initialise underlying cipher */
             super(pFactory, pSpec);
-            theEncryptor = new EllipticEncryptor();
+            theEncryptor = new GordianEllipticEncryptor();
         }
 
         @Override

@@ -39,23 +39,29 @@ import org.bouncycastle.crypto.params.KeyParameter;
  * @see GordianSkeinParameters
  */
 public class GordianSkeinMac
-        implements Mac, Xof
-{
+        implements Mac, Xof {
     /**
-     * 256 bit block size - Skein MAC-256
+     * 256 bit block size - Skein MAC-256.
      */
     public static final int SKEIN_256 = GordianSkeinBase.SKEIN_256;
     /**
-     * 512 bit block size - Skein MAC-512
+     * 512 bit block size - Skein MAC-512.
      */
     public static final int SKEIN_512 = GordianSkeinBase.SKEIN_512;
     /**
-     * 1024 bit block size - Skein MAC-1024
+     * 1024 bit block size - Skein MAC-1024.
      */
     public static final int SKEIN_1024 = GordianSkeinBase.SKEIN_1024;
 
-    private GordianSkeinBase engine;
-    private GordianSkeinXof xof;
+    /**
+     * The engine.
+     */
+    private final GordianSkeinBase engine;
+
+    /**
+     * The Xof.
+     */
+    private final GordianSkeinXof xof;
 
     /**
      * Constructs a Skein MAC with an internal state size and output size.
@@ -64,21 +70,27 @@ public class GordianSkeinMac
      *                       {@link #SKEIN_1024}.
      * @param digestSizeBits the output/MAC size to produce in bits, which must be an integral number of bytes.
      */
-    public GordianSkeinMac(int stateSizeBits, int digestSizeBits)
-    {
+    public GordianSkeinMac(final int stateSizeBits,
+                           final int digestSizeBits) {
         this.engine = new GordianSkeinBase(stateSizeBits, digestSizeBits);
         this.xof = new GordianSkeinXof(engine);
     }
 
-    public GordianSkeinMac(GordianSkeinMac mac)
-    {
+    /**
+     * Copy constructor.
+     * @param mac the source mac
+     */
+    public GordianSkeinMac(final GordianSkeinMac mac) {
         this.engine = new GordianSkeinBase(mac.engine);
         this.xof = new GordianSkeinXof(engine);
     }
 
-    public String getAlgorithmName()
-    {
-        return "Skein-MAC-" + (engine.getBlockSize() * 8) + "-" + (engine.getOutputSize() * 8);
+    /**
+     * Obtain the lgorithm name.
+     * @return the name
+     */
+    public String getAlgorithmName() {
+        return "Skein-MAC-" + (engine.getBlockSize() * Byte.SIZE) + "-" + (engine.getOutputSize() * Byte.SIZE);
     }
 
     /**
@@ -87,52 +99,48 @@ public class GordianSkeinMac
      *
      * @param params an instance of {@link GordianSkeinParameters} or {@link KeyParameter}.
      */
-    public void init(CipherParameters params)
-            throws IllegalArgumentException
-    {
-        GordianSkeinParameters skeinParameters;
-        if (params instanceof GordianSkeinParameters)
-        {
-            skeinParameters = (GordianSkeinParameters)params;
-        }
-        else if (params instanceof KeyParameter)
-        {
-            skeinParameters = new GordianSkeinParameters.Builder().setKey(((KeyParameter)params).getKey()).build();
-        }
-        else
-        {
+    public void init(final CipherParameters params)
+            throws IllegalArgumentException {
+        final GordianSkeinParameters skeinParameters;
+        if (params instanceof GordianSkeinParameters) {
+            skeinParameters = (GordianSkeinParameters) params;
+        } else if (params instanceof KeyParameter) {
+            skeinParameters = new GordianSkeinParameters.Builder().setKey(((KeyParameter) params).getKey()).build();
+        } else {
             throw new IllegalArgumentException("Invalid parameter passed to Skein MAC init - "
                     + params.getClass().getName());
         }
-        if (skeinParameters.getKey() == null)
-        {
+        if (skeinParameters.getKey() == null) {
             throw new IllegalArgumentException("Skein MAC requires a key parameter.");
         }
         engine.init(skeinParameters);
     }
 
-    public int getMacSize()
-    {
+    @Override
+    public int getMacSize() {
         return engine.getOutputSize();
     }
 
-    public void reset()
-    {
+    @Override
+    public void reset() {
         xof.reset();
     }
 
-    public void update(byte in)
-    {
+    @Override
+    public void update(final byte in) {
         xof.update(in);
     }
 
-    public void update(byte[] in, int inOff, int len)
-    {
+    @Override
+    public void update(final byte[] in,
+                       final int inOff,
+                       final int len) {
         xof.update(in, inOff, len);
     }
 
-    public int doFinal(byte[] out, int outOff)
-    {
+    @Override
+    public int doFinal(final byte[] out,
+                       final int outOff) {
         return xof.doFinal(out, outOff);
     }
 

@@ -16,22 +16,21 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.junit.extensions;
 
-import java.util.Arrays;
-import java.util.stream.Stream;
-
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCryptoException;
+import net.sourceforge.joceanus.gordianknot.impl.ext.engines.GordianRabbitEngine;
+import net.sourceforge.joceanus.gordianknot.impl.ext.engines.GordianSnow3GEngine;
+import net.sourceforge.joceanus.gordianknot.impl.ext.engines.GordianSosemanukEngine;
+import net.sourceforge.joceanus.gordianknot.impl.ext.engines.GordianXChaCha20Engine;
+import net.sourceforge.joceanus.gordianknot.impl.ext.engines.GordianZuc128Engine;
+import net.sourceforge.joceanus.gordianknot.impl.ext.engines.GordianZuc256Engine;
+import net.sourceforge.joceanus.gordianknot.impl.ext.macs.GordianZuc128Mac;
+import net.sourceforge.joceanus.gordianknot.impl.ext.macs.GordianZuc256Mac;
+import net.sourceforge.joceanus.gordianknot.impl.ext.modes.GordianChaChaPoly1305;
+import net.sourceforge.joceanus.oceanus.OceanusException;
 import org.bouncycastle.crypto.InvalidCipherTextException;
 import org.bouncycastle.crypto.Mac;
 import org.bouncycastle.crypto.StreamCipher;
 import org.bouncycastle.crypto.engines.ChaCha7539Engine;
-import org.bouncycastle.crypto.ext.modes.ChaChaPoly1305;
-import org.bouncycastle.crypto.ext.engines.RabbitEngine;
-import org.bouncycastle.crypto.ext.engines.Snow3GEngine;
-import org.bouncycastle.crypto.ext.engines.SosemanukEngine;
-import org.bouncycastle.crypto.ext.engines.XChaCha20Engine;
-import org.bouncycastle.crypto.engines.Zuc128Engine;
-import org.bouncycastle.crypto.engines.Zuc256Engine;
-import org.bouncycastle.crypto.macs.Zuc128Mac;
-import org.bouncycastle.crypto.macs.Zuc256Mac;
 import org.bouncycastle.crypto.params.AEADParameters;
 import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.crypto.params.ParametersWithIV;
@@ -42,8 +41,8 @@ import org.junit.jupiter.api.DynamicNode;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCryptoException;
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import java.util.Arrays;
+import java.util.stream.Stream;
 
 /**
  * Stream Cipher Tests.
@@ -349,7 +348,7 @@ class StreamCipherTest {
      * @param pTestCase the testCase
      * @throws OceanusException on error
      */
-    static void testAADCipher(final ChaChaPoly1305 pCipher,
+    static void testAADCipher(final GordianChaChaPoly1305 pCipher,
                               final TestCase pTestCase) throws OceanusException {
         try {
             /* Access the expected bytes */
@@ -455,7 +454,7 @@ class StreamCipherTest {
          * @throws OceanusException on error
          */
         void testTheCipher() throws OceanusException {
-            final RabbitEngine myEngine = new RabbitEngine();
+            final GordianRabbitEngine myEngine = new GordianRabbitEngine();
             testCipher(myEngine, TEST1);
             testCipher(myEngine, TEST2);
             testCipher(myEngine, TEST3);
@@ -493,7 +492,7 @@ class StreamCipherTest {
          * @throws OceanusException on error
          */
         void testTheCipher() throws OceanusException {
-            final SosemanukEngine myEngine = new SosemanukEngine();
+            final GordianSosemanukEngine myEngine = new GordianSosemanukEngine();
             testCipher(myEngine, TEST1);
             testCipher(myEngine, TEST2);
             testCipher(myEngine, TEST3);
@@ -531,7 +530,7 @@ class StreamCipherTest {
          * @throws OceanusException on error
          */
         void testTheCipher() throws OceanusException {
-            final SosemanukEngine myEngine = new SosemanukEngine();
+            final GordianSosemanukEngine myEngine = new GordianSosemanukEngine();
             testCipher(myEngine, TEST1);
             testCipher(myEngine, TEST2);
             testCipher(myEngine, TEST3);
@@ -560,7 +559,7 @@ class StreamCipherTest {
          * @throws OceanusException on error
          */
         void testTheCipher() throws OceanusException {
-            final Snow3GEngine myEngine = new Snow3GEngine();
+            final GordianSnow3GEngine myEngine = new GordianSnow3GEngine();
             testCipher(myEngine, TEST1);
             testCipher(myEngine, TEST2);
             testCipher(myEngine, TEST3);
@@ -596,7 +595,7 @@ class StreamCipherTest {
          * @throws OceanusException on error
          */
         void testTheCipher() throws OceanusException {
-            final Zuc128Engine myEngine = new Zuc128Engine();
+            final GordianZuc128Engine myEngine = new GordianZuc128Engine();
             testCipher(myEngine, TEST1);
             testCipher(myEngine, TEST2);
             testCipher(myEngine, TEST3);
@@ -634,7 +633,7 @@ class StreamCipherTest {
          * @throws OceanusException on error
          */
         void testTheCipher() throws OceanusException {
-            final Zuc256Engine myEngine = new Zuc256Engine();
+            final GordianZuc256Engine myEngine = new GordianZuc256Engine();
             testCipher(myEngine, TEST1);
             testCipher(myEngine, TEST2);
             testCipher(myEngine, TEST3);
@@ -670,7 +669,7 @@ class StreamCipherTest {
          * @throws OceanusException on error
          */
         void testTheMac() throws OceanusException {
-            final Zuc128Mac myMac = new Zuc128Mac();
+            final GordianZuc128Mac myMac = new GordianZuc128Mac();
             testMac(myMac, false, TEST1);
             testMac(myMac, true, TEST2);
             testMac(myMac, false, TEST3);
@@ -704,7 +703,7 @@ class StreamCipherTest {
          * @throws OceanusException on error
          */
         void testTheMac() throws OceanusException {
-            final Zuc256Mac myMac = new Zuc256Mac(32);
+            final GordianZuc256Mac myMac = new GordianZuc256Mac(32);
             testMac(myMac, false, TEST1);
             testMac(myMac, true, TEST2);
             testMac(myMac, false, TEST3);
@@ -738,7 +737,7 @@ class StreamCipherTest {
          * @throws OceanusException on error
          */
         void testTheMac() throws OceanusException {
-            final Zuc256Mac myMac = new Zuc256Mac(64);
+            final GordianZuc256Mac myMac = new GordianZuc256Mac(64);
             testMac(myMac, false, TEST1);
             testMac(myMac, true, TEST2);
             testMac(myMac, false, TEST3);
@@ -772,7 +771,7 @@ class StreamCipherTest {
          * @throws OceanusException on error
          */
         void testTheMac() throws OceanusException {
-            final Zuc256Mac myMac = new Zuc256Mac(128);
+            final GordianZuc256Mac myMac = new GordianZuc256Mac(128);
             testMac(myMac, false, TEST1);
             testMac(myMac, true, TEST2);
             testMac(myMac, false, TEST3);
@@ -819,7 +818,7 @@ class StreamCipherTest {
          * @throws OceanusException on error
          */
         void testTheCipher() throws OceanusException {
-            final XChaCha20Engine myEngine = new XChaCha20Engine();
+            final GordianXChaCha20Engine myEngine = new GordianXChaCha20Engine();
             testCipher(myEngine, TEST);
         }
     }
@@ -861,7 +860,7 @@ class StreamCipherTest {
          * @throws OceanusException on error
          */
         void testTheCipher() throws OceanusException {
-            final ChaChaPoly1305 myEngine = new ChaChaPoly1305(new ChaCha7539Engine());
+            final GordianChaChaPoly1305 myEngine = new GordianChaChaPoly1305(new ChaCha7539Engine());
             testAADCipher(myEngine, TEST);
         }
     }
@@ -898,7 +897,7 @@ class StreamCipherTest {
          * @throws OceanusException on error
          */
         void testTheCipher() throws OceanusException {
-            final ChaChaPoly1305 myEngine = new ChaChaPoly1305(new XChaCha20Engine());
+            final GordianChaChaPoly1305 myEngine = new GordianChaChaPoly1305(new GordianXChaCha20Engine());
             testAADCipher(myEngine, TEST);
         }
     }

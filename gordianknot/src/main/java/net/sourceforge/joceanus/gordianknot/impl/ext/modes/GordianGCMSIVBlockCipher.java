@@ -35,12 +35,13 @@ import java.io.ByteArrayOutputStream;
 
 /**
  * GCM-SIV Mode.
+ * Donated to BouncyCastle.
  * <p>It should be noted that the specified limit of 2<sup>36</sup> bytes is not checked. This is because all bytes are
  * cached in a <b>ByteArrayOutputStream</b> object (which has a limit of 2<sup>31</sup> bytes), and are output
  * on the <b>doFinal</b>() call (which can only process a maximum of 2<sup>31</sup> bytes).
  * <p>The limit of 2<sup>31</sup> bytes is not policed, and attempts to breach the limit will fail on writing to the
  * <b>ByteArrayOutputStream</b> with <b>OutOfMemoryError</b></p>
- * <p>In order to properly support the higher limit, the <b>GCMSIVCache</b> would need to be extended to use
+ * <p>In order to properly support the higher limit, the <b>GCMSIVCache</b> would need to be extended to
  * use multiple arrays to store the data. In addition, a new <b>doOutput</b> method would be required (similar to that in
  * <b>XOF</b> digests), which would allow the data to be output over multiple calls. Alternatively an extended form
  * of <b>ByteArrayInputStream</b> could be used to deliver the data</p>
@@ -64,7 +65,7 @@ public class GordianGCMSIVBlockCipher
 
     /**
      * The maximum data length (AEAD/PlainText). Due to implementation constraints this is restricted to the
-     * maximum array length (https://programming.guide/java/array-maximum-length.html) - the BUFLEN
+     * maximum array length (<a href="https://programming.guide/java/array-maximum-length.html">Java Maximum Array Length</a>) - the BUFLEN
      */
     private static final int MAX_DATALEN = Integer.MAX_VALUE - 8 - BUFLEN;
 
@@ -194,8 +195,8 @@ public class GordianGCMSIVBlockCipher
                      final CipherParameters cipherParameters) throws IllegalArgumentException {
         /* Set defaults */
         byte[] myInitialAEAD = null;
-        byte[] myNonce = null;
-        KeyParameter myKey = null;
+        final byte[] myNonce;
+        final KeyParameter myKey;
 
         /* Access parameters */
         if (cipherParameters instanceof AEADParameters) {
@@ -583,7 +584,7 @@ public class GordianGCMSIVBlockCipher
         }
 
         /* Clear top bit */
-        myPolyVal[BUFLEN - 1] &= (MASK - 1);
+        myPolyVal[BUFLEN - 1] &= (byte) (MASK - 1);
 
         /* Calculate tag and return it */
         theCipher.processBlock(myPolyVal, 0, myResult, 0);
@@ -796,7 +797,7 @@ public class GordianGCMSIVBlockCipher
     /**
      * Hash Control.
      */
-    private class GCMSIVHasher {
+    private final class GCMSIVHasher {
         /**
          * Cache.
          */

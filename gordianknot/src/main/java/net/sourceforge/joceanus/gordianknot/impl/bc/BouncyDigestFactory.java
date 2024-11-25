@@ -23,6 +23,17 @@ import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestType;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.digest.GordianCoreDigestFactory;
+import net.sourceforge.joceanus.gordianknot.impl.ext.digests.GordianBlake2Base;
+import net.sourceforge.joceanus.gordianknot.impl.ext.digests.GordianBlake2bDigest;
+import net.sourceforge.joceanus.gordianknot.impl.ext.digests.GordianBlake2sDigest;
+import net.sourceforge.joceanus.gordianknot.impl.ext.digests.GordianBlake3Digest;
+import net.sourceforge.joceanus.gordianknot.impl.ext.digests.GordianCubeHashDigest;
+import net.sourceforge.joceanus.gordianknot.impl.ext.digests.GordianGroestlDigest;
+import net.sourceforge.joceanus.gordianknot.impl.ext.digests.GordianJHDigest;
+import net.sourceforge.joceanus.gordianknot.impl.ext.digests.GordianKangarooDigest.GordianKangarooBase;
+import net.sourceforge.joceanus.gordianknot.impl.ext.digests.GordianKangarooDigest.GordianKangarooTwelve;
+import net.sourceforge.joceanus.gordianknot.impl.ext.digests.GordianKangarooDigest.GordianMarsupilamiFourteen;
+import net.sourceforge.joceanus.gordianknot.impl.ext.digests.GordianSkeinDigest;
 import net.sourceforge.joceanus.oceanus.OceanusException;
 import org.bouncycastle.crypto.Digest;
 import org.bouncycastle.crypto.Xof;
@@ -57,17 +68,6 @@ import org.bouncycastle.crypto.digests.SparkleDigest.SparkleParameters;
 import org.bouncycastle.crypto.digests.TigerDigest;
 import org.bouncycastle.crypto.digests.WhirlpoolDigest;
 import org.bouncycastle.crypto.digests.XoodyakDigest;
-import org.bouncycastle.crypto.ext.digests.Blake2;
-import org.bouncycastle.crypto.ext.digests.Blake2b;
-import org.bouncycastle.crypto.ext.digests.Blake2s;
-import org.bouncycastle.crypto.ext.digests.Blake3Digest;
-import org.bouncycastle.crypto.ext.digests.CubeHashDigest;
-import org.bouncycastle.crypto.ext.digests.GroestlDigest;
-import org.bouncycastle.crypto.ext.digests.JHDigest;
-import org.bouncycastle.crypto.ext.digests.Kangaroo.KangarooBase;
-import org.bouncycastle.crypto.ext.digests.Kangaroo.KangarooTwelve;
-import org.bouncycastle.crypto.ext.digests.Kangaroo.MarsupilamiFourteen;
-import org.bouncycastle.crypto.ext.digests.SkeinDigest;
 
 /**
  * BouncyCastle Digest Factory.
@@ -132,17 +132,17 @@ public class BouncyDigestFactory
             case BLAKE2:
                 return getBlake2Digest(pDigestSpec);
             case BLAKE3:
-                return new Blake3Digest(myLen.getByteLength());
+                return new GordianBlake3Digest(myLen.getByteLength());
             case STREEBOG:
                 return getStreebogDigest(myLen);
             case KUPYNA:
                 return getKupynaDigest(myLen);
             case GROESTL:
-                return new GroestlDigest(myLen.getLength());
+                return new GordianGroestlDigest(myLen.getLength());
             case JH:
-                return new JHDigest(myLen.getLength());
+                return new GordianJHDigest(myLen.getLength());
             case CUBEHASH:
-                return new CubeHashDigest(myLen.getLength());
+                return new GordianCubeHashDigest(myLen.getLength());
             case GOST:
                 return new GOST3411Digest();
             case TIGER:
@@ -200,11 +200,11 @@ public class BouncyDigestFactory
      * @param pSpec the digest spec
      * @return the digest
      */
-    static Blake2 getBlake2Digest(final GordianDigestSpec pSpec) {
+    static GordianBlake2Base getBlake2Digest(final GordianDigestSpec pSpec) {
         final int myLength = pSpec.getDigestLength().getLength();
         return pSpec.getDigestState().isBlake2bState()
-               ? new Blake2b(myLength)
-               : new Blake2s(myLength);
+               ? new GordianBlake2bDigest(myLength)
+               : new GordianBlake2sDigest(myLength);
     }
 
     /**
@@ -213,11 +213,11 @@ public class BouncyDigestFactory
      * @param pSpec the digest spec
      * @return the digest
      */
-    private static KangarooBase getKangarooDigest(final GordianDigestSpec pSpec) {
+    private static GordianKangarooBase getKangarooDigest(final GordianDigestSpec pSpec) {
         final int myLength = pSpec.getDigestLength().getByteLength();
         return GordianDigestState.STATE128.equals(pSpec.getDigestState())
-               ? new KangarooTwelve(myLength)
-               : new MarsupilamiFourteen(myLength);
+               ? new GordianKangarooTwelve(myLength)
+               : new GordianMarsupilamiFourteen(myLength);
     }
 
     /**
@@ -319,7 +319,7 @@ public class BouncyDigestFactory
      */
     private static Digest getSkeinDigest(final GordianDigestState pState,
                                          final GordianLength pLength) {
-        return new SkeinDigest(pState.getLength().getLength(), pLength.getLength());
+        return new GordianSkeinDigest(pState.getLength().getLength(), pLength.getLength());
     }
 
     /**

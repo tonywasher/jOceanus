@@ -22,7 +22,7 @@ import org.bouncycastle.crypto.Mac;
 
 /**
  * Zuc128Mac implementation.
- * Based on http://www.qtc.jp/3GPP/Specs/eea3eia3specificationv16.pdf
+ * Based on <a href="http://www.qtc.jp/3GPP/Specs/eea3eia3specificationv16.pdf">Zuc Specification</a>
  * Donated to BouncyCastle
  */
 public class GordianZuc128Mac

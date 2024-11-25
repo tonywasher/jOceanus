@@ -18,7 +18,7 @@ import java.io.ByteArrayOutputStream;
  * ISAP AEAD v2 with reference to C Reference Impl from: https://github.com/isap-lwc/isap-code-package
  * </p>
  */
-public class ISAPXEngine
+public class GordianISAPEngine
         implements AEADCipher
 {
 
@@ -30,7 +30,7 @@ public class ISAPXEngine
         ISAP_K_128
     }
 
-    public ISAPXEngine(IsapType isapType)
+    public GordianISAPEngine(IsapType isapType)
     {
         switch (isapType)
         {

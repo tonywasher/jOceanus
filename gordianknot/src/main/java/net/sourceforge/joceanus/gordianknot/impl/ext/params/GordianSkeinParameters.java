@@ -68,8 +68,7 @@ public class GordianSkeinParameters
      * A builder for {@link GordianSkeinParameters}.
      */
     public static class Builder
-            extends SkeinParameters.Builder
-    {
+            extends SkeinParameters.Builder {
         /**
          * The maximum xofLen.
          */
@@ -91,42 +90,48 @@ public class GordianSkeinParameters
         private int theLeafLen;
 
         @Override
-        public Builder set(int type, byte[] value) {
+        public Builder set(final int type,
+                           final byte[] value) {
             return (Builder) super.set(type, value);
         }
 
         @Override
-        public Builder setKey(byte[] key) {
+        public Builder setKey(final byte[] key) {
             return (Builder) super.setKey(key);
         }
 
         @Override
-        public Builder setPersonalisation(byte[] personalisation) {
+        public Builder setPersonalisation(final byte[] personalisation) {
             return (Builder) super.setPersonalisation(personalisation);
         }
 
         @Override
-        public Builder setPersonalisation(Date date, String emailAddress, String distinguisher) {
+        public Builder setPersonalisation(final Date date,
+                                          final String emailAddress,
+                                          final String distinguisher) {
             return (Builder) super.setPersonalisation(date, emailAddress, distinguisher);
         }
 
         @Override
-        public Builder setPersonalisation(Date date, Locale dateLocale, String emailAddress, String distinguisher) {
+        public Builder setPersonalisation(final Date date,
+                                          final Locale dateLocale,
+                                          final String emailAddress,
+                                          final String distinguisher) {
             return (Builder) super.setPersonalisation(date, dateLocale, emailAddress, distinguisher);
         }
 
         @Override
-        public Builder setPublicKey(byte[] publicKey) {
+        public Builder setPublicKey(final byte[] publicKey) {
             return (Builder) super.setPublicKey(publicKey);
         }
 
         @Override
-        public Builder setKeyIdentifier(byte[] keyId) {
+        public Builder setKeyIdentifier(final byte[] keyId) {
             return (Builder) super.setKeyIdentifier(keyId);
         }
 
         @Override
-        public Builder setNonce(byte[] nonce) {
+        public Builder setNonce(final byte[] nonce) {
             return (Builder) super.setNonce(nonce);
         }
 
@@ -157,6 +162,7 @@ public class GordianSkeinParameters
         }
 
         @Override
+        @SuppressWarnings("unchecked")
         public GordianSkeinParameters build() {
             /* Build base parameters */
             final SkeinParameters myBaseParms = super.build();
@@ -166,9 +172,8 @@ public class GordianSkeinParameters
             final Hashtable<Integer, Object> myBaseStore = (Hashtable<Integer, Object>) myBaseParms.getParameters();
             final Hashtable<Integer, Object> myStore = (Hashtable<Integer, Object>) myParams.getParameters();
             final Enumeration<Integer> keys = myBaseStore.keys();
-            while (keys.hasMoreElements())
-            {
-                Integer key = keys.nextElement();
+            while (keys.hasMoreElements()) {
+                final Integer key = keys.nextElement();
                 myStore.put(key, myBaseStore.get(key));
             }
 

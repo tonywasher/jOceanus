@@ -144,7 +144,7 @@ public class GordianBlake2Xof
             return myBase;
         }
         final long myLen = theXofLen == 0 ? theUnderlying.getDigestSize() : theXofLen;
-        return myBase + "-" + (myLen * 8);
+        return myBase + "-" + (myLen * Byte.SIZE);
     }
 
     @Override

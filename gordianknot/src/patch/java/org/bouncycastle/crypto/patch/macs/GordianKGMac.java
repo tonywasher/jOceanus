@@ -7,7 +7,7 @@ import org.bouncycastle.crypto.Mac;
 import org.bouncycastle.crypto.params.AEADParameters;
 import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.crypto.params.ParametersWithIV;
-import org.bouncycastle.crypto.patch.modes.KGCMXBlockCipher;
+import org.bouncycastle.crypto.patch.modes.GordianKGCMBlockCipher;
 
 /**
  * The GMAC specialisation of Galois/Counter mode (GCM) detailed in NIST Special Publication 800-38D
@@ -16,9 +16,9 @@ import org.bouncycastle.crypto.patch.modes.KGCMXBlockCipher;
  * KGMac is an invocation of the KGCM mode where no data is encrypted (i.e. all input data to the
  * Mac is processed as additional authenticated data with the underlying KGCM block cipher).
  */
-public class KXGMac
+public class GordianKGMac
         implements Mac {
-    private final KGCMXBlockCipher cipher;
+    private final GordianKGCMBlockCipher cipher;
     private final int macSizeBits;
 
     /**
@@ -28,7 +28,7 @@ public class KXGMac
      *
      * @param cipher the cipher to be used in GCM mode to generate the MAC.
      */
-    public KXGMac(final KGCMXBlockCipher cipher) {
+    public GordianKGMac(final GordianKGCMBlockCipher cipher) {
         // use of this confused flow analyser in some earlier JDKs
         this.cipher = cipher;
         this.macSizeBits = cipher.getUnderlyingCipher().getBlockSize() * 8;
@@ -42,8 +42,8 @@ public class KXGMac
      * applications.
      * @param cipher the cipher to be used in GCM mode to generate the MAC.
      */
-    public KXGMac(final KGCMXBlockCipher cipher,
-                  final int macSizeBits) {
+    public GordianKGMac(final GordianKGCMBlockCipher cipher,
+                        final int macSizeBits) {
         this.cipher = cipher;
         this.macSizeBits = macSizeBits;
     }

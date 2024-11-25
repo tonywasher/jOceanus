@@ -31,6 +31,7 @@ import org.bouncycastle.util.Pack;
 
 /**
  * ChaCha20Poly1305 Engine.
+ * Donated to BouncyCastle.
  */
 public class GordianChaChaPoly1305
         implements AEADCipher {

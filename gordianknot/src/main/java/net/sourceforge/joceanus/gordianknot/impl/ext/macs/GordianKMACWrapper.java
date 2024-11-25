@@ -57,7 +57,7 @@ public class GordianKMACWrapper
         CipherParameters myParams = pParams;
         byte[] myPersonal = null;
         if (myParams instanceof GordianKeccakParameters) {
-            GordianKeccakParameters myKeccakParams = (GordianKeccakParameters) myParams;
+            final GordianKeccakParameters myKeccakParams = (GordianKeccakParameters) myParams;
             myParams = new KeyParameter(myKeccakParams.getKey());
             myPersonal = myKeccakParams.getPersonalisation();
         }

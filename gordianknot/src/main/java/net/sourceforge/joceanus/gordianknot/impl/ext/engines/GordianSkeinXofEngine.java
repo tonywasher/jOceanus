@@ -16,13 +16,13 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.ext.engines;
 
+import net.sourceforge.joceanus.gordianknot.impl.ext.digests.GordianSkeinBase;
+import net.sourceforge.joceanus.gordianknot.impl.ext.digests.GordianSkeinXof;
+import net.sourceforge.joceanus.gordianknot.impl.ext.params.GordianSkeinParameters.Builder;
 import org.bouncycastle.crypto.CipherParameters;
 import org.bouncycastle.crypto.DataLengthException;
 import org.bouncycastle.crypto.OutputLengthException;
 import org.bouncycastle.crypto.StreamCipher;
-import org.bouncycastle.crypto.ext.digests.SkeinBase;
-import org.bouncycastle.crypto.ext.digests.SkeinXof;
-import org.bouncycastle.crypto.ext.params.SkeinXParameters.Builder;
 import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.crypto.params.ParametersWithIV;
 import org.bouncycastle.util.Memoable;
@@ -45,20 +45,20 @@ public class GordianSkeinXofEngine
     /**
      * Underlying digest.
      */
-    private final SkeinXof theSkeinXof;
+    private final GordianSkeinXof theSkeinXof;
 
     /**
      * Reset state.
      */
-    private SkeinXof theResetState;
+    private GordianSkeinXof theResetState;
 
     /**
      * Constructor.
      * @param pLength the underlying stateLength
      */
     public GordianSkeinXofEngine(final int pLength) {
-        final SkeinBase myBase = new SkeinBase(pLength, pLength);
-        theSkeinXof = new SkeinXof(myBase);
+        final GordianSkeinBase myBase = new GordianSkeinBase(pLength, pLength);
+        theSkeinXof = new GordianSkeinXof(myBase);
         theKeyStream = new byte[myBase.getBlockSize()];
     }
 
@@ -67,7 +67,7 @@ public class GordianSkeinXofEngine
      * @param pSource the source engine
      */
     private GordianSkeinXofEngine(final GordianSkeinXofEngine pSource) {
-        theSkeinXof = new SkeinXof(pSource.theSkeinXof);
+        theSkeinXof = new GordianSkeinXof(pSource.theSkeinXof);
         theKeyStream = new byte[theSkeinXof.getByteLength()];
         reset(pSource);
     }

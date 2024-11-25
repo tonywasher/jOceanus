@@ -16,7 +16,7 @@ import java.util.Arrays;
  * Reference C implementation: https://github.com/TimBeyne/Elephant
  * Specification: https://csrc.nist.gov/CSRC/media/Projects/lightweight-cryptography/documents/finalist-round/updated-spec-doc/elephant-spec-final.pdf
  */
-public class ElephantXEngine
+public class GordianElephantEngine
         implements AEADCipher {
     public enum ElephantParameters {
         elephant160,
@@ -93,7 +93,7 @@ public class ElephantXEngine
 
     private final int[] KeccakRhoOffsets = {0, 1, 6, 4, 3, 4, 4, 6, 7, 4, 3, 2, 3, 1, 7, 1, 5, 7, 5, 0, 2, 2, 5, 0, 6};
 
-    public ElephantXEngine(ElephantParameters parameters) {
+    public GordianElephantEngine(ElephantParameters parameters) {
 
         switch (parameters) {
             case elephant160:

@@ -11,7 +11,7 @@ import org.bouncycastle.util.Arrays;
 /**
  * Implementation of DSTU7624 MAC mode
  */
-public class DSTUX7624Mac
+public class GordianDSTU7624Mac
         implements Mac {
     private final static int BITS_IN_BYTE = 8;
 
@@ -24,8 +24,8 @@ public class DSTUX7624Mac
 
     private byte[] c, cTemp, kDelta;
 
-    public DSTUX7624Mac(int blockBitLength,
-                        int q) {
+    public GordianDSTU7624Mac(int blockBitLength,
+                              int q) {
         this.engine = new DSTU7624Engine(blockBitLength);
         this.blockSize = blockBitLength / BITS_IN_BYTE;
         this.macSize = q / BITS_IN_BYTE;

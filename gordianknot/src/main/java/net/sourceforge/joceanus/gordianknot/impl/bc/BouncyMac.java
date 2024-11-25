@@ -16,18 +16,17 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.bc;
 
-import org.bouncycastle.crypto.CipherParameters;
-import org.bouncycastle.crypto.Mac;
-import org.bouncycastle.crypto.ext.params.Blake2Parameters;
-import org.bouncycastle.crypto.ext.params.SkeinXParameters;
-import org.bouncycastle.crypto.params.KeyParameter;
-import org.bouncycastle.crypto.params.ParametersWithIV;
-
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacParameters;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacSpec;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacType;
 import net.sourceforge.joceanus.gordianknot.impl.core.mac.GordianCoreMac;
+import net.sourceforge.joceanus.gordianknot.impl.ext.params.GordianBlake2Parameters;
+import net.sourceforge.joceanus.gordianknot.impl.ext.params.GordianSkeinParameters;
 import net.sourceforge.joceanus.oceanus.OceanusException;
+import org.bouncycastle.crypto.CipherParameters;
+import org.bouncycastle.crypto.Mac;
+import org.bouncycastle.crypto.params.KeyParameter;
+import org.bouncycastle.crypto.params.ParametersWithIV;
 
 /**
  * Wrapper for BouncyCastle MAC.
@@ -83,7 +82,7 @@ public class BouncyMac
                                              final byte[] pIV) {
         /* Handle Skein Parameters */
         if (GordianMacType.SKEIN.equals(getMacSpec().getMacType())) {
-            final SkeinXParameters.Builder myBuilder = new SkeinXParameters.Builder();
+            final GordianSkeinParameters.Builder myBuilder = new GordianSkeinParameters.Builder();
             myBuilder.setKey(pKey.getKey());
             if (pIV != null) {
                 myBuilder.setNonce(pIV);
@@ -93,7 +92,7 @@ public class BouncyMac
 
         /* Handle Blake Parameters */
         if (GordianMacType.BLAKE2.equals(getMacSpec().getMacType())) {
-            final Blake2Parameters.Builder myBuilder = new Blake2Parameters.Builder();
+            final GordianBlake2Parameters.Builder myBuilder = new GordianBlake2Parameters.Builder();
             myBuilder.setKey(pKey.getKey());
             if (pIV != null) {
                 myBuilder.setSalt(pIV);

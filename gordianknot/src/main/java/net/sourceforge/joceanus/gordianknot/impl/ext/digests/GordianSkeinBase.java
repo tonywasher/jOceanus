@@ -47,8 +47,7 @@ import java.util.Vector;
  * @see GordianSkeinParameters
  */
 public class GordianSkeinBase
-        implements Memoable
-{
+        implements Memoable {
     /**
      * 256 bit block size - Skein 256
      */
@@ -63,12 +62,10 @@ public class GordianSkeinBase
     public static final int SKEIN_1024 = ThreefishEngine.BLOCKSIZE_1024;
 
     // Minimal at present, but more complex when tree hashing is implemented
-    static class Configuration
-    {
+    static class Configuration {
         byte[] bytes = new byte[32];
 
-        public Configuration(long outputSizeBits)
-        {
+        public Configuration(final long outputSizeBits) {
             // 0..3 = ASCII SHA3
             bytes[0] = (byte)'S';
             bytes[1] = (byte)'H';
@@ -83,34 +80,27 @@ public class GordianSkeinBase
             Pack.longToLittleEndian(outputSizeBits, bytes, 8);
         }
 
-        public byte[] getBytes()
-        {
+        public byte[] getBytes() {
             return bytes;
         }
-
     }
 
-    public static class Parameter
-    {
+    public static class Parameter {
         private int type;
         private byte[] value;
 
-        public Parameter(int type, byte[] value)
-        {
+        public Parameter(final int type, final byte[] value) {
             this.type = type;
             this.value = value;
         }
 
-        public int getType()
-        {
+        public int getType() {
             return type;
         }
 
-        public byte[] getValue()
-        {
+        public byte[] getValue() {
             return value;
         }
-
     }
 
     /**
@@ -137,7 +127,7 @@ public class GordianSkeinBase
      * Precalculated UBI(CFG) states for common state/output combinations without key or other
      * pre-message params.
      */
-    private static final Hashtable INITIAL_STATES = new Hashtable();
+    private static final Hashtable<Integer, long[]> INITIAL_STATES = new Hashtable<>();
 
     static
     {
@@ -217,18 +207,15 @@ public class GordianSkeinBase
                 0xae18a40b660fcc33L});
     }
 
-    private static void initialState(int blockSize, int outputSize, long[] state)
-    {
+    private static void initialState(final int blockSize, final int outputSize, final long[] state) {
         INITIAL_STATES.put(variantIdentifier(blockSize / 8, outputSize / 8), state);
     }
 
-    private static Integer variantIdentifier(int blockSizeBytes, int outputSizeBytes)
-    {
+    private static Integer variantIdentifier(final int blockSizeBytes, final int outputSizeBytes) {
         return Integers.valueOf((outputSizeBytes << 16) | blockSizeBytes);
     }
 
-    private static class UbiTweak
-    {
+    private static class UbiTweak {
         /**
          * Point at which position might overflow long, so switch to add with carry logic
          */
@@ -254,38 +241,32 @@ public class GordianSkeinBase
          */
         private boolean extendedPosition;
 
-        public UbiTweak()
-        {
+        public UbiTweak() {
             reset();
         }
 
-        public void reset(UbiTweak tweak)
-        {
+        public void reset(final UbiTweak tweak) {
             this.tweak = Arrays.clone(tweak.tweak, this.tweak);
             this.extendedPosition = tweak.extendedPosition;
         }
 
-        public void reset()
-        {
+        public void reset() {
             tweak[0] = 0;
             tweak[1] = 0;
             extendedPosition = false;
             setFirst(true);
         }
 
-        public void setType(int type)
-        {
+        public void setType(final int type) {
             // Bits 120..125 = type
             tweak[1] = (tweak[1] & 0xFFFFFFC000000000L) | ((type & 0x3FL) << 56);
         }
 
-        public int getType()
-        {
+        public int getType() {
             return (int)((tweak[1] >>> 56) & 0x3FL);
         }
 
-        public void setTreeLocation(int level, int hiOffset, long loOffset)
-        {
+        public void setTreeLocation(final int level, final int hiOffset, final long loOffset) {
             // Bits 112..119 = level
             tweak[1] = (tweak[1] & 0xFF00FFC000000000L) | ((level & 0xFFL) << 48);
 
@@ -297,87 +278,68 @@ public class GordianSkeinBase
             extendedPosition = loOffset < 0 || loOffset > LOW_RANGE || hiOffset != 0;
         }
 
-        public int getLevel()
-        {
+        public int getLevel() {
             return (int)((tweak[1] >>> 48) & 0xFFL);
         }
 
-        public void setFirst(boolean first)
-        {
-            if (first)
-            {
+        public void setFirst(final boolean first) {
+            if (first) {
                 tweak[1] |= T1_FIRST;
-            }
-            else
-            {
+            } else {
                 tweak[1] &= ~T1_FIRST;
             }
         }
 
-        public boolean isFirst()
-        {
+        public boolean isFirst() {
             return ((tweak[1] & T1_FIRST) != 0);
         }
 
-        public void setFinal(boolean last)
-        {
-            if (last)
-            {
+        public void setFinal(final boolean last) {
+            if (last) {
                 tweak[1] |= T1_FINAL;
-            }
-            else
-            {
+            } else {
                 tweak[1] &= ~T1_FINAL;
             }
         }
 
-        public boolean isFinal()
-        {
+        public boolean isFinal() {
             return ((tweak[1] & T1_FINAL) != 0);
         }
 
         /**
          * Advances the position in the tweak by the specified value.
          */
-        public void advancePosition(int advance)
-        {
+        public void advancePosition(final int advance) {
             // Bits 0..95 = position
-            if (extendedPosition)
-            {
+            if (extendedPosition) {
                 long[] parts = new long[3];
                 parts[0] = tweak[0] & 0xFFFFFFFFL;
                 parts[1] = (tweak[0] >>> 32) & 0xFFFFFFFFL;
                 parts[2] = tweak[1] & 0xFFFFFFFFL;
 
                 long carry = advance;
-                for (int i = 0; i < parts.length; i++)
-                {
+                for (int i = 0; i < parts.length; i++) {
                     carry += parts[i];
                     parts[i] = carry;
                     carry >>>= 32;
                 }
                 tweak[0] = ((parts[1] & 0xFFFFFFFFL) << 32) | (parts[0] & 0xFFFFFFFFL);
                 tweak[1] = (tweak[1] & 0xFFFFFFFF00000000L) | (parts[2] & 0xFFFFFFFFL);
-            }
-            else
-            {
+            } else {
                 long position = tweak[0];
                 position += advance;
                 tweak[0] = position;
-                if (position > LOW_RANGE)
-                {
+                if (position > LOW_RANGE) {
                     extendedPosition = true;
                 }
             }
         }
 
-        public long[] getWords()
-        {
+        public long[] getWords() {
             return tweak;
         }
 
-        public String toString()
-        {
+        public String toString() {
             return getType() + " first: " + isFirst() + ", final: " + isFinal();
         }
 
@@ -387,8 +349,7 @@ public class GordianSkeinBase
      * The Unique Block Iteration chaining mode.
      */
     // TODO: This might be better as methods...
-    private class UBI
-    {
+    private class UBI {
         private final UbiTweak tweak = new UbiTweak();
 
         /**
@@ -406,8 +367,7 @@ public class GordianSkeinBase
          */
         private long[] message;
 
-        public UBI(int blockSize)
-        {
+        public UBI(final int blockSize) {
             currentBlock = new byte[blockSize];
             message = new long[currentBlock.length / 8];
         }
@@ -420,15 +380,13 @@ public class GordianSkeinBase
             tweak.reset(ubi.tweak);
         }
 
-        public void reset(int type)
-        {
+        public void reset(final int type) {
             tweak.reset();
             tweak.setType(type);
             currentOffset = 0;
         }
 
-        public void setTreeLocation(int level, long offSet, int pShift)
-        {
+        public void setTreeLocation(final int level, final long offSet, final int pShift) {
             int shift = getBlockSize() << 3;
             shift += pShift; //level == 0 ? leafLen : fanOut;
             int hiOffset = (int) offSet >>> 64 - shift;
@@ -436,17 +394,14 @@ public class GordianSkeinBase
             tweak.setTreeLocation(level, hiOffset, loOffset);
         }
 
-        public void update(byte[] value, int offset, int len, long[] output)
-        {
+        public void update(final byte[] value, final int offset, final int len, final long[] output) {
             /*
              * Buffer complete blocks for the underlying Threefish cipher, only flushing when there
              * are subsequent bytes (last block must be processed in doFinal() with final=true set).
              */
             int copied = 0;
-            while (len > copied)
-            {
-                if (currentOffset == currentBlock.length)
-                {
+            while (len > copied) {
+                if (currentOffset == currentBlock.length) {
                     processBlock(output);
                     tweak.setFirst(false);
                     currentOffset = 0;
@@ -460,18 +415,15 @@ public class GordianSkeinBase
             }
         }
 
-        private void processBlock(long[] output)
-        {
+        private void processBlock(final long[] output) {
             threefish.init(true, chain, tweak.getWords());
-            for (int i = 0; i < message.length; i++)
-            {
+            for (int i = 0; i < message.length; i++) {
                 message[i] = Pack.littleEndianToLong(currentBlock, i * 8);
             }
 
             threefish.processBlock(message, output);
 
-            for (int i = 0; i < output.length; i++)
-            {
+            for (int i = 0; i < output.length; i++) {
                 output[i] ^= message[i];
             }
         }
@@ -479,15 +431,13 @@ public class GordianSkeinBase
         public void doFinal(long[] output)
         {
             // Pad remainder of current block with zeroes
-            for (int i = currentOffset; i < currentBlock.length; i++)
-            {
+            for (int i = currentOffset; i < currentBlock.length; i++) {
                 currentBlock[i] = 0;
             }
 
             tweak.setFinal(true);
             processBlock(output);
         }
-
     }
 
     /**
@@ -548,10 +498,8 @@ public class GordianSkeinBase
      * @param outputSizeBits the output/digest size to produce in bits, which must be an integral number of
      *                       bytes.
      */
-    public GordianSkeinBase(int blockSizeBits, int outputSizeBits)
-    {
-        if (outputSizeBits % 8 != 0)
-        {
+    public GordianSkeinBase(int blockSizeBits, int outputSizeBits) {
+        if (outputSizeBits % 8 != 0) {
             throw new IllegalArgumentException("Output size must be a multiple of 8 bits. :" + outputSizeBits);
         }
         // TODO: Prevent digest sizes > block size?
@@ -565,14 +513,12 @@ public class GordianSkeinBase
      * Creates a SkeinEngine as an exact copy of an existing instance.
      * @param engine the base engine
      */
-    public GordianSkeinBase(GordianSkeinBase engine)
-    {
+    public GordianSkeinBase(final GordianSkeinBase engine) {
         this(engine.getBlockSize() * 8, engine.getOutputSize() * 8);
         copyIn(engine);
     }
 
-    private void copyIn(GordianSkeinBase engine)
-    {
+    private void copyIn(final GordianSkeinBase engine) {
         this.ubi.reset(engine.ubi);
         this.chain = Arrays.clone(engine.chain, this.chain);
         this.initialState = Arrays.clone(engine.initialState, this.initialState);
@@ -581,42 +527,34 @@ public class GordianSkeinBase
         this.postMessageParameters = clone(engine.postMessageParameters, this.postMessageParameters);
     }
 
-    private static Parameter[] clone(Parameter[] data, Parameter[] existing)
-    {
-        if (data == null)
-        {
+    private static Parameter[] clone(final Parameter[] data, Parameter[] existing)    {
+        if (data == null) {
             return null;
         }
-        if ((existing == null) || (existing.length != data.length))
-        {
+        if ((existing == null) || (existing.length != data.length)) {
             existing = new Parameter[data.length];
         }
         System.arraycopy(data, 0, existing, 0, existing.length);
         return existing;
     }
 
-    public Memoable copy()
-    {
+    public Memoable copy() {
         return new GordianSkeinBase(this);
     }
 
-    public void reset(Memoable other)
-    {
+    public void reset(final Memoable other) {
         GordianSkeinBase s = (GordianSkeinBase)other;
-        if ((getBlockSize() != s.getBlockSize()) || (outputSizeBytes != s.outputSizeBytes))
-        {
+        if ((getBlockSize() != s.getBlockSize()) || (outputSizeBytes != s.outputSizeBytes)) {
             throw new IllegalArgumentException("Incompatible parameters in provided SkeinEngine.");
         }
         copyIn(s);
     }
 
-    public int getOutputSize()
-    {
+    public int getOutputSize() {
         return outputSizeBytes;
     }
 
-    public int getBlockSize()
-    {
+    public int getBlockSize() {
         return threefish.getBlockSize();
     }
 
@@ -634,21 +572,20 @@ public class GordianSkeinBase
      *
      * @param params the parameters to apply to this engine, or <code>null</code> to use no parameters.
      */
-    public void init(GordianSkeinParameters params)
+    @SuppressWarnings("unchecked")
+    public void init(final GordianSkeinParameters params)
     {
         this.chain = null;
         this.key = null;
         this.preMessageParameters = null;
         this.postMessageParameters = null;
 
-        if (params != null)
-        {
+        if (params != null) {
             byte[] key = params.getKey();
-            if (key != null && key.length < 16)
-            {
+            if (key != null && key.length < 16) {
                 throw new IllegalArgumentException("Skein key must be at least 128 bits.");
             }
-            initParams(params.getParameters());
+            initParams((Hashtable<Integer, byte[]>) params.getParameters());
         }
         createInitialState();
 
@@ -656,28 +593,22 @@ public class GordianSkeinBase
         ubiInit(PARAM_TYPE_MESSAGE);
     }
 
-    private void initParams(Hashtable parameters)
+    private void initParams(final Hashtable<Integer, byte[]> parameters)
     {
-        Enumeration keys = parameters.keys();
-        final Vector pre = new Vector();
-        final Vector post = new Vector();
+        Enumeration<Integer> keys = parameters.keys();
+        final Vector<Parameter> pre = new Vector<>();
+        final Vector<Parameter> post = new Vector<>();
 
-        while (keys.hasMoreElements())
-        {
-            Integer type = (Integer)keys.nextElement();
-            byte[] value = (byte[])parameters.get(type);
+        while (keys.hasMoreElements()) {
+            Integer type = keys.nextElement();
+            byte[] value = parameters.get(type);
 
-            if (type.intValue() == PARAM_TYPE_KEY)
-            {
+            if (type == PARAM_TYPE_KEY) {
                 this.key = value;
-            }
-            else if (type.intValue() < PARAM_TYPE_MESSAGE)
-            {
-                pre.addElement(new org.bouncycastle.crypto.ext.digests.SkeinBase.Parameter(type.intValue(), value));
-            }
-            else
-            {
-                post.addElement(new Parameter(type.intValue(), value));
+            } else if (type < PARAM_TYPE_MESSAGE) {
+                pre.addElement(new Parameter(type, value));
+            } else {
+                post.addElement(new Parameter(type, value));
             }
         }
         preMessageParameters = new Parameter[pre.size()];
@@ -689,19 +620,17 @@ public class GordianSkeinBase
         sort(postMessageParameters);
     }
 
-    private static void sort(Parameter[] params)
+    private static void sort(final Parameter[] params)
     {
-        if (params == null)
-        {
+        if (params == null) {
             return;
         }
+
         // Insertion sort, for Java 1.1 compatibility
-        for (int i = 1; i < params.length; i++)
-        {
+        for (int i = 1; i < params.length; i++) {
             Parameter param = params[i];
             int hole = i;
-            while (hole > 0 && param.getType() < params[hole - 1].getType())
-            {
+            while (hole > 0 && param.getType() < params[hole - 1].getType()) {
                 params[hole] = params[hole - 1];
                 hole = hole - 1;
             }
@@ -712,23 +641,18 @@ public class GordianSkeinBase
     /**
      * Calculate the initial (pre message block) chaining state.
      */
-    private void createInitialState()
-    {
+    private void createInitialState() {
         boolean xtendedConfig = theConfig != null;
         long[] precalc = xtendedConfig ? null : (long[])INITIAL_STATES.get(variantIdentifier(getBlockSize(), getOutputSize()));
-        if ((key == null) && (precalc != null))
-        {
+        if ((key == null) && (precalc != null)) {
             // Precalculated UBI(CFG)
             chain = Arrays.clone(precalc);
-        }
-        else
-        {
+        } else {
             // Blank initial state
             chain = new long[getBlockSize() / 8];
 
             // Process key block
-            if (key != null)
-            {
+            if (key != null) {
                 ubiComplete(SkeinParameters.PARAM_TYPE_KEY, key);
             }
 
@@ -738,10 +662,8 @@ public class GordianSkeinBase
         }
 
         // Process additional pre-message parameters
-        if (preMessageParameters != null)
-        {
-            for (int i = 0; i < preMessageParameters.length; i++)
-            {
+        if (preMessageParameters != null) {
+            for (int i = 0; i < preMessageParameters.length; i++) {
                 Parameter param = preMessageParameters[i];
                 ubiComplete(param.getType(), param.getValue());
             }
@@ -753,59 +675,50 @@ public class GordianSkeinBase
      * Reset the engine to the initial state (with the key and any pre-message parameters , ready to
      * accept message input.
      */
-    public void reset()
-    {
+    public void reset() {
         System.arraycopy(initialState, 0, chain, 0, chain.length);
 
         ubiInit(PARAM_TYPE_MESSAGE);
     }
 
-    void initTreeNode(int level, long offset, int shift) {
+    void initTreeNode(final int level, final long offset, final int shift) {
         reset();
         ubi.setTreeLocation(level, offset, shift);
     }
 
-    private void ubiComplete(int type, byte[] value)
-    {
+    private void ubiComplete(final int type, final byte[] value) {
         ubiInit(type);
         this.ubi.update(value, 0, value.length, chain);
         ubiFinal();
     }
 
-    private void ubiInit(int type)
-    {
+    private void ubiInit(final int type) {
         this.ubi.reset(type);
     }
 
-    private void ubiFinal()
-    {
+    private void ubiFinal() {
         ubi.doFinal(chain);
     }
 
-    private void checkInitialised()
-    {
-        if (this.ubi == null)
-        {
+    private void checkInitialised() {
+        if (this.ubi == null) {
             throw new IllegalArgumentException("Skein engine is not initialised.");
         }
     }
 
-    public void update(byte in)
-    {
+    public void update(final byte in) {
         singleByte[0] = in;
         update(singleByte, 0, 1);
     }
 
-    public void update(byte[] in, int inOff, int len)
-    {
+    public void update(final byte[] in, final int inOff, final int len) {
         checkInitialised();
         ubi.update(in, inOff, len, chain);
     }
 
-    void calculateNode(byte[] out, int outOff) {
+    void calculateNode(final byte[] out, final int outOff) {
         checkInitialised();
-        if (out.length < (outOff + outputSizeBytes))
-        {
+        if (out.length < (outOff + outputSizeBytes)) {
             throw new OutputLengthException("Output buffer is too short to hold output");
         }
 
@@ -818,11 +731,9 @@ public class GordianSkeinBase
         }
     }
 
-    public int doFinal(byte[] out, int outOff)
-    {
+    public int doFinal(final byte[] out, final int outOff) {
         checkInitialised();
-        if (out.length < (outOff + outputSizeBytes))
-        {
+        if (out.length < (outOff + outputSizeBytes)) {
             throw new OutputLengthException("Output buffer is too short to hold output");
         }
 
@@ -832,8 +743,7 @@ public class GordianSkeinBase
         // Perform the output transform
         final int blockSize = getBlockSize();
         final int blocksRequired = ((outputSizeBytes + blockSize - 1) / blockSize);
-        for (int i = 0; i < blocksRequired; i++)
-        {
+        for (int i = 0; i < blocksRequired; i++) {
             final int toWrite = Math.min(blockSize, outputSizeBytes - (i * blockSize));
             output(i, out, outOff + (i * blockSize), toWrite);
         }
@@ -843,21 +753,17 @@ public class GordianSkeinBase
         return outputSizeBytes;
     }
 
-    void postProcessMessage()
-    {
+    void postProcessMessage() {
         // Process additional post-message parameters
-        if (postMessageParameters != null)
-        {
-            for (int i = 0; i < postMessageParameters.length; i++)
-            {
+        if (postMessageParameters != null) {
+            for (int i = 0; i < postMessageParameters.length; i++) {
                 Parameter param = postMessageParameters[i];
                 ubiComplete(param.getType(), param.getValue());
             }
         }
     }
 
-    void initiateOutput()
-    {
+    void initiateOutput() {
         // Finalise message block
         ubiFinal();
 
@@ -865,8 +771,7 @@ public class GordianSkeinBase
         postProcessMessage();
     }
 
-    void restoreForOutput(final byte[] pState)
-    {
+    void restoreForOutput(final byte[] pState) {
         /* Restore the state */
         for (int i = 0; i < chain.length; i++) {
             chain[i] = Pack.littleEndianToLong(pState, i * 8);
@@ -876,8 +781,7 @@ public class GordianSkeinBase
         initiateOutput();
     }
 
-    void output(long outputSequence, byte[] out, int outOff, int outputBytes)
-    {
+    void output(final long outputSequence, final byte[] out, final int outOff, final int outputBytes) {
         byte[] currentBytes = new byte[8];
         Pack.longToLittleEndian(outputSequence, currentBytes, 0);
 
@@ -889,15 +793,11 @@ public class GordianSkeinBase
         ubi.doFinal(outputWords);
 
         final int wordsRequired = ((outputBytes + 8 - 1) / 8);
-        for (int i = 0; i < wordsRequired; i++)
-        {
+        for (int i = 0; i < wordsRequired; i++) {
             int toWrite = Math.min(8, outputBytes - (i * 8));
-            if (toWrite == 8)
-            {
+            if (toWrite == 8) {
                 Pack.longToLittleEndian(outputWords[i], out, outOff + (i * 8));
-            }
-            else
-            {
+            } else  {
                 Pack.longToLittleEndian(outputWords[i], currentBytes, 0);
                 System.arraycopy(currentBytes, 0, out, outOff + (i * 8), toWrite);
             }
