@@ -22,6 +22,7 @@ import org.bouncycastle.util.Pack;
 /**
  * Blake2s digest.
  */
+@SuppressWarnings("checkstyle:MagicNumber")
 public class GordianBlake2sDigest
         extends GordianBlake2Base {
     /**

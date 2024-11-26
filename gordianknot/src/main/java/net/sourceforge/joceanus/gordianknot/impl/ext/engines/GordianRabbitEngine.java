@@ -31,6 +31,7 @@ import java.util.Arrays;
  * <p>
  * Based on http://www.ecrypt.eu.org/stream/e2-rabbit.html.
  */
+@SuppressWarnings("checkstyle:MagicNumber")
 public class GordianRabbitEngine
         implements StreamCipher, Memoable {
     /**

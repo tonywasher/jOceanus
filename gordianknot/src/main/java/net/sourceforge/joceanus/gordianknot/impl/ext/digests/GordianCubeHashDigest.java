@@ -24,6 +24,7 @@ import java.util.Arrays;
 /**
  * CubeHash Digest.
  */
+@SuppressWarnings("checkstyle:MagicNumber")
 public class GordianCubeHashDigest
         implements ExtendedDigest, Memoable {
     /**

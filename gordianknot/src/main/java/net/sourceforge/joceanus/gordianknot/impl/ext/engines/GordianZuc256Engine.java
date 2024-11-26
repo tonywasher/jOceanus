@@ -22,6 +22,7 @@ import org.bouncycastle.util.Memoable;
  * Zuc256Mac implementation.
  * Based on http://www.is.cas.cn/ztzl2016/zouchongzhi/201801/W020180126529970733243.pdf
  */
+@SuppressWarnings("checkstyle:MagicNumber")
 public class GordianZuc256Engine
         extends GordianZuc128Engine {
     /* the constants D */

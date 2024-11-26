@@ -28,6 +28,7 @@ import org.bouncycastle.util.Memoable;
  * Snow3GEngine implementation.
  * Based on https://www.gsma.com/aboutus/wp-content/uploads/2014/12/snow3gspec.pdf
  */
+@SuppressWarnings("checkstyle:MagicNumber")
 public class GordianSnow3GEngine
         implements StreamCipher, Memoable {
     /* Rijndael S-box SR */

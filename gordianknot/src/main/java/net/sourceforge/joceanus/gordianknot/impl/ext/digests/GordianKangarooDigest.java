@@ -433,6 +433,7 @@ public abstract class GordianKangarooDigest
     /**
      * The Kangaroo Sponge.
      */
+    @SuppressWarnings("checkstyle:MagicNumber")
     private static class GordianKangarooSponge {
         /**
          * The round constants.

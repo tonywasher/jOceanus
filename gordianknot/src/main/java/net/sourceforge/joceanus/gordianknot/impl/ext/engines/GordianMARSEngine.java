@@ -25,6 +25,7 @@ import org.bouncycastle.crypto.params.KeyParameter;
 /**
  * MARSEngine ported from the reference C implementation, found at https://embeddedsw.net/Cipher_Reference_Home.html
  */
+@SuppressWarnings("checkstyle:MagicNumber")
 public class GordianMARSEngine
         implements BlockCipher {
     /*

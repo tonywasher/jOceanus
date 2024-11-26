@@ -46,6 +46,7 @@ import java.util.Vector;
  *
  * @see GordianSkeinParameters
  */
+@SuppressWarnings("checkstyle:MagicNumber")
 public class GordianSkeinBase
         implements Memoable {
     /**

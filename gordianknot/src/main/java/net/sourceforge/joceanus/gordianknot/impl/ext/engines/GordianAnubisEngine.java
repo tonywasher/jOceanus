@@ -27,6 +27,7 @@ import org.bouncycastle.crypto.params.KeyParameter;
  * <p>
  * Directly ported from the Anubis C reference implementation found at https://embeddedsw.net/Cipher_Reference_Home.html
  */
+@SuppressWarnings("checkstyle:MagicNumber")
 public class GordianAnubisEngine
         implements BlockCipher {
     /*

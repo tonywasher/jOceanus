@@ -28,6 +28,7 @@ import java.util.Arrays;
  * 3 submission package at http://www3.ntu.edu.sg with tweaks to interface to the BouncyCastle
  * libraries
  */
+@SuppressWarnings("checkstyle:MagicNumber")
 public class GordianJHDigest
         implements ExtendedDigest, Memoable {
     /**

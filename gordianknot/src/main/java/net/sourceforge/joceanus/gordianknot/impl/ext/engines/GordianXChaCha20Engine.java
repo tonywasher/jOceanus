@@ -23,6 +23,7 @@ import org.bouncycastle.util.Pack;
 /**
  * Modelled on XSalsa20Engine.
  */
+@SuppressWarnings("checkstyle:MagicNumber")
 public class GordianXChaCha20Engine
         extends ChaChaEngine {
 

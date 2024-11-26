@@ -28,6 +28,7 @@ import java.util.Arrays;
  * groestl_opt.h/tables.h in the "NIST submission package" at http://www.groestl.info with tweaks to
  * interface to the BouncyCastle libraries
  */
+@SuppressWarnings("checkstyle:MagicNumber")
 public class GordianGroestlDigest
         implements ExtendedDigest, Memoable {
     /**

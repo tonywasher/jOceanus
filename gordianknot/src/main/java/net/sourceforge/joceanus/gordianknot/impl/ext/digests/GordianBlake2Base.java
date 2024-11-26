@@ -24,6 +24,7 @@ import org.bouncycastle.util.Memoable;
 /**
  * Blake2 Base class.
  */
+@SuppressWarnings("checkstyle:MagicNumber")
 public abstract class GordianBlake2Base
         implements ExtendedDigest, Memoable {
     /**

@@ -29,6 +29,7 @@ import org.bouncycastle.util.Memoable;
  * <p>
  * Copied from http://www.ecrypt.eu.org/stream/e2-sosemanuk.html.
  */
+@SuppressWarnings("checkstyle:MagicNumber")
 public class GordianSosemanukEngine
         implements StreamCipher, Memoable {
     /**
