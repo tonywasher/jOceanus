@@ -1,10 +1,8 @@
 package net.sourceforge.joceanus.gordianknot.junit.extensions;
 
-import java.util.Arrays;
-import java.util.stream.Stream;
-
-import org.bouncycastle.crypto.ext.digests.Blake3Digest;
-import org.bouncycastle.crypto.ext.params.Blake3Parameters;
+import net.sourceforge.joceanus.gordianknot.impl.ext.digests.GordianBlake3Digest;
+import net.sourceforge.joceanus.gordianknot.impl.ext.params.GordianBlake3Parameters;
+import net.sourceforge.joceanus.oceanus.OceanusException;
 import org.bouncycastle.util.encoders.Hex;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DynamicContainer;
@@ -12,7 +10,8 @@ import org.junit.jupiter.api.DynamicNode;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import java.util.Arrays;
+import java.util.stream.Stream;
 
 /**
  * Blake3 tests.
@@ -285,7 +284,7 @@ class Blake3Test {
      */
     private void testHash(final TestDef pTest) {
         /* Create digest */
-        final Blake3Digest myDigest = new Blake3Digest();
+        final GordianBlake3Digest myDigest = new GordianBlake3Digest();
 
         /* Try a fake update */
         myDigest.update(BLAKE3KEY, 0, BLAKE3KEY.length);
@@ -293,7 +292,7 @@ class Blake3Test {
 
         /* Save just before final and reset */
         myDigest.update(pTest.theData, 0, pTest.theLength);
-        final Blake3Digest mySave = myDigest.copy();
+        final GordianBlake3Digest mySave = myDigest.copy();
         myDigest.reset();
 
         /* restore save and perform a standard hash */
@@ -316,8 +315,8 @@ class Blake3Test {
      */
     private void testKeyed(final TestDef pTest) {
         /* Create digest */
-        final Blake3Digest myDigest = new Blake3Digest();
-        final Blake3Parameters myParams = Blake3Parameters.key(BLAKE3KEY);
+        final GordianBlake3Digest myDigest = new GordianBlake3Digest();
+        final GordianBlake3Parameters myParams = GordianBlake3Parameters.key(BLAKE3KEY);
         myDigest.init(myParams);
 
         /* Try a fake update */
@@ -326,7 +325,7 @@ class Blake3Test {
 
         /* Save just before final and reset */
         myDigest.update(pTest.theData, 0, pTest.theLength);
-        final Blake3Digest mySave = myDigest.copy();
+        final GordianBlake3Digest mySave = myDigest.copy();
         myDigest.reset();
 
         /* restore save and perform a standard hash */
@@ -349,8 +348,8 @@ class Blake3Test {
      */
     private void testDerived(final TestDef pTest) {
         /* Create digest */
-        final Blake3Digest myDigest = new Blake3Digest();
-        final Blake3Parameters myParams = Blake3Parameters.context(BLAKE3CTX);
+        final GordianBlake3Digest myDigest = new GordianBlake3Digest();
+        final GordianBlake3Parameters myParams = GordianBlake3Parameters.context(BLAKE3CTX);
         myDigest.init(myParams);
 
         /* Try a fake update */
@@ -359,7 +358,7 @@ class Blake3Test {
 
         /* Save just before final and reset */
         myDigest.update(pTest.theData, 0, pTest.theLength);
-        final Blake3Digest mySave = myDigest.copy();
+        final GordianBlake3Digest mySave = myDigest.copy();
         myDigest.reset();
 
         /* restore save and perform a standard hash */
@@ -381,10 +380,10 @@ class Blake3Test {
      * @param pDigest the digest
      * @param pBuffer the buffer
      */
-    private static void checkMultiOutput(final Blake3Digest pDigest,
+    private static void checkMultiOutput(final GordianBlake3Digest pDigest,
                                          final byte[] pBuffer) {
         /* Take a copy of the state */
-        final Blake3Digest mySave = pDigest.copy();
+        final GordianBlake3Digest mySave = pDigest.copy();
 
         /* Create alternative buffer */
         final int myLen = pBuffer.length;
@@ -403,7 +402,7 @@ class Blake3Test {
             /* Around halfway through */
             if (i == PARTBREAK) {
                 /* Check save and reset in the middle of output */
-                final Blake3Digest myTemp  = pDigest.copy();
+                final GordianBlake3Digest myTemp  = pDigest.copy();
                 pDigest.reset();
                 pDigest.reset(myTemp);
             }

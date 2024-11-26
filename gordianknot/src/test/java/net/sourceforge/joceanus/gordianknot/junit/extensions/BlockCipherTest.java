@@ -16,16 +16,15 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.junit.extensions;
 
-import java.util.stream.Stream;
-
+import net.sourceforge.joceanus.gordianknot.impl.ext.engines.GordianAnubisEngine;
+import net.sourceforge.joceanus.gordianknot.impl.ext.engines.GordianLeaEngine;
+import net.sourceforge.joceanus.gordianknot.impl.ext.engines.GordianMARSEngine;
+import net.sourceforge.joceanus.gordianknot.impl.ext.engines.GordianSimonEngine;
+import net.sourceforge.joceanus.gordianknot.impl.ext.engines.GordianSpeckEngine;
+import net.sourceforge.joceanus.gordianknot.impl.ext.modes.GordianGCMSIVBlockCipher;
+import net.sourceforge.joceanus.oceanus.OceanusException;
 import org.bouncycastle.crypto.BlockCipher;
 import org.bouncycastle.crypto.InvalidCipherTextException;
-import org.bouncycastle.crypto.ext.engines.AnubisEngine;
-import org.bouncycastle.crypto.ext.engines.LeaEngine;
-import org.bouncycastle.crypto.ext.engines.MARSEngine;
-import org.bouncycastle.crypto.ext.engines.SimonEngine;
-import org.bouncycastle.crypto.ext.engines.SpeckEngine;
-import org.bouncycastle.crypto.ext.modes.GCMSIVBlockCipher;
 import org.bouncycastle.crypto.params.AEADParameters;
 import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.util.encoders.Hex;
@@ -35,7 +34,7 @@ import org.junit.jupiter.api.DynamicNode;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import java.util.stream.Stream;
 
 /**
  * BlockCipher Tests.
@@ -160,7 +159,7 @@ class BlockCipherTest {
          * @throws OceanusException on error
          */
         void testTheCipher() throws OceanusException {
-            testCipher(new AnubisEngine(), KEY128, TESTDATA, EXPECTED);
+            testCipher(new GordianAnubisEngine(), KEY128, TESTDATA, EXPECTED);
         }
     }
 
@@ -179,7 +178,7 @@ class BlockCipherTest {
          * @throws OceanusException on error
          */
         void testTheCipher() throws OceanusException {
-            testCipher(new AnubisEngine(), KEY192, TESTDATA, EXPECTED);
+            testCipher(new GordianAnubisEngine(), KEY192, TESTDATA, EXPECTED);
         }
     }
 
@@ -198,7 +197,7 @@ class BlockCipherTest {
          * @throws OceanusException on error
          */
         void testTheCipher() throws OceanusException {
-            testCipher(new AnubisEngine(), KEY256, TESTDATA, EXPECTED);
+            testCipher(new GordianAnubisEngine(), KEY256, TESTDATA, EXPECTED);
         }
     }
 
@@ -217,7 +216,7 @@ class BlockCipherTest {
          * @throws OceanusException on error
          */
         void testTheCipher() throws OceanusException {
-            testCipher(new MARSEngine(), KEY128, TESTDATA, EXPECTED);
+            testCipher(new GordianMARSEngine(), KEY128, TESTDATA, EXPECTED);
         }
     }
 
@@ -236,7 +235,7 @@ class BlockCipherTest {
          * @throws OceanusException on error
          */
         void testTheCipher() throws OceanusException {
-            testCipher(new MARSEngine(), KEY192, TESTDATA, EXPECTED);
+            testCipher(new GordianMARSEngine(), KEY192, TESTDATA, EXPECTED);
         }
     }
 
@@ -255,7 +254,7 @@ class BlockCipherTest {
          * @throws OceanusException on error
          */
         void testTheCipher() throws OceanusException {
-            testCipher(new MARSEngine(), KEY256, TESTDATA, EXPECTED);
+            testCipher(new GordianMARSEngine(), KEY256, TESTDATA, EXPECTED);
         }
     }
 
@@ -275,7 +274,7 @@ class BlockCipherTest {
          * @throws OceanusException on error
          */
         void testTheCipher() throws OceanusException {
-            testCipher(new LeaEngine(), KEY, TESTDATA, EXPECTED);
+            testCipher(new GordianLeaEngine(), KEY, TESTDATA, EXPECTED);
         }
     }
 
@@ -295,7 +294,7 @@ class BlockCipherTest {
          * @throws OceanusException on error
          */
         void testTheCipher() throws OceanusException {
-            testCipher(new LeaEngine(), KEY, TESTDATA, EXPECTED);
+            testCipher(new GordianLeaEngine(), KEY, TESTDATA, EXPECTED);
         }
     }
 
@@ -315,7 +314,7 @@ class BlockCipherTest {
          * @throws OceanusException on error
          */
         void testTheCipher() throws OceanusException {
-            testCipher(new LeaEngine(), KEY, TESTDATA, EXPECTED);
+            testCipher(new GordianLeaEngine(), KEY, TESTDATA, EXPECTED);
         }
     }
 
@@ -335,7 +334,7 @@ class BlockCipherTest {
          * @throws OceanusException on error
          */
         void testTheCipher() throws OceanusException {
-            testCipher(new SpeckEngine(), KEY, TESTDATA, EXPECTED);
+            testCipher(new GordianSpeckEngine(), KEY, TESTDATA, EXPECTED);
         }
     }
 
@@ -355,7 +354,7 @@ class BlockCipherTest {
          * @throws OceanusException on error
          */
         void testTheCipher() throws OceanusException {
-            testCipher(new SpeckEngine(), KEY, TESTDATA, EXPECTED);
+            testCipher(new GordianSpeckEngine(), KEY, TESTDATA, EXPECTED);
         }
     }
 
@@ -375,7 +374,7 @@ class BlockCipherTest {
          * @throws OceanusException on error
          */
         void testTheCipher() throws OceanusException {
-            testCipher(new SpeckEngine(), KEY, TESTDATA, EXPECTED);
+            testCipher(new GordianSpeckEngine(), KEY, TESTDATA, EXPECTED);
         }
     }
 
@@ -395,7 +394,7 @@ class BlockCipherTest {
          * @throws OceanusException on error
          */
         void testTheCipher() throws OceanusException {
-            testCipher(new SimonEngine(), KEY, TESTDATA, EXPECTED);
+            testCipher(new GordianSimonEngine(), KEY, TESTDATA, EXPECTED);
         }
     }
 
@@ -415,7 +414,7 @@ class BlockCipherTest {
          * @throws OceanusException on error
          */
         void testTheCipher() throws OceanusException {
-            testCipher(new SimonEngine(), KEY, TESTDATA, EXPECTED);
+            testCipher(new GordianSimonEngine(), KEY, TESTDATA, EXPECTED);
         }
     }
 
@@ -435,7 +434,7 @@ class BlockCipherTest {
          * @throws OceanusException on error
          */
         void testTheCipher() throws OceanusException {
-            testCipher(new SimonEngine(), KEY, TESTDATA, EXPECTED);
+            testCipher(new GordianSimonEngine(), KEY, TESTDATA, EXPECTED);
         }
     }
 
@@ -471,13 +470,13 @@ class BlockCipherTest {
          * @throws OceanusException on error
          */
         void testTheCipher() throws OceanusException {
-            testSIVCipher(new GCMSIVBlockCipher(), KEY_1, NONCE_1, EMPTY, EMPTY, EXPECTED_1);
-            testSIVCipher(new GCMSIVBlockCipher(), KEY_1, NONCE_1, EMPTY, DATA_8, EXPECTED_2);
-            testSIVCipher(new GCMSIVBlockCipher(), KEY_1, NONCE_1, EMPTY, DATA_12, EXPECTED_3);
-            testSIVCipher(new GCMSIVBlockCipher(), KEY_1, NONCE_1, EMPTY, DATA_16, EXPECTED_4);
-            testSIVCipher(new GCMSIVBlockCipher(), KEY_1, NONCE_1, EMPTY, DATA_32, EXPECTED_5);
-            testSIVCipher(new GCMSIVBlockCipher(), KEY_1, NONCE_1, EMPTY, DATA_48, EXPECTED_6);
-            testSIVCipher(new GCMSIVBlockCipher(), KEY_1, NONCE_1, EMPTY, DATA_64, EXPECTED_7);
+            testSIVCipher(new GordianGCMSIVBlockCipher(), KEY_1, NONCE_1, EMPTY, EMPTY, EXPECTED_1);
+            testSIVCipher(new GordianGCMSIVBlockCipher(), KEY_1, NONCE_1, EMPTY, DATA_8, EXPECTED_2);
+            testSIVCipher(new GordianGCMSIVBlockCipher(), KEY_1, NONCE_1, EMPTY, DATA_12, EXPECTED_3);
+            testSIVCipher(new GordianGCMSIVBlockCipher(), KEY_1, NONCE_1, EMPTY, DATA_16, EXPECTED_4);
+            testSIVCipher(new GordianGCMSIVBlockCipher(), KEY_1, NONCE_1, EMPTY, DATA_32, EXPECTED_5);
+            testSIVCipher(new GordianGCMSIVBlockCipher(), KEY_1, NONCE_1, EMPTY, DATA_48, EXPECTED_6);
+            testSIVCipher(new GordianGCMSIVBlockCipher(), KEY_1, NONCE_1, EMPTY, DATA_64, EXPECTED_7);
         }
     }
 
@@ -523,15 +522,15 @@ class BlockCipherTest {
          * @throws OceanusException on error
          */
         void testTheCipher() throws OceanusException {
-            testSIVCipher(new GCMSIVBlockCipher(), KEY_1, NONCE_1, AEAD_1, DATA_8, EXPECTED_1);
-            testSIVCipher(new GCMSIVBlockCipher(), KEY_1, NONCE_1, AEAD_1, DATA_12, EXPECTED_2);
-            testSIVCipher(new GCMSIVBlockCipher(), KEY_1, NONCE_1, AEAD_1, DATA_16, EXPECTED_3);
-            testSIVCipher(new GCMSIVBlockCipher(), KEY_1, NONCE_1, AEAD_1, DATA_32, EXPECTED_4);
-            testSIVCipher(new GCMSIVBlockCipher(), KEY_1, NONCE_1, AEAD_1, DATA_48, EXPECTED_5);
-            testSIVCipher(new GCMSIVBlockCipher(), KEY_1, NONCE_1, AEAD_1, DATA_64, EXPECTED_6);
-            testSIVCipher(new GCMSIVBlockCipher(), KEY_1, NONCE_1, AEAD_12, DATA_4, EXPECTED_7);
-            testSIVCipher(new GCMSIVBlockCipher(), KEY_1, NONCE_1, AEAD_18, DATA_20, EXPECTED_8);
-            testSIVCipher(new GCMSIVBlockCipher(), KEY_1, NONCE_1, AEAD_20, DATA_18, EXPECTED_9);
+            testSIVCipher(new GordianGCMSIVBlockCipher(), KEY_1, NONCE_1, AEAD_1, DATA_8, EXPECTED_1);
+            testSIVCipher(new GordianGCMSIVBlockCipher(), KEY_1, NONCE_1, AEAD_1, DATA_12, EXPECTED_2);
+            testSIVCipher(new GordianGCMSIVBlockCipher(), KEY_1, NONCE_1, AEAD_1, DATA_16, EXPECTED_3);
+            testSIVCipher(new GordianGCMSIVBlockCipher(), KEY_1, NONCE_1, AEAD_1, DATA_32, EXPECTED_4);
+            testSIVCipher(new GordianGCMSIVBlockCipher(), KEY_1, NONCE_1, AEAD_1, DATA_48, EXPECTED_5);
+            testSIVCipher(new GordianGCMSIVBlockCipher(), KEY_1, NONCE_1, AEAD_1, DATA_64, EXPECTED_6);
+            testSIVCipher(new GordianGCMSIVBlockCipher(), KEY_1, NONCE_1, AEAD_12, DATA_4, EXPECTED_7);
+            testSIVCipher(new GordianGCMSIVBlockCipher(), KEY_1, NONCE_1, AEAD_18, DATA_20, EXPECTED_8);
+            testSIVCipher(new GordianGCMSIVBlockCipher(), KEY_1, NONCE_1, AEAD_20, DATA_18, EXPECTED_9);
         }
     }
 
@@ -587,14 +586,14 @@ class BlockCipherTest {
          * @throws OceanusException on error
          */
         void testTheCipher() throws OceanusException {
-            testSIVCipher(new GCMSIVBlockCipher(), KEY_1, NONCE_1, EMPTY, EMPTY, EXPECTED_1);
-            testSIVCipher(new GCMSIVBlockCipher(), KEY_2, NONCE_2, AEAD_2, DATA_2, EXPECTED_2);
-            testSIVCipher(new GCMSIVBlockCipher(), KEY_3, NONCE_3, AEAD_3, DATA_3, EXPECTED_3);
-            testSIVCipher(new GCMSIVBlockCipher(), KEY_4, NONCE_4, AEAD_4, DATA_4, EXPECTED_4);
-            testSIVCipher(new GCMSIVBlockCipher(), KEY_5, NONCE_5, AEAD_5, DATA_5, EXPECTED_5);
-            testSIVCipher(new GCMSIVBlockCipher(), KEY_6, NONCE_6, AEAD_6, DATA_6, EXPECTED_6);
-            testSIVCipher(new GCMSIVBlockCipher(), KEY_7, NONCE_7, AEAD_7, DATA_7, EXPECTED_7);
-            testSIVCipher(new GCMSIVBlockCipher(), KEY_8, NONCE_8, AEAD_8, DATA_8, EXPECTED_8);
+            testSIVCipher(new GordianGCMSIVBlockCipher(), KEY_1, NONCE_1, EMPTY, EMPTY, EXPECTED_1);
+            testSIVCipher(new GordianGCMSIVBlockCipher(), KEY_2, NONCE_2, AEAD_2, DATA_2, EXPECTED_2);
+            testSIVCipher(new GordianGCMSIVBlockCipher(), KEY_3, NONCE_3, AEAD_3, DATA_3, EXPECTED_3);
+            testSIVCipher(new GordianGCMSIVBlockCipher(), KEY_4, NONCE_4, AEAD_4, DATA_4, EXPECTED_4);
+            testSIVCipher(new GordianGCMSIVBlockCipher(), KEY_5, NONCE_5, AEAD_5, DATA_5, EXPECTED_5);
+            testSIVCipher(new GordianGCMSIVBlockCipher(), KEY_6, NONCE_6, AEAD_6, DATA_6, EXPECTED_6);
+            testSIVCipher(new GordianGCMSIVBlockCipher(), KEY_7, NONCE_7, AEAD_7, DATA_7, EXPECTED_7);
+            testSIVCipher(new GordianGCMSIVBlockCipher(), KEY_8, NONCE_8, AEAD_8, DATA_8, EXPECTED_8);
         }
     }
 
@@ -630,13 +629,13 @@ class BlockCipherTest {
          * @throws OceanusException on error
          */
         void testTheCipher() throws OceanusException {
-            testSIVCipher(new GCMSIVBlockCipher(), KEY_1, NONCE_1, EMPTY, EMPTY, EXPECTED_1);
-            testSIVCipher(new GCMSIVBlockCipher(), KEY_1, NONCE_1, EMPTY, DATA_8, EXPECTED_2);
-            testSIVCipher(new GCMSIVBlockCipher(), KEY_1, NONCE_1, EMPTY, DATA_12, EXPECTED_3);
-            testSIVCipher(new GCMSIVBlockCipher(), KEY_1, NONCE_1, EMPTY, DATA_16, EXPECTED_4);
-            testSIVCipher(new GCMSIVBlockCipher(), KEY_1, NONCE_1, EMPTY, DATA_32, EXPECTED_5);
-            testSIVCipher(new GCMSIVBlockCipher(), KEY_1, NONCE_1, EMPTY, DATA_48, EXPECTED_6);
-            testSIVCipher(new GCMSIVBlockCipher(), KEY_1, NONCE_1, EMPTY, DATA_64, EXPECTED_7);
+            testSIVCipher(new GordianGCMSIVBlockCipher(), KEY_1, NONCE_1, EMPTY, EMPTY, EXPECTED_1);
+            testSIVCipher(new GordianGCMSIVBlockCipher(), KEY_1, NONCE_1, EMPTY, DATA_8, EXPECTED_2);
+            testSIVCipher(new GordianGCMSIVBlockCipher(), KEY_1, NONCE_1, EMPTY, DATA_12, EXPECTED_3);
+            testSIVCipher(new GordianGCMSIVBlockCipher(), KEY_1, NONCE_1, EMPTY, DATA_16, EXPECTED_4);
+            testSIVCipher(new GordianGCMSIVBlockCipher(), KEY_1, NONCE_1, EMPTY, DATA_32, EXPECTED_5);
+            testSIVCipher(new GordianGCMSIVBlockCipher(), KEY_1, NONCE_1, EMPTY, DATA_48, EXPECTED_6);
+            testSIVCipher(new GordianGCMSIVBlockCipher(), KEY_1, NONCE_1, EMPTY, DATA_64, EXPECTED_7);
         }
     }
 
@@ -682,15 +681,15 @@ class BlockCipherTest {
          * @throws OceanusException on error
          */
         void testTheCipher() throws OceanusException {
-            testSIVCipher(new GCMSIVBlockCipher(), KEY_1, NONCE_1, AEAD_1, DATA_8, EXPECTED_1);
-            testSIVCipher(new GCMSIVBlockCipher(), KEY_1, NONCE_1, AEAD_1, DATA_12, EXPECTED_2);
-            testSIVCipher(new GCMSIVBlockCipher(), KEY_1, NONCE_1, AEAD_1, DATA_16, EXPECTED_3);
-            testSIVCipher(new GCMSIVBlockCipher(), KEY_1, NONCE_1, AEAD_1, DATA_32, EXPECTED_4);
-            testSIVCipher(new GCMSIVBlockCipher(), KEY_1, NONCE_1, AEAD_1, DATA_48, EXPECTED_5);
-            testSIVCipher(new GCMSIVBlockCipher(), KEY_1, NONCE_1, AEAD_1, DATA_64, EXPECTED_6);
-            testSIVCipher(new GCMSIVBlockCipher(), KEY_1, NONCE_1, AEAD_12, DATA_4, EXPECTED_7);
-            testSIVCipher(new GCMSIVBlockCipher(), KEY_1, NONCE_1, AEAD_18, DATA_20, EXPECTED_8);
-            testSIVCipher(new GCMSIVBlockCipher(), KEY_1, NONCE_1, AEAD_20, DATA_18, EXPECTED_9);
+            testSIVCipher(new GordianGCMSIVBlockCipher(), KEY_1, NONCE_1, AEAD_1, DATA_8, EXPECTED_1);
+            testSIVCipher(new GordianGCMSIVBlockCipher(), KEY_1, NONCE_1, AEAD_1, DATA_12, EXPECTED_2);
+            testSIVCipher(new GordianGCMSIVBlockCipher(), KEY_1, NONCE_1, AEAD_1, DATA_16, EXPECTED_3);
+            testSIVCipher(new GordianGCMSIVBlockCipher(), KEY_1, NONCE_1, AEAD_1, DATA_32, EXPECTED_4);
+            testSIVCipher(new GordianGCMSIVBlockCipher(), KEY_1, NONCE_1, AEAD_1, DATA_48, EXPECTED_5);
+            testSIVCipher(new GordianGCMSIVBlockCipher(), KEY_1, NONCE_1, AEAD_1, DATA_64, EXPECTED_6);
+            testSIVCipher(new GordianGCMSIVBlockCipher(), KEY_1, NONCE_1, AEAD_12, DATA_4, EXPECTED_7);
+            testSIVCipher(new GordianGCMSIVBlockCipher(), KEY_1, NONCE_1, AEAD_18, DATA_20, EXPECTED_8);
+            testSIVCipher(new GordianGCMSIVBlockCipher(), KEY_1, NONCE_1, AEAD_20, DATA_18, EXPECTED_9);
         }
     }
 
@@ -746,14 +745,14 @@ class BlockCipherTest {
          * @throws OceanusException on error
          */
         void testTheCipher() throws OceanusException {
-            testSIVCipher(new GCMSIVBlockCipher(), KEY_1, NONCE_1, EMPTY, EMPTY, EXPECTED_1);
-            testSIVCipher(new GCMSIVBlockCipher(), KEY_2, NONCE_2, AEAD_2, DATA_2, EXPECTED_2);
-            testSIVCipher(new GCMSIVBlockCipher(), KEY_3, NONCE_3, AEAD_3, DATA_3, EXPECTED_3);
-            testSIVCipher(new GCMSIVBlockCipher(), KEY_4, NONCE_4, AEAD_4, DATA_4, EXPECTED_4);
-            testSIVCipher(new GCMSIVBlockCipher(), KEY_5, NONCE_5, AEAD_5, DATA_5, EXPECTED_5);
-            testSIVCipher(new GCMSIVBlockCipher(), KEY_6, NONCE_6, AEAD_6, DATA_6, EXPECTED_6);
-            testSIVCipher(new GCMSIVBlockCipher(), KEY_7, NONCE_7, AEAD_7, DATA_7, EXPECTED_7);
-            testSIVCipher(new GCMSIVBlockCipher(), KEY_8, NONCE_8, AEAD_8, DATA_8, EXPECTED_8);
+            testSIVCipher(new GordianGCMSIVBlockCipher(), KEY_1, NONCE_1, EMPTY, EMPTY, EXPECTED_1);
+            testSIVCipher(new GordianGCMSIVBlockCipher(), KEY_2, NONCE_2, AEAD_2, DATA_2, EXPECTED_2);
+            testSIVCipher(new GordianGCMSIVBlockCipher(), KEY_3, NONCE_3, AEAD_3, DATA_3, EXPECTED_3);
+            testSIVCipher(new GordianGCMSIVBlockCipher(), KEY_4, NONCE_4, AEAD_4, DATA_4, EXPECTED_4);
+            testSIVCipher(new GordianGCMSIVBlockCipher(), KEY_5, NONCE_5, AEAD_5, DATA_5, EXPECTED_5);
+            testSIVCipher(new GordianGCMSIVBlockCipher(), KEY_6, NONCE_6, AEAD_6, DATA_6, EXPECTED_6);
+            testSIVCipher(new GordianGCMSIVBlockCipher(), KEY_7, NONCE_7, AEAD_7, DATA_7, EXPECTED_7);
+            testSIVCipher(new GordianGCMSIVBlockCipher(), KEY_8, NONCE_8, AEAD_8, DATA_8, EXPECTED_8);
         }
     }
 
@@ -776,8 +775,8 @@ class BlockCipherTest {
          * @throws OceanusException on error
          */
         void testTheCipher() throws OceanusException {
-            testSIVCipher(new GCMSIVBlockCipher(), KEY_1, NONCE_1, EMPTY, DATA_1, EXPECTED_1);
-            testSIVCipher(new GCMSIVBlockCipher(), KEY_1, NONCE_1, EMPTY, DATA_2, EXPECTED_2);
+            testSIVCipher(new GordianGCMSIVBlockCipher(), KEY_1, NONCE_1, EMPTY, DATA_1, EXPECTED_1);
+            testSIVCipher(new GordianGCMSIVBlockCipher(), KEY_1, NONCE_1, EMPTY, DATA_2, EXPECTED_2);
         }
     }
 
@@ -791,7 +790,7 @@ class BlockCipherTest {
      * @param pExpected the expected results
      * @throws OceanusException on error
      */
-    static void testSIVCipher(final GCMSIVBlockCipher pCipher,
+    static void testSIVCipher(final GordianGCMSIVBlockCipher pCipher,
                               final String pKey,
                               final String pNonce,
                               final String pAEAD,

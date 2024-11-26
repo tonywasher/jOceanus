@@ -16,28 +16,26 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.junit.extensions;
 
-import java.util.Arrays;
-import java.util.stream.Stream;
-
+import net.sourceforge.joceanus.gordianknot.impl.ext.digests.GordianBlake2Base;
+import net.sourceforge.joceanus.gordianknot.impl.ext.digests.GordianBlake2Tree;
+import net.sourceforge.joceanus.gordianknot.impl.ext.digests.GordianBlake2Xof;
+import net.sourceforge.joceanus.gordianknot.impl.ext.digests.GordianBlake2bDigest;
+import net.sourceforge.joceanus.gordianknot.impl.ext.digests.GordianBlake2sDigest;
+import net.sourceforge.joceanus.gordianknot.impl.ext.digests.GordianCubeHashDigest;
+import net.sourceforge.joceanus.gordianknot.impl.ext.digests.GordianGroestlDigest;
+import net.sourceforge.joceanus.gordianknot.impl.ext.digests.GordianJHDigest;
+import net.sourceforge.joceanus.gordianknot.impl.ext.digests.GordianKangarooDigest.GordianKangarooTwelve;
+import net.sourceforge.joceanus.gordianknot.impl.ext.digests.GordianSkeinBase;
+import net.sourceforge.joceanus.gordianknot.impl.ext.digests.GordianSkeinDigest;
+import net.sourceforge.joceanus.gordianknot.impl.ext.digests.GordianSkeinTree;
+import net.sourceforge.joceanus.gordianknot.impl.ext.digests.GordianSkeinXof;
+import net.sourceforge.joceanus.gordianknot.impl.ext.macs.GordianBlake2Mac;
+import net.sourceforge.joceanus.gordianknot.impl.ext.params.GordianBlake2Parameters;
+import net.sourceforge.joceanus.gordianknot.impl.ext.params.GordianKeccakParameters;
+import net.sourceforge.joceanus.gordianknot.impl.ext.params.GordianSkeinParameters;
+import net.sourceforge.joceanus.oceanus.OceanusException;
 import org.bouncycastle.crypto.Digest;
 import org.bouncycastle.crypto.Mac;
-import org.bouncycastle.crypto.digests.SkeinDigest;
-import org.bouncycastle.crypto.ext.digests.Blake2;
-import org.bouncycastle.crypto.ext.digests.Blake2Tree;
-import org.bouncycastle.crypto.ext.digests.Blake2X;
-import org.bouncycastle.crypto.ext.digests.Blake2b;
-import org.bouncycastle.crypto.ext.digests.Blake2s;
-import org.bouncycastle.crypto.ext.digests.CubeHashDigest;
-import org.bouncycastle.crypto.ext.digests.GroestlDigest;
-import org.bouncycastle.crypto.ext.digests.JHDigest;
-import org.bouncycastle.crypto.ext.digests.Kangaroo.KangarooTwelve;
-import org.bouncycastle.crypto.ext.digests.SkeinBase;
-import org.bouncycastle.crypto.ext.digests.SkeinTree;
-import org.bouncycastle.crypto.ext.digests.SkeinXof;
-import org.bouncycastle.crypto.ext.macs.Blake2Mac;
-import org.bouncycastle.crypto.ext.params.Blake2Parameters;
-import org.bouncycastle.crypto.ext.params.KeccakParameters;
-import org.bouncycastle.crypto.ext.params.SkeinXParameters;
 import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.util.encoders.Hex;
 import org.junit.jupiter.api.Assertions;
@@ -46,7 +44,8 @@ import org.junit.jupiter.api.DynamicNode;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import java.util.Arrays;
+import java.util.stream.Stream;
 
 /**
  * Digest Tests.
@@ -216,7 +215,7 @@ class DigestTest {
      * @param pResult the expected result
      * @throws OceanusException on error
      */
-    static void testBlakeXof(final Blake2X pXof,
+    static void testBlakeXof(final GordianBlake2Xof pXof,
                              final int pKeyLen,
                              final String pResult) throws OceanusException {
         /* Access the expected result */
@@ -231,7 +230,7 @@ class DigestTest {
         final byte[] myOutput = new byte[myXofLen];
 
         /* Calculate the Xof */
-        final Blake2Parameters myParams = new Blake2Parameters.Builder()
+        final GordianBlake2Parameters myParams = new GordianBlake2Parameters.Builder()
                 .setKey(myKey)
                 .setMaxOutputLen(myXofLen)
                 .build();
@@ -248,9 +247,9 @@ class DigestTest {
      * @param pBase the base digest.
      * @throws OceanusException on error
      */
-    static void testBlakeNullXof(final Blake2 pBase) throws OceanusException {
+    static void testBlakeNullXof(final GordianBlake2Base pBase) throws OceanusException {
         /* Create a Blake2X instance */
-        final Blake2X myXof = new Blake2X((Blake2) pBase.copy());
+        final GordianBlake2Xof myXof = new GordianBlake2Xof((GordianBlake2Base) pBase.copy());
 
         /* Create output buffers */
         final int myLen = pBase.getDigestSize();
@@ -258,7 +257,7 @@ class DigestTest {
         final byte[] myBlake2X = new byte[myLen];
 
         /* Initialise the Xof */
-        final Blake2Parameters myParams = new Blake2Parameters.Builder()
+        final GordianBlake2Parameters myParams = new GordianBlake2Parameters.Builder()
                 .setMaxOutputLen(0)
                 .build();
         myXof.init(myParams);
@@ -279,7 +278,7 @@ class DigestTest {
      * @param pResult the expected result
      * @throws OceanusException on error
      */
-    static void testSkeinXof(final SkeinXof pXof,
+    static void testSkeinXof(final GordianSkeinXof pXof,
                              final int pKeyLen,
                              final String pResult) throws OceanusException {
         /* Access the expected result */
@@ -290,7 +289,7 @@ class DigestTest {
         final byte[] myOutput = new byte[myXofLen];
 
         /* Create the parameters */
-        final SkeinXParameters.Builder myBuilder = new SkeinXParameters.Builder()
+        final GordianSkeinParameters.Builder myBuilder = new GordianSkeinParameters.Builder()
                 .setMaxOutputLen(myXofLen);
         if (pKeyLen > 0) {
             /* Create the key */
@@ -298,7 +297,7 @@ class DigestTest {
             System.arraycopy(BLAKE2DATA, 0, myKey, 0, pKeyLen);
             myBuilder.setKey(myKey);
         }
-        final SkeinXParameters myParams = myBuilder.build();
+        final GordianSkeinParameters myParams = myBuilder.build();
 
         /* Calculate the Xof */
         pXof.init(myParams);
@@ -314,10 +313,10 @@ class DigestTest {
      * @param pBase the base digest.
      * @throws OceanusException on error
      */
-    static void testSkeinNullXof(final SkeinBase pBase) throws OceanusException {
+    static void testSkeinNullXof(final GordianSkeinBase pBase) throws OceanusException {
         /* Create a Blake2X instance */
-        final SkeinXof myXof = new SkeinXof((SkeinBase) pBase.copy());
-        final SkeinDigest myDigest = new SkeinDigest(pBase.getBlockSize() * 8, pBase.getOutputSize() * 8);
+        final GordianSkeinXof myXof = new GordianSkeinXof((GordianSkeinBase) pBase.copy());
+        final GordianSkeinDigest myDigest = new GordianSkeinDigest(pBase.getBlockSize() * 8, pBase.getOutputSize() * 8);
 
         /* Create output buffers */
         final int myLen = pBase.getOutputSize();
@@ -325,7 +324,7 @@ class DigestTest {
         final byte[] myXofResult = new byte[myLen];
 
         /* Initialise the Xof */
-        final SkeinXParameters myParams = new SkeinXParameters.Builder()
+        final GordianSkeinParameters myParams = new GordianSkeinParameters.Builder()
                 .setMaxOutputLen(0)
                 .build();
         myXof.init(myParams);
@@ -390,8 +389,8 @@ class DigestTest {
         byte[] myOutput = new byte[myXofLen];
 
         /* Initialise the mac */
-        final KangarooTwelve myDigest = new KangarooTwelve();
-        final KeccakParameters myParams = new KeccakParameters.Builder()
+        final GordianKangarooTwelve myDigest = new GordianKangarooTwelve();
+        final GordianKeccakParameters myParams = new GordianKeccakParameters.Builder()
                 .setPersonalisation(myPers)
                 .build();
         myDigest.init(myParams);
@@ -429,11 +428,11 @@ class DigestTest {
                                final int pFanOut,
                                final int pMaxDepth) throws OceanusException {
         /* Create the tree */
-        final Blake2Tree myTree = new Blake2Tree(new Blake2b(512));
+        final GordianBlake2Tree myTree = new GordianBlake2Tree(new GordianBlake2bDigest(512));
         final int myLeafLen = 4096;
 
         /* Build the parameters */
-        final Blake2Parameters.Builder myBuilder = new Blake2Parameters.Builder();
+        final GordianBlake2Parameters.Builder myBuilder = new GordianBlake2Parameters.Builder();
         myBuilder.setKey(Arrays.copyOf(BLAKE2DATA, 32));
         myBuilder.setTreeConfig(pFanOut, pMaxDepth, myLeafLen);
         myTree.init(myBuilder.build());
@@ -462,7 +461,7 @@ class DigestTest {
         myTree.obtainResult(myLeafResult, 0);
 
         /* Recalculate the entire tree */
-        final Blake2Tree myAltTree = new Blake2Tree(new Blake2b(512));
+        final GordianBlake2Tree myAltTree = new GordianBlake2Tree(new GordianBlake2bDigest(512));
         myAltTree.init(myBuilder.build());
         for (int i = 0; i < pNumLeaves; i++) {
             myAltTree.update(myLeaf, 0, myLeafLen);
@@ -481,15 +480,15 @@ class DigestTest {
      * @throws OceanusException on error
      */
     static void testSkeinTree(final int pNumLeaves,
-                               final int pFanOut,
-                               final int pMaxDepth) throws OceanusException {
+                              final int pFanOut,
+                              final int pMaxDepth) throws OceanusException {
         /* Create the tree */
-        final SkeinTree myTree = new SkeinTree(new SkeinBase(512, 512));
+        final GordianSkeinTree myTree = new GordianSkeinTree(new GordianSkeinBase(512, 512));
         final int myLeafLen = 4096;
         final int myLeafShift = 6;
 
         /* Build the parameters */
-        final SkeinXParameters.Builder myBuilder = new SkeinXParameters.Builder();
+        final GordianSkeinParameters.Builder myBuilder = new GordianSkeinParameters.Builder();
         myBuilder.setKey(Arrays.copyOf(BLAKE2DATA, 32));
         myBuilder.setTreeConfig(pFanOut, pMaxDepth, myLeafShift);
         myTree.init(myBuilder.build());
@@ -518,7 +517,7 @@ class DigestTest {
         myTree.obtainResult(myLeafResult, 0);
 
         /* Recalculate the entire tree */
-        final SkeinTree myAltTree = new SkeinTree(new SkeinBase(512, 512));
+        final GordianSkeinTree myAltTree = new GordianSkeinTree(new GordianSkeinBase(512, 512));
         myAltTree.init(myBuilder.build());
         for (int i = 0; i < pNumLeaves; i++) {
             myAltTree.update(myLeaf, 0, myLeafLen);
@@ -551,7 +550,7 @@ class DigestTest {
          * @throws OceanusException on error
          */
         void checkDigests() throws OceanusException {
-            checkDigestStrings(new GroestlDigest(224), EXPECTED);
+            checkDigestStrings(new GordianGroestlDigest(224), EXPECTED);
         }
     }
 
@@ -577,7 +576,7 @@ class DigestTest {
          * @throws OceanusException on error
          */
         void checkDigests() throws OceanusException {
-            checkDigestStrings(new GroestlDigest(256), EXPECTED);
+            checkDigestStrings(new GordianGroestlDigest(256), EXPECTED);
         }
     }
 
@@ -603,7 +602,7 @@ class DigestTest {
          * @throws OceanusException on error
          */
         void checkDigests() throws OceanusException {
-            checkDigestStrings(new GroestlDigest(384), EXPECTED);
+            checkDigestStrings(new GordianGroestlDigest(384), EXPECTED);
         }
     }
 
@@ -629,7 +628,7 @@ class DigestTest {
          * @throws OceanusException on error
          */
         void checkDigests() throws OceanusException {
-            checkDigestStrings(new GroestlDigest(512), EXPECTED);
+            checkDigestStrings(new GordianGroestlDigest(512), EXPECTED);
         }
     }
 
@@ -655,7 +654,7 @@ class DigestTest {
          * @throws OceanusException on error
          */
         void checkDigests() throws OceanusException {
-            checkDigestStrings(new JHDigest(224), EXPECTED);
+            checkDigestStrings(new GordianJHDigest(224), EXPECTED);
         }
     }
 
@@ -681,7 +680,7 @@ class DigestTest {
          * @throws OceanusException on error
          */
         void checkDigests() throws OceanusException {
-            checkDigestStrings(new JHDigest(256), EXPECTED);
+            checkDigestStrings(new GordianJHDigest(256), EXPECTED);
         }
     }
 
@@ -707,7 +706,7 @@ class DigestTest {
          * @throws OceanusException on error
          */
         void checkDigests() throws OceanusException {
-            checkDigestStrings(new JHDigest(384), EXPECTED);
+            checkDigestStrings(new GordianJHDigest(384), EXPECTED);
         }
     }
 
@@ -733,7 +732,7 @@ class DigestTest {
          * @throws OceanusException on error
          */
         void checkDigests() throws OceanusException {
-            checkDigestStrings(new JHDigest(512), EXPECTED);
+            checkDigestStrings(new GordianJHDigest(512), EXPECTED);
         }
     }
 
@@ -759,7 +758,7 @@ class DigestTest {
          * @throws OceanusException on error
          */
         void checkDigests() throws OceanusException {
-            checkDigestStrings(new CubeHashDigest(224), EXPECTED);
+            checkDigestStrings(new GordianCubeHashDigest(224), EXPECTED);
         }
     }
 
@@ -785,7 +784,7 @@ class DigestTest {
          * @throws OceanusException on error
          */
         void checkDigests() throws OceanusException {
-            checkDigestStrings(new CubeHashDigest(256), EXPECTED);
+            checkDigestStrings(new GordianCubeHashDigest(256), EXPECTED);
         }
     }
 
@@ -811,7 +810,7 @@ class DigestTest {
          * @throws OceanusException on error
          */
         void checkDigests() throws OceanusException {
-            checkDigestStrings(new CubeHashDigest(384), EXPECTED);
+            checkDigestStrings(new GordianCubeHashDigest(384), EXPECTED);
         }
     }
 
@@ -837,7 +836,7 @@ class DigestTest {
          * @throws OceanusException on error
          */
         void checkDigests() throws OceanusException {
-            checkDigestStrings(new CubeHashDigest(512), EXPECTED);
+            checkDigestStrings(new GordianCubeHashDigest(512), EXPECTED);
         }
     }
 
@@ -863,7 +862,7 @@ class DigestTest {
          * @throws OceanusException on error
          */
         void checkDigests() throws OceanusException {
-            checkDigestStrings(new Blake2b(224), EXPECTED);
+            checkDigestStrings(new GordianBlake2bDigest(224), EXPECTED);
         }
     }
 
@@ -889,7 +888,7 @@ class DigestTest {
          * @throws OceanusException on error
          */
         void checkDigests() throws OceanusException {
-            checkDigestStrings(new Blake2b(256), EXPECTED);
+            checkDigestStrings(new GordianBlake2bDigest(256), EXPECTED);
         }
     }
 
@@ -915,7 +914,7 @@ class DigestTest {
          * @throws OceanusException on error
          */
         void checkDigests() throws OceanusException {
-            checkDigestStrings(new Blake2b(384), EXPECTED);
+            checkDigestStrings(new GordianBlake2bDigest(384), EXPECTED);
         }
     }
 
@@ -941,7 +940,7 @@ class DigestTest {
          * @throws OceanusException on error
          */
         void checkDigests() throws OceanusException {
-            checkDigestStrings(new Blake2b(512), EXPECTED);
+            checkDigestStrings(new GordianBlake2bDigest(512), EXPECTED);
         }
     }
 
@@ -966,7 +965,7 @@ class DigestTest {
          * @throws OceanusException on error
          */
         void checkMacs() throws OceanusException {
-            final Blake2Mac myMac = new Blake2Mac(new Blake2b(512));
+            final GordianBlake2Mac myMac = new GordianBlake2Mac(new GordianBlake2bDigest(512));
             testBlakeMac(myMac, 64, 0, EXPECTED[0]);
             testBlakeMac(myMac, 64, 1, EXPECTED[1]);
             testBlakeMac(myMac, 64, 2, EXPECTED[2]);
@@ -998,7 +997,7 @@ class DigestTest {
          * @throws OceanusException on error
          */
         void checkDigests() throws OceanusException {
-            checkDigestStrings(new Blake2s(128), EXPECTED);
+            checkDigestStrings(new GordianBlake2sDigest(128), EXPECTED);
         }
     }
 
@@ -1024,7 +1023,7 @@ class DigestTest {
          * @throws OceanusException on error
          */
         void checkDigests() throws OceanusException {
-            checkDigestStrings(new Blake2s(160), EXPECTED);
+            checkDigestStrings(new GordianBlake2sDigest(160), EXPECTED);
         }
     }
 
@@ -1050,7 +1049,7 @@ class DigestTest {
          * @throws OceanusException on error
          */
         void checkDigests() throws OceanusException {
-            checkDigestStrings(new Blake2s(224), EXPECTED);
+            checkDigestStrings(new GordianBlake2sDigest(224), EXPECTED);
         }
     }
 
@@ -1076,7 +1075,7 @@ class DigestTest {
          * @throws OceanusException on error
          */
         void checkDigests() throws OceanusException {
-            checkDigestStrings(new Blake2s(256), EXPECTED);
+            checkDigestStrings(new GordianBlake2sDigest(256), EXPECTED);
         }
     }
 
@@ -1101,7 +1100,7 @@ class DigestTest {
          * @throws OceanusException on error
          */
         void checkMacs() throws OceanusException {
-            final Blake2Mac myMac = new Blake2Mac(new Blake2s(256));
+            final GordianBlake2Mac myMac = new GordianBlake2Mac(new GordianBlake2sDigest(256));
             testBlakeMac(myMac, 32, 0, EXPECTED[0]);
             testBlakeMac(myMac, 32, 1, EXPECTED[1]);
             testBlakeMac(myMac, 32, 2, EXPECTED[2]);
@@ -1142,7 +1141,7 @@ class DigestTest {
          * @throws OceanusException on error
          */
         void checkXofs() throws OceanusException {
-            final Blake2X myXof = new Blake2X(new Blake2s(256));
+            final GordianBlake2Xof myXof = new GordianBlake2Xof(new GordianBlake2sDigest(256));
             testBlakeXof(myXof, 0, EXPECTED[0]);
             testBlakeXof(myXof, 0, EXPECTED[1]);
             testBlakeXof(myXof, 0, EXPECTED[2]);
@@ -1155,14 +1154,14 @@ class DigestTest {
             testBlakeXof(myXof, 32, KEYEDEXPECTED[4]);
 
             /* Test null Xofs */
-            testBlakeNullXof(new Blake2s(128));
-            testBlakeNullXof(new Blake2s(160));
-            testBlakeNullXof(new Blake2s(224));
-            testBlakeNullXof(new Blake2s(256));
-            testBlakeNullXof(new Blake2b(160));
-            testBlakeNullXof(new Blake2b(256));
-            testBlakeNullXof(new Blake2b(384));
-            testBlakeNullXof(new Blake2b(512));
+            testBlakeNullXof(new GordianBlake2sDigest(128));
+            testBlakeNullXof(new GordianBlake2sDigest(160));
+            testBlakeNullXof(new GordianBlake2sDigest(224));
+            testBlakeNullXof(new GordianBlake2sDigest(256));
+            testBlakeNullXof(new GordianBlake2bDigest(160));
+            testBlakeNullXof(new GordianBlake2bDigest(256));
+            testBlakeNullXof(new GordianBlake2bDigest(384));
+            testBlakeNullXof(new GordianBlake2bDigest(512));
         }
     }
 
@@ -1263,7 +1262,7 @@ class DigestTest {
          * @throws OceanusException on error
          */
         void checkXofs() throws OceanusException {
-            final SkeinXof myXof = new SkeinXof(new SkeinBase(256, 256));
+            final GordianSkeinXof myXof = new GordianSkeinXof(new GordianSkeinBase(256, 256));
             testSkeinXof(myXof, 0, EXPECTED[0]);
             testSkeinXof(myXof, 0, EXPECTED[1]);
             testSkeinXof(myXof, 0, EXPECTED[2]);
@@ -1276,18 +1275,18 @@ class DigestTest {
             testSkeinXof(myXof, 32, KEYEDEXPECTED[4]);
 
             /* Test null Xofs */
-            testSkeinNullXof(new SkeinBase(256, 128));
-            testSkeinNullXof(new SkeinBase(256, 160));
-            testSkeinNullXof(new SkeinBase(256, 224));
-            testSkeinNullXof(new SkeinBase(256, 256));
-            testSkeinNullXof(new SkeinBase(512, 128));
-            testSkeinNullXof(new SkeinBase(512, 160));
-            testSkeinNullXof(new SkeinBase(512, 256));
-            testSkeinNullXof(new SkeinBase(512, 384));
-            testSkeinNullXof(new SkeinBase(512, 512));
-            testSkeinNullXof(new SkeinBase(1024, 384));
-            testSkeinNullXof(new SkeinBase(1024, 512));
-            testSkeinNullXof(new SkeinBase(1024, 1024));
+            testSkeinNullXof(new GordianSkeinBase(256, 128));
+            testSkeinNullXof(new GordianSkeinBase(256, 160));
+            testSkeinNullXof(new GordianSkeinBase(256, 224));
+            testSkeinNullXof(new GordianSkeinBase(256, 256));
+            testSkeinNullXof(new GordianSkeinBase(512, 128));
+            testSkeinNullXof(new GordianSkeinBase(512, 160));
+            testSkeinNullXof(new GordianSkeinBase(512, 256));
+            testSkeinNullXof(new GordianSkeinBase(512, 384));
+            testSkeinNullXof(new GordianSkeinBase(512, 512));
+            testSkeinNullXof(new GordianSkeinBase(1024, 384));
+            testSkeinNullXof(new GordianSkeinBase(1024, 512));
+            testSkeinNullXof(new GordianSkeinBase(1024, 1024));
         }
     }
 

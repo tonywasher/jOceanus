@@ -10,13 +10,13 @@ import org.bouncycastle.crypto.engines.SparkleEngine.SparkleParameters;
 import org.bouncycastle.crypto.modes.AEADCipher;
 import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.crypto.params.ParametersWithIV;
-import org.bouncycastle.crypto.patch.engines.ElephantXEngine;
-import org.bouncycastle.crypto.patch.engines.ElephantXEngine.ElephantParameters;
-import org.bouncycastle.crypto.patch.engines.ISAPXEngine;
-import org.bouncycastle.crypto.patch.engines.ISAPXEngine.IsapType;
-import org.bouncycastle.crypto.patch.engines.PhotonXEngine;
-import org.bouncycastle.crypto.patch.engines.PhotonXEngine.PhotonBeetleParameters;
-import org.bouncycastle.crypto.patch.engines.XoodyakXEngine;
+import org.bouncycastle.crypto.patch.engines.GordianElephantEngine;
+import org.bouncycastle.crypto.patch.engines.GordianElephantEngine.ElephantParameters;
+import org.bouncycastle.crypto.patch.engines.GordianISAPEngine;
+import org.bouncycastle.crypto.patch.engines.GordianISAPEngine.IsapType;
+import org.bouncycastle.crypto.patch.engines.GordianPhotonBeetleEngine;
+import org.bouncycastle.crypto.patch.engines.GordianPhotonBeetleEngine.PhotonBeetleParameters;
+import org.bouncycastle.crypto.patch.engines.GordianXoodyakEngine;
 
 import java.security.SecureRandom;
 import java.util.Arrays;
@@ -37,12 +37,12 @@ public class OutputLength {
      * @params pArgs the arguments
      */
     public static void main(final String[] pArgs) {
-        checkCipher(new ElephantXEngine(ElephantParameters.elephant160), 12);
+        checkCipher(new GordianElephantEngine(ElephantParameters.elephant160), 12);
         checkCipher(new AsconEngine(AsconParameters.ascon128a), 16);
-        checkCipher(new PhotonXEngine(PhotonBeetleParameters.pb128), 16);
+        checkCipher(new GordianPhotonBeetleEngine(PhotonBeetleParameters.pb128), 16);
         checkCipher(new SparkleEngine(SparkleParameters.SCHWAEMM128_128), 16);
-        checkCipher(new XoodyakXEngine(), 16);
-        checkCipher(new ISAPXEngine(IsapType.ISAP_A_128), 16);
+        checkCipher(new GordianXoodyakEngine(), 16);
+        checkCipher(new GordianISAPEngine(IsapType.ISAP_A_128), 16);
     }
 
     /**

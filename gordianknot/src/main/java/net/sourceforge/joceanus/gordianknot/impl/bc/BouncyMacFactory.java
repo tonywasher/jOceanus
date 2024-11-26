@@ -27,18 +27,18 @@ import net.sourceforge.joceanus.gordianknot.api.mac.GordianSipHashSpec;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.mac.GordianCoreMacFactory;
+import net.sourceforge.joceanus.gordianknot.impl.ext.digests.GordianBlake2Base;
+import net.sourceforge.joceanus.gordianknot.impl.ext.digests.GordianBlake3Digest;
+import net.sourceforge.joceanus.gordianknot.impl.ext.macs.GordianBlake2Mac;
+import net.sourceforge.joceanus.gordianknot.impl.ext.macs.GordianBlake3Mac;
+import net.sourceforge.joceanus.gordianknot.impl.ext.macs.GordianKMACWrapper;
+import net.sourceforge.joceanus.gordianknot.impl.ext.macs.GordianSkeinMac;
+import net.sourceforge.joceanus.gordianknot.impl.ext.macs.GordianZuc128Mac;
+import net.sourceforge.joceanus.gordianknot.impl.ext.macs.GordianZuc256Mac;
 import net.sourceforge.joceanus.oceanus.OceanusException;
 import org.bouncycastle.crypto.CipherKeyGenerator;
 import org.bouncycastle.crypto.Mac;
 import org.bouncycastle.crypto.Xof;
-import org.bouncycastle.crypto.ext.digests.Blake2;
-import org.bouncycastle.crypto.ext.digests.Blake3Digest;
-import org.bouncycastle.crypto.ext.macs.Blake2Mac;
-import org.bouncycastle.crypto.ext.macs.Blake3Mac;
-import org.bouncycastle.crypto.ext.macs.KMACWrapper;
-import org.bouncycastle.crypto.ext.macs.SkeinMac;
-import org.bouncycastle.crypto.ext.macs.Zuc128Mac;
-import org.bouncycastle.crypto.ext.macs.Zuc256Mac;
 import org.bouncycastle.crypto.generators.Poly1305KeyGenerator;
 import org.bouncycastle.crypto.macs.CBCBlockCipherMac;
 import org.bouncycastle.crypto.macs.CFBBlockCipherMac;
@@ -51,9 +51,9 @@ import org.bouncycastle.crypto.macs.SipHash;
 import org.bouncycastle.crypto.macs.SipHash128;
 import org.bouncycastle.crypto.macs.VMPCMac;
 import org.bouncycastle.crypto.modes.GCMBlockCipher;
-import org.bouncycastle.crypto.patch.macs.DSTUX7624Mac;
-import org.bouncycastle.crypto.patch.macs.KXGMac;
-import org.bouncycastle.crypto.patch.modes.KGCMXBlockCipher;
+import org.bouncycastle.crypto.patch.macs.GordianDSTU7624Mac;
+import org.bouncycastle.crypto.patch.macs.GordianKGMac;
+import org.bouncycastle.crypto.patch.modes.GordianKGCMBlockCipher;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -195,7 +195,7 @@ public class BouncyMacFactory
      */
     private static Mac getBCGMac(final GordianSymKeySpec pSymKeySpec) throws OceanusException {
         return GordianSymKeyType.KALYNA.equals(pSymKeySpec.getSymKeyType())
-               ? new KXGMac(new KGCMXBlockCipher(BouncyCipherFactory.getBCSymEngine(pSymKeySpec)))
+               ? new GordianKGMac(new GordianKGCMBlockCipher(BouncyCipherFactory.getBCSymEngine(pSymKeySpec)))
                : new GMac(GCMBlockCipher.newInstance(BouncyCipherFactory.getBCSymEngine(pSymKeySpec)));
     }
 
@@ -230,7 +230,7 @@ public class BouncyMacFactory
      * @return the MAC
      */
     private static Mac getBCSkeinMac(final GordianDigestSpec pSpec) {
-        return new SkeinMac(pSpec.getDigestState().getLength().getLength(), pSpec.getDigestLength().getLength());
+        return new GordianSkeinMac(pSpec.getDigestState().getLength().getLength(), pSpec.getDigestLength().getLength());
     }
 
     /**
@@ -241,7 +241,7 @@ public class BouncyMacFactory
      */
     private static Mac getBCKalynaMac(final GordianSymKeySpec pSymKeySpec) {
         final GordianLength myLen = pSymKeySpec.getBlockLength();
-        return new DSTUX7624Mac(myLen.getLength(), myLen.getLength());
+        return new GordianDSTU7624Mac(myLen.getLength(), myLen.getLength());
     }
 
     /**
@@ -261,8 +261,8 @@ public class BouncyMacFactory
      * @return the MAC
      */
     private static Mac getBCBlake2Mac(final GordianMacSpec pSpec) {
-        final Blake2 myDigest = BouncyDigestFactory.getBlake2Digest(pSpec.getDigestSpec());
-        return new Blake2Mac(myDigest);
+        final GordianBlake2Base myDigest = BouncyDigestFactory.getBlake2Digest(pSpec.getDigestSpec());
+        return new GordianBlake2Mac(myDigest);
     }
 
     /**
@@ -272,8 +272,8 @@ public class BouncyMacFactory
      * @return the MAC
      */
     private static Mac getBCBlake3Mac(final GordianMacSpec pSpec) {
-        final Blake3Digest myDigest = new Blake3Digest(pSpec.getDigestSpec().getDigestLength().getByteLength());
-        return new Blake3Mac(myDigest);
+        final GordianBlake3Digest myDigest = new GordianBlake3Digest(pSpec.getDigestSpec().getDigestLength().getByteLength());
+        return new GordianBlake3Mac(myDigest);
     }
 
     /**
@@ -284,7 +284,7 @@ public class BouncyMacFactory
      */
     private static Mac getBCKMAC(final GordianMacSpec pSpec) {
         final GordianDigestSpec mySpec = pSpec.getDigestSpec();
-        return new KMACWrapper(mySpec.getDigestState().getLength().getLength());
+        return new GordianKMACWrapper(mySpec.getDigestState().getLength().getLength());
     }
 
     /**
@@ -347,7 +347,7 @@ public class BouncyMacFactory
      */
     private static Mac getBCZucMac(final GordianMacSpec pMacSpec) {
         return GordianLength.LEN_128 == pMacSpec.getKeyLength()
-               ? new Zuc128Mac()
-               : new Zuc256Mac(pMacSpec.getMacLength().getLength());
+               ? new GordianZuc128Mac()
+               : new GordianZuc256Mac(pMacSpec.getMacLength().getLength());
     }
 }

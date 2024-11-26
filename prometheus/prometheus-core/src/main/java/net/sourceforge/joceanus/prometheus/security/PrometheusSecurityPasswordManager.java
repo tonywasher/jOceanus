@@ -105,7 +105,7 @@ public class PrometheusSecurityPasswordManager {
     }
 
     /**
-     * Set the dialog controller
+     * Set the dialog controller.
      * @param pDialog the controller
      */
     public void setDialogController(final PrometheusSecurityDialogController pDialog) {
@@ -420,6 +420,9 @@ public class PrometheusSecurityPasswordManager {
         return myResult;
     }
 
+    /**
+     * Process password interface.
+     */
     @FunctionalInterface
     public interface PrometheusProcessPassword {
         /**

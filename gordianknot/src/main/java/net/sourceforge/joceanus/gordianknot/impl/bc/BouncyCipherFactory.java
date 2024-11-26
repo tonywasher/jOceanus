@@ -42,6 +42,24 @@ import net.sourceforge.joceanus.gordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.cipher.GordianCoreCipherFactory;
+import net.sourceforge.joceanus.gordianknot.impl.ext.digests.GordianBlake2bDigest;
+import net.sourceforge.joceanus.gordianknot.impl.ext.digests.GordianBlake2sDigest;
+import net.sourceforge.joceanus.gordianknot.impl.ext.engines.GordianAnubisEngine;
+import net.sourceforge.joceanus.gordianknot.impl.ext.engines.GordianBlake2XEngine;
+import net.sourceforge.joceanus.gordianknot.impl.ext.engines.GordianBlake3Engine;
+import net.sourceforge.joceanus.gordianknot.impl.ext.engines.GordianLeaEngine;
+import net.sourceforge.joceanus.gordianknot.impl.ext.engines.GordianMARSEngine;
+import net.sourceforge.joceanus.gordianknot.impl.ext.engines.GordianRabbitEngine;
+import net.sourceforge.joceanus.gordianknot.impl.ext.engines.GordianSimonEngine;
+import net.sourceforge.joceanus.gordianknot.impl.ext.engines.GordianSkeinXofEngine;
+import net.sourceforge.joceanus.gordianknot.impl.ext.engines.GordianSnow3GEngine;
+import net.sourceforge.joceanus.gordianknot.impl.ext.engines.GordianSosemanukEngine;
+import net.sourceforge.joceanus.gordianknot.impl.ext.engines.GordianSpeckEngine;
+import net.sourceforge.joceanus.gordianknot.impl.ext.engines.GordianXChaCha20Engine;
+import net.sourceforge.joceanus.gordianknot.impl.ext.engines.GordianZuc128Engine;
+import net.sourceforge.joceanus.gordianknot.impl.ext.engines.GordianZuc256Engine;
+import net.sourceforge.joceanus.gordianknot.impl.ext.modes.GordianChaChaPoly1305;
+import net.sourceforge.joceanus.gordianknot.impl.ext.modes.GordianGCMSIVBlockCipher;
 import net.sourceforge.joceanus.oceanus.OceanusException;
 import org.bouncycastle.crypto.BlockCipher;
 import org.bouncycastle.crypto.BufferedBlockCipher;
@@ -86,24 +104,6 @@ import org.bouncycastle.crypto.engines.VMPCEngine;
 import org.bouncycastle.crypto.engines.VMPCKSA3Engine;
 import org.bouncycastle.crypto.engines.XSalsa20Engine;
 import org.bouncycastle.crypto.engines.XTEAEngine;
-import org.bouncycastle.crypto.ext.digests.Blake2b;
-import org.bouncycastle.crypto.ext.digests.Blake2s;
-import org.bouncycastle.crypto.ext.engines.AnubisEngine;
-import org.bouncycastle.crypto.ext.engines.Blake2XEngine;
-import org.bouncycastle.crypto.ext.engines.Blake3Engine;
-import org.bouncycastle.crypto.ext.engines.LeaEngine;
-import org.bouncycastle.crypto.ext.engines.MARSEngine;
-import org.bouncycastle.crypto.ext.engines.RabbitEngine;
-import org.bouncycastle.crypto.ext.engines.SimonEngine;
-import org.bouncycastle.crypto.ext.engines.SkeinXofEngine;
-import org.bouncycastle.crypto.ext.engines.Snow3GEngine;
-import org.bouncycastle.crypto.ext.engines.SosemanukEngine;
-import org.bouncycastle.crypto.ext.engines.SpeckEngine;
-import org.bouncycastle.crypto.ext.engines.XChaCha20Engine;
-import org.bouncycastle.crypto.ext.engines.Zuc128Engine;
-import org.bouncycastle.crypto.ext.engines.Zuc256Engine;
-import org.bouncycastle.crypto.ext.modes.ChaChaPoly1305;
-import org.bouncycastle.crypto.ext.modes.GCMSIVBlockCipher;
 import org.bouncycastle.crypto.generators.DESedeKeyGenerator;
 import org.bouncycastle.crypto.modes.AEADBlockCipher;
 import org.bouncycastle.crypto.modes.AEADCipher;
@@ -128,13 +128,13 @@ import org.bouncycastle.crypto.paddings.PKCS7Padding;
 import org.bouncycastle.crypto.paddings.PaddedBufferedBlockCipher;
 import org.bouncycastle.crypto.paddings.TBCPadding;
 import org.bouncycastle.crypto.paddings.X923Padding;
-import org.bouncycastle.crypto.patch.engines.ElephantXEngine;
-import org.bouncycastle.crypto.patch.engines.ISAPXEngine;
-import org.bouncycastle.crypto.patch.engines.PhotonXEngine;
-import org.bouncycastle.crypto.patch.engines.PhotonXEngine.PhotonBeetleParameters;
-import org.bouncycastle.crypto.patch.engines.XoodyakXEngine;
-import org.bouncycastle.crypto.patch.modes.KCCMXBlockCipher;
-import org.bouncycastle.crypto.patch.modes.KGCMXBlockCipher;
+import org.bouncycastle.crypto.patch.engines.GordianElephantEngine;
+import org.bouncycastle.crypto.patch.engines.GordianISAPEngine;
+import org.bouncycastle.crypto.patch.engines.GordianPhotonBeetleEngine;
+import org.bouncycastle.crypto.patch.engines.GordianPhotonBeetleEngine.PhotonBeetleParameters;
+import org.bouncycastle.crypto.patch.engines.GordianXoodyakEngine;
+import org.bouncycastle.crypto.patch.modes.GordianKCCMBlockCipher;
+import org.bouncycastle.crypto.patch.modes.GordianKGCMBlockCipher;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -268,7 +268,7 @@ public class BouncyCipherFactory
             case CHACHA20:
                 switch ((GordianChaCha20Key) mySpec.getSubKeyType()) {
                     case XCHACHA:
-                        return new XChaCha20Engine();
+                        return new GordianXChaCha20Engine();
                     case ISO7539:
                         return new ChaCha7539Engine();
                     default:
@@ -289,23 +289,25 @@ public class BouncyCipherFactory
             case RC4:
                 return new RC4Engine();
             case SOSEMANUK:
-                return new SosemanukEngine();
+                return new GordianSosemanukEngine();
             case RABBIT:
-                return new RabbitEngine();
+                return new GordianRabbitEngine();
             case SNOW3G:
-                return new Snow3GEngine();
+                return new GordianSnow3GEngine();
             case ZUC:
                 return GordianLength.LEN_128 == mySpec.getKeyLength()
-                       ? new Zuc128Engine()
-                       : new Zuc256Engine();
+                       ? new GordianZuc128Engine()
+                       : new GordianZuc256Engine();
             case SKEINXOF:
                 final GordianSkeinXofKey mySkeinKeyType = (GordianSkeinXofKey) mySpec.getSubKeyType();
-                return new SkeinXofEngine(mySkeinKeyType.getLength().getLength());
+                return new GordianSkeinXofEngine(mySkeinKeyType.getLength().getLength());
             case BLAKE2XOF:
                 final GordianBlakeXofKey myBlakeKeyType = (GordianBlakeXofKey) mySpec.getSubKeyType();
-                return new Blake2XEngine(GordianBlakeXofKey.BLAKE2XB == myBlakeKeyType ? new Blake2b() : new Blake2s());
+                return new GordianBlake2XEngine(GordianBlakeXofKey.BLAKE2XB == myBlakeKeyType
+                        ? new GordianBlake2bDigest()
+                        : new GordianBlake2sDigest());
             case BLAKE3XOF:
-                return new Blake3Engine();
+                return new GordianBlake3Engine();
             default:
                 throw new GordianDataException(GordianCoreFactory.getInvalidText(pCipherSpec));
         }
@@ -324,23 +326,23 @@ public class BouncyCipherFactory
             case CHACHA20:
                 switch ((GordianChaCha20Key) mySpec.getSubKeyType()) {
                     case XCHACHA:
-                        return new ChaChaPoly1305(new XChaCha20Engine());
+                        return new GordianChaChaPoly1305(new GordianXChaCha20Engine());
                     case ISO7539:
                     default:
-                        return new ChaChaPoly1305(new ChaCha7539Engine());
+                        return new GordianChaChaPoly1305(new ChaCha7539Engine());
                 }
             case ASCON:
                 return new AsconEngine(((GordianAsconKey) mySpec.getSubKeyType()).getParameters());
             case ELEPHANT:
-                return new ElephantXEngine(((GordianElephantKey) mySpec.getSubKeyType()).getParameters());
+                return new GordianElephantEngine(((GordianElephantKey) mySpec.getSubKeyType()).getParameters());
             case ISAP:
-                return new ISAPXEngine(((GordianISAPKey) mySpec.getSubKeyType()).getType());
+                return new GordianISAPEngine(((GordianISAPKey) mySpec.getSubKeyType()).getType());
             case PHOTONBEETLE:
-                return new PhotonXEngine(PhotonBeetleParameters.pb128);
+                return new GordianPhotonBeetleEngine(PhotonBeetleParameters.pb128);
             case SPARKLE:
                 return new SparkleEngine(((GordianSparkleKey) mySpec.getSubKeyType()).getParameters());
             case XOODYAK:
-                return new XoodyakXEngine();
+                return new GordianXoodyakEngine();
             default:
                 throw new GordianDataException(GordianCoreFactory.getInvalidText(pCipherSpec));
         }
@@ -406,15 +408,15 @@ public class BouncyCipherFactory
             case SHACAL2:
                 return new Shacal2Engine();
             case SPECK:
-                return new SpeckEngine();
+                return new GordianSpeckEngine();
             case ANUBIS:
-                return new AnubisEngine();
+                return new GordianAnubisEngine();
             case SIMON:
-                return new SimonEngine();
+                return new GordianSimonEngine();
             case MARS:
-                return new MARSEngine();
+                return new GordianMARSEngine();
             case LEA:
-                return new LeaEngine();
+                return new GordianLeaEngine();
             default:
                 throw new GordianDataException(GordianCoreFactory.getInvalidText(pKeySpec));
         }
@@ -479,13 +481,13 @@ public class BouncyCipherFactory
             case CCM:
                 return CCMBlockCipher.newInstance(getBCSymEngine(mySpec));
             case KCCM:
-                return new KCCMXBlockCipher(getBCSymEngine(mySpec));
+                return new GordianKCCMBlockCipher(getBCSymEngine(mySpec));
             case GCM:
                 return GCMBlockCipher.newInstance(getBCSymEngine(mySpec));
             case GCMSIV:
-                return new GCMSIVBlockCipher(getBCSymEngine(mySpec));
+                return new GordianGCMSIVBlockCipher(getBCSymEngine(mySpec));
             case KGCM:
-                return new KGCMXBlockCipher(getBCSymEngine(mySpec));
+                return new GordianKGCMBlockCipher(getBCSymEngine(mySpec));
             case OCB:
                 return new OCBBlockCipher(getBCSymEngine(mySpec), getBCSymEngine(mySpec));
             default:
@@ -518,13 +520,4 @@ public class BouncyCipherFactory
                 return new DefaultBufferedBlockCipher(pEngine);
         }
     }
-
-    //@Override
-    //protected boolean validStreamKeyType(final GordianStreamKeyType pKeyType) {
-        /* Disable Elephant for the time being */
-      //  if (pKeyType == null || pKeyType == GordianStreamKeyType.ELEPHANT) {
-        //    return false;
-        //}
-        //return super.validStreamKeyType(pKeyType);
-    //}
 }

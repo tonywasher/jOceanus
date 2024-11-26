@@ -20,8 +20,8 @@ import net.sourceforge.joceanus.gordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
 import org.bouncycastle.crypto.engines.AsconEngine.AsconParameters;
 import org.bouncycastle.crypto.engines.SparkleEngine.SparkleParameters;
-import org.bouncycastle.crypto.patch.engines.ElephantXEngine.ElephantParameters;
-import org.bouncycastle.crypto.patch.engines.ISAPXEngine.IsapType;
+import org.bouncycastle.crypto.patch.engines.GordianElephantEngine.ElephantParameters;
+import org.bouncycastle.crypto.patch.engines.GordianISAPEngine.IsapType;
 
 import java.util.Objects;
 

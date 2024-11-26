@@ -453,7 +453,7 @@
         <version>${CheckStylePluginVersion}</version>
         <configuration>
           <configLocation>src/main/checkstyle/checks.xml</configLocation>
-          <excludes>**/test/**/*.java,**/embedded/**/*.java,**/patch/**/*.java,**/extension/**/*.java,**/module-info.java</excludes>
+          <excludes>**/test/**/*.java,**/embedded/**/*.java,**/patch/**/*.java,**/module-info.java</excludes>
         </configuration>
       </plugin>
       <plugin>

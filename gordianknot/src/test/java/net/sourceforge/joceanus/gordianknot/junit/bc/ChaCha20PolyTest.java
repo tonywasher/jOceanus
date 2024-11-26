@@ -1,8 +1,8 @@
 package net.sourceforge.joceanus.gordianknot.junit.bc;
 
+import net.sourceforge.joceanus.gordianknot.impl.ext.modes.GordianChaChaPoly1305;
 import org.bouncycastle.crypto.InvalidCipherTextException;
 import org.bouncycastle.crypto.engines.ChaCha7539Engine;
-import org.bouncycastle.crypto.ext.modes.ChaChaPoly1305;
 import org.bouncycastle.crypto.params.AEADParameters;
 import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.crypto.params.ParametersWithIV;
@@ -121,7 +121,7 @@ public class ChaCha20PolyTest
          * Test Cipher.
          */
         void testTheCipher() {
-            final ChaChaPoly1305 myEngine = new ChaChaPoly1305(new ChaCha7539Engine());
+            final GordianChaChaPoly1305 myEngine = new GordianChaChaPoly1305(new ChaCha7539Engine());
             testAADCipher(myEngine, TEST);
         }
     }
@@ -131,7 +131,7 @@ public class ChaCha20PolyTest
      * @param pCipher the cipher to test.
      * @param pTestCase the testCase
      */
-    void testAADCipher(final ChaChaPoly1305 pCipher,
+    void testAADCipher(final GordianChaChaPoly1305 pCipher,
                        final TestCase pTestCase) {
         try {
             /* Access the expected bytes */
