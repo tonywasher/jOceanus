@@ -78,7 +78,10 @@ public class OutputLength {
             final int myFinalOutLen = pCipher.getOutputSize(DATALEN);
             final byte[] myEncrypted = new byte[myFinalOutLen];
             pCipher.processAADBytes(myAEAD, 0, AEADLEN);
-            int myOutLen = pCipher.processBytes(myData, 0, DATALEN, myEncrypted, 0);
+            int myOutLen = 0;
+            for (int i = 0; i < DATALEN; i++) {
+                myOutLen += pCipher.processBytes(myData, i, 1, myEncrypted, myOutLen);
+            }
             int myRemaining = pCipher.getOutputSize(0);
 
             /* Check that the predicted data output length is reasonable */
