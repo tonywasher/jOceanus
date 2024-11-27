@@ -67,12 +67,11 @@ public class GordianHKDFMulti {
 
     /**
      * Set mode to extractOnly.
-     * @param pSalt the salt
      * @return the engine
      */
-    public GordianHKDFMulti extractOnly(final byte[] pSalt) {
+    public GordianHKDFMulti extractOnly() {
         /* Configure the primary */
-        thePrimary.extractOnly(pSalt);
+        thePrimary.extractOnly();
 
         /* Share parameters with secondaries */
         shareParameters();
@@ -82,7 +81,7 @@ public class GordianHKDFMulti {
     }
 
     /**
-     * Set mode to extractOnly.
+     * Set mode to expandOnly.
      * @param pPRK the pseudo-random key
      * @param pLength the length
      * @return the engine
@@ -101,14 +100,12 @@ public class GordianHKDFMulti {
 
     /**
      * Set mode to extractThenExpand.
-     * @param pSalt the salt
      * @param pLength the length
      * @return the engine
      */
-    public GordianHKDFMulti extractThenExpand(final byte[] pSalt,
-                                              final int pLength) {
+    public GordianHKDFMulti extractThenExpand(final int pLength) {
         /* Configure the primary */
-        thePrimary.extractThenExpand(pSalt, pLength);
+        thePrimary.extractThenExpand(pLength);
 
         /* Share parameters with secondaries */
         shareParameters();
@@ -132,8 +129,18 @@ public class GordianHKDFMulti {
      * @param pIKM the initial keying material
      * @return the engine
      */
-    public GordianHKDFMulti addIKM(final byte[] pIKM) {
-        thePrimary.addIKM(pIKM);
+    public GordianHKDFMulti withIKM(final byte[] pIKM) {
+        thePrimary.withIKM(pIKM);
+        return this;
+    }
+
+    /**
+     * Add salt.
+     * @param pSalt the salt
+     * @return the engine
+     */
+    public GordianHKDFMulti withSalt(final byte[] pSalt) {
+        thePrimary.withSalt(pSalt);
         return this;
     }
 
@@ -142,17 +149,8 @@ public class GordianHKDFMulti {
      * @param pInfo the info
      * @return the engine
      */
-    public GordianHKDFMulti addInfo(final byte[] pInfo) {
-        thePrimary.addInfo(pInfo);
-        return this;
-    }
-
-    /**
-     * Clear the info list.
-     * @return the engine
-     */
-    public GordianHKDFMulti clearInfo() {
-        thePrimary.clearInfo();
+    public GordianHKDFMulti withInfo(final byte[] pInfo) {
+        thePrimary.withInfo(pInfo);
         return this;
     }
 

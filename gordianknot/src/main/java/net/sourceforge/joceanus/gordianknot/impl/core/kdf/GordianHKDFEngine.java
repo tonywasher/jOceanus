@@ -16,6 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.core.kdf;
 
+import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigest;
+import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestFactory;
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMac;
@@ -30,6 +32,11 @@ import java.util.Iterator;
  * HKDF functions.
  */
 public class GordianHKDFEngine {
+    /**
+     * The Digest.
+     */
+    private final GordianDigest theDigest;
+
     /**
      * The HMac.
      */
@@ -48,24 +55,27 @@ public class GordianHKDFEngine {
      */
     public GordianHKDFEngine(final GordianFactory pFactory,
                              final GordianDigestSpec pDigestSpec) throws OceanusException {
+        /* Create the digest */
+        final GordianDigestFactory myDigestFactory = pFactory.getDigestFactory();
+        theDigest = myDigestFactory.createDigest(pDigestSpec);
+
         /* Create the hMac */
-        final GordianMacFactory myFactory = pFactory.getMacFactory();
+        final GordianMacFactory myMacFactory = pFactory.getMacFactory();
         final GordianMacSpec myMacSpec = GordianMacSpecBuilder.hMac(pDigestSpec);
-        theHMac = myFactory.createMac(myMacSpec);
+        theHMac = myMacFactory.createMac(myMacSpec);
     }
 
     /**
      * Set mode to extractOnly.
-     * @param pSalt the salt
      * @return the engine
      */
-    public GordianHKDFEngine extractOnly(final byte[] pSalt) {
-        theParams = GordianHKDFParams.extractOnly(pSalt);
+    public GordianHKDFEngine extractOnly() {
+        theParams = GordianHKDFParams.extractOnly();
         return this;
     }
 
     /**
-     * Set mode to extractOnly.
+     * Set mode to expandOnly.
      * @param pPRK the pseudo-random key
      * @param pLength the length
      * @return the engine
@@ -78,13 +88,11 @@ public class GordianHKDFEngine {
 
     /**
      * Set mode to extractThenExpand.
-     * @param pSalt the salt
      * @param pLength the length
      * @return the engine
      */
-    public GordianHKDFEngine extractThenExpand(final byte[] pSalt,
-                                               final int pLength) {
-        theParams = GordianHKDFParams.extractThenExpand(pSalt, pLength);
+    public GordianHKDFEngine extractThenExpand(final int pLength) {
+        theParams = GordianHKDFParams.extractThenExpand(pLength);
         return this;
     }
 
@@ -93,9 +101,20 @@ public class GordianHKDFEngine {
      * @param pIKM the initial keying material
      * @return the engine
      */
-    public GordianHKDFEngine addIKM(final byte[] pIKM) {
+    public GordianHKDFEngine withIKM(final byte[] pIKM) {
         checkParams();
-        theParams.addIKM(pIKM);
+        theParams.withIKM(pIKM);
+        return this;
+    }
+
+    /**
+     * Add salt.
+     * @param pSalt the salt
+     * @return the engine
+     */
+    public GordianHKDFEngine withSalt(final byte[] pSalt) {
+        checkParams();
+        theParams.withIKM(pSalt);
         return this;
     }
 
@@ -104,19 +123,9 @@ public class GordianHKDFEngine {
      * @param pInfo the info
      * @return the engine
      */
-    public GordianHKDFEngine addInfo(final byte[] pInfo) {
+    public GordianHKDFEngine withInfo(final byte[] pInfo) {
         checkParams();
-        theParams.addInfo(pInfo);
-        return this;
-    }
-
-    /**
-     * Clear the info list.
-     * @return the engine
-     */
-    public GordianHKDFEngine clearInfo() {
-        checkParams();
-        theParams.clearInfo();
+        theParams.withInfo(pInfo);
         return this;
     }
 
@@ -150,7 +159,7 @@ public class GordianHKDFEngine {
 
         /* If we should extract the information */
         if (myMode.doExtract()) {
-            myOutput = extractKeyingMaterial(theParams.ikmIterator());
+            myOutput = extractKeyingMaterial(theParams.saltIterator(), theParams.ikmIterator());
         }
 
         /* If we should expand the information */
@@ -166,13 +175,20 @@ public class GordianHKDFEngine {
 
     /**
      * Extract keying material.
+     * @param saltIterator the iterator over the salts
      * @param ikmIterator the iterator over the initial keying material
      * @return the extracted material
      * @throws OceanusException on error
      */
-    private byte[] extractKeyingMaterial(final Iterator<byte[]> ikmIterator) throws OceanusException {
+    private byte[] extractKeyingMaterial(final Iterator<byte[]> saltIterator,
+                                         final Iterator<byte[]> ikmIterator) throws OceanusException {
+        /* Determine the key */
+        while (saltIterator.hasNext()) {
+            theDigest.update(saltIterator.next());
+        }
+        theHMac.initKeyBytes(theDigest.finish());
+
         /* Extract the keying material */
-        theHMac.initKeyBytes(theParams.getSalt());
         while (ikmIterator.hasNext()) {
             theHMac.update(ikmIterator.next());
         }

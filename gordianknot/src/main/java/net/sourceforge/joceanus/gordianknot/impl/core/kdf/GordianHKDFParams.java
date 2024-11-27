@@ -30,6 +30,11 @@ public final class GordianHKDFParams {
     private final List<byte[]> theIKMs;
 
     /**
+     * The salts.
+     */
+    private final List<byte[]> theSalts;
+
+    /**
      * The pseudo-random key.
      */
     private final byte[] thePRK;
@@ -45,11 +50,6 @@ public final class GordianHKDFParams {
     private final GordianHKDFMode theMode;
 
     /**
-     * The salt.
-     */
-    private final byte[] theSalt;
-
-    /**
      * The expand length.
      */
     private final int theLength;
@@ -57,27 +57,25 @@ public final class GordianHKDFParams {
     /**
      * Constructor.
      * @param pMode theMode
-     * @param pSalt the salt
      * @param pPRK the pseudo-random key
      * @param pLength the length
      */
     private GordianHKDFParams(final GordianHKDFMode pMode,
-                              final byte[] pSalt,
                               final byte[] pPRK,
                               final int pLength) {
         /* Store parameters */
         theMode = pMode;
-        theSalt = pSalt == null ? null : pSalt.clone();
         thePRK = pPRK == null ? null : pPRK.clone();
         theLength = pLength;
         theIKMs = new ArrayList<>();
+        theSalts = new ArrayList<>();
         theInfo = new ArrayList<>();
 
         /* Check salt */
-        if (pMode.doExtract()
-                && (theSalt == null || pSalt.length == 0)) {
-            throw new IllegalArgumentException("Salt must be non-null and non-zero length for extract");
-        }
+        //if (pMode.doExtract()
+        //        && (theSalt == null || pSalt.length == 0)) {
+        //    throw new IllegalArgumentException("Salt must be non-null and non-zero length for extract");
+        //}
 
         /* Check prk */
         if (GordianHKDFMode.EXPAND.equals(theMode)
@@ -88,11 +86,10 @@ public final class GordianHKDFParams {
 
     /**
      * Create an extractOnly parameters.
-     * @param pSalt the salt
      * @return an extractOnly parameters
      */
-    static GordianHKDFParams extractOnly(final byte[] pSalt) {
-        return new GordianHKDFParams(GordianHKDFMode.EXTRACT, pSalt, null, 0);
+    static GordianHKDFParams extractOnly() {
+        return new GordianHKDFParams(GordianHKDFMode.EXTRACT, null, 0);
     }
 
     /**
@@ -103,18 +100,16 @@ public final class GordianHKDFParams {
      */
     static GordianHKDFParams expandOnly(final byte[] pPRK,
                                         final int pLength) {
-        return new GordianHKDFParams(GordianHKDFMode.EXPAND, null, pPRK, pLength);
+        return new GordianHKDFParams(GordianHKDFMode.EXPAND, pPRK, pLength);
     }
 
     /**
      * Create an extractThenExpand parameters.
-     * @param pSalt the salt
      * @param pLength the length
      * @return an extractThenExpand parameters
      */
-    static GordianHKDFParams extractThenExpand(final byte[] pSalt,
-                                               final int pLength) {
-        return new GordianHKDFParams(GordianHKDFMode.EXTRACTTHENEXPAND, pSalt, null, pLength);
+    static GordianHKDFParams extractThenExpand(final int pLength) {
+        return new GordianHKDFParams(GordianHKDFMode.EXTRACTTHENEXPAND, null, pLength);
     }
 
     /**
@@ -123,14 +118,6 @@ public final class GordianHKDFParams {
      */
     GordianHKDFMode getMode() {
         return theMode;
-    }
-
-    /**
-     * Obtain the salt.
-     * @return the salt
-     */
-    byte[] getSalt() {
-        return theSalt;
     }
 
     /**
@@ -146,7 +133,7 @@ public final class GordianHKDFParams {
      * @param pIKM the initial keying material
      * @return the parameters
      */
-    GordianHKDFParams addIKM(final byte[] pIKM) {
+    GordianHKDFParams withIKM(final byte[] pIKM) {
         if (pIKM != null && pIKM.length > 0) {
             theIKMs.add(pIKM.clone());
         }
@@ -162,23 +149,34 @@ public final class GordianHKDFParams {
     }
 
     /**
-     * Add info.
-     * @param pInfo the info
+     * Add salt.
+     * @param pSalt the salt
      * @return the parameters
      */
-    GordianHKDFParams addInfo(final byte[] pInfo) {
-        if (pInfo != null && pInfo.length > 0) {
-            theInfo.add(pInfo.clone());
+    GordianHKDFParams withSalt(final byte[] pSalt) {
+        if (pSalt != null && pSalt.length > 0) {
+            theSalts.add(pSalt.clone());
         }
         return this;
     }
 
     /**
-     * Clear the info list.
+     * Obtain the saltIterator.
+     * @return the iterator.
+     */
+    Iterator<byte[]> saltIterator() {
+        return theSalts.iterator();
+    }
+
+    /**
+     * Add info.
+     * @param pInfo the info
      * @return the parameters
      */
-    GordianHKDFParams clearInfo() {
-        theInfo.clear();
+    GordianHKDFParams withInfo(final byte[] pInfo) {
+        if (pInfo != null && pInfo.length > 0) {
+            theInfo.add(pInfo.clone());
+        }
         return this;
     }
 
