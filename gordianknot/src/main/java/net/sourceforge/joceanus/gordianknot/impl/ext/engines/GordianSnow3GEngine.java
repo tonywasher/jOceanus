@@ -31,7 +31,9 @@ import org.bouncycastle.util.Memoable;
 @SuppressWarnings("checkstyle:MagicNumber")
 public class GordianSnow3GEngine
         implements StreamCipher, Memoable {
-    /* Rijndael S-box SR */
+    /**
+     * Rijndael S-box SR.
+     */
     private static final byte[] SR = {
             (byte) 0x63, (byte) 0x7C, (byte) 0x77, (byte) 0x7B, (byte) 0xF2, (byte) 0x6B, (byte) 0x6F, (byte) 0xC5,
             (byte) 0x30, (byte) 0x01, (byte) 0x67, (byte) 0x2B, (byte) 0xFE, (byte) 0xD7, (byte) 0xAB, (byte) 0x76,
@@ -66,7 +68,10 @@ public class GordianSnow3GEngine
             (byte) 0x8C, (byte) 0xA1, (byte) 0x89, (byte) 0x0D, (byte) 0xBF, (byte) 0xE6, (byte) 0x42, (byte) 0x68,
             (byte) 0x41, (byte) 0x99, (byte) 0x2D, (byte) 0x0F, (byte) 0xB0, (byte) 0x54, (byte) 0xBB, (byte) 0x16
     };
-    /* S-box SQ */
+
+    /**
+     * S-box SQ.
+     */
     private static final byte[] SQ = {
             (byte) 0x25, (byte) 0x24, (byte) 0x73, (byte) 0x67, (byte) 0xD7, (byte) 0xAE, (byte) 0x5C, (byte) 0x30,
             (byte) 0xA4, (byte) 0xEE, (byte) 0x6E, (byte) 0xCB, (byte) 0x7D, (byte) 0xB5, (byte) 0x82, (byte) 0xDB,
@@ -103,10 +108,14 @@ public class GordianSnow3GEngine
     };
 
     /**
-     * State.
+     * LFSR State.
      */
-    private final int[] LFSR = new int[16];
-    private final int[] FSM = new int[3];
+    private final int[] lfsrState = new int[16];
+
+    /**
+     * FSM State.
+     */
+    private final int[] fsmState = new int[3];
 
     /**
      * index of next byte in keyStream.
@@ -138,7 +147,7 @@ public class GordianSnow3GEngine
      * Constructor.
      * @param pSource the source engine
      */
-    private GordianSnow3GEngine(GordianSnow3GEngine pSource) {
+    private GordianSnow3GEngine(final GordianSnow3GEngine pSource) {
         reset(pSource);
     }
 
@@ -244,7 +253,7 @@ public class GordianSnow3GEngine
      * @param off the input offset
      * @return the decoded value
      */
-    private static int decode32be(byte[] buf, int off) {
+    private static int decode32be(final byte[] buf, final int off) {
         return ((buf[off] & 0xFF) << 24)
                 | ((buf[off + 1] & 0xFF) << 16)
                 | ((buf[off + 2] & 0xFF) << 8)
@@ -258,7 +267,7 @@ public class GordianSnow3GEngine
      * @param buf the output buffer
      * @param off the output offset
      */
-    private static void encode32be(int val, byte[] buf, int off) {
+    private static void encode32be(final int val, final byte[] buf, final int off) {
         buf[off] = (byte) (val >> 24);
         buf[off + 1] = (byte) (val >> 16);
         buf[off + 2] = (byte) (val >> 8);
@@ -266,32 +275,32 @@ public class GordianSnow3GEngine
     }
 
     /* MULx.
-     * Input V: an 8-bit input.
+     * Input v: an 8-bit input.
      * Input c: an 8-bit input.
      * Output : an 8-bit output.
      * See section 3.1.1 for details.
      */
-    int MULx(byte V, int c)
-    {
-        if ((V & 0x80) != 0)
-            return ((V << 1) ^ c) & 0xFF;
-        else
-            return (V << 1) & 0xFF;
+    int mulX(final byte v, final int c) {
+        if ((v & 0x80) != 0) {
+            return ((v << 1) ^ c) & 0xFF;
+        } else {
+            return (v << 1) & 0xFF;
+        }
     }
 
     /* MULxPOW.
-     * Input V: an 8-bit input.
+     * Input v: an 8-bit input.
      * Input i: a positive integer.
      * Input c: an 8-bit input.
      * Output : an 8-bit output.
      * See section 3.1.2 for details.
      */
-    int MULxPOW(byte V, int i, int c)
-    {
-        if (i == 0)
-            return V & 0xFF;
-        else
-            return MULx((byte) MULxPOW(V, i - 1, c), c);
+    int mulXpow(final byte v, final int i, final int c) {
+        if (i == 0) {
+            return v & 0xFF;
+        } else {
+            return mulX((byte) mulXpow(v, i - 1, c), c);
+        }
     }
 
     /* The function MUL alpha.
@@ -299,12 +308,11 @@ public class GordianSnow3GEngine
      * Output : 32-bit output.
      * See section 3.4.2 for details.
      */
-    int MULalpha(byte c)
-    {
-        return (((MULxPOW(c, 23, 0xa9)) << 24) |
-                ((MULxPOW(c, 245, 0xa9)) << 16) |
-                ((MULxPOW(c, 48, 0xa9)) << 8) |
-                ((MULxPOW(c, 239, 0xa9))));
+    int mulAlpha(final byte c) {
+        return (((mulXpow(c, 23, 0xa9)) << 24)
+                | ((mulXpow(c, 245, 0xa9)) << 16)
+                | ((mulXpow(c, 48, 0xa9)) << 8)
+                | ((mulXpow(c, 239, 0xa9))));
     }
 
     /* The function DIV alpha.
@@ -312,12 +320,11 @@ public class GordianSnow3GEngine
      * Output : 32-bit output.
      * See section 3.4.3 for details.
      */
-    int DIValpha(byte c)
-    {
-        return (((MULxPOW(c, 16, 0xa9)) << 24) |
-                ((MULxPOW(c, 39, 0xa9)) << 16) |
-                ((MULxPOW(c, 6, 0xa9)) << 8) |
-                ((MULxPOW(c, 64, 0xa9))));
+    int divAlpha(final byte c) {
+        return (((mulXpow(c, 16, 0xa9)) << 24)
+                | ((mulXpow(c, 39, 0xa9)) << 16)
+                | ((mulXpow(c, 6, 0xa9)) << 8)
+                | ((mulXpow(c, 64, 0xa9))));
     }
 
     /* The 32x32-bit S-Box S1
@@ -325,35 +332,33 @@ public class GordianSnow3GEngine
      * Output: a 32-bit output of S1 box.
      * See section 3.3.1.
      */
-    int S1(int w)
-    {
-        int r0 = 0, r1 = 0, r2 = 0, r3 = 0;
-        byte srw0 = (byte) SR[((w >> 24) & 0xff)];
-        byte srw1 = (byte) SR[((w >> 16) & 0xff)];
-        byte srw2 = (byte) SR[((w >> 8) & 0xff)];
-        byte srw3 = (byte) SR[((w) & 0xff)];
-        r0 = ((MULx(srw0, 0x1b)) ^
-                (srw1) ^
-                (srw2) ^
-                ((MULx(srw3, 0x1b)) ^ srw3)
+    int s1(final int w) {
+        final byte srw0 = (byte) SR[((w >> 24) & 0xff)];
+        final byte srw1 = (byte) SR[((w >> 16) & 0xff)];
+        final byte srw2 = (byte) SR[((w >> 8) & 0xff)];
+        final byte srw3 = (byte) SR[((w) & 0xff)];
+        final int r0 = ((mulX(srw0, 0x1b))
+                ^ (srw1)
+                ^ (srw2)
+                ^ ((mulX(srw3, 0x1b)) ^ srw3)
         ) & 0xFF;
-        r1 = (((MULx(srw0, 0x1b)) ^ srw0) ^
-                (MULx(srw1, 0x1b)) ^
-                (srw2) ^
-                (srw3)
+        final int r1 = (((mulX(srw0, 0x1b)) ^ srw0)
+                ^ (mulX(srw1, 0x1b))
+                ^ (srw2)
+                ^ (srw3)
         ) & 0xFF;
-        r2 = ((srw0) ^
-                ((MULx(srw1, 0x1b)) ^ srw1) ^
-                (MULx(srw2, 0x1b)) ^
-                (srw3)
+        final int r2 = ((srw0)
+                ^ ((mulX(srw1, 0x1b)) ^ srw1)
+                ^ (mulX(srw2, 0x1b))
+                ^ (srw3)
         ) & 0xFF;
-        r3 = ((srw0) ^
-                (srw1) ^
-                ((MULx(srw2, 0x1b)) ^ srw2) ^
-                (MULx(srw3, 0x1b))
+        final int r3 = ((srw0)
+                ^ (srw1)
+                ^ ((mulX(srw2, 0x1b)) ^ srw2)
+                ^ (mulX(srw3, 0x1b))
         ) & 0xFF;
-        return (((r0) << 24) | ((r1) << 16) | ((r2) << 8) |
-                ((r3)));
+        return (((r0) << 24) | ((r1) << 16) | ((r2) << 8)
+                | ((r3)));
     }
 
     /* The 32x32-bit S-Box S2
@@ -361,97 +366,93 @@ public class GordianSnow3GEngine
      * Output: a 32-bit output of S2 box.
      * See section 3.3.2.
      */
-    int S2(int w)
-    {
-        int r0 = 0, r1 = 0, r2 = 0, r3 = 0;
-        byte sqw0 = (byte) SQ[((w >> 24) & 0xff)];
-        byte sqw1 = (byte) SQ[((w >> 16) & 0xff)];
-        byte sqw2 = (byte) SQ[((w >> 8) & 0xff)];
-        byte sqw3 = (byte) SQ[((w) & 0xff)];
-        r0 = ((MULx(sqw0, 0x69)) ^
-                (sqw1) ^
-                (sqw2) ^
-                ((MULx(sqw3, 0x69)) ^ sqw3)
+    int s2(final int w) {
+        final byte sqw0 = SQ[((w >> 24) & 0xff)];
+        final byte sqw1 = SQ[((w >> 16) & 0xff)];
+        final byte sqw2 = SQ[((w >> 8) & 0xff)];
+        final byte sqw3 = SQ[((w) & 0xff)];
+        final int r0 = ((mulX(sqw0, 0x69))
+                ^ (sqw1)
+                ^ (sqw2)
+                ^ ((mulX(sqw3, 0x69)) ^ sqw3)
         ) & 0xFF;
-        r1 = (((MULx(sqw0, 0x69)) ^ sqw0) ^
-                (MULx(sqw1, 0x69)) ^
-                (sqw2) ^
-                (sqw3)
+        final int r1 = (((mulX(sqw0, 0x69)) ^ sqw0)
+                ^ (mulX(sqw1, 0x69))
+                ^ (sqw2)
+                ^ (sqw3)
         ) & 0xFF;
-        r2 = ((sqw0) ^
-                ((MULx(sqw1, 0x69)) ^ sqw1) ^
-                (MULx(sqw2, 0x69)) ^
-                (sqw3)
+        final int r2 = ((sqw0)
+                ^ ((mulX(sqw1, 0x69)) ^ sqw1)
+                ^ (mulX(sqw2, 0x69))
+                ^ (sqw3)
         ) & 0xFF;
-        r3 = ((sqw0) ^
-                (sqw1) ^
-                ((MULx(sqw2, 0x69)) ^ sqw2) ^
-                (MULx(sqw3, 0x69))
+        final int r3 = ((sqw0)
+                ^ (sqw1)
+                ^ ((mulX(sqw2, 0x69)) ^ sqw2)
+                ^ (mulX(sqw3, 0x69))
         ) & 0xFF;
-        return (((r0) << 24) | ((r1) << 16) | ((r2) << 8) |
-                ((r3)));
+        return (((r0) << 24) | ((r1) << 16) | ((r2) << 8)
+                | ((r3)));
     }
 
     /* Clocking LFSR in initialization mode.
      * LFSR Registers S0 to S15 are updated as the LFSR receives a single clock.
-     * Input F: a 32-bit word comes from output of FSM.
+     * Input f: a 32-bit word comes from output of FSM.
      * See section 3.4.4.
      */
-    void ClockLFSRInitializationMode(int F)
-    {
-        int v = (((LFSR[0] << 8) & 0xffffff00) ^
-                (MULalpha((byte)((LFSR[0] >>> 24) & 0xff))) ^
-                (LFSR[2]) ^
-                ((LFSR[11] >>> 8) & 0x00ffffff) ^
-                (DIValpha((byte)((LFSR[11]) & 0xff))) ^
-                (F)
+    void clockLFSRInitializationMode(final int f) {
+        final int v = (((lfsrState[0] << 8) & 0xffffff00)
+                ^ (mulAlpha((byte) ((lfsrState[0] >>> 24) & 0xff)))
+                ^ (lfsrState[2])
+                ^ ((lfsrState[11] >>> 8) & 0x00ffffff)
+                ^ (divAlpha((byte) ((lfsrState[11]) & 0xff)))
+                ^ (f)
         );
-        LFSR[0] = LFSR[1];
-        LFSR[1] = LFSR[2];
-        LFSR[2] = LFSR[3];
-        LFSR[3] = LFSR[4];
-        LFSR[4] = LFSR[5];
-        LFSR[5] = LFSR[6];
-        LFSR[6] = LFSR[7];
-        LFSR[7] = LFSR[8];
-        LFSR[8] = LFSR[9];
-        LFSR[9] = LFSR[10];
-        LFSR[10] = LFSR[11];
-        LFSR[11] = LFSR[12];
-        LFSR[12] = LFSR[13];
-        LFSR[13] = LFSR[14];
-        LFSR[14] = LFSR[15];
-        LFSR[15] = v;
+        lfsrState[0] = lfsrState[1];
+        lfsrState[1] = lfsrState[2];
+        lfsrState[2] = lfsrState[3];
+        lfsrState[3] = lfsrState[4];
+        lfsrState[4] = lfsrState[5];
+        lfsrState[5] = lfsrState[6];
+        lfsrState[6] = lfsrState[7];
+        lfsrState[7] = lfsrState[8];
+        lfsrState[8] = lfsrState[9];
+        lfsrState[9] = lfsrState[10];
+        lfsrState[10] = lfsrState[11];
+        lfsrState[11] = lfsrState[12];
+        lfsrState[12] = lfsrState[13];
+        lfsrState[13] = lfsrState[14];
+        lfsrState[14] = lfsrState[15];
+        lfsrState[15] = v;
     }
 
     /* Clocking LFSR in keystream mode.
      * LFSR Registers S0 to S15 are updated as the LFSR receives a single clock.
      * See section 3.4.5.
      */
-    void ClockLFSRKeyStreamMode()
-    {
-        int v = (((LFSR[0] << 8) & 0xffffff00) ^
-                (MULalpha((byte)((LFSR[0] >>> 24) & 0xff))) ^
-                (LFSR[2]) ^
-                ((LFSR[11] >>> 8) & 0x00ffffff) ^
-                (DIValpha((byte) ((LFSR[11]) & 0xff)))
+    void clockLFSRKeyStreamMode() {
+        final int v = (((lfsrState[0] << 8) & 0xffffff00)
+                ^ (mulAlpha((byte) ((lfsrState[0] >>> 24) & 0xff)))
+                ^ (lfsrState[2])
+                ^ ((lfsrState[11] >>> 8) & 0x00ffffff)
+                ^ (divAlpha((byte) ((lfsrState[11]) & 0xff)))
         );
-        LFSR[0] = LFSR[1];
-        LFSR[1] = LFSR[2];
-        LFSR[2] = LFSR[3];
-        LFSR[3] = LFSR[4];
-        LFSR[4] = LFSR[5];
-        LFSR[5] = LFSR[6];
-        LFSR[6] = LFSR[7];
-        LFSR[7] = LFSR[8];
-        LFSR[8] = LFSR[9];
-        LFSR[9] = LFSR[10];
-        LFSR[10] = LFSR[11];
-        LFSR[11] = LFSR[12];
-        LFSR[12] = LFSR[13];
-        LFSR[13] = LFSR[14];
-        LFSR[14] = LFSR[15];
-        LFSR[15] = v;
+        lfsrState[0] = lfsrState[1];
+        lfsrState[1] = lfsrState[2];
+        lfsrState[2] = lfsrState[3];
+        lfsrState[3] = lfsrState[4];
+        lfsrState[4] = lfsrState[5];
+        lfsrState[5] = lfsrState[6];
+        lfsrState[6] = lfsrState[7];
+        lfsrState[7] = lfsrState[8];
+        lfsrState[8] = lfsrState[9];
+        lfsrState[9] = lfsrState[10];
+        lfsrState[10] = lfsrState[11];
+        lfsrState[11] = lfsrState[12];
+        lfsrState[12] = lfsrState[13];
+        lfsrState[13] = lfsrState[14];
+        lfsrState[14] = lfsrState[15];
+        lfsrState[15] = v;
     }
 
     /* Clocking FSM.
@@ -459,14 +460,13 @@ public class GordianSnow3GEngine
      * Updates FSM registers R1, R2, R3.
      * See Section 3.4.6.
      */
-    int ClockFSM()
-    {
-        int F = ((LFSR[15] + FSM[0]) & 0xffffffff) ^ FSM[1];
-        int r = (FSM[1] + (FSM[2] ^ LFSR[5])) & 0xffffffff;
-        FSM[2] = S2(FSM[1]);
-        FSM[1] = S1(FSM[0]);
-        FSM[0] = r;
-        return F;
+    int clockFSM() {
+        final int f = ((lfsrState[15] + fsmState[0]) & 0xffffffff) ^ fsmState[1];
+        final int r = (fsmState[1] + (fsmState[2] ^ lfsrState[5])) & 0xffffffff;
+        fsmState[2] = s2(fsmState[1]);
+        fsmState[1] = s1(fsmState[0]);
+        fsmState[0] = r;
+        return f;
     }
 
     /* Initialization.
@@ -475,8 +475,7 @@ public class GordianSnow3GEngine
      * Output: All the LFSRs and FSM are initialized for key generation.
      * See Section 4.1.
      */
-    void setKeyAndIV(byte[] key, byte[] iv)
-    {
+    void setKeyAndIV(final byte[] key, final byte[] iv) {
         /* Check lengths */
         if (key == null || key.length != 16) {
             throw new IllegalArgumentException("A key of 16 bytes is needed");
@@ -485,47 +484,43 @@ public class GordianSnow3GEngine
             throw new IllegalArgumentException("An IV of 16 bytes is needed");
         }
 
-        /* Temporary variables */
-        int k0, k1, k2, k3, i0, i1, i2, i3;
-
         /* Generate four subkeys */
-        k0 = decode32be(key, 12);
-        k1 = decode32be(key, 8);
-        k2 = decode32be(key, 4);
-        k3 = decode32be(key, 0);
+        final int k0 = decode32be(key, 12);
+        final int k1 = decode32be(key, 8);
+        final int k2 = decode32be(key, 4);
+        final int k3 = decode32be(key, 0);
 
         /* Generate four subvectors */
-        i0 = decode32be(iv, 12);
-        i1 = decode32be(iv, 8);
-        i2 = decode32be(iv, 4);
-        i3 = decode32be(iv, 0);
+        final int i0 = decode32be(iv, 12);
+        final int i1 = decode32be(iv, 8);
+        final int i2 = decode32be(iv, 4);
+        final int i3 = decode32be(iv, 0);
 
-        LFSR[15] = k3 ^ i0;
-        LFSR[14] = k2;
-        LFSR[13] = k1;
-        LFSR[12] = k0 ^ i1;
-        LFSR[11] = k3 ^ 0xffffffff;
-        LFSR[10] = k2 ^ 0xffffffff ^ i2;
-        LFSR[9] = k1 ^ 0xffffffff ^ i3;
-        LFSR[8] = k0 ^ 0xffffffff;
-        LFSR[7] = k3;
-        LFSR[6] = k2;
-        LFSR[5] = k1;
-        LFSR[4] = k0;
-        LFSR[3] = k3 ^ 0xffffffff;
-        LFSR[2] = k2 ^ 0xffffffff;
-        LFSR[1] = k1 ^ 0xffffffff;
-        LFSR[0] = k0 ^ 0xffffffff;
-        FSM[0] = 0x0;
-        FSM[1] = 0x0;
-        FSM[2] = 0x0;
-        for (int i = 0; i<32; i++)
-        {
-            int F = ClockFSM();
-            ClockLFSRInitializationMode(F);
+        lfsrState[15] = k3 ^ i0;
+        lfsrState[14] = k2;
+        lfsrState[13] = k1;
+        lfsrState[12] = k0 ^ i1;
+        lfsrState[11] = k3 ^ 0xffffffff;
+        lfsrState[10] = k2 ^ 0xffffffff ^ i2;
+        lfsrState[9] = k1 ^ 0xffffffff ^ i3;
+        lfsrState[8] = k0 ^ 0xffffffff;
+        lfsrState[7] = k3;
+        lfsrState[6] = k2;
+        lfsrState[5] = k1;
+        lfsrState[4] = k0;
+        lfsrState[3] = k3 ^ 0xffffffff;
+        lfsrState[2] = k2 ^ 0xffffffff;
+        lfsrState[1] = k1 ^ 0xffffffff;
+        lfsrState[0] = k0 ^ 0xffffffff;
+        fsmState[0] = 0x0;
+        fsmState[1] = 0x0;
+        fsmState[2] = 0x0;
+        for (int i = 0; i < 32; i++) {
+            final int f = clockFSM();
+            clockLFSRInitializationMode(f);
         }
-        ClockFSM(); /* Clock FSM once. Discard the output. */
-        ClockLFSRKeyStreamMode(); /* Clock LFSR in keystream mode once. */
+        clockFSM(); /* Clock FSM once. Discard the output. */
+        clockLFSRKeyStreamMode(); /* Clock LFSR in keystream mode once. */
     }
 
     /* Generation of Keystream.
@@ -535,15 +530,14 @@ public class GordianSnow3GEngine
      * output: generated keystream which is filled in z
      * See section 4.2.
      */
-    void makeKeyStream()
-    {
+    void makeKeyStream() {
         if (theIterations++ >= getMaxIterations()) {
             throw new IllegalStateException("Too much data processed by singleKey/IV");
         }
-        int F = ClockFSM(); /* STEP 1 */
-        encode32be(F ^ LFSR[0], keyStream, 0); /* STEP 2 */
+        final int f = clockFSM(); /* STEP 1 */
+        encode32be(f ^ lfsrState[0], keyStream, 0); /* STEP 2 */
         /* Note that ks[t] corresponds to z_{t+1} in section 4.2 */
-        ClockLFSRKeyStreamMode(); /* STEP 3 */
+        clockLFSRKeyStreamMode(); /* STEP 3 */
     }
 
     @Override
@@ -551,11 +545,10 @@ public class GordianSnow3GEngine
         return new GordianSnow3GEngine(this);
     }
 
-    @Override
-    public void reset(final Memoable pState) {
+    @Override    public void reset(final Memoable pState) {
         final GordianSnow3GEngine e = (GordianSnow3GEngine) pState;
-        System.arraycopy(e.LFSR, 0, LFSR, 0, LFSR.length);
-        System.arraycopy(e.FSM, 0, FSM, 0, FSM.length);
+        System.arraycopy(e.lfsrState, 0, lfsrState, 0, lfsrState.length);
+        System.arraycopy(e.fsmState, 0, fsmState, 0, fsmState.length);
         System.arraycopy(e.keyStream, 0, keyStream, 0, keyStream.length);
         theIterations = e.theIterations;
         theIndex = e.theIndex;

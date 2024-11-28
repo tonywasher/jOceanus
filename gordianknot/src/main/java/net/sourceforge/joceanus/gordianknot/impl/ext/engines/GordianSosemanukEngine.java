@@ -62,7 +62,7 @@ public class GordianSosemanukEngine
      * Constructor.
      * @param pSource the source engine
      */
-    private GordianSosemanukEngine(GordianSosemanukEngine pSource) {
+    private GordianSosemanukEngine(final GordianSosemanukEngine pSource) {
         reset(pSource);
     }
 
@@ -175,12 +175,65 @@ public class GordianSosemanukEngine
         theIndex = e.theIndex;
     }
 
-    /*
-     * Internal cipher state.
+    /**
+     * LFSR0 State.
      */
-    private int lfsr0, lfsr1, lfsr2, lfsr3, lfsr4;
-    private int lfsr5, lfsr6, lfsr7, lfsr8, lfsr9;
-    private int fsmR1, fsmR2;
+    private int lfsr0;
+
+    /**
+     * LFSR1 State.
+     */
+    private int lfsr1;
+
+    /**
+     * LFSR2 State.
+     */
+    private int lfsr2;
+
+    /**
+     * LFSR3 State.
+     */
+    private int lfsr3;
+
+    /**
+     * LFSR4 State.
+     */
+    private int lfsr4;
+
+    /**
+     * LFSR5 State.
+     */
+    private int lfsr5;
+
+    /**
+     * LFSR6 State.
+     */
+    private int lfsr6;
+
+    /**
+     * LFSR7 State.
+     */
+    private int lfsr7;
+
+    /**
+     * LFSR8 State.
+     */
+    private int lfsr8;
+
+    /**
+     * LFSR9 State.
+     */
+    private int lfsr9;
+
+    /**
+     * FSMR1 State.
+     */
+    private int fsmR1;
+
+    /**
+     * FSMR2 State.
+     */
+    private int fsmR2;
 
     /*
      * The code internals for the SERPENT-derived functions have been
@@ -197,8 +250,7 @@ public class GordianSosemanukEngine
      * @param off   the input offset
      * @return  the decoded value
      */
-    private static final int decode32le(byte[] buf, int off)
-    {
+    private static int decode32le(final byte[] buf, final int off) {
         return (buf[off] & 0xFF)
                 | ((buf[off + 1] & 0xFF) << 8)
                 | ((buf[off + 2] & 0xFF) << 16)
@@ -212,12 +264,11 @@ public class GordianSosemanukEngine
      * @param buf   the output buffer
      * @param off   the output offset
      */
-    private static final void encode32le(int val, byte[] buf, int off)
-    {
-        buf[off] = (byte)val;
-        buf[off + 1] = (byte)(val >> 8);
-        buf[off + 2] = (byte)(val >> 16);
-        buf[off + 3] = (byte)(val >> 24);
+    private static void encode32le(final int val, final byte[] buf, final int off) {
+        buf[off] = (byte) val;
+        buf[off + 1] = (byte) (val >> 8);
+        buf[off + 2] = (byte) (val >> 16);
+        buf[off + 3] = (byte) (val >> 24);
     }
 
     /**
@@ -225,9 +276,9 @@ public class GordianSosemanukEngine
      *
      * @param val   the value to rotate
      * @param n     the rotation count (between 1 and 31)
+     * @return rotated value
      */
-    private static final int rotateLeft(int val, int n)
-    {
+    private static int rotateLeft(final int val, final int n) {
         return (val << n) | (val >>> (32 - n));
     }
 
@@ -240,46 +291,46 @@ public class GordianSosemanukEngine
      *
      * @param key   the private key
      */
-    public void setKey(byte[] key)
-    {
-        if (key.length < 1 || key.length > 32)
+    @SuppressWarnings("checkstyle:MethodLength")
+    public void setKey(final byte[] key) {
+        if (key.length < 1 || key.length > 32) {
             throw new Error("bad key length: " + key.length);
-        byte[] lkey;
+        }
+        final byte[] lkey;
         if (key.length == 32) {
             lkey = key;
         } else {
             lkey = new byte[32];
             System.arraycopy(key, 0, lkey, 0, key.length);
             lkey[key.length] = 0x01;
-            for (int i = key.length + 1; i < lkey.length; i ++)
+            for (int i = key.length + 1; i < lkey.length; i++) {
                 lkey[i] = 0x00;
+            }
         }
 
-        int w0, w1, w2, w3, w4, w5, w6, w7;
-        int r0, r1, r2, r3, r4, tt;
         int i = 0;
 
-        w0 = decode32le(lkey, 0);
-        w1 = decode32le(lkey, 4);
-        w2 = decode32le(lkey, 8);
-        w3 = decode32le(lkey, 12);
-        w4 = decode32le(lkey, 16);
-        w5 = decode32le(lkey, 20);
-        w6 = decode32le(lkey, 24);
-        w7 = decode32le(lkey, 28);
-        tt = w0 ^ w3 ^ w5 ^ w7 ^ ((int)0x9E3779B9 ^ (0));
+        int w0 = decode32le(lkey, 0);
+        int w1 = decode32le(lkey, 4);
+        int w2 = decode32le(lkey, 8);
+        int w3 = decode32le(lkey, 12);
+        int w4 = decode32le(lkey, 16);
+        int w5 = decode32le(lkey, 20);
+        int w6 = decode32le(lkey, 24);
+        int w7 = decode32le(lkey, 28);
+        int tt = w0 ^ w3 ^ w5 ^ w7 ^ (0x9E3779B9 ^ (0));
         w0 = rotateLeft(tt, 11);
-        tt = w1 ^ w4 ^ w6 ^ w0 ^ ((int)0x9E3779B9 ^ (0 + 1));
+        tt = w1 ^ w4 ^ w6 ^ w0 ^ (0x9E3779B9 ^ (0 + 1));
         w1 = rotateLeft(tt, 11);
-        tt = w2 ^ w5 ^ w7 ^ w1 ^ ((int)0x9E3779B9 ^ (0 + 2));
+        tt = w2 ^ w5 ^ w7 ^ w1 ^ (0x9E3779B9 ^ (0 + 2));
         w2 = rotateLeft(tt, 11);
-        tt = w3 ^ w6 ^ w0 ^ w2 ^ ((int)0x9E3779B9 ^ (0 + 3));
+        tt = w3 ^ w6 ^ w0 ^ w2 ^ (0x9E3779B9 ^ (0 + 3));
         w3 = rotateLeft(tt, 11);
-        r0 = w0;
-        r1 = w1;
-        r2 = w2;
-        r3 = w3;
-        r4 = r0;
+        int r0 = w0;
+        int r1 = w1;
+        int r2 = w2;
+        int r3 = w3;
+        int r4 = r0;
         r0 |= r3;
         r3 ^= r1;
         r1 &= r4;
@@ -298,17 +349,17 @@ public class GordianSosemanukEngine
         r2 = r1;
         r1 |= r3;
         r1 ^= r0;
-        serpent24SubKeys[i ++] = r1;
-        serpent24SubKeys[i ++] = r2;
-        serpent24SubKeys[i ++] = r3;
-        serpent24SubKeys[i ++] = r4;
-        tt = w4 ^ w7 ^ w1 ^ w3 ^ ((int)0x9E3779B9 ^ (4));
+        serpent24SubKeys[i++] = r1;
+        serpent24SubKeys[i++] = r2;
+        serpent24SubKeys[i++] = r3;
+        serpent24SubKeys[i++] = r4;
+        tt = w4 ^ w7 ^ w1 ^ w3 ^ (0x9E3779B9 ^ (4));
         w4 = rotateLeft(tt, 11);
-        tt = w5 ^ w0 ^ w2 ^ w4 ^ ((int)0x9E3779B9 ^ (4 + 1));
+        tt = w5 ^ w0 ^ w2 ^ w4 ^ (0x9E3779B9 ^ (4 + 1));
         w5 = rotateLeft(tt, 11);
-        tt = w6 ^ w1 ^ w3 ^ w5 ^ ((int)0x9E3779B9 ^ (4 + 2));
+        tt = w6 ^ w1 ^ w3 ^ w5 ^ (0x9E3779B9 ^ (4 + 2));
         w6 = rotateLeft(tt, 11);
-        tt = w7 ^ w2 ^ w4 ^ w6 ^ ((int)0x9E3779B9 ^ (4 + 3));
+        tt = w7 ^ w2 ^ w4 ^ w6 ^ (0x9E3779B9 ^ (4 + 3));
         w7 = rotateLeft(tt, 11);
         r0 = w4;
         r1 = w5;
@@ -330,17 +381,17 @@ public class GordianSosemanukEngine
         r1 ^= r3;
         r1 ^= r4;
         r4 = ~r4;
-        serpent24SubKeys[i ++] = r2;
-        serpent24SubKeys[i ++] = r3;
-        serpent24SubKeys[i ++] = r1;
-        serpent24SubKeys[i ++] = r4;
-        tt = w0 ^ w3 ^ w5 ^ w7 ^ ((int)0x9E3779B9 ^ (8));
+        serpent24SubKeys[i++] = r2;
+        serpent24SubKeys[i++] = r3;
+        serpent24SubKeys[i++] = r1;
+        serpent24SubKeys[i++] = r4;
+        tt = w0 ^ w3 ^ w5 ^ w7 ^ (0x9E3779B9 ^ (8));
         w0 = rotateLeft(tt, 11);
-        tt = w1 ^ w4 ^ w6 ^ w0 ^ ((int)0x9E3779B9 ^ (8 + 1));
+        tt = w1 ^ w4 ^ w6 ^ w0 ^ (0x9E3779B9 ^ (8 + 1));
         w1 = rotateLeft(tt, 11);
-        tt = w2 ^ w5 ^ w7 ^ w1 ^ ((int)0x9E3779B9 ^ (8 + 2));
+        tt = w2 ^ w5 ^ w7 ^ w1 ^ (0x9E3779B9 ^ (8 + 2));
         w2 = rotateLeft(tt, 11);
-        tt = w3 ^ w6 ^ w0 ^ w2 ^ ((int)0x9E3779B9 ^ (8 + 3));
+        tt = w3 ^ w6 ^ w0 ^ w2 ^ (0x9E3779B9 ^ (8 + 3));
         w3 = rotateLeft(tt, 11);
         r0 = w0;
         r1 = w1;
@@ -364,17 +415,17 @@ public class GordianSosemanukEngine
         r1 ^= r0;
         r0 &= r2;
         r0 ^= r4;
-        serpent24SubKeys[i ++] = r2;
-        serpent24SubKeys[i ++] = r0;
-        serpent24SubKeys[i ++] = r3;
-        serpent24SubKeys[i ++] = r1;
-        tt = w4 ^ w7 ^ w1 ^ w3 ^ ((int)0x9E3779B9 ^ (12));
+        serpent24SubKeys[i++] = r2;
+        serpent24SubKeys[i++] = r0;
+        serpent24SubKeys[i++] = r3;
+        serpent24SubKeys[i++] = r1;
+        tt = w4 ^ w7 ^ w1 ^ w3 ^ (0x9E3779B9 ^ (12));
         w4 = rotateLeft(tt, 11);
-        tt = w5 ^ w0 ^ w2 ^ w4 ^ ((int)0x9E3779B9 ^ (12 + 1));
+        tt = w5 ^ w0 ^ w2 ^ w4 ^ (0x9E3779B9 ^ (12 + 1));
         w5 = rotateLeft(tt, 11);
-        tt = w6 ^ w1 ^ w3 ^ w5 ^ ((int)0x9E3779B9 ^ (12 + 2));
+        tt = w6 ^ w1 ^ w3 ^ w5 ^ (0x9E3779B9 ^ (12 + 2));
         w6 = rotateLeft(tt, 11);
-        tt = w7 ^ w2 ^ w4 ^ w6 ^ ((int)0x9E3779B9 ^ (12 + 3));
+        tt = w7 ^ w2 ^ w4 ^ w6 ^ (0x9E3779B9 ^ (12 + 3));
         w7 = rotateLeft(tt, 11);
         r0 = w4;
         r1 = w5;
@@ -398,17 +449,17 @@ public class GordianSosemanukEngine
         r3 |= r0;
         r1 ^= r3;
         r4 ^= r3;
-        serpent24SubKeys[i ++] = r1;
-        serpent24SubKeys[i ++] = r4;
-        serpent24SubKeys[i ++] = r2;
-        serpent24SubKeys[i ++] = r0;
-        tt = w0 ^ w3 ^ w5 ^ w7 ^ ((int)0x9E3779B9 ^ (16));
+        serpent24SubKeys[i++] = r1;
+        serpent24SubKeys[i++] = r4;
+        serpent24SubKeys[i++] = r2;
+        serpent24SubKeys[i++] = r0;
+        tt = w0 ^ w3 ^ w5 ^ w7 ^ (0x9E3779B9 ^ (16));
         w0 = rotateLeft(tt, 11);
-        tt = w1 ^ w4 ^ w6 ^ w0 ^ ((int)0x9E3779B9 ^ (16 + 1));
+        tt = w1 ^ w4 ^ w6 ^ w0 ^ (0x9E3779B9 ^ (16 + 1));
         w1 = rotateLeft(tt, 11);
-        tt = w2 ^ w5 ^ w7 ^ w1 ^ ((int)0x9E3779B9 ^ (16 + 2));
+        tt = w2 ^ w5 ^ w7 ^ w1 ^ (0x9E3779B9 ^ (16 + 2));
         w2 = rotateLeft(tt, 11);
-        tt = w3 ^ w6 ^ w0 ^ w2 ^ ((int)0x9E3779B9 ^ (16 + 3));
+        tt = w3 ^ w6 ^ w0 ^ w2 ^ (0x9E3779B9 ^ (16 + 3));
         w3 = rotateLeft(tt, 11);
         r0 = w0;
         r1 = w1;
@@ -434,17 +485,17 @@ public class GordianSosemanukEngine
         r2 = ~r2;
         r2 |= r0;
         r4 ^= r2;
-        serpent24SubKeys[i ++] = r4;
-        serpent24SubKeys[i ++] = r3;
-        serpent24SubKeys[i ++] = r1;
-        serpent24SubKeys[i ++] = r0;
-        tt = w4 ^ w7 ^ w1 ^ w3 ^ ((int)0x9E3779B9 ^ (20));
+        serpent24SubKeys[i++] = r4;
+        serpent24SubKeys[i++] = r3;
+        serpent24SubKeys[i++] = r1;
+        serpent24SubKeys[i++] = r0;
+        tt = w4 ^ w7 ^ w1 ^ w3 ^ (0x9E3779B9 ^ (20));
         w4 = rotateLeft(tt, 11);
-        tt = w5 ^ w0 ^ w2 ^ w4 ^ ((int)0x9E3779B9 ^ (20 + 1));
+        tt = w5 ^ w0 ^ w2 ^ w4 ^ (0x9E3779B9 ^ (20 + 1));
         w5 = rotateLeft(tt, 11);
-        tt = w6 ^ w1 ^ w3 ^ w5 ^ ((int)0x9E3779B9 ^ (20 + 2));
+        tt = w6 ^ w1 ^ w3 ^ w5 ^ (0x9E3779B9 ^ (20 + 2));
         w6 = rotateLeft(tt, 11);
-        tt = w7 ^ w2 ^ w4 ^ w6 ^ ((int)0x9E3779B9 ^ (20 + 3));
+        tt = w7 ^ w2 ^ w4 ^ w6 ^ (0x9E3779B9 ^ (20 + 3));
         w7 = rotateLeft(tt, 11);
         r0 = w4;
         r1 = w5;
@@ -468,17 +519,17 @@ public class GordianSosemanukEngine
         r3 = ~r3;
         r2 &= r4;
         r2 ^= r3;
-        serpent24SubKeys[i ++] = r0;
-        serpent24SubKeys[i ++] = r1;
-        serpent24SubKeys[i ++] = r4;
-        serpent24SubKeys[i ++] = r2;
-        tt = w0 ^ w3 ^ w5 ^ w7 ^ ((int)0x9E3779B9 ^ (24));
+        serpent24SubKeys[i++] = r0;
+        serpent24SubKeys[i++] = r1;
+        serpent24SubKeys[i++] = r4;
+        serpent24SubKeys[i++] = r2;
+        tt = w0 ^ w3 ^ w5 ^ w7 ^ (0x9E3779B9 ^ (24));
         w0 = rotateLeft(tt, 11);
-        tt = w1 ^ w4 ^ w6 ^ w0 ^ ((int)0x9E3779B9 ^ (24 + 1));
+        tt = w1 ^ w4 ^ w6 ^ w0 ^ (0x9E3779B9 ^ (24 + 1));
         w1 = rotateLeft(tt, 11);
-        tt = w2 ^ w5 ^ w7 ^ w1 ^ ((int)0x9E3779B9 ^ (24 + 2));
+        tt = w2 ^ w5 ^ w7 ^ w1 ^ (0x9E3779B9 ^ (24 + 2));
         w2 = rotateLeft(tt, 11);
-        tt = w3 ^ w6 ^ w0 ^ w2 ^ ((int)0x9E3779B9 ^ (24 + 3));
+        tt = w3 ^ w6 ^ w0 ^ w2 ^ (0x9E3779B9 ^ (24 + 3));
         w3 = rotateLeft(tt, 11);
         r0 = w0;
         r1 = w1;
@@ -503,17 +554,17 @@ public class GordianSosemanukEngine
         r0 ^= r4;
         r4 |= r3;
         r2 ^= r4;
-        serpent24SubKeys[i ++] = r1;
-        serpent24SubKeys[i ++] = r3;
-        serpent24SubKeys[i ++] = r0;
-        serpent24SubKeys[i ++] = r2;
-        tt = w4 ^ w7 ^ w1 ^ w3 ^ ((int)0x9E3779B9 ^ (28));
+        serpent24SubKeys[i++] = r1;
+        serpent24SubKeys[i++] = r3;
+        serpent24SubKeys[i++] = r0;
+        serpent24SubKeys[i++] = r2;
+        tt = w4 ^ w7 ^ w1 ^ w3 ^ (0x9E3779B9 ^ (28));
         w4 = rotateLeft(tt, 11);
-        tt = w5 ^ w0 ^ w2 ^ w4 ^ ((int)0x9E3779B9 ^ (28 + 1));
+        tt = w5 ^ w0 ^ w2 ^ w4 ^ (0x9E3779B9 ^ (28 + 1));
         w5 = rotateLeft(tt, 11);
-        tt = w6 ^ w1 ^ w3 ^ w5 ^ ((int)0x9E3779B9 ^ (28 + 2));
+        tt = w6 ^ w1 ^ w3 ^ w5 ^ (0x9E3779B9 ^ (28 + 2));
         w6 = rotateLeft(tt, 11);
-        tt = w7 ^ w2 ^ w4 ^ w6 ^ ((int)0x9E3779B9 ^ (28 + 3));
+        tt = w7 ^ w2 ^ w4 ^ w6 ^ (0x9E3779B9 ^ (28 + 3));
         w7 = rotateLeft(tt, 11);
         r0 = w4;
         r1 = w5;
@@ -539,17 +590,17 @@ public class GordianSosemanukEngine
         r2 &= r3;
         r0 = ~r0;
         r4 ^= r2;
-        serpent24SubKeys[i ++] = r1;
-        serpent24SubKeys[i ++] = r4;
-        serpent24SubKeys[i ++] = r0;
-        serpent24SubKeys[i ++] = r3;
-        tt = w0 ^ w3 ^ w5 ^ w7 ^ ((int)0x9E3779B9 ^ (32));
+        serpent24SubKeys[i++] = r1;
+        serpent24SubKeys[i++] = r4;
+        serpent24SubKeys[i++] = r0;
+        serpent24SubKeys[i++] = r3;
+        tt = w0 ^ w3 ^ w5 ^ w7 ^ (0x9E3779B9 ^ (32));
         w0 = rotateLeft(tt, 11);
-        tt = w1 ^ w4 ^ w6 ^ w0 ^ ((int)0x9E3779B9 ^ (32 + 1));
+        tt = w1 ^ w4 ^ w6 ^ w0 ^ (0x9E3779B9 ^ (32 + 1));
         w1 = rotateLeft(tt, 11);
-        tt = w2 ^ w5 ^ w7 ^ w1 ^ ((int)0x9E3779B9 ^ (32 + 2));
+        tt = w2 ^ w5 ^ w7 ^ w1 ^ (0x9E3779B9 ^ (32 + 2));
         w2 = rotateLeft(tt, 11);
-        tt = w3 ^ w6 ^ w0 ^ w2 ^ ((int)0x9E3779B9 ^ (32 + 3));
+        tt = w3 ^ w6 ^ w0 ^ w2 ^ (0x9E3779B9 ^ (32 + 3));
         w3 = rotateLeft(tt, 11);
         r0 = w0;
         r1 = w1;
@@ -574,17 +625,17 @@ public class GordianSosemanukEngine
         r2 = r1;
         r1 |= r3;
         r1 ^= r0;
-        serpent24SubKeys[i ++] = r1;
-        serpent24SubKeys[i ++] = r2;
-        serpent24SubKeys[i ++] = r3;
-        serpent24SubKeys[i ++] = r4;
-        tt = w4 ^ w7 ^ w1 ^ w3 ^ ((int)0x9E3779B9 ^ (36));
+        serpent24SubKeys[i++] = r1;
+        serpent24SubKeys[i++] = r2;
+        serpent24SubKeys[i++] = r3;
+        serpent24SubKeys[i++] = r4;
+        tt = w4 ^ w7 ^ w1 ^ w3 ^ (0x9E3779B9 ^ (36));
         w4 = rotateLeft(tt, 11);
-        tt = w5 ^ w0 ^ w2 ^ w4 ^ ((int)0x9E3779B9 ^ (36 + 1));
+        tt = w5 ^ w0 ^ w2 ^ w4 ^ (0x9E3779B9 ^ (36 + 1));
         w5 = rotateLeft(tt, 11);
-        tt = w6 ^ w1 ^ w3 ^ w5 ^ ((int)0x9E3779B9 ^ (36 + 2));
+        tt = w6 ^ w1 ^ w3 ^ w5 ^ (0x9E3779B9 ^ (36 + 2));
         w6 = rotateLeft(tt, 11);
-        tt = w7 ^ w2 ^ w4 ^ w6 ^ ((int)0x9E3779B9 ^ (36 + 3));
+        tt = w7 ^ w2 ^ w4 ^ w6 ^ (0x9E3779B9 ^ (36 + 3));
         w7 = rotateLeft(tt, 11);
         r0 = w4;
         r1 = w5;
@@ -606,17 +657,17 @@ public class GordianSosemanukEngine
         r1 ^= r3;
         r1 ^= r4;
         r4 = ~r4;
-        serpent24SubKeys[i ++] = r2;
-        serpent24SubKeys[i ++] = r3;
-        serpent24SubKeys[i ++] = r1;
-        serpent24SubKeys[i ++] = r4;
-        tt = w0 ^ w3 ^ w5 ^ w7 ^ ((int)0x9E3779B9 ^ (40));
+        serpent24SubKeys[i++] = r2;
+        serpent24SubKeys[i++] = r3;
+        serpent24SubKeys[i++] = r1;
+        serpent24SubKeys[i++] = r4;
+        tt = w0 ^ w3 ^ w5 ^ w7 ^ (0x9E3779B9 ^ (40));
         w0 = rotateLeft(tt, 11);
-        tt = w1 ^ w4 ^ w6 ^ w0 ^ ((int)0x9E3779B9 ^ (40 + 1));
+        tt = w1 ^ w4 ^ w6 ^ w0 ^ (0x9E3779B9 ^ (40 + 1));
         w1 = rotateLeft(tt, 11);
-        tt = w2 ^ w5 ^ w7 ^ w1 ^ ((int)0x9E3779B9 ^ (40 + 2));
+        tt = w2 ^ w5 ^ w7 ^ w1 ^ (0x9E3779B9 ^ (40 + 2));
         w2 = rotateLeft(tt, 11);
-        tt = w3 ^ w6 ^ w0 ^ w2 ^ ((int)0x9E3779B9 ^ (40 + 3));
+        tt = w3 ^ w6 ^ w0 ^ w2 ^ (0x9E3779B9 ^ (40 + 3));
         w3 = rotateLeft(tt, 11);
         r0 = w0;
         r1 = w1;
@@ -640,17 +691,17 @@ public class GordianSosemanukEngine
         r1 ^= r0;
         r0 &= r2;
         r0 ^= r4;
-        serpent24SubKeys[i ++] = r2;
-        serpent24SubKeys[i ++] = r0;
-        serpent24SubKeys[i ++] = r3;
-        serpent24SubKeys[i ++] = r1;
-        tt = w4 ^ w7 ^ w1 ^ w3 ^ ((int)0x9E3779B9 ^ (44));
+        serpent24SubKeys[i++] = r2;
+        serpent24SubKeys[i++] = r0;
+        serpent24SubKeys[i++] = r3;
+        serpent24SubKeys[i++] = r1;
+        tt = w4 ^ w7 ^ w1 ^ w3 ^ (0x9E3779B9 ^ (44));
         w4 = rotateLeft(tt, 11);
-        tt = w5 ^ w0 ^ w2 ^ w4 ^ ((int)0x9E3779B9 ^ (44 + 1));
+        tt = w5 ^ w0 ^ w2 ^ w4 ^ (0x9E3779B9 ^ (44 + 1));
         w5 = rotateLeft(tt, 11);
-        tt = w6 ^ w1 ^ w3 ^ w5 ^ ((int)0x9E3779B9 ^ (44 + 2));
+        tt = w6 ^ w1 ^ w3 ^ w5 ^ (0x9E3779B9 ^ (44 + 2));
         w6 = rotateLeft(tt, 11);
-        tt = w7 ^ w2 ^ w4 ^ w6 ^ ((int)0x9E3779B9 ^ (44 + 3));
+        tt = w7 ^ w2 ^ w4 ^ w6 ^ (0x9E3779B9 ^ (44 + 3));
         w7 = rotateLeft(tt, 11);
         r0 = w4;
         r1 = w5;
@@ -674,17 +725,17 @@ public class GordianSosemanukEngine
         r3 |= r0;
         r1 ^= r3;
         r4 ^= r3;
-        serpent24SubKeys[i ++] = r1;
-        serpent24SubKeys[i ++] = r4;
-        serpent24SubKeys[i ++] = r2;
-        serpent24SubKeys[i ++] = r0;
-        tt = w0 ^ w3 ^ w5 ^ w7 ^ ((int)0x9E3779B9 ^ (48));
+        serpent24SubKeys[i++] = r1;
+        serpent24SubKeys[i++] = r4;
+        serpent24SubKeys[i++] = r2;
+        serpent24SubKeys[i++] = r0;
+        tt = w0 ^ w3 ^ w5 ^ w7 ^ (0x9E3779B9 ^ (48));
         w0 = rotateLeft(tt, 11);
-        tt = w1 ^ w4 ^ w6 ^ w0 ^ ((int)0x9E3779B9 ^ (48 + 1));
+        tt = w1 ^ w4 ^ w6 ^ w0 ^ (0x9E3779B9 ^ (48 + 1));
         w1 = rotateLeft(tt, 11);
-        tt = w2 ^ w5 ^ w7 ^ w1 ^ ((int)0x9E3779B9 ^ (48 + 2));
+        tt = w2 ^ w5 ^ w7 ^ w1 ^ (0x9E3779B9 ^ (48 + 2));
         w2 = rotateLeft(tt, 11);
-        tt = w3 ^ w6 ^ w0 ^ w2 ^ ((int)0x9E3779B9 ^ (48 + 3));
+        tt = w3 ^ w6 ^ w0 ^ w2 ^ (0x9E3779B9 ^ (48 + 3));
         w3 = rotateLeft(tt, 11);
         r0 = w0;
         r1 = w1;
@@ -710,17 +761,17 @@ public class GordianSosemanukEngine
         r2 = ~r2;
         r2 |= r0;
         r4 ^= r2;
-        serpent24SubKeys[i ++] = r4;
-        serpent24SubKeys[i ++] = r3;
-        serpent24SubKeys[i ++] = r1;
-        serpent24SubKeys[i ++] = r0;
-        tt = w4 ^ w7 ^ w1 ^ w3 ^ ((int)0x9E3779B9 ^ (52));
+        serpent24SubKeys[i++] = r4;
+        serpent24SubKeys[i++] = r3;
+        serpent24SubKeys[i++] = r1;
+        serpent24SubKeys[i++] = r0;
+        tt = w4 ^ w7 ^ w1 ^ w3 ^ (0x9E3779B9 ^ (52));
         w4 = rotateLeft(tt, 11);
-        tt = w5 ^ w0 ^ w2 ^ w4 ^ ((int)0x9E3779B9 ^ (52 + 1));
+        tt = w5 ^ w0 ^ w2 ^ w4 ^ (0x9E3779B9 ^ (52 + 1));
         w5 = rotateLeft(tt, 11);
-        tt = w6 ^ w1 ^ w3 ^ w5 ^ ((int)0x9E3779B9 ^ (52 + 2));
+        tt = w6 ^ w1 ^ w3 ^ w5 ^ (0x9E3779B9 ^ (52 + 2));
         w6 = rotateLeft(tt, 11);
-        tt = w7 ^ w2 ^ w4 ^ w6 ^ ((int)0x9E3779B9 ^ (52 + 3));
+        tt = w7 ^ w2 ^ w4 ^ w6 ^ (0x9E3779B9 ^ (52 + 3));
         w7 = rotateLeft(tt, 11);
         r0 = w4;
         r1 = w5;
@@ -744,17 +795,17 @@ public class GordianSosemanukEngine
         r3 = ~r3;
         r2 &= r4;
         r2 ^= r3;
-        serpent24SubKeys[i ++] = r0;
-        serpent24SubKeys[i ++] = r1;
-        serpent24SubKeys[i ++] = r4;
-        serpent24SubKeys[i ++] = r2;
-        tt = w0 ^ w3 ^ w5 ^ w7 ^ ((int)0x9E3779B9 ^ (56));
+        serpent24SubKeys[i++] = r0;
+        serpent24SubKeys[i++] = r1;
+        serpent24SubKeys[i++] = r4;
+        serpent24SubKeys[i++] = r2;
+        tt = w0 ^ w3 ^ w5 ^ w7 ^ (0x9E3779B9 ^ (56));
         w0 = rotateLeft(tt, 11);
-        tt = w1 ^ w4 ^ w6 ^ w0 ^ ((int)0x9E3779B9 ^ (56 + 1));
+        tt = w1 ^ w4 ^ w6 ^ w0 ^ (0x9E3779B9 ^ (56 + 1));
         w1 = rotateLeft(tt, 11);
-        tt = w2 ^ w5 ^ w7 ^ w1 ^ ((int)0x9E3779B9 ^ (56 + 2));
+        tt = w2 ^ w5 ^ w7 ^ w1 ^ (0x9E3779B9 ^ (56 + 2));
         w2 = rotateLeft(tt, 11);
-        tt = w3 ^ w6 ^ w0 ^ w2 ^ ((int)0x9E3779B9 ^ (56 + 3));
+        tt = w3 ^ w6 ^ w0 ^ w2 ^ (0x9E3779B9 ^ (56 + 3));
         w3 = rotateLeft(tt, 11);
         r0 = w0;
         r1 = w1;
@@ -779,17 +830,17 @@ public class GordianSosemanukEngine
         r0 ^= r4;
         r4 |= r3;
         r2 ^= r4;
-        serpent24SubKeys[i ++] = r1;
-        serpent24SubKeys[i ++] = r3;
-        serpent24SubKeys[i ++] = r0;
-        serpent24SubKeys[i ++] = r2;
-        tt = w4 ^ w7 ^ w1 ^ w3 ^ ((int)0x9E3779B9 ^ (60));
+        serpent24SubKeys[i++] = r1;
+        serpent24SubKeys[i++] = r3;
+        serpent24SubKeys[i++] = r0;
+        serpent24SubKeys[i++] = r2;
+        tt = w4 ^ w7 ^ w1 ^ w3 ^ (0x9E3779B9 ^ (60));
         w4 = rotateLeft(tt, 11);
-        tt = w5 ^ w0 ^ w2 ^ w4 ^ ((int)0x9E3779B9 ^ (60 + 1));
+        tt = w5 ^ w0 ^ w2 ^ w4 ^ (0x9E3779B9 ^ (60 + 1));
         w5 = rotateLeft(tt, 11);
-        tt = w6 ^ w1 ^ w3 ^ w5 ^ ((int)0x9E3779B9 ^ (60 + 2));
+        tt = w6 ^ w1 ^ w3 ^ w5 ^ (0x9E3779B9 ^ (60 + 2));
         w6 = rotateLeft(tt, 11);
-        tt = w7 ^ w2 ^ w4 ^ w6 ^ ((int)0x9E3779B9 ^ (60 + 3));
+        tt = w7 ^ w2 ^ w4 ^ w6 ^ (0x9E3779B9 ^ (60 + 3));
         w7 = rotateLeft(tt, 11);
         r0 = w4;
         r1 = w5;
@@ -815,17 +866,17 @@ public class GordianSosemanukEngine
         r2 &= r3;
         r0 = ~r0;
         r4 ^= r2;
-        serpent24SubKeys[i ++] = r1;
-        serpent24SubKeys[i ++] = r4;
-        serpent24SubKeys[i ++] = r0;
-        serpent24SubKeys[i ++] = r3;
-        tt = w0 ^ w3 ^ w5 ^ w7 ^ ((int)0x9E3779B9 ^ (64));
+        serpent24SubKeys[i++] = r1;
+        serpent24SubKeys[i++] = r4;
+        serpent24SubKeys[i++] = r0;
+        serpent24SubKeys[i++] = r3;
+        tt = w0 ^ w3 ^ w5 ^ w7 ^ (0x9E3779B9 ^ (64));
         w0 = rotateLeft(tt, 11);
-        tt = w1 ^ w4 ^ w6 ^ w0 ^ ((int)0x9E3779B9 ^ (64 + 1));
+        tt = w1 ^ w4 ^ w6 ^ w0 ^ (0x9E3779B9 ^ (64 + 1));
         w1 = rotateLeft(tt, 11);
-        tt = w2 ^ w5 ^ w7 ^ w1 ^ ((int)0x9E3779B9 ^ (64 + 2));
+        tt = w2 ^ w5 ^ w7 ^ w1 ^ (0x9E3779B9 ^ (64 + 2));
         w2 = rotateLeft(tt, 11);
-        tt = w3 ^ w6 ^ w0 ^ w2 ^ ((int)0x9E3779B9 ^ (64 + 3));
+        tt = w3 ^ w6 ^ w0 ^ w2 ^ (0x9E3779B9 ^ (64 + 3));
         w3 = rotateLeft(tt, 11);
         r0 = w0;
         r1 = w1;
@@ -850,17 +901,17 @@ public class GordianSosemanukEngine
         r2 = r1;
         r1 |= r3;
         r1 ^= r0;
-        serpent24SubKeys[i ++] = r1;
-        serpent24SubKeys[i ++] = r2;
-        serpent24SubKeys[i ++] = r3;
-        serpent24SubKeys[i ++] = r4;
-        tt = w4 ^ w7 ^ w1 ^ w3 ^ ((int)0x9E3779B9 ^ (68));
+        serpent24SubKeys[i++] = r1;
+        serpent24SubKeys[i++] = r2;
+        serpent24SubKeys[i++] = r3;
+        serpent24SubKeys[i++] = r4;
+        tt = w4 ^ w7 ^ w1 ^ w3 ^ (0x9E3779B9 ^ (68));
         w4 = rotateLeft(tt, 11);
-        tt = w5 ^ w0 ^ w2 ^ w4 ^ ((int)0x9E3779B9 ^ (68 + 1));
+        tt = w5 ^ w0 ^ w2 ^ w4 ^ (0x9E3779B9 ^ (68 + 1));
         w5 = rotateLeft(tt, 11);
-        tt = w6 ^ w1 ^ w3 ^ w5 ^ ((int)0x9E3779B9 ^ (68 + 2));
+        tt = w6 ^ w1 ^ w3 ^ w5 ^ (0x9E3779B9 ^ (68 + 2));
         w6 = rotateLeft(tt, 11);
-        tt = w7 ^ w2 ^ w4 ^ w6 ^ ((int)0x9E3779B9 ^ (68 + 3));
+        tt = w7 ^ w2 ^ w4 ^ w6 ^ (0x9E3779B9 ^ (68 + 3));
         w7 = rotateLeft(tt, 11);
         r0 = w4;
         r1 = w5;
@@ -882,17 +933,17 @@ public class GordianSosemanukEngine
         r1 ^= r3;
         r1 ^= r4;
         r4 = ~r4;
-        serpent24SubKeys[i ++] = r2;
-        serpent24SubKeys[i ++] = r3;
-        serpent24SubKeys[i ++] = r1;
-        serpent24SubKeys[i ++] = r4;
-        tt = w0 ^ w3 ^ w5 ^ w7 ^ ((int)0x9E3779B9 ^ (72));
+        serpent24SubKeys[i++] = r2;
+        serpent24SubKeys[i++] = r3;
+        serpent24SubKeys[i++] = r1;
+        serpent24SubKeys[i++] = r4;
+        tt = w0 ^ w3 ^ w5 ^ w7 ^ (0x9E3779B9 ^ (72));
         w0 = rotateLeft(tt, 11);
-        tt = w1 ^ w4 ^ w6 ^ w0 ^ ((int)0x9E3779B9 ^ (72 + 1));
+        tt = w1 ^ w4 ^ w6 ^ w0 ^ (0x9E3779B9 ^ (72 + 1));
         w1 = rotateLeft(tt, 11);
-        tt = w2 ^ w5 ^ w7 ^ w1 ^ ((int)0x9E3779B9 ^ (72 + 2));
+        tt = w2 ^ w5 ^ w7 ^ w1 ^ (0x9E3779B9 ^ (72 + 2));
         w2 = rotateLeft(tt, 11);
-        tt = w3 ^ w6 ^ w0 ^ w2 ^ ((int)0x9E3779B9 ^ (72 + 3));
+        tt = w3 ^ w6 ^ w0 ^ w2 ^ (0x9E3779B9 ^ (72 + 3));
         w3 = rotateLeft(tt, 11);
         r0 = w0;
         r1 = w1;
@@ -916,17 +967,17 @@ public class GordianSosemanukEngine
         r1 ^= r0;
         r0 &= r2;
         r0 ^= r4;
-        serpent24SubKeys[i ++] = r2;
-        serpent24SubKeys[i ++] = r0;
-        serpent24SubKeys[i ++] = r3;
-        serpent24SubKeys[i ++] = r1;
-        tt = w4 ^ w7 ^ w1 ^ w3 ^ ((int)0x9E3779B9 ^ (76));
+        serpent24SubKeys[i++] = r2;
+        serpent24SubKeys[i++] = r0;
+        serpent24SubKeys[i++] = r3;
+        serpent24SubKeys[i++] = r1;
+        tt = w4 ^ w7 ^ w1 ^ w3 ^ (0x9E3779B9 ^ (76));
         w4 = rotateLeft(tt, 11);
-        tt = w5 ^ w0 ^ w2 ^ w4 ^ ((int)0x9E3779B9 ^ (76 + 1));
+        tt = w5 ^ w0 ^ w2 ^ w4 ^ (0x9E3779B9 ^ (76 + 1));
         w5 = rotateLeft(tt, 11);
-        tt = w6 ^ w1 ^ w3 ^ w5 ^ ((int)0x9E3779B9 ^ (76 + 2));
+        tt = w6 ^ w1 ^ w3 ^ w5 ^ (0x9E3779B9 ^ (76 + 2));
         w6 = rotateLeft(tt, 11);
-        tt = w7 ^ w2 ^ w4 ^ w6 ^ ((int)0x9E3779B9 ^ (76 + 3));
+        tt = w7 ^ w2 ^ w4 ^ w6 ^ (0x9E3779B9 ^ (76 + 3));
         w7 = rotateLeft(tt, 11);
         r0 = w4;
         r1 = w5;
@@ -950,17 +1001,17 @@ public class GordianSosemanukEngine
         r3 |= r0;
         r1 ^= r3;
         r4 ^= r3;
-        serpent24SubKeys[i ++] = r1;
-        serpent24SubKeys[i ++] = r4;
-        serpent24SubKeys[i ++] = r2;
-        serpent24SubKeys[i ++] = r0;
-        tt = w0 ^ w3 ^ w5 ^ w7 ^ ((int)0x9E3779B9 ^ (80));
+        serpent24SubKeys[i++] = r1;
+        serpent24SubKeys[i++] = r4;
+        serpent24SubKeys[i++] = r2;
+        serpent24SubKeys[i++] = r0;
+        tt = w0 ^ w3 ^ w5 ^ w7 ^ (0x9E3779B9 ^ (80));
         w0 = rotateLeft(tt, 11);
-        tt = w1 ^ w4 ^ w6 ^ w0 ^ ((int)0x9E3779B9 ^ (80 + 1));
+        tt = w1 ^ w4 ^ w6 ^ w0 ^ (0x9E3779B9 ^ (80 + 1));
         w1 = rotateLeft(tt, 11);
-        tt = w2 ^ w5 ^ w7 ^ w1 ^ ((int)0x9E3779B9 ^ (80 + 2));
+        tt = w2 ^ w5 ^ w7 ^ w1 ^ (0x9E3779B9 ^ (80 + 2));
         w2 = rotateLeft(tt, 11);
-        tt = w3 ^ w6 ^ w0 ^ w2 ^ ((int)0x9E3779B9 ^ (80 + 3));
+        tt = w3 ^ w6 ^ w0 ^ w2 ^ (0x9E3779B9 ^ (80 + 3));
         w3 = rotateLeft(tt, 11);
         r0 = w0;
         r1 = w1;
@@ -986,17 +1037,17 @@ public class GordianSosemanukEngine
         r2 = ~r2;
         r2 |= r0;
         r4 ^= r2;
-        serpent24SubKeys[i ++] = r4;
-        serpent24SubKeys[i ++] = r3;
-        serpent24SubKeys[i ++] = r1;
-        serpent24SubKeys[i ++] = r0;
-        tt = w4 ^ w7 ^ w1 ^ w3 ^ ((int)0x9E3779B9 ^ (84));
+        serpent24SubKeys[i++] = r4;
+        serpent24SubKeys[i++] = r3;
+        serpent24SubKeys[i++] = r1;
+        serpent24SubKeys[i++] = r0;
+        tt = w4 ^ w7 ^ w1 ^ w3 ^ (0x9E3779B9 ^ (84));
         w4 = rotateLeft(tt, 11);
-        tt = w5 ^ w0 ^ w2 ^ w4 ^ ((int)0x9E3779B9 ^ (84 + 1));
+        tt = w5 ^ w0 ^ w2 ^ w4 ^ (0x9E3779B9 ^ (84 + 1));
         w5 = rotateLeft(tt, 11);
-        tt = w6 ^ w1 ^ w3 ^ w5 ^ ((int)0x9E3779B9 ^ (84 + 2));
+        tt = w6 ^ w1 ^ w3 ^ w5 ^ (0x9E3779B9 ^ (84 + 2));
         w6 = rotateLeft(tt, 11);
-        tt = w7 ^ w2 ^ w4 ^ w6 ^ ((int)0x9E3779B9 ^ (84 + 3));
+        tt = w7 ^ w2 ^ w4 ^ w6 ^ (0x9E3779B9 ^ (84 + 3));
         w7 = rotateLeft(tt, 11);
         r0 = w4;
         r1 = w5;
@@ -1020,17 +1071,17 @@ public class GordianSosemanukEngine
         r3 = ~r3;
         r2 &= r4;
         r2 ^= r3;
-        serpent24SubKeys[i ++] = r0;
-        serpent24SubKeys[i ++] = r1;
-        serpent24SubKeys[i ++] = r4;
-        serpent24SubKeys[i ++] = r2;
-        tt = w0 ^ w3 ^ w5 ^ w7 ^ ((int)0x9E3779B9 ^ (88));
+        serpent24SubKeys[i++] = r0;
+        serpent24SubKeys[i++] = r1;
+        serpent24SubKeys[i++] = r4;
+        serpent24SubKeys[i++] = r2;
+        tt = w0 ^ w3 ^ w5 ^ w7 ^ (0x9E3779B9 ^ (88));
         w0 = rotateLeft(tt, 11);
-        tt = w1 ^ w4 ^ w6 ^ w0 ^ ((int)0x9E3779B9 ^ (88 + 1));
+        tt = w1 ^ w4 ^ w6 ^ w0 ^ (0x9E3779B9 ^ (88 + 1));
         w1 = rotateLeft(tt, 11);
-        tt = w2 ^ w5 ^ w7 ^ w1 ^ ((int)0x9E3779B9 ^ (88 + 2));
+        tt = w2 ^ w5 ^ w7 ^ w1 ^ (0x9E3779B9 ^ (88 + 2));
         w2 = rotateLeft(tt, 11);
-        tt = w3 ^ w6 ^ w0 ^ w2 ^ ((int)0x9E3779B9 ^ (88 + 3));
+        tt = w3 ^ w6 ^ w0 ^ w2 ^ (0x9E3779B9 ^ (88 + 3));
         w3 = rotateLeft(tt, 11);
         r0 = w0;
         r1 = w1;
@@ -1055,17 +1106,17 @@ public class GordianSosemanukEngine
         r0 ^= r4;
         r4 |= r3;
         r2 ^= r4;
-        serpent24SubKeys[i ++] = r1;
-        serpent24SubKeys[i ++] = r3;
-        serpent24SubKeys[i ++] = r0;
-        serpent24SubKeys[i ++] = r2;
-        tt = w4 ^ w7 ^ w1 ^ w3 ^ ((int)0x9E3779B9 ^ (92));
+        serpent24SubKeys[i++] = r1;
+        serpent24SubKeys[i++] = r3;
+        serpent24SubKeys[i++] = r0;
+        serpent24SubKeys[i++] = r2;
+        tt = w4 ^ w7 ^ w1 ^ w3 ^ (0x9E3779B9 ^ (92));
         w4 = rotateLeft(tt, 11);
-        tt = w5 ^ w0 ^ w2 ^ w4 ^ ((int)0x9E3779B9 ^ (92 + 1));
+        tt = w5 ^ w0 ^ w2 ^ w4 ^ (0x9E3779B9 ^ (92 + 1));
         w5 = rotateLeft(tt, 11);
-        tt = w6 ^ w1 ^ w3 ^ w5 ^ ((int)0x9E3779B9 ^ (92 + 2));
+        tt = w6 ^ w1 ^ w3 ^ w5 ^ (0x9E3779B9 ^ (92 + 2));
         w6 = rotateLeft(tt, 11);
-        tt = w7 ^ w2 ^ w4 ^ w6 ^ ((int)0x9E3779B9 ^ (92 + 3));
+        tt = w7 ^ w2 ^ w4 ^ w6 ^ (0x9E3779B9 ^ (92 + 3));
         w7 = rotateLeft(tt, 11);
         r0 = w4;
         r1 = w5;
@@ -1091,17 +1142,17 @@ public class GordianSosemanukEngine
         r2 &= r3;
         r0 = ~r0;
         r4 ^= r2;
-        serpent24SubKeys[i ++] = r1;
-        serpent24SubKeys[i ++] = r4;
-        serpent24SubKeys[i ++] = r0;
-        serpent24SubKeys[i ++] = r3;
-        tt = w0 ^ w3 ^ w5 ^ w7 ^ ((int)0x9E3779B9 ^ (96));
+        serpent24SubKeys[i++] = r1;
+        serpent24SubKeys[i++] = r4;
+        serpent24SubKeys[i++] = r0;
+        serpent24SubKeys[i++] = r3;
+        tt = w0 ^ w3 ^ w5 ^ w7 ^ (0x9E3779B9 ^ (96));
         w0 = rotateLeft(tt, 11);
-        tt = w1 ^ w4 ^ w6 ^ w0 ^ ((int)0x9E3779B9 ^ (96 + 1));
+        tt = w1 ^ w4 ^ w6 ^ w0 ^ (0x9E3779B9 ^ (96 + 1));
         w1 = rotateLeft(tt, 11);
-        tt = w2 ^ w5 ^ w7 ^ w1 ^ ((int)0x9E3779B9 ^ (96 + 2));
+        tt = w2 ^ w5 ^ w7 ^ w1 ^ (0x9E3779B9 ^ (96 + 2));
         w2 = rotateLeft(tt, 11);
-        tt = w3 ^ w6 ^ w0 ^ w2 ^ ((int)0x9E3779B9 ^ (96 + 3));
+        tt = w3 ^ w6 ^ w0 ^ w2 ^ (0x9E3779B9 ^ (96 + 3));
         w3 = rotateLeft(tt, 11);
         r0 = w0;
         r1 = w1;
@@ -1126,10 +1177,10 @@ public class GordianSosemanukEngine
         r2 = r1;
         r1 |= r3;
         r1 ^= r0;
-        serpent24SubKeys[i ++] = r1;
-        serpent24SubKeys[i ++] = r2;
-        serpent24SubKeys[i ++] = r3;
-        serpent24SubKeys[i ++] = r4;
+        serpent24SubKeys[i++] = r1;
+        serpent24SubKeys[i++] = r2;
+        serpent24SubKeys[i++] = r3;
+        serpent24SubKeys[i++] = r4;
     }
 
     /**
@@ -1139,28 +1190,31 @@ public class GordianSosemanukEngine
      *
      * @param iv   the IV (or <code>null</code>)
      */
-    public void setIV(byte[] iv)
-    {
-        if (iv == null)
-            iv = new byte[0];
-        if (iv.length > 16)
-            throw new Error("bad IV length: " + iv.length);
-        byte[] piv;
-        if (iv.length == 16) {
-            piv = iv;
+    @SuppressWarnings("checkstyle:MethodLength")
+    public void setIV(final byte[] iv) {
+        byte[] myIV = iv;
+        if (myIV == null) {
+            myIV = new byte[0];
+        }
+        if (myIV.length > 16) {
+            throw new Error("bad IV length: " + myIV.length);
+        }
+        final byte[] piv;
+        if (myIV.length == 16) {
+            piv = myIV;
         } else {
             piv = new byte[16];
-            System.arraycopy(iv, 0, piv, 0, iv.length);
-            for (int i = iv.length; i < piv.length; i ++)
+            System.arraycopy(myIV, 0, piv, 0, myIV.length);
+            for (int i = myIV.length; i < piv.length; i++) {
                 piv[i] = 0x00;
+            }
         }
 
-        int r0, r1, r2, r3, r4;
-
-        r0 = decode32le(piv, 0);
-        r1 = decode32le(piv, 4);
-        r2 = decode32le(piv, 8);
-        r3 = decode32le(piv, 12);
+        int r0 = decode32le(piv, 0);
+        int r1 = decode32le(piv, 4);
+        int r2 = decode32le(piv, 8);
+        int r3 = decode32le(piv, 12);
+        int r4;
 
         r0 ^= serpent24SubKeys[0];
         r1 ^= serpent24SubKeys[0 + 1];
@@ -1960,15 +2014,17 @@ public class GordianSosemanukEngine
         lfsr0 = r3;
     }
 
-    /*
+    /**
      * mulAlpha[] is used to multiply a word by alpha; mulAlpha[x]
      * is equal to x * alpha^4.
-     *
+     */
+    private static final int[] MUL_ALPHA = new int[256];
+
+    /**
      * divAlpha[] is used to divide a word by alpha; divAlpha[x]
      * is equal to x / alpha.
      */
-    private static final int[] mulAlpha = new int[256];
-    private static final int[] divAlpha = new int[256];
+    private static final int[] DIV_ALPHA = new int[256];
 
     static {
         /*
@@ -1977,17 +2033,19 @@ public class GordianSosemanukEngine
          * conventionaly, but this is actually not used in our
          * computations.
          */
-        int[] expb = new int[256];
-        for (int i = 0, x = 0x01; i < 0xFF; i ++) {
+        final int[] expb = new int[256];
+        for (int i = 0, x = 0x01; i < 0xFF; i++) {
             expb[i] = x;
             x <<= 1;
-            if (x > 0xFF)
+            if (x > 0xFF) {
                 x ^= 0x1A9;
+            }
         }
         expb[0xFF] = 0x00;
-        int[] logb = new int[256];
-        for (int i = 0; i < 0x100; i ++)
+        final int[] logb = new int[256];
+        for (int i = 0; i < 0x100; i++) {
             logb[expb[i]] = i;
+        }
 
         /*
          * We now compute mulAlpha[] and divAlpha[]. For all
@@ -2002,15 +2060,15 @@ public class GordianSosemanukEngine
          * 1/alpha = beta^16 * alpha^3 + beta^39 * alpha^2
          *           + beta^6 * alpha + beta^64
          */
-        mulAlpha[0x00] = 0x00000000;
-        divAlpha[0x00] = 0x00000000;
-        for (int x = 1; x < 0x100; x ++) {
-            int ex = logb[x];
-            mulAlpha[x] = (expb[(ex + 23) % 255] << 24)
+        MUL_ALPHA[0x00] = 0x00000000;
+        DIV_ALPHA[0x00] = 0x00000000;
+        for (int x = 1; x < 0x100; x++) {
+            final int ex = logb[x];
+            MUL_ALPHA[x] = (expb[(ex + 23) % 255] << 24)
                     | (expb[(ex + 245) % 255] << 16)
                     | (expb[(ex + 48) % 255] << 8)
                     | expb[(ex + 239) % 255];
-            divAlpha[x] = (expb[(ex + 16) % 255] << 24)
+            DIV_ALPHA[x] = (expb[(ex + 16) % 255] << 24)
                     | (expb[(ex + 39) % 255] << 16)
                     | (expb[(ex + 6) % 255] << 8)
                     | expb[(ex + 64) % 255];
@@ -2023,8 +2081,8 @@ public class GordianSosemanukEngine
      * @param buf   the output buffer
      * @param off   the output offset
      */
-    private final void makeStreamBlock(byte[] buf, int off)
-    {
+    @SuppressWarnings("checkstyle:MethodLength")
+    private void makeStreamBlock(final byte[] buf, final int off) {
         int s0 = lfsr0;
         int s1 = lfsr1;
         int s2 = lfsr2;
@@ -2037,46 +2095,43 @@ public class GordianSosemanukEngine
         int s9 = lfsr9;
         int r1 = fsmR1;
         int r2 = fsmR2;
-        int f0, f1, f2, f3, f4;
-        int v0, v1, v2, v3;
-        int tt;
 
-        tt = r1;
+        int tt = r1;
         r1 = r2 + (s1 ^ ((r1 & 0x01) != 0 ? s8 : 0));
         r2 = rotateLeft(tt * 0x54655307, 7);
-        v0 = s0;
-        s0 = ((s0 << 8) ^ mulAlpha[s0 >>> 24])
-                ^ ((s3 >>> 8) ^ divAlpha[s3 & 0xFF]) ^ s9;
-        f0 = (s9 + r1) ^ r2;
+        int v0 = s0;
+        s0 = ((s0 << 8) ^ MUL_ALPHA[s0 >>> 24])
+                ^ ((s3 >>> 8) ^ DIV_ALPHA[s3 & 0xFF]) ^ s9;
+        int f0 = (s9 + r1) ^ r2;
 
         tt = r1;
         r1 = r2 + (s2 ^ ((r1 & 0x01) != 0 ? s9 : 0));
         r2 = rotateLeft(tt * 0x54655307, 7);
-        v1 = s1;
-        s1 = ((s1 << 8) ^ mulAlpha[s1 >>> 24])
-                ^ ((s4 >>> 8) ^ divAlpha[s4 & 0xFF]) ^ s0;
-        f1 = (s0 + r1) ^ r2;
+        int v1 = s1;
+        s1 = ((s1 << 8) ^ MUL_ALPHA[s1 >>> 24])
+                ^ ((s4 >>> 8) ^ DIV_ALPHA[s4 & 0xFF]) ^ s0;
+        int f1 = (s0 + r1) ^ r2;
 
         tt = r1;
         r1 = r2 + (s3 ^ ((r1 & 0x01) != 0 ? s0 : 0));
         r2 = rotateLeft(tt * 0x54655307, 7);
-        v2 = s2;
-        s2 = ((s2 << 8) ^ mulAlpha[s2 >>> 24])
-                ^ ((s5 >>> 8) ^ divAlpha[s5 & 0xFF]) ^ s1;
-        f2 = (s1 + r1) ^ r2;
+        int v2 = s2;
+        s2 = ((s2 << 8) ^ MUL_ALPHA[s2 >>> 24])
+                ^ ((s5 >>> 8) ^ DIV_ALPHA[s5 & 0xFF]) ^ s1;
+        int f2 = (s1 + r1) ^ r2;
 
         tt = r1;
         r1 = r2 + (s4 ^ ((r1 & 0x01) != 0 ? s1 : 0));
         r2 = rotateLeft(tt * 0x54655307, 7);
-        v3 = s3;
-        s3 = ((s3 << 8) ^ mulAlpha[s3 >>> 24])
-                ^ ((s6 >>> 8) ^ divAlpha[s6 & 0xFF]) ^ s2;
-        f3 = (s2 + r1) ^ r2;
+        int v3 = s3;
+        s3 = ((s3 << 8) ^ MUL_ALPHA[s3 >>> 24])
+                ^ ((s6 >>> 8) ^ DIV_ALPHA[s6 & 0xFF]) ^ s2;
+        int f3 = (s2 + r1) ^ r2;
 
         /*
          * Apply the third S-box (number 2) on (f3, f2, f1, f0).
          */
-        f4 = f0;
+        int f4 = f0;
         f0 &= f2;
         f0 ^= f3;
         f2 ^= f1;
@@ -2105,32 +2160,32 @@ public class GordianSosemanukEngine
         r1 = r2 + (s5 ^ ((r1 & 0x01) != 0 ? s2 : 0));
         r2 = rotateLeft(tt * 0x54655307, 7);
         v0 = s4;
-        s4 = ((s4 << 8) ^ mulAlpha[s4 >>> 24])
-                ^ ((s7 >>> 8) ^ divAlpha[s7 & 0xFF]) ^ s3;
+        s4 = ((s4 << 8) ^ MUL_ALPHA[s4 >>> 24])
+                ^ ((s7 >>> 8) ^ DIV_ALPHA[s7 & 0xFF]) ^ s3;
         f0 = (s3 + r1) ^ r2;
 
         tt = r1;
         r1 = r2 + (s6 ^ ((r1 & 0x01) != 0 ? s3 : 0));
         r2 = rotateLeft(tt * 0x54655307, 7);
         v1 = s5;
-        s5 = ((s5 << 8) ^ mulAlpha[s5 >>> 24])
-                ^ ((s8 >>> 8) ^ divAlpha[s8 & 0xFF]) ^ s4;
+        s5 = ((s5 << 8) ^ MUL_ALPHA[s5 >>> 24])
+                ^ ((s8 >>> 8) ^ DIV_ALPHA[s8 & 0xFF]) ^ s4;
         f1 = (s4 + r1) ^ r2;
 
         tt = r1;
         r1 = r2 + (s7 ^ ((r1 & 0x01) != 0 ? s4 : 0));
         r2 = rotateLeft(tt * 0x54655307, 7);
         v2 = s6;
-        s6 = ((s6 << 8) ^ mulAlpha[s6 >>> 24])
-                ^ ((s9 >>> 8) ^ divAlpha[s9 & 0xFF]) ^ s5;
+        s6 = ((s6 << 8) ^ MUL_ALPHA[s6 >>> 24])
+                ^ ((s9 >>> 8) ^ DIV_ALPHA[s9 & 0xFF]) ^ s5;
         f2 = (s5 + r1) ^ r2;
 
         tt = r1;
         r1 = r2 + (s8 ^ ((r1 & 0x01) != 0 ? s5 : 0));
         r2 = rotateLeft(tt * 0x54655307, 7);
         v3 = s7;
-        s7 = ((s7 << 8) ^ mulAlpha[s7 >>> 24])
-                ^ ((s0 >>> 8) ^ divAlpha[s0 & 0xFF]) ^ s6;
+        s7 = ((s7 << 8) ^ MUL_ALPHA[s7 >>> 24])
+                ^ ((s0 >>> 8) ^ DIV_ALPHA[s0 & 0xFF]) ^ s6;
         f3 = (s6 + r1) ^ r2;
 
         /*
@@ -2165,32 +2220,32 @@ public class GordianSosemanukEngine
         r1 = r2 + (s9 ^ ((r1 & 0x01) != 0 ? s6 : 0));
         r2 = rotateLeft(tt * 0x54655307, 7);
         v0 = s8;
-        s8 = ((s8 << 8) ^ mulAlpha[s8 >>> 24])
-                ^ ((s1 >>> 8) ^ divAlpha[s1 & 0xFF]) ^ s7;
+        s8 = ((s8 << 8) ^ MUL_ALPHA[s8 >>> 24])
+                ^ ((s1 >>> 8) ^ DIV_ALPHA[s1 & 0xFF]) ^ s7;
         f0 = (s7 + r1) ^ r2;
 
         tt = r1;
         r1 = r2 + (s0 ^ ((r1 & 0x01) != 0 ? s7 : 0));
         r2 = rotateLeft(tt * 0x54655307, 7);
         v1 = s9;
-        s9 = ((s9 << 8) ^ mulAlpha[s9 >>> 24])
-                ^ ((s2 >>> 8) ^ divAlpha[s2 & 0xFF]) ^ s8;
+        s9 = ((s9 << 8) ^ MUL_ALPHA[s9 >>> 24])
+                ^ ((s2 >>> 8) ^ DIV_ALPHA[s2 & 0xFF]) ^ s8;
         f1 = (s8 + r1) ^ r2;
 
         tt = r1;
         r1 = r2 + (s1 ^ ((r1 & 0x01) != 0 ? s8 : 0));
         r2 = rotateLeft(tt * 0x54655307, 7);
         v2 = s0;
-        s0 = ((s0 << 8) ^ mulAlpha[s0 >>> 24])
-                ^ ((s3 >>> 8) ^ divAlpha[s3 & 0xFF]) ^ s9;
+        s0 = ((s0 << 8) ^ MUL_ALPHA[s0 >>> 24])
+                ^ ((s3 >>> 8) ^ DIV_ALPHA[s3 & 0xFF]) ^ s9;
         f2 = (s9 + r1) ^ r2;
 
         tt = r1;
         r1 = r2 + (s2 ^ ((r1 & 0x01) != 0 ? s9 : 0));
         r2 = rotateLeft(tt * 0x54655307, 7);
         v3 = s1;
-        s1 = ((s1 << 8) ^ mulAlpha[s1 >>> 24])
-                ^ ((s4 >>> 8) ^ divAlpha[s4 & 0xFF]) ^ s0;
+        s1 = ((s1 << 8) ^ MUL_ALPHA[s1 >>> 24])
+                ^ ((s4 >>> 8) ^ DIV_ALPHA[s4 & 0xFF]) ^ s0;
         f3 = (s0 + r1) ^ r2;
 
         /*
@@ -2225,32 +2280,32 @@ public class GordianSosemanukEngine
         r1 = r2 + (s3 ^ ((r1 & 0x01) != 0 ? s0 : 0));
         r2 = rotateLeft(tt * 0x54655307, 7);
         v0 = s2;
-        s2 = ((s2 << 8) ^ mulAlpha[s2 >>> 24])
-                ^ ((s5 >>> 8) ^ divAlpha[s5 & 0xFF]) ^ s1;
+        s2 = ((s2 << 8) ^ MUL_ALPHA[s2 >>> 24])
+                ^ ((s5 >>> 8) ^ DIV_ALPHA[s5 & 0xFF]) ^ s1;
         f0 = (s1 + r1) ^ r2;
 
         tt = r1;
         r1 = r2 + (s4 ^ ((r1 & 0x01) != 0 ? s1 : 0));
         r2 = rotateLeft(tt * 0x54655307, 7);
         v1 = s3;
-        s3 = ((s3 << 8) ^ mulAlpha[s3 >>> 24])
-                ^ ((s6 >>> 8) ^ divAlpha[s6 & 0xFF]) ^ s2;
+        s3 = ((s3 << 8) ^ MUL_ALPHA[s3 >>> 24])
+                ^ ((s6 >>> 8) ^ DIV_ALPHA[s6 & 0xFF]) ^ s2;
         f1 = (s2 + r1) ^ r2;
 
         tt = r1;
         r1 = r2 + (s5 ^ ((r1 & 0x01) != 0 ? s2 : 0));
         r2 = rotateLeft(tt * 0x54655307, 7);
         v2 = s4;
-        s4 = ((s4 << 8) ^ mulAlpha[s4 >>> 24])
-                ^ ((s7 >>> 8) ^ divAlpha[s7 & 0xFF]) ^ s3;
+        s4 = ((s4 << 8) ^ MUL_ALPHA[s4 >>> 24])
+                ^ ((s7 >>> 8) ^ DIV_ALPHA[s7 & 0xFF]) ^ s3;
         f2 = (s3 + r1) ^ r2;
 
         tt = r1;
         r1 = r2 + (s6 ^ ((r1 & 0x01) != 0 ? s3 : 0));
         r2 = rotateLeft(tt * 0x54655307, 7);
         v3 = s5;
-        s5 = ((s5 << 8) ^ mulAlpha[s5 >>> 24])
-                ^ ((s8 >>> 8) ^ divAlpha[s8 & 0xFF]) ^ s4;
+        s5 = ((s5 << 8) ^ MUL_ALPHA[s5 >>> 24])
+                ^ ((s8 >>> 8) ^ DIV_ALPHA[s8 & 0xFF]) ^ s4;
         f3 = (s4 + r1) ^ r2;
 
         /*
@@ -2285,32 +2340,32 @@ public class GordianSosemanukEngine
         r1 = r2 + (s7 ^ ((r1 & 0x01) != 0 ? s4 : 0));
         r2 = rotateLeft(tt * 0x54655307, 7);
         v0 = s6;
-        s6 = ((s6 << 8) ^ mulAlpha[s6 >>> 24])
-                ^ ((s9 >>> 8) ^ divAlpha[s9 & 0xFF]) ^ s5;
+        s6 = ((s6 << 8) ^ MUL_ALPHA[s6 >>> 24])
+                ^ ((s9 >>> 8) ^ DIV_ALPHA[s9 & 0xFF]) ^ s5;
         f0 = (s5 + r1) ^ r2;
 
         tt = r1;
         r1 = r2 + (s8 ^ ((r1 & 0x01) != 0 ? s5 : 0));
         r2 = rotateLeft(tt * 0x54655307, 7);
         v1 = s7;
-        s7 = ((s7 << 8) ^ mulAlpha[s7 >>> 24])
-                ^ ((s0 >>> 8) ^ divAlpha[s0 & 0xFF]) ^ s6;
+        s7 = ((s7 << 8) ^ MUL_ALPHA[s7 >>> 24])
+                ^ ((s0 >>> 8) ^ DIV_ALPHA[s0 & 0xFF]) ^ s6;
         f1 = (s6 + r1) ^ r2;
 
         tt = r1;
         r1 = r2 + (s9 ^ ((r1 & 0x01) != 0 ? s6 : 0));
         r2 = rotateLeft(tt * 0x54655307, 7);
         v2 = s8;
-        s8 = ((s8 << 8) ^ mulAlpha[s8 >>> 24])
-                ^ ((s1 >>> 8) ^ divAlpha[s1 & 0xFF]) ^ s7;
+        s8 = ((s8 << 8) ^ MUL_ALPHA[s8 >>> 24])
+                ^ ((s1 >>> 8) ^ DIV_ALPHA[s1 & 0xFF]) ^ s7;
         f2 = (s7 + r1) ^ r2;
 
         tt = r1;
         r1 = r2 + (s0 ^ ((r1 & 0x01) != 0 ? s7 : 0));
         r2 = rotateLeft(tt * 0x54655307, 7);
         v3 = s9;
-        s9 = ((s9 << 8) ^ mulAlpha[s9 >>> 24])
-                ^ ((s2 >>> 8) ^ divAlpha[s2 & 0xFF]) ^ s8;
+        s9 = ((s9 << 8) ^ MUL_ALPHA[s9 >>> 24])
+                ^ ((s2 >>> 8) ^ DIV_ALPHA[s2 & 0xFF]) ^ s8;
         f3 = (s8 + r1) ^ r2;
 
         /*

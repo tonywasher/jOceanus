@@ -16,7 +16,11 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.core.kdf;
 
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianDataException;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -59,10 +63,11 @@ public final class GordianHKDFParams {
      * @param pMode theMode
      * @param pPRK the pseudo-random key
      * @param pLength the length
+     * @throws OceanusException on error
      */
     private GordianHKDFParams(final GordianHKDFMode pMode,
                               final byte[] pPRK,
-                              final int pLength) {
+                              final int pLength) throws OceanusException {
         /* Store parameters */
         theMode = pMode;
         thePRK = pPRK == null ? null : pPRK.clone();
@@ -71,24 +76,24 @@ public final class GordianHKDFParams {
         theSalts = new ArrayList<>();
         theInfo = new ArrayList<>();
 
-        /* Check salt */
-        //if (pMode.doExtract()
-        //        && (theSalt == null || pSalt.length == 0)) {
-        //    throw new IllegalArgumentException("Salt must be non-null and non-zero length for extract");
-        //}
-
-        /* Check prk */
+        /* Check PRK */
         if (GordianHKDFMode.EXPAND.equals(theMode)
                 && (thePRK == null || pPRK.length == 0)) {
-            throw new IllegalArgumentException("PRK must be non-null and non-zero length for expandOnly");
+            throw new GordianDataException("PRK must be non-null and non-zero length for expandOnly");
+        }
+
+        /* Check length */
+        if (theMode.doExpand() && theLength <= 0) {
+            throw new GordianDataException("Length must be greater than zero");
         }
     }
 
     /**
      * Create an extractOnly parameters.
      * @return an extractOnly parameters
+     * @throws OceanusException on error
      */
-    static GordianHKDFParams extractOnly() {
+    public static GordianHKDFParams extractOnly() throws OceanusException {
         return new GordianHKDFParams(GordianHKDFMode.EXTRACT, null, 0);
     }
 
@@ -97,9 +102,10 @@ public final class GordianHKDFParams {
      * @param pPRK the pseudo-random key
      * @param pLength the length
      * @return an expandOnly parameters
+     * @throws OceanusException on error
      */
-    static GordianHKDFParams expandOnly(final byte[] pPRK,
-                                        final int pLength) {
+    public static GordianHKDFParams expandOnly(final byte[] pPRK,
+                                               final int pLength) throws OceanusException {
         return new GordianHKDFParams(GordianHKDFMode.EXPAND, pPRK, pLength);
     }
 
@@ -107,8 +113,9 @@ public final class GordianHKDFParams {
      * Create an extractThenExpand parameters.
      * @param pLength the length
      * @return an extractThenExpand parameters
+     * @throws OceanusException on error
      */
-    static GordianHKDFParams extractThenExpand(final int pLength) {
+    public static GordianHKDFParams extractThenExpand(final int pLength) throws OceanusException {
         return new GordianHKDFParams(GordianHKDFMode.EXTRACTTHENEXPAND, null, pLength);
     }
 
@@ -133,7 +140,7 @@ public final class GordianHKDFParams {
      * @param pIKM the initial keying material
      * @return the parameters
      */
-    GordianHKDFParams withIKM(final byte[] pIKM) {
+    public GordianHKDFParams withIKM(final byte[] pIKM) {
         if (pIKM != null && pIKM.length > 0) {
             theIKMs.add(pIKM.clone());
         }
@@ -153,7 +160,7 @@ public final class GordianHKDFParams {
      * @param pSalt the salt
      * @return the parameters
      */
-    GordianHKDFParams withSalt(final byte[] pSalt) {
+    public GordianHKDFParams withSalt(final byte[] pSalt) {
         if (pSalt != null && pSalt.length > 0) {
             theSalts.add(pSalt.clone());
         }
@@ -173,7 +180,7 @@ public final class GordianHKDFParams {
      * @param pInfo the info
      * @return the parameters
      */
-    GordianHKDFParams withInfo(final byte[] pInfo) {
+    public GordianHKDFParams withInfo(final byte[] pInfo) {
         if (pInfo != null && pInfo.length > 0) {
             theInfo.add(pInfo.clone());
         }
@@ -193,9 +200,31 @@ public final class GordianHKDFParams {
      * @return the length
      */
     int getLength() {
-        if (theLength <= 0) {
-            throw new IllegalArgumentException("Length must be greater than zero");
-        }
         return theLength;
+    }
+
+    /**
+     * Clear parameters.
+     */
+    public void clearParameters() {
+        /* Clear all initial keying materials */
+        for (final byte[] myIKM : theIKMs) {
+            Arrays.fill(myIKM, (byte) 0);
+        }
+
+        /* Clear all salts */
+        for (final byte[] mySalt : theSalts) {
+            Arrays.fill(mySalt, (byte) 0);
+        }
+
+        /* Clear all info */
+        for (final byte[] myInfo : theInfo) {
+            Arrays.fill(myInfo, (byte) 0);
+        }
+
+        /* Clear PRK */
+        if (thePRK != null) {
+            Arrays.fill(thePRK, (byte) 0);
+        }
     }
 }

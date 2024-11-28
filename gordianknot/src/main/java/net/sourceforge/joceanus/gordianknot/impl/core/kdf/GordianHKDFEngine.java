@@ -26,6 +26,7 @@ import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacSpec;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacSpecBuilder;
 import net.sourceforge.joceanus.oceanus.OceanusException;
 
+import java.util.Arrays;
 import java.util.Iterator;
 
 /**
@@ -43,9 +44,9 @@ public class GordianHKDFEngine {
     private final GordianMac theHMac;
 
     /**
-     * The Parameters.
+     * Is this a primary engine?
      */
-    private GordianHKDFParams theParams;
+    private boolean isPrimary;
 
     /**
      * Constructor.
@@ -66,107 +67,39 @@ public class GordianHKDFEngine {
     }
 
     /**
-     * Set mode to extractOnly.
-     * @return the engine
-     */
-    public GordianHKDFEngine extractOnly() {
-        theParams = GordianHKDFParams.extractOnly();
-        return this;
-    }
-
-    /**
-     * Set mode to expandOnly.
-     * @param pPRK the pseudo-random key
-     * @param pLength the length
-     * @return the engine
-     */
-    public GordianHKDFEngine expandOnly(final byte[] pPRK,
-                                        final int pLength) {
-        theParams = GordianHKDFParams.expandOnly(pPRK, pLength);
-        return this;
-    }
-
-    /**
-     * Set mode to extractThenExpand.
-     * @param pLength the length
-     * @return the engine
-     */
-    public GordianHKDFEngine extractThenExpand(final int pLength) {
-        theParams = GordianHKDFParams.extractThenExpand(pLength);
-        return this;
-    }
-
-    /**
-     * Add iKM.
-     * @param pIKM the initial keying material
-     * @return the engine
-     */
-    public GordianHKDFEngine withIKM(final byte[] pIKM) {
-        checkParams();
-        theParams.withIKM(pIKM);
-        return this;
-    }
-
-    /**
-     * Add salt.
-     * @param pSalt the salt
-     * @return the engine
-     */
-    public GordianHKDFEngine withSalt(final byte[] pSalt) {
-        checkParams();
-        theParams.withIKM(pSalt);
-        return this;
-    }
-
-    /**
-     * Add info.
-     * @param pInfo the info
-     * @return the engine
-     */
-    public GordianHKDFEngine withInfo(final byte[] pInfo) {
-        checkParams();
-        theParams.withInfo(pInfo);
-        return this;
-    }
-
-    /**
-     * Check that we have valid parameters.
-     */
-    private void checkParams() {
-         if (theParams == null) {
-             throw new IllegalStateException("HKDF parameters not set");
-         }
-    }
-
-    /**
-     * Share parameters.
-     * @param pPrimary the primary engine
-     */
-    void shareParameters(final GordianHKDFEngine pPrimary) {
-        theParams = pPrimary.theParams;
-    }
-
-    /**
      * Derive bytes.
+     * @param pParams the parameters
      * @return the derived bytes
      * @throws OceanusException on error
      */
-    public byte[] deriveBytes() throws OceanusException {
+    public byte[] deriveBytes(final GordianHKDFParams pParams) throws OceanusException {
+        /* Check parameters */
+        if (pParams == null) {
+            throw new IllegalStateException("Null HKDF parameters");
+        }
+
         /* Determine the mode */
-        checkParams();
-        final GordianHKDFMode myMode = theParams.getMode();
+        final GordianHKDFMode myMode = pParams.getMode();
         byte[] myOutput = null;
 
         /* If we should extract the information */
         if (myMode.doExtract()) {
-            myOutput = extractKeyingMaterial(theParams.saltIterator(), theParams.ikmIterator());
+            myOutput = extractKeyingMaterial(pParams.saltIterator(), pParams.ikmIterator());
         }
 
         /* If we should expand the information */
         if (myMode.doExpand()) {
+            /* Save the intermediate value */
+            final byte[] myIntermediate = myOutput;
+
             /* Determine PRK and expand it */
-            final byte[] myPRK = myOutput == null ? theParams.getPRK() : myOutput;
-            myOutput = expandKeyingMaterial(myPRK);
+            final byte[] myPRK = myOutput == null ? pParams.getPRK() : myOutput;
+            myOutput = expandKeyingMaterial(pParams, myPRK);
+
+            /* Clear intermediate result */
+            if (myIntermediate != null) {
+                Arrays.fill(myIntermediate, (byte) 0);
+            }
         }
 
         /* Return the result */
@@ -196,17 +129,19 @@ public class GordianHKDFEngine {
     }
 
     /**
-     * Expane the pseudo-random key.
+     * Expand the pseudo-random key.
+     * @param pParams the parameters
      * @param pPRK the pseudo-random key
      * @return the expanded material
      * @throws OceanusException on error
      */
-    private byte[] expandKeyingMaterial(final byte[] pPRK) throws OceanusException {
+    private byte[] expandKeyingMaterial(final GordianHKDFParams pParams,
+                                        final byte[] pPRK) throws OceanusException {
         /* Initialise the HMac */
         theHMac.initKeyBytes(pPRK);
 
         /* Allocate the output buffer */
-        int myLenRemaining = theParams.getLength();
+        int myLenRemaining = pParams.getLength();
         final byte[] myOutput = new byte[myLenRemaining];
         final int myHashLen = theHMac.getMacSize();
 
@@ -220,10 +155,11 @@ public class GordianHKDFEngine {
             /* Update with the results of the last loop */
             if (myInput != null) {
                 theHMac.update(myInput);
+                Arrays.fill(myInput, (byte) 0);
             }
 
             /* Update with the info */
-            final Iterator<byte[]> myIterator = theParams.infoIterator();
+            final Iterator<byte[]> myIterator = pParams.infoIterator();
             while (myIterator.hasNext()) {
                 theHMac.update(myIterator.next());
             }
@@ -239,6 +175,11 @@ public class GordianHKDFEngine {
             System.arraycopy(myInput, 0, myOutput, myOffset, myLenToCopy);
             myOffset += myLenToCopy;
             myLenRemaining -= myLenToCopy;
+        }
+
+        /* Clear final intermediate results */
+        if (myInput != null) {
+            Arrays.fill(myInput, (byte) 0);
         }
 
         /* Return the expanded key */
