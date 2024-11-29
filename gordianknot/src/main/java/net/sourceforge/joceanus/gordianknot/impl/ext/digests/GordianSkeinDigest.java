@@ -35,21 +35,23 @@ import org.bouncycastle.util.Memoable;
  * @see GordianSkeinParameters
  */
 public class GordianSkeinDigest
-        implements ExtendedDigest, Memoable
-{
+        implements ExtendedDigest, Memoable {
     /**
-     * 256 bit block size - Skein-256
+     * 256 bit block size - Skein-256.
      */
     public static final int SKEIN_256 = GordianSkeinBase.SKEIN_256;
     /**
-     * 512 bit block size - Skein-512
+     * 512 bit block size - Skein-512.
      */
     public static final int SKEIN_512 = GordianSkeinBase.SKEIN_512;
     /**
-     * 1024 bit block size - Skein-1024
+     * 1024 bit block size - Skein-1024.
      */
     public static final int SKEIN_1024 = GordianSkeinBase.SKEIN_1024;
 
+    /**
+     * The underlying engine.
+     */
     private GordianSkeinBase engine;
 
     /**
@@ -60,40 +62,42 @@ public class GordianSkeinDigest
      * @param digestSizeBits the output/digest size to produce in bits, which must be an integral number of
      *                       bytes.
      */
-    public GordianSkeinDigest(int stateSizeBits, int digestSizeBits)
-    {
+    public GordianSkeinDigest(final int stateSizeBits, final int digestSizeBits) {
         this.engine = new GordianSkeinBase(stateSizeBits, digestSizeBits);
         init(null);
     }
 
-    public GordianSkeinDigest(GordianSkeinDigest digest)
-    {
+    /**
+     * Constructor.
+     * @param digest the digest to copy
+     */
+    public GordianSkeinDigest(final GordianSkeinDigest digest) {
         this.engine = new GordianSkeinBase(digest.engine);
     }
 
-    public void reset(Memoable other)
-    {
-        GordianSkeinDigest d = (GordianSkeinDigest)other;
+    @Override
+    public void reset(final Memoable other) {
+        final GordianSkeinDigest d = (GordianSkeinDigest) other;
         engine.reset(d.engine);
     }
 
-    public Memoable copy()
-    {
+    @Override
+    public Memoable copy() {
         return new GordianSkeinDigest(this);
     }
 
-    public String getAlgorithmName()
-    {
-        return "Skein-" + (engine.getBlockSize() * 8) + "-" + (engine.getOutputSize() * 8);
+    @Override
+    public String getAlgorithmName() {
+        return "Skein-" + (engine.getBlockSize() * Byte.SIZE) + "-" + (engine.getOutputSize() * Byte.SIZE);
     }
 
-    public int getDigestSize()
-    {
+    @Override
+    public int getDigestSize() {
         return engine.getOutputSize();
     }
 
-    public int getByteLength()
-    {
+    @Override
+    public int getByteLength() {
         return engine.getBlockSize();
     }
 
@@ -111,29 +115,27 @@ public class GordianSkeinDigest
      *
      * @param params the parameters to apply to this engine, or <code>null</code> to use no parameters.
      */
-    public void init(GordianSkeinParameters params)
-    {
+    public void init(final GordianSkeinParameters params) {
         engine.init(params);
     }
 
-    public void reset()
-    {
+    @Override
+    public void reset() {
         engine.reset();
     }
 
-    public void update(byte in)
-    {
+    @Override
+    public void update(final byte in) {
         engine.update(in);
     }
 
-    public void update(byte[] in, int inOff, int len)
-    {
+    @Override
+    public void update(final byte[] in, final int inOff, final int len) {
         engine.update(in, inOff, len);
     }
 
-    public int doFinal(byte[] out, int outOff)
-    {
+    @Override
+    public int doFinal(final byte[] out, final int outOff) {
         return engine.doFinal(out, outOff);
     }
-
 }

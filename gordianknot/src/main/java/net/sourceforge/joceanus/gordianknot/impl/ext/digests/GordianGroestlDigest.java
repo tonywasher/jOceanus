@@ -28,7 +28,7 @@ import java.util.Arrays;
  * groestl_opt.h/tables.h in the "NIST submission package" at http://www.groestl.info with tweaks to
  * interface to the BouncyCastle libraries
  */
-@SuppressWarnings("checkstyle:MagicNumber")
+@SuppressWarnings({"checkstyle:MagicNumber", "checkstyle:JavadocVariable"})
 public class GordianGroestlDigest
         implements ExtendedDigest, Memoable {
     /**
@@ -62,7 +62,7 @@ public class GordianGroestlDigest
 
     @Override
     public int doFinal(final byte[] pHash, final int pOffset) {
-        theDigest.Final(pHash, pOffset);
+        theDigest.finalise(pHash, pOffset);
         return getDigestSize();
     }
 
@@ -90,7 +90,7 @@ public class GordianGroestlDigest
 
     @Override
     public void update(final byte[] pData, final int pOffset, final int pLength) {
-        theDigest.Update(pData, pOffset, ((long) pLength) * Byte.SIZE);
+        theDigest.update(pData, pOffset, ((long) pLength) * Byte.SIZE);
     }
 
     @Override
@@ -131,11 +131,11 @@ public class GordianGroestlDigest
         private final int size; /* LONG or SHORT */
         private final boolean isShort; /* LONG or SHORT */
         private boolean initialised;
-        private long block_counter; /* message block counter */
+        private long blockCounter; /* message block counter */
         private long[] chaining; /* actual state */
         private byte[] buffer; /* data buffer */
-        private int buf_ptr; /* data buffer pointer */
-        private int bits_in_last_byte; /*
+        private int bufPtr; /* data buffer pointer */
+        private int bitsInLastByte; /*
          * no. of message bits in last byte of data buffer
          */
 
@@ -409,9 +409,9 @@ public class GordianGroestlDigest
          * Constructor.
          * @param pHashBitLen the hash bit length
          */
-        GordianGroestlFastDigest(int pHashBitLen) {
+        GordianGroestlFastDigest(final int pHashBitLen) {
             /* Check the hashBitLength */
-            int numCols;
+            final int numCols;
             switch (pHashBitLen) {
                 case 224:
                 case 256:
@@ -446,7 +446,7 @@ public class GordianGroestlDigest
          */
         private void ensureInitialised() {
             if (!initialised) {
-                Init();
+                init();
                 initialised = true;
             }
         }
@@ -465,7 +465,7 @@ public class GordianGroestlDigest
          * @param n the number of bits to rotate
          * @return the rotated long
          */
-        private static long ROTL64(long a, int n) {
+        private static long rotl64(final long a, final int n) {
             return (a << n) | (a >>> (64 - n));
         }
 
@@ -475,7 +475,7 @@ public class GordianGroestlDigest
          * @param n the byte number
          * @return the extracted byte
          */
-        private static int EXT_BYTE(long var, int n) {
+        private static int extByte(final long var, final int n) {
             return (int) ((var >>> (8 * n)) & 0xffL);
         }
 
@@ -484,11 +484,11 @@ public class GordianGroestlDigest
          * @param a the value to convert
          * @return the converted value
          */
-        private static long U64BIG(long a) {
-            return ((ROTL64(a, 8) & 0x000000FF000000FFL) |
-                    (ROTL64(a, 24) & 0x0000FF000000FF00L) |
-                    (ROTL64(a, 40) & 0x00FF000000FF0000L) |
-                    (ROTL64(a, 56) & 0xFF000000FF000000L));
+        private static long u64Big(final long a) {
+            return ((rotl64(a, 8) & 0x000000FF000000FFL)
+                    | (rotl64(a, 24) & 0x0000FF000000FF00L)
+                    | (rotl64(a, 40) & 0x00FF000000FF0000L)
+                    | (rotl64(a, 56) & 0xFF000000FF000000L));
         }
 
         /**
@@ -498,19 +498,20 @@ public class GordianGroestlDigest
          * @param pIndex the index of the long to extract with respect to the offset
          * @return the extracted long
          */
-        private static long leBytesToLong(byte[] pBuffer, int pOffset, int pIndex) {
+        private static long leBytesToLong(final byte[] pBuffer, final int pOffset, final int pIndex) {
             /* Determine position to extract from */
-            pIndex *= 8;
-            pIndex += pOffset;
+            int myIndex = pIndex;
+            myIndex *= 8;
+            myIndex += pOffset;
 
             /* Loop through the bytes to build the value */
             long value = 0;
             int i = 7;
             while (i > 0) {
-                value += pBuffer[pIndex + i--] & 0xff;
+                value += pBuffer[myIndex + i--] & 0xff;
                 value <<= 8;
             }
-            value += pBuffer[pIndex] & 0xff;
+            value += pBuffer[myIndex] & 0xff;
 
             /* Return the value */
             return value;
@@ -523,245 +524,246 @@ public class GordianGroestlDigest
          * @param pOffset the offset of the buffer to place the result into
          * @param pLength the length of buffer available
          */
-        private static void longToLeBytes(long pValue, byte[] pBuffer, int pOffset, int pLength) {
+        private static void longToLeBytes(final long pValue, final byte[] pBuffer, final int pOffset, final int pLength) {
             /* Determine how many bytes to copy */
             int i = 8;
+            long myValue = pValue;
             while (i > pLength) {
-                pValue >>= 8;
+                myValue >>= 8;
                 i--;
             }
 
             /* Convert and copy bytes */
             int pos = pOffset + pLength - i;
             while (i-- > 0) {
-                pBuffer[pos++] = (byte) (pValue & 0xff);
-                pValue >>= 8;
+                pBuffer[pos++] = (byte) (myValue & 0xff);
+                myValue >>= 8;
             }
         }
 
         /* compute one new state column */
-        private static long COLUMN(long[] x, int c0, int c1, int c2, int c3, int c4, int c5, int c6, int c7) {
-            return T[0 * 256 + EXT_BYTE(x[c0], 0)]
-                    ^ T[1 * 256 + EXT_BYTE(x[c1], 1)]
-                    ^ T[2 * 256 + EXT_BYTE(x[c2], 2)]
-                    ^ T[3 * 256 + EXT_BYTE(x[c3], 3)]
-                    ^ T[4 * 256 + EXT_BYTE(x[c4], 4)]
-                    ^ T[5 * 256 + EXT_BYTE(x[c5], 5)]
-                    ^ T[6 * 256 + EXT_BYTE(x[c6], 6)]
-                    ^ T[7 * 256 + EXT_BYTE(x[c7], 7)];
+        @SuppressWarnings("checkstyle:ParameterNumber")
+        private static long column(final long[] x, final int c0, final int c1, final int c2,
+                                   final int c3, final int c4, final int c5, final int c6, final int c7) {
+            return T[0 * 256 + extByte(x[c0], 0)]
+                    ^ T[1 * 256 + extByte(x[c1], 1)]
+                    ^ T[2 * 256 + extByte(x[c2], 2)]
+                    ^ T[3 * 256 + extByte(x[c3], 3)]
+                    ^ T[4 * 256 + extByte(x[c4], 4)]
+                    ^ T[5 * 256 + extByte(x[c5], 5)]
+                    ^ T[6 * 256 + extByte(x[c6], 6)]
+                    ^ T[7 * 256 + extByte(x[c7], 7)];
         }
 
         /* compute a round in P (short variants) */
-        private static void RND512P(long[] x, long[] y, long r) {
-            x[0] ^= 0x0000000000000000l ^ r;
-            x[1] ^= 0x0000000000000010l ^ r;
-            x[2] ^= 0x0000000000000020l ^ r;
-            x[3] ^= 0x0000000000000030l ^ r;
-            x[4] ^= 0x0000000000000040l ^ r;
-            x[5] ^= 0x0000000000000050l ^ r;
-            x[6] ^= 0x0000000000000060l ^ r;
-            x[7] ^= 0x0000000000000070l ^ r;
-            y[0] = COLUMN(x, 0, 1, 2, 3, 4, 5, 6, 7);
-            y[1] = COLUMN(x, 1, 2, 3, 4, 5, 6, 7, 0);
-            y[2] = COLUMN(x, 2, 3, 4, 5, 6, 7, 0, 1);
-            y[3] = COLUMN(x, 3, 4, 5, 6, 7, 0, 1, 2);
-            y[4] = COLUMN(x, 4, 5, 6, 7, 0, 1, 2, 3);
-            y[5] = COLUMN(x, 5, 6, 7, 0, 1, 2, 3, 4);
-            y[6] = COLUMN(x, 6, 7, 0, 1, 2, 3, 4, 5);
-            y[7] = COLUMN(x, 7, 0, 1, 2, 3, 4, 5, 6);
+        private static void rnd512P(final long[] x, final long[] y, final long r) {
+            x[0] ^= 0x0000000000000000L ^ r;
+            x[1] ^= 0x0000000000000010L ^ r;
+            x[2] ^= 0x0000000000000020L ^ r;
+            x[3] ^= 0x0000000000000030L ^ r;
+            x[4] ^= 0x0000000000000040L ^ r;
+            x[5] ^= 0x0000000000000050L ^ r;
+            x[6] ^= 0x0000000000000060L ^ r;
+            x[7] ^= 0x0000000000000070L ^ r;
+            y[0] = column(x, 0, 1, 2, 3, 4, 5, 6, 7);
+            y[1] = column(x, 1, 2, 3, 4, 5, 6, 7, 0);
+            y[2] = column(x, 2, 3, 4, 5, 6, 7, 0, 1);
+            y[3] = column(x, 3, 4, 5, 6, 7, 0, 1, 2);
+            y[4] = column(x, 4, 5, 6, 7, 0, 1, 2, 3);
+            y[5] = column(x, 5, 6, 7, 0, 1, 2, 3, 4);
+            y[6] = column(x, 6, 7, 0, 1, 2, 3, 4, 5);
+            y[7] = column(x, 7, 0, 1, 2, 3, 4, 5, 6);
         }
 
         /* compute a round in Q (short variants) */
-        private static void RND512Q(long[] x, long[] y, long r) {
-            x[0] ^= 0xffffffffffffffffl ^ r;
-            x[1] ^= 0xefffffffffffffffl ^ r;
-            x[2] ^= 0xdfffffffffffffffl ^ r;
-            x[3] ^= 0xcfffffffffffffffl ^ r;
-            x[4] ^= 0xbfffffffffffffffl ^ r;
-            x[5] ^= 0xafffffffffffffffl ^ r;
-            x[6] ^= 0x9fffffffffffffffl ^ r;
-            x[7] ^= 0x8fffffffffffffffl ^ r;
-            y[0] = COLUMN(x, 1, 3, 5, 7, 0, 2, 4, 6);
-            y[1] = COLUMN(x, 2, 4, 6, 0, 1, 3, 5, 7);
-            y[2] = COLUMN(x, 3, 5, 7, 1, 2, 4, 6, 0);
-            y[3] = COLUMN(x, 4, 6, 0, 2, 3, 5, 7, 1);
-            y[4] = COLUMN(x, 5, 7, 1, 3, 4, 6, 0, 2);
-            y[5] = COLUMN(x, 6, 0, 2, 4, 5, 7, 1, 3);
-            y[6] = COLUMN(x, 7, 1, 3, 5, 6, 0, 2, 4);
-            y[7] = COLUMN(x, 0, 2, 4, 6, 7, 1, 3, 5);
+        private static void rnd512Q(final long[] x, final long[] y, final long r) {
+            x[0] ^= 0xffffffffffffffffL ^ r;
+            x[1] ^= 0xefffffffffffffffL ^ r;
+            x[2] ^= 0xdfffffffffffffffL ^ r;
+            x[3] ^= 0xcfffffffffffffffL ^ r;
+            x[4] ^= 0xbfffffffffffffffL ^ r;
+            x[5] ^= 0xafffffffffffffffL ^ r;
+            x[6] ^= 0x9fffffffffffffffL ^ r;
+            x[7] ^= 0x8fffffffffffffffL ^ r;
+            y[0] = column(x, 1, 3, 5, 7, 0, 2, 4, 6);
+            y[1] = column(x, 2, 4, 6, 0, 1, 3, 5, 7);
+            y[2] = column(x, 3, 5, 7, 1, 2, 4, 6, 0);
+            y[3] = column(x, 4, 6, 0, 2, 3, 5, 7, 1);
+            y[4] = column(x, 5, 7, 1, 3, 4, 6, 0, 2);
+            y[5] = column(x, 6, 0, 2, 4, 5, 7, 1, 3);
+            y[6] = column(x, 7, 1, 3, 5, 6, 0, 2, 4);
+            y[7] = column(x, 0, 2, 4, 6, 7, 1, 3, 5);
         }
 
         /* compute a round in P (long variants) */
-        private static void RND1024P(long[] x, long[] y, long r) {
-            x[0] ^= 0x0000000000000000l ^ r;
-            x[1] ^= 0x0000000000000010l ^ r;
-            x[2] ^= 0x0000000000000020l ^ r;
-            x[3] ^= 0x0000000000000030l ^ r;
-            x[4] ^= 0x0000000000000040l ^ r;
-            x[5] ^= 0x0000000000000050l ^ r;
-            x[6] ^= 0x0000000000000060l ^ r;
-            x[7] ^= 0x0000000000000070l ^ r;
-            x[8] ^= 0x0000000000000080l ^ r;
-            x[9] ^= 0x0000000000000090l ^ r;
-            x[10] ^= 0x00000000000000a0l ^ r;
-            x[11] ^= 0x00000000000000b0l ^ r;
-            x[12] ^= 0x00000000000000c0l ^ r;
-            x[13] ^= 0x00000000000000d0l ^ r;
-            x[14] ^= 0x00000000000000e0l ^ r;
-            x[15] ^= 0x00000000000000f0l ^ r;
-            y[15] = COLUMN(x, 15, 0, 1, 2, 3, 4, 5, 10);
-            y[14] = COLUMN(x, 14, 15, 0, 1, 2, 3, 4, 9);
-            y[13] = COLUMN(x, 13, 14, 15, 0, 1, 2, 3, 8);
-            y[12] = COLUMN(x, 12, 13, 14, 15, 0, 1, 2, 7);
-            y[11] = COLUMN(x, 11, 12, 13, 14, 15, 0, 1, 6);
-            y[10] = COLUMN(x, 10, 11, 12, 13, 14, 15, 0, 5);
-            y[9] = COLUMN(x, 9, 10, 11, 12, 13, 14, 15, 4);
-            y[8] = COLUMN(x, 8, 9, 10, 11, 12, 13, 14, 3);
-            y[7] = COLUMN(x, 7, 8, 9, 10, 11, 12, 13, 2);
-            y[6] = COLUMN(x, 6, 7, 8, 9, 10, 11, 12, 1);
-            y[5] = COLUMN(x, 5, 6, 7, 8, 9, 10, 11, 0);
-            y[4] = COLUMN(x, 4, 5, 6, 7, 8, 9, 10, 15);
-            y[3] = COLUMN(x, 3, 4, 5, 6, 7, 8, 9, 14);
-            y[2] = COLUMN(x, 2, 3, 4, 5, 6, 7, 8, 13);
-            y[1] = COLUMN(x, 1, 2, 3, 4, 5, 6, 7, 12);
-            y[0] = COLUMN(x, 0, 1, 2, 3, 4, 5, 6, 11);
+        private static void rnd1024P(final long[] x, final long[] y, final long r) {
+            x[0] ^= 0x0000000000000000L ^ r;
+            x[1] ^= 0x0000000000000010L ^ r;
+            x[2] ^= 0x0000000000000020L ^ r;
+            x[3] ^= 0x0000000000000030L ^ r;
+            x[4] ^= 0x0000000000000040L ^ r;
+            x[5] ^= 0x0000000000000050L ^ r;
+            x[6] ^= 0x0000000000000060L ^ r;
+            x[7] ^= 0x0000000000000070L ^ r;
+            x[8] ^= 0x0000000000000080L ^ r;
+            x[9] ^= 0x0000000000000090L ^ r;
+            x[10] ^= 0x00000000000000a0L ^ r;
+            x[11] ^= 0x00000000000000b0L ^ r;
+            x[12] ^= 0x00000000000000c0L ^ r;
+            x[13] ^= 0x00000000000000d0L ^ r;
+            x[14] ^= 0x00000000000000e0L ^ r;
+            x[15] ^= 0x00000000000000f0L ^ r;
+            y[15] = column(x, 15, 0, 1, 2, 3, 4, 5, 10);
+            y[14] = column(x, 14, 15, 0, 1, 2, 3, 4, 9);
+            y[13] = column(x, 13, 14, 15, 0, 1, 2, 3, 8);
+            y[12] = column(x, 12, 13, 14, 15, 0, 1, 2, 7);
+            y[11] = column(x, 11, 12, 13, 14, 15, 0, 1, 6);
+            y[10] = column(x, 10, 11, 12, 13, 14, 15, 0, 5);
+            y[9] = column(x, 9, 10, 11, 12, 13, 14, 15, 4);
+            y[8] = column(x, 8, 9, 10, 11, 12, 13, 14, 3);
+            y[7] = column(x, 7, 8, 9, 10, 11, 12, 13, 2);
+            y[6] = column(x, 6, 7, 8, 9, 10, 11, 12, 1);
+            y[5] = column(x, 5, 6, 7, 8, 9, 10, 11, 0);
+            y[4] = column(x, 4, 5, 6, 7, 8, 9, 10, 15);
+            y[3] = column(x, 3, 4, 5, 6, 7, 8, 9, 14);
+            y[2] = column(x, 2, 3, 4, 5, 6, 7, 8, 13);
+            y[1] = column(x, 1, 2, 3, 4, 5, 6, 7, 12);
+            y[0] = column(x, 0, 1, 2, 3, 4, 5, 6, 11);
         }
 
         /* compute a round in Q (long variants) */
-        private static void RND1024Q(long[] x, long[] y, long r) {
-            x[0] ^= 0xffffffffffffffffl ^ r;
-            x[1] ^= 0xefffffffffffffffl ^ r;
-            x[2] ^= 0xdfffffffffffffffl ^ r;
-            x[3] ^= 0xcfffffffffffffffl ^ r;
-            x[4] ^= 0xbfffffffffffffffl ^ r;
-            x[5] ^= 0xafffffffffffffffl ^ r;
-            x[6] ^= 0x9fffffffffffffffl ^ r;
-            x[7] ^= 0x8fffffffffffffffl ^ r;
-            x[8] ^= 0x7fffffffffffffffl ^ r;
-            x[9] ^= 0x6fffffffffffffffl ^ r;
-            x[10] ^= 0x5fffffffffffffffl ^ r;
-            x[11] ^= 0x4fffffffffffffffl ^ r;
-            x[12] ^= 0x3fffffffffffffffl ^ r;
-            x[13] ^= 0x2fffffffffffffffl ^ r;
-            x[14] ^= 0x1fffffffffffffffl ^ r;
-            x[15] ^= 0x0fffffffffffffffl ^ r;
-            y[15] = COLUMN(x, 0, 2, 4, 10, 15, 1, 3, 5);
-            y[14] = COLUMN(x, 15, 1, 3, 9, 14, 0, 2, 4);
-            y[13] = COLUMN(x, 14, 0, 2, 8, 13, 15, 1, 3);
-            y[12] = COLUMN(x, 13, 15, 1, 7, 12, 14, 0, 2);
-            y[11] = COLUMN(x, 12, 14, 0, 6, 11, 13, 15, 1);
-            y[10] = COLUMN(x, 11, 13, 15, 5, 10, 12, 14, 0);
-            y[9] = COLUMN(x, 10, 12, 14, 4, 9, 11, 13, 15);
-            y[8] = COLUMN(x, 9, 11, 13, 3, 8, 10, 12, 14);
-            y[7] = COLUMN(x, 8, 10, 12, 2, 7, 9, 11, 13);
-            y[6] = COLUMN(x, 7, 9, 11, 1, 6, 8, 10, 12);
-            y[5] = COLUMN(x, 6, 8, 10, 0, 5, 7, 9, 11);
-            y[4] = COLUMN(x, 5, 7, 9, 15, 4, 6, 8, 10);
-            y[3] = COLUMN(x, 4, 6, 8, 14, 3, 5, 7, 9);
-            y[2] = COLUMN(x, 3, 5, 7, 13, 2, 4, 6, 8);
-            y[1] = COLUMN(x, 2, 4, 6, 12, 1, 3, 5, 7);
-            y[0] = COLUMN(x, 1, 3, 5, 11, 0, 2, 4, 6);
+        private static void rnd1024Q(final long[] x, final long[] y, final long r) {
+            x[0] ^= 0xffffffffffffffffL ^ r;
+            x[1] ^= 0xefffffffffffffffL ^ r;
+            x[2] ^= 0xdfffffffffffffffL ^ r;
+            x[3] ^= 0xcfffffffffffffffL ^ r;
+            x[4] ^= 0xbfffffffffffffffL ^ r;
+            x[5] ^= 0xafffffffffffffffL ^ r;
+            x[6] ^= 0x9fffffffffffffffL ^ r;
+            x[7] ^= 0x8fffffffffffffffL ^ r;
+            x[8] ^= 0x7fffffffffffffffL ^ r;
+            x[9] ^= 0x6fffffffffffffffL ^ r;
+            x[10] ^= 0x5fffffffffffffffL ^ r;
+            x[11] ^= 0x4fffffffffffffffL ^ r;
+            x[12] ^= 0x3fffffffffffffffL ^ r;
+            x[13] ^= 0x2fffffffffffffffL ^ r;
+            x[14] ^= 0x1fffffffffffffffL ^ r;
+            x[15] ^= 0x0fffffffffffffffL ^ r;
+            y[15] = column(x, 0, 2, 4, 10, 15, 1, 3, 5);
+            y[14] = column(x, 15, 1, 3, 9, 14, 0, 2, 4);
+            y[13] = column(x, 14, 0, 2, 8, 13, 15, 1, 3);
+            y[12] = column(x, 13, 15, 1, 7, 12, 14, 0, 2);
+            y[11] = column(x, 12, 14, 0, 6, 11, 13, 15, 1);
+            y[10] = column(x, 11, 13, 15, 5, 10, 12, 14, 0);
+            y[9] = column(x, 10, 12, 14, 4, 9, 11, 13, 15);
+            y[8] = column(x, 9, 11, 13, 3, 8, 10, 12, 14);
+            y[7] = column(x, 8, 10, 12, 2, 7, 9, 11, 13);
+            y[6] = column(x, 7, 9, 11, 1, 6, 8, 10, 12);
+            y[5] = column(x, 6, 8, 10, 0, 5, 7, 9, 11);
+            y[4] = column(x, 5, 7, 9, 15, 4, 6, 8, 10);
+            y[3] = column(x, 4, 6, 8, 14, 3, 5, 7, 9);
+            y[2] = column(x, 3, 5, 7, 13, 2, 4, 6, 8);
+            y[1] = column(x, 2, 4, 6, 12, 1, 3, 5, 7);
+            y[0] = column(x, 1, 3, 5, 11, 0, 2, 4, 6);
         }
 
         /* the compression function (short variants) */
-        private void F512(long[] h, byte[] m, int pOffset) {
-            int i;
-
-            for (i = 0; i < COLS512; i++) {
-                long inVal = leBytesToLong(m, pOffset, i);
+        private void f512(final long[] h, final byte[] m, final int pOffset) {
+            for (int i = 0; i < COLS512; i++) {
+                final long inVal = leBytesToLong(m, pOffset, i);
                 tmpZ[i] = inVal;
                 tmpInP[i] = h[i] ^ inVal;
             }
 
             /* compute Q(m) */
-            RND512Q(tmpZ, tmpY, 0x0000000000000000l);
-            RND512Q(tmpY, tmpZ, 0x0100000000000000l);
-            RND512Q(tmpZ, tmpY, 0x0200000000000000l);
-            RND512Q(tmpY, tmpZ, 0x0300000000000000l);
-            RND512Q(tmpZ, tmpY, 0x0400000000000000l);
-            RND512Q(tmpY, tmpZ, 0x0500000000000000l);
-            RND512Q(tmpZ, tmpY, 0x0600000000000000l);
-            RND512Q(tmpY, tmpZ, 0x0700000000000000l);
-            RND512Q(tmpZ, tmpY, 0x0800000000000000l);
-            RND512Q(tmpY, tmpOutQ, 0x0900000000000000l);
+            rnd512Q(tmpZ, tmpY, 0x0000000000000000L);
+            rnd512Q(tmpY, tmpZ, 0x0100000000000000L);
+            rnd512Q(tmpZ, tmpY, 0x0200000000000000L);
+            rnd512Q(tmpY, tmpZ, 0x0300000000000000L);
+            rnd512Q(tmpZ, tmpY, 0x0400000000000000L);
+            rnd512Q(tmpY, tmpZ, 0x0500000000000000L);
+            rnd512Q(tmpZ, tmpY, 0x0600000000000000L);
+            rnd512Q(tmpY, tmpZ, 0x0700000000000000L);
+            rnd512Q(tmpZ, tmpY, 0x0800000000000000L);
+            rnd512Q(tmpY, tmpOutQ, 0x0900000000000000L);
 
             /* compute P(h+m) */
-            RND512P(tmpInP, tmpZ, 0x0000000000000000l);
-            RND512P(tmpZ, tmpY, 0x0000000000000001l);
-            RND512P(tmpY, tmpZ, 0x0000000000000002l);
-            RND512P(tmpZ, tmpY, 0x0000000000000003l);
-            RND512P(tmpY, tmpZ, 0x0000000000000004l);
-            RND512P(tmpZ, tmpY, 0x0000000000000005l);
-            RND512P(tmpY, tmpZ, 0x0000000000000006l);
-            RND512P(tmpZ, tmpY, 0x0000000000000007l);
-            RND512P(tmpY, tmpZ, 0x0000000000000008l);
-            RND512P(tmpZ, tmpY, 0x0000000000000009l);
+            rnd512P(tmpInP, tmpZ, 0x0000000000000000L);
+            rnd512P(tmpZ, tmpY, 0x0000000000000001L);
+            rnd512P(tmpY, tmpZ, 0x0000000000000002L);
+            rnd512P(tmpZ, tmpY, 0x0000000000000003L);
+            rnd512P(tmpY, tmpZ, 0x0000000000000004L);
+            rnd512P(tmpZ, tmpY, 0x0000000000000005L);
+            rnd512P(tmpY, tmpZ, 0x0000000000000006L);
+            rnd512P(tmpZ, tmpY, 0x0000000000000007L);
+            rnd512P(tmpY, tmpZ, 0x0000000000000008L);
+            rnd512P(tmpZ, tmpY, 0x0000000000000009L);
 
             /* h' == h + Q(m) + P(h+m) */
-            for (i = 0; i < COLS512; i++) {
+            for (int i = 0; i < COLS512; i++) {
                 h[i] ^= tmpOutQ[i] ^ tmpY[i];
             }
         }
 
         /* the compression function (long variants) */
-        private void F1024(long[] h, byte[] m, int pOffset) {
-            int i;
-
-            for (i = 0; i < COLS1024; i++) {
-                long inVal = leBytesToLong(m, pOffset, i);
+        private void f1024(final long[] h, final byte[] m, final int pOffset) {
+            for (int i = 0; i < COLS1024; i++) {
+                final long inVal = leBytesToLong(m, pOffset, i);
                 tmpZ[i] = inVal;
                 tmpInP[i] = h[i] ^ inVal;
             }
 
             /* compute Q(m) */
-            RND1024Q(tmpZ, tmpY, 0);
-            for (i = 1; i < ROUNDS1024 - 1; i += 2) {
-                RND1024Q(tmpY, tmpZ, U64BIG((long) i));
-                RND1024Q(tmpZ, tmpY, U64BIG((long) (i + 1)));
+            rnd1024Q(tmpZ, tmpY, 0);
+            for (int i = 1; i < ROUNDS1024 - 1; i += 2) {
+                rnd1024Q(tmpY, tmpZ, u64Big(i));
+                rnd1024Q(tmpZ, tmpY, u64Big(i + 1));
             }
-            RND1024Q(tmpY, tmpOutQ, U64BIG(((long) (ROUNDS1024 - 1))));
+            rnd1024Q(tmpY, tmpOutQ, u64Big(((ROUNDS1024 - 1))));
 
             /* compute P(h+m) */
-            RND1024P(tmpInP, tmpZ, 0);
-            for (i = 1; i < ROUNDS1024 - 1; i += 2) {
-                RND1024P(tmpZ, tmpY, U64BIG(((long) i) << 56));
-                RND1024P(tmpY, tmpZ, U64BIG(((long) (i + 1)) << 56));
+            rnd1024P(tmpInP, tmpZ, 0);
+            for (int i = 1; i < ROUNDS1024 - 1; i += 2) {
+                rnd1024P(tmpZ, tmpY, u64Big(((long) i) << 56));
+                rnd1024P(tmpY, tmpZ, u64Big(((long) (i + 1)) << 56));
             }
-            RND1024P(tmpZ, tmpY, U64BIG(((long) (ROUNDS1024 - 1)) << 56));
+            rnd1024P(tmpZ, tmpY, u64Big(((long) (ROUNDS1024 - 1)) << 56));
 
             /* h' == h + Q(m) + P(h+m) */
-            for (i = 0; i < COLS1024; i++) {
+            for (int i = 0; i < COLS1024; i++) {
                 h[i] ^= tmpOutQ[i] ^ tmpY[i];
             }
         }
 
         /* digest up to msglen bytes of input (full blocks only) */
-        private void Transform(byte[] input, int pOffset, int msglen) {
+        private void transform(final byte[] input, final int pOffset, final int msglen) {
             /*
              * determine variant, SHORT or LONG, and select underlying compression function based on
              * the variant
              */
+            int myOffset = pOffset;
+            int myMsgLen = msglen;
             if (isShort) {
                 /* increment block counter */
-                block_counter += msglen / SIZE512;
-                while (msglen >= SIZE512) {
-                    F512(chaining, input, pOffset);
-                    msglen -= SIZE512;
-                    pOffset += SIZE512;
+                blockCounter += myMsgLen / SIZE512;
+                while (myMsgLen >= SIZE512) {
+                    f512(chaining, input, myOffset);
+                    myMsgLen -= SIZE512;
+                    myOffset += SIZE512;
                 }
             } else {
                 /* increment block counter */
-                block_counter += msglen / SIZE1024;
-                while (msglen >= SIZE1024) {
-                    F1024(chaining, input, pOffset);
-                    msglen -= SIZE1024;
-                    pOffset += SIZE1024;
+                blockCounter += myMsgLen / SIZE1024;
+                while (myMsgLen >= SIZE1024) {
+                    f1024(chaining, input, myOffset);
+                    myMsgLen -= SIZE1024;
+                    myOffset += SIZE1024;
                 }
             }
         }
 
         /* given state h, do h <- P(h)+h */
-        private void OutputTransformation() {
+        private void outputTransformation() {
             int j;
 
             /* determine variant */
@@ -769,16 +771,16 @@ public class GordianGroestlDigest
                 for (j = 0; j < COLS512; j++) {
                     tmpInP[j] = chaining[j];
                 }
-                RND512P(tmpInP, tmpZ, 0x0000000000000000l);
-                RND512P(tmpZ, tmpY, 0x0000000000000001l);
-                RND512P(tmpY, tmpZ, 0x0000000000000002l);
-                RND512P(tmpZ, tmpY, 0x0000000000000003l);
-                RND512P(tmpY, tmpZ, 0x0000000000000004l);
-                RND512P(tmpZ, tmpY, 0x0000000000000005l);
-                RND512P(tmpY, tmpZ, 0x0000000000000006l);
-                RND512P(tmpZ, tmpY, 0x0000000000000007l);
-                RND512P(tmpY, tmpZ, 0x0000000000000008l);
-                RND512P(tmpZ, tmpInP, 0x0000000000000009l);
+                rnd512P(tmpInP, tmpZ, 0x0000000000000000L);
+                rnd512P(tmpZ, tmpY, 0x0000000000000001L);
+                rnd512P(tmpY, tmpZ, 0x0000000000000002L);
+                rnd512P(tmpZ, tmpY, 0x0000000000000003L);
+                rnd512P(tmpY, tmpZ, 0x0000000000000004L);
+                rnd512P(tmpZ, tmpY, 0x0000000000000005L);
+                rnd512P(tmpY, tmpZ, 0x0000000000000006L);
+                rnd512P(tmpZ, tmpY, 0x0000000000000007L);
+                rnd512P(tmpY, tmpZ, 0x0000000000000008L);
+                rnd512P(tmpZ, tmpInP, 0x0000000000000009L);
                 for (j = 0; j < COLS512; j++) {
                     chaining[j] ^= tmpInP[j];
                 }
@@ -787,12 +789,12 @@ public class GordianGroestlDigest
                 for (j = 0; j < COLS1024; j++) {
                     tmpInP[j] = chaining[j];
                 }
-                RND1024P(tmpInP, tmpY, 0);
+                rnd1024P(tmpInP, tmpY, 0);
                 for (j = 1; j < ROUNDS1024 - 1; j += 2) {
-                    RND1024P(tmpY, tmpZ, U64BIG(((long) j) << 56));
-                    RND1024P(tmpZ, tmpY, U64BIG(((long) j + 1) << 56));
+                    rnd1024P(tmpY, tmpZ, u64Big(((long) j) << 56));
+                    rnd1024P(tmpZ, tmpY, u64Big(((long) j + 1) << 56));
                 }
-                RND1024P(tmpY, tmpInP, U64BIG(((long) (ROUNDS1024 - 1)) << 56));
+                rnd1024P(tmpY, tmpInP, u64Big(((long) (ROUNDS1024 - 1)) << 56));
                 for (j = 0; j < COLS1024; j++) {
                     chaining[j] ^= tmpInP[j];
                 }
@@ -800,23 +802,23 @@ public class GordianGroestlDigest
         }
 
         /* initialise context */
-        private void Init() {
+        private void init() {
             /*
              * set number of state columns and state size depending on variant
              */
             if (isShort) {
                 /* set initial value */
-                chaining[COLS512 - 1] = U64BIG((long) hashbitlen);
+                chaining[COLS512 - 1] = u64Big((long) hashbitlen);
 
             } else {
                 /* set initial value */
-                chaining[COLS1024 - 1] = U64BIG((long) hashbitlen);
+                chaining[COLS1024 - 1] = u64Big((long) hashbitlen);
             }
 
             /* set other variables */
-            buf_ptr = 0;
-            block_counter = 0;
-            bits_in_last_byte = 0;
+            bufPtr = 0;
+            blockCounter = 0;
+            bitsInLastByte = 0;
         }
 
         /**
@@ -839,30 +841,32 @@ public class GordianGroestlDigest
          */
         void copyIn(final GordianGroestlFastDigest pState) {
             /* Ensure that we are copying similar digest */
-            if (this.hashbitlen != pState.hashbitlen)
+            if (this.hashbitlen != pState.hashbitlen) {
                 throw new IllegalArgumentException();
+            }
 
             /* Copy state */
             initialised = pState.initialised;
-            block_counter = pState.block_counter;
-            buf_ptr = pState.buf_ptr;
-            bits_in_last_byte = pState.bits_in_last_byte;
+            blockCounter = pState.blockCounter;
+            bufPtr = pState.bufPtr;
+            bitsInLastByte = pState.bitsInLastByte;
             System.arraycopy(pState.buffer, 0, buffer, 0, buffer.length);
             System.arraycopy(pState.chaining, 0, chaining, 0, chaining.length);
         }
 
         /* update state with databitlen bits of input */
-        void Update(byte[] input, int pOffset, long databitlen) {
+        void update(final byte[] input, final int pOffset, final long databitlen) {
             int index = 0;
-            int msglen = (int) (databitlen / 8);
-            int rem = (int) (databitlen % 8);
+            final int msglen = (int) (databitlen / 8);
+            final int rem = (int) (databitlen % 8);
 
             /*
              * non-integral number of message bytes can only be supplied in the last call to this
              * function
              */
-            if (bits_in_last_byte != 0)
+            if (bitsInLastByte != 0) {
                 throw new IllegalStateException("FAIL");
+            }
 
             /* Ensure that we are initialised */
             ensureInitialised();
@@ -871,31 +875,31 @@ public class GordianGroestlDigest
              * if the buffer contains data that has not yet been digested, first add data to buffer
              * until full
              */
-            if (buf_ptr != 0) {
-                while (buf_ptr < size && index < msglen) {
-                    buffer[buf_ptr++] = input[pOffset + index++];
+            if (bufPtr != 0) {
+                while (bufPtr < size && index < msglen) {
+                    buffer[bufPtr++] = input[pOffset + index++];
                 }
-                if (buf_ptr < size) {
+                if (bufPtr < size) {
                     /* buffer still not full, return */
                     if (rem != 0) {
-                        bits_in_last_byte = rem;
-                        buffer[buf_ptr++] = input[pOffset + index];
+                        bitsInLastByte = rem;
+                        buffer[bufPtr++] = input[pOffset + index];
                     }
                     return;
                 }
 
                 /* digest buffer */
-                buf_ptr = 0;
-                Transform(buffer, 0, size);
+                bufPtr = 0;
+                transform(buffer, 0, size);
             }
 
             /* digest bulk of message */
-            Transform(input, pOffset + index, msglen - index);
+            transform(input, pOffset + index, msglen - index);
             index += ((msglen - index) / size) * size;
 
             /* store remaining data in buffer */
             while (index < msglen) {
-                buffer[buf_ptr++] = input[pOffset + index++];
+                buffer[bufPtr++] = input[pOffset + index++];
             }
 
             /*
@@ -903,8 +907,8 @@ public class GordianGroestlDigest
              * byte, together with information about number of bits
              */
             if (rem != 0) {
-                bits_in_last_byte = rem;
-                buffer[buf_ptr++] = input[pOffset + index];
+                bitsInLastByte = rem;
+                buffer[bufPtr++] = input[pOffset + index];
             }
         }
 
@@ -914,10 +918,11 @@ public class GordianGroestlDigest
          * @param pOffset the offset at which to place the hash
          * @param pLength the length of the hash
          */
-        private void buildHashFromState(byte[] pHashVal, int pOffset, int pLength) {
-            for (int i = chaining.length - 1; i >= 0 && pLength > 0; i--) {
-                longToLeBytes(chaining[i], pHashVal, pOffset, pLength);
-                pLength -= 8;
+        private void buildHashFromState(final byte[] pHashVal, final int pOffset, final int pLength) {
+            int myLength = pLength;
+            for (int i = chaining.length - 1; i >= 0 && myLength > 0; i--) {
+                longToLeBytes(chaining[i], pHashVal, pOffset, myLength);
+                myLength -= 8;
             }
         }
 
@@ -925,47 +930,48 @@ public class GordianGroestlDigest
          * finalise: process remaining data (including padding), perform output transformation, and
          * write hash result to 'output'
          */
-        void Final(byte[] hashval, int pOffset) {
-            int hashbytelen = hashbitlen / 8;
+        void finalise(final byte[] hashval, final int pOffset) {
+            final int hashbytelen = hashbitlen / 8;
 
             /* Ensure that we are initialised */
             ensureInitialised();
 
             /* pad with '1'-bit and first few '0'-bits */
-            if (bits_in_last_byte != 0) {
-                buffer[buf_ptr - 1] &= ((1 << bits_in_last_byte) - 1) << (8 - bits_in_last_byte);
-                buffer[buf_ptr - 1] ^= 0x1 << (7 - bits_in_last_byte);
-                bits_in_last_byte = 0;
-            } else
-                buffer[buf_ptr++] = (byte) 0x80;
+            if (bitsInLastByte != 0) {
+                buffer[bufPtr - 1] &= ((1 << bitsInLastByte) - 1) << (8 - bitsInLastByte);
+                buffer[bufPtr - 1] ^= 0x1 << (7 - bitsInLastByte);
+                bitsInLastByte = 0;
+            } else {
+                buffer[bufPtr++] = (byte) 0x80;
+            }
 
             /* pad with '0'-bits */
-            if (buf_ptr > size - LENGTHFIELDLEN) {
+            if (bufPtr > size - LENGTHFIELDLEN) {
                 /* padding requires two blocks */
-                while (buf_ptr < size) {
-                    buffer[buf_ptr++] = 0;
+                while (bufPtr < size) {
+                    buffer[bufPtr++] = 0;
                 }
                 /* digest first padding block */
-                Transform(buffer, 0, size);
-                buf_ptr = 0;
+                transform(buffer, 0, size);
+                bufPtr = 0;
             }
-            while (buf_ptr < size - LENGTHFIELDLEN) {
-                buffer[buf_ptr++] = 0;
+            while (bufPtr < size - LENGTHFIELDLEN) {
+                buffer[bufPtr++] = 0;
             }
 
             /* length padding */
-            block_counter++;
-            buf_ptr = size;
-            while (buf_ptr > size - LENGTHFIELDLEN) {
-                buffer[--buf_ptr] = (byte) block_counter;
-                block_counter >>>= 8;
+            blockCounter++;
+            bufPtr = size;
+            while (bufPtr > size - LENGTHFIELDLEN) {
+                buffer[--bufPtr] = (byte) blockCounter;
+                blockCounter >>>= 8;
             }
 
             /* digest final padding block */
-            Transform(buffer, 0, size);
+            transform(buffer, 0, size);
 
             /* perform output transformation */
-            OutputTransformation();
+            outputTransformation();
 
             /* store hash result in output */
             buildHashFromState(hashval, pOffset, hashbytelen);
