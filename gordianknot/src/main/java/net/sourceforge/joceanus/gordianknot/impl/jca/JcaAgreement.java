@@ -29,7 +29,7 @@ import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianCoreAnonymous
 import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianCoreBasicAgreement;
 import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianCoreEphemeralAgreement;
 import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianCoreSignedAgreement;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCryptoException;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
 import net.sourceforge.joceanus.gordianknot.impl.jca.JcaKeyPair.JcaPrivateKey;
 import net.sourceforge.joceanus.gordianknot.impl.jca.JcaKeyPair.JcaPublicKey;
 import net.sourceforge.joceanus.oceanus.OceanusException;

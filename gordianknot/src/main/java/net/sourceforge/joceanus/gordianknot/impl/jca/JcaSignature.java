@@ -26,7 +26,7 @@ import net.sourceforge.joceanus.gordianknot.api.keypair.GordianXMSSKeySpec;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignatureSpec;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignatureType;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCryptoException;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
 import net.sourceforge.joceanus.gordianknot.impl.core.sign.GordianCoreSignature;
 import net.sourceforge.joceanus.oceanus.OceanusException;
 

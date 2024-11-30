@@ -16,11 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.core.base;
 
-import java.security.SecureRandom;
-import java.util.List;
-import java.util.Random;
-import java.util.stream.Collectors;
-
 import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianCipherFactory;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianStreamKeySpec;
@@ -35,6 +30,11 @@ import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacSpec;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacSpecBuilder;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacType;
 import net.sourceforge.joceanus.oceanus.OceanusException;
+
+import java.security.SecureRandom;
+import java.util.List;
+import java.util.Random;
+import java.util.stream.Collectors;
 
 /**
  * Security Id Manager.
@@ -266,7 +266,7 @@ public class GordianIdManager {
         final GordianDigestFactory myDigests = theFactory.getDigestFactory();
         final List<GordianDigestType> myTypes = myDigests.listAllExternalTypes();
 
-         /* Select from the list */
+        /* Select from the list */
         final int myIndex = pRandom.nextInt(myTypes.size());
         return myTypes.get(myIndex);
     }

@@ -6,8 +6,8 @@
     <body>
         <section name="Overview">
             <p>GordianKnot can be personalised to ensure differing securitySpaces. The personalisation is achieved via a SecurityPhrase which is processed
-                via a set of digests to produce two 512-bit arrays (<strong>I</strong> and <strong>IV</strong>) which are then utilised in the various algorithms.</p>
-            <p><strong>I</strong> is often split into 16 integers written as <strong>I<sub>1</sub></strong> through <strong>I<sub>16</sub></strong>. Similarly
+                via a set of digests to produce two 512-bit arrays (<strong>P</strong> and <strong>IV</strong>) which are then utilised in the various algorithms.</p>
+            <p><strong>P</strong> is often split into 16 integers written as <strong>P<sub>1</sub></strong> through <strong>P<sub>16</sub></strong>. Similarly
                 <strong>IV</strong> is often split into 4 128-bit arrays written as <strong>IV<sub>1</sub></strong> through <strong>IV<sub>4</sub></strong></p>
         </section>
         <subsection name="Sample">
@@ -20,29 +20,27 @@
         <section name="Generation">
             <p>The personalisation algorithm is as follows.</p>
             <ol>
-                <li>Initialise <strong>I</strong> and <strong>IV</strong> to all zeroes</li>
-                <li>Create an array of all available digests that have an output length of 512-bits.</li>
+                <li>Initialise intermediate result buffer <strong>I</strong> to all zeroes</li>
+                <li>Create an array of all available digests that have an output length of 256-bits.</li>
                 <li>Initialise all digests with a constant value followed by the security phrase</li>
-                <li>Finish all digests, creating an array <strong>R</strong> of the hashResults and xor each of
-                    these hashes into <strong>I</strong></li>
+                <li>Finish all digests, creating an array <strong>I<sub>A</sub></strong> of the hashResults and xor each of
+                    these hashes into the intermediate buffer <strong>I</strong></li>
                 <li>Loop for 2K iterations.
                     <ol>
-                        <li>Update each digest with <strong>ALL</strong> the elements of <strong>R</strong></li>
-                        <li>Finish each digest, updating its hash in <strong>R</strong> and xor-ing into <strong>I</strong></li>
+                        <li>Update each digest with <strong>ALL</strong> the elements of <strong>I<sub>A</sub></strong></li>
+                        <li>Finish each digest, updating its hash in <strong>I<sub>A</sub></strong> and xor-ing into <strong>I</strong></li>
                     </ol>
                 </li>
-                <li>Repeat above loop for 2K iterations, xor-ing results into <strong>IV</strong> instead of <strong>I</strong>.
-                    <ol>
-                        <li>Update each digest with <strong>ALL</strong> the elements of <strong>R</strong></li>
-                        <li>Finish each digest, updating its hash in <strong>R</strong> and xor-ing into <strong>I</strong></li>
-                    </ol>
-                </li>
+                <li>Obtain a seed <strong>S</strong> from the first 8 bytes of <strong>I</strong> and obtain a seeded random <strong>R</strong> using
+                    <strong>S</strong></li>
+                <li>Obtain an HMAC <strong>H</strong> from the seededRandom <strong>R</strong></li>
+                <li>Use HKDF to with the HMAC <strong>H</strong> to expand the result <strong>I</strong> into <strong>P</strong> and <strong>IV</strong>.</li>
             </ol>
         </section>
         <section name="Seeded Random">
             <p>Several algorithms in <strong>GordianKnot</strong> require selection of various algorithms in a deterministic fashion based
                 on a 4-byte seed <strong>S</strong>. This is performed by creating a 6-byte seed from the combination of the 4-byte seed and
-                one of the <strong>I<sub>n</sub></strong> values, specific to the algorithm. This 6-byte seed in used to instantiate an instance of
+                one of the <strong>P<sub>n</sub></strong> values, specific to the algorithm. This 6-byte seed in used to instantiate an instance of
                 the deterministic <strong>Random</strong> class and algorithm selection is performed via this seeded Random instance.</p>
         </section>
         <section name="Key Derivation">

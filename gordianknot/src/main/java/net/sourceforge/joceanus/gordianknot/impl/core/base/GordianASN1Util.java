@@ -18,6 +18,7 @@ package net.sourceforge.joceanus.gordianknot.impl.core.base;
 
 import java.io.IOException;
 
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianIOException;
 import org.bouncycastle.asn1.ASN1Object;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.bc.BCObjectIdentifiers;

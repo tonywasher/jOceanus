@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.gordianknot.impl.jca;
 
 import net.sourceforge.joceanus.gordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.gordianknot.api.key.GordianKey;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianDataException;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.key.GordianCoreKey;
 import net.sourceforge.joceanus.oceanus.OceanusException;
 import org.bouncycastle.util.Arrays;

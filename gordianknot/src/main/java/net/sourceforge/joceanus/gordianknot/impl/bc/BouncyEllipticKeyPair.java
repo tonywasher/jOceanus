@@ -33,9 +33,9 @@ import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianCoreAnonymous
 import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianCoreBasicAgreement;
 import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianCoreEphemeralAgreement;
 import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianCoreSignedAgreement;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCryptoException;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianIOException;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianLogicException;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianIOException;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianLogicException;
 import net.sourceforge.joceanus.gordianknot.impl.core.encrypt.GordianCoreEncryptor;
 import net.sourceforge.joceanus.gordianknot.impl.core.keypair.GordianKeyPairValidity;
 import net.sourceforge.joceanus.gordianknot.impl.ext.engines.GordianEllipticEncryptor;

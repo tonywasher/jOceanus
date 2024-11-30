@@ -33,8 +33,8 @@ import net.sourceforge.joceanus.gordianknot.api.zip.GordianZipFactory;
 import net.sourceforge.joceanus.gordianknot.api.zip.GordianZipFileEntry;
 import net.sourceforge.joceanus.gordianknot.api.zip.GordianZipReadFile;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianDataException;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianIOException;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianIOException;
 import net.sourceforge.joceanus.gordianknot.impl.core.keypair.GordianCoreKeyPairFactory;
 import net.sourceforge.joceanus.oceanus.OceanusException;
 

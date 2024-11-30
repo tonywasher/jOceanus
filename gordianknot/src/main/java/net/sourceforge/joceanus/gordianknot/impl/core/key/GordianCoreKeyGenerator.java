@@ -29,7 +29,7 @@ import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacFactory;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacSpec;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacSpecBuilder;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianByteArrayInteger;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianDataException;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianPersonalisation;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianRandomSource;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;

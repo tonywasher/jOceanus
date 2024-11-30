@@ -196,7 +196,7 @@
             <p>Composite agreements may be created by a composite keyPair, as long as each element of the composite keyPair is capable of supporting the
                 desired AgreementSpec. There are two small variations.
                 <ol>
-                    <li>Confirm is not supported for <string>SM2</string> agreements</li>
+                    <li>Confirm is not supported for <strong>SM2</strong> agreements</li>
                     <li>Signed agreements are implemented as a set of <strong>Basic</strong> Agreements with the results signed.</li>
                 </ol>
             </p>

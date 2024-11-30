@@ -16,7 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.core.kdf;
 
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianDataException;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.oceanus.OceanusException;
 
 import java.util.ArrayList;

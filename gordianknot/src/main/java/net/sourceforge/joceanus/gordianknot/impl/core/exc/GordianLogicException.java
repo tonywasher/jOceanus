@@ -14,27 +14,25 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.gordianknot.impl.core.base;
+package net.sourceforge.joceanus.gordianknot.impl.core.exc;
 
 import net.sourceforge.joceanus.oceanus.OceanusException;
 
 /**
- * Cryptography Exception.
+ * Logic Exception.
  */
-public class GordianCryptoException
+public class GordianLogicException
         extends OceanusException {
     /**
      * SerialId.
      */
-    private static final long serialVersionUID = 3549487220672166829L;
+    private static final long serialVersionUID = -1823057546452392611L;
 
     /**
-     * Create a new GordianKnot Exception object based on a string and an underlying exception.
+     * Create a new GordianKnot Exception object based on a string.
      * @param s the description of the exception
-     * @param e the underlying exception
      */
-    public GordianCryptoException(final String s,
-                                  final Throwable e) {
-        super(s, e);
+    public GordianLogicException(final String s) {
+        super(s);
     }
 }

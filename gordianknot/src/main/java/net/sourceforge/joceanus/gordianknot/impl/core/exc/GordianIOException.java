@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.gordianknot.impl.core.base;
+package net.sourceforge.joceanus.gordianknot.impl.core.exc;
 
 import net.sourceforge.joceanus.oceanus.OceanusException;
 

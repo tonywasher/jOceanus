@@ -20,7 +20,7 @@ import net.sourceforge.joceanus.gordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMac;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacParameters;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacSpec;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianLogicException;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianLogicException;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.oceanus.OceanusException;
 

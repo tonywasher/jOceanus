@@ -19,6 +19,7 @@ package net.sourceforge.joceanus.gordianknot.impl.core.base;
 import java.security.SecureRandom;
 import java.util.function.Predicate;
 
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 
