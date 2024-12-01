@@ -16,26 +16,26 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.core.lock;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactory;
+import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactoryLock;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactoryType;
+import net.sourceforge.joceanus.gordianknot.api.factory.GordianLockFactory;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySet;
-import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactoryLock;
 import net.sourceforge.joceanus.gordianknot.api.lock.GordianKeyPairLock;
 import net.sourceforge.joceanus.gordianknot.api.lock.GordianKeySetLock;
-import net.sourceforge.joceanus.gordianknot.api.factory.GordianLockFactory;
 import net.sourceforge.joceanus.gordianknot.api.lock.GordianPasswordLockSpec;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
-import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianParameters;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.keyset.GordianCoreKeySet;
 import net.sourceforge.joceanus.gordianknot.impl.core.keyset.GordianCoreKeySetFactory;
 import net.sourceforge.joceanus.oceanus.OceanusException;
 import net.sourceforge.joceanus.oceanus.logger.OceanusLogManager;
 import net.sourceforge.joceanus.oceanus.logger.OceanusLogger;
+
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 
 /**
  * Lock factory implementation.
@@ -78,9 +78,10 @@ public class GordianCoreLockFactory
 
     @Override
     public GordianFactoryLock newFactoryLock(final GordianPasswordLockSpec pLockSpec,
+                                             final GordianFactoryType pFactoryType,
                                              final char[] pPassword) throws OceanusException {
         /* Create the lockFactory */
-        final GordianParameters myParams = GordianParameters.randomParams();
+        final GordianParameters myParams = GordianParameters.randomParams(pFactoryType);
         final GordianFactory myFactory = theFactory.newFactory(myParams);
 
         /* Create the factoryLock */
@@ -199,8 +200,7 @@ public class GordianCoreLockFactory
             /* If lockFactory is not created */
             if (lockFactory == null) {
                 /* Create the lockFactory */
-                final GordianParameters myParams = new GordianParameters(GordianFactoryType.BC);
-                myParams.setSecurityPhrase(getHostName());
+                final GordianParameters myParams = new GordianParameters(GordianFactoryType.BC, getHostName());
                 lockFactory = (GordianCoreFactory) theFactory.newFactory(myParams);
             }
 

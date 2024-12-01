@@ -16,15 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.junit.regression;
 
-import java.security.SecureRandom;
-import java.util.stream.Stream;
-
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.DynamicContainer;
-import org.junit.jupiter.api.DynamicNode;
-import org.junit.jupiter.api.DynamicTest;
-import org.junit.jupiter.api.TestFactory;
-
 import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianStreamKeySpec;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymKeySpec;
@@ -32,23 +23,31 @@ import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactoryLock;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactoryType;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianLockFactory;
-import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySetAADCipher;
-import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySetCipher;
-import net.sourceforge.joceanus.gordianknot.api.lock.GordianKeySetLock;
-import net.sourceforge.joceanus.gordianknot.api.lock.GordianPasswordLockSpec;
-import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
-import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianLogicException;
-import net.sourceforge.joceanus.gordianknot.util.GordianGenerator;
 import net.sourceforge.joceanus.gordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySet;
+import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySetAADCipher;
+import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySetCipher;
 import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySetSpec;
+import net.sourceforge.joceanus.gordianknot.api.lock.GordianKeySetLock;
+import net.sourceforge.joceanus.gordianknot.api.lock.GordianPasswordLockSpec;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMac;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacSpec;
 import net.sourceforge.joceanus.gordianknot.api.random.GordianRandomFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianLogicException;
 import net.sourceforge.joceanus.gordianknot.impl.core.keyset.GordianCoreKeySet;
+import net.sourceforge.joceanus.gordianknot.util.GordianGenerator;
 import net.sourceforge.joceanus.gordianknot.util.GordianUtilities;
-import net.sourceforge.joceanus.oceanus.OceanusException;
 import net.sourceforge.joceanus.oceanus.OceanusDataConverter;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.DynamicContainer;
+import org.junit.jupiter.api.DynamicNode;
+import org.junit.jupiter.api.DynamicTest;
+import org.junit.jupiter.api.TestFactory;
+
+import java.security.SecureRandom;
+import java.util.stream.Stream;
 
 /**
  * Security Test suite - Test KeySet functionality.
@@ -794,7 +793,7 @@ class KeySetTest {
     private void checkFactory(final FactoryKeySet pKeySet) throws OceanusException {
         /* Access the keys */
         final GordianCoreKeySet myKeySet = (GordianCoreKeySet) pKeySet.getKeySet();
-        final GordianFactory myFactory = GordianGenerator.createRandomFactory();
+        final GordianFactory myFactory = GordianGenerator.createRandomFactory(myKeySet.getFactory().getFactoryType());
         final byte[] myWrapped = myKeySet.secureFactory(myFactory);
         final GordianFactory myUnWrapped = myKeySet.deriveFactory(myWrapped);
         Assertions.assertEquals(myFactory, myUnWrapped, "Failed to secure/derive factory");
@@ -833,7 +832,7 @@ class KeySetTest {
      */
     private void testRandomFactory() throws OceanusException {
         /* Create the random factory */
-        final GordianFactory myFactory = GordianGenerator.createRandomFactory();
+        final GordianFactory myFactory = GordianGenerator.createRandomFactory(GordianFactoryType.BC);
         final GordianLockFactory myLockFactory = myFactory.getLockFactory();
         final GordianFactoryLock mySecured = myLockFactory.newFactoryLock(myFactory, DEF_PASSWORD.clone());
         final GordianFactoryLock myResolved = myLockFactory.resolveFactoryLock(mySecured.getLockBytes(), DEF_PASSWORD.clone());

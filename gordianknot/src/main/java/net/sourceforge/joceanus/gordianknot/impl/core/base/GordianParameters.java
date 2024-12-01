@@ -40,39 +40,118 @@ public class GordianParameters {
     public static final GordianFactoryType DEFAULT_FACTORY = GordianFactoryType.BC;
 
     /**
+     * FactoryTypeMask.
+     */
+    public static final byte FACTORY_MASK = (byte) 0x80;
+
+    /**
      * The Factory Type.
      */
-    private GordianFactoryType theFactoryType;
+    private final GordianFactoryType theFactoryType;
 
     /**
      * The Security seed.
      */
-    private byte[] theSecuritySeed;
+    private final byte[] theSecuritySeed;
 
     /**
      * The Security phrase.
      */
-    private byte[] theKeySetSeed;
+    private final byte[] theKeySetSeed;
 
     /**
      * Is this an internal set?
      */
-    private boolean isInternal;
+    private final boolean isInternal;
 
     /**
-     * Default Constructor.
+     * Constructor.
+     * @param pFactoryType the factory type
+     * @param pRandom the secureRandom
      */
-    public GordianParameters() {
-        this(DEFAULT_FACTORY);
+    public GordianParameters(final GordianFactoryType pFactoryType,
+                             final SecureRandom pRandom) {
+        /* Store factory Type */
+        theFactoryType = pFactoryType;
+
+        /* Generate the security seeds */
+        theSecuritySeed = new byte[SECRET_LEN.getByteLength()];
+        pRandom.nextBytes(theSecuritySeed);
+        theKeySetSeed = new byte[SECRET_LEN.getByteLength()];
+        pRandom.nextBytes(theKeySetSeed);
+
+        /* Adjust security seed according to factory type */
+        adjustSecuritySeed();
+
+        /* Note that this is internal */
+        isInternal = true;
+    }
+
+    /**
+     * Constructor.
+     * @param pSecuritySeeds the security seeds
+     */
+    public GordianParameters(final byte[] pSecuritySeeds) {
+        /* Split out the security seeds */
+        final int mySecretLen = SECRET_LEN.getByteLength();
+        theSecuritySeed = new byte[mySecretLen];
+        System.arraycopy(pSecuritySeeds, 0, theSecuritySeed, 0, mySecretLen);
+        theKeySetSeed = new byte[mySecretLen];
+        System.arraycopy(pSecuritySeeds, mySecretLen, theKeySetSeed, 0, mySecretLen);
+        Arrays.fill(pSecuritySeeds, (byte) 0);
+
+        /* Determine the factory type */
+        theFactoryType = (theSecuritySeed[0] & FACTORY_MASK) == FACTORY_MASK
+                ? GordianFactoryType.BC : GordianFactoryType.JCA;
+
+        /* Note that this is internal */
+        isInternal = true;
     }
 
     /**
      * Constructor.
      * @param pFactoryType the factory type
+     * @param pSecuritySeeds the security seeds
      */
-    public GordianParameters(final GordianFactoryType pFactoryType) {
-        /* Store parameters */
+    public GordianParameters(final GordianFactoryType pFactoryType,
+                             final byte[] pSecuritySeeds) {
+        /* Store the factory type */
         theFactoryType = pFactoryType;
+
+        /* Split out the security seeds */
+        final int mySecretLen = SECRET_LEN.getByteLength();
+        theSecuritySeed = new byte[mySecretLen];
+        System.arraycopy(pSecuritySeeds, 0, theSecuritySeed, 0, mySecretLen);
+        theKeySetSeed = new byte[mySecretLen];
+        System.arraycopy(pSecuritySeeds, mySecretLen, theKeySetSeed, 0, mySecretLen);
+        Arrays.fill(pSecuritySeeds, (byte) 0);
+
+        /* Adjust security seed according to factory type */
+        adjustSecuritySeed();
+
+        /* Note that this is internal */
+        isInternal = true;
+    }
+
+    /**
+     * Constructor.
+     * @param pFactoryType the factory type
+     * @param pSecurityPhrase the security phrase (or null)
+     * @throws OceanusException on error
+     */
+    public GordianParameters(final GordianFactoryType pFactoryType,
+                             final char[] pSecurityPhrase) throws OceanusException {
+        /* Store factory Type */
+        theFactoryType = pFactoryType;
+
+        /* Store seeds */
+        theSecuritySeed = pSecurityPhrase == null
+                ? null
+                : OceanusDataConverter.charsToByteArray(pSecurityPhrase);
+        theKeySetSeed = null;
+
+        /* Note that this is not internal */
+        isInternal = false;
     }
 
     /**
@@ -100,64 +179,23 @@ public class GordianParameters {
     }
 
     /**
+     * Obtain Security Seeds as single array.
+     * @return the seeds
+     */
+    public byte[] getSecuritySeeds() {
+        final int mySecretLen = SECRET_LEN.getByteLength();
+        final byte[] myBuffer = new byte[mySecretLen << 1];
+        System.arraycopy(theSecuritySeed, 0, myBuffer, 0, mySecretLen);
+        System.arraycopy(theKeySetSeed, 0, myBuffer, mySecretLen, mySecretLen);
+        return myBuffer;
+    }
+
+    /**
      * Is this an internal set of parameters.
      * @return true/false
      */
     public boolean isInternal() {
         return isInternal;
-    }
-
-    /**
-     * Set factory type.
-     * @param pType the factory type
-     */
-    public void setFactoryType(final GordianFactoryType pType) {
-        theFactoryType = pType;
-    }
-
-    /**
-     * Set security phrase.
-     * @param pSecurityPhrase the security phrase (or null)
-     * @throws OceanusException on error
-     */
-    public void setSecurityPhrase(final char[] pSecurityPhrase) throws OceanusException {
-        theSecuritySeed = pSecurityPhrase == null
-                                ? null
-                                : OceanusDataConverter.charsToByteArray(pSecurityPhrase);
-    }
-
-    /**
-     * Set security seed.
-     * @param pSecuritySeed the security seed (or null)
-     */
-    public void setSecuritySeed(final byte[] pSecuritySeed) {
-        theSecuritySeed = pSecuritySeed == null
-                            ? null
-                            : Arrays.copyOf(pSecuritySeed, pSecuritySeed.length);
-    }
-
-    /**
-     * Set security seed.
-     * @param pSecuritySeed the security seed
-     * @param pKeySetSeed the keySet seed
-     */
-    public void setSecuritySeeds(final byte[] pSecuritySeed,
-                                 final byte[] pKeySetSeed) {
-        theSecuritySeed = Arrays.copyOf(pSecuritySeed, pSecuritySeed.length);
-        Arrays.fill(pSecuritySeed, (byte) 0);
-        theKeySetSeed = Arrays.copyOf(pKeySetSeed, pKeySetSeed.length);
-        Arrays.fill(pKeySetSeed, (byte) 0);
-    }
-
-    /**
-     * Set random security seeds.
-     * @param pRandom the secureRandom
-     */
-    public void setSecuritySeeds(final SecureRandom pRandom) {
-        theSecuritySeed = new byte[SECRET_LEN.getByteLength()];
-        pRandom.nextBytes(theSecuritySeed);
-        theKeySetSeed = new byte[SECRET_LEN.getByteLength()];
-        pRandom.nextBytes(theKeySetSeed);
     }
 
     /**
@@ -169,10 +207,15 @@ public class GordianParameters {
     }
 
     /**
-     * Set internal.
+     * Adjust the securitySeed.
      */
-    public void setInternal() {
-        isInternal = true;
+    private void adjustSecuritySeed() {
+        /* Adjust first byte of security seed according to factory type */
+        if (GordianFactoryType.BC.equals(theFactoryType)) {
+            theSecuritySeed[0] |= FACTORY_MASK;
+        } else {
+            theSecuritySeed[0] &= ~FACTORY_MASK;
+        }
     }
 
     /**
@@ -191,10 +234,6 @@ public class GordianParameters {
             if (theSecuritySeed == null || theSecuritySeed.length != SECRET_LEN.getByteLength()) {
                 return false;
             }
-
-            /* Factory type must be BC and it must be internal */
-            return theFactoryType == GordianFactoryType.BC
-                   && isInternal;
         }
 
         /* Check factory type */
@@ -241,13 +280,11 @@ public class GordianParameters {
 
     /**
      * Create random parameters.
+     * @param pType the factory type
      * @return the parameters
      * @throws OceanusException on error
      */
-    public static GordianParameters randomParams() throws OceanusException {
-        final GordianParameters myParams = new GordianParameters(GordianFactoryType.BC);
-        myParams.setSecuritySeeds(GordianRandomSource.getStrongRandom());
-        myParams.setInternal();
-        return myParams;
+    public static GordianParameters randomParams(final GordianFactoryType pType) throws OceanusException {
+        return new GordianParameters(pType, GordianRandomSource.getStrongRandom());
     }
 }

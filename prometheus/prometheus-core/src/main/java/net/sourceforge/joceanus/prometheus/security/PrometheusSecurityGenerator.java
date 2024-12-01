@@ -64,7 +64,7 @@ public final class PrometheusSecurityGenerator {
      */
     public static PrometheusSecurityPasswordManager newPasswordManager(final TethysUIFactory<?> pGuiFactory,
                                                                        final GordianPasswordLockSpec pLockSpec) throws OceanusException {
-        final GordianFactory mySecurityFactory = GordianGenerator.createRandomFactory();
+        final GordianFactory mySecurityFactory = GordianGenerator.createRandomFactory(GordianFactoryType.BC);
         return newPasswordManager(pGuiFactory, mySecurityFactory, pLockSpec);
     }
 

@@ -22,7 +22,6 @@ import net.sourceforge.joceanus.gordianknot.api.cipher.GordianCipherFactory;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymKeySpec;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymKeyType;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactory;
-import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactoryType;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianKeyPairFactory;
 import net.sourceforge.joceanus.gordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.gordianknot.api.key.GordianKeyGenerator;
@@ -34,12 +33,12 @@ import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySetAADCipher;
 import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySetCipher;
 import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySetSpec;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
-import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
-import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianIOException;
-import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianLogicException;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianParameters;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianPersonalisation.GordianPersonalId;
 import net.sourceforge.joceanus.gordianknot.impl.core.cipher.GordianCoreWrapper;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianIOException;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianLogicException;
 import net.sourceforge.joceanus.gordianknot.impl.core.key.GordianCoreKeyGenerator;
 import net.sourceforge.joceanus.gordianknot.impl.core.keyset.GordianKeySetRecipe.GordianKeySetParameters;
 import net.sourceforge.joceanus.oceanus.OceanusException;
@@ -442,26 +441,25 @@ public final class GordianCoreKeySet
      */
     public byte[] secureFactory(final GordianFactory pFactoryToSecure) throws OceanusException {
         /* Protect the operation */
-        final byte[] myBuffer = new byte[GordianParameters.SECRET_LEN.getByteLength() << 1];
+        byte[] myBuffer = null;
         try {
             /* Access the parameters */
             final GordianParameters myParams = ((GordianCoreFactory) pFactoryToSecure).getParameters();
-            final byte[] mySecSeed = myParams.getSecuritySeed();
-            final byte[] myKeySetSeed = myParams.getKeySetSeed();
 
-            /* Reject request if this is not a randomFactory */
-            if (myKeySetSeed == null) {
-                throw new GordianDataException("Unable to lock non-Random factory");
+            /* Reject request if this is a namedFactory */
+            if (!myParams.isInternal()) {
+                throw new GordianDataException("Unable to lock named factory");
             }
 
-            /* Build the buffer and encrypt it */
-            System.arraycopy(mySecSeed, 0, myBuffer, 0, mySecSeed.length);
-            System.arraycopy(myKeySetSeed, 0, myBuffer, mySecSeed.length, myKeySetSeed.length);
+            /* Return the encrypted seeds */
+            myBuffer = myParams.getSecuritySeeds();
             return encryptBytes(myBuffer);
 
             /* Clear the buffer */
         } finally {
-            Arrays.fill(myBuffer, (byte) 0);
+            if (myBuffer != null) {
+                Arrays.fill(myBuffer, (byte) 0);
+            }
         }
     }
 
@@ -481,15 +479,8 @@ public final class GordianCoreKeySet
             throw new IllegalArgumentException("Invalid secured factory");
         }
 
-        /* Access the separate parts */
-        final byte[] mySecSeed = Arrays.copyOfRange(myBytes, 0, mySeedLen);
-        final byte[] myKeySetSeed = Arrays.copyOfRange(myBytes, mySeedLen, myBytes.length);
-        Arrays.fill(myBytes, (byte) 0);
-
         /* Create parameters and factory */
-        final GordianParameters myParams = new GordianParameters(GordianFactoryType.BC);
-        myParams.setSecuritySeeds(mySecSeed, myKeySetSeed);
-        myParams.setInternal();
+        final GordianParameters myParams = new GordianParameters(myBytes);
         return theFactory.newFactory(myParams);
     }
 

@@ -56,20 +56,20 @@ public final class GordianGenerator {
                                                final char[] pSecurityPhrase) throws OceanusException {
         /* Allocate a generator and the parameters */
         final GordianFactoryGenerator myGenerator = new GordianUtilGenerator();
-        final GordianParameters myParams = new GordianParameters(pFactoryType);
-        myParams.setSecurityPhrase(pSecurityPhrase);
+        final GordianParameters myParams = new GordianParameters(pFactoryType, pSecurityPhrase);
         return myGenerator.newFactory(myParams);
     }
 
     /**
      * Create a new random bouncyCastle factory instance.
+     * @param pFactoryType the factory type
      * @return the new factory
      * @throws OceanusException on error
      */
-    public static GordianFactory createRandomFactory() throws OceanusException {
+    public static GordianFactory createRandomFactory(final GordianFactoryType pFactoryType) throws OceanusException {
         /* Allocate a generator and the parameters */
         final GordianFactoryGenerator myGenerator = new GordianUtilGenerator();
-        final GordianParameters myParams = GordianParameters.randomParams();
+        final GordianParameters myParams = GordianParameters.randomParams(pFactoryType);
         return myGenerator.newFactory(myParams);
     }
 

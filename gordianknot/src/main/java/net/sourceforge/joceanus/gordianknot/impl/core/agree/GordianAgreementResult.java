@@ -16,10 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.core.agree;
 
-import java.util.Random;
-
-import org.bouncycastle.util.Arrays;
-
 import net.sourceforge.joceanus.gordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianCipherFactory;
@@ -45,6 +41,9 @@ import net.sourceforge.joceanus.gordianknot.impl.core.key.GordianCoreKeyGenerato
 import net.sourceforge.joceanus.gordianknot.impl.core.keyset.GordianCoreKeySet;
 import net.sourceforge.joceanus.gordianknot.impl.core.keyset.GordianCoreKeySetFactory;
 import net.sourceforge.joceanus.oceanus.OceanusException;
+import org.bouncycastle.util.Arrays;
+
+import java.util.Random;
 
 /**
  * Result derivation.
@@ -312,9 +311,7 @@ public class GordianAgreementResult {
             calculateDerivedSecret(GordianDigestType.BLAKE2, pSecret, myPhrase);
 
             /* Create a new Factory using the phrase */
-            final GordianParameters myParams = new GordianParameters(pFactoryType);
-            myParams.setSecuritySeed(myPhrase);
-            myParams.setInternal();
+            final GordianParameters myParams = new GordianParameters(myPhrase);
             return theFactory.newFactory(myParams);
 
             /* Clear buffer */
