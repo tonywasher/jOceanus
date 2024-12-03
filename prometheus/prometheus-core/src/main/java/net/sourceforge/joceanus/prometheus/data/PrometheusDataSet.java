@@ -17,6 +17,7 @@
 package net.sourceforge.joceanus.prometheus.data;
 
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactoryLock;
+import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySetSpec;
 import net.sourceforge.joceanus.metis.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.metis.field.MetisFieldItem;
@@ -105,6 +106,11 @@ public abstract class PrometheusDataSet
     private final PrometheusSecurityPasswordManager thePasswordMgr;
 
     /**
+     * KeySetSpec.
+     */
+    private final GordianKeySetSpec theKeySetSpec;
+
+    /**
      * Number of activeKeySets.
      */
     private final int theNumActiveKeySets;
@@ -141,6 +147,7 @@ public abstract class PrometheusDataSet
     protected PrometheusDataSet(final PrometheusToolkit pToolkit) {
         /* Store the password manager and Enum class */
         thePasswordMgr = pToolkit.getPasswordManager();
+        theKeySetSpec = thePasswordMgr.getLockSpec().getKeySetSpec();
 
         /* Access the SecurityPreferences */
         final PrometheusPreferenceManager myPrefMgr = pToolkit.getPreferenceManager();
@@ -172,6 +179,9 @@ public abstract class PrometheusDataSet
 
         /* Store the password manager */
         thePasswordMgr = pSource.getPasswordMgr();
+
+        /* Store the keySetSpec */
+        theKeySetSpec = pSource.getKeySetSpec();
 
         /* Create the map of additional DataLists */
         theListMap = new LinkedHashMap<>();
@@ -255,6 +265,14 @@ public abstract class PrometheusDataSet
      */
     public int getNumActiveKeySets() {
         return theNumActiveKeySets;
+    }
+
+    /**
+     * Get KeySetSpec.
+     * @return the keySetSpec
+     */
+    public GordianKeySetSpec getKeySetSpec() {
+        return theKeySetSpec;
     }
 
     /**

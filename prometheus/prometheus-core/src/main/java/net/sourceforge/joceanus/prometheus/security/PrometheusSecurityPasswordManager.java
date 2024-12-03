@@ -106,6 +106,14 @@ public class PrometheusSecurityPasswordManager {
     }
 
     /**
+     * Obtain the lockSpec.
+     * @return the lockSpec
+     */
+    public GordianPasswordLockSpec getLockSpec() {
+        return theLockSpec;
+    }
+
+    /**
      * Set the dialog controller.
      * @param pDialog the controller
      */

@@ -16,11 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.prometheus.preference;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.util.EnumSet;
-import java.util.Set;
-
 import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactoryType;
@@ -33,10 +28,15 @@ import net.sourceforge.joceanus.gordianknot.util.GordianGenerator;
 import net.sourceforge.joceanus.metis.preference.MetisPreferenceKey;
 import net.sourceforge.joceanus.metis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.metis.preference.MetisPreferenceResource;
-import net.sourceforge.joceanus.oceanus.OceanusException;
 import net.sourceforge.joceanus.oceanus.OceanusDataConverter;
+import net.sourceforge.joceanus.oceanus.OceanusException;
 import net.sourceforge.joceanus.oceanus.logger.OceanusLogManager;
 import net.sourceforge.joceanus.oceanus.logger.OceanusLogger;
+
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.EnumSet;
+import java.util.Set;
 
 /**
  * Security for Preferences.
@@ -305,16 +305,26 @@ public class PrometheusPreferenceSecurity {
         }
 
         /**
-         * Get KeySetHashSpec.
+         * Get KeySetSpec.
          *
-         * @return the parameters
+         * @return the spec
+         */
+        public GordianKeySetSpec getKeySetSpec() {
+            /* Build and return keySetSpec */
+            final GordianLength myKeyLen = getEnumValue(PrometheusSecurityPreferenceKey.KEYLENGTH, GordianLength.class);
+            final int mySteps = getIntegerValue(PrometheusSecurityPreferenceKey.CIPHERSTEPS);
+            return new GordianKeySetSpec(myKeyLen, mySteps);
+        }
+
+        /**
+         * Get PasswordLockSpec.
+         *
+         * @return the spec
          */
         public GordianPasswordLockSpec getPasswordLockSpec() {
             /* Build and return keySetSpec */
-            final GordianLength myKeyLen = getEnumValue(PrometheusSecurityPreferenceKey.KEYLENGTH, GordianLength.class);
             final int myIterations = getIntegerValue(PrometheusSecurityPreferenceKey.HASHITERATIONS);
-            final int mySteps = getIntegerValue(PrometheusSecurityPreferenceKey.CIPHERSTEPS);
-            return new GordianPasswordLockSpec(myIterations, new GordianKeySetSpec(myKeyLen, mySteps));
+            return new GordianPasswordLockSpec(myIterations, getKeySetSpec());
         }
 
         @Override
