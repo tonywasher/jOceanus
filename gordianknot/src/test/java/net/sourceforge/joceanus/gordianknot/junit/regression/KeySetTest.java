@@ -125,7 +125,7 @@ class KeySetTest {
          */
         FactoryBase(final GordianFactoryType pType) throws OceanusException {
             /* Create the factory */
-            theFactory = GordianGenerator.createFactory(pType);
+            theFactory = GordianGenerator.createRandomFactory(pType);
         }
 
         /**

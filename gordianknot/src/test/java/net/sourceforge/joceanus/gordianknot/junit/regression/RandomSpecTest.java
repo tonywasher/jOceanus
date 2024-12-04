@@ -16,17 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.junit.regression;
 
-import java.util.Iterator;
-import java.util.List;
-import java.util.stream.Stream;
-
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.DynamicContainer;
-import org.junit.jupiter.api.DynamicNode;
-import org.junit.jupiter.api.DynamicTest;
-import org.junit.jupiter.api.TestFactory;
-
 import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianStreamKeySpec;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymKeySpec;
@@ -45,6 +34,16 @@ import net.sourceforge.joceanus.gordianknot.impl.core.digest.GordianCoreDigestFa
 import net.sourceforge.joceanus.gordianknot.impl.core.mac.GordianCoreMacFactory;
 import net.sourceforge.joceanus.gordianknot.util.GordianGenerator;
 import net.sourceforge.joceanus.oceanus.OceanusException;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.DynamicContainer;
+import org.junit.jupiter.api.DynamicNode;
+import org.junit.jupiter.api.DynamicTest;
+import org.junit.jupiter.api.TestFactory;
+
+import java.util.Iterator;
+import java.util.List;
+import java.util.stream.Stream;
 
 /**
  * Security Test suite - Test Symmetric/Stream and Digest/MAC Algorithms.
@@ -62,8 +61,8 @@ class RandomSpecTest {
      */
     @BeforeAll
     public static void createSecurityFactories() throws OceanusException {
-        BCFACTORY = GordianGenerator.createFactory(GordianFactoryType.BC);
-        JCAFACTORY = GordianGenerator.createFactory(GordianFactoryType.JCA);
+        BCFACTORY = GordianGenerator.createRandomFactory(GordianFactoryType.BC);
+        JCAFACTORY = GordianGenerator.createRandomFactory(GordianFactoryType.JCA);
     }
 
     /**

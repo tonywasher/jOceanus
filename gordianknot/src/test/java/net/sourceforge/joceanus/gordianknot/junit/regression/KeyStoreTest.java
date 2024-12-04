@@ -132,7 +132,7 @@ public class KeyStoreTest {
      */
     private Stream<DynamicNode> keyStoreTests(final GordianFactoryType pFactoryType) throws OceanusException {
         /* Create the factory */
-        final GordianFactory myFactory = GordianGenerator.createFactory(pFactoryType);
+        final GordianFactory myFactory = GordianGenerator.createRandomFactory(pFactoryType);
 
         /* Access keyStoreFactory and create a keyStore */
         final GordianKeyStoreFactory myKSFactory = myFactory.getKeyPairFactory().getKeyStoreFactory();

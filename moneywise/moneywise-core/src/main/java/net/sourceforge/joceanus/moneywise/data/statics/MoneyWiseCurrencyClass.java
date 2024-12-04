@@ -16,11 +16,11 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.moneywise.data.statics;
 
-import java.util.Currency;
-
 import net.sourceforge.joceanus.moneywise.MoneyWiseDataException;
-import net.sourceforge.joceanus.prometheus.data.PrometheusStaticDataClass;
 import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.prometheus.data.PrometheusStaticDataClass;
+
+import java.util.Currency;
 
 /**
  * Enumeration of Currency Classes.
@@ -845,7 +845,12 @@ public enum MoneyWiseCurrencyClass
     /**
      * New Sierra Leone Leone.
      */
-    SLE(164, 163);
+    SLE(164, 163),
+
+    /**
+     * Zimbabwe Dollar.
+     */
+    ZWG(165, 164);
 
     /**
      * Class Id.

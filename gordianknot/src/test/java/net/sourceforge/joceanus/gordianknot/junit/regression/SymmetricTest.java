@@ -135,8 +135,8 @@ class SymmetricTest {
      */
     @BeforeAll
     public static void createSecurityFactories() throws OceanusException {
-        BCFACTORY = GordianGenerator.createFactory(GordianFactoryType.BC);
-        JCAFACTORY = GordianGenerator.createFactory(GordianFactoryType.JCA);
+        BCFACTORY = GordianGenerator.createRandomFactory(GordianFactoryType.BC);
+        JCAFACTORY = GordianGenerator.createRandomFactory(GordianFactoryType.JCA);
     }
 
     /**
