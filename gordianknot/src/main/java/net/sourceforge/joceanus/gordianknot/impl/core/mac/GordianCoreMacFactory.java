@@ -31,9 +31,8 @@ import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacSpecBuilder;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacType;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianSipHashSpec;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
-import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.cipher.GordianCoreCipherFactory;
-import net.sourceforge.joceanus.gordianknot.impl.core.digest.GordianCoreDigestFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.oceanus.OceanusException;
 
 import java.util.ArrayList;
@@ -77,31 +76,38 @@ public abstract class GordianCoreMacFactory
         return this::validMacType;
     }
 
-    @Override
+    /**
+     * Obtain predicate for supported hMac digestSpecs.
+     * @return the predicate
+     */
     public Predicate<GordianDigestSpec> supportedHMacDigestSpecs() {
         return this::validHMacSpec;
     }
 
-    @Override
-    public Predicate<GordianDigestType> supportedHMacDigestTypes() {
-        return this::validHMacDigestType;
-    }
-
-    @Override
-    public Predicate<GordianSymKeySpec> supportedPoly1305SymKeySpecs() {
+    /**
+     * Obtain predicate for supported poly1305 symKeySpecs.
+     * @return the predicate
+     */
+    private Predicate<GordianSymKeySpec> supportedPoly1305SymKeySpecs() {
         return p -> p == null
                         || (validPoly1305SymKeySpec(p)
                              && p.getBlockLength() == GordianLength.LEN_128);
     }
 
-    @Override
-    public Predicate<GordianSymKeySpec> supportedGMacSymKeySpecs() {
+    /**
+     * Obtain predicate for supported gMac symKeySpecs.
+     * @return the predicate
+     */
+    private Predicate<GordianSymKeySpec> supportedGMacSymKeySpecs() {
         return p -> validGMacSymKeySpec(p)
                 && p.getBlockLength() == GordianLength.LEN_128;
     }
 
-    @Override
-    public Predicate<GordianSymKeySpec> supportedCMacSymKeySpecs() {
+    /**
+     * Obtain predicate for supported cMac symKeyTypes.
+     * @return the predicate
+     */
+    private Predicate<GordianSymKeySpec> supportedCMacSymKeySpecs() {
         return this::validCMacSymKeySpec;
     }
 
@@ -128,16 +134,6 @@ public abstract class GordianCoreMacFactory
     }
 
     /**
-     * Check HMacDigestType.
-     * @param pDigestType the digestType
-     * @return true/false
-     */
-    protected boolean validHMacDigestType(final GordianDigestType pDigestType) {
-        final GordianCoreDigestFactory myDigests = (GordianCoreDigestFactory) theFactory.getDigestFactory();
-        return myDigests.validDigestType(pDigestType) && pDigestType.supportsLargeData();
-    }
-
-    /**
      * Check HMacSpec.
      * @param pDigestSpec the digestSpec
      * @return true/false
@@ -148,7 +144,7 @@ public abstract class GordianCoreMacFactory
         final GordianDigestFactory myDigests = theFactory.getDigestFactory();
 
         /* Check validity */
-        return supportedHMacDigestTypes().test(myType)
+        return theFactory.getValidator().supportedHMacDigestTypes().test(myType)
                 && myDigests.supportedDigestSpecs().test(pDigestSpec);
     }
 

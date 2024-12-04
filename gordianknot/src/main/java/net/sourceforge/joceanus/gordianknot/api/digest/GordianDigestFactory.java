@@ -16,10 +16,10 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.api.digest;
 
+import net.sourceforge.joceanus.oceanus.OceanusException;
+
 import java.util.List;
 import java.util.function.Predicate;
-
-import net.sourceforge.joceanus.oceanus.OceanusException;
 
 /**
  * Digest factory.
@@ -46,12 +46,6 @@ public interface GordianDigestFactory {
     Predicate<GordianDigestType> supportedDigestTypes();
 
     /**
-     * Obtain predicate for supported external digests.
-     * @return the predicate
-     */
-    Predicate<GordianDigestType> supportedExternalDigestTypes();
-
-    /**
      * Obtain a list of supported digestSpecs.
      * @return the list of supported digestSpecs.
      */
@@ -62,12 +56,6 @@ public interface GordianDigestFactory {
      * @return the list of supported digestTypes.
      */
     List<GordianDigestType> listAllSupportedTypes();
-
-    /**
-     * Obtain a list of external digestTypes.
-     * @return the list of supported digestTypes.
-     */
-    List<GordianDigestType> listAllExternalTypes();
 
     /**
      * List all possible digestSpecs.

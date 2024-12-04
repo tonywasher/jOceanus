@@ -21,7 +21,6 @@ import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymKeySpec;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymKeyType;
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestSpec;
-import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestType;
 import net.sourceforge.joceanus.gordianknot.api.key.GordianKeyGenerator;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacSpec;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacType;
@@ -328,12 +327,6 @@ public class JcaMacFactory
     }
 
     @Override
-    protected boolean validHMacDigestType(final GordianDigestType pDigestType) {
-        return JcaDigest.isHMacSupported(pDigestType)
-                && getFactory().getDigestFactory().validDigestType(pDigestType);
-    }
-
-    @Override
     protected boolean validCMacSymKeySpec(final GordianSymKeySpec pKeySpec) {
         switch (pKeySpec.getSymKeyType()) {
             case AES:
@@ -348,6 +341,7 @@ public class JcaMacFactory
                 return false;
         }
     }
+
     @Override
     protected boolean validGMacSymKeySpec(final GordianSymKeySpec pKeySpec) {
         switch (pKeySpec.getSymKeyType()) {

@@ -101,7 +101,7 @@ public abstract class GordianCoreCipherFactory
 
     @Override
     public Predicate<GordianSymKeyType> supportedSymKeyTypes() {
-        return theFactory::validSymKeyType;
+        return t -> theFactory.getValidator().validSymKeyType(t);
     }
 
     @Override

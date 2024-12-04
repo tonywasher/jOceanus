@@ -16,16 +16,13 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.api.mac;
 
-import java.util.List;
-import java.util.function.Predicate;
-
 import net.sourceforge.joceanus.gordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
-import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymKeySpec;
-import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestSpec;
-import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestType;
 import net.sourceforge.joceanus.gordianknot.api.key.GordianKeyGenerator;
 import net.sourceforge.joceanus.oceanus.OceanusException;
+
+import java.util.List;
+import java.util.function.Predicate;
 
 /**
  * Mac factory.
@@ -59,36 +56,6 @@ public interface GordianMacFactory {
      * @return the predicate
      */
     Predicate<GordianMacType> supportedMacTypes();
-
-    /**
-     * Obtain predicate for supported hMac digestSpecs.
-     * @return the predicate
-     */
-    Predicate<GordianDigestSpec> supportedHMacDigestSpecs();
-
-    /**
-     * Obtain predicate for supported hMac digestTypes.
-     * @return the predicate
-     */
-    Predicate<GordianDigestType> supportedHMacDigestTypes();
-
-    /**
-     * Obtain predicate for supported poly1305 symKeySpecs.
-     * @return the predicate
-     */
-    Predicate<GordianSymKeySpec> supportedPoly1305SymKeySpecs();
-
-    /**
-     * Obtain predicate for supported gMac symKeySpecs.
-     * @return the predicate
-     */
-    Predicate<GordianSymKeySpec> supportedGMacSymKeySpecs();
-
-    /**
-     * Obtain predicate for supported cMac symKeyTypes.
-     * @return the predicate
-     */
-    Predicate<GordianSymKeySpec> supportedCMacSymKeySpecs();
 
     /**
      * Obtain a list of supported macSpecs for a keyLength.

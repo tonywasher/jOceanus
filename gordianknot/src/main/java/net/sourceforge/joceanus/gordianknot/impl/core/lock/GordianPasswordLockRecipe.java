@@ -16,20 +16,16 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.core.lock;
 
-import java.security.SecureRandom;
-import java.util.Arrays;
-import java.util.Random;
-
 import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigest;
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestFactory;
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestType;
 import net.sourceforge.joceanus.gordianknot.api.keyset.GordianBadCredentialsException;
+import net.sourceforge.joceanus.gordianknot.api.lock.GordianPasswordLockSpec;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMac;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacFactory;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacSpec;
-import net.sourceforge.joceanus.gordianknot.api.lock.GordianPasswordLockSpec;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacSpecBuilder;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianIdManager;
@@ -37,8 +33,12 @@ import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianPersonalisatio
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianPersonalisation.GordianPersonalId;
 import net.sourceforge.joceanus.gordianknot.impl.core.keyset.GordianCoreKeySet;
 import net.sourceforge.joceanus.gordianknot.impl.core.keyset.GordianCoreKeySetFactory;
-import net.sourceforge.joceanus.oceanus.OceanusException;
 import net.sourceforge.joceanus.oceanus.OceanusDataConverter;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+
+import java.security.SecureRandom;
+import java.util.Arrays;
+import java.util.Random;
 
 /**
  * Class for assembling/disassembling PasswordLocks.
@@ -410,9 +410,9 @@ public final class GordianPasswordLockRecipe {
             /* Generate recipe and derive digestTypes */
             final int mySeed = myRandom.nextInt();
             theRecipe = OceanusDataConverter.integerToByteArray(mySeed);
-            final Random mySeededRandom = myPersonal.getSeededRandom(GordianPersonalId.HASHRANDOM, theRecipe);
-            theSecretDigest = myManager.deriveKeyHashSecretTypeFromSeed(mySeededRandom);
-            theDigests = myManager.deriveKeyHashDigestTypesFromSeed(mySeededRandom, NUM_DIGESTS);
+            final Random mySeededRandom = myPersonal.getSeededRandom(GordianPersonalId.LOCKRANDOM, theRecipe);
+            theSecretDigest = myManager.deriveLockSecretTypeFromSeed(mySeededRandom);
+            theDigests = myManager.deriveLockDigestTypesFromSeed(mySeededRandom, NUM_DIGESTS);
             theExternalDigest = myManager.deriveExternalDigestTypeFromSeed(mySeededRandom);
 
             /* Derive random adjustment value */
@@ -432,9 +432,9 @@ public final class GordianPasswordLockRecipe {
 
             /* Store recipe and derive digestTypes */
             theRecipe = pRecipe;
-            final Random mySeededRandom = myPersonal.getSeededRandom(GordianPersonalId.HASHRANDOM, theRecipe);
-            theSecretDigest = myManager.deriveKeyHashSecretTypeFromSeed(mySeededRandom);
-            theDigests = myManager.deriveKeyHashDigestTypesFromSeed(mySeededRandom, NUM_DIGESTS);
+            final Random mySeededRandom = myPersonal.getSeededRandom(GordianPersonalId.LOCKRANDOM, theRecipe);
+            theSecretDigest = myManager.deriveLockSecretTypeFromSeed(mySeededRandom);
+            theDigests = myManager.deriveLockDigestTypesFromSeed(mySeededRandom, NUM_DIGESTS);
             theExternalDigest = myManager.deriveExternalDigestTypeFromSeed(mySeededRandom);
 
             /* Derive random adjustment value */

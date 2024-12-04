@@ -368,8 +368,8 @@ public class GordianPersonalisation {
         final Random myRandom = new Random(mySeed);
 
         /* Access the list to select from */
-        final GordianDigestFactory myDigests = pFactory.getDigestFactory();
-        final List<GordianDigestType> myTypes = myDigests.listAllExternalTypes();
+        final GordianValidator myValidator = ((GordianCoreFactory) pFactory).getValidator();
+        final List<GordianDigestType> myTypes = myValidator.listAllExternalDigestTypes();
 
         /* Select from the list */
         final int myIndex = myRandom.nextInt(myTypes.size());
@@ -446,14 +446,19 @@ public class GordianPersonalisation {
      */
     public enum GordianPersonalId {
         /**
+         * KeySetGenRandom Prefix.
+         */
+        KEYSETGENRANDOM,
+
+        /**
          * KeySetRandom Prefix.
          */
         KEYSETRANDOM,
 
         /**
-         * HashRandom Prefix.
+         * LockRandom Prefix.
          */
-        HASHRANDOM,
+        LOCKRANDOM,
 
         /**
          * KnuthPrime.

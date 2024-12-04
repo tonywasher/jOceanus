@@ -16,13 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.jca;
 
-import java.security.Provider;
-import java.security.Security;
-
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
-
-import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymKeyType;
 import net.sourceforge.joceanus.gordianknot.api.zip.GordianZipFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianFactoryGenerator;
@@ -32,6 +25,11 @@ import net.sourceforge.joceanus.gordianknot.impl.core.lock.GordianCoreLockFactor
 import net.sourceforge.joceanus.gordianknot.impl.core.random.GordianCoreRandomFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.zip.GordianCoreZipFactory;
 import net.sourceforge.joceanus.oceanus.OceanusException;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
+
+import java.security.Provider;
+import java.security.Security;
 
 /**
  * Jca Factory.
@@ -81,6 +79,7 @@ public class JcaFactory
     @Override
     protected void declareFactories() throws OceanusException {
         /* Create the factories */
+        setValidator(new JcaValidator());
         setDigestFactory(new JcaDigestFactory(this));
         setCipherFactory(new JcaCipherFactory(this));
         setMacFactory(new JcaMacFactory(this));
@@ -118,11 +117,5 @@ public class JcaFactory
             theKeyPairFactory = new JcaKeyPairFactory(this);
         }
         return theKeyPairFactory;
-    }
-
-    @Override
-    public boolean validSymKeyType(final GordianSymKeyType pKeyType) {
-        return JcaCipherFactory.supportedSymKeyType(pKeyType)
-                && super.validSymKeyType(pKeyType);
     }
 }

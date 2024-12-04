@@ -282,8 +282,8 @@ public class GordianAgreementResult {
             /* Derive the key */
             final GordianCipherFactory myCiphers = pFactory.getCipherFactory();
             final GordianCoreKeyGenerator<T> myGenerator = (GordianCoreKeyGenerator<T>) myCiphers.getKeyGenerator(pKeyType);
-            final Random mySeededRandom = theFactory.getPersonalisation().getSeededRandom(GordianPersonalId.HASHRANDOM, myIV);
-            return myGenerator.generateKeyFromSecret(mySecret, myIV, mySeededRandom);
+            final Random mySeededRandom = theFactory.getPersonalisation().getSeededRandom(GordianPersonalId.LOCKRANDOM, myIV);
+            return myGenerator.generateKeyFromSecret(mySecret, mySeededRandom);
 
             /* Clear buffers */
         } finally {
