@@ -32,7 +32,6 @@ import net.sourceforge.joceanus.gordianknot.api.cipher.GordianStreamKeySpec.Gord
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianStreamKeySpec.GordianSkeinXofKey;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianStreamKeySpec.GordianSparkleKey;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianStreamKeySpec.GordianVMPCKey;
-import net.sourceforge.joceanus.gordianknot.api.cipher.GordianStreamKeyType;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymCipher;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymCipherSpec;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymCipherSpecBuilder;
@@ -41,8 +40,8 @@ import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymKeyType;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianWrapper;
 import net.sourceforge.joceanus.gordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
-import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.cipher.GordianCoreCipherFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.ext.digests.GordianBlake2bDigest;
 import net.sourceforge.joceanus.gordianknot.impl.ext.digests.GordianBlake2sDigest;
 import net.sourceforge.joceanus.gordianknot.impl.ext.engines.GordianAnubisEngine;
@@ -520,14 +519,5 @@ public class BouncyCipherFactory
             default:
                 return new DefaultBufferedBlockCipher(pEngine);
         }
-    }
-
-    @Override
-    protected boolean validStreamKeyType(final GordianStreamKeyType pKeyType) {
-        /* Disable Elephant for the time being */
-        if (pKeyType == null || pKeyType == GordianStreamKeyType.ELEPHANT) {
-            return false;
-        }
-        return super.validStreamKeyType(pKeyType);
     }
 }

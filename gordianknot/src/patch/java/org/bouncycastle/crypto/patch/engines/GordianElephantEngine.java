@@ -316,7 +316,7 @@ public class GordianElephantEngine
         }
 
         if (inputOff + len - (forEncryption ? 0 : CRYPTO_ABYTES) >= BLOCK_SIZE) {
-            int mlen = inputOff + len - (forEncryption ? 0 : CRYPTO_ABYTES);
+            int mlen = inputOff + messageLen + len - (forEncryption ? 0 : CRYPTO_ABYTES);
             int adlen = processAADBytes();
             int nblocks_c = 1 + mlen / BLOCK_SIZE;
             int nblocks_m = ((mlen % BLOCK_SIZE) != 0 ? nblocks_c : nblocks_c - 1);
