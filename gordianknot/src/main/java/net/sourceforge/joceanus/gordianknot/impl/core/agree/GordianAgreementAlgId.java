@@ -30,19 +30,17 @@ import net.sourceforge.joceanus.gordianknot.api.keypair.GordianGOSTElliptic;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairSpecBuilder;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairType;
-import net.sourceforge.joceanus.gordianknot.api.keypair.GordianLMSKeySpec;
-import net.sourceforge.joceanus.gordianknot.api.keypair.GordianLMSKeySpec.GordianHSSKeySpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianNTRUPrimeSpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianSM2Elliptic;
-import net.sourceforge.joceanus.gordianknot.api.keypair.GordianXMSSKeySpec;
 import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySetSpec;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianASN1Util;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
-import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.cipher.GordianCoreCipherFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.keyset.GordianKeySetSpecASN1;
 import net.sourceforge.joceanus.oceanus.OceanusException;
 import org.bouncycastle.asn1.ASN1EncodableVector;
+import org.bouncycastle.asn1.ASN1Integer;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.DERSequence;
@@ -75,9 +73,14 @@ public class GordianAgreementAlgId {
     private static final ASN1ObjectIdentifier KEYPAIRSPECOID = AGREEOID.branch("2");
 
     /**
+     * Byte Result OID branch.
+     */
+    static final ASN1ObjectIdentifier BYTERESULTOID = AGREEOID.branch("3");
+
+    /**
      * Null Result OID branch.
      */
-    static final ASN1ObjectIdentifier NULLRESULTOID = AGREEOID.branch("3");
+    static final ASN1ObjectIdentifier NULLRESULTOID = AGREEOID.branch("4");
 
     /**
      * Null KeyPairSpec for Partial AgreementSpec.
@@ -194,14 +197,9 @@ public class GordianAgreementAlgId {
                 myId = myId.branch(Integer.toString(pSpec.getRSAModulus().ordinal() + 1));
                 break;
             case DH:
-            case ELGAMAL:
                 myId = myId.branch(Integer.toString(pSpec.getDHGroup().ordinal() + 1));
                 break;
-            case DSA:
-                myId = myId.branch(Integer.toString(pSpec.getDSAKeyType().ordinal() + 1));
-                break;
             case XDH:
-            case EDDSA:
                 myId = myId.branch(Integer.toString(pSpec.getEdwardsElliptic().ordinal() + 1));
                 break;
             case EC:
@@ -215,9 +213,6 @@ public class GordianAgreementAlgId {
                 break;
             case DSTU4145:
                 myId = myId.branch(Integer.toString(((GordianDSTU4145Elliptic) pSpec.getElliptic()).ordinal() + 1));
-                break;
-            case SLHDSA:
-                myId = myId.branch(Integer.toString(pSpec.getSLHDSAKeySpec().ordinal() + 1));
                 break;
             case CMCE:
                 myId = myId.branch(Integer.toString(pSpec.getCMCEKeySpec().ordinal() + 1));
@@ -244,33 +239,6 @@ public class GordianAgreementAlgId {
                 final GordianNTRUPrimeSpec myNTRUPrime = pSpec.getNTRUPrimeKeySpec();
                 myId = myId.branch(Integer.toString(myNTRUPrime.getType().ordinal() + 1));
                 myId = myId.branch(Integer.toString(myNTRUPrime.getParams().ordinal() + 1));
-                break;
-            case XMSS:
-                final GordianXMSSKeySpec myXMSS = pSpec.getXMSSKeySpec();
-                myId = myId.branch(Integer.toString(myXMSS.getKeyType().ordinal() + 1));
-                myId = myId.branch(Integer.toString(myXMSS.getDigestType().ordinal() + 1));
-                myId = myId.branch(Integer.toString(myXMSS.getHeight().ordinal() + 1));
-                if (myXMSS.getLayers() != null) {
-                    myId = myId.branch(Integer.toString(myXMSS.getLayers().ordinal() + 1));
-                }
-                break;
-            case LMS:
-                final Object mySubType = pSpec.getSubKeyType();
-                if (mySubType instanceof GordianLMSKeySpec) {
-                    final GordianLMSKeySpec myLMS = (GordianLMSKeySpec) mySubType;
-                    myId = myId.branch(Integer.toString(myLMS.getHash().ordinal() + 1));
-                    myId = myId.branch(Integer.toString(myLMS.getHeight().ordinal() + 1));
-                    myId = myId.branch(Integer.toString(myLMS.getWidth().ordinal() + 1));
-                    myId = myId.branch(Integer.toString(myLMS.getLength().ordinal() + 1));
-                } else if (mySubType instanceof GordianHSSKeySpec) {
-                    final GordianHSSKeySpec myHSS = (GordianHSSKeySpec) mySubType;
-                    final GordianLMSKeySpec myLMS = myHSS.getKeySpec();
-                    myId = myId.branch(Integer.toString(myLMS.getHash().ordinal() + 1));
-                    myId = myId.branch(Integer.toString(myLMS.getHeight().ordinal() + 1));
-                    myId = myId.branch(Integer.toString(myLMS.getWidth().ordinal() + 1));
-                    myId = myId.branch(Integer.toString(myLMS.getLength().ordinal() + 1));
-                    myId = myId.branch(Integer.toString(myHSS.getTreeDepth()));
-                }
                 break;
             case COMPOSITE:
             default:
@@ -360,6 +328,7 @@ public class GordianAgreementAlgId {
         theKeyPair2IdMap.put(pSpec, pIdentifier);
         theId2KeyPairMap.put(pIdentifier, pSpec);
     }
+
     /**
      * Obtain identifier for result.
      * @param pResultType the result type
@@ -384,6 +353,9 @@ public class GordianAgreementAlgId {
         if (pResultType instanceof GordianStreamCipherSpec) {
             final GordianCoreCipherFactory myCipherFactory = (GordianCoreCipherFactory) theFactory.getCipherFactory();
             return myCipherFactory.getIdentifierForSpec((GordianStreamCipherSpec) pResultType);
+        }
+        if (pResultType instanceof Integer) {
+            return new AlgorithmIdentifier(BYTERESULTOID, new ASN1Integer((Integer) pResultType));
         }
         if (pResultType == null) {
             return new AlgorithmIdentifier(NULLRESULTOID, null);
@@ -419,10 +391,17 @@ public class GordianAgreementAlgId {
             return mySpec;
         }
 
-        /* Look for a Factory */
+        /* Look for a Byte Type */
+        if (BYTERESULTOID.equals(myAlgId)) {
+            return ASN1Integer.getInstance(pResId.getParameters());
+        }
+
+        /* Look for a Raw Type */
         if (NULLRESULTOID.equals(myAlgId)) {
             return null;
         }
+
+        /* Unrecognised */
         throw new GordianDataException("Unrecognised resultType");
     }
 }

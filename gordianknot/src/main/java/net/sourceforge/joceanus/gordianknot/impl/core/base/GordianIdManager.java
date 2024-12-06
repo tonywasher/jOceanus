@@ -305,6 +305,24 @@ public class GordianIdManager {
     }
 
     /**
+     * Derive agreementDigestType from seed.
+     * @param pRandom the seeded random
+     * @return the selected agreementDigestType
+     */
+    public GordianDigestType deriveAgreementDigestTypeFromSeed(final Random pRandom) {
+        /* Access the list to select from */
+        final GordianDigestFactory myDigests = theFactory.getDigestFactory();
+        final GordianValidator myValidator = theFactory.getValidator();
+        final List<GordianDigestType> myTypes = myDigests.listAllSupportedTypes().stream()
+                .filter(myValidator.supportedAgreementDigestTypes())
+                .collect(Collectors.toList());
+
+        /* Select from the list */
+        final int myIndex = pRandom.nextInt(myTypes.size());
+        return myTypes.get(myIndex);
+    }
+
+    /**
      * generate random GordianMacSpec.
      * @param pKeyLen the keyLength
      * @param pLargeData only generate a Mac that is suitable for parsing large amounts of data

@@ -169,7 +169,7 @@ public class GordianFactoryLockImpl
      * @return the byte length
      */
     public static int getEncodedLength() {
-        return GordianPasswordLockASN1.getEncodedLength(GordianCoreKeySet.getEncryptionLength(GordianParameters.SECRET_LEN.getByteLength() << 1));
+        return GordianPasswordLockASN1.getEncodedLength(GordianCoreKeySet.getEncryptionLength(GordianParameters.SEED_LEN.getByteLength()));
     }
 
     @Override

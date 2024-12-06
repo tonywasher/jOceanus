@@ -7,9 +7,12 @@
         <section name="Overview">
             <p>GordianKnot provide three kinds of locks that are password protected.</p>
             <ol>
-                <li><strong>keySetLock</strong>s are provided to secure a randomly generated keySet using a password.</li>
-                <li><strong>factoryLock</strong>s are provided to secure a randomly generated factory using a password.</li>
-                <li><strong>keyPairLock</strong>s are provided to secure a randomly generated keySet using a password and a private asymmetric key.</li>
+                <li><strong>keySetLock</strong>s are provided to secure a keySet using a password. This keySet can be
+                    automatically generated or be pre-existing. It can only be unlocked by the same factory that was used to lock it.</li>
+                <li><strong>factoryLock</strong>s are provided to secure a factory using a password. The factory to be locked can be
+                    automatically generated or be pre-existing. It can be unlocked by any factory running on the same machine.</li>
+                <li><strong>keyPairLock</strong>s are provided to secure a randomly generated keySet using a password and a private asymmetric key.
+                    It can be unlocked using any factory and the corresponding public asymmetric key.</li>
             </ol>
         </section>
         <section name="keySetLock">

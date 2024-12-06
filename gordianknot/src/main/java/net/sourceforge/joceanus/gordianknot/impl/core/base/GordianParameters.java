@@ -30,9 +30,14 @@ import java.util.Objects;
  */
 public class GordianParameters {
     /**
-     * Seed length.
+     * Secret length.
      */
     public static final GordianLength SECRET_LEN = GordianLength.LEN_512;
+
+    /**
+     * Seed length.
+     */
+    public static final GordianLength SEED_LEN = GordianLength.LEN_1024;
 
     /**
      * Default Factory.
@@ -75,9 +80,10 @@ public class GordianParameters {
         theFactoryType = pFactoryType;
 
         /* Generate the security seeds */
-        theSecuritySeed = new byte[SECRET_LEN.getByteLength()];
+        final int mySecretLen = SECRET_LEN.getByteLength();
+        theSecuritySeed = new byte[mySecretLen];
         pRandom.nextBytes(theSecuritySeed);
-        theKeySetSeed = new byte[SECRET_LEN.getByteLength()];
+        theKeySetSeed = new byte[mySecretLen];
         pRandom.nextBytes(theKeySetSeed);
 
         /* Adjust security seed according to factory type */

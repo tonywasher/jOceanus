@@ -57,7 +57,7 @@ public class GordianValidator {
     }
 
     /**
-     * Determine whether the digestType is valid for PasswordLock
+     * Determine whether the digestType is valid for PasswordLock.
      * @return the predicate
      */
     public Predicate<GordianDigestType> supportedLockDigestTypes() {
@@ -65,7 +65,7 @@ public class GordianValidator {
     }
 
     /**
-     * Determine whether the digestType is valid for KeyGenLock
+     * Determine whether the digestType is valid for KeyGenLock.
      * @return the predicate
      */
     public Predicate<GordianDigestType> supportedKeyGenDigestTypes() {
@@ -73,7 +73,15 @@ public class GordianValidator {
     }
 
     /**
-     * Determine whether the digestType is an external hash
+     * Determine whether the digestType is valid for agreement.
+     * @return the predicate
+     */
+    public Predicate<GordianDigestType> supportedAgreementDigestTypes() {
+        return supportedHMacDigestTypes();
+    }
+
+    /**
+     * Determine whether the digestType is an external hash.
      * @return the predicate
      */
     private Predicate<GordianDigestType> isCombinedHashDigest() {
@@ -82,7 +90,7 @@ public class GordianValidator {
     }
 
     /**
-     * Determine whether the digestType is an external hash
+     * Determine whether the digestType is an external hash.
      * @return the predicate
      */
     public Predicate<GordianDigestType> isExternalHashDigest() {

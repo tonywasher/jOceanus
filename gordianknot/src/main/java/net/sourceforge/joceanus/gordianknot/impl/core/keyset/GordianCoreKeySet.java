@@ -476,8 +476,8 @@ public final class GordianCoreKeySet
         final byte[] myBytes = decryptBytes(pSecuredFactory);
 
         /* Check that the buffer is the correct length */
-        final int mySeedLen = GordianParameters.SECRET_LEN.getByteLength();
-        if (myBytes.length != mySeedLen << 1) {
+        final int mySeedLen = GordianParameters.SEED_LEN.getByteLength();
+        if (myBytes.length != mySeedLen) {
             throw new IllegalArgumentException("Invalid secured factory");
         }
 

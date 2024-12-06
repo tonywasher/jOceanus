@@ -34,7 +34,7 @@
                 <li>Obtain a seed <strong>S</strong> from the first 8 bytes of <strong>I</strong> and obtain a seeded random <strong>R</strong> using
                     <strong>S</strong></li>
                 <li>Obtain an HMAC <strong>H</strong> from the seededRandom <strong>R</strong></li>
-                <li>Use HKDF to with the HMAC <strong>H</strong> to expand the result <strong>I</strong> into <strong>P</strong> and <strong>IV</strong>.</li>
+                <li>Use HKDF with the HMAC <strong>H</strong> to expand the result <strong>I</strong> into <strong>P</strong> and <strong>IV</strong>.</li>
             </ol>
         </section>
         <section name="Seeded Random">
@@ -42,34 +42,6 @@
                 on a 4-byte seed <strong>S</strong>. This is performed by creating a 6-byte seed from the combination of the 4-byte seed and
                 one of the <strong>P<sub>n</sub></strong> values, specific to the algorithm. This 6-byte seed in used to instantiate an instance of
                 the deterministic <strong>Random</strong> class and algorithm selection is performed via this seeded Random instance.</p>
-        </section>
-        <section name="Key Derivation">
-            <p>The key derivation algorithm that generates a key <strong>K<sub>A</sub></strong> for an algorithm <strong>A</strong>
-                from a secret <strong>S</strong> and vector <strong>V</strong> is as follows.</p>
-            <ol>
-                <li>Obtain a seed <strong>X</strong> from the first 4 bytes of <strong>V</strong> and obtain a seeded random <strong>R</strong> using
-                    <strong>X</strong> and <strong>I<sub>1</sub></strong></li>
-                <li>Obtain a set of two distinct HMACs <strong>H<sub>M</sub></strong> and <strong>H<sub>A</sub></strong> from the seededRandom <strong>R</strong></li>
-                <li>Initialise both HMac with a key of secret <strong>S</strong></li>
-                <li>Repeat the following loop until sufficient bits have been generated. Start with <strong>C</strong> = 0
-                    <ol>
-                        <li>Initialise result to all zeros</li>
-                        <li>Update both Macs with <strong>I</strong> and <strong>IV</strong></li>
-                        <li>Update both Macs with <strong>A</strong>, keyLength and <strong>C</strong></li>
-                        <li>Set input <strong>D<sub>M</sub></strong> and <strong>D<sub>A</sub></strong> to <strong>V</strong></li>
-                        <li>Loop for 16 iterations.
-                            <ol>
-                                <li>Update <strong>H<sub>A</sub></strong> with <strong>D<sub>A</sub></strong></li>
-                                <li>Calculate <strong>D<sub>A</sub></strong> as the hash result of <strong>H<sub>A</sub></strong></li>
-                                <li>Update <strong>H<sub>M</sub></strong> with <strong>D<sub>M</sub></strong> and with <strong>D<sub>A</sub></strong></li>
-                                <li>Calculate <strong>D<sub>M</sub></strong> as the hash result of <strong>H<sub>M</sub></strong></li>
-                                <li>Xor <strong>D<sub>M</sub></strong> into the result</li>
-                            </ol>
-                        </li>
-                        <li>Increment <strong>C</strong> and repeat if necessary.</li>
-                    </ol>
-                </li>
-            </ol>
         </section>
     </body>
 </document>

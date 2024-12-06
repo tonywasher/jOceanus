@@ -185,7 +185,7 @@ public final class BouncySM2KeyPair {
         /**
          * Key length.
          */
-        private static final int KEYLEN = 32;
+        private static final int KEYLEN = 64;
 
         /**
          * Key Agreement.

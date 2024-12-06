@@ -19,11 +19,8 @@ package net.sourceforge.joceanus.gordianknot.impl.core.base;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianCipherFactory;
-import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymKeySpec;
-import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymKeyType;
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestFactory;
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestSpec;
-import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestType;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactoryType;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianLockFactory;
@@ -37,10 +34,6 @@ import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 
 import java.security.SecureRandom;
-import java.util.Arrays;
-import java.util.List;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 /**
  * Base factory.

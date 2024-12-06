@@ -42,8 +42,10 @@ public interface GordianAgreement {
      *     <dd>To agree a streamCipher</dd>
      *     <dt>GordianKeySetSpec</dt>
      *     <dd>To agree a KeySet</dd>
+     *     <dt>Integer</dt>
+     *     <dd>To agree a defined length byte array</dd>
      *     <dt>null</dt>
-     *     <dd>To agree a byte array</dd>
+     *     <dd>To obtain the raw agreement</dd>
      * </dl>
      * @param pResultType the resultType.
      * @throws OceanusException on error
