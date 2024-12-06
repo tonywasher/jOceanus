@@ -14,26 +14,40 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.metis;
+package net.sourceforge.joceanus.metis.exc;
 
 import net.sourceforge.joceanus.oceanus.OceanusException;
 
 /**
- * Metis Logic Exception.
+ * Metis Data Exception.
  */
-public class MetisLogicException
+public class MetisDataException
         extends OceanusException {
     /**
      * SerialId.
      */
-    private static final long serialVersionUID = 864554925186516604L;
+    private static final long serialVersionUID = 5044865005238316211L;
 
     /**
-     * Create a new Metis Exception object based on a string.
+     * Create a new Metis Exception object based on an object, a string and an underlying exception.
+     * @param o the object
+     * @param s the description of the exception
+     * @param e the underlying exception
+     */
+    public MetisDataException(final Object o,
+                              final String s,
+                              final Throwable e) {
+        super(o, s, e);
+    }
+
+    /**
+     * Create a new Metis Exception object based on an object and a string.
+     * @param o the data object
      * @param s the description of the exception
      */
-    public MetisLogicException(final String s) {
-        super(s);
+    public MetisDataException(final Object o,
+                              final String s) {
+        super(o, s);
     }
 
     /**
@@ -41,8 +55,16 @@ public class MetisLogicException
      * @param s the description of the exception
      * @param e the underlying exception
      */
-    public MetisLogicException(final String s,
-                               final Throwable e) {
+    public MetisDataException(final String s,
+                              final Throwable e) {
         super(s, e);
+    }
+
+    /**
+     * Create a new Metis Exception object based on a string.
+     * @param s the description of the exception
+     */
+    public MetisDataException(final String s) {
+        super(s);
     }
 }

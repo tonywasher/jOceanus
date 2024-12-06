@@ -16,7 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.coeus.data.ratesetter;
 
-import net.sourceforge.joceanus.coeus.CoeusDataException;
+import net.sourceforge.joceanus.coeus.exc.CoeusDataException;
 import net.sourceforge.joceanus.coeus.data.CoeusLoan;
 import net.sourceforge.joceanus.coeus.data.CoeusResource;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;

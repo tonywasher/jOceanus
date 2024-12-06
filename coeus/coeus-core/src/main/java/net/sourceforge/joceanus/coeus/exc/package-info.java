@@ -16,6 +16,6 @@
  ******************************************************************************/
 
 /**
- * Peer2Peer Basics.
+ * Peer2Peer Exceptions.
  */
-package net.sourceforge.joceanus.coeus;
+package net.sourceforge.joceanus.coeus.exc;

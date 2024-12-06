@@ -19,7 +19,7 @@ package net.sourceforge.joceanus.coeus.data.zopa;
 import java.util.Iterator;
 import java.util.List;
 
-import net.sourceforge.joceanus.coeus.CoeusDataException;
+import net.sourceforge.joceanus.coeus.exc.CoeusDataException;
 import net.sourceforge.joceanus.coeus.data.CoeusLoanRisk;
 import net.sourceforge.joceanus.coeus.data.CoeusLoanStatus;
 import net.sourceforge.joceanus.coeus.data.CoeusResource;

@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.metis.ui;
 
 import java.util.ResourceBundle;
 
-import net.sourceforge.joceanus.metis.MetisDataException;
+import net.sourceforge.joceanus.metis.exc.MetisDataException;
 import net.sourceforge.joceanus.oceanus.resource.OceanusBundleId;
 import net.sourceforge.joceanus.oceanus.resource.OceanusBundleLoader;
 

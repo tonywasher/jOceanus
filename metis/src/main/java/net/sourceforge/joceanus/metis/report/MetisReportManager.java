@@ -16,7 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.metis.report;
 
-import net.sourceforge.joceanus.metis.MetisIOException;
+import net.sourceforge.joceanus.metis.exc.MetisIOException;
 import net.sourceforge.joceanus.oceanus.OceanusException;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;

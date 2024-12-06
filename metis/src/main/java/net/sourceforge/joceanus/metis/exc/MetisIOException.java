@@ -1,4 +1,4 @@
-/* *****************************************************************************
+/*******************************************************************************
  * Metis: Java Data Framework
  * Copyright 2012,2024 Tony Washer
  *
@@ -14,7 +14,27 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
+package net.sourceforge.joceanus.metis.exc;
+
+import net.sourceforge.joceanus.oceanus.OceanusException;
+
 /**
- * Data Framework.
+ * Metis IO Exception.
  */
-package net.sourceforge.joceanus.metis;
+public class MetisIOException
+        extends OceanusException {
+    /**
+     * SerialId.
+     */
+    private static final long serialVersionUID = 1642164880304226592L;
+
+    /**
+     * Create a new Metis Exception object based on a string and an underlying exception.
+     * @param s the description of the exception
+     * @param e the underlying exception
+     */
+    public MetisIOException(final String s,
+                            final Throwable e) {
+        super(s, e);
+    }
+}

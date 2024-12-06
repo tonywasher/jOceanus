@@ -20,7 +20,7 @@ import java.util.EnumMap;
 import java.util.Map;
 import java.util.ResourceBundle;
 
-import net.sourceforge.joceanus.coeus.CoeusDataException;
+import net.sourceforge.joceanus.coeus.exc.CoeusDataException;
 import net.sourceforge.joceanus.oceanus.resource.OceanusBundleId;
 import net.sourceforge.joceanus.oceanus.resource.OceanusBundleLoader;
 

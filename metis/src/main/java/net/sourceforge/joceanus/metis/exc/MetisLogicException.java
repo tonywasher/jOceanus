@@ -14,27 +14,35 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.metis;
+package net.sourceforge.joceanus.metis.exc;
 
 import net.sourceforge.joceanus.oceanus.OceanusException;
 
 /**
- * Metis IO Exception.
+ * Metis Logic Exception.
  */
-public class MetisIOException
+public class MetisLogicException
         extends OceanusException {
     /**
      * SerialId.
      */
-    private static final long serialVersionUID = 1642164880304226592L;
+    private static final long serialVersionUID = 864554925186516604L;
+
+    /**
+     * Create a new Metis Exception object based on a string.
+     * @param s the description of the exception
+     */
+    public MetisLogicException(final String s) {
+        super(s);
+    }
 
     /**
      * Create a new Metis Exception object based on a string and an underlying exception.
      * @param s the description of the exception
      * @param e the underlying exception
      */
-    public MetisIOException(final String s,
-                            final Throwable e) {
+    public MetisLogicException(final String s,
+                               final Throwable e) {
         super(s, e);
     }
 }

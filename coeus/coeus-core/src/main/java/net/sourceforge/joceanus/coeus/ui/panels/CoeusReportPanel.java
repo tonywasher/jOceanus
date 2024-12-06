@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.coeus.ui.panels;
 
 import org.w3c.dom.Document;
 
-import net.sourceforge.joceanus.coeus.CoeusDataException;
+import net.sourceforge.joceanus.coeus.exc.CoeusDataException;
 import net.sourceforge.joceanus.coeus.data.CoeusMarketAnnual;
 import net.sourceforge.joceanus.coeus.data.CoeusMarketProvider;
 import net.sourceforge.joceanus.coeus.data.CoeusMarketSnapShot;

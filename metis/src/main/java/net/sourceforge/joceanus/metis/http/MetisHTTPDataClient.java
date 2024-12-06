@@ -30,8 +30,8 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
-import net.sourceforge.joceanus.metis.MetisDataException;
-import net.sourceforge.joceanus.metis.MetisIOException;
+import net.sourceforge.joceanus.metis.exc.MetisDataException;
+import net.sourceforge.joceanus.metis.exc.MetisIOException;
 import net.sourceforge.joceanus.oceanus.OceanusException;
 import net.sourceforge.joceanus.oceanus.OceanusDataConverter;
 

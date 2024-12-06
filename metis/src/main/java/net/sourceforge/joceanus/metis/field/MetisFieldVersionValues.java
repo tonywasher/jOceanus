@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.metis.field;
 
 import java.util.Iterator;
 
-import net.sourceforge.joceanus.metis.MetisDataException;
+import net.sourceforge.joceanus.metis.exc.MetisDataException;
 import net.sourceforge.joceanus.metis.data.MetisDataDifference;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.metis.data.MetisDataType;
