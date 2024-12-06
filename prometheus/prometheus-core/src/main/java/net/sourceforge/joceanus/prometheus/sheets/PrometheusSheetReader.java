@@ -23,7 +23,7 @@ import net.sourceforge.joceanus.gordianknot.api.zip.GordianZipLock;
 import net.sourceforge.joceanus.gordianknot.api.zip.GordianZipReadFile;
 import net.sourceforge.joceanus.oceanus.OceanusException;
 import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
-import net.sourceforge.joceanus.prometheus.PrometheusIOException;
+import net.sourceforge.joceanus.prometheus.exc.PrometheusIOException;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataSet;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataSet.PrometheusCryptographyDataType;
 import net.sourceforge.joceanus.prometheus.security.PrometheusSecurityPasswordManager;

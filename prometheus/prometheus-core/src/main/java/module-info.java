@@ -30,7 +30,6 @@ module net.sourceforge.joceanus.prometheus.core {
     requires net.sourceforge.joceanus.prometheus.sheet.api;
 
     /* Exports */
-    exports net.sourceforge.joceanus.prometheus;
     exports net.sourceforge.joceanus.prometheus.toolkit;
     exports net.sourceforge.joceanus.prometheus.data;
     exports net.sourceforge.joceanus.prometheus.database;
@@ -42,4 +41,5 @@ module net.sourceforge.joceanus.prometheus.core {
     exports net.sourceforge.joceanus.prometheus.ui;
     exports net.sourceforge.joceanus.prometheus.ui.fieldset;
     exports net.sourceforge.joceanus.prometheus.ui.panel;
+    //exports net.sourceforge.joceanus.prometheus.exc;
 }

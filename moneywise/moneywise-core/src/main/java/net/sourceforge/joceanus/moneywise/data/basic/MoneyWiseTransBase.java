@@ -16,8 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.moneywise.data.basic;
 
-import java.util.Currency;
-
 import net.sourceforge.joceanus.metis.data.MetisDataDifference;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
@@ -29,7 +27,8 @@ import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePayee.MoneyWisePay
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePortfolio.MoneyWisePortfolioList;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurityHolding.MoneyWiseSecurityHoldingMap;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransCategoryClass;
-import net.sourceforge.joceanus.prometheus.PrometheusDataException;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataList.PrometheusDataListSet;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataResource;
@@ -38,9 +37,9 @@ import net.sourceforge.joceanus.prometheus.data.PrometheusEncryptedDataItem;
 import net.sourceforge.joceanus.prometheus.data.PrometheusEncryptedFieldSet;
 import net.sourceforge.joceanus.prometheus.data.PrometheusEncryptedPair;
 import net.sourceforge.joceanus.prometheus.data.PrometheusEncryptedValues;
-import net.sourceforge.joceanus.oceanus.OceanusException;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
+
+import java.util.Currency;
 
 /**
  * Transaction data type.
@@ -767,7 +766,7 @@ public abstract class MoneyWiseTransBase
         final Object myValue = resolveTransactionAsset(pData, myBaseValue);
         if (myValue == null) {
             pOwner.addError(ERROR_UNKNOWN, pField);
-            throw new PrometheusDataException(this, ERROR_RESOLUTION);
+            throw new MoneyWiseDataException(this, ERROR_RESOLUTION);
         }
         pOwner.getValues().setUncheckedValue(pField, myValue);
     }

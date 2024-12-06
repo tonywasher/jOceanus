@@ -31,7 +31,7 @@ import net.sourceforge.joceanus.oceanus.OceanusDataConverter;
 import net.sourceforge.joceanus.oceanus.OceanusException;
 import net.sourceforge.joceanus.oceanus.logger.OceanusLogManager;
 import net.sourceforge.joceanus.oceanus.logger.OceanusLogger;
-import net.sourceforge.joceanus.prometheus.PrometheusDataException;
+import net.sourceforge.joceanus.prometheus.exc.PrometheusDataException;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;

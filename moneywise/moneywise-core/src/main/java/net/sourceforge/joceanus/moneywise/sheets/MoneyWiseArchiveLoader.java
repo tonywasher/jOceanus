@@ -16,19 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.moneywise.sheets;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Map;
-import java.util.Map.Entry;
-
 import net.sourceforge.joceanus.moneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.moneywise.MoneyWiseIOException;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseAssetBase;
@@ -63,7 +50,10 @@ import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTaxBasis;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransCategoryClass;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransCategoryType;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransInfoType;
-import net.sourceforge.joceanus.prometheus.PrometheusDataException;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.date.OceanusFiscalYear;
+import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
 import net.sourceforge.joceanus.prometheus.data.PrometheusControlData.PrometheusControlDataList;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataValues;
@@ -74,12 +64,21 @@ import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetProvider
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetView;
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetWorkBook;
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetWorkBookType;
-import net.sourceforge.joceanus.oceanus.OceanusException;
-import net.sourceforge.joceanus.oceanus.date.OceanusDate;
-import net.sourceforge.joceanus.oceanus.date.OceanusFiscalYear;
-import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
 import net.sourceforge.joceanus.tethys.ui.api.factory.TethysUIFactory;
 import net.sourceforge.joceanus.tethys.ui.api.thread.TethysUIThreadStatusReport;
+
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  * Class to load an archive SpreadSheet.
@@ -389,7 +388,7 @@ public class MoneyWiseArchiveLoader {
 
         /* Check for name already exists */
         if (theNameMap.get(myName) != null) {
-            throw new PrometheusDataException(pAsset, PrometheusDataItem.ERROR_DUPLICATE);
+            throw new MoneyWiseDataException(pAsset, PrometheusDataItem.ERROR_DUPLICATE);
         }
 
         /* Store the asset */
@@ -407,7 +406,7 @@ public class MoneyWiseArchiveLoader {
 
         /* Check for name already exists */
         if (theCategoryMap.get(myName) != null) {
-            throw new PrometheusDataException(pCategory, PrometheusDataItem.ERROR_DUPLICATE);
+            throw new MoneyWiseDataException(pCategory, PrometheusDataItem.ERROR_DUPLICATE);
         }
 
         /* Store the category */
@@ -427,7 +426,7 @@ public class MoneyWiseArchiveLoader {
 
         /* Check for name already exists */
         if (theNameMap.get(myName) != null) {
-            throw new PrometheusDataException(pSecurity, PrometheusDataItem.ERROR_DUPLICATE);
+            throw new MoneyWiseDataException(pSecurity, PrometheusDataItem.ERROR_DUPLICATE);
         }
 
         /* Store the asset */
@@ -447,7 +446,7 @@ public class MoneyWiseArchiveLoader {
         /* Check for name already exists */
         final Object myHolding = theNameMap.get(pAlias);
         if (!(myHolding instanceof MoneyWiseSecurityHoldingDef)) {
-            throw new PrometheusDataException(pAlias, "Aliased security not found");
+            throw new MoneyWiseDataException(pAlias, "Aliased security not found");
         }
 
         /* Store the asset */

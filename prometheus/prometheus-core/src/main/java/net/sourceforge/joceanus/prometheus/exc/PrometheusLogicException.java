@@ -14,25 +14,35 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.prometheus;
+package net.sourceforge.joceanus.prometheus.exc;
 
 import net.sourceforge.joceanus.oceanus.OceanusException;
 
 /**
- * Prometheus Cancel Exception.
+ * Prometheus Logic Exception.
  */
-public class PrometheusCancelException
+public class PrometheusLogicException
         extends OceanusException {
     /**
      * SerialId.
      */
-    private static final long serialVersionUID = 6444216782361549187L;
+    private static final long serialVersionUID = -7274938835745309630L;
+
+    /**
+     * Create a new Prometheus Exception object based on an object and a string.
+     * @param o the object
+     * @param s the description of the exception
+     */
+    public PrometheusLogicException(final Object o,
+                                    final String s) {
+        super(o, s);
+    }
 
     /**
      * Create a new Prometheus Exception object based on a string.
      * @param s the description of the exception
      */
-    public PrometheusCancelException(final String s) {
+    public PrometheusLogicException(final String s) {
         super(s);
     }
 }

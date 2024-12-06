@@ -17,4 +17,4 @@
 /**
  * Main window package.
  */
-package net.sourceforge.joceanus.prometheus;
+package net.sourceforge.joceanus.prometheus.exc;

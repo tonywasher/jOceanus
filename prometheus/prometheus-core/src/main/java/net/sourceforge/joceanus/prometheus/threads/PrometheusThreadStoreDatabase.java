@@ -16,7 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.prometheus.threads;
 
-import net.sourceforge.joceanus.prometheus.PrometheusDataException;
+import net.sourceforge.joceanus.prometheus.exc.PrometheusDataException;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataSet;
 import net.sourceforge.joceanus.prometheus.database.PrometheusDataStore;
 import net.sourceforge.joceanus.prometheus.views.PrometheusDataControl;

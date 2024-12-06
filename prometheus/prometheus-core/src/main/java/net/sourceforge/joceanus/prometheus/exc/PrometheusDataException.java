@@ -14,35 +14,58 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.prometheus;
+package net.sourceforge.joceanus.prometheus.exc;
 
 import net.sourceforge.joceanus.oceanus.OceanusException;
 
 /**
- * Prometheus Logic Exception.
+ * Prometheus Data Exception.
  */
-public class PrometheusLogicException
+public class PrometheusDataException
         extends OceanusException {
     /**
      * SerialId.
      */
-    private static final long serialVersionUID = -7274938835745309630L;
+    private static final long serialVersionUID = 477418185621087538L;
+
+    /**
+     * Create a new Prometheus Exception object based on an object, a string and an underlying
+     * exception.
+     * @param o the object
+     * @param s the description of the exception
+     * @param e the underlying exception
+     */
+    public PrometheusDataException(final Object o,
+                                   final String s,
+                                   final Throwable e) {
+        super(o, s, e);
+    }
 
     /**
      * Create a new Prometheus Exception object based on an object and a string.
      * @param o the object
      * @param s the description of the exception
      */
-    public PrometheusLogicException(final Object o,
-                                    final String s) {
+    public PrometheusDataException(final Object o,
+                                   final String s) {
         super(o, s);
+    }
+
+    /**
+     * Create a new Prometheus Exception object based on a string and an underlying exception.
+     * @param s the description of the exception
+     * @param e the underlying exception
+     */
+    public PrometheusDataException(final String s,
+                                   final Throwable e) {
+        super(s, e);
     }
 
     /**
      * Create a new Prometheus Exception object based on a string.
      * @param s the description of the exception
      */
-    public PrometheusLogicException(final String s) {
+    public PrometheusDataException(final String s) {
         super(s);
     }
 }
