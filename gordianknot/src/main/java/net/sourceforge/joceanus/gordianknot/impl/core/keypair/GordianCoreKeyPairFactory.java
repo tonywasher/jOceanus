@@ -49,7 +49,7 @@ import net.sourceforge.joceanus.gordianknot.api.keypair.GordianXMSSKeySpec;
 import net.sourceforge.joceanus.gordianknot.api.keystore.GordianKeyStoreFactory;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignatureFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianDataException;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.oceanus.OceanusException;
 
 import java.security.spec.PKCS8EncodedKeySpec;

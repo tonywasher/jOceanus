@@ -30,20 +30,44 @@ import org.bouncycastle.crypto.params.KeyParameter;
 @SuppressWarnings("checkstyle:MagicNumber")
 public class GordianAnubisEngine
         implements BlockCipher {
-    /*
-     * Anubis-specific definitions:
+    /**
+     * BlockSize Bits.
      */
     private static final int BLOCKSIZE = 128;
+
+    /**
+     * BlockSize Bytes.
+     */
     private static final int BLOCKSIZEB = (BLOCKSIZE / 8);
 
-    /* State */
+    /**
+     * keyBits State.
+     */
     private int keyBits;
-    private int R;
-    private int N;
+
+    /**
+     * R State.
+     */
+    private int rState;
+
+    /**
+     * N State.
+     */
+    private int nState;
+
+    /**
+     * encryption State.
+     */
     private Boolean forEncryption;
+
+    /**
+     * roundKey State.
+     */
     private int[][] roundKey;
 
-    /* Tables */
+    /**
+     * Table T0.
+     */
     private static final int[] T0 =
             {
                     0xa753a6f5, 0xd3bb6bd0, 0xe6d1bf6e, 0x71e2d93b,
@@ -112,6 +136,9 @@ public class GordianAnubisEngine
                     0x0b162c3a, 0xf3fbeb10, 0xe0dda77a, 0x376edcb2,
             };
 
+    /**
+     * Table T1.
+     */
     private static final int[] T1 =
             {
                     0x53a7f5a6, 0xbbd3d06b, 0xd1e66ebf, 0xe2713bd9,
@@ -180,6 +207,9 @@ public class GordianAnubisEngine
                     0x160b3a2c, 0xfbf310eb, 0xdde07aa7, 0x6e37b2dc,
             };
 
+    /**
+     * Table T2.
+     */
     private static final int[] T2 =
             {
                     0xa6f5a753, 0x6bd0d3bb, 0xbf6ee6d1, 0xd93b71e2,
@@ -248,6 +278,9 @@ public class GordianAnubisEngine
                     0x2c3a0b16, 0xeb10f3fb, 0xa77ae0dd, 0xdcb2376e,
             };
 
+    /**
+     * Table T3.
+     */
     private static final int[] T3 =
             {
                     0xf5a653a7, 0xd06bbbd3, 0x6ebfd1e6, 0x3bd9e271,
@@ -316,6 +349,9 @@ public class GordianAnubisEngine
                     0x3a2c160b, 0x10ebfbf3, 0x7aa7dde0, 0xb2dc6e37,
             };
 
+    /**
+     * Table T4.
+     */
     private static final int[] T4 =
             {
                     0xa7a7a7a7, 0xd3d3d3d3, 0xe6e6e6e6, 0x71717171,
@@ -384,6 +420,9 @@ public class GordianAnubisEngine
                     0x0b0b0b0b, 0xf3f3f3f3, 0xe0e0e0e0, 0x37373737,
             };
 
+    /**
+     * Table T5.
+     */
     private static final int[] T5 =
             {
                     0x00000000, 0x01020608, 0x02040c10, 0x03060a18,
@@ -455,7 +494,7 @@ public class GordianAnubisEngine
     /**
      * The round constants.
      */
-    private static final int[] rc =
+    private static final int[] RC =
             { 0xa7d3e671, 0xd0ac4d79, 0x3ac991fc, 0x1e4754bd,
                     0x8ca57afb, 0x63b8ddd4, 0xe5b3c5be, 0xa9880ca2,
                     0x39df29da, 0x2ba8cb4c, 0x4b22aa24, 0x4170a6f9,
@@ -468,87 +507,88 @@ public class GordianAnubisEngine
      *
      * @param key The 32N-bit cipher key.
      */
-    private void NESSIEkeysetup(final byte[] key) {
-        int i, pos, r;
-        int[] kappa = new int[N];
-        int[] inter = new int[N];
-        int[][] roundKeyEnc = new int[R + 1][4];
+    private void nessieKeysetup(final byte[] key) {
+        final int[] kappa = new int[nState];
+        final int[] inter = new int[nState];
+        final int[][] roundKeyEnc = new int[rState + 1][4];
 
         /*
          * map cipher key to initial key state (mu):
          */
-        for (i = 0, pos = 0; i < N; i++, pos += 4) {
-            kappa[i] = (key[pos] << 24) ^
-                    (key[pos + 1] << 16) ^
-                    (key[pos + 2] << 8) ^
-                    (key[pos + 3]);
+        for (int i = 0, pos = 0; i < nState; i++, pos += 4) {
+            kappa[i] = (key[pos] << 24)
+                    ^ (key[pos + 1] << 16)
+                    ^ (key[pos + 2] << 8)
+                    ^ (key[pos + 3]);
         }
 
         /*
          * generate R + 1 round keys:
          */
-        for (r = 0; r <= R; r++) {
-            int K0, K1, K2, K3;
+        for (int r = 0; r <= rState; r++) {
             /*
              * generate r-th round key K^r:
              */
-            K0 = T4[(kappa[N - 1] >>> 24)];
-            K1 = T4[(kappa[N - 1] >>> 16) & 0xff];
-            K2 = T4[(kappa[N - 1] >>> 8) & 0xff];
-            K3 = T4[(kappa[N - 1]) & 0xff];
-            for (i = N - 2; i >= 0; i--) {
-                K0 = T4[(kappa[i] >>> 24)] ^
-                        (T5[(K0 >>> 24)] & 0xff000000) ^
-                        (T5[(K0 >>> 16) & 0xff] & 0x00ff0000) ^
-                        (T5[(K0 >>> 8) & 0xff] & 0x0000ff00) ^
-                        (T5[(K0) & 0xff] & 0x000000ff);
-                K1 = T4[(kappa[i] >>> 16) & 0xff] ^
-                        (T5[(K1 >>> 24)] & 0xff000000) ^
-                        (T5[(K1 >>> 16) & 0xff] & 0x00ff0000) ^
-                        (T5[(K1 >>> 8) & 0xff] & 0x0000ff00) ^
-                        (T5[(K1) & 0xff] & 0x000000ff);
-                K2 = T4[(kappa[i] >>> 8) & 0xff] ^
-                        (T5[(K2 >>> 24)] & 0xff000000) ^
-                        (T5[(K2 >>> 16) & 0xff] & 0x00ff0000) ^
-                        (T5[(K2 >>> 8) & 0xff] & 0x0000ff00) ^
-                        (T5[(K2) & 0xff] & 0x000000ff);
-                K3 = T4[(kappa[i]) & 0xff] ^
-                        (T5[(K3 >>> 24)] & 0xff000000) ^
-                        (T5[(K3 >>> 16) & 0xff] & 0x00ff0000) ^
-                        (T5[(K3 >>> 8) & 0xff] & 0x0000ff00) ^
-                        (T5[(K3) & 0xff] & 0x000000ff);
+            int k0 = T4[(kappa[nState - 1] >>> 24)];
+            int k1 = T4[(kappa[nState - 1] >>> 16) & 0xff];
+            int k2 = T4[(kappa[nState - 1] >>> 8) & 0xff];
+            int k3 = T4[(kappa[nState - 1]) & 0xff];
+            for (int i = nState - 2; i >= 0; i--) {
+                k0 = T4[(kappa[i] >>> 24)]
+                        ^ (T5[(k0 >>> 24)] & 0xff000000)
+                        ^ (T5[(k0 >>> 16) & 0xff] & 0x00ff0000)
+                        ^ (T5[(k0 >>> 8) & 0xff] & 0x0000ff00)
+                        ^ (T5[(k0) & 0xff] & 0x000000ff);
+                k1 = T4[(kappa[i] >>> 16) & 0xff]
+                        ^ (T5[(k1 >>> 24)] & 0xff000000)
+                        ^ (T5[(k1 >>> 16) & 0xff] & 0x00ff0000)
+                        ^ (T5[(k1 >>> 8) & 0xff] & 0x0000ff00)
+                        ^ (T5[(k1) & 0xff] & 0x000000ff);
+                k2 = T4[(kappa[i] >>> 8) & 0xff]
+                        ^ (T5[(k2 >>> 24)] & 0xff000000)
+                        ^ (T5[(k2 >>> 16) & 0xff] & 0x00ff0000)
+                        ^ (T5[(k2 >>> 8) & 0xff] & 0x0000ff00)
+                        ^ (T5[(k2) & 0xff] & 0x000000ff);
+                k3 = T4[(kappa[i]) & 0xff]
+                        ^ (T5[(k3 >>> 24)] & 0xff000000)
+                        ^ (T5[(k3 >>> 16) & 0xff] & 0x00ff0000)
+                        ^ (T5[(k3 >>> 8) & 0xff] & 0x0000ff00)
+                        ^ (T5[(k3) & 0xff] & 0x000000ff);
             }
             /*
              * -- this is the code to use with the large U tables: K0 = K1 = K2 = K3 = 0; for (i =
              * 0; i < N; i++) { K0 ^= U[i][(kappa[i] >> 24) ]; K1 ^= U[i][(kappa[i] >> 16) & 0xff];
              * K2 ^= U[i][(kappa[i] >> 8) & 0xff]; K3 ^= U[i][(kappa[i] ) & 0xff]; }
              */
-            roundKeyEnc[r][0] = K0;
-            roundKeyEnc[r][1] = K1;
-            roundKeyEnc[r][2] = K2;
-            roundKeyEnc[r][3] = K3;
+            roundKeyEnc[r][0] = k0;
+            roundKeyEnc[r][1] = k1;
+            roundKeyEnc[r][2] = k2;
+            roundKeyEnc[r][3] = k3;
 
             /*
              * compute kappa^{r+1} from kappa^r:
              */
-            if (r == R) {
+            if (r == rState) {
                 break;
             }
-            for (i = 0; i < N; i++) {
+            for (int i = 0; i < nState; i++) {
                 int j = i;
                 inter[i] = T0[(kappa[j--] >>> 24)];
-                if (j < 0)
-                    j = N - 1;
+                if (j < 0) {
+                    j = nState - 1;
+                }
                 inter[i] ^= T1[(kappa[j--] >>> 16) & 0xff];
-                if (j < 0)
-                    j = N - 1;
+                if (j < 0) {
+                    j = nState - 1;
+                }
                 inter[i] ^= T2[(kappa[j--] >>> 8) & 0xff];
-                if (j < 0)
-                    j = N - 1;
+                if (j < 0) {
+                    j = nState - 1;
+                }
                 inter[i] ^= T3[(kappa[j]) & 0xff];
             }
-            kappa[0] = inter[0] ^ rc[r];
-            for (i = 1; i < N; i++) {
+            kappa[0] = inter[0] ^ RC[r];
+            for (int i = 1; i < nState; i++) {
                 kappa[i] = inter[i];
             }
         }
@@ -559,18 +599,18 @@ public class GordianAnubisEngine
             /*
              * generate inverse key schedule: K'^0 = K^R, K'^R = K^0, K'^r = theta(K^{R-r}):
              */
-            int[][] roundKeyDec = new int[R + 1][4];
-            for (i = 0; i < 4; i++) {
-                roundKeyDec[0][i] = roundKeyEnc[R][i];
-                roundKeyDec[R][i] = roundKeyEnc[0][i];
+            final int[][] roundKeyDec = new int[rState + 1][4];
+            for (int i = 0; i < 4; i++) {
+                roundKeyDec[0][i] = roundKeyEnc[rState][i];
+                roundKeyDec[rState][i] = roundKeyEnc[0][i];
             }
-            for (r = 1; r < R; r++) {
-                for (i = 0; i < 4; i++) {
-                    int v = roundKeyEnc[R - r][i];
-                    roundKeyDec[r][i] = T0[T4[(v >>> 24)] & 0xff] ^
-                            T1[T4[(v >>> 16) & 0xff] & 0xff] ^
-                            T2[T4[(v >>> 8) & 0xff] & 0xff] ^
-                            T3[T4[(v) & 0xff] & 0xff];
+            for (int r = 1; r < rState; r++) {
+                for (int i = 0; i < 4; i++) {
+                    final int v = roundKeyEnc[rState - r][i];
+                    roundKeyDec[r][i] = T0[T4[(v >>> 24)] & 0xff]
+                            ^ T1[T4[(v >>> 16) & 0xff] & 0xff]
+                            ^ T2[T4[(v >>> 8) & 0xff] & 0xff]
+                            ^ T3[T4[(v) & 0xff] & 0xff];
                 }
             }
             roundKey = roundKeyDec;
@@ -589,45 +629,44 @@ public class GordianAnubisEngine
                        final int inOff,
                        final byte[] outBuffer,
                        final int outOff) {
-        int i, pos, r;
-        int[] state = new int[4];
-        int[] inter = new int[4];
+        final int[] state = new int[4];
+        final int[] inter = new int[4];
 
         /*
          * map plaintext block to cipher state (mu) and add initial round key (sigma[K^0]):
          */
-        for (i = 0, pos = inOff; i < 4; i++, pos += 4) {
-            state[i] = (inBuffer[pos] << 24) ^
-                    ((inBuffer[pos + 1] << 16) & 0xff0000) ^
-                    ((inBuffer[pos + 2] << 8) & 0xff00) ^
-                    ((inBuffer[pos + 3]) & 0xff) ^
-                    roundKey[0][i];
+        for (int i = 0, pos = inOff; i < 4; i++, pos += 4) {
+            state[i] = (inBuffer[pos] << 24)
+                    ^ ((inBuffer[pos + 1] << 16) & 0xff0000)
+                    ^ ((inBuffer[pos + 2] << 8) & 0xff00)
+                    ^ ((inBuffer[pos + 3]) & 0xff)
+                    ^ roundKey[0][i];
         }
 
         /*
          * R - 1 full rounds:
          */
-        for (r = 1; r < R; r++) {
-            inter[0] = T0[(state[0] >>> 24)] ^
-                    T1[(state[1] >>> 24)] ^
-                    T2[(state[2] >>> 24)] ^
-                    T3[(state[3] >>> 24)] ^
-                    roundKey[r][0];
-            inter[1] = T0[(state[0] >>> 16) & 0xff] ^
-                    T1[(state[1] >>> 16) & 0xff] ^
-                    T2[(state[2] >>> 16) & 0xff] ^
-                    T3[(state[3] >>> 16) & 0xff] ^
-                    roundKey[r][1];
-            inter[2] = T0[(state[0] >>> 8) & 0xff] ^
-                    T1[(state[1] >>> 8) & 0xff] ^
-                    T2[(state[2] >>> 8) & 0xff] ^
-                    T3[(state[3] >>> 8) & 0xff] ^
-                    roundKey[r][2];
-            inter[3] = T0[(state[0]) & 0xff] ^
-                    T1[(state[1]) & 0xff] ^
-                    T2[(state[2]) & 0xff] ^
-                    T3[(state[3]) & 0xff] ^
-                    roundKey[r][3];
+        for (int r = 1; r < rState; r++) {
+            inter[0] = T0[(state[0] >>> 24)]
+                    ^ T1[(state[1] >>> 24)]
+                    ^ T2[(state[2] >>> 24)]
+                    ^ T3[(state[3] >>> 24)]
+                    ^ roundKey[r][0];
+            inter[1] = T0[(state[0] >>> 16) & 0xff]
+                    ^ T1[(state[1] >>> 16) & 0xff]
+                    ^ T2[(state[2] >>> 16) & 0xff]
+                    ^ T3[(state[3] >>> 16) & 0xff]
+                    ^ roundKey[r][1];
+            inter[2] = T0[(state[0] >>> 8) & 0xff]
+                    ^ T1[(state[1] >>> 8) & 0xff]
+                    ^ T2[(state[2] >>> 8) & 0xff]
+                    ^ T3[(state[3] >>> 8) & 0xff]
+                    ^ roundKey[r][2];
+            inter[3] = T0[(state[0]) & 0xff]
+                    ^ T1[(state[1]) & 0xff]
+                    ^ T2[(state[2]) & 0xff]
+                    ^ T3[(state[3]) & 0xff]
+                    ^ roundKey[r][3];
             state[0] = inter[0];
             state[1] = inter[1];
             state[2] = inter[2];
@@ -637,32 +676,32 @@ public class GordianAnubisEngine
         /*
          * last round:
          */
-        inter[0] = (T0[(state[0] >>> 24)] & 0xff000000) ^
-                (T1[(state[1] >>> 24)] & 0x00ff0000) ^
-                (T2[(state[2] >>> 24)] & 0x0000ff00) ^
-                (T3[(state[3] >>> 24)] & 0x000000ff) ^
-                roundKey[R][0];
-        inter[1] = (T0[(state[0] >>> 16) & 0xff] & 0xff000000) ^
-                (T1[(state[1] >>> 16) & 0xff] & 0x00ff0000) ^
-                (T2[(state[2] >>> 16) & 0xff] & 0x0000ff00) ^
-                (T3[(state[3] >>> 16) & 0xff] & 0x000000ff) ^
-                roundKey[R][1];
-        inter[2] = (T0[(state[0] >>> 8) & 0xff] & 0xff000000) ^
-                (T1[(state[1] >>> 8) & 0xff] & 0x00ff0000) ^
-                (T2[(state[2] >>> 8) & 0xff] & 0x0000ff00) ^
-                (T3[(state[3] >>> 8) & 0xff] & 0x000000ff) ^
-                roundKey[R][2];
-        inter[3] = (T0[(state[0]) & 0xff] & 0xff000000) ^
-                (T1[(state[1]) & 0xff] & 0x00ff0000) ^
-                (T2[(state[2]) & 0xff] & 0x0000ff00) ^
-                (T3[(state[3]) & 0xff] & 0x000000ff) ^
-                roundKey[R][3];
+        inter[0] = (T0[(state[0] >>> 24)] & 0xff000000)
+                ^ (T1[(state[1] >>> 24)] & 0x00ff0000)
+                ^ (T2[(state[2] >>> 24)] & 0x0000ff00)
+                ^ (T3[(state[3] >>> 24)] & 0x000000ff)
+                ^ roundKey[rState][0];
+        inter[1] = (T0[(state[0] >>> 16) & 0xff] & 0xff000000)
+                ^ (T1[(state[1] >>> 16) & 0xff] & 0x00ff0000)
+                ^ (T2[(state[2] >>> 16) & 0xff] & 0x0000ff00)
+                ^ (T3[(state[3] >>> 16) & 0xff] & 0x000000ff)
+                ^ roundKey[rState][1];
+        inter[2] = (T0[(state[0] >>> 8) & 0xff] & 0xff000000)
+                ^ (T1[(state[1] >>> 8) & 0xff] & 0x00ff0000)
+                ^ (T2[(state[2] >>> 8) & 0xff] & 0x0000ff00)
+                ^ (T3[(state[3] >>> 8) & 0xff] & 0x000000ff)
+                ^ roundKey[rState][2];
+        inter[3] = (T0[(state[0]) & 0xff] & 0xff000000)
+                ^ (T1[(state[1]) & 0xff] & 0x00ff0000)
+                ^ (T2[(state[2]) & 0xff] & 0x0000ff00)
+                ^ (T3[(state[3]) & 0xff] & 0x000000ff)
+                ^ roundKey[rState][3];
 
         /*
          * map cipher state to ciphertext block (mu^{-1}):
          */
-        for (i = 0, pos = outOff; i < 4; i++, pos += 4) {
-            int w = inter[i];
+        for (int i = 0, pos = outOff; i < 4; i++, pos += 4) {
+            final int w = inter[i];
             outBuffer[pos] = (byte) (w >> 24);
             outBuffer[pos + 1] = (byte) (w >> 16);
             outBuffer[pos + 2] = (byte) (w >> 8);
@@ -681,7 +720,7 @@ public class GordianAnubisEngine
     }
 
     @Override
-    public void init(boolean forEncryption, CipherParameters pParameters) {
+    public void init(final boolean forEncrypt, final CipherParameters pParameters) {
         /* Reject invalid parameters */
         if (!(pParameters instanceof KeyParameter)) {
             throw new IllegalArgumentException("Invalid parameter passed to Anubis init - "
@@ -689,24 +728,24 @@ public class GordianAnubisEngine
         }
 
         /* Determine keySize */
-        byte[] keyBytes = ((KeyParameter) pParameters).getKey();
-        int keyBitSize = keyBytes.length * Byte.SIZE;
+        final byte[] keyBytes = ((KeyParameter) pParameters).getKey();
+        final int keyBitSize = keyBytes.length * Byte.SIZE;
         if (keyBitSize != 128 && keyBitSize != 192 && keyBitSize != 256) {
             throw new IllegalArgumentException("KeyBitSize must be 128, 192 or 256");
         }
 
         /* Record parameters */
         keyBits = keyBitSize;
-        N = keyBits >> 5;
-        R = 8 + N;
+        nState = keyBits >> 5;
+        rState = 8 + nState;
 
         /* Set up key */
-        this.forEncryption = forEncryption;
-        NESSIEkeysetup(keyBytes);
+        this.forEncryption = forEncrypt;
+        nessieKeysetup(keyBytes);
     }
 
     @Override
-    public int processBlock(byte[] in, int inOff, byte[] out, int outOff) {
+    public int processBlock(final byte[] in, final int inOff, final byte[] out, final int outOff) {
         if (forEncryption == null) {
             throw new IllegalStateException("Anubis engine not initialised");
         }

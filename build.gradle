@@ -43,12 +43,12 @@ allprojects {
         jUnitVersion = "5.11.3"
         jsonVersion = "20240303"
         mySQLVersion = "9.1.0"
-        MariaDBVersion = "3.5.0"
+        MariaDBVersion = "3.5.1"
         postGreSQLVersion = "42.7.4"
         mssqlVersion = "12.8.1.jre11"
         h2Version = "2.3.232"
         apachePOIVersion = "5.3.0"
-        jsoupVersion = "1.18.1"
+        jsoupVersion = "1.18.3"
         jFreeChartVersion = "1.5.5"
 
         /* javaFX versions */
@@ -56,14 +56,14 @@ allprojects {
         javaFXPluginVersion = "0.1.0"
 
         /* Annotation versions */
-        jetBrainsAnnotationsVersion = "24.0.1"
+        jetBrainsAnnotationsVersion = "26.0.1"
 
         /* checkStyle config */
-        checkStyleVersion = "10.20.1"
+        checkStyleVersion = "10.20.2"
         checkStyleConfig = "$rootDir/src/main/checkstyle/checks.xml"
 
         /* pmd config */
-        pmdVersion = "7.7.0"
+        pmdVersion = "7.8.0"
 
         /* jacoco config */
         jacocoVersion = "0.8.12"

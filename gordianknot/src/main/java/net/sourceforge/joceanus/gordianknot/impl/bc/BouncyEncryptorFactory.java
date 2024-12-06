@@ -23,7 +23,7 @@ import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyEllipticKeyPair.Bouncy
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyRSAKeyPair.BouncyRSAEncryptor;
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncySM2KeyPair.BouncySM2Encryptor;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianDataException;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.encrypt.GordianCompositeEncryptor;
 import net.sourceforge.joceanus.gordianknot.impl.core.encrypt.GordianCoreEncryptorFactory;
 import net.sourceforge.joceanus.oceanus.OceanusException;

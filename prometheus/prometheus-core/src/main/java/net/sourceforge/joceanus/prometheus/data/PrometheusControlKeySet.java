@@ -16,27 +16,26 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.prometheus.data;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Objects;
-
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySet;
 import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySetFactory;
-import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySetSpec;
 import net.sourceforge.joceanus.gordianknot.util.GordianUtilities;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataList;
 import net.sourceforge.joceanus.metis.data.MetisDataResource;
 import net.sourceforge.joceanus.metis.field.MetisFieldItem;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.metis.field.MetisFieldVersionedSet;
+import net.sourceforge.joceanus.oceanus.OceanusException;
 import net.sourceforge.joceanus.prometheus.PrometheusDataException;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataKeySet.PrometheusDataKeySetList;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataList.PrometheusListStyle;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataSet.PrometheusCryptographyDataType;
-import net.sourceforge.joceanus.oceanus.OceanusException;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * ControlKeySet definition and list. The controlKeySet secures a set of dataKeySets.
@@ -177,7 +176,7 @@ public class PrometheusControlKeySet
 
             /* Create the KeySet */
             final GordianKeySetFactory myKeySets = theSecurityFactory.getKeySetFactory();
-            final GordianKeySet myKeySet = myKeySets.generateKeySet(new GordianKeySetSpec());
+            final GordianKeySet myKeySet = myKeySets.generateKeySet(getDataSet().getKeySetSpec());
             setValueKeySet(myKeySet);
 
             /* Set the wrappedKeySetDef */

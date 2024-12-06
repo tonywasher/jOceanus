@@ -47,7 +47,7 @@ import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestSpecBuilder;
 import net.sourceforge.joceanus.gordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.gordianknot.api.key.GordianKeyLengths;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianDataException;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.oceanus.OceanusException;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 
@@ -101,7 +101,7 @@ public abstract class GordianCoreCipherFactory
 
     @Override
     public Predicate<GordianSymKeyType> supportedSymKeyTypes() {
-        return theFactory::validSymKeyType;
+        return t -> theFactory.getValidator().validSymKeyType(t);
     }
 
     @Override

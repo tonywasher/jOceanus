@@ -48,15 +48,26 @@ public class GordianRabbitEngine
      * context.
      */
     static class GordianRabbitContext {
+        /**
+         * X state.
+         */
         private int[] x = new int[NUM_VARS];
+
+        /**
+         * c stat.
+         */
         private int[] c = new int[NUM_VARS];
+
+        /**
+         * carry state.
+         */
         private int carry;
 
         /**
          * Copy from.
          * @param pSource the source context
          */
-        void copyFrom(GordianRabbitContext pSource) {
+        void copyFrom(final GordianRabbitContext pSource) {
             System.arraycopy(pSource.x, 0, x, 0, NUM_VARS);
             System.arraycopy(pSource.c, 0, c, 0, NUM_VARS);
             carry = pSource.carry;
@@ -67,6 +78,10 @@ public class GordianRabbitEngine
      * Work context.
      */
     private GordianRabbitContext work = new GordianRabbitContext();
+
+    /**
+     * master context.
+     */
     private GordianRabbitContext master = new GordianRabbitContext();
 
     /**
@@ -94,7 +109,7 @@ public class GordianRabbitEngine
      * Constructor.
      * @param pSource the source engine
      */
-    private GordianRabbitEngine(GordianRabbitEngine pSource) {
+    private GordianRabbitEngine(final GordianRabbitEngine pSource) {
         reset(pSource);
     }
 
@@ -189,7 +204,7 @@ public class GordianRabbitEngine
      * @param off the input offset
      * @return the decoded value
      */
-    private static int decode32le(byte[] buf, int off) {
+    private static int decode32le(final byte[] buf, final int off) {
         return (buf[off] & 0xFF)
                 | ((buf[off + 1] & 0xFF) << 8)
                 | ((buf[off + 2] & 0xFF) << 16)
@@ -203,7 +218,7 @@ public class GordianRabbitEngine
      * @param buf the output buffer
      * @param off the output offset
      */
-    private static void encode32le(int val, byte[] buf, int off) {
+    private static void encode32le(final int val, final byte[] buf, final int off) {
         buf[off] = (byte) val;
         buf[off + 1] = (byte) (val >> 8);
         buf[off + 2] = (byte) (val >> 16);
@@ -212,76 +227,68 @@ public class GordianRabbitEngine
 
     /* Square a 32-bit unsigned integer to obtain the 64-bit result and return */
     /* the upper 32 bits XOR the lower 32 bits */
-    static int RABBIT_g_func(int x)
-    {
-        /* Temporary variables */
-        int a, b, h, l;
-
+    static int rabbitGFunc(final int x) {
         /* Construct high and low argument for squaring */
-        a = x & 0xFFFF;
-        b = x >>> 16;
+        final int a = x & 0xFFFF;
+        final int b = x >>> 16;
 
         /* Calculate high and low result of squaring */
-        h = ((((a*a) >>> 17) + (a*b)) >>> 15) + b * b;
-        l = x * x;
+        final int h = ((((a * a) >>> 17) + (a * b)) >>> 15) + b * b;
+        final int l = x * x;
 
         /* Return high XOR low */
-        return (h^l);
+        return (h ^ l);
     }
 
     /* Calculate the next internal state */
-    static void RABBIT_next_state(GordianRabbitContext pContext)
-    {
+    static void rabbitNextState(final GordianRabbitContext pContext) {
         /* Save old counter values */
-        int[] c_old = Arrays.copyOf(pContext.c, NUM_VARS);
-        int[] g = new int[NUM_VARS];
+        final int[] cOld = Arrays.copyOf(pContext.c, NUM_VARS);
+        final int[] g = new int[NUM_VARS];
 
         /* Calculate new counter values */
         pContext.c[0] = (pContext.c[0] + 0x4D34D34D + pContext.carry);
-        pContext.c[1] = (pContext.c[1] + 0xD34D34D3 + (Integer.compareUnsigned(pContext.c[0], c_old[0]) < 0 ? 1 : 0));
-        pContext.c[2] = (pContext.c[2] + 0x34D34D34 + (Integer.compareUnsigned(pContext.c[1], c_old[1]) < 0 ? 1 : 0));
-        pContext.c[3] = (pContext.c[3] + 0x4D34D34D + (Integer.compareUnsigned(pContext.c[2], c_old[2]) < 0 ? 1 : 0));
-        pContext.c[4] = (pContext.c[4] + 0xD34D34D3 + (Integer.compareUnsigned(pContext.c[3], c_old[3]) < 0 ? 1 : 0));
-        pContext.c[5] = (pContext.c[5] + 0x34D34D34 + (Integer.compareUnsigned(pContext.c[4], c_old[4]) < 0 ? 1 : 0));
-        pContext.c[6] = (pContext.c[6] + 0x4D34D34D + (Integer.compareUnsigned(pContext.c[5], c_old[5]) < 0 ? 1 : 0));
-        pContext.c[7] = (pContext.c[7] + 0xD34D34D3 + (Integer.compareUnsigned(pContext.c[6], c_old[6]) < 0 ? 1 : 0));
-        pContext.carry = Integer.compareUnsigned(pContext.c[7], c_old[7]) < 0 ? 1 : 0;
+        pContext.c[1] = (pContext.c[1] + 0xD34D34D3 + (Integer.compareUnsigned(pContext.c[0], cOld[0]) < 0 ? 1 : 0));
+        pContext.c[2] = (pContext.c[2] + 0x34D34D34 + (Integer.compareUnsigned(pContext.c[1], cOld[1]) < 0 ? 1 : 0));
+        pContext.c[3] = (pContext.c[3] + 0x4D34D34D + (Integer.compareUnsigned(pContext.c[2], cOld[2]) < 0 ? 1 : 0));
+        pContext.c[4] = (pContext.c[4] + 0xD34D34D3 + (Integer.compareUnsigned(pContext.c[3], cOld[3]) < 0 ? 1 : 0));
+        pContext.c[5] = (pContext.c[5] + 0x34D34D34 + (Integer.compareUnsigned(pContext.c[4], cOld[4]) < 0 ? 1 : 0));
+        pContext.c[6] = (pContext.c[6] + 0x4D34D34D + (Integer.compareUnsigned(pContext.c[5], cOld[5]) < 0 ? 1 : 0));
+        pContext.c[7] = (pContext.c[7] + 0xD34D34D3 + (Integer.compareUnsigned(pContext.c[6], cOld[6]) < 0 ? 1 : 0));
+        pContext.carry = Integer.compareUnsigned(pContext.c[7], cOld[7]) < 0 ? 1 : 0;
 
         /* Calculate the g-values */
-        for (int i = 0; i<8; i++)
-            g[i] = RABBIT_g_func((int)(pContext.x[i] + pContext.c[i]));
+        for (int i = 0; i < 8; i++) {
+            g[i] = rabbitGFunc((int) (pContext.x[i] + pContext.c[i]));
+        }
 
         /* Calculate new state values */
-        pContext.x[0] = (g[0] + ROTL32(g[7], 16) + ROTL32(g[6], 16));
-        pContext.x[1] = (g[1] + ROTL32(g[0], 8) + g[7]);
-        pContext.x[2] = (g[2] + ROTL32(g[1], 16) + ROTL32(g[0], 16));
-        pContext.x[3] = (g[3] + ROTL32(g[2], 8) + g[1]);
-        pContext.x[4] = (g[4] + ROTL32(g[3], 16) + ROTL32(g[2], 16));
-        pContext.x[5] = (g[5] + ROTL32(g[4], 8) + g[3]);
-        pContext.x[6] = (g[6] + ROTL32(g[5], 16) + ROTL32(g[4], 16));
-        pContext.x[7] = (g[7] + ROTL32(g[6], 8) + g[5]);
+        pContext.x[0] = (g[0] + rotl32(g[7], 16) + rotl32(g[6], 16));
+        pContext.x[1] = (g[1] + rotl32(g[0], 8) + g[7]);
+        pContext.x[2] = (g[2] + rotl32(g[1], 16) + rotl32(g[0], 16));
+        pContext.x[3] = (g[3] + rotl32(g[2], 8) + g[1]);
+        pContext.x[4] = (g[4] + rotl32(g[3], 16) + rotl32(g[2], 16));
+        pContext.x[5] = (g[5] + rotl32(g[4], 8) + g[3]);
+        pContext.x[6] = (g[6] + rotl32(g[5], 16) + rotl32(g[4], 16));
+        pContext.x[7] = (g[7] + rotl32(g[6], 8) + g[5]);
     }
 
-    static int  ROTL32(int v, int n) {
+    static int rotl32(final int v, final int n) {
         return (((v) << (n)) | ((v) >>> (32 - (n))));
     }
 
     /* Key setup */
-    void setKey(byte[] key)
-    {
+    void setKey(final byte[] key) {
         /* Check lengths */
         if (key == null || key.length != 16) {
             throw new IllegalArgumentException("A key of 16 bytes is needed");
         }
 
-        /* Temporary variables */
-        int k0, k1, k2, k3, i;
-
         /* Generate four subkeys */
-        k0 = decode32le(key, 0);
-        k1 = decode32le(key, 4);
-        k2 = decode32le(key, 8);
-        k3 = decode32le(key, 12);
+        final int k0 = decode32le(key, 0);
+        final int k1 = decode32le(key, 4);
+        final int k2 = decode32le(key, 8);
+        final int k3 = decode32le(key, 12);
 
         /* Generate initial state variables */
         master.x[0] = k0;
@@ -294,10 +301,10 @@ public class GordianRabbitEngine
         master.x[7] = (k2 << 16) | (k1 >>> 16);
 
         /* Generate initial counter values */
-        master.c[0] = ROTL32(k2, 16);
-        master.c[2] = ROTL32(k3, 16);
-        master.c[4] = ROTL32(k0, 16);
-        master.c[6] = ROTL32(k1, 16);
+        master.c[0] = rotl32(k2, 16);
+        master.c[2] = rotl32(k3, 16);
+        master.c[4] = rotl32(k0, 16);
+        master.c[6] = rotl32(k1, 16);
         master.c[1] = (k0 & 0xFFFF0000) | (k1 & 0xFFFF);
         master.c[3] = (k1 & 0xFFFF0000) | (k2 & 0xFFFF);
         master.c[5] = (k2 & 0xFFFF0000) | (k3 & 0xFFFF);
@@ -307,16 +314,17 @@ public class GordianRabbitEngine
         master.carry = 0;
 
         /* Iterate the system four times */
-        for (i = 0; i<4; i++)
-            RABBIT_next_state(master);
+        for (int i = 0; i < 4; i++) {
+            rabbitNextState(master);
+        }
 
         /* Modify the counters */
-        for (i = 0; i<NUM_VARS; i++)
+        for (int i = 0; i < NUM_VARS; i++) {
             master.c[i] ^= master.x[(i + 4) & 0x7];
+        }
 
         /* Copy master instance to work instance */
-        for (i = 0; i<NUM_VARS; i++)
-        {
+        for (int i = 0; i < NUM_VARS; i++) {
             work.x[i] = master.x[i];
             work.c[i] = master.c[i];
         }
@@ -326,21 +334,17 @@ public class GordianRabbitEngine
     /* ------------------------------------------------------------------------- */
 
     /* IV setup */
-    void setIV(byte[] iv)
-    {
+    void setIV(final byte[] iv) {
         /* Check lengths */
         if (iv == null || iv.length != 8) {
             throw new IllegalArgumentException("An IV of 8 bytes is needed");
         }
 
-        /* Temporary variables */
-        int i0, i1, i2, i3, i;
-
         /* Generate four subvectors */
-        i0 = decode32le(iv, 0);
-        i2 = decode32le(iv, 4);
-        i1 = (i0 >>> 16) | (i2 & 0xFFFF0000);
-        i3 = (i2 << 16) | (i0 & 0x0000FFFF);
+        final int i0 = decode32le(iv, 0);
+        final int i2 = decode32le(iv, 4);
+        final int i1 = (i0 >>> 16) | (i2 & 0xFFFF0000);
+        final int i3 = (i2 << 16) | (i0 & 0x0000FFFF);
 
         /* Modify counter values */
         work.c[0] = master.c[0] ^ i0;
@@ -353,23 +357,23 @@ public class GordianRabbitEngine
         work.c[7] = master.c[7] ^ i3;
 
         /* Copy state variables */
-        for (i = 0; i<NUM_VARS; i++)
+        for (int i = 0; i < NUM_VARS; i++) {
             work.x[i] = master.x[i];
+        }
         work.carry = master.carry;
 
         /* Iterate the system four times */
-        for (i = 0; i<4; i++)
-            RABBIT_next_state(work);
+        for (int i = 0; i < 4; i++) {
+            rabbitNextState(work);
+        }
     }
 
     /* Generate keystream */
-    void makeKeyStream()
-    {
+    void makeKeyStream() {
         /* Generate five blocks */
-        for (int i = 0; i < STREAM_LEN; i += 16)
-        {
+        for (int i = 0; i < STREAM_LEN; i += 16) {
             /* Iterate the system */
-            RABBIT_next_state(work);
+            rabbitNextState(work);
 
             /* Generate 16 bytes of pseudo-random data */
             encode32le(work.x[0] ^ (work.x[5] >>> 16) ^ (work.x[3] << 16), keyStream, i + 0);

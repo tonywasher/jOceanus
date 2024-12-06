@@ -41,8 +41,8 @@ import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPrivateK
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPublicKey;
 import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianAgreementMessageASN1;
 import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianCoreEphemeralAgreement;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCryptoException;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianIOException;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianIOException;
 import net.sourceforge.joceanus.gordianknot.impl.core.encrypt.GordianCoreEncryptor;
 import net.sourceforge.joceanus.gordianknot.impl.core.sign.GordianCoreSignature;
 import net.sourceforge.joceanus.oceanus.OceanusException;
@@ -185,7 +185,7 @@ public final class BouncySM2KeyPair {
         /**
          * Key length.
          */
-        private static final int KEYLEN = 32;
+        private static final int KEYLEN = 64;
 
         /**
          * Key Agreement.

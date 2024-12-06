@@ -54,23 +54,27 @@ public interface GordianLockFactory {
 
     /**
      * Create a new factoryLock.
+     * @param pFactoryType the factoryType
      * @param pPassword the password
      * @return the factoryLock
      * @throws OceanusException on error
      */
-    default GordianFactoryLock newFactoryLock(char[] pPassword) throws OceanusException {
+    default GordianFactoryLock newFactoryLock(GordianFactoryType pFactoryType,
+                                              char[] pPassword) throws OceanusException {
         /* Create the factoryLock */
-        return newFactoryLock(new GordianPasswordLockSpec(), pPassword);
+        return newFactoryLock(new GordianPasswordLockSpec(), pFactoryType, pPassword);
     }
 
     /**
      * Create a new factoryLock for a new random factory.
      * @param pLockSpec the locking spec
+     * @param pFactoryType the factoryType
      * @param pPassword the password
      * @return the factoryLock
      * @throws OceanusException on error
      */
     GordianFactoryLock newFactoryLock(GordianPasswordLockSpec pLockSpec,
+                                      GordianFactoryType pFactoryType,
                                       char[] pPassword) throws OceanusException;
 
     /**

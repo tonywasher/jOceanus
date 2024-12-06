@@ -83,7 +83,7 @@ class ZipFileTest {
      */
     private Stream<DynamicNode> zipFileTests(final GordianFactoryType pType) throws OceanusException {
         /* Create the factory */
-        final GordianFactory myFactory = GordianGenerator.createFactory(pType);
+        final GordianFactory myFactory = GordianGenerator.createRandomFactory(pType);
 
         /* Create the keyPair */
         final GordianKeyPairFactory myAsymFactory = myFactory.getKeyPairFactory();

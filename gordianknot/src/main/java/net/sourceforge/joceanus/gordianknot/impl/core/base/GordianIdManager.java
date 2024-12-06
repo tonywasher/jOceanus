@@ -16,11 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.core.base;
 
-import java.security.SecureRandom;
-import java.util.List;
-import java.util.Random;
-import java.util.stream.Collectors;
-
 import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianCipherFactory;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianStreamKeySpec;
@@ -35,6 +30,11 @@ import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacSpec;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacSpecBuilder;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacType;
 import net.sourceforge.joceanus.oceanus.OceanusException;
+
+import java.security.SecureRandom;
+import java.util.List;
+import java.util.Random;
+import java.util.stream.Collectors;
 
 /**
  * Security Id Manager.
@@ -187,8 +187,9 @@ public class GordianIdManager {
                                                                final int pCount) {
         /* Access the list to select from */
         final GordianCipherFactory myCiphers = theFactory.getCipherFactory();
+        final GordianValidator myValidator = theFactory.getValidator();
         final List<GordianSymKeyType> myTypes = myCiphers.listAllSupportedSymKeyTypes().stream()
-                .filter(theFactory.supportedKeySetSymKeyTypes(pKeyLen))
+                .filter(myValidator.supportedKeySetSymKeyTypes(pKeyLen))
                 .collect(Collectors.toList());
 
         /* Allocate the array to return */
@@ -208,16 +209,17 @@ public class GordianIdManager {
     }
 
     /**
-     * Derive secret keyHashDigestType from seed.
+     * Derive secret lockDigestType from seed.
      * @param pRandom the seeded random
      * @return the selected keyHashDigestTypes
      */
-    public GordianDigestType deriveKeyHashSecretTypeFromSeed(final Random pRandom) {
+    public GordianDigestType deriveLockSecretTypeFromSeed(final Random pRandom) {
         /* Access the list to select from */
         final GordianDigestFactory myDigests = theFactory.getDigestFactory();
+        final GordianValidator myValidator = theFactory.getValidator();
         final List<GordianDigestType> myTypes = myDigests.listAllSupportedTypes().stream()
-                .filter(theFactory.supportedKeySetDigestTypes())
-                .filter(GordianDigestType::isExternalHashDigest)
+                .filter(myValidator.supportedLockDigestTypes())
+                .filter(myValidator.isExternalHashDigest())
                 .collect(Collectors.toList());
 
         /* Select from the list and remove the selected item */
@@ -225,19 +227,19 @@ public class GordianIdManager {
         return myTypes.get(myIndex);
     }
 
-
     /**
-     * Derive set of keyHashDigestTypes from seed.
+     * Derive set of lockDigestTypes from seed.
      * @param pRandom the seeded random
      * @param pCount the number of distinct digestTypes to select
      * @return the selected keyHashDigestTypes
      */
-    public GordianDigestType[] deriveKeyHashDigestTypesFromSeed(final Random pRandom,
-                                                                final int pCount) {
+    public GordianDigestType[] deriveLockDigestTypesFromSeed(final Random pRandom,
+                                                             final int pCount) {
         /* Access the list to select from */
         final GordianDigestFactory myDigests = theFactory.getDigestFactory();
+        final GordianValidator myValidator = theFactory.getValidator();
         final List<GordianDigestType> myTypes = myDigests.listAllSupportedTypes().stream()
-                .filter(theFactory.supportedKeySetDigestTypes())
+                .filter(myValidator.supportedLockDigestTypes())
                 .collect(Collectors.toList());
 
         /* Allocate the array to return */
@@ -257,16 +259,65 @@ public class GordianIdManager {
     }
 
     /**
-     * Derive an externalDigestTypes from seededRandom.
+     * Derive a Lock externalDigestTypes from seededRandom.
      * @param pRandom the seeded random
      * @return the selected externalDigestType
      */
     public GordianDigestType deriveExternalDigestTypeFromSeed(final Random pRandom) {
         /* Access the list to select from */
-        final GordianDigestFactory myDigests = theFactory.getDigestFactory();
-        final List<GordianDigestType> myTypes = myDigests.listAllExternalTypes();
+        final GordianValidator myValidator = theFactory.getValidator();
+        final List<GordianDigestType> myTypes = myValidator.listAllExternalDigestTypes();
 
-         /* Select from the list */
+        /* Select from the list */
+        final int myIndex = pRandom.nextInt(myTypes.size());
+        return myTypes.get(myIndex);
+    }
+
+    /**
+     * Derive set of keyGenDigestTypes from seed.
+     * @param pRandom the seeded random
+     * @param pCount the number of distinct digestTypes to select
+     * @return the selected keyGenDigestTypes
+     */
+    public GordianDigestType[] deriveKeyGenDigestTypesFromSeed(final Random pRandom,
+                                                               final int pCount) {
+        /* Access the list to select from */
+        final GordianDigestFactory myDigests = theFactory.getDigestFactory();
+        final GordianValidator myValidator = theFactory.getValidator();
+        final List<GordianDigestType> myTypes = myDigests.listAllSupportedTypes().stream()
+                .filter(myValidator.supportedKeyGenDigestTypes())
+                .collect(Collectors.toList());
+
+        /* Allocate the array to return */
+        final GordianDigestType[] myResult = new GordianDigestType[pCount];
+
+        /* Loop selecting digestTypes */
+        for (int i = 0; i < pCount; i++) {
+            /* Select from the list and remove the selected item */
+            final int myIndex = pRandom.nextInt(myTypes.size());
+            final GordianDigestType myType = myTypes.get(myIndex);
+            myTypes.removeIf(t -> t == myType);
+            myResult[i] = myType;
+        }
+
+        /* return the selected digestTypes */
+        return myResult;
+    }
+
+    /**
+     * Derive agreementDigestType from seed.
+     * @param pRandom the seeded random
+     * @return the selected agreementDigestType
+     */
+    public GordianDigestType deriveAgreementDigestTypeFromSeed(final Random pRandom) {
+        /* Access the list to select from */
+        final GordianDigestFactory myDigests = theFactory.getDigestFactory();
+        final GordianValidator myValidator = theFactory.getValidator();
+        final List<GordianDigestType> myTypes = myDigests.listAllSupportedTypes().stream()
+                .filter(myValidator.supportedAgreementDigestTypes())
+                .collect(Collectors.toList());
+
+        /* Select from the list */
         final int myIndex = pRandom.nextInt(myTypes.size());
         return myTypes.get(myIndex);
     }

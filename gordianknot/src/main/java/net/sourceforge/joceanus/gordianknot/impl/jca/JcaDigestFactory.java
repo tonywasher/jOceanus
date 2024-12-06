@@ -17,10 +17,9 @@
 package net.sourceforge.joceanus.gordianknot.impl.jca;
 
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestSpec;
-import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestType;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCryptoException;
 import net.sourceforge.joceanus.gordianknot.impl.core.digest.GordianCoreDigestFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
 import net.sourceforge.joceanus.oceanus.OceanusException;
 
 import java.security.MessageDigest;
@@ -75,29 +74,6 @@ public class JcaDigestFactory
         }
     }
 
-    @Override
-    public boolean validDigestType(final GordianDigestType pDigestType) {
-        /* Perform standard checks */
-        if (!super.validDigestType(pDigestType)) {
-            return false;
-        }
-
-        /* Disable non-JCE digests */
-        switch (pDigestType) {
-            case JH:
-            case GROESTL:
-            case CUBEHASH:
-            case KANGAROO:
-            case ASCON:
-            case ISAP:
-            case PHOTONBEETLE:
-            case SPARKLE:
-            case XOODYAK:
-                return false;
-            default:
-                return true;
-        }
-    }
 
     @Override
     public boolean validDigestSpec(final GordianDigestSpec pDigestSpec) {

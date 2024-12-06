@@ -16,24 +16,23 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.core.agree;
 
-import java.security.SecureRandom;
-
+import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreement;
+import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementSpec;
+import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementStatus;
+import net.sourceforge.joceanus.gordianknot.api.cipher.GordianStreamCipherSpec;
+import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymCipherSpec;
+import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactoryType;
+import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySetSpec;
+import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianAgreementResult.GordianDerivationId;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.cipher.GordianCoreCipherFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianLogicException;
+import net.sourceforge.joceanus.gordianknot.impl.core.keyset.GordianCoreKeySetFactory;
+import net.sourceforge.joceanus.oceanus.OceanusException;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.util.Arrays;
 
-import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreement;
-import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementStatus;
-import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementSpec;
-import net.sourceforge.joceanus.gordianknot.api.cipher.GordianStreamCipherSpec;
-import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymCipherSpec;
-import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestType;
-import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactoryType;
-import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySetSpec;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianLogicException;
-import net.sourceforge.joceanus.gordianknot.impl.core.cipher.GordianCoreCipherFactory;
-import net.sourceforge.joceanus.gordianknot.impl.core.keyset.GordianCoreKeySetFactory;
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import java.security.SecureRandom;
 
 /**
  * Key Agreement Specification.
@@ -135,7 +134,7 @@ public abstract class GordianCoreAgreement
         /* Must be in result available state */
         checkStatus(GordianAgreementStatus.RESULT_AVAILABLE);
 
-        /* Obtain result to  return and reset the agreement */
+        /* Obtain result to return and reset the agreement */
         final Object myResult = theResult;
         reset();
 
@@ -193,6 +192,14 @@ public abstract class GordianCoreAgreement
             /* Check Spec */
             final GordianCoreCipherFactory myCipherFactory = (GordianCoreCipherFactory) theFactory.getCipherFactory();
             myCipherFactory.checkStreamCipherSpec((GordianStreamCipherSpec) pResultType);
+            return;
+        }
+
+        /* Validate a byte array */
+        if (pResultType instanceof Integer) {
+            if (((Integer) pResultType) <= 0) {
+                throw new GordianLogicException("Invalid length for byteArray");
+            }
             return;
         }
 
@@ -336,14 +343,15 @@ public abstract class GordianCoreAgreement
 
     /**
      * Calculate the derived secret.
-     * @param pDigestType the digestType
      * @param pSecret the secret
-     * @param pResult the result buffer
+     * @param pId the derivation Id
+     * @param pResultLen the result length
+     * @return the derived secret
      * @throws OceanusException on error
      */
-    protected void calculateDerivedSecret(final GordianDigestType pDigestType,
-                                          final byte[] pSecret,
-                                          final byte[] pResult) throws OceanusException {
-        theResultCalc.calculateDerivedSecret(pDigestType, pSecret, pResult);
+    protected byte[] calculateDerivedSecret(final byte[] pSecret,
+                                            final GordianDerivationId pId,
+                                            final int pResultLen) throws OceanusException {
+        return theResultCalc.calculateDerivedSecret(pSecret, pId, pResultLen);
     }
 }

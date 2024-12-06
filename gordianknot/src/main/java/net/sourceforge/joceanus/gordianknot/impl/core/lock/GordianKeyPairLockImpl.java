@@ -32,7 +32,7 @@ import net.sourceforge.joceanus.gordianknot.api.lock.GordianPasswordLockSpec;
 import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianAgreementMessageASN1;
 import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianAgreementMessageASN1.GordianMessageType;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianLogicException;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianLogicException;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianParameters;
 import net.sourceforge.joceanus.gordianknot.impl.core.keyset.GordianCoreKeySet;
 import net.sourceforge.joceanus.oceanus.OceanusDataConverter;
@@ -233,7 +233,7 @@ public class GordianKeyPairLockImpl
      * @return the byte length
      */
     public static int getEncodedLength() {
-        return GordianPasswordLockASN1.getEncodedLength(GordianCoreKeySet.getEncryptionLength(GordianParameters.SECRET_LEN.getByteLength() << 1));
+        return GordianPasswordLockASN1.getEncodedLength(GordianCoreKeySet.getEncryptionLength(GordianParameters.SEED_LEN.getByteLength()));
     }
 
     @Override

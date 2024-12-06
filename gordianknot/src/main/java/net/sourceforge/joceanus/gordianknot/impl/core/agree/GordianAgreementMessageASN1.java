@@ -16,12 +16,10 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.core.agree;
 
-import java.io.IOException;
-import java.security.spec.X509EncodedKeySpec;
-import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.Objects;
-
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianASN1Util.GordianASN1Object;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianIOException;
+import net.sourceforge.joceanus.oceanus.OceanusException;
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.ASN1Integer;
 import org.bouncycastle.asn1.ASN1OctetString;
@@ -34,10 +32,11 @@ import org.bouncycastle.asn1.DERTaggedObject;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianASN1Util.GordianASN1Object;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianDataException;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianIOException;
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import java.io.IOException;
+import java.security.spec.X509EncodedKeySpec;
+import java.util.Arrays;
+import java.util.Enumeration;
+import java.util.Objects;
 
 /**
  * ASN1 Encoding of Agreement Messages.
@@ -526,8 +525,8 @@ public final class GordianAgreementMessageASN1
 
     @Override
     public int hashCode() {
-        return Objects.hash(getMessageType(), getClientId(), getServerId())
-                ^ Objects.hash(getAgreementId(), getResultId(), getSignatureId(), getEphemeral())
+        return Objects.hash(getMessageType(), getClientId(), getServerId(),
+                             getAgreementId(), getResultId(), getSignatureId(), getEphemeral())
                 ^ Arrays.hashCode(getSignature())
                 ^ Arrays.hashCode(getEncapsulated())
                 ^ Arrays.hashCode(getConfirmation())

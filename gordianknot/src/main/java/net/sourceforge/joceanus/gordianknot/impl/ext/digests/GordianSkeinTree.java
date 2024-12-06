@@ -817,6 +817,7 @@ public class GordianSkeinTree
             super(outputSizeBits);
 
             // 16..18 treeConfig
+            final byte[] bytes = getBytes();
             bytes[CONFIGBASE] = (byte) treeLeafLen;
             bytes[CONFIGBASE + 1] = (byte) treeFanOut;
             bytes[CONFIGBASE + 2] = (byte) treeMaxDepth;

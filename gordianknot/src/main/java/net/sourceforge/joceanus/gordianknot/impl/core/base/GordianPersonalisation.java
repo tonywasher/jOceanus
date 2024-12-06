@@ -16,11 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.core.base;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.util.Arrays;
-import java.util.Random;
-
 import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigest;
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestFactory;
@@ -28,8 +23,18 @@ import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestType;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMac;
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
+import net.sourceforge.joceanus.gordianknot.impl.core.kdf.GordianHKDFEngine;
+import net.sourceforge.joceanus.gordianknot.impl.core.kdf.GordianHKDFParams;
 import net.sourceforge.joceanus.oceanus.OceanusDataConverter;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Random;
 
 /**
  * Personalisation.
@@ -38,22 +43,32 @@ public class GordianPersonalisation {
     /**
      * The Base personalisation.
      */
-    protected static final String BASE_PERSONAL = "jG0rd1anKn0t";
+    private static final byte[] BASE_PERSONAL = "G0rd1anKn0t".getBytes(StandardCharsets.UTF_8);
 
     /**
-     * Default iterations.
+     * Number of iterations.
      */
-    public static final Integer DEFAULT_ITERATIONS = 2048;
+    public static final Integer NUM_ITERATIONS = 128;
 
     /**
-     * Internal iterations.
+     * Phrase multiplier.
      */
-    public static final Integer INTERNAL_ITERATIONS = 128;
+    public static final Integer PHRASE_SHIFT = 4;
 
     /**
      * The hash length.
      */
-    private static final GordianLength HASH_LEN = GordianLength.LEN_512;
+    private static final GordianLength HASH_LEN = GordianLength.LEN_256;
+
+    /**
+     * The result length.
+     */
+    private static final int RESULT_LEN = GordianLength.LEN_512.getByteLength();
+
+    /**
+     * The # of results.
+     */
+    private static final int NUM_RESULTS = 3;
 
     /**
      * Personalisation bytes.
@@ -100,9 +115,11 @@ public class GordianPersonalisation {
 
         /* Loop through the digestTypes */
         for (final GordianDigestType myType : GordianDigestType.values()) {
-            /* Add the digest if it is relevant */
-            if (myFactory.supportedExternalDigestTypes().test(myType)) {
-                myDigests[myLen++] = myFactory.createDigest(new GordianDigestSpec(myType, HASH_LEN));
+            /* Add the digest if it is available as 256-bit and supports largeData */
+            final GordianDigestSpec mySpec = new GordianDigestSpec(myType, HASH_LEN);
+            if (myType.supportsLargeData()
+                    && myFactory.supportedDigestSpecs().test(mySpec)) {
+                myDigests[myLen++] = myFactory.createDigest(mySpec);
             }
         }
 
@@ -142,10 +159,15 @@ public class GordianPersonalisation {
     private static byte[][] personalise(final GordianCoreFactory pFactory) throws OceanusException {
         /* Determine the digests */
         final GordianDigest[] myDigests = determineDigests(pFactory);
+
+        /* Allocate buffers */
         final byte[][] myHashes = new byte[myDigests.length][];
+        final byte[] myConfig = new byte[HASH_LEN.getByteLength()];
+        byte[] myExpanded = null;
+        GordianHKDFParams myParams = null;
+        final byte[] myKeySetVec = pFactory.getKeySetSeed();
 
         /* Obtain configuration */
-        final byte[] myPersonalBytes = OceanusDataConverter.stringToByteArray(BASE_PERSONAL);
         byte[] myPhraseBytes = pFactory.getSecuritySeed();
         if (myPhraseBytes == null) {
             myPhraseBytes = OceanusDataConverter.stringToByteArray(getHostName());
@@ -154,11 +176,10 @@ public class GordianPersonalisation {
         /* Protect against exceptions */
         try {
             /* Initialise hashes */
-            final byte[] myConfig = new byte[HASH_LEN.getByteLength()];
             for (int i = 0; i < myDigests.length; i++) {
                 /* Initialise the digests */
                 final GordianDigest myDigest = myDigests[i];
-                myDigest.update(myPersonalBytes);
+                myDigest.update(BASE_PERSONAL);
                 myDigest.update(myPhraseBytes);
 
                 /* Finish the update and store the buffer */
@@ -169,37 +190,61 @@ public class GordianPersonalisation {
 
             /* Determine the number of iterations */
             final int myIterations = pFactory.isInternal()
-                                     ? INTERNAL_ITERATIONS
-                                     : DEFAULT_ITERATIONS;
+                    ? NUM_ITERATIONS
+                    : NUM_ITERATIONS << PHRASE_SHIFT;
 
             /* Loop the required amount of times to cross-fertilise */
             for (int i = 0; i < myIterations; i++) {
                 iterateHashes(myDigests, myHashes, myConfig);
             }
 
-            /* build the initVector mask */
-            final byte[] myInitVec = new byte[HASH_LEN.getByteLength()];
-            for (int i = 0; i < myIterations; i++) {
-                iterateHashes(myDigests, myHashes, myInitVec);
-            }
+            /* Determine the number of results that we want from HKDF */
+            final int numResults = myKeySetVec != null ? NUM_RESULTS - 1 : NUM_RESULTS;
 
-            /* build the keySetVector if required */
-            byte[] myKeySetVec = pFactory.getParameters().getKeySetSeed();
-            if (myKeySetVec == null) {
-                myKeySetVec = new byte[HASH_LEN.getByteLength()];
-                for (int i = 0; i < INTERNAL_ITERATIONS; i++) {
-                    iterateHashes(myDigests, myHashes, myKeySetVec);
-                }
+            /* Use HKDF to expand to the required length */
+            final GordianDigestSpec mySpec = determineHKDFDigestSpec(pFactory, myConfig);
+            final GordianHKDFEngine myEngine = new GordianHKDFEngine(pFactory, mySpec);
+            myParams = GordianHKDFParams.expandOnly(myConfig, RESULT_LEN * numResults).withInfo(BASE_PERSONAL);
+            myExpanded = myEngine.deriveBytes(myParams);
+
+            /* Extract the results */
+            final byte[][] myResults = new byte[NUM_RESULTS][];
+            myResults[0] = new byte[RESULT_LEN];
+            System.arraycopy(myExpanded, 0, myResults[0], 0, RESULT_LEN);
+            myResults[1] = new byte[RESULT_LEN];
+            System.arraycopy(myExpanded, RESULT_LEN, myResults[1], 0, RESULT_LEN);
+
+            /* Handle the keySetVector */
+            if (myKeySetVec != null) {
+                myResults[2] = myKeySetVec;
+            } else {
+                myResults[2] = new byte[RESULT_LEN];
+                System.arraycopy(myExpanded, RESULT_LEN << 1, myResults[2], 0, RESULT_LEN);
             }
 
             /* Return the array */
-            return new byte[][]
-                    { myConfig, myInitVec, myKeySetVec };
+            return myResults;
 
             /* Clear intermediate arrays */
         } finally {
+            /* Clear intermediate hashes */
             for (int i = 0; i < myDigests.length; i++) {
-                Arrays.fill(myHashes[i], (byte) 0);
+                if (myHashes[i] != null) {
+                    Arrays.fill(myHashes[i], (byte) 0);
+                }
+            }
+
+            /* Clear intermediate result */
+            Arrays.fill(myConfig, (byte) 0);
+
+            /* Clear temporary output buffer */
+            if (myExpanded != null) {
+                Arrays.fill(myExpanded, (byte) 0);
+            }
+
+            /* Clear HKDF parameters */
+            if (myParams != null) {
+                myParams.clearParameters();
             }
         }
     }
@@ -244,10 +289,20 @@ public class GordianPersonalisation {
     /**
      * Update a MAC with personalisation.
      * @param pMac the MAC
-      */
+     */
     public void updateMac(final GordianMac pMac) {
         pMac.update(thePersonalisation);
         pMac.update(theInitVector);
+    }
+
+    /**
+     * Update HKDFInfo with personalisation.
+     * @param pParams the params
+     */
+    public void updateInfo(final GordianHKDFParams pParams) {
+        pParams.withInfo(BASE_PERSONAL);
+        pParams.withInfo(thePersonalisation);
+        pParams.withInfo(theInitVector);
     }
 
     /**
@@ -298,6 +353,30 @@ public class GordianPersonalisation {
         final long myBaseSeed = Integer.toUnsignedLong(OceanusDataConverter.byteArrayToInteger(pBaseSeed));
         final long mySeed = myPrefix ^ myBaseSeed;
         return new Random(mySeed);
+    }
+
+    /**
+     * Detremine the HKDFDigestSpec.
+     * @param pFactory the factory
+     * @param pBaseSeed the seed.
+     * @return the digestSpec
+     */
+    private static GordianDigestSpec determineHKDFDigestSpec(final GordianFactory pFactory,
+                                                             final byte[] pBaseSeed) {
+        /* Build the 64-bit seed and create the seeded random */
+        final long mySeed = OceanusDataConverter.byteArrayToLong(pBaseSeed);
+        final Random myRandom = new Random(mySeed);
+
+        /* Access the list to select from */
+        final GordianValidator myValidator = ((GordianCoreFactory) pFactory).getValidator();
+        final List<GordianDigestType> myTypes = myValidator.listAllExternalDigestTypes();
+
+        /* Select from the list */
+        final int myIndex = myRandom.nextInt(myTypes.size());
+        final GordianDigestType myType = myTypes.get(myIndex);
+
+        /* return the selected digestSpec */
+        return new GordianDigestSpec(myType, GordianLength.LEN_512);
     }
 
     /**
@@ -367,9 +446,9 @@ public class GordianPersonalisation {
      */
     public enum GordianPersonalId {
         /**
-         * KeyRandom Prefix.
+         * KeySetGenRandom Prefix.
          */
-        KEYRANDOM,
+        KEYSETGENRANDOM,
 
         /**
          * KeySetRandom Prefix.
@@ -377,9 +456,9 @@ public class GordianPersonalisation {
         KEYSETRANDOM,
 
         /**
-         * HashRandom Prefix.
+         * LockRandom Prefix.
          */
-        HASHRANDOM,
+        LOCKRANDOM,
 
         /**
          * KnuthPrime.

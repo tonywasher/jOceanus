@@ -20,8 +20,8 @@ import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestSubSpec.GordianDigestState;
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestType;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCryptoException;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianDataException;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.digest.GordianCoreDigest;
 import net.sourceforge.joceanus.oceanus.OceanusException;
 

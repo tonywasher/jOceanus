@@ -16,7 +16,11 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.core.kdf;
 
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -28,6 +32,11 @@ public final class GordianHKDFParams {
      * The initial keying material.
      */
     private final List<byte[]> theIKMs;
+
+    /**
+     * The salts.
+     */
+    private final List<byte[]> theSalts;
 
     /**
      * The pseudo-random key.
@@ -45,11 +54,6 @@ public final class GordianHKDFParams {
     private final GordianHKDFMode theMode;
 
     /**
-     * The salt.
-     */
-    private final byte[] theSalt;
-
-    /**
      * The expand length.
      */
     private final int theLength;
@@ -57,42 +61,40 @@ public final class GordianHKDFParams {
     /**
      * Constructor.
      * @param pMode theMode
-     * @param pSalt the salt
      * @param pPRK the pseudo-random key
      * @param pLength the length
+     * @throws OceanusException on error
      */
     private GordianHKDFParams(final GordianHKDFMode pMode,
-                              final byte[] pSalt,
                               final byte[] pPRK,
-                              final int pLength) {
+                              final int pLength) throws OceanusException {
         /* Store parameters */
         theMode = pMode;
-        theSalt = pSalt == null ? null : pSalt.clone();
         thePRK = pPRK == null ? null : pPRK.clone();
         theLength = pLength;
         theIKMs = new ArrayList<>();
+        theSalts = new ArrayList<>();
         theInfo = new ArrayList<>();
 
-        /* Check salt */
-        if (pMode.doExtract()
-                && (theSalt == null || pSalt.length == 0)) {
-            throw new IllegalArgumentException("Salt must be non-null and non-zero length for extract");
-        }
-
-        /* Check prk */
+        /* Check PRK */
         if (GordianHKDFMode.EXPAND.equals(theMode)
                 && (thePRK == null || pPRK.length == 0)) {
-            throw new IllegalArgumentException("PRK must be non-null and non-zero length for expandOnly");
+            throw new GordianDataException("PRK must be non-null and non-zero length for expandOnly");
+        }
+
+        /* Check length */
+        if (theMode.doExpand() && theLength <= 0) {
+            throw new GordianDataException("Length must be greater than zero");
         }
     }
 
     /**
      * Create an extractOnly parameters.
-     * @param pSalt the salt
      * @return an extractOnly parameters
+     * @throws OceanusException on error
      */
-    static GordianHKDFParams extractOnly(final byte[] pSalt) {
-        return new GordianHKDFParams(GordianHKDFMode.EXTRACT, pSalt, null, 0);
+    public static GordianHKDFParams extractOnly() throws OceanusException {
+        return new GordianHKDFParams(GordianHKDFMode.EXTRACT, null, 0);
     }
 
     /**
@@ -100,21 +102,21 @@ public final class GordianHKDFParams {
      * @param pPRK the pseudo-random key
      * @param pLength the length
      * @return an expandOnly parameters
+     * @throws OceanusException on error
      */
-    static GordianHKDFParams expandOnly(final byte[] pPRK,
-                                        final int pLength) {
-        return new GordianHKDFParams(GordianHKDFMode.EXPAND, null, pPRK, pLength);
+    public static GordianHKDFParams expandOnly(final byte[] pPRK,
+                                               final int pLength) throws OceanusException {
+        return new GordianHKDFParams(GordianHKDFMode.EXPAND, pPRK, pLength);
     }
 
     /**
      * Create an extractThenExpand parameters.
-     * @param pSalt the salt
      * @param pLength the length
      * @return an extractThenExpand parameters
+     * @throws OceanusException on error
      */
-    static GordianHKDFParams extractThenExpand(final byte[] pSalt,
-                                               final int pLength) {
-        return new GordianHKDFParams(GordianHKDFMode.EXTRACTTHENEXPAND, pSalt, null, pLength);
+    public static GordianHKDFParams extractThenExpand(final int pLength) throws OceanusException {
+        return new GordianHKDFParams(GordianHKDFMode.EXTRACTTHENEXPAND, null, pLength);
     }
 
     /**
@@ -123,14 +125,6 @@ public final class GordianHKDFParams {
      */
     GordianHKDFMode getMode() {
         return theMode;
-    }
-
-    /**
-     * Obtain the salt.
-     * @return the salt
-     */
-    byte[] getSalt() {
-        return theSalt;
     }
 
     /**
@@ -146,7 +140,7 @@ public final class GordianHKDFParams {
      * @param pIKM the initial keying material
      * @return the parameters
      */
-    GordianHKDFParams addIKM(final byte[] pIKM) {
+    public GordianHKDFParams withIKM(final byte[] pIKM) {
         if (pIKM != null && pIKM.length > 0) {
             theIKMs.add(pIKM.clone());
         }
@@ -162,23 +156,34 @@ public final class GordianHKDFParams {
     }
 
     /**
-     * Add info.
-     * @param pInfo the info
+     * Add salt.
+     * @param pSalt the salt
      * @return the parameters
      */
-    GordianHKDFParams addInfo(final byte[] pInfo) {
-        if (pInfo != null && pInfo.length > 0) {
-            theInfo.add(pInfo.clone());
+    public GordianHKDFParams withSalt(final byte[] pSalt) {
+        if (pSalt != null && pSalt.length > 0) {
+            theSalts.add(pSalt.clone());
         }
         return this;
     }
 
     /**
-     * Clear the info list.
+     * Obtain the saltIterator.
+     * @return the iterator.
+     */
+    Iterator<byte[]> saltIterator() {
+        return theSalts.iterator();
+    }
+
+    /**
+     * Add info.
+     * @param pInfo the info
      * @return the parameters
      */
-    GordianHKDFParams clearInfo() {
-        theInfo.clear();
+    public GordianHKDFParams withInfo(final byte[] pInfo) {
+        if (pInfo != null && pInfo.length > 0) {
+            theInfo.add(pInfo.clone());
+        }
         return this;
     }
 
@@ -195,9 +200,31 @@ public final class GordianHKDFParams {
      * @return the length
      */
     int getLength() {
-        if (theLength <= 0) {
-            throw new IllegalArgumentException("Length must be greater than zero");
-        }
         return theLength;
+    }
+
+    /**
+     * Clear parameters.
+     */
+    public void clearParameters() {
+        /* Clear all initial keying materials */
+        for (final byte[] myIKM : theIKMs) {
+            Arrays.fill(myIKM, (byte) 0);
+        }
+
+        /* Clear all salts */
+        for (final byte[] mySalt : theSalts) {
+            Arrays.fill(mySalt, (byte) 0);
+        }
+
+        /* Clear all info */
+        for (final byte[] myInfo : theInfo) {
+            Arrays.fill(myInfo, (byte) 0);
+        }
+
+        /* Clear PRK */
+        if (thePRK != null) {
+            Arrays.fill(thePRK, (byte) 0);
+        }
     }
 }

@@ -16,11 +16,11 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.core.stream;
 
+import SevenZip.Compression.LZMA.Encoder;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-
-import SevenZip.Compression.LZMA.Encoder;
 
 /**
  * Provides an LZMA compression OutputStream. Due to the design of the 7-Zip libraries the
@@ -176,8 +176,8 @@ final class GordianLZMAOutputStream
                 theTarget.close();
 
                 /* Catch and record any errors */
-            } catch (IOException e) {
-                theError = e;
+            } catch (Exception e) {
+                theError = e instanceof IOException ? (IOException) e : new IOException(e);
             }
         }
     }

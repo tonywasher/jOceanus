@@ -27,8 +27,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianDataException;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianIOException;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianIOException;
 import net.sourceforge.joceanus.gordianknot.impl.core.keystore.GordianPEMObject.GordianPEMObjectType;
 import net.sourceforge.joceanus.oceanus.OceanusException;
 import net.sourceforge.joceanus.oceanus.OceanusDataConverter;

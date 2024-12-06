@@ -16,6 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.ext.digests;
 
+import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.gordianknot.impl.ext.params.GordianKeccakParameters;
 
 import org.bouncycastle.crypto.Digest;
@@ -39,6 +40,11 @@ public abstract class GordianKangarooDigest
     public static class GordianKangarooTwelve
             extends GordianKangarooBase {
         /**
+         * # of rounds.
+         */
+        private static final int ROUNDS = 12;
+
+        /**
          * Constructor.
          */
         public GordianKangarooTwelve() {
@@ -50,7 +56,7 @@ public abstract class GordianKangarooDigest
          * @param pLength the digest length
          */
         public GordianKangarooTwelve(final int pLength) {
-            super(128, 12, pLength);
+            super(GordianLength.LEN_128.getLength(), ROUNDS, pLength);
         }
 
         @Override
@@ -65,6 +71,11 @@ public abstract class GordianKangarooDigest
     public static class GordianMarsupilamiFourteen
             extends GordianKangarooBase {
         /**
+         * # of rounds.
+         */
+        private static final int ROUNDS = 14;
+
+        /**
          * Constructor.
          */
         public GordianMarsupilamiFourteen() {
@@ -76,7 +87,7 @@ public abstract class GordianKangarooDigest
          * @param pLength the digest length
          */
         public GordianMarsupilamiFourteen(final int pLength) {
-            super(256, 14, pLength);
+            super(GordianLength.LEN_256.getLength(), ROUNDS, pLength);
         }
 
         @Override
@@ -438,7 +449,7 @@ public abstract class GordianKangarooDigest
         /**
          * The round constants.
          */
-        private static long[] KeccakRoundConstants = new long[]{ 0x0000000000000001L, 0x0000000000008082L,
+        private static long[] keccakRoundConstants = new long[]{ 0x0000000000000001L, 0x0000000000008082L,
                 0x800000000000808aL, 0x8000000080008000L, 0x000000000000808bL, 0x0000000080000001L, 0x8000000080008081L,
                 0x8000000000008009L, 0x000000000000008aL, 0x0000000000000088L, 0x0000000080008009L, 0x000000008000000aL,
                 0x000000008000808bL, 0x800000000000008bL, 0x8000000000008089L, 0x8000000000008003L, 0x8000000000008002L,
@@ -493,7 +504,7 @@ public abstract class GordianKangarooDigest
          */
         private void initSponge() {
             Arrays.fill(theState, 0L);
-            Arrays.fill(theQueue, (byte)0);
+            Arrays.fill(theQueue, (byte) 0);
             bytesInQueue = 0;
             squeezing = false;
         }
@@ -516,7 +527,7 @@ public abstract class GordianKangarooDigest
             while (count < len) {
                 if (bytesInQueue == 0 && count <= (len - theRateBytes)) {
                     do {
-                        KangarooAbsorb(data, off + count);
+                        kangarooAbsorb(data, off + count);
                         count += theRateBytes;
                     } while (count <= (len - theRateBytes));
 
@@ -528,7 +539,7 @@ public abstract class GordianKangarooDigest
                     count += partialBlock;
 
                     if (bytesInQueue == theRateBytes) {
-                        KangarooAbsorb(theQueue, 0);
+                        kangarooAbsorb(theQueue, 0);
                         bytesInQueue = 0;
                     }
                 }
@@ -544,9 +555,9 @@ public abstract class GordianKangarooDigest
                 theQueue[i] = 0;
             }
             theQueue[theRateBytes - 1] ^= 0x80;
-            KangarooAbsorb(theQueue, 0);
+            kangarooAbsorb(theQueue, 0);
 
-            KangarooExtract();
+            kangarooExtract();
             bytesInQueue = theRateBytes;
             squeezing = true;
         }
@@ -567,11 +578,11 @@ public abstract class GordianKangarooDigest
             int i = 0;
             while (i < outputLength) {
                 if (bytesInQueue == 0) {
-                    KangarooPermutation();
-                    KangarooExtract();
+                    kangarooPermutation();
+                    kangarooExtract();
                     bytesInQueue = theRateBytes;
                 }
-                int partialBlock = Math.min(bytesInQueue, outputLength - i);
+                final int partialBlock = Math.min(bytesInQueue, outputLength - i);
                 System.arraycopy(theQueue, theRateBytes - bytesInQueue, output, offset + i, partialBlock);
                 bytesInQueue -= partialBlock;
                 i += partialBlock;
@@ -583,7 +594,7 @@ public abstract class GordianKangarooDigest
          * @param data the data to absorb
          * @param off the starting offset in the data
          */
-        private void KangarooAbsorb(final byte[] data,
+        private void kangarooAbsorb(final byte[] data,
                                     final int off) {
             final int count = theRateBytes >> 3;
             int offSet = off;
@@ -592,43 +603,62 @@ public abstract class GordianKangarooDigest
                 offSet += 8;
             }
 
-            KangarooPermutation();
+            kangarooPermutation();
         }
 
         /**
          * Extract a block of data to the queue.
          */
-        private void KangarooExtract() {
+        private void kangarooExtract() {
             Pack.longToLittleEndian(theState, 0, theRateBytes >> 3, theQueue, 0);
         }
 
         /**
          * Permutation (KP).
          */
-        private void KangarooPermutation() {
-            long[] A = theState;
+        private void kangarooPermutation() {
+            final long[] a = theState;
 
-            long a00 = A[ 0], a01 = A[ 1], a02 = A[ 2], a03 = A[ 3], a04 = A[ 4];
-            long a05 = A[ 5], a06 = A[ 6], a07 = A[ 7], a08 = A[ 8], a09 = A[ 9];
-            long a10 = A[10], a11 = A[11], a12 = A[12], a13 = A[13], a14 = A[14];
-            long a15 = A[15], a16 = A[16], a17 = A[17], a18 = A[18], a19 = A[19];
-            long a20 = A[20], a21 = A[21], a22 = A[22], a23 = A[23], a24 = A[24];
+            long a00 = a[ 0];
+            long a01 = a[ 1];
+            long a02 = a[ 2];
+            long a03 = a[ 3];
+            long a04 = a[ 4];
+            long a05 = a[ 5];
+            long a06 = a[ 6];
+            long a07 = a[ 7];
+            long a08 = a[ 8];
+            long a09 = a[ 9];
+            long a10 = a[10];
+            long a11 = a[11];
+            long a12 = a[12];
+            long a13 = a[13];
+            long a14 = a[14];
+            long a15 = a[15];
+            long a16 = a[16];
+            long a17 = a[17];
+            long a18 = a[18];
+            long a19 = a[19];
+            long a20 = a[20];
+            long a21 = a[21];
+            long a22 = a[22];
+            long a23 = a[23];
+            long a24 = a[24];
 
-            int myBase = KeccakRoundConstants.length - theRounds;
-            for (int i = 0; i < theRounds; i++)
-            {
+            final int myBase = keccakRoundConstants.length - theRounds;
+            for (int i = 0; i < theRounds; i++) {
                 // theta
                 long c0 = a00 ^ a05 ^ a10 ^ a15 ^ a20;
                 long c1 = a01 ^ a06 ^ a11 ^ a16 ^ a21;
-                long c2 = a02 ^ a07 ^ a12 ^ a17 ^ a22;
-                long c3 = a03 ^ a08 ^ a13 ^ a18 ^ a23;
-                long c4 = a04 ^ a09 ^ a14 ^ a19 ^ a24;
+                final long c2 = a02 ^ a07 ^ a12 ^ a17 ^ a22;
+                final long c3 = a03 ^ a08 ^ a13 ^ a18 ^ a23;
+                final long c4 = a04 ^ a09 ^ a14 ^ a19 ^ a24;
 
-                long d1 = (c1 << 1 | c1 >>> -1) ^ c4;
-                long d2 = (c2 << 1 | c2 >>> -1) ^ c0;
-                long d3 = (c3 << 1 | c3 >>> -1) ^ c1;
-                long d4 = (c4 << 1 | c4 >>> -1) ^ c2;
-                long d0 = (c0 << 1 | c0 >>> -1) ^ c3;
+                final long d1 = (c1 << 1 | c1 >>> -1) ^ c4;
+                final long d2 = (c2 << 1 | c2 >>> -1) ^ c0;
+                final long d3 = (c3 << 1 | c3 >>> -1) ^ c1;
+                final long d4 = (c4 << 1 | c4 >>> -1) ^ c2;
+                final long d0 = (c0 << 1 | c0 >>> -1) ^ c3;
 
                 a00 ^= d1; a05 ^= d1; a10 ^= d1; a15 ^= d1; a20 ^= d1;
                 a01 ^= d2; a06 ^= d2; a11 ^= d2; a16 ^= d2; a21 ^= d2;
@@ -705,14 +735,14 @@ public abstract class GordianKangarooDigest
                 a21 = c1;
 
                 // iota
-                a00 ^= KeccakRoundConstants[myBase + i];
+                a00 ^= keccakRoundConstants[myBase + i];
             }
 
-            A[ 0] = a00; A[ 1] = a01; A[ 2] = a02; A[ 3] = a03; A[ 4] = a04;
-            A[ 5] = a05; A[ 6] = a06; A[ 7] = a07; A[ 8] = a08; A[ 9] = a09;
-            A[10] = a10; A[11] = a11; A[12] = a12; A[13] = a13; A[14] = a14;
-            A[15] = a15; A[16] = a16; A[17] = a17; A[18] = a18; A[19] = a19;
-            A[20] = a20; A[21] = a21; A[22] = a22; A[23] = a23; A[24] = a24;
+            a[ 0] = a00; a[ 1] = a01; a[ 2] = a02; a[ 3] = a03; a[ 4] = a04;
+            a[ 5] = a05; a[ 6] = a06; a[ 7] = a07; a[ 8] = a08; a[ 9] = a09;
+            a[10] = a10; a[11] = a11; a[12] = a12; a[13] = a13; a[14] = a14;
+            a[15] = a15; a[16] = a16; a[17] = a17; a[18] = a18; a[19] = a19;
+            a[20] = a20; a[21] = a21; a[22] = a22; a[23] = a23; a[24] = a24;
         }
     }
 }

@@ -16,21 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.junit.regression;
 
-import java.security.SecureRandom;
-import java.security.spec.PKCS8EncodedKeySpec;
-import java.security.spec.X509EncodedKeySpec;
-import java.util.Arrays;
-import java.util.Objects;
-import java.util.stream.Stream;
-
-import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.DynamicContainer;
-import org.junit.jupiter.api.DynamicNode;
-import org.junit.jupiter.api.DynamicTest;
-import org.junit.jupiter.api.TestFactory;
-
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreement;
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementFactory;
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementSpec;
@@ -71,6 +56,20 @@ import net.sourceforge.joceanus.gordianknot.junit.regression.AsymmetricStore.Fac
 import net.sourceforge.joceanus.gordianknot.junit.regression.AsymmetricStore.FactorySignature;
 import net.sourceforge.joceanus.gordianknot.util.GordianGenerator;
 import net.sourceforge.joceanus.oceanus.OceanusException;
+import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.DynamicContainer;
+import org.junit.jupiter.api.DynamicNode;
+import org.junit.jupiter.api.DynamicTest;
+import org.junit.jupiter.api.TestFactory;
+
+import java.security.SecureRandom;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
+import java.util.Arrays;
+import java.util.Objects;
+import java.util.stream.Stream;
 
 /**
  * Security Test suite - Test Asymmetric functionality.
@@ -112,14 +111,19 @@ class AsymmetricTest {
     private static final GordianStreamCipherSpec STREAMKEYSPEC = GordianStreamCipherSpecBuilder.stream(GordianStreamKeySpecBuilder.chacha(GordianLength.LEN_256));
 
     /**
+     * ByteArrayResult.
+     */
+    private static final Integer BYTEARRAY = GordianLength.LEN_128.getLength();
+
+    /**
      * Initialise Factories.
      * @throws OceanusException on error
      */
     @BeforeAll
     public static void createSecurityFactories() throws OceanusException {
         /* Create the factories */
-        BCFACTORY = GordianGenerator.createFactory(GordianFactoryType.BC);
-        JCAFACTORY = GordianGenerator.createFactory(GordianFactoryType.JCA);
+        BCFACTORY = GordianGenerator.createRandomFactory(GordianFactoryType.BC);
+        JCAFACTORY = GordianGenerator.createRandomFactory(GordianFactoryType.JCA);
 
         /* Create the BC Signer */
         final GordianKeyPairSpec mySpec = GordianKeyPairSpecBuilder.ed448();
@@ -260,7 +264,8 @@ class AsymmetricTest {
                 DynamicTest.dynamicTest("keySet", () -> checkSelfAgreement(pAgreement, KEYSETSPEC)),
                 DynamicTest.dynamicTest("symCipher", () -> checkSelfAgreement(pAgreement, SYMKEYSPEC)),
                 DynamicTest.dynamicTest("streamCipher", () -> checkSelfAgreement(pAgreement, STREAMKEYSPEC)),
-                DynamicTest.dynamicTest("basic", () -> checkSelfAgreement(pAgreement, null))
+                DynamicTest.dynamicTest("byteArray", () -> checkSelfAgreement(pAgreement, BYTEARRAY)),
+                DynamicTest.dynamicTest("raw", () -> checkSelfAgreement(pAgreement, null))
          )));
 
         /* Add algorithmId test */

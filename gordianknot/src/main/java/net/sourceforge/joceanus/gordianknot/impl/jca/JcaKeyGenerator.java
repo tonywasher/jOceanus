@@ -16,15 +16,15 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.jca;
 
-import java.util.Random;
-import javax.crypto.KeyGenerator;
-import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
-
 import net.sourceforge.joceanus.gordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMac;
 import net.sourceforge.joceanus.gordianknot.impl.core.key.GordianCoreKeyGenerator;
 import net.sourceforge.joceanus.oceanus.OceanusException;
+
+import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
+import java.util.Random;
 
 /**
  * Wrapper for JCA BouncyCastle KeyGenerator.
@@ -74,9 +74,8 @@ public final class JcaKeyGenerator<T extends GordianKeySpec>
 
     @Override
     public JcaKey<T> generateKeyFromSecret(final byte[] pSecret,
-                                           final byte[] pInitVector,
-                                           final Random pSeededRandom) throws OceanusException {
-        return (JcaKey<T>) super.generateKeyFromSecret(pSecret, pInitVector, pSeededRandom);
+                                            final Random pSeededRandom) throws OceanusException {
+        return (JcaKey<T>) super.generateKeyFromSecret(pSecret, pSeededRandom);
     }
 
     @Override

@@ -36,8 +36,8 @@ import net.sourceforge.joceanus.gordianknot.api.factory.GordianKeyPairFactory;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairGenerator;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianDataException;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianIOException;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianIOException;
 import net.sourceforge.joceanus.gordianknot.impl.core.keypair.GordianCompositeKeyPair.GordianStateAwareCompositeKeyPair;
 import net.sourceforge.joceanus.oceanus.OceanusException;
 

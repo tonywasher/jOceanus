@@ -11,14 +11,17 @@
                 The resultTypes can be any of the following</p>
             <table class="defTable">
                 <tr><th>ResultType</th><th>Description</th></tr>
-                <tr><td>GordianParameters</td><td>The underlying agreement is used as the security phrase with the rest of the supplied parameters to
+                <tr><td>GordianParameters</td><td>The underlying agreement is used as the input to the HKDF algorithm to
                     generate a new personalised <strong>GordianFactory</strong></td></tr>
-                <tr><td>GordianKeySetSpec</td><td>The underlying agreement is used to generate a new <strong>GordianKeySet</strong> of the specified type,
-                    belonging to an agreed BC factory.</td></tr>
-                <tr><td>GordianSymCipherSpec</td><td>The agreement is used to generate a new <strong>GordianSymCipher</strong> Key and InitVector (if required),
+                <tr><td>GordianKeySetSpec</td><td>The underlying agreement is used as the input to the HKDF algorithm to generate a new
+                    <strong>GordianKeySet</strong> of the specified type, belonging to an agreed BC factory.</td></tr>
+                <tr><td>GordianSymCipherSpec</td><td>The underlying agreement is used as the input to the HKDF algorithm to generate a new
+                    <strong>GordianSymCipher</strong> Key and InitVector (if required),
                     belonging to an agreed BC factory. A pair of <strong>GordianSymCipher</strong>s are returned as the result, one for encryption
                     and one for decryption</td></tr>
                 <tr><td>GordianStreamCipherSpec</td><td>Similar to <strong>GordianSymKeySpec</strong>.</td></tr>
+                <tr><td>Integer</td><td>The underlying agreement is used as the input to the HKDF algorithm to generate a byte array
+                    of the desired length</td></tr>
                 <tr><td>null</td><td>The raw agreement bytes are returned.</td></tr>
             </table>
             <p>Agreements are always targeted by a <strong>Client</strong> towards a <strong>Server</strong>. The <strong>GordianAgreement</strong>
@@ -194,10 +197,11 @@
         </section>
         <section name="Composite Agreements">
             <p>Composite agreements may be created by a composite keyPair, as long as each element of the composite keyPair is capable of supporting the
-                desired AgreementSpec. There are two small variations.
+                desired AgreementSpec. There are three small variations.
                 <ol>
-                    <li>Confirm is not supported for <string>SM2</string> agreements</li>
+                    <li>Confirm is not supported for <strong>SM2</strong> agreements</li>
                     <li>Signed agreements are implemented as a set of <strong>Basic</strong> Agreements with the results signed.</li>
+                    <li>The various individual agreements are used as inputs to the HKDF algorithm to extract a combined agreement secret</li>
                 </ol>
             </p>
             <subsection name="Sample">

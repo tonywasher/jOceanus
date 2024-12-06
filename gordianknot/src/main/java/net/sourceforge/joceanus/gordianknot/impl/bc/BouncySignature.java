@@ -36,7 +36,7 @@ import org.bouncycastle.crypto.signers.HMacDSAKCalculator;
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairType;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignatureSpec;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCryptoException;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
 import net.sourceforge.joceanus.gordianknot.impl.core.sign.GordianCoreSignature;
 import net.sourceforge.joceanus.oceanus.OceanusException;
 

@@ -51,7 +51,7 @@ import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyXDHKeyPair.BouncyX448K
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyXMSSKeyPair.BouncyXMSSKeyPairGenerator;
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyXMSSKeyPair.BouncyXMSSMTKeyPairGenerator;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianDataException;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.keypair.GordianCoreKeyPairFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.keystore.GordianCoreKeyStoreFactory;
 import net.sourceforge.joceanus.oceanus.OceanusException;

@@ -16,18 +16,11 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.core.agree;
 
-import java.security.spec.X509EncodedKeySpec;
-import java.util.Objects;
-
-import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
-import org.bouncycastle.util.Arrays;
-
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementSpec;
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementStatus;
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementType;
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianHandshakeAgreement;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
-import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestType;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianKeyPairFactory;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
@@ -37,9 +30,15 @@ import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacFactory;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacSpec;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacSpecBuilder;
 import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianAgreementMessageASN1.GordianMessageType;
+import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianAgreementResult.GordianDerivationId;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianDataException;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.oceanus.OceanusException;
+import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
+import org.bouncycastle.util.Arrays;
+
+import java.security.spec.X509EncodedKeySpec;
+import java.util.Objects;
 
 /**
  * Ephemeral Agreement.
@@ -448,13 +447,12 @@ public abstract class GordianCoreEphemeralAgreement
      */
     private void calculateConfirmationTags(final byte[] pSecret) throws OceanusException {
         /* Derive the key */
-        final byte[] myKey = new byte[GordianLength.LEN_512.getByteLength()];
-        calculateDerivedSecret(GordianDigestType.SHA2, pSecret, myKey);
+        final byte[] myKey = calculateDerivedSecret(pSecret, GordianDerivationId.TAGS, GordianLength.LEN_512.getByteLength());
 
         /* Create the hMac and initialise with the key */
         final GordianFactory myBaseFactory = getFactory();
         final GordianMacFactory myMacs = myBaseFactory.getMacFactory();
-        final GordianMacSpec mySpec = GordianMacSpecBuilder.hMac(GordianDigestType.WHIRLPOOL);
+        final GordianMacSpec mySpec = GordianMacSpecBuilder.hMac(GordianDerivationId.TAGS.getDigestType());
         final GordianMac myMac = myMacs.createMac(mySpec);
         myMac.initKeyBytes(myKey);
 

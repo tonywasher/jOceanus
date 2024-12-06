@@ -24,7 +24,7 @@ import net.sourceforge.joceanus.gordianknot.api.encrypt.GordianEncryptorSpec;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianKeyPairFactory;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianDataException;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.keypair.GordianCoreKeyPair;
 import net.sourceforge.joceanus.gordianknot.impl.core.keypair.GordianPrivateKey;
 import net.sourceforge.joceanus.gordianknot.impl.core.keypair.GordianPublicKey;

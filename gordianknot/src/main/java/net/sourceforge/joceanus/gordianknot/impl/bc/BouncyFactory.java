@@ -20,6 +20,7 @@ import net.sourceforge.joceanus.gordianknot.api.zip.GordianZipFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianFactoryGenerator;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianParameters;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianValidator;
 import net.sourceforge.joceanus.gordianknot.impl.core.keyset.GordianCoreKeySetFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.lock.GordianCoreLockFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.random.GordianCoreRandomFactory;
@@ -56,6 +57,7 @@ public class BouncyFactory
     @Override
     protected void declareFactories() throws OceanusException {
         /* Create the factories */
+        setValidator(new GordianValidator());
         setDigestFactory(new BouncyDigestFactory(this));
         setCipherFactory(new BouncyCipherFactory(this));
         setMacFactory(new BouncyMacFactory(this));

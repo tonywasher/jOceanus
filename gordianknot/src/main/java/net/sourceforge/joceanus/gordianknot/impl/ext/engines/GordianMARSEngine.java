@@ -23,24 +23,45 @@ import org.bouncycastle.crypto.OutputLengthException;
 import org.bouncycastle.crypto.params.KeyParameter;
 
 /**
- * MARSEngine ported from the reference C implementation, found at https://embeddedsw.net/Cipher_Reference_Home.html
+ * MARSEngine ported from the reference C implementation, found at https://embeddedsw.net/Cipher_Reference_Home.html.
  */
 @SuppressWarnings("checkstyle:MagicNumber")
 public class GordianMARSEngine
         implements BlockCipher {
-    /*
-     * Constants:
+    /**
+     * BlockSize in bits.
      */
     private static final int BLOCKSIZE = 128;
+
+    /**
+     * BlockSize in bytes.
+     */
     private static final int BLOCKSIZEB = (BLOCKSIZE / 8);
+
+    /**
+     * BlockSize in Integers.
+     */
     private static final int INTLENGTH = BLOCKSIZEB / Integer.BYTES;
 
+    /**
+     * Encryption flag.
+     */
     private Boolean forEncryption;
-    private int[] input = new int[INTLENGTH];
-    private int[] output = new int[INTLENGTH];
 
-    private static int s_box[] =
-            {
+    /**
+     * Input buffer.
+     */
+    private final int[] input = new int[INTLENGTH];
+
+    /**
+     * Output buffer.
+     */
+    private final int[] output = new int[INTLENGTH];
+
+    /**
+     * SBox.
+     */
+    private static final int[] S_BOX = {
                     0x09d0c479, 0x28c8ffe0, 0x84aa6c39, 0x9dad7287, /* 0x000 */
                     0x7dff9be3, 0xd4268361, 0xc96da1d4, 0x7974cc93,
                     0x85d0582e, 0x2a4b5705, 0x1ca16a62, 0xc3bd279d,
@@ -171,77 +192,85 @@ public class GordianMARSEngine
                     0xab561187, 0x14eea0f0, 0xdf0d4164, 0x19af70ee
             };
 
-    private int vk[] =
-            {
+    /**
+     * VK.
+     */
+    private final int[] vk = {
                     0x09d0c479, 0x28c8ffe0, 0x84aa6c39, 0x9dad7287, 0x7dff9be3, 0xd4268361, /* 6 */
                     0xc96da1d4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /* 20 */
                     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /* 37 */
                     0, 0, 0, 0, 0, 0, 0, 0, 0, 0 /* 47 */
             };
 
-    private int l_key[] = new int[40];
+    /**
+     * lKey.
+     */
+    private final int[] lKey = new int[40];
 
-    private static int rotr(int x, int n) {
+    private static int rotr(final int x, final int n) {
         return ((x >>> n) | (x << (32 - n)));
     }
 
-    private static int rotl(int x, int n) {
+    private static int rotl(final int x, final int n) {
         return ((x << n) | (x >>> (32 - n)));
     }
 
-    private static void f_mix(int[] vals, int offset) {
+    private static void fMix(final int[] vals, final int offset) {
         /* Decide correct offsets */
-        int a = offset++ % 4;
-        int b = offset++ % 4;
-        int c = offset++ % 4;
-        int d = offset % 4;
+        int myOffset = offset;
+        final int a = myOffset++ % 4;
+        final int b = myOffset++ % 4;
+        final int c = myOffset++ % 4;
+        final int d = myOffset % 4;
 
         /* Perform mix */
         int r = rotr(vals[a], 8);
-        vals[b] ^= s_box[vals[a] & 255];
-        vals[b] += s_box[(r & 255) + 256];
+        vals[b] ^= S_BOX[vals[a] & 255];
+        vals[b] += S_BOX[(r & 255) + 256];
         r = rotr(vals[a], 16);
         vals[a] = rotr(vals[a], 24);
-        vals[c] += s_box[r & 255];
-        vals[d] ^= s_box[(vals[a] & 255) + 256];
+        vals[c] += S_BOX[r & 255];
+        vals[d] ^= S_BOX[(vals[a] & 255) + 256];
     }
 
-    private static void b_mix(int[] vals, int offset) {
+    private static void bMix(final int[] vals, final int offset) {
         /* Decide correct offsets */
-        int a = offset++ % 4;
-        int b = offset++ % 4;
-        int c = offset++ % 4;
-        int d = offset % 4;
+        int myOffset = offset;
+        final int a = myOffset++ % 4;
+        final int b = myOffset++ % 4;
+        final int c = myOffset++ % 4;
+        final int d = myOffset % 4;
 
         /* Perform mix */
         int r = rotl(vals[a], 8);
-        vals[b] ^= s_box[(vals[a] & 255) + 256];
-        vals[c] -= s_box[r & 255];
+        vals[b] ^= S_BOX[(vals[a] & 255) + 256];
+        vals[c] -= S_BOX[r & 255];
         r = rotl(vals[a], 16);
         vals[a] = rotl(vals[a], 24);
-        vals[d] -= s_box[(r & 255) + 256];
-        vals[d] ^= s_box[vals[a] & 255];
+        vals[d] -= S_BOX[(r & 255) + 256];
+        vals[d] ^= S_BOX[vals[a] & 255];
     }
 
-    private void f_ktr(int[] vals, int i, int offset, boolean doSwitch) {
+    private void fKtr(final int[] vals, final int i, final int offset, final boolean doSwitch) {
         /* Decide correct offsets */
-        int a = offset++ % 4;
-        int b = offset++ % 4;
-        int c = offset++ % 4;
-        int d = offset % 4;
+        int myOffset = offset;
+        final int a = myOffset++ % 4;
+        int b = myOffset++ % 4;
+        final int c = myOffset++ % 4;
+        int d = myOffset % 4;
 
         /* Switch b and c if required */
         if (doSwitch) {
-            int temp = b;
+            final int temp = b;
             b = d;
             d = temp;
         }
 
         /* Perform operation */
-        int m = vals[a] + l_key[i];
+        final int m = vals[a] + lKey[i];
         vals[a] = rotl(vals[a], 13);
-        int r = vals[a] * l_key[i + 1];
-        int l = s_box[m & 511];
+        int r = vals[a] * lKey[i + 1];
+        int l = S_BOX[m & 511];
         r = rotl(r, 5);
         vals[c] += rotl(m, r);
         l ^= r;
@@ -251,25 +280,26 @@ public class GordianMARSEngine
         vals[b] += rotl(l, r);
     }
 
-    private void r_ktr(int[] vals, int i, int offset, boolean doSwitch) {
+    private void rKtr(final int[] vals, final int i, final int offset, final boolean doSwitch) {
         /* Decide correct offsets */
-        int a = offset++ % 4;
-        int b = offset++ % 4;
-        int c = offset++ % 4;
-        int d = offset % 4;
+        int myOffset = offset;
+        final int a = myOffset++ % 4;
+        int b = myOffset++ % 4;
+        final int c = myOffset++ % 4;
+        int d = myOffset % 4;
 
         /* Switch b and c if required */
         if (doSwitch) {
-            int temp = b;
+            final int temp = b;
             b = d;
             d = temp;
         }
 
         /* Perform operation */
-        int r = vals[a] * l_key[i + 1];
+        int r = vals[a] * lKey[i + 1];
         vals[a] = rotr(vals[a], 13);
-        int m = vals[a] + l_key[i];
-        int l = s_box[m & 511];
+        final int m = vals[a] + lKey[i];
+        int l = S_BOX[m & 511];
         r = rotl(r, 5);
         l ^= r;
         vals[c] -= rotl(m, r);
@@ -293,7 +323,7 @@ public class GordianMARSEngine
     /* the endpoint of a sequence of '0' bits. My thanks go to Shai */
     /* Halevi of IBM for the neat trick (which I missed) of finding */
     /* the '0' and '1' sequences at the same time. */
-    private static int gen_mask(int x) {
+    private static int genMask(final int x) {
         /* if m{bn} stands for bit number bn of m, set m{bn} = 1 if */
         /* x{bn} == x{bn+1} for 0 <= bn <= 30. That is, set a bit */
         /* in m if the corresponding bit and the next higher bit in */
@@ -309,8 +339,9 @@ public class GordianMARSEngine
         m &= (m >>> 3) & (m >>> 6);
 
         /* return if mask is empty - no key fixing needed */
-        if (m == 0)
+        if (m == 0) {
             return 0;
+        }
 
         /* We need the internal bits in each continuous sequence of */
         /* matching bits (that is the bits less the two endpoints). */
@@ -331,181 +362,182 @@ public class GordianMARSEngine
 
     /* My thanks to Louis Granboulan for spotting an error in the */
     /* previous version of set_key. */
-    private int[] set_key(int[] in_key, int key_len) {
-        int i, j, w;
-        int m = key_len / 32 - 1;
-        for (i = j = 0; i < 39; ++i) {
-            vk[i + 7] = rotl(vk[i] ^ vk[i + 5], 3) ^ in_key[j] ^ i;
+    private int[] setKey(final int[] inKey, final int keyLen) {
+        int w;
+        int m = keyLen / 32 - 1;
+        for (int i = 0, j = 0; i < 39; ++i) {
+            vk[i + 7] = rotl(vk[i] ^ vk[i + 5], 3) ^ inKey[j] ^ i;
             j = (j == m
                     ? 0
                     : j + 1);
         }
 
-        vk[46] = key_len / 32;
+        vk[46] = keyLen / 32;
 
-        for (j = 0; j < 7; ++j) {
-            for (i = 1; i < 40; ++i) {
-                vk[i + 7] = rotl(vk[i + 7] + s_box[vk[i + 6] & 511], 9);
+        for (int j = 0; j < 7; ++j) {
+            for (int i = 1; i < 40; ++i) {
+                vk[i + 7] = rotl(vk[i + 7] + S_BOX[vk[i + 6] & 511], 9);
             }
-            vk[7] = rotl(vk[7] + s_box[vk[46] & 511], 9);
+            vk[7] = rotl(vk[7] + S_BOX[vk[46] & 511], 9);
         }
 
-        for (i = j = 0; i < 40; ++i) {
-            l_key[j] = vk[i + 7];
+        for (int i = 0, j = 0; i < 40; ++i) {
+            lKey[j] = vk[i + 7];
             j = (j < 33
                     ? j + 7
                     : j - 33);
         }
 
-        for (i = 5; i < 37; i += 2) {
-            w = l_key[i] | 3;
-            m = gen_mask(w);
-            if (m != 0)
-                w ^= (rotl(s_box[265 + (l_key[i] & 3)], l_key[i + 3] & 31) & m);
-            l_key[i] = w;
+        for (int i = 5; i < 37; i += 2) {
+            w = lKey[i] | 3;
+            m = genMask(w);
+            if (m != 0) {
+                w ^= (rotl(S_BOX[265 + (lKey[i] & 3)], lKey[i + 3] & 31) & m);
+            }
+            lKey[i] = w;
         }
-        return l_key;
+        return lKey;
     }
 
-    private void encrypt(int[] in_blk, int[] out_blk) {
-        int[] vals = new int[4];
+    private void encrypt(final int[] inBlk, final int[] outBlk) {
+        final int[] vals = new int[4];
 
-        vals[0] = in_blk[0] + l_key[0];
-        vals[1] = in_blk[1] + l_key[1];
-        vals[2] = in_blk[2] + l_key[2];
-        vals[3] = in_blk[3] + l_key[3];
+        vals[0] = inBlk[0] + lKey[0];
+        vals[1] = inBlk[1] + lKey[1];
+        vals[2] = inBlk[2] + lKey[2];
+        vals[3] = inBlk[3] + lKey[3];
 
-        f_mix(vals, 0);
+        fMix(vals, 0);
         vals[0] += vals[3];
-        f_mix(vals, 1);
+        fMix(vals, 1);
         vals[1] += vals[2];
-        f_mix(vals, 2);
-        f_mix(vals, 3);
+        fMix(vals, 2);
+        fMix(vals, 3);
 
-        f_mix(vals, 0);
+        fMix(vals, 0);
         vals[0] += vals[3];
-        f_mix(vals, 1);
+        fMix(vals, 1);
         vals[1] += vals[2];
-        f_mix(vals, 2);
-        f_mix(vals, 3);
+        fMix(vals, 2);
+        fMix(vals, 3);
 
-        f_ktr(vals, 4, 0, false);
-        f_ktr(vals, 6, 1, false);
-        f_ktr(vals, 8, 2, false);
-        f_ktr(vals, 10, 3, false);
-        f_ktr(vals, 12, 0, false);
-        f_ktr(vals, 14, 1, false);
-        f_ktr(vals, 16, 2, false);
-        f_ktr(vals, 18, 3, false);
-        f_ktr(vals, 20, 0, true);
-        f_ktr(vals, 22, 1, true);
-        f_ktr(vals, 24, 2, true);
-        f_ktr(vals, 26, 3, true);
-        f_ktr(vals, 28, 0, true);
-        f_ktr(vals, 30, 1, true);
-        f_ktr(vals, 32, 2, true);
-        f_ktr(vals, 34, 3, true);
+        fKtr(vals, 4, 0, false);
+        fKtr(vals, 6, 1, false);
+        fKtr(vals, 8, 2, false);
+        fKtr(vals, 10, 3, false);
+        fKtr(vals, 12, 0, false);
+        fKtr(vals, 14, 1, false);
+        fKtr(vals, 16, 2, false);
+        fKtr(vals, 18, 3, false);
+        fKtr(vals, 20, 0, true);
+        fKtr(vals, 22, 1, true);
+        fKtr(vals, 24, 2, true);
+        fKtr(vals, 26, 3, true);
+        fKtr(vals, 28, 0, true);
+        fKtr(vals, 30, 1, true);
+        fKtr(vals, 32, 2, true);
+        fKtr(vals, 34, 3, true);
 
-        b_mix(vals, 0);
-        b_mix(vals, 1);
+        bMix(vals, 0);
+        bMix(vals, 1);
         vals[2] -= vals[1];
-        b_mix(vals, 2);
+        bMix(vals, 2);
         vals[3] -= vals[0];
-        b_mix(vals, 3);
+        bMix(vals, 3);
 
-        b_mix(vals, 0);
-        b_mix(vals, 1);
+        bMix(vals, 0);
+        bMix(vals, 1);
         vals[2] -= vals[1];
-        b_mix(vals, 2);
+        bMix(vals, 2);
         vals[3] -= vals[0];
-        b_mix(vals, 3);
+        bMix(vals, 3);
 
-        out_blk[0] = vals[0] - l_key[36];
-        out_blk[1] = vals[1] - l_key[37];
-        out_blk[2] = vals[2] - l_key[38];
-        out_blk[3] = vals[3] - l_key[39];
+        outBlk[0] = vals[0] - lKey[36];
+        outBlk[1] = vals[1] - lKey[37];
+        outBlk[2] = vals[2] - lKey[38];
+        outBlk[3] = vals[3] - lKey[39];
     }
 
-    private void decrypt(int[] in_blk, int[] out_blk) {
-        int[] vals = new int[4];
+    private void decrypt(final int[] inBlk, final int[] outBlk) {
+        final int[] vals = new int[4];
 
-        vals[3] = in_blk[0] + l_key[36];
-        vals[2] = in_blk[1] + l_key[37];
-        vals[1] = in_blk[2] + l_key[38];
-        vals[0] = in_blk[3] + l_key[39];
+        vals[3] = inBlk[0] + lKey[36];
+        vals[2] = inBlk[1] + lKey[37];
+        vals[1] = inBlk[2] + lKey[38];
+        vals[0] = inBlk[3] + lKey[39];
 
-        f_mix(vals, 0);
+        fMix(vals, 0);
         vals[0] += vals[3];
-        f_mix(vals, 1);
+        fMix(vals, 1);
         vals[1] += vals[2];
-        f_mix(vals, 2);
-        f_mix(vals, 3);
+        fMix(vals, 2);
+        fMix(vals, 3);
 
-        f_mix(vals, 0);
+        fMix(vals, 0);
         vals[0] += vals[3];
-        f_mix(vals, 1);
+        fMix(vals, 1);
         vals[1] += vals[2];
-        f_mix(vals, 2);
-        f_mix(vals, 3);
+        fMix(vals, 2);
+        fMix(vals, 3);
 
-        r_ktr(vals, 34, 0, false);
-        r_ktr(vals, 32, 1, false);
-        r_ktr(vals, 30, 2, false);
-        r_ktr(vals, 28, 3, false);
-        r_ktr(vals, 26, 0, false);
-        r_ktr(vals, 24, 1, false);
-        r_ktr(vals, 22, 2, false);
-        r_ktr(vals, 20, 3, false);
-        r_ktr(vals, 18, 0, true);
-        r_ktr(vals, 16, 1, true);
-        r_ktr(vals, 14, 2, true);
-        r_ktr(vals, 12, 3, true);
-        r_ktr(vals, 10, 0, true);
-        r_ktr(vals, 8, 1, true);
-        r_ktr(vals, 6, 2, true);
-        r_ktr(vals, 4, 3, true);
+        rKtr(vals, 34, 0, false);
+        rKtr(vals, 32, 1, false);
+        rKtr(vals, 30, 2, false);
+        rKtr(vals, 28, 3, false);
+        rKtr(vals, 26, 0, false);
+        rKtr(vals, 24, 1, false);
+        rKtr(vals, 22, 2, false);
+        rKtr(vals, 20, 3, false);
+        rKtr(vals, 18, 0, true);
+        rKtr(vals, 16, 1, true);
+        rKtr(vals, 14, 2, true);
+        rKtr(vals, 12, 3, true);
+        rKtr(vals, 10, 0, true);
+        rKtr(vals, 8, 1, true);
+        rKtr(vals, 6, 2, true);
+        rKtr(vals, 4, 3, true);
 
-        b_mix(vals, 0);
-        b_mix(vals, 1);
+        bMix(vals, 0);
+        bMix(vals, 1);
         vals[2] -= vals[1];
-        b_mix(vals, 2);
+        bMix(vals, 2);
         vals[3] -= vals[0];
-        b_mix(vals, 3);
-        b_mix(vals, 0);
-        b_mix(vals, 1);
+        bMix(vals, 3);
+        bMix(vals, 0);
+        bMix(vals, 1);
         vals[2] -= vals[1];
-        b_mix(vals, 2);
+        bMix(vals, 2);
         vals[3] -= vals[0];
-        b_mix(vals, 3);
+        bMix(vals, 3);
 
-        out_blk[0] = vals[3] - l_key[0];
-        out_blk[1] = vals[2] - l_key[1];
-        out_blk[2] = vals[1] - l_key[2];
-        out_blk[3] = vals[0] - l_key[3];
+        outBlk[0] = vals[3] - lKey[0];
+        outBlk[1] = vals[2] - lKey[1];
+        outBlk[2] = vals[1] - lKey[2];
+        outBlk[3] = vals[0] - lKey[3];
     }
 
     /**
      * Set key from bytes.
      * @param pKey the key Bytes.
      */
-    public void setKey(byte[] pKey) {
+    public void setKey(final byte[] pKey) {
         /* Determine the key and array length */
         int keyLength = pKey.length;
-        int intLength = keyLength / Integer.BYTES;
+        final int intLength = keyLength / Integer.BYTES;
         keyLength *= Byte.SIZE;
 
 
         /* map cipher key to initial key state */
-        int[] myIntKey = new int[intLength];
+        final int[] myIntKey = new int[intLength];
         for (int i = 0, pos = 0; i < intLength; i++, pos += Integer.BYTES) {
-            myIntKey[i] = ((pKey[pos + 3] & 255) << 24) |
-                    ((pKey[pos + 2] & 255) << 16) |
-                    ((pKey[pos + 1] & 255) << 8) |
-                    (pKey[pos] & 255);
+            myIntKey[i] = ((pKey[pos + 3] & 255) << 24)
+                    | ((pKey[pos + 2] & 255) << 16)
+                    | ((pKey[pos + 1] & 255) << 8)
+                    | (pKey[pos] & 255);
         }
 
         /* Set the key */
-        set_key(myIntKey, keyLength);
+        setKey(myIntKey, keyLength);
     }
 
     /**
@@ -513,13 +545,13 @@ public class GordianMARSEngine
      * @param pInput the input Bytes.
      * @param pOffset the offset
      */
-    private void buildInput(byte[] pInput, int pOffset) {
+    private void buildInput(final byte[] pInput, final int pOffset) {
         /* map input to intArray */
         for (int i = 0, pos = pOffset; i < INTLENGTH; i++, pos += Integer.BYTES) {
-            input[i] = ((pInput[pos + 3] & 255) << 24) |
-                    ((pInput[pos + 2] & 255) << 16) |
-                    ((pInput[pos + 1] & 255) << 8) |
-                    (pInput[pos] & 255);
+            input[i] = ((pInput[pos + 3] & 255) << 24)
+                    | ((pInput[pos + 2] & 255) << 16)
+                    | ((pInput[pos + 1] & 255) << 8)
+                    | (pInput[pos] & 255);
         }
     }
 
@@ -528,13 +560,13 @@ public class GordianMARSEngine
      * @param pOutput the output array.
      * @param pOffset the offset
      */
-    private void buildOutput(byte[] pOutput, int pOffset) {
+    private void buildOutput(final byte[] pOutput, final int pOffset) {
         /* Determine the key and array length */
-        int intLength = 4;
+        final int intLength = 4;
 
         /* map input to intArray */
         for (int i = 0, pos = pOffset; i < intLength; i++, pos += Integer.BYTES) {
-            int w = output[i];
+            final int w = output[i];
             pOutput[pos] = (byte) (w);
             pOutput[pos + 1] = (byte) (w >> 8);
             pOutput[pos + 2] = (byte) (w >> 16);
@@ -553,7 +585,7 @@ public class GordianMARSEngine
     }
 
     @Override
-    public void init(boolean forEncryption, CipherParameters pParameters) throws IllegalArgumentException {
+    public void init(final boolean forEncrypt, final CipherParameters pParameters) throws IllegalArgumentException {
         /* Reject invalid parameters */
         if (!(pParameters instanceof KeyParameter)) {
             throw new IllegalArgumentException("Invalid parameter passed to MARS init - "
@@ -561,19 +593,19 @@ public class GordianMARSEngine
         }
 
         /* Determine keySize */
-        byte[] keyBytes = ((KeyParameter) pParameters).getKey();
-        int keyBitSize = keyBytes.length * Byte.SIZE;
+        final byte[] keyBytes = ((KeyParameter) pParameters).getKey();
+        final int keyBitSize = keyBytes.length * Byte.SIZE;
         if (keyBitSize != 128 && keyBitSize != 192 && keyBitSize != 256) {
             throw new IllegalArgumentException("KeyBitSize must be 128, 192 or 256");
         }
 
         /* Set up key */
-        this.forEncryption = forEncryption;
+        this.forEncryption = forEncrypt;
         setKey(keyBytes);
     }
 
     @Override
-    public int processBlock(byte[] in, int inOff, byte[] out, int outOff) throws DataLengthException, IllegalStateException {
+    public int processBlock(final byte[] in, final int inOff, final byte[] out, final int outOff) throws DataLengthException, IllegalStateException {
         if (forEncryption == null) {
             throw new IllegalStateException("Anubis engine not initialised");
         }

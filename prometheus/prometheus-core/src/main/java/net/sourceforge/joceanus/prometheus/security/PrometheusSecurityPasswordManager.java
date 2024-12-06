@@ -18,6 +18,7 @@ package net.sourceforge.joceanus.prometheus.security;
 
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactoryLock;
+import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactoryType;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianLockFactory;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.gordianknot.api.keyset.GordianBadCredentialsException;
@@ -105,6 +106,14 @@ public class PrometheusSecurityPasswordManager {
     }
 
     /**
+     * Obtain the lockSpec.
+     * @return the lockSpec
+     */
+    public GordianPasswordLockSpec getLockSpec() {
+        return theLockSpec;
+    }
+
+    /**
      * Set the dialog controller.
      * @param pDialog the controller
      */
@@ -119,7 +128,7 @@ public class PrometheusSecurityPasswordManager {
      * @throws OceanusException on error
      */
     public GordianFactoryLock newFactoryLock(final String pSource) throws OceanusException {
-        final GordianFactory myFactory = GordianGenerator.createRandomFactory();
+        final GordianFactory myFactory = GordianGenerator.createRandomFactory(GordianFactoryType.BC);
         return (GordianFactoryLock) requestPassword(pSource, true, p -> createFactoryLock(myFactory, p));
     }
 
@@ -169,7 +178,7 @@ public class PrometheusSecurityPasswordManager {
      */
     public GordianFactoryLock similarFactoryLock(final Object pReference) throws OceanusException {
         /* Create a new random factory */
-        final GordianFactory myFactory = GordianGenerator.createRandomFactory();
+        final GordianFactory myFactory = GordianGenerator.createRandomFactory(GordianFactoryType.BC);
 
         /* LookUp the password */
         final ByteBuffer myPassword = theCache.lookUpResolvedPassword(pReference);

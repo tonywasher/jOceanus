@@ -21,9 +21,8 @@ import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestFactory;
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestSubSpec;
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestType;
-import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianDataException;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.oceanus.OceanusException;
 
 import java.util.ArrayList;
@@ -65,16 +64,10 @@ public abstract class GordianCoreDigestFactory
 
     @Override
     public Predicate<GordianDigestType> supportedDigestTypes() {
-        return this::validDigestType;
+        return t -> theFactory.getValidator().validDigestType(t);
     }
 
-    @Override
-    public Predicate<GordianDigestType> supportedExternalDigestTypes() {
-        final GordianMacFactory myMacFactory = theFactory.getMacFactory();
-        return myMacFactory.supportedHMacDigestTypes().and(GordianDigestType::isExternalHashDigest);
-    }
-
-    /**
+       /**
      * Check digestSpec.
      * @param pDigestSpec the digestSpec
      * @throws OceanusException on error
@@ -101,16 +94,6 @@ public abstract class GordianCoreDigestFactory
         return supportedDigestTypes().test(pDigestSpec.getDigestType());
     }
 
-    /**
-     * Check DigestType.
-     * @param pDigestType the digestType
-     * @return true/false
-     */
-    public boolean validDigestType(final GordianDigestType pDigestType) {
-        return true;
-    }
-
-
     @Override
     public List<GordianDigestSpec> listAllSupportedSpecs() {
         return listAllPossibleSpecs()
@@ -123,13 +106,6 @@ public abstract class GordianCoreDigestFactory
     public List<GordianDigestType> listAllSupportedTypes() {
         return Arrays.stream(GordianDigestType.values())
                 .filter(supportedDigestTypes())
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public List<GordianDigestType> listAllExternalTypes() {
-        return Arrays.stream(GordianDigestType.values())
-                .filter(supportedExternalDigestTypes())
                 .collect(Collectors.toList());
     }
 

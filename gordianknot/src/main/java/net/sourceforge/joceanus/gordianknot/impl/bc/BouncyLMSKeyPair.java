@@ -51,7 +51,7 @@ import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPublicKe
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyStateAwareKeyPair;
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyStateAwarePrivateKey;
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncySignature.BouncyDigestSignature;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCryptoException;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
 import net.sourceforge.joceanus.gordianknot.impl.core.keypair.GordianKeyPairValidity;
 import net.sourceforge.joceanus.oceanus.OceanusException;
 

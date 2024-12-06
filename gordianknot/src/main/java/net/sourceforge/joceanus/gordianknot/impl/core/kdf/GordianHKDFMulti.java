@@ -16,9 +16,11 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.core.kdf;
 
+import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactory;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianLogicException;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianLogicException;
 import net.sourceforge.joceanus.oceanus.OceanusException;
 
 import java.util.ArrayList;
@@ -58,116 +60,30 @@ public class GordianHKDFMulti {
 
         /* Allocate primary engine */
         thePrimary = new GordianHKDFEngine(pFactory, pPrimary);
+        final GordianLength myLength = pPrimary.getDigestLength();
 
         /* Allocate the secondary engines */
         for (final GordianDigestSpec mySpec : pSecondaries) {
+            if (!myLength.equals(mySpec.getDigestLength())) {
+                throw new GordianDataException("Inconsistent digestLengths");
+            }
             theEngines.add(new GordianHKDFEngine(pFactory, mySpec));
         }
     }
 
     /**
-     * Set mode to extractOnly.
-     * @param pSalt the salt
-     * @return the engine
-     */
-    public GordianHKDFMulti extractOnly(final byte[] pSalt) {
-        /* Configure the primary */
-        thePrimary.extractOnly(pSalt);
-
-        /* Share parameters with secondaries */
-        shareParameters();
-
-        /* return the engine */
-        return this;
-    }
-
-    /**
-     * Set mode to extractOnly.
-     * @param pPRK the pseudo-random key
-     * @param pLength the length
-     * @return the engine
-     */
-    public GordianHKDFMulti expandOnly(final byte[] pPRK,
-                                       final int pLength) {
-        /* Configure the primary */
-        thePrimary.expandOnly(pPRK, pLength);
-
-        /* Share parameters with secondaries */
-        shareParameters();
-
-        /* return the engine */
-        return this;
-    }
-
-    /**
-     * Set mode to extractThenExpand.
-     * @param pSalt the salt
-     * @param pLength the length
-     * @return the engine
-     */
-    public GordianHKDFMulti extractThenExpand(final byte[] pSalt,
-                                              final int pLength) {
-        /* Configure the primary */
-        thePrimary.extractThenExpand(pSalt, pLength);
-
-        /* Share parameters with secondaries */
-        shareParameters();
-
-        /* return the engine */
-        return this;
-    }
-
-    /**
-     * Share primary parameters with secondaries.
-     */
-    private void shareParameters() {
-        /* Loop through the secondaries */
-        for (final GordianHKDFEngine myEngine : theEngines) {
-            myEngine.shareParameters(thePrimary);
-        }
-    }
-
-    /**
-     * Add iKM.
-     * @param pIKM the initial keying material
-     * @return the engine
-     */
-    public GordianHKDFMulti addIKM(final byte[] pIKM) {
-        thePrimary.addIKM(pIKM);
-        return this;
-    }
-
-    /**
-     * Add info.
-     * @param pInfo the info
-     * @return the engine
-     */
-    public GordianHKDFMulti addInfo(final byte[] pInfo) {
-        thePrimary.addInfo(pInfo);
-        return this;
-    }
-
-    /**
-     * Clear the info list.
-     * @return the engine
-     */
-    public GordianHKDFMulti clearInfo() {
-        thePrimary.clearInfo();
-        return this;
-    }
-
-    /**
      * Derive bytes.
+     * @param pParams the parameters
      * @return the derived bytes
      * @throws OceanusException on error
      */
-    public byte[] deriveBytes() throws OceanusException {
+    public byte[] deriveBytes(final GordianHKDFParams pParams) throws OceanusException {
         /* Create the primary output */
-        final byte[] myOutput = thePrimary.deriveBytes();
+        final byte[] myOutput = thePrimary.deriveBytes(pParams);
 
         /* Loop through the secondaries */
         for (final GordianHKDFEngine myEngine : theEngines) {
-            final byte[] mySecondary = myEngine.deriveBytes();
+            final byte[] mySecondary = myEngine.deriveBytes(pParams);
             for (int i = 0; i < myOutput.length; i++) {
                 myOutput[i] ^= mySecondary[i];
             }

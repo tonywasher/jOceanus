@@ -16,15 +16,25 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.core.agree;
 
-import java.io.IOException;
-import java.security.spec.X509EncodedKeySpec;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.Iterator;
-import java.util.List;
-
+import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreement;
+import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementFactory;
+import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementSpec;
+import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementStatus;
+import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementType;
+import net.sourceforge.joceanus.gordianknot.api.agree.GordianKDFType;
+import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestSpec;
+import net.sourceforge.joceanus.gordianknot.api.factory.GordianKeyPairFactory;
+import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
+import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairGenerator;
+import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
+import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianAgreementResult.GordianDerivationId;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianIOException;
+import net.sourceforge.joceanus.gordianknot.impl.core.kdf.GordianHKDFEngine;
+import net.sourceforge.joceanus.gordianknot.impl.core.kdf.GordianHKDFParams;
+import net.sourceforge.joceanus.gordianknot.impl.core.keypair.GordianCompositeKeyPair;
+import net.sourceforge.joceanus.oceanus.OceanusDataConverter;
+import net.sourceforge.joceanus.oceanus.OceanusException;
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.ASN1OctetString;
 import org.bouncycastle.asn1.ASN1Sequence;
@@ -34,21 +44,15 @@ import org.bouncycastle.asn1.misc.MiscObjectIdentifiers;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 
-import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreement;
-import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementFactory;
-import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementSpec;
-import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementStatus;
-import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementType;
-import net.sourceforge.joceanus.gordianknot.api.agree.GordianKDFType;
-import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
-import net.sourceforge.joceanus.gordianknot.api.factory.GordianKeyPairFactory;
-import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
-import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairGenerator;
-import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianIOException;
-import net.sourceforge.joceanus.gordianknot.impl.core.keypair.GordianCompositeKeyPair;
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import java.io.IOException;
+import java.security.spec.X509EncodedKeySpec;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Random;
 
 /**
  * Composite Agreements.
@@ -163,27 +167,47 @@ public final class GordianCompositeAgreement {
 
     /**
      * Create a merged result.
+     * @param pFactory the factory
      * @param pSubs the subAgreements
      * @return the merged result
      * @throws OceanusException on error
      */
-    private static byte[] mergeResults(final List<GordianAgreement> pSubs) throws OceanusException {
-        /* Create the result */
-        final int myPartLen = GordianLength.LEN_512.getByteLength();
-        final byte[] myResult = new byte[pSubs.size() * myPartLen];
-        int myOffset = 0;
+    private static byte[] mergeResults(final GordianCoreFactory pFactory,
+                                       final List<GordianAgreement> pSubs) throws OceanusException {
+        /* Protect against exceptions */
+        final GordianHKDFParams myParams = GordianHKDFParams.extractOnly();
+        try {
+            /* Create the HKDF parameters */
+            final GordianDigestSpec myDigestSpec = new GordianDigestSpec(GordianDerivationId.COMPOSITE.getDigestType());
+            Random myRandom = null;
 
-        /* Loop through the agreements */
-        for (GordianAgreement myAgreement : pSubs) {
-            /* build secret part */
-            final byte[] myPart = (byte[]) myAgreement.getResult();
-            System.arraycopy(myPart, 0, myResult, myOffset, myPartLen);
-            myOffset += myPartLen;
-            Arrays.fill(myPart, (byte) 0);
+            /* Loop through the agreements */
+            for (GordianAgreement myAgreement : pSubs) {
+                /* Add secret as IKM */
+                final byte[] myPart = (byte[]) myAgreement.getResult();
+
+                /* Handle random bytes */
+                if (myRandom == null) {
+                    /* Build the 64-bit seed, create the seeded random and populate bytes */
+                    final long mySeed = OceanusDataConverter.byteArrayToLong(myPart);
+                    myRandom = new Random(mySeed);
+                    final byte[] myBytes = new byte[Long.BYTES];
+                    myRandom.nextBytes(myBytes);
+                    myParams.withSalt(myBytes);
+                }
+
+                /* Add part to parameters */
+                myParams.withIKM(myPart);
+                Arrays.fill(myPart, (byte) 0);
+            }
+
+            /* Derive the bytes */
+            final GordianHKDFEngine myEngine = new GordianHKDFEngine(pFactory, myDigestSpec);
+            return myEngine.deriveBytes(myParams);
+
+        } finally {
+            myParams.clearParameters();
         }
-
-        /* Return the result */
-        return myResult;
     }
 
     /**
@@ -244,7 +268,7 @@ public final class GordianCompositeAgreement {
             final GordianAgreementMessageASN1 myClientHello = buildClientHelloASN1(myEncapsulated, myEphemeral);
 
             /* merge results and store the secret */
-            storeSecret(mergeResults(theAgreements));
+            storeSecret(mergeResults(getFactory(), theAgreements));
 
             /* Return the client hello */
             return myClientHello;
@@ -276,7 +300,7 @@ public final class GordianCompositeAgreement {
             }
 
             /* merge results and store the secret */
-            storeSecret(mergeResults(theAgreements));
+            storeSecret(mergeResults(getFactory(), theAgreements));
         }
 
         /**
@@ -442,7 +466,7 @@ public final class GordianCompositeAgreement {
             final GordianAgreementMessageASN1 myServerHello = buildServerHello();
 
             /* merge results and store the secret */
-            storeSecret(mergeResults(theAgreements));
+            storeSecret(mergeResults(getFactory(), theAgreements));
 
             /* return the server hello */
             return myServerHello;
@@ -475,7 +499,7 @@ public final class GordianCompositeAgreement {
             }
 
             /* merge results and store the secret */
-            storeSecret(mergeResults(theAgreements));
+            storeSecret(mergeResults(getFactory(), theAgreements));
         }
     }
 
@@ -582,7 +606,7 @@ public final class GordianCompositeAgreement {
             final GordianAgreementMessageASN1 myServerHello = buildServerHelloASN1(pSigner).setEphemeral(myKeySpec);
 
             /* merge results and store the secret */
-            storeSecret(mergeResults(theAgreements));
+            storeSecret(mergeResults(getFactory(), theAgreements));
 
             /* return the server hello */
             return myServerHello;
@@ -615,7 +639,7 @@ public final class GordianCompositeAgreement {
             }
 
             /* merge results and store the secret */
-            storeSecret(mergeResults(theAgreements));
+            storeSecret(mergeResults(getFactory(), theAgreements));
         }
     }
 
@@ -732,7 +756,7 @@ public final class GordianCompositeAgreement {
             storeServerEphemeral(myGenerator.derivePublicOnlyKeyPair(myEphemeral));
 
             /* merge results and store the secret */
-            storeSecret(mergeResults(theAgreements));
+            storeSecret(mergeResults(getFactory(), theAgreements));
 
             /* return the server hello */
             return buildServerHello();
@@ -767,7 +791,7 @@ public final class GordianCompositeAgreement {
             }
 
             /* merge results and store the secret */
-            storeSecret(mergeResults(theAgreements));
+            storeSecret(mergeResults(getFactory(), theAgreements));
             return buildClientConfirmASN1();
         }
     }

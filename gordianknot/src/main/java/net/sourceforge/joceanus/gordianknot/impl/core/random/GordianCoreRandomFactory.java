@@ -43,7 +43,7 @@ import net.sourceforge.joceanus.gordianknot.api.random.GordianRandomSpec;
 import net.sourceforge.joceanus.gordianknot.api.random.GordianRandomSpecBuilder;
 import net.sourceforge.joceanus.gordianknot.api.random.GordianRandomType;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianDataException;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianIdManager;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianRandomSource;
 import net.sourceforge.joceanus.gordianknot.impl.core.cipher.GordianCoreCipher;

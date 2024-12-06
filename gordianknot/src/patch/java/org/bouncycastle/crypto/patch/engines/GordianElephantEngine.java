@@ -316,7 +316,7 @@ public class GordianElephantEngine
         }
 
         if (inputOff + len - (forEncryption ? 0 : CRYPTO_ABYTES) >= BLOCK_SIZE) {
-            int mlen = inputOff + len - (forEncryption ? 0 : CRYPTO_ABYTES);
+            int mlen = inputOff + messageLen + len - (forEncryption ? 0 : CRYPTO_ABYTES);
             int adlen = processAADBytes();
             int nblocks_c = 1 + mlen / BLOCK_SIZE;
             int nblocks_m = ((mlen % BLOCK_SIZE) != 0 ? nblocks_c : nblocks_c - 1);
@@ -324,11 +324,17 @@ public class GordianElephantEngine
             int nb_it = Math.max(nblocks_c + 1, nblocks_ad - 1);
             byte[] tempInput = new byte[Math.max(nblocks_c, 1) * BLOCK_SIZE];
             System.arraycopy(inputMessage, 0, tempInput, 0, inputOff);
-            System.arraycopy(input, inOff, tempInput, inputOff, Math.min(len, tempInput.length));
+            System.arraycopy(input, inOff, tempInput, inputOff, Math.min(len - (forEncryption ? 0 : CRYPTO_ABYTES), tempInput.length - inputOff));
             int rv = processBytes(tempInput, output, outOff, nb_it, nblocks_m, nblocks_c, mlen, nblocks_ad, false);
             int copyLen = rv - inputOff;
-            inputOff = inputOff + len - rv;
-            System.arraycopy(input, inOff + copyLen, inputMessage, 0, inputOff);
+            if (copyLen < 0) {
+                System.arraycopy(inputMessage, inputOff + copyLen, inputMessage, 0, -copyLen);
+                System.arraycopy(input, inOff, inputMessage, -copyLen, len);
+                inputOff = len - copyLen;
+            } else {
+                inputOff = inputOff + len - rv;
+                System.arraycopy(input, inOff + copyLen, inputMessage, 0, inputOff);
+            }
 
             messageLen += rv;
             return rv;

@@ -38,7 +38,7 @@ import net.sourceforge.joceanus.gordianknot.api.keystore.GordianKeyStoreEntry.Go
 import net.sourceforge.joceanus.gordianknot.api.keystore.GordianKeyStoreGateway;
 import net.sourceforge.joceanus.gordianknot.api.zip.GordianZipLock;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianDataException;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.keystore.GordianPEMObject.GordianPEMObjectType;
 import net.sourceforge.joceanus.gordianknot.impl.core.zip.GordianCoreZipLock;
 import net.sourceforge.joceanus.oceanus.OceanusException;

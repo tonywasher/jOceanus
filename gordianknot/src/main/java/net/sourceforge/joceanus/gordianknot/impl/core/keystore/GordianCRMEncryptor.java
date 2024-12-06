@@ -16,10 +16,28 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.core.keystore;
 
-import java.io.IOException;
-import java.security.spec.PKCS8EncodedKeySpec;
-import java.util.Arrays;
-
+import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementSpec;
+import net.sourceforge.joceanus.gordianknot.api.agree.GordianAnonymousAgreement;
+import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
+import net.sourceforge.joceanus.gordianknot.api.encrypt.GordianEncryptor;
+import net.sourceforge.joceanus.gordianknot.api.encrypt.GordianEncryptorSpec;
+import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactory;
+import net.sourceforge.joceanus.gordianknot.api.factory.GordianKeyPairFactory;
+import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
+import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
+import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySet;
+import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySetSpec;
+import net.sourceforge.joceanus.gordianknot.api.keystore.GordianCertificate;
+import net.sourceforge.joceanus.gordianknot.api.keystore.GordianKeyPairUsage;
+import net.sourceforge.joceanus.gordianknot.api.keystore.GordianKeyPairUse;
+import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianCoreAgreementFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianParameters;
+import net.sourceforge.joceanus.gordianknot.impl.core.encrypt.GordianCoreEncryptorFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianIOException;
+import net.sourceforge.joceanus.gordianknot.impl.core.keyset.GordianKeySetSpecASN1;
+import net.sourceforge.joceanus.oceanus.OceanusException;
 import org.bouncycastle.asn1.BEROctetString;
 import org.bouncycastle.asn1.cms.EncryptedContentInfo;
 import org.bouncycastle.asn1.cms.IssuerAndSerialNumber;
@@ -34,31 +52,9 @@ import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.asn1.x509.Certificate;
 import org.bouncycastle.asn1.x509.GeneralName;
 
-import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementSpec;
-import net.sourceforge.joceanus.gordianknot.api.agree.GordianAnonymousAgreement;
-import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
-import net.sourceforge.joceanus.gordianknot.api.encrypt.GordianEncryptor;
-import net.sourceforge.joceanus.gordianknot.api.encrypt.GordianEncryptorSpec;
-import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactory;
-import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactoryType;
-import net.sourceforge.joceanus.gordianknot.api.factory.GordianKeyPairFactory;
-import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
-import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
-import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySet;
-import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySetSpec;
-import net.sourceforge.joceanus.gordianknot.api.keystore.GordianCertificate;
-import net.sourceforge.joceanus.gordianknot.api.keystore.GordianKeyPairUsage;
-import net.sourceforge.joceanus.gordianknot.api.keystore.GordianKeyPairUse;
-import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianCoreAgreementFactory;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianDataException;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianIOException;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianParameters;
-import net.sourceforge.joceanus.gordianknot.impl.core.encrypt.GordianCoreEncryptorFactory;
-import net.sourceforge.joceanus.gordianknot.impl.core.keyset.GordianCoreKeySet;
-import net.sourceforge.joceanus.gordianknot.impl.core.keyset.GordianCoreKeySetFactory;
-import net.sourceforge.joceanus.gordianknot.impl.core.keyset.GordianKeySetSpecASN1;
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import java.io.IOException;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.util.Arrays;
 
 /**
  * Encryptor.
@@ -179,20 +175,9 @@ public class GordianCRMEncryptor {
      */
     private GordianKeySet deriveKeySetFromKey(final byte[] pKey) throws OceanusException {
         /* Create a new Factory using the key */
-        final byte[] myPhrase = Arrays.copyOf(pKey, GordianLength.LEN_512.getByteLength());
-        final GordianParameters myParams = new GordianParameters(GordianFactoryType.BC);
-        myParams.setSecuritySeed(myPhrase);
-        myParams.setInternal();
+        final GordianParameters myParams = new GordianParameters(pKey);
         final GordianFactory myFactory = theFactory.newFactory(myParams);
-        Arrays.fill(myPhrase, (byte) 0);
-
-        /* Create keySet from key */
-        final byte[] mySecret = Arrays.copyOfRange(pKey, GordianLength.LEN_512.getByteLength(), GordianLength.LEN_1024.getByteLength());
-        final GordianCoreKeySetFactory myKeySets = (GordianCoreKeySetFactory) myFactory.getKeySetFactory();
-        final GordianCoreKeySet myKeySet = myKeySets.createKeySet(new GordianKeySetSpec());
-        myKeySet.buildFromSecret(mySecret);
-        Arrays.fill(mySecret, (byte) 0);
-        return myKeySet;
+        return myFactory.getEmbeddedKeySet();
     }
 
     /**

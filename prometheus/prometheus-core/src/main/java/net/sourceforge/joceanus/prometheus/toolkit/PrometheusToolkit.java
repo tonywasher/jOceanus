@@ -17,6 +17,7 @@
 package net.sourceforge.joceanus.prometheus.toolkit;
 
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactoryType;
+import net.sourceforge.joceanus.gordianknot.api.lock.GordianPasswordLockSpec;
 import net.sourceforge.joceanus.metis.toolkit.MetisToolkit;
 import net.sourceforge.joceanus.oceanus.OceanusException;
 import net.sourceforge.joceanus.prometheus.preference.PrometheusPreferenceManager;
@@ -59,13 +60,13 @@ public class PrometheusToolkit {
         /* Access components */
         thePreferenceManager = new PrometheusPreferenceManager(theToolkit.getViewerManager());
         theToolkit.setUpColors(thePreferenceManager);
-        final TethysUIThreadManager myThreadMgr = theToolkit.getThreadManager();
 
         /* Create the passwordManager */
         final PrometheusSecurityPreferences myPreferences = thePreferenceManager.getPreferenceSet(PrometheusSecurityPreferences.class);
-        thePasswordMgr = newPasswordManager(myPreferences.getFactoryType(), myPreferences.getSecurityPhrase());
+        thePasswordMgr = newPasswordManager(myPreferences.getFactoryType(), myPreferences.getPasswordLockSpec(), myPreferences.getSecurityPhrase());
 
         /* Set this as the threadData */
+        final TethysUIThreadManager myThreadMgr = theToolkit.getThreadManager();
         myThreadMgr.setThreadData(this);
     }
 
@@ -104,11 +105,13 @@ public class PrometheusToolkit {
     /**
      * Create a Password Manager.
      * @param pFactoryType the factoryType
+     * @param pLockSpec the lockSpec
      * @param pSecurityPhrase the security phrase
      * @return the manager
      * @throws OceanusException on error
      */
     private PrometheusSecurityPasswordManager newPasswordManager(final GordianFactoryType pFactoryType,
+                                                                 final GordianPasswordLockSpec pLockSpec,
                                                                  final char[] pSecurityPhrase) throws OceanusException {
         return PrometheusSecurityGenerator.newPasswordManager(getToolkit().getGuiFactory(), pFactoryType, pSecurityPhrase);
     }

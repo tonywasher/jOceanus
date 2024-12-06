@@ -75,33 +75,42 @@ public class OutputLength {
 
             /* Initialise the cipher for encryption */
             pCipher.init(true, myParams);
-            final int myMaxOutLen = pCipher.getOutputSize(DATALEN);
-            final byte[] myEncrypted = new byte[myMaxOutLen];
-            //pCipher.processAADBytes(myAEAD, 0, AEADLEN);
-            int myOutLen = pCipher.processBytes(myData, 0, DATALEN, myEncrypted, 0);
+            final int myFinalOutLen = pCipher.getOutputSize(DATALEN);
+            final byte[] myEncrypted = new byte[myFinalOutLen];
+            pCipher.processAADBytes(myAEAD, 0, AEADLEN);
+            int myOutLen = 0;
+            for (int i = 0; i < DATALEN; i++) {
+                myOutLen += pCipher.processBytes(myData, i, 1, myEncrypted, myOutLen);
+            }
             int myRemaining = pCipher.getOutputSize(0);
-            if (myRemaining + myOutLen < myMaxOutLen) {
+
+            /* Check that the predicted data output length is reasonable */
+            if (myRemaining + myOutLen < myFinalOutLen) {
                 System.out.println("Bad outputLength on encryption for " + pCipher.getAlgorithmName());
             }
             int myProcessed = pCipher.doFinal(myEncrypted, myOutLen);
-            if (myOutLen + myProcessed != myMaxOutLen) {
+
+            /* Check that the total data output is as predicted */
+            if (myOutLen + myProcessed != myFinalOutLen) {
                 System.out.println("Bad total on encryption for " + pCipher.getAlgorithmName());
             }
 
-            /* Note that myOutLen is too large by DATALEN  */
-
             /* Initialise the cipher for decryption */
             pCipher.init(false, myParams);
-            final int myMaxClearLen = pCipher.getOutputSize(myMaxOutLen);
-            final byte[] myDecrypted = new byte[myMaxClearLen];
-            //pCipher.processAADBytes(myAEAD, 0, AEADLEN);
+            final int myFinalClearLen = pCipher.getOutputSize(myFinalOutLen);
+            final byte[] myDecrypted = new byte[myFinalClearLen];
+            pCipher.processAADBytes(myAEAD, 0, AEADLEN);
             int myClearLen = pCipher.processBytes(myEncrypted, 0, myEncrypted.length, myDecrypted, 0);
             myRemaining = pCipher.getOutputSize(0);
-            if (myRemaining + myClearLen < myMaxClearLen) {
+
+            /* Check that the predicted data output length is reasonable */
+            if (myRemaining + myClearLen < myFinalClearLen) {
                 System.out.println("Bad outputLength on decryption for " + pCipher.getAlgorithmName());
             }
             myProcessed = pCipher.doFinal(myDecrypted, myClearLen);
-            if (myClearLen + myProcessed != myMaxClearLen) {
+
+            /* Check that the total data output is as predicted */
+            if (myClearLen + myProcessed != myFinalClearLen) {
                 System.out.println("Bad total on decryption for " + pCipher.getAlgorithmName());
             }
             final byte[] myResult = Arrays.copyOf(myDecrypted, DATALEN);

@@ -16,7 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.junit.extensions;
 
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCryptoException;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
 import net.sourceforge.joceanus.gordianknot.impl.ext.engines.GordianRabbitEngine;
 import net.sourceforge.joceanus.gordianknot.impl.ext.engines.GordianSnow3GEngine;
 import net.sourceforge.joceanus.gordianknot.impl.ext.engines.GordianSosemanukEngine;

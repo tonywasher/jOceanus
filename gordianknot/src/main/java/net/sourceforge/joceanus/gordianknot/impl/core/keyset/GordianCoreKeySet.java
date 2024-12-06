@@ -22,7 +22,6 @@ import net.sourceforge.joceanus.gordianknot.api.cipher.GordianCipherFactory;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymKeySpec;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymKeyType;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactory;
-import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactoryType;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianKeyPairFactory;
 import net.sourceforge.joceanus.gordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.gordianknot.api.key.GordianKeyGenerator;
@@ -34,12 +33,13 @@ import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySetAADCipher;
 import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySetCipher;
 import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySetSpec;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianDataException;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianIOException;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianLogicException;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianParameters;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianPersonalisation.GordianPersonalId;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianValidator;
 import net.sourceforge.joceanus.gordianknot.impl.core.cipher.GordianCoreWrapper;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianIOException;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianLogicException;
 import net.sourceforge.joceanus.gordianknot.impl.core.key.GordianCoreKeyGenerator;
 import net.sourceforge.joceanus.gordianknot.impl.core.keyset.GordianKeySetRecipe.GordianKeySetParameters;
 import net.sourceforge.joceanus.oceanus.OceanusException;
@@ -202,7 +202,7 @@ public final class GordianCoreKeySet
         /* Count the number of KeySetSymTypes for 256 bit keys */
         int myCount = 0;
         for (GordianSymKeyType myType : GordianSymKeyType.values()) {
-            if (GordianCoreFactory.validStdBlockSymKeyTypeForKeyLength(myType, pKeyLen)) {
+            if (GordianValidator.validStdBlockSymKeyTypeForKeyLength(myType, pKeyLen)) {
                 myCount++;
             }
         }
@@ -224,7 +224,8 @@ public final class GordianCoreKeySet
     @Override
     public int getKeySetWrapLength() {
         /* Obtain the count of valid symKeyTypes */
-        final Predicate<GordianSymKeyType> myPredicate = theFactory.supportedKeySetSymKeyTypes(theSpec.getKeyLength());
+        final GordianValidator myValidator = theFactory.getValidator();
+        final Predicate<GordianSymKeyType> myPredicate = myValidator.supportedKeySetSymKeyTypes(theSpec.getKeyLength());
         final int myCount = (int) Arrays.stream(GordianSymKeyType.values()).filter(myPredicate).count();
 
         /* Determine the size of the encoded ASN1 keySet */
@@ -442,26 +443,25 @@ public final class GordianCoreKeySet
      */
     public byte[] secureFactory(final GordianFactory pFactoryToSecure) throws OceanusException {
         /* Protect the operation */
-        final byte[] myBuffer = new byte[GordianParameters.SECRET_LEN.getByteLength() << 1];
+        byte[] myBuffer = null;
         try {
             /* Access the parameters */
             final GordianParameters myParams = ((GordianCoreFactory) pFactoryToSecure).getParameters();
-            final byte[] mySecSeed = myParams.getSecuritySeed();
-            final byte[] myKeySetSeed = myParams.getKeySetSeed();
 
-            /* Reject request if this is not a randomFactory */
-            if (myKeySetSeed == null) {
-                throw new GordianDataException("Unable to lock non-Random factory");
+            /* Reject request if this is a namedFactory */
+            if (!myParams.isInternal()) {
+                throw new GordianDataException("Unable to lock named factory");
             }
 
-            /* Build the buffer and encrypt it */
-            System.arraycopy(mySecSeed, 0, myBuffer, 0, mySecSeed.length);
-            System.arraycopy(myKeySetSeed, 0, myBuffer, mySecSeed.length, myKeySetSeed.length);
+            /* Return the encrypted seeds */
+            myBuffer = myParams.getSecuritySeeds();
             return encryptBytes(myBuffer);
 
             /* Clear the buffer */
         } finally {
-            Arrays.fill(myBuffer, (byte) 0);
+            if (myBuffer != null) {
+                Arrays.fill(myBuffer, (byte) 0);
+            }
         }
     }
 
@@ -476,20 +476,13 @@ public final class GordianCoreKeySet
         final byte[] myBytes = decryptBytes(pSecuredFactory);
 
         /* Check that the buffer is the correct length */
-        final int mySeedLen = GordianParameters.SECRET_LEN.getByteLength();
-        if (myBytes.length != mySeedLen << 1) {
+        final int mySeedLen = GordianParameters.SEED_LEN.getByteLength();
+        if (myBytes.length != mySeedLen) {
             throw new IllegalArgumentException("Invalid secured factory");
         }
 
-        /* Access the separate parts */
-        final byte[] mySecSeed = Arrays.copyOfRange(myBytes, 0, mySeedLen);
-        final byte[] myKeySetSeed = Arrays.copyOfRange(myBytes, mySeedLen, myBytes.length);
-        Arrays.fill(myBytes, (byte) 0);
-
         /* Create parameters and factory */
-        final GordianParameters myParams = new GordianParameters(GordianFactoryType.BC);
-        myParams.setSecuritySeeds(mySecSeed, myKeySetSeed);
-        myParams.setInternal();
+        final GordianParameters myParams = new GordianParameters(myBytes);
         return theFactory.newFactory(myParams);
     }
 
@@ -517,7 +510,8 @@ public final class GordianCoreKeySet
         final GordianSymKeySpec myKeyType = pKey.getKeyType();
 
         /* Check that the key is supported */
-        if (!theFactory.supportedKeySetSymKeySpecs(theSpec.getKeyLength()).test(myKeyType)) {
+        final GordianValidator myValidator = theFactory.getValidator();
+        if (!myValidator.supportedKeySetSymKeySpecs(theSpec.getKeyLength()).test(myKeyType)) {
             throw new GordianDataException("invalid keyType");
         }
 
@@ -542,7 +536,8 @@ public final class GordianCoreKeySet
     void buildFromRandom() throws OceanusException {
         /* Loop through the symmetricKeys values */
         final GordianLength myKeyLen = theSpec.getKeyLength();
-        final Predicate<GordianSymKeyType> mySymPredicate = theFactory.supportedKeySetSymKeyTypes(myKeyLen);
+        final GordianValidator myValidator = theFactory.getValidator();
+        final Predicate<GordianSymKeyType> mySymPredicate = myValidator.supportedKeySetSymKeyTypes(myKeyLen);
         for (final GordianSymKeyType myType : GordianSymKeyType.values()) {
             /* If this is supported for a keySet */
             if (mySymPredicate.test(myType)) {
@@ -570,32 +565,20 @@ public final class GordianCoreKeySet
             throw new GordianLogicException("Invalid secret length");
         }
 
-        /* Protect internal buffers */
-        final int myPartLen = pSecret.length >> 1;
-        final byte[] mySecret = new byte[myPartLen];
-        final byte[] myIV = new byte[myPartLen];
-        try {
-            /* Split into two parts */
-            System.arraycopy(pSecret, 0, mySecret, 0, myPartLen);
-            System.arraycopy(pSecret, myPartLen, myIV, 0, myPartLen);
-
-            /* Loop through the symmetricKeys values */
-            final GordianLength myKeyLen = theSpec.getKeyLength();
-            final Predicate<GordianSymKeyType> mySymPredicate = theFactory.supportedKeySetSymKeyTypes(myKeyLen);
-            final Random mySeededRandom = theFactory.getPersonalisation().getSeededRandom(GordianPersonalId.HASHRANDOM, myIV);
-            for (final GordianSymKeyType myType : GordianSymKeyType.values()) {
-                /* If this is supported for a keySet */
-                if (mySymPredicate.test(myType)) {
-                    /* Generate the key and add to map */
-                    final GordianSymKeySpec mySpec = new GordianSymKeySpec(myType, myKeyLen);
-                    final GordianKey<GordianSymKeySpec> myKey = generateKey(mySpec, mySecret, myIV, mySeededRandom);
-                    theSymKeyMap.put(mySpec, myKey);
-                    theCipher.declareSymKey(myKey);
-                }
+        /* Loop through the symmetricKeys values */
+        final GordianLength myKeyLen = theSpec.getKeyLength();
+        final GordianValidator myValidator = theFactory.getValidator();
+        final Predicate<GordianSymKeyType> mySymPredicate = myValidator.supportedKeySetSymKeyTypes(myKeyLen);
+        final Random mySeededRandom = theFactory.getPersonalisation().getSeededRandom(GordianPersonalId.KEYSETGENRANDOM, pSecret);
+        for (final GordianSymKeyType myType : GordianSymKeyType.values()) {
+            /* If this is supported for a keySet */
+            if (mySymPredicate.test(myType)) {
+                /* Generate the key and add to map */
+                final GordianSymKeySpec mySpec = new GordianSymKeySpec(myType, myKeyLen);
+                final GordianKey<GordianSymKeySpec> myKey = generateKey(mySpec, pSecret, mySeededRandom);
+                theSymKeyMap.put(mySpec, myKey);
+                theCipher.declareSymKey(myKey);
             }
-        } finally {
-            Arrays.fill(mySecret, (byte) 0);
-            Arrays.fill(myIV, (byte) 0);
         }
     }
 
@@ -604,19 +587,17 @@ public final class GordianCoreKeySet
      * @param <T> the class of key
      * @param pKeyType the keyType
      * @param pSecret the derived Secret
-     * @param pInitVector the initialisation vector.
      * @param pSeededRandom the seededRandom.
      * @return the generated key
      * @throws OceanusException on error
      */
     private <T extends GordianKeySpec> GordianKey<T> generateKey(final T pKeyType,
                                                                  final byte[] pSecret,
-                                                                 final byte[] pInitVector,
                                                                  final Random pSeededRandom) throws OceanusException {
         /* Generate a new Secret Key from the secret */
         final GordianCipherFactory myFactory = theFactory.getCipherFactory();
         final GordianCoreKeyGenerator<T> myGenerator = (GordianCoreKeyGenerator<T>) myFactory.getKeyGenerator(pKeyType);
-        return myGenerator.generateKeyFromSecret(pSecret, pInitVector, pSeededRandom);
+        return myGenerator.generateKeyFromSecret(pSecret, pSeededRandom);
     }
 
     @Override

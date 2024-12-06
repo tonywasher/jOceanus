@@ -16,28 +16,29 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.core.zip;
 
+import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactory;
+import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactoryLock;
+import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactoryType;
+import net.sourceforge.joceanus.gordianknot.api.factory.GordianLockFactory;
+import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
+import net.sourceforge.joceanus.gordianknot.api.lock.GordianKeyPairLock;
+import net.sourceforge.joceanus.gordianknot.api.lock.GordianKeySetLock;
+import net.sourceforge.joceanus.gordianknot.api.lock.GordianLock;
+import net.sourceforge.joceanus.gordianknot.api.lock.GordianPasswordLockSpec;
+import net.sourceforge.joceanus.gordianknot.api.zip.GordianZipFactory;
+import net.sourceforge.joceanus.gordianknot.api.zip.GordianZipLock;
+import net.sourceforge.joceanus.gordianknot.api.zip.GordianZipReadFile;
+import net.sourceforge.joceanus.gordianknot.api.zip.GordianZipWriteFile;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianIOException;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianLogicException;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-
-import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactory;
-import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
-import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactoryLock;
-import net.sourceforge.joceanus.gordianknot.api.lock.GordianKeyPairLock;
-import net.sourceforge.joceanus.gordianknot.api.lock.GordianKeySetLock;
-import net.sourceforge.joceanus.gordianknot.api.factory.GordianLockFactory;
-import net.sourceforge.joceanus.gordianknot.api.lock.GordianLock;
-import net.sourceforge.joceanus.gordianknot.api.lock.GordianPasswordLockSpec;
-import net.sourceforge.joceanus.gordianknot.api.zip.GordianZipLock;
-import net.sourceforge.joceanus.gordianknot.api.zip.GordianZipFactory;
-import net.sourceforge.joceanus.gordianknot.api.zip.GordianZipReadFile;
-import net.sourceforge.joceanus.gordianknot.api.zip.GordianZipWriteFile;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianIOException;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianLogicException;
-import net.sourceforge.joceanus.oceanus.OceanusException;
 
 /**
  * Zip Factory.
@@ -74,7 +75,7 @@ public class GordianCoreZipFactory
     public GordianZipLock factoryZipLock(final GordianPasswordLockSpec pLockSpec,
                                          final char[] pPassword) throws OceanusException {
         final GordianLockFactory myLockFactory = theFactory.getLockFactory();
-        final GordianFactoryLock myLock = myLockFactory.newFactoryLock(pLockSpec, pPassword);
+        final GordianFactoryLock myLock = myLockFactory.newFactoryLock(pLockSpec, GordianFactoryType.BC, pPassword);
         return zipLock(myLock);
     }
 

@@ -29,7 +29,7 @@ import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymCipher;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymCipherSpec;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymKeySpec;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymKeyType;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCryptoException;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
 import net.sourceforge.joceanus.gordianknot.impl.core.cipher.GordianCoreCipher;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.oceanus.OceanusException;

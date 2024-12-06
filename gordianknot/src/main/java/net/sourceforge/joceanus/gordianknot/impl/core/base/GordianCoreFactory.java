@@ -16,28 +16,24 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.core.base;
 
-import java.security.SecureRandom;
-import java.util.function.Predicate;
-
-import org.bouncycastle.asn1.ASN1ObjectIdentifier;
-import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
-
 import net.sourceforge.joceanus.gordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianCipherFactory;
-import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymKeySpec;
-import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymKeyType;
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestFactory;
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestSpec;
-import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestType;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactoryType;
+import net.sourceforge.joceanus.gordianknot.api.factory.GordianLockFactory;
 import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySet;
 import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySetFactory;
-import net.sourceforge.joceanus.gordianknot.api.factory.GordianLockFactory;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacFactory;
 import net.sourceforge.joceanus.gordianknot.api.random.GordianRandomFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.oceanus.OceanusException;
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
+
+import java.security.SecureRandom;
 
 /**
  * Base factory.
@@ -145,6 +141,11 @@ public abstract class GordianCoreFactory
      * Lock Factory.
      */
     private GordianLockFactory theLockFactory;
+
+    /**
+     * The validator.
+     */
+    private GordianValidator theValidator;
 
     /**
      * The Key AlgIds.
@@ -383,75 +384,23 @@ public abstract class GordianCoreFactory
         theLockFactory = pFactory;
     }
 
-    Predicate<GordianDigestType> supportedKeySetDigestTypes() {
-        final GordianMacFactory myMacs = getMacFactory();
-        return myMacs.supportedHMacDigestTypes().and(GordianDigestType::isCombinedHashDigest);
-    }
-
     /**
-     * Obtain predicate for supported keySet symKeySpecs.
-     * @param pKeyLen the keyLength
-     * @return the predicate
+     * Obtain the validator.
+     * @return the validator
      */
-    public Predicate<GordianSymKeySpec> supportedKeySetSymKeySpecs(final GordianLength pKeyLen) {
-        return s -> supportedKeySetSymKeyTypes(pKeyLen).test(s.getSymKeyType())
-                && s.getBlockLength() == GordianLength.LEN_128;
+    public GordianValidator getValidator() {
+        return theValidator;
     }
 
     /**
-     * Obtain predicate for keySet SymKeyTypes.
-     * @param pKeyLen the keyLength
-     * @return the predicate
+     * Set the validator.
+     * @param pValidator the validator.
      */
-    public Predicate<GordianSymKeyType> supportedKeySetSymKeyTypes(final GordianLength pKeyLen) {
-        return t -> validKeySetSymKeyType(t, pKeyLen);
+    protected void setValidator(final GordianValidator pValidator) {
+        theValidator = pValidator;
     }
 
-    /**
-     * check valid keySet symKeyType.
-     * @param pKeyType the symKeyType
-     * @param pKeyLen the keyLength
-     * @return true/false
-     */
-    private boolean validKeySetSymKeyType(final GordianSymKeyType pKeyType,
-                                          final GordianLength pKeyLen) {
-        return validSymKeyType(pKeyType)
-                && validStdBlockSymKeyTypeForKeyLength(pKeyType, pKeyLen);
-    }
-
-    /**
-     * Check standard block symKeyType.
-     * @param pKeyType the symKeyType
-     * @param pKeyLen the keyLength
-     * @return true/false
-     */
-    public static boolean validStdBlockSymKeyTypeForKeyLength(final GordianSymKeyType pKeyType,
-                                                              final GordianLength pKeyLen) {
-        return validSymKeyTypeForKeyLength(pKeyType, pKeyLen)
-                && pKeyType.getDefaultBlockLength().equals(GordianLength.LEN_128);
-    }
-
-    /**
-     * Check SymKeyType.
-     * @param pKeyType the symKeyType
-     * @param pKeyLen the keyLength
-     * @return true/false
-     */
-    public static boolean validSymKeyTypeForKeyLength(final GordianSymKeyType pKeyType,
-                                                      final GordianLength pKeyLen) {
-        return pKeyType.validForKeyLength(pKeyLen);
-    }
-
-    /**
-     * Check SymKeyType.
-     * @param pKeyType the symKeyType
-     * @return true/false
-     */
-    public boolean validSymKeyType(final GordianSymKeyType pKeyType) {
-        return pKeyType != null;
-    }
-
-    /**
+        /**
      * Obtain Identifier for keySpec.
      * @param pSpec the keySpec.
      * @return the Identifier

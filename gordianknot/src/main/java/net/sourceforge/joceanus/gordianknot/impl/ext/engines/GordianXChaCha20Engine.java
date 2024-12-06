@@ -28,14 +28,12 @@ public class GordianXChaCha20Engine
         extends ChaChaEngine {
 
     @Override
-    public String getAlgorithmName()
-    {
+    public String getAlgorithmName() {
         return "XChaCha20";
     }
 
     @Override
-    protected int getNonceSize()
-    {
+    protected int getNonceSize() {
         return 24;
     }
 

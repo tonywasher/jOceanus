@@ -16,21 +16,20 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.prometheus.data;
 
-import java.util.Objects;
-
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySet;
 import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySetFactory;
-import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySetSpec;
 import net.sourceforge.joceanus.gordianknot.util.GordianUtilities;
 import net.sourceforge.joceanus.metis.data.MetisDataResource;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.metis.field.MetisFieldVersionedSet;
-import net.sourceforge.joceanus.prometheus.PrometheusDataException;
-import net.sourceforge.joceanus.prometheus.data.PrometheusDataSet.PrometheusCryptographyDataType;
-import net.sourceforge.joceanus.prometheus.data.PrometheusDataList.PrometheusListStyle;
 import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.prometheus.PrometheusDataException;
+import net.sourceforge.joceanus.prometheus.data.PrometheusDataList.PrometheusListStyle;
+import net.sourceforge.joceanus.prometheus.data.PrometheusDataSet.PrometheusCryptographyDataType;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
+
+import java.util.Objects;
 
 /**
  * ControlKey definition and list. The Control Key represents the passwordHash that controls
@@ -177,7 +176,7 @@ public class PrometheusDataKeySet
 
             /* Create the KeySet */
             final GordianKeySetFactory myKeySets = theSecurityFactory.getKeySetFactory();
-            final GordianKeySet myKeySet = myKeySets.generateKeySet(new GordianKeySetSpec());
+            final GordianKeySet myKeySet = myKeySets.generateKeySet(getDataSet().getKeySetSpec());
             theEncryptor = new PrometheusEncryptor(myFormatter, myKeySet);
             setValueKeySet(myKeySet);
 

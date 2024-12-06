@@ -16,25 +16,24 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.core.key;
 
-import java.security.SecureRandom;
-import java.util.Arrays;
-import java.util.Random;
-
+import net.sourceforge.joceanus.gordianknot.api.base.GordianKeySpec;
+import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
+import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestType;
 import net.sourceforge.joceanus.gordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.gordianknot.api.key.GordianKeyGenerator;
-import net.sourceforge.joceanus.gordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMac;
-import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacFactory;
-import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacSpec;
-import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacSpecBuilder;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianByteArrayInteger;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianDataException;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianPersonalisation;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianRandomSource;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianRandomSource;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
+import net.sourceforge.joceanus.gordianknot.impl.core.kdf.GordianHKDFMulti;
+import net.sourceforge.joceanus.gordianknot.impl.core.kdf.GordianHKDFParams;
 import net.sourceforge.joceanus.oceanus.OceanusDataConverter;
+import net.sourceforge.joceanus.oceanus.OceanusException;
+
+import java.security.SecureRandom;
+import java.util.Arrays;
+import java.util.Random;
 
 /**
  * GordianKnot interface for Key Generators.
@@ -42,11 +41,6 @@ import net.sourceforge.joceanus.oceanus.OceanusDataConverter;
  */
 public abstract class GordianCoreKeyGenerator<T extends GordianKeySpec>
     implements GordianKeyGenerator<T> {
-    /**
-     * iterations for buildCipher.
-     */
-    private static final int BUILD_ITERATIONS = 16;
-
     /**
      * The Key Type.
      */
@@ -114,69 +108,51 @@ public abstract class GordianCoreKeyGenerator<T extends GordianKeySpec>
     /**
      * Generate a Key from a Secret.
      * @param pSecret the derived Secret
-     * @param pInitVector the initialisation vector
      * @param pSeededRandom the deterministic random
      * @return the new Secret Key
      * @throws OceanusException on error
      */
     public GordianKey<T> generateKeyFromSecret(final byte[] pSecret,
-                                               final byte[] pInitVector,
                                                final Random pSeededRandom) throws OceanusException {
         /* Determine the key length in bytes */
         final int myKeyLen = theKeyLength
                 / Byte.SIZE;
 
-        /* Create a buffer to hold the resulting key and # of bytes built */
-        final byte[] myKeyBytes = new byte[myKeyLen];
-        int myBuilt = 0;
+        /* Create data that will be cleared */
+        byte[] myKeyBytes = null;
+        GordianHKDFParams myParams = null;
 
         /* Derive the two digestTypes from the seededRandom */
-        final GordianDigestType[] myDigestTypes = theFactory.getIdManager().deriveKeyHashDigestTypesFromSeed(pSeededRandom, 2);
+        final GordianDigestType[] myDigestTypes = theFactory.getIdManager().deriveKeyGenDigestTypesFromSeed(pSeededRandom, 2);
 
-        /* Create the MACs and initialise them */
-        final GordianMacFactory myFactory = theFactory.getMacFactory();
-        final GordianMac[] myMacs = new GordianMac[2];
-        GordianMacSpec myMacSpec = GordianMacSpecBuilder.hMac(myDigestTypes[0]);
-        GordianMac myMac = myFactory.createMac(myMacSpec);
-        initMacKeyBytes(myMac, pSecret);
-        myMacs[0] = myMac;
-        myMacSpec = GordianMacSpecBuilder.hMac(myDigestTypes[1]);
-        myMac =  myFactory.createMac(myMacSpec);
-        initMacKeyBytes(myMac, pSecret);
-        myMacs[1] = myMac;
+        /* Determine info bytes */
+        final byte[] myAlgo = OceanusDataConverter.stringToByteArray(theKeyType.toString());
+        final byte[] myKeyLenBytes = OceanusDataConverter.integerToByteArray(theKeyLength);
+        final byte[] mySeed = new byte[Long.BYTES];
+        pSeededRandom.nextBytes(mySeed);
 
         /* Protect against exceptions */
         try {
-            /* Create section count */
-            final GordianByteArrayInteger mySection = new GordianByteArrayInteger();
-            final byte[] myAdjust = new byte[Integer.BYTES];
-            pSeededRandom.nextBytes(myAdjust);
-            mySection.addTo(myAdjust);
-
-            /* while we need to generate more bytes */
-            while (myBuilt < myKeyLen) {
-                /* Build the key part */
-                final byte[] myKeyPart = buildCipherSection(myMacs, mySection.iterate(), pInitVector);
-
-                /* Determine how many bytes of this hash should be used */
-                int myNeeded = myKeyLen
-                        - myBuilt;
-                if (myNeeded > myKeyPart.length) {
-                    myNeeded = myKeyPart.length;
-                }
-
-                /* Copy bytes across */
-                System.arraycopy(myKeyPart, 0, myKeyBytes, myBuilt, myNeeded);
-                myBuilt += myNeeded;
-                Arrays.fill(myKeyPart, (byte) 0);
-            }
+            /* Create the HKDF and parameters */
+            final GordianHKDFMulti myEngine = new GordianHKDFMulti(theFactory,
+                    new GordianDigestSpec(myDigestTypes[0], GordianLength.LEN_512),
+                    new GordianDigestSpec(myDigestTypes[1], GordianLength.LEN_512));
+            myParams = GordianHKDFParams.expandOnly(pSecret, myKeyLen)
+                    .withInfo(myAlgo).withInfo(myKeyLenBytes).withInfo(mySeed);
+            theFactory.getPersonalisation().updateInfo(myParams);
+            myKeyBytes = myEngine.deriveBytes(myParams);
 
             /* Return the new key */
             return buildKeyFromBytes(myKeyBytes);
 
             /* Clear build buffer */
         } finally {
-            Arrays.fill(myKeyBytes, (byte) 0);
+            if (myKeyBytes != null) {
+                Arrays.fill(myKeyBytes, (byte) 0);
+            }
+            if (myParams != null) {
+                myParams.clearParameters();
+            }
         }
     }
 
@@ -199,74 +175,4 @@ public abstract class GordianCoreKeyGenerator<T extends GordianKeySpec>
      * @throws OceanusException on error
      */
     public abstract void initMacKeyBytes(GordianMac pMac, byte[] pKeyBytes) throws OceanusException;
-
-    /**
-     * Build Secret Key section (based on PBKDF2).
-     * @param pMacs the MACs to utilise
-     * @param pSection the section count
-     * @param pInitVector the initialisation vector
-     * @return the section
-     * @throws OceanusException on error
-     */
-    private byte[] buildCipherSection(final GordianMac[] pMacs,
-                                      final byte[] pSection,
-                                      final byte[] pInitVector) throws OceanusException {
-        /* Access the two MACs */
-        final GordianMac myPrime = pMacs[0];
-        final GordianMac myAlt = pMacs[1];
-
-        /* Declare initial value */
-        final byte[] myResult = new byte[myPrime.getMacSize()];
-        final byte[] myPrimeHash = new byte[myPrime.getMacSize()];
-        final byte[] myAltHash = new byte[myAlt.getMacSize()];
-        byte[] myPrimeInput = pInitVector;
-        byte[] myAltInput = pInitVector;
-
-        /* Create the standard data */
-        final byte[] myAlgo = OceanusDataConverter.stringToByteArray(theKeyType.toString());
-        final GordianPersonalisation myPersonal = theFactory.getPersonalisation();
-        final byte[] myKeyLen = OceanusDataConverter.integerToByteArray(theKeyLength);
-
-        /* Protect against exceptions */
-        try {
-            /* Update prime with personalisation, algorithm and section */
-            myPersonal.updateMac(myPrime);
-            myPrime.update(myAlgo);
-            myPrime.update(myKeyLen);
-            myPrime.update(pSection);
-
-            /* Update alt with personalisation, algorithm and section */
-            myPersonal.updateMac(myAlt);
-            myAlt.update(myAlgo);
-            myAlt.update(myKeyLen);
-            myAlt.update(pSection);
-
-            /* Loop through the iterations */
-            for (int i = 0; i < BUILD_ITERATIONS; i++) {
-                /* Calculate alternate hash */
-                myAlt.update(myAltInput);
-                myAltInput = myAltHash;
-                myAlt.finish(myAltHash, 0);
-
-                /* Add the existing result to hash */
-                myPrime.update(myPrimeInput);
-                myPrime.update(myAltHash);
-                myPrimeInput = myPrimeHash;
-
-                /* Calculate MAC and place results into hash */
-                myPrime.finish(myPrimeHash, 0);
-
-                /* Fold into results */
-                GordianPersonalisation.buildHashResult(myResult, myPrimeHash);
-            }
-
-            /* Return the result */
-            return myResult;
-
-            /* Clear the intermediate buffers */
-        } finally {
-            Arrays.fill(myPrimeHash, (byte) 0);
-            Arrays.fill(myAltHash, (byte) 0);
-        }
-    }
 }

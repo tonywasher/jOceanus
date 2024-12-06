@@ -33,7 +33,7 @@ import net.sourceforge.joceanus.gordianknot.api.mac.GordianMac;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacParameters;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacSpec;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianDataException;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.cipher.GordianCoreCipher;
 import net.sourceforge.joceanus.gordianknot.impl.core.cipher.GordianCoreCipherFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.digest.GordianCoreDigestFactory;

@@ -256,21 +256,4 @@ public enum GordianDigestType {
     public boolean supportsLargeData() {
         return this != HARAKA;
     }
-
-    /**
-     * is this available as an external hashDigest?
-     * @return true/false
-     */
-    public boolean isExternalHashDigest() {
-        return isLengthValid(GordianLength.LEN_512);
-    }
-
-    /**
-     * is this available as a combined hashDigest?
-     * @return true/false
-     */
-    public boolean isCombinedHashDigest() {
-        return getDefaultLength().getLength() >= GordianLength.LEN_256.getLength()
-                && supportsLargeData();
-    }
 }

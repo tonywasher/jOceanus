@@ -38,6 +38,11 @@ import org.bouncycastle.util.Memoable;
 public class GordianSkeinXof
         implements ExtendedDigest, Memoable, Xof {
     /**
+     * The maximum Xof length.
+     */
+    private static final int MAX_XOFLEN = -2;
+
+    /**
      * The underlying Skein instance.
      */
     private final GordianSkeinBase theUnderlying;
@@ -218,7 +223,7 @@ public class GordianSkeinXof
             } else {
                 /* Calculate the number of bytes available */
                 theXofRemaining = theXofLen == -1
-                        ? -2
+                        ? MAX_XOFLEN
                         : theXofLen;
             }
 

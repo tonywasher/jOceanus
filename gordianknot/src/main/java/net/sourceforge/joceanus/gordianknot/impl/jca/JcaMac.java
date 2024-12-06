@@ -29,7 +29,7 @@ import org.bouncycastle.jcajce.spec.SkeinParameterSpec.Builder;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacParameters;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacSpec;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacType;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCryptoException;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
 import net.sourceforge.joceanus.gordianknot.impl.core.mac.GordianCoreMac;
 import net.sourceforge.joceanus.oceanus.OceanusException;
 
