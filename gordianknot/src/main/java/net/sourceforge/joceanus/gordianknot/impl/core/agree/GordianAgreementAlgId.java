@@ -393,7 +393,7 @@ public class GordianAgreementAlgId {
 
         /* Look for a Byte Type */
         if (BYTERESULTOID.equals(myAlgId)) {
-            return ASN1Integer.getInstance(pResId.getParameters());
+            return ASN1Integer.getInstance(pResId.getParameters()).intValueExact();
         }
 
         /* Look for a Raw Type */

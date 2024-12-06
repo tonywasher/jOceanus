@@ -111,6 +111,11 @@ class AsymmetricTest {
     private static final GordianStreamCipherSpec STREAMKEYSPEC = GordianStreamCipherSpecBuilder.stream(GordianStreamKeySpecBuilder.chacha(GordianLength.LEN_256));
 
     /**
+     * ByteArrayResult.
+     */
+    private static final Integer BYTEARRAY = GordianLength.LEN_128.getLength();
+
+    /**
      * Initialise Factories.
      * @throws OceanusException on error
      */
@@ -259,7 +264,8 @@ class AsymmetricTest {
                 DynamicTest.dynamicTest("keySet", () -> checkSelfAgreement(pAgreement, KEYSETSPEC)),
                 DynamicTest.dynamicTest("symCipher", () -> checkSelfAgreement(pAgreement, SYMKEYSPEC)),
                 DynamicTest.dynamicTest("streamCipher", () -> checkSelfAgreement(pAgreement, STREAMKEYSPEC)),
-                DynamicTest.dynamicTest("basic", () -> checkSelfAgreement(pAgreement, null))
+                DynamicTest.dynamicTest("byteArray", () -> checkSelfAgreement(pAgreement, BYTEARRAY)),
+                DynamicTest.dynamicTest("raw", () -> checkSelfAgreement(pAgreement, null))
          )));
 
         /* Add algorithmId test */

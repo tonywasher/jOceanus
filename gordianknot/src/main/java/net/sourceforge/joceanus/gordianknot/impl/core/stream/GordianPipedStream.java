@@ -16,13 +16,13 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.core.stream;
 
+import org.bouncycastle.util.Arrays;
+
 import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.concurrent.ArrayBlockingQueue;
-
-import org.bouncycastle.util.Arrays;
 
 /**
  * Class to provide a pipe enabling data to be passed between threads via writing to an output
@@ -183,9 +183,7 @@ class GordianPipedStream {
                     - theReadOffset;
 
             /* Determine how much data we can transfer */
-            iNumRead = iNumRead <= pLength
-                       ? iNumRead
-                       : pLength;
+            iNumRead = Math.min(iNumRead, pLength);
 
             /* If we have data to copy */
             if (iNumRead > 0) {
@@ -285,7 +283,7 @@ class GordianPipedStream {
         }
 
         @Override
-        public void close() throws IOException {
+        public void close() {
             /* Ignore if already closed */
             if (isClosed) {
                 return;
@@ -296,7 +294,6 @@ class GordianPipedStream {
                 theQueue.put(new byte[0]);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
-                throw new IOException(e);
             }
 
             /* Note that we have closed */

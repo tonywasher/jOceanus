@@ -195,6 +195,14 @@ public abstract class GordianCoreAgreement
             return;
         }
 
+        /* Validate a byte array */
+        if (pResultType instanceof Integer) {
+            if (((Integer) pResultType) <= 0) {
+                throw new GordianLogicException("Invalid length for byteArray");
+            }
+            return;
+        }
+
         /* Invalid resultType */
         throw new GordianLogicException("Invalid resultType");
     }

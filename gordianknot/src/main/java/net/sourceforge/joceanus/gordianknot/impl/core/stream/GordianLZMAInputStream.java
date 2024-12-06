@@ -16,12 +16,12 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.core.stream;
 
+import SevenZip.Compression.LZMA.Decoder;
+import SevenZip.Compression.LZMA.Encoder;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-
-import SevenZip.Compression.LZMA.Decoder;
-import SevenZip.Compression.LZMA.Encoder;
 
 /**
  * Provides an LZMA decompression InputStream. Due to the design of the 7-Zip libraries the
@@ -131,6 +131,17 @@ final class GordianLZMAInputStream
     }
 
     /**
+     * Close the input.
+     */
+    void closeInputOnError() {
+        try {
+            closeInput();
+        } catch (IOException e) {
+            /* Ignore!! */
+        }
+    }
+
+    /**
      * The decoder service.
      */
     private final class GordianDecoderService
@@ -185,8 +196,9 @@ final class GordianLZMAInputStream
                 /* Close the input/output streams */
                 closeInput();
 
-            } catch (IOException e) {
-                theError = e;
+            } catch (Exception e) {
+                theError = e instanceof IOException ? (IOException) e : new IOException(e);
+                closeInputOnError();
             }
         }
     }

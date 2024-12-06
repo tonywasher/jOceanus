@@ -3,13 +3,14 @@ package net.sourceforge.joceanus.gordianknot.junit.patches;
 import org.bouncycastle.crypto.CipherKeyGenerator;
 import org.bouncycastle.crypto.InvalidCipherTextException;
 import org.bouncycastle.crypto.KeyGenerationParameters;
-import org.bouncycastle.crypto.engines.ElephantEngine;
-import org.bouncycastle.crypto.engines.ElephantEngine.ElephantParameters;
 import org.bouncycastle.crypto.modes.AEADCipher;
 import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.crypto.params.ParametersWithIV;
+import org.bouncycastle.crypto.patch.engines.GordianElephantEngine;
+import org.bouncycastle.crypto.patch.engines.GordianElephantEngine.ElephantParameters;
 
 import java.security.SecureRandom;
+import java.util.Arrays;
 
 public class ElephantMulti {
     /**
@@ -34,9 +35,9 @@ public class ElephantMulti {
      */
     public static void main(final String[] pArgs) {
         //checkCipher(new GordianElephantEngine(ElephantParameters.elephant160), 12);
-        checkCipher(new ElephantEngine(ElephantParameters.elephant160), 12, 20);
-        checkCipher(new ElephantEngine(ElephantParameters.elephant176), 12, 22);
-        checkCipher(new ElephantEngine(ElephantParameters.elephant200), 12, 25);
+        checkCipher(new GordianElephantEngine(ElephantParameters.elephant160), 12, 20);
+        checkCipher(new GordianElephantEngine(ElephantParameters.elephant176), 12, 22);
+        checkCipher(new GordianElephantEngine(ElephantParameters.elephant200), 12, 25);
     }
 
     /**
@@ -78,17 +79,39 @@ public class ElephantMulti {
             int myOutLen = pCipher.processBytes(myData, 0, PARTLEN, myEncrypted, 0);
 
             /* Note that myOutLen is incorrect so calculate what it should have been */
-            myOutLen = pBufferLen * (PARTLEN / pBufferLen) ;
+            myOutLen = pBufferLen * (PARTLEN / pBufferLen);
+            int myXtra = PARTLEN << 1;
 
             /* FAILS on this call */
-            myOutLen += pCipher.processBytes(myData, PARTLEN, DATALEN - PARTLEN, myEncrypted, myOutLen);
+            myOutLen += pCipher.processBytes(myData, PARTLEN, PARTLEN, myEncrypted, myOutLen);
+            myOutLen = pBufferLen * (myXtra / pBufferLen);
+
+            /* FAILS on this call if the previous call is fixed */
+            myOutLen += pCipher.processBytes(myData, myXtra, DATALEN - myXtra, myEncrypted, myOutLen);
 
             /* If it succeeded myOutLen is again incorrect, so recalculate it  */
             myOutLen = pBufferLen * (DATALEN / pBufferLen);
 
             /* Finish the encryption */
-            pCipher.doFinal(myEncrypted, myOutLen);
+            myOutLen += pCipher.doFinal(myEncrypted, myOutLen);
 
+            /* Initialise the cipher for decryption */
+            pCipher.init(false, myParams);
+            final int myExpectedClearLen = pCipher.getOutputSize(myExpectedOutLen);
+            final byte[] myDecrypted = new byte[myExpectedClearLen];
+            pCipher.processAADBytes(myAEAD, 0, AEADLEN);
+            int myPartLen = pBufferLen + 3;
+            int myClearLen = pCipher.processBytes(myEncrypted, 0, myPartLen, myDecrypted, 0);
+            myClearLen = 0;
+            myClearLen += pCipher.processBytes(myEncrypted, myPartLen, myOutLen - myPartLen, myDecrypted, myClearLen);
+            myClearLen = pBufferLen * (DATALEN / pBufferLen);
+            pCipher.doFinal(myDecrypted, myClearLen);
+            final byte[] myResult = Arrays.copyOf(myDecrypted, DATALEN);
+
+            /* Check that we have the same result */
+            if (!Arrays.equals(myData, myResult)) {
+                System.out.println("Cipher " + pCipher.getAlgorithmName() + " failed");
+            }
         } catch (InvalidCipherTextException e) {
             throw new RuntimeException(e);
         }

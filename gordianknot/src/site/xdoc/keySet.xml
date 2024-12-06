@@ -176,58 +176,5 @@
                 </source>
             </subsection>
         </section>
-        <section name="KeySetHash">
-            <p>A keySet can also be derived from a password and a hash.</p>
-            <subsection name="Creation Algorithm">
-                <ol>
-                    <li>A random 32-bit seed <strong>S</strong> and a random 128-bit initVector <strong>V</strong> are generated.</li>
-                    <li>A set of three hMacs (all different) <strong>H<sub>M</sub></strong>, <strong>H<sub>A</sub></strong> and <strong>H<sub>S</sub></strong> are
-                         selected in a deterministic fashion using a seededRandom based on <strong>S</strong> and the personalisation value
-                        <strong>I<sub>3</sub></strong>. In addition a 512-bit length digest <strong>X</strong> is selected from the same seeded Random.</li>
-                    <li>Each of the hMacs is initialised with the password as the key</li>
-                    <li>Each of the macs is updated with <strong>P</strong>, <strong>IV</strong> and the number of iterations <strong>L</strong> </li>
-                    <li>Set input <strong>D<sub>M</sub></strong>, <strong>D<sub>A</sub></strong> and <strong>D<sub>S</sub></strong> to <strong>V</strong></li>
-                    <li>Repeat the following loop <strong>L</strong> times
-                         <ol>
-                             <li>Update <strong>H<sub>M</sub></strong> with <strong>D<sub>M</sub></strong></li>
-                             <li>Update <strong>H<sub>A</sub></strong> with <strong>D<sub>A</sub></strong></li>
-                             <li>Update <strong>H<sub>S</sub></strong> with <strong>D<sub>S</sub></strong>, <strong>D<sub>M</sub></strong> and <strong>D<sub>A</sub></strong></li>
-                             <li>Build new <strong>D<sub>M</sub></strong> as the hash of <strong>H<sub>M</sub></strong> and xor the result into <strong>C<sub>M</sub></strong>.
-                                Repeat for other hashes.</li>
-                         </ol>
-                    </li>
-                    <li>Update digest <strong>X</strong> with <strong>D<sub>M</sub></strong> and <strong>D<sub>A</sub></strong> and calculate the hash as
-                         <strong>R<sub>V</sub></strong></li>
-                    <li>Update digest <strong>X</strong> with <strong>C<sub>M</sub></strong> and <strong>C<sub>A</sub></strong> and calculate the hash as
-                         <strong>R<sub>X</sub></strong></li>
-                    <li>Calculate external hash as the concatenation of <strong>S||V||R<sub>X</sub></strong></li>
-                    <li>Create keys for the keySet using <strong>C<sub>S</sub></strong> as the secret and <strong>R<sub>V</sub></strong> as the initVector</li>
-                </ol>
-            </subsection>
-            <subsection name="Derivation Algorithm">
-                <ol>
-                    <li>Extract <strong>S</strong>, <strong>V</strong> and <strong>R<sub>X</sub></strong> from the hash.</li>
-                    <li>Repeat creation algorithm with <strong>S</strong>, <strong>V</strong> and the password</li>
-                    <li>Compare the calculated <strong>R<sub>X</sub></strong> with the one extracted from the hash. Only create the keySet if it matches.</li>
-                 </ol>
-            </subsection>
-            <subsection name="Sample">
-                <source>
-                    /* Access factory */
-                    final GordianFactory myBaseFactory = GordianGenerator.createFactory();
-                    final GordianKeySetFactory myKeySetFactory = myBaseFactory.getKeySetFactory();
-
-                    /* Create the hash and access the resultant keySet */
-                    final GordianKeySetSpec mySpec = new GordianKeySetHashSpec(new GordianKeySetSpec(GordianLength.LEN_256));
-                    final char[] myPassword = ...
-                    final GordianKeySetHash myKeySetHash = myKeySetFactory.generateKeySetHash(mySpec, myPassword);
-                    final GordianKeySet myKeySet = myKeySetHash.getKeySet();
-
-                    /* Access hash and derive keySet from hash and password */
-                    final byte[] myHash = myKeySetHash.getHash();
-                    final GordianKeySetHash myResolved = myKeySetFactory.deriveKeySetHash(myHash, myPassword);
-               </source>
-            </subsection>
-        </section>
     </body>
 </document>
