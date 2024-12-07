@@ -16,14 +16,13 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.coeus.data;
 
-import java.util.EnumMap;
-import java.util.Map;
-import java.util.ResourceBundle;
-
-import net.sourceforge.joceanus.coeus.exc.CoeusDataException;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.oceanus.resource.OceanusBundleId;
 import net.sourceforge.joceanus.oceanus.resource.OceanusBundleLoader;
+
+import java.util.EnumMap;
+import java.util.Map;
+import java.util.ResourceBundle;
 
 /**
  * Resource IDs for Coeus.
@@ -533,7 +532,7 @@ public enum CoeusResource
     /**
      * The Resource Loader.
      */
-    private static final OceanusBundleLoader LOADER = OceanusBundleLoader.getPackageLoader(CoeusDataException.class.getCanonicalName(),
+    private static final OceanusBundleLoader LOADER = OceanusBundleLoader.getLoader(CoeusResource.class.getCanonicalName(),
             ResourceBundle::getBundle);
 
     /**

@@ -17,7 +17,7 @@
 package net.sourceforge.joceanus.themis.analysis;
 
 import net.sourceforge.joceanus.oceanus.OceanusException;
-import net.sourceforge.joceanus.themis.ThemisDataException;
+import net.sourceforge.joceanus.themis.exc.ThemisDataException;
 
 /**
  * Array construct.

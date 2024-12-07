@@ -14,27 +14,50 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.themis;
+package net.sourceforge.joceanus.themis.exc;
 
 import net.sourceforge.joceanus.oceanus.OceanusException;
 
 /**
- * Themis IO Exception.
+ * Themis Data Exception.
  */
-public class ThemisIOException
+public class ThemisDataException
         extends OceanusException {
     /**
      * SerialId.
      */
-    private static final long serialVersionUID = 2852365971732230169L;
+    private static final long serialVersionUID = 4637657079563352555L;
+
+    /**
+     * Create a new Themis Exception object based on an object, a string and an underlying
+     * exception.
+     * @param o the object
+     * @param s the description of the exception
+     * @param e the underlying exception
+     */
+    public ThemisDataException(final Object o,
+                               final String s,
+                               final Throwable e) {
+        super(o, s, e);
+    }
+
+    /**
+     * Create a new Themis Exception object based on an object and a string.
+     * @param o the object
+     * @param s the description of the exception
+     */
+    public ThemisDataException(final Object o,
+                               final String s) {
+        super(o, s);
+    }
 
     /**
      * Create a new Themis Exception object based on a string and an underlying exception.
      * @param s the description of the exception
      * @param e the underlying exception
      */
-    public ThemisIOException(final String s,
-                             final Throwable e) {
+    public ThemisDataException(final String s,
+                               final Throwable e) {
         super(s, e);
     }
 
@@ -42,7 +65,7 @@ public class ThemisIOException
      * Create a new Themis Exception object based on a string.
      * @param s the description of the exception
      */
-    public ThemisIOException(final String s) {
+    public ThemisDataException(final String s) {
         super(s);
     }
 }

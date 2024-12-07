@@ -15,6 +15,6 @@
  * limitations under the License.
  ******************************************************************************/
 /**
- * Package to provide exception classes for jThemis.
+ * Package to provide exception classes for Themis.
  */
-package net.sourceforge.joceanus.themis;
+package net.sourceforge.joceanus.themis.exc;

@@ -68,18 +68,6 @@ public final class OceanusBundleLoader {
     }
 
     /**
-     * Obtain package loader.
-     * @param pBundleName the Bundle Name
-     * @param pLoader the bundle loader
-     * @return the loader
-     */
-    public static OceanusBundleLoader getPackageLoader(final String pBundleName,
-                                                       final Function<String, ResourceBundle> pLoader) {
-        final String myName = getPackageBundle(pBundleName);
-        return new OceanusBundleLoader(myName, pLoader);
-    }
-
-    /**
      * Build name of resource for Key.
      * @param <K> the the resource key data type
      * @param pKey the resource Key

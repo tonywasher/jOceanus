@@ -14,35 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.themis;
+package net.sourceforge.joceanus.themis.exc;
 
 import net.sourceforge.joceanus.oceanus.OceanusException;
 
 /**
- * Themis Logic Exception.
+ * Themis Cancel Exception.
  */
-public class ThemisLogicException
+public class ThemisCancelException
         extends OceanusException {
     /**
      * SerialId.
      */
-    private static final long serialVersionUID = -8168556703703668204L;
-
-    /**
-     * Create a new Themis Exception object based on an object and a string.
-     * @param o the object
-     * @param s the description of the exception
-     */
-    public ThemisLogicException(final Object o,
-                                final String s) {
-        super(o, s);
-    }
+    private static final long serialVersionUID = 8610621822129819107L;
 
     /**
      * Create a new Themis Exception object based on a string.
      * @param s the description of the exception
      */
-    public ThemisLogicException(final String s) {
+    public ThemisCancelException(final String s) {
         super(s);
     }
 }

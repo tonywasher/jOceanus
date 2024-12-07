@@ -38,7 +38,7 @@ import net.sourceforge.joceanus.tethys.ui.api.pane.TethysUIBoxPaneManager;
 import net.sourceforge.joceanus.tethys.ui.api.pane.TethysUIPaneFactory;
 import net.sourceforge.joceanus.tethys.ui.api.pane.TethysUITabPaneManager;
 import net.sourceforge.joceanus.tethys.ui.api.pane.TethysUITabPaneManager.TethysUITabItem;
-import net.sourceforge.joceanus.themis.ThemisIOException;
+import net.sourceforge.joceanus.themis.exc.ThemisIOException;
 import net.sourceforge.joceanus.themis.analysis.ThemisAnalysisProject;
 import net.sourceforge.joceanus.themis.dsm.ThemisDSMModule;
 import net.sourceforge.joceanus.themis.dsm.ThemisDSMPackage;

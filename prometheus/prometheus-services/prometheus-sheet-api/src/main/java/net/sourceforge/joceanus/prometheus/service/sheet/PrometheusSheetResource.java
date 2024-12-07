@@ -16,12 +16,12 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.prometheus.service.sheet;
 
+import net.sourceforge.joceanus.oceanus.resource.OceanusBundleId;
+import net.sourceforge.joceanus.oceanus.resource.OceanusBundleLoader;
+
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.ResourceBundle;
-
-import net.sourceforge.joceanus.oceanus.resource.OceanusBundleId;
-import net.sourceforge.joceanus.oceanus.resource.OceanusBundleLoader;
 
 /**
  * Resource IDs for Sheet.
@@ -51,7 +51,7 @@ public enum PrometheusSheetResource
     /**
      * The Resource Loader.
      */
-    private static final OceanusBundleLoader LOADER = OceanusBundleLoader.getPackageLoader(PrometheusSheetException.class.getCanonicalName(),
+    private static final OceanusBundleLoader LOADER = OceanusBundleLoader.getLoader(PrometheusSheetResource.class.getCanonicalName(),
             ResourceBundle::getBundle);
 
     /**
