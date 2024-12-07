@@ -28,7 +28,7 @@ import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianRandomSource;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.kdf.GordianHKDFMulti;
 import net.sourceforge.joceanus.gordianknot.impl.core.kdf.GordianHKDFParams;
-import net.sourceforge.joceanus.oceanus.format.OceanusDataConverter;
+import net.sourceforge.joceanus.oceanus.convert.OceanusDataConverter;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 import java.security.SecureRandom;

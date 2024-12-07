@@ -16,13 +16,13 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.metis.field;
 
+import net.sourceforge.joceanus.metis.data.MetisDataDifference;
+import net.sourceforge.joceanus.metis.data.MetisDataResource;
+import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
+
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Iterator;
-
-import net.sourceforge.joceanus.metis.data.MetisDataDifference;
-import net.sourceforge.joceanus.metis.data.MetisDataResource;
-import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
 
 /**
  * Data Version History.
@@ -91,7 +91,7 @@ public class MetisFieldVersionHistory
     }
 
     @Override
-    public String formatObject(final TethysUIDataFormatter pFormatter) {
+    public String formatObject(final OceanusDataFormatter pFormatter) {
         return MetisFieldVersionHistory.class.getSimpleName() + "(" + theStack.size() + ")";
     }
 

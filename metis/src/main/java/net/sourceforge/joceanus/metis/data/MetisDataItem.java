@@ -16,13 +16,13 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.metis.data;
 
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
+
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
-
-import net.sourceforge.joceanus.oceanus.date.OceanusDate;
-import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
 
 /**
  * Standard item interfaces.
@@ -43,7 +43,7 @@ public final class MetisDataItem {
          * @param pFormatter the data formatter
          * @return the display summary of the object
          */
-        default String formatObject(TethysUIDataFormatter pFormatter) {
+        default String formatObject(OceanusDataFormatter pFormatter) {
             return toString();
         }
     }

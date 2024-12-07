@@ -26,6 +26,7 @@ import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataSet;
 import net.sourceforge.joceanus.prometheus.database.PrometheusDataStore;
@@ -33,7 +34,6 @@ import net.sourceforge.joceanus.prometheus.preference.PrometheusPreferenceManage
 import net.sourceforge.joceanus.prometheus.security.PrometheusSecurityPasswordManager;
 import net.sourceforge.joceanus.prometheus.sheets.PrometheusSpreadSheet;
 import net.sourceforge.joceanus.prometheus.toolkit.PrometheusToolkit;
-import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
 import net.sourceforge.joceanus.tethys.ui.api.factory.TethysUIFactory;
 
 import java.util.EnumMap;
@@ -202,7 +202,7 @@ public abstract class PrometheusDataControl
      * Obtain DataFormatter.
      * @return the DataFormatter
      */
-    public TethysUIDataFormatter getDataFormatter() {
+    public OceanusDataFormatter getDataFormatter() {
         return theMetisToolkit.getFormatter();
     }
 

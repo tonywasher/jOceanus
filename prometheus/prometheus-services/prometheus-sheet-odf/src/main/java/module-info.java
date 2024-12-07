@@ -24,7 +24,6 @@ module net.sourceforge.joceanus.prometheus.sheet.odf {
 
     /* Oceanus */
     requires net.sourceforge.joceanus.oceanus;
-    requires net.sourceforge.joceanus.tethys.core;
     requires net.sourceforge.joceanus.prometheus.sheet.api;
 
     /* Services provided */

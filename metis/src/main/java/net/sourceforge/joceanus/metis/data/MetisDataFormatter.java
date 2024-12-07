@@ -19,25 +19,25 @@ package net.sourceforge.joceanus.metis.data;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataList;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataMap;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataObjectFormat;
-import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
-import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter.TethysUIDataFormatterExtension;
+import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
+import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter.OceanusDataFormatterExtension;
 
 /**
  * Generic Data object formatter.
  * @author Tony Washer
  */
 public class MetisDataFormatter
-        implements TethysUIDataFormatterExtension {
+        implements OceanusDataFormatterExtension {
     /**
      * The formatter.
      */
-    private final TethysUIDataFormatter theFormatter;
+    private final OceanusDataFormatter theFormatter;
 
     /**
      * Constructor.
      * @param pFormatter the formatter
      */
-    public MetisDataFormatter(final TethysUIDataFormatter pFormatter) {
+    public MetisDataFormatter(final OceanusDataFormatter pFormatter) {
         theFormatter = pFormatter;
     }
 

@@ -19,7 +19,7 @@ package net.sourceforge.joceanus.oceanus.logger;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 
-import net.sourceforge.joceanus.oceanus.format.OceanusDataConverter;
+import net.sourceforge.joceanus.oceanus.convert.OceanusDataConverter;
 
 /**
  * Log Manager.

@@ -16,23 +16,23 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.metis.toolkit;
 
-import net.sourceforge.joceanus.metis.ui.MetisErrorPanel;
-import net.sourceforge.joceanus.metis.ui.MetisFieldColours.MetisColorPreferences;
-import net.sourceforge.joceanus.metis.ui.MetisPreferenceView;
 import net.sourceforge.joceanus.metis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.metis.help.MetisHelpWindow;
 import net.sourceforge.joceanus.metis.preference.MetisPreferenceEvent;
 import net.sourceforge.joceanus.metis.preference.MetisPreferenceManager;
+import net.sourceforge.joceanus.metis.ui.MetisErrorPanel;
+import net.sourceforge.joceanus.metis.ui.MetisFieldColours.MetisColorPreferences;
+import net.sourceforge.joceanus.metis.ui.MetisPreferenceView;
 import net.sourceforge.joceanus.metis.viewer.MetisViewerEntry;
 import net.sourceforge.joceanus.metis.viewer.MetisViewerManager;
 import net.sourceforge.joceanus.metis.viewer.MetisViewerStandardEntry;
 import net.sourceforge.joceanus.metis.viewer.MetisViewerWindow;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
+import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.oceanus.logger.OceanusLogManager;
 import net.sourceforge.joceanus.oceanus.logger.OceanusLogger;
 import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
-import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIProgram;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIValueSet;
 import net.sourceforge.joceanus.tethys.ui.api.factory.TethysUIFactory;
@@ -89,6 +89,11 @@ public class MetisToolkit {
     private MetisColorPreferences theColorPreferences;
 
     /**
+     * The formatter.
+     */
+    private final OceanusDataFormatter theFormatter;
+
+    /**
      * Program Definition.
      */
     private final TethysUIProgram theProgram;
@@ -126,8 +131,9 @@ public class MetisToolkit {
         /* Record the profile */
         setProfile(theGuiFactory.getActiveProfile());
 
-        /* Extend the formatter */
-        getFormatter().extendFormatter(new MetisDataFormatter(getFormatter()));
+        /* Access and extend the formatter */
+        theFormatter = pFactory.getDataFormatter();
+        theFormatter.extendFormatter(new MetisDataFormatter(theFormatter));
 
         /* create the thread manager */
         theThreadManager = theGuiFactory.threadFactory().newThreadManager();
@@ -172,8 +178,8 @@ public class MetisToolkit {
      * Obtain the Data Formatter.
      * @return the formatter
      */
-    public TethysUIDataFormatter getFormatter() {
-        return getGuiFactory().getDataFormatter();
+    public OceanusDataFormatter getFormatter() {
+        return theFormatter;
     }
 
     /**

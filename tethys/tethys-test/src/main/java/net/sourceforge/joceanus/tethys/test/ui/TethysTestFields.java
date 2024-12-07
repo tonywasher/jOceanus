@@ -16,17 +16,14 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.tethys.test.ui;
 
-import java.util.Currency;
-import java.util.List;
-
 import net.sourceforge.joceanus.oceanus.date.OceanusDate;
 import net.sourceforge.joceanus.oceanus.date.OceanusDateFormatter;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimal;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimalFormatter;
 import net.sourceforge.joceanus.oceanus.event.OceanusEvent;
+import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIAlignment;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIComponent;
-import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.tethys.ui.api.button.TethysUIButton;
 import net.sourceforge.joceanus.tethys.ui.api.button.TethysUIButtonFactory;
@@ -57,6 +54,9 @@ import net.sourceforge.joceanus.tethys.ui.api.menu.TethysUIScrollMenu;
 import net.sourceforge.joceanus.tethys.ui.api.pane.TethysUIBoxPaneManager;
 import net.sourceforge.joceanus.tethys.ui.api.pane.TethysUIGridPaneManager;
 import net.sourceforge.joceanus.tethys.ui.api.pane.TethysUIScrollPaneManager;
+
+import java.util.Currency;
+import java.util.List;
 
 /**
  * Scroll utilities examples.
@@ -209,7 +209,7 @@ public class TethysTestFields {
         theHelper = new TethysTestHelper(theGuiFactory);
 
         /* Access formatters */
-        final TethysUIDataFormatter myFormatter = theGuiFactory.getDataFormatter();
+        final OceanusDataFormatter myFormatter = theGuiFactory.getDataFormatter();
         theDecimalFormatter = myFormatter.getDecimalFormatter();
         theDateFormatter = myFormatter.getDateFormatter();
 

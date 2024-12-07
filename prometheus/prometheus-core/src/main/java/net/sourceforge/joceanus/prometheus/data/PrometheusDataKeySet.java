@@ -24,10 +24,10 @@ import net.sourceforge.joceanus.metis.data.MetisDataResource;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.metis.field.MetisFieldVersionedSet;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.prometheus.exc.PrometheusDataException;
+import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataList.PrometheusListStyle;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataSet.PrometheusCryptographyDataType;
-import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
+import net.sourceforge.joceanus.prometheus.exc.PrometheusDataException;
 
 import java.util.Objects;
 
@@ -109,7 +109,7 @@ public class PrometheusDataKeySet
 
         /* Access the Password manager */
         final PrometheusDataSet myData = getDataSet();
-        final TethysUIDataFormatter myFormatter = myData.getDataFormatter();
+        final OceanusDataFormatter myFormatter = myData.getDataFormatter();
 
         /* Store the ControlKey */
         Object myValue = pValues.getValue(PrometheusCryptographyDataType.CONTROLKEYSET);
@@ -169,7 +169,7 @@ public class PrometheusDataKeySet
 
             /* Access the Formatter */
             final PrometheusDataSet myData = getDataSet();
-            final TethysUIDataFormatter myFormatter = myData.getDataFormatter();
+            final OceanusDataFormatter myFormatter = myData.getDataFormatter();
 
             /* Record the security factory */
             theSecurityFactory = pControlKeySet.getControlKey().getFactoryLock().getFactory();

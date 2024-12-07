@@ -16,18 +16,17 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.metis.report;
 
-import javax.xml.XMLConstants;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-
+import net.sourceforge.joceanus.metis.exc.MetisIOException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimal;
+import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-import net.sourceforge.joceanus.metis.exc.MetisIOException;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimal;
-import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
+import javax.xml.XMLConstants;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 
 /**
  * Build a report document.
@@ -231,14 +230,14 @@ public class MetisReportHTMLBuilder {
     /**
      * The data formatter.
      */
-    private final TethysUIDataFormatter theFormatter;
+    private final OceanusDataFormatter theFormatter;
 
     /**
      * Constructor.
      * @param pFormatter the formatter
      * @throws OceanusException on error
      */
-    public MetisReportHTMLBuilder(final TethysUIDataFormatter pFormatter) throws OceanusException {
+    public MetisReportHTMLBuilder(final OceanusDataFormatter pFormatter) throws OceanusException {
         /* Protect against exceptions */
         try {
             /* Store the formatter */
@@ -260,7 +259,7 @@ public class MetisReportHTMLBuilder {
      * Obtain the data formatter.
      * @return the formatter
      */
-    public TethysUIDataFormatter getDataFormatter() {
+    public OceanusDataFormatter getDataFormatter() {
         return theFormatter;
     }
 

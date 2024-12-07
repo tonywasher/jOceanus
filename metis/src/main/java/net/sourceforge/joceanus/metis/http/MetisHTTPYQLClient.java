@@ -16,23 +16,22 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.metis.http;
 
-import java.util.Currency;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import net.sourceforge.joceanus.metis.exc.MetisDataException;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimal;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimalParser;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusRatio;
-import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
+import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.Currency;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Client to query YQL.
@@ -139,7 +138,7 @@ public class MetisHTTPYQLClient
      * Constructor.
      * @param pFormatter the data formatter
      */
-    public MetisHTTPYQLClient(final TethysUIDataFormatter pFormatter) {
+    public MetisHTTPYQLClient(final OceanusDataFormatter pFormatter) {
         super(YQL_WEBSITE);
         theParser = pFormatter.getDecimalParser();
     }

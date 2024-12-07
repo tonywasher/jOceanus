@@ -16,20 +16,20 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.coeus.data;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
 import net.sourceforge.joceanus.coeus.exc.CoeusDataException;
 import net.sourceforge.joceanus.metis.field.MetisFieldItem;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.date.OceanusDate;
 import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
-import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
+import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
+
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Loan Market.
@@ -59,7 +59,7 @@ public abstract class CoeusMarket
     /**
      * Data Formatter.
      */
-    private final TethysUIDataFormatter theFormatter;
+    private final OceanusDataFormatter theFormatter;
 
     /**
      * Loan Map.
@@ -91,7 +91,7 @@ public abstract class CoeusMarket
      * @param pFormatter the data formatter
      * @param pProvider the loanMarket provider
      */
-    protected CoeusMarket(final TethysUIDataFormatter pFormatter,
+    protected CoeusMarket(final OceanusDataFormatter pFormatter,
                           final CoeusMarketProvider pProvider) {
         /* Store parameters */
         theFormatter = pFormatter;
@@ -120,7 +120,7 @@ public abstract class CoeusMarket
      * Obtain the formatter.
      * @return the formatter
      */
-    public TethysUIDataFormatter getFormatter() {
+    public OceanusDataFormatter getFormatter() {
         return theFormatter;
     }
 

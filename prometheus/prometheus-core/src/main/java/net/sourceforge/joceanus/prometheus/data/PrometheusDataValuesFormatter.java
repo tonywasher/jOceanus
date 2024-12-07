@@ -27,12 +27,12 @@ import net.sourceforge.joceanus.metis.data.MetisDataDifference;
 import net.sourceforge.joceanus.metis.field.MetisFieldItem.MetisFieldSetDef;
 import net.sourceforge.joceanus.metis.toolkit.MetisToolkit;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
+import net.sourceforge.joceanus.prometheus.data.PrometheusDataValues.PrometheusGroupedItem;
 import net.sourceforge.joceanus.prometheus.exc.PrometheusDataException;
 import net.sourceforge.joceanus.prometheus.exc.PrometheusIOException;
-import net.sourceforge.joceanus.prometheus.data.PrometheusDataValues.PrometheusGroupedItem;
 import net.sourceforge.joceanus.prometheus.security.PrometheusSecurityPasswordManager;
-import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
 import net.sourceforge.joceanus.tethys.ui.api.thread.TethysUIThreadStatusReport;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -317,7 +317,7 @@ public class PrometheusDataValuesFormatter {
         pDocument.appendChild(myElement);
 
         /* Access the Data formatter */
-        final TethysUIDataFormatter myFormatter = pList.getDataSet().getDataFormatter();
+        final OceanusDataFormatter myFormatter = pList.getDataSet().getDataFormatter();
 
         /* Declare the number of steps */
         final int myTotal = pList.size();
@@ -513,7 +513,7 @@ public class PrometheusDataValuesFormatter {
         final MetisFieldSetDef myFields = pList.getItemFields();
 
         /* Access the Data formatter */
-        final TethysUIDataFormatter myFormatter = pList.getDataSet().getDataFormatter();
+        final OceanusDataFormatter myFormatter = pList.getDataSet().getDataFormatter();
 
         /* Declare the number of steps */
         final int myTotal = getListCount(myFormatter, myElement);
@@ -547,7 +547,7 @@ public class PrometheusDataValuesFormatter {
      * @return the list count
      * @throws OceanusException on error
      */
-    private static Integer getListCount(final TethysUIDataFormatter pFormatter,
+    private static Integer getListCount(final OceanusDataFormatter pFormatter,
                                         final Element pElement) throws OceanusException {
         try {
             /* Access the list count */

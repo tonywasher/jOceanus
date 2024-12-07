@@ -16,14 +16,14 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.moneywise.quicken.file;
 
+import net.sourceforge.joceanus.moneywise.quicken.definitions.MoneyWiseQIFType;
+import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
+import net.sourceforge.joceanus.tethys.ui.api.factory.TethysUIFactory;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
-import net.sourceforge.joceanus.moneywise.quicken.definitions.MoneyWiseQIFType;
-import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
-import net.sourceforge.joceanus.tethys.ui.api.factory.TethysUIFactory;
 
 /**
  * Class to parse a QIFFile.
@@ -37,7 +37,7 @@ public class MoneyWiseQIFParser {
     /**
      * Data formatter.
      */
-    private final TethysUIDataFormatter theFormatter;
+    private final OceanusDataFormatter theFormatter;
 
     /**
      * Record mode.

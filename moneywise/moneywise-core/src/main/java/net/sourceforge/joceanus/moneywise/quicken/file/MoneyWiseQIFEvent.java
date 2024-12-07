@@ -16,8 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.moneywise.quicken.file;
 
-import java.util.List;
-
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransaction;
 import net.sourceforge.joceanus.moneywise.quicken.definitions.MoneyWiseQEventLineType;
 import net.sourceforge.joceanus.moneywise.quicken.file.MoneyWiseQIFLine.MoneyWiseQIFCategoryLine;
@@ -32,7 +30,9 @@ import net.sourceforge.joceanus.oceanus.date.OceanusDateFormatter;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimalParser;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusRate;
-import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
+import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
+
+import java.util.List;
 
 /**
  * Class representing a QIF Event record.
@@ -107,7 +107,7 @@ public class MoneyWiseQIFEvent
      * @param pLines the data lines
      */
     protected MoneyWiseQIFEvent(final MoneyWiseQIFFile pFile,
-                                final TethysUIDataFormatter pFormatter,
+                                final OceanusDataFormatter pFormatter,
                                 final List<String> pLines) {
         /* Call super-constructor */
         super(pFile, MoneyWiseQEventLineType.class);

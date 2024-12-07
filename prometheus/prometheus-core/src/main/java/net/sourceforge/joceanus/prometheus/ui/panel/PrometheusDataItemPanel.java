@@ -18,27 +18,27 @@ package net.sourceforge.joceanus.prometheus.ui.panel;
 
 import net.sourceforge.joceanus.metis.field.MetisFieldVersionValues;
 import net.sourceforge.joceanus.metis.ui.MetisErrorPanel;
-import net.sourceforge.joceanus.prometheus.exc.PrometheusDataException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataList;
 import net.sourceforge.joceanus.prometheus.data.PrometheusListKey;
 import net.sourceforge.joceanus.prometheus.data.PrometheusTableItem;
-import net.sourceforge.joceanus.prometheus.ui.fieldset.PrometheusFieldSet;
-import net.sourceforge.joceanus.prometheus.ui.fieldset.PrometheusFieldSetEvent;
-import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
+import net.sourceforge.joceanus.prometheus.exc.PrometheusDataException;
 import net.sourceforge.joceanus.prometheus.ui.PrometheusGoToEvent;
 import net.sourceforge.joceanus.prometheus.ui.PrometheusItemActions;
 import net.sourceforge.joceanus.prometheus.ui.PrometheusItemEditActions;
 import net.sourceforge.joceanus.prometheus.ui.PrometheusItemEditActions.PrometheusItemEditParent;
 import net.sourceforge.joceanus.prometheus.ui.PrometheusUIResource;
+import net.sourceforge.joceanus.prometheus.ui.fieldset.PrometheusFieldSet;
+import net.sourceforge.joceanus.prometheus.ui.fieldset.PrometheusFieldSetEvent;
 import net.sourceforge.joceanus.prometheus.views.PrometheusDataEvent;
+import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
 import net.sourceforge.joceanus.prometheus.views.PrometheusUIEvent;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.TethysEventProvider;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIComponent;
-import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIGenericWrapper;
 import net.sourceforge.joceanus.tethys.ui.api.factory.TethysUIFactory;
 import net.sourceforge.joceanus.tethys.ui.api.menu.TethysUIScrollMenu;
@@ -94,7 +94,7 @@ public abstract class PrometheusDataItemPanel<T extends PrometheusTableItem & Co
     /**
      * The DataFormatter.
      */
-    private final TethysUIDataFormatter theFormatter;
+    private final OceanusDataFormatter theFormatter;
 
     /**
      * The Field Set.
@@ -239,7 +239,7 @@ public abstract class PrometheusDataItemPanel<T extends PrometheusTableItem & Co
      * Obtain the formatter.
      * @return the formatter
      */
-    protected TethysUIDataFormatter getFormatter() {
+    protected OceanusDataFormatter getFormatter() {
         return theFormatter;
     }
 

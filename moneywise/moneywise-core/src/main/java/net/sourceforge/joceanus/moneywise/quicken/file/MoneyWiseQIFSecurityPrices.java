@@ -16,13 +16,13 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.moneywise.quicken.file;
 
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurity;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurityPrice;
+import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurity;
-import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurityPrice;
-import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
 
 /**
  * Security Price List.
@@ -119,7 +119,7 @@ public class MoneyWiseQIFSecurityPrices
      * @param pFormatter the formatter
      * @param pBuilder the string builder
      */
-    protected void formatPrices(final TethysUIDataFormatter pFormatter,
+    protected void formatPrices(final OceanusDataFormatter pFormatter,
                                 final StringBuilder pBuilder) {
         /* Loop through the prices */
         for (MoneyWiseQIFPrice myPrice : thePrices) {

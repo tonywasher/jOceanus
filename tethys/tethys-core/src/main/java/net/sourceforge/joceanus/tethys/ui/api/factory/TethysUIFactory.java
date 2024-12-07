@@ -16,8 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.tethys.ui.api.factory;
 
+import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
-import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIIcon;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIIconId;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIProgram;
@@ -48,13 +48,13 @@ public interface TethysUIFactory<C> {
      * Obtain the formatter.
      * @return the formatter
      */
-    TethysUIDataFormatter getDataFormatter();
+    OceanusDataFormatter getDataFormatter();
 
     /**
      * Obtain a new formatter.
      * @return the formatter
      */
-    TethysUIDataFormatter newDataFormatter();
+    OceanusDataFormatter newDataFormatter();
 
     /**
      * Obtain the valueSet.

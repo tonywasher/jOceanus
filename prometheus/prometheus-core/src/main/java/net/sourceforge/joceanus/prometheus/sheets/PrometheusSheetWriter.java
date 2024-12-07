@@ -196,7 +196,7 @@ public abstract class PrometheusSheetWriter {
      */
     private void initialiseWorkBook(final PrometheusSheetWorkBookType pType) throws OceanusException {
         /* Create the workbook attached to the output stream */
-        theWorkBook = PrometheusSheetProvider.newWorkBook(pType, theGuiFactory);
+        theWorkBook = PrometheusSheetProvider.newWorkBook(pType);
 
         /* Initialise the list */
         theSheets = new ArrayList<>();

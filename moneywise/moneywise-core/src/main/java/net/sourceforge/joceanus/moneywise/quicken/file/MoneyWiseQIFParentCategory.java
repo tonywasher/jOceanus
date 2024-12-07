@@ -16,13 +16,13 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.moneywise.quicken.file;
 
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransCategory;
+import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-
-import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransCategory;
-import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
 
 /**
  * Parent category registration.
@@ -112,7 +112,7 @@ public class MoneyWiseQIFParentCategory
      * @param pFormatter the data formatter
      * @param pBuilder the string builder
      */
-    public void formatRecord(final TethysUIDataFormatter pFormatter,
+    public void formatRecord(final OceanusDataFormatter pFormatter,
                              final StringBuilder pBuilder) {
         /* Format own record */
         theSelf.formatRecord(pFormatter, pBuilder);

@@ -16,19 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.coeus.data.ratesetter;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.nodes.Node;
-import org.jsoup.select.Elements;
-
 import net.sourceforge.joceanus.coeus.exc.CoeusDataException;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.date.OceanusDate;
@@ -36,7 +23,19 @@ import net.sourceforge.joceanus.oceanus.date.OceanusDateFormatter;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimalParser;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusRate;
-import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
+import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.nodes.Node;
+import org.jsoup.select.Elements;
+
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * RateSetter LoanBook Parser.
@@ -61,7 +60,7 @@ public class CoeusRateSetterLoanBookParser {
      * Constructor.
      * @param pFormatter the formatter
      */
-    CoeusRateSetterLoanBookParser(final TethysUIDataFormatter pFormatter) {
+    CoeusRateSetterLoanBookParser(final OceanusDataFormatter pFormatter) {
         /* Create the loan list */
         theLoans = new ArrayList<>();
 

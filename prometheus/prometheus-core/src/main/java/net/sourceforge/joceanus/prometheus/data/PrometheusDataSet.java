@@ -25,6 +25,7 @@ import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.metis.field.MetisFieldVersionedItem;
 import net.sourceforge.joceanus.metis.toolkit.MetisToolkit;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
 import net.sourceforge.joceanus.prometheus.data.PrometheusControlData.PrometheusControlDataList;
 import net.sourceforge.joceanus.prometheus.data.PrometheusControlKey.PrometheusControlKeyList;
@@ -38,7 +39,6 @@ import net.sourceforge.joceanus.prometheus.preference.PrometheusPreferenceSecuri
 import net.sourceforge.joceanus.prometheus.preference.PrometheusPreferenceSecurity.PrometheusSecurityPreferences;
 import net.sourceforge.joceanus.prometheus.security.PrometheusSecurityPasswordManager;
 import net.sourceforge.joceanus.prometheus.toolkit.PrometheusToolkit;
-import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
 import net.sourceforge.joceanus.tethys.ui.api.thread.TethysUIThreadStatusReport;
 
 import java.util.Iterator;
@@ -138,7 +138,7 @@ public abstract class PrometheusDataSet
     /**
      * General formatter.
      */
-    private final TethysUIDataFormatter theFormatter;
+    private final OceanusDataFormatter theFormatter;
 
     /**
      * Constructor for new empty DataSet.
@@ -191,7 +191,7 @@ public abstract class PrometheusDataSet
     }
 
     @Override
-    public String formatObject(final TethysUIDataFormatter pFormatter) {
+    public String formatObject(final OceanusDataFormatter pFormatter) {
         return PrometheusDataSet.class.getSimpleName();
     }
 
@@ -199,7 +199,7 @@ public abstract class PrometheusDataSet
      * Obtain the data formatter.
      * @return the formatter
      */
-    public TethysUIDataFormatter getDataFormatter() {
+    public OceanusDataFormatter getDataFormatter() {
         return theFormatter;
     }
 

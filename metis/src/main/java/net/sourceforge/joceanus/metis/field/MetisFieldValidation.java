@@ -16,11 +16,11 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.metis.field;
 
+import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
+import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
-import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
 
 /**
  * Records errors relating to an item.
@@ -66,7 +66,7 @@ public class MetisFieldValidation
     }
 
     @Override
-    public String formatObject(final TethysUIDataFormatter pFormatter) {
+    public String formatObject(final OceanusDataFormatter pFormatter) {
         final int mySize = theErrors.size();
         if (mySize != 1) {
             return mySize

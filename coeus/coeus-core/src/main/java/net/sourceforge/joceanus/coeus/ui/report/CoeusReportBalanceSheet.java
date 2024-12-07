@@ -16,9 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.coeus.ui.report;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-
 import net.sourceforge.joceanus.coeus.data.CoeusMarketSnapShot;
 import net.sourceforge.joceanus.coeus.data.CoeusTotalSet;
 import net.sourceforge.joceanus.coeus.data.CoeusTotals;
@@ -33,7 +30,9 @@ import net.sourceforge.joceanus.oceanus.date.OceanusDate;
 import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimal;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusRatio;
-import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
+import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 /**
  * BalanceSheet Report.
@@ -48,7 +47,7 @@ public class CoeusReportBalanceSheet
     /**
      * The Formatter.
      */
-    private final TethysUIDataFormatter theFormatter;
+    private final OceanusDataFormatter theFormatter;
 
     /**
      * Market.

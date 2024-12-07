@@ -16,15 +16,15 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.metis.viewer;
 
-import java.util.Iterator;
-
 import net.sourceforge.joceanus.metis.data.MetisDataResource;
 import net.sourceforge.joceanus.metis.field.MetisFieldItem;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimal;
+import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
 import net.sourceforge.joceanus.oceanus.profile.OceanusProfile.TethysProfileStatus;
-import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
+
+import java.util.Iterator;
 
 /**
  * Profile wrapper.
@@ -78,7 +78,7 @@ public class MetisViewerProfileWrapper
     }
 
     @Override
-    public String formatObject(final TethysUIDataFormatter pFormatter) {
+    public String formatObject(final OceanusDataFormatter pFormatter) {
         /* Format the profile */
         return getName()
                 + ": "

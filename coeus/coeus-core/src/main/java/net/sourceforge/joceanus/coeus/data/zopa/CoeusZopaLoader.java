@@ -16,6 +16,11 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.coeus.data.zopa;
 
+import net.sourceforge.joceanus.coeus.data.CoeusMarketProvider;
+import net.sourceforge.joceanus.coeus.exc.CoeusDataException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
+
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.FileSystem;
@@ -27,11 +32,6 @@ import java.time.temporal.ChronoField;
 import java.time.temporal.TemporalAccessor;
 import java.util.ArrayList;
 import java.util.List;
-
-import net.sourceforge.joceanus.coeus.exc.CoeusDataException;
-import net.sourceforge.joceanus.coeus.data.CoeusMarketProvider;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
 
 /**
  * Zopa Loader.
@@ -70,7 +70,7 @@ public class CoeusZopaLoader {
     /**
      * The formatter.
      */
-    private final TethysUIDataFormatter theFormatter;
+    private final OceanusDataFormatter theFormatter;
 
     /**
      * The base path.
@@ -82,7 +82,7 @@ public class CoeusZopaLoader {
      * @param pFormatter the formatter
      * @param pPath the path to load from
      */
-    public CoeusZopaLoader(final TethysUIDataFormatter pFormatter,
+    public CoeusZopaLoader(final OceanusDataFormatter pFormatter,
                            final String pPath) {
         /* Store the formatter */
         theFormatter = pFormatter;

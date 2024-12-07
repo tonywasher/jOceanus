@@ -19,6 +19,13 @@ package net.sourceforge.joceanus.moneywise.lethe.views;
 import net.sourceforge.joceanus.metis.data.MetisDataDifference;
 import net.sourceforge.joceanus.metis.field.MetisFieldItem;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseAssetBase;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicResource;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseCash;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDeposit;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseLoan;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransDefaults;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransaction;
 import net.sourceforge.joceanus.moneywise.lethe.data.analysis.base.MoneyWiseAnalysisAttribute;
 import net.sourceforge.joceanus.moneywise.lethe.data.analysis.base.MoneyWiseAnalysisValues;
 import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisAccountBucket;
@@ -43,17 +50,10 @@ import net.sourceforge.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAn
 import net.sourceforge.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisTaxBasisAttr;
 import net.sourceforge.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisTaxBasisValues;
 import net.sourceforge.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisTransAttr;
-import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseAssetBase;
-import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicResource;
-import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseCash;
-import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDeposit;
-import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseLoan;
-import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransDefaults;
-import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransaction;
 import net.sourceforge.joceanus.moneywise.views.MoneyWiseViewResource;
 import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimal;
-import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
+import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 
 /**
  * Analysis Filter Classes.
@@ -116,7 +116,7 @@ public abstract class MoneyWiseAnalysisFilter<B, T extends Enum<T> & MoneyWiseAn
     }
 
     @Override
-    public String formatObject(final TethysUIDataFormatter pFormatter) {
+    public String formatObject(final OceanusDataFormatter pFormatter) {
         return getName();
     }
 

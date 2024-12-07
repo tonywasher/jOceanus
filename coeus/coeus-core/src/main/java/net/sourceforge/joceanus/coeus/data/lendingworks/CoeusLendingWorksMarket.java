@@ -16,9 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.coeus.data.lendingworks;
 
-import java.nio.file.Path;
-import java.util.Iterator;
-
 import net.sourceforge.joceanus.coeus.data.CoeusHistory;
 import net.sourceforge.joceanus.coeus.data.CoeusLoan;
 import net.sourceforge.joceanus.coeus.data.CoeusMarket;
@@ -26,7 +23,10 @@ import net.sourceforge.joceanus.coeus.data.CoeusMarketProvider;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
-import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
+import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
+
+import java.nio.file.Path;
+import java.util.Iterator;
 
 /**
  * LendingWorks Market.
@@ -52,7 +52,7 @@ public class CoeusLendingWorksMarket
      * Constructor.
      * @param pFormatter the formatter
      */
-    CoeusLendingWorksMarket(final TethysUIDataFormatter pFormatter) {
+    CoeusLendingWorksMarket(final OceanusDataFormatter pFormatter) {
         /* Initialise underlying class */
         super(pFormatter, CoeusMarketProvider.LENDINGWORKS);
 

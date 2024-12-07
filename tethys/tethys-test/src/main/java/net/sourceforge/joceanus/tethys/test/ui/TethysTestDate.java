@@ -16,17 +16,12 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.tethys.test.ui;
 
-import java.time.Month;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-
 import net.sourceforge.joceanus.oceanus.date.OceanusDate;
 import net.sourceforge.joceanus.oceanus.date.OceanusDateFormatter;
 import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
+import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIAlignment;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIComponent;
-import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.tethys.ui.api.button.TethysUIButtonFactory;
 import net.sourceforge.joceanus.tethys.ui.api.button.TethysUIDateButtonManager;
@@ -43,6 +38,11 @@ import net.sourceforge.joceanus.tethys.ui.api.pane.TethysUIPaneFactory;
 import net.sourceforge.joceanus.tethys.ui.api.table.TethysUITableColumn.TethysUITableDateColumn;
 import net.sourceforge.joceanus.tethys.ui.api.table.TethysUITableColumn.TethysUITableStringColumn;
 import net.sourceforge.joceanus.tethys.ui.api.table.TethysUITableManager;
+
+import java.time.Month;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 /**
  * <p>
@@ -183,7 +183,7 @@ public class TethysTestDate {
     /**
      * The formatter.
      */
-    private final TethysUIDataFormatter theFormatter;
+    private final OceanusDataFormatter theFormatter;
 
     /**
      * The formatter.

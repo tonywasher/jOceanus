@@ -16,8 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.moneywise.quicken.file;
 
-import java.util.List;
-
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransaction;
 import net.sourceforge.joceanus.moneywise.quicken.definitions.MoneyWiseQActionType;
 import net.sourceforge.joceanus.moneywise.quicken.definitions.MoneyWiseQPortfolioLineType;
@@ -40,7 +38,9 @@ import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusRatio;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusUnits;
-import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
+import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
+
+import java.util.List;
 
 /**
  * Class representing a QIF Portfolio Event record.
@@ -98,7 +98,7 @@ public class MoneyWiseQIFPortfolioEvent
      * @param pLines the data lines
      */
     protected MoneyWiseQIFPortfolioEvent(final MoneyWiseQIFFile pFile,
-                                         final TethysUIDataFormatter pFormatter,
+                                         final OceanusDataFormatter pFormatter,
                                          final List<String> pLines) {
         /* Call super-constructor */
         super(pFile, MoneyWiseQPortfolioLineType.class);
@@ -597,7 +597,7 @@ public class MoneyWiseQIFPortfolioEvent
         }
 
         @Override
-        protected void formatData(final TethysUIDataFormatter pFormatter,
+        protected void formatData(final OceanusDataFormatter pFormatter,
                                   final StringBuilder pBuilder) {
             /* Add the action */
             pBuilder.append(theAction.getSymbol());

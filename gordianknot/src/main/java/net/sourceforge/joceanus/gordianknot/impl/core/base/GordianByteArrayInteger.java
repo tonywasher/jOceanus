@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.gordianknot.impl.core.base;
 
 import org.bouncycastle.util.Arrays;
 
-import net.sourceforge.joceanus.oceanus.format.OceanusDataConverter;
+import net.sourceforge.joceanus.oceanus.convert.OceanusDataConverter;
 
 /**
  * Simple class that handles a byte array as an integer housing an integer of max value 2

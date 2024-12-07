@@ -247,7 +247,7 @@ public abstract class PrometheusSheetReader {
         theReport.setNewStage("Loading");
 
         /* Access the workbook from the stream */
-        theWorkBook = PrometheusSheetProvider.loadFromStream(pType, theGuiFactory, pStream);
+        theWorkBook = PrometheusSheetProvider.loadFromStream(pType, pStream);
     }
 
     /**
