@@ -23,7 +23,6 @@ import net.sourceforge.joceanus.metis.field.MetisFieldItem;
 import net.sourceforge.joceanus.metis.field.MetisFieldItem.MetisFieldTableItem;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.metis.list.MetisListIndexed;
-import net.sourceforge.joceanus.moneywise.exc.MoneyWiseDataException;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.base.MoneyWiseXAnalysisEvent;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.base.MoneyWiseXAnalysisHistory;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisInterfaces.MoneyWiseXAnalysisBucketPriced;
@@ -38,6 +37,7 @@ import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrency;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseSecurityClass;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseSecurityType;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
+import net.sourceforge.joceanus.moneywise.exc.MoneyWiseDataException;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.date.OceanusDate;
 import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
@@ -46,7 +46,7 @@ import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusRatio;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusUnits;
-import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
+import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 
 import java.util.Currency;
 import java.util.Iterator;
@@ -250,7 +250,7 @@ public final class MoneyWiseXAnalysisSecurityBucket
     }
 
     @Override
-    public String formatObject(final TethysUIDataFormatter pFormatter) {
+    public String formatObject(final OceanusDataFormatter pFormatter) {
         return toString();
     }
 
@@ -792,7 +792,7 @@ public final class MoneyWiseXAnalysisSecurityBucket
         }
 
         @Override
-        public String formatObject(final TethysUIDataFormatter pFormatter) {
+        public String formatObject(final OceanusDataFormatter pFormatter) {
             return getDataFieldSet().getName();
         }
 

@@ -16,18 +16,17 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.prometheus.service.sheet.hssf;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ListIterator;
-
+import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
+import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetCell;
+import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetRow;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.ss.usermodel.CellValue;
 import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 
-import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetCell;
-import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetRow;
-import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ListIterator;
 
 /**
  * Class representing a row within a sheet or a view.
@@ -194,7 +193,7 @@ public class PrometheusExcelHSSFRow
      */
     protected <T> T parseValue(final String pSource,
                                final Class<T> pClass) {
-        final TethysUIDataFormatter myFormatter = theExcelSheet.getDataFormatter();
+        final OceanusDataFormatter myFormatter = theExcelSheet.getDataFormatter();
         return myFormatter.parseValue(pSource, pClass);
     }
 
@@ -207,7 +206,7 @@ public class PrometheusExcelHSSFRow
      */
     protected <T> T parseValue(final Double pSource,
                                final Class<T> pClass) {
-        final TethysUIDataFormatter myFormatter = theExcelSheet.getDataFormatter();
+        final OceanusDataFormatter myFormatter = theExcelSheet.getDataFormatter();
         return myFormatter.parseValue(pSource, pClass);
     }
 
@@ -222,7 +221,7 @@ public class PrometheusExcelHSSFRow
     protected <T> T parseValue(final Double pSource,
                                final String pCurrCode,
                                final Class<T> pClass) {
-        final TethysUIDataFormatter myFormatter = theExcelSheet.getDataFormatter();
+        final OceanusDataFormatter myFormatter = theExcelSheet.getDataFormatter();
         return myFormatter.parseValue(pSource, pCurrCode, pClass);
     }
 }

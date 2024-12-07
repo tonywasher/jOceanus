@@ -16,11 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.prometheus.data;
 
-import java.util.Date;
-
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
-import net.sourceforge.joceanus.prometheus.exc.PrometheusDataException;
-import net.sourceforge.joceanus.prometheus.exc.PrometheusLogicException;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.date.OceanusDate;
 import net.sourceforge.joceanus.oceanus.date.OceanusDateFormatter;
@@ -30,7 +26,11 @@ import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusRate;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusRatio;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusUnits;
-import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
+import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
+import net.sourceforge.joceanus.prometheus.exc.PrometheusDataException;
+import net.sourceforge.joceanus.prometheus.exc.PrometheusLogicException;
+
+import java.util.Date;
 
 /**
  * Representation of an information extension of a DataItem.
@@ -186,7 +186,7 @@ public abstract class PrometheusDataInfoItem
     }
 
     @Override
-    public String formatObject(final TethysUIDataFormatter pFormatter) {
+    public String formatObject(final OceanusDataFormatter pFormatter) {
         /* Access Info Type Value */
         final PrometheusEncryptedValues myValues = getValues();
         final Object myType = myValues.getValue(PrometheusDataResource.DATAINFO_TYPE, Object.class);
@@ -198,7 +198,7 @@ public abstract class PrometheusDataInfoItem
         final PrometheusStaticDataItem myInfoType = getInfoType();
 
         /* Access formatter */
-        final TethysUIDataFormatter myFormatter = getDataSet().getDataFormatter();
+        final OceanusDataFormatter myFormatter = getDataSet().getDataFormatter();
         final PrometheusDataInfoClass myInfoClass = (PrometheusDataInfoClass) myInfoType.getStaticClass();
 
         /* Switch on type of Data */
@@ -470,7 +470,7 @@ public abstract class PrometheusDataInfoItem
 
         /* Access the DataSet and parser */
         final PrometheusDataSet myDataSet = getDataSet();
-        final TethysUIDataFormatter myFormatter = myDataSet.getDataFormatter();
+        final OceanusDataFormatter myFormatter = myDataSet.getDataFormatter();
         final OceanusDecimalParser myParser = myFormatter.getDecimalParser();
 
         /* Switch on Info Class */
@@ -557,7 +557,7 @@ public abstract class PrometheusDataInfoItem
      * @return is value valid true/false
      * @throws OceanusException on error
      */
-    private boolean setIntegerValue(final TethysUIDataFormatter pFormatter,
+    private boolean setIntegerValue(final OceanusDataFormatter pFormatter,
                                     final Object pValue) throws OceanusException {
         try {
             /* Handle various forms */

@@ -16,12 +16,15 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.prometheus.service.sheet.hssf;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.HashMap;
-import java.util.Map;
-
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
+import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetCellPosition;
+import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetCellStyleType;
+import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetException;
+import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetFormats;
+import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetSheet;
+import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetView;
+import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetWorkBook;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFDataValidationHelper;
@@ -43,16 +46,11 @@ import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellRangeAddressList;
 import org.apache.poi.ss.util.CellReference;
 
-import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetCellPosition;
-import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetCellStyleType;
-import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetException;
-import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetFormats;
-import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetSheet;
-import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetView;
-import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetWorkBook;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
-import net.sourceforge.joceanus.tethys.ui.api.factory.TethysUIFactory;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * The Excel WorkBook.
@@ -72,7 +70,7 @@ public class PrometheusExcelHSSFWorkBook
     /**
      * JDataFormatter.
      */
-    private final TethysUIDataFormatter theDataFormatter;
+    private final OceanusDataFormatter theDataFormatter;
 
     /**
      * FormulaEvaluator.
@@ -121,12 +119,10 @@ public class PrometheusExcelHSSFWorkBook
 
     /**
      * Constructor.
-     * @param pFactory the gui factory
      * @param pInput the input stream
      * @throws OceanusException on error
      */
-    PrometheusExcelHSSFWorkBook(final TethysUIFactory<?> pFactory,
-                                final InputStream pInput) throws OceanusException {
+    PrometheusExcelHSSFWorkBook(final InputStream pInput) throws OceanusException {
         try {
             /* Load the book and set null map */
             theBook = new HSSFWorkbook(pInput);
@@ -139,7 +135,7 @@ public class PrometheusExcelHSSFWorkBook
             theHeaderFont = null;
 
             /* Allocate the formatter */
-            theDataFormatter = createFormatter(pFactory);
+            theDataFormatter = createFormatter();
 
             /* Create evaluator and formatter */
             theEvaluator = new HSSFFormulaEvaluator(theBook);
@@ -155,9 +151,8 @@ public class PrometheusExcelHSSFWorkBook
 
     /**
      * Constructor.
-     * @param pFactory the gui factory
      */
-    PrometheusExcelHSSFWorkBook(final TethysUIFactory<?> pFactory) {
+    PrometheusExcelHSSFWorkBook() {
         /* Create new book and map */
         theBook = new HSSFWorkbook();
         theStyleMap = new HashMap<>();
@@ -165,7 +160,7 @@ public class PrometheusExcelHSSFWorkBook
         theValueConstraintMap = new HashMap<>();
 
         /* Allocate the formatter */
-        theDataFormatter = createFormatter(pFactory);
+        theDataFormatter = createFormatter();
 
         /* Create evaluator and formatter */
         theEvaluator = new HSSFFormulaEvaluator(theBook);
@@ -217,7 +212,7 @@ public class PrometheusExcelHSSFWorkBook
      * Obtain the data formatter.
      * @return the formatter
      */
-    protected TethysUIDataFormatter getDataFormatter() {
+    protected OceanusDataFormatter getDataFormatter() {
         return theDataFormatter;
     }
 

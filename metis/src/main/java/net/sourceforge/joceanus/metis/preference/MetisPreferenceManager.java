@@ -23,9 +23,9 @@ import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.oceanus.logger.OceanusLogManager;
 import net.sourceforge.joceanus.oceanus.logger.OceanusLogger;
-import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -86,7 +86,7 @@ public class MetisPreferenceManager
     }
 
     @Override
-    public String formatObject(final TethysUIDataFormatter pFormatter) {
+    public String formatObject(final OceanusDataFormatter pFormatter) {
         return theFields.getName();
     }
 

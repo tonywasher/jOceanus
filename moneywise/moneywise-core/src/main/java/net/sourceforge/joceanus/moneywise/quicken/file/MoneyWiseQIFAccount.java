@@ -16,11 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.moneywise.quicken.file;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseCash;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDeposit;
@@ -34,7 +29,12 @@ import net.sourceforge.joceanus.moneywise.quicken.definitions.MoneyWiseQAccountL
 import net.sourceforge.joceanus.moneywise.quicken.file.MoneyWiseQIFLine.MoneyWiseQIFMoneyLine;
 import net.sourceforge.joceanus.moneywise.quicken.file.MoneyWiseQIFLine.MoneyWiseQIFStringLine;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
-import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
+import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  * Class representing a QIF Account record.
@@ -172,7 +172,7 @@ public class MoneyWiseQIFAccount
      * @param pLines the data lines
      */
     protected MoneyWiseQIFAccount(final MoneyWiseQIFFile pFile,
-                                  final TethysUIDataFormatter pFormatter,
+                                  final OceanusDataFormatter pFormatter,
                                   final List<String> pLines) {
         /* Call super-constructor */
         super(pFile, MoneyWiseQAccountLineType.class);

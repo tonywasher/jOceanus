@@ -16,11 +16,10 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.prometheus.service.sheet;
 
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
+
 import java.io.InputStream;
 import java.util.ServiceLoader;
-
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.tethys.ui.api.factory.TethysUIFactory;
 
 /**
  * SpreadSheet Factory Provider.
@@ -57,28 +56,24 @@ public final class PrometheusSheetProvider {
     /**
      * Load readOnly workBook from inputStream.
      * @param pType the workBook type
-     * @param pGuiFactory the gui factory
      * @param pInput the input stream
      * @return the loaded workBook
      * @throws OceanusException on error
      */
     public static PrometheusSheetWorkBook loadFromStream(final PrometheusSheetWorkBookType pType,
-                                                         final TethysUIFactory<?> pGuiFactory,
                                                          final InputStream pInput) throws OceanusException {
         final PrometheusSheetFactory myFactory = newFactory(pType);
-        return myFactory.loadFromStream(pGuiFactory, pInput);
+        return myFactory.loadFromStream(pInput);
     }
 
     /**
      * Create empty workBook.
-     * @param pGuiFactory the gui factory
      * @param pType the workBook type
      * @return the new workBook
      * @throws OceanusException on error
      */
-    public static PrometheusSheetWorkBook newWorkBook(final PrometheusSheetWorkBookType pType,
-                                                      final TethysUIFactory<?> pGuiFactory) throws OceanusException {
+    public static PrometheusSheetWorkBook newWorkBook(final PrometheusSheetWorkBookType pType) throws OceanusException {
         final PrometheusSheetFactory myFactory = newFactory(pType);
-        return myFactory.newWorkBook(pGuiFactory);
+        return myFactory.newWorkBook();
     }
 }

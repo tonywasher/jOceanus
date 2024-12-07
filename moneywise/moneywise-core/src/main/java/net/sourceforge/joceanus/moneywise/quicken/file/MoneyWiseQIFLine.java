@@ -16,10 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.moneywise.quicken.file;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
 import net.sourceforge.joceanus.moneywise.quicken.definitions.MoneyWiseQLineType;
 import net.sourceforge.joceanus.oceanus.date.OceanusDate;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimal;
@@ -28,7 +24,11 @@ import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusRate;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusRatio;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusUnits;
-import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
+import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * A standard event line in the QIF file.
@@ -76,7 +76,7 @@ public abstract class MoneyWiseQIFLine<T extends MoneyWiseQLineType> {
      * @param pFormatter the data formatter
      * @param pBuilder the string builder
      */
-    protected abstract void formatData(TethysUIDataFormatter pFormatter,
+    protected abstract void formatData(OceanusDataFormatter pFormatter,
                                        StringBuilder pBuilder);
 
     /**
@@ -84,7 +84,7 @@ public abstract class MoneyWiseQIFLine<T extends MoneyWiseQLineType> {
      * @param pFormatter the data formatter
      * @param pBuilder the string builder
      */
-    protected void formatLine(final TethysUIDataFormatter pFormatter,
+    protected void formatLine(final OceanusDataFormatter pFormatter,
                               final StringBuilder pBuilder) {
         /* Add the lineType */
         final T myType = getLineType();
@@ -155,7 +155,7 @@ public abstract class MoneyWiseQIFLine<T extends MoneyWiseQLineType> {
         }
 
         @Override
-        protected void formatData(final TethysUIDataFormatter pFormatter,
+        protected void formatData(final OceanusDataFormatter pFormatter,
                                   final StringBuilder pBuilder) {
             /* Append the string data */
             pBuilder.append(theValue);
@@ -229,7 +229,7 @@ public abstract class MoneyWiseQIFLine<T extends MoneyWiseQLineType> {
         }
 
         @Override
-        protected void formatData(final TethysUIDataFormatter pFormatter,
+        protected void formatData(final OceanusDataFormatter pFormatter,
                                   final StringBuilder pBuilder) {
             /* Convert to Decimal */
             final OceanusDecimal myDecimal = new OceanusDecimal(theMoney);
@@ -306,7 +306,7 @@ public abstract class MoneyWiseQIFLine<T extends MoneyWiseQLineType> {
         }
 
         @Override
-        protected void formatData(final TethysUIDataFormatter pFormatter,
+        protected void formatData(final OceanusDataFormatter pFormatter,
                                   final StringBuilder pBuilder) {
             /* Append the string data */
             pBuilder.append(pFormatter.formatObject(theDate));
@@ -437,7 +437,7 @@ public abstract class MoneyWiseQIFLine<T extends MoneyWiseQLineType> {
         }
 
         @Override
-        protected void formatData(final TethysUIDataFormatter pFormatter,
+        protected void formatData(final OceanusDataFormatter pFormatter,
                                   final StringBuilder pBuilder) {
             /* If we should set the flag */
             if (isSet()) {
@@ -481,7 +481,7 @@ public abstract class MoneyWiseQIFLine<T extends MoneyWiseQLineType> {
         }
 
         @Override
-        protected void formatData(final TethysUIDataFormatter pFormatter,
+        protected void formatData(final OceanusDataFormatter pFormatter,
                                   final StringBuilder pBuilder) {
             /* Convert to Decimal */
             final OceanusDecimal myDecimal = new OceanusDecimal(thePrice);
@@ -558,7 +558,7 @@ public abstract class MoneyWiseQIFLine<T extends MoneyWiseQLineType> {
         }
 
         @Override
-        protected void formatData(final TethysUIDataFormatter pFormatter,
+        protected void formatData(final OceanusDataFormatter pFormatter,
                                   final StringBuilder pBuilder) {
             /* Append the string data */
             pBuilder.append(pFormatter.formatObject(theUnits));
@@ -632,7 +632,7 @@ public abstract class MoneyWiseQIFLine<T extends MoneyWiseQLineType> {
         }
 
         @Override
-        protected void formatData(final TethysUIDataFormatter pFormatter,
+        protected void formatData(final OceanusDataFormatter pFormatter,
                                   final StringBuilder pBuilder) {
             /* Append the string data */
             pBuilder.append(pFormatter.formatObject(theRate));
@@ -706,7 +706,7 @@ public abstract class MoneyWiseQIFLine<T extends MoneyWiseQLineType> {
         }
 
         @Override
-        protected void formatData(final TethysUIDataFormatter pFormatter,
+        protected void formatData(final OceanusDataFormatter pFormatter,
                                   final StringBuilder pBuilder) {
             /* Append the string data */
             pBuilder.append(pFormatter.formatObject(theRatio));
@@ -780,7 +780,7 @@ public abstract class MoneyWiseQIFLine<T extends MoneyWiseQLineType> {
         }
 
         @Override
-        protected void formatData(final TethysUIDataFormatter pFormatter,
+        protected void formatData(final OceanusDataFormatter pFormatter,
                                   final StringBuilder pBuilder) {
             /* Append the security name */
             pBuilder.append(theSecurity.getName());
@@ -878,7 +878,7 @@ public abstract class MoneyWiseQIFLine<T extends MoneyWiseQLineType> {
         }
 
         @Override
-        protected void formatData(final TethysUIDataFormatter pFormatter,
+        protected void formatData(final OceanusDataFormatter pFormatter,
                                   final StringBuilder pBuilder) {
             /* Append the string data */
             pBuilder.append(QIF_XFERSTART);
@@ -1066,7 +1066,7 @@ public abstract class MoneyWiseQIFLine<T extends MoneyWiseQLineType> {
         }
 
         @Override
-        protected void formatData(final TethysUIDataFormatter pFormatter,
+        protected void formatData(final OceanusDataFormatter pFormatter,
                                   final StringBuilder pBuilder) {
             /* Append the string data */
             pBuilder.append(thePayee.getName());
@@ -1164,7 +1164,7 @@ public abstract class MoneyWiseQIFLine<T extends MoneyWiseQLineType> {
         }
 
         @Override
-        protected void formatData(final TethysUIDataFormatter pFormatter,
+        protected void formatData(final OceanusDataFormatter pFormatter,
                                   final StringBuilder pBuilder) {
             /* Append the string data */
             pBuilder.append(theCategory.getName());
@@ -1383,7 +1383,7 @@ public abstract class MoneyWiseQIFLine<T extends MoneyWiseQLineType> {
         }
 
         @Override
-        protected void formatData(final TethysUIDataFormatter pFormatter,
+        protected void formatData(final OceanusDataFormatter pFormatter,
                                   final StringBuilder pBuilder) {
             /* Append the string data */
             pBuilder.append(theCategory.getName());

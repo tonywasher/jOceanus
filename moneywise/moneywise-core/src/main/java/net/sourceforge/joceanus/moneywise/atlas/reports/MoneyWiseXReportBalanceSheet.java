@@ -16,11 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.moneywise.atlas.reports;
 
-import java.util.Iterator;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-
 import net.sourceforge.joceanus.metis.data.MetisDataDifference;
 import net.sourceforge.joceanus.metis.report.MetisReportBase;
 import net.sourceforge.joceanus.metis.report.MetisReportHTMLBuilder;
@@ -65,7 +60,11 @@ import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseDepositCategoryC
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseLoanCategoryClass;
 import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
-import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
+import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
+import java.util.Iterator;
 
 /**
  * BalanceSheet report builder.
@@ -90,7 +89,7 @@ public class MoneyWiseXReportBalanceSheet
     /**
      * The Formatter.
      */
-    private final TethysUIDataFormatter theFormatter;
+    private final OceanusDataFormatter theFormatter;
 
     /**
      * Data Analysis.

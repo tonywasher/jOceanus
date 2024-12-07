@@ -16,24 +16,23 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.tethys.ui.core.factory;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
-
 import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.oceanus.logger.OceanusLogManager;
 import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
-import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
-import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIProgram;
-import net.sourceforge.joceanus.tethys.ui.api.factory.TethysUIFactory;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIComponent;
-import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIValueSet;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIEvent;
+import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIProgram;
+import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIValueSet;
+import net.sourceforge.joceanus.tethys.ui.api.factory.TethysUIFactory;
 import net.sourceforge.joceanus.tethys.ui.api.factory.TethysUILogTextArea;
-import net.sourceforge.joceanus.tethys.ui.core.base.TethysUICoreDataFormatter;
 import net.sourceforge.joceanus.tethys.ui.core.base.TethysUICoreValueSet;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Core factory.
@@ -63,7 +62,7 @@ public abstract class TethysUICoreFactory<C>
     /**
      * The Data Formatter.
      */
-    private final TethysUIDataFormatter theFormatter;
+    private final OceanusDataFormatter theFormatter;
 
     /**
      * The Next nodeId.
@@ -105,7 +104,7 @@ public abstract class TethysUICoreFactory<C>
         theProfile = new OceanusProfile("StartUp");
 
         /* Create base items */
-        theFormatter = new TethysUICoreDataFormatter();
+        theFormatter = new OceanusDataFormatter();
         theNextNodeId = new AtomicInteger(1);
         theParentMap = new HashMap<>();
         theValueSet = new TethysUICoreValueSet();
@@ -125,13 +124,13 @@ public abstract class TethysUICoreFactory<C>
     }
 
     @Override
-    public TethysUIDataFormatter getDataFormatter() {
+    public OceanusDataFormatter getDataFormatter() {
         return theFormatter;
     }
 
     @Override
-    public TethysUIDataFormatter newDataFormatter() {
-        return new TethysUICoreDataFormatter();
+    public OceanusDataFormatter newDataFormatter() {
+        return new OceanusDataFormatter();
     }
 
     @Override

@@ -25,7 +25,7 @@ import net.sourceforge.joceanus.metis.data.MetisDataState;
 import net.sourceforge.joceanus.metis.field.MetisFieldItem.MetisFieldTableItem;
 import net.sourceforge.joceanus.metis.field.MetisFieldItem.MetisFieldUpdatableItem;
 import net.sourceforge.joceanus.metis.field.MetisFieldValidation.MetisFieldError;
-import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
+import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 
 /**
  * Data Version Control.
@@ -214,7 +214,7 @@ public abstract class MetisFieldVersionedItem
     }
 
     @Override
-    public String formatObject(final TethysUIDataFormatter pFormatter) {
+    public String formatObject(final OceanusDataFormatter pFormatter) {
         return FIELD_DEFS.getName();
     }
 

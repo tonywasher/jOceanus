@@ -16,14 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.prometheus.data;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Spliterator;
-import java.util.function.Consumer;
-
 import net.sourceforge.joceanus.metis.data.MetisDataDifference;
 import net.sourceforge.joceanus.metis.data.MetisDataEditState;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
@@ -31,11 +23,19 @@ import net.sourceforge.joceanus.metis.data.MetisDataState;
 import net.sourceforge.joceanus.metis.field.MetisFieldItem;
 import net.sourceforge.joceanus.metis.field.MetisFieldRequired;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataInfoItem.PrometheusDataInfoList;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataList.PrometheusDataListSet;
 import net.sourceforge.joceanus.prometheus.data.PrometheusStaticDataItem.PrometheusStaticList;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
+
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Spliterator;
+import java.util.function.Consumer;
 
 /**
  * Representation of an information set extension of a DataItem.
@@ -102,7 +102,7 @@ public abstract class PrometheusDataInfoSet<T extends PrometheusDataInfoItem>
     }
 
     @Override
-    public String formatObject(final TethysUIDataFormatter pFormatter) {
+    public String formatObject(final OceanusDataFormatter pFormatter) {
         return this.getDataFieldSet().getName();
     }
 

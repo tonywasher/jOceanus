@@ -16,10 +16,13 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.prometheus.service.sheet.hssf;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ListIterator;
-
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
+import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetCellPosition;
+import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetCellStyleType;
+import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetFormats;
+import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetRow;
+import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetSheet;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -29,13 +32,9 @@ import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellRangeAddressList;
 import org.apache.poi.ss.util.CellReference;
 
-import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetCellPosition;
-import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetCellStyleType;
-import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetFormats;
-import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetRow;
-import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetSheet;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ListIterator;
 
 /**
  * Class representing an Excel sheet within a workBook.
@@ -104,7 +103,7 @@ public class PrometheusExcelHSSFSheet
      * Obtain the data formatter.
      * @return the formatter
      */
-    protected TethysUIDataFormatter getDataFormatter() {
+    protected OceanusDataFormatter getDataFormatter() {
         return theExcelBook.getDataFormatter();
     }
 

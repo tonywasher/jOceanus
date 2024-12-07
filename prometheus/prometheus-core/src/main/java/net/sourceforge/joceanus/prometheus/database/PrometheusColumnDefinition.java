@@ -16,6 +16,20 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.prometheus.database;
 
+import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
+import net.sourceforge.joceanus.metis.data.MetisDataResource;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRate;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRatio;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusUnits;
+import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
+import net.sourceforge.joceanus.prometheus.database.PrometheusTableDefinition.PrometheusSortOrder;
+import net.sourceforge.joceanus.prometheus.exc.PrometheusDataException;
+import net.sourceforge.joceanus.prometheus.preference.PrometheusColumnType;
+
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -25,20 +39,6 @@ import java.sql.Types;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
-
-import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
-import net.sourceforge.joceanus.metis.data.MetisDataResource;
-import net.sourceforge.joceanus.prometheus.exc.PrometheusDataException;
-import net.sourceforge.joceanus.prometheus.database.PrometheusTableDefinition.PrometheusSortOrder;
-import net.sourceforge.joceanus.prometheus.preference.PrometheusColumnType;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.date.OceanusDate;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusRate;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusRatio;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusUnits;
-import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
 
 /**
  * Column definition classes handling data-type specifics.
@@ -897,7 +897,7 @@ public abstract class PrometheusColumnDefinition {
          * @return the money value
          * @throws OceanusException on error
          */
-        public OceanusMoney getValue(final TethysUIDataFormatter pFormatter) throws OceanusException {
+        public OceanusMoney getValue(final OceanusDataFormatter pFormatter) throws OceanusException {
             try {
                 return pFormatter.parseValue(getValue(), OceanusMoney.class);
             } catch (IllegalArgumentException e) {
@@ -963,7 +963,7 @@ public abstract class PrometheusColumnDefinition {
          * @return the money value
          * @throws OceanusException on error
          */
-        public OceanusRate getValue(final TethysUIDataFormatter pFormatter) throws OceanusException {
+        public OceanusRate getValue(final OceanusDataFormatter pFormatter) throws OceanusException {
             try {
                 return pFormatter.parseValue(getValue(), OceanusRate.class);
             } catch (IllegalArgumentException e) {
@@ -1029,7 +1029,7 @@ public abstract class PrometheusColumnDefinition {
          * @return the money value
          * @throws OceanusException on error
          */
-        public OceanusPrice getValue(final TethysUIDataFormatter pFormatter) throws OceanusException {
+        public OceanusPrice getValue(final OceanusDataFormatter pFormatter) throws OceanusException {
             try {
                 return pFormatter.parseValue(getValue(), OceanusPrice.class);
             } catch (IllegalArgumentException e) {
@@ -1095,7 +1095,7 @@ public abstract class PrometheusColumnDefinition {
          * @return the money value
          * @throws OceanusException on error
          */
-        public OceanusUnits getValue(final TethysUIDataFormatter pFormatter) throws OceanusException {
+        public OceanusUnits getValue(final OceanusDataFormatter pFormatter) throws OceanusException {
             try {
                 return pFormatter.parseValue(getValue(), OceanusUnits.class);
             } catch (IllegalArgumentException e) {
@@ -1161,7 +1161,7 @@ public abstract class PrometheusColumnDefinition {
          * @return the money value
          * @throws OceanusException on error
          */
-        public OceanusRatio getValue(final TethysUIDataFormatter pFormatter) throws OceanusException {
+        public OceanusRatio getValue(final OceanusDataFormatter pFormatter) throws OceanusException {
             try {
                 return pFormatter.parseValue(getValue(), OceanusRatio.class);
             } catch (IllegalArgumentException e) {

@@ -16,11 +16,10 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.prometheus.service.sheet;
 
-import java.io.OutputStream;
-
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
-import net.sourceforge.joceanus.tethys.ui.api.factory.TethysUIFactory;
+import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
+
+import java.io.OutputStream;
 
 /**
  * Sheet Service interface.
@@ -77,12 +76,11 @@ public interface PrometheusSheetWorkBook {
 
     /**
      * Create data formatter.
-     * @param pFactory the Gui factory
      * @return the new formatter
      */
-    default TethysUIDataFormatter createFormatter(final TethysUIFactory<?> pFactory) {
+    default OceanusDataFormatter createFormatter() {
         /* Allocate the formatter and set date format */
-        final TethysUIDataFormatter myFormatter = pFactory.newDataFormatter();
+        final OceanusDataFormatter myFormatter = new OceanusDataFormatter();
         myFormatter.setFormat(PrometheusSheetFormats.OASIS_DATE);
         myFormatter.setAccountingWidth(PrometheusSheetFormats.ACCOUNTING_WIDTH);
 

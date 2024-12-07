@@ -16,11 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.moneywise.atlas.reports;
 
-import java.util.Iterator;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-
 import net.sourceforge.joceanus.metis.report.MetisReportBase;
 import net.sourceforge.joceanus.metis.report.MetisReportHTMLBuilder;
 import net.sourceforge.joceanus.metis.report.MetisReportHTMLBuilder.MetisHTMLTable;
@@ -34,7 +29,11 @@ import net.sourceforge.joceanus.moneywise.atlas.data.analysis.values.MoneyWiseXA
 import net.sourceforge.joceanus.moneywise.atlas.views.MoneyWiseXAnalysisFilter;
 import net.sourceforge.joceanus.moneywise.atlas.views.MoneyWiseXAnalysisFilter.MoneyWiseXAnalysisPayeeFilter;
 import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
-import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
+import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
+import java.util.Iterator;
 
 /**
  * CashFlow report builder.
@@ -54,7 +53,7 @@ public class MoneyWiseXReportCashFlow
     /**
      * The Formatter.
      */
-    private final TethysUIDataFormatter theFormatter;
+    private final OceanusDataFormatter theFormatter;
 
     /**
      * Constructor.

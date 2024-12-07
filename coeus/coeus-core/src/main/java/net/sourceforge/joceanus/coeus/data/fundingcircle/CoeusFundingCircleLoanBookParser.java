@@ -16,13 +16,13 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.coeus.data.fundingcircle;
 
+import net.sourceforge.joceanus.metis.parser.MetisCSVParser;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
-import net.sourceforge.joceanus.metis.parser.MetisCSVParser;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
 
 /**
  * FundingCircle LoanBook Parser.
@@ -46,7 +46,7 @@ public class CoeusFundingCircleLoanBookParser
      * Constructor.
      * @param pFormatter the formatter
      */
-    CoeusFundingCircleLoanBookParser(final TethysUIDataFormatter pFormatter) {
+    CoeusFundingCircleLoanBookParser(final OceanusDataFormatter pFormatter) {
         /* Initialise the underlying class */
         super(pFormatter, HEADERS);
 

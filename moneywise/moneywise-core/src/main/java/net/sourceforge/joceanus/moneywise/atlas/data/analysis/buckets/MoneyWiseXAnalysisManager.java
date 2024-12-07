@@ -16,9 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataMap;
 import net.sourceforge.joceanus.metis.field.MetisFieldItem;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
@@ -41,9 +38,12 @@ import net.sourceforge.joceanus.moneywise.atlas.data.analysis.values.MoneyWiseXA
 import net.sourceforge.joceanus.oceanus.date.OceanusDate;
 import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
+import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.oceanus.logger.OceanusLogManager;
 import net.sourceforge.joceanus.oceanus.logger.OceanusLogger;
-import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Analysis manager.
@@ -105,7 +105,7 @@ public class MoneyWiseXAnalysisManager
     }
 
     @Override
-    public String formatObject(final TethysUIDataFormatter pFormatter) {
+    public String formatObject(final OceanusDataFormatter pFormatter) {
         return getClass().getSimpleName();
     }
 

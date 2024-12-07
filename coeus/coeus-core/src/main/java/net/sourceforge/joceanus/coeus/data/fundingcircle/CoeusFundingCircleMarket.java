@@ -16,22 +16,22 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.coeus.data.fundingcircle;
 
-import java.nio.file.Path;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.Map;
-
-import net.sourceforge.joceanus.coeus.exc.CoeusDataException;
 import net.sourceforge.joceanus.coeus.data.CoeusHistory;
 import net.sourceforge.joceanus.coeus.data.CoeusLoan;
 import net.sourceforge.joceanus.coeus.data.CoeusLoanStatus;
 import net.sourceforge.joceanus.coeus.data.CoeusMarket;
 import net.sourceforge.joceanus.coeus.data.CoeusMarketProvider;
 import net.sourceforge.joceanus.coeus.data.CoeusResource;
+import net.sourceforge.joceanus.coeus.exc.CoeusDataException;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
-import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
+import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
+
+import java.nio.file.Path;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * FundingCircle Market.
@@ -79,7 +79,7 @@ public class CoeusFundingCircleMarket
      * Constructor.
      * @param pFormatter the formatter
      */
-    CoeusFundingCircleMarket(final TethysUIDataFormatter pFormatter) {
+    CoeusFundingCircleMarket(final OceanusDataFormatter pFormatter) {
         /* Initialise underlying class */
         super(pFormatter, CoeusMarketProvider.FUNDINGCIRCLE);
 

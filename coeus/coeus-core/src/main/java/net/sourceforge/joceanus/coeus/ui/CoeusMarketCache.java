@@ -16,10 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.coeus.ui;
 
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.Map;
-
 import net.sourceforge.joceanus.coeus.data.CoeusCalendar;
 import net.sourceforge.joceanus.coeus.data.CoeusMarketAnnual;
 import net.sourceforge.joceanus.coeus.data.CoeusMarketProvider;
@@ -36,7 +32,11 @@ import net.sourceforge.joceanus.oceanus.date.OceanusDate;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.TethysEventProvider;
-import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
+import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
+
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Loan MarketCache.
@@ -85,7 +85,7 @@ public class CoeusMarketCache
     /**
      * the formatter.
      */
-    private final TethysUIDataFormatter theFormatter;
+    private final OceanusDataFormatter theFormatter;
 
     /**
      * the calendar.
@@ -242,7 +242,7 @@ public class CoeusMarketCache
     }
 
     @Override
-    public String formatObject(final TethysUIDataFormatter pFormatter) {
+    public String formatObject(final OceanusDataFormatter pFormatter) {
         return toString();
     }
 

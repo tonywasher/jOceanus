@@ -16,10 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets;
 
-import java.util.Currency;
-import java.util.Iterator;
-import java.util.List;
-
 import net.sourceforge.joceanus.metis.data.MetisDataDifference;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataList;
@@ -27,7 +23,6 @@ import net.sourceforge.joceanus.metis.field.MetisFieldItem;
 import net.sourceforge.joceanus.metis.field.MetisFieldItem.MetisFieldTableItem;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.metis.list.MetisListIndexed;
-import net.sourceforge.joceanus.moneywise.exc.MoneyWiseDataException;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisSecurityBucket.MoneyWiseXAnalysisSecurityBucketList;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.values.MoneyWiseXAnalysisAccountAttr;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.values.MoneyWiseXAnalysisAccountValues;
@@ -38,11 +33,16 @@ import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePortfolio;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurity;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurityHolding;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrency;
+import net.sourceforge.joceanus.moneywise.exc.MoneyWiseDataException;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.date.OceanusDate;
 import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
-import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
+import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
+
+import java.util.Currency;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Portfolio Bucket.
@@ -203,7 +203,7 @@ public final class MoneyWiseXAnalysisPortfolioBucket
     }
 
     @Override
-    public String formatObject(final TethysUIDataFormatter pFormatter) {
+    public String formatObject(final OceanusDataFormatter pFormatter) {
         return toString();
     }
 
@@ -666,7 +666,7 @@ public final class MoneyWiseXAnalysisPortfolioBucket
         }
 
         @Override
-        public String formatObject(final TethysUIDataFormatter pFormatter) {
+        public String formatObject(final OceanusDataFormatter pFormatter) {
             return getDataFieldSet().getName();
         }
 

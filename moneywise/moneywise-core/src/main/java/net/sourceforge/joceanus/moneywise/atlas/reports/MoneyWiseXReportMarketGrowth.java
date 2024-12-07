@@ -32,9 +32,9 @@ import net.sourceforge.joceanus.moneywise.atlas.data.analysis.values.MoneyWiseXA
 import net.sourceforge.joceanus.moneywise.atlas.views.MoneyWiseXAnalysisFilter;
 import net.sourceforge.joceanus.moneywise.atlas.views.MoneyWiseXAnalysisFilter.MoneyWiseXAnalysisSecurityFilter;
 import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
+import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.oceanus.logger.OceanusLogManager;
 import net.sourceforge.joceanus.oceanus.logger.OceanusLogger;
-import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -83,7 +83,7 @@ public class MoneyWiseXReportMarketGrowth
     /**
      * The Formatter.
      */
-    private final TethysUIDataFormatter theFormatter;
+    private final OceanusDataFormatter theFormatter;
 
     /**
      * Do we have foreign assets?

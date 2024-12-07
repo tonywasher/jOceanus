@@ -16,11 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.moneywise.lethe.data.analysis.data;
 
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataList;
 import net.sourceforge.joceanus.metis.field.MetisFieldItem;
 import net.sourceforge.joceanus.metis.field.MetisFieldItem.MetisFieldTableItem;
@@ -31,7 +26,12 @@ import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransTag;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransaction;
 import net.sourceforge.joceanus.oceanus.date.OceanusDate;
 import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
-import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
+import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
+
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * The TransactionTag Bucket class.
@@ -143,7 +143,7 @@ public final class MoneyWiseAnalysisTransTagBucket
     }
 
     @Override
-    public String formatObject(final TethysUIDataFormatter pFormatter) {
+    public String formatObject(final OceanusDataFormatter pFormatter) {
         return toString();
     }
 
@@ -336,7 +336,7 @@ public final class MoneyWiseAnalysisTransTagBucket
         }
 
         @Override
-        public String formatObject(final TethysUIDataFormatter pFormatter) {
+        public String formatObject(final OceanusDataFormatter pFormatter) {
             return getDataFieldSet().getName();
         }
 

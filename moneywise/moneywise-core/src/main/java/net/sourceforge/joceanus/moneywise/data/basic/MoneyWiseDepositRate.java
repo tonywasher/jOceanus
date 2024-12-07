@@ -16,21 +16,19 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.moneywise.data.basic;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Map;
-
 import net.sourceforge.joceanus.metis.data.MetisDataDifference;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataList;
 import net.sourceforge.joceanus.metis.data.MetisDataResource;
 import net.sourceforge.joceanus.metis.field.MetisFieldItem;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
-import net.sourceforge.joceanus.moneywise.exc.MoneyWiseDataException;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDeposit.MoneyWiseDepositList;
+import net.sourceforge.joceanus.moneywise.exc.MoneyWiseDataException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.date.OceanusDateFormatter;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRate;
+import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataInstanceMap;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataMapItem;
@@ -40,11 +38,13 @@ import net.sourceforge.joceanus.prometheus.data.PrometheusEncryptedFieldSet;
 import net.sourceforge.joceanus.prometheus.data.PrometheusEncryptedPair;
 import net.sourceforge.joceanus.prometheus.data.PrometheusEncryptedValues;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.date.OceanusDate;
-import net.sourceforge.joceanus.oceanus.date.OceanusDateFormatter;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusRate;
-import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Map;
 
 /**
  * DepositRate data type.
@@ -113,7 +113,7 @@ public class MoneyWiseDepositRate
         super(pList, pValues);
 
         /* Access the formatter */
-        final TethysUIDataFormatter myFormatter = getDataSet().getDataFormatter();
+        final OceanusDataFormatter myFormatter = getDataSet().getDataFormatter();
 
         /* Protect against exceptions */
         try {
@@ -192,7 +192,7 @@ public class MoneyWiseDepositRate
     }
 
     @Override
-    public String formatObject(final TethysUIDataFormatter pFormatter) {
+    public String formatObject(final OceanusDataFormatter pFormatter) {
         return toString();
     }
 
@@ -205,7 +205,7 @@ public class MoneyWiseDepositRate
         final Object myEndDate = myValues.getValue(MoneyWiseBasicResource.DEPOSITRATE_ENDDATE);
 
         /* Access formatter */
-        final TethysUIDataFormatter myFormatter = getDataSet().getDataFormatter();
+        final OceanusDataFormatter myFormatter = getDataSet().getDataFormatter();
 
         /* Create string builder */
         final StringBuilder myBuilder = new StringBuilder();
@@ -794,7 +794,7 @@ public class MoneyWiseDepositRate
         }
 
         @Override
-        public String formatObject(final TethysUIDataFormatter pFormatter) {
+        public String formatObject(final OceanusDataFormatter pFormatter) {
             return FIELD_DEFS.getName();
         }
 
@@ -954,7 +954,7 @@ public class MoneyWiseDepositRate
             }
 
             @Override
-            public String formatObject(final TethysUIDataFormatter pFormatter) {
+            public String formatObject(final OceanusDataFormatter pFormatter) {
                 return theDeposit.formatObject(pFormatter)
                         + "("
                         + size()

@@ -303,7 +303,7 @@ public class MoneyWiseArchiveLoader {
             theParentCache = new MoneyWiseParentCache(pData);
 
             /* Access the workbook from the stream */
-            final PrometheusSheetWorkBook myWorkbook = PrometheusSheetProvider.loadFromStream(pType, theGuiFactory, pStream);
+            final PrometheusSheetWorkBook myWorkbook = PrometheusSheetProvider.loadFromStream(pType, pStream);
             pReport.checkForCancellation();
 
             /* Determine Year Range */

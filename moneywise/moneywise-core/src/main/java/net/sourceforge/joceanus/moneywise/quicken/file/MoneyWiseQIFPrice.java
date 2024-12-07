@@ -16,15 +16,15 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.moneywise.quicken.file;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurityPrice;
 import net.sourceforge.joceanus.moneywise.quicken.definitions.MoneyWiseQIFType;
 import net.sourceforge.joceanus.oceanus.date.OceanusDate;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
-import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
+import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Class representing a QIF Price record.
@@ -95,7 +95,7 @@ public class MoneyWiseQIFPrice
      * @param pLine the line
      */
     private MoneyWiseQIFPrice(final MoneyWiseQIFFile pFile,
-                              final TethysUIDataFormatter pFormatter,
+                              final OceanusDataFormatter pFormatter,
                               final String pLine) {
         /* Split out the parts */
         final String[] myParts = pLine.split(QIF_COMMA);
@@ -124,7 +124,7 @@ public class MoneyWiseQIFPrice
      * @param pLines the lines
      */
     protected MoneyWiseQIFPrice(final MoneyWiseQIFFile pFile,
-                                final TethysUIDataFormatter pFormatter,
+                                final OceanusDataFormatter pFormatter,
                                 final List<String> pLines) {
         /* Build the price list */
         thePrices = new ArrayList<>();
@@ -182,7 +182,7 @@ public class MoneyWiseQIFPrice
      * @param pFormatter the formatter
      * @param pBuilder the string builder
      */
-    protected void formatRecord(final TethysUIDataFormatter pFormatter,
+    protected void formatRecord(final OceanusDataFormatter pFormatter,
                                 final StringBuilder pBuilder) {
         /* Format the security */
         pBuilder.append(QIF_QUOTE);

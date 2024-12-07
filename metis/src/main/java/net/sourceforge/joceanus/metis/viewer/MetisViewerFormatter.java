@@ -16,11 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.metis.viewer;
 
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
 import net.sourceforge.joceanus.metis.data.MetisDataDelta;
 import net.sourceforge.joceanus.metis.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataList;
@@ -34,8 +29,13 @@ import net.sourceforge.joceanus.metis.field.MetisFieldVersionHistory;
 import net.sourceforge.joceanus.metis.field.MetisFieldVersionedItem;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimal;
+import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
-import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
+
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  * Data Viewer Formatter.
@@ -91,7 +91,7 @@ public class MetisViewerFormatter {
      * @param pFormatter the data formatter
      * @throws OceanusException on error
      */
-    protected MetisViewerFormatter(final TethysUIDataFormatter pFormatter) throws OceanusException {
+    protected MetisViewerFormatter(final OceanusDataFormatter pFormatter) throws OceanusException {
         theBuilder = new MetisViewerBuilder(pFormatter);
     }
 

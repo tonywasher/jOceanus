@@ -16,10 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.metis.viewer;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.event.OceanusEvent;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
@@ -34,6 +30,10 @@ import net.sourceforge.joceanus.tethys.ui.api.control.TethysUITreeManager.Tethys
 import net.sourceforge.joceanus.tethys.ui.api.dialog.TethysUIChildDialog;
 import net.sourceforge.joceanus.tethys.ui.api.factory.TethysUIFactory;
 import net.sourceforge.joceanus.tethys.ui.api.pane.TethysUIBorderPaneManager;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Viewer Manager class, responsible for displaying the debug view.

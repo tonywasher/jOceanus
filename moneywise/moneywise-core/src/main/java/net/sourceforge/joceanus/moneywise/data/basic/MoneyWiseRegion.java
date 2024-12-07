@@ -16,14 +16,14 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.moneywise.data.basic;
 
-import java.util.Iterator;
-
 import net.sourceforge.joceanus.metis.data.MetisDataDifference;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataNamedItem;
 import net.sourceforge.joceanus.metis.data.MetisDataResource;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.moneywise.exc.MoneyWiseDataException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataInfoLinkSet;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataInstanceMap;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
@@ -33,8 +33,8 @@ import net.sourceforge.joceanus.prometheus.data.PrometheusEncryptedDataItem;
 import net.sourceforge.joceanus.prometheus.data.PrometheusEncryptedFieldSet;
 import net.sourceforge.joceanus.prometheus.data.PrometheusEncryptedPair;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
+
+import java.util.Iterator;
 
 /**
  * Region for a Unit Trust.
@@ -132,7 +132,7 @@ public class MoneyWiseRegion
     }
 
     @Override
-    public String formatObject(final TethysUIDataFormatter pFormatter) {
+    public String formatObject(final OceanusDataFormatter pFormatter) {
         return toString();
     }
 

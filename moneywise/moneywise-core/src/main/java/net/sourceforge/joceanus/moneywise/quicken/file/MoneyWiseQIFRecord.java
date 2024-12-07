@@ -16,13 +16,13 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.moneywise.quicken.file;
 
+import net.sourceforge.joceanus.moneywise.quicken.definitions.MoneyWiseQLineType;
+import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
+
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
-
-import net.sourceforge.joceanus.moneywise.quicken.definitions.MoneyWiseQLineType;
-import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
 
 /**
  * QIF File record representation.
@@ -163,7 +163,7 @@ public abstract class MoneyWiseQIFRecord<T extends Enum<T> & MoneyWiseQLineType>
      * @param pFormatter the data formatter
      * @param pBuilder the string builder
      */
-    public void formatRecord(final TethysUIDataFormatter pFormatter,
+    public void formatRecord(final OceanusDataFormatter pFormatter,
                              final StringBuilder pBuilder) {
         /* Format the standard lines */
         formatLines(pFormatter, pBuilder);
@@ -187,7 +187,7 @@ public abstract class MoneyWiseQIFRecord<T extends Enum<T> & MoneyWiseQLineType>
      * @param pFormatter the data formatter
      * @param pBuilder the string builder
      */
-    private void formatLines(final TethysUIDataFormatter pFormatter,
+    private void formatLines(final OceanusDataFormatter pFormatter,
                              final StringBuilder pBuilder) {
         /* Loop through the map in ordinal order */
         for (T myType : theClass.getEnumConstants()) {

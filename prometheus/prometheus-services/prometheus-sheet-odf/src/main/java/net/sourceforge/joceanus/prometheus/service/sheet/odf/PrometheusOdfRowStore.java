@@ -16,19 +16,18 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.prometheus.service.sheet.odf;
 
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
+import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetCell;
+import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetCellPosition;
+import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetRow;
+import org.w3c.dom.Element;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Objects;
-
-import org.w3c.dom.Element;
-
-import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetCell;
-import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetCellPosition;
-import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetRow;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
 
 /**
  * Row store.
@@ -52,7 +51,7 @@ class PrometheusOdfRowStore {
     /**
      * The Formatter.
      */
-    private final TethysUIDataFormatter theFormatter;
+    private final OceanusDataFormatter theFormatter;
 
     /**
      * Array of hiddens.

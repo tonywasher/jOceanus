@@ -16,23 +16,23 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.moneywise.data.statics;
 
-import java.text.DecimalFormatSymbols;
-import java.util.Currency;
-import java.util.Locale;
-
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.metis.data.MetisDataResource;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.metis.field.MetisFieldVersionValues;
 import net.sourceforge.joceanus.metis.field.MetisFieldVersionedSet;
 import net.sourceforge.joceanus.moneywise.exc.MoneyWiseDataException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataSet;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataValues;
 import net.sourceforge.joceanus.prometheus.data.PrometheusStaticDataClass;
 import net.sourceforge.joceanus.prometheus.data.PrometheusStaticDataItem;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
+
+import java.text.DecimalFormatSymbols;
+import java.util.Currency;
+import java.util.Locale;
 
 /**
  * AssetCurrency data type.
@@ -115,7 +115,7 @@ public class MoneyWiseCurrency
         if (myValue instanceof Boolean) {
             setValueReporting((Boolean) myValue);
         } else if (myValue instanceof String) {
-            final TethysUIDataFormatter myFormatter = getDataSet().getDataFormatter();
+            final OceanusDataFormatter myFormatter = getDataSet().getDataFormatter();
             setValueReporting(myFormatter.parseValue((String) myValue, Boolean.class));
         } else {
             setValueReporting(Boolean.FALSE);
@@ -532,7 +532,7 @@ public class MoneyWiseCurrency
         }
 
         @Override
-        public String formatObject(final TethysUIDataFormatter pFormatter) {
+        public String formatObject(final OceanusDataFormatter pFormatter) {
             return FIELD_DEFS.getName();
         }
 

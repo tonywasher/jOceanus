@@ -18,9 +18,9 @@ package net.sourceforge.joceanus.tethys.ui.helper;
 
 import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
+import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIComponent;
-import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIIcon;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIIconId;
@@ -42,7 +42,6 @@ import net.sourceforge.joceanus.tethys.ui.api.thread.TethysUIThreadEvent;
 import net.sourceforge.joceanus.tethys.ui.api.thread.TethysUIThreadFactory;
 import net.sourceforge.joceanus.tethys.ui.api.thread.TethysUIThreadManager;
 import net.sourceforge.joceanus.tethys.ui.api.thread.TethysUIThreadStatusManager;
-import net.sourceforge.joceanus.tethys.ui.core.base.TethysUICoreDataFormatter;
 import net.sourceforge.joceanus.tethys.ui.core.base.TethysUICoreValueSet;
 
 /**
@@ -53,7 +52,7 @@ public class TethysUIHelperFactory
     /**
      * The DataFormatter.
      */
-    private final TethysUIDataFormatter theFormatter;
+    private final OceanusDataFormatter theFormatter;
 
     /**
      * The ValueSet.
@@ -79,7 +78,7 @@ public class TethysUIHelperFactory
      * Constructor.
      */
     public TethysUIHelperFactory() {
-        theFormatter = new TethysUICoreDataFormatter();
+        theFormatter = new OceanusDataFormatter();
         theProfile = new OceanusProfile("Dummy");
         theValueSet = new TethysUICoreValueSet();
         theLogSink = new SinkStub();
@@ -92,13 +91,13 @@ public class TethysUIHelperFactory
     }
 
     @Override
-    public TethysUIDataFormatter getDataFormatter() {
+    public OceanusDataFormatter getDataFormatter() {
         return theFormatter;
     }
 
     @Override
-    public TethysUIDataFormatter newDataFormatter() {
-        return new TethysUICoreDataFormatter();
+    public OceanusDataFormatter newDataFormatter() {
+        return new OceanusDataFormatter();
     }
 
     @Override

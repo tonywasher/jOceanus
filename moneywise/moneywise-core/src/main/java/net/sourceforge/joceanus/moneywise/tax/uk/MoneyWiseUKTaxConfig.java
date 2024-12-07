@@ -27,7 +27,7 @@ import net.sourceforge.joceanus.moneywise.tax.MoneyWiseTaxResource;
 import net.sourceforge.joceanus.moneywise.tax.MoneyWiseTaxSource;
 import net.sourceforge.joceanus.oceanus.date.OceanusDate;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
-import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
+import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 
 /**
  * Tax configuration.
@@ -318,7 +318,7 @@ public class MoneyWiseUKTaxConfig
     }
 
     @Override
-    public String formatObject(final TethysUIDataFormatter pFormatter) {
+    public String formatObject(final OceanusDataFormatter pFormatter) {
         return FIELD_DEFS.getName();
     }
 

@@ -16,9 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.moneywise.data.basic;
 
-import java.util.Iterator;
-import java.util.List;
-
 import net.sourceforge.joceanus.metis.data.MetisDataDifference;
 import net.sourceforge.joceanus.metis.data.MetisDataEditState;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
@@ -27,26 +24,17 @@ import net.sourceforge.joceanus.metis.data.MetisDataState;
 import net.sourceforge.joceanus.metis.field.MetisFieldRequired;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.metis.field.MetisFieldVersionedSet;
-import net.sourceforge.joceanus.moneywise.exc.MoneyWiseDataException;
-import net.sourceforge.joceanus.moneywise.exc.MoneyWiseLogicException;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseAssetBase.MoneyWiseAssetBaseList;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDeposit.MoneyWiseDepositList;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTax.MoneyWiseTaxCredit;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTax.MoneyWiseTaxFactory;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransCategory.MoneyWiseTransCategoryList;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransInfo.MoneyWiseTransInfoList;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransInfoClass;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransInfoType.MoneyWiseTransInfoTypeList;
-import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTax.MoneyWiseTaxCredit;
-import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTax.MoneyWiseTaxFactory;
-import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
-import net.sourceforge.joceanus.prometheus.data.PrometheusDataList;
-import net.sourceforge.joceanus.prometheus.data.PrometheusDataMapItem;
-import net.sourceforge.joceanus.prometheus.data.PrometheusDataResource;
-import net.sourceforge.joceanus.prometheus.data.PrometheusDataValues;
-import net.sourceforge.joceanus.prometheus.data.PrometheusDataValues.PrometheusInfoItem;
-import net.sourceforge.joceanus.prometheus.data.PrometheusDataValues.PrometheusInfoSetItem;
-import net.sourceforge.joceanus.prometheus.views.PrometheusEditEntry;
-import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
+import net.sourceforge.joceanus.moneywise.exc.MoneyWiseDataException;
+import net.sourceforge.joceanus.moneywise.exc.MoneyWiseLogicException;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.date.OceanusDate;
 import net.sourceforge.joceanus.oceanus.date.OceanusDateFormatter;
@@ -56,7 +44,19 @@ import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusRate;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusRatio;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusUnits;
-import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
+import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
+import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
+import net.sourceforge.joceanus.prometheus.data.PrometheusDataList;
+import net.sourceforge.joceanus.prometheus.data.PrometheusDataMapItem;
+import net.sourceforge.joceanus.prometheus.data.PrometheusDataResource;
+import net.sourceforge.joceanus.prometheus.data.PrometheusDataValues;
+import net.sourceforge.joceanus.prometheus.data.PrometheusDataValues.PrometheusInfoItem;
+import net.sourceforge.joceanus.prometheus.data.PrometheusDataValues.PrometheusInfoSetItem;
+import net.sourceforge.joceanus.prometheus.views.PrometheusEditEntry;
+import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
+
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * New version of Event DataItem utilising EventInfo.
@@ -171,7 +171,7 @@ public class MoneyWiseTransaction
         super(pList, pValues);
 
         /* Access formatter */
-        final TethysUIDataFormatter myFormatter = getDataSet().getDataFormatter();
+        final OceanusDataFormatter myFormatter = getDataSet().getDataFormatter();
 
         /* Protect against exceptions */
         try {

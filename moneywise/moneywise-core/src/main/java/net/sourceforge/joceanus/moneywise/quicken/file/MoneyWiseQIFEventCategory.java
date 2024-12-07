@@ -16,13 +16,13 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.moneywise.quicken.file;
 
-import java.util.List;
-
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransCategory;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransCategoryClass;
 import net.sourceforge.joceanus.moneywise.quicken.definitions.MoneyWiseQCategoryLineType;
 import net.sourceforge.joceanus.moneywise.quicken.file.MoneyWiseQIFLine.MoneyWiseQIFStringLine;
-import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
+import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
+
+import java.util.List;
 
 /**
  * Class representing a QIF Category record.
@@ -254,7 +254,7 @@ public class MoneyWiseQIFEventCategory
         }
 
         @Override
-        protected void formatData(final TethysUIDataFormatter pFormatter,
+        protected void formatData(final OceanusDataFormatter pFormatter,
                                   final StringBuilder pBuilder) {
             /* No data */
         }
@@ -282,7 +282,7 @@ public class MoneyWiseQIFEventCategory
         }
 
         @Override
-        protected void formatData(final TethysUIDataFormatter pFormatter,
+        protected void formatData(final OceanusDataFormatter pFormatter,
                                   final StringBuilder pBuilder) {
             /* No data */
         }
@@ -310,7 +310,7 @@ public class MoneyWiseQIFEventCategory
         }
 
         @Override
-        protected void formatData(final TethysUIDataFormatter pFormatter,
+        protected void formatData(final OceanusDataFormatter pFormatter,
                                   final StringBuilder pBuilder) {
             /* No data */
         }

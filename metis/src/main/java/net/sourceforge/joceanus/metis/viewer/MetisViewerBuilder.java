@@ -16,14 +16,13 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.metis.viewer;
 
-import net.sourceforge.joceanus.metis.exc.MetisIOException;
 import net.sourceforge.joceanus.metis.data.MetisDataDelta;
 import net.sourceforge.joceanus.metis.data.MetisDataDifference;
+import net.sourceforge.joceanus.metis.exc.MetisIOException;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.oceanus.logger.OceanusLogManager;
 import net.sourceforge.joceanus.oceanus.logger.OceanusLogger;
-import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -139,7 +138,7 @@ public class MetisViewerBuilder {
     /**
      * The data formatter.
      */
-    private final TethysUIDataFormatter theFormatter;
+    private final OceanusDataFormatter theFormatter;
 
     /**
      * The document builder.
@@ -191,7 +190,7 @@ public class MetisViewerBuilder {
      * @param pFormatter the data formatter
      * @throws OceanusException on error
      */
-    protected MetisViewerBuilder(final TethysUIDataFormatter pFormatter) throws OceanusException {
+    protected MetisViewerBuilder(final OceanusDataFormatter pFormatter) throws OceanusException {
         /* Protect against exceptions */
         try {
             /* Store parameters */

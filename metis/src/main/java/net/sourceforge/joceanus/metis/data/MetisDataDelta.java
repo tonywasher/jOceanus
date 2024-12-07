@@ -17,7 +17,7 @@
 package net.sourceforge.joceanus.metis.data;
 
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataObjectFormat;
-import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
+import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 
 /**
  * Delta class.
@@ -62,7 +62,7 @@ public class MetisDataDelta
     }
 
     @Override
-    public String formatObject(final TethysUIDataFormatter pFormatter) {
+    public String formatObject(final OceanusDataFormatter pFormatter) {
         return theDifference.isDifferent()
                 ? theDifference + "(" + pFormatter.formatObject(theObject) + ")"
                 : pFormatter.formatObject(theObject);

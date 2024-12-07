@@ -16,13 +16,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.prometheus.data;
 
-import java.util.EnumMap;
-import java.util.Map;
-
 import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySet;
 import net.sourceforge.joceanus.metis.data.MetisDataDifference;
 import net.sourceforge.joceanus.metis.data.MetisDataType;
-import net.sourceforge.joceanus.prometheus.exc.PrometheusDataException;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.convert.OceanusDataConverter;
 import net.sourceforge.joceanus.oceanus.date.OceanusDate;
@@ -32,7 +28,11 @@ import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusRate;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusRatio;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusUnits;
-import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
+import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
+import net.sourceforge.joceanus.prometheus.exc.PrometheusDataException;
+
+import java.util.EnumMap;
+import java.util.Map;
 
 /**
  * FieldGenerator.
@@ -56,14 +56,14 @@ public class PrometheusFieldGenerator {
     /**
      * The Data formatter.
      */
-    private final TethysUIDataFormatter theFormatter;
+    private final OceanusDataFormatter theFormatter;
 
     /**
      * Constructor.
      * @param pFormatter the formatter
      * @param pKeySet the keySet
      */
-    public PrometheusFieldGenerator(final TethysUIDataFormatter pFormatter,
+    public PrometheusFieldGenerator(final OceanusDataFormatter pFormatter,
                                     final GordianKeySet pKeySet) {
         theFormatter = pFormatter;
         theKeySet = pKeySet;
@@ -186,7 +186,7 @@ public class PrometheusFieldGenerator {
          * @return the converted bytes.
          * @throws OceanusException on error
          */
-        byte[] convertValue(TethysUIDataFormatter pFormatter,
+        byte[] convertValue(OceanusDataFormatter pFormatter,
                             Object pValue) throws OceanusException;
 
         /**
@@ -196,7 +196,7 @@ public class PrometheusFieldGenerator {
          * @return the parsed value.
          * @throws OceanusException on error
          */
-        Object parseValue(TethysUIDataFormatter pFormatter,
+        Object parseValue(OceanusDataFormatter pFormatter,
                           byte[] pBytes) throws OceanusException;
     }
 
@@ -206,13 +206,13 @@ public class PrometheusFieldGenerator {
     private static final class PrometheusDateEncryptor
             implements PrometheusDataEncryptor {
         @Override
-        public byte[] convertValue(final TethysUIDataFormatter pFormatter,
+        public byte[] convertValue(final OceanusDataFormatter pFormatter,
                                    final Object pValue) {
             return pFormatter.getDateFormatter().toBytes((OceanusDate) pValue);
         }
 
         @Override
-        public Object parseValue(final TethysUIDataFormatter pFormatter,
+        public Object parseValue(final OceanusDataFormatter pFormatter,
                                  final byte[] pBytes) throws OceanusException {
             try {
                 return pFormatter.getDateFormatter().fromBytes(pBytes);
@@ -228,13 +228,13 @@ public class PrometheusFieldGenerator {
     private static final class PrometheusShortEncryptor
             implements PrometheusDataEncryptor {
         @Override
-        public byte[] convertValue(final TethysUIDataFormatter pFormatter,
+        public byte[] convertValue(final OceanusDataFormatter pFormatter,
                                    final Object pValue) {
             return OceanusDataConverter.shortToByteArray((short) pValue);
         }
 
         @Override
-        public Object parseValue(final TethysUIDataFormatter pFormatter,
+        public Object parseValue(final OceanusDataFormatter pFormatter,
                                  final byte[] pBytes) throws OceanusException {
             return OceanusDataConverter.byteArrayToShort(pBytes);
         }
@@ -245,13 +245,13 @@ public class PrometheusFieldGenerator {
     private static final class PrometheusIntegerEncryptor
             implements PrometheusDataEncryptor {
         @Override
-        public byte[] convertValue(final TethysUIDataFormatter pFormatter,
+        public byte[] convertValue(final OceanusDataFormatter pFormatter,
                                    final Object pValue) {
             return OceanusDataConverter.integerToByteArray((int) pValue);
         }
 
         @Override
-        public Object parseValue(final TethysUIDataFormatter pFormatter,
+        public Object parseValue(final OceanusDataFormatter pFormatter,
                                  final byte[] pBytes) throws OceanusException {
             return OceanusDataConverter.byteArrayToInteger(pBytes);
         }
@@ -263,13 +263,13 @@ public class PrometheusFieldGenerator {
     private static final class PrometheusLongEncryptor
             implements PrometheusDataEncryptor {
         @Override
-        public byte[] convertValue(final TethysUIDataFormatter pFormatter,
+        public byte[] convertValue(final OceanusDataFormatter pFormatter,
                                    final Object pValue) {
             return OceanusDataConverter.longToByteArray((long) pValue);
         }
 
         @Override
-        public Object parseValue(final TethysUIDataFormatter pFormatter,
+        public Object parseValue(final OceanusDataFormatter pFormatter,
                                  final byte[] pBytes) throws OceanusException {
             return OceanusDataConverter.byteArrayToLong(pBytes);
         }
@@ -281,13 +281,13 @@ public class PrometheusFieldGenerator {
     private static final class PrometheusBooleanEncryptor
             implements PrometheusDataEncryptor {
         @Override
-        public byte[] convertValue(final TethysUIDataFormatter pFormatter,
+        public byte[] convertValue(final OceanusDataFormatter pFormatter,
                                    final Object pValue) {
             return OceanusDataConverter.stringToByteArray(pValue.toString());
         }
 
         @Override
-        public Object parseValue(final TethysUIDataFormatter pFormatter,
+        public Object parseValue(final OceanusDataFormatter pFormatter,
                                  final byte[] pBytes) {
             final String myBoolString = OceanusDataConverter.byteArrayToString(pBytes);
             return Boolean.parseBoolean(myBoolString);
@@ -300,13 +300,13 @@ public class PrometheusFieldGenerator {
     private static final class PrometheusStringEncryptor
             implements PrometheusDataEncryptor {
         @Override
-        public byte[] convertValue(final TethysUIDataFormatter pFormatter,
+        public byte[] convertValue(final OceanusDataFormatter pFormatter,
                                    final Object pValue) {
             return OceanusDataConverter.stringToByteArray((String) pValue);
         }
 
         @Override
-        public Object parseValue(final TethysUIDataFormatter pFormatter,
+        public Object parseValue(final OceanusDataFormatter pFormatter,
                                  final byte[] pBytes) {
             return OceanusDataConverter.byteArrayToString(pBytes);
         }
@@ -318,13 +318,13 @@ public class PrometheusFieldGenerator {
     private static final class PrometheusCharArrayEncryptor
             implements PrometheusDataEncryptor {
         @Override
-        public byte[] convertValue(final TethysUIDataFormatter pFormatter,
+        public byte[] convertValue(final OceanusDataFormatter pFormatter,
                                    final Object pValue) throws OceanusException {
             return OceanusDataConverter.charsToByteArray((char[]) pValue);
         }
 
         @Override
-        public Object parseValue(final TethysUIDataFormatter pFormatter,
+        public Object parseValue(final OceanusDataFormatter pFormatter,
                                  final byte[] pBytes) throws OceanusException {
             return OceanusDataConverter.bytesToCharArray(pBytes);
         }
@@ -336,7 +336,7 @@ public class PrometheusFieldGenerator {
     private abstract static class PrometheusDecimalEncryptor
             implements PrometheusDataEncryptor {
         @Override
-        public byte[] convertValue(final TethysUIDataFormatter pFormatter,
+        public byte[] convertValue(final OceanusDataFormatter pFormatter,
                                    final Object pValue) {
             return ((OceanusDecimal) pValue).toBytes();
         }
@@ -348,7 +348,7 @@ public class PrometheusFieldGenerator {
     private static class PrometheusMoneyEncryptor
             extends PrometheusDecimalEncryptor {
         @Override
-        public Object parseValue(final TethysUIDataFormatter pFormatter,
+        public Object parseValue(final OceanusDataFormatter pFormatter,
                                  final byte[] pBytes) throws OceanusException {
             return new OceanusMoney(pBytes);
         }
@@ -360,7 +360,7 @@ public class PrometheusFieldGenerator {
     private static final class PrometheusPriceEncryptor
             extends PrometheusMoneyEncryptor {
         @Override
-        public Object parseValue(final TethysUIDataFormatter pFormatter,
+        public Object parseValue(final OceanusDataFormatter pFormatter,
                                  final byte[] pBytes) throws OceanusException {
             return new OceanusPrice(pBytes);
         }
@@ -372,7 +372,7 @@ public class PrometheusFieldGenerator {
     private static final class PrometheusRatioEncryptor
             extends PrometheusDecimalEncryptor {
         @Override
-        public Object parseValue(final TethysUIDataFormatter pFormatter,
+        public Object parseValue(final OceanusDataFormatter pFormatter,
                                  final byte[] pBytes) throws OceanusException {
             return new OceanusRatio(pBytes);
         }
@@ -384,7 +384,7 @@ public class PrometheusFieldGenerator {
     private static final class PrometheusUnitsEncryptor
             extends PrometheusDecimalEncryptor {
         @Override
-        public Object parseValue(final TethysUIDataFormatter pFormatter,
+        public Object parseValue(final OceanusDataFormatter pFormatter,
                                  final byte[] pBytes) throws OceanusException {
             return new OceanusUnits(pBytes);
         }
@@ -396,7 +396,7 @@ public class PrometheusFieldGenerator {
     private static final class PrometheusRateEncryptor
             extends PrometheusDecimalEncryptor {
         @Override
-        public Object parseValue(final TethysUIDataFormatter pFormatter,
+        public Object parseValue(final OceanusDataFormatter pFormatter,
                                  final byte[] pBytes) throws OceanusException {
             return new OceanusRate(pBytes);
         }

@@ -16,18 +16,19 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.moneywise.data.basic;
 
-import java.util.Currency;
-import java.util.Iterator;
-
 import net.sourceforge.joceanus.metis.data.MetisDataDifference;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
-import net.sourceforge.joceanus.moneywise.exc.MoneyWiseDataException;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTax.MoneyWiseTaxCredit;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransaction.MoneyWiseTransactionList;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseAssetCategory;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrency;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
-import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTax.MoneyWiseTaxCredit;
+import net.sourceforge.joceanus.moneywise.exc.MoneyWiseDataException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
+import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataInstanceMap;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataList.PrometheusListStyle;
@@ -38,10 +39,9 @@ import net.sourceforge.joceanus.prometheus.data.PrometheusEncryptedFieldSet;
 import net.sourceforge.joceanus.prometheus.data.PrometheusEncryptedPair;
 import net.sourceforge.joceanus.prometheus.data.PrometheusEncryptedValues;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.date.OceanusDate;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
-import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
+
+import java.util.Currency;
+import java.util.Iterator;
 
 /**
  * Class representing an account that can be part of a transaction.
@@ -149,7 +149,7 @@ public abstract class MoneyWiseAssetBase
         super(pList, pValues);
 
         /* Access formatter */
-        final TethysUIDataFormatter myFormatter = getDataSet().getDataFormatter();
+        final OceanusDataFormatter myFormatter = getDataSet().getDataFormatter();
 
         /* Protect against exceptions */
         try {
@@ -220,7 +220,7 @@ public abstract class MoneyWiseAssetBase
     }
 
     @Override
-    public String formatObject(final TethysUIDataFormatter pFormatter) {
+    public String formatObject(final OceanusDataFormatter pFormatter) {
         return toString();
     }
 

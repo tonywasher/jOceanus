@@ -16,14 +16,14 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.prometheus.data;
 
+import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataMap;
+import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataObjectFormat;
+import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
+import net.sourceforge.joceanus.prometheus.data.PrometheusDataTouch.PrometheusTouchCounter;
+
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-
-import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataMap;
-import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataObjectFormat;
-import net.sourceforge.joceanus.prometheus.data.PrometheusDataTouch.PrometheusTouchCounter;
-import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
 
 /**
  * Class to record reference to a DataItem via another data item.
@@ -49,7 +49,7 @@ public class PrometheusDataTouch
     }
 
     @Override
-    public String formatObject(final TethysUIDataFormatter pFormatter) {
+    public String formatObject(final OceanusDataFormatter pFormatter) {
         return getClass().getSimpleName();
     }
 
@@ -160,7 +160,7 @@ public class PrometheusDataTouch
         }
 
         @Override
-        public String formatObject(final TethysUIDataFormatter pFormatter) {
+        public String formatObject(final OceanusDataFormatter pFormatter) {
             return Integer.toString(theTouches);
         }
 

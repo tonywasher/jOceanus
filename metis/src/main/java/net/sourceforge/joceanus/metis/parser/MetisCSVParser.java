@@ -24,7 +24,7 @@ import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimal;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimalParser;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusRate;
-import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
+import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -84,7 +84,7 @@ public abstract class MetisCSVParser {
      * @param pFormatter the formatter
      * @param pHeaders the expected headers
      */
-    protected MetisCSVParser(final TethysUIDataFormatter pFormatter,
+    protected MetisCSVParser(final OceanusDataFormatter pFormatter,
                              final String[] pHeaders) {
         /* Store the headers */
         theHeaders = Arrays.copyOf(pHeaders, pHeaders.length);

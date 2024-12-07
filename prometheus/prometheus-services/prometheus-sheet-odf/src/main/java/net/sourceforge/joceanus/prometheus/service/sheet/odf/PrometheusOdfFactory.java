@@ -16,14 +16,13 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.prometheus.service.sheet.odf;
 
-import java.io.InputStream;
-
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetFactory;
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetService;
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetWorkBook;
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetWorkBookType;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.tethys.ui.api.factory.TethysUIFactory;
+
+import java.io.InputStream;
 
 /**
  * Factory to load/initialise an Oasis ODF WorkBook.
@@ -32,13 +31,12 @@ import net.sourceforge.joceanus.tethys.ui.api.factory.TethysUIFactory;
 public class PrometheusOdfFactory
         implements PrometheusSheetFactory {
     @Override
-    public PrometheusSheetWorkBook loadFromStream(final TethysUIFactory<?> pFactory,
-                                                  final InputStream pInput) throws OceanusException {
-        return new PrometheusOdfWorkBook(pFactory, pInput);
+    public PrometheusSheetWorkBook loadFromStream(final InputStream pInput) throws OceanusException {
+        return new PrometheusOdfWorkBook(pInput);
     }
 
     @Override
-    public PrometheusSheetWorkBook newWorkBook(final TethysUIFactory<?> pFactory) throws OceanusException {
-        return new PrometheusOdfWorkBook(pFactory);
+    public PrometheusSheetWorkBook newWorkBook() throws OceanusException {
+        return new PrometheusOdfWorkBook();
     }
 }

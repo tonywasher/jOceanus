@@ -16,12 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.coeus.ui.report;
 
-import java.time.Month;
-import java.util.Iterator;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-
 import net.sourceforge.joceanus.coeus.data.CoeusHistory;
 import net.sourceforge.joceanus.coeus.data.CoeusMarketAnnual;
 import net.sourceforge.joceanus.coeus.data.CoeusTotalSet;
@@ -37,7 +31,12 @@ import net.sourceforge.joceanus.oceanus.date.OceanusDate;
 import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimal;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusRatio;
-import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
+import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
+import java.time.Month;
+import java.util.Iterator;
 
 /**
  * TaxBook Report.
@@ -52,7 +51,7 @@ public class CoeusReportAnnual
     /**
      * The Formatter.
      */
-    private final TethysUIDataFormatter theFormatter;
+    private final OceanusDataFormatter theFormatter;
 
     /**
      * Market.

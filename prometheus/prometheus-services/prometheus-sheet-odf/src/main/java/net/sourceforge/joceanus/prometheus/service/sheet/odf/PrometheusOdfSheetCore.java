@@ -16,17 +16,16 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.prometheus.service.sheet.odf;
 
-import java.util.ListIterator;
-
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetCellPosition;
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetCellRange;
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetCellStyleType;
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetRow;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+
+import java.util.ListIterator;
 
 /**
  * Sheet definition.
@@ -60,7 +59,7 @@ class PrometheusOdfSheetCore {
     /**
      * The formatter.
      */
-    private final TethysUIDataFormatter theFormatter;
+    private final OceanusDataFormatter theFormatter;
 
     /**
      * The Columns for the sheet.
@@ -171,7 +170,7 @@ class PrometheusOdfSheetCore {
      * Obtain the formatter.
      * @return the formatter
      */
-    TethysUIDataFormatter getFormatter() {
+    OceanusDataFormatter getFormatter() {
         return theFormatter;
     }
 

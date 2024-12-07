@@ -16,12 +16,12 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.prometheus.data;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import net.sourceforge.joceanus.metis.field.MetisFieldItem;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
-import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
+import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Template for a Data Instance Map.
@@ -92,7 +92,7 @@ public abstract class PrometheusDataInstanceMap<T extends PrometheusDataItem, K>
     }
 
     @Override
-    public String formatObject(final TethysUIDataFormatter pFormatter) {
+    public String formatObject(final OceanusDataFormatter pFormatter) {
         return FIELD_DEFS.getName();
     }
 

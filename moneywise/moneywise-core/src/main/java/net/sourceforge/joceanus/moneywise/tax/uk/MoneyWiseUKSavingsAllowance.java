@@ -16,14 +16,14 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.moneywise.tax.uk;
 
-import java.util.Iterator;
-
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.moneywise.tax.MoneyWiseMarginalReduction;
 import net.sourceforge.joceanus.moneywise.tax.MoneyWiseTaxBandSet.MoneyWiseTaxBand;
 import net.sourceforge.joceanus.moneywise.tax.MoneyWiseTaxResource;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
-import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
+import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
+
+import java.util.Iterator;
 
 /**
  * Savings UK Tax Allowance.
@@ -174,7 +174,7 @@ public class MoneyWiseUKSavingsAllowance
     }
 
     @Override
-    public String formatObject(final TethysUIDataFormatter pFormatter) {
+    public String formatObject(final OceanusDataFormatter pFormatter) {
         return FIELD_DEFS.getName();
     }
 }

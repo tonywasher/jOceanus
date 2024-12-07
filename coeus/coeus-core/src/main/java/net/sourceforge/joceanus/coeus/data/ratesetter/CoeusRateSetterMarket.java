@@ -16,10 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.coeus.data.ratesetter;
 
-import java.nio.file.Path;
-import java.util.Iterator;
-import java.util.ListIterator;
-
 import net.sourceforge.joceanus.coeus.data.CoeusHistory;
 import net.sourceforge.joceanus.coeus.data.CoeusLoan;
 import net.sourceforge.joceanus.coeus.data.CoeusMarket;
@@ -28,7 +24,11 @@ import net.sourceforge.joceanus.coeus.data.CoeusTransactionType;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
-import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
+import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
+
+import java.nio.file.Path;
+import java.util.Iterator;
+import java.util.ListIterator;
 
 /**
  * RateSetter Market.
@@ -59,7 +59,7 @@ public class CoeusRateSetterMarket
      * Constructor.
      * @param pFormatter the formatter
      */
-    CoeusRateSetterMarket(final TethysUIDataFormatter pFormatter) {
+    CoeusRateSetterMarket(final OceanusDataFormatter pFormatter) {
         /* Initialise underlying class */
         super(pFormatter, CoeusMarketProvider.RATESETTER);
 

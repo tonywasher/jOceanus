@@ -16,11 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.tethys.ui.core.field;
 
-import java.util.Arrays;
-import java.util.Currency;
-import java.util.function.IntSupplier;
-import java.util.function.Supplier;
-
 import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimal;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimalFormatter;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimalParser;
@@ -29,8 +24,13 @@ import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusRate;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusRatio;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusUnits;
-import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
+import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.tethys.ui.core.control.TethysUICorePasswordField;
+
+import java.util.Arrays;
+import java.util.Currency;
+import java.util.function.IntSupplier;
+import java.util.function.Supplier;
 
 /**
  * Data edit converter.
@@ -146,7 +146,7 @@ public interface TethysUICoreDataEditConverter<T> {
          * Constructor.
          * @param pFormatter the data formatter
          */
-        protected TethysUICoreNumberEditConverter(final TethysUIDataFormatter pFormatter) {
+        protected TethysUICoreNumberEditConverter(final OceanusDataFormatter pFormatter) {
             theFormatter = pFormatter.getDecimalFormatter();
             theParser = pFormatter.getDecimalParser();
         }
@@ -189,7 +189,7 @@ public interface TethysUICoreDataEditConverter<T> {
          * Constructor.
          * @param pFormatter the data formatter
          */
-        public TethysUICoreShortEditConverter(final TethysUIDataFormatter pFormatter) {
+        public TethysUICoreShortEditConverter(final OceanusDataFormatter pFormatter) {
             super(pFormatter);
         }
 
@@ -213,7 +213,7 @@ public interface TethysUICoreDataEditConverter<T> {
          * Constructor.
          * @param pFormatter the data formatter
          */
-        public TethysUICoreIntegerEditConverter(final TethysUIDataFormatter pFormatter) {
+        public TethysUICoreIntegerEditConverter(final OceanusDataFormatter pFormatter) {
             super(pFormatter);
         }
 
@@ -237,7 +237,7 @@ public interface TethysUICoreDataEditConverter<T> {
          * Constructor.
          * @param pFormatter the data formatter
          */
-        public TethysUICoreLongEditConverter(final TethysUIDataFormatter pFormatter) {
+        public TethysUICoreLongEditConverter(final OceanusDataFormatter pFormatter) {
             super(pFormatter);
         }
 
@@ -271,7 +271,7 @@ public interface TethysUICoreDataEditConverter<T> {
          * Constructor.
          * @param pFormatter the formatter
          */
-        public TethysUICoreRawDecimalEditConverter(final TethysUIDataFormatter pFormatter) {
+        public TethysUICoreRawDecimalEditConverter(final OceanusDataFormatter pFormatter) {
             super(pFormatter);
         }
 
@@ -304,7 +304,7 @@ public interface TethysUICoreDataEditConverter<T> {
          * Constructor.
          * @param pFormatter the formatter
          */
-        public TethysUICoreRateEditConverter(final TethysUIDataFormatter pFormatter) {
+        public TethysUICoreRateEditConverter(final OceanusDataFormatter pFormatter) {
             super(pFormatter);
         }
 
@@ -328,7 +328,7 @@ public interface TethysUICoreDataEditConverter<T> {
          * Constructor.
          * @param pFormatter the formatter
          */
-        public TethysUICoreUnitsEditConverter(final TethysUIDataFormatter pFormatter) {
+        public TethysUICoreUnitsEditConverter(final OceanusDataFormatter pFormatter) {
             super(pFormatter);
         }
 
@@ -352,7 +352,7 @@ public interface TethysUICoreDataEditConverter<T> {
          * Constructor.
          * @param pFormatter the formatter
          */
-        public TethysUICoreRatioEditConverter(final TethysUIDataFormatter pFormatter) {
+        public TethysUICoreRatioEditConverter(final OceanusDataFormatter pFormatter) {
             super(pFormatter);
         }
 
@@ -382,7 +382,7 @@ public interface TethysUICoreDataEditConverter<T> {
          * Constructor.
          * @param pFormatter the formatter
          */
-        protected TethysUICoreMoneyEditConverterBase(final TethysUIDataFormatter pFormatter) {
+        protected TethysUICoreMoneyEditConverterBase(final OceanusDataFormatter pFormatter) {
             super(pFormatter);
         }
 
@@ -417,7 +417,7 @@ public interface TethysUICoreDataEditConverter<T> {
          * Constructor.
          * @param pFormatter the formatter
          */
-        public TethysUICoreMoneyEditConverter(final TethysUIDataFormatter pFormatter) {
+        public TethysUICoreMoneyEditConverter(final OceanusDataFormatter pFormatter) {
             super(pFormatter);
         }
 
@@ -436,7 +436,7 @@ public interface TethysUICoreDataEditConverter<T> {
          * Constructor.
          * @param pFormatter the formatter
          */
-        public TethysUICorePriceEditConverter(final TethysUIDataFormatter pFormatter) {
+        public TethysUICorePriceEditConverter(final OceanusDataFormatter pFormatter) {
             super(pFormatter);
         }
 

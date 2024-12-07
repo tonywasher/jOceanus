@@ -16,25 +16,24 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.moneywise.lethe.reports;
 
-import java.util.Iterator;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-
 import net.sourceforge.joceanus.metis.report.MetisReportBase;
 import net.sourceforge.joceanus.metis.report.MetisReportHTMLBuilder;
 import net.sourceforge.joceanus.metis.report.MetisReportHTMLBuilder.MetisHTMLTable;
 import net.sourceforge.joceanus.metis.report.MetisReportManager;
 import net.sourceforge.joceanus.metis.report.MetisReportReferenceManager.DelayedTable;
 import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysis;
-import net.sourceforge.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisPayeeAttr;
 import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisPayeeBucket;
 import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisPayeeBucket.MoneyWiseAnalysisPayeeBucketList;
+import net.sourceforge.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisPayeeAttr;
 import net.sourceforge.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisPayeeValues;
 import net.sourceforge.joceanus.moneywise.lethe.views.MoneyWiseAnalysisFilter;
 import net.sourceforge.joceanus.moneywise.lethe.views.MoneyWiseAnalysisFilter.MoneyWiseAnalysisPayeeFilter;
 import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
-import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
+import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
+import java.util.Iterator;
 
 /**
  * CashFlow report builder.
@@ -54,7 +53,7 @@ public class MoneyWiseReportCashFlow
     /**
      * The Formatter.
      */
-    private final TethysUIDataFormatter theFormatter;
+    private final OceanusDataFormatter theFormatter;
 
     /**
      * Constructor.
