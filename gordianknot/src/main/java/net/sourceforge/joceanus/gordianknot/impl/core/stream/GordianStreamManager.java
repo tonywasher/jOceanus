@@ -34,15 +34,13 @@ import net.sourceforge.joceanus.gordianknot.api.mac.GordianMac;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacParameters;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacSpec;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianIdManager;
 import net.sourceforge.joceanus.gordianknot.impl.core.cipher.GordianCoreCipherFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.digest.GordianCoreDigestFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.keyset.GordianCoreKeySet;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianIdManager;
 import net.sourceforge.joceanus.gordianknot.impl.core.mac.GordianCoreMacFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.stream.GordianStreamDefinition.GordianStreamType;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.logger.OceanusLogManager;
-import net.sourceforge.joceanus.oceanus.logger.OceanusLogger;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -55,16 +53,6 @@ import java.util.List;
  * Stream Factory.
  */
 public final class GordianStreamManager {
-    /**
-     * Logger.
-     */
-    private static final OceanusLogger LOGGER = OceanusLogManager.getLogger(GordianStreamManager.class);
-
-    /**
-     * Close error.
-     */
-    private static final String ERROR_CLOSE = "Failed to close stream";
-
     /**
      * The keySet.
      */
@@ -288,7 +276,7 @@ public final class GordianStreamManager {
         try {
             pStream.close();
         } catch (IOException e) {
-            LOGGER.error(ERROR_CLOSE, e);
+            /* NoOp */
         }
     }
 
@@ -300,7 +288,7 @@ public final class GordianStreamManager {
         try {
             pStream.close();
         } catch (IOException e) {
-            LOGGER.error(ERROR_CLOSE, e);
+            /* NoOp */
         }
     }
 }

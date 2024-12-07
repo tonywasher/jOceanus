@@ -16,16 +16,13 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.junit.regression;
 
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
+
 import java.security.Provider;
 import java.security.Security;
 import java.util.HashSet;
 import java.util.Set;
-
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
-
-import net.sourceforge.joceanus.oceanus.logger.OceanusLogManager;
-import net.sourceforge.joceanus.oceanus.logger.OceanusLogger;
 
 /**
  * Security Test suite - List Algorithms.
@@ -34,7 +31,7 @@ public final class ListAlgorithms {
     /**
      * Create a logger.
      */
-    private static final OceanusLogger LOGGER = OceanusLogManager.getLogger(ListAlgorithms.class);
+    //private static final OceanusLogger LOGGER = OceanusLogManager.getLogger(ListAlgorithms.class);
 
     /**
      * List the supported algorithms.
@@ -116,13 +113,13 @@ public final class ListAlgorithms {
      */
     private static void printSet(final String setName,
                                  final Set<String> algorithms) {
-        LOGGER.info(setName
+        System.out.println(setName
                 + ":");
         if (algorithms.isEmpty()) {
-            LOGGER.info("            None available.");
+            System.out.println("            None available.");
         } else {
             for (String name : algorithms) {
-                LOGGER.info("            "
+                System.out.println("            "
                         + name);
             }
         }

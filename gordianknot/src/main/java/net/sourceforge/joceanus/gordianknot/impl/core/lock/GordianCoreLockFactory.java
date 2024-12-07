@@ -31,8 +31,6 @@ import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.keyset.GordianCoreKeySet;
 import net.sourceforge.joceanus.gordianknot.impl.core.keyset.GordianCoreKeySetFactory;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.logger.OceanusLogManager;
-import net.sourceforge.joceanus.oceanus.logger.OceanusLogger;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -42,11 +40,6 @@ import java.net.UnknownHostException;
  */
 public class GordianCoreLockFactory
         implements GordianLockFactory {
-    /**
-     * Logger.
-     */
-    private static final OceanusLogger LOGGER = OceanusLogManager.getLogger(GordianCoreLockFactory.class);
-
     /**
      * The factory.
      */
@@ -221,7 +214,6 @@ public class GordianCoreLockFactory
             return myAddr.getHostName().toCharArray();
 
         } catch (UnknownHostException e) {
-            LOGGER.error("Hostname can not be resolved", e);
             return "localhost".toCharArray();
         }
     }
