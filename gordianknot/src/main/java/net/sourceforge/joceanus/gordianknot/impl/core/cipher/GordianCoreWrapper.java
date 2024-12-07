@@ -38,8 +38,8 @@ import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianLogicException;
 import net.sourceforge.joceanus.gordianknot.impl.core.key.GordianCoreKey;
 import net.sourceforge.joceanus.gordianknot.impl.core.key.GordianCoreKeyGenerator;
 import net.sourceforge.joceanus.gordianknot.impl.core.keypair.GordianCoreKeyPairGenerator;
-import net.sourceforge.joceanus.oceanus.OceanusException;
-import net.sourceforge.joceanus.oceanus.OceanusDataConverter;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.oceanus.format.OceanusDataConverter;
 
 /**
  * GordianKnot base for WrapCipher.

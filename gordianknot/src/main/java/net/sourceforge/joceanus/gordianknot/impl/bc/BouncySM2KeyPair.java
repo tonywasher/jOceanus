@@ -45,7 +45,7 @@ import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianCryptoException
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianIOException;
 import net.sourceforge.joceanus.gordianknot.impl.core.encrypt.GordianCoreEncryptor;
 import net.sourceforge.joceanus.gordianknot.impl.core.sign.GordianCoreSignature;
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 /**
  * SM2 KeyPair classes.

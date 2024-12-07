@@ -28,8 +28,8 @@ import net.sourceforge.joceanus.gordianknot.util.GordianGenerator;
 import net.sourceforge.joceanus.metis.preference.MetisPreferenceKey;
 import net.sourceforge.joceanus.metis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.metis.preference.MetisPreferenceResource;
-import net.sourceforge.joceanus.oceanus.OceanusDataConverter;
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.format.OceanusDataConverter;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.logger.OceanusLogManager;
 import net.sourceforge.joceanus.oceanus.logger.OceanusLogger;
 

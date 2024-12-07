@@ -16,7 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.prometheus.sheets;
 
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataSet;
 import net.sourceforge.joceanus.prometheus.security.PrometheusSecurityPasswordManager;
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetWorkBookType;

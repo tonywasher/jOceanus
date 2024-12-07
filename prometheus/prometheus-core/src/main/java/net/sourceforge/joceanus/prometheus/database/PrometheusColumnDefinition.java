@@ -28,10 +28,10 @@ import java.util.ListIterator;
 
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.metis.data.MetisDataResource;
-import net.sourceforge.joceanus.prometheus.PrometheusDataException;
+import net.sourceforge.joceanus.prometheus.exc.PrometheusDataException;
 import net.sourceforge.joceanus.prometheus.database.PrometheusTableDefinition.PrometheusSortOrder;
 import net.sourceforge.joceanus.prometheus.preference.PrometheusColumnType;
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.date.OceanusDate;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;

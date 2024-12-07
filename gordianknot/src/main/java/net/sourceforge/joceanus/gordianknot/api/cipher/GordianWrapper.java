@@ -21,7 +21,7 @@ import java.security.spec.X509EncodedKeySpec;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.gordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 /**
  * GordianKnot base for Wrap Cipher.

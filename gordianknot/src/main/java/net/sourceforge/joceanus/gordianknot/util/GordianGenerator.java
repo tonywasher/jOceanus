@@ -22,7 +22,7 @@ import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianFactoryGenerator;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianParameters;
 import net.sourceforge.joceanus.gordianknot.impl.jca.JcaFactory;
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 /**
  * Factory generator.

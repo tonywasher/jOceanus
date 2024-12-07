@@ -37,7 +37,7 @@ import net.sourceforge.joceanus.gordianknot.impl.jca.JcaSignature.JcaRSASignatur
 import net.sourceforge.joceanus.gordianknot.impl.jca.JcaSignature.JcaRainbowSignature;
 import net.sourceforge.joceanus.gordianknot.impl.jca.JcaSignature.JcaSLHDSASignature;
 import net.sourceforge.joceanus.gordianknot.impl.jca.JcaSignature.JcaXMSSSignature;
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.Signature;

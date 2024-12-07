@@ -16,13 +16,13 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.prometheus.database;
 
+import net.sourceforge.joceanus.oceanus.resource.OceanusBundleId;
+import net.sourceforge.joceanus.oceanus.resource.OceanusBundleLoader;
+import net.sourceforge.joceanus.prometheus.preference.PrometheusPreferenceResource;
+
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.ResourceBundle;
-
-import net.sourceforge.joceanus.prometheus.PrometheusDataException;
-import net.sourceforge.joceanus.oceanus.resource.OceanusBundleId;
-import net.sourceforge.joceanus.oceanus.resource.OceanusBundleLoader;
 
 /**
  * Resource IDs for jPrometheus Preference Fields.
@@ -106,7 +106,7 @@ public enum PrometheusDBResource implements OceanusBundleId {
     /**
      * The Resource Loader.
      */
-    private static final OceanusBundleLoader LOADER = OceanusBundleLoader.getPackageLoader(PrometheusDataException.class.getCanonicalName(),
+    private static final OceanusBundleLoader LOADER = OceanusBundleLoader.getLoader(PrometheusPreferenceResource.class.getCanonicalName(),
             ResourceBundle::getBundle);
 
     /**

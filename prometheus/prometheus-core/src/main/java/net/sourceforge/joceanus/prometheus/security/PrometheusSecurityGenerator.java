@@ -20,7 +20,7 @@ import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactoryType;
 import net.sourceforge.joceanus.gordianknot.api.lock.GordianPasswordLockSpec;
 import net.sourceforge.joceanus.gordianknot.util.GordianGenerator;
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.tethys.ui.api.factory.TethysUIFactory;
 
 /**

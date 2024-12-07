@@ -22,7 +22,7 @@ import net.sourceforge.joceanus.prometheus.data.PrometheusDataSet;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataValues;
 import net.sourceforge.joceanus.prometheus.database.PrometheusDataStore;
 import net.sourceforge.joceanus.prometheus.database.PrometheusTableDataInfo;
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 /**
  * TableDataInfo extension for LoanInfo.

@@ -33,7 +33,7 @@ import net.sourceforge.joceanus.gordianknot.impl.core.cipher.GordianCoreCipherFa
 import net.sourceforge.joceanus.gordianknot.impl.core.digest.GordianCoreDigestFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.mac.GordianCoreMacFactory;
 import net.sourceforge.joceanus.gordianknot.util.GordianGenerator;
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DynamicContainer;

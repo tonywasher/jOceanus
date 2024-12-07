@@ -19,7 +19,7 @@ package net.sourceforge.joceanus.prometheus.service.sheet;
 import java.io.InputStream;
 import java.util.ServiceLoader;
 
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.tethys.ui.api.factory.TethysUIFactory;
 
 /**

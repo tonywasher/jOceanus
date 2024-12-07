@@ -20,7 +20,7 @@ import java.io.File;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.tethys.ui.api.button.TethysUIButton;
 import net.sourceforge.joceanus.tethys.ui.api.button.TethysUIButtonFactory;
@@ -38,7 +38,7 @@ import net.sourceforge.joceanus.tethys.ui.api.pane.TethysUIBoxPaneManager;
 import net.sourceforge.joceanus.tethys.ui.api.pane.TethysUIPaneFactory;
 import net.sourceforge.joceanus.tethys.ui.api.pane.TethysUITabPaneManager;
 import net.sourceforge.joceanus.tethys.ui.api.pane.TethysUITabPaneManager.TethysUITabItem;
-import net.sourceforge.joceanus.themis.ThemisIOException;
+import net.sourceforge.joceanus.themis.exc.ThemisIOException;
 import net.sourceforge.joceanus.themis.analysis.ThemisAnalysisProject;
 import net.sourceforge.joceanus.themis.dsm.ThemisDSMModule;
 import net.sourceforge.joceanus.themis.dsm.ThemisDSMPackage;

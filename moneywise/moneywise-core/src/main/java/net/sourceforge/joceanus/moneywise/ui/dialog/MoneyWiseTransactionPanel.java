@@ -62,7 +62,7 @@ import net.sourceforge.joceanus.moneywise.lethe.views.MoneyWiseTransactionFilter
 import net.sourceforge.joceanus.prometheus.ui.fieldset.PrometheusFieldSet;
 import net.sourceforge.joceanus.prometheus.ui.fieldset.PrometheusFieldSetEvent;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.date.OceanusDate;
 import net.sourceforge.joceanus.oceanus.date.OceanusDateConfig;
 import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;

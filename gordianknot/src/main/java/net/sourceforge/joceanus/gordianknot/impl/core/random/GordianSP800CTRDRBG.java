@@ -22,8 +22,8 @@ import org.bouncycastle.util.Arrays;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymKeySpec;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianByteArrayInteger;
 import net.sourceforge.joceanus.gordianknot.impl.core.cipher.GordianCoreCipher;
-import net.sourceforge.joceanus.oceanus.OceanusException;
-import net.sourceforge.joceanus.oceanus.OceanusDataConverter;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.oceanus.format.OceanusDataConverter;
 
 /**
  * Implementation of CTRSP800DRBG based on the BouncyCastle Code.

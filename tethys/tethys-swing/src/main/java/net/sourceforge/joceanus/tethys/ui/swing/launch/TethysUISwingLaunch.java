@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.tethys.ui.swing.launch;
 
 import javax.swing.SwingUtilities;
 
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.logger.OceanusLogManager;
 import net.sourceforge.joceanus.oceanus.logger.OceanusLogger;
 import net.sourceforge.joceanus.tethys.ui.api.factory.TethysUILaunchProgram;

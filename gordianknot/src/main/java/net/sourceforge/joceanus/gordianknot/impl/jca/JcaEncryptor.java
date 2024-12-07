@@ -32,7 +32,7 @@ import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianCryptoException
 import net.sourceforge.joceanus.gordianknot.impl.core.encrypt.GordianCoreEncryptor;
 import net.sourceforge.joceanus.gordianknot.impl.jca.JcaKeyPair.JcaPrivateKey;
 import net.sourceforge.joceanus.gordianknot.impl.jca.JcaKeyPair.JcaPublicKey;
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 /**
  * JCA Encryptor classes.

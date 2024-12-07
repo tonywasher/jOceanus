@@ -35,7 +35,7 @@ import net.sourceforge.joceanus.prometheus.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
 import net.sourceforge.joceanus.prometheus.views.PrometheusUIEvent;
 import net.sourceforge.joceanus.prometheus.views.PrometheusViewerEntryId;
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.event.OceanusEvent;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;

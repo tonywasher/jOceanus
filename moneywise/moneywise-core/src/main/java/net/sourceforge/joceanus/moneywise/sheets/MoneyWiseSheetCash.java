@@ -33,7 +33,7 @@ import net.sourceforge.joceanus.prometheus.sheets.PrometheusSheetEncrypted;
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetCell;
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetRow;
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetView;
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 /**
  * SheetDataItem extension for Cash.

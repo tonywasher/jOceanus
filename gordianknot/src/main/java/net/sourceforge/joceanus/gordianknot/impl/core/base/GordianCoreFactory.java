@@ -29,7 +29,7 @@ import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySetFactory;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacFactory;
 import net.sourceforge.joceanus.gordianknot.api.random.GordianRandomFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 

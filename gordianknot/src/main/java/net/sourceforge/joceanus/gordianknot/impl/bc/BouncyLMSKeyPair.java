@@ -53,7 +53,7 @@ import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyStateAwa
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncySignature.BouncyDigestSignature;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
 import net.sourceforge.joceanus.gordianknot.impl.core.keypair.GordianKeyPairValidity;
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 /**
  * LMS KeyPair classes.

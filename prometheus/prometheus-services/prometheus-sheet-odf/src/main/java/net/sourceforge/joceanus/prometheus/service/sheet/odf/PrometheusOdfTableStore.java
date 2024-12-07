@@ -28,7 +28,7 @@ import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetCellRang
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetException;
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetSheet;
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetView;
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 /**
  * Table storage.

@@ -19,8 +19,8 @@ package net.sourceforge.joceanus.themis.analysis;
 import java.nio.CharBuffer;
 import java.util.Deque;
 
-import net.sourceforge.joceanus.oceanus.OceanusException;
-import net.sourceforge.joceanus.themis.ThemisDataException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.themis.exc.ThemisDataException;
 import net.sourceforge.joceanus.themis.analysis.ThemisAnalysisGeneric.ThemisAnalysisGenericBase;
 
 /**

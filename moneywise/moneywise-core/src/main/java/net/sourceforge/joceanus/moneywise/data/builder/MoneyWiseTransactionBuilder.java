@@ -19,7 +19,7 @@ package net.sourceforge.joceanus.moneywise.data.builder;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.sourceforge.joceanus.moneywise.MoneyWiseDataException;
+import net.sourceforge.joceanus.moneywise.exc.MoneyWiseDataException;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseAssetDirection;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataSet;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePayee;
@@ -29,7 +29,7 @@ import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransAsset;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransCategory;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransTag;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransaction;
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.date.OceanusDate;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;

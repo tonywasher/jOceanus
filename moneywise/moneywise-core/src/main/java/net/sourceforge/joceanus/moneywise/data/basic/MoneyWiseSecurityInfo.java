@@ -19,7 +19,7 @@ package net.sourceforge.joceanus.moneywise.data.basic;
 import net.sourceforge.joceanus.metis.data.MetisDataDifference;
 import net.sourceforge.joceanus.metis.data.MetisDataResource;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
-import net.sourceforge.joceanus.moneywise.MoneyWiseDataException;
+import net.sourceforge.joceanus.moneywise.exc.MoneyWiseDataException;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseRegion.MoneyWiseRegionList;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurity.MoneyWiseSecurityList;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseAccountInfoClass;
@@ -33,7 +33,7 @@ import net.sourceforge.joceanus.prometheus.data.PrometheusDataResource;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataValues;
 import net.sourceforge.joceanus.prometheus.data.PrometheusStaticDataItem;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 /**
  * Representation of an information extension of a security.

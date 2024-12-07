@@ -24,7 +24,7 @@ import net.sourceforge.joceanus.metis.field.MetisFieldItem;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.metis.field.MetisFieldVersionValues;
 import net.sourceforge.joceanus.metis.field.MetisFieldVersionedItem;
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.event.OceanusEvent;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;

@@ -27,7 +27,7 @@ import net.sourceforge.joceanus.prometheus.database.PrometheusDataStore;
 import net.sourceforge.joceanus.prometheus.database.PrometheusTableDataItem;
 import net.sourceforge.joceanus.prometheus.database.PrometheusTableDefinition;
 import net.sourceforge.joceanus.prometheus.database.PrometheusTableDefinition.PrometheusSortOrder;
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
 
 /**

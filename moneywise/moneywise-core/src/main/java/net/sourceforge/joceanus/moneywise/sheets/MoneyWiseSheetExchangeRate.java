@@ -16,7 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.moneywise.sheets;
 
-import net.sourceforge.joceanus.moneywise.MoneyWiseIOException;
+import net.sourceforge.joceanus.moneywise.exc.MoneyWiseIOException;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicResource;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataSet;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseExchangeRate;
@@ -27,7 +27,7 @@ import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetCell;
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetRow;
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetView;
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetWorkBook;
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.date.OceanusDate;
 import net.sourceforge.joceanus.tethys.ui.api.thread.TethysUIThreadStatusReport;
 import net.sourceforge.joceanus.tethys.ui.api.thread.TethysUIThreadCancelException;

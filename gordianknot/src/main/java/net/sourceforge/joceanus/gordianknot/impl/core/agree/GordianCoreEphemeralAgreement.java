@@ -33,7 +33,7 @@ import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianAgreementMess
 import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianAgreementResult.GordianDerivationId;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.util.Arrays;
 

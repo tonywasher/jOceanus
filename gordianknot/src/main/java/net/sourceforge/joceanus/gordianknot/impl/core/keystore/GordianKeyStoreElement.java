@@ -30,7 +30,7 @@ import net.sourceforge.joceanus.gordianknot.api.keystore.GordianCertificate;
 import net.sourceforge.joceanus.gordianknot.api.keystore.GordianCertificateId;
 import net.sourceforge.joceanus.gordianknot.api.lock.GordianKeySetLock;
 import net.sourceforge.joceanus.gordianknot.api.lock.GordianPasswordLockSpec;
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.date.OceanusDate;
 
 /**

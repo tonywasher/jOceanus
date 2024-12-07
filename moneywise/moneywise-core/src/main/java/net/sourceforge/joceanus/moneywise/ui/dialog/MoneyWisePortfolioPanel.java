@@ -39,7 +39,7 @@ import net.sourceforge.joceanus.prometheus.data.PrometheusDataResource;
 import net.sourceforge.joceanus.prometheus.ui.fieldset.PrometheusFieldSet;
 import net.sourceforge.joceanus.prometheus.ui.fieldset.PrometheusFieldSetEvent;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.tethys.ui.api.control.TethysUIControl.TethysUIIconMapSet;
 import net.sourceforge.joceanus.tethys.ui.api.factory.TethysUIFactory;
 import net.sourceforge.joceanus.tethys.ui.api.field.TethysUIDataEditField.TethysUICharArrayEditField;

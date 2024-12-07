@@ -35,7 +35,7 @@ import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePortfolio.MoneyWis
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurityHolding.MoneyWiseSecurityHoldingMap;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurityPrice;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
 import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
 

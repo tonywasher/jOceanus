@@ -27,11 +27,11 @@ import net.sourceforge.joceanus.gordianknot.api.lock.GordianKeyPairLock;
 import net.sourceforge.joceanus.gordianknot.api.lock.GordianKeySetLock;
 import net.sourceforge.joceanus.gordianknot.api.lock.GordianLock;
 import net.sourceforge.joceanus.gordianknot.api.lock.GordianPasswordLockSpec;
-import net.sourceforge.joceanus.oceanus.OceanusDataConverter;
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.format.OceanusDataConverter;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.logger.OceanusLogManager;
 import net.sourceforge.joceanus.oceanus.logger.OceanusLogger;
-import net.sourceforge.joceanus.prometheus.PrometheusDataException;
+import net.sourceforge.joceanus.prometheus.exc.PrometheusDataException;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;

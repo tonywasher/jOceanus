@@ -28,8 +28,8 @@ import net.sourceforge.joceanus.metis.data.MetisDataState;
 import net.sourceforge.joceanus.metis.field.MetisFieldItem;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.metis.field.MetisFieldVersionedSet;
-import net.sourceforge.joceanus.moneywise.MoneyWiseDataException;
-import net.sourceforge.joceanus.moneywise.MoneyWiseLogicException;
+import net.sourceforge.joceanus.moneywise.exc.MoneyWiseDataException;
+import net.sourceforge.joceanus.moneywise.exc.MoneyWiseLogicException;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePayeeInfo.MoneyWisePayeeInfoList;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseAccountInfoClass;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseAccountInfoType.MoneyWiseAccountInfoTypeList;
@@ -46,7 +46,7 @@ import net.sourceforge.joceanus.prometheus.data.PrometheusDataValues;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataValues.PrometheusInfoItem;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataValues.PrometheusInfoSetItem;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
 
 /**

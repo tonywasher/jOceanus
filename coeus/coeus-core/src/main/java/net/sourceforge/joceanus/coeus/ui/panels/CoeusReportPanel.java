@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.coeus.ui.panels;
 
 import org.w3c.dom.Document;
 
-import net.sourceforge.joceanus.coeus.CoeusDataException;
+import net.sourceforge.joceanus.coeus.exc.CoeusDataException;
 import net.sourceforge.joceanus.coeus.data.CoeusMarketAnnual;
 import net.sourceforge.joceanus.coeus.data.CoeusMarketProvider;
 import net.sourceforge.joceanus.coeus.data.CoeusMarketSnapShot;
@@ -37,7 +37,7 @@ import net.sourceforge.joceanus.metis.toolkit.MetisToolkit;
 import net.sourceforge.joceanus.metis.viewer.MetisViewerEntry;
 import net.sourceforge.joceanus.metis.viewer.MetisViewerManager;
 import net.sourceforge.joceanus.metis.viewer.MetisViewerStandardEntry;
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.date.OceanusDate;
 import net.sourceforge.joceanus.oceanus.event.OceanusEvent;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;

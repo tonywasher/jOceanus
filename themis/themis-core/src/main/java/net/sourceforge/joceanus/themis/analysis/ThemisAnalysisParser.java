@@ -23,8 +23,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import net.sourceforge.joceanus.oceanus.OceanusException;
-import net.sourceforge.joceanus.themis.ThemisDataException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.themis.exc.ThemisDataException;
 import net.sourceforge.joceanus.themis.analysis.ThemisAnalysisDataMap.ThemisAnalysisDataType;
 import net.sourceforge.joceanus.themis.analysis.ThemisAnalysisEmbedded.ThemisAnalysisEmbedType;
 import net.sourceforge.joceanus.themis.analysis.ThemisAnalysisGeneric.ThemisAnalysisGenericBase;

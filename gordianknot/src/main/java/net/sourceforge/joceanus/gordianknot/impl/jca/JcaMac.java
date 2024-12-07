@@ -31,7 +31,7 @@ import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacSpec;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacType;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
 import net.sourceforge.joceanus.gordianknot.impl.core.mac.GordianCoreMac;
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 /**
  * Wrapper for JCA MAC.

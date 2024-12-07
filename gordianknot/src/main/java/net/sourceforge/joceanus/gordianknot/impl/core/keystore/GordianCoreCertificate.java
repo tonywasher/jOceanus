@@ -64,7 +64,7 @@ import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianLogicException;
 import net.sourceforge.joceanus.gordianknot.impl.core.keypair.GordianCompositeKeyPair;
 import net.sourceforge.joceanus.gordianknot.impl.core.keypair.GordianCoreKeyPair;
 import net.sourceforge.joceanus.gordianknot.impl.core.sign.GordianCoreSignatureFactory;
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 /**
  * Certificate implementation.

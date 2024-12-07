@@ -20,8 +20,8 @@ import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Objects;
 
-import net.sourceforge.joceanus.oceanus.OceanusException;
-import net.sourceforge.joceanus.themis.ThemisDataException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.themis.exc.ThemisDataException;
 import net.sourceforge.joceanus.themis.analysis.ThemisAnalysisContainer.ThemisAnalysisAdoptable;
 
 /**

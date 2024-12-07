@@ -27,7 +27,7 @@ import java.util.Map;
 
 import net.sourceforge.joceanus.gordianknot.util.GordianUtilities;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
-import net.sourceforge.joceanus.prometheus.PrometheusLogicException;
+import net.sourceforge.joceanus.prometheus.exc.PrometheusLogicException;
 import net.sourceforge.joceanus.prometheus.database.PrometheusColumnDefinition.PrometheusBinaryColumn;
 import net.sourceforge.joceanus.prometheus.database.PrometheusColumnDefinition.PrometheusBooleanColumn;
 import net.sourceforge.joceanus.prometheus.database.PrometheusColumnDefinition.PrometheusDateColumn;
@@ -41,7 +41,7 @@ import net.sourceforge.joceanus.prometheus.database.PrometheusColumnDefinition.P
 import net.sourceforge.joceanus.prometheus.database.PrometheusColumnDefinition.PrometheusReferenceColumn;
 import net.sourceforge.joceanus.prometheus.database.PrometheusColumnDefinition.PrometheusStringColumn;
 import net.sourceforge.joceanus.prometheus.database.PrometheusColumnDefinition.PrometheusUnitsColumn;
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.date.OceanusDate;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;

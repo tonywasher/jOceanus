@@ -32,7 +32,7 @@ import net.sourceforge.joceanus.metis.preference.MetisPreferenceSet.MetisPrefere
 import net.sourceforge.joceanus.metis.preference.MetisPreferenceSet.MetisPreferenceItem;
 import net.sourceforge.joceanus.metis.preference.MetisPreferenceSet.MetisStringPreference;
 import net.sourceforge.joceanus.metis.preference.MetisPreferenceType;
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.TethysEventProvider;

@@ -19,7 +19,7 @@ package net.sourceforge.joceanus.themis.analysis;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 /**
  * Annotation.

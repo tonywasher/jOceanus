@@ -16,7 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.prometheus.service.sheet;
 
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.tethys.ui.api.factory.TethysUIFactory;
 
 import java.io.InputStream;

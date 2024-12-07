@@ -33,7 +33,7 @@ import net.sourceforge.joceanus.gordianknot.api.mac.GordianSipHashSpec;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.cipher.GordianCoreCipherFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 import java.util.ArrayList;
 import java.util.List;

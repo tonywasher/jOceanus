@@ -35,7 +35,7 @@ import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignatureSpec;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianLogicException;
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 import java.util.Arrays;
 

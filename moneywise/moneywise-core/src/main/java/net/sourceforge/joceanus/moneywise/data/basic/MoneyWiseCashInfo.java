@@ -21,7 +21,7 @@ import java.util.Iterator;
 import net.sourceforge.joceanus.metis.data.MetisDataDifference;
 import net.sourceforge.joceanus.metis.data.MetisDataResource;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
-import net.sourceforge.joceanus.moneywise.MoneyWiseDataException;
+import net.sourceforge.joceanus.moneywise.exc.MoneyWiseDataException;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseCash.MoneyWiseCashList;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePayee.MoneyWisePayeeList;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransCategory.MoneyWiseTransCategoryList;
@@ -36,7 +36,7 @@ import net.sourceforge.joceanus.prometheus.data.PrometheusDataResource;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataValues;
 import net.sourceforge.joceanus.prometheus.data.PrometheusStaticDataItem;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 /**
  * Representation of an information extension of a cash account.

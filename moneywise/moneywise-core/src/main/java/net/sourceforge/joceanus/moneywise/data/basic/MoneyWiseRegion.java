@@ -23,7 +23,7 @@ import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataNamedItem;
 import net.sourceforge.joceanus.metis.data.MetisDataResource;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
-import net.sourceforge.joceanus.moneywise.MoneyWiseDataException;
+import net.sourceforge.joceanus.moneywise.exc.MoneyWiseDataException;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataInfoLinkSet;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataInstanceMap;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
@@ -33,7 +33,7 @@ import net.sourceforge.joceanus.prometheus.data.PrometheusEncryptedDataItem;
 import net.sourceforge.joceanus.prometheus.data.PrometheusEncryptedFieldSet;
 import net.sourceforge.joceanus.prometheus.data.PrometheusEncryptedPair;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
 
 /**

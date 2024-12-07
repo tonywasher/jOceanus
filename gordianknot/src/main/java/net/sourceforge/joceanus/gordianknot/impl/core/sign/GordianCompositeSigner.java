@@ -36,7 +36,7 @@ import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignatureSpec;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianIOException;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianLogicException;
 import net.sourceforge.joceanus.gordianknot.impl.core.keypair.GordianCompositeKeyPair;
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 /**
  * KeyPairSet signer.

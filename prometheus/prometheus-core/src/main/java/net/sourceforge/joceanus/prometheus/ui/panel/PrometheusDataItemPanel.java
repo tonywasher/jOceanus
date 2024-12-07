@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.prometheus.ui.panel;
 
 import net.sourceforge.joceanus.metis.field.MetisFieldVersionValues;
 import net.sourceforge.joceanus.metis.ui.MetisErrorPanel;
-import net.sourceforge.joceanus.prometheus.PrometheusDataException;
+import net.sourceforge.joceanus.prometheus.exc.PrometheusDataException;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataList;
 import net.sourceforge.joceanus.prometheus.data.PrometheusListKey;
@@ -33,7 +33,7 @@ import net.sourceforge.joceanus.prometheus.ui.PrometheusItemEditActions.Promethe
 import net.sourceforge.joceanus.prometheus.ui.PrometheusUIResource;
 import net.sourceforge.joceanus.prometheus.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.prometheus.views.PrometheusUIEvent;
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.TethysEventProvider;

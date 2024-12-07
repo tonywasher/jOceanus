@@ -23,7 +23,7 @@ import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestType;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.digest.GordianCoreDigest;
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 import java.security.DigestException;
 import java.security.MessageDigest;

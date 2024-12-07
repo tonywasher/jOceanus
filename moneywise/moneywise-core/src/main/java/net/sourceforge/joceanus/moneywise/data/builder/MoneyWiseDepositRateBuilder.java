@@ -16,11 +16,11 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.moneywise.data.builder;
 
-import net.sourceforge.joceanus.moneywise.MoneyWiseDataException;
+import net.sourceforge.joceanus.moneywise.exc.MoneyWiseDataException;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataSet;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDeposit;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDepositRate;
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.date.OceanusDate;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusRate;
 

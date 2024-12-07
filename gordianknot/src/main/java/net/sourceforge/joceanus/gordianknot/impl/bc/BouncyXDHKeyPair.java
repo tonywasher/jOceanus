@@ -59,7 +59,7 @@ import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianCoreEphemeral
 import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianCoreSignedAgreement;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
 import net.sourceforge.joceanus.gordianknot.impl.core.keypair.GordianKeyPairValidity;
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 /**
  * EdwardsCurve XDH KeyPair classes.

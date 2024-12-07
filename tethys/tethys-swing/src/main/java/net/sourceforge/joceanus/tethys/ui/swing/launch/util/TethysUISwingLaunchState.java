@@ -25,7 +25,7 @@ import java.util.Arrays;
 import javax.swing.JFrame;
 import javax.swing.WindowConstants;
 
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIIconId;
 import net.sourceforge.joceanus.tethys.ui.api.factory.TethysUILaunchProgram;
 import net.sourceforge.joceanus.tethys.ui.api.factory.TethysUIMainPanel;

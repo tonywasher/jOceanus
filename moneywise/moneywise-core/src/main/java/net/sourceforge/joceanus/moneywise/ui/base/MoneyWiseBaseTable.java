@@ -16,18 +16,18 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.moneywise.ui.base;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.nio.charset.StandardCharsets;
-import java.util.Iterator;
-
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
-import net.sourceforge.joceanus.metis.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataNamedItem;
+import net.sourceforge.joceanus.metis.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.metis.viewer.MetisViewerEntry;
-import net.sourceforge.joceanus.moneywise.MoneyWiseDataException;
+import net.sourceforge.joceanus.moneywise.exc.MoneyWiseDataException;
 import net.sourceforge.joceanus.moneywise.views.MoneyWiseView;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.oceanus.logger.OceanusLogManager;
+import net.sourceforge.joceanus.oceanus.logger.OceanusLogger;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataInfoClass;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataValues.PrometheusInfoSetItem;
@@ -35,13 +35,6 @@ import net.sourceforge.joceanus.prometheus.data.PrometheusListKey;
 import net.sourceforge.joceanus.prometheus.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditEntry;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
-import net.sourceforge.joceanus.oceanus.OceanusException;
-import net.sourceforge.joceanus.oceanus.OceanusDataException;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.TethysEventProvider;
-import net.sourceforge.joceanus.oceanus.logger.OceanusLogManager;
-import net.sourceforge.joceanus.oceanus.logger.OceanusLogger;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.tethys.ui.api.dialog.TethysUIFileSelector;
 import net.sourceforge.joceanus.tethys.ui.api.factory.TethysUIFactory;
@@ -49,6 +42,12 @@ import net.sourceforge.joceanus.tethys.ui.api.pane.TethysUIBorderPaneManager;
 import net.sourceforge.joceanus.tethys.ui.api.table.TethysUITableColumn;
 import net.sourceforge.joceanus.tethys.ui.api.table.TethysUITableColumn.TethysUIOnCellCommit;
 import net.sourceforge.joceanus.tethys.ui.api.table.TethysUITableManager;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
+import java.util.Iterator;
 
 /**
  * MoneyWise Base Table.
@@ -703,7 +702,7 @@ public abstract class MoneyWiseBaseTable<T extends PrometheusDataItem>
             myWriter.print(pData);
 
         } catch (IOException e) {
-            throw new OceanusDataException("Failed to output CSV", e);
+            throw new MoneyWiseDataException("Failed to output CSV", e);
         }
     }
 }

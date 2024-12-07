@@ -21,7 +21,7 @@ import org.bouncycastle.util.Arrays;
 
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMac;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianByteArrayInteger;
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 /**
  * Implementation of HMacSP800DRBG based on the BouncyCastle Code.

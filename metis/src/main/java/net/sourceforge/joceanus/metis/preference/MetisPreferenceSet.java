@@ -24,14 +24,14 @@ import java.util.function.Predicate;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
-import net.sourceforge.joceanus.metis.MetisDataException;
+import net.sourceforge.joceanus.metis.exc.MetisDataException;
 import net.sourceforge.joceanus.metis.data.MetisDataDifference;
 import net.sourceforge.joceanus.metis.field.MetisFieldItem;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.metis.viewer.MetisViewerEntry;
 import net.sourceforge.joceanus.metis.viewer.MetisViewerManager;
 import net.sourceforge.joceanus.metis.viewer.MetisViewerStandardEntry;
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.date.OceanusDate;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;

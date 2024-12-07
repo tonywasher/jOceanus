@@ -26,7 +26,7 @@ import net.sourceforge.joceanus.coeus.ui.CoeusPreference.CoeusPreferenceKey;
 import net.sourceforge.joceanus.coeus.ui.CoeusPreference.CoeusPreferences;
 import net.sourceforge.joceanus.metis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.metis.toolkit.MetisToolkit;
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
 
 /**

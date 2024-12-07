@@ -16,7 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.api.agree;
 
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 /**
  * Key Agreement Specification.

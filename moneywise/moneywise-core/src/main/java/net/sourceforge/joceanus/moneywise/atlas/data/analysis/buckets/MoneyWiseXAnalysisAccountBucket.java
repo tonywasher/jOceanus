@@ -28,7 +28,7 @@ import net.sourceforge.joceanus.metis.field.MetisFieldItem;
 import net.sourceforge.joceanus.metis.field.MetisFieldItem.MetisFieldTableItem;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.metis.list.MetisListIndexed;
-import net.sourceforge.joceanus.moneywise.MoneyWiseDataException;
+import net.sourceforge.joceanus.moneywise.exc.MoneyWiseDataException;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.base.MoneyWiseXAnalysisBaseResource;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.base.MoneyWiseXAnalysisEvent;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.base.MoneyWiseXAnalysisHistory;
@@ -39,7 +39,7 @@ import net.sourceforge.joceanus.moneywise.atlas.data.analysis.values.MoneyWiseXA
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseAssetBase;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDeposit;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrency;
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.date.OceanusDate;
 import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimal;

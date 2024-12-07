@@ -22,7 +22,7 @@ import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetCellPosi
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetCellRange;
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetRow;
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetSheet;
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 /**
  * Sheet class.

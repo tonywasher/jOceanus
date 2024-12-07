@@ -23,7 +23,7 @@ import org.bouncycastle.util.Arrays;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianKeyedCipher;
 import net.sourceforge.joceanus.gordianknot.impl.core.cipher.GordianCoreCipher;
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 /**
  * Input stream Cipher implementation.

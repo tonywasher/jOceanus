@@ -27,7 +27,7 @@ import org.w3c.dom.Element;
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetCell;
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetCellPosition;
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetRow;
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
 
 /**

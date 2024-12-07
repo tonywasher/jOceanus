@@ -18,8 +18,8 @@ package net.sourceforge.joceanus.gordianknot.impl.core.base;
 
 import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactoryType;
-import net.sourceforge.joceanus.oceanus.OceanusDataConverter;
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.format.OceanusDataConverter;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 import java.security.SecureRandom;
 import java.util.Arrays;

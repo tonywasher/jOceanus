@@ -16,14 +16,14 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.metis.viewer;
 
+import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
+import net.sourceforge.joceanus.metis.data.MetisDataResource;
+import net.sourceforge.joceanus.oceanus.resource.OceanusBundleId;
+import net.sourceforge.joceanus.oceanus.resource.OceanusBundleLoader;
+
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.ResourceBundle;
-
-import net.sourceforge.joceanus.metis.MetisDataException;
-import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
-import net.sourceforge.joceanus.oceanus.resource.OceanusBundleId;
-import net.sourceforge.joceanus.oceanus.resource.OceanusBundleLoader;
 
 /**
  * Resource IDs for Metis viewer.
@@ -183,7 +183,7 @@ public enum MetisViewerResource
     /**
      * The Resource Loader.
      */
-    private static final OceanusBundleLoader LOADER = OceanusBundleLoader.getPackageLoader(MetisDataException.class.getCanonicalName(),
+    private static final OceanusBundleLoader LOADER = OceanusBundleLoader.getLoader(MetisDataResource.class.getCanonicalName(),
             ResourceBundle::getBundle);
 
     /**

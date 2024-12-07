@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.moneywise.test.data;
 
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataSet;
 import net.sourceforge.joceanus.moneywise.tax.uk.MoneyWiseUKTaxYearCache;
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
 import net.sourceforge.joceanus.prometheus.security.PrometheusSecurityDialogController;
 import net.sourceforge.joceanus.prometheus.security.PrometheusSecurityPasswordManager;

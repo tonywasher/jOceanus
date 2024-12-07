@@ -22,7 +22,7 @@ import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacType;
 import net.sourceforge.joceanus.gordianknot.impl.core.mac.GordianCoreMac;
 import net.sourceforge.joceanus.gordianknot.impl.ext.params.GordianBlake2Parameters;
 import net.sourceforge.joceanus.gordianknot.impl.ext.params.GordianSkeinParameters;
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import org.bouncycastle.crypto.CipherParameters;
 import org.bouncycastle.crypto.Mac;
 import org.bouncycastle.crypto.params.KeyParameter;

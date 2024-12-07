@@ -19,7 +19,7 @@ package net.sourceforge.joceanus.gordianknot.api.mac;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.gordianknot.api.key.GordianKeyGenerator;
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 import java.util.List;
 import java.util.function.Predicate;

@@ -16,7 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.tethys.ui.core.control;
 
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
 import net.sourceforge.joceanus.oceanus.logger.OceanusLogManager;

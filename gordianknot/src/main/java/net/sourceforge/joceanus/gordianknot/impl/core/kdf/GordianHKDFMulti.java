@@ -21,7 +21,7 @@ import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianLogicException;
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 import java.util.ArrayList;
 import java.util.List;

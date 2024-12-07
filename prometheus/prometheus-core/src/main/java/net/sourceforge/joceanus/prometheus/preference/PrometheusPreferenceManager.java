@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.prometheus.preference;
 
 import net.sourceforge.joceanus.metis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.metis.viewer.MetisViewerManager;
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 /**
  * Prometheus Preference Manager.

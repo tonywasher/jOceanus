@@ -39,7 +39,7 @@ import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetException;
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 /**
  * Loader and Archiver for Odf files.

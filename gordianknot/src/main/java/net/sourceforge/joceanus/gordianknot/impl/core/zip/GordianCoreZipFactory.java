@@ -31,7 +31,7 @@ import net.sourceforge.joceanus.gordianknot.api.zip.GordianZipReadFile;
 import net.sourceforge.joceanus.gordianknot.api.zip.GordianZipWriteFile;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianIOException;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianLogicException;
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 import java.io.File;
 import java.io.FileInputStream;

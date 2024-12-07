@@ -16,7 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.moneywise.atlas.data.analysis.analyse;
 
-import net.sourceforge.joceanus.moneywise.MoneyWiseLogicException;
+import net.sourceforge.joceanus.moneywise.exc.MoneyWiseLogicException;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisPortfolioBucket;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisPortfolioBucket.MoneyWiseXAnalysisPortfolioBucketList;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisPortfolioCashBucket;
@@ -28,7 +28,7 @@ import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePortfolio;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurityHolding;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurityHolding.MoneyWiseSecurityHoldingMap;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransAsset;
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusUnits;
 

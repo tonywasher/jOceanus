@@ -32,7 +32,7 @@ import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianIOException;
 import net.sourceforge.joceanus.gordianknot.impl.core.encrypt.GordianCoreEncryptor;
 import net.sourceforge.joceanus.gordianknot.impl.core.keypair.GordianKeyPairValidity;
 import net.sourceforge.joceanus.gordianknot.impl.core.sign.GordianCoreSignature;
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.bouncycastle.crypto.AsymmetricBlockCipher;

@@ -27,13 +27,13 @@ import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.metis.data.MetisDataResource;
 import net.sourceforge.joceanus.metis.data.MetisDataState;
 import net.sourceforge.joceanus.metis.field.MetisFieldVersionValues;
-import net.sourceforge.joceanus.prometheus.PrometheusDataException;
-import net.sourceforge.joceanus.prometheus.PrometheusIOException;
+import net.sourceforge.joceanus.prometheus.exc.PrometheusDataException;
+import net.sourceforge.joceanus.prometheus.exc.PrometheusIOException;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataList;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataSet;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataValues;
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.tethys.ui.api.thread.TethysUIThreadStatusReport;
 
 /**

@@ -23,8 +23,8 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
 
-import net.sourceforge.joceanus.moneywise.MoneyWiseIOException;
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.moneywise.exc.MoneyWiseIOException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 /**
  * Wrapper for stream writer.

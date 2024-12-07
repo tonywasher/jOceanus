@@ -22,7 +22,7 @@ import net.sourceforge.joceanus.gordianknot.api.cipher.GordianStreamCipherSpec;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianStreamKeySpec;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
 import net.sourceforge.joceanus.gordianknot.impl.core.cipher.GordianCoreCipher;
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import org.bouncycastle.crypto.CipherParameters;
 import org.bouncycastle.crypto.DataLengthException;
 import org.bouncycastle.crypto.InvalidCipherTextException;

@@ -21,7 +21,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataMap;
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.date.OceanusDate;
 
 /**

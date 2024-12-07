@@ -27,7 +27,7 @@ import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianRandomSource;
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 /**
  * GordianKnot class for KeyPair Generators.

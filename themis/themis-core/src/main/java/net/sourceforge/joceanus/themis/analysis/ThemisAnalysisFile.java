@@ -27,9 +27,9 @@ import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.List;
 
-import net.sourceforge.joceanus.oceanus.OceanusException;
-import net.sourceforge.joceanus.themis.ThemisDataException;
-import net.sourceforge.joceanus.themis.ThemisIOException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.themis.exc.ThemisDataException;
+import net.sourceforge.joceanus.themis.exc.ThemisIOException;
 import net.sourceforge.joceanus.themis.analysis.ThemisAnalysisDataMap.ThemisAnalysisDataType;
 import net.sourceforge.joceanus.themis.analysis.ThemisAnalysisDataMap.ThemisAnalysisIntermediate;
 

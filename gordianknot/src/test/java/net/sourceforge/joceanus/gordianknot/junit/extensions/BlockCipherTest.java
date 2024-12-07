@@ -22,7 +22,7 @@ import net.sourceforge.joceanus.gordianknot.impl.ext.engines.GordianMARSEngine;
 import net.sourceforge.joceanus.gordianknot.impl.ext.engines.GordianSimonEngine;
 import net.sourceforge.joceanus.gordianknot.impl.ext.engines.GordianSpeckEngine;
 import net.sourceforge.joceanus.gordianknot.impl.ext.modes.GordianGCMSIVBlockCipher;
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import org.bouncycastle.crypto.BlockCipher;
 import org.bouncycastle.crypto.InvalidCipherTextException;
 import org.bouncycastle.crypto.params.AEADParameters;

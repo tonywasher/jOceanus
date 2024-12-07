@@ -22,7 +22,7 @@ import net.sourceforge.joceanus.gordianknot.api.agree.GordianAnonymousAgreement;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianAgreementMessageASN1.GordianMessageType;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 /**
  * Encapsulation Agreement.

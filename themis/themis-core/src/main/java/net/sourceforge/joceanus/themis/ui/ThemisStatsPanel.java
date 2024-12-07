@@ -19,7 +19,7 @@ package net.sourceforge.joceanus.themis.ui;
 import java.util.Iterator;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.event.OceanusEvent;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIEvent;

@@ -16,10 +16,10 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.metis.viewer;
 
-import net.sourceforge.joceanus.metis.MetisIOException;
+import net.sourceforge.joceanus.metis.exc.MetisIOException;
 import net.sourceforge.joceanus.metis.data.MetisDataDelta;
 import net.sourceforge.joceanus.metis.data.MetisDataDifference;
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.logger.OceanusLogManager;
 import net.sourceforge.joceanus.oceanus.logger.OceanusLogger;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;

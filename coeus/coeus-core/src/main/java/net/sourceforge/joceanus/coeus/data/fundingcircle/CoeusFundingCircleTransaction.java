@@ -19,11 +19,11 @@ package net.sourceforge.joceanus.coeus.data.fundingcircle;
 import java.util.Iterator;
 import java.util.List;
 
-import net.sourceforge.joceanus.coeus.CoeusDataException;
+import net.sourceforge.joceanus.coeus.exc.CoeusDataException;
 import net.sourceforge.joceanus.coeus.data.CoeusTransaction;
 import net.sourceforge.joceanus.coeus.data.CoeusTransactionType;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.date.OceanusDate;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
 

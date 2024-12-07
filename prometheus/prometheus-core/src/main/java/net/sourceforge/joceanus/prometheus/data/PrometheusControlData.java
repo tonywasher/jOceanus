@@ -19,9 +19,9 @@ package net.sourceforge.joceanus.prometheus.data;
 import net.sourceforge.joceanus.metis.data.MetisDataResource;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.metis.field.MetisFieldVersionedSet;
-import net.sourceforge.joceanus.prometheus.PrometheusDataException;
+import net.sourceforge.joceanus.prometheus.exc.PrometheusDataException;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataSet.PrometheusCryptographyDataType;
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 /**
  * ControlData definition and list. The Control Data represents the data version of the entire data

@@ -16,7 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.moneywise.data.builder;
 
-import net.sourceforge.joceanus.moneywise.MoneyWiseDataException;
+import net.sourceforge.joceanus.moneywise.exc.MoneyWiseDataException;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataSet;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePayee;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseRegion;
@@ -25,7 +25,7 @@ import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrency;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrencyClass;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseSecurityClass;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseSecurityType;
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
 
 /**

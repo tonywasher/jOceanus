@@ -31,7 +31,6 @@ module net.sourceforge.joceanus.metis {
     requires net.sourceforge.joceanus.tethys.core;
 
     /* Exports */
-    exports net.sourceforge.joceanus.metis;
     exports net.sourceforge.joceanus.metis.data;
     exports net.sourceforge.joceanus.metis.field;
     exports net.sourceforge.joceanus.metis.help;

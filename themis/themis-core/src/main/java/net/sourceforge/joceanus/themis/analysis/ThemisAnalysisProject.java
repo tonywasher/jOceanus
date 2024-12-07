@@ -23,8 +23,8 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.sourceforge.joceanus.oceanus.OceanusException;
-import net.sourceforge.joceanus.themis.ThemisIOException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.themis.exc.ThemisIOException;
 
 /**
  * Project.

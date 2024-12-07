@@ -34,7 +34,7 @@ import net.sourceforge.joceanus.moneywise.tax.MoneyWiseTaxDueBucket;
 import net.sourceforge.joceanus.moneywise.tax.MoneyWiseTaxResource;
 import net.sourceforge.joceanus.moneywise.tax.MoneyWiseTaxSource;
 import net.sourceforge.joceanus.moneywise.tax.uk.MoneyWiseUKChargeableGainsScheme.MoneyWiseUKSlicedTaxDueBucket;
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.date.OceanusDate;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;

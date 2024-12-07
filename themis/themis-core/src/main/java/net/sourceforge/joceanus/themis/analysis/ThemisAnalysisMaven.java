@@ -32,9 +32,9 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
-import net.sourceforge.joceanus.oceanus.OceanusException;
-import net.sourceforge.joceanus.themis.ThemisDataException;
-import net.sourceforge.joceanus.themis.ThemisIOException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.themis.exc.ThemisDataException;
+import net.sourceforge.joceanus.themis.exc.ThemisIOException;
 
 /**
  * Maven pom.xml parser.

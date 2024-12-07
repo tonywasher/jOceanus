@@ -30,7 +30,7 @@ import net.sourceforge.joceanus.prometheus.data.PrometheusDataInfoClass;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataInfoSet;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
 
 /**

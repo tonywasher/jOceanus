@@ -22,7 +22,7 @@ import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataResource;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataValues;
 import net.sourceforge.joceanus.prometheus.sheets.PrometheusSheetEncrypted;
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 /**
  * SheetDataItem extension for LoanCategory.

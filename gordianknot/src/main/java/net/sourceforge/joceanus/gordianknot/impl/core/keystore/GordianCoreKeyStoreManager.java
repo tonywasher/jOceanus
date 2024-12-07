@@ -45,7 +45,7 @@ import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianLogicException;
 import net.sourceforge.joceanus.gordianknot.impl.core.keypair.GordianCoreKeyPair;
 import net.sourceforge.joceanus.gordianknot.impl.core.keystore.GordianCoreKeyStoreEntry.GordianCoreKeyStorePair;
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 /**
  * KeyStore Manager implementation.

@@ -16,11 +16,12 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.tethys.ui.core.control;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.nio.charset.StandardCharsets;
-
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.oceanus.logger.OceanusLogManager;
+import net.sourceforge.joceanus.oceanus.logger.OceanusLogger;
+import net.sourceforge.joceanus.tethys.ui.api.dialog.TethysUIFileSelector;
+import net.sourceforge.joceanus.tethys.ui.core.base.TethysUIDataException;
+import net.sourceforge.joceanus.tethys.ui.core.factory.TethysUICoreFactory;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Document.OutputSettings;
@@ -28,12 +29,10 @@ import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Entities.EscapeMode;
 import org.jsoup.select.Elements;
 
-import net.sourceforge.joceanus.oceanus.OceanusException;
-import net.sourceforge.joceanus.oceanus.OceanusDataException;
-import net.sourceforge.joceanus.oceanus.logger.OceanusLogManager;
-import net.sourceforge.joceanus.oceanus.logger.OceanusLogger;
-import net.sourceforge.joceanus.tethys.ui.api.dialog.TethysUIFileSelector;
-import net.sourceforge.joceanus.tethys.ui.core.factory.TethysUICoreFactory;
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
 
 /**
  * HTML to File.
@@ -187,7 +186,7 @@ public class TethysUICoreHTMLToFile {
             myWriter.print(myHTML);
 
         } catch (IOException e) {
-            throw new OceanusDataException("Failed to output XML", e);
+            throw new TethysUIDataException("Failed to output XML", e);
         }
     }
 }

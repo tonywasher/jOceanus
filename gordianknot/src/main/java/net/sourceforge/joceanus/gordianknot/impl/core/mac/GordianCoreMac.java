@@ -22,7 +22,7 @@ import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacParameters;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacSpec;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianLogicException;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 /**
  * GordianKnot interface for Message Authentication Codes.

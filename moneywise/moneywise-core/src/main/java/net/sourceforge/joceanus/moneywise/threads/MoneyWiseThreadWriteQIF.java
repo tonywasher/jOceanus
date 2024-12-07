@@ -25,7 +25,7 @@ import java.nio.charset.StandardCharsets;
 
 import net.sourceforge.joceanus.metis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.metis.toolkit.MetisToolkit;
-import net.sourceforge.joceanus.moneywise.MoneyWiseIOException;
+import net.sourceforge.joceanus.moneywise.exc.MoneyWiseIOException;
 import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysis;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataSet;
 import net.sourceforge.joceanus.moneywise.quicken.file.MoneyWiseQIFFile;
@@ -36,7 +36,7 @@ import net.sourceforge.joceanus.moneywise.views.MoneyWiseView;
 import net.sourceforge.joceanus.moneywise.quicken.definitions.MoneyWiseQIFPreference.MoneyWiseQIFPreferenceKey;
 import net.sourceforge.joceanus.moneywise.quicken.definitions.MoneyWiseQIFPreference.MoneyWiseQIFPreferences;
 import net.sourceforge.joceanus.moneywise.quicken.definitions.MoneyWiseQIFType;
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.logger.OceanusLogManager;
 import net.sourceforge.joceanus.oceanus.logger.OceanusLogger;
 import net.sourceforge.joceanus.tethys.ui.api.thread.TethysUIThread;

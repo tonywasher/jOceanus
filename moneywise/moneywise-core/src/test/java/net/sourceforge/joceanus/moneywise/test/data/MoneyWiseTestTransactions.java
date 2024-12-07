@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.moneywise.test.data;
 
 import org.junit.jupiter.api.Assertions;
 
-import net.sourceforge.joceanus.moneywise.MoneyWiseDataException;
+import net.sourceforge.joceanus.moneywise.exc.MoneyWiseDataException;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysis;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisAccountBucket;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisPayeeBucket;
@@ -39,7 +39,7 @@ import net.sourceforge.joceanus.moneywise.data.builder.MoneyWiseTransactionBuild
 import net.sourceforge.joceanus.moneywise.data.builder.MoneyWiseXchgRateBuilder;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrencyClass;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTaxClass;
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
 
 /**

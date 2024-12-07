@@ -42,7 +42,7 @@ import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianIOException;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianLogicException;
 import net.sourceforge.joceanus.gordianknot.impl.core.key.GordianCoreKeyGenerator;
 import net.sourceforge.joceanus.gordianknot.impl.core.keyset.GordianKeySetRecipe.GordianKeySetParameters;
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 import java.io.IOException;
 import java.security.spec.PKCS8EncodedKeySpec;

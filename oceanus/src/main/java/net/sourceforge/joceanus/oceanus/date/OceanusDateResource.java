@@ -16,7 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.oceanus.date;
 
-import net.sourceforge.joceanus.oceanus.OceanusException;
 import net.sourceforge.joceanus.oceanus.resource.OceanusBundleId;
 import net.sourceforge.joceanus.oceanus.resource.OceanusBundleLoader;
 
@@ -131,7 +130,7 @@ public enum OceanusDateResource implements OceanusBundleId {
     /**
      * The Resource Loader.
      */
-    private static final OceanusBundleLoader LOADER = OceanusBundleLoader.getPackageLoader(OceanusException.class.getCanonicalName(),
+    private static final OceanusBundleLoader LOADER = OceanusBundleLoader.getLoader(OceanusDateResource.class.getCanonicalName(),
             ResourceBundle::getBundle);
 
     /**

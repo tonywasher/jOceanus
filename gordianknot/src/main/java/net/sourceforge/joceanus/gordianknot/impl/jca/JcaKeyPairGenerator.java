@@ -34,7 +34,7 @@ import net.sourceforge.joceanus.gordianknot.impl.jca.JcaKeyPair.JcaPrivateKey;
 import net.sourceforge.joceanus.gordianknot.impl.jca.JcaKeyPair.JcaPublicKey;
 import net.sourceforge.joceanus.gordianknot.impl.jca.JcaKeyPair.JcaStateAwareKeyPair;
 import net.sourceforge.joceanus.gordianknot.impl.jca.JcaKeyPair.JcaStateAwarePrivateKey;
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import org.bouncycastle.crypto.params.DHParameters;
 import org.bouncycastle.jcajce.provider.asymmetric.dh.BCDHPrivateKey;
 import org.bouncycastle.jcajce.provider.asymmetric.dh.BCDHPublicKey;

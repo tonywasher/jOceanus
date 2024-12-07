@@ -2,7 +2,7 @@ package net.sourceforge.joceanus.gordianknot.junit.extensions;
 
 import net.sourceforge.joceanus.gordianknot.impl.ext.digests.GordianBlake3Digest;
 import net.sourceforge.joceanus.gordianknot.impl.ext.params.GordianBlake3Parameters;
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import org.bouncycastle.util.encoders.Hex;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DynamicContainer;

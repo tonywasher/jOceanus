@@ -25,7 +25,7 @@ import net.sourceforge.joceanus.gordianknot.impl.core.keyset.GordianCoreKeySetFa
 import net.sourceforge.joceanus.gordianknot.impl.core.lock.GordianCoreLockFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.random.GordianCoreRandomFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.zip.GordianCoreZipFactory;
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 /**
  * BouncyCastle Factory.

@@ -42,8 +42,8 @@ import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianLogicException;
 import net.sourceforge.joceanus.gordianknot.impl.core.keyset.GordianCoreKeySet;
 import net.sourceforge.joceanus.gordianknot.impl.core.stream.GordianStreamDefinition;
 import net.sourceforge.joceanus.gordianknot.impl.core.stream.GordianStreamManager;
-import net.sourceforge.joceanus.oceanus.OceanusException;
-import net.sourceforge.joceanus.oceanus.OceanusDataConverter;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.oceanus.format.OceanusDataConverter;
 
 /**
  * Class used to build a ZipFile.

@@ -27,7 +27,7 @@ import net.sourceforge.joceanus.metis.viewer.MetisViewerEntry;
 import net.sourceforge.joceanus.metis.viewer.MetisViewerManager;
 import net.sourceforge.joceanus.metis.viewer.MetisViewerStandardEntry;
 import net.sourceforge.joceanus.metis.viewer.MetisViewerWindow;
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
 import net.sourceforge.joceanus.oceanus.logger.OceanusLogManager;
 import net.sourceforge.joceanus.oceanus.logger.OceanusLogger;

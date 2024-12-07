@@ -28,7 +28,7 @@ import net.sourceforge.joceanus.prometheus.database.PrometheusDatabase.Prometheu
 import net.sourceforge.joceanus.prometheus.preference.PrometheusPreferenceView;
 import net.sourceforge.joceanus.prometheus.ui.PrometheusGoToEvent;
 import net.sourceforge.joceanus.prometheus.views.PrometheusDataEvent;
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.event.OceanusEvent;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;

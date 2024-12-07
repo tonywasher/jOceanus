@@ -19,7 +19,7 @@ package net.sourceforge.joceanus.metis.help;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.resource.OceanusResourceId;
 import net.sourceforge.joceanus.oceanus.resource.OceanusResourceLoader;
 import net.sourceforge.joceanus.tethys.ui.api.control.TethysUIHTMLManager.TethysUIStyleSheetId;

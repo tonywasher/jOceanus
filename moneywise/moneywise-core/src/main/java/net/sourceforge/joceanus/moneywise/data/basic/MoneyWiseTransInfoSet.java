@@ -36,7 +36,7 @@ import net.sourceforge.joceanus.prometheus.data.PrometheusDataInfoSet;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataList.PrometheusDataListSet;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusRatio;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusUnits;

@@ -21,8 +21,8 @@ import java.util.Collections;
 import java.util.Deque;
 import java.util.Iterator;
 
-import net.sourceforge.joceanus.oceanus.OceanusException;
-import net.sourceforge.joceanus.themis.ThemisDataException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.themis.exc.ThemisDataException;
 import net.sourceforge.joceanus.themis.analysis.ThemisAnalysisContainer.ThemisAnalysisAdoptable;
 import net.sourceforge.joceanus.themis.analysis.ThemisAnalysisStatement.ThemisAnalysisStatementHolder;
 

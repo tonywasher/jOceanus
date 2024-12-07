@@ -16,7 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.moneywise.data.builder;
 
-import net.sourceforge.joceanus.moneywise.MoneyWiseDataException;
+import net.sourceforge.joceanus.moneywise.exc.MoneyWiseDataException;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataSet;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePayee;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePortfolio;
@@ -24,7 +24,7 @@ import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrency;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrencyClass;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWisePortfolioClass;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWisePortfolioType;
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 /**
  * Portfolio Builder.

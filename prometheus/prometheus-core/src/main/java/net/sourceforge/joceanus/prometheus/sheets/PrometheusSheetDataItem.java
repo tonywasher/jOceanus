@@ -19,7 +19,7 @@ package net.sourceforge.joceanus.prometheus.sheets;
 import java.util.Iterator;
 
 import net.sourceforge.joceanus.metis.data.MetisDataResource;
-import net.sourceforge.joceanus.prometheus.PrometheusIOException;
+import net.sourceforge.joceanus.prometheus.exc.PrometheusIOException;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataList;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataValues;
@@ -30,7 +30,7 @@ import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetRow;
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetSheet;
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetView;
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetWorkBook;
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.date.OceanusDate;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimal;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;

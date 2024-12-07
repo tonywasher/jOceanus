@@ -17,7 +17,7 @@
 package net.sourceforge.joceanus.moneywise.ui.panel;
 
 import net.sourceforge.joceanus.metis.help.MetisHelpModule;
-import net.sourceforge.joceanus.moneywise.MoneyWiseIOException;
+import net.sourceforge.joceanus.moneywise.exc.MoneyWiseIOException;
 import net.sourceforge.joceanus.moneywise.tax.uk.MoneyWiseUKTaxYearCache;
 import net.sourceforge.joceanus.moneywise.threads.MoneyWiseThreadLoadArchive;
 import net.sourceforge.joceanus.moneywise.threads.MoneyWiseThreadWriteQIF;
@@ -32,7 +32,7 @@ import net.sourceforge.joceanus.prometheus.toolkit.PrometheusToolkit;
 import net.sourceforge.joceanus.prometheus.ui.PrometheusGoToEvent;
 import net.sourceforge.joceanus.prometheus.ui.panel.PrometheusMainWindow;
 import net.sourceforge.joceanus.prometheus.views.PrometheusDataEvent;
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.event.OceanusEvent;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
 import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;

@@ -20,7 +20,7 @@ import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.digest.GordianCoreDigestFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;

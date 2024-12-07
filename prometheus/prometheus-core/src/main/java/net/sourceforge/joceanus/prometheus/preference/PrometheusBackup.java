@@ -22,7 +22,7 @@ import net.sourceforge.joceanus.metis.preference.MetisPreferenceKey;
 import net.sourceforge.joceanus.metis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.metis.preference.MetisPreferenceSet;
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetWorkBookType;
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.date.OceanusDate;
 
 /**

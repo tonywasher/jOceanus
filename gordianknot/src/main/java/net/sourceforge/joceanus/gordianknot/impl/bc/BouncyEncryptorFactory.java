@@ -26,7 +26,7 @@ import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.encrypt.GordianCompositeEncryptor;
 import net.sourceforge.joceanus.gordianknot.impl.core.encrypt.GordianCoreEncryptorFactory;
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 /**
  * Bouncy Encryptor Factory.
