@@ -49,7 +49,7 @@ import net.sourceforge.joceanus.gordianknot.impl.core.keystore.GordianKeyStoreEl
 import net.sourceforge.joceanus.gordianknot.impl.core.keystore.GordianKeyStoreElement.GordianKeyStoreSetElement;
 import net.sourceforge.joceanus.gordianknot.impl.core.lock.GordianPasswordLockSpecASN1;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.format.OceanusDataConverter;
+import net.sourceforge.joceanus.oceanus.convert.OceanusDataConverter;
 import net.sourceforge.joceanus.oceanus.date.OceanusDate;
 
 /**

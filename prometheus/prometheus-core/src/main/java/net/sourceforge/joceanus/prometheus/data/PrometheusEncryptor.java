@@ -26,7 +26,7 @@ import net.sourceforge.joceanus.metis.field.MetisFieldItem.MetisFieldDef;
 import net.sourceforge.joceanus.prometheus.exc.PrometheusDataException;
 import net.sourceforge.joceanus.prometheus.exc.PrometheusLogicException;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.format.OceanusDataConverter;
+import net.sourceforge.joceanus.oceanus.convert.OceanusDataConverter;
 import net.sourceforge.joceanus.oceanus.date.OceanusDate;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimal;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;

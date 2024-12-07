@@ -30,7 +30,7 @@ import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianIdManager;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianPersonalisation;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianPersonalisation.GordianPersonalId;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.format.OceanusDataConverter;
+import net.sourceforge.joceanus.oceanus.convert.OceanusDataConverter;
 
 /**
  * Class for assembling/disassembling data encrypted by a KeySet.

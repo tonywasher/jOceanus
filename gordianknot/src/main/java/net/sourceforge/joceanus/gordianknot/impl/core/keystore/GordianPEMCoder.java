@@ -51,7 +51,7 @@ import net.sourceforge.joceanus.gordianknot.impl.core.keystore.GordianPEMObject.
 import net.sourceforge.joceanus.gordianknot.impl.core.zip.GordianCoreZipLock;
 import net.sourceforge.joceanus.gordianknot.impl.core.zip.GordianZipLockASN1;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.format.OceanusDataConverter;
+import net.sourceforge.joceanus.oceanus.convert.OceanusDataConverter;
 import net.sourceforge.joceanus.oceanus.date.OceanusDate;
 
 /**

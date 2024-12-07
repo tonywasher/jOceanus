@@ -26,7 +26,7 @@ import net.sourceforge.joceanus.gordianknot.api.mac.GordianMac;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.kdf.GordianHKDFEngine;
 import net.sourceforge.joceanus.gordianknot.impl.core.kdf.GordianHKDFParams;
-import net.sourceforge.joceanus.oceanus.format.OceanusDataConverter;
+import net.sourceforge.joceanus.oceanus.convert.OceanusDataConverter;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 import java.net.InetAddress;

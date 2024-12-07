@@ -22,7 +22,7 @@ import org.bouncycastle.util.Arrays;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigest;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianByteArrayInteger;
-import net.sourceforge.joceanus.oceanus.format.OceanusDataConverter;
+import net.sourceforge.joceanus.oceanus.convert.OceanusDataConverter;
 
 /**
  * Implementation of HashSP800DRBG based on the BouncyCastle Code.

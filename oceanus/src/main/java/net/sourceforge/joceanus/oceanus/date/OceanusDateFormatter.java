@@ -25,7 +25,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-import net.sourceforge.joceanus.oceanus.format.OceanusDataConverter;
+import net.sourceforge.joceanus.oceanus.convert.OceanusDataConverter;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.TethysEventProvider;

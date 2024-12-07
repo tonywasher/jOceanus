@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Tethys: GUI Utilities
+ * Oceanus: Java Utilities
  * Copyright 2012,2024 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,17 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.tethys.ui.core.base;
-
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+package net.sourceforge.joceanus.oceanus.format;
 
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.convert.OceanusDataConverter;
@@ -40,13 +30,33 @@ import net.sourceforge.joceanus.oceanus.decimal.OceanusRate;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusRatio;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusUnits;
 import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
-import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
+
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 /**
- * Tethys Data Formatter.
+ * Data Formatter.
  */
-public class TethysUICoreDataFormatter
-        implements TethysUIDataFormatter {
+public class OceanusDataFormatter {
+    /**
+     * Formatter extension.
+     */
+    public interface OceanusDataFormatterExtension {
+        /**
+         * Format an object value.
+         * @param pValue the object to format
+         * @return the formatted value (or null if not recognised)
+         */
+        String formatObject(Object pValue);
+    }
+
     /**
      * Invalid class error.
      */
@@ -68,67 +78,90 @@ public class TethysUICoreDataFormatter
     private final OceanusDecimalParser theDecimalParser;
 
     /**
-     * Constructor.
-     */
-    public TethysUICoreDataFormatter() {
-        this(Locale.getDefault());
-    }
-
-    /**
      * Extensions.
      */
-    private final List<TethysUIDataFormatterExtension> theExtensions;
+    private final List<OceanusDataFormatterExtension> theExtensions;
+
+    /**
+     * Constructor.
+     */
+    public OceanusDataFormatter() {
+        this(Locale.getDefault());
+    }
 
     /**
      * Constructor.
      * @param pLocale the locale
      */
-    public TethysUICoreDataFormatter(final Locale pLocale) {
+    public OceanusDataFormatter(final Locale pLocale) {
         theDateFormatter = new OceanusDateFormatter(pLocale);
         theDecimalFormatter = new OceanusDecimalFormatter(pLocale);
         theDecimalParser = new OceanusDecimalParser(pLocale);
         theExtensions = new ArrayList<>();
     }
 
-    @Override
+    /**
+     * Obtain the date formatter.
+     * @return the formatter
+     */
     public OceanusDateFormatter getDateFormatter() {
         return theDateFormatter;
     }
 
-    @Override
+    /**
+     * Obtain the decimal formatter.
+     * @return the formatter
+     */
     public OceanusDecimalFormatter getDecimalFormatter() {
         return theDecimalFormatter;
     }
 
-    @Override
+    /**
+     * Obtain the decimal parser.
+     * @return the parser
+     */
     public OceanusDecimalParser getDecimalParser() {
         return theDecimalParser;
     }
 
-    @Override
-    public void extendFormatter(final TethysUIDataFormatterExtension pExtension) {
+    /**
+     * Extend the formatter.
+     * @param pExtension the extension
+     */
+    public void extendFormatter(final OceanusDataFormatterExtension pExtension) {
         theExtensions.add(pExtension);
     }
 
-    @Override
+    /**
+     * Set accounting width.
+     * @param pWidth the accounting width to use
+     */
     public void setAccountingWidth(final int pWidth) {
         /* Set accounting width on decimal formatter */
         theDecimalFormatter.setAccountingWidth(pWidth);
     }
 
-    @Override
+    /**
+     * Clear accounting mode.
+     */
     public void clearAccounting() {
         /* Clear the accounting mode flag */
         theDecimalFormatter.clearAccounting();
     }
 
-    @Override
+    /**
+     * Set the date format.
+     * @param pFormat the format string
+     */
     public final void setFormat(final String pFormat) {
         /* Tell the formatters about the format */
         theDateFormatter.setFormat(pFormat);
     }
 
-    @Override
+    /**
+     * Set the locale.
+     * @param pLocale the locale
+     */
     public final void setLocale(final Locale pLocale) {
         /* Tell the formatters about the locale */
         theDateFormatter.setLocale(pLocale);
@@ -136,13 +169,20 @@ public class TethysUICoreDataFormatter
         theDecimalParser.setLocale(pLocale);
     }
 
-    @Override
+    /**
+     * Obtain the locale.
+     * @return the locale
+     */
     public Locale getLocale() {
         /* Obtain locale from date formatter */
         return theDateFormatter.getLocale();
     }
 
-    @Override
+    /**
+     * Format an object value.
+     * @param pValue the object to format
+     * @return the formatted value
+     */
     public String formatObject(final Object pValue) {
         /* Handle null value */
         if (pValue == null) {
@@ -150,7 +190,7 @@ public class TethysUICoreDataFormatter
         }
 
         /* Loop through extensions */
-        for (TethysUIDataFormatterExtension myExtension : theExtensions) {
+        for (OceanusDataFormatterExtension myExtension : theExtensions) {
             final String myResult = myExtension.formatObject(pValue);
             if (myResult != null) {
                 return myResult;
@@ -231,8 +271,8 @@ public class TethysUICoreDataFormatter
             return myProfile.getName()
                     + ": "
                     + (myProfile.isRunning()
-                        ? myProfile.getStatus()
-                        : myProfile.getElapsed());
+                    ? myProfile.getStatus()
+                    : myProfile.getElapsed());
         }
 
         /* Handle OceanusExceptions */
@@ -244,7 +284,15 @@ public class TethysUICoreDataFormatter
         return formatBasicValue(pValue);
     }
 
-    @Override
+    /**
+     * Parse object value.
+     * @param <T> the value type
+     * @param pSource the source value
+     * @param pClazz the value type class
+     * @return the formatted value
+     * @throws IllegalArgumentException on bad Date/Decimal format
+     * @throws NumberFormatException on bad Integer format
+     */
     public <T> T parseValue(final String pSource,
                             final Class<T> pClazz) {
         if (Boolean.class.equals(pClazz)) {
@@ -310,7 +358,14 @@ public class TethysUICoreDataFormatter
         throw new IllegalArgumentException(ERROR_CLASS + pClazz.getSimpleName());
     }
 
-    @Override
+    /**
+     * Parse object value.
+     * @param <T> the value type
+     * @param pSource the source value
+     * @param pClazz the value type class
+     * @return the formatted value
+     * @throws IllegalArgumentException on bad TethysDecimal format
+     */
     public <T> T parseValue(final Double pSource,
                             final Class<T> pClazz) {
         if (OceanusPrice.class.equals(pClazz)) {
@@ -336,7 +391,15 @@ public class TethysUICoreDataFormatter
         throw new IllegalArgumentException(ERROR_CLASS + pClazz.getSimpleName());
     }
 
-    @Override
+    /**
+     * Parse object value.
+     * @param <T> the value type
+     * @param pSource the source value
+     * @param pCurrCode the currency code
+     * @param pClazz the value type class
+     * @return the formatted value
+     * @throws IllegalArgumentException on bad TethysDecimal format
+     */
     public <T> T parseValue(final Double pSource,
                             final String pCurrCode,
                             final Class<T> pClazz) {

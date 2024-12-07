@@ -43,7 +43,7 @@ import net.sourceforge.joceanus.gordianknot.impl.core.keyset.GordianCoreKeySet;
 import net.sourceforge.joceanus.gordianknot.impl.core.stream.GordianStreamManager;
 import net.sourceforge.joceanus.gordianknot.impl.core.zip.GordianCoreZipLock.GordianUnlockNotify;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.format.OceanusDataConverter;
+import net.sourceforge.joceanus.oceanus.convert.OceanusDataConverter;
 
 /**
  * Class used to extract from a ZipFile.

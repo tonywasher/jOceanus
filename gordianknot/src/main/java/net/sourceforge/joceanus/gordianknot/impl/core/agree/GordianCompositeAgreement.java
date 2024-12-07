@@ -33,7 +33,7 @@ import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianIOException;
 import net.sourceforge.joceanus.gordianknot.impl.core.kdf.GordianHKDFEngine;
 import net.sourceforge.joceanus.gordianknot.impl.core.kdf.GordianHKDFParams;
 import net.sourceforge.joceanus.gordianknot.impl.core.keypair.GordianCompositeKeyPair;
-import net.sourceforge.joceanus.oceanus.format.OceanusDataConverter;
+import net.sourceforge.joceanus.oceanus.convert.OceanusDataConverter;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.ASN1OctetString;

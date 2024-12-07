@@ -33,7 +33,7 @@ import org.json.JSONTokener;
 import net.sourceforge.joceanus.metis.exc.MetisDataException;
 import net.sourceforge.joceanus.metis.exc.MetisIOException;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.format.OceanusDataConverter;
+import net.sourceforge.joceanus.oceanus.convert.OceanusDataConverter;
 
 /**
  * Http client interface.
