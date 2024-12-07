@@ -16,9 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.core.stream;
 
-import java.io.InputStream;
-import java.util.Arrays;
-
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianCipherParameters;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianStreamCipher;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianStreamCipherSpec;
@@ -33,15 +30,18 @@ import net.sourceforge.joceanus.gordianknot.api.mac.GordianMac;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacParameters;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacSpec;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
-import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreKnuthObfuscater;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianDataConverter;
 import net.sourceforge.joceanus.gordianknot.impl.core.cipher.GordianCoreCipher;
 import net.sourceforge.joceanus.gordianknot.impl.core.cipher.GordianCoreCipherFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.digest.GordianCoreDigestFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.keyset.GordianCoreKeySet;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreKnuthObfuscater;
 import net.sourceforge.joceanus.gordianknot.impl.core.mac.GordianCoreMacFactory;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.convert.OceanusDataConverter;
+
+import java.io.InputStream;
+import java.util.Arrays;
 
 /**
  * Stream definition.
@@ -89,9 +89,9 @@ public final class GordianStreamDefinition {
                                    final byte[] pTypeDef,
                                    final byte[] pInitVector,
                                    final byte[] pValue) throws OceanusException {
-        final int myStreamId = (int) (pExternalId & OceanusDataConverter.NYBBLE_MASK);
+        final int myStreamId = (int) (pExternalId & GordianDataConverter.NYBBLE_MASK);
         theType = GordianStreamType.fromId(myStreamId);
-        theTypeId = (int) (pExternalId >> OceanusDataConverter.NYBBLE_SHIFT);
+        theTypeId = (int) (pExternalId >> GordianDataConverter.NYBBLE_SHIFT);
         theTypeDefinition = pTypeDef == null
                             ? null
                             : Arrays.copyOf(pTypeDef, pTypeDef.length);
@@ -196,7 +196,7 @@ public final class GordianStreamDefinition {
      * @return the encoded value
      */
     public long getExternalId() {
-        return ((long) theTypeId << OceanusDataConverter.NYBBLE_SHIFT)
+        return ((long) theTypeId << GordianDataConverter.NYBBLE_SHIFT)
                 + theType.getId();
     }
 

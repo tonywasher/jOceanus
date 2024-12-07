@@ -52,6 +52,7 @@ import net.sourceforge.joceanus.gordianknot.api.random.GordianRandomFactory;
 import net.sourceforge.joceanus.gordianknot.api.random.GordianRandomSpec;
 import net.sourceforge.joceanus.gordianknot.api.random.GordianRandomType;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianDataConverter;
 import net.sourceforge.joceanus.gordianknot.impl.core.cipher.GordianCoreCipher;
 import net.sourceforge.joceanus.gordianknot.impl.core.cipher.GordianCoreCipherFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.cipher.GordianCoreWrapper;
@@ -68,7 +69,6 @@ import net.sourceforge.joceanus.gordianknot.junit.regression.SymmetricStore.Fact
 import net.sourceforge.joceanus.gordianknot.junit.regression.SymmetricStore.FactorySymPBECipherSpec;
 import net.sourceforge.joceanus.gordianknot.util.GordianGenerator;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.convert.OceanusDataConverter;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.util.Arrays;
 import org.junit.jupiter.api.Assertions;
@@ -1362,7 +1362,7 @@ class SymmetricTest {
      */
     private byte[] getAADData() {
         if (theAADData == null) {
-            theAADData = OceanusDataConverter.stringToByteArray("SomeAADBytes");
+            theAADData = GordianDataConverter.stringToByteArray("SomeAADBytes");
         }
         return theAADData;
     }

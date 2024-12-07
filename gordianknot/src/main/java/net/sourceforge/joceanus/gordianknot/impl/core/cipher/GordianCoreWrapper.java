@@ -16,12 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.core.cipher;
 
-import java.security.spec.PKCS8EncodedKeySpec;
-import java.security.spec.X509EncodedKeySpec;
-
-import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
-import org.bouncycastle.util.Arrays;
-
 import net.sourceforge.joceanus.gordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianCipherParameters;
@@ -33,13 +27,18 @@ import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacSpec;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianDataConverter;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianLogicException;
 import net.sourceforge.joceanus.gordianknot.impl.core.key.GordianCoreKey;
 import net.sourceforge.joceanus.gordianknot.impl.core.key.GordianCoreKeyGenerator;
 import net.sourceforge.joceanus.gordianknot.impl.core.keypair.GordianCoreKeyPairGenerator;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.convert.OceanusDataConverter;
+import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
+import org.bouncycastle.util.Arrays;
+
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
 
 /**
  * GordianKnot base for WrapCipher.
@@ -224,7 +223,7 @@ public class GordianCoreWrapper
         }
 
         /* Determine semantics of the initial block */
-        final byte[] myByteLen = OceanusDataConverter.integerToByteArray(myDataLen);
+        final byte[] myByteLen = GordianDataConverter.integerToByteArray(myDataLen);
         int myCheckLen = theBlockLen - Integer.BYTES;
         int myHdrLen = theBlockLen;
 
@@ -352,7 +351,7 @@ public class GordianCoreWrapper
 
         /* Obtain encoded length */
         final byte[] myByteLen = Arrays.copyOfRange(myData, myCheckLen, myCheckLen + Integer.BYTES);
-        final int myEncodedLen = OceanusDataConverter.byteArrayToInteger(myByteLen);
+        final int myEncodedLen = GordianDataConverter.byteArrayToInteger(myByteLen);
 
         /* Obtain zeroLen and check that it is valid */
         final int myZeroLen = myDataLen - myEncodedLen;

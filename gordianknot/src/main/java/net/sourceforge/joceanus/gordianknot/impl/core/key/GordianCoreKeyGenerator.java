@@ -24,11 +24,11 @@ import net.sourceforge.joceanus.gordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.gordianknot.api.key.GordianKeyGenerator;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMac;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianDataConverter;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianRandomSource;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.kdf.GordianHKDFMulti;
 import net.sourceforge.joceanus.gordianknot.impl.core.kdf.GordianHKDFParams;
-import net.sourceforge.joceanus.oceanus.convert.OceanusDataConverter;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 import java.security.SecureRandom;
@@ -126,8 +126,8 @@ public abstract class GordianCoreKeyGenerator<T extends GordianKeySpec>
         final GordianDigestType[] myDigestTypes = theFactory.getIdManager().deriveKeyGenDigestTypesFromSeed(pSeededRandom, 2);
 
         /* Determine info bytes */
-        final byte[] myAlgo = OceanusDataConverter.stringToByteArray(theKeyType.toString());
-        final byte[] myKeyLenBytes = OceanusDataConverter.integerToByteArray(theKeyLength);
+        final byte[] myAlgo = GordianDataConverter.stringToByteArray(theKeyType.toString());
+        final byte[] myKeyLenBytes = GordianDataConverter.integerToByteArray(theKeyLength);
         final byte[] mySeed = new byte[Long.BYTES];
         pSeededRandom.nextBytes(mySeed);
 

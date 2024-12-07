@@ -29,11 +29,11 @@ import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairGenerator;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianAgreementResult.GordianDerivationId;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianDataConverter;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianIOException;
 import net.sourceforge.joceanus.gordianknot.impl.core.kdf.GordianHKDFEngine;
 import net.sourceforge.joceanus.gordianknot.impl.core.kdf.GordianHKDFParams;
 import net.sourceforge.joceanus.gordianknot.impl.core.keypair.GordianCompositeKeyPair;
-import net.sourceforge.joceanus.oceanus.convert.OceanusDataConverter;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.ASN1OctetString;
@@ -189,7 +189,7 @@ public final class GordianCompositeAgreement {
                 /* Handle random bytes */
                 if (myRandom == null) {
                     /* Build the 64-bit seed, create the seeded random and populate bytes */
-                    final long mySeed = OceanusDataConverter.byteArrayToLong(myPart);
+                    final long mySeed = GordianDataConverter.byteArrayToLong(myPart);
                     myRandom = new Random(mySeed);
                     final byte[] myBytes = new byte[Long.BYTES];
                     myRandom.nextBytes(myBytes);

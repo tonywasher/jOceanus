@@ -16,14 +16,13 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.core.random;
 
-import org.bouncycastle.crypto.prng.EntropySource;
-import org.bouncycastle.util.Arrays;
-
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymKeySpec;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianByteArrayInteger;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianDataConverter;
 import net.sourceforge.joceanus.gordianknot.impl.core.cipher.GordianCoreCipher;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.convert.OceanusDataConverter;
+import org.bouncycastle.crypto.prng.EntropySource;
+import org.bouncycastle.util.Arrays;
 
 /**
  * Implementation of CTRSP800DRBG based on the BouncyCastle Code.
@@ -124,8 +123,8 @@ public class GordianSP800CTRDRBG
         }
 
         /* Allocate the lengths */
-        final byte[] myL = OceanusDataConverter.integerToByteArray(pInput.length);
-        final byte[] myN = OceanusDataConverter.integerToByteArray(pNumBits / Byte.SIZE);
+        final byte[] myL = GordianDataConverter.integerToByteArray(pInput.length);
+        final byte[] myN = GordianDataConverter.integerToByteArray(pNumBits / Byte.SIZE);
 
         /* Create the input buffer */
         final int myKeyLen = theKey.length;

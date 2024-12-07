@@ -18,8 +18,6 @@ package net.sourceforge.joceanus.gordianknot.impl.core.base;
 
 import org.bouncycastle.util.Arrays;
 
-import net.sourceforge.joceanus.oceanus.convert.OceanusDataConverter;
-
 /**
  * Simple class that handles a byte array as an integer housing an integer of max value 2
  * <sup>8n</sup> where n is the length of the byte array.
@@ -99,9 +97,9 @@ public final class GordianByteArrayInteger {
         /* Calculate existing value */
         long myVal = 0;
         for (int i = 0; i < theLength; i++) {
-            myVal <<= OceanusDataConverter.NYBBLE_SHIFT;
+            myVal <<= GordianDataConverter.NYBBLE_SHIFT;
             myVal += theBuffer[i]
-                    & OceanusDataConverter.BYTE_MASK;
+                    & GordianDataConverter.BYTE_MASK;
         }
 
         /* Determine whether we have reached the limit */
@@ -142,9 +140,9 @@ public final class GordianByteArrayInteger {
         while (myOffset <= myLength) {
             /* Calculate sum at offset */
             int myNext = (theBuffer[theLength
-                    - myOffset] & OceanusDataConverter.BYTE_MASK)
+                    - myOffset] & GordianDataConverter.BYTE_MASK)
                     + (pAdjust[myLength
-                    - myOffset] & OceanusDataConverter.BYTE_MASK);
+                    - myOffset] & GordianDataConverter.BYTE_MASK);
             if (doCarry) {
                 myNext++;
             }
@@ -155,7 +153,7 @@ public final class GordianByteArrayInteger {
             myOffset++;
 
             /* Determine the carry */
-            doCarry = (myNext & ~OceanusDataConverter.BYTE_MASK) != 0;
+            doCarry = (myNext & ~GordianDataConverter.BYTE_MASK) != 0;
         }
 
         /* Adjust remaining bytes for carry */

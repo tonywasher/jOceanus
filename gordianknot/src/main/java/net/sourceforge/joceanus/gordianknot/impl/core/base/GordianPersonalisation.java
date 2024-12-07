@@ -26,7 +26,6 @@ import net.sourceforge.joceanus.gordianknot.api.mac.GordianMac;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.kdf.GordianHKDFEngine;
 import net.sourceforge.joceanus.gordianknot.impl.core.kdf.GordianHKDFParams;
-import net.sourceforge.joceanus.oceanus.convert.OceanusDataConverter;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 import java.net.InetAddress;
@@ -170,7 +169,7 @@ public class GordianPersonalisation {
         /* Obtain configuration */
         byte[] myPhraseBytes = pFactory.getSecuritySeed();
         if (myPhraseBytes == null) {
-            myPhraseBytes = OceanusDataConverter.stringToByteArray(getHostName());
+            myPhraseBytes = GordianDataConverter.stringToByteArray(getHostName());
         }
 
         /* Protect against exceptions */
@@ -333,7 +332,7 @@ public class GordianPersonalisation {
         int myVal = 0;
         for (int i = 0, myOffSet = pOffSet; i < Integer.BYTES; i++, myOffSet++) {
             myVal <<= Byte.SIZE;
-            myVal |= thePersonalisation[myOffSet] & OceanusDataConverter.BYTE_MASK;
+            myVal |= thePersonalisation[myOffSet] & GordianDataConverter.BYTE_MASK;
         }
 
         /* Return the value */
@@ -350,7 +349,7 @@ public class GordianPersonalisation {
                                   final byte[] pBaseSeed) {
         /* Build the 48-bit seed and return the seeded random */
         final long myPrefix = ((long) getPersonalisedInteger(pPrefixId)) << Short.SIZE;
-        final long myBaseSeed = Integer.toUnsignedLong(OceanusDataConverter.byteArrayToInteger(pBaseSeed));
+        final long myBaseSeed = Integer.toUnsignedLong(GordianDataConverter.byteArrayToInteger(pBaseSeed));
         final long mySeed = myPrefix ^ myBaseSeed;
         return new Random(mySeed);
     }
@@ -364,7 +363,7 @@ public class GordianPersonalisation {
     private static GordianDigestSpec determineHKDFDigestSpec(final GordianFactory pFactory,
                                                              final byte[] pBaseSeed) {
         /* Build the 64-bit seed and create the seeded random */
-        final long mySeed = OceanusDataConverter.byteArrayToLong(pBaseSeed);
+        final long mySeed = GordianDataConverter.byteArrayToLong(pBaseSeed);
         final Random myRandom = new Random(mySeed);
 
         /* Access the list to select from */

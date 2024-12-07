@@ -16,14 +16,14 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.core.zip;
 
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianDataConverter;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
-
-import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.convert.OceanusDataConverter;
 
 /**
  * Class represents the properties of an encrypted file in the Zip file.
@@ -105,7 +105,7 @@ public class GordianZipFileProperties {
     protected void setProperty(final String pName,
                                final String pValue) {
         /* Set the new value */
-        setProperty(pName, OceanusDataConverter.stringToByteArray(pValue));
+        setProperty(pName, GordianDataConverter.stringToByteArray(pValue));
     }
 
     /**
@@ -194,7 +194,7 @@ public class GordianZipFileProperties {
         /* Return the value */
         return (myValue == null)
                ? null
-               : OceanusDataConverter.byteArrayToString(myValue);
+               : GordianDataConverter.byteArrayToString(myValue);
     }
 
     /**
@@ -279,7 +279,7 @@ public class GordianZipFileProperties {
             /* If we have a byte value */
             if (myProperty.getByteValue() != null) {
                 /* Add the byte value as a Hex String */
-                myValue.append(OceanusDataConverter.bytesToHexString(myProperty.getByteValue()));
+                myValue.append(GordianDataConverter.bytesToHexString(myProperty.getByteValue()));
             }
 
             /* Add the value separator */
@@ -288,7 +288,7 @@ public class GordianZipFileProperties {
             /* If we have a long value */
             if (myProperty.getLongValue() != null) {
                 /* Add the long value as a Hex String */
-                myValue.append(OceanusDataConverter.longToHexString(myProperty.getLongValue()));
+                myValue.append(GordianDataConverter.longToHexString(myProperty.getLongValue()));
             }
 
             /* Add the value to the string */
@@ -358,13 +358,13 @@ public class GordianZipFileProperties {
         /* If we have a bytes array */
         if (myBytes != null) {
             /* Set the bytes value */
-            myProperty.setByteValue(OceanusDataConverter.hexStringToBytes(myBytes));
+            myProperty.setByteValue(GordianDataConverter.hexStringToBytes(myBytes));
         }
 
         /* If we have a long value */
         if (myLong != null) {
             /* Access the bytes value */
-            myProperty.setLongValue(OceanusDataConverter.hexStringToLong(myLong));
+            myProperty.setLongValue(GordianDataConverter.hexStringToLong(myLong));
         }
     }
 

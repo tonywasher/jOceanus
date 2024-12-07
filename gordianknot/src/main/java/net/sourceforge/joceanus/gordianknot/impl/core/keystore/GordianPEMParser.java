@@ -16,6 +16,12 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.core.keystore;
 
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianDataConverter;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianIOException;
+import net.sourceforge.joceanus.gordianknot.impl.core.keystore.GordianPEMObject.GordianPEMObjectType;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -26,12 +32,6 @@ import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
-
-import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
-import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianIOException;
-import net.sourceforge.joceanus.gordianknot.impl.core.keystore.GordianPEMObject.GordianPEMObjectType;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.convert.OceanusDataConverter;
 
 /**
  * PEM Parser.
@@ -129,7 +129,7 @@ public class GordianPEMParser {
                 pWriter.write(NEWLINE);
 
                 /* Access base64 data */
-                final String myBase64 = OceanusDataConverter.byteArrayToBase64(myObject.getEncoded());
+                final String myBase64 = GordianDataConverter.byteArrayToBase64(myObject.getEncoded());
                 int myLen = myBase64.length();
                 for (int i = 0; myLen > 0; i += PEMLEN, myLen -= PEMLEN) {
                     pWriter.write(myBase64, i, Math.min(myLen, PEMLEN));
@@ -239,7 +239,7 @@ public class GordianPEMParser {
 
         /* Parse the data and add certificate to list */
         final String myData = pCurrent.toString();
-        final byte[] myBytes = OceanusDataConverter.base64ToByteArray(myData);
+        final byte[] myBytes = GordianDataConverter.base64ToByteArray(myData);
         pList.add(new GordianPEMObject(theObjectType, myBytes));
         theObjectType = null;
         pCurrent.setLength(0);

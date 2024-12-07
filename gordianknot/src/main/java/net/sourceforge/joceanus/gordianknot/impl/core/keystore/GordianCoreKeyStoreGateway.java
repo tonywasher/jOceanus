@@ -16,6 +16,23 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.core.keystore;
 
+import net.sourceforge.joceanus.gordianknot.api.keystore.GordianCertificate;
+import net.sourceforge.joceanus.gordianknot.api.keystore.GordianKeyPairUse;
+import net.sourceforge.joceanus.gordianknot.api.keystore.GordianKeyStoreEntry;
+import net.sourceforge.joceanus.gordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStorePair;
+import net.sourceforge.joceanus.gordianknot.api.keystore.GordianKeyStoreGateway;
+import net.sourceforge.joceanus.gordianknot.api.zip.GordianZipLock;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianDataConverter;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
+import net.sourceforge.joceanus.gordianknot.impl.core.keystore.GordianPEMObject.GordianPEMObjectType;
+import net.sourceforge.joceanus.gordianknot.impl.core.zip.GordianCoreZipLock;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import org.bouncycastle.asn1.ASN1Object;
+import org.bouncycastle.asn1.crmf.CertReqMsg;
+import org.bouncycastle.asn1.crmf.PKMACValue;
+import org.bouncycastle.asn1.x500.X500Name;
+
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Arrays;
@@ -25,24 +42,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
-
-import org.bouncycastle.asn1.ASN1Object;
-import org.bouncycastle.asn1.crmf.CertReqMsg;
-import org.bouncycastle.asn1.crmf.PKMACValue;
-import org.bouncycastle.asn1.x500.X500Name;
-
-import net.sourceforge.joceanus.gordianknot.api.keystore.GordianCertificate;
-import net.sourceforge.joceanus.gordianknot.api.keystore.GordianKeyPairUse;
-import net.sourceforge.joceanus.gordianknot.api.keystore.GordianKeyStoreEntry;
-import net.sourceforge.joceanus.gordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStorePair;
-import net.sourceforge.joceanus.gordianknot.api.keystore.GordianKeyStoreGateway;
-import net.sourceforge.joceanus.gordianknot.api.zip.GordianZipLock;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
-import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
-import net.sourceforge.joceanus.gordianknot.impl.core.keystore.GordianPEMObject.GordianPEMObjectType;
-import net.sourceforge.joceanus.gordianknot.impl.core.zip.GordianCoreZipLock;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.convert.OceanusDataConverter;
 
 /**
  * keyStoreGateway implementation.
@@ -181,7 +180,7 @@ public class GordianCoreKeyStoreGateway
      */
     byte[] getMACSecret(final X500Name pName) {
         final String mySecret = theMACSecretResolver.apply(pName);
-        return mySecret == null ? null : OceanusDataConverter.stringToByteArray(mySecret);
+        return mySecret == null ? null : GordianDataConverter.stringToByteArray(mySecret);
     }
 
     /**

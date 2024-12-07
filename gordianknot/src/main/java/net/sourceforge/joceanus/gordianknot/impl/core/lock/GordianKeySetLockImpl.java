@@ -20,8 +20,8 @@ import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySet;
 import net.sourceforge.joceanus.gordianknot.api.lock.GordianKeySetLock;
 import net.sourceforge.joceanus.gordianknot.api.lock.GordianPasswordLockSpec;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianDataConverter;
 import net.sourceforge.joceanus.gordianknot.impl.core.keyset.GordianCoreKeySet;
-import net.sourceforge.joceanus.oceanus.convert.OceanusDataConverter;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 import java.util.Arrays;
@@ -69,7 +69,7 @@ public class GordianKeySetLockImpl
             final GordianPasswordLockRecipe myRecipe = new GordianPasswordLockRecipe(pLockingFactory, pLockSpec);
 
             /* Generate the hash */
-            myPassword = OceanusDataConverter.charsToByteArray(pPassword);
+            myPassword = GordianDataConverter.charsToByteArray(pPassword);
             final GordianCoreKeySet myKeySet = myRecipe.processPassword(pLockingFactory, myPassword);
             final byte[] myPayload = myKeySet.secureKeySet(pKeySetToLock);
             theLockASN1 = myRecipe.buildLockASN1(myPassword.length, myPayload);
@@ -128,7 +128,7 @@ public class GordianKeySetLockImpl
             theLockASN1 = pLockASN1;
 
             /* Resolve the recipe */
-            myPassword = OceanusDataConverter.charsToByteArray(pPassword);
+            myPassword = GordianDataConverter.charsToByteArray(pPassword);
             final GordianPasswordLockRecipe myRecipe = new GordianPasswordLockRecipe(pLockingFactory, myPassword.length, theLockASN1);
 
             /* Process the password, create parameters and factory */

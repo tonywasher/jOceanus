@@ -33,13 +33,13 @@ import net.sourceforge.joceanus.gordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySet;
 import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySetSpec;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianDataConverter;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianParameters;
 import net.sourceforge.joceanus.gordianknot.impl.core.kdf.GordianHKDFEngine;
 import net.sourceforge.joceanus.gordianknot.impl.core.kdf.GordianHKDFParams;
 import net.sourceforge.joceanus.gordianknot.impl.core.key.GordianCoreKeyGenerator;
 import net.sourceforge.joceanus.gordianknot.impl.core.keyset.GordianCoreKeySet;
 import net.sourceforge.joceanus.gordianknot.impl.core.keyset.GordianCoreKeySetFactory;
-import net.sourceforge.joceanus.oceanus.convert.OceanusDataConverter;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import org.bouncycastle.util.Arrays;
 
@@ -362,7 +362,7 @@ public class GordianAgreementResult {
                                   final GordianDerivationId pId,
                                   final int pResultLen) throws OceanusException {
         /* Build the 64-bit seed and create the seeded random */
-        final long mySeed = OceanusDataConverter.byteArrayToLong(pSecret);
+        final long mySeed = GordianDataConverter.byteArrayToLong(pSecret);
         final Random myRandom = new Random(mySeed);
 
         /* Protect against exceptions */

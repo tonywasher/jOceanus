@@ -18,7 +18,6 @@ package net.sourceforge.joceanus.gordianknot.impl.core.base;
 
 import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactoryType;
-import net.sourceforge.joceanus.oceanus.convert.OceanusDataConverter;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 import java.security.SecureRandom;
@@ -153,7 +152,7 @@ public class GordianParameters {
         /* Store seeds */
         theSecuritySeed = pSecurityPhrase == null
                 ? null
-                : OceanusDataConverter.charsToByteArray(pSecurityPhrase);
+                : GordianDataConverter.charsToByteArray(pSecurityPhrase);
         theKeySetSeed = null;
 
         /* Note that this is not internal */
