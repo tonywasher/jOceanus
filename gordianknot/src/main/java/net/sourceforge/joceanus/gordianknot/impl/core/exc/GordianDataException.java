@@ -35,4 +35,13 @@ public class GordianDataException
     public GordianDataException(final String s) {
         super(s);
     }
+
+    /**
+     * Create a new GordianKnot Exception object based on a string and exception.
+     * @param s the description of the exception
+     * @param e the causing exception
+     */
+    public GordianDataException(final String s, final Exception e) {
+        super(s, e);
+    }
 }

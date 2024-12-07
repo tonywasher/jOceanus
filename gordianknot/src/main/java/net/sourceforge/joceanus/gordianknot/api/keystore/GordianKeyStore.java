@@ -16,16 +16,16 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.api.keystore;
 
-import java.io.File;
-import java.io.OutputStream;
-import java.util.List;
-
 import net.sourceforge.joceanus.gordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.gordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySet;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+
+import java.io.File;
+import java.io.OutputStream;
+import java.time.LocalDate;
+import java.util.List;
 
 /**
  * KeyStore.
@@ -236,7 +236,7 @@ public interface GordianKeyStore {
      * @param pAlias the alias
      * @return the creation date
      */
-    OceanusDate getCreationDate(String pAlias);
+    LocalDate getCreationDate(String pAlias);
 
     /**
      * Obtain the alias for this certificate.

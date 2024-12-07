@@ -33,7 +33,6 @@ import net.sourceforge.joceanus.gordianknot.impl.core.keystore.GordianKeyStoreEl
 import net.sourceforge.joceanus.gordianknot.impl.core.keystore.GordianKeyStoreElement.GordianKeyStoreSetElement;
 import net.sourceforge.joceanus.gordianknot.impl.core.lock.GordianPasswordLockSpecASN1;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.date.OceanusDate;
 import org.bouncycastle.asn1.ASN1BitString;
 import org.bouncycastle.asn1.DERBitString;
 import org.bouncycastle.asn1.x500.X500Name;
@@ -46,6 +45,8 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -55,6 +56,11 @@ import java.util.Map.Entry;
  * KeyStore Document.
  */
 public final class GordianKeyStoreDocument {
+    /**
+     * The Invalid XML error.
+     */
+    private static final DateTimeFormatter DATEFORMATTER = DateTimeFormatter.BASIC_ISO_DATE;
+
     /**
      * The Invalid XML error.
      */
@@ -266,7 +272,7 @@ public final class GordianKeyStoreDocument {
             /* Build alias entry */
             final Element myAliasEl = theDocument.createElement(myType.getElementName());
             myAliasEl.setAttribute(ATTR_ALIAS, myEntry.getKey());
-            myAliasEl.setAttribute(ATTR_DATE, myElement.getCreationDate().toString());
+            myAliasEl.setAttribute(ATTR_DATE, myElement.getCreationDate().format(DATEFORMATTER));
             pAliases.appendChild(myAliasEl);
 
             /* Switch on element type */
@@ -468,7 +474,7 @@ public final class GordianKeyStoreDocument {
 
             /* Access alias and creationDate */
             final String myAlias = ((Element) myNode).getAttribute(ATTR_ALIAS);
-            final OceanusDate myDate = new OceanusDate(((Element) myNode).getAttribute(ATTR_DATE));
+            final LocalDate myDate = LocalDate.parse(((Element) myNode).getAttribute(ATTR_DATE), DATEFORMATTER);
 
             /* Switch on element type */
             switch (myType) {
@@ -503,7 +509,7 @@ public final class GordianKeyStoreDocument {
      */
     private void parseKeySetLockElement(final Node pNode,
                                         final String pAlias,
-                                        final OceanusDate pDate) {
+                                        final LocalDate pDate) {
         /* Loop through the nodes */
         Node myNode = pNode.getFirstChild();
         while (myNode != null) {
@@ -533,7 +539,7 @@ public final class GordianKeyStoreDocument {
      */
     private void parseKeySetElement(final Node pNode,
                                     final String pAlias,
-                                    final OceanusDate pDate) throws OceanusException {
+                                    final LocalDate pDate) throws OceanusException {
         /* Loop through the nodes */
         byte[] mySecuredKey = null;
         Node myNode = pNode.getFirstChild();
@@ -575,7 +581,7 @@ public final class GordianKeyStoreDocument {
      */
     private void parseKeyElement(final Node pNode,
                                  final String pAlias,
-                                 final OceanusDate pDate) throws OceanusException {
+                                 final LocalDate pDate) throws OceanusException {
         /* Loop through the nodes */
         byte[] mySecuredKey = null;
         GordianKeySpec mySpec = null;
@@ -624,7 +630,7 @@ public final class GordianKeyStoreDocument {
      */
     private void parsePrivateKeyElement(final Node pNode,
                                         final String pAlias,
-                                        final OceanusDate pDate) throws OceanusException {
+                                        final LocalDate pDate) throws OceanusException {
         /* Loop through the nodes */
         byte[] mySecuredKey = null;
         byte[] myLock = null;
@@ -689,7 +695,7 @@ public final class GordianKeyStoreDocument {
      */
     private void parseCertificateElement(final Node pNode,
                                          final String pAlias,
-                                         final OceanusDate pDate) throws OceanusException {
+                                         final LocalDate pDate) throws OceanusException {
         /* Loop through the nodes */
         Node myNode = pNode.getFirstChild();
         while (myNode != null) {

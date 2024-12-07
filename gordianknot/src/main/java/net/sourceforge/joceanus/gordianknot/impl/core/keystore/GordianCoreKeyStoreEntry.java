@@ -16,16 +16,16 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.core.keystore;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import net.sourceforge.joceanus.gordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.gordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySet;
 import net.sourceforge.joceanus.gordianknot.api.keystore.GordianCertificate;
 import net.sourceforge.joceanus.gordianknot.api.keystore.GordianKeyStoreEntry;
-import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Core KeyStoreEntry.
@@ -38,26 +38,25 @@ public class GordianCoreKeyStoreEntry
     /**
      * The Creation Date.
      */
-    private final OceanusDate theDate;
+    private final LocalDate theDate;
 
     /**
      * Constructor.
      */
     GordianCoreKeyStoreEntry() {
-
-        this(new OceanusDate());
+        this(LocalDate.now());
     }
 
     /**
      * Constructor.
      * @param pDate the creation date
      */
-    GordianCoreKeyStoreEntry(final OceanusDate pDate) {
+    GordianCoreKeyStoreEntry(final LocalDate pDate) {
         theDate = pDate;
     }
 
     @Override
-    public OceanusDate getCreationDate() {
+    public LocalDate getCreationDate() {
         return theDate;
     }
 
@@ -103,7 +102,7 @@ public class GordianCoreKeyStoreEntry
          * @param pDate the creation date
          */
         GordianCoreKeyStoreCertificate(final GordianCoreCertificate pCertificate,
-                                       final OceanusDate pDate) {
+                                       final LocalDate pDate) {
             super(pDate);
             theCertificate = pCertificate;
         }
@@ -164,7 +163,7 @@ public class GordianCoreKeyStoreEntry
          */
         GordianCoreKeyStorePair(final GordianKeyPair pKeyPair,
                                 final List<GordianCertificate> pChain,
-                                final OceanusDate pDate) {
+                                final LocalDate pDate) {
             super(pDate);
             theKeyPair = pKeyPair;
             theChain = new ArrayList<>(pChain);
@@ -228,7 +227,7 @@ public class GordianCoreKeyStoreEntry
          * @param pDate the creation date
          */
         GordianCoreKeyStoreKey(final GordianKey<T> pKey,
-                               final OceanusDate pDate) {
+                               final LocalDate pDate) {
             super(pDate);
             theKey = pKey;
         }
@@ -282,7 +281,7 @@ public class GordianCoreKeyStoreEntry
          * @param pDate the creation date
          */
         GordianCoreKeyStoreSet(final GordianKeySet pKeySet,
-                               final OceanusDate pDate) {
+                               final LocalDate pDate) {
             super(pDate);
             theKeySet = pKeySet;
         }

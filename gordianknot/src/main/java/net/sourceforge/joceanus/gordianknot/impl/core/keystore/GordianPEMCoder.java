@@ -40,7 +40,6 @@ import net.sourceforge.joceanus.gordianknot.impl.core.keystore.GordianPEMObject.
 import net.sourceforge.joceanus.gordianknot.impl.core.zip.GordianCoreZipLock;
 import net.sourceforge.joceanus.gordianknot.impl.core.zip.GordianZipLockASN1;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.date.OceanusDate;
 import org.bouncycastle.asn1.ASN1Object;
 import org.bouncycastle.asn1.crmf.CertReqMsg;
 import org.bouncycastle.asn1.pkcs.EncryptedPrivateKeyInfo;
@@ -49,6 +48,7 @@ import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -216,7 +216,7 @@ public class GordianPEMCoder {
         /* Prepare for loop */
         final List<GordianKeyStoreEntry> myChain = new ArrayList<>();
         final GordianPEMObjectType myType = pObjects.get(0).getObjectType();
-        final OceanusDate myDate = new OceanusDate();
+        final LocalDate myDate = LocalDate.now();
 
         /* Loop through the objects */
         for (GordianPEMObject myObject : pObjects) {
@@ -386,7 +386,7 @@ public class GordianPEMCoder {
         checkSingletonList(pObjects);
 
         /* parse the certificate */
-        return new GordianCoreKeyStoreCertificate(decodeCertificate(pObjects.get(0)), new OceanusDate());
+        return new GordianCoreKeyStoreCertificate(decodeCertificate(pObjects.get(0)), LocalDate.now());
     }
 
     /**
@@ -491,7 +491,7 @@ public class GordianPEMCoder {
         final GordianKeyPair myPair = mySecuringKeySet.deriveKeyPair(myCert.getX509KeySpec(), myPrivateInfo.getEncryptedData());
 
         /* Return the new keyPair */
-        return new GordianCoreKeyStorePair(myPair, myChain, new OceanusDate());
+        return new GordianCoreKeyStorePair(myPair, myChain, LocalDate.now());
     }
 
     /**
@@ -521,7 +521,7 @@ public class GordianPEMCoder {
 
         /* Derive the keySet */
         final GordianKeySet myKeySet = mySecuringKeySet.deriveKeySet(myInfo.getEncryptedData());
-        return new GordianCoreKeyStoreSet(myKeySet, new OceanusDate());
+        return new GordianCoreKeyStoreSet(myKeySet, LocalDate.now());
     }
 
     /**
@@ -563,7 +563,7 @@ public class GordianPEMCoder {
 
         /* Derive the key */
         final GordianKey<?> myKey = mySecuringKeySet.deriveKey(myKeyDef, myKeyType);
-        return new GordianCoreKeyStoreKey<>(myKey, new OceanusDate());
+        return new GordianCoreKeyStoreKey<>(myKey, LocalDate.now());
     }
 
     /**

@@ -18,6 +18,7 @@ package net.sourceforge.joceanus.oceanus.date;
 
 import java.time.temporal.ChronoUnit;
 import java.util.Locale;
+import java.util.Objects;
 
 /**
  * Represents a contiguous Range of dates.
@@ -237,17 +238,7 @@ public class OceanusDateRange
 
     @Override
     public int hashCode() {
-        /* Calculate hash based on Start/End */
-        int iHash = 1;
-        if (theStart != null) {
-            iHash *= OceanusDate.HASH_PRIME;
-            iHash += theStart.hashCode();
-        }
-        if (theEnd != null) {
-            iHash *= OceanusDate.HASH_PRIME;
-            iHash += theEnd.hashCode();
-        }
-        return iHash;
+        return Objects.hash(theStart, theEnd);
     }
 
     /**

@@ -16,8 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.core.base;
 
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.exc.OceanusDataException;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -225,7 +225,7 @@ public final class GordianDataConverter {
 
         /* Check that it has an even length */
         if (myLen % 2 != 0) {
-            throw new OceanusDataException(ERROR_HEXLEN
+            throw new GordianDataException(ERROR_HEXLEN
                     + pHexString);
         }
 
@@ -240,7 +240,7 @@ public final class GordianDataConverter {
 
             /* Check that the char is a valid hex digit */
             if (myDigit < 0) {
-                throw new OceanusDataException(ERROR_HEXDIGIT
+                throw new GordianDataException(ERROR_HEXDIGIT
                         + pHexString);
             }
 
@@ -253,7 +253,7 @@ public final class GordianDataConverter {
 
             /* Check that the char is a valid hex digit */
             if (myDigit < 0) {
-                throw new OceanusDataException(ERROR_HEXDIGIT
+                throw new GordianDataException(ERROR_HEXDIGIT
                         + pHexString);
             }
 
@@ -292,7 +292,7 @@ public final class GordianDataConverter {
 
         /* Check that it has an even length */
         if (myLen % 2 != 0) {
-            throw new OceanusDataException(ERROR_HEXLEN
+            throw new GordianDataException(ERROR_HEXLEN
                     + pHexString);
         }
 
@@ -305,7 +305,7 @@ public final class GordianDataConverter {
 
             /* Check that the char is a valid hex digit */
             if (myDigit < 0) {
-                throw new OceanusDataException(ERROR_HEXDIGIT
+                throw new GordianDataException(ERROR_HEXDIGIT
                         + pHexString);
             }
 
@@ -339,7 +339,7 @@ public final class GordianDataConverter {
             out.flush();
             return baos.toByteArray();
         } catch (IOException e) {
-            throw new OceanusDataException(e.getMessage(), e);
+            throw new GordianDataException(e.getMessage(), e);
         }
     }
 
@@ -366,7 +366,7 @@ public final class GordianDataConverter {
             /* Return the array */
             return myArray;
         } catch (IOException e) {
-            throw new OceanusDataException(e.getMessage(), e);
+            throw new GordianDataException(e.getMessage(), e);
         }
     }
 

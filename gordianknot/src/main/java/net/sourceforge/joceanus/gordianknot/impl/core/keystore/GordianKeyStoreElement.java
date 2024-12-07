@@ -16,10 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.core.keystore;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import net.sourceforge.joceanus.gordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianLockFactory;
@@ -31,7 +27,11 @@ import net.sourceforge.joceanus.gordianknot.api.keystore.GordianCertificateId;
 import net.sourceforge.joceanus.gordianknot.api.lock.GordianKeySetLock;
 import net.sourceforge.joceanus.gordianknot.api.lock.GordianPasswordLockSpec;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * KeyStoreElement.
@@ -154,7 +154,7 @@ public interface GordianKeyStoreElement {
          * @param pDate the creation date
          */
         GordianKeyStoreCertificateElement(final GordianKeyStoreCertificateKey pKey,
-                                          final OceanusDate pDate) {
+                                          final LocalDate pDate) {
             super(pDate);
             theKey = pKey;
         }
@@ -263,7 +263,7 @@ public interface GordianKeyStoreElement {
         GordianKeyStorePairElement(final byte[] pSecuredKey,
                                    final byte[] pSecuringLock,
                                    final List<GordianKeyStoreCertificateKey> pChain,
-                                   final OceanusDate pDate) {
+                                   final LocalDate pDate) {
             /* Store details */
             super(pDate);
             theSecuredKey = pSecuredKey;
@@ -427,7 +427,7 @@ public interface GordianKeyStoreElement {
          * @param pDate the creation date
          */
         GordianKeyStoreLockElement(final byte[] pLock,
-                                   final OceanusDate pDate) {
+                                   final LocalDate pDate) {
             /* Store details */
             super(pDate);
             theLock = pLock;
@@ -537,7 +537,7 @@ public interface GordianKeyStoreElement {
         GordianKeyStoreKeyElement(final T pKeyType,
                                   final byte[] pSecuredKey,
                                   final byte[] pSecuringLock,
-                                  final OceanusDate pDate) {
+                                  final LocalDate pDate) {
             /* Store details */
             super(pDate);
             theKeyType = pKeyType;
@@ -672,7 +672,7 @@ public interface GordianKeyStoreElement {
          */
         GordianKeyStoreSetElement(final byte[] pSecuredKeySet,
                                   final byte[] pSecuringLock,
-                                  final OceanusDate pDate) {
+                                  final LocalDate pDate) {
             /* Store details */
             super(pDate);
             theSecuredKeySet = pSecuredKeySet;
