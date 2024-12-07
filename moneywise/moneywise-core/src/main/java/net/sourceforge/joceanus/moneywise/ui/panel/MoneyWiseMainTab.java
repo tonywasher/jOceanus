@@ -17,7 +17,7 @@
 package net.sourceforge.joceanus.moneywise.ui.panel;
 
 import net.sourceforge.joceanus.metis.help.MetisHelpModule;
-import net.sourceforge.joceanus.moneywise.MoneyWiseIOException;
+import net.sourceforge.joceanus.moneywise.exc.MoneyWiseIOException;
 import net.sourceforge.joceanus.moneywise.tax.uk.MoneyWiseUKTaxYearCache;
 import net.sourceforge.joceanus.moneywise.threads.MoneyWiseThreadLoadArchive;
 import net.sourceforge.joceanus.moneywise.threads.MoneyWiseThreadWriteQIF;

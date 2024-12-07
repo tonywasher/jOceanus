@@ -14,35 +14,58 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.moneywise;
+package net.sourceforge.joceanus.moneywise.exc;
 
 import net.sourceforge.joceanus.oceanus.OceanusException;
 
 /**
- * MoneyWise Logic Exception.
+ * MoneyWise Data Exception.
  */
-public class MoneyWiseLogicException
+public class MoneyWiseDataException
         extends OceanusException {
     /**
      * SerialId.
      */
-    private static final long serialVersionUID = 7365752331990335281L;
+    private static final long serialVersionUID = -7752365452043464292L;
+
+    /**
+     * Create a new MoneyWise Exception object based on an object, a string and an underlying
+     * exception.
+     * @param o the object
+     * @param s the description of the exception
+     * @param e the underlying exception
+     */
+    public MoneyWiseDataException(final Object o,
+                                  final String s,
+                                  final Throwable e) {
+        super(o, s, e);
+    }
 
     /**
      * Create a new MoneyWise Exception object based on an object and a string.
      * @param o the object
      * @param s the description of the exception
      */
-    public MoneyWiseLogicException(final Object o,
-                                   final String s) {
+    public MoneyWiseDataException(final Object o,
+                                  final String s) {
         super(o, s);
+    }
+
+    /**
+     * Create a new MoneyWise Exception object based on a string and an underlying exception.
+     * @param s the description of the exception
+     * @param e the underlying exception
+     */
+    public MoneyWiseDataException(final String s,
+                                  final Throwable e) {
+        super(s, e);
     }
 
     /**
      * Create a new MoneyWise Exception object based on a string.
      * @param s the description of the exception
      */
-    public MoneyWiseLogicException(final String s) {
+    public MoneyWiseDataException(final String s) {
         super(s);
     }
 }

@@ -14,25 +14,27 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.moneywise;
+package net.sourceforge.joceanus.moneywise.exc;
 
 import net.sourceforge.joceanus.oceanus.OceanusException;
 
 /**
- * MoneyWise Cancel Exception.
+ * MoneyWise IO Exception.
  */
-public class MoneyWiseCancelException
+public class MoneyWiseIOException
         extends OceanusException {
     /**
      * SerialId.
      */
-    private static final long serialVersionUID = 7209820774558300955L;
+    private static final long serialVersionUID = 7012839153107398238L;
 
     /**
-     * Create a new MoneyWise Exception object based on a string.
+     * Create a new MoneyWise Exception object based on a string and an underlying exception.
      * @param s the description of the exception
+     * @param e the underlying exception
      */
-    public MoneyWiseCancelException(final String s) {
-        super(s);
+    public MoneyWiseIOException(final String s,
+                                final Throwable e) {
+        super(s, e);
     }
 }

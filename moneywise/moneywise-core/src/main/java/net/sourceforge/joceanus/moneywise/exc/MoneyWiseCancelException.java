@@ -1,4 +1,4 @@
-/* *****************************************************************************
+/*******************************************************************************
  * MoneyWise: Finance Application
  * Copyright 2012,2024 Tony Washer
  *
@@ -14,7 +14,25 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
+package net.sourceforge.joceanus.moneywise.exc;
+
+import net.sourceforge.joceanus.oceanus.OceanusException;
+
 /**
- * Top level package.
+ * MoneyWise Cancel Exception.
  */
-package net.sourceforge.joceanus.moneywise;
+public class MoneyWiseCancelException
+        extends OceanusException {
+    /**
+     * SerialId.
+     */
+    private static final long serialVersionUID = 7209820774558300955L;
+
+    /**
+     * Create a new MoneyWise Exception object based on a string.
+     * @param s the description of the exception
+     */
+    public MoneyWiseCancelException(final String s) {
+        super(s);
+    }
+}
