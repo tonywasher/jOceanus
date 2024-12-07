@@ -36,7 +36,7 @@ import net.sourceforge.joceanus.prometheus.threads.PrometheusThreadUpdatePasswor
 import net.sourceforge.joceanus.prometheus.ui.PrometheusMenuId;
 import net.sourceforge.joceanus.prometheus.ui.PrometheusUIResource;
 import net.sourceforge.joceanus.prometheus.views.PrometheusDataControl;
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.logger.OceanusLogManager;
 import net.sourceforge.joceanus.oceanus.logger.OceanusLogger;
 import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;

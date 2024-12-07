@@ -26,7 +26,7 @@ import net.sourceforge.joceanus.gordianknot.impl.ext.engines.GordianZuc256Engine
 import net.sourceforge.joceanus.gordianknot.impl.ext.macs.GordianZuc128Mac;
 import net.sourceforge.joceanus.gordianknot.impl.ext.macs.GordianZuc256Mac;
 import net.sourceforge.joceanus.gordianknot.impl.ext.modes.GordianChaChaPoly1305;
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import org.bouncycastle.crypto.InvalidCipherTextException;
 import org.bouncycastle.crypto.Mac;
 import org.bouncycastle.crypto.StreamCipher;

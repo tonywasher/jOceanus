@@ -31,7 +31,7 @@ import net.sourceforge.joceanus.gordianknot.impl.core.encrypt.GordianCompositeEn
 import net.sourceforge.joceanus.gordianknot.impl.core.encrypt.GordianCoreEncryptorFactory;
 import net.sourceforge.joceanus.gordianknot.impl.jca.JcaEncryptor.JcaBlockEncryptor;
 import net.sourceforge.joceanus.gordianknot.impl.jca.JcaEncryptor.JcaHybridEncryptor;
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 /**
  * Jca Encryptor Factory.

@@ -19,7 +19,7 @@ package net.sourceforge.joceanus.tethys.ui.javafx.launch;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.logger.OceanusLogManager;
 import net.sourceforge.joceanus.oceanus.logger.OceanusLogger;
 import net.sourceforge.joceanus.tethys.ui.api.factory.TethysUILaunchProgram;

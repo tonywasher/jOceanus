@@ -35,7 +35,7 @@ import net.sourceforge.joceanus.moneywise.ui.dialog.MoneyWiseTransCategoryPanel;
 import net.sourceforge.joceanus.moneywise.views.MoneyWiseView;
 import net.sourceforge.joceanus.prometheus.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
 import net.sourceforge.joceanus.tethys.ui.api.factory.TethysUIFactory;
 import net.sourceforge.joceanus.tethys.ui.api.menu.TethysUIScrollMenu;

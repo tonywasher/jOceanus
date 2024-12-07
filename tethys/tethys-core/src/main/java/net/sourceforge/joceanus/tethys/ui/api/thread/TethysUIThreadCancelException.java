@@ -16,7 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.tethys.ui.api.thread;
 
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 /**
  * TethysThread Cancellation Exception.

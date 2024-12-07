@@ -16,16 +16,11 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.coeus.ui.panels;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.nio.charset.StandardCharsets;
-import java.util.Iterator;
-
 import net.sourceforge.joceanus.coeus.data.CoeusLoan;
 import net.sourceforge.joceanus.coeus.data.CoeusTotals;
 import net.sourceforge.joceanus.coeus.data.CoeusTotalsField;
 import net.sourceforge.joceanus.coeus.data.CoeusTransactionType;
+import net.sourceforge.joceanus.coeus.exc.CoeusDataException;
 import net.sourceforge.joceanus.coeus.ui.CoeusDataEvent;
 import net.sourceforge.joceanus.coeus.ui.CoeusFilter;
 import net.sourceforge.joceanus.coeus.ui.CoeusFilter.CoeusSnapShotFilter;
@@ -34,8 +29,7 @@ import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.metis.list.MetisListBaseManager;
 import net.sourceforge.joceanus.metis.list.MetisListIndexed;
 import net.sourceforge.joceanus.metis.toolkit.MetisToolkit;
-import net.sourceforge.joceanus.oceanus.OceanusException;
-import net.sourceforge.joceanus.oceanus.OceanusDataException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimal;
 import net.sourceforge.joceanus.oceanus.logger.OceanusLogManager;
 import net.sourceforge.joceanus.oceanus.logger.OceanusLogger;
@@ -45,6 +39,12 @@ import net.sourceforge.joceanus.tethys.ui.api.factory.TethysUIFactory;
 import net.sourceforge.joceanus.tethys.ui.api.pane.TethysUIBorderPaneManager;
 import net.sourceforge.joceanus.tethys.ui.api.table.TethysUITableColumn.TethysUITableScrollColumn;
 import net.sourceforge.joceanus.tethys.ui.api.table.TethysUITableManager;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
+import java.util.Iterator;
 
 /**
  * Statement Panel.
@@ -308,7 +308,7 @@ public class CoeusStatementTable
             myWriter.print(pData);
 
         } catch (IOException e) {
-            throw new OceanusDataException("Failed to output XML", e);
+            throw new CoeusDataException("Failed to output XML", e);
         }
     }
 }

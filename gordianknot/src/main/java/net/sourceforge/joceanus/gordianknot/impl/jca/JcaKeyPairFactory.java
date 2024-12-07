@@ -47,7 +47,7 @@ import net.sourceforge.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaSABE
 import net.sourceforge.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaSNTRUPrimeKeyPairGenerator;
 import net.sourceforge.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaSLHDSAKeyPairGenerator;
 import net.sourceforge.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaXMSSKeyPairGenerator;
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 import java.security.KeyFactory;
 import java.security.KeyPairGenerator;

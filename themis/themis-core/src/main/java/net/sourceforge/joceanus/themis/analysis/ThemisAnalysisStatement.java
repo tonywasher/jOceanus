@@ -19,7 +19,7 @@ package net.sourceforge.joceanus.themis.analysis;
 import java.util.Deque;
 import java.util.Iterator;
 
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.exc.ThemisDataException;
 
 /**

@@ -16,8 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.oceanus.jar;
 
-import net.sourceforge.joceanus.oceanus.OceanusDataException;
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.exc.OceanusDataException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.logger.OceanusLogManager;
 import net.sourceforge.joceanus.oceanus.logger.OceanusLogger;
 

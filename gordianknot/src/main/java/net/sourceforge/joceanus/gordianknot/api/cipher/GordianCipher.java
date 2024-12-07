@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.gordianknot.api.cipher;
 
 import java.util.Arrays;
 
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 /**
  * GordianKnot base for Cipher.

@@ -28,7 +28,7 @@ import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurity;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrency;
 import net.sourceforge.joceanus.moneywise.views.MoneyWiseSpotExchangeRate.MoneyWiseSpotExchangeList;
 import net.sourceforge.joceanus.moneywise.views.MoneyWiseSpotSecurityPrice.MoneyWiseSpotSecurityList;
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusRatio;
 

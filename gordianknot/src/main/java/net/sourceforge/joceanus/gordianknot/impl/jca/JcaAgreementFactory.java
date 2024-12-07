@@ -31,7 +31,7 @@ import net.sourceforge.joceanus.gordianknot.impl.jca.JcaAgreement.JcaMQVAgreemen
 import net.sourceforge.joceanus.gordianknot.impl.jca.JcaAgreement.JcaPostQuantumAgreement;
 import net.sourceforge.joceanus.gordianknot.impl.jca.JcaAgreement.JcaSignedAgreement;
 import net.sourceforge.joceanus.gordianknot.impl.jca.JcaAgreement.JcaUnifiedAgreement;
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 import javax.crypto.KeyAgreement;
 import javax.crypto.KeyGenerator;

@@ -26,7 +26,7 @@ import net.sourceforge.joceanus.gordianknot.impl.ext.engines.GordianBlake2XEngin
 import net.sourceforge.joceanus.gordianknot.impl.ext.engines.GordianSkeinXofEngine;
 import net.sourceforge.joceanus.gordianknot.impl.ext.params.GordianBlake2Parameters;
 import net.sourceforge.joceanus.gordianknot.impl.ext.params.GordianSkeinParameters;
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import org.bouncycastle.crypto.CipherParameters;
 import org.bouncycastle.crypto.StreamCipher;
 import org.bouncycastle.crypto.Xof;

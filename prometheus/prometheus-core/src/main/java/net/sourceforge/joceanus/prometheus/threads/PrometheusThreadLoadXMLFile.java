@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.prometheus.threads;
 
 import net.sourceforge.joceanus.gordianknot.util.GordianUtilities;
 import net.sourceforge.joceanus.metis.preference.MetisPreferenceManager;
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataSet;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataValuesFormatter;
 import net.sourceforge.joceanus.prometheus.database.PrometheusDataStore;

@@ -16,7 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.coeus.exc;
 
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 /**
  * Coeus Exception class.

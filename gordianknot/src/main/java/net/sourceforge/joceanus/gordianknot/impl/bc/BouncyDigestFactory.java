@@ -34,7 +34,7 @@ import net.sourceforge.joceanus.gordianknot.impl.ext.digests.GordianKangarooDige
 import net.sourceforge.joceanus.gordianknot.impl.ext.digests.GordianKangarooDigest.GordianKangarooTwelve;
 import net.sourceforge.joceanus.gordianknot.impl.ext.digests.GordianKangarooDigest.GordianMarsupilamiFourteen;
 import net.sourceforge.joceanus.gordianknot.impl.ext.digests.GordianSkeinDigest;
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import org.bouncycastle.crypto.Digest;
 import org.bouncycastle.crypto.Xof;
 import org.bouncycastle.crypto.digests.AsconDigest;

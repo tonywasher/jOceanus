@@ -21,7 +21,7 @@ import net.sourceforge.joceanus.gordianknot.api.zip.GordianZipFileContents;
 import net.sourceforge.joceanus.gordianknot.api.zip.GordianZipFileEntry;
 import net.sourceforge.joceanus.gordianknot.api.zip.GordianZipLock;
 import net.sourceforge.joceanus.gordianknot.api.zip.GordianZipReadFile;
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
 import net.sourceforge.joceanus.prometheus.exc.PrometheusIOException;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataSet;

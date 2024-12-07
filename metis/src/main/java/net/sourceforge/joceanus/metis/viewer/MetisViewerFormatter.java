@@ -32,7 +32,7 @@ import net.sourceforge.joceanus.metis.field.MetisFieldItem.MetisFieldVersionedDe
 import net.sourceforge.joceanus.metis.field.MetisFieldValidation;
 import net.sourceforge.joceanus.metis.field.MetisFieldVersionHistory;
 import net.sourceforge.joceanus.metis.field.MetisFieldVersionedItem;
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimal;
 import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
 import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;

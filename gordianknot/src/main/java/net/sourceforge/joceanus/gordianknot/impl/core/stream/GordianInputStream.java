@@ -21,8 +21,8 @@ import java.io.InputStream;
 
 import org.bouncycastle.util.Arrays;
 
-import net.sourceforge.joceanus.oceanus.OceanusException;
-import net.sourceforge.joceanus.oceanus.OceanusDataConverter;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.oceanus.format.OceanusDataConverter;
 
 /**
  * Input stream base implementation.

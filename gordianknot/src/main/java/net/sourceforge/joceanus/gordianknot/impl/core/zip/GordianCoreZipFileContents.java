@@ -23,7 +23,7 @@ import java.util.zip.ZipEntry;
 
 import net.sourceforge.joceanus.gordianknot.api.zip.GordianZipFileContents;
 import net.sourceforge.joceanus.gordianknot.api.zip.GordianZipFileEntry;
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 /**
  * Class represents the contents of an encrypted Zip file.

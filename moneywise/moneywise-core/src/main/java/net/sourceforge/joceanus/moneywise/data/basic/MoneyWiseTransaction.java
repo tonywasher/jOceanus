@@ -47,7 +47,7 @@ import net.sourceforge.joceanus.prometheus.data.PrometheusDataValues.PrometheusI
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataValues.PrometheusInfoSetItem;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditEntry;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.date.OceanusDate;
 import net.sourceforge.joceanus.oceanus.date.OceanusDateFormatter;
 import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;

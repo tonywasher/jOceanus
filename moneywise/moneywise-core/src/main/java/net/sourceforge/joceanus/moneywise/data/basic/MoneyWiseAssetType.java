@@ -17,7 +17,7 @@
 package net.sourceforge.joceanus.moneywise.data.basic;
 
 import net.sourceforge.joceanus.moneywise.exc.MoneyWiseDataException;
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 /**
  * Enumeration of Asset Types.

@@ -40,8 +40,8 @@ import net.sourceforge.joceanus.gordianknot.impl.core.digest.GordianCoreDigestFa
 import net.sourceforge.joceanus.gordianknot.impl.core.keyset.GordianCoreKeySet;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreKnuthObfuscater;
 import net.sourceforge.joceanus.gordianknot.impl.core.mac.GordianCoreMacFactory;
-import net.sourceforge.joceanus.oceanus.OceanusException;
-import net.sourceforge.joceanus.oceanus.OceanusDataConverter;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.oceanus.format.OceanusDataConverter;
 
 /**
  * Stream definition.

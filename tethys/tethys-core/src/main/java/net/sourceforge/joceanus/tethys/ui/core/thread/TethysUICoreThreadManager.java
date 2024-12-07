@@ -19,7 +19,7 @@ package net.sourceforge.joceanus.tethys.ui.core.thread;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.TethysEventProvider;

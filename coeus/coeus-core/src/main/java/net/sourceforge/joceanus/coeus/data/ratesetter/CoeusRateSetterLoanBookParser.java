@@ -30,7 +30,7 @@ import org.jsoup.nodes.Node;
 import org.jsoup.select.Elements;
 
 import net.sourceforge.joceanus.coeus.exc.CoeusDataException;
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.date.OceanusDate;
 import net.sourceforge.joceanus.oceanus.date.OceanusDateFormatter;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimalParser;

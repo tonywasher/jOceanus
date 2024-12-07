@@ -33,7 +33,7 @@ import net.sourceforge.joceanus.gordianknot.impl.ext.macs.GordianBlake2Mac;
 import net.sourceforge.joceanus.gordianknot.impl.ext.params.GordianBlake2Parameters;
 import net.sourceforge.joceanus.gordianknot.impl.ext.params.GordianKeccakParameters;
 import net.sourceforge.joceanus.gordianknot.impl.ext.params.GordianSkeinParameters;
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import org.bouncycastle.crypto.Digest;
 import org.bouncycastle.crypto.Mac;
 import org.bouncycastle.crypto.params.KeyParameter;

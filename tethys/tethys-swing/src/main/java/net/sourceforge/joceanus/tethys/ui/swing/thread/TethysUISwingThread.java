@@ -21,7 +21,7 @@ import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import javax.swing.SwingWorker;
 
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.tethys.ui.api.thread.TethysUIThread;
 import net.sourceforge.joceanus.tethys.ui.api.thread.TethysUIThreadStatusManager;
 import net.sourceforge.joceanus.tethys.ui.core.thread.TethysUICoreThreadStatus;

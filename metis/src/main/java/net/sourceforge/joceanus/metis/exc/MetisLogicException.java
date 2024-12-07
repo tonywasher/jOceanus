@@ -16,7 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.metis.exc;
 
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 /**
  * Metis Logic Exception.

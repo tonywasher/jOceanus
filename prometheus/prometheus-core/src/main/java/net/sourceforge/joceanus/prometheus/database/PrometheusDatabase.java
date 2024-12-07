@@ -23,7 +23,7 @@ import net.sourceforge.joceanus.metis.preference.MetisPreferenceKey;
 import net.sourceforge.joceanus.metis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.prometheus.preference.PrometheusPreferenceManager;
 import net.sourceforge.joceanus.prometheus.preference.PrometheusPreferenceSet;
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 /**
  * Preferences for a database.

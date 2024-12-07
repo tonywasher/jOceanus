@@ -16,6 +16,16 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.metis.parser;
 
+import net.sourceforge.joceanus.metis.exc.MetisDataException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.date.OceanusDateFormatter;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimal;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimalParser;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRate;
+import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -24,16 +34,6 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import net.sourceforge.joceanus.oceanus.OceanusException;
-import net.sourceforge.joceanus.oceanus.OceanusDataException;
-import net.sourceforge.joceanus.oceanus.date.OceanusDate;
-import net.sourceforge.joceanus.oceanus.date.OceanusDateFormatter;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimal;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimalParser;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusRate;
-import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIDataFormatter;
 
 /**
  * CSV Parser.
@@ -105,7 +105,7 @@ public abstract class MetisCSVParser {
         try {
             return theDateParser.parseDate(pInput);
         } catch (IllegalArgumentException e) {
-            throw new OceanusDataException("Bad date", e);
+            throw new MetisDataException("Bad date", e);
         }
     }
 
@@ -119,7 +119,7 @@ public abstract class MetisCSVParser {
         try {
             return theDecimalParser.parseDecimalValue(pInput, theDecimalSize);
         } catch (IllegalArgumentException e) {
-            throw new OceanusDataException("Bad decimal", e);
+            throw new MetisDataException("Bad decimal", e);
         }
     }
 
@@ -133,7 +133,7 @@ public abstract class MetisCSVParser {
         try {
             return theDecimalParser.parseMoneyValue(pInput);
         } catch (IllegalArgumentException e) {
-            throw new OceanusDataException("Bad money", e);
+            throw new MetisDataException("Bad money", e);
         }
     }
 
@@ -147,7 +147,7 @@ public abstract class MetisCSVParser {
         try {
             return theDecimalParser.parseRateValue(pInput);
         } catch (IllegalArgumentException e) {
-            throw new OceanusDataException("Bad rate", e);
+            throw new MetisDataException("Bad rate", e);
         }
     }
 
@@ -211,7 +211,7 @@ public abstract class MetisCSVParser {
             /* Catch exceptions */
         } catch (IOException e) {
             /* Throw an exception */
-            throw new OceanusDataException("Failed to load resource ", e);
+            throw new MetisDataException("Failed to load resource ", e);
         }
     }
 
@@ -338,7 +338,7 @@ public abstract class MetisCSVParser {
     private void checkFieldCount(final List<String> pFields) throws OceanusException {
         /* Check the # of fields */
         if (pFields.size() != theHeaders.length) {
-            throw new OceanusDataException("Invalid # of fields in record");
+            throw new MetisDataException("Invalid # of fields in record");
         }
     }
 
@@ -353,7 +353,7 @@ public abstract class MetisCSVParser {
             /* Check name */
             final String myHeader = pFields.get(i);
             if (!theHeaders[i].equals(myHeader.trim())) {
-                throw new OceanusDataException(myHeader, "Invalid header");
+                throw new MetisDataException(myHeader, "Invalid header");
             }
         }
     }

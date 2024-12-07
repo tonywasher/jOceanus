@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.oceanus;
+package net.sourceforge.joceanus.oceanus.format;
+
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.oceanus.exc.OceanusDataException;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;

@@ -38,7 +38,7 @@ import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianIOException;
 import net.sourceforge.joceanus.gordianknot.impl.core.lock.GordianKeyPairLockASN1;
 import net.sourceforge.joceanus.gordianknot.impl.core.lock.GordianPasswordLockASN1;
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 /**
  * ASN1 Encoding of Lock.

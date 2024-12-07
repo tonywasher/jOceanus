@@ -19,7 +19,7 @@ package net.sourceforge.joceanus.tethys.ui.javafx.thread;
 import java.util.concurrent.atomic.AtomicReference;
 import javafx.concurrent.Worker.State;
 
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.tethys.ui.api.thread.TethysUIThread;
 import net.sourceforge.joceanus.tethys.ui.api.thread.TethysUIThreadCancelException;
 import net.sourceforge.joceanus.tethys.ui.core.factory.TethysUICoreFactory;

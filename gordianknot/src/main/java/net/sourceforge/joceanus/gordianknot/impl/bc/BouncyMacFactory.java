@@ -35,7 +35,7 @@ import net.sourceforge.joceanus.gordianknot.impl.ext.macs.GordianKMACWrapper;
 import net.sourceforge.joceanus.gordianknot.impl.ext.macs.GordianSkeinMac;
 import net.sourceforge.joceanus.gordianknot.impl.ext.macs.GordianZuc128Mac;
 import net.sourceforge.joceanus.gordianknot.impl.ext.macs.GordianZuc256Mac;
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import org.bouncycastle.crypto.CipherKeyGenerator;
 import org.bouncycastle.crypto.Mac;
 import org.bouncycastle.crypto.Xof;

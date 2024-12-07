@@ -60,7 +60,7 @@ import net.sourceforge.joceanus.gordianknot.impl.ext.engines.GordianZuc128Engine
 import net.sourceforge.joceanus.gordianknot.impl.ext.engines.GordianZuc256Engine;
 import net.sourceforge.joceanus.gordianknot.impl.ext.modes.GordianChaChaPoly1305;
 import net.sourceforge.joceanus.gordianknot.impl.ext.modes.GordianGCMSIVBlockCipher;
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import org.bouncycastle.crypto.BlockCipher;
 import org.bouncycastle.crypto.BufferedBlockCipher;
 import org.bouncycastle.crypto.CipherKeyGenerator;

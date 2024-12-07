@@ -39,7 +39,7 @@ import net.sourceforge.joceanus.moneywise.data.builder.MoneyWiseTransactionBuild
 import net.sourceforge.joceanus.moneywise.data.builder.MoneyWiseXchgRateBuilder;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrencyClass;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTaxClass;
-import net.sourceforge.joceanus.oceanus.OceanusException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
 
 /**

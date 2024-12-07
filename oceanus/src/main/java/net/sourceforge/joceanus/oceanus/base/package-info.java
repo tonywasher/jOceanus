@@ -17,4 +17,4 @@
 /**
  * Java Utilities.
  */
-package net.sourceforge.joceanus.oceanus;
+package net.sourceforge.joceanus.oceanus.base;

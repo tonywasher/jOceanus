@@ -21,7 +21,7 @@ import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.util.Arrays;
 
-import net.sourceforge.joceanus.oceanus.OceanusDataConverter;
+import net.sourceforge.joceanus.oceanus.format.OceanusDataConverter;
 
 /**
  * Provides classes to represent decimal numbers with fixed numbers of decimal digits

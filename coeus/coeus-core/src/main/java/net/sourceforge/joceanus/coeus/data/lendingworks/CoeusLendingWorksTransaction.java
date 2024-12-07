@@ -16,17 +16,16 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.coeus.data.lendingworks;
 
-import java.util.Iterator;
-import java.util.List;
-
-import net.sourceforge.joceanus.coeus.exc.CoeusDataException;
 import net.sourceforge.joceanus.coeus.data.CoeusTransaction;
 import net.sourceforge.joceanus.coeus.data.CoeusTransactionType;
+import net.sourceforge.joceanus.coeus.exc.CoeusDataException;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
-import net.sourceforge.joceanus.oceanus.OceanusException;
-import net.sourceforge.joceanus.oceanus.OceanusDataException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.date.OceanusDate;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimal;
+
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * LendingWorks Transaction.
@@ -384,7 +383,7 @@ public final class CoeusLendingWorksTransaction
         }
 
         /* Not recognised */
-        throw new OceanusDataException("Unrecognised transaction");
+        throw new CoeusDataException("Unrecognised transaction");
     }
 
     /**
