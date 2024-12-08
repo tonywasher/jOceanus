@@ -16,13 +16,13 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.core.exc;
 
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 
 /**
  * Cryptography Exception.
  */
 public class GordianIOException
-        extends OceanusException {
+        extends GordianException {
     /**
      * SerialId.
      */

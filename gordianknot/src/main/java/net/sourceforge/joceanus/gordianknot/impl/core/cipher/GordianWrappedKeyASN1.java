@@ -16,10 +16,11 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.core.cipher;
 
-import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.Objects;
-
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianASN1Util;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianASN1Util.GordianASN1Object;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianIOException;
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.ASN1OctetString;
 import org.bouncycastle.asn1.ASN1Primitive;
@@ -28,11 +29,9 @@ import org.bouncycastle.asn1.BEROctetString;
 import org.bouncycastle.asn1.DERSequence;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianASN1Util;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianASN1Util.GordianASN1Object;
-import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
-import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianIOException;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import java.util.Arrays;
+import java.util.Enumeration;
+import java.util.Objects;
 
 /**
  * ASN1 Encoding of WrappedKey.
@@ -70,9 +69,9 @@ public class GordianWrappedKeyASN1
     /**
      * Constructor.
      * @param pSequence the Sequence
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private GordianWrappedKeyASN1(final ASN1Sequence pSequence) throws OceanusException {
+    private GordianWrappedKeyASN1(final ASN1Sequence pSequence) throws GordianException {
         /* Protect against exceptions */
         try {
             /* Access the sequence */
@@ -98,9 +97,9 @@ public class GordianWrappedKeyASN1
      * Parse the ASN1 object.
      * @param pObject the object to parse
      * @return the parsed object
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    public static GordianWrappedKeyASN1 getInstance(final Object pObject) throws OceanusException {
+    public static GordianWrappedKeyASN1 getInstance(final Object pObject) throws GordianException {
         if (pObject instanceof GordianWrappedKeyASN1) {
             return (GordianWrappedKeyASN1) pObject;
         } else if (pObject != null) {

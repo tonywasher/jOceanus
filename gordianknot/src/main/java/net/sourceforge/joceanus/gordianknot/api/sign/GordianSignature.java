@@ -17,8 +17,8 @@
 package net.sourceforge.joceanus.gordianknot.api.sign;
 
 import net.sourceforge.joceanus.gordianknot.api.base.GordianConsumer;
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 /**
  * GordianKnot base for signature.
@@ -34,29 +34,29 @@ public interface GordianSignature
     /**
      * Initialise for signature.
      * @param pKeyPair the keyPair
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    void initForSigning(GordianKeyPair pKeyPair) throws OceanusException;
+    void initForSigning(GordianKeyPair pKeyPair) throws GordianException;
 
     /**
      * Initialise for verify.
      * @param pKeyPair the keyPair
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    void initForVerify(GordianKeyPair pKeyPair) throws OceanusException;
+    void initForVerify(GordianKeyPair pKeyPair) throws GordianException;
 
     /**
      * Complete the signature operation and return the signature bytes.
      * @return the signature
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    byte[] sign() throws OceanusException;
+    byte[] sign() throws GordianException;
 
     /**
      * Verify the signature against the supplied signature bytes.
      * @param pSignature the supplied signature
      * @return the signature
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    boolean verify(byte[] pSignature) throws OceanusException;
+    boolean verify(byte[] pSignature) throws GordianException;
 }

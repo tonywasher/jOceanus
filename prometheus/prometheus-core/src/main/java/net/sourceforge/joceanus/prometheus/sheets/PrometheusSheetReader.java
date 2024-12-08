@@ -16,6 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.prometheus.sheets;
 
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.zip.GordianZipFactory;
 import net.sourceforge.joceanus.gordianknot.api.zip.GordianZipFileContents;
 import net.sourceforge.joceanus.gordianknot.api.zip.GordianZipFileEntry;
@@ -26,6 +27,7 @@ import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
 import net.sourceforge.joceanus.prometheus.exc.PrometheusIOException;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataSet;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataSet.PrometheusCryptographyDataType;
+import net.sourceforge.joceanus.prometheus.exc.PrometheusSecurityException;
 import net.sourceforge.joceanus.prometheus.security.PrometheusSecurityPasswordManager;
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetProvider;
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetWorkBook;
@@ -147,42 +149,48 @@ public abstract class PrometheusSheetReader {
     public void loadBackup(final InputStream pInStream,
                            final PrometheusDataSet pData,
                            final String pName) throws OceanusException {
-        /* Start the task */
-        OceanusProfile myTask = theReport.getActiveTask();
-        myTask = myTask.startTask("Loading");
-        theData = pData;
+        /* Protect against exceptions */
+        try {
+            /* Start the task */
+            OceanusProfile myTask = theReport.getActiveTask();
+            myTask = myTask.startTask("Loading");
+            theData = pData;
 
-        /* Access the zip file */
-        final GordianZipFactory myZips = thePasswordMgr.getSecurityFactory().getZipFactory();
-        final GordianZipReadFile myFile = myZips.openZipFile(pInStream);
+            /* Access the zip file */
+            final GordianZipFactory myZips = thePasswordMgr.getSecurityFactory().getZipFactory();
+            final GordianZipReadFile myFile = myZips.openZipFile(pInStream);
 
-        /* Obtain the lock from the file */
-        final GordianZipLock myLock = myFile.getLock();
+            /* Obtain the lock from the file */
+            final GordianZipLock myLock = myFile.getLock();
 
-        /* Resolve the lock */
-        thePasswordMgr.resolveZipLock(myLock, pName);
+            /* Resolve the lock */
+            thePasswordMgr.resolveZipLock(myLock, pName);
 
-        /* Access ZipFile contents */
-        final GordianZipFileContents myContents = myFile.getContents();
+            /* Access ZipFile contents */
+            final GordianZipFileContents myContents = myFile.getContents();
 
-        /* Loop through the file entries */
-        final Iterator<GordianZipFileEntry> myIterator = myContents.iterator();
-        GordianZipFileEntry myEntry = null;
-        while (myIterator.hasNext()) {
-            /* Access the entry */
-            myEntry = myIterator.next();
+            /* Loop through the file entries */
+            final Iterator<GordianZipFileEntry> myIterator = myContents.iterator();
+            GordianZipFileEntry myEntry = null;
+            while (myIterator.hasNext()) {
+                /* Access the entry */
+                myEntry = myIterator.next();
 
-            /* Break loop if we have the right entry */
-            if (myEntry.getFileName().startsWith(PrometheusSpreadSheet.FILE_NAME)) {
-                break;
+                /* Break loop if we have the right entry */
+                if (myEntry.getFileName().startsWith(PrometheusSpreadSheet.FILE_NAME)) {
+                    break;
+                }
             }
+
+            /* Load the workBook */
+            loadEntry(myFile, myEntry);
+
+            /* Complete the task */
+            myTask.end();
+
+        } catch (GordianException e) {
+            throw new PrometheusSecurityException(e);
         }
-
-        /* Load the workBook */
-        loadEntry(myFile, myEntry);
-
-        /* Complete the task */
-        myTask.end();
     }
 
     /**
@@ -212,6 +220,9 @@ public abstract class PrometheusSheetReader {
         } catch (IOException e) {
             /* Report the error */
             throw new PrometheusIOException("Failed to load Backup Workbook: " + pEntry.getFileName(), e);
+
+        } catch (GordianException e) {
+            throw new PrometheusSecurityException(e);
         }
     }
 

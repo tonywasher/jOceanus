@@ -16,8 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.api.keyset;
 
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianCipher;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 /**
  * KeySet Cipher.
@@ -26,13 +26,13 @@ public interface GordianKeySetCipher
         extends GordianCipher {
     /**
      * Initialise the cipher for encryption.
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    void initForEncrypt() throws OceanusException;
+    void initForEncrypt() throws GordianException;
 
     /**
      * Initialise the cipher for decryption.
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    void initForDecrypt() throws OceanusException;
+    void initForDecrypt() throws GordianException;
 }

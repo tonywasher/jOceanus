@@ -16,10 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.core.cipher;
 
-import java.security.SecureRandom;
-import java.util.Arrays;
-import java.util.Objects;
-
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
+import net.sourceforge.joceanus.gordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianCipherParameters;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianCipherSpec;
@@ -28,12 +26,13 @@ import net.sourceforge.joceanus.gordianknot.api.cipher.GordianPBESpec;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianStreamCipherSpec;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymCipherSpec;
 import net.sourceforge.joceanus.gordianknot.api.key.GordianKey;
-import net.sourceforge.joceanus.gordianknot.api.base.GordianKeySpec;
-import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianLogicException;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianRandomSource;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianRandomSource;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianLogicException;
 
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import java.security.SecureRandom;
+import java.util.Arrays;
+import java.util.Objects;
 
 /**
  * Core Cipher implementation.
@@ -54,7 +53,7 @@ public abstract class GordianCoreCipher<T extends GordianKeySpec>
     /**
      * Parameters.
      */
-    private GordianCoreCipherParameters<T> theParameters;
+    private final GordianCoreCipherParameters<T> theParameters;
 
     /**
      * Constructor.
@@ -129,12 +128,12 @@ public abstract class GordianCoreCipher<T extends GordianKeySpec>
     }
 
     @Override
-    public void initForEncrypt(final GordianCipherParameters pParams) throws OceanusException {
+    public void initForEncrypt(final GordianCipherParameters pParams) throws GordianException {
         init(true, pParams);
     }
 
     @Override
-    public void initForDecrypt(final GordianCipherParameters pParams) throws OceanusException {
+    public void initForDecrypt(final GordianCipherParameters pParams) throws GordianException {
         init(false, pParams);
     }
 
@@ -142,17 +141,17 @@ public abstract class GordianCoreCipher<T extends GordianKeySpec>
      * Initialise the cipher for encryption or decryption.
      * @param pEncrypt true/false
      * @param pParams the parameters
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     public abstract void init(boolean pEncrypt,
-                              GordianCipherParameters pParams) throws OceanusException;
+                              GordianCipherParameters pParams) throws GordianException;
 
     /**
      * Init with bytes as key.
      * @param pKeyBytes the bytes to use
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    public void initKeyBytes(final byte[] pKeyBytes) throws OceanusException {
+    public void initKeyBytes(final byte[] pKeyBytes) throws GordianException {
         /* Check that the key length is correct */
         if (getKeyLength().getByteLength() != pKeyBytes.length) {
             throw new GordianLogicException("incorrect keyLength");
@@ -166,9 +165,9 @@ public abstract class GordianCoreCipher<T extends GordianKeySpec>
     /**
      * Process cipherParameters.
      * @param pParams the cipher parameters
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    protected void processParameters(final GordianCipherParameters pParams) throws OceanusException {
+    protected void processParameters(final GordianCipherParameters pParams) throws GordianException {
         /* Process the parameters */
         theParameters.processParameters(pParams);
         checkValidKey(getKey());
@@ -212,7 +211,7 @@ public abstract class GordianCoreCipher<T extends GordianKeySpec>
                       final int pOffset,
                       final int pLength,
                       final byte[] pOutput,
-                      final int pOutOffset) throws OceanusException {
+                      final int pOutOffset) throws GordianException {
         /* Make sure that there is no overlap between buffers */
         byte[] myInput = pBytes;
         int myOffset = pOffset;
@@ -234,13 +233,13 @@ public abstract class GordianCoreCipher<T extends GordianKeySpec>
      * @param pOutput the output buffer to receive processed data
      * @param pOutOffset offset within pOutput to write bytes to
      * @return the number of bytes transferred to the output buffer
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     public abstract int doUpdate(byte[] pBytes,
                                  int pOffset,
                                  int pLength,
                                  byte[] pOutput,
-                                 int pOutOffset) throws OceanusException;
+                                 int pOutOffset) throws GordianException;
 
     /**
      * Check for buffer overlap in update.
@@ -250,13 +249,13 @@ public abstract class GordianCoreCipher<T extends GordianKeySpec>
      * @param pOutput the output buffer to receive processed data
      * @param pOutOffset offset within pOutput to write bytes to
      * @return is there overlap between the two buffers? true/false overlap
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     public boolean check4UpdateOverLap(final byte[] pBytes,
                                        final int pOffset,
                                        final int pLength,
                                        final byte[] pOutput,
-                                       final int pOutOffset) throws OceanusException {
+                                       final int pOutOffset) throws GordianException {
         /* Check that the buffers are sufficient */
         final int myInBufLen = pBytes == null ? 0 : pBytes.length;
         if (myInBufLen < (pLength + pOffset)) {
@@ -279,7 +278,7 @@ public abstract class GordianCoreCipher<T extends GordianKeySpec>
 
     @Override
     public int finish(final byte[] pOutput,
-                      final int pOutOffset) throws OceanusException {
+                      final int pOutOffset) throws GordianException {
         /* Check that the buffers are sufficient */
         final int myOutBufLen = pOutput == null ? 0 : pOutput.length;
         if (myOutBufLen < (getOutputLength(0) + pOutOffset)) {
@@ -295,17 +294,17 @@ public abstract class GordianCoreCipher<T extends GordianKeySpec>
      * @param pOutput the output buffer to receive processed data
      * @param pOutOffset offset within pOutput to write bytes to
      * @return the number of bytes transferred to the output buffer
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     public abstract int doFinish(byte[] pOutput,
-                                 int pOutOffset) throws OceanusException;
+                                 int pOutOffset) throws GordianException;
 
     /**
      * Check that the key matches the keyType.
      * @param pKey the passed key.
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    void checkValidKey(final GordianKey<T> pKey) throws OceanusException {
+    void checkValidKey(final GordianKey<T> pKey) throws GordianException {
         if (!getKeyType().equals(pKey.getKeyType())) {
             throw new GordianLogicException("MisMatch on keyType");
         }

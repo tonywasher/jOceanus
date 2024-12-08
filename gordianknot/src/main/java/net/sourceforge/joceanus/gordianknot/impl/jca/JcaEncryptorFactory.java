@@ -16,22 +16,22 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.jca;
 
-import java.security.NoSuchAlgorithmException;
-import javax.crypto.Cipher;
-import javax.crypto.NoSuchPaddingException;
-
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.encrypt.GordianEncryptor;
 import net.sourceforge.joceanus.gordianknot.api.encrypt.GordianEncryptorSpec;
 import net.sourceforge.joceanus.gordianknot.api.encrypt.GordianSM2EncryptionSpec;
 import net.sourceforge.joceanus.gordianknot.api.encrypt.GordianSM2EncryptionSpec.GordianSM2EncryptionType;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
-import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
-import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.encrypt.GordianCompositeEncryptor;
 import net.sourceforge.joceanus.gordianknot.impl.core.encrypt.GordianCoreEncryptorFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.jca.JcaEncryptor.JcaBlockEncryptor;
 import net.sourceforge.joceanus.gordianknot.impl.jca.JcaEncryptor.JcaHybridEncryptor;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
+
+import javax.crypto.Cipher;
+import javax.crypto.NoSuchPaddingException;
+import java.security.NoSuchAlgorithmException;
 
 /**
  * Jca Encryptor Factory.
@@ -54,7 +54,7 @@ public class JcaEncryptorFactory
     }
 
     @Override
-    public GordianEncryptor createEncryptor(final GordianEncryptorSpec pEncryptorSpec) throws OceanusException {
+    public GordianEncryptor createEncryptor(final GordianEncryptorSpec pEncryptorSpec) throws GordianException {
         /* Check validity of encryptor */
         checkEncryptorSpec(pEncryptorSpec);
 
@@ -66,9 +66,9 @@ public class JcaEncryptorFactory
      * Create the Jca Encryptor.
      * @param pEncryptorSpec the encryptorSpec
      * @return the Encryptor
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private GordianEncryptor getJcaEncryptor(final GordianEncryptorSpec pEncryptorSpec) throws OceanusException {
+    private GordianEncryptor getJcaEncryptor(final GordianEncryptorSpec pEncryptorSpec) throws GordianException {
         switch (pEncryptorSpec.getKeyPairType()) {
             case RSA:
             case ELGAMAL:
@@ -87,10 +87,10 @@ public class JcaEncryptorFactory
      * @param pAlgorithm the Algorithm
      * @param postQuantum is this a postQuantum algorithm?
      * @return the KeyFactory
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     static Cipher getJavaEncryptor(final String pAlgorithm,
-                                   final boolean postQuantum) throws OceanusException {
+                                   final boolean postQuantum) throws GordianException {
         /* Protect against exceptions */
         try {
             /* Return a Cipher for the algorithm */

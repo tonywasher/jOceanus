@@ -16,6 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.core.sign;
 
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestSpecBuilder;
@@ -28,9 +29,8 @@ import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignatureSpec;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignatureSpecBuilder;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignatureType;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
-import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.digest.GordianCoreDigestFactory;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 
 import java.util.ArrayList;
@@ -78,9 +78,9 @@ public abstract class GordianCoreSignatureFactory
     /**
      * Check the signatureSpec.
      * @param pSignatureSpec the signatureSpec
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    protected void checkSignatureSpec(final GordianSignatureSpec pSignatureSpec) throws OceanusException {
+    protected void checkSignatureSpec(final GordianSignatureSpec pSignatureSpec) throws GordianException {
         /* Check validity of signature */
         if (!validSignatureSpec(pSignatureSpec)) {
             throw new GordianDataException(GordianCoreFactory.getInvalidText(pSignatureSpec));

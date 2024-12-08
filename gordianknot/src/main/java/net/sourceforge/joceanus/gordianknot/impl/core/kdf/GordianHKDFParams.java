@@ -16,8 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.core.kdf;
 
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -63,11 +63,11 @@ public final class GordianHKDFParams {
      * @param pMode theMode
      * @param pPRK the pseudo-random key
      * @param pLength the length
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     private GordianHKDFParams(final GordianHKDFMode pMode,
                               final byte[] pPRK,
-                              final int pLength) throws OceanusException {
+                              final int pLength) throws GordianException {
         /* Store parameters */
         theMode = pMode;
         thePRK = pPRK == null ? null : pPRK.clone();
@@ -91,9 +91,9 @@ public final class GordianHKDFParams {
     /**
      * Create an extractOnly parameters.
      * @return an extractOnly parameters
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    public static GordianHKDFParams extractOnly() throws OceanusException {
+    public static GordianHKDFParams extractOnly() throws GordianException {
         return new GordianHKDFParams(GordianHKDFMode.EXTRACT, null, 0);
     }
 
@@ -102,10 +102,10 @@ public final class GordianHKDFParams {
      * @param pPRK the pseudo-random key
      * @param pLength the length
      * @return an expandOnly parameters
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     public static GordianHKDFParams expandOnly(final byte[] pPRK,
-                                               final int pLength) throws OceanusException {
+                                               final int pLength) throws GordianException {
         return new GordianHKDFParams(GordianHKDFMode.EXPAND, pPRK, pLength);
     }
 
@@ -113,9 +113,9 @@ public final class GordianHKDFParams {
      * Create an extractThenExpand parameters.
      * @param pLength the length
      * @return an extractThenExpand parameters
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    public static GordianHKDFParams extractThenExpand(final int pLength) throws OceanusException {
+    public static GordianHKDFParams extractThenExpand(final int pLength) throws GordianException {
         return new GordianHKDFParams(GordianHKDFMode.EXTRACTTHENEXPAND, null, pLength);
     }
 

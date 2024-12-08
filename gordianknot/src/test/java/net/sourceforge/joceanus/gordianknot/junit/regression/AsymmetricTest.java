@@ -22,6 +22,7 @@ import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementSpec;
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianAnonymousAgreement;
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianHandshakeAgreement;
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianSignedAgreement;
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianStreamCipherSpec;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianStreamCipherSpecBuilder;
@@ -55,7 +56,6 @@ import net.sourceforge.joceanus.gordianknot.junit.regression.AsymmetricStore.Fac
 import net.sourceforge.joceanus.gordianknot.junit.regression.AsymmetricStore.FactoryKeySpec;
 import net.sourceforge.joceanus.gordianknot.junit.regression.AsymmetricStore.FactorySignature;
 import net.sourceforge.joceanus.gordianknot.util.GordianGenerator;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -117,10 +117,10 @@ class AsymmetricTest {
 
     /**
      * Initialise Factories.
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     @BeforeAll
-    public static void createSecurityFactories() throws OceanusException {
+    public static void createSecurityFactories() throws GordianException {
         /* Create the factories */
         BCFACTORY = GordianGenerator.createRandomFactory(GordianFactoryType.BC);
         JCAFACTORY = GordianGenerator.createRandomFactory(GordianFactoryType.JCA);
@@ -164,10 +164,10 @@ class AsymmetricTest {
     /**
      * Create the asymmetric test suite.
      * @return the test stream
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     @TestFactory
-    Stream<DynamicNode> asymmetricTests() throws OceanusException {
+    Stream<DynamicNode> asymmetricTests() throws GordianException {
         /* Create tests */
         final Stream<DynamicNode> myBC = asymmetricTests(BCFACTORY, JCAFACTORY);
         final Stream<DynamicNode> myJCA = asymmetricTests(JCAFACTORY, BCFACTORY);
@@ -179,10 +179,10 @@ class AsymmetricTest {
      * @param pFactory the factory
      * @param pPartner the partner factory
      * @return the test stream
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     Stream<DynamicNode> asymmetricTests(final GordianFactory pFactory,
-                                        final GordianFactory pPartner) throws OceanusException {
+                                        final GordianFactory pPartner) throws GordianException {
         /* Create an empty stream */
         Stream<DynamicNode> myStream = Stream.empty();
 
@@ -314,9 +314,9 @@ class AsymmetricTest {
     /**
      * Generate KeyPairs.
      * @param pKeySpec the keySpec
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private void generateKeyPairs(final FactoryKeySpec pKeySpec) throws OceanusException {
+    private void generateKeyPairs(final FactoryKeySpec pKeySpec) throws GordianException {
         /* Access the keyPairs */
         final FactoryKeyPairs myPairs = pKeySpec.getKeyPairs();
 
@@ -331,9 +331,9 @@ class AsymmetricTest {
     /**
      * Check KeyPair.
      * @param pKeySpec the keySpec
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private void checkKeyPair(final FactoryKeySpec pKeySpec) throws OceanusException {
+    private void checkKeyPair(final FactoryKeySpec pKeySpec) throws GordianException {
         /* Access the keyPairs */
         final FactoryKeyPairs myPairs = pKeySpec.getKeyPairs();
         final GordianKeyPairFactory myFactory = pKeySpec.getFactory();
@@ -366,9 +366,9 @@ class AsymmetricTest {
     /**
      * Check KeyPair.
      * @param pKeySpec the keySpec
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private void checkKeyWrap(final FactoryKeySpec pKeySpec) throws OceanusException {
+    private void checkKeyWrap(final FactoryKeySpec pKeySpec) throws GordianException {
         /* Access the keyPairs */
         final FactoryKeyPairs myPairs = pKeySpec.getKeyPairs();
         final GordianKeyPairFactory myFactory = pKeySpec.getFactory();
@@ -387,9 +387,9 @@ class AsymmetricTest {
     /**
      * Check Self Signature.
      * @param pSignature the signature
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private void checkSelfSignature(final FactorySignature pSignature) throws OceanusException {
+    private void checkSelfSignature(final FactorySignature pSignature) throws GordianException {
         /* Access the KeySpec */
         final GordianSignatureSpec mySpec = pSignature.getSpec();
         final FactoryKeyPairs myPairs = pSignature.getOwner().getKeyPairs();
@@ -411,9 +411,9 @@ class AsymmetricTest {
     /**
      * Check Partner Signature.
      * @param pSignature the signature
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private void checkPartnerSignature(final FactorySignature pSignature) throws OceanusException {
+    private void checkPartnerSignature(final FactorySignature pSignature) throws GordianException {
         /* Access the KeySpec */
         final GordianSignatureSpec mySpec = pSignature.getSpec();
         final FactoryKeyPairs myPairs = pSignature.getOwner().getKeyPairs();
@@ -449,10 +449,10 @@ class AsymmetricTest {
      * Test Self Agreement.
      * @param pAgreement the agreementSpec
      * @param pResultType the resultType
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     private void checkSelfAgreement(final FactoryAgreement pAgreement,
-                                    final Object pResultType) throws OceanusException {
+                                    final Object pResultType) throws GordianException {
         /* Access the KeySpec */
         final GordianAgreementSpec mySpec = pAgreement.getSpec();
         final FactoryKeyPairs myPairs = pAgreement.getOwner().getKeyPairs();
@@ -512,9 +512,9 @@ class AsymmetricTest {
     /**
      * Check Partner Agreement.
      * @param pAgreement the agreementSpec
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private void checkPartnerAgreement(final FactoryAgreement pAgreement) throws OceanusException {
+    private void checkPartnerAgreement(final FactoryAgreement pAgreement) throws GordianException {
         /* Access the KeySpec */
         final GordianAgreementSpec mySpec = pAgreement.getSpec();
         final FactoryKeyPairs myPairs = pAgreement.getOwner().getKeyPairs();
@@ -572,9 +572,9 @@ class AsymmetricTest {
     /**
      * Check Self Encryption.
      * @param pEncryptor the encryptor
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private void checkSelfEncryptor(final FactoryEncryptor pEncryptor) throws OceanusException {
+    private void checkSelfEncryptor(final FactoryEncryptor pEncryptor) throws GordianException {
         /* Create the data to encrypt */
         final byte[] mySrc = new byte[TESTLEN];
 
@@ -619,9 +619,9 @@ class AsymmetricTest {
     /**
      * Check Partner Encryption.
      * @param pEncryptor the encryptor
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private void checkPartnerEncryptor(final FactoryEncryptor pEncryptor) throws OceanusException {
+    private void checkPartnerEncryptor(final FactoryEncryptor pEncryptor) throws GordianException {
         /* Create the data to encrypt */
         final byte[] mySrc = new byte[TESTLEN];
 
@@ -664,9 +664,9 @@ class AsymmetricTest {
     /**
      * Check signatureAlgId.
      * @param pSignature the signature to check
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private void checkSignatureAlgId(final FactorySignature pSignature) throws OceanusException {
+    private void checkSignatureAlgId(final FactorySignature pSignature) throws GordianException {
         /* Access the factory */
         final GordianCoreSignatureFactory myFactory = (GordianCoreSignatureFactory) pSignature.getOwner().getFactory().getSignatureFactory();
 

@@ -16,10 +16,10 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.core.agree;
 
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianASN1Util.GordianASN1Object;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianIOException;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.ASN1Integer;
 import org.bouncycastle.asn1.ASN1OctetString;
@@ -172,9 +172,9 @@ public final class GordianAgreementMessageASN1
     /**
      * Constructor.
      * @param pSequence the Sequence
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private GordianAgreementMessageASN1(final ASN1Sequence pSequence) throws OceanusException {
+    private GordianAgreementMessageASN1(final ASN1Sequence pSequence) throws GordianException {
         /* Protect against exceptions */
         try {
             /* Access the sequence */
@@ -266,9 +266,9 @@ public final class GordianAgreementMessageASN1
      * Parse the ASN1 object.
      * @param pObject the object to parse
      * @return the parsed object
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    public static GordianAgreementMessageASN1 getInstance(final Object pObject) throws OceanusException {
+    public static GordianAgreementMessageASN1 getInstance(final Object pObject) throws GordianException {
         if (pObject instanceof GordianAgreementMessageASN1) {
             return (GordianAgreementMessageASN1) pObject;
         } else if (pObject != null) {
@@ -288,9 +288,9 @@ public final class GordianAgreementMessageASN1
     /**
      * Check the message type.
      * @param pMessageType the message type
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    public void checkMessageType(final GordianMessageType pMessageType) throws OceanusException {
+    public void checkMessageType(final GordianMessageType pMessageType) throws GordianException {
         if (!theMessageType.equals(pMessageType)) {
             throw new GordianDataException("Unexpected Message type: " + pMessageType);
         }
@@ -577,9 +577,9 @@ public final class GordianAgreementMessageASN1
          * Determine the MessageType from the id.
          * @param pId the id
          * @return the messageType
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
-        private static GordianMessageType determineType(final int pId) throws OceanusException {
+        private static GordianMessageType determineType(final int pId) throws GordianException {
             for (GordianMessageType myType : values()) {
                 if (pId == myType.getId()) {
                     return myType;

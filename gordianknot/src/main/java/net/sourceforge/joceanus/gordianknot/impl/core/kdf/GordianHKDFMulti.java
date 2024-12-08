@@ -16,12 +16,12 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.core.kdf;
 
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianLogicException;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,11 +45,11 @@ public class GordianHKDFMulti {
      * @param pFactory the security factory
      * @param pPrimary the primary digestSpecs
      * @param pSecondaries the secondary digestSpecs
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     public GordianHKDFMulti(final GordianFactory pFactory,
                             final GordianDigestSpec pPrimary,
-                            final GordianDigestSpec... pSecondaries) throws OceanusException {
+                            final GordianDigestSpec... pSecondaries) throws GordianException {
         /* Create the list */
         theEngines  = new ArrayList<>();
 
@@ -75,9 +75,9 @@ public class GordianHKDFMulti {
      * Derive bytes.
      * @param pParams the parameters
      * @return the derived bytes
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    public byte[] deriveBytes(final GordianHKDFParams pParams) throws OceanusException {
+    public byte[] deriveBytes(final GordianHKDFParams pParams) throws GordianException {
         /* Create the primary output */
         final byte[] myOutput = thePrimary.deriveBytes(pParams);
 

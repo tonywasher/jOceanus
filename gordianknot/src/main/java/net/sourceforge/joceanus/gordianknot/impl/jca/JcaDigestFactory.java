@@ -16,11 +16,11 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.jca;
 
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.digest.GordianCoreDigestFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -46,7 +46,7 @@ public class JcaDigestFactory
     }
 
     @Override
-    public JcaDigest createDigest(final GordianDigestSpec pDigestSpec) throws OceanusException {
+    public JcaDigest createDigest(final GordianDigestSpec pDigestSpec) throws GordianException {
         /* Check validity of DigestSpec */
         checkDigestSpec(pDigestSpec);
 
@@ -59,9 +59,9 @@ public class JcaDigestFactory
      * Create the BouncyCastle digest via JCA.
      * @param pDigestSpec the digestSpec
      * @return the digest
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private static MessageDigest getJavaDigest(final GordianDigestSpec pDigestSpec) throws OceanusException {
+    private static MessageDigest getJavaDigest(final GordianDigestSpec pDigestSpec) throws GordianException {
         /* Protect against exceptions */
         try {
             /* Return a digest for the algorithm */

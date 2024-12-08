@@ -16,11 +16,13 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.prometheus.security;
 
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactoryType;
 import net.sourceforge.joceanus.gordianknot.api.lock.GordianPasswordLockSpec;
 import net.sourceforge.joceanus.gordianknot.util.GordianGenerator;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.prometheus.exc.PrometheusSecurityException;
 import net.sourceforge.joceanus.tethys.ui.api.factory.TethysUIFactory;
 
 /**
@@ -59,6 +61,18 @@ public final class PrometheusSecurityGenerator {
      * Create a password Manager.
      * @param pGuiFactory the GUI Factory
      * @param pFactoryType the factory type
+     * @return the password Manager
+     * @throws OceanusException on error
+     */
+    public static PrometheusSecurityPasswordManager newPasswordManager(final TethysUIFactory<?> pGuiFactory,
+                                                                       final GordianFactoryType pFactoryType) throws OceanusException {
+        return newPasswordManager(pGuiFactory, pFactoryType, new GordianPasswordLockSpec());
+    }
+
+    /**
+     * Create a password Manager.
+     * @param pGuiFactory the GUI Factory
+     * @param pFactoryType the factory type
      * @param pLockSpec the passwordLockSpec
      * @return the password Manager
      * @throws OceanusException on error
@@ -66,8 +80,13 @@ public final class PrometheusSecurityGenerator {
     public static PrometheusSecurityPasswordManager newPasswordManager(final TethysUIFactory<?> pGuiFactory,
                                                                        final GordianFactoryType pFactoryType,
                                                                        final GordianPasswordLockSpec pLockSpec) throws OceanusException {
-        final GordianFactory mySecurityFactory = GordianGenerator.createRandomFactory(pFactoryType);
-        return newPasswordManager(pGuiFactory, mySecurityFactory, pLockSpec);
+        /* Protect against exceptions */
+        try {
+            final GordianFactory mySecurityFactory = GordianGenerator.createRandomFactory(pFactoryType);
+            return newPasswordManager(pGuiFactory, mySecurityFactory, pLockSpec);
+        } catch (GordianException e) {
+            throw new PrometheusSecurityException(e);
+        }
     }
 
     /**
@@ -97,8 +116,13 @@ public final class PrometheusSecurityGenerator {
                                                                        final GordianPasswordLockSpec pLockSpec,
                                                                        final GordianFactoryType pFactoryType,
                                                                        final char[] pSecurityPhrase) throws OceanusException {
-        final GordianFactory mySecurityFactory = GordianGenerator.createFactory(pFactoryType, pSecurityPhrase);
-        return newPasswordManager(pGuiFactory, mySecurityFactory, pLockSpec);
+        /* Protect against exceptions */
+        try {
+            final GordianFactory mySecurityFactory = GordianGenerator.createFactory(pFactoryType, pSecurityPhrase);
+            return newPasswordManager(pGuiFactory, mySecurityFactory, pLockSpec);
+        } catch (GordianException e) {
+            throw new PrometheusSecurityException(e);
+        }
     }
 
     /**

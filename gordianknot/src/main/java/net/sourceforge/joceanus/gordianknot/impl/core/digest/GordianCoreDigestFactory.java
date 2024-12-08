@@ -16,6 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.core.digest;
 
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestFactory;
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestSpec;
@@ -23,7 +24,6 @@ import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestSubSpec;
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestType;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -70,9 +70,9 @@ public abstract class GordianCoreDigestFactory
        /**
      * Check digestSpec.
      * @param pDigestSpec the digestSpec
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    public void checkDigestSpec(final GordianDigestSpec pDigestSpec) throws OceanusException {
+    public void checkDigestSpec(final GordianDigestSpec pDigestSpec) throws GordianException {
         /* Check validity of DigestType */
         if (!supportedDigestSpecs().test(pDigestSpec)) {
             throw new GordianDataException(GordianCoreFactory.getInvalidText(pDigestSpec));

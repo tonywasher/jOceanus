@@ -16,6 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.core.keypair;
 
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianBIKESpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianCMCESpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianDHGroup;
@@ -46,7 +47,6 @@ import net.sourceforge.joceanus.gordianknot.api.keypair.GordianXMSSKeySpec.Gordi
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianXMSSKeySpec.GordianXMSSMTLayers;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianIOException;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.ASN1OctetString;
 import org.bouncycastle.asn1.ASN1Sequence;
@@ -179,9 +179,9 @@ public class GordianKeyPairAlgId {
      * Obtain KeySpec from X509KeySpec.
      * @param pEncoded X509 keySpec
      * @return the keySpec
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    public GordianKeyPairSpec determineKeyPairSpec(final PKCS8EncodedKeySpec pEncoded) throws OceanusException {
+    public GordianKeyPairSpec determineKeyPairSpec(final PKCS8EncodedKeySpec pEncoded) throws GordianException {
         /* Determine the algorithm Id. */
         final PrivateKeyInfo myInfo = PrivateKeyInfo.getInstance(pEncoded.getEncoded());
         final AlgorithmIdentifier myId = myInfo.getPrivateKeyAlgorithm();
@@ -199,9 +199,9 @@ public class GordianKeyPairAlgId {
      * Obtain KeySpec from X509KeySpec.
      * @param pEncoded X509 keySpec
      * @return the keySpec
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    public GordianKeyPairSpec determineKeyPairSpec(final X509EncodedKeySpec pEncoded) throws OceanusException {
+    public GordianKeyPairSpec determineKeyPairSpec(final X509EncodedKeySpec pEncoded) throws GordianException {
         /* Determine the algorithm Id. */
         final SubjectPublicKeyInfo myInfo = SubjectPublicKeyInfo.getInstance(pEncoded.getEncoded());
         final AlgorithmIdentifier myId = myInfo.getAlgorithm();
@@ -233,17 +233,17 @@ public class GordianKeyPairAlgId {
          * Obtain KeySpec from PrivateKeyInfo.
          * @param pInfo keySpec
          * @return the keySpec
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
-        GordianKeyPairSpec determineKeyPairSpec(SubjectPublicKeyInfo pInfo) throws OceanusException;
+        GordianKeyPairSpec determineKeyPairSpec(SubjectPublicKeyInfo pInfo) throws GordianException;
 
         /**
          * Obtain KeySpec from SubjectPublicKeyInfo.
          * @param pInfo keySpec
          * @return the keySpec
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
-        GordianKeyPairSpec determineKeyPairSpec(PrivateKeyInfo pInfo) throws OceanusException;
+        GordianKeyPairSpec determineKeyPairSpec(PrivateKeyInfo pInfo) throws GordianException;
     }
 
     /**
@@ -259,7 +259,7 @@ public class GordianKeyPairAlgId {
         }
 
         @Override
-        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws OceanusException {
+        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws GordianException {
             /* Protect against exceptions */
             try {
                 /* Parse the publicKey */
@@ -273,7 +273,7 @@ public class GordianKeyPairAlgId {
         }
 
         @Override
-        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws OceanusException {
+        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws GordianException {
             /* Protect against exceptions */
             try {
                 /* Parse the publicKey */
@@ -290,9 +290,9 @@ public class GordianKeyPairAlgId {
          * Obtain keySpec from Modulus.
          * @param pModulus the modulus
          * @return the keySpec
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
-        private static GordianKeyPairSpec determineKeyPairSpec(final BigInteger pModulus) throws OceanusException {
+        private static GordianKeyPairSpec determineKeyPairSpec(final BigInteger pModulus) throws GordianException {
             final GordianRSAModulus myModulus = GordianRSAModulus.getModulusForInteger(pModulus);
             if (myModulus == null) {
                 throw new GordianDataException("RSA strength not supported: " + pModulus.bitLength());
@@ -314,14 +314,14 @@ public class GordianKeyPairAlgId {
         }
 
         @Override
-        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws OceanusException {
+        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws GordianException {
             final AlgorithmIdentifier myId = pInfo.getAlgorithm();
             final DSAParameter myParms = DSAParameter.getInstance(myId.getParameters());
             return determineKeyPairSpec(myParms);
         }
 
         @Override
-        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws OceanusException {
+        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws GordianException {
             final AlgorithmIdentifier myId = pInfo.getPrivateKeyAlgorithm();
             final DSAParameter myParms = DSAParameter.getInstance(myId.getParameters());
             return determineKeyPairSpec(myParms);
@@ -331,9 +331,9 @@ public class GordianKeyPairAlgId {
          * Obtain keySpec from Parameters.
          * @param pParms the parameters
          * @return the keySpec
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
-        private static GordianKeyPairSpec determineKeyPairSpec(final DSAParameter pParms) throws OceanusException {
+        private static GordianKeyPairSpec determineKeyPairSpec(final DSAParameter pParms) throws GordianException {
             final GordianDSAKeyType myKeyType = GordianDSAKeyType.getDSATypeForParms(pParms);
             if (myKeyType == null) {
                 throw new GordianDataException("Unsupported DSA parameters: "
@@ -357,13 +357,13 @@ public class GordianKeyPairAlgId {
         }
 
         @Override
-        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws OceanusException {
+        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws GordianException {
             final DHParameters myParms = determineParameters(pInfo.getAlgorithm());
             return determineKeyPairSpec(myParms);
         }
 
         @Override
-        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws OceanusException {
+        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws GordianException {
             final DHParameters myParms = determineParameters(pInfo.getPrivateKeyAlgorithm());
             return determineKeyPairSpec(myParms);
         }
@@ -401,9 +401,9 @@ public class GordianKeyPairAlgId {
          * Obtain keySpec from Parameters.
          * @param pParms the parameters
          * @return the keySpec
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
-        private static GordianKeyPairSpec determineKeyPairSpec(final DHParameters pParms) throws OceanusException {
+        private static GordianKeyPairSpec determineKeyPairSpec(final DHParameters pParms) throws GordianException {
             final GordianDHGroup myGroup = GordianDHGroup.getGroupForParams(pParms);
             if (myGroup == null) {
                 throw new GordianDataException("Unsupported DH parameters: "
@@ -426,13 +426,13 @@ public class GordianKeyPairAlgId {
         }
 
         @Override
-        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws OceanusException {
+        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws GordianException {
             final DHParameters myParms = determineParameters(pInfo.getAlgorithm());
             return determineKeyPairSpec(myParms);
         }
 
         @Override
-        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws OceanusException {
+        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws GordianException {
             final DHParameters myParms = determineParameters(pInfo.getPrivateKeyAlgorithm());
             return determineKeyPairSpec(myParms);
         }
@@ -454,9 +454,9 @@ public class GordianKeyPairAlgId {
          * Obtain keySpec from Parameters.
          * @param pParms the parameters
          * @return the keySpec
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
-        private static GordianKeyPairSpec determineKeyPairSpec(final DHParameters pParms) throws OceanusException {
+        private static GordianKeyPairSpec determineKeyPairSpec(final DHParameters pParms) throws GordianException {
             final GordianDHGroup myGroup = GordianDHGroup.getGroupForParams(pParms);
             if (myGroup == null) {
                 throw new GordianDataException("Unsupported DH parameters: "
@@ -479,14 +479,14 @@ public class GordianKeyPairAlgId {
         }
 
         @Override
-        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws OceanusException {
+        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws GordianException {
             final AlgorithmIdentifier myId = pInfo.getAlgorithm();
             final X962Parameters myParms = X962Parameters.getInstance(myId.getParameters());
             return determineKeyPairSpec(myParms);
         }
 
         @Override
-        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws OceanusException {
+        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws GordianException {
             final AlgorithmIdentifier myId = pInfo.getPrivateKeyAlgorithm();
             final X962Parameters myParms = X962Parameters.getInstance(myId.getParameters());
             return determineKeyPairSpec(myParms);
@@ -496,9 +496,9 @@ public class GordianKeyPairAlgId {
          * Obtain keySpec from Parameters.
          * @param pParms the parameters
          * @return the keySpec
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
-        private static GordianKeyPairSpec determineKeyPairSpec(final X962Parameters pParms) throws OceanusException {
+        private static GordianKeyPairSpec determineKeyPairSpec(final X962Parameters pParms) throws GordianException {
             /* Reject if not a named curve */
             if (!pParms.isNamedCurve()) {
                 throw new GordianDataException(ERROR_NAMEDCURVE);
@@ -540,14 +540,14 @@ public class GordianKeyPairAlgId {
         }
 
         @Override
-        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws OceanusException {
+        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws GordianException {
             final AlgorithmIdentifier myId = pInfo.getAlgorithm();
             final DSTU4145Params  myParms = DSTU4145Params.getInstance(myId.getParameters());
             return determineKeyPairSpec(myParms);
         }
 
         @Override
-        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws OceanusException {
+        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws GordianException {
             final AlgorithmIdentifier myId = pInfo.getPrivateKeyAlgorithm();
             final X962Parameters myParms = X962Parameters.getInstance(myId.getParameters());
             return determineKeyPairSpec(myParms);
@@ -557,9 +557,9 @@ public class GordianKeyPairAlgId {
          * Obtain keySpec from Parameters.
          * @param pParms the parameters
          * @return the keySpec
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
-        private static GordianKeyPairSpec determineKeyPairSpec(final DSTU4145Params pParms) throws OceanusException {
+        private static GordianKeyPairSpec determineKeyPairSpec(final DSTU4145Params pParms) throws GordianException {
             /* Reject if not a named curve */
             if (!pParms.isNamedCurve()) {
                 throw new GordianDataException(ERROR_NAMEDCURVE);
@@ -571,9 +571,9 @@ public class GordianKeyPairAlgId {
          * Obtain keySpec from Parameters.
          * @param pParms the parameters
          * @return the keySpec
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
-        private static GordianKeyPairSpec determineKeyPairSpec(final X962Parameters pParms) throws OceanusException {
+        private static GordianKeyPairSpec determineKeyPairSpec(final X962Parameters pParms) throws GordianException {
             /* Reject if not a named curve */
             if (!pParms.isNamedCurve()) {
                 throw new GordianDataException(ERROR_NAMEDCURVE);
@@ -585,9 +585,9 @@ public class GordianKeyPairAlgId {
          * Obtain keySpec from curveId.
          * @param pId the curveId
          * @return the keySpec
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
-        private static GordianKeyPairSpec determineKeyPairSpec(final ASN1ObjectIdentifier pId) throws OceanusException {
+        private static GordianKeyPairSpec determineKeyPairSpec(final ASN1ObjectIdentifier pId) throws GordianException {
             /* Check for EC named surve */
             final String myName = pId.toString();
             final ECDomainParameters myParms = DSTU4145NamedCurves.getByOID(pId);
@@ -614,12 +614,12 @@ public class GordianKeyPairAlgId {
         }
 
         @Override
-        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws OceanusException {
+        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws GordianException {
             return determineKeyPairSpec(pInfo.getAlgorithm());
         }
 
         @Override
-        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws OceanusException {
+        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws GordianException {
             return determineKeyPairSpec(pInfo.getPrivateKeyAlgorithm());
         }
 
@@ -627,9 +627,9 @@ public class GordianKeyPairAlgId {
          * Obtain keySpec from Parameters.
          * @param pId the algorithmId
          * @return the keySpec
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
-        private static GordianKeyPairSpec determineKeyPairSpec(final AlgorithmIdentifier pId) throws OceanusException {
+        private static GordianKeyPairSpec determineKeyPairSpec(final AlgorithmIdentifier pId) throws GordianException {
             /* Determine the curve name */
             final GOST3410PublicKeyAlgParameters myParms = GOST3410PublicKeyAlgParameters.getInstance(pId.getParameters());
             final ASN1ObjectIdentifier myId = myParms.getPublicKeyParamSet();
@@ -677,12 +677,12 @@ public class GordianKeyPairAlgId {
         }
 
         @Override
-        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws OceanusException {
+        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws GordianException {
             return theKeySpec;
         }
 
         @Override
-        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws OceanusException {
+        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws GordianException {
             return theKeySpec;
         }
     }
@@ -715,12 +715,12 @@ public class GordianKeyPairAlgId {
         }
 
         @Override
-        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws OceanusException {
+        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws GordianException {
             return theKeySpec;
         }
 
         @Override
-        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws OceanusException {
+        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws GordianException {
             return theKeySpec;
         }
     }
@@ -753,12 +753,12 @@ public class GordianKeyPairAlgId {
         }
 
         @Override
-        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws OceanusException {
+        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws GordianException {
             return theKeySpec;
         }
 
         @Override
-        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws OceanusException {
+        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws GordianException {
             return theKeySpec;
         }
     }
@@ -791,12 +791,12 @@ public class GordianKeyPairAlgId {
         }
 
         @Override
-        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws OceanusException {
+        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws GordianException {
             return theKeySpec;
         }
 
         @Override
-        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws OceanusException {
+        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws GordianException {
             return theKeySpec;
         }
     }
@@ -829,12 +829,12 @@ public class GordianKeyPairAlgId {
         }
 
         @Override
-        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws OceanusException {
+        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws GordianException {
             return theKeySpec;
         }
 
         @Override
-        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws OceanusException {
+        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws GordianException {
             return theKeySpec;
         }
     }
@@ -867,12 +867,12 @@ public class GordianKeyPairAlgId {
         }
 
         @Override
-        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws OceanusException {
+        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws GordianException {
             return theKeySpec;
         }
 
         @Override
-        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws OceanusException {
+        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws GordianException {
             return theKeySpec;
         }
     }
@@ -905,12 +905,12 @@ public class GordianKeyPairAlgId {
         }
 
         @Override
-        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws OceanusException {
+        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws GordianException {
             return theKeySpec;
         }
 
         @Override
-        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws OceanusException {
+        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws GordianException {
             return theKeySpec;
         }
     }
@@ -943,12 +943,12 @@ public class GordianKeyPairAlgId {
         }
 
         @Override
-        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws OceanusException {
+        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws GordianException {
             return theKeySpec;
         }
 
         @Override
-        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws OceanusException {
+        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws GordianException {
             return theKeySpec;
         }
     }
@@ -981,12 +981,12 @@ public class GordianKeyPairAlgId {
         }
 
         @Override
-        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws OceanusException {
+        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws GordianException {
             return theKeySpec;
         }
 
         @Override
-        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws OceanusException {
+        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws GordianException {
             return theKeySpec;
         }
     }
@@ -1022,12 +1022,12 @@ public class GordianKeyPairAlgId {
         }
 
         @Override
-        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws OceanusException {
+        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws GordianException {
             return theKeySpec;
         }
 
         @Override
-        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws OceanusException {
+        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws GordianException {
             return theKeySpec;
         }
     }
@@ -1060,12 +1060,12 @@ public class GordianKeyPairAlgId {
         }
 
         @Override
-        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws OceanusException {
+        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws GordianException {
             return theKeySpec;
         }
 
         @Override
-        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws OceanusException {
+        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws GordianException {
             return theKeySpec;
         }
     }
@@ -1098,12 +1098,12 @@ public class GordianKeyPairAlgId {
         }
 
         @Override
-        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws OceanusException {
+        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws GordianException {
             return theKeySpec;
         }
 
         @Override
-        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws OceanusException {
+        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws GordianException {
             return theKeySpec;
         }
     }
@@ -1136,12 +1136,12 @@ public class GordianKeyPairAlgId {
         }
 
         @Override
-        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws OceanusException {
+        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws GordianException {
             return theKeySpec;
         }
 
         @Override
-        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws OceanusException {
+        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws GordianException {
             return theKeySpec;
         }
     }
@@ -1161,7 +1161,7 @@ public class GordianKeyPairAlgId {
 
 
         @Override
-        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws OceanusException {
+        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws GordianException {
             final AlgorithmIdentifier myId = pInfo.getAlgorithm();
             final XMSSKeyParams myParms = XMSSKeyParams.getInstance(myId.getParameters());
             if (myParms != null) {
@@ -1181,7 +1181,7 @@ public class GordianKeyPairAlgId {
         }
 
         @Override
-        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws OceanusException {
+        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws GordianException {
             final AlgorithmIdentifier myId = pInfo.getPrivateKeyAlgorithm();
             final XMSSKeyParams myParms = XMSSKeyParams.getInstance(myId.getParameters());
             return determineKeyPairSpec(myParms);
@@ -1191,9 +1191,9 @@ public class GordianKeyPairAlgId {
          * Obtain keySpec from Parameters.
          * @param pParms the parameters
          * @return the keySpec
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
-        private static GordianKeyPairSpec determineKeyPairSpec(final XMSSKeyParams pParms) throws OceanusException {
+        private static GordianKeyPairSpec determineKeyPairSpec(final XMSSKeyParams pParms) throws GordianException {
             final ASN1ObjectIdentifier myDigest = pParms.getTreeDigest().getAlgorithm();
             final GordianXMSSHeight myHeight = determineHeight(pParms.getHeight());
             return GordianKeyPairSpecBuilder.xmss(determineKeyType(myDigest), myHeight);
@@ -1203,9 +1203,9 @@ public class GordianKeyPairAlgId {
          * Obtain keyType from digest.
          * @param pDigest the treeDigest
          * @return the keyType
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
-        static GordianXMSSDigestType determineKeyType(final ASN1ObjectIdentifier pDigest) throws OceanusException {
+        static GordianXMSSDigestType determineKeyType(final ASN1ObjectIdentifier pDigest) throws GordianException {
             if (pDigest.equals(NISTObjectIdentifiers.id_sha256)) {
                 return GordianXMSSDigestType.SHA256;
             }
@@ -1227,9 +1227,9 @@ public class GordianKeyPairAlgId {
          * Obtain height.
          * @param pHeight the height
          * @return the xmssHeight
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
-        static GordianXMSSHeight determineHeight(final int pHeight) throws OceanusException {
+        static GordianXMSSHeight determineHeight(final int pHeight) throws GordianException {
             /* Loo through the heights */
             for (GordianXMSSHeight myHeight : GordianXMSSHeight.values()) {
                 if (myHeight.getHeight() == pHeight) {
@@ -1256,7 +1256,7 @@ public class GordianKeyPairAlgId {
         }
 
         @Override
-        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws OceanusException {
+        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws GordianException {
             final AlgorithmIdentifier myId = pInfo.getAlgorithm();
             final XMSSMTKeyParams myParms = XMSSMTKeyParams.getInstance(myId.getParameters());
             if (myParms != null) {
@@ -1276,7 +1276,7 @@ public class GordianKeyPairAlgId {
         }
 
         @Override
-        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws OceanusException {
+        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws GordianException {
             final AlgorithmIdentifier myId = pInfo.getPrivateKeyAlgorithm();
             final XMSSMTKeyParams myParms = XMSSMTKeyParams.getInstance(myId.getParameters());
             return determineKeyPairSpec(myParms);
@@ -1286,9 +1286,9 @@ public class GordianKeyPairAlgId {
          * Obtain keySpec from Parameters.
          * @param pParms the parameters
          * @return the keySpec
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
-        private static GordianKeyPairSpec determineKeyPairSpec(final XMSSMTKeyParams pParms) throws OceanusException {
+        private static GordianKeyPairSpec determineKeyPairSpec(final XMSSMTKeyParams pParms) throws GordianException {
             final ASN1ObjectIdentifier myDigest = pParms.getTreeDigest().getAlgorithm();
             final GordianXMSSHeight myHeight = GordianXMSSEncodedParser.determineHeight(pParms.getHeight());
             final GordianXMSSMTLayers myLayers = determineLayers(pParms.getLayers());
@@ -1299,9 +1299,9 @@ public class GordianKeyPairAlgId {
          * Obtain layers.
          * @param pLayers the layers
          * @return the xmssMTLayers
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
-        static GordianXMSSMTLayers determineLayers(final int pLayers) throws OceanusException {
+        static GordianXMSSMTLayers determineLayers(final int pLayers) throws GordianException {
             /* Loo through the heights */
             for (GordianXMSSMTLayers myLayers : GordianXMSSMTLayers.values()) {
                 if (myLayers.getLayers() == pLayers) {
@@ -1343,12 +1343,12 @@ public class GordianKeyPairAlgId {
         }
 
         @Override
-        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws OceanusException {
+        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws GordianException {
             return theKeySpec;
         }
 
         @Override
-        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws OceanusException {
+        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws GordianException {
             return theKeySpec;
         }
     }
@@ -1366,7 +1366,7 @@ public class GordianKeyPairAlgId {
         }
 
         @Override
-        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws OceanusException {
+        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws GordianException {
             /* Protect against exceptions */
             try {
                 /* Parse public key */
@@ -1391,7 +1391,7 @@ public class GordianKeyPairAlgId {
          }
 
         @Override
-        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws OceanusException {
+        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws GordianException {
             /* Protect against exceptions */
             try {
                 /* Parse public key */
@@ -1450,7 +1450,7 @@ public class GordianKeyPairAlgId {
         }
 
         @Override
-        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws OceanusException {
+        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws GordianException {
             /* Protect against exceptions */
             try {
                 final ASN1Sequence myKeys = ASN1Sequence.getInstance(pInfo.getPublicKeyData().getBytes());
@@ -1471,7 +1471,7 @@ public class GordianKeyPairAlgId {
         }
 
         @Override
-        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws OceanusException {
+        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws GordianException {
             /* Protect against exceptions */
             try {
                 final ASN1Sequence myKeys = ASN1Sequence.getInstance(pInfo.getPrivateKey().getOctets());

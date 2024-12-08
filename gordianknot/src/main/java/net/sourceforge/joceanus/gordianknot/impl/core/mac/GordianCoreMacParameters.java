@@ -16,6 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.core.mac;
 
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacFactory;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacParameters;
@@ -23,7 +24,6 @@ import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacSpec;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianRandomSource;
 import net.sourceforge.joceanus.gordianknot.impl.core.key.GordianCoreKeyGenerator;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 /**
  * Core Mac parameters implementation.
@@ -90,9 +90,9 @@ public class GordianCoreMacParameters {
     /**
      * Process macParameters.
      * @param pParams the mac parameters
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    void processParameters(final GordianMacParameters pParams) throws OceanusException {
+    void processParameters(final GordianMacParameters pParams) throws GordianException {
         /* Access the key details */
         theKey = pParams.getKey();
         theInitVector = obtainNonceFromParameters(pParams);
@@ -102,9 +102,9 @@ public class GordianCoreMacParameters {
      * Build a key from bytes.
      * @param pKeyBytes the bytes to use
      * @return the key
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    GordianKey<GordianMacSpec> buildKeyFromBytes(final byte[] pKeyBytes) throws OceanusException {
+    GordianKey<GordianMacSpec> buildKeyFromBytes(final byte[] pKeyBytes) throws GordianException {
         /* Create generator if needed */
         if (theGenerator == null) {
             final GordianMacFactory myFactory = theFactory.getMacFactory();

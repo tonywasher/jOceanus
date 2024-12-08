@@ -16,19 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.jca;
 
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
-import java.security.spec.AlgorithmParameterSpec;
-
-import javax.crypto.BadPaddingException;
-import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.SecretKey;
-import javax.crypto.ShortBufferException;
-import javax.crypto.spec.IvParameterSpec;
-import javax.crypto.spec.RC2ParameterSpec;
-import javax.crypto.spec.RC5ParameterSpec;
-
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
+import net.sourceforge.joceanus.gordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianCipherParameters;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianCipherSpec;
@@ -39,11 +28,21 @@ import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymCipher;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymCipherSpec;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymKeySpec;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymKeyType;
-import net.sourceforge.joceanus.gordianknot.api.base.GordianKeySpec;
-import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
-import net.sourceforge.joceanus.gordianknot.impl.core.cipher.GordianCoreCipher;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.gordianknot.impl.core.cipher.GordianCoreCipher;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.SecretKey;
+import javax.crypto.ShortBufferException;
+import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.RC2ParameterSpec;
+import javax.crypto.spec.RC5ParameterSpec;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.spec.AlgorithmParameterSpec;
 
 /**
  * Cipher for JCA BouncyCastle Ciphers.
@@ -81,7 +80,7 @@ public abstract class JcaCipher<T extends GordianKeySpec>
 
     @Override
     public void init(final boolean pEncrypt,
-                     final GordianCipherParameters pParams) throws OceanusException {
+                     final GordianCipherParameters pParams) throws GordianException {
         /* Process the parameters and access the key */
         processParameters(pParams);
         final JcaKey<T> myJcaKey = JcaKey.accessKey(getKey());
@@ -149,7 +148,7 @@ public abstract class JcaCipher<T extends GordianKeySpec>
                         final int pOffset,
                         final int pLength,
                         final byte[] pOutput,
-                        final int pOutOffset) throws OceanusException {
+                        final int pOutOffset) throws GordianException {
         /* Protect against exceptions */
         try {
             /* Process the bytes */
@@ -163,7 +162,7 @@ public abstract class JcaCipher<T extends GordianKeySpec>
 
     @Override
     public int doFinish(final byte[] pOutput,
-                        final int pOutOffset) throws OceanusException {
+                        final int pOutOffset) throws GordianException {
         /* Protect against exceptions */
         try {
             /* Finish the operation */

@@ -16,13 +16,14 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.core.exc;
 
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
+
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 
 /**
  * Data Exception.
  */
 public class GordianDataException
-        extends OceanusException {
+        extends GordianException {
     /**
      * SerialId.
      */
@@ -34,5 +35,14 @@ public class GordianDataException
      */
     public GordianDataException(final String s) {
         super(s);
+    }
+
+    /**
+     * Create a new GordianKnot Exception object based on a string and exception.
+     * @param s the description of the exception
+     * @param e the causing exception
+     */
+    public GordianDataException(final String s, final Exception e) {
+        super(s, e);
     }
 }

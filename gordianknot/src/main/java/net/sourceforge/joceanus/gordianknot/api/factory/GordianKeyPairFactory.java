@@ -16,19 +16,19 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.api.factory;
 
-import java.security.spec.PKCS8EncodedKeySpec;
-import java.security.spec.X509EncodedKeySpec;
-import java.util.List;
-import java.util.function.Predicate;
-
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementFactory;
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.encrypt.GordianEncryptorFactory;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairGenerator;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairType;
 import net.sourceforge.joceanus.gordianknot.api.keystore.GordianKeyStoreFactory;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignatureFactory;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
+
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
+import java.util.List;
+import java.util.function.Predicate;
 
 /**
  * KeyPair Factory API.
@@ -38,25 +38,25 @@ public interface GordianKeyPairFactory {
      * Obtain keyPair generator.
      * @param pKeySpec the keySpec
      * @return the generator
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    GordianKeyPairGenerator getKeyPairGenerator(GordianKeyPairSpec pKeySpec) throws OceanusException;
+    GordianKeyPairGenerator getKeyPairGenerator(GordianKeyPairSpec pKeySpec) throws GordianException;
 
     /**
      * Determine KeySpec from PKCS8EncodedKeySpec.
      * @param pEncoded the encodedKeySpec
      * @return the keySpec
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    GordianKeyPairSpec determineKeyPairSpec(PKCS8EncodedKeySpec pEncoded) throws OceanusException;
+    GordianKeyPairSpec determineKeyPairSpec(PKCS8EncodedKeySpec pEncoded) throws GordianException;
 
     /**
      * Determine KeySpec from X509EncodedKeySpec.
      * @param pEncoded the encodedKeySpec
      * @return the keySpec
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    GordianKeyPairSpec determineKeyPairSpec(X509EncodedKeySpec pEncoded) throws OceanusException;
+    GordianKeyPairSpec determineKeyPairSpec(X509EncodedKeySpec pEncoded) throws GordianException;
 
     /**
      * Obtain the underlying Factory.

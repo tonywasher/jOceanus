@@ -86,31 +86,6 @@ public class PrometheusEncryptedPair
 
     /**
      * Adopt Encryption.
-     * @param pGenerator the generator
-     * @param pSource field to adopt encryption from
-     * @throws OceanusException on error
-     */
-    protected void adoptEncryption(final PrometheusFieldGenerator pGenerator,
-                                   final PrometheusEncryptedPair pSource) throws OceanusException {
-        /* Store the keySet */
-        theKeySet = pGenerator.getKeySet();
-
-        /* If we need to renew the encryption */
-        if (pSource == null
-                || MetisDataDifference.difference(theKeySet, pSource.getKeySet()).isDifferent()
-                || MetisDataDifference.difference(getValue(), pSource.getValue()).isDifferent()) {
-            /* encrypt the value */
-            theBytes = pGenerator.encryptValue(getValue());
-
-            /* else we can simply adopt the underlying encryption */
-        } else {
-            /* Pick up the underlying encryption */
-            theBytes = pSource.getBytes();
-        }
-    }
-
-    /**
-     * Adopt Encryption.
      * @param pEncryptor the encryptor
      * @param pSource field to adopt encryption from
      * @throws OceanusException on error

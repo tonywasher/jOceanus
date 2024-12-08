@@ -16,12 +16,12 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.core.keyset;
 
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianCipherParameters;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.cipher.GordianCoreWrapper;
 import net.sourceforge.joceanus.gordianknot.impl.core.keyset.GordianMultiCipher.GordianSymKeyCipherSet;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 /**
  * GordianKnot base for KeySetWrapper.
@@ -47,14 +47,14 @@ public class GordianKeySetWrapper
     }
 
     @Override
-    protected void initCipherForWrapping() throws OceanusException {
+    protected void initCipherForWrapping() throws GordianException {
         for (GordianSymKeyCipherSet myCipher : theCiphers) {
             myCipher.getStandardCipher().initForEncrypt(GordianCipherParameters.key(myCipher.getKey()));
         }
     }
 
     @Override
-    protected void initCipherForUnwrapping() throws OceanusException {
+    protected void initCipherForUnwrapping() throws GordianException {
         for (GordianSymKeyCipherSet myCipher : theCiphers) {
             myCipher.getStandardCipher().initForDecrypt(GordianCipherParameters.key(myCipher.getKey()));
         }
@@ -63,7 +63,7 @@ public class GordianKeySetWrapper
     @Override
     protected void iterateCipher(final byte[] pInBuffer,
                                  final int pBufferLen,
-                                 final byte[] pResult) throws OceanusException {
+                                 final byte[] pResult) throws GordianException {
         byte[] myInBuffer = pInBuffer;
         final byte[][] myTempBuffers = { new byte[pBufferLen], new byte[pBufferLen] };
         int myNextIndex = 0;

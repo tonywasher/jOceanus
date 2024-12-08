@@ -19,6 +19,7 @@ package net.sourceforge.joceanus.gordianknot.impl.core.agree;
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementSpec;
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementType;
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianKDFType;
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianCipherSpec;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianStreamCipherSpec;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymCipherSpec;
@@ -38,7 +39,6 @@ import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.cipher.GordianCoreCipherFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.keyset.GordianKeySetSpecASN1;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.ASN1Integer;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
@@ -333,9 +333,9 @@ public class GordianAgreementAlgId {
      * Obtain identifier for result.
      * @param pResultType the result type
      * @return the identifier
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    protected AlgorithmIdentifier getIdentifierForResult(final Object pResultType) throws OceanusException {
+    protected AlgorithmIdentifier getIdentifierForResult(final Object pResultType) throws GordianException {
         if (pResultType instanceof GordianFactoryType) {
             final ASN1ObjectIdentifier myOID = pResultType == GordianFactoryType.BC
                     ? GordianCoreFactory.BCFACTORYOID
@@ -367,9 +367,9 @@ public class GordianAgreementAlgId {
      * process result algorithmId.
      * @param pResId the result algorithmId.
      * @return the resultType
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    public Object  processResultIdentifier(final AlgorithmIdentifier pResId) throws OceanusException {
+    public Object  processResultIdentifier(final AlgorithmIdentifier pResId) throws GordianException {
         /* Look for a Factory */
         final ASN1ObjectIdentifier myAlgId = pResId.getAlgorithm();
         if (GordianCoreFactory.BCFACTORYOID.equals(myAlgId)) {

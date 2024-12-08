@@ -16,14 +16,14 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.core.stream;
 
-import java.io.IOException;
-import java.io.OutputStream;
-
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
+import net.sourceforge.joceanus.gordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianKeyedCipher;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymKeySpec;
-import net.sourceforge.joceanus.gordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.gordianknot.impl.core.cipher.GordianCoreCipher;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
+
+import java.io.IOException;
+import java.io.OutputStream;
 
 /**
  * Output stream cipher implementation.
@@ -108,7 +108,7 @@ class GordianCipherOutputStream<T extends GordianKeySpec>
             }
 
             /* Catch exceptions */
-        } catch (OceanusException e) {
+        } catch (GordianException e) {
             throw new IOException(e);
         }
     }
@@ -128,7 +128,7 @@ class GordianCipherOutputStream<T extends GordianKeySpec>
             }
 
             /* Catch exceptions */
-        } catch (OceanusException e) {
+        } catch (GordianException e) {
             throw new IOException(theCipher.getKeyType().toString(), e);
         }
     }

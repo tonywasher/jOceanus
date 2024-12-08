@@ -16,8 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.core.keystore;
 
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 /**
  * PEM Object.
@@ -129,9 +129,9 @@ public class GordianPEMObject {
          * Determine the ObjectType.
          * @param pId the id
          * @return the objectType
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
-        static GordianPEMObjectType getObjectType(final String pId) throws OceanusException {
+        static GordianPEMObjectType getObjectType(final String pId) throws GordianException {
             for (GordianPEMObjectType myType : values()) {
                 final String myTest = myType.getId() + BRACKET;
                 if (myTest.equals(pId)) {

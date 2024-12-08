@@ -16,27 +16,26 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.core.keystore;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-
-import org.w3c.dom.Document;
-
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.keystore.GordianKeyStore;
 import net.sourceforge.joceanus.gordianknot.api.keystore.GordianKeyStoreFactory;
 import net.sourceforge.joceanus.gordianknot.api.keystore.GordianKeyStoreGateway;
 import net.sourceforge.joceanus.gordianknot.api.keystore.GordianKeyStoreManager;
 import net.sourceforge.joceanus.gordianknot.api.lock.GordianPasswordLockSpec;
-import net.sourceforge.joceanus.gordianknot.api.zip.GordianZipLock;
 import net.sourceforge.joceanus.gordianknot.api.zip.GordianZipFactory;
 import net.sourceforge.joceanus.gordianknot.api.zip.GordianZipFileEntry;
+import net.sourceforge.joceanus.gordianknot.api.zip.GordianZipLock;
 import net.sourceforge.joceanus.gordianknot.api.zip.GordianZipReadFile;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianIOException;
 import net.sourceforge.joceanus.gordianknot.impl.core.keypair.GordianCoreKeyPairFactory;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import org.w3c.dom.Document;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * KeyStore Factory implementation.
@@ -63,7 +62,7 @@ public class GordianCoreKeyStoreFactory
 
     @Override
     public GordianKeyStore loadKeyStore(final File pFile,
-                                        final char[] pPassword) throws OceanusException {
+                                        final char[] pPassword) throws GordianException {
         try {
             return loadKeyStore(new FileInputStream(pFile), pPassword);
         } catch (IOException e) {
@@ -73,7 +72,7 @@ public class GordianCoreKeyStoreFactory
 
     @Override
     public GordianKeyStore loadKeyStore(final InputStream pInputStream,
-                                        final char[] pPassword) throws OceanusException {
+                                        final char[] pPassword) throws GordianException {
         /* Access the ZipFile */
         final GordianZipFactory myZipFactory = theFactory.getZipFactory();
         final GordianZipReadFile myZipFile = myZipFactory.openZipFile(pInputStream);

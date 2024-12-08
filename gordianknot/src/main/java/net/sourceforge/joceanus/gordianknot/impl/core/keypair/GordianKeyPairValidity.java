@@ -21,6 +21,7 @@ import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementSpec;
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementSpecBuilder;
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianAnonymousAgreement;
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianKDFType;
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestSpecBuilder;
 import net.sourceforge.joceanus.gordianknot.api.encrypt.GordianEncryptor;
@@ -35,7 +36,6 @@ import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignatureSpec;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianLogicException;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 import java.util.Arrays;
 
@@ -58,10 +58,10 @@ public final class GordianKeyPairValidity {
      * Check keyPair validity.
      * @param pFactory the factory
      * @param pKeyPair the keyPair
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     public static void checkValidity(final GordianCoreFactory pFactory,
-                                     final GordianKeyPair pKeyPair) throws OceanusException {
+                                     final GordianKeyPair pKeyPair) throws GordianException {
         final Object myCheck = getValidityCheck(pFactory, pKeyPair);
         if (myCheck instanceof GordianSignatureSpec) {
             checkValidity(pFactory, pKeyPair, (GordianSignatureSpec) myCheck);
@@ -79,11 +79,11 @@ public final class GordianKeyPairValidity {
      * @param pFactory the factory
      * @param pKeyPair the keyPair
      * @param pSignSpec the signature spec
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     private static void checkValidity(final GordianCoreFactory pFactory,
                                       final GordianKeyPair pKeyPair,
-                                      final GordianSignatureSpec pSignSpec) throws OceanusException {
+                                      final GordianSignatureSpec pSignSpec) throws GordianException {
         /* Use default personalisation as the data to sign */
         final byte[] myData = pFactory.getRandomSource().defaultPersonalisation();
 
@@ -109,11 +109,11 @@ public final class GordianKeyPairValidity {
      * @param pFactory the factory
      * @param pKeyPair the keyPair
      * @param pEncryptSpec the encryption spec
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     private static void checkValidity(final GordianCoreFactory pFactory,
                                       final GordianKeyPair pKeyPair,
-                                      final GordianEncryptorSpec pEncryptSpec) throws OceanusException {
+                                      final GordianEncryptorSpec pEncryptSpec) throws GordianException {
         /* Use default personalisation as the data to encrypt */
         final byte[] myData = pFactory.getRandomSource().defaultPersonalisation();
 
@@ -140,11 +140,11 @@ public final class GordianKeyPairValidity {
      * @param pFactory the factory
      * @param pKeyPair the keyPair
      * @param pAgreeSpec the agreementSpec
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     private static void checkValidity(final GordianCoreFactory pFactory,
                                       final GordianKeyPair pKeyPair,
-                                      final GordianAgreementSpec pAgreeSpec) throws OceanusException {
+                                      final GordianAgreementSpec pAgreeSpec) throws GordianException {
         /* Create agreement on client side */
         final GordianAgreementFactory myAgrees = pFactory.getKeyPairFactory().getAgreementFactory();
         GordianAnonymousAgreement myAgreement

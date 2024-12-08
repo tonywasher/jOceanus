@@ -16,6 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.jca;
 
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianDHGroup;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianDSAKeyType;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
@@ -34,7 +35,6 @@ import net.sourceforge.joceanus.gordianknot.impl.jca.JcaKeyPair.JcaPrivateKey;
 import net.sourceforge.joceanus.gordianknot.impl.jca.JcaKeyPair.JcaPublicKey;
 import net.sourceforge.joceanus.gordianknot.impl.jca.JcaKeyPair.JcaStateAwareKeyPair;
 import net.sourceforge.joceanus.gordianknot.impl.jca.JcaKeyPair.JcaStateAwarePrivateKey;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import org.bouncycastle.crypto.params.DHParameters;
 import org.bouncycastle.jcajce.provider.asymmetric.dh.BCDHPrivateKey;
 import org.bouncycastle.jcajce.provider.asymmetric.dh.BCDHPublicKey;
@@ -117,7 +117,7 @@ public abstract class JcaKeyPairGenerator
     }
 
     @Override
-    public PKCS8EncodedKeySpec getPKCS8Encoding(final GordianKeyPair pKeyPair) throws OceanusException {
+    public PKCS8EncodedKeySpec getPKCS8Encoding(final GordianKeyPair pKeyPair) throws GordianException {
         /* Check the keyPair */
         JcaKeyPair.checkKeyPair(pKeyPair);
 
@@ -127,7 +127,7 @@ public abstract class JcaKeyPairGenerator
     }
 
     @Override
-    public X509EncodedKeySpec getX509Encoding(final GordianKeyPair pKeyPair) throws OceanusException {
+    public X509EncodedKeySpec getX509Encoding(final GordianKeyPair pKeyPair) throws GordianException {
         /* Check the keyPair */
         JcaKeyPair.checkKeyPair(pKeyPair);
 
@@ -138,7 +138,7 @@ public abstract class JcaKeyPairGenerator
 
     @Override
     public JcaKeyPair deriveKeyPair(final X509EncodedKeySpec pPublicKey,
-                                    final PKCS8EncodedKeySpec pPrivateKey) throws OceanusException {
+                                    final PKCS8EncodedKeySpec pPrivateKey) throws GordianException {
         /* Protect against exceptions */
         try {
             /* Check the keySpec */
@@ -179,7 +179,7 @@ public abstract class JcaKeyPairGenerator
     }
 
     @Override
-    public JcaKeyPair derivePublicOnlyKeyPair(final X509EncodedKeySpec pPublicKey) throws OceanusException {
+    public JcaKeyPair derivePublicOnlyKeyPair(final X509EncodedKeySpec pPublicKey) throws GordianException {
         final JcaPublicKey myPublic = derivePublicKey(pPublicKey);
         return new JcaKeyPair(myPublic);
     }
@@ -188,9 +188,9 @@ public abstract class JcaKeyPairGenerator
      * Derive the public key.
      * @param pEncodedKey the encoded public key
      * @return the public key
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    protected JcaPublicKey derivePublicKey(final X509EncodedKeySpec pEncodedKey) throws OceanusException {
+    protected JcaPublicKey derivePublicKey(final X509EncodedKeySpec pEncodedKey) throws GordianException {
         /* Protect against exceptions */
         try {
             /* Check the keySpec */
@@ -223,10 +223,10 @@ public abstract class JcaKeyPairGenerator
          * Constructor.
          * @param pFactory the Security Factory
          * @param pKeySpec the keySpec
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
         JcaRSAKeyPairGenerator(final JcaFactory pFactory,
-                               final GordianKeyPairSpec pKeySpec) throws OceanusException {
+                               final GordianKeyPairSpec pKeySpec) throws GordianException {
             /* Initialise underlying class */
             super(pFactory, pKeySpec);
 
@@ -267,10 +267,10 @@ public abstract class JcaKeyPairGenerator
          * Constructor.
          * @param pFactory the Security Factory
          * @param pKeySpec the keySpec
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
         JcaElGamalKeyPairGenerator(final JcaFactory pFactory,
-                                   final GordianKeyPairSpec pKeySpec) throws OceanusException {
+                                   final GordianKeyPairSpec pKeySpec) throws GordianException {
             /* Initialise underlying class */
             super(pFactory, pKeySpec);
 
@@ -317,10 +317,10 @@ public abstract class JcaKeyPairGenerator
          * Constructor.
          * @param pFactory the Security Factory
          * @param pKeySpec the keySpec
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
         JcaECKeyPairGenerator(final JcaFactory pFactory,
-                              final GordianKeyPairSpec pKeySpec) throws OceanusException {
+                              final GordianKeyPairSpec pKeySpec) throws GordianException {
             /* Initialise underlying class */
             super(pFactory, pKeySpec);
 
@@ -384,10 +384,10 @@ public abstract class JcaKeyPairGenerator
          * Constructor.
          * @param pFactory the Security Factory
          * @param pKeySpec the keySpec
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
         JcaDSAKeyPairGenerator(final JcaFactory pFactory,
-                               final GordianKeyPairSpec pKeySpec) throws OceanusException {
+                               final GordianKeyPairSpec pKeySpec) throws GordianException {
             /* Initialise underlying class */
             super(pFactory, pKeySpec);
 
@@ -429,10 +429,10 @@ public abstract class JcaKeyPairGenerator
          * Constructor.
          * @param pFactory the Security Factory
          * @param pKeySpec the keySpec
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
         JcaDHKeyPairGenerator(final JcaFactory pFactory,
-                              final GordianKeyPairSpec pKeySpec) throws OceanusException {
+                              final GordianKeyPairSpec pKeySpec) throws GordianException {
             /* Initialise underlying class */
             super(pFactory, pKeySpec);
 
@@ -499,10 +499,10 @@ public abstract class JcaKeyPairGenerator
          * Constructor.
          * @param pFactory the Security Factory
          * @param pKeySpec the keySpec
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
         JcaSLHDSAKeyPairGenerator(final JcaFactory pFactory,
-                                  final GordianKeyPairSpec pKeySpec) throws OceanusException {
+                                  final GordianKeyPairSpec pKeySpec) throws GordianException {
             /* Initialise underlying class */
             super(pFactory, pKeySpec);
 
@@ -553,10 +553,10 @@ public abstract class JcaKeyPairGenerator
          * Constructor.
          * @param pFactory the Security Factory
          * @param pKeySpec the keySpec
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
         JcaCMCEKeyPairGenerator(final JcaFactory pFactory,
-                                final GordianKeyPairSpec pKeySpec) throws OceanusException {
+                                final GordianKeyPairSpec pKeySpec) throws GordianException {
             /* Initialise underlying class */
             super(pFactory, pKeySpec);
 
@@ -604,10 +604,10 @@ public abstract class JcaKeyPairGenerator
          * Constructor.
          * @param pFactory the Security Factory
          * @param pKeySpec the keySpec
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
         JcaFrodoKeyPairGenerator(final JcaFactory pFactory,
-                                 final GordianKeyPairSpec pKeySpec) throws OceanusException {
+                                 final GordianKeyPairSpec pKeySpec) throws GordianException {
             /* Initialise underlying class */
             super(pFactory, pKeySpec);
 
@@ -655,10 +655,10 @@ public abstract class JcaKeyPairGenerator
          * Constructor.
          * @param pFactory the Security Factory
          * @param pKeySpec the keySpec
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
         JcaSABERKeyPairGenerator(final JcaFactory pFactory,
-                                 final GordianKeyPairSpec pKeySpec) throws OceanusException {
+                                 final GordianKeyPairSpec pKeySpec) throws GordianException {
             /* Initialise underlying class */
             super(pFactory, pKeySpec);
 
@@ -706,10 +706,10 @@ public abstract class JcaKeyPairGenerator
          * Constructor.
          * @param pFactory the Security Factory
          * @param pKeySpec the keySpec
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
         JcaMLKEMKeyPairGenerator(final JcaFactory pFactory,
-                                 final GordianKeyPairSpec pKeySpec) throws OceanusException {
+                                 final GordianKeyPairSpec pKeySpec) throws GordianException {
             /* Initialise underlying class */
             super(pFactory, pKeySpec);
 
@@ -762,10 +762,10 @@ public abstract class JcaKeyPairGenerator
          * Constructor.
          * @param pFactory the Security Factory
          * @param pKeySpec the keySpec
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
         JcaMLDSAKeyPairGenerator(final JcaFactory pFactory,
-                                 final GordianKeyPairSpec pKeySpec) throws OceanusException {
+                                 final GordianKeyPairSpec pKeySpec) throws GordianException {
             /* Initialise underlying class */
             super(pFactory, pKeySpec);
 
@@ -816,10 +816,10 @@ public abstract class JcaKeyPairGenerator
          * Constructor.
          * @param pFactory the Security Factory
          * @param pKeySpec the keySpec
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
         JcaHQCKeyPairGenerator(final JcaFactory pFactory,
-                               final GordianKeyPairSpec pKeySpec) throws OceanusException {
+                               final GordianKeyPairSpec pKeySpec) throws GordianException {
             /* Initialise underlying class */
             super(pFactory, pKeySpec);
 
@@ -868,10 +868,10 @@ public abstract class JcaKeyPairGenerator
          * Constructor.
          * @param pFactory the Security Factory
          * @param pKeySpec the keySpec
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
         JcaBIKEKeyPairGenerator(final JcaFactory pFactory,
-                                final GordianKeyPairSpec pKeySpec) throws OceanusException {
+                                final GordianKeyPairSpec pKeySpec) throws GordianException {
             /* Initialise underlying class */
             super(pFactory, pKeySpec);
 
@@ -919,10 +919,10 @@ public abstract class JcaKeyPairGenerator
          * Constructor.
          * @param pFactory the Security Factory
          * @param pKeySpec the keySpec
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
         JcaNTRUKeyPairGenerator(final JcaFactory pFactory,
-                                final GordianKeyPairSpec pKeySpec) throws OceanusException {
+                                final GordianKeyPairSpec pKeySpec) throws GordianException {
             /* Initialise underlying class */
             super(pFactory, pKeySpec);
 
@@ -970,10 +970,10 @@ public abstract class JcaKeyPairGenerator
          * Constructor.
          * @param pFactory the Security Factory
          * @param pKeySpec the keySpec
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
         JcaFALCONKeyPairGenerator(final JcaFactory pFactory,
-                                  final GordianKeyPairSpec pKeySpec) throws OceanusException {
+                                  final GordianKeyPairSpec pKeySpec) throws GordianException {
             /* Initialise underlying class */
             super(pFactory, pKeySpec);
 
@@ -1021,10 +1021,10 @@ public abstract class JcaKeyPairGenerator
          * Constructor.
          * @param pFactory the Security Factory
          * @param pKeySpec the keySpec
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
         JcaRainbowKeyPairGenerator(final JcaFactory pFactory,
-                                   final GordianKeyPairSpec pKeySpec) throws OceanusException {
+                                   final GordianKeyPairSpec pKeySpec) throws GordianException {
             /* Initialise underlying class */
             super(pFactory, pKeySpec);
 
@@ -1072,10 +1072,10 @@ public abstract class JcaKeyPairGenerator
          * Constructor.
          * @param pFactory the Security Factory
          * @param pKeySpec the keySpec
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
         JcaNTRULPrimeKeyPairGenerator(final JcaFactory pFactory,
-                                      final GordianKeyPairSpec pKeySpec) throws OceanusException {
+                                      final GordianKeyPairSpec pKeySpec) throws GordianException {
             /* Initialise underlying class */
             super(pFactory, pKeySpec);
 
@@ -1123,10 +1123,10 @@ public abstract class JcaKeyPairGenerator
          * Constructor.
          * @param pFactory the Security Factory
          * @param pKeySpec the keySpec
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
         JcaSNTRUPrimeKeyPairGenerator(final JcaFactory pFactory,
-                                      final GordianKeyPairSpec pKeySpec) throws OceanusException {
+                                      final GordianKeyPairSpec pKeySpec) throws GordianException {
             /* Initialise underlying class */
             super(pFactory, pKeySpec);
 
@@ -1174,10 +1174,10 @@ public abstract class JcaKeyPairGenerator
          * Constructor.
          * @param pFactory the Security Factory
          * @param pKeySpec the keySpec
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
         JcaPICNICKeyPairGenerator(final JcaFactory pFactory,
-                                  final GordianKeyPairSpec pKeySpec) throws OceanusException {
+                                  final GordianKeyPairSpec pKeySpec) throws GordianException {
             /* Initialise underlying class */
             super(pFactory, pKeySpec);
 
@@ -1220,10 +1220,10 @@ public abstract class JcaKeyPairGenerator
          * Constructor.
          * @param pFactory the Security Factory
          * @param pKeySpec the keySpec
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
         JcaXMSSKeyPairGenerator(final JcaFactory pFactory,
-                                final GordianKeyPairSpec pKeySpec) throws OceanusException {
+                                final GordianKeyPairSpec pKeySpec) throws GordianException {
             /* Initialise underlying class */
             super(pFactory, pKeySpec);
 
@@ -1269,7 +1269,7 @@ public abstract class JcaKeyPairGenerator
 
         @Override
         public JcaKeyPair deriveKeyPair(final X509EncodedKeySpec pPublicKey,
-                                        final PKCS8EncodedKeySpec pPrivateKey) throws OceanusException {
+                                        final PKCS8EncodedKeySpec pPrivateKey) throws GordianException {
             /* Protect against exceptions */
             try {
                 /* Check the keySpecs */
@@ -1307,10 +1307,10 @@ public abstract class JcaKeyPairGenerator
          * Constructor.
          * @param pFactory the Security Factory
          * @param pKeySpec the keySpec
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
         protected JcaEdKeyPairGenerator(final JcaFactory pFactory,
-                                        final GordianKeyPairSpec pKeySpec) throws OceanusException {
+                                        final GordianKeyPairSpec pKeySpec) throws GordianException {
             /* Initialise underlying class */
             super(pFactory, pKeySpec);
 
@@ -1371,10 +1371,10 @@ public abstract class JcaKeyPairGenerator
          * Constructor.
          * @param pFactory the Security Factory
          * @param pKeySpec the keySpec
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
         JcaLMSKeyPairGenerator(final JcaFactory pFactory,
-                               final GordianKeyPairSpec pKeySpec) throws OceanusException {
+                               final GordianKeyPairSpec pKeySpec) throws GordianException {
             /* Initialise underlying class */
             super(pFactory, pKeySpec);
 
@@ -1436,7 +1436,7 @@ public abstract class JcaKeyPairGenerator
 
         @Override
         public JcaKeyPair deriveKeyPair(final X509EncodedKeySpec pPublicKey,
-                                        final PKCS8EncodedKeySpec pPrivateKey) throws OceanusException {
+                                        final PKCS8EncodedKeySpec pPrivateKey) throws GordianException {
             /* Protect against exceptions */
             try {
                 /* Check the keySpecs */

@@ -18,6 +18,7 @@ package net.sourceforge.joceanus.gordianknot.impl.bc;
 
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreement;
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementSpec;
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianNTRUPrimeSpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianNTRUPrimeSpec.GordianNTRUPrimeType;
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyBIKEKeyPair.BouncyBIKEAgreement;
@@ -49,7 +50,6 @@ import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyXDHKeyPair.BouncyXDHUn
 import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianCoreAgreementFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 /**
  * Bouncy Agreement Factory.
@@ -72,7 +72,7 @@ public class BouncyAgreementFactory
     }
 
     @Override
-    public GordianAgreement createAgreement(final GordianAgreementSpec pAgreementSpec) throws OceanusException {
+    public GordianAgreement createAgreement(final GordianAgreementSpec pAgreementSpec) throws GordianException {
         /* Check validity of Agreement */
         checkAgreementSpec(pAgreementSpec);
 
@@ -85,9 +85,9 @@ public class BouncyAgreementFactory
      *
      * @param pSpec the agreementSpec
      * @return the Agreement
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private GordianAgreement getBCAgreement(final GordianAgreementSpec pSpec) throws OceanusException {
+    private GordianAgreement getBCAgreement(final GordianAgreementSpec pSpec) throws GordianException {
         switch (pSpec.getKeyPairSpec().getKeyPairType()) {
             case RSA:
                 return new BouncyRSAEncapsulationAgreement(getFactory(), pSpec);
@@ -131,9 +131,9 @@ public class BouncyAgreementFactory
      *
      * @param pSpec the agreementSpec
      * @return the Agreement
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private GordianAgreement getBCECAgreement(final GordianAgreementSpec pSpec) throws OceanusException {
+    private GordianAgreement getBCECAgreement(final GordianAgreementSpec pSpec) throws GordianException {
         switch (pSpec.getAgreementType()) {
             case KEM:
                 return new BouncyECIESAgreement(getFactory(), pSpec);
@@ -159,9 +159,9 @@ public class BouncyAgreementFactory
      *
      * @param pSpec the agreementSpec
      * @return the Agreement
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private GordianAgreement getBCDHAgreement(final GordianAgreementSpec pSpec) throws OceanusException {
+    private GordianAgreement getBCDHAgreement(final GordianAgreementSpec pSpec) throws GordianException {
         switch (pSpec.getAgreementType()) {
             case ANON:
                 return new BouncyDHAnonymousAgreement(getFactory(), pSpec);
@@ -183,9 +183,9 @@ public class BouncyAgreementFactory
      *
      * @param pSpec the agreementSpec
      * @return the Agreement
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private GordianAgreement getBCXDHAgreement(final GordianAgreementSpec pSpec) throws OceanusException {
+    private GordianAgreement getBCXDHAgreement(final GordianAgreementSpec pSpec) throws GordianException {
         switch (pSpec.getAgreementType()) {
             case ANON:
                 return new BouncyXDHAnonymousAgreement(getFactory(), pSpec);

@@ -17,8 +17,8 @@
 package net.sourceforge.joceanus.gordianknot.api.mac;
 
 import net.sourceforge.joceanus.gordianknot.api.base.GordianConsumer;
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.key.GordianKey;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 /**
  * GordianKnot interface for Message Authentication Codes.
@@ -52,16 +52,16 @@ public interface GordianMac
     /**
      * Initialise the MAC with the given parameters.
      * @param pParams the parameters
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    void init(GordianMacParameters pParams) throws OceanusException;
+    void init(GordianMacParameters pParams) throws GordianException;
 
     /**
      * Init with bytes as key.
      * @param pKeyBytes the bytes to use
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    void initKeyBytes(byte[] pKeyBytes) throws OceanusException;
+    void initKeyBytes(byte[] pKeyBytes) throws GordianException;
 
     /**
      * Calculate the MAC.
@@ -74,18 +74,18 @@ public interface GordianMac
      * @param pBuffer the buffer to return the digest in.
      * @param pOffset the offset in the buffer to store the digest.
      * @return the number of bytes placed into buffer
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     int finish(byte[] pBuffer,
-               int pOffset) throws OceanusException;
+               int pOffset) throws GordianException;
 
     /**
      * Update the MAC, calculate and reset it.
      * @param pBytes the bytes to update with.
      * @return the MAC
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    default byte[] finish(final byte[] pBytes) throws OceanusException {
+    default byte[] finish(final byte[] pBytes) throws GordianException {
         update(pBytes);
         return finish();
     }

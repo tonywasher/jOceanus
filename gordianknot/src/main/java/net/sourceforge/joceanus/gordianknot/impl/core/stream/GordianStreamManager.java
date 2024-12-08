@@ -16,6 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.core.stream;
 
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianCipherParameters;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianPadding;
@@ -34,15 +35,12 @@ import net.sourceforge.joceanus.gordianknot.api.mac.GordianMac;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacParameters;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacSpec;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianIdManager;
 import net.sourceforge.joceanus.gordianknot.impl.core.cipher.GordianCoreCipherFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.digest.GordianCoreDigestFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.keyset.GordianCoreKeySet;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianIdManager;
 import net.sourceforge.joceanus.gordianknot.impl.core.mac.GordianCoreMacFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.stream.GordianStreamDefinition.GordianStreamType;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.logger.OceanusLogManager;
-import net.sourceforge.joceanus.oceanus.logger.OceanusLogger;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -55,16 +53,6 @@ import java.util.List;
  * Stream Factory.
  */
 public final class GordianStreamManager {
-    /**
-     * Logger.
-     */
-    private static final OceanusLogger LOGGER = OceanusLogManager.getLogger(GordianStreamManager.class);
-
-    /**
-     * Close error.
-     */
-    private static final String ERROR_CLOSE = "Failed to close stream";
-
     /**
      * The keySet.
      */
@@ -82,9 +70,9 @@ public final class GordianStreamManager {
      * Analyse output stream.
      * @param pStream the output stream
      * @return the Stream definition list
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    public List<GordianStreamDefinition> analyseStreams(final OutputStream pStream) throws OceanusException {
+    public List<GordianStreamDefinition> analyseStreams(final OutputStream pStream) throws GordianException {
         /* Allocate the list */
         final List<GordianStreamDefinition> myStreams = new ArrayList<>();
 
@@ -134,10 +122,10 @@ public final class GordianStreamManager {
      * @param pStreamDefs the list of stream definitions
      * @param pBaseStream the base input stream
      * @return the new input stream
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     public InputStream buildInputStream(final List<GordianStreamDefinition> pStreamDefs,
-                                        final InputStream pBaseStream) throws OceanusException {
+                                        final InputStream pBaseStream) throws GordianException {
         /* Loop through the stream definitions */
         InputStream myCurrent = pBaseStream;
         GordianMacInputStream myMacStream = null;
@@ -158,10 +146,10 @@ public final class GordianStreamManager {
      * @param pBaseStream the base output stream
      * @param pCompress should we compress this file?
      * @return the new output stream
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     public OutputStream buildOutputStream(final OutputStream pBaseStream,
-                                          final boolean pCompress) throws OceanusException {
+                                          final boolean pCompress) throws GordianException {
         /* Loop through the stream definitions */
         OutputStream myCurrent = pBaseStream;
 
@@ -239,9 +227,9 @@ public final class GordianStreamManager {
     /**
      * generate random GordianDigest.
      * @return the new Digest
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private GordianDigest generateRandomDigest() throws OceanusException {
+    private GordianDigest generateRandomDigest() throws GordianException {
         /* Access factory */
         final GordianCoreFactory myFactory = theKeySet.getFactory();
         final GordianCoreDigestFactory myDigests = (GordianCoreDigestFactory) myFactory.getDigestFactory();
@@ -255,9 +243,9 @@ public final class GordianStreamManager {
     /**
      * generate random SymKeyList.
      * @return the list of keys
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    public List<GordianKey<GordianSymKeySpec>> generateRandomSymKeyList() throws OceanusException {
+    public List<GordianKey<GordianSymKeySpec>> generateRandomSymKeyList() throws GordianException {
         /* Access factory */
         final GordianCoreFactory myFactory = theKeySet.getFactory();
         final GordianCoreCipherFactory myCiphers = (GordianCoreCipherFactory) myFactory.getCipherFactory();
@@ -288,7 +276,7 @@ public final class GordianStreamManager {
         try {
             pStream.close();
         } catch (IOException e) {
-            LOGGER.error(ERROR_CLOSE, e);
+            /* NoOp */
         }
     }
 
@@ -300,7 +288,7 @@ public final class GordianStreamManager {
         try {
             pStream.close();
         } catch (IOException e) {
-            LOGGER.error(ERROR_CLOSE, e);
+            /* NoOp */
         }
     }
 }

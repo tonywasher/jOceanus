@@ -16,8 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.api.key;
 
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianKeySpec;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 /**
  * Key Generator API.
@@ -41,7 +41,7 @@ public interface GordianKeyGenerator<T extends GordianKeySpec> {
      * @param <X> the source keySpec
      * @param pSource the source key
      * @return the new Key
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    <X extends GordianKeySpec> GordianKey<T> translateKey(GordianKey<X> pSource) throws OceanusException;
+    <X extends GordianKeySpec> GordianKey<T> translateKey(GordianKey<X> pSource) throws GordianException;
 }

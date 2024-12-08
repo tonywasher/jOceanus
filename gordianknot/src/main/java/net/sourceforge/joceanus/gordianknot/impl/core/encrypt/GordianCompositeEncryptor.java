@@ -16,11 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.core.encrypt;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
-
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.encrypt.GordianEncryptor;
 import net.sourceforge.joceanus.gordianknot.api.encrypt.GordianEncryptorFactory;
 import net.sourceforge.joceanus.gordianknot.api.encrypt.GordianEncryptorSpec;
@@ -28,7 +24,11 @@ import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianLogicException;
 import net.sourceforge.joceanus.gordianknot.impl.core.keypair.GordianCompositeKeyPair;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
 
 /**
  * Composite encryptor.
@@ -54,10 +54,10 @@ public class GordianCompositeEncryptor
      * Constructor.
      * @param pFactory the factory
      * @param pSpec the encryptorSpec
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     public GordianCompositeEncryptor(final GordianFactory pFactory,
-                                     final GordianEncryptorSpec pSpec) throws OceanusException {
+                                     final GordianEncryptorSpec pSpec) throws GordianException {
         /* Store parameters */
         theFactory = pFactory.getKeyPairFactory().getEncryptorFactory();
         theSpec = pSpec;
@@ -77,7 +77,7 @@ public class GordianCompositeEncryptor
     }
 
     @Override
-    public void initForEncrypt(final GordianKeyPair pKeyPair) throws OceanusException {
+    public void initForEncrypt(final GordianKeyPair pKeyPair) throws GordianException {
         /* Check the keyPair */
         checkKeySpec(pKeyPair);
 
@@ -91,7 +91,7 @@ public class GordianCompositeEncryptor
     }
 
     @Override
-    public void initForDecrypt(final GordianKeyPair pKeyPair) throws OceanusException {
+    public void initForDecrypt(final GordianKeyPair pKeyPair) throws GordianException {
         /* Check the keyPair */
         checkKeySpec(pKeyPair);
 
@@ -107,16 +107,16 @@ public class GordianCompositeEncryptor
     /**
      * check the keyPair.
      * @param pKeyPair the keyPair
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private void checkKeySpec(final GordianKeyPair pKeyPair) throws OceanusException {
+    private void checkKeySpec(final GordianKeyPair pKeyPair) throws GordianException {
         if (!theFactory.validEncryptorSpecForKeyPairSpec(pKeyPair.getKeyPairSpec(), theSpec)) {
             throw new GordianLogicException("Invalid keyPair for encryptor");
         }
     }
 
     @Override
-    public byte[] encrypt(final byte[] pBytes) throws OceanusException {
+    public byte[] encrypt(final byte[] pBytes) throws GordianException {
         /* Loop through the encryptors */
         byte[] myData = pBytes;
         for (GordianEncryptor myEncryptor : theEncryptors) {
@@ -129,7 +129,7 @@ public class GordianCompositeEncryptor
     }
 
     @Override
-    public byte[] decrypt(final byte[] pEncrypted) throws OceanusException {
+    public byte[] decrypt(final byte[] pEncrypted) throws GordianException {
         /* Loop through the encryptors */
         byte[] myData = pEncrypted;
         final ListIterator<GordianEncryptor> myIterator = theEncryptors.listIterator(theEncryptors.size());

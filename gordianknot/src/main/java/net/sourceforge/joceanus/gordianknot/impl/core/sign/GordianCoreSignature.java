@@ -16,17 +16,17 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.core.sign;
 
-import java.security.SecureRandom;
-
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianKeyPairFactory;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignature;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignatureFactory;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignatureSpec;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
-import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.digest.GordianCoreDigestFactory;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
+
+import java.security.SecureRandom;
 
 /**
  * GordianKnot base for signature.
@@ -104,9 +104,9 @@ public abstract class GordianCoreSignature
     /**
      * Check that the KeyPair is the correct type.
      * @param pKeyPair the keyPair
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private void checkKeyPair(final GordianKeyPair pKeyPair) throws OceanusException {
+    private void checkKeyPair(final GordianKeyPair pKeyPair) throws GordianException {
         final GordianKeyPairFactory myFactory = theFactory.getKeyPairFactory();
         final GordianSignatureFactory mySigns = myFactory.getSignatureFactory();
         if (!mySigns.validSignatureSpecForKeyPair(pKeyPair, theSpec)) {
@@ -115,7 +115,7 @@ public abstract class GordianCoreSignature
     }
 
     @Override
-    public void initForSigning(final GordianKeyPair pKeyPair) throws OceanusException {
+    public void initForSigning(final GordianKeyPair pKeyPair) throws GordianException {
         /* Check that the keyPair matches */
         checkKeyPair(pKeyPair);
 
@@ -130,7 +130,7 @@ public abstract class GordianCoreSignature
     }
 
     @Override
-    public void initForVerify(final GordianKeyPair pKeyPair) throws OceanusException {
+    public void initForVerify(final GordianKeyPair pKeyPair) throws GordianException {
         /* Check that the keyPair matches */
         checkKeyPair(pKeyPair);
 
@@ -142,9 +142,9 @@ public abstract class GordianCoreSignature
     /**
      * Check that we are in the correct mode.
      * @param pMode the required mode
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    protected void checkMode(final GordianSignatureMode pMode) throws OceanusException {
+    protected void checkMode(final GordianSignatureMode pMode) throws GordianException {
         if (!pMode.equals(theMode)) {
             throw new GordianDataException("Incorrect signature Mode");
         }

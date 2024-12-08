@@ -16,15 +16,14 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.api.keystore;
 
-import org.bouncycastle.asn1.x500.X500Name;
-
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySetSpec;
 import net.sourceforge.joceanus.gordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStoreKey;
 import net.sourceforge.joceanus.gordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStorePair;
 import net.sourceforge.joceanus.gordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStoreSet;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import org.bouncycastle.asn1.x500.X500Name;
 
 /**
  * KeyStore Manager.
@@ -43,11 +42,11 @@ public interface GordianKeyStoreManager {
      * @param pAlias the alias
      * @param pPassword the password
      * @return the new keySet entry
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     GordianKeyStoreSet createKeySet(GordianKeySetSpec pKeySetSpec,
                                     String pAlias,
-                                    char[] pPassword) throws OceanusException;
+                                    char[] pPassword) throws GordianException;
 
     /**
      * Create a new key.
@@ -57,11 +56,11 @@ public interface GordianKeyStoreManager {
      * @param pAlias the alias
      * @param pPassword the password
      * @return the new keySet entry
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     <K extends GordianKeySpec> GordianKeyStoreKey<K> createKey(K pKeySpec,
                                                                String pAlias,
-                                                               char[] pPassword) throws OceanusException;
+                                                               char[] pPassword) throws GordianException;
 
     /**
      * Create a new keyPair with root certificate.
@@ -71,12 +70,12 @@ public interface GordianKeyStoreManager {
      * @param pAlias the alias
      * @param pPassword the password
      * @return the new keyPair entry
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     GordianKeyStorePair createRootKeyPair(GordianKeyPairSpec pKeySpec,
                                           X500Name pSubject,
                                           String pAlias,
-                                          char[] pPassword) throws OceanusException;
+                                          char[] pPassword) throws GordianException;
 
     /**
      * Create a new keyPair with certificate.
@@ -88,14 +87,14 @@ public interface GordianKeyStoreManager {
      * @param pAlias the alias
      * @param pPassword the password
      * @return the new keyPair entry
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     GordianKeyStorePair createKeyPair(GordianKeyPairSpec pKeySpec,
                                       X500Name pSubject,
                                       GordianKeyPairUsage pUsage,
                                       GordianKeyStorePair pSigner,
                                       String pAlias,
-                                      char[] pPassword) throws OceanusException;
+                                      char[] pPassword) throws GordianException;
 
     /**
      * Create an alternate certificate for keyPair.
@@ -106,11 +105,11 @@ public interface GordianKeyStoreManager {
      * @param pAlias the alias
      * @param pPassword the password
      * @return the new keyPair entry
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     GordianKeyStorePair createAlternate(GordianKeyStorePair pKeyPair,
                                         GordianKeyPairUsage pUsage,
                                         GordianKeyStorePair pSigner,
                                         String pAlias,
-                                        char[] pPassword) throws OceanusException;
+                                        char[] pPassword) throws GordianException;
 }

@@ -16,6 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.core.cipher;
 
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianCipherFactory;
@@ -48,7 +49,6 @@ import net.sourceforge.joceanus.gordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.gordianknot.api.key.GordianKeyLengths;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 
 import java.util.ArrayList;
@@ -213,9 +213,9 @@ public abstract class GordianCoreCipherFactory
     /**
      * Check the keySpec.
      * @param pKeySpec the keySpec
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    protected void checkKeySpec(final GordianKeySpec pKeySpec) throws OceanusException {
+    protected void checkKeySpec(final GordianKeySpec pKeySpec) throws GordianException {
         /* Assume failure */
         boolean bValid = false;
 
@@ -239,9 +239,9 @@ public abstract class GordianCoreCipherFactory
     /**
      * Check the symKeySpec.
      * @param pKeySpec the symKeySpec
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    public void checkSymKeySpec(final GordianSymKeySpec pKeySpec) throws OceanusException {
+    public void checkSymKeySpec(final GordianSymKeySpec pKeySpec) throws GordianException {
         /* Check validity of SymKey */
         if (!supportedSymKeySpecs().test(pKeySpec)) {
             throw new GordianDataException(GordianCoreFactory.getInvalidText(pKeySpec));
@@ -251,9 +251,9 @@ public abstract class GordianCoreCipherFactory
     /**
      * Check the symCipherSpec.
      * @param pCipherSpec the cipherSpec
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    public void checkSymCipherSpec(final GordianSymCipherSpec pCipherSpec) throws OceanusException {
+    public void checkSymCipherSpec(final GordianSymCipherSpec pCipherSpec) throws GordianException {
         /* Reject invalid cipherSpec */
         if (pCipherSpec == null || !pCipherSpec.isValid()) {
             throw new GordianDataException(GordianCoreFactory.getInvalidText(pCipherSpec));
@@ -274,9 +274,9 @@ public abstract class GordianCoreCipherFactory
     /**
      * Check the streamCipherSpec.
      * @param pCipherSpec the cipherSpec
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    public void checkStreamCipherSpec(final GordianStreamCipherSpec pCipherSpec) throws OceanusException {
+    public void checkStreamCipherSpec(final GordianStreamCipherSpec pCipherSpec) throws GordianException {
         /* Reject invalid cipherSpec */
         if (pCipherSpec == null || !pCipherSpec.isValid()) {
             throw new GordianDataException(GordianCoreFactory.getInvalidText(pCipherSpec));

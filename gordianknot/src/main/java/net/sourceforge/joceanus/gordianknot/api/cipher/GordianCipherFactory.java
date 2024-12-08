@@ -16,14 +16,14 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.api.cipher;
 
-import java.util.List;
-import java.util.function.Predicate;
-
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
+import net.sourceforge.joceanus.gordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.gordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.gordianknot.api.key.GordianKeyGenerator;
-import net.sourceforge.joceanus.gordianknot.api.base.GordianKeySpec;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
+
+import java.util.List;
+import java.util.function.Predicate;
 
 /**
  * Cipher factory.
@@ -34,25 +34,25 @@ public interface GordianCipherFactory {
      * @param <T> the key type
      * @param pKeyType the KeyType
      * @return the new KeyGenerator
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    <T extends GordianKeySpec> GordianKeyGenerator<T> getKeyGenerator(T pKeyType) throws OceanusException;
+    <T extends GordianKeySpec> GordianKeyGenerator<T> getKeyGenerator(T pKeyType) throws GordianException;
 
     /**
      * create GordianSymCipher.
      * @param pCipherSpec the cipherSpec
      * @return the new Cipher
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    GordianSymCipher createSymKeyCipher(GordianSymCipherSpec pCipherSpec) throws OceanusException;
+    GordianSymCipher createSymKeyCipher(GordianSymCipherSpec pCipherSpec) throws GordianException;
 
     /**
      * create GordianStreamCipher.
      * @param pCipherSpec the cipherSpec
      * @return the new Cipher
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    GordianStreamCipher createStreamKeyCipher(GordianStreamCipherSpec pCipherSpec) throws OceanusException;
+    GordianStreamCipher createStreamKeyCipher(GordianStreamCipherSpec pCipherSpec) throws GordianException;
 
     /**
      * Obtain predicate for supported symKeySpecs.
@@ -94,9 +94,9 @@ public interface GordianCipherFactory {
      * create GordianWrapper.
      * @param pKey the Key
      * @return the new wrapper
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    GordianWrapper createKeyWrapper(GordianKey<GordianSymKeySpec> pKey) throws OceanusException;
+    GordianWrapper createKeyWrapper(GordianKey<GordianSymKeySpec> pKey) throws GordianException;
 
     /**
      * Obtain a list of supported symCipherSpecs.

@@ -16,8 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.api.encrypt;
 
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 /**
  * Asymmetric Encryptor.
@@ -32,30 +32,30 @@ public interface GordianEncryptor {
     /**
      * Initialise for encrypt.
      * @param pKeyPair the keyPair
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    void initForEncrypt(GordianKeyPair pKeyPair) throws OceanusException;
+    void initForEncrypt(GordianKeyPair pKeyPair) throws GordianException;
 
     /**
      * Initialise for decrypt.
      * @param pKeyPair the keyPair
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    void initForDecrypt(GordianKeyPair pKeyPair) throws OceanusException;
+    void initForDecrypt(GordianKeyPair pKeyPair) throws GordianException;
 
      /**
      * Encrypt the bytes.
      * @param pBytes the bytes to encrypt
      * @return the encrypted bytes
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    byte[] encrypt(byte[] pBytes) throws OceanusException;
+    byte[] encrypt(byte[] pBytes) throws GordianException;
 
     /**
      * Decrypt the encrypted bytes.
      * @param pEncrypted the encrypted bytes
      * @return the decrypted bytes
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    byte[] decrypt(byte[] pEncrypted) throws OceanusException;
+    byte[] decrypt(byte[] pEncrypted) throws GordianException;
 }

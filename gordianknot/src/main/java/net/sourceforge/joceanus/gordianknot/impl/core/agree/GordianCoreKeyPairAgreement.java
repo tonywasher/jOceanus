@@ -16,9 +16,19 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.core.agree;
 
-import java.security.spec.X509EncodedKeySpec;
-import java.util.Objects;
-
+import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreement;
+import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementFactory;
+import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementSpec;
+import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementStatus;
+import net.sourceforge.joceanus.gordianknot.api.agree.GordianKDFType;
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
+import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
+import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianAgreementMessageASN1.GordianMessageType;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
+import net.sourceforge.joceanus.gordianknot.impl.core.keypair.GordianCoreKeyPair;
+import net.sourceforge.joceanus.gordianknot.impl.core.keypair.GordianPrivateKey;
+import net.sourceforge.joceanus.gordianknot.impl.core.keypair.GordianPublicKey;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.crypto.DerivationFunction;
 import org.bouncycastle.crypto.DerivationParameters;
@@ -29,19 +39,8 @@ import org.bouncycastle.crypto.generators.KDF2BytesGenerator;
 import org.bouncycastle.crypto.params.KDFParameters;
 import org.bouncycastle.util.Arrays;
 
-import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreement;
-import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementFactory;
-import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementStatus;
-import net.sourceforge.joceanus.gordianknot.api.agree.GordianKDFType;
-import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementSpec;
-import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
-import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianAgreementMessageASN1.GordianMessageType;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
-import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
-import net.sourceforge.joceanus.gordianknot.impl.core.keypair.GordianCoreKeyPair;
-import net.sourceforge.joceanus.gordianknot.impl.core.keypair.GordianPrivateKey;
-import net.sourceforge.joceanus.gordianknot.impl.core.keypair.GordianPublicKey;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import java.security.spec.X509EncodedKeySpec;
+import java.util.Objects;
 
 /**
  * Core KeyPairAgreement.
@@ -80,9 +79,9 @@ public abstract class GordianCoreKeyPairAgreement
     /**
      * CheckKeyPair.
      * @param pKeyPair the keyPair
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    protected void checkKeyPair(final GordianKeyPair pKeyPair) throws OceanusException {
+    protected void checkKeyPair(final GordianKeyPair pKeyPair) throws GordianException {
         /* Check that the KeyPair is valid */
         final GordianAgreementFactory myAgrees = getAgreementFactory();
         if (!myAgrees.validAgreementSpecForKeyPair(pKeyPair, getAgreementSpec())) {
@@ -104,9 +103,9 @@ public abstract class GordianCoreKeyPairAgreement
      * Obtain private key from pair.
      * @param pKeyPair the keyPair
      * @return the private key
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    protected GordianPrivateKey getPrivateKey(final GordianKeyPair pKeyPair) throws OceanusException {
+    protected GordianPrivateKey getPrivateKey(final GordianKeyPair pKeyPair) throws GordianException {
         if (pKeyPair.isPublicOnly()) {
             throw new GordianDataException("missing privateKey");
         }
@@ -114,7 +113,7 @@ public abstract class GordianCoreKeyPairAgreement
     }
 
     @Override
-    protected void storeSecret(final byte[] pSecret) throws OceanusException {
+    protected void storeSecret(final byte[] pSecret) throws GordianException {
         /* Protect against failure */
         final byte[] mySecret = new byte[pSecret.length];
         try {
@@ -202,9 +201,9 @@ public abstract class GordianCoreKeyPairAgreement
     /**
      * Build clientHello message.
      * @return the clientHello message
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    protected GordianAgreementMessageASN1 buildClientHelloASN1() throws OceanusException {
+    protected GordianAgreementMessageASN1 buildClientHelloASN1() throws GordianException {
         return buildClientHelloASN1(null, null);
     }
 
@@ -212,9 +211,9 @@ public abstract class GordianCoreKeyPairAgreement
      * Build clientHello message.
      * @param pEncapsulated the encapsulated message
      * @return the clientHello message
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    protected GordianAgreementMessageASN1 buildClientHelloASN1(final byte[] pEncapsulated) throws OceanusException {
+    protected GordianAgreementMessageASN1 buildClientHelloASN1(final byte[] pEncapsulated) throws GordianException {
         return buildClientHelloASN1(pEncapsulated, null);
     }
 
@@ -222,9 +221,9 @@ public abstract class GordianCoreKeyPairAgreement
      * Build clientHello message.
      * @param pEphemeral the ephemeral publicKey
      * @return the clientHello message
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    protected GordianAgreementMessageASN1 buildClientHelloASN1(final X509EncodedKeySpec pEphemeral) throws OceanusException {
+    protected GordianAgreementMessageASN1 buildClientHelloASN1(final X509EncodedKeySpec pEphemeral) throws GordianException {
         return buildClientHelloASN1(null, pEphemeral);
     }
 
@@ -233,10 +232,10 @@ public abstract class GordianCoreKeyPairAgreement
      * @param pEncapsulated the encapsulated message
      * @param pEphemeral the ephemeral publicKey
      * @return the clientHello message
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     GordianAgreementMessageASN1 buildClientHelloASN1(final byte[] pEncapsulated,
-                                                     final X509EncodedKeySpec pEphemeral) throws OceanusException {
+                                                     final X509EncodedKeySpec pEphemeral) throws GordianException {
         /* Must be in clean state */
         checkStatus(GordianAgreementStatus.CLEAN);
 
@@ -265,9 +264,9 @@ public abstract class GordianCoreKeyPairAgreement
     /**
      * Parse the incoming clientHello message.
      * @param pClientHello the incoming clientHello message
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    protected void parseClientHelloASN1(final GordianAgreementMessageASN1 pClientHello) throws OceanusException {
+    protected void parseClientHelloASN1(final GordianAgreementMessageASN1 pClientHello) throws GordianException {
         /* Access message parts */
         final AlgorithmIdentifier myAlgId = pClientHello.getAgreementId();
         final AlgorithmIdentifier myResId = pClientHello.getResultId();
@@ -291,9 +290,9 @@ public abstract class GordianCoreKeyPairAgreement
     /**
      * Build serverHello message.
      * @return the serverHello message
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    protected GordianAgreementMessageASN1 buildServerHello() throws OceanusException {
+    protected GordianAgreementMessageASN1 buildServerHello() throws GordianException {
         return buildServerHello(null, null);
     }
 
@@ -302,10 +301,10 @@ public abstract class GordianCoreKeyPairAgreement
      * @param pEphemeral the ephemeral publicKey
      * @param pConfirmation the confirmationTag
      * @return the serverHello message
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     protected GordianAgreementMessageASN1 buildServerHello(final X509EncodedKeySpec pEphemeral,
-                                                           final byte[] pConfirmation) throws OceanusException {
+                                                           final byte[] pConfirmation) throws GordianException {
         /* Access message parts */
         final GordianCoreAgreementFactory myFactory = getAgreementFactory();
         final GordianAgreementSpec mySpec = getAgreementSpec();
@@ -336,11 +335,11 @@ public abstract class GordianCoreKeyPairAgreement
      * @param pSignId the signatureId
      * @param pSignature the signature
      * @return the serverHello message
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     protected GordianAgreementMessageASN1 buildServerHello(final X509EncodedKeySpec pEphemeral,
                                                            final AlgorithmIdentifier pSignId,
-                                                           final byte[] pSignature) throws OceanusException {
+                                                           final byte[] pSignature) throws GordianException {
         /* Create the serverHello */
         final GordianCoreAgreementFactory myFactory = getAgreementFactory();
         final GordianAgreementSpec mySpec = getAgreementSpec();
@@ -356,9 +355,9 @@ public abstract class GordianCoreKeyPairAgreement
      * Parse the incoming serverHello message.
      * @param pServerHello the serverHello message
      * @return the parsed ASN1
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    protected GordianAgreementMessageASN1 parseServerHello(final byte[] pServerHello) throws OceanusException {
+    protected GordianAgreementMessageASN1 parseServerHello(final byte[] pServerHello) throws GordianException {
         /* Must be in awaiting serverHello state */
         checkStatus(GordianAgreementStatus.AWAITING_SERVERHELLO);
 
@@ -376,9 +375,9 @@ public abstract class GordianCoreKeyPairAgreement
     /**
      * Parse the incoming serverHello message.
      * @param pServerHello the serverHello ASN1
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    protected void parseServerHelloASN1(final GordianAgreementMessageASN1 pServerHello) throws OceanusException {
+    protected void parseServerHelloASN1(final GordianAgreementMessageASN1 pServerHello) throws GordianException {
         /* Access message parts */
         final AlgorithmIdentifier myAlgId = pServerHello.getAgreementId();
         final byte[] myInitVector = pServerHello.getInitVector();

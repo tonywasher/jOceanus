@@ -16,9 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.core.stream;
 
-import java.io.InputStream;
-import java.util.Arrays;
-
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianCipherParameters;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianStreamCipher;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianStreamCipherSpec;
@@ -33,15 +31,17 @@ import net.sourceforge.joceanus.gordianknot.api.mac.GordianMac;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacParameters;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacSpec;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
-import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreKnuthObfuscater;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianDataConverter;
 import net.sourceforge.joceanus.gordianknot.impl.core.cipher.GordianCoreCipher;
 import net.sourceforge.joceanus.gordianknot.impl.core.cipher.GordianCoreCipherFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.digest.GordianCoreDigestFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.keyset.GordianCoreKeySet;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreKnuthObfuscater;
 import net.sourceforge.joceanus.gordianknot.impl.core.mac.GordianCoreMacFactory;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.convert.OceanusDataConverter;
+
+import java.io.InputStream;
+import java.util.Arrays;
 
 /**
  * Stream definition.
@@ -83,15 +83,15 @@ public final class GordianStreamDefinition {
      * @param pTypeDef the type definition
      * @param pInitVector the IV
      * @param pValue the value
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     public GordianStreamDefinition(final long pExternalId,
                                    final byte[] pTypeDef,
                                    final byte[] pInitVector,
-                                   final byte[] pValue) throws OceanusException {
-        final int myStreamId = (int) (pExternalId & OceanusDataConverter.NYBBLE_MASK);
+                                   final byte[] pValue) throws GordianException {
+        final int myStreamId = (int) (pExternalId & GordianDataConverter.NYBBLE_MASK);
         theType = GordianStreamType.fromId(myStreamId);
-        theTypeId = (int) (pExternalId >> OceanusDataConverter.NYBBLE_SHIFT);
+        theTypeId = (int) (pExternalId >> GordianDataConverter.NYBBLE_SHIFT);
         theTypeDefinition = pTypeDef == null
                             ? null
                             : Arrays.copyOf(pTypeDef, pTypeDef.length);
@@ -108,10 +108,10 @@ public final class GordianStreamDefinition {
      * Constructor.
      * @param pKeySet the KeySet
      * @param pStream the DigestOutputStream
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     GordianStreamDefinition(final GordianCoreKeySet pKeySet,
-                            final GordianDigestOutputStream pStream) throws OceanusException {
+                            final GordianDigestOutputStream pStream) throws GordianException {
         /* Access factory */
         final GordianCoreFactory myFactory = pKeySet.getFactory();
         final GordianCoreKnuthObfuscater myKnuth = myFactory.getObfuscater();
@@ -132,10 +132,10 @@ public final class GordianStreamDefinition {
      * Constructor.
      * @param pKeySet the KeySet
      * @param pStream the MacOutputStream
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     GordianStreamDefinition(final GordianCoreKeySet pKeySet,
-                            final GordianMacOutputStream pStream) throws OceanusException {
+                            final GordianMacOutputStream pStream) throws GordianException {
         /* Access factory */
         final GordianCoreFactory myFactory = pKeySet.getFactory();
         final GordianCoreKnuthObfuscater myKnuth = myFactory.getObfuscater();
@@ -156,10 +156,10 @@ public final class GordianStreamDefinition {
      * Constructor.
      * @param pKeySet the KeySet
      * @param pStream the CipherOutputStream
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     GordianStreamDefinition(final GordianCoreKeySet pKeySet,
-                            final GordianCipherOutputStream<?> pStream) throws OceanusException {
+                            final GordianCipherOutputStream<?> pStream) throws GordianException {
         /* Access factory */
         final GordianCoreFactory myFactory = pKeySet.getFactory();
         final GordianCoreKnuthObfuscater myKnuth = myFactory.getObfuscater();
@@ -196,7 +196,7 @@ public final class GordianStreamDefinition {
      * @return the encoded value
      */
     public long getExternalId() {
-        return ((long) theTypeId << OceanusDataConverter.NYBBLE_SHIFT)
+        return ((long) theTypeId << GordianDataConverter.NYBBLE_SHIFT)
                 + theType.getId();
     }
 
@@ -260,11 +260,11 @@ public final class GordianStreamDefinition {
      * @param pCurrent the current stream
      * @param pMacStream the Mac input stream
      * @return the new input stream
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     InputStream buildInputStream(final GordianCoreKeySet pKeySet,
                                  final InputStream pCurrent,
-                                 final GordianMacInputStream pMacStream) throws OceanusException {
+                                 final GordianMacInputStream pMacStream) throws GordianException {
         switch (theType) {
             case DIGEST:
                 return buildDigestInputStream(pKeySet, pCurrent, pMacStream);
@@ -286,11 +286,11 @@ public final class GordianStreamDefinition {
      * @param pCurrent the current stream
      * @param pMacStream the Mac input stream
      * @return the new input stream
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     private InputStream buildDigestInputStream(final GordianCoreKeySet pKeySet,
                                                final InputStream pCurrent,
-                                               final GordianMacInputStream pMacStream) throws OceanusException {
+                                               final GordianMacInputStream pMacStream) throws GordianException {
         /* Access factory */
         final GordianCoreFactory myFactory = pKeySet.getFactory();
         final GordianCoreKnuthObfuscater myKnuth = myFactory.getObfuscater();
@@ -311,10 +311,10 @@ public final class GordianStreamDefinition {
      * @param pKeySet the keySet
      * @param pCurrent the current stream
      * @return the new input stream
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     private InputStream buildMacInputStream(final GordianCoreKeySet pKeySet,
-                                            final InputStream pCurrent) throws OceanusException {
+                                            final InputStream pCurrent) throws GordianException {
         /* Access factory */
         final GordianCoreFactory myFactory = pKeySet.getFactory();
         final GordianCoreKnuthObfuscater myKnuth = myFactory.getObfuscater();
@@ -337,10 +337,10 @@ public final class GordianStreamDefinition {
      * @param pKeySet the keySet
      * @param pCurrent the current stream
      * @return the new input stream
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     private InputStream buildSymKeyInputStream(final GordianCoreKeySet pKeySet,
-                                               final InputStream pCurrent) throws OceanusException {
+                                               final InputStream pCurrent) throws GordianException {
         /* Access factory */
         final GordianCoreFactory myFactory = pKeySet.getFactory();
         final GordianCoreKnuthObfuscater myKnuth = myFactory.getObfuscater();
@@ -364,10 +364,10 @@ public final class GordianStreamDefinition {
      * @param pKeySet the keySet
      * @param pCurrent the current stream
      * @return the new input stream
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     private InputStream buildStreamKeyInputStream(final GordianCoreKeySet pKeySet,
-                                                  final InputStream pCurrent) throws OceanusException {
+                                                  final InputStream pCurrent) throws GordianException {
         /* Access factory */
         final GordianCoreFactory myFactory = pKeySet.getFactory();
         final GordianCoreKnuthObfuscater myKnuth = myFactory.getObfuscater();
@@ -450,9 +450,9 @@ public final class GordianStreamDefinition {
          * get value from id.
          * @param id the id value
          * @return the corresponding enumeration object
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
-        public static GordianStreamType fromId(final int id) throws OceanusException {
+        public static GordianStreamType fromId(final int id) throws GordianException {
             for (final GordianStreamType myType : values()) {
                 if (myType.getId() == id) {
                     return myType;

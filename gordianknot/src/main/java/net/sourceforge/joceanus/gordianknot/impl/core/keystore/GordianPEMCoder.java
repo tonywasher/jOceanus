@@ -16,18 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.core.keystore;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import org.bouncycastle.asn1.ASN1Object;
-import org.bouncycastle.asn1.crmf.CertReqMsg;
-import org.bouncycastle.asn1.pkcs.EncryptedPrivateKeyInfo;
-import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
-
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianKnuthObfuscater;
 import net.sourceforge.joceanus.gordianknot.api.key.GordianKey;
@@ -35,24 +24,34 @@ import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySet;
 import net.sourceforge.joceanus.gordianknot.api.keystore.GordianCertificate;
 import net.sourceforge.joceanus.gordianknot.api.keystore.GordianKeyStoreEntry;
+import net.sourceforge.joceanus.gordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStoreCertificate;
 import net.sourceforge.joceanus.gordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStoreKey;
 import net.sourceforge.joceanus.gordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStorePair;
-import net.sourceforge.joceanus.gordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStoreCertificate;
 import net.sourceforge.joceanus.gordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStoreSet;
 import net.sourceforge.joceanus.gordianknot.api.keystore.GordianKeyStoreGateway.GordianLockResolver;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianDataConverter;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianIOException;
+import net.sourceforge.joceanus.gordianknot.impl.core.keystore.GordianCoreKeyStoreEntry.GordianCoreKeyStoreCertificate;
 import net.sourceforge.joceanus.gordianknot.impl.core.keystore.GordianCoreKeyStoreEntry.GordianCoreKeyStoreKey;
 import net.sourceforge.joceanus.gordianknot.impl.core.keystore.GordianCoreKeyStoreEntry.GordianCoreKeyStorePair;
-import net.sourceforge.joceanus.gordianknot.impl.core.keystore.GordianCoreKeyStoreEntry.GordianCoreKeyStoreCertificate;
 import net.sourceforge.joceanus.gordianknot.impl.core.keystore.GordianCoreKeyStoreEntry.GordianCoreKeyStoreSet;
 import net.sourceforge.joceanus.gordianknot.impl.core.keystore.GordianPEMObject.GordianPEMObjectType;
 import net.sourceforge.joceanus.gordianknot.impl.core.zip.GordianCoreZipLock;
 import net.sourceforge.joceanus.gordianknot.impl.core.zip.GordianZipLockASN1;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.convert.OceanusDataConverter;
-import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import org.bouncycastle.asn1.ASN1Object;
+import org.bouncycastle.asn1.crmf.CertReqMsg;
+import org.bouncycastle.asn1.pkcs.EncryptedPrivateKeyInfo;
+import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * PEM Coder/deCoder.
@@ -101,11 +100,11 @@ public class GordianPEMCoder {
      * @param pEntry the entry
      * @param pStream the output stream
      * @param pLock the lock
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     public void exportKeyStoreEntry(final GordianKeyStoreEntry pEntry,
                                     final OutputStream pStream,
-                                    final GordianCoreZipLock pLock) throws OceanusException {
+                                    final GordianCoreZipLock pLock) throws GordianException {
         /* Check that the lock is usable */
         if (pLock == null || !pLock.isFresh()) {
             throw new GordianDataException("Invalid lock");
@@ -121,9 +120,9 @@ public class GordianPEMCoder {
      * Import a keyStoreEntry from stream.
      * @param pStream the input stream
      * @return the decoded object.
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    public GordianKeyStoreEntry importKeyStoreEntry(final InputStream pStream) throws OceanusException {
+    public GordianKeyStoreEntry importKeyStoreEntry(final InputStream pStream) throws GordianException {
         final List<GordianPEMObject> myObjects = theParser.parsePEMFile(pStream);
         return decodePEMObjectList(myObjects);
     }
@@ -132,9 +131,9 @@ public class GordianPEMCoder {
      * Import a list of certificates from stream.
      * @param pStream the input stream
      * @return the list of certificates.
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    public List<GordianKeyStoreEntry> importCertificates(final InputStream pStream) throws OceanusException {
+    public List<GordianKeyStoreEntry> importCertificates(final InputStream pStream) throws GordianException {
         final List<GordianPEMObject> myObjects = theParser.parsePEMFile(pStream);
         return decodePEMCertificateList(myObjects);
     }
@@ -144,10 +143,10 @@ public class GordianPEMCoder {
      * @param pEntry the entry
      * @param pLock the lock
      * @return the encoded object list.
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     private List<GordianPEMObject> encodeKeyStoreEntry(final GordianKeyStoreEntry pEntry,
-                                                       final GordianCoreZipLock pLock) throws OceanusException {
+                                                       final GordianCoreZipLock pLock) throws GordianException {
         /* Handle certificates */
         if (pEntry instanceof GordianKeyStoreCertificate) {
              final GordianCertificate myCert = ((GordianKeyStoreCertificate) pEntry).getCertificate();
@@ -175,9 +174,9 @@ public class GordianPEMCoder {
      * Decode a PEMObject list.
      * @param pObjects the object list
      * @return the decoded object.
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-     private GordianKeyStoreEntry decodePEMObjectList(final List<GordianPEMObject> pObjects) throws OceanusException {
+     private GordianKeyStoreEntry decodePEMObjectList(final List<GordianPEMObject> pObjects) throws GordianException {
          /* List must be non-empty */
          if (pObjects.isEmpty()) {
              throw new GordianDataException("Empty list");
@@ -206,9 +205,9 @@ public class GordianPEMCoder {
      * Decode a PEMCertificate list.
      * @param pObjects the object list
      * @return the decoded list.
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private List<GordianKeyStoreEntry> decodePEMCertificateList(final List<GordianPEMObject> pObjects) throws OceanusException {
+    private List<GordianKeyStoreEntry> decodePEMCertificateList(final List<GordianPEMObject> pObjects) throws GordianException {
         /* List must be non-empty */
         if (pObjects.isEmpty()) {
             throw new GordianDataException("Empty list");
@@ -217,7 +216,7 @@ public class GordianPEMCoder {
         /* Prepare for loop */
         final List<GordianKeyStoreEntry> myChain = new ArrayList<>();
         final GordianPEMObjectType myType = pObjects.get(0).getObjectType();
-        final OceanusDate myDate = new OceanusDate();
+        final LocalDate myDate = LocalDate.now();
 
         /* Loop through the objects */
         for (GordianPEMObject myObject : pObjects) {
@@ -255,10 +254,10 @@ public class GordianPEMCoder {
      * @param pObjectType the objectType
      * @param pObject the object
      * @return the PEM Object
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     static GordianPEMObject createPEMObject(final GordianPEMObjectType pObjectType,
-                                            final ASN1Object pObject) throws OceanusException {
+                                            final ASN1Object pObject) throws GordianException {
         /* Protect against exceptions */
         try {
             /* Create a PEM Object */
@@ -274,10 +273,10 @@ public class GordianPEMCoder {
      * @param pKeyPair the keyPair
      * @param pLock the lock
      * @return the encoded object.
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     private List<GordianPEMObject> encodePrivateKeyPair(final GordianKeyStorePair pKeyPair,
-                                                        final GordianCoreZipLock pLock) throws OceanusException {
+                                                        final GordianCoreZipLock pLock) throws GordianException {
         /* Create the list */
         final List<GordianPEMObject> myList = new ArrayList<>();
 
@@ -299,10 +298,10 @@ public class GordianPEMCoder {
      * @param pKeyPair the keyPair
      * @param pLock the lock
      * @return the encoded object.
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     private GordianPEMObject encodePrivateKey(final GordianKeyStorePair pKeyPair,
-                                              final GordianCoreZipLock pLock) throws OceanusException {
+                                              final GordianCoreZipLock pLock) throws GordianException {
         /* Protect against exception */
         try {
             /* Build encoded object and return it */
@@ -322,10 +321,10 @@ public class GordianPEMCoder {
      * @param pKeySet the keySet
      * @param pLock the lock
      * @return the encoded object.
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     private GordianPEMObject encodeKeySet(final GordianKeyStoreSet pKeySet,
-                                          final GordianCoreZipLock pLock) throws OceanusException {
+                                          final GordianCoreZipLock pLock) throws GordianException {
         /* Protect against exception */
         try {
             /* Build encoded object and return it */
@@ -345,17 +344,17 @@ public class GordianPEMCoder {
      * @param pKey the key
      * @param pLock the Lock
      * @return the encoded object.
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     private GordianPEMObject encodeKey(final GordianKeyStoreKey<?> pKey,
-                                       final GordianCoreZipLock pLock) throws OceanusException {
+                                       final GordianCoreZipLock pLock) throws GordianException {
         /* Protect against exception */
         try {
             /* Access keyType */
             final GordianKey<?> myKey = pKey.getKey();
             final GordianKnuthObfuscater myObfuscater = theFactory.getObfuscater();
             final int myId = myObfuscater.deriveExternalIdFromType(myKey.getKeyType());
-            final byte[] myTypeDef = OceanusDataConverter.integerToByteArray(myId);
+            final byte[] myTypeDef = GordianDataConverter.integerToByteArray(myId);
 
             /* Secure the key */
             final GordianKeySet myKeySet = pLock.getKeySet();
@@ -380,23 +379,23 @@ public class GordianPEMCoder {
      * Decode a Certificate.
      * @param pObjects the PEM object list
      * @return the Certificate.
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private GordianKeyStoreCertificate decodeCertificate(final List<GordianPEMObject> pObjects) throws OceanusException {
+    private GordianKeyStoreCertificate decodeCertificate(final List<GordianPEMObject> pObjects) throws GordianException {
         /* Reject if not singleton list */
         checkSingletonList(pObjects);
 
         /* parse the certificate */
-        return new GordianCoreKeyStoreCertificate(decodeCertificate(pObjects.get(0)), new OceanusDate());
+        return new GordianCoreKeyStoreCertificate(decodeCertificate(pObjects.get(0)), LocalDate.now());
     }
 
     /**
      * Decode a Certificate.
      * @param pObject the PEM object
      * @return the Certificate.
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private GordianCoreCertificate decodeCertificate(final GordianPEMObject pObject) throws OceanusException {
+    private GordianCoreCertificate decodeCertificate(final GordianPEMObject pObject) throws GordianException {
         /* Reject if not keySetCertificate */
         checkObjectType(pObject, GordianPEMObjectType.CERT);
 
@@ -408,9 +407,9 @@ public class GordianPEMCoder {
      * Decode a Certificate Request.
      * @param pObjects the PEM object list
      * @return the Certificate Request.
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    static CertReqMsg decodeCertRequest(final List<GordianPEMObject> pObjects) throws OceanusException {
+    static CertReqMsg decodeCertRequest(final List<GordianPEMObject> pObjects) throws GordianException {
         /* Reject if not singleton list */
         checkSingletonList(pObjects);
         final GordianPEMObject myObject = pObjects.get(0);
@@ -426,9 +425,9 @@ public class GordianPEMCoder {
      * Decode a Certificate Response.
      * @param pObjects the PEM object list
      * @return the Certificate Response.
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    static GordianCertResponseASN1 decodeCertResponse(final List<GordianPEMObject> pObjects) throws OceanusException {
+    static GordianCertResponseASN1 decodeCertResponse(final List<GordianPEMObject> pObjects) throws GordianException {
         /* Reject if not singleton list */
         checkSingletonList(pObjects);
         final GordianPEMObject myObject = pObjects.get(0);
@@ -444,9 +443,9 @@ public class GordianPEMCoder {
      * Decode a Certificate Ack.
      * @param pObjects the PEM object list
      * @return the Certificate Ack.
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    static GordianCertAckASN1 decodeCertAck(final List<GordianPEMObject> pObjects) throws OceanusException {
+    static GordianCertAckASN1 decodeCertAck(final List<GordianPEMObject> pObjects) throws GordianException {
         /* Reject if not singleton list */
         checkSingletonList(pObjects);
         final GordianPEMObject myObject = pObjects.get(0);
@@ -462,9 +461,9 @@ public class GordianPEMCoder {
      * Decode a keyPair.
      * @param pObjects the list of objects
      * @return the keyPair.
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private GordianKeyStorePair decodeKeyPair(final List<GordianPEMObject> pObjects) throws OceanusException {
+    private GordianKeyStorePair decodeKeyPair(final List<GordianPEMObject> pObjects) throws GordianException {
         /* Initialise variables */
         EncryptedPrivateKeyInfo myPrivateInfo = null;
         final List<GordianCertificate> myChain = new ArrayList<>();
@@ -492,16 +491,16 @@ public class GordianPEMCoder {
         final GordianKeyPair myPair = mySecuringKeySet.deriveKeyPair(myCert.getX509KeySpec(), myPrivateInfo.getEncryptedData());
 
         /* Return the new keyPair */
-        return new GordianCoreKeyStorePair(myPair, myChain, new OceanusDate());
+        return new GordianCoreKeyStorePair(myPair, myChain, LocalDate.now());
     }
 
     /**
      * Decode a keySet.
      * @param pObjects the PEM object list
      * @return the keySet.
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private GordianKeyStoreSet decodeKeySet(final List<GordianPEMObject> pObjects) throws OceanusException {
+    private GordianKeyStoreSet decodeKeySet(final List<GordianPEMObject> pObjects) throws GordianException {
         checkSingletonList(pObjects);
         return decodeKeySet(pObjects.get(0));
     }
@@ -510,9 +509,9 @@ public class GordianPEMCoder {
      * Decode a keySet.
      * @param pObject the PEM object
      * @return the keySet.
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private GordianCoreKeyStoreSet decodeKeySet(final GordianPEMObject pObject) throws OceanusException {
+    private GordianCoreKeyStoreSet decodeKeySet(final GordianPEMObject pObject) throws GordianException {
         /* Reject if not KeySet */
         checkObjectType(pObject, GordianPEMObjectType.KEYSET);
 
@@ -522,16 +521,16 @@ public class GordianPEMCoder {
 
         /* Derive the keySet */
         final GordianKeySet myKeySet = mySecuringKeySet.deriveKeySet(myInfo.getEncryptedData());
-        return new GordianCoreKeyStoreSet(myKeySet, new OceanusDate());
+        return new GordianCoreKeyStoreSet(myKeySet, LocalDate.now());
     }
 
     /**
      * Decode a key.
      * @param pObjects the PEM object list
      * @return the key.
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private GordianKeyStoreKey<?> decodeKey(final List<GordianPEMObject> pObjects) throws OceanusException {
+    private GordianKeyStoreKey<?> decodeKey(final List<GordianPEMObject> pObjects) throws GordianException {
         checkSingletonList(pObjects);
         return decodeKey(pObjects.get(0));
     }
@@ -540,9 +539,9 @@ public class GordianPEMCoder {
      * Decode a key.
      * @param pObject the PEM object
      * @return the key.
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private GordianCoreKeyStoreKey<?> decodeKey(final GordianPEMObject pObject) throws OceanusException {
+    private GordianCoreKeyStoreKey<?> decodeKey(final GordianPEMObject pObject) throws GordianException {
         /* Reject if not Key */
         checkObjectType(pObject, GordianPEMObjectType.KEY);
 
@@ -559,12 +558,12 @@ public class GordianPEMCoder {
 
         /* Obtain the keySpec */
         final GordianKnuthObfuscater myObfuscater = theFactory.getObfuscater();
-        final int myType = OceanusDataConverter.byteArrayToInteger(myTypeDef);
+        final int myType = GordianDataConverter.byteArrayToInteger(myTypeDef);
         final GordianKeySpec myKeyType = (GordianKeySpec) myObfuscater.deriveTypeFromExternalId(myType);
 
         /* Derive the key */
         final GordianKey<?> myKey = mySecuringKeySet.deriveKey(myKeyDef, myKeyType);
-        return new GordianCoreKeyStoreKey<>(myKey, new OceanusDate());
+        return new GordianCoreKeyStoreKey<>(myKey, LocalDate.now());
     }
 
     /**
@@ -582,9 +581,9 @@ public class GordianPEMCoder {
      * Derive securing keySet.
      * @param pInfo the encrypted private keyInfo
      * @return the keySet
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private GordianKeySet deriveSecuringKeySet(final EncryptedPrivateKeyInfo pInfo) throws OceanusException {
+    private GordianKeySet deriveSecuringKeySet(final EncryptedPrivateKeyInfo pInfo) throws GordianException {
         /* Validate the algorithmId */
         final AlgorithmIdentifier myId = pInfo.getEncryptionAlgorithm();
         if (!myId.getAlgorithm().equals(GordianZipLockASN1.LOCKOID)) {
@@ -608,9 +607,9 @@ public class GordianPEMCoder {
     /**
      * Check for singleton list.
      * @param pObjects the object list
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private static void checkSingletonList(final List<GordianPEMObject> pObjects) throws OceanusException {
+    private static void checkSingletonList(final List<GordianPEMObject> pObjects) throws GordianException {
         /* Throw error on non-singleton */
         if (pObjects.size() != 1) {
             throw new GordianDataException("Too many objects");
@@ -621,10 +620,10 @@ public class GordianPEMCoder {
      * Check PEM objectType.
      * @param pObject the objectType
      * @param pRequired the required objectType
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     static void checkObjectType(final GordianPEMObject pObject,
-                                final GordianPEMObjectType pRequired) throws OceanusException {
+                                final GordianPEMObjectType pRequired) throws GordianException {
         /* Throw error on mismatch */
         final GordianPEMObjectType myType = pObject.getObjectType();
         if (myType != pRequired) {

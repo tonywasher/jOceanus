@@ -16,12 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.core.cipher;
 
-import java.security.spec.PKCS8EncodedKeySpec;
-import java.security.spec.X509EncodedKeySpec;
-
-import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
-import org.bouncycastle.util.Arrays;
-
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianCipherParameters;
@@ -33,13 +28,17 @@ import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacSpec;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianDataConverter;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianLogicException;
 import net.sourceforge.joceanus.gordianknot.impl.core.key.GordianCoreKey;
 import net.sourceforge.joceanus.gordianknot.impl.core.key.GordianCoreKeyGenerator;
 import net.sourceforge.joceanus.gordianknot.impl.core.keypair.GordianCoreKeyPairGenerator;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.convert.OceanusDataConverter;
+import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
+import org.bouncycastle.util.Arrays;
+
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
 
 /**
  * GordianKnot base for WrapCipher.
@@ -131,7 +130,7 @@ public class GordianCoreWrapper
     }
 
     @Override
-    public byte[] secureKey(final GordianKey<?> pKeyToSecure) throws OceanusException {
+    public byte[] secureKey(final GordianKey<?> pKeyToSecure) throws GordianException {
         /* Secure the bytes */
         final byte[] myBytes = secureBytes(((GordianCoreKey<?>) pKeyToSecure).getKeyBytes());
 
@@ -143,7 +142,7 @@ public class GordianCoreWrapper
 
     @Override
     public <T extends GordianKeySpec> GordianKey<T> deriveKey(final byte[] pSecuredKey,
-                                                              final T pKeyType) throws OceanusException {
+                                                              final T pKeyType) throws GordianException {
         /* Parse the ASN1 */
         final GordianWrappedKeyASN1 myASN1 = GordianWrappedKeyASN1.getInstance(pSecuredKey);
         final AlgorithmIdentifier myAlgId = myASN1.getKeySpecId();
@@ -168,7 +167,7 @@ public class GordianCoreWrapper
     }
 
     @Override
-    public byte[] securePrivateKey(final GordianKeyPair pKeyPairToSecure) throws OceanusException {
+    public byte[] securePrivateKey(final GordianKeyPair pKeyPairToSecure) throws GordianException {
         /* Access the KeyPair Generator */
         final GordianKeyPairFactory myFactory = theFactory.getKeyPairFactory();
         final GordianCoreKeyPairGenerator myGenerator = (GordianCoreKeyPairGenerator) myFactory.getKeyPairGenerator(pKeyPairToSecure.getKeyPairSpec());
@@ -178,7 +177,7 @@ public class GordianCoreWrapper
 
     @Override
     public GordianKeyPair deriveKeyPair(final X509EncodedKeySpec pPublicKeySpec,
-                                        final byte[] pSecuredPrivateKey) throws OceanusException {
+                                        final byte[] pSecuredPrivateKey) throws GordianException {
         /* Access the PKCS8Encoding */
         final PKCS8EncodedKeySpec myPrivate = derivePrivateKeySpec(pSecuredPrivateKey);
 
@@ -198,16 +197,16 @@ public class GordianCoreWrapper
      * derive private key.
       * @param pSecuredPrivateKey the secured privateKey
      * @return the derived key
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private PKCS8EncodedKeySpec derivePrivateKeySpec(final byte[] pSecuredPrivateKey) throws OceanusException {
+    private PKCS8EncodedKeySpec derivePrivateKeySpec(final byte[] pSecuredPrivateKey) throws GordianException {
         /* Derive the keySpec */
         final byte[] myBytes = deriveBytes(pSecuredPrivateKey);
         return new PKCS8EncodedKeySpec(myBytes);
     }
 
     @Override
-    public byte[] secureBytes(final byte[] pBytesToSecure) throws OceanusException {
+    public byte[] secureBytes(final byte[] pBytesToSecure) throws GordianException {
         /* Determine number of blocks */
         final int myDataLen = pBytesToSecure.length;
         int myNumBlocks = myDataLen
@@ -224,7 +223,7 @@ public class GordianCoreWrapper
         }
 
         /* Determine semantics of the initial block */
-        final byte[] myByteLen = OceanusDataConverter.integerToByteArray(myDataLen);
+        final byte[] myByteLen = GordianDataConverter.integerToByteArray(myDataLen);
         int myCheckLen = theBlockLen - Integer.BYTES;
         int myHdrLen = theBlockLen;
 
@@ -288,7 +287,7 @@ public class GordianCoreWrapper
 
     @Override
     public byte[] deriveBytes(final byte[] pSecuredBytes,
-                              final int pOffset) throws OceanusException {
+                              final int pOffset) throws GordianException {
         /* Determine number of blocks */
         int myDataLen = pSecuredBytes.length
                 - theBlockLen - pOffset;
@@ -352,7 +351,7 @@ public class GordianCoreWrapper
 
         /* Obtain encoded length */
         final byte[] myByteLen = Arrays.copyOfRange(myData, myCheckLen, myCheckLen + Integer.BYTES);
-        final int myEncodedLen = OceanusDataConverter.byteArrayToInteger(myByteLen);
+        final int myEncodedLen = GordianDataConverter.byteArrayToInteger(myByteLen);
 
         /* Obtain zeroLen and check that it is valid */
         final int myZeroLen = myDataLen - myEncodedLen;
@@ -388,17 +387,17 @@ public class GordianCoreWrapper
 
     /**
      * Initialise cipher for wrapping.
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    protected void initCipherForWrapping() throws OceanusException {
+    protected void initCipherForWrapping() throws GordianException {
         theCipher.initForEncrypt(GordianCipherParameters.key(theKey));
     }
 
     /**
      * Initialise cipher for unwrapping.
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    protected void initCipherForUnwrapping() throws OceanusException {
+    protected void initCipherForUnwrapping() throws GordianException {
         theCipher.initForDecrypt(GordianCipherParameters.key(theKey));
     }
 
@@ -407,11 +406,11 @@ public class GordianCoreWrapper
      * @param pInBuffer the input buffer
      * @param pBufferLen the buffer length
      * @param pResult the results buffer
-     * @throws OceanusException on erro
+     * @throws GordianException on erro
      */
     protected void iterateCipher(final byte[] pInBuffer,
                                  final int pBufferLen,
-                                 final byte[] pResult) throws OceanusException {
+                                 final byte[] pResult) throws GordianException {
         theCipher.finish(pInBuffer, 0, pBufferLen, pResult, 0);
     }
 
@@ -436,7 +435,7 @@ public class GordianCoreWrapper
     }
 
     @Override
-    public int getPrivateKeyWrapLength(final GordianKeyPair pKeyPair) throws OceanusException {
+    public int getPrivateKeyWrapLength(final GordianKeyPair pKeyPair) throws GordianException {
         /* Determine and check the keySpec */
         final GordianKeyPairFactory myFactory = theFactory.getKeyPairFactory();
         final GordianCoreKeyPairGenerator myGenerator = (GordianCoreKeyPairGenerator) myFactory.getKeyPairGenerator(pKeyPair.getKeyPairSpec());

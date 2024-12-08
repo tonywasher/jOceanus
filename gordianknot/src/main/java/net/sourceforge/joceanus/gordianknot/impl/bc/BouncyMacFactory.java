@@ -16,6 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.bc;
 
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymKeySpec;
@@ -35,7 +36,6 @@ import net.sourceforge.joceanus.gordianknot.impl.ext.macs.GordianKMACWrapper;
 import net.sourceforge.joceanus.gordianknot.impl.ext.macs.GordianSkeinMac;
 import net.sourceforge.joceanus.gordianknot.impl.ext.macs.GordianZuc128Mac;
 import net.sourceforge.joceanus.gordianknot.impl.ext.macs.GordianZuc256Mac;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import org.bouncycastle.crypto.CipherKeyGenerator;
 import org.bouncycastle.crypto.Mac;
 import org.bouncycastle.crypto.Xof;
@@ -88,7 +88,7 @@ public class BouncyMacFactory
 
     @Override
     @SuppressWarnings("unchecked")
-    public <T extends GordianKeySpec> BouncyKeyGenerator<T> getKeyGenerator(final T pMacSpec) throws OceanusException {
+    public <T extends GordianKeySpec> BouncyKeyGenerator<T> getKeyGenerator(final T pMacSpec) throws GordianException {
         /* Look up in the cache */
         BouncyKeyGenerator<T> myGenerator = (BouncyKeyGenerator<T>) theCache.get(pMacSpec);
         if (myGenerator == null) {
@@ -118,7 +118,7 @@ public class BouncyMacFactory
     }
 
     @Override
-    public BouncyMac createMac(final GordianMacSpec pMacSpec) throws OceanusException {
+    public BouncyMac createMac(final GordianMacSpec pMacSpec) throws GordianException {
         /* Check validity of MacSpec */
         checkMacSpec(pMacSpec);
 
@@ -134,9 +134,9 @@ public class BouncyMacFactory
      *
      * @param pMacSpec the MacSpec
      * @return the MAC
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private Mac getBCMac(final GordianMacSpec pMacSpec) throws OceanusException {
+    private Mac getBCMac(final GordianMacSpec pMacSpec) throws GordianException {
         switch (pMacSpec.getMacType()) {
             case HMAC:
                 return getBCHMac(pMacSpec);
@@ -180,9 +180,9 @@ public class BouncyMacFactory
      *
      * @param pMacSpec the macSpec
      * @return the MAC
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private Mac getBCHMac(final GordianMacSpec pMacSpec) throws OceanusException {
+    private Mac getBCHMac(final GordianMacSpec pMacSpec) throws GordianException {
          return new BouncyHMac(getFactory().getDigestFactory(), pMacSpec);
     }
 
@@ -191,9 +191,9 @@ public class BouncyMacFactory
      *
      * @param pSymKeySpec the SymKeySpec
      * @return the MAC
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private static Mac getBCGMac(final GordianSymKeySpec pSymKeySpec) throws OceanusException {
+    private static Mac getBCGMac(final GordianSymKeySpec pSymKeySpec) throws GordianException {
         return GordianSymKeyType.KALYNA.equals(pSymKeySpec.getSymKeyType())
                ? new GordianKGMac(new GordianKGCMBlockCipher(BouncyCipherFactory.getBCSymEngine(pSymKeySpec)))
                : new GMac(GCMBlockCipher.newInstance(BouncyCipherFactory.getBCSymEngine(pSymKeySpec)));
@@ -204,9 +204,9 @@ public class BouncyMacFactory
      *
      * @param pSymKeySpec the SymKeySpec
      * @return the MAC
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private static Mac getBCCMac(final GordianSymKeySpec pSymKeySpec) throws OceanusException {
+    private static Mac getBCCMac(final GordianSymKeySpec pSymKeySpec) throws GordianException {
         return new CMac(BouncyCipherFactory.getBCSymEngine(pSymKeySpec));
     }
 
@@ -215,9 +215,9 @@ public class BouncyMacFactory
      *
      * @param pSymKeySpec the SymKeySpec
      * @return the MAC
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private static Mac getBCPoly1305Mac(final GordianSymKeySpec pSymKeySpec) throws OceanusException {
+    private static Mac getBCPoly1305Mac(final GordianSymKeySpec pSymKeySpec) throws GordianException {
         return pSymKeySpec == null
                ? new Poly1305()
                : new Poly1305(BouncyCipherFactory.getBCSymEngine(pSymKeySpec));
@@ -301,9 +301,9 @@ public class BouncyMacFactory
      *
      * @param pSymKeySpec the SymKeySpec
      * @return the MAC
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private static Mac getBCCBCMac(final GordianSymKeySpec pSymKeySpec) throws OceanusException {
+    private static Mac getBCCBCMac(final GordianSymKeySpec pSymKeySpec) throws GordianException {
         return new CBCBlockCipherMac(BouncyCipherFactory.getBCSymEngine(pSymKeySpec));
     }
 
@@ -312,9 +312,9 @@ public class BouncyMacFactory
      *
      * @param pSymKeySpec the SymKeySpec
      * @return the MAC
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private static Mac getBCCFBMac(final GordianSymKeySpec pSymKeySpec) throws OceanusException {
+    private static Mac getBCCFBMac(final GordianSymKeySpec pSymKeySpec) throws GordianException {
         return new CFBBlockCipherMac(BouncyCipherFactory.getBCSymEngine(pSymKeySpec));
     }
 

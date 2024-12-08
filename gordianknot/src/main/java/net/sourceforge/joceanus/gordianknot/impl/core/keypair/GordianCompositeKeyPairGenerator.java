@@ -16,14 +16,14 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.core.keypair;
 
-import java.io.IOException;
-import java.security.spec.PKCS8EncodedKeySpec;
-import java.security.spec.X509EncodedKeySpec;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.Iterator;
-import java.util.List;
-
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
+import net.sourceforge.joceanus.gordianknot.api.factory.GordianKeyPairFactory;
+import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
+import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairGenerator;
+import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianIOException;
+import net.sourceforge.joceanus.gordianknot.impl.core.keypair.GordianCompositeKeyPair.GordianStateAwareCompositeKeyPair;
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.DERSequence;
@@ -32,14 +32,13 @@ import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 
-import net.sourceforge.joceanus.gordianknot.api.factory.GordianKeyPairFactory;
-import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
-import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairGenerator;
-import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
-import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
-import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianIOException;
-import net.sourceforge.joceanus.gordianknot.impl.core.keypair.GordianCompositeKeyPair.GordianStateAwareCompositeKeyPair;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import java.io.IOException;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * CompositeKeyPair generator.
@@ -70,10 +69,10 @@ public class GordianCompositeKeyPairGenerator
      * Constructor.
      * @param pFactory the asymFactory.
      * @param pSpec the keyPairSetSpec.
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     GordianCompositeKeyPairGenerator(final GordianKeyPairFactory pFactory,
-                                     final GordianKeyPairSpec pSpec) throws OceanusException {
+                                     final GordianKeyPairSpec pSpec) throws GordianException {
         /* Store the spec. */
         theSpec = pSpec;
         theFactory = (GordianCoreKeyPairFactory) pFactory;
@@ -116,7 +115,7 @@ public class GordianCompositeKeyPairGenerator
     }
 
     @Override
-    public X509EncodedKeySpec getX509Encoding(final GordianKeyPair pKeyPair) throws OceanusException {
+    public X509EncodedKeySpec getX509Encoding(final GordianKeyPair pKeyPair) throws GordianException {
         /* Protect against exceptions */
         try {
             /* Create the new empty keyPair */
@@ -140,7 +139,7 @@ public class GordianCompositeKeyPairGenerator
     }
 
     @Override
-    public PKCS8EncodedKeySpec getPKCS8Encoding(final GordianKeyPair pKeyPair) throws OceanusException {
+    public PKCS8EncodedKeySpec getPKCS8Encoding(final GordianKeyPair pKeyPair) throws GordianException {
         /* Protect against exceptions */
         try {
             /* Create the new empty keyPair */
@@ -164,7 +163,7 @@ public class GordianCompositeKeyPairGenerator
 
     @Override
     public GordianCompositeKeyPair deriveKeyPair(final X509EncodedKeySpec pPublicKeySet,
-                                                 final PKCS8EncodedKeySpec pPrivateKeySet) throws OceanusException {
+                                                 final PKCS8EncodedKeySpec pPrivateKeySet) throws GordianException {
         /* CheckKeySpecs */
         checkKeySpec(pPublicKeySet);
         checkKeySpec(pPrivateKeySet);
@@ -206,7 +205,7 @@ public class GordianCompositeKeyPairGenerator
     }
 
     @Override
-    public GordianCompositeKeyPair derivePublicOnlyKeyPair(final X509EncodedKeySpec pPublicKeySet) throws OceanusException {
+    public GordianCompositeKeyPair derivePublicOnlyKeyPair(final X509EncodedKeySpec pPublicKeySet) throws GordianException {
         /* CheckKeySpecs */
         checkKeySpec(pPublicKeySet);
 
@@ -240,9 +239,9 @@ public class GordianCompositeKeyPairGenerator
     /**
      * Check keySpec.
      * @param pKeySpec the keySpec.
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private void checkKeySpec(final PKCS8EncodedKeySpec pKeySpec) throws OceanusException {
+    private void checkKeySpec(final PKCS8EncodedKeySpec pKeySpec) throws GordianException {
         final GordianKeyPairSpec myKeySpec = theFactory.determineKeyPairSpec(pKeySpec);
         if (!theSpec.equals(myKeySpec)) {
             throw new GordianDataException("KeySpec not supported by this KeyPairGenerator");
@@ -252,9 +251,9 @@ public class GordianCompositeKeyPairGenerator
     /**
      * Check keySpec.
      * @param pKeySpec the keySpec.
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private void checkKeySpec(final X509EncodedKeySpec pKeySpec) throws OceanusException {
+    private void checkKeySpec(final X509EncodedKeySpec pKeySpec) throws GordianException {
         final GordianKeyPairSpec myKeySpec = theFactory.determineKeyPairSpec(pKeySpec);
         if (!theSpec.equals(myKeySpec)) {
             throw new GordianDataException("KeySpec not supported by this KeyPairGenerator");

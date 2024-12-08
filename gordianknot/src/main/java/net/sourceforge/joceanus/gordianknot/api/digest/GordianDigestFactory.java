@@ -16,7 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.api.digest;
 
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 
 import java.util.List;
 import java.util.function.Predicate;
@@ -29,9 +29,9 @@ public interface GordianDigestFactory {
      * create GordianDigest.
      * @param pDigestSpec the DigestSpec
      * @return the new Digest
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    GordianDigest createDigest(GordianDigestSpec pDigestSpec) throws OceanusException;
+    GordianDigest createDigest(GordianDigestSpec pDigestSpec) throws GordianException;
 
     /**
      * Obtain predicate for supported digestSpecs.

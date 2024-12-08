@@ -22,6 +22,7 @@ import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementSpec;
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementStatus;
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementType;
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianKDFType;
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianKeyPairFactory;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
@@ -29,12 +30,11 @@ import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairGenerator;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianAgreementResult.GordianDerivationId;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianDataConverter;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianIOException;
 import net.sourceforge.joceanus.gordianknot.impl.core.kdf.GordianHKDFEngine;
 import net.sourceforge.joceanus.gordianknot.impl.core.kdf.GordianHKDFParams;
 import net.sourceforge.joceanus.gordianknot.impl.core.keypair.GordianCompositeKeyPair;
-import net.sourceforge.joceanus.oceanus.convert.OceanusDataConverter;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.ASN1OctetString;
 import org.bouncycastle.asn1.ASN1Sequence;
@@ -96,9 +96,9 @@ public final class GordianCompositeAgreement {
      * Derive the composite ephemeral.
      * @param pSubs the subMessages
      * @return the ephemeral (or null)
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private static X509EncodedKeySpec deriveCompositeEphemeral(final List<GordianAgreementMessageASN1> pSubs) throws OceanusException {
+    private static X509EncodedKeySpec deriveCompositeEphemeral(final List<GordianAgreementMessageASN1> pSubs) throws GordianException {
         /* Protect against exceptions */
         try {
             /* initialise the vector */
@@ -131,9 +131,9 @@ public final class GordianCompositeAgreement {
      * Split composite ephemeral.
      * @param pEphemeral the composite ephemeral
      * @return the ephemeral list (maybe empty)
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private static List<X509EncodedKeySpec> splitCompositeEphemeral(final X509EncodedKeySpec pEphemeral) throws OceanusException {
+    private static List<X509EncodedKeySpec> splitCompositeEphemeral(final X509EncodedKeySpec pEphemeral) throws GordianException {
         /* Protect against exceptions */
         try {
             /* Handle null ephemeral */
@@ -170,10 +170,10 @@ public final class GordianCompositeAgreement {
      * @param pFactory the factory
      * @param pSubs the subAgreements
      * @return the merged result
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     private static byte[] mergeResults(final GordianCoreFactory pFactory,
-                                       final List<GordianAgreement> pSubs) throws OceanusException {
+                                       final List<GordianAgreement> pSubs) throws GordianException {
         /* Protect against exceptions */
         final GordianHKDFParams myParams = GordianHKDFParams.extractOnly();
         try {
@@ -189,7 +189,7 @@ public final class GordianCompositeAgreement {
                 /* Handle random bytes */
                 if (myRandom == null) {
                     /* Build the 64-bit seed, create the seeded random and populate bytes */
-                    final long mySeed = OceanusDataConverter.byteArrayToLong(myPart);
+                    final long mySeed = GordianDataConverter.byteArrayToLong(myPart);
                     myRandom = new Random(mySeed);
                     final byte[] myBytes = new byte[Long.BYTES];
                     myRandom.nextBytes(myBytes);
@@ -224,10 +224,10 @@ public final class GordianCompositeAgreement {
          * Constructor.
          * @param pFactory the factory
          * @param pSpec the agreementSpec
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
         GordianCompositeAnonymousAgreement(final GordianCoreFactory pFactory,
-                                           final GordianAgreementSpec pSpec) throws OceanusException {
+                                           final GordianAgreementSpec pSpec) throws GordianException {
             /* Initialise super class */
             super(pFactory, pSpec);
 
@@ -241,7 +241,7 @@ public final class GordianCompositeAgreement {
         }
 
         @Override
-        public GordianAgreementMessageASN1 createClientHelloASN1(final GordianKeyPair pServer) throws OceanusException {
+        public GordianAgreementMessageASN1 createClientHelloASN1(final GordianKeyPair pServer) throws GordianException {
             /* Check keyPair */
             checkKeyPair(pServer);
 
@@ -276,7 +276,7 @@ public final class GordianCompositeAgreement {
 
         @Override
         public void acceptClientHelloASN1(final GordianKeyPair pSelf,
-                                          final GordianAgreementMessageASN1 pClientHello) throws OceanusException {
+                                          final GordianAgreementMessageASN1 pClientHello) throws GordianException {
             /* Check keyPair */
             checkKeyPair(pSelf);
 
@@ -307,9 +307,9 @@ public final class GordianCompositeAgreement {
          * Derive the composite encapsulated.
          * @param pSubs the subMessages
          * @return the encapsulation (or null)
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
-        private static byte[] deriveCompositeEncapsulated(final List<GordianAgreementMessageASN1> pSubs) throws OceanusException {
+        private static byte[] deriveCompositeEncapsulated(final List<GordianAgreementMessageASN1> pSubs) throws GordianException {
             /* Protect against exceptions */
             try {
                 /* initialise the vector */
@@ -340,9 +340,9 @@ public final class GordianCompositeAgreement {
          * Split composite encapsulated.
          * @param pEncapsulated the composite encapsulated
          * @return the encapsulated list (maybe empty)
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
-        private static List<byte[]> splitCompositeEncapsulated(final byte[] pEncapsulated) throws OceanusException {
+        private static List<byte[]> splitCompositeEncapsulated(final byte[] pEncapsulated) throws GordianException {
             /* Protect against exceptions */
             try {
                 /* Handle null ephemeral */
@@ -386,10 +386,10 @@ public final class GordianCompositeAgreement {
          * Constructor.
          * @param pFactory the factory
          * @param pSpec the agreementSpec
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
         GordianCompositeBasicAgreement(final GordianCoreFactory pFactory,
-                                       final GordianAgreementSpec pSpec) throws OceanusException {
+                                       final GordianAgreementSpec pSpec) throws GordianException {
             /* Initialise super class */
             super(pFactory, pSpec);
 
@@ -403,7 +403,7 @@ public final class GordianCompositeAgreement {
         }
 
         @Override
-        public GordianAgreementMessageASN1 createClientHelloASN1(final GordianKeyPair pClient) throws OceanusException {
+        public GordianAgreementMessageASN1 createClientHelloASN1(final GordianKeyPair pClient) throws GordianException {
             /* Check keyPair */
             checkKeyPair(pClient);
 
@@ -432,7 +432,7 @@ public final class GordianCompositeAgreement {
         @Override
         public GordianAgreementMessageASN1 acceptClientHelloASN1(final GordianKeyPair pClient,
                                                                  final GordianKeyPair pServer,
-                                                                 final GordianAgreementMessageASN1 pClientHello) throws OceanusException {
+                                                                 final GordianAgreementMessageASN1 pClientHello) throws GordianException {
             /* Check keyPair */
             checkKeyPair(pClient);
             checkKeyPair(pServer);
@@ -474,7 +474,7 @@ public final class GordianCompositeAgreement {
 
         @Override
         public void acceptServerHelloASN1(final GordianKeyPair pServer,
-                                          final GordianAgreementMessageASN1 pServerHello) throws OceanusException {
+                                          final GordianAgreementMessageASN1 pServerHello) throws GordianException {
             /* Check keyPair */
             checkKeyPair(pServer);
 
@@ -517,10 +517,10 @@ public final class GordianCompositeAgreement {
          * Constructor.
          * @param pFactory the factory
          * @param pSpec the agreementSpec
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
         GordianCompositeSignedAgreement(final GordianCoreFactory pFactory,
-                                        final GordianAgreementSpec pSpec) throws OceanusException {
+                                        final GordianAgreementSpec pSpec) throws GordianException {
             /* Initialise super class */
             super(pFactory, pSpec);
 
@@ -534,7 +534,7 @@ public final class GordianCompositeAgreement {
         }
 
         @Override
-        public GordianAgreementMessageASN1 createClientHelloASN1() throws OceanusException {
+        public GordianAgreementMessageASN1 createClientHelloASN1() throws GordianException {
             /* Create ephemeral key */
             final GordianKeyPairFactory myFactory = getFactory().getKeyPairFactory();
             final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(getAgreementSpec().getKeyPairSpec());
@@ -566,7 +566,7 @@ public final class GordianCompositeAgreement {
 
         @Override
         public GordianAgreementMessageASN1 acceptClientHelloASN1(final GordianKeyPair pSigner,
-                                                                 final GordianAgreementMessageASN1 pClientHello) throws OceanusException {
+                                                                 final GordianAgreementMessageASN1 pClientHello) throws GordianException {
             /* Create ephemeral key */
             final GordianKeyPairFactory myFactory = getFactory().getKeyPairFactory();
             final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(getAgreementSpec().getKeyPairSpec());
@@ -614,7 +614,7 @@ public final class GordianCompositeAgreement {
 
         @Override
         public void acceptServerHelloASN1(final GordianKeyPair pServer,
-                                          final GordianAgreementMessageASN1 pServerHello) throws OceanusException {
+                                          final GordianAgreementMessageASN1 pServerHello) throws GordianException {
             /* Access the composite client key  */
             final GordianKeyPairFactory myFactory = getFactory().getKeyPairFactory();
             final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(getAgreementSpec().getKeyPairSpec());
@@ -657,10 +657,10 @@ public final class GordianCompositeAgreement {
          * Constructor.
          * @param pFactory the factory
          * @param pSpec the agreementSpec
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
         GordianCompositeHandshakeAgreement(final GordianCoreFactory pFactory,
-                                           final GordianAgreementSpec pSpec) throws OceanusException {
+                                           final GordianAgreementSpec pSpec) throws GordianException {
             /* Initialise super class */
             super(pFactory, pSpec);
 
@@ -674,7 +674,7 @@ public final class GordianCompositeAgreement {
         }
 
         @Override
-        public GordianAgreementMessageASN1 createClientHelloASN1(final GordianKeyPair pClient) throws OceanusException {
+        public GordianAgreementMessageASN1 createClientHelloASN1(final GordianKeyPair pClient) throws GordianException {
             /* Check keyPair */
             checkKeyPair(pClient);
 
@@ -714,7 +714,7 @@ public final class GordianCompositeAgreement {
         @Override
         public GordianAgreementMessageASN1 acceptClientHelloASN1(final GordianKeyPair pClient,
                                                                  final GordianKeyPair pServer,
-                                                                 final GordianAgreementMessageASN1 pClientHello) throws OceanusException {
+                                                                 final GordianAgreementMessageASN1 pClientHello) throws GordianException {
             /* Check keyPair */
             checkKeyPair(pClient);
             checkKeyPair(pServer);
@@ -764,7 +764,7 @@ public final class GordianCompositeAgreement {
 
         @Override
         public GordianAgreementMessageASN1 acceptServerHelloASN1(final GordianKeyPair pServer,
-                                                                 final GordianAgreementMessageASN1 pServerHello) throws OceanusException {
+                                                                 final GordianAgreementMessageASN1 pServerHello) throws GordianException {
             /* Check keyPair */
             checkKeyPair(pServer);
 

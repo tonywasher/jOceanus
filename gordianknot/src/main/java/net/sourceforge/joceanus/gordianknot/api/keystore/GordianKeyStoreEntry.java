@@ -16,14 +16,14 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.api.keystore;
 
-import java.security.KeyStore.Entry;
-import java.util.List;
-
 import net.sourceforge.joceanus.gordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.gordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySet;
-import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+
+import java.security.KeyStore.Entry;
+import java.time.LocalDate;
+import java.util.List;
 
 /**
  * KeyStore Entry API.
@@ -34,7 +34,7 @@ public interface GordianKeyStoreEntry
      * Obtain the creation date.
      * @return the creation date
      */
-    OceanusDate getCreationDate();
+    LocalDate getCreationDate();
 
     /**
      * KeyStore Certificate API.

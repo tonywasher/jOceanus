@@ -19,6 +19,7 @@ package net.sourceforge.joceanus.gordianknot.impl.jca;
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreement;
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementSpec;
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementType;
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianNTRUPrimeSpec;
 import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianCoreAgreementFactory;
@@ -31,7 +32,6 @@ import net.sourceforge.joceanus.gordianknot.impl.jca.JcaAgreement.JcaMQVAgreemen
 import net.sourceforge.joceanus.gordianknot.impl.jca.JcaAgreement.JcaPostQuantumAgreement;
 import net.sourceforge.joceanus.gordianknot.impl.jca.JcaAgreement.JcaSignedAgreement;
 import net.sourceforge.joceanus.gordianknot.impl.jca.JcaAgreement.JcaUnifiedAgreement;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 import javax.crypto.KeyAgreement;
 import javax.crypto.KeyGenerator;
@@ -69,7 +69,7 @@ public class JcaAgreementFactory
     }
 
     @Override
-    public GordianAgreement createAgreement(final GordianAgreementSpec pAgreementSpec) throws OceanusException {
+    public GordianAgreement createAgreement(final GordianAgreementSpec pAgreementSpec) throws GordianException {
         /* Check validity of agreement */
         checkAgreementSpec(pAgreementSpec);
 
@@ -81,9 +81,9 @@ public class JcaAgreementFactory
      * Create the Jca Agreement.
      * @param pAgreementSpec the agreementSpec
      * @return the Agreement
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private GordianAgreement getJcaAgreement(final GordianAgreementSpec pAgreementSpec) throws OceanusException {
+    private GordianAgreement getJcaAgreement(final GordianAgreementSpec pAgreementSpec) throws GordianException {
         switch (pAgreementSpec.getKeyPairSpec().getKeyPairType()) {
             case CMCE:
             case FRODO:
@@ -114,9 +114,9 @@ public class JcaAgreementFactory
      * Create the PostQuantum Agreement.
      * @param pAgreementSpec the agreementSpec
      * @return the Agreement
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private GordianAgreement getPostQuantumAgreement(final GordianAgreementSpec pAgreementSpec) throws OceanusException {
+    private GordianAgreement getPostQuantumAgreement(final GordianAgreementSpec pAgreementSpec) throws GordianException {
         return new JcaPostQuantumAgreement(getFactory(), pAgreementSpec, getJavaKeyGenerator(pAgreementSpec.getKeyPairSpec()));
     }
 
@@ -124,9 +124,9 @@ public class JcaAgreementFactory
      * Create the EC Agreement.
      * @param pAgreementSpec the agreementSpec
      * @return the Agreement
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private GordianAgreement getECAgreement(final GordianAgreementSpec pAgreementSpec) throws OceanusException {
+    private GordianAgreement getECAgreement(final GordianAgreementSpec pAgreementSpec) throws GordianException {
         switch (pAgreementSpec.getAgreementType()) {
             case ANON:
                 return new JcaAnonymousAgreement(getFactory(), pAgreementSpec, getJavaKeyAgreement(getFullAgreementName(ECCDH_ALGO, pAgreementSpec)));
@@ -147,9 +147,9 @@ public class JcaAgreementFactory
      * Create the DH Agreement.
      * @param pAgreementSpec the agreementSpec
      * @return the Agreement
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private GordianAgreement getDHAgreement(final GordianAgreementSpec pAgreementSpec) throws OceanusException {
+    private GordianAgreement getDHAgreement(final GordianAgreementSpec pAgreementSpec) throws GordianException {
         switch (pAgreementSpec.getAgreementType()) {
             case ANON:
                 return new JcaAnonymousAgreement(getFactory(), pAgreementSpec, getJavaKeyAgreement(getFullAgreementName(DH_ALGO, pAgreementSpec)));
@@ -170,9 +170,9 @@ public class JcaAgreementFactory
      * Create the XDH Agreement.
      * @param pAgreementSpec the agreementSpec
      * @return the Agreement
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private GordianAgreement getXDHAgreement(final GordianAgreementSpec pAgreementSpec) throws OceanusException {
+    private GordianAgreement getXDHAgreement(final GordianAgreementSpec pAgreementSpec) throws GordianException {
         switch (pAgreementSpec.getAgreementType()) {
             case ANON:
                 return new JcaAnonymousAgreement(getFactory(), pAgreementSpec, null);
@@ -192,10 +192,10 @@ public class JcaAgreementFactory
      * @param pBase the base agreement
      * @param pAgreementSpec the agreementSpec
      * @return the full agreement name
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     static String getFullAgreementName(final String pBase,
-                                       final GordianAgreementSpec pAgreementSpec) throws OceanusException {
+                                       final GordianAgreementSpec pAgreementSpec) throws GordianException {
         switch (pAgreementSpec.getKDFType()) {
             case NONE:
                 return pBase;
@@ -216,9 +216,9 @@ public class JcaAgreementFactory
      * Create the BouncyCastle KeyFactory via JCA.
      * @param pAlgorithm the Algorithm
      * @return the KeyFactory
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    static KeyAgreement getJavaKeyAgreement(final String pAlgorithm) throws OceanusException {
+    static KeyAgreement getJavaKeyAgreement(final String pAlgorithm) throws GordianException {
         /* Protect against exceptions */
         try {
             /* Return a KeyAgreement for the algorithm */
@@ -235,9 +235,9 @@ public class JcaAgreementFactory
      * Create the BouncyCastle KeyGenerator via JCA.
      * @param pSpec the KeySpec
      * @return the KeyFactory
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private static KeyGenerator getJavaKeyGenerator(final GordianKeyPairSpec pSpec) throws OceanusException {
+    private static KeyGenerator getJavaKeyGenerator(final GordianKeyPairSpec pSpec) throws GordianException {
         /* Protect against exceptions */
         try {
             /* Determine the algorithm name */

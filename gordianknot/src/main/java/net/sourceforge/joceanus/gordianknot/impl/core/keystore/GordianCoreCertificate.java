@@ -16,33 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.core.keystore;
 
-import java.io.IOException;
-import java.math.BigInteger;
-import java.security.spec.X509EncodedKeySpec;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Objects;
-
-import org.bouncycastle.asn1.ASN1BitString;
-import org.bouncycastle.asn1.ASN1EncodableVector;
-import org.bouncycastle.asn1.ASN1Integer;
-import org.bouncycastle.asn1.ASN1OutputStream;
-import org.bouncycastle.asn1.DERBitString;
-import org.bouncycastle.asn1.DERSequence;
-import org.bouncycastle.asn1.x500.X500Name;
-import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
-import org.bouncycastle.asn1.x509.BasicConstraints;
-import org.bouncycastle.asn1.x509.Certificate;
-import org.bouncycastle.asn1.x509.Extension;
-import org.bouncycastle.asn1.x509.Extensions;
-import org.bouncycastle.asn1.x509.ExtensionsGenerator;
-import org.bouncycastle.asn1.x509.KeyUsage;
-import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
-import org.bouncycastle.asn1.x509.TBSCertificate;
-import org.bouncycastle.asn1.x509.Time;
-import org.bouncycastle.asn1.x509.V3TBSCertificateGenerator;
-
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigest;
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestFactory;
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestSpec;
@@ -64,7 +38,32 @@ import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianLogicException;
 import net.sourceforge.joceanus.gordianknot.impl.core.keypair.GordianCompositeKeyPair;
 import net.sourceforge.joceanus.gordianknot.impl.core.keypair.GordianCoreKeyPair;
 import net.sourceforge.joceanus.gordianknot.impl.core.sign.GordianCoreSignatureFactory;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import org.bouncycastle.asn1.ASN1BitString;
+import org.bouncycastle.asn1.ASN1EncodableVector;
+import org.bouncycastle.asn1.ASN1Integer;
+import org.bouncycastle.asn1.ASN1OutputStream;
+import org.bouncycastle.asn1.DERBitString;
+import org.bouncycastle.asn1.DERSequence;
+import org.bouncycastle.asn1.x500.X500Name;
+import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
+import org.bouncycastle.asn1.x509.BasicConstraints;
+import org.bouncycastle.asn1.x509.Certificate;
+import org.bouncycastle.asn1.x509.Extension;
+import org.bouncycastle.asn1.x509.Extensions;
+import org.bouncycastle.asn1.x509.ExtensionsGenerator;
+import org.bouncycastle.asn1.x509.KeyUsage;
+import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
+import org.bouncycastle.asn1.x509.TBSCertificate;
+import org.bouncycastle.asn1.x509.Time;
+import org.bouncycastle.asn1.x509.V3TBSCertificateGenerator;
+
+import java.io.IOException;
+import java.math.BigInteger;
+import java.security.spec.X509EncodedKeySpec;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Objects;
 
 /**
  * Certificate implementation.
@@ -142,11 +141,11 @@ public class GordianCoreCertificate
      * @param pFactory the factory
      * @param pKeyPair the keyPair
      * @param pSubject the name of the entity
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     GordianCoreCertificate(final GordianCoreFactory pFactory,
                            final GordianKeyPair pKeyPair,
-                           final X500Name pSubject) throws OceanusException {
+                           final X500Name pSubject) throws GordianException {
         /* Check that the keyPair is OK */
         if (isPublicOnly(pKeyPair)) {
             throw new GordianLogicException("Invalid keyPair");
@@ -188,13 +187,13 @@ public class GordianCoreCertificate
      * @param pKeyPair the keyPair
      * @param pSubject the name of the entity
      * @param pUsage   the key usage
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     GordianCoreCertificate(final GordianCoreFactory pFactory,
                            final GordianKeyStorePair pSigner,
                            final GordianKeyPair pKeyPair,
                            final X500Name pSubject,
-                           final GordianKeyPairUsage pUsage) throws OceanusException {
+                           final GordianKeyPairUsage pUsage) throws GordianException {
         /* Store the parameters */
         theFactory = pFactory;
         theKeyPair = getPublicOnly(pKeyPair);
@@ -239,10 +238,10 @@ public class GordianCoreCertificate
      *
      * @param pFactory    the factory
      * @param pSequence   the DER representation of the certificate
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     protected GordianCoreCertificate(final GordianCoreFactory pFactory,
-                                     final byte[] pSequence) throws OceanusException {
+                                     final byte[] pSequence) throws GordianException {
         this(pFactory, Certificate.getInstance(pSequence));
     }
 
@@ -251,10 +250,10 @@ public class GordianCoreCertificate
      *
      * @param pFactory     the factory
      * @param pCertificate the certificate
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     public GordianCoreCertificate(final GordianCoreFactory pFactory,
-                                  final Certificate pCertificate) throws OceanusException {
+                                  final Certificate pCertificate) throws GordianException {
         /* Protect against exceptions */
         try {
             /* Store the parameters */
@@ -468,9 +467,9 @@ public class GordianCoreCertificate
     /**
      * parse encodedKey.
      * @return the parsed key
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    protected GordianKeyPair parseEncodedKey() throws OceanusException {
+    protected GordianKeyPair parseEncodedKey() throws GordianException {
         /* Derive the keyPair */
         final GordianKeyPairFactory myFactory = getFactory().getKeyPairFactory();
         final X509EncodedKeySpec myX509 = getX509KeySpec();
@@ -482,9 +481,9 @@ public class GordianCoreCertificate
     /**
      * Obtain the encoded publicKey.
      * @return the encoded bytes
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    protected byte[] getPublicKeyEncoded() throws OceanusException {
+    protected byte[] getPublicKeyEncoded() throws GordianException {
         /* Access the keyPair */
         final GordianKeyPair myPair = getKeyPair();
 
@@ -509,9 +508,9 @@ public class GordianCoreCertificate
      * Create the signer.
      *
      * @return the signer
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    protected GordianSignature createSigner() throws OceanusException {
+    protected GordianSignature createSigner() throws GordianException {
         /* Create the signer */
         final GordianCoreSignatureFactory mySigns = (GordianCoreSignatureFactory) getFactory().getKeyPairFactory().getSignatureFactory();
         return mySigns.createSigner(getSignatureSpec());
@@ -590,9 +589,9 @@ public class GordianCoreCertificate
      *
      * @param pSigner the signer of the certiicate
      * @return valid? true/false
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    public boolean validateCertificate(final GordianCoreCertificate pSigner) throws OceanusException {
+    public boolean validateCertificate(final GordianCoreCertificate pSigner) throws GordianException {
         /* Check that the certificate is not self-signed */
         if (isSelfSigned) {
             throw new GordianDataException("Root certificate used as intermediary");
@@ -620,9 +619,9 @@ public class GordianCoreCertificate
      * Validate a root certificate.
      *
      * @return valid? true/false
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    public boolean validateRootCertificate() throws OceanusException {
+    public boolean validateRootCertificate() throws GordianException {
         /* Check that the certificate is self-signed */
         if (!isSelfSigned) {
             throw new GordianDataException("Non-root certificate used as root");
@@ -648,10 +647,10 @@ public class GordianCoreCertificate
      * @param pSigner the signing certificate
      * @param pSubject the name of the certificate
      * @return the theCertificate
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     private TBSCertificate buildCertificate(final GordianCoreCertificate pSigner,
-                                            final X500Name pSubject) throws OceanusException {
+                                            final X500Name pSubject) throws GordianException {
         /* Create the name of the certificate */
         final X500Name myIssuer = pSigner == null
                                   ? pSubject
@@ -697,9 +696,9 @@ public class GordianCoreCertificate
      * Create extensions for tbsCertificate.
      *
      * @return the extensions
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private Extensions createExtensions() throws OceanusException {
+    private Extensions createExtensions() throws GordianException {
         /* Create extensions for the certificate */
         final ExtensionsGenerator myExtGenerator = new ExtensionsGenerator();
         createKeyUseExtensions(myExtGenerator);
@@ -710,9 +709,9 @@ public class GordianCoreCertificate
     /**
      * Create extensions.
      * @param pGenerator the extensions generator
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private void createKeyUseExtensions(final ExtensionsGenerator pGenerator) throws OceanusException {
+    private void createKeyUseExtensions(final ExtensionsGenerator pGenerator) throws GordianException {
         /* Protect against exceptions */
         try {
             pGenerator.addExtension(Extension.keyUsage, true, theKeyUsage.getKeyUsage());
@@ -727,10 +726,10 @@ public class GordianCoreCertificate
      * @param pEncodedPublicKey the publicKey
      * @param pSerialNo         the certificate Serial#
      * @return the subjectId
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     private DERBitString createSubjectId(final byte[] pEncodedPublicKey,
-                                         final BigInteger pSerialNo) throws OceanusException {
+                                         final BigInteger pSerialNo) throws GordianException {
         /* Build the hash */
         final GordianDigestSpec mySpec = getDigestSpec();
         final GordianDigestFactory myDigests = theFactory.getDigestFactory();
@@ -747,9 +746,9 @@ public class GordianCoreCertificate
      *
      * @param pSigner the signer
      * @return the generated signature
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private byte[] createSignature(final GordianKeyPair pSigner) throws OceanusException {
+    private byte[] createSignature(final GordianKeyPair pSigner) throws GordianException {
         /* Protect against exceptions */
         try {
             /* Build the signature */
@@ -771,9 +770,9 @@ public class GordianCoreCertificate
      * Obtain the X509EncodedKeySpec.
      *
      * @return the keySpec
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    X509EncodedKeySpec getX509KeySpec() throws OceanusException {
+    X509EncodedKeySpec getX509KeySpec() throws GordianException {
         /* Protect against exceptions */
         try {
             /* Obtain the X509 keySpec */
@@ -789,9 +788,9 @@ public class GordianCoreCertificate
      *
      * @param pSigner the signer
      * @return true/false is the signature valid?
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private boolean validateSignature(final GordianKeyPair pSigner) throws OceanusException {
+    private boolean validateSignature(final GordianKeyPair pSigner) throws GordianException {
         /* Protect against exceptions */
         try {
             /* Build the signature */
@@ -813,9 +812,9 @@ public class GordianCoreCertificate
      * Create the DERSequence for a certificate.
      *
      * @return the DERSequence
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private byte[] encodeCertificate() throws OceanusException {
+    private byte[] encodeCertificate() throws GordianException {
         /* Protect against exceptions */
         try {
             /* Create the DERSequence */
@@ -928,9 +927,9 @@ public class GordianCoreCertificate
         /**
          * Create extensions.
          * @param pGenerator the extensions generator
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
-        void createExtensions(final ExtensionsGenerator pGenerator) throws OceanusException {
+        void createExtensions(final ExtensionsGenerator pGenerator) throws GordianException {
             /* Protect against exceptions */
             try {
                 pGenerator.addExtension(Extension.basicConstraints, isCA, thePathLen == null

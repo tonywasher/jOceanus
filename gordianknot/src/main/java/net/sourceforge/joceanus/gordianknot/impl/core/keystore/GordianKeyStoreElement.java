@@ -16,10 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.core.keystore;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianLockFactory;
@@ -30,8 +27,11 @@ import net.sourceforge.joceanus.gordianknot.api.keystore.GordianCertificate;
 import net.sourceforge.joceanus.gordianknot.api.keystore.GordianCertificateId;
 import net.sourceforge.joceanus.gordianknot.api.lock.GordianKeySetLock;
 import net.sourceforge.joceanus.gordianknot.api.lock.GordianPasswordLockSpec;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * KeyStoreElement.
@@ -154,7 +154,7 @@ public interface GordianKeyStoreElement {
          * @param pDate the creation date
          */
         GordianKeyStoreCertificateElement(final GordianKeyStoreCertificateKey pKey,
-                                          final OceanusDate pDate) {
+                                          final LocalDate pDate) {
             super(pDate);
             theKey = pKey;
         }
@@ -230,13 +230,13 @@ public interface GordianKeyStoreElement {
          * @param pKeyPair the keyPair
          * @param pPassword the securing password.
          * @param pChain the certificate chain.
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
         GordianKeyStorePairElement(final GordianFactory pFactory,
                                    final GordianPasswordLockSpec pSpec,
                                    final GordianKeyPair pKeyPair,
                                    final char[] pPassword,
-                                   final List<GordianCertificate> pChain) throws OceanusException {
+                                   final List<GordianCertificate> pChain) throws GordianException {
             /* Create a securing lock */
             final GordianLockFactory myFactory = pFactory.getLockFactory();
             final GordianKeySetLock myLock = myFactory.newKeySetLock(pSpec, pPassword);
@@ -263,7 +263,7 @@ public interface GordianKeyStoreElement {
         GordianKeyStorePairElement(final byte[] pSecuredKey,
                                    final byte[] pSecuringLock,
                                    final List<GordianKeyStoreCertificateKey> pChain,
-                                   final OceanusDate pDate) {
+                                   final LocalDate pDate) {
             /* Store details */
             super(pDate);
             theSecuredKey = pSecuredKey;
@@ -324,10 +324,10 @@ public interface GordianKeyStoreElement {
          * @param pKeySet the keySet
          * @param pKeyPair the keyPair
          * @return the securedPrivateKey
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
         byte[] securePrivateKey(final GordianKeySet pKeySet,
-                                final GordianKeyPair pKeyPair) throws OceanusException {
+                                final GordianKeyPair pKeyPair) throws GordianException {
             return pKeySet.securePrivateKey(pKeyPair);
         }
 
@@ -351,10 +351,10 @@ public interface GordianKeyStoreElement {
          * @param pKeyStore the keyStore
          * @param pPassword the password
          * @return the keyStorePair entry
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
         GordianCoreKeyStorePair buildEntry(final GordianCoreKeyStore pKeyStore,
-                                           final char[] pPassword) throws OceanusException {
+                                           final char[] pPassword) throws GordianException {
             /* Create the chain */
             final List<GordianCertificate> myChain = buildChain(pKeyStore);
 
@@ -427,7 +427,7 @@ public interface GordianKeyStoreElement {
          * @param pDate the creation date
          */
         GordianKeyStoreLockElement(final byte[] pLock,
-                                   final OceanusDate pDate) {
+                                   final LocalDate pDate) {
             /* Store details */
             super(pDate);
             theLock = pLock;
@@ -446,10 +446,10 @@ public interface GordianKeyStoreElement {
          * @param pKeyStore the keyStore
          * @param pPassword the password
          * @return the keyStore certificate entry
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
         GordianKeySetLock buildEntry(final GordianCoreKeyStore pKeyStore,
-                                     final char[] pPassword) throws OceanusException {
+                                     final char[] pPassword) throws GordianException {
             /* Resolve the hash */
             final GordianLockFactory myFactory = pKeyStore.getFactory().getLockFactory();
             return myFactory.resolveKeySetLock(theLock, pPassword);
@@ -510,12 +510,12 @@ public interface GordianKeyStoreElement {
          * @param pSpec the passwordLockSpec
          * @param pKey the key
          * @param pPassword the securing password.
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
         GordianKeyStoreKeyElement(final GordianFactory pFactory,
                                   final GordianPasswordLockSpec pSpec,
                                   final GordianKey<T> pKey,
-                                  final char[] pPassword) throws OceanusException {
+                                  final char[] pPassword) throws GordianException {
             /* Create a securing lock */
             final GordianLockFactory myFactory = pFactory.getLockFactory();
             final GordianKeySetLock myLock = myFactory.newKeySetLock(pSpec, pPassword);
@@ -537,7 +537,7 @@ public interface GordianKeyStoreElement {
         GordianKeyStoreKeyElement(final T pKeyType,
                                   final byte[] pSecuredKey,
                                   final byte[] pSecuringLock,
-                                  final OceanusDate pDate) {
+                                  final LocalDate pDate) {
             /* Store details */
             super(pDate);
             theKeyType = pKeyType;
@@ -582,10 +582,10 @@ public interface GordianKeyStoreElement {
          * @param pKeyStore the keyStore
          * @param pPassword the password
          * @return the keyStore certificate entry
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
         GordianCoreKeyStoreKey<T> buildEntry(final GordianCoreKeyStore pKeyStore,
-                                             final char[] pPassword) throws OceanusException {
+                                             final char[] pPassword) throws GordianException {
             /* Resolve securing lock */
             final GordianKeySetLock myLock = theSecuringLock.buildEntry(pKeyStore, pPassword);
 
@@ -648,12 +648,12 @@ public interface GordianKeyStoreElement {
          * @param pSpec the keySetHashSpec
          * @param pKeySet the keySet
          * @param pPassword the securing password.
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
         GordianKeyStoreSetElement(final GordianFactory pFactory,
                                   final GordianPasswordLockSpec pSpec,
                                   final GordianKeySet pKeySet,
-                                  final char[] pPassword) throws OceanusException {
+                                  final char[] pPassword) throws GordianException {
             /* Create a securing hash */
             final GordianLockFactory myFactory = pFactory.getLockFactory();
             final GordianKeySetLock myLock = myFactory.newKeySetLock(pSpec, pPassword);
@@ -672,7 +672,7 @@ public interface GordianKeyStoreElement {
          */
         GordianKeyStoreSetElement(final byte[] pSecuredKeySet,
                                   final byte[] pSecuringLock,
-                                  final OceanusDate pDate) {
+                                  final LocalDate pDate) {
             /* Store details */
             super(pDate);
             theSecuredKeySet = pSecuredKeySet;
@@ -708,10 +708,10 @@ public interface GordianKeyStoreElement {
          * @param pKeyStore the keyStore
          * @param pPassword the password
          * @return the keyStore certificate entry
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
         GordianCoreKeyStoreSet buildEntry(final GordianCoreKeyStore pKeyStore,
-                                          final char[] pPassword) throws OceanusException {
+                                          final char[] pPassword) throws GordianException {
             /* Resolve the lock */
             final GordianKeySetLock myLock = theSecuringLock.buildEntry(pKeyStore, pPassword);
             final GordianKeySet mySecuringKeySet = myLock.getKeySet();

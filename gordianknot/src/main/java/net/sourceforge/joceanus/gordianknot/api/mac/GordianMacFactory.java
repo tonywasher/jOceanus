@@ -16,10 +16,10 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.api.mac;
 
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.gordianknot.api.key.GordianKeyGenerator;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 import java.util.List;
 import java.util.function.Predicate;
@@ -33,17 +33,17 @@ public interface GordianMacFactory {
      * @param <T> the keyType
      * @param pKeyType the KeyType
      * @return the new KeyGenerator
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    <T extends GordianKeySpec> GordianKeyGenerator<T> getKeyGenerator(T pKeyType) throws OceanusException;
+    <T extends GordianKeySpec> GordianKeyGenerator<T> getKeyGenerator(T pKeyType) throws GordianException;
 
     /**
      * create GordianMac.
      * @param pMacSpec the MacSpec
      * @return the new MAC
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    GordianMac createMac(GordianMacSpec pMacSpec) throws OceanusException;
+    GordianMac createMac(GordianMacSpec pMacSpec) throws GordianException;
 
     /**
      * Obtain predicate for supported macSpecs.

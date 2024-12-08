@@ -16,6 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.core.key;
 
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestSpec;
@@ -24,12 +25,11 @@ import net.sourceforge.joceanus.gordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.gordianknot.api.key.GordianKeyGenerator;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMac;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianDataConverter;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianRandomSource;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.kdf.GordianHKDFMulti;
 import net.sourceforge.joceanus.gordianknot.impl.core.kdf.GordianHKDFParams;
-import net.sourceforge.joceanus.oceanus.convert.OceanusDataConverter;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 import java.security.SecureRandom;
 import java.util.Arrays;
@@ -110,10 +110,10 @@ public abstract class GordianCoreKeyGenerator<T extends GordianKeySpec>
      * @param pSecret the derived Secret
      * @param pSeededRandom the deterministic random
      * @return the new Secret Key
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     public GordianKey<T> generateKeyFromSecret(final byte[] pSecret,
-                                               final Random pSeededRandom) throws OceanusException {
+                                               final Random pSeededRandom) throws GordianException {
         /* Determine the key length in bytes */
         final int myKeyLen = theKeyLength
                 / Byte.SIZE;
@@ -126,8 +126,8 @@ public abstract class GordianCoreKeyGenerator<T extends GordianKeySpec>
         final GordianDigestType[] myDigestTypes = theFactory.getIdManager().deriveKeyGenDigestTypesFromSeed(pSeededRandom, 2);
 
         /* Determine info bytes */
-        final byte[] myAlgo = OceanusDataConverter.stringToByteArray(theKeyType.toString());
-        final byte[] myKeyLenBytes = OceanusDataConverter.integerToByteArray(theKeyLength);
+        final byte[] myAlgo = GordianDataConverter.stringToByteArray(theKeyType.toString());
+        final byte[] myKeyLenBytes = GordianDataConverter.integerToByteArray(theKeyLength);
         final byte[] mySeed = new byte[Long.BYTES];
         pSeededRandom.nextBytes(mySeed);
 
@@ -157,7 +157,7 @@ public abstract class GordianCoreKeyGenerator<T extends GordianKeySpec>
     }
 
     @Override
-    public <X extends GordianKeySpec> GordianKey<T> translateKey(final GordianKey<X> pSource) throws OceanusException {
+    public <X extends GordianKeySpec> GordianKey<T> translateKey(final GordianKey<X> pSource) throws GordianException {
         /* Check that the keyLengths are compatible */
         if (pSource.getKeyType().getKeyLength() != theKeyType.getKeyLength()) {
             throw new GordianDataException("Incorrect length for key");
@@ -172,7 +172,7 @@ public abstract class GordianCoreKeyGenerator<T extends GordianKeySpec>
      * Init Mac keyBytes.
      * @param pMac the Mac.
      * @param pKeyBytes the keyBytes
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    public abstract void initMacKeyBytes(GordianMac pMac, byte[] pKeyBytes) throws OceanusException;
+    public abstract void initMacKeyBytes(GordianMac pMac, byte[] pKeyBytes) throws GordianException;
 }

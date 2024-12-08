@@ -16,11 +16,11 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.bc;
 
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.gordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.key.GordianCoreKey;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import org.bouncycastle.util.Arrays;
 
 import java.util.Objects;
@@ -68,9 +68,9 @@ public final class BouncyKey<T extends GordianKeySpec>
      * @param <X> the key type
      * @param pKey the key to convert
      * @return the converted key
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    protected static <X extends GordianKeySpec> BouncyKey<X> accessKey(final GordianKey<X> pKey) throws OceanusException {
+    protected static <X extends GordianKeySpec> BouncyKey<X> accessKey(final GordianKey<X> pKey) throws GordianException {
         /* Check that it is a BouncyKey */
         if (pKey instanceof BouncyKey) {
             return (BouncyKey<X>) pKey;

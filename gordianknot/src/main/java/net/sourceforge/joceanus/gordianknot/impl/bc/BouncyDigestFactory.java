@@ -16,13 +16,14 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.bc;
 
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestSubSpec.GordianDigestState;
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestType;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
-import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.digest.GordianCoreDigestFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.ext.digests.GordianBlake2Base;
 import net.sourceforge.joceanus.gordianknot.impl.ext.digests.GordianBlake2bDigest;
 import net.sourceforge.joceanus.gordianknot.impl.ext.digests.GordianBlake2sDigest;
@@ -34,7 +35,6 @@ import net.sourceforge.joceanus.gordianknot.impl.ext.digests.GordianKangarooDige
 import net.sourceforge.joceanus.gordianknot.impl.ext.digests.GordianKangarooDigest.GordianKangarooTwelve;
 import net.sourceforge.joceanus.gordianknot.impl.ext.digests.GordianKangarooDigest.GordianMarsupilamiFourteen;
 import net.sourceforge.joceanus.gordianknot.impl.ext.digests.GordianSkeinDigest;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import org.bouncycastle.crypto.Digest;
 import org.bouncycastle.crypto.Xof;
 import org.bouncycastle.crypto.digests.AsconDigest;
@@ -90,7 +90,7 @@ public class BouncyDigestFactory
     }
 
     @Override
-    public BouncyDigest createDigest(final GordianDigestSpec pDigestSpec) throws OceanusException {
+    public BouncyDigest createDigest(final GordianDigestSpec pDigestSpec) throws GordianException {
         /* Check validity of DigestSpec */
         checkDigestSpec(pDigestSpec);
 
@@ -106,9 +106,9 @@ public class BouncyDigestFactory
      *
      * @param pDigestSpec the digestSpec
      * @return the digest
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private static Digest getBCDigest(final GordianDigestSpec pDigestSpec) throws OceanusException {
+    private static Digest getBCDigest(final GordianDigestSpec pDigestSpec) throws GordianException {
         /* Access digest details */
         final GordianDigestType myType = pDigestSpec.getDigestType();
         final GordianLength myLen = pDigestSpec.getDigestLength();

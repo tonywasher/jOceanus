@@ -16,13 +16,13 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.bc;
 
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacParameters;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacSpec;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacType;
 import net.sourceforge.joceanus.gordianknot.impl.core.mac.GordianCoreMac;
 import net.sourceforge.joceanus.gordianknot.impl.ext.params.GordianBlake2Parameters;
 import net.sourceforge.joceanus.gordianknot.impl.ext.params.GordianSkeinParameters;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import org.bouncycastle.crypto.CipherParameters;
 import org.bouncycastle.crypto.Mac;
 import org.bouncycastle.crypto.params.KeyParameter;
@@ -57,7 +57,7 @@ public class BouncyMac
     }
 
     @Override
-    public void init(final GordianMacParameters pParams) throws OceanusException {
+    public void init(final GordianMacParameters pParams) throws GordianException {
         /* Process the parameters and access the key */
         processParameters(pParams);
         final BouncyKey<GordianMacSpec> myKey = BouncyKey.accessKey(getKey());

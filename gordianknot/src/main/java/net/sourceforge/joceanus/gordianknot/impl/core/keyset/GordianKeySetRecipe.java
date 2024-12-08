@@ -16,21 +16,21 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.core.keyset;
 
-import java.security.SecureRandom;
-import java.util.Arrays;
-import java.util.Random;
-
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymKeyType;
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestType;
 import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySetSpec;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
-import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianDataConverter;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianIdManager;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianPersonalisation;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianPersonalisation.GordianPersonalId;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.convert.OceanusDataConverter;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
+
+import java.security.SecureRandom;
+import java.util.Arrays;
+import java.util.Random;
 
 /**
  * Class for assembling/disassembling data encrypted by a KeySet.
@@ -118,12 +118,12 @@ public final class GordianKeySetRecipe {
      * @param pHeader the header
      * @param pAEAD true/false is AEAD in use?
      * @return the recipe
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     static GordianKeySetRecipe parseRecipe(final GordianCoreFactory pFactory,
                                            final GordianKeySetSpec pSpec,
                                            final byte[] pHeader,
-                                           final boolean pAEAD) throws OceanusException {
+                                           final boolean pAEAD) throws GordianException {
         /* Check that the input data is long enough */
         if (pHeader.length < HDRLEN) {
             throw new GordianDataException("Header too short");
@@ -203,7 +203,7 @@ public final class GordianKeySetRecipe {
 
             /* Generate recipe */
             final int mySeed = myRandom.nextInt();
-            theRecipe = OceanusDataConverter.integerToByteArray(mySeed);
+            theRecipe = GordianDataConverter.integerToByteArray(mySeed);
 
             /* Process the recipe */
             processRecipe(pFactory, pSpec, pAEAD);

@@ -16,6 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.junit.extensions;
 
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.impl.ext.digests.GordianBlake2Base;
 import net.sourceforge.joceanus.gordianknot.impl.ext.digests.GordianBlake2Xof;
 import net.sourceforge.joceanus.gordianknot.impl.ext.digests.GordianBlake2bDigest;
@@ -26,7 +27,6 @@ import net.sourceforge.joceanus.gordianknot.impl.ext.engines.GordianBlake2XEngin
 import net.sourceforge.joceanus.gordianknot.impl.ext.engines.GordianSkeinXofEngine;
 import net.sourceforge.joceanus.gordianknot.impl.ext.params.GordianBlake2Parameters;
 import net.sourceforge.joceanus.gordianknot.impl.ext.params.GordianSkeinParameters;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import org.bouncycastle.crypto.CipherParameters;
 import org.bouncycastle.crypto.StreamCipher;
 import org.bouncycastle.crypto.Xof;
@@ -84,10 +84,10 @@ class XofStreamCipherTest {
     /**
      * Create the xofStreamCipher test suite.
      * @return the test stream
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     @TestFactory
-    Stream<DynamicNode> streamCipherTests() throws OceanusException {
+    Stream<DynamicNode> streamCipherTests() throws GordianException {
         /* Create tests */
         return Stream.of(DynamicContainer.dynamicContainer("XofStreams", Stream.of(
                 DynamicContainer.dynamicContainer("Blake2X", Stream.of(

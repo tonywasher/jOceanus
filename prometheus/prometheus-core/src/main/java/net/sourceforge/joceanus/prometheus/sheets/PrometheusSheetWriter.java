@@ -16,6 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.prometheus.sheets;
 
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactoryLock;
 import net.sourceforge.joceanus.gordianknot.api.zip.GordianZipFactory;
 import net.sourceforge.joceanus.gordianknot.api.zip.GordianZipLock;
@@ -26,6 +27,7 @@ import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
 import net.sourceforge.joceanus.prometheus.exc.PrometheusIOException;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataSet;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataSet.PrometheusCryptographyDataType;
+import net.sourceforge.joceanus.prometheus.exc.PrometheusSecurityException;
 import net.sourceforge.joceanus.prometheus.security.PrometheusSecurityPasswordManager;
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetProvider;
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetWorkBook;
@@ -152,32 +154,37 @@ public abstract class PrometheusSheetWriter {
         OceanusProfile myTask = theReport.getActiveTask();
         myTask = myTask.startTask("Writing");
 
-        /* Create a similar security control */
-        final PrometheusSecurityPasswordManager myPasswordMgr = pData.getPasswordMgr();
-        final GordianFactoryLock myBase = pData.getFactoryLock();
-        final GordianFactoryLock myLock = myPasswordMgr.similarFactoryLock(myBase);
-        final GordianZipFactory myZips = myPasswordMgr.getSecurityFactory().getZipFactory();
-        final GordianZipLock myZipLock = myZips.zipLock(myLock);
+        /* Protect against exceptions */
+        try {
+            /* Create a similar security control */
+            final PrometheusSecurityPasswordManager myPasswordMgr = pData.getPasswordMgr();
+            final GordianFactoryLock myBase = pData.getFactoryLock();
+            final GordianFactoryLock myLock = myPasswordMgr.similarFactoryLock(myBase);
+            final GordianZipFactory myZips = myPasswordMgr.getSecurityFactory().getZipFactory();
+            final GordianZipLock myZipLock = myZips.zipLock(myLock);
 
-        /* Assume failure */
-        final String myName = PrometheusSpreadSheet.FILE_NAME + pType.getExtension();
+            /* Assume failure */
+            final String myName = PrometheusSpreadSheet.FILE_NAME + pType.getExtension();
 
-        /* Protect the workbook access */
-        try (GordianZipWriteFile myZipFile = myZips.createZipFile(myZipLock, pZipStream);
-             OutputStream myStream = myZipFile.createOutputStream(new File(myName), false)) {
-            /* Record the DataSet */
-            theData = pData;
+            /* Protect the workbook access */
+            try (GordianZipWriteFile myZipFile = myZips.createZipFile(myZipLock, pZipStream);
+                 OutputStream myStream = myZipFile.createOutputStream(new File(myName), false)) {
+                /* Record the DataSet */
+                theData = pData;
 
-            /* Initialise the WorkBook */
-            initialiseWorkBook(pType);
+                /* Initialise the WorkBook */
+                initialiseWorkBook(pType);
 
-            /* Write the data to the work book */
-            writeWorkBook(myStream);
+                /* Write the data to the work book */
+                writeWorkBook(myStream);
 
-        } catch (IOException
-                 | OceanusException e) {
-            /* Report the error */
-            throw new PrometheusIOException("Failed to create Backup Workbook", e);
+            } catch (IOException
+                     | OceanusException e) {
+                /* Report the error */
+                throw new PrometheusIOException("Failed to create Backup Workbook", e);
+            }
+        } catch (GordianException e) {
+            throw new PrometheusSecurityException(e);
         }
 
         /* Complete task */

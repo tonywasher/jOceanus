@@ -16,18 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.bc;
 
-import org.bouncycastle.crypto.CryptoException;
-import org.bouncycastle.crypto.InvalidCipherTextException;
-import org.bouncycastle.crypto.agreement.SM2KeyExchange;
-import org.bouncycastle.crypto.engines.SM2Engine;
-import org.bouncycastle.crypto.engines.SM2Engine.Mode;
-import org.bouncycastle.crypto.generators.SM2KeyPairGenerator;
-import org.bouncycastle.crypto.params.ParametersWithRandom;
-import org.bouncycastle.crypto.params.SM2KeyExchangePrivateParameters;
-import org.bouncycastle.crypto.params.SM2KeyExchangePublicParameters;
-import org.bouncycastle.crypto.signers.SM2Signer;
-
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementSpec;
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.encrypt.GordianEncryptorSpec;
 import net.sourceforge.joceanus.gordianknot.api.encrypt.GordianSM2EncryptionSpec;
 import net.sourceforge.joceanus.gordianknot.api.encrypt.GordianSM2EncryptionSpec.GordianSM2EncryptionType;
@@ -41,11 +31,20 @@ import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPrivateK
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPublicKey;
 import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianAgreementMessageASN1;
 import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianCoreEphemeralAgreement;
+import net.sourceforge.joceanus.gordianknot.impl.core.encrypt.GordianCoreEncryptor;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianIOException;
-import net.sourceforge.joceanus.gordianknot.impl.core.encrypt.GordianCoreEncryptor;
 import net.sourceforge.joceanus.gordianknot.impl.core.sign.GordianCoreSignature;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import org.bouncycastle.crypto.CryptoException;
+import org.bouncycastle.crypto.InvalidCipherTextException;
+import org.bouncycastle.crypto.agreement.SM2KeyExchange;
+import org.bouncycastle.crypto.engines.SM2Engine;
+import org.bouncycastle.crypto.engines.SM2Engine.Mode;
+import org.bouncycastle.crypto.generators.SM2KeyPairGenerator;
+import org.bouncycastle.crypto.params.ParametersWithRandom;
+import org.bouncycastle.crypto.params.SM2KeyExchangePrivateParameters;
+import org.bouncycastle.crypto.params.SM2KeyExchangePublicParameters;
+import org.bouncycastle.crypto.signers.SM2Signer;
 
 /**
  * SM2 KeyPair classes.
@@ -66,10 +65,10 @@ public final class BouncySM2KeyPair {
          * Constructor.
          * @param pFactory the Security Factory
          * @param pKeySpec the keySpec
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
         BouncySM2KeyPairGenerator(final BouncyFactory pFactory,
-                                  final GordianKeyPairSpec pKeySpec) throws OceanusException {
+                                  final GordianKeyPairSpec pKeySpec) throws GordianException {
             /* Initialise underlying class */
             super(pFactory, pKeySpec);
         }
@@ -132,7 +131,7 @@ public final class BouncySM2KeyPair {
         }
 
         @Override
-        public void initForSigning(final GordianKeyPair pKeyPair) throws OceanusException {
+        public void initForSigning(final GordianKeyPair pKeyPair) throws GordianException {
             /* Initialise detail */
             BouncyKeyPair.checkKeyPair(pKeyPair);
             super.initForSigning(pKeyPair);
@@ -144,7 +143,7 @@ public final class BouncySM2KeyPair {
         }
 
         @Override
-        public void initForVerify(final GordianKeyPair pKeyPair) throws OceanusException {
+        public void initForVerify(final GordianKeyPair pKeyPair) throws GordianException {
             /* Initialise detail */
             BouncyKeyPair.checkKeyPair(pKeyPair);
             super.initForVerify(pKeyPair);
@@ -155,7 +154,7 @@ public final class BouncySM2KeyPair {
         }
 
         @Override
-        public byte[] sign() throws OceanusException {
+        public byte[] sign() throws GordianException {
             /* Check that we are in signing mode */
             checkMode(GordianSignatureMode.SIGN);
 
@@ -168,7 +167,7 @@ public final class BouncySM2KeyPair {
         }
 
         @Override
-        public boolean verify(final byte[] pSignature) throws OceanusException {
+        public boolean verify(final byte[] pSignature) throws GordianException {
             /* Check that we are in verify mode */
             checkMode(GordianSignatureMode.VERIFY);
 
@@ -209,7 +208,7 @@ public final class BouncySM2KeyPair {
         @Override
         public GordianAgreementMessageASN1 acceptClientHelloASN1(final GordianKeyPair pClient,
                                                                  final GordianKeyPair pServer,
-                                                                 final GordianAgreementMessageASN1 pClientHello) throws OceanusException {
+                                                                 final GordianAgreementMessageASN1 pClientHello) throws GordianException {
             /* process clientHello */
             BouncyKeyPair.checkKeyPair(pClient);
             BouncyKeyPair.checkKeyPair(pServer);
@@ -251,7 +250,7 @@ public final class BouncySM2KeyPair {
 
         @Override
         public GordianAgreementMessageASN1 acceptServerHelloASN1(final GordianKeyPair pServer,
-                                                                 final GordianAgreementMessageASN1 pServerHello) throws OceanusException {
+                                                                 final GordianAgreementMessageASN1 pServerHello) throws GordianException {
             /* Check keyPair */
             BouncyKeyPair.checkKeyPair(pServer);
             checkKeyPair(pServer);
@@ -318,10 +317,10 @@ public final class BouncySM2KeyPair {
          * Constructor.
          * @param pFactory the factory
          * @param pSpec the encryptorSpec
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
         BouncySM2Encryptor(final BouncyFactory pFactory,
-                           final GordianEncryptorSpec pSpec) throws OceanusException {
+                           final GordianEncryptorSpec pSpec) throws GordianException {
             /* Initialise underlying cipher */
             super(pFactory, pSpec);
             final BouncyDigestFactory myFactory = pFactory.getDigestFactory();
@@ -343,7 +342,7 @@ public final class BouncySM2KeyPair {
         }
 
         @Override
-        public void initForEncrypt(final GordianKeyPair pKeyPair) throws OceanusException {
+        public void initForEncrypt(final GordianKeyPair pKeyPair) throws GordianException {
             /* Initialise underlying cipher */
             BouncyKeyPair.checkKeyPair(pKeyPair);
             super.initForEncrypt(pKeyPair);
@@ -354,7 +353,7 @@ public final class BouncySM2KeyPair {
         }
 
         @Override
-        public void initForDecrypt(final GordianKeyPair pKeyPair) throws OceanusException {
+        public void initForDecrypt(final GordianKeyPair pKeyPair) throws GordianException {
             /* Initialise underlying cipher */
             BouncyKeyPair.checkKeyPair(pKeyPair);
             super.initForDecrypt(pKeyPair);
@@ -364,7 +363,7 @@ public final class BouncySM2KeyPair {
         }
 
         @Override
-        public byte[] encrypt(final byte[] pBytes) throws OceanusException {
+        public byte[] encrypt(final byte[] pBytes) throws GordianException {
             try {
                 /* Check that we are in encryption mode */
                 checkMode(GordianEncryptMode.ENCRYPT);
@@ -377,7 +376,7 @@ public final class BouncySM2KeyPair {
         }
 
         @Override
-        public byte[] decrypt(final byte[] pBytes) throws OceanusException {
+        public byte[] decrypt(final byte[] pBytes) throws GordianException {
             try {
                 /* Check that we are in decryption mode */
                 checkMode(GordianEncryptMode.DECRYPT);

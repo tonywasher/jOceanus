@@ -16,14 +16,14 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.api.sign;
 
-import java.util.List;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairType;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
+
+import java.util.List;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 /**
  * GordianKnot SignatureFactory API.
@@ -33,9 +33,9 @@ public interface GordianSignatureFactory {
      * Create signer.
      * @param pSignatureSpec the signatureSpec
      * @return the signer
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    GordianSignature createSigner(GordianSignatureSpec pSignatureSpec) throws OceanusException;
+    GordianSignature createSigner(GordianSignatureSpec pSignatureSpec) throws GordianException;
 
     /**
      * Obtain predicate for signatures.

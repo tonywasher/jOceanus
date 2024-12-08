@@ -16,6 +16,25 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.core.zip;
 
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
+import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactory;
+import net.sourceforge.joceanus.gordianknot.api.zip.GordianZipFileContents;
+import net.sourceforge.joceanus.gordianknot.api.zip.GordianZipFileEntry;
+import net.sourceforge.joceanus.gordianknot.api.zip.GordianZipLock;
+import net.sourceforge.joceanus.gordianknot.api.zip.GordianZipReadFile;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianDataConverter;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianIOException;
+import net.sourceforge.joceanus.gordianknot.impl.core.keyset.GordianCoreKeySet;
+import net.sourceforge.joceanus.gordianknot.impl.core.stream.GordianStreamManager;
+import net.sourceforge.joceanus.gordianknot.impl.core.zip.GordianCoreZipLock.GordianUnlockNotify;
+import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
+
+import javax.xml.XMLConstants;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -24,26 +43,6 @@ import java.io.InputStream;
 import java.util.Arrays;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
-import javax.xml.XMLConstants;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
-import org.w3c.dom.Document;
-import org.xml.sax.SAXException;
-
-import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactory;
-import net.sourceforge.joceanus.gordianknot.api.zip.GordianZipLock;
-import net.sourceforge.joceanus.gordianknot.api.zip.GordianZipFileContents;
-import net.sourceforge.joceanus.gordianknot.api.zip.GordianZipFileEntry;
-import net.sourceforge.joceanus.gordianknot.api.zip.GordianZipReadFile;
-import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
-import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianIOException;
-import net.sourceforge.joceanus.gordianknot.impl.core.keyset.GordianCoreKeySet;
-import net.sourceforge.joceanus.gordianknot.impl.core.stream.GordianStreamManager;
-import net.sourceforge.joceanus.gordianknot.impl.core.zip.GordianCoreZipLock.GordianUnlockNotify;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.convert.OceanusDataConverter;
 
 /**
  * Class used to extract from a ZipFile.
@@ -84,10 +83,10 @@ public class GordianCoreZipReadFile
      * Constructor.
      * @param pFactory the factory
      * @param pInputStream the input stream to read
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     GordianCoreZipReadFile(final GordianFactory pFactory,
-                           final InputStream pInputStream) throws OceanusException {
+                           final InputStream pInputStream) throws GordianException {
         /* Protect against exceptions */
         try (BufferedInputStream myInBuffer = new BufferedInputStream(pInputStream);
              ByteArrayOutputStream myOutBuffer = new ByteArrayOutputStream()) {
@@ -155,13 +154,13 @@ public class GordianCoreZipReadFile
     }
 
     @Override
-    public void notifyUnlock() throws OceanusException {
+    public void notifyUnlock() throws GordianException {
         /* Access the keySet */
         final GordianCoreKeySet myKeySet = (GordianCoreKeySet) theLock.getKeySet();
 
         /* Parse the decrypted header */
         final byte[] myBytes = myKeySet.decryptBytes(theHeader);
-        theContents = new GordianCoreZipFileContents(OceanusDataConverter.byteArrayToString(myBytes));
+        theContents = new GordianCoreZipFileContents(GordianDataConverter.byteArrayToString(myBytes));
 
         /* Access the security details */
         final GordianCoreZipFileEntry myHeader = theContents.getHeader();
@@ -214,7 +213,7 @@ public class GordianCoreZipReadFile
     }
 
     @Override
-    public Document readXMLDocument(final GordianZipFileEntry pFile) throws OceanusException {
+    public Document readXMLDocument(final GordianZipFileEntry pFile) throws GordianException {
         /* Access the entry as an input stream */
         try (InputStream myInputStream = createInputStream(pFile)) {
             /* Create a Document builder */
@@ -236,7 +235,7 @@ public class GordianCoreZipReadFile
     }
 
     @Override
-    public InputStream createInputStream(final GordianZipFileEntry pFile) throws OceanusException {
+    public InputStream createInputStream(final GordianZipFileEntry pFile) throws GordianException {
         /* Check that entry belongs to this zip file */
         if (!pFile.getParent().equals(theContents)) {
             throw new GordianDataException("File does not belong to Zip file");

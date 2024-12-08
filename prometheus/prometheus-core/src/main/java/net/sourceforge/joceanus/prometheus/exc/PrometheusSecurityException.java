@@ -1,5 +1,5 @@
 /*******************************************************************************
- * GordianKnot: Security Suite
+ * Prometheus: Application Framework
  * Copyright 2012,2024 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
@@ -14,28 +14,24 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.gordianknot.impl.core.exc;
+package net.sourceforge.joceanus.prometheus.exc;
 
-
-import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 /**
- * Cryptography Exception.
+ * Prometheus Security Exception.
  */
-public class GordianCryptoException
-        extends GordianException {
+public class PrometheusSecurityException
+        extends OceanusException {
     /**
      * SerialId.
      */
-    private static final long serialVersionUID = 3549487220672166829L;
-
+    private static final long serialVersionUID = -4922173072593980760L;
     /**
-     * Create a new GordianKnot Exception object based on a string and an underlying exception.
-     * @param s the description of the exception
+     * Create a new Prometheus Exception object based on a string and an underlying exception.
      * @param e the underlying exception
      */
-    public GordianCryptoException(final String s,
-                                  final Throwable e) {
-        super(s, e);
+    public PrometheusSecurityException(final Throwable e) {
+        super(e);
     }
 }

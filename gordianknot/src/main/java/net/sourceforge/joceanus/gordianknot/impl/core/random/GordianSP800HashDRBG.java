@@ -16,13 +16,12 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.core.random;
 
-import org.bouncycastle.crypto.prng.EntropySource;
-import org.bouncycastle.util.Arrays;
-
 import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigest;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianByteArrayInteger;
-import net.sourceforge.joceanus.oceanus.convert.OceanusDataConverter;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianDataConverter;
+import org.bouncycastle.crypto.prng.EntropySource;
+import org.bouncycastle.util.Arrays;
 
 /**
  * Implementation of HashSP800DRBG based on the BouncyCastle Code.
@@ -254,7 +253,7 @@ public final class GordianSP800HashDRBG
         int mySeedLength = pSeedLength;
         for (int i = mySeed.length - 1; i >= 0; i--) {
             mySeed[i] = (byte) mySeedLength;
-            mySeedLength >>= OceanusDataConverter.BYTE_SHIFT;
+            mySeedLength >>= GordianDataConverter.BYTE_SHIFT;
         }
 
         /* while we need to generate more bytes */

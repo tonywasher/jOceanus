@@ -16,23 +16,23 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.jca;
 
-import java.security.InvalidKeyException;
-import java.util.Arrays;
-import javax.crypto.BadPaddingException;
-import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
-
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestType;
 import net.sourceforge.joceanus.gordianknot.api.encrypt.GordianEncryptorSpec;
 import net.sourceforge.joceanus.gordianknot.api.encrypt.GordianSM2EncryptionSpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
-import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
 import net.sourceforge.joceanus.gordianknot.impl.core.encrypt.GordianCoreEncryptor;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
 import net.sourceforge.joceanus.gordianknot.impl.jca.JcaKeyPair.JcaPrivateKey;
 import net.sourceforge.joceanus.gordianknot.impl.jca.JcaKeyPair.JcaPublicKey;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import java.security.InvalidKeyException;
+import java.util.Arrays;
 
 /**
  * JCA Encryptor classes.
@@ -63,10 +63,10 @@ public final class JcaEncryptor {
          * Constructor.
          * @param pFactory the factory
          * @param pSpec the encryptorSpec
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
         JcaBlockEncryptor(final JcaFactory pFactory,
-                          final GordianEncryptorSpec pSpec) throws OceanusException {
+                          final GordianEncryptorSpec pSpec) throws GordianException {
             /* Initialise underlying cipher */
             super(pFactory, pSpec);
             theEncryptor = JcaEncryptorFactory.getJavaEncryptor(getAlgorithmName(pSpec), false);
@@ -83,7 +83,7 @@ public final class JcaEncryptor {
         }
 
         @Override
-        public void initForEncrypt(final GordianKeyPair pKeyPair) throws OceanusException {
+        public void initForEncrypt(final GordianKeyPair pKeyPair) throws GordianException {
             try {
                 /* Initialise underlying cipher */
                 JcaKeyPair.checkKeyPair(pKeyPair);
@@ -97,7 +97,7 @@ public final class JcaEncryptor {
         }
 
         @Override
-        public void initForDecrypt(final GordianKeyPair pKeyPair) throws OceanusException {
+        public void initForDecrypt(final GordianKeyPair pKeyPair) throws GordianException {
             try {
                 /* Initialise underlying cipher */
                 JcaKeyPair.checkKeyPair(pKeyPair);
@@ -111,7 +111,7 @@ public final class JcaEncryptor {
         }
 
         @Override
-        public byte[] encrypt(final byte[] pBytes) throws OceanusException {
+        public byte[] encrypt(final byte[] pBytes) throws GordianException {
             /* Check that we are in encryption mode */
             checkMode(GordianEncryptMode.ENCRYPT);
 
@@ -120,7 +120,7 @@ public final class JcaEncryptor {
         }
 
         @Override
-        public byte[] decrypt(final byte[] pBytes) throws OceanusException {
+        public byte[] decrypt(final byte[] pBytes) throws GordianException {
             /* Check that we are in decryption mode */
             checkMode(GordianEncryptMode.DECRYPT);
 
@@ -132,9 +132,9 @@ public final class JcaEncryptor {
          * Process a data buffer.
          * @param pData the buffer to process
          * @return the processed buffer
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
-        private byte[] processData(final byte[] pData) throws OceanusException {
+        private byte[] processData(final byte[] pData) throws GordianException {
             try {
                 /* Access input block length */
                 int myInLen = pData.length;
@@ -227,10 +227,10 @@ public final class JcaEncryptor {
          * Constructor.
          * @param pFactory the factory
          * @param pSpec the encryptorSpec
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
         JcaHybridEncryptor(final JcaFactory pFactory,
-                           final GordianEncryptorSpec pSpec) throws OceanusException {
+                           final GordianEncryptorSpec pSpec) throws GordianException {
             /* Initialise underlying cipher */
             super(pFactory, pSpec);
             theEncryptor = JcaEncryptorFactory.getJavaEncryptor(getAlgorithmName(pSpec), false);
@@ -247,7 +247,7 @@ public final class JcaEncryptor {
         }
 
         @Override
-        public void initForEncrypt(final GordianKeyPair pKeyPair) throws OceanusException {
+        public void initForEncrypt(final GordianKeyPair pKeyPair) throws GordianException {
             try {
                 /* Initialise underlying cipher */
                 JcaKeyPair.checkKeyPair(pKeyPair);
@@ -261,7 +261,7 @@ public final class JcaEncryptor {
         }
 
         @Override
-        public void initForDecrypt(final GordianKeyPair pKeyPair) throws OceanusException {
+        public void initForDecrypt(final GordianKeyPair pKeyPair) throws GordianException {
             try {
                 /* Initialise underlying cipher */
                 JcaKeyPair.checkKeyPair(pKeyPair);
@@ -275,7 +275,7 @@ public final class JcaEncryptor {
         }
 
         @Override
-        public byte[] encrypt(final byte[] pBytes) throws OceanusException {
+        public byte[] encrypt(final byte[] pBytes) throws GordianException {
             /* Check that we are in encryption mode */
             checkMode(GordianEncryptMode.ENCRYPT);
 
@@ -284,7 +284,7 @@ public final class JcaEncryptor {
         }
 
         @Override
-        public byte[] decrypt(final byte[] pBytes) throws OceanusException {
+        public byte[] decrypt(final byte[] pBytes) throws GordianException {
             /* Check that we are in decryption mode */
             checkMode(GordianEncryptMode.DECRYPT);
 
@@ -296,9 +296,9 @@ public final class JcaEncryptor {
          * Process a data buffer.
          * @param pData the buffer to process
          * @return the processed buffer
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
-        private byte[] processData(final byte[] pData) throws OceanusException {
+        private byte[] processData(final byte[] pData) throws GordianException {
             try {
                 return theEncryptor.doFinal(pData, 0, pData.length);
             } catch (IllegalBlockSizeException

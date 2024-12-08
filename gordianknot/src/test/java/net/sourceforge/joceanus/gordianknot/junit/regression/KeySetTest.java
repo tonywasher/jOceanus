@@ -16,6 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.junit.regression;
 
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianStreamKeySpec;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymKeySpec;
@@ -33,13 +34,12 @@ import net.sourceforge.joceanus.gordianknot.api.lock.GordianPasswordLockSpec;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMac;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacSpec;
 import net.sourceforge.joceanus.gordianknot.api.random.GordianRandomFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianDataConverter;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianLogicException;
 import net.sourceforge.joceanus.gordianknot.impl.core.keyset.GordianCoreKeySet;
 import net.sourceforge.joceanus.gordianknot.util.GordianGenerator;
 import net.sourceforge.joceanus.gordianknot.util.GordianUtilities;
-import net.sourceforge.joceanus.oceanus.convert.OceanusDataConverter;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DynamicContainer;
 import org.junit.jupiter.api.DynamicNode;
@@ -121,9 +121,9 @@ class KeySetTest {
         /**
          * Constructor.
          * @param pType the factoryType
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
-        FactoryBase(final GordianFactoryType pType) throws OceanusException {
+        FactoryBase(final GordianFactoryType pType) throws GordianException {
             /* Create the factory */
             theFactory = GordianGenerator.createRandomFactory(pType);
         }
@@ -196,11 +196,11 @@ class KeySetTest {
          * @param pFactory the factory
          * @param pKeyLen the factory keyLength
          * @param pMaxSteps true/false use Max Cipher Steps (or else Min)
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
         FactoryKeySet(final FactoryBase pFactory,
                       final GordianLength pKeyLen,
-                      final boolean pMaxSteps) throws OceanusException {
+                      final boolean pMaxSteps) throws GordianException {
             /* Store parameters */
             theFactory = pFactory;
             maxSteps = pMaxSteps;
@@ -309,10 +309,10 @@ class KeySetTest {
     /**
      * Create the keySet test suite.
      * @return the test stream
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     @TestFactory
-    Stream<DynamicNode> keySetTests() throws OceanusException {
+    Stream<DynamicNode> keySetTests() throws GordianException {
         /* Create tests */
         Stream<DynamicNode> myStream = keySetTests(GordianFactoryType.BC);
         return Stream.concat(myStream, keySetTests(GordianFactoryType.JCA));
@@ -322,9 +322,9 @@ class KeySetTest {
      * Create the keySet test suite for a factoryType.
      * @param pFactoryType the factoryType
      * @return the test stream
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private Stream<DynamicNode> keySetTests(final GordianFactoryType pFactoryType) throws OceanusException {
+    private Stream<DynamicNode> keySetTests(final GordianFactoryType pFactoryType) throws GordianException {
         /* Create the factory */
         final FactoryBase myFactory = new FactoryBase(pFactoryType);
 
@@ -346,11 +346,11 @@ class KeySetTest {
      * @param pKeyLen the keyLength
      * @param pMaxSteps true/false use Max Cipher Steps (or else Min)
      * @return the test stream
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     private Stream<DynamicNode> keySetTests(final FactoryBase pFactory,
                                             final GordianLength pKeyLen,
-                                            final boolean pMaxSteps) throws OceanusException {
+                                            final boolean pMaxSteps) throws GordianException {
         /* Create the factory */
         final FactoryKeySet myKeySet = new FactoryKeySet(pFactory, pKeyLen, pMaxSteps);
 
@@ -367,9 +367,9 @@ class KeySetTest {
     /**
      * Check encrypt.
      * @param pKeySet the keySet
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private void checkEncrypt(final FactoryKeySet pKeySet) throws OceanusException {
+    private void checkEncrypt(final FactoryKeySet pKeySet) throws GordianException {
         /* Check short string */
         checkEncrypt(pKeySet, TEST_STRING1);
 
@@ -383,9 +383,9 @@ class KeySetTest {
     /**
      * Check encryptAAD.
      * @param pKeySet the keySet
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private void checkEncryptAAD(final FactoryKeySet pKeySet) throws OceanusException {
+    private void checkEncryptAAD(final FactoryKeySet pKeySet) throws GordianException {
         /* Check short string */
         checkEncryptAAD(pKeySet, TEST_STRING1);
 
@@ -400,10 +400,10 @@ class KeySetTest {
      * Check encrypt.
      * @param pKeySet the keySet
      * @param pTest the test string
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     private void checkEncrypt(final FactoryKeySet pKeySet,
-                              final String pTest) throws OceanusException {
+                              final String pTest) throws GordianException {
         /* Encrypt oneOff string */
         byte[] myEncrypt = encryptOneOff(pKeySet, pTest);
         String myAnswer = decryptOneOff(pKeySet, myEncrypt);
@@ -436,10 +436,10 @@ class KeySetTest {
      * Check encrypt.
      * @param pKeySet the keySet
      * @param pTest the test string
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     private void checkEncryptAAD(final FactoryKeySet pKeySet,
-                                 final String pTest) throws OceanusException {
+                                 final String pTest) throws GordianException {
         /* Encrypt cipher string */
         byte[] myEncrypt = encryptOneOffAADCipher(pKeySet, pTest, null);
         String myAnswer = decryptOneOffAADCipher(pKeySet, myEncrypt, null);
@@ -474,15 +474,15 @@ class KeySetTest {
      * @param pKeySet the keySet
      * @param pData the data to encrypt
      * @return the encrypted data
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     private byte[] encryptOneOff(final FactoryKeySet pKeySet,
-                                 final String pData) throws OceanusException {
+                                 final String pData) throws GordianException {
         /* Access the keySet */
         final GordianCoreKeySet myKeySet = (GordianCoreKeySet) pKeySet.getKeySet();
 
         /* Encrypt string */
-        final byte[] myBytes = OceanusDataConverter.stringToByteArray(pData);
+        final byte[] myBytes = GordianDataConverter.stringToByteArray(pData);
         final byte[] myEncrypted = myKeySet.encryptBytes(myBytes);
 
         /* Check encryption length */
@@ -498,17 +498,17 @@ class KeySetTest {
      * @param pKeySet the keySet
      * @param pData the data to encrypt
      * @return the encrypted data
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     private byte[] encryptOneOffCipher(final FactoryKeySet pKeySet,
-                                       final String pData) throws OceanusException {
+                                       final String pData) throws GordianException {
         /* Access the keySet */
         final GordianCoreKeySet myKeySet = (GordianCoreKeySet) pKeySet.getKeySet();
         final GordianKeySetCipher myCipher = myKeySet.createCipher();
 
         /* Encrypt string */
         myCipher.initForEncrypt();
-        final byte[] myBytes = OceanusDataConverter.stringToByteArray(pData);
+        final byte[] myBytes = GordianDataConverter.stringToByteArray(pData);
         final byte[] myEncrypted = myCipher.finish(myBytes, 0, myBytes.length);
 
         /* Check encryption length */
@@ -524,16 +524,16 @@ class KeySetTest {
      * @param pKeySet the keySet
      * @param pData the data to encrypt
      * @return the encrypted data
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     private byte[] encryptCacheCipher(final FactoryKeySet pKeySet,
-                                      final String pData) throws OceanusException {
+                                      final String pData) throws GordianException {
         /* Access the keySet */
         final GordianKeySetCipher myCipher = pKeySet.getKeySetCipher();
 
         /* Encrypt string */
         myCipher.initForEncrypt();
-        final byte[] myBytes = OceanusDataConverter.stringToByteArray(pData);
+        final byte[] myBytes = GordianDataConverter.stringToByteArray(pData);
         final byte[] myEncrypted = myCipher.finish(myBytes, 0, myBytes.length);
 
         /* Check that a second decryption works */
@@ -557,21 +557,21 @@ class KeySetTest {
      * @param pData the data to encrypt
      * @param pAAD the AAD
      * @return the encrypted data
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     private byte[] encryptOneOffAADCipher(final FactoryKeySet pKeySet,
                                           final String pData,
-                                          final String pAAD) throws OceanusException {
+                                          final String pAAD) throws GordianException {
         /* Access the keySet */
         final GordianCoreKeySet myKeySet = (GordianCoreKeySet) pKeySet.getKeySet();
         final GordianKeySetAADCipher myCipher = myKeySet.createAADCipher();
         final byte[] myAAD = pAAD == null
                              ? null
-                             : OceanusDataConverter.stringToByteArray(pAAD);
+                             : GordianDataConverter.stringToByteArray(pAAD);
 
         /* Encrypt string */
         myCipher.initForEncrypt(myAAD);
-        final byte[] myBytes = OceanusDataConverter.stringToByteArray(pData);
+        final byte[] myBytes = GordianDataConverter.stringToByteArray(pData);
         final byte[] myEncrypted = myCipher.finish(myBytes, 0, myBytes.length);
 
         /* Check encryption length */
@@ -587,20 +587,20 @@ class KeySetTest {
      * @param pKeySet the keySet
      * @param pData the data to encrypt
      * @return the encrypted data
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     private byte[] encryptCacheAADCipher(final FactoryKeySet pKeySet,
                                          final String pData,
-                                         final String pAAD) throws OceanusException {
+                                         final String pAAD) throws GordianException {
         /* Access the keySet */
         final GordianKeySetAADCipher myCipher = pKeySet.getKeySetAADCipher();
         final byte[] myAAD = pAAD == null
                              ? null
-                             : OceanusDataConverter.stringToByteArray(pAAD);
+                             : GordianDataConverter.stringToByteArray(pAAD);
 
         /* Encrypt string */
         myCipher.initForEncrypt(myAAD);
-        final byte[] myBytes = OceanusDataConverter.stringToByteArray(pData);
+        final byte[] myBytes = GordianDataConverter.stringToByteArray(pData);
         final byte[] myEncrypted = myCipher.finish(myBytes, 0, myBytes.length);
 
         /* Check that a second decryption works */
@@ -623,16 +623,16 @@ class KeySetTest {
      * @param pKeySet the keySet
      * @param pData the data to dencrypt
      * @return the decrypted string
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     private String decryptOneOff(final FactoryKeySet pKeySet,
-                                 final byte[] pData) throws OceanusException {
+                                 final byte[] pData) throws GordianException {
         /* Access the keySet */
         final GordianCoreKeySet myKeySet = (GordianCoreKeySet) pKeySet.getKeySet();
 
         /* Decrypt string */
         final byte[] myResult = myKeySet.decryptBytes(pData);
-        return OceanusDataConverter.byteArrayToString(myResult);
+        return GordianDataConverter.byteArrayToString(myResult);
     }
 
     /**
@@ -640,10 +640,10 @@ class KeySetTest {
      * @param pKeySet the keySet
      * @param pData the data to decrypt
      * @return the decrypted string
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     private String decryptOneOffCipher(final FactoryKeySet pKeySet,
-                                       final byte[] pData) throws OceanusException {
+                                       final byte[] pData) throws GordianException {
         /* Access the keySet */
         final GordianCoreKeySet myKeySet = (GordianCoreKeySet) pKeySet.getKeySet();
         final GordianKeySetCipher myCipher = myKeySet.createCipher();
@@ -651,7 +651,7 @@ class KeySetTest {
         /* Decrypt string */
         myCipher.initForDecrypt();
         final byte[] myResult = myCipher.finish(pData, 0, pData.length);
-        return OceanusDataConverter.byteArrayToString(myResult);
+        return GordianDataConverter.byteArrayToString(myResult);
     }
 
     /**
@@ -659,10 +659,10 @@ class KeySetTest {
      * @param pKeySet the keySet
      * @param pData the data to decrypt
      * @return the decrypted string
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     private String decryptCacheCipher(final FactoryKeySet pKeySet,
-                                      final byte[] pData) throws OceanusException {
+                                      final byte[] pData) throws GordianException {
         /* Access the keySet */
         final GordianKeySetCipher myCipher = pKeySet.getKeySetCipher();
 
@@ -683,7 +683,7 @@ class KeySetTest {
                 () -> myCipher.finish(pData,0, pData.length, myResult2, 1), "Short output");
 
         /* return the result */
-        return OceanusDataConverter.byteArrayToString(myResult);
+        return GordianDataConverter.byteArrayToString(myResult);
     }
 
     /**
@@ -692,22 +692,22 @@ class KeySetTest {
      * @param pData the data to decrypt
      * @param pAAD the AAD
      * @return the decrypted string
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     private String decryptOneOffAADCipher(final FactoryKeySet pKeySet,
                                           final byte[] pData,
-                                          final String pAAD) throws OceanusException {
+                                          final String pAAD) throws GordianException {
         /* Access the keySet */
         final GordianCoreKeySet myKeySet = (GordianCoreKeySet) pKeySet.getKeySet();
         final GordianKeySetAADCipher myCipher = myKeySet.createAADCipher();
         final byte[] myAAD = pAAD == null
                              ? null
-                             : OceanusDataConverter.stringToByteArray(pAAD);
+                             : GordianDataConverter.stringToByteArray(pAAD);
 
         /* Decrypt string */
         myCipher.initForDecrypt(myAAD);
         final byte[] myResult = myCipher.finish(pData, 0, pData.length);
-        return OceanusDataConverter.byteArrayToString(myResult);
+        return GordianDataConverter.byteArrayToString(myResult);
     }
 
     /**
@@ -716,16 +716,16 @@ class KeySetTest {
      * @param pData the data to decrypt
      * @param pAAD the AAD
      * @return the decrypted string
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     private String decryptCacheAADCipher(final FactoryKeySet pKeySet,
                                          final byte[] pData,
-                                         final String pAAD) throws OceanusException {
+                                         final String pAAD) throws GordianException {
         /* Access the keySet */
         final GordianKeySetAADCipher myCipher = pKeySet.getKeySetAADCipher();
         final byte[] myAAD = pAAD == null
                              ? null
-                             : OceanusDataConverter.stringToByteArray(pAAD);
+                             : GordianDataConverter.stringToByteArray(pAAD);
 
         /* Decrypt string */
         myCipher.initForDecrypt(myAAD);
@@ -744,15 +744,15 @@ class KeySetTest {
                 () -> myCipher.finish(pData,0, pData.length, myResult2, 1), "Short output");
 
         /* return the result */
-        return OceanusDataConverter.byteArrayToString(myResult);
+        return GordianDataConverter.byteArrayToString(myResult);
     }
 
     /**
      * Check wrapping.
      * @param pKeySet the keySet
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private void checkWrap(final FactoryKeySet pKeySet) throws OceanusException {
+    private void checkWrap(final FactoryKeySet pKeySet) throws GordianException {
         /* Access the keys */
         final GordianCoreKeySet myKeySet = (GordianCoreKeySet) pKeySet.getKeySet();
         final GordianKey<GordianSymKeySpec> mySymKey = pKeySet.getSymKey();
@@ -788,9 +788,9 @@ class KeySetTest {
     /**
      * Check wrapping.
      * @param pKeySet the keySet
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private void checkFactory(final FactoryKeySet pKeySet) throws OceanusException {
+    private void checkFactory(final FactoryKeySet pKeySet) throws GordianException {
         /* Access the keys */
         final GordianCoreKeySet myKeySet = (GordianCoreKeySet) pKeySet.getKeySet();
         final GordianFactory myFactory = GordianGenerator.createRandomFactory(myKeySet.getFactory().getFactoryType());
@@ -802,9 +802,9 @@ class KeySetTest {
     /**
      * Profile encrypt.
      * @param pKeySet the keySet
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private void profileEncrypt(final FactoryKeySet pKeySet) throws OceanusException {
+    private void profileEncrypt(final FactoryKeySet pKeySet) throws GordianException {
         /* Access the keys */
         final GordianKeySet myKeySet = pKeySet.getKeySet();
 
@@ -828,9 +828,9 @@ class KeySetTest {
 
     /**
      * create a random factory and lock/resolve it.
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private void testRandomFactory() throws OceanusException {
+    private void testRandomFactory() throws GordianException {
         /* Create the random factory */
         final GordianFactory myFactory = GordianGenerator.createRandomFactory(GordianFactoryType.BC);
         final GordianLockFactory myLockFactory = myFactory.getLockFactory();

@@ -16,17 +16,17 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.api.factory;
 
+import net.sourceforge.joceanus.gordianknot.api.base.GordianBundleLoader;
+import net.sourceforge.joceanus.gordianknot.api.base.GordianBundleLoader.GordianBundleId;
+
 import java.util.EnumMap;
 import java.util.Map;
-import java.util.ResourceBundle;
-
-import net.sourceforge.joceanus.oceanus.resource.OceanusBundleId;
-import net.sourceforge.joceanus.oceanus.resource.OceanusBundleLoader;
 
 /**
  * Resource IDs for Factory package.
  */
-public enum GordianFactoryResource implements OceanusBundleId {
+public enum GordianFactoryResource
+        implements GordianBundleId {
     /**
      * Factory BC.
      */
@@ -40,13 +40,12 @@ public enum GordianFactoryResource implements OceanusBundleId {
     /**
      * The Factory Map.
      */
-    private static final Map<GordianFactoryType, OceanusBundleId> FACTORY_MAP = buildFactoryMap();
+    private static final Map<GordianFactoryType, GordianBundleId> FACTORY_MAP = buildFactoryMap();
 
     /**
      * The Resource Loader.
      */
-    private static final OceanusBundleLoader LOADER = OceanusBundleLoader.getLoader(GordianFactory.class.getCanonicalName(),
-            ResourceBundle::getBundle);
+    private static final GordianBundleLoader LOADER = GordianBundleLoader.getLoader(GordianFactory.class.getCanonicalName());
 
     /**
      * The Id.
@@ -92,9 +91,9 @@ public enum GordianFactoryResource implements OceanusBundleId {
      * Build factory map.
      * @return the map
      */
-    private static Map<GordianFactoryType, OceanusBundleId> buildFactoryMap() {
+    private static Map<GordianFactoryType, GordianBundleId> buildFactoryMap() {
         /* Create the map and return it */
-        final Map<GordianFactoryType, OceanusBundleId> myMap = new EnumMap<>(GordianFactoryType.class);
+        final Map<GordianFactoryType, GordianBundleId> myMap = new EnumMap<>(GordianFactoryType.class);
         myMap.put(GordianFactoryType.BC, FACTORY_BC);
         myMap.put(GordianFactoryType.JCA, FACTORY_JCA);
         return myMap;
@@ -105,7 +104,8 @@ public enum GordianFactoryResource implements OceanusBundleId {
      * @param pFactoryType the factoryType
      * @return the resource key
      */
-    protected static OceanusBundleId getKeyForFactoryType(final GordianFactoryType pFactoryType) {
-        return OceanusBundleLoader.getKeyForEnum(FACTORY_MAP, pFactoryType);
+    static GordianBundleId getKeyForFactoryType(final GordianFactoryType pFactoryType) {
+        final GordianBundleId myResource = FACTORY_MAP.get(pFactoryType);
+        return GordianBundleLoader.getKeyForEnum(FACTORY_MAP, pFactoryType);
     }
 }

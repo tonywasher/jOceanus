@@ -16,6 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.core.base;
 
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianCipherFactory;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianStreamKeySpec;
@@ -29,7 +30,6 @@ import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacFactory;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacSpec;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacSpecBuilder;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacType;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 import java.security.SecureRandom;
 import java.util.List;
@@ -48,9 +48,9 @@ public class GordianIdManager {
     /**
      * Constructor.
      * @param pFactory the security factory
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    GordianIdManager(final GordianCoreFactory pFactory) throws OceanusException  {
+    GordianIdManager(final GordianCoreFactory pFactory) throws GordianException  {
         /* Store the factory */
         theFactory = pFactory;
     }

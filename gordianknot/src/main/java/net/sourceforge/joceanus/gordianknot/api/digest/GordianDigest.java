@@ -17,7 +17,7 @@
 package net.sourceforge.joceanus.gordianknot.api.digest;
 
 import net.sourceforge.joceanus.gordianknot.api.base.GordianConsumer;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 
 /**
  * GordianKnot interface for Message Digests.
@@ -47,10 +47,10 @@ public interface GordianDigest
      * @param pBuffer the buffer to return the digest in.
      * @param pOffset the offset in the buffer to store the digest.
      * @return the number of bytes placed into buffer
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     int finish(byte[] pBuffer,
-               int pOffset) throws OceanusException;
+               int pOffset) throws GordianException;
 
     /**
      * Update the digest, calculate and reset it.

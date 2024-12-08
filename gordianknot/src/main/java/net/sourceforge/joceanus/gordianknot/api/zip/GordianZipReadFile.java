@@ -16,11 +16,10 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.api.zip;
 
-import java.io.InputStream;
-
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import org.w3c.dom.Document;
 
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import java.io.InputStream;
 
 /**
  * GordianKnot Zip ReadFile API.
@@ -48,15 +47,15 @@ public interface GordianZipReadFile {
      * Obtain an input stream for an entry in the zip file.
      * @param pFile the file details for the new zip entry
      * @return the input stream
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    InputStream createInputStream(GordianZipFileEntry pFile) throws OceanusException;
+    InputStream createInputStream(GordianZipFileEntry pFile) throws GordianException;
 
     /**
      * Read an entry in the zip file and parse as an XML Document.
      * @param pFile the file details for the new zip entry
      * @return the parsed XML Document
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    Document readXMLDocument(GordianZipFileEntry pFile) throws OceanusException;
+    Document readXMLDocument(GordianZipFileEntry pFile) throws GordianException;
 }

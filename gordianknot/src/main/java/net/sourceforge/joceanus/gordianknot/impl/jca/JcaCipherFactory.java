@@ -16,6 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.jca;
 
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianCipherMode;
@@ -36,14 +37,13 @@ import net.sourceforge.joceanus.gordianknot.api.cipher.GordianWrapper;
 import net.sourceforge.joceanus.gordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.gordianknot.api.key.GordianKeyGenerator;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.cipher.GordianCoreCipherFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
-import net.sourceforge.joceanus.gordianknot.impl.core.cipher.GordianCoreCipherFactory;
 import net.sourceforge.joceanus.gordianknot.impl.jca.JcaAEADCipher.JcaStreamAEADCipher;
 import net.sourceforge.joceanus.gordianknot.impl.jca.JcaAEADCipher.JcaSymAEADCipher;
 import net.sourceforge.joceanus.gordianknot.impl.jca.JcaCipher.JcaStreamCipher;
 import net.sourceforge.joceanus.gordianknot.impl.jca.JcaCipher.JcaSymCipher;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
@@ -92,7 +92,7 @@ public class JcaCipherFactory
 
     @Override
     @SuppressWarnings("unchecked")
-    public <T extends GordianKeySpec> GordianKeyGenerator<T> getKeyGenerator(final T pKeySpec) throws OceanusException {
+    public <T extends GordianKeySpec> GordianKeyGenerator<T> getKeyGenerator(final T pKeySpec) throws GordianException {
         /* Look up in the cache */
         JcaKeyGenerator<T> myGenerator = (JcaKeyGenerator<T>) theCache.get(pKeySpec);
         if (myGenerator == null) {
@@ -112,7 +112,7 @@ public class JcaCipherFactory
     }
 
     @Override
-    public GordianSymCipher createSymKeyCipher(final GordianSymCipherSpec pCipherSpec) throws OceanusException {
+    public GordianSymCipher createSymKeyCipher(final GordianSymCipherSpec pCipherSpec) throws GordianException {
         /* Check validity of SymKeySpec */
         checkSymCipherSpec(pCipherSpec);
 
@@ -131,7 +131,7 @@ public class JcaCipherFactory
     }
 
     @Override
-    public GordianStreamCipher createStreamKeyCipher(final GordianStreamCipherSpec pCipherSpec) throws OceanusException {
+    public GordianStreamCipher createStreamKeyCipher(final GordianStreamCipherSpec pCipherSpec) throws GordianException {
         /* Check validity of StreamKeySpec */
         checkStreamCipherSpec(pCipherSpec);
 
@@ -142,7 +142,7 @@ public class JcaCipherFactory
     }
 
     @Override
-    public GordianWrapper createKeyWrapper(final GordianKey<GordianSymKeySpec> pKey) throws OceanusException {
+    public GordianWrapper createKeyWrapper(final GordianKey<GordianSymKeySpec> pKey) throws GordianException {
         /* Create the cipher */
         final JcaKey<GordianSymKeySpec> myKey = JcaKey.accessKey(pKey);
         final GordianSymCipherSpec mySpec = GordianSymCipherSpecBuilder.ecb(myKey.getKeyType(), GordianPadding.NONE);
@@ -155,9 +155,9 @@ public class JcaCipherFactory
      * @param pKeySpec the keySpec
      * @param <T> the SpecType
      * @return the name of the algorithm
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private static <T extends GordianKeySpec> String getKeyAlgorithm(final T pKeySpec) throws OceanusException {
+    private static <T extends GordianKeySpec> String getKeyAlgorithm(final T pKeySpec) throws GordianException {
         if (pKeySpec instanceof GordianStreamKeySpec) {
             return getStreamKeyAlgorithm((GordianStreamKeySpec) pKeySpec);
         }
@@ -171,9 +171,9 @@ public class JcaCipherFactory
      * Create the BouncyCastle KeyGenerator via JCA.
      * @param pAlgorithm the Algorithm
      * @return the KeyGenerator
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private static KeyGenerator getJavaKeyGenerator(final String pAlgorithm) throws OceanusException {
+    private static KeyGenerator getJavaKeyGenerator(final String pAlgorithm) throws GordianException {
         /* Protect against exceptions */
         try {
             /* Massage the keyGenerator name */
@@ -198,9 +198,9 @@ public class JcaCipherFactory
      * Create the BouncyCastle SymKey Cipher via JCA.
      * @param pCipherSpec the cipherSpec
      * @return the Cipher
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private static Cipher getJavaCipher(final GordianSymCipherSpec pCipherSpec) throws OceanusException {
+    private static Cipher getJavaCipher(final GordianSymCipherSpec pCipherSpec) throws GordianException {
         final String myAlgo = getSymKeyAlgorithm(pCipherSpec.getKeyType())
                 + ALGO_SEP
                 + getCipherModeAlgorithm(pCipherSpec)
@@ -213,9 +213,9 @@ public class JcaCipherFactory
      * Create the BouncyCastle StreamKey Cipher via JCA.
      * @param pCipherSpec the StreamCipherSpec
      * @return the Cipher
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private static Cipher getJavaCipher(final GordianStreamCipherSpec pCipherSpec) throws OceanusException {
+    private static Cipher getJavaCipher(final GordianStreamCipherSpec pCipherSpec) throws GordianException {
         final GordianStreamKeySpec myKeySpec = pCipherSpec.getKeyType();
         String myAlgo = getStreamKeyAlgorithm(myKeySpec);
         if (pCipherSpec.isAEAD()
@@ -229,9 +229,9 @@ public class JcaCipherFactory
      * Create the StreamKey Cipher via JCA.
      * @param pAlgorithm the Algorithm
      * @return the KeyGenerator
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private static Cipher getJavaCipher(final String pAlgorithm) throws OceanusException {
+    private static Cipher getJavaCipher(final String pAlgorithm) throws GordianException {
         /* Protect against exceptions */
         try {
             /* Return a Cipher for the algorithm */
@@ -249,9 +249,9 @@ public class JcaCipherFactory
      * Obtain the SymKey algorithm.
      * @param pKeySpec the keySpec
      * @return the Algorithm
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    static String getSymKeyAlgorithm(final GordianSymKeySpec pKeySpec) throws OceanusException {
+    static String getSymKeyAlgorithm(final GordianSymKeySpec pKeySpec) throws GordianException {
         switch (pKeySpec.getSymKeyType()) {
             case TWOFISH:
                 return "TwoFish";
@@ -297,9 +297,9 @@ public class JcaCipherFactory
      * Obtain the CipherMode algorithm.
      * @param pSpec the cipherSpec
      * @return the Algorithm
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private static String getCipherModeAlgorithm(final GordianSymCipherSpec pSpec) throws OceanusException {
+    private static String getCipherModeAlgorithm(final GordianSymCipherSpec pSpec) throws GordianException {
         final GordianCipherMode myMode = pSpec.getCipherMode();
         switch (pSpec.getCipherMode()) {
             case ECB:
@@ -361,9 +361,9 @@ public class JcaCipherFactory
      * Obtain the StreamKey algorithm.
      * @param pKeySpec the keySpec
      * @return the Algorithm
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private static String getStreamKeyAlgorithm(final GordianStreamKeySpec pKeySpec) throws OceanusException {
+    private static String getStreamKeyAlgorithm(final GordianStreamKeySpec pKeySpec) throws GordianException {
         switch (pKeySpec.getStreamKeyType()) {
             case HC:
                 return GordianLength.LEN_128 == pKeySpec.getKeyLength()

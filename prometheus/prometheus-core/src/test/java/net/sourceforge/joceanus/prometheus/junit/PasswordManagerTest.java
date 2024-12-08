@@ -1,5 +1,6 @@
 package net.sourceforge.joceanus.prometheus.junit;
 
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactoryLock;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactoryType;
@@ -7,6 +8,7 @@ import net.sourceforge.joceanus.gordianknot.api.lock.GordianKeySetLock;
 import net.sourceforge.joceanus.gordianknot.util.GordianGenerator;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.prometheus.exc.PrometheusDataException;
+import net.sourceforge.joceanus.prometheus.exc.PrometheusSecurityException;
 import net.sourceforge.joceanus.prometheus.security.PrometheusSecurityDialogController;
 import net.sourceforge.joceanus.prometheus.security.PrometheusSecurityPasswordManager;
 import org.junit.jupiter.api.Assertions;
@@ -218,23 +220,27 @@ class PasswordManagerTest {
     @BeforeAll
     public static void setUpFactories() throws OceanusException {
         /* Create the security manager */
-        final GordianFactory myFactory = GordianGenerator.createFactory(GordianFactoryType.BC);
-        final PrometheusSecurityPasswordManager myManager = new PrometheusSecurityPasswordManager(myFactory, new DialogController());
+        try {
+            final GordianFactory myFactory = GordianGenerator.createFactory(GordianFactoryType.BC);
+            final PrometheusSecurityPasswordManager myManager = new PrometheusSecurityPasswordManager(myFactory, new DialogController());
 
-        /* For each NAME */
-        for (int i = 0; i < NAMES.length; i++) {
-            /* Create some factories */
-            createNewFactory(myManager, i);
-            createNewFactory(myManager, i);
-            createNewFactory(myManager, i);
-            final FactoryIndex myIndex = createNewFactory(myManager, i);
+            /* For each NAME */
+            for (int i = 0; i < NAMES.length; i++) {
+                /* Create some factories */
+                createNewFactory(myManager, i);
+                createNewFactory(myManager, i);
+                createNewFactory(myManager, i);
+                final FactoryIndex myIndex = createNewFactory(myManager, i);
 
-            /* Create a couple of similar factories */
-            createSimilarFactory(myManager, myIndex);
+                /* Create a couple of similar factories */
+                createSimilarFactory(myManager, myIndex);
+            }
+
+            /* Shuffle the hashes */
+            Collections.shuffle(FACTORIES);
+        } catch (GordianException e) {
+            throw new PrometheusSecurityException(e);
         }
-
-        /* Shuffle the hashes */
-        Collections.shuffle(FACTORIES);
     }
 
     /**
@@ -244,20 +250,24 @@ class PasswordManagerTest {
     @Test
     void FactoryPasswordTests() throws OceanusException {
         /* Create the security manager */
-        final DialogController myController = new DialogController();
-        final GordianFactory myFactory = GordianGenerator.createFactory(GordianFactoryType.BC);
-        final PrometheusSecurityPasswordManager myManager = new PrometheusSecurityPasswordManager(myFactory, myController);
+        try {
+            final DialogController myController = new DialogController();
+            final GordianFactory myFactory = GordianGenerator.createFactory(GordianFactoryType.BC);
+            final PrometheusSecurityPasswordManager myManager = new PrometheusSecurityPasswordManager(myFactory, myController);
 
-        /* Loop through the factories in the list */
-        for (FactoryIndex myIndex : FACTORIES) {
-            /* Resolve the factory */
-            if (myIndex.resolved()) {
-                final GordianFactoryLock myLock = myController.resolveFactory(myManager, myIndex);
-                Assertions.assertEquals(myIndex.theLock, myLock, "Incorrect lock");
-            } else {
-                Assertions.assertThrows(PrometheusDataException.class,
-                        () -> myController.resolveFactory(myManager, myIndex), "Resolution failure");
+            /* Loop through the factories in the list */
+            for (FactoryIndex myIndex : FACTORIES) {
+                /* Resolve the factory */
+                if (myIndex.resolved()) {
+                    final GordianFactoryLock myLock = myController.resolveFactory(myManager, myIndex);
+                    Assertions.assertEquals(myIndex.theLock, myLock, "Incorrect lock");
+                } else {
+                    Assertions.assertThrows(PrometheusDataException.class,
+                            () -> myController.resolveFactory(myManager, myIndex), "Resolution failure");
+                }
             }
+        } catch (GordianException e) {
+            throw new PrometheusSecurityException(e);
         }
     }
 
@@ -335,23 +345,27 @@ class PasswordManagerTest {
     @BeforeAll
     public static void setUpKeySets() throws OceanusException {
         /* Create the security manager */
-        final GordianFactory myFactory = GordianGenerator.createFactory(GordianFactoryType.BC);
-        final PrometheusSecurityPasswordManager myManager = new PrometheusSecurityPasswordManager(myFactory, new DialogController());
+        try {
+            final GordianFactory myFactory = GordianGenerator.createFactory(GordianFactoryType.BC);
+            final PrometheusSecurityPasswordManager myManager = new PrometheusSecurityPasswordManager(myFactory, new DialogController());
 
-        /* For each NAME */
-        for (int i = 0; i < NAMES.length; i++) {
-            /* Create some keySets */
-            createNewKeySet(myManager, i);
-            createNewKeySet(myManager, i);
-            createNewKeySet(myManager, i);
-            final KeySetIndex myIndex = createNewKeySet(myManager, i);
+            /* For each NAME */
+            for (int i = 0; i < NAMES.length; i++) {
+                /* Create some keySets */
+                createNewKeySet(myManager, i);
+                createNewKeySet(myManager, i);
+                createNewKeySet(myManager, i);
+                final KeySetIndex myIndex = createNewKeySet(myManager, i);
 
-            /* Create a couple of similar keySets */
-            createSimilarKeySet(myManager, myIndex);
+                /* Create a couple of similar keySets */
+                createSimilarKeySet(myManager, myIndex);
+            }
+
+            /* Shuffle the hashes */
+            Collections.shuffle(FACTORIES);
+        } catch (GordianException e) {
+            throw new PrometheusSecurityException(e);
         }
-
-        /* Shuffle the hashes */
-        Collections.shuffle(FACTORIES);
     }
 
     /**
@@ -361,20 +375,24 @@ class PasswordManagerTest {
     @Test
     void KeySetPasswordTests() throws OceanusException {
         /* Create the security manager */
-        final DialogController myController = new DialogController();
-        final GordianFactory myFactory = GordianGenerator.createFactory(GordianFactoryType.BC);
-        final PrometheusSecurityPasswordManager myManager = new PrometheusSecurityPasswordManager(myFactory, myController);
+        try {
+            final DialogController myController = new DialogController();
+            final GordianFactory myFactory = GordianGenerator.createFactory(GordianFactoryType.BC);
+            final PrometheusSecurityPasswordManager myManager = new PrometheusSecurityPasswordManager(myFactory, myController);
 
-        /* Loop through the keySets in the list */
-        for (KeySetIndex myIndex : KEYSETS) {
-            /* Resolve the hash */
-            if (myIndex.resolved()) {
-                final GordianKeySetLock myLock = myController.resolveKeySet(myManager, myIndex);
-                Assertions.assertEquals(myIndex.theLock, myLock, "Incorrect lock");
-            } else {
-                Assertions.assertThrows(PrometheusDataException.class,
-                        () -> myController.resolveKeySet(myManager, myIndex), "Resolution failure");
+            /* Loop through the keySets in the list */
+            for (KeySetIndex myIndex : KEYSETS) {
+                /* Resolve the hash */
+                if (myIndex.resolved()) {
+                    final GordianKeySetLock myLock = myController.resolveKeySet(myManager, myIndex);
+                    Assertions.assertEquals(myIndex.theLock, myLock, "Incorrect lock");
+                } else {
+                    Assertions.assertThrows(PrometheusDataException.class,
+                            () -> myController.resolveKeySet(myManager, myIndex), "Resolution failure");
+                }
             }
+        } catch (GordianException e) {
+            throw new PrometheusSecurityException(e);
         }
     }
 }

@@ -16,6 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.junit.extensions;
 
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.impl.ext.digests.GordianBlake2Base;
 import net.sourceforge.joceanus.gordianknot.impl.ext.digests.GordianBlake2Tree;
 import net.sourceforge.joceanus.gordianknot.impl.ext.digests.GordianBlake2Xof;
@@ -33,7 +34,6 @@ import net.sourceforge.joceanus.gordianknot.impl.ext.macs.GordianBlake2Mac;
 import net.sourceforge.joceanus.gordianknot.impl.ext.params.GordianBlake2Parameters;
 import net.sourceforge.joceanus.gordianknot.impl.ext.params.GordianKeccakParameters;
 import net.sourceforge.joceanus.gordianknot.impl.ext.params.GordianSkeinParameters;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import org.bouncycastle.crypto.Digest;
 import org.bouncycastle.crypto.Mac;
 import org.bouncycastle.crypto.params.KeyParameter;
@@ -78,10 +78,10 @@ class DigestTest {
     /**
      * Create the blockCipher test suite.
      * @return the test stream
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     @TestFactory
-    Stream<DynamicNode> digestTests() throws OceanusException {
+    Stream<DynamicNode> digestTests() throws GordianException {
         /* Create tests */
         return Stream.of(DynamicContainer.dynamicContainer("Digests", Stream.of(
                 DynamicContainer.dynamicContainer("Groestl", Stream.of(
@@ -130,10 +130,10 @@ class DigestTest {
      * Test the Digests against the results.
      * @param pDigest the digest to test.
      * @param pExpected the expected results
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     static void checkDigestStrings(final Digest pDigest,
-                                   final String[] pExpected) throws OceanusException {
+                                   final String[] pExpected) throws GordianException {
         /* Check the array */
         Assertions.assertEquals(INPUTS.length, pExpected.length, "Expected results must have same dimensions as Inputs");
 
@@ -161,9 +161,9 @@ class DigestTest {
     /**
      * Print the Digests.
      * @param pDigest the digest to test.
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    static void printDigestStrings(final Digest pDigest) throws OceanusException {
+    static void printDigestStrings(final Digest pDigest) throws GordianException {
         /* Create the output buffer */
         final byte[] myOutput = new byte[pDigest.getDigestSize()];
 
@@ -185,12 +185,12 @@ class DigestTest {
      * @param pKeyLen the keyLength
      * @param pDataLen the dataLength
      * @param pResult the expected result
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     static void testBlakeMac(final Mac pMac,
                              final int pKeyLen,
                              final int pDataLen,
-                             final String pResult) throws OceanusException {
+                             final String pResult) throws GordianException {
         /* Create the key */
         final byte[] myKey = new byte[pKeyLen];
         System.arraycopy(BLAKE2DATA, 0, myKey, 0, pKeyLen);
@@ -213,11 +213,11 @@ class DigestTest {
      * @param pXof the Xof to test.
      * @param pKeyLen the keyLength
      * @param pResult the expected result
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     static void testBlakeXof(final GordianBlake2Xof pXof,
                              final int pKeyLen,
-                             final String pResult) throws OceanusException {
+                             final String pResult) throws GordianException {
         /* Access the expected result */
         final byte[] myExpected = Hex.decode(pResult);
         final int myXofLen = myExpected.length;
@@ -245,9 +245,9 @@ class DigestTest {
     /**
      * Run the blake Null Xof tests.
      * @param pBase the base digest.
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    static void testBlakeNullXof(final GordianBlake2Base pBase) throws OceanusException {
+    static void testBlakeNullXof(final GordianBlake2Base pBase) throws GordianException {
         /* Create a Blake2X instance */
         final GordianBlake2Xof myXof = new GordianBlake2Xof((GordianBlake2Base) pBase.copy());
 
@@ -276,11 +276,11 @@ class DigestTest {
      * @param pXof the Xof to test.
      * @param pKeyLen the keyLength
      * @param pResult the expected result
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     static void testSkeinXof(final GordianSkeinXof pXof,
                              final int pKeyLen,
-                             final String pResult) throws OceanusException {
+                             final String pResult) throws GordianException {
         /* Access the expected result */
         final byte[] myExpected = Hex.decode(pResult);
         final int myXofLen = myExpected.length;
@@ -311,9 +311,9 @@ class DigestTest {
     /**
      * Run the skein Null Xof tests.
      * @param pBase the base digest.
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    static void testSkeinNullXof(final GordianSkeinBase pBase) throws OceanusException {
+    static void testSkeinNullXof(final GordianSkeinBase pBase) throws GordianException {
         /* Create a Blake2X instance */
         final GordianSkeinXof myXof = new GordianSkeinXof((GordianSkeinBase) pBase.copy());
         final GordianSkeinDigest myDigest = new GordianSkeinDigest(pBase.getBlockSize() * 8, pBase.getOutputSize() * 8);
@@ -344,12 +344,12 @@ class DigestTest {
      * @param pStdMsg is this a  standard message
      * @param pPersLen the personalLength
      * @param pResult the expected result
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     static void testKangaroo(final int pMsgLen,
                              final boolean pStdMsg,
                              final int pPersLen,
-                             final String pResult) throws OceanusException {
+                             final String pResult) throws GordianException {
         testKangaroo(pMsgLen, pStdMsg, pPersLen, 0, pResult);
     }
 
@@ -360,13 +360,13 @@ class DigestTest {
      * @param pPersLen the personalLength
      * @param pOutLen the outputLength
      * @param pResult the expected result
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     static void testKangaroo(final int pMsgLen,
                              final boolean pStdMsg,
                              final int pPersLen,
                              final int pOutLen,
-                             final String pResult) throws OceanusException {
+                             final String pResult) throws GordianException {
         /* Access the expected result */
         final byte[] myExpected = Hex.decode(pResult);
         final int myXofLen = pOutLen == 0 ? myExpected.length : pOutLen;
@@ -422,11 +422,11 @@ class DigestTest {
      * @param pNumLeaves the number of leaves
      * @param pFanOut the fanOut
      * @param pMaxDepth the max depth of the tree
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     static void testBlake2Tree(final int pNumLeaves,
                                final int pFanOut,
-                               final int pMaxDepth) throws OceanusException {
+                               final int pMaxDepth) throws GordianException {
         /* Create the tree */
         final GordianBlake2Tree myTree = new GordianBlake2Tree(new GordianBlake2bDigest(512));
         final int myLeafLen = 4096;
@@ -477,11 +477,11 @@ class DigestTest {
      * @param pNumLeaves the number of leaves
      * @param pFanOut the fanOut
      * @param pMaxDepth the max depth of the tree
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     static void testSkeinTree(final int pNumLeaves,
                               final int pFanOut,
-                              final int pMaxDepth) throws OceanusException {
+                              final int pMaxDepth) throws GordianException {
         /* Create the tree */
         final GordianSkeinTree myTree = new GordianSkeinTree(new GordianSkeinBase(512, 512));
         final int myLeafLen = 4096;
@@ -547,9 +547,9 @@ class DigestTest {
 
         /**
          * Test digests.
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
-        void checkDigests() throws OceanusException {
+        void checkDigests() throws GordianException {
             checkDigestStrings(new GordianGroestlDigest(224), EXPECTED);
         }
     }
@@ -573,9 +573,9 @@ class DigestTest {
 
         /**
          * Test digests.
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
-        void checkDigests() throws OceanusException {
+        void checkDigests() throws GordianException {
             checkDigestStrings(new GordianGroestlDigest(256), EXPECTED);
         }
     }
@@ -599,9 +599,9 @@ class DigestTest {
 
         /**
          * Test digests.
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
-        void checkDigests() throws OceanusException {
+        void checkDigests() throws GordianException {
             checkDigestStrings(new GordianGroestlDigest(384), EXPECTED);
         }
     }
@@ -625,9 +625,9 @@ class DigestTest {
 
         /**
          * Test digests.
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
-        void checkDigests() throws OceanusException {
+        void checkDigests() throws GordianException {
             checkDigestStrings(new GordianGroestlDigest(512), EXPECTED);
         }
     }
@@ -651,9 +651,9 @@ class DigestTest {
 
         /**
          * Test digests.
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
-        void checkDigests() throws OceanusException {
+        void checkDigests() throws GordianException {
             checkDigestStrings(new GordianJHDigest(224), EXPECTED);
         }
     }
@@ -677,9 +677,9 @@ class DigestTest {
 
         /**
          * Test digests.
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
-        void checkDigests() throws OceanusException {
+        void checkDigests() throws GordianException {
             checkDigestStrings(new GordianJHDigest(256), EXPECTED);
         }
     }
@@ -703,9 +703,9 @@ class DigestTest {
 
         /**
          * Test digests.
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
-        void checkDigests() throws OceanusException {
+        void checkDigests() throws GordianException {
             checkDigestStrings(new GordianJHDigest(384), EXPECTED);
         }
     }
@@ -729,9 +729,9 @@ class DigestTest {
 
         /**
          * Test digests.
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
-        void checkDigests() throws OceanusException {
+        void checkDigests() throws GordianException {
             checkDigestStrings(new GordianJHDigest(512), EXPECTED);
         }
     }
@@ -755,9 +755,9 @@ class DigestTest {
 
         /**
          * Test digests.
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
-        void checkDigests() throws OceanusException {
+        void checkDigests() throws GordianException {
             checkDigestStrings(new GordianCubeHashDigest(224), EXPECTED);
         }
     }
@@ -781,9 +781,9 @@ class DigestTest {
 
         /**
          * Test digests.
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
-        void checkDigests() throws OceanusException {
+        void checkDigests() throws GordianException {
             checkDigestStrings(new GordianCubeHashDigest(256), EXPECTED);
         }
     }
@@ -807,9 +807,9 @@ class DigestTest {
 
         /**
          * Test digests.
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
-        void checkDigests() throws OceanusException {
+        void checkDigests() throws GordianException {
             checkDigestStrings(new GordianCubeHashDigest(384), EXPECTED);
         }
     }
@@ -833,9 +833,9 @@ class DigestTest {
 
         /**
          * Test digests.
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
-        void checkDigests() throws OceanusException {
+        void checkDigests() throws GordianException {
             checkDigestStrings(new GordianCubeHashDigest(512), EXPECTED);
         }
     }
@@ -859,9 +859,9 @@ class DigestTest {
 
         /**
          * Test digests.
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
-        void checkDigests() throws OceanusException {
+        void checkDigests() throws GordianException {
             checkDigestStrings(new GordianBlake2bDigest(224), EXPECTED);
         }
     }
@@ -885,9 +885,9 @@ class DigestTest {
 
         /**
          * Test digests.
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
-        void checkDigests() throws OceanusException {
+        void checkDigests() throws GordianException {
             checkDigestStrings(new GordianBlake2bDigest(256), EXPECTED);
         }
     }
@@ -911,9 +911,9 @@ class DigestTest {
 
         /**
          * Test digests.
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
-        void checkDigests() throws OceanusException {
+        void checkDigests() throws GordianException {
             checkDigestStrings(new GordianBlake2bDigest(384), EXPECTED);
         }
     }
@@ -937,9 +937,9 @@ class DigestTest {
 
         /**
          * Test digests.
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
-        void checkDigests() throws OceanusException {
+        void checkDigests() throws GordianException {
             checkDigestStrings(new GordianBlake2bDigest(512), EXPECTED);
         }
     }
@@ -962,9 +962,9 @@ class DigestTest {
 
         /**
          * Test macs.
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
-        void checkMacs() throws OceanusException {
+        void checkMacs() throws GordianException {
             final GordianBlake2Mac myMac = new GordianBlake2Mac(new GordianBlake2bDigest(512));
             testBlakeMac(myMac, 64, 0, EXPECTED[0]);
             testBlakeMac(myMac, 64, 1, EXPECTED[1]);
@@ -994,9 +994,9 @@ class DigestTest {
 
         /**
          * Test digests.
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
-        void checkDigests() throws OceanusException {
+        void checkDigests() throws GordianException {
             checkDigestStrings(new GordianBlake2sDigest(128), EXPECTED);
         }
     }
@@ -1020,9 +1020,9 @@ class DigestTest {
 
         /**
          * Test digests.
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
-        void checkDigests() throws OceanusException {
+        void checkDigests() throws GordianException {
             checkDigestStrings(new GordianBlake2sDigest(160), EXPECTED);
         }
     }
@@ -1046,9 +1046,9 @@ class DigestTest {
 
         /**
          * Test digests.
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
-        void checkDigests() throws OceanusException {
+        void checkDigests() throws GordianException {
             checkDigestStrings(new GordianBlake2sDigest(224), EXPECTED);
         }
     }
@@ -1072,9 +1072,9 @@ class DigestTest {
 
         /**
          * Test digests.
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
-        void checkDigests() throws OceanusException {
+        void checkDigests() throws GordianException {
             checkDigestStrings(new GordianBlake2sDigest(256), EXPECTED);
         }
     }
@@ -1097,9 +1097,9 @@ class DigestTest {
 
         /**
          * Test macs.
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
-        void checkMacs() throws OceanusException {
+        void checkMacs() throws GordianException {
             final GordianBlake2Mac myMac = new GordianBlake2Mac(new GordianBlake2sDigest(256));
             testBlakeMac(myMac, 32, 0, EXPECTED[0]);
             testBlakeMac(myMac, 32, 1, EXPECTED[1]);
@@ -1138,9 +1138,9 @@ class DigestTest {
 
         /**
          * Test Xofs.
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
-        void checkXofs() throws OceanusException {
+        void checkXofs() throws GordianException {
             final GordianBlake2Xof myXof = new GordianBlake2Xof(new GordianBlake2sDigest(256));
             testBlakeXof(myXof, 0, EXPECTED[0]);
             testBlakeXof(myXof, 0, EXPECTED[1]);
@@ -1191,9 +1191,9 @@ class DigestTest {
 
         /**
          * Test digests.
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
-        void checkDigests() throws OceanusException {
+        void checkDigests() throws GordianException {
             testKangaroo(0, true, 0, EXPECTED[0]);
             testKangaroo(0, true, 0, EXPECTED[1]);
             testKangaroo(0, true, 0, 10032, EXPECTED[2]);
@@ -1218,9 +1218,9 @@ class DigestTest {
         /**
          * Run the Blake2Tree tests.
          *
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
-        void runTest() throws OceanusException {
+        void runTest() throws GordianException {
             /* Run standard tests */
             testBlake2Tree(1, 2, 3);
             testBlake2Tree(4, 2, 3);
@@ -1259,9 +1259,9 @@ class DigestTest {
 
         /**
          * Test Xofs.
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
-        void checkXofs() throws OceanusException {
+        void checkXofs() throws GordianException {
             final GordianSkeinXof myXof = new GordianSkeinXof(new GordianSkeinBase(256, 256));
             testSkeinXof(myXof, 0, EXPECTED[0]);
             testSkeinXof(myXof, 0, EXPECTED[1]);
@@ -1297,9 +1297,9 @@ class DigestTest {
         /**
          * Run the SkeinTree tests.
          *
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
-        void runTest() throws OceanusException {
+        void runTest() throws GordianException {
             /* Run standard tests */
             testSkeinTree(1, 1, 3);
             testSkeinTree(4, 1, 3);

@@ -16,13 +16,13 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.api.zip;
 
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
+import org.w3c.dom.Document;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import org.w3c.dom.Document;
-
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 /**
  * GordianKnot Zip WriteFile API.
@@ -33,19 +33,19 @@ public interface GordianZipWriteFile extends AutoCloseable {
      * @param pFile the file details for the new zip entry
      * @param pCompress should we compress this file?
      * @return the output stream
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     OutputStream createOutputStream(File pFile,
-                                    boolean pCompress) throws OceanusException;
+                                    boolean pCompress) throws GordianException;
 
     /**
      * Write an XML Document as a compressed in the Zip file.
      * @param pFile the file details for the new zip entry
      * @param pDocument the XML document.
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     void writeXMLDocument(File pFile,
-                          Document pDocument) throws OceanusException;
+                          Document pDocument) throws GordianException;
 
     /**
      * Obtain the contents.

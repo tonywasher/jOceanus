@@ -63,7 +63,7 @@ public class PrometheusToolkit {
 
         /* Create the passwordManager */
         final PrometheusSecurityPreferences myPreferences = thePreferenceManager.getPreferenceSet(PrometheusSecurityPreferences.class);
-        thePasswordMgr = newPasswordManager(myPreferences.getFactoryType(), myPreferences.getPasswordLockSpec(), myPreferences.getSecurityPhrase());
+        thePasswordMgr = newPasswordManager(myPreferences.getFactoryType(), myPreferences.getPasswordLockSpec());
 
         /* Set this as the threadData */
         final TethysUIThreadManager myThreadMgr = theToolkit.getThreadManager();
@@ -106,14 +106,12 @@ public class PrometheusToolkit {
      * Create a Password Manager.
      * @param pFactoryType the factoryType
      * @param pLockSpec the lockSpec
-     * @param pSecurityPhrase the security phrase
      * @return the manager
      * @throws OceanusException on error
      */
     private PrometheusSecurityPasswordManager newPasswordManager(final GordianFactoryType pFactoryType,
-                                                                 final GordianPasswordLockSpec pLockSpec,
-                                                                 final char[] pSecurityPhrase) throws OceanusException {
-        return PrometheusSecurityGenerator.newPasswordManager(getToolkit().getGuiFactory(), pFactoryType, pSecurityPhrase);
+                                                                 final GordianPasswordLockSpec pLockSpec) throws OceanusException {
+        return PrometheusSecurityGenerator.newPasswordManager(getToolkit().getGuiFactory(), pFactoryType, pLockSpec);
     }
 
     /**

@@ -16,7 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.api.cipher;
 
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 
 /**
  * GordianKnot base for AEAD Cipher.
@@ -25,9 +25,9 @@ public interface GordianAEADCipher {
     /**
      * Process the passed AEAD data.
      * @param pBytes AEAD Bytes to update cipher with
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    default void updateAAD(final byte[] pBytes) throws OceanusException {
+    default void updateAAD(final byte[] pBytes) throws GordianException {
         updateAAD(pBytes, 0, pBytes.length);
     }
 
@@ -36,9 +36,9 @@ public interface GordianAEADCipher {
      * @param pBytes AEAD Bytes to update cipher with
      * @param pOffset offset within pBytes to read bytes from
      * @param pLength length of data to update with
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     void updateAAD(byte[] pBytes,
                    int pOffset,
-                   int pLength) throws OceanusException;
+                   int pLength) throws GordianException;
 }

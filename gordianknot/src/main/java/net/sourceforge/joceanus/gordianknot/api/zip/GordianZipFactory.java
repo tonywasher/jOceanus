@@ -16,14 +16,14 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.api.zip;
 
-import java.io.File;
-import java.io.InputStream;
-import java.io.OutputStream;
-
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.gordianknot.api.lock.GordianLock;
 import net.sourceforge.joceanus.gordianknot.api.lock.GordianPasswordLockSpec;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
+
+import java.io.File;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 /**
  * GordianKnot Zip Factory API.
@@ -33,9 +33,9 @@ public interface GordianZipFactory {
      * Create a keySetLock.
      * @param pPassword the password
      * @return the zipLock
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    default GordianZipLock keySetZipLock(final char[] pPassword) throws OceanusException {
+    default GordianZipLock keySetZipLock(final char[] pPassword) throws GordianException {
         return keySetZipLock(new GordianPasswordLockSpec(), pPassword);
     }
 
@@ -44,18 +44,18 @@ public interface GordianZipFactory {
      * @param pLockSpec the lockSpec
      * @param pPassword the password
      * @return the zipLock
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     GordianZipLock keySetZipLock(GordianPasswordLockSpec pLockSpec,
-                                 char[] pPassword) throws OceanusException;
+                                 char[] pPassword) throws GordianException;
 
     /**
      * Create a factoryLock.
      * @param pPassword the password
      * @return the zipLock
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    default GordianZipLock factoryZipLock(char[] pPassword) throws OceanusException {
+    default GordianZipLock factoryZipLock(char[] pPassword) throws GordianException {
         return factoryZipLock(new GordianPasswordLockSpec(), pPassword);
     }
 
@@ -64,20 +64,20 @@ public interface GordianZipFactory {
      * @param pLockSpec the lockSpec
      * @param pPassword the password
      * @return the zipLock
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     GordianZipLock factoryZipLock(GordianPasswordLockSpec pLockSpec,
-                                  char[] pPassword) throws OceanusException;
+                                  char[] pPassword) throws GordianException;
 
     /**
      * Create a keyPairZipLock.
      * @param pKeyPair the keyPair
      * @param pPassword the password
      * @return the zipLock
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     default GordianZipLock keyPairZipLock(GordianKeyPair pKeyPair,
-                                          char[] pPassword) throws OceanusException {
+                                          char[] pPassword) throws GordianException {
         return keyPairZipLock(new GordianPasswordLockSpec(), pKeyPair, pPassword);
     }
 
@@ -87,47 +87,47 @@ public interface GordianZipFactory {
      * @param pKeyPair the keyPair
      * @param pPassword the password
      * @return the zipLock
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     GordianZipLock keyPairZipLock(GordianPasswordLockSpec pLockSpec,
                                   GordianKeyPair pKeyPair,
-                                  char[] pPassword) throws OceanusException;
+                                  char[] pPassword) throws GordianException;
 
     /**
      * Create a zipLock.
      * @param pLock the keyPairLock
      * @return the zipLock
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    GordianZipLock zipLock(GordianLock<?> pLock) throws OceanusException;
+    GordianZipLock zipLock(GordianLock<?> pLock) throws GordianException;
 
     /**
      * Create a secure zipFile.
      * @param pZipLock the zipLock to use
      * @param pFile the file details for the new zip file
      * @return the zipFile
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     GordianZipWriteFile createZipFile(GordianZipLock pZipLock,
-                                      File pFile) throws OceanusException;
+                                      File pFile) throws GordianException;
 
     /**
      * Create a secure zipFile.
      * @param pZipLock the zipLock to use
      * @param pOutputStream the output stream to write to
      * @return the zipFile
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     GordianZipWriteFile createZipFile(GordianZipLock pZipLock,
-                                      OutputStream pOutputStream) throws OceanusException;
+                                      OutputStream pOutputStream) throws GordianException;
 
     /**
      * Create a standard zipFile with no security.
      * @param pFile the file details for the new zip file
      * @return the zipFile
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    GordianZipWriteFile createZipFile(File pFile) throws OceanusException;
+    GordianZipWriteFile createZipFile(File pFile) throws GordianException;
 
     /**
      * Create a standard zipFile with no security.
@@ -140,15 +140,15 @@ public interface GordianZipFactory {
      * Open an existing zipFile.
      * @param pFile the file to read
      * @return the zipFile
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    GordianZipReadFile openZipFile(File pFile) throws OceanusException;
+    GordianZipReadFile openZipFile(File pFile) throws GordianException;
 
     /**
      * Open an existing zipFile.
      * @param pInputStream the input stream to read from
      * @return the zipFile
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    GordianZipReadFile openZipFile(InputStream pInputStream) throws OceanusException;
+    GordianZipReadFile openZipFile(InputStream pInputStream) throws GordianException;
 }

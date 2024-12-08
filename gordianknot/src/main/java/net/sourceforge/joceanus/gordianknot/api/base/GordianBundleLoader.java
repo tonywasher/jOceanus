@@ -1,30 +1,52 @@
 /*******************************************************************************
- * Oceanus: Java Utilities
+ * GordianKnot: Security Suite
  * Copyright 2012,2024 Tony Washer
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.oceanus.resource;
+package net.sourceforge.joceanus.gordianknot.api.base;
 
 import java.lang.ref.WeakReference;
 import java.util.Map;
 import java.util.ResourceBundle;
-import java.util.function.Function;
 
 /**
- * Bundle Loader.
+ * Bundle Loader. (Cloned from OceanusBundleLoader)
  */
-public final class OceanusBundleLoader {
+public final class GordianBundleLoader {
+    /**
+     * Interface for bundleIds.
+     */
+    public interface GordianBundleId {
+        /**
+         * Get Key Name.
+         * @return the key name.
+         */
+        String getKeyName();
+
+        /**
+         * Get NameSpace.
+         * @return the nameSpace.
+         */
+        String getNameSpace();
+
+        /**
+         * Get Value.
+         * @return the value.
+         */
+        String getValue();
+    }
+
     /**
      * String Builder.
      */
@@ -36,11 +58,6 @@ public final class OceanusBundleLoader {
     private final String theBundleName;
 
     /**
-     * BundleLoader.
-     */
-    private final Function<String, ResourceBundle> theLoader;
-
-    /**
      * ResourceBundle.
      */
     private WeakReference<ResourceBundle> theBundle;
@@ -48,23 +65,18 @@ public final class OceanusBundleLoader {
     /**
      * Standard constructor.
      * @param pBundleName the Bundle Name
-     * @param pLoader the loader
      */
-    private OceanusBundleLoader(final String pBundleName,
-                                final Function<String, ResourceBundle> pLoader) {
+    private GordianBundleLoader(final String pBundleName) {
         theBundleName = pBundleName;
-        theLoader = pLoader;
     }
 
     /**
      * Obtain standard loader.
      * @param pBundleName the Bundle Name
-     * @param pLoader the bundle loader
      * @return the loader
      */
-    public static OceanusBundleLoader getLoader(final String pBundleName,
-                                                final Function<String, ResourceBundle> pLoader) {
-        return new OceanusBundleLoader(pBundleName, pLoader);
+    public static GordianBundleLoader getLoader(final String pBundleName) {
+        return new GordianBundleLoader(pBundleName);
     }
 
     /**
@@ -73,7 +85,7 @@ public final class OceanusBundleLoader {
      * @param pKey the resource Key
      * @return the resourceName
      */
-    public <K extends Enum<K> & OceanusBundleId> String getValue(final K pKey) {
+    public <K extends Enum<K> & GordianBundleId> String getValue(final K pKey) {
         /* Build the required name */
         theBuilder.setLength(0);
         theBuilder.append(pKey.getNameSpace());
@@ -82,13 +94,13 @@ public final class OceanusBundleLoader {
 
         /* Access the cached bundle */
         ResourceBundle myBundle = theBundle == null
-                                                    ? null
-                                                    : theBundle.get();
+                ? null
+                : theBundle.get();
 
         /* If the bundle is not cached */
         if (myBundle == null) {
             /* Access and cache the bundle */
-            myBundle = theLoader.apply(theBundleName);
+            myBundle = ResourceBundle.getBundle(theBundleName);
             theBundle = new WeakReference<>(myBundle);
         }
 
@@ -103,12 +115,24 @@ public final class OceanusBundleLoader {
      * @param pValue the enum value
      * @return the resource key
      */
-    public static <E extends Enum<E>> OceanusBundleId getKeyForEnum(final Map<E, OceanusBundleId> pMap,
+    public static <E extends Enum<E>> GordianBundleId getKeyForEnum(final Map<E, GordianBundleId> pMap,
                                                                     final E pValue) {
-        final OceanusBundleId myId = pMap.get(pValue);
+        final GordianBundleId myId = pMap.get(pValue);
         if (myId == null) {
-            throw new IllegalArgumentException(OceanusResourceLoader.getErrorNoResource(pValue));
+            throw new IllegalArgumentException(getErrorNoResource(pValue));
         }
         return myId;
+    }
+
+    /**
+     * Error for missing resource.
+     * @param pId the missing id
+     * @return the error message
+     */
+    private static String getErrorNoResource(final Enum<?> pId) {
+        return "Missing Resource: "
+                + pId.getClass().getName()
+                + ':'
+                + pId.name();
     }
 }

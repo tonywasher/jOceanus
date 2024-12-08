@@ -16,22 +16,20 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.jca;
 
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
-import java.security.spec.AlgorithmParameterSpec;
-
-import javax.crypto.Mac;
-import javax.crypto.ShortBufferException;
-import javax.crypto.spec.IvParameterSpec;
-
-import org.bouncycastle.jcajce.spec.SkeinParameterSpec.Builder;
-
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacParameters;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacSpec;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacType;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
 import net.sourceforge.joceanus.gordianknot.impl.core.mac.GordianCoreMac;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import org.bouncycastle.jcajce.spec.SkeinParameterSpec.Builder;
+
+import javax.crypto.Mac;
+import javax.crypto.ShortBufferException;
+import javax.crypto.spec.IvParameterSpec;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.spec.AlgorithmParameterSpec;
 
 /**
  * Wrapper for JCA MAC.
@@ -62,7 +60,7 @@ public final class JcaMac
     }
 
     @Override
-    public void init(final GordianMacParameters pParams) throws OceanusException {
+    public void init(final GordianMacParameters pParams) throws GordianException {
         /* Process the parameters and access the key */
         processParameters(pParams);
         final JcaKey<GordianMacSpec> myKey = JcaKey.accessKey(getKey());
@@ -131,7 +129,7 @@ public final class JcaMac
 
     @Override
     public int doFinish(final byte[] pBuffer,
-                        final int pOffset) throws OceanusException {
+                        final int pOffset) throws GordianException {
         try {
             theMac.doFinal(pBuffer, pOffset);
             return getMacSize();

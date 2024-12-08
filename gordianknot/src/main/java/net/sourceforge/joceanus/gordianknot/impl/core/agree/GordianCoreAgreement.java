@@ -19,6 +19,7 @@ package net.sourceforge.joceanus.gordianknot.impl.core.agree;
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreement;
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementSpec;
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementStatus;
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianStreamCipherSpec;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymCipherSpec;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactoryType;
@@ -28,7 +29,6 @@ import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.cipher.GordianCoreCipherFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianLogicException;
 import net.sourceforge.joceanus.gordianknot.impl.core.keyset.GordianCoreKeySetFactory;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.util.Arrays;
 
@@ -130,7 +130,7 @@ public abstract class GordianCoreAgreement
     }
 
     @Override
-    public Object getResult() throws OceanusException {
+    public Object getResult() throws GordianException {
         /* Must be in result available state */
         checkStatus(GordianAgreementStatus.RESULT_AVAILABLE);
 
@@ -143,7 +143,7 @@ public abstract class GordianCoreAgreement
     }
 
     @Override
-    public void setResultType(final Object pResultType) throws OceanusException {
+    public void setResultType(final Object pResultType) throws GordianException {
         /* Check result Type */
         checkResultType(pResultType);
         theResultType = pResultType;
@@ -162,9 +162,9 @@ public abstract class GordianCoreAgreement
     /**
      * Check the resultType is valid.
      * @param pResultType the resultType
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private void checkResultType(final Object pResultType) throws OceanusException {
+    private void checkResultType(final Object pResultType) throws GordianException {
         /* No need to check FactoryType or null */
         if (pResultType instanceof GordianFactoryType
             || pResultType == null) {
@@ -218,9 +218,9 @@ public abstract class GordianCoreAgreement
     /**
      * Check status.
      * @param pStatus the required status
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    protected void checkStatus(final GordianAgreementStatus pStatus) throws OceanusException {
+    protected void checkStatus(final GordianAgreementStatus pStatus) throws GordianException {
         /* If we are in the wrong state */
         if (theStatus != pStatus) {
             throw new GordianLogicException("Invalid State: " + theStatus);
@@ -293,9 +293,9 @@ public abstract class GordianCoreAgreement
     /**
      * Store secret.
      * @param pSecret the secret
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    protected void storeSecret(final byte[] pSecret) throws OceanusException {
+    protected void storeSecret(final byte[] pSecret) throws GordianException {
         /* Protect against failure */
         try {
             /* Just process the secret */
@@ -311,9 +311,9 @@ public abstract class GordianCoreAgreement
     /**
      * Process the secret.
      * @param pSecret the secret
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    protected void processSecret(final byte[] pSecret) throws OceanusException {
+    protected void processSecret(final byte[] pSecret) throws GordianException {
         /* Calculate result */
         theResult = theResultCalc.processSecret(pSecret, theResultType);
 
@@ -324,9 +324,9 @@ public abstract class GordianCoreAgreement
     /**
      * Obtain identifier for result.
      * @return the identifier
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    protected AlgorithmIdentifier getIdentifierForResult() throws OceanusException {
+    protected AlgorithmIdentifier getIdentifierForResult() throws GordianException {
         /* determine the resultType algId */
         return theAlgIds.getIdentifierForResult(theResultType);
     }
@@ -334,9 +334,9 @@ public abstract class GordianCoreAgreement
     /**
      * process result algorithmId.
      * @param pResId the result algorithmId.
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    public void processResultIdentifier(final AlgorithmIdentifier pResId) throws OceanusException {
+    public void processResultIdentifier(final AlgorithmIdentifier pResId) throws GordianException {
         /* determine the resultType */
         theResultType = theAlgIds.processResultIdentifier(pResId);
     }
@@ -347,11 +347,11 @@ public abstract class GordianCoreAgreement
      * @param pId the derivation Id
      * @param pResultLen the result length
      * @return the derived secret
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     protected byte[] calculateDerivedSecret(final byte[] pSecret,
                                             final GordianDerivationId pId,
-                                            final int pResultLen) throws OceanusException {
+                                            final int pResultLen) throws GordianException {
         return theResultCalc.calculateDerivedSecret(pSecret, pId, pResultLen);
     }
 }

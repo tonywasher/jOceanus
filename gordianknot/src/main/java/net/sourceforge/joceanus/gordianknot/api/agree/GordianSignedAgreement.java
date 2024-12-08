@@ -16,8 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.api.agree;
 
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 /**
  * Signed TwoShot Agreement.
@@ -27,26 +27,26 @@ public interface GordianSignedAgreement
     /**
      * Create the clientHello message.
      * @return the clientHello message
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    byte[] createClientHello() throws OceanusException;
+    byte[] createClientHello() throws GordianException;
 
     /**
      * Accept the clientHello.
      * @param pServer the server keyPair
      * @param pClientHello the incoming clientHello message
      * @return the serverHello message
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     byte[] acceptClientHello(GordianKeyPair pServer,
-                             byte[] pClientHello)  throws OceanusException;
+                             byte[] pClientHello)  throws GordianException;
 
     /**
      * Accept the serverHello.
      * @param pServer the server keyPair
      * @param pServerHello the serverHello message
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     void acceptServerHello(GordianKeyPair pServer,
-                           byte[] pServerHello) throws OceanusException;
+                           byte[] pServerHello) throws GordianException;
 }

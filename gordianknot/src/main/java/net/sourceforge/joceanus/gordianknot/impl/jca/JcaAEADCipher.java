@@ -16,6 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.jca;
 
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianAEADCipher;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianCipherParameters;
@@ -26,9 +27,8 @@ import net.sourceforge.joceanus.gordianknot.api.cipher.GordianStreamKeySpec;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymAEADCipher;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymCipherSpec;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymKeySpec;
-import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
 import net.sourceforge.joceanus.gordianknot.impl.core.cipher.GordianCoreCipher;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
 import org.bouncycastle.jcajce.spec.AEADParameterSpec;
 
 import javax.crypto.BadPaddingException;
@@ -80,7 +80,7 @@ public class JcaAEADCipher<T extends GordianKeySpec>
 
     @Override
     public void init(final boolean pEncrypt,
-                     final GordianCipherParameters pParams) throws OceanusException {
+                     final GordianCipherParameters pParams) throws GordianException {
         /* Process the parameters and access the key */
         processParameters(pParams);
         final JcaKey<T> myJcaKey = JcaKey.accessKey(getKey());
@@ -116,7 +116,7 @@ public class JcaAEADCipher<T extends GordianKeySpec>
                         final int pOffset,
                         final int pLength,
                         final byte[] pOutput,
-                        final int pOutOffset) throws OceanusException {
+                        final int pOutOffset) throws GordianException {
         /* Protect against exceptions */
         try {
             /* Process the bytes */
@@ -131,7 +131,7 @@ public class JcaAEADCipher<T extends GordianKeySpec>
     @Override
     public void updateAAD(final byte[] pBytes,
                           final int pOffset,
-                          final int pLength) throws OceanusException {
+                          final int pLength) throws GordianException {
         /* Protect against exceptions */
         try {
             /* Process the bytes */
@@ -145,7 +145,7 @@ public class JcaAEADCipher<T extends GordianKeySpec>
 
     @Override
     public int doFinish(final byte[] pOutput,
-                        final int pOutOffset) throws OceanusException {
+                        final int pOutOffset) throws GordianException {
         /* Protect against exceptions */
         try {
             /* Finish the operation */

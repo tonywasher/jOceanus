@@ -16,6 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.jca;
 
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestSubSpec.GordianDigestState;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignature;
@@ -37,7 +38,6 @@ import net.sourceforge.joceanus.gordianknot.impl.jca.JcaSignature.JcaRSASignatur
 import net.sourceforge.joceanus.gordianknot.impl.jca.JcaSignature.JcaRainbowSignature;
 import net.sourceforge.joceanus.gordianknot.impl.jca.JcaSignature.JcaSLHDSASignature;
 import net.sourceforge.joceanus.gordianknot.impl.jca.JcaSignature.JcaXMSSSignature;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.Signature;
@@ -63,7 +63,7 @@ public class JcaSignatureFactory
     }
 
     @Override
-    public GordianSignature createSigner(final GordianSignatureSpec pSignatureSpec) throws OceanusException {
+    public GordianSignature createSigner(final GordianSignatureSpec pSignatureSpec) throws GordianException {
         /* Check validity of Signature */
         checkSignatureSpec(pSignatureSpec);
 
@@ -76,10 +76,10 @@ public class JcaSignatureFactory
      * @param pAlgorithm the Algorithm
      * @param postQuantum is this a postQuantum algorithm?
      * @return the KeyPairGenerator
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     static Signature getJavaSignature(final String pAlgorithm,
-                                      final boolean postQuantum) throws OceanusException {
+                                      final boolean postQuantum) throws GordianException {
         /* Protect against exceptions */
         try {
             /* Return a Signature for the algorithm */
@@ -98,9 +98,9 @@ public class JcaSignatureFactory
      * Create the Jca Signer.
      * @param pSignatureSpec the signatureSpec
      * @return the Signer
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private GordianSignature getJcaSigner(final GordianSignatureSpec pSignatureSpec) throws OceanusException {
+    private GordianSignature getJcaSigner(final GordianSignatureSpec pSignatureSpec) throws GordianException {
         switch (pSignatureSpec.getKeyPairType()) {
             case RSA:
                 return new JcaRSASignature(getFactory(), pSignatureSpec);

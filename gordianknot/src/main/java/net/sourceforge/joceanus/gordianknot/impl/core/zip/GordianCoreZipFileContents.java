@@ -16,14 +16,14 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.core.zip;
 
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
+import net.sourceforge.joceanus.gordianknot.api.zip.GordianZipFileContents;
+import net.sourceforge.joceanus.gordianknot.api.zip.GordianZipFileEntry;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.zip.ZipEntry;
-
-import net.sourceforge.joceanus.gordianknot.api.zip.GordianZipFileContents;
-import net.sourceforge.joceanus.gordianknot.api.zip.GordianZipFileEntry;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 /**
  * Class represents the contents of an encrypted Zip file.
@@ -66,9 +66,9 @@ public class GordianCoreZipFileContents
     /**
      * Constructor from encoded string.
      * @param pCodedString the encoded string
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    GordianCoreZipFileContents(final String pCodedString) throws OceanusException {
+    GordianCoreZipFileContents(final String pCodedString) throws GordianException {
         /* Initialise normally */
         this();
 
@@ -256,9 +256,9 @@ public class GordianCoreZipFileContents
     /**
      * Add a File Entry from encoded string.
      * @param pCodedString the encoded string
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private void parseEncodedEntry(final String pCodedString) throws OceanusException {
+    private void parseEncodedEntry(final String pCodedString) throws GordianException {
         /* Parse the properties */
         final GordianZipFileProperties myProperties = new GordianZipFileProperties(pCodedString);
 

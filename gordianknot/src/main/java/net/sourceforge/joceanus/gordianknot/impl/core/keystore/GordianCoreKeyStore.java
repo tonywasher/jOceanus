@@ -16,20 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.core.keystore;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import org.bouncycastle.asn1.cms.IssuerAndSerialNumber;
-import org.bouncycastle.asn1.x500.X500Name;
-
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.gordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
@@ -38,13 +25,13 @@ import net.sourceforge.joceanus.gordianknot.api.keystore.GordianCertificate;
 import net.sourceforge.joceanus.gordianknot.api.keystore.GordianCertificateId;
 import net.sourceforge.joceanus.gordianknot.api.keystore.GordianKeyStore;
 import net.sourceforge.joceanus.gordianknot.api.keystore.GordianKeyStoreEntry;
+import net.sourceforge.joceanus.gordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStoreCertificate;
 import net.sourceforge.joceanus.gordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStoreKey;
 import net.sourceforge.joceanus.gordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStorePair;
-import net.sourceforge.joceanus.gordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStoreCertificate;
 import net.sourceforge.joceanus.gordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStoreSet;
 import net.sourceforge.joceanus.gordianknot.api.lock.GordianPasswordLockSpec;
-import net.sourceforge.joceanus.gordianknot.api.zip.GordianZipLock;
 import net.sourceforge.joceanus.gordianknot.api.zip.GordianZipFactory;
+import net.sourceforge.joceanus.gordianknot.api.zip.GordianZipLock;
 import net.sourceforge.joceanus.gordianknot.api.zip.GordianZipWriteFile;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
@@ -56,8 +43,20 @@ import net.sourceforge.joceanus.gordianknot.impl.core.keystore.GordianKeyStoreEl
 import net.sourceforge.joceanus.gordianknot.impl.core.keystore.GordianKeyStoreElement.GordianKeyStoreKeyElement;
 import net.sourceforge.joceanus.gordianknot.impl.core.keystore.GordianKeyStoreElement.GordianKeyStorePairElement;
 import net.sourceforge.joceanus.gordianknot.impl.core.keystore.GordianKeyStoreElement.GordianKeyStoreSetElement;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import org.bouncycastle.asn1.cms.IssuerAndSerialNumber;
+import org.bouncycastle.asn1.x500.X500Name;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.math.BigInteger;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  * KeyStore implementation.
@@ -287,7 +286,7 @@ public class GordianCoreKeyStore
 
     @Override
     public void setCertificate(final String pAlias,
-                               final GordianCertificate pCertificate) throws OceanusException {
+                               final GordianCertificate pCertificate) throws GordianException {
         /* Check the alias */
         checkAlias(pAlias);
 
@@ -313,7 +312,7 @@ public class GordianCoreKeyStore
     public void setKeyPair(final String pAlias,
                            final GordianKeyPair pKeyPair,
                            final char[] pPassword,
-                           final List<GordianCertificate> pCertificateChain) throws OceanusException {
+                           final List<GordianCertificate> pCertificateChain) throws GordianException {
         /* Check the alias */
         checkAlias(pAlias);
 
@@ -340,7 +339,7 @@ public class GordianCoreKeyStore
 
     @Override
     public void updateCertificateChain(final String pAlias,
-                                       final List<GordianCertificate> pCertificateChain) throws OceanusException {
+                                       final List<GordianCertificate> pCertificateChain) throws GordianException {
         /* Obtain the keyStore Entry */
         final GordianCoreKeyStoreEntry myEntry = theAliases.get(pAlias);
         if (!(myEntry instanceof GordianKeyStorePairElement)) {
@@ -376,7 +375,7 @@ public class GordianCoreKeyStore
     @Override
     public <T extends GordianKeySpec> void setKey(final String pAlias,
                                                   final GordianKey<T> pKey,
-                                                  final char[] pPassword) throws OceanusException {
+                                                  final char[] pPassword) throws GordianException {
         /* Check the alias */
         checkAlias(pAlias);
 
@@ -391,7 +390,7 @@ public class GordianCoreKeyStore
     @Override
     public void setKeySet(final String pAlias,
                           final GordianKeySet pKeySet,
-                          final char[] pPassword) throws OceanusException {
+                          final char[] pPassword) throws GordianException {
         /* Check the alias */
         checkAlias(pAlias);
 
@@ -453,7 +452,7 @@ public class GordianCoreKeyStore
 
     @Override
     public GordianKeyStoreEntry getEntry(final String pAlias,
-                                         final char[] pPassword) throws OceanusException {
+                                         final char[] pPassword) throws GordianException {
         if (isCertificateEntry(pAlias)) {
             return getKeyStoreCertificate(pAlias);
         }
@@ -492,7 +491,7 @@ public class GordianCoreKeyStore
 
     @Override
     public GordianKeyPair getKeyPair(final String pAlias,
-                                     final char[] pPassword) throws OceanusException {
+                                     final char[] pPassword) throws GordianException {
         final GordianKeyStorePair myPair = getKeyStorePair(pAlias, pPassword);
         return myPair == null ? null : myPair.getKeyPair();
     }
@@ -512,7 +511,7 @@ public class GordianCoreKeyStore
      * @return the keyPair entry (or null)
      */
     private GordianKeyStorePair getKeyStorePair(final String pAlias,
-                                                final char[] pPassword) throws OceanusException {
+                                                final char[] pPassword) throws GordianException {
         final GordianCoreKeyStoreEntry myEntry = theAliases.get(pAlias);
         return myEntry instanceof GordianKeyStorePairElement
                 ? ((GordianKeyStorePairElement) myEntry).buildEntry(this, pPassword)
@@ -521,7 +520,7 @@ public class GordianCoreKeyStore
 
     @Override
     public <T extends GordianKeySpec> GordianKey<T> getKey(final String pAlias,
-                                                           final char[] pPassword) throws OceanusException {
+                                                           final char[] pPassword) throws GordianException {
         final GordianKeyStoreKey<T> myKey = getKeyStoreKey(pAlias, pPassword);
         return myKey == null ? null : myKey.getKey();
     }
@@ -535,7 +534,7 @@ public class GordianCoreKeyStore
      */
     @SuppressWarnings("unchecked")
     private <T extends GordianKeySpec> GordianKeyStoreKey<T> getKeyStoreKey(final String pAlias,
-                                                                            final char[] pPassword) throws OceanusException {
+                                                                            final char[] pPassword) throws GordianException {
         final GordianCoreKeyStoreEntry myEntry = theAliases.get(pAlias);
         return myEntry instanceof GordianKeyStoreKeyElement
                 ? ((GordianKeyStoreKeyElement<T>) myEntry).buildEntry(this, pPassword)
@@ -544,7 +543,7 @@ public class GordianCoreKeyStore
 
     @Override
     public GordianKeySet getKeySet(final String pAlias,
-                                   final char[] pPassword) throws OceanusException {
+                                   final char[] pPassword) throws GordianException {
         final GordianKeyStoreSet mySet = getKeyStoreSet(pAlias, pPassword);
         return mySet == null ? null : mySet.getKeySet();
     }
@@ -556,7 +555,7 @@ public class GordianCoreKeyStore
      * @return the keySet entry (or null)
      */
     private GordianKeyStoreSet getKeyStoreSet(final String pAlias,
-                                              final char[] pPassword) throws OceanusException {
+                                              final char[] pPassword) throws GordianException {
         final GordianCoreKeyStoreEntry myEntry = theAliases.get(pAlias);
         return myEntry instanceof GordianKeyStoreSetElement
                 ? ((GordianKeyStoreSetElement) myEntry).buildEntry(this, pPassword)
@@ -564,7 +563,7 @@ public class GordianCoreKeyStore
     }
 
     @Override
-    public OceanusDate getCreationDate(final String pAlias) {
+    public LocalDate getCreationDate(final String pAlias) {
         final GordianCoreKeyStoreEntry myEntry = theAliases.get(pAlias);
         return myEntry != null ? myEntry.getCreationDate() : null;
     }
@@ -610,10 +609,10 @@ public class GordianCoreKeyStore
      * Check validity of certificate chain.
      * @param pKeyPair the keyPair
      * @param pChain the certificate chain
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     private void checkChain(final GordianKeyPair pKeyPair,
-                            final List<GordianCertificate> pChain) throws OceanusException {
+                            final List<GordianCertificate> pChain) throws GordianException {
         /* Make sure that we have a chain */
         if (pChain == null || pChain.isEmpty()) {
             throw new GordianDataException("Empty chain");
@@ -663,9 +662,9 @@ public class GordianCoreKeyStore
      * find the alias for a keyPair(Set) entry for issuer/serial#.
      * @param pIssuer the issuer
      * @return the alias if found
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    String findIssuerCert(final IssuerAndSerialNumber pIssuer) throws OceanusException {
+    String findIssuerCert(final IssuerAndSerialNumber pIssuer) throws GordianException {
         /* Loop through the alias entries */
         final X500Name myIssuer = pIssuer.getName();
         final BigInteger mySerial = pIssuer.getSerialNumber().getValue();
@@ -691,7 +690,7 @@ public class GordianCoreKeyStore
 
     @Override
     public void storeToFile(final File pFile,
-                            final char[] pPassword) throws OceanusException {
+                            final char[] pPassword) throws GordianException {
         try {
             storeToStream(new FileOutputStream(pFile), pPassword);
         } catch (IOException e) {
@@ -701,7 +700,7 @@ public class GordianCoreKeyStore
 
     @Override
     public void storeToStream(final OutputStream pOutputStream,
-                              final char[] pPassword) throws OceanusException {
+                              final char[] pPassword) throws GordianException {
         /* Access the Factories */
         final GordianZipFactory myZipFactory = theFactory.getZipFactory();
 

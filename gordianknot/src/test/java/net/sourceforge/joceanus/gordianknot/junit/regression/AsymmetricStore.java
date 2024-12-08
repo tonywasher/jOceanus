@@ -16,15 +16,10 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.junit.regression;
 
-import java.security.spec.PKCS8EncodedKeySpec;
-import java.security.spec.X509EncodedKeySpec;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementFactory;
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementSpec;
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementType;
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.gordianknot.api.encrypt.GordianEncryptorFactory;
 import net.sourceforge.joceanus.gordianknot.api.encrypt.GordianEncryptorSpec;
@@ -55,7 +50,12 @@ import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignatureSpec;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignatureType;
 import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianCoreAgreementFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.keypair.GordianCoreKeyPairFactory;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
+
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Assymmetric Test Data Classes.
@@ -321,9 +321,9 @@ class AsymmetricStore {
         /**
          * Obtain (or create) the keyPair for the FactoryKeySpec
          * @return the keyPair
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
-        GordianKeyPair getKeyPair() throws OceanusException {
+        GordianKeyPair getKeyPair() throws GordianException {
             /* If the keyPair has not yet been initialised */
             GordianKeyPair myKeyPair = theKeyPair;
             if (myKeyPair != null) {
@@ -350,9 +350,9 @@ class AsymmetricStore {
         /**
          * Obtain the X509 encoding.
          * @return the encoding
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
-        X509EncodedKeySpec getX509Encoding() throws OceanusException {
+        X509EncodedKeySpec getX509Encoding() throws GordianException {
             final GordianKeyPairFactory myFactory = theOwner.getFactory();
             final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(theOwner.getKeySpec());
             return myGenerator.getX509Encoding(getKeyPair());
@@ -361,9 +361,9 @@ class AsymmetricStore {
         /**
          * Obtain the PKCS8 encoding.
          * @return the encoding
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
-        PKCS8EncodedKeySpec getPKCS8Encoding() throws OceanusException {
+        PKCS8EncodedKeySpec getPKCS8Encoding() throws GordianException {
             final GordianKeyPairFactory myFactory = theOwner.getFactory();
             final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(theOwner.getKeySpec());
             return myGenerator.getPKCS8Encoding(getKeyPair());
@@ -372,9 +372,9 @@ class AsymmetricStore {
         /**
          * Obtain (or create) the keyPair for the target
          * @return the keyPair
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
-        GordianKeyPair getTargetKeyPair() throws OceanusException {
+        GordianKeyPair getTargetKeyPair() throws GordianException {
             /* Return keyPair if it exists */
             GordianKeyPair myTarget = theTarget;
             if (myTarget != null) {
@@ -401,9 +401,9 @@ class AsymmetricStore {
         /**
          * Obtain (or create) the mirror keyPair
          * @return the mirror keyPair
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
-        GordianKeyPair getMirrorKeyPair() throws OceanusException {
+        GordianKeyPair getMirrorKeyPair() throws GordianException {
             /* Return mirror keyPair if it exists */
             GordianKeyPair myMirror = theMirror;
             if (myMirror != null) {
@@ -435,9 +435,9 @@ class AsymmetricStore {
         /**
          * Obtain (or create) the partner Self keyPair
          * @return the partnerSelf keyPair
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
-        GordianKeyPair getPartnerSelfKeyPair() throws OceanusException {
+        GordianKeyPair getPartnerSelfKeyPair() throws GordianException {
             /* Return partnerSelf keyPair if it exists */
             GordianKeyPair myPartnerSelf = thePartnerSelf;
             if (myPartnerSelf != null
@@ -472,9 +472,9 @@ class AsymmetricStore {
         /**
          * Obtain (or create) the partner Target keyPair
          * @return the partnerTarget keyPair
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
-        GordianKeyPair getPartnerTargetKeyPair() throws OceanusException {
+        GordianKeyPair getPartnerTargetKeyPair() throws GordianException {
             /* Return partnerTarget keyPair if it exists */
             GordianKeyPair myPartnerTarget = thePartnerTarget;
             if (myPartnerTarget != null

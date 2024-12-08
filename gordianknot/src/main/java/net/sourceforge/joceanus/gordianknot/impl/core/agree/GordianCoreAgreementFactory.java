@@ -22,6 +22,7 @@ import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementSpec;
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementSpecBuilder;
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementType;
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianKDFType;
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianEdwardsElliptic;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
@@ -33,7 +34,6 @@ import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianCompositeAgre
 import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianCompositeAgreement.GordianCompositeSignedAgreement;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 
 import java.util.ArrayList;
@@ -82,7 +82,7 @@ public abstract class GordianCoreAgreementFactory
     }
 
     @Override
-    public GordianAgreement createAgreement(final byte[] pClientHello) throws OceanusException {
+    public GordianAgreement createAgreement(final byte[] pClientHello) throws GordianException {
         /* Parse the client hello message */
         final GordianAgreementMessageASN1 myASN1 = GordianAgreementMessageASN1.getInstance(pClientHello);
         myASN1.checkMessageType(GordianMessageType.CLIENTHELLO);
@@ -96,9 +96,9 @@ public abstract class GordianCoreAgreementFactory
      *
      * @param pSpec the agreementSpec
      * @return the Agreement
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    protected GordianAgreement getCompositeAgreement(final GordianAgreementSpec pSpec) throws OceanusException {
+    protected GordianAgreement getCompositeAgreement(final GordianAgreementSpec pSpec) throws GordianException {
         switch (pSpec.getAgreementType()) {
             case KEM:
             case ANON:
@@ -124,9 +124,9 @@ public abstract class GordianCoreAgreementFactory
     /**
      * Check the agreementSpec.
      * @param pAgreementSpec the agreementSpec
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    protected void checkAgreementSpec(final GordianAgreementSpec pAgreementSpec) throws OceanusException {
+    protected void checkAgreementSpec(final GordianAgreementSpec pAgreementSpec) throws GordianException {
         /* Check validity of agreement */
         if (!validAgreementSpec(pAgreementSpec)) {
             throw new GordianDataException(GordianCoreFactory.getInvalidText(pAgreementSpec));

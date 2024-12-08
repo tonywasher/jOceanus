@@ -16,12 +16,12 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.api.agree;
 
-import java.util.List;
-import java.util.function.Predicate;
-
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
+
+import java.util.List;
+import java.util.function.Predicate;
 
 /**
  * GordianKnot AgreementFactory API.
@@ -31,17 +31,17 @@ public interface GordianAgreementFactory {
      * Create Agreement.
      * @param pSpec the agreementSpec
      * @return the Agreement
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    GordianAgreement createAgreement(GordianAgreementSpec pSpec) throws OceanusException;
+    GordianAgreement createAgreement(GordianAgreementSpec pSpec) throws GordianException;
 
     /**
      * Create Agreement for clientHello message.
      * @param pClientHello the clientHello message
      * @return the Agreement
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    GordianAgreement createAgreement(byte[] pClientHello) throws OceanusException;
+    GordianAgreement createAgreement(byte[] pClientHello) throws GordianException;
 
     /**
      * Obtain predicate for keyAgreement.

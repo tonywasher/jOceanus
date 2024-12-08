@@ -16,18 +16,18 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.core.keypair;
 
-import java.security.SecureRandom;
-import java.security.spec.PKCS8EncodedKeySpec;
-import java.security.spec.X509EncodedKeySpec;
-
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianKeyPairFactory;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairGenerator;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
-import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianRandomSource;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
+
+import java.security.SecureRandom;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
 
 /**
  * GordianKnot class for KeyPair Generators.
@@ -106,9 +106,9 @@ public abstract class GordianCoreKeyPairGenerator
     /**
      * Check keySpec.
      * @param pKeySpec the keySpec.
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    protected void checkKeySpec(final PKCS8EncodedKeySpec pKeySpec) throws OceanusException {
+    protected void checkKeySpec(final PKCS8EncodedKeySpec pKeySpec) throws GordianException {
         final GordianKeyPairFactory myFactory = theFactory.getKeyPairFactory();
         final GordianKeyPairSpec myKeySpec = myFactory.determineKeyPairSpec(pKeySpec);
         if (!theKeySpec.equals(myKeySpec)) {
@@ -119,9 +119,9 @@ public abstract class GordianCoreKeyPairGenerator
     /**
      * Check keySpec.
      * @param pKeySpec the keySpec.
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    protected void checkKeySpec(final X509EncodedKeySpec pKeySpec) throws OceanusException {
+    protected void checkKeySpec(final X509EncodedKeySpec pKeySpec) throws GordianException {
         final GordianKeyPairFactory myFactory = theFactory.getKeyPairFactory();
         final GordianKeyPairSpec myKeySpec = myFactory.determineKeyPairSpec(pKeySpec);
         if (!theKeySpec.equals(myKeySpec)) {

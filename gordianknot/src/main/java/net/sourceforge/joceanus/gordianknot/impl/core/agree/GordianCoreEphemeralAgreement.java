@@ -20,6 +20,7 @@ import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementSpec;
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementStatus;
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementType;
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianHandshakeAgreement;
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianKeyPairFactory;
@@ -33,7 +34,6 @@ import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianAgreementMess
 import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianAgreementResult.GordianDerivationId;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.util.Arrays;
 
@@ -149,7 +149,7 @@ public abstract class GordianCoreEphemeralAgreement
     }
 
     @Override
-    protected void processSecret(final byte[] pSecret) throws OceanusException {
+    protected void processSecret(final byte[] pSecret) throws GordianException {
         /* If we are using confirmation and are not SM2 */
         final GordianAgreementSpec mySpec = getAgreementSpec();
         if (Boolean.TRUE.equals(mySpec.withConfirm())
@@ -218,7 +218,7 @@ public abstract class GordianCoreEphemeralAgreement
     }
 
     @Override
-    public byte[] createClientHello(final GordianKeyPair pClient) throws OceanusException {
+    public byte[] createClientHello(final GordianKeyPair pClient) throws GordianException {
         /* Create the clientHello and extract the encoded bytes */
         return createClientHelloASN1(pClient).getEncodedBytes();
     }
@@ -227,9 +227,9 @@ public abstract class GordianCoreEphemeralAgreement
      * Create the clientHello ASN1.
      * @param pClient the client keyPair
      * @return the clientHello message
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    public GordianAgreementMessageASN1 createClientHelloASN1(final GordianKeyPair pClient) throws OceanusException {
+    public GordianAgreementMessageASN1 createClientHelloASN1(final GordianKeyPair pClient) throws GordianException {
         /* Check the keyPair */
         checkKeyPair(pClient);
 
@@ -255,7 +255,7 @@ public abstract class GordianCoreEphemeralAgreement
     @Override
     public byte[] acceptClientHello(final GordianKeyPair pClient,
                                     final GordianKeyPair pServer,
-                                    final byte[] pClientHello) throws OceanusException {
+                                    final byte[] pClientHello) throws GordianException {
         /* Must be in clean state */
         checkStatus(GordianAgreementStatus.CLEAN);
 
@@ -274,22 +274,22 @@ public abstract class GordianCoreEphemeralAgreement
      * @param pServer the server keyPair
      * @param pClientHello the incoming clientHello message
      * @return the serverHello message
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     public abstract GordianAgreementMessageASN1 acceptClientHelloASN1(GordianKeyPair pClient,
                                                                       GordianKeyPair pServer,
-                                                                      GordianAgreementMessageASN1 pClientHello) throws OceanusException;
+                                                                      GordianAgreementMessageASN1 pClientHello) throws GordianException;
 
     /**
      * Process the incoming clientHello message request.
      * @param pClient the client keyPair
      * @param pServer the server keyPair
      * @param pClientHello the incoming clientHello message
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     protected void processClientHelloASN1(final GordianKeyPair pClient,
                                           final GordianKeyPair pServer,
-                                          final GordianAgreementMessageASN1 pClientHello) throws OceanusException {
+                                          final GordianAgreementMessageASN1 pClientHello) throws GordianException {
         /* Check the keyPair */
         checkKeyPair(pClient);
         checkKeyPair(pServer);
@@ -317,7 +317,7 @@ public abstract class GordianCoreEphemeralAgreement
     }
 
     @Override
-    protected GordianAgreementMessageASN1 buildServerHello() throws OceanusException {
+    protected GordianAgreementMessageASN1 buildServerHello() throws GordianException {
         /* Add server ephemeral and any server confirmation tag to the serverHello */
         final GordianKeyPairFactory myFactory = getFactory().getKeyPairFactory();
         final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(theServerEphemeral.getKeyPairSpec());
@@ -328,7 +328,7 @@ public abstract class GordianCoreEphemeralAgreement
 
     @Override
     public byte[] acceptServerHello(final GordianKeyPair pServer,
-                                    final byte[] pServerHello) throws OceanusException {
+                                    final byte[] pServerHello) throws GordianException {
         /* Must be in clean state */
         checkStatus(GordianAgreementStatus.AWAITING_SERVERHELLO);
 
@@ -346,19 +346,19 @@ public abstract class GordianCoreEphemeralAgreement
      * @param pServer the server keyPair
      * @param pServerHello the serverHello message
      * @return the clientConfirm (or null if no confirmation)
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     public abstract GordianAgreementMessageASN1 acceptServerHelloASN1(GordianKeyPair pServer,
-                                                                      GordianAgreementMessageASN1 pServerHello) throws OceanusException;
+                                                                      GordianAgreementMessageASN1 pServerHello) throws GordianException;
 
     /**
      * Process the serverHello.
      * @param pServer the server keyPair
      * @param pServerHello the serverHello message
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     protected void processServerHelloASN1(final GordianKeyPair pServer,
-                                          final GordianAgreementMessageASN1 pServerHello) throws OceanusException {
+                                          final GordianAgreementMessageASN1 pServerHello) throws GordianException {
         /* Check the keyPair */
         checkKeyPair(pServer);
 
@@ -380,9 +380,9 @@ public abstract class GordianCoreEphemeralAgreement
     /**
      * Build clientConfirm message.
      * @return the clientConfirm message
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    protected GordianAgreementMessageASN1 buildClientConfirmASN1() throws OceanusException {
+    protected GordianAgreementMessageASN1 buildClientConfirmASN1() throws GordianException {
         /* If there is no client confirmation, return null */
         if (theClientConfirmation == null) {
             return null;
@@ -397,7 +397,7 @@ public abstract class GordianCoreEphemeralAgreement
     }
 
     @Override
-    public void acceptClientConfirm(final byte[] pClientConfirm) throws OceanusException {
+    public void acceptClientConfirm(final byte[] pClientConfirm) throws GordianException {
         /* Must be in awaiting clientConfirm state */
         checkStatus(GordianAgreementStatus.AWAITING_CLIENTCONFIRM);
 
@@ -415,9 +415,9 @@ public abstract class GordianCoreEphemeralAgreement
     /**
      * Accept a client confirm message.
      * @param pClientConfirm the confirm message
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    public void acceptClientConfirmASN1(final GordianAgreementMessageASN1 pClientConfirm) throws OceanusException {
+    public void acceptClientConfirmASN1(final GordianAgreementMessageASN1 pClientConfirm) throws GordianException {
         /* Access message parts */
         final AlgorithmIdentifier myAlgId = pClientConfirm.getAgreementId();
         final byte[] myConfirm = pClientConfirm.getConfirmation();
@@ -443,9 +443,9 @@ public abstract class GordianCoreEphemeralAgreement
     /**
      * Create the confirmation tags.
      * @param pSecret the secret
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private void calculateConfirmationTags(final byte[] pSecret) throws OceanusException {
+    private void calculateConfirmationTags(final byte[] pSecret) throws GordianException {
         /* Derive the key */
         final byte[] myKey = calculateDerivedSecret(pSecret, GordianDerivationId.TAGS, GordianLength.LEN_512.getByteLength());
 

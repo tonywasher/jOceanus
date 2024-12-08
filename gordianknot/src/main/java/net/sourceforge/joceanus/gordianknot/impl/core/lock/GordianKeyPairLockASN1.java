@@ -16,19 +16,18 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.core.lock;
 
-import java.util.Enumeration;
-import java.util.Objects;
-
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
+import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianAgreementMessageASN1;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianASN1Util.GordianASN1Object;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianIOException;
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.ASN1Primitive;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.DERSequence;
 
-import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianAgreementMessageASN1;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianASN1Util.GordianASN1Object;
-import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
-import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianIOException;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import java.util.Enumeration;
+import java.util.Objects;
 
 /**
  * ASN1 Encoding of keyPairLock.
@@ -66,9 +65,9 @@ public class GordianKeyPairLockASN1
     /**
      * Constructor.
      * @param pSequence the Sequence
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    public GordianKeyPairLockASN1(final ASN1Sequence pSequence) throws OceanusException {
+    public GordianKeyPairLockASN1(final ASN1Sequence pSequence) throws GordianException {
         /* Protect against exceptions */
         try {
             /* Extract the parameters from the sequence */
@@ -91,9 +90,9 @@ public class GordianKeyPairLockASN1
      * Parse the ASN1 object.
      * @param pObject the object to parse
      * @return the parsed object
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    public static GordianKeyPairLockASN1 getInstance(final Object pObject) throws OceanusException {
+    public static GordianKeyPairLockASN1 getInstance(final Object pObject) throws GordianException {
         if (pObject instanceof GordianKeyPairLockASN1) {
             return (GordianKeyPairLockASN1) pObject;
         } else if (pObject != null) {
