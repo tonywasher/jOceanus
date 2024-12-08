@@ -16,18 +16,18 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.api.mac;
 
+import net.sourceforge.joceanus.gordianknot.api.base.GordianBundleLoader;
+import net.sourceforge.joceanus.gordianknot.api.base.GordianBundleLoader.GordianBundleId;
+import net.sourceforge.joceanus.gordianknot.api.cipher.GordianCipherResource;
+
 import java.util.EnumMap;
 import java.util.Map;
-import java.util.ResourceBundle;
-
-import net.sourceforge.joceanus.gordianknot.api.cipher.GordianCipherResource;
-import net.sourceforge.joceanus.oceanus.resource.OceanusBundleId;
-import net.sourceforge.joceanus.oceanus.resource.OceanusBundleLoader;
 
 /**
  * Resource IDs for Mac package.
  */
-public enum GordianMacResource implements OceanusBundleId {
+public enum GordianMacResource
+        implements GordianBundleId {
     /**
      * MAC HMAC.
      */
@@ -106,13 +106,12 @@ public enum GordianMacResource implements OceanusBundleId {
     /**
      * The MAC Map.
      */
-    private static final Map<GordianMacType, OceanusBundleId> MAC_MAP = buildMacMap();
+    private static final Map<GordianMacType, GordianBundleId> MAC_MAP = buildMacMap();
 
     /**
      * The Resource Loader.
      */
-    private static final OceanusBundleLoader LOADER = OceanusBundleLoader.getLoader(GordianMac.class.getCanonicalName(),
-            ResourceBundle::getBundle);
+    private static final GordianBundleLoader LOADER = GordianBundleLoader.getLoader(GordianMac.class.getCanonicalName());
 
     /**
      * The Id.
@@ -157,9 +156,9 @@ public enum GordianMacResource implements OceanusBundleId {
      * Build MAC map.
      * @return the map
      */
-    private static Map<GordianMacType, OceanusBundleId> buildMacMap() {
+    private static Map<GordianMacType, GordianBundleId> buildMacMap() {
         /* Create the map and return it */
-        final Map<GordianMacType, OceanusBundleId> myMap = new EnumMap<>(GordianMacType.class);
+        final Map<GordianMacType, GordianBundleId> myMap = new EnumMap<>(GordianMacType.class);
         myMap.put(GordianMacType.HMAC, MAC_HMAC);
         myMap.put(GordianMacType.GMAC, MAC_GMAC);
         myMap.put(GordianMacType.CMAC, MAC_CMAC);
@@ -184,7 +183,7 @@ public enum GordianMacResource implements OceanusBundleId {
      * @param pMac the MacType
      * @return the resource key
      */
-    protected static OceanusBundleId getKeyForMac(final GordianMacType pMac) {
-        return OceanusBundleLoader.getKeyForEnum(MAC_MAP, pMac);
+    static GordianBundleId getKeyForMac(final GordianMacType pMac) {
+        return GordianBundleLoader.getKeyForEnum(MAC_MAP, pMac);
     }
 }

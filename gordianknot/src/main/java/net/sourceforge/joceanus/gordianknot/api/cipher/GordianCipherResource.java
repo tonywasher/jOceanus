@@ -16,18 +16,18 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.api.cipher;
 
+import net.sourceforge.joceanus.gordianknot.api.base.GordianBundleLoader;
+import net.sourceforge.joceanus.gordianknot.api.base.GordianBundleLoader.GordianBundleId;
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestResource;
-import net.sourceforge.joceanus.oceanus.resource.OceanusBundleId;
-import net.sourceforge.joceanus.oceanus.resource.OceanusBundleLoader;
 
 import java.util.EnumMap;
 import java.util.Map;
-import java.util.ResourceBundle;
 
 /**
  * Resource IDs for Cipher package.
  */
-public enum GordianCipherResource implements OceanusBundleId {
+public enum GordianCipherResource
+        implements GordianBundleId {
     /**
      * SymKey AES.
      */
@@ -276,18 +276,17 @@ public enum GordianCipherResource implements OceanusBundleId {
     /**
      * The SymKey Map.
      */
-    private static final Map<GordianSymKeyType, OceanusBundleId> SYM_MAP = buildSymKeyMap();
+    private static final Map<GordianSymKeyType, GordianBundleId> SYM_MAP = buildSymKeyMap();
 
     /**
      * The StreamKey Map.
      */
-    private static final Map<GordianStreamKeyType, OceanusBundleId> STREAM_MAP = buildStreamKeyMap();
+    private static final Map<GordianStreamKeyType, GordianBundleId> STREAM_MAP = buildStreamKeyMap();
 
     /**
      * The Resource Loader.
      */
-    private static final OceanusBundleLoader LOADER = OceanusBundleLoader.getLoader(GordianCipher.class.getCanonicalName(),
-            ResourceBundle::getBundle);
+    private static final GordianBundleLoader LOADER = GordianBundleLoader.getLoader(GordianCipher.class.getCanonicalName());
 
     /**
      * The Id.
@@ -311,7 +310,7 @@ public enum GordianCipherResource implements OceanusBundleId {
      * Constructor.
      * @param pResource the underlying resource
      */
-    GordianCipherResource(final OceanusBundleId pResource) {
+    GordianCipherResource(final GordianBundleId pResource) {
         theKeyName = null;
         theValue = pResource.getValue();
     }
@@ -342,9 +341,9 @@ public enum GordianCipherResource implements OceanusBundleId {
      * Build SymKey map.
      * @return the map
      */
-    private static Map<GordianSymKeyType, OceanusBundleId> buildSymKeyMap() {
+    private static Map<GordianSymKeyType, GordianBundleId> buildSymKeyMap() {
         /* Create the map and return it */
-        final Map<GordianSymKeyType, OceanusBundleId> myMap = new EnumMap<>(GordianSymKeyType.class);
+        final Map<GordianSymKeyType, GordianBundleId> myMap = new EnumMap<>(GordianSymKeyType.class);
         myMap.put(GordianSymKeyType.AES, SYMKEY_AES);
         myMap.put(GordianSymKeyType.SERPENT, SYMKEY_SERPENT);
         myMap.put(GordianSymKeyType.TWOFISH, SYMKEY_TWOFISH);
@@ -382,17 +381,17 @@ public enum GordianCipherResource implements OceanusBundleId {
      * @param pKeyType the keyType
      * @return the resource key
      */
-    protected static OceanusBundleId getKeyForSym(final GordianSymKeyType pKeyType) {
-        return OceanusBundleLoader.getKeyForEnum(SYM_MAP, pKeyType);
+    static GordianBundleId getKeyForSym(final GordianSymKeyType pKeyType) {
+        return GordianBundleLoader.getKeyForEnum(SYM_MAP, pKeyType);
     }
 
     /**
      * Build StreamKey map.
      * @return the map
      */
-    private static Map<GordianStreamKeyType, OceanusBundleId> buildStreamKeyMap() {
+    private static Map<GordianStreamKeyType, GordianBundleId> buildStreamKeyMap() {
         /* Create the map and return it */
-        final Map<GordianStreamKeyType, OceanusBundleId> myMap = new EnumMap<>(GordianStreamKeyType.class);
+        final Map<GordianStreamKeyType, GordianBundleId> myMap = new EnumMap<>(GordianStreamKeyType.class);
         myMap.put(GordianStreamKeyType.SALSA20, STREAMKEY_SALSA20);
         myMap.put(GordianStreamKeyType.HC, STREAMKEY_HC);
         myMap.put(GordianStreamKeyType.CHACHA20, STREAMKEY_CHACHA);
@@ -421,7 +420,7 @@ public enum GordianCipherResource implements OceanusBundleId {
      * @param pKeyType the keyType
      * @return the resource key
      */
-    protected static OceanusBundleId getKeyForStream(final GordianStreamKeyType pKeyType) {
-        return OceanusBundleLoader.getKeyForEnum(STREAM_MAP, pKeyType);
+    static GordianBundleId getKeyForStream(final GordianStreamKeyType pKeyType) {
+        return GordianBundleLoader.getKeyForEnum(STREAM_MAP, pKeyType);
     }
 }
