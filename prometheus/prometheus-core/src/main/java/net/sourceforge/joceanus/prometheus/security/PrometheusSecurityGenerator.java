@@ -61,6 +61,18 @@ public final class PrometheusSecurityGenerator {
      * Create a password Manager.
      * @param pGuiFactory the GUI Factory
      * @param pFactoryType the factory type
+     * @return the password Manager
+     * @throws OceanusException on error
+     */
+    public static PrometheusSecurityPasswordManager newPasswordManager(final TethysUIFactory<?> pGuiFactory,
+                                                                       final GordianFactoryType pFactoryType) throws OceanusException {
+        return newPasswordManager(pGuiFactory, pFactoryType, new GordianPasswordLockSpec());
+    }
+
+    /**
+     * Create a password Manager.
+     * @param pGuiFactory the GUI Factory
+     * @param pFactoryType the factory type
      * @param pLockSpec the passwordLockSpec
      * @return the password Manager
      * @throws OceanusException on error

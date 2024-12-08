@@ -183,11 +183,6 @@ public class PrometheusPreferenceSecurity {
         HASHITERATIONS("HashIterations", MetisPreferenceResource.SECPREF_ITERATIONS),
 
         /**
-         * SecurityPhrase.
-         */
-        SECURITYPHRASE("SecurityPhrase", MetisPreferenceResource.SECPREF_PHRASE),
-
-        /**
          * ActiveKeySets.
          */
         ACTIVEKEYSETS("NumActiveKeySets", MetisPreferenceResource.SECPREF_KEYSETS);
@@ -313,15 +308,6 @@ public class PrometheusPreferenceSecurity {
         }
 
         /**
-         * Get Security Phrase.
-         *
-         * @return the phrase
-         */
-        public char[] getSecurityPhrase() {
-            return getCharArrayValue(PrometheusSecurityPreferenceKey.SECURITYPHRASE);
-        }
-
-        /**
          * Get KeySetSpec.
          *
          * @return the spec
@@ -350,7 +336,6 @@ public class PrometheusPreferenceSecurity {
             defineEnumPreference(PrometheusSecurityPreferenceKey.KEYLENGTH, GordianLength.class);
             defineIntegerPreference(PrometheusSecurityPreferenceKey.CIPHERSTEPS);
             defineIntegerPreference(PrometheusSecurityPreferenceKey.HASHITERATIONS);
-            defineCharArrayPreference(PrometheusSecurityPreferenceKey.SECURITYPHRASE);
             defineIntegerPreference(PrometheusSecurityPreferenceKey.ACTIVEKEYSETS);
         }
 
@@ -372,12 +357,6 @@ public class PrometheusPreferenceSecurity {
 
             /* Make sure that the length is restricted */
             myLengthPref.setFilter(VALID_LENGTHS::contains);
-
-            /* Make sure that the security phrase is specified */
-            final PrometheusCharArrayPreference myPhrasePref = getCharArrayPreference(PrometheusSecurityPreferenceKey.SECURITYPHRASE);
-            if (!myPhrasePref.isAvailable()) {
-                myPhrasePref.setValue(DEFAULT_SECURITY_PHRASE.toCharArray());
-            }
 
             /* Make sure that the cipherSteps is specified */
             MetisIntegerPreference myPref = getIntegerPreference(PrometheusSecurityPreferenceKey.CIPHERSTEPS);
