@@ -16,10 +16,10 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.api.keypair;
 
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
+
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
-
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 /**
  * KeyPair Generator API.
@@ -41,33 +41,33 @@ public interface GordianKeyPairGenerator {
      * Extract the X509 encoding for the public key.
      * @param pKeyPair the keyPair
      * @return the X509 publicKeySpec
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    X509EncodedKeySpec getX509Encoding(GordianKeyPair pKeyPair) throws OceanusException;
+    X509EncodedKeySpec getX509Encoding(GordianKeyPair pKeyPair) throws GordianException;
 
     /**
      * Obtain PKCS8EncodedKeySpec.
      * @param pKeyPair the keyPair
      * @return the PrivateKeySpec
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    PKCS8EncodedKeySpec getPKCS8Encoding(GordianKeyPair pKeyPair) throws OceanusException;
+    PKCS8EncodedKeySpec getPKCS8Encoding(GordianKeyPair pKeyPair) throws GordianException;
 
     /**
      * Create the keyPair from the PKCS8/X509 encodings.
      * @param pPublicKey the encoded public key
      * @param pPrivateKey the secured private key
      * @return the keyPair
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     GordianKeyPair deriveKeyPair(X509EncodedKeySpec pPublicKey,
-                                 PKCS8EncodedKeySpec pPrivateKey) throws OceanusException;
+                                 PKCS8EncodedKeySpec pPrivateKey) throws GordianException;
 
     /**
      * Derive the public-only keyPair from the X509 encoding.
      * @param pPublicKeySpec the publicKeySpec
      * @return the derived public-only keyPair
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    GordianKeyPair derivePublicOnlyKeyPair(X509EncodedKeySpec pPublicKeySpec) throws OceanusException;
+    GordianKeyPair derivePublicOnlyKeyPair(X509EncodedKeySpec pPublicKeySpec) throws GordianException;
 }

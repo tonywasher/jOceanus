@@ -16,16 +16,16 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.core.zip;
 
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
+import net.sourceforge.joceanus.gordianknot.api.zip.GordianZipFileContents;
+import net.sourceforge.joceanus.gordianknot.api.zip.GordianZipFileEntry;
+import net.sourceforge.joceanus.gordianknot.impl.core.stream.GordianStreamDefinition;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.zip.ZipEntry;
-
-import net.sourceforge.joceanus.gordianknot.api.zip.GordianZipFileContents;
-import net.sourceforge.joceanus.gordianknot.api.zip.GordianZipFileEntry;
-import net.sourceforge.joceanus.gordianknot.impl.core.stream.GordianStreamDefinition;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 /**
  * Class represents an encrypted file in the Zip file.
@@ -340,9 +340,9 @@ public class GordianCoreZipFileEntry
     /**
      * Build input list.
      * @return the new input list
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    public List<GordianStreamDefinition> buildInputList() throws OceanusException {
+    public List<GordianStreamDefinition> buildInputList() throws GordianException {
         /* Create list */
         final List<GordianStreamDefinition> myList = new ArrayList<>();
 

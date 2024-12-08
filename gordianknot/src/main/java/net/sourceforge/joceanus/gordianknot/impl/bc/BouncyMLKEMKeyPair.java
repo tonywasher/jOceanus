@@ -17,6 +17,7 @@
 package net.sourceforge.joceanus.gordianknot.impl.bc;
 
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementSpec;
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPrivateKey;
@@ -26,7 +27,6 @@ import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianCoreAnonymous
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianIOException;
 import net.sourceforge.joceanus.gordianknot.impl.core.keypair.GordianKeyPairValidity;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import org.bouncycastle.asn1.ASN1Encoding;
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
@@ -128,10 +128,10 @@ public final class BouncyMLKEMKeyPair {
          * Constructor.
          * @param pFactory the Security Factory
          * @param pKeySpec the keySpec
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
         BouncyMLKEMKeyPairGenerator(final BouncyFactory pFactory,
-                                    final GordianKeyPairSpec pKeySpec) throws OceanusException {
+                                    final GordianKeyPairSpec pKeySpec) throws GordianException {
             /* Initialise underlying class */
             super(pFactory, pKeySpec);
 
@@ -156,7 +156,7 @@ public final class BouncyMLKEMKeyPair {
         }
 
         @Override
-        public PKCS8EncodedKeySpec getPKCS8Encoding(final GordianKeyPair pKeyPair) throws OceanusException {
+        public PKCS8EncodedKeySpec getPKCS8Encoding(final GordianKeyPair pKeyPair) throws GordianException {
             /* Protect against exceptions */
             try {
                 /* Check the keyPair type and keySpecs */
@@ -175,7 +175,7 @@ public final class BouncyMLKEMKeyPair {
 
         @Override
         public BouncyKeyPair deriveKeyPair(final X509EncodedKeySpec pPublicKey,
-                                           final PKCS8EncodedKeySpec pPrivateKey) throws OceanusException {
+                                           final PKCS8EncodedKeySpec pPrivateKey) throws GordianException {
             /* Protect against exceptions */
             try {
                 /* Check the keySpecs */
@@ -200,7 +200,7 @@ public final class BouncyMLKEMKeyPair {
         }
 
         @Override
-        public X509EncodedKeySpec getX509Encoding(final GordianKeyPair pKeyPair) throws OceanusException {
+        public X509EncodedKeySpec getX509Encoding(final GordianKeyPair pKeyPair) throws GordianException {
             /* Protect against exceptions */
             try {
                 /* Check the keyPair type and keySpecs */
@@ -219,7 +219,7 @@ public final class BouncyMLKEMKeyPair {
         }
 
         @Override
-        public BouncyKeyPair derivePublicOnlyKeyPair(final X509EncodedKeySpec pEncodedKey) throws OceanusException {
+        public BouncyKeyPair derivePublicOnlyKeyPair(final X509EncodedKeySpec pEncodedKey) throws GordianException {
             final BouncyMLKEMPublicKey myPublic = derivePublicKey(pEncodedKey);
             return new BouncyKeyPair(myPublic);
         }
@@ -228,9 +228,9 @@ public final class BouncyMLKEMKeyPair {
          * Derive public key from encoded.
          * @param pEncodedKey the encoded key
          * @return the public key
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
-        private BouncyMLKEMPublicKey derivePublicKey(final X509EncodedKeySpec pEncodedKey) throws OceanusException {
+        private BouncyMLKEMPublicKey derivePublicKey(final X509EncodedKeySpec pEncodedKey) throws GordianException {
             /* Protect against exceptions */
             try {
                 /* Check the keySpecs */
@@ -272,7 +272,7 @@ public final class BouncyMLKEMKeyPair {
         }
 
         @Override
-        public GordianAgreementMessageASN1 createClientHelloASN1(final GordianKeyPair pServer) throws OceanusException {
+        public GordianAgreementMessageASN1 createClientHelloASN1(final GordianKeyPair pServer) throws GordianException {
             /* Protect against exceptions */
             try {
                 /* Check keyPair */
@@ -299,7 +299,7 @@ public final class BouncyMLKEMKeyPair {
 
         @Override
         public void acceptClientHelloASN1(final GordianKeyPair pServer,
-                                          final GordianAgreementMessageASN1 pClientHello) throws OceanusException {
+                                          final GordianAgreementMessageASN1 pClientHello) throws GordianException {
             /* Check keyPair */
             BouncyKeyPair.checkKeyPair(pServer);
             checkKeyPair(pServer);

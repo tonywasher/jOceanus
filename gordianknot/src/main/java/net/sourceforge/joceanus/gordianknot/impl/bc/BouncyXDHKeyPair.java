@@ -16,11 +16,21 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.bc;
 
-import java.io.IOException;
-import java.security.spec.PKCS8EncodedKeySpec;
-import java.security.spec.X509EncodedKeySpec;
-import java.util.Arrays;
-
+import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementSpec;
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
+import net.sourceforge.joceanus.gordianknot.api.factory.GordianKeyPairFactory;
+import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
+import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairGenerator;
+import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
+import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPrivateKey;
+import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPublicKey;
+import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianAgreementMessageASN1;
+import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianCoreAnonymousAgreement;
+import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianCoreBasicAgreement;
+import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianCoreEphemeralAgreement;
+import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianCoreSignedAgreement;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
+import net.sourceforge.joceanus.gordianknot.impl.core.keypair.GordianKeyPairValidity;
 import org.bouncycastle.asn1.ASN1Encoding;
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
@@ -45,21 +55,10 @@ import org.bouncycastle.crypto.util.PrivateKeyInfoFactory;
 import org.bouncycastle.crypto.util.PublicKeyFactory;
 import org.bouncycastle.crypto.util.SubjectPublicKeyInfoFactory;
 
-import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementSpec;
-import net.sourceforge.joceanus.gordianknot.api.factory.GordianKeyPairFactory;
-import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
-import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairGenerator;
-import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
-import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPrivateKey;
-import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPublicKey;
-import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianAgreementMessageASN1;
-import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianCoreAnonymousAgreement;
-import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianCoreBasicAgreement;
-import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianCoreEphemeralAgreement;
-import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianCoreSignedAgreement;
-import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
-import net.sourceforge.joceanus.gordianknot.impl.core.keypair.GordianKeyPairValidity;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import java.io.IOException;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
+import java.util.Arrays;
 
 /**
  * EdwardsCurve XDH KeyPair classes.
@@ -215,7 +214,7 @@ public final class BouncyXDHKeyPair {
         }
 
         @Override
-        public PKCS8EncodedKeySpec getPKCS8Encoding(final GordianKeyPair pKeyPair) throws OceanusException {
+        public PKCS8EncodedKeySpec getPKCS8Encoding(final GordianKeyPair pKeyPair) throws GordianException {
             /* Protect against exceptions */
             try {
                 /* Check the keyPair type and keySpecs */
@@ -234,7 +233,7 @@ public final class BouncyXDHKeyPair {
 
         @Override
         public BouncyKeyPair deriveKeyPair(final X509EncodedKeySpec pPublicKey,
-                                           final PKCS8EncodedKeySpec pPrivateKey) throws OceanusException {
+                                           final PKCS8EncodedKeySpec pPrivateKey) throws GordianException {
             /* Protect against exceptions */
             try {
                 /* Check the keySpecs */
@@ -259,7 +258,7 @@ public final class BouncyXDHKeyPair {
         }
 
         @Override
-        public X509EncodedKeySpec getX509Encoding(final GordianKeyPair pKeyPair) throws OceanusException {
+        public X509EncodedKeySpec getX509Encoding(final GordianKeyPair pKeyPair) throws GordianException {
             /* Protect against exceptions */
             try {
                 /* Check the keyPair type and keySpecs */
@@ -278,7 +277,7 @@ public final class BouncyXDHKeyPair {
         }
 
         @Override
-        public BouncyKeyPair derivePublicOnlyKeyPair(final X509EncodedKeySpec pEncodedKey) throws OceanusException {
+        public BouncyKeyPair derivePublicOnlyKeyPair(final X509EncodedKeySpec pEncodedKey) throws GordianException {
             final BouncyX25519PublicKey myPublic = derivePublicKey(pEncodedKey);
             return new BouncyKeyPair(myPublic);
         }
@@ -287,9 +286,9 @@ public final class BouncyXDHKeyPair {
          * Derive public key from encoded.
          * @param pEncodedKey the encoded key
          * @return the public key
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
-        private BouncyX25519PublicKey derivePublicKey(final X509EncodedKeySpec pEncodedKey) throws OceanusException {
+        private BouncyX25519PublicKey derivePublicKey(final X509EncodedKeySpec pEncodedKey) throws GordianException {
             /* Protect against exceptions */
             try {
                 /* Check the keySpecs */
@@ -344,7 +343,7 @@ public final class BouncyXDHKeyPair {
         }
 
         @Override
-        public PKCS8EncodedKeySpec getPKCS8Encoding(final GordianKeyPair pKeyPair) throws OceanusException {
+        public PKCS8EncodedKeySpec getPKCS8Encoding(final GordianKeyPair pKeyPair) throws GordianException {
             /* Protect against exceptions */
             try {
                 /* Check the keyPair type and keySpecs */
@@ -363,7 +362,7 @@ public final class BouncyXDHKeyPair {
 
         @Override
         public BouncyKeyPair deriveKeyPair(final X509EncodedKeySpec pPublicKey,
-                                           final PKCS8EncodedKeySpec pPrivateKey) throws OceanusException {
+                                           final PKCS8EncodedKeySpec pPrivateKey) throws GordianException {
             /* Protect against exceptions */
             try {
                 /* Check the keySpecs */
@@ -388,7 +387,7 @@ public final class BouncyXDHKeyPair {
         }
 
         @Override
-        public X509EncodedKeySpec getX509Encoding(final GordianKeyPair pKeyPair) throws OceanusException {
+        public X509EncodedKeySpec getX509Encoding(final GordianKeyPair pKeyPair) throws GordianException {
             /* Protect against exceptions */
             try {
                 /* Check the keyPair type and keySpecs */
@@ -407,7 +406,7 @@ public final class BouncyXDHKeyPair {
         }
 
         @Override
-        public BouncyKeyPair derivePublicOnlyKeyPair(final X509EncodedKeySpec pEncodedKey) throws OceanusException {
+        public BouncyKeyPair derivePublicOnlyKeyPair(final X509EncodedKeySpec pEncodedKey) throws GordianException {
             final BouncyX448PublicKey myPublic = derivePublicKey(pEncodedKey);
             return new BouncyKeyPair(myPublic);
         }
@@ -416,9 +415,9 @@ public final class BouncyXDHKeyPair {
          * Derive public key from encoded.
          * @param pEncodedKey the encoded key
          * @return the public key
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
-        private BouncyX448PublicKey derivePublicKey(final X509EncodedKeySpec pEncodedKey) throws OceanusException {
+        private BouncyX448PublicKey derivePublicKey(final X509EncodedKeySpec pEncodedKey) throws GordianException {
             /* Protect against exceptions */
             try {
                 /* Check the keySpecs */
@@ -471,7 +470,7 @@ public final class BouncyXDHKeyPair {
         }
 
         @Override
-        public GordianAgreementMessageASN1 createClientHelloASN1(final GordianKeyPair pServer) throws OceanusException {
+        public GordianAgreementMessageASN1 createClientHelloASN1(final GordianKeyPair pServer) throws GordianException {
             /* Check keyPair */
             BouncyKeyPair.checkKeyPair(pServer);
             checkKeyPair(pServer);
@@ -500,7 +499,7 @@ public final class BouncyXDHKeyPair {
 
         @Override
         public void acceptClientHelloASN1(final GordianKeyPair pServer,
-                                          final GordianAgreementMessageASN1 pClientHello) throws OceanusException {
+                                          final GordianAgreementMessageASN1 pClientHello) throws GordianException {
             /* Check keyPair */
             BouncyKeyPair.checkKeyPair(pServer);
             checkKeyPair(pServer);
@@ -553,7 +552,7 @@ public final class BouncyXDHKeyPair {
         @Override
         public GordianAgreementMessageASN1 acceptClientHelloASN1(final GordianKeyPair pClient,
                                                                  final GordianKeyPair pServer,
-                                                                 final GordianAgreementMessageASN1 pClientHello) throws OceanusException {
+                                                                 final GordianAgreementMessageASN1 pClientHello) throws GordianException {
             /* Check keyPair */
             BouncyKeyPair.checkKeyPair(pClient);
             checkKeyPair(pClient);
@@ -580,7 +579,7 @@ public final class BouncyXDHKeyPair {
 
         @Override
         public void acceptServerHelloASN1(final GordianKeyPair pServer,
-                                          final GordianAgreementMessageASN1 pServerHello) throws OceanusException {
+                                          final GordianAgreementMessageASN1 pServerHello) throws GordianException {
             /* Check keyPair */
             BouncyKeyPair.checkKeyPair(pServer);
             checkKeyPair(pServer);
@@ -627,7 +626,7 @@ public final class BouncyXDHKeyPair {
 
         @Override
         public GordianAgreementMessageASN1 acceptClientHelloASN1(final GordianKeyPair pServer,
-                                                                 final GordianAgreementMessageASN1 pClientHello) throws OceanusException {
+                                                                 final GordianAgreementMessageASN1 pClientHello) throws GordianException {
             /* Process clientHello */
             BouncyKeyPair.checkKeyPair(pServer);
             processClientHelloASN1(pClientHello);
@@ -649,7 +648,7 @@ public final class BouncyXDHKeyPair {
 
         @Override
         public void acceptServerHelloASN1(final GordianKeyPair pServer,
-                                          final GordianAgreementMessageASN1 pServerHello) throws OceanusException {
+                                          final GordianAgreementMessageASN1 pServerHello) throws GordianException {
             /* process the serverHello */
             BouncyKeyPair.checkKeyPair(pServer);
             processServerHelloASN1(pServer, pServerHello);
@@ -694,7 +693,7 @@ public final class BouncyXDHKeyPair {
         @Override
         public GordianAgreementMessageASN1 acceptClientHelloASN1(final GordianKeyPair pClient,
                                                                  final GordianKeyPair pServer,
-                                                                 final GordianAgreementMessageASN1 pClientHello) throws OceanusException {
+                                                                 final GordianAgreementMessageASN1 pClientHello) throws GordianException {
             /* Establish agreement */
             theAgreement = new XDHUnifiedAgreement(establishAgreement(pServer));
 
@@ -726,7 +725,7 @@ public final class BouncyXDHKeyPair {
 
         @Override
         public GordianAgreementMessageASN1 acceptServerHelloASN1(final GordianKeyPair pServer,
-                                                                 final GordianAgreementMessageASN1 pServerHello) throws OceanusException {
+                                                                 final GordianAgreementMessageASN1 pServerHello) throws GordianException {
             /* Check keyPair */
             BouncyKeyPair.checkKeyPair(pServer);
             checkKeyPair(pServer);

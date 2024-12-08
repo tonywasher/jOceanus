@@ -16,13 +16,13 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.core.lock;
 
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySet;
 import net.sourceforge.joceanus.gordianknot.api.lock.GordianKeySetLock;
 import net.sourceforge.joceanus.gordianknot.api.lock.GordianPasswordLockSpec;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianDataConverter;
 import net.sourceforge.joceanus.gordianknot.impl.core.keyset.GordianCoreKeySet;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 import java.util.Arrays;
 import java.util.Objects;
@@ -53,12 +53,12 @@ public class GordianKeySetLockImpl
      * @param pKeySetToLock the keySet to lock
      * @param pLockSpec the passwordLockSpec
      * @param pPassword the password
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     public GordianKeySetLockImpl(final GordianCoreFactory pLockingFactory,
                                  final GordianCoreKeySet pKeySetToLock,
                                  final GordianPasswordLockSpec pLockSpec,
-                                 final char[] pPassword) throws OceanusException {
+                                 final char[] pPassword) throws GordianException {
         /* Protect from exceptions */
         byte[] myPassword = null;
         try {
@@ -87,11 +87,11 @@ public class GordianKeySetLockImpl
      * @param pLockingFactory the locking factory
      * @param pLockBytes the lockBytes
      * @param pPassword the password
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     public GordianKeySetLockImpl(final GordianCoreFactory pLockingFactory,
                                  final byte[] pLockBytes,
-                                 final char[] pPassword) throws OceanusException {
+                                 final char[] pPassword) throws GordianException {
         this(pLockingFactory, GordianPasswordLockASN1.getInstance(pLockBytes), pLockBytes, pPassword);
     }
 
@@ -100,11 +100,11 @@ public class GordianKeySetLockImpl
      * @param pLockingFactory the locking factory
      * @param pLockASN1 the lockASN1
      * @param pPassword the password
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     public GordianKeySetLockImpl(final GordianCoreFactory pLockingFactory,
                                  final GordianPasswordLockASN1 pLockASN1,
-                                 final char[] pPassword) throws OceanusException {
+                                 final char[] pPassword) throws GordianException {
         this(pLockingFactory, pLockASN1, pLockASN1.getEncodedBytes(), pPassword);
     }
 
@@ -114,12 +114,12 @@ public class GordianKeySetLockImpl
      * @param pLockASN1 the lockASN1
      * @param pLockBytes the lockBytes
      * @param pPassword the password
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     public GordianKeySetLockImpl(final GordianCoreFactory pLockingFactory,
                                  final GordianPasswordLockASN1 pLockASN1,
                                  final byte[] pLockBytes,
-                                 final char[] pPassword) throws OceanusException {
+                                 final char[] pPassword) throws GordianException {
         /* Protect from exceptions */
         byte[] myPassword = null;
         try {

@@ -16,6 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.core.keyset;
 
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymKeyType;
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestType;
@@ -26,7 +27,6 @@ import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianIdManager;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianPersonalisation;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianPersonalisation.GordianPersonalId;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 import java.security.SecureRandom;
 import java.util.Arrays;
@@ -118,12 +118,12 @@ public final class GordianKeySetRecipe {
      * @param pHeader the header
      * @param pAEAD true/false is AEAD in use?
      * @return the recipe
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     static GordianKeySetRecipe parseRecipe(final GordianCoreFactory pFactory,
                                            final GordianKeySetSpec pSpec,
                                            final byte[] pHeader,
-                                           final boolean pAEAD) throws OceanusException {
+                                           final boolean pAEAD) throws GordianException {
         /* Check that the input data is long enough */
         if (pHeader.length < HDRLEN) {
             throw new GordianDataException("Header too short");

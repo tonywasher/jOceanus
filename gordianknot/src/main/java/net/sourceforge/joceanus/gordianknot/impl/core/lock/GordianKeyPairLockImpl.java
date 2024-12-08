@@ -21,6 +21,7 @@ import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementSpec;
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementType;
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianAnonymousAgreement;
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianKDFType;
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactoryType;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianKeyPairFactory;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianEdwardsElliptic;
@@ -36,7 +37,6 @@ import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianDataConverter;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianParameters;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianLogicException;
 import net.sourceforge.joceanus.gordianknot.impl.core.keyset.GordianCoreKeySet;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 import java.util.Arrays;
 import java.util.Objects;
@@ -72,12 +72,12 @@ public class GordianKeyPairLockImpl
      * @param pLockSpec the passwordLockSpec
      * @param pKeyPair the locking keyPair
      * @param pPassword the password
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     public GordianKeyPairLockImpl(final GordianCoreFactory pLockingFactory,
                                   final GordianPasswordLockSpec pLockSpec,
                                   final GordianKeyPair pKeyPair,
-                                  final char[] pPassword) throws OceanusException {
+                                  final char[] pPassword) throws GordianException {
         /* Protect from exceptions */
         byte[] myPassword = null;
         try {
@@ -118,12 +118,12 @@ public class GordianKeyPairLockImpl
      * @param pLockBytes the lockBytes
      * @param pKeyPair the keyPair
      * @param pPassword the password
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     public GordianKeyPairLockImpl(final GordianCoreFactory pLockingFactory,
                                   final byte[] pLockBytes,
                                   final GordianKeyPair pKeyPair,
-                                  final char[] pPassword) throws OceanusException {
+                                  final char[] pPassword) throws GordianException {
         this(pLockingFactory, GordianKeyPairLockASN1.getInstance(pLockBytes), pLockBytes, pKeyPair, pPassword);
     }
 
@@ -133,12 +133,12 @@ public class GordianKeyPairLockImpl
      * @param pLockASN1 the lockASN1
      * @param pKeyPair the keyPair
      * @param pPassword the password
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     public GordianKeyPairLockImpl(final GordianCoreFactory pLockingFactory,
                                   final GordianKeyPairLockASN1 pLockASN1,
                                   final GordianKeyPair pKeyPair,
-                                  final char[] pPassword) throws OceanusException {
+                                  final char[] pPassword) throws GordianException {
         this(pLockingFactory, pLockASN1, pLockASN1.getEncodedBytes(), pKeyPair, pPassword);
     }
 
@@ -149,13 +149,13 @@ public class GordianKeyPairLockImpl
      * @param pLockBytes the lockBytes
      * @param pKeyPair the keyPair
      * @param pPassword the password
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     public GordianKeyPairLockImpl(final GordianCoreFactory pLockingFactory,
                                   final GordianKeyPairLockASN1 pLockASN1,
                                   final byte[] pLockBytes,
                                   final GordianKeyPair pKeyPair,
-                                  final char[] pPassword) throws OceanusException {
+                                  final char[] pPassword) throws GordianException {
         /* Protect from exceptions */
         byte[] myPassword = null;
         try {
@@ -210,9 +210,9 @@ public class GordianKeyPairLockImpl
      * Obtain AgreementSpec for asymKeySpec.
      * @param pKeySpec the keySpec
      * @return the agreementSpec
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private static GordianAgreementSpec getAgreementSpec(final GordianKeyPairSpec pKeySpec) throws OceanusException {
+    private static GordianAgreementSpec getAgreementSpec(final GordianKeyPairSpec pKeySpec) throws GordianException {
         /* Determine KDF type */
         final GordianKDFType myKDFType = GordianEdwardsElliptic.CURVE25519.equals(pKeySpec.getSubKeyType())
                 ? GordianKDFType.SHA256KDF

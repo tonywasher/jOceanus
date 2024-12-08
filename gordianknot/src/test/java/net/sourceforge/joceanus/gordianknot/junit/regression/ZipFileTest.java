@@ -16,6 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.junit.regression;
 
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactoryType;
@@ -33,7 +34,6 @@ import net.sourceforge.joceanus.gordianknot.api.zip.GordianZipLock;
 import net.sourceforge.joceanus.gordianknot.api.zip.GordianZipReadFile;
 import net.sourceforge.joceanus.gordianknot.api.zip.GordianZipWriteFile;
 import net.sourceforge.joceanus.gordianknot.util.GordianGenerator;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DynamicContainer;
 import org.junit.jupiter.api.DynamicNode;
@@ -66,10 +66,10 @@ class ZipFileTest {
     /**
      * Create the zipFile test suite.
      * @return the test stream
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     @TestFactory
-    Stream<DynamicNode> zipFileTests() throws OceanusException {
+    Stream<DynamicNode> zipFileTests() throws GordianException {
         /* Create tests */
         Stream<DynamicNode> myStream = zipFileTests(GordianFactoryType.BC);
         return Stream.concat(myStream, zipFileTests(GordianFactoryType.JCA));
@@ -79,9 +79,9 @@ class ZipFileTest {
      * Create the keySet test suite for a factory.
      * @param pType the factoryType
      * @return the test stream
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private Stream<DynamicNode> zipFileTests(final GordianFactoryType pType) throws OceanusException {
+    private Stream<DynamicNode> zipFileTests(final GordianFactoryType pType) throws GordianException {
         /* Create the factory */
         final GordianFactory myFactory = GordianGenerator.createRandomFactory(pType);
 
@@ -108,12 +108,12 @@ class ZipFileTest {
      * @param pKeyPair1 the first keyPair
      * @param pKeyPair2 the second keyPair
      * @param pKeyLen the keyLength
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     private Stream<DynamicNode> lockedZipFileTests(final GordianFactory pFactory,
                                                    final GordianKeyPair pKeyPair1,
                                                    final GordianKeyPair pKeyPair2,
-                                                   final GordianLength pKeyLen) throws OceanusException {
+                                                   final GordianLength pKeyLen) throws GordianException {
         return Stream.of(
                 DynamicTest.dynamicTest("keySet/password", () -> testZipFile(pFactory,null, pKeyLen)),
                 DynamicTest.dynamicTest("factory/password", () -> testZipFile(pFactory, Boolean.TRUE, pKeyLen)),
@@ -127,11 +127,11 @@ class ZipFileTest {
      * @param pFactory the factory.
      * @param pKeyPair the keyPair
      * @param pKeyLen the keyLength (or null)
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     private void testZipFile(final GordianFactory pFactory,
                              final Object pKeyPair,
-                             final GordianLength pKeyLen) throws OceanusException {
+                             final GordianLength pKeyLen) throws GordianException {
         /* Obtain the home directory */
         final String myHome = System.getProperty("user.home");
 
@@ -148,12 +148,12 @@ class ZipFileTest {
      * @param pKeyPair the keyPair (if any)
      * @param pKeyLen the keyLength (or null)
      * @return the in-memory ZipFile
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     private byte[] createZipFile(final GordianFactory pFactory,
                                  final File pDirectory,
                                  final Object pKeyPair,
-                                 final GordianLength pKeyLen) throws OceanusException {
+                                 final GordianLength pKeyLen) throws GordianException {
         /* Protect against exceptions */
         final ByteArrayOutputStream myZipStream = new ByteArrayOutputStream();
         try (GordianZipWriteFile myZipFile = createZipFile(pFactory, myZipStream, pKeyPair, pKeyLen)) {
@@ -197,12 +197,12 @@ class ZipFileTest {
      * @param pKeyPair the keyPair (if any)
      * @param pKeyLen the keyLength (or null)
      * @return the new zip file
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     private GordianZipWriteFile createZipFile(final GordianFactory pFactory,
                                               final OutputStream pZipStream,
                                               final Object pKeyPair,
-                                              final GordianLength pKeyLen) throws OceanusException {
+                                              final GordianLength pKeyLen) throws GordianException {
         /* Access ZipManager */
         final GordianZipFactory myZipFactory = pFactory.getZipFactory();
 
@@ -227,11 +227,11 @@ class ZipFileTest {
      * @param pKeyPair the keyPair (if any)
      * @param pKeyLen the keyLength
      * @return the new zip file
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     private GordianZipLock createZipLock(final GordianZipFactory pFactory,
                                          final Object pKeyPair,
-                                         final GordianLength pKeyLen) throws OceanusException {
+                                         final GordianLength pKeyLen) throws GordianException {
         /* Create appropriate zipLock */
         final GordianPasswordLockSpec mySpec = new GordianPasswordLockSpec(new GordianKeySetSpec(pKeyLen));
         if (pKeyPair instanceof GordianKeyPair) {
@@ -248,12 +248,12 @@ class ZipFileTest {
      * @param pZipFile the in-memory Zip file
      * @param pKeyPair the keyPair (if any)
      * @param pDirectory the directory to compare against
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     private void extractZipFile(final GordianFactory pFactory,
                                 final byte[] pZipFile,
                                 final Object pKeyPair,
-                                final File pDirectory) throws OceanusException {
+                                final File pDirectory) throws GordianException {
         /* Access ZipManager */
         final GordianZipFactory myZipMgr = pFactory.getZipFactory();
 
@@ -334,7 +334,7 @@ class ZipFileTest {
      * Cryptography Exception.
      */
     public static class GordianTestException
-            extends OceanusException {
+            extends GordianException {
         /**
          * SerialId.
          */

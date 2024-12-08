@@ -16,6 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.core.keystore;
 
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianKnuthObfuscater;
@@ -32,7 +33,6 @@ import net.sourceforge.joceanus.gordianknot.impl.core.keystore.GordianKeyStoreEl
 import net.sourceforge.joceanus.gordianknot.impl.core.keystore.GordianKeyStoreElement.GordianKeyStorePairElement;
 import net.sourceforge.joceanus.gordianknot.impl.core.keystore.GordianKeyStoreElement.GordianKeyStoreSetElement;
 import net.sourceforge.joceanus.gordianknot.impl.core.lock.GordianPasswordLockSpecASN1;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import org.bouncycastle.asn1.ASN1BitString;
 import org.bouncycastle.asn1.DERBitString;
 import org.bouncycastle.asn1.x500.X500Name;
@@ -154,9 +154,9 @@ public final class GordianKeyStoreDocument {
     /**
      * Constructor from keyStore.
      * @param pKeyStore the keyStore
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    public GordianKeyStoreDocument(final GordianCoreKeyStore pKeyStore) throws OceanusException {
+    public GordianKeyStoreDocument(final GordianCoreKeyStore pKeyStore) throws GordianException {
         try {
             /* Store the keyStore */
             theKeyStore = pKeyStore;
@@ -197,10 +197,10 @@ public final class GordianKeyStoreDocument {
      * Constructor from document.
      * @param pFactory the factory
      * @param pDocument the document
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     public GordianKeyStoreDocument(final GordianFactory pFactory,
-                                   final Document pDocument) throws OceanusException {
+                                   final Document pDocument) throws GordianException {
         /* Access the document element */
         final Element myDocElement = pDocument.getDocumentElement();
 
@@ -260,9 +260,9 @@ public final class GordianKeyStoreDocument {
     /**
      * build the aliases.
      * @param pAliases the aliases element
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private void buildAliases(final Node pAliases) throws OceanusException {
+    private void buildAliases(final Node pAliases) throws GordianException {
         /* Access the Alias entries */
         for (Entry<String, GordianCoreKeyStoreEntry> myEntry : theKeyStore.getAliasMap().entrySet()) {
             /* Determine the entry type */
@@ -332,10 +332,10 @@ public final class GordianKeyStoreDocument {
      * build the key element.
      * @param pNode the key node to build
      * @param pEntry the key entry
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     private void buildKeyElement(final Element pNode,
-                                 final GordianKeyStoreKeyElement<?> pEntry) throws OceanusException {
+                                 final GordianKeyStoreKeyElement<?> pEntry) throws GordianException {
         /* Build securedKey entry */
         final Element myKeyEl = theDocument.createElement(ELEMENT_SECUREDKEY);
         pNode.appendChild(myKeyEl);
@@ -356,10 +356,10 @@ public final class GordianKeyStoreDocument {
      * build the privateKey element.
      * @param pNode the privateKey node to build
      * @param pEntry the privateKey entry
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     private void buildPrivateKeyElement(final Element pNode,
-                                        final GordianKeyStorePairElement pEntry) throws OceanusException {
+                                        final GordianKeyStorePairElement pEntry) throws GordianException {
         /* Build securedKey entry */
         final Element myKeyEl = theDocument.createElement(ELEMENT_SECUREDKEY);
         pNode.appendChild(myKeyEl);
@@ -385,10 +385,10 @@ public final class GordianKeyStoreDocument {
      * build the certificate element.
      * @param pNode the certificate node to build
      * @param pEntry the certificate entry
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     private void buildCertificateElement(final Element pNode,
-                                         final GordianKeyStoreCertificateElement pEntry) throws OceanusException {
+                                         final GordianKeyStoreCertificateElement pEntry) throws GordianException {
         /* Build certificateKey */
         buildCertificateKey(pNode, pEntry.getCertificateKey());
     }
@@ -397,10 +397,10 @@ public final class GordianKeyStoreDocument {
      * build the certificateKey element.
      * @param pNode the holding node
      * @param pKey the certificate key
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     private void buildCertificateKey(final Element pNode,
-                                     final GordianKeyStoreCertificateKey pKey) throws OceanusException {
+                                     final GordianKeyStoreCertificateKey pKey) throws GordianException {
         /* Build certificateKey entry */
         final Element myKeyEl = theDocument.createElement(ELEMENT_CERTKEY);
         pNode.appendChild(myKeyEl);
@@ -420,10 +420,10 @@ public final class GordianKeyStoreDocument {
      * build the certificateId element.
      * @param pNode the holding node
      * @param pId the certificate id
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     private void buildCertificateId(final Element pNode,
-                                    final GordianCertificateId pId) throws OceanusException {
+                                    final GordianCertificateId pId) throws GordianException {
         /* protecte against exceptions */
         try {
             /* Build Name entry */
@@ -463,9 +463,9 @@ public final class GordianKeyStoreDocument {
     /**
      * parse the aliases.
      * @param pAliases the aliases element
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private void parseAliases(final Node pAliases) throws OceanusException {
+    private void parseAliases(final Node pAliases) throws GordianException {
         /* Loop through the nodes */
         Node myNode = pAliases.getFirstChild();
         while (myNode != null) {
@@ -535,11 +535,11 @@ public final class GordianKeyStoreDocument {
      * @param pNode the node to parse
      * @param pAlias the alias
      * @param pDate the creation date
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     private void parseKeySetElement(final Node pNode,
                                     final String pAlias,
-                                    final LocalDate pDate) throws OceanusException {
+                                    final LocalDate pDate) throws GordianException {
         /* Loop through the nodes */
         byte[] mySecuredKey = null;
         Node myNode = pNode.getFirstChild();
@@ -577,11 +577,11 @@ public final class GordianKeyStoreDocument {
      * @param pNode the node to parse
      * @param pAlias the alias
      * @param pDate the creation date
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     private void parseKeyElement(final Node pNode,
                                  final String pAlias,
-                                 final LocalDate pDate) throws OceanusException {
+                                 final LocalDate pDate) throws GordianException {
         /* Loop through the nodes */
         byte[] mySecuredKey = null;
         GordianKeySpec mySpec = null;
@@ -626,11 +626,11 @@ public final class GordianKeyStoreDocument {
      * @param pNode the node to parse
      * @param pAlias the alias
      * @param pDate the creation date
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     private void parsePrivateKeyElement(final Node pNode,
                                         final String pAlias,
-                                        final LocalDate pDate) throws OceanusException {
+                                        final LocalDate pDate) throws GordianException {
         /* Loop through the nodes */
         byte[] mySecuredKey = null;
         byte[] myLock = null;
@@ -691,11 +691,11 @@ public final class GordianKeyStoreDocument {
      * @param pNode the node to parse
      * @param pAlias the alias
      * @param pDate the creation date
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     private void parseCertificateElement(final Node pNode,
                                          final String pAlias,
-                                         final LocalDate pDate) throws OceanusException {
+                                         final LocalDate pDate) throws GordianException {
         /* Loop through the nodes */
         Node myNode = pNode.getFirstChild();
         while (myNode != null) {
@@ -720,9 +720,9 @@ public final class GordianKeyStoreDocument {
      * parse the certificateKey.
      * @param pNode the node to parse
      * @return the key
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private static GordianKeyStoreCertificateKey parseCertificateKey(final Node pNode) throws OceanusException {
+    private static GordianKeyStoreCertificateKey parseCertificateKey(final Node pNode) throws GordianException {
         /* Loop through the nodes */
         GordianCertificateId mySubject = null;
         Node myNode = pNode.getFirstChild();
@@ -760,9 +760,9 @@ public final class GordianKeyStoreDocument {
      * parse the certificateKey.
      * @param pNode the node to parse
      * @return the key
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private static GordianCertificateId parseCertificateId(final Node pNode) throws OceanusException {
+    private static GordianCertificateId parseCertificateId(final Node pNode) throws GordianException {
         /* Loop through the nodes */
         X500Name myName = null;
         Node myNode = pNode.getFirstChild();
@@ -801,9 +801,9 @@ public final class GordianKeyStoreDocument {
     /**
      * parse the certificates.
      * @param pCerts the certificates element
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private void parseCertificates(final Node pCerts) throws OceanusException {
+    private void parseCertificates(final Node pCerts) throws GordianException {
         /* Loop through the nodes */
         Node myNode = pCerts.getFirstChild();
         while (myNode != null) {

@@ -16,6 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.prometheus.data;
 
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySet;
 import net.sourceforge.joceanus.metis.data.MetisDataDifference;
 import net.sourceforge.joceanus.metis.data.MetisDataType;
@@ -30,6 +31,7 @@ import net.sourceforge.joceanus.oceanus.decimal.OceanusRatio;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusUnits;
 import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.prometheus.exc.PrometheusDataException;
+import net.sourceforge.joceanus.prometheus.exc.PrometheusSecurityException;
 
 import java.util.EnumMap;
 import java.util.Map;
@@ -84,12 +86,17 @@ public class PrometheusFieldGenerator {
      * @throws OceanusException on error
      */
     public byte[] encryptValue(final Object pValue) throws OceanusException {
-        /* Access the encryptor */
-        final MetisDataType myDataType = PrometheusEncryptor.getDataTypeForValue(pValue);
-        final PrometheusDataEncryptor myEncryptor = ENCRYPTORS.get(myDataType);
+        /* Protect agains exceptions */
+        try {
+            /* Access the encryptor */
+            final MetisDataType myDataType = PrometheusEncryptor.getDataTypeForValue(pValue);
+            final PrometheusDataEncryptor myEncryptor = ENCRYPTORS.get(myDataType);
 
-        final byte[] myBytes = myEncryptor.convertValue(theFormatter, pValue);
-        return theKeySet == null ? null : theKeySet.encryptBytes(myBytes);
+            final byte[] myBytes = myEncryptor.convertValue(theFormatter, pValue);
+            return theKeySet == null ? null : theKeySet.encryptBytes(myBytes);
+        } catch (GordianException e) {
+            throw new PrometheusSecurityException(e);
+        }
     }
 
     /**
@@ -133,15 +140,21 @@ public class PrometheusFieldGenerator {
      */
     public PrometheusEncryptedPair decryptValue(final byte[] pBytes,
                                                 final Class<?> pClazz) throws OceanusException {
-        /* Access the encryptor */
-        final MetisDataType myDataType = PrometheusEncryptor.getDataTypeForClass(pClazz);
-        final PrometheusDataEncryptor myEncryptor = ENCRYPTORS.get(myDataType);
+        /* Protect against exceptions */
+        try {
+            /* Access the encryptor */
+            final MetisDataType myDataType = PrometheusEncryptor.getDataTypeForClass(pClazz);
+            final PrometheusDataEncryptor myEncryptor = ENCRYPTORS.get(myDataType);
 
-        /* Decrypt the data */
-        final byte[] myDecrypted = theKeySet.decryptBytes(pBytes);
-        final Object myValue = myEncryptor.parseValue(theFormatter, myDecrypted);
-        return new PrometheusEncryptedPair(theKeySet, myValue, pBytes);
+            /* Decrypt the data */
+            final byte[] myDecrypted = theKeySet.decryptBytes(pBytes);
+            final Object myValue = myEncryptor.parseValue(theFormatter, myDecrypted);
+            return new PrometheusEncryptedPair(theKeySet, myValue, pBytes);
+        } catch (GordianException e) {
+            throw new PrometheusSecurityException(e);
+        }
     }
+
     /**
      * Build the encryptor map.
      * @return the map

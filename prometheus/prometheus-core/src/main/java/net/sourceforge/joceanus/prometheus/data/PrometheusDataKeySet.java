@@ -16,6 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.prometheus.data;
 
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySet;
 import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySetFactory;
@@ -28,6 +29,7 @@ import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataList.PrometheusListStyle;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataSet.PrometheusCryptographyDataType;
 import net.sourceforge.joceanus.prometheus.exc.PrometheusDataException;
+import net.sourceforge.joceanus.prometheus.exc.PrometheusSecurityException;
 
 import java.util.Objects;
 
@@ -142,9 +144,14 @@ public class PrometheusDataKeySet
             theEncryptor = new PrometheusEncryptor(myFormatter, myKeySet);
             setValueKeySet(myKeySet);
         } else if (getSecuredKeySetDef() != null) {
-            final GordianKeySet myKeySet = myControlKeySet.getKeySet().deriveKeySet(getSecuredKeySetDef());
-            theEncryptor = new PrometheusEncryptor(myFormatter, myKeySet);
-            setValueKeySet(myKeySet);
+            /* Protect against exceptions */
+            try {
+                final GordianKeySet myKeySet = myControlKeySet.getKeySet().deriveKeySet(getSecuredKeySetDef());
+                theEncryptor = new PrometheusEncryptor(myFormatter, myKeySet);
+                setValueKeySet(myKeySet);
+            } catch (GordianException e) {
+                throw new PrometheusSecurityException(e);
+            }
         }
 
         /* Register the DataKeySet */
@@ -184,7 +191,8 @@ public class PrometheusDataKeySet
             setValueSecuredKeySetDef(pControlKeySet.getKeySet().secureKeySet(myKeySet));
 
             /* Catch Exceptions */
-        } catch (OceanusException e) {
+        } catch (GordianException
+                 | OceanusException e) {
             /* Pass on exception */
             throw new PrometheusDataException(this, ERROR_CREATEITEM, e);
         }

@@ -16,8 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.api.factory;
 
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianIdSpec;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 /**
  * GordianKnot Knuth Obfuscator API.
@@ -28,34 +28,34 @@ public interface GordianKnuthObfuscater {
      * @param pType the type
      * @param pAdjustment the adjustment
      * @return the externalId
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     int deriveExternalIdFromType(GordianIdSpec pType,
-                                 int pAdjustment) throws OceanusException;
+                                 int pAdjustment) throws GordianException;
 
     /**
      * Obtain external Id from Type.
      * @param pType the type
      * @return the externalId
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    int deriveExternalIdFromType(GordianIdSpec pType) throws OceanusException;
+    int deriveExternalIdFromType(GordianIdSpec pType) throws GordianException;
 
     /**
      * Obtain IdSpec from external Id.
      * @param pId the externalId
      * @param pAdjustment the adjustment
      * @return the derived Type
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     GordianIdSpec deriveTypeFromExternalId(int pId,
-                                           int pAdjustment) throws OceanusException;
+                                           int pAdjustment) throws GordianException;
 
     /**
      * Obtain IdSpec from external Id.
      * @param pId the externalId
      * @return the derived Type
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    GordianIdSpec deriveTypeFromExternalId(int pId) throws OceanusException;
+    GordianIdSpec deriveTypeFromExternalId(int pId) throws GordianException;
 }

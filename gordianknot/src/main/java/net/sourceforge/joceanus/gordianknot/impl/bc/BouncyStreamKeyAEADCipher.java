@@ -16,13 +16,13 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.bc;
 
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianCipherParameters;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianStreamAEADCipher;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianStreamCipherSpec;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianStreamKeySpec;
-import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
 import net.sourceforge.joceanus.gordianknot.impl.core.cipher.GordianCoreCipher;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
 import org.bouncycastle.crypto.CipherParameters;
 import org.bouncycastle.crypto.DataLengthException;
 import org.bouncycastle.crypto.InvalidCipherTextException;
@@ -64,7 +64,7 @@ public class BouncyStreamKeyAEADCipher
 
     @Override
     public void init(final boolean pEncrypt,
-                     final GordianCipherParameters pParams) throws OceanusException {
+                     final GordianCipherParameters pParams) throws GordianException {
         /* Process the parameters and access the key */
         processParameters(pParams);
         final BouncyKey<GordianStreamKeySpec> myKey = BouncyKey.accessKey(getKey());
@@ -97,7 +97,7 @@ public class BouncyStreamKeyAEADCipher
                         final int pOffset,
                         final int pLength,
                         final byte[] pOutput,
-                        final int pOutOffset) throws OceanusException {
+                        final int pOutOffset) throws GordianException {
         /* Protect against exceptions */
         try {
             /* Process the bytes */
@@ -116,7 +116,7 @@ public class BouncyStreamKeyAEADCipher
 
     @Override
     public int doFinish(final byte[] out,
-                        final int outOff) throws OceanusException {
+                        final int outOff) throws GordianException {
         try {
             return theCipher.doFinal(out, outOff);
         } catch (InvalidCipherTextException e) {

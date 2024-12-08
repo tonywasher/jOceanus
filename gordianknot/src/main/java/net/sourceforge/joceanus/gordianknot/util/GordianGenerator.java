@@ -16,13 +16,13 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.util;
 
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactoryType;
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianFactoryGenerator;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianParameters;
 import net.sourceforge.joceanus.gordianknot.impl.jca.JcaFactory;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 /**
  * Factory generator.
@@ -38,9 +38,9 @@ public final class GordianGenerator {
      * Create a new factory instance.
      * @param pFactoryType the factoryType
      * @return the new factory
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    public static GordianFactory createFactory(final GordianFactoryType pFactoryType) throws OceanusException {
+    public static GordianFactory createFactory(final GordianFactoryType pFactoryType) throws GordianException {
         /* Create a factory with null security phrase */
         return createFactory(pFactoryType, null);
     }
@@ -50,10 +50,10 @@ public final class GordianGenerator {
      * @param pFactoryType the factoryType
      * @param pSecurityPhrase the securityPhrase
      * @return the new factory
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     public static GordianFactory createFactory(final GordianFactoryType pFactoryType,
-                                               final char[] pSecurityPhrase) throws OceanusException {
+                                               final char[] pSecurityPhrase) throws GordianException {
         /* Allocate a generator and the parameters */
         final GordianFactoryGenerator myGenerator = new GordianUtilGenerator();
         final GordianParameters myParams = new GordianParameters(pFactoryType, pSecurityPhrase);
@@ -64,9 +64,9 @@ public final class GordianGenerator {
      * Create a new random bouncyCastle factory instance.
      * @param pFactoryType the factory type
      * @return the new factory
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    public static GordianFactory createRandomFactory(final GordianFactoryType pFactoryType) throws OceanusException {
+    public static GordianFactory createRandomFactory(final GordianFactoryType pFactoryType) throws GordianException {
         /* Allocate a generator and the parameters */
         final GordianFactoryGenerator myGenerator = new GordianUtilGenerator();
         final GordianParameters myParams = GordianParameters.randomParams(pFactoryType);
@@ -85,7 +85,7 @@ public final class GordianGenerator {
         }
 
         @Override
-        public GordianFactory newFactory(final GordianParameters pParameters) throws OceanusException {
+        public GordianFactory newFactory(final GordianParameters pParameters) throws GordianException {
             /* Allocate the factory */
             return GordianFactoryType.BC.equals(pParameters.getFactoryType())
                     ? new BouncyFactory(this, pParameters)

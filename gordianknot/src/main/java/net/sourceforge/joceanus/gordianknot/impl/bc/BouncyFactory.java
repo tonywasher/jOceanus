@@ -16,6 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.bc;
 
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.zip.GordianZipFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianFactoryGenerator;
@@ -25,7 +26,6 @@ import net.sourceforge.joceanus.gordianknot.impl.core.keyset.GordianCoreKeySetFa
 import net.sourceforge.joceanus.gordianknot.impl.core.lock.GordianCoreLockFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.random.GordianCoreRandomFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.zip.GordianCoreZipFactory;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 /**
  * BouncyCastle Factory.
@@ -46,16 +46,16 @@ public class BouncyFactory
      * Constructor.
      * @param pGenerator the factory generator
      * @param pParameters the security parameters
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     public BouncyFactory(final GordianFactoryGenerator pGenerator,
-                         final GordianParameters pParameters) throws OceanusException {
+                         final GordianParameters pParameters) throws GordianException {
         /* initialise underlying factory */
         super(pGenerator, pParameters);
     }
 
     @Override
-    protected void declareFactories() throws OceanusException {
+    protected void declareFactories() throws GordianException {
         /* Create the factories */
         setValidator(new GordianValidator());
         setDigestFactory(new BouncyDigestFactory(this));

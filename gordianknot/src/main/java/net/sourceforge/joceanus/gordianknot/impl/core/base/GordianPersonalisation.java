@@ -16,6 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.core.base;
 
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigest;
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestFactory;
@@ -26,7 +27,6 @@ import net.sourceforge.joceanus.gordianknot.api.mac.GordianMac;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.kdf.GordianHKDFEngine;
 import net.sourceforge.joceanus.gordianknot.impl.core.kdf.GordianHKDFParams;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -87,9 +87,9 @@ public class GordianPersonalisation {
     /**
      * Constructor.
      * @param pFactory the factory
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    GordianPersonalisation(final GordianCoreFactory pFactory) throws OceanusException {
+    GordianPersonalisation(final GordianCoreFactory pFactory) throws GordianException {
         /* Calculate personalisation bytes */
         final byte[][] myArrays = personalise(pFactory);
         thePersonalisation = myArrays[0];
@@ -101,9 +101,9 @@ public class GordianPersonalisation {
      * Obtain an array of digests for personalisation.
      * @param pFactory the factory
      * @return the digests
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private static GordianDigest[] determineDigests(final GordianFactory pFactory) throws OceanusException {
+    private static GordianDigest[] determineDigests(final GordianFactory pFactory) throws GordianException {
         /* Access digest factory */
         final GordianDigestFactory myFactory = pFactory.getDigestFactory();
 
@@ -153,9 +153,9 @@ public class GordianPersonalisation {
      * Create an array of hashes from personalisation.
      * @param pFactory the factory
      * @return the hashes
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private static byte[][] personalise(final GordianCoreFactory pFactory) throws OceanusException {
+    private static byte[][] personalise(final GordianCoreFactory pFactory) throws GordianException {
         /* Determine the digests */
         final GordianDigest[] myDigests = determineDigests(pFactory);
 
@@ -253,11 +253,11 @@ public class GordianPersonalisation {
      * @param pDigests the digest array
      * @param pHashes the hashes array
      * @param pResult the result array
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     private static void iterateHashes(final GordianDigest[] pDigests,
                                       final byte[][] pHashes,
-                                      final byte[] pResult) throws OceanusException {
+                                      final byte[] pResult) throws GordianException {
         /* Update all the digests */
         for (final GordianDigest myDigest : pDigests) {
             /* Update with the results */
@@ -424,10 +424,10 @@ public class GordianPersonalisation {
      * Simple function to build a hash result.
      * @param pResult the result Hash
      * @param pHash the calculated Hash
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     public static void buildHashResult(final byte[] pResult,
-                                       final byte[] pHash) throws OceanusException {
+                                       final byte[] pHash) throws GordianException {
         /* If the target is smaller than the source */
         final int myLen = pResult.length;
         if (myLen != pHash.length) {

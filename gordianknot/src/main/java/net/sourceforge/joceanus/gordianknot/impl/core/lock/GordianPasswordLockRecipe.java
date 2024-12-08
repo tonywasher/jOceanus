@@ -16,6 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.core.lock;
 
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigest;
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestFactory;
@@ -34,7 +35,6 @@ import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianPersonalisatio
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianPersonalisation.GordianPersonalId;
 import net.sourceforge.joceanus.gordianknot.impl.core.keyset.GordianCoreKeySet;
 import net.sourceforge.joceanus.gordianknot.impl.core.keyset.GordianCoreKeySetFactory;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 import java.security.SecureRandom;
 import java.util.Arrays;
@@ -225,10 +225,10 @@ public final class GordianPasswordLockRecipe {
      * @param pFactory the factory
      * @param pPassword the password for the keys
      * @return the locking KeySet
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     GordianCoreKeySet processPassword(final GordianCoreFactory pFactory,
-                                      final byte[] pPassword) throws OceanusException {
+                                      final byte[] pPassword) throws GordianException {
         /* Obtain configuration details */
         final GordianPersonalisation myPersonal = pFactory.getPersonalisation();
         final int iIterations = theLockSpec.getNumIterations();

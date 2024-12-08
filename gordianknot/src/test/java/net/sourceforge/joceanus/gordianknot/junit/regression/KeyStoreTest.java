@@ -16,6 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.junit.regression;
 
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianStreamKeySpecBuilder;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymKeySpecBuilder;
@@ -24,7 +25,6 @@ import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactoryType;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianBIKESpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianCMCESpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianDHGroup;
-import net.sourceforge.joceanus.gordianknot.api.keypair.GordianMLDSASpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianDSAElliptic;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianDSAKeyType;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianDSTU4145Elliptic;
@@ -38,6 +38,7 @@ import net.sourceforge.joceanus.gordianknot.api.keypair.GordianLMSKeySpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianLMSKeySpec.GordianLMSHash;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianLMSKeySpec.GordianLMSHeight;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianLMSKeySpec.GordianLMSWidth;
+import net.sourceforge.joceanus.gordianknot.api.keypair.GordianMLDSASpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianMLKEMSpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianNTRUPrimeSpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianNTRUPrimeSpec.GordianNTRUPrimeParams;
@@ -47,8 +48,8 @@ import net.sourceforge.joceanus.gordianknot.api.keypair.GordianPICNICSpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianRSAModulus;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianRainbowSpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianSABERSpec;
-import net.sourceforge.joceanus.gordianknot.api.keypair.GordianSM2Elliptic;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianSLHDSASpec;
+import net.sourceforge.joceanus.gordianknot.api.keypair.GordianSM2Elliptic;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianXMSSKeySpec.GordianXMSSDigestType;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianXMSSKeySpec.GordianXMSSHeight;
 import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySetSpec;
@@ -69,7 +70,6 @@ import net.sourceforge.joceanus.gordianknot.impl.core.keystore.GordianCoreKeySto
 import net.sourceforge.joceanus.gordianknot.impl.core.keystore.GordianCoreKeyStoreGateway;
 import net.sourceforge.joceanus.gordianknot.impl.core.keystore.GordianCoreKeyStoreManager;
 import net.sourceforge.joceanus.gordianknot.util.GordianGenerator;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x500.X500NameBuilder;
 import org.bouncycastle.asn1.x500.style.BCStyle;
@@ -115,10 +115,10 @@ public class KeyStoreTest {
     /**
      * Create the keyStore test suite.
      * @return the test stream
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     @TestFactory
-    public Stream<DynamicNode> keyStoreTests() throws OceanusException {
+    public Stream<DynamicNode> keyStoreTests() throws GordianException {
         /* Create tests */
         Stream<DynamicNode> myStream = keyStoreTests(GordianFactoryType.BC);
         return Stream.concat(myStream, keyStoreTests(GordianFactoryType.JCA));
@@ -128,9 +128,9 @@ public class KeyStoreTest {
      * Create the keySet test suite for a factoryType.
      * @param pFactoryType the factoryType
      * @return the test stream
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private Stream<DynamicNode> keyStoreTests(final GordianFactoryType pFactoryType) throws OceanusException {
+    private Stream<DynamicNode> keyStoreTests(final GordianFactoryType pFactoryType) throws GordianException {
         /* Create the factory */
         final GordianFactory myFactory = GordianGenerator.createRandomFactory(pFactoryType);
 
@@ -151,9 +151,9 @@ public class KeyStoreTest {
      * create keyPairRequests test stream.
      * @param pManager the keyStoreManager
      * @return the test stream
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private DynamicNode keyPairRequestTest(final GordianKeyStoreManager pManager) throws OceanusException {
+    private DynamicNode keyPairRequestTest(final GordianKeyStoreManager pManager) throws GordianException {
         /* Create state */
         final KeyPairCertReqState myState = new KeyPairCertReqState(pManager);
 
@@ -205,10 +205,10 @@ public class KeyStoreTest {
      * @param pState the state
      * @param pSpec the keyPairSpec
      * @return the test
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     private static DynamicNode signedKeyPairRequestTest(final KeyPairCertReqState pState,
-                                                        final GordianKeyPairSpec pSpec) throws OceanusException {
+                                                        final GordianKeyPairSpec pSpec) throws GordianException {
         /* Create test */
         return DynamicTest.dynamicTest(pSpec.toString(), () -> signedKeyPairRequest(pState, pSpec));
     }
@@ -218,10 +218,10 @@ public class KeyStoreTest {
      * @param pState the state
      * @param pSpec the keyPairSpec
      * @return the test
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     private static DynamicNode encryptedKeyPairRequestTest(final KeyPairCertReqState pState,
-                                                           final GordianKeyPairSpec pSpec) throws OceanusException {
+                                                           final GordianKeyPairSpec pSpec) throws GordianException {
         /* Create test */
         final GordianKeyPairUsage myUsage = new GordianKeyPairUsage(GordianKeyPairUse.KEYENCRYPT, GordianKeyPairUse.DATAENCRYPT);
         return DynamicTest.dynamicTest(pSpec.toString(), () -> encryptedKeyPairRequest(pState, pSpec, myUsage));
@@ -232,10 +232,10 @@ public class KeyStoreTest {
      * @param pState the state
      * @param pSpec the keyPairSpec
      * @return the test
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     private static DynamicNode agreedKeyPairRequestTest(final KeyPairCertReqState pState,
-                                                        final GordianKeyPairSpec pSpec) throws OceanusException {
+                                                        final GordianKeyPairSpec pSpec) throws GordianException {
         /* Create test */
         final GordianKeyPairUsage myUsage = new GordianKeyPairUsage(GordianKeyPairUse.AGREEMENT);
         return DynamicTest.dynamicTest(pSpec.toString(), () -> encryptedKeyPairRequest(pState, pSpec, myUsage));
@@ -244,9 +244,9 @@ public class KeyStoreTest {
     /**
      * test symmetric.
      * @param pManager the keyStoreManager
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private void symmetric(final GordianKeyStoreManager pManager) throws OceanusException {
+    private void symmetric(final GordianKeyStoreManager pManager) throws GordianException {
         /* Access details */
         final GordianCoreKeyStore myStore = (GordianCoreKeyStore) pManager.getKeyStore();
         final GordianKeyStoreFactory myFactory = myStore.getFactory().getKeyPairFactory().getKeyStoreFactory();
@@ -289,9 +289,9 @@ public class KeyStoreTest {
     /**
      * test keyPairs.
      * @param pManager the keyStoreManager
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private void keyPairs(final GordianKeyStoreManager pManager) throws OceanusException {
+    private void keyPairs(final GordianKeyStoreManager pManager) throws GordianException {
         /* Access details */
         final GordianCoreKeyStore myStore = (GordianCoreKeyStore) pManager.getKeyStore();
         final GordianKeyStoreFactory myFactory = myStore.getFactory().getKeyPairFactory().getKeyStoreFactory();
@@ -375,10 +375,10 @@ public class KeyStoreTest {
      * test signed keyPairRequest.
      * @param pState the state
      * @param pKeyPairSpec the keyPairSpec
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     private static void signedKeyPairRequest(final KeyPairCertReqState pState,
-                                             final GordianKeyPairSpec pKeyPairSpec) throws OceanusException {
+                                             final GordianKeyPairSpec pKeyPairSpec) throws GordianException {
         /* Access details */
         final GordianCoreKeyStoreManager myMgr = pState.getManager();
         final GordianCoreKeyStore myStore = pState.getStore();
@@ -419,11 +419,11 @@ public class KeyStoreTest {
      * @param pState the state
      * @param pKeyPairSpec the keyPairSpec
      * @param pUsage the keyUsage
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     private static void encryptedKeyPairRequest(final KeyPairCertReqState pState,
                                                 final GordianKeyPairSpec pKeyPairSpec,
-                                                final GordianKeyPairUsage pUsage) throws OceanusException {
+                                                final GordianKeyPairUsage pUsage) throws GordianException {
         /* Access details */
         final GordianCoreKeyStoreManager myMgr = pState.getManager();
         final GordianCoreKeyStore myStore = pState.getStore();
@@ -471,11 +471,11 @@ public class KeyStoreTest {
      * @param pGateway the keyStoreGateway
      * @param pAlias the alias
      * @param pKeySet the keySet
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     private static void checkKeySet(final GordianKeyStoreGateway pGateway,
                                     final KeyStoreAlias pAlias,
-                                    final GordianKeyStoreSet pKeySet) throws OceanusException {
+                                    final GordianKeyStoreSet pKeySet) throws GordianException {
         final String myName = pAlias.getName();
         final GordianKeyStore myStore = pGateway.getKeyStore();
         Assertions.assertTrue(myStore.containsAlias(myName));
@@ -491,11 +491,11 @@ public class KeyStoreTest {
      * @param pGateway the keyStoreGateway
      * @param pAlias the alias
      * @param pKey the key
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     private static void checkKey(final GordianKeyStoreGateway pGateway,
                                  final KeyStoreAlias pAlias,
-                                 final GordianKeyStoreKey<?> pKey) throws OceanusException {
+                                 final GordianKeyStoreKey<?> pKey) throws GordianException {
         final String myName = pAlias.getName();
         final GordianKeyStore myStore = pGateway.getKeyStore();
         Assertions.assertTrue(myStore.containsAlias(myName));
@@ -511,11 +511,11 @@ public class KeyStoreTest {
      * @param pGateway the keyStoreGateway
      * @param pAlias the alias
      * @param pKeyPair the keyPair
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     private static void checkKeyPair(final GordianKeyStoreGateway pGateway,
                                      final KeyStoreAlias pAlias,
-                                     final GordianKeyStorePair pKeyPair) throws OceanusException {
+                                     final GordianKeyStorePair pKeyPair) throws GordianException {
         final String myName = pAlias.getName();
         final GordianKeyStore myStore = pGateway.getKeyStore();
         Assertions.assertTrue(myStore.containsAlias(myName));
@@ -532,11 +532,11 @@ public class KeyStoreTest {
      * @param pGateway the keyStoreGateway
      * @param pAlias the alias
      * @param pEntry the entry
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     private static void checkExport(final GordianKeyStoreGateway pGateway,
                                     final KeyStoreAlias pAlias,
-                                    final GordianKeyStoreEntry pEntry) throws OceanusException {
+                                    final GordianKeyStoreEntry pEntry) throws GordianException {
         final GordianCoreKeyStore myStore = (GordianCoreKeyStore) pGateway.getKeyStore();
         final GordianZipLock myLock = myStore.getFactory().getZipFactory().keySetZipLock(DEF_PASSWORD);
         final ByteArrayOutputStream myOutStream = new ByteArrayOutputStream();
@@ -585,9 +585,9 @@ public class KeyStoreTest {
         /**
          * Constructor.
          * @param pManager the keyStore Manager
-         * @throws OceanusException on error
+         * @throws GordianException on error
           */
-        KeyPairCertReqState(final GordianKeyStoreManager pManager) throws OceanusException {
+        KeyPairCertReqState(final GordianKeyStoreManager pManager) throws GordianException {
             /* Store the manager */
             theManager = (GordianCoreKeyStoreManager) pManager;
         }
@@ -626,9 +626,9 @@ public class KeyStoreTest {
 
         /**
          * Initialise.
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
-        void initialise() throws OceanusException {
+        void initialise() throws GordianException {
             /* Create specs */
             final GordianKeyPairSpec myRSASpec = GordianKeyPairSpecBuilder.rsa(GordianRSAModulus.MOD2048);
             final GordianKeyPairSpec myECSpec = GordianKeyPairSpecBuilder.ec(GordianDSAElliptic.SECT571K1);

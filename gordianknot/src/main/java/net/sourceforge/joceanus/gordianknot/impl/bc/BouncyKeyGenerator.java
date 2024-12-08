@@ -16,10 +16,10 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.bc;
 
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMac;
 import net.sourceforge.joceanus.gordianknot.impl.core.key.GordianCoreKeyGenerator;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import org.bouncycastle.crypto.CipherKeyGenerator;
 import org.bouncycastle.crypto.KeyGenerationParameters;
 
@@ -73,13 +73,13 @@ public final class BouncyKeyGenerator<T extends GordianKeySpec>
 
     @Override
     public BouncyKey<T> generateKeyFromSecret(final byte[] pSecret,
-                                               final Random pSeededRandom) throws OceanusException {
+                                               final Random pSeededRandom) throws GordianException {
         return (BouncyKey<T>) super.generateKeyFromSecret(pSecret, pSeededRandom);
     }
 
     @Override
     public void initMacKeyBytes(final GordianMac pMac,
-                                final byte[] pKeyBytes) throws OceanusException {
+                                final byte[] pKeyBytes) throws GordianException {
         pMac.initKeyBytes(pKeyBytes);
     }
 }

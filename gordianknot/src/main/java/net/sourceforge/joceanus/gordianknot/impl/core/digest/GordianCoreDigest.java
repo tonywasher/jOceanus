@@ -17,9 +17,9 @@
 package net.sourceforge.joceanus.gordianknot.impl.core.digest;
 
 
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigest;
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestSpec;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 /**
  * Core Digest implementation.
@@ -77,7 +77,7 @@ public abstract class GordianCoreDigest
 
     @Override
     public int finish(final byte[] pBuffer,
-                      final int pOffset) throws OceanusException {
+                      final int pOffset) throws GordianException {
         /* Check that the buffers are sufficient */
         if (pBuffer.length < (getDigestSize() + pOffset)) {
             throw new IllegalArgumentException("Output buffer too short.");
@@ -92,8 +92,8 @@ public abstract class GordianCoreDigest
      * @param pBuffer the buffer to return the digest in.
      * @param pOffset the offset in the buffer to store the digest.
      * @return the number of bytes placed into buffer
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     public abstract int doFinish(byte[] pBuffer,
-                                 int pOffset) throws OceanusException;
+                                 int pOffset) throws GordianException;
 }

@@ -16,8 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.core.encrypt;
 
-import java.security.SecureRandom;
-
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.encrypt.GordianEncryptor;
 import net.sourceforge.joceanus.gordianknot.api.encrypt.GordianEncryptorFactory;
 import net.sourceforge.joceanus.gordianknot.api.encrypt.GordianEncryptorSpec;
@@ -28,7 +27,8 @@ import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.keypair.GordianCoreKeyPair;
 import net.sourceforge.joceanus.gordianknot.impl.core.keypair.GordianPrivateKey;
 import net.sourceforge.joceanus.gordianknot.impl.core.keypair.GordianPublicKey;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
+
+import java.security.SecureRandom;
 
 /**
  * Asymmetric Encryptor.
@@ -90,9 +90,9 @@ public abstract class GordianCoreEncryptor
     /**
      * CheckKeyPair.
      * @param pKeyPair the keyPair
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    protected void checkKeyPair(final GordianKeyPair pKeyPair) throws OceanusException {
+    protected void checkKeyPair(final GordianKeyPair pKeyPair) throws GordianException {
         final GordianKeyPairFactory myFactory = theFactory.getKeyPairFactory();
         final GordianEncryptorFactory myEncrypts = myFactory.getEncryptorFactory();
         if (!myEncrypts.validEncryptorSpecForKeyPair(pKeyPair, theSpec)) {
@@ -117,7 +117,7 @@ public abstract class GordianCoreEncryptor
     }
 
     @Override
-    public void initForEncrypt(final GordianKeyPair pKeyPair) throws OceanusException {
+    public void initForEncrypt(final GordianKeyPair pKeyPair) throws GordianException {
         /* Check that the keyPair matches */
         checkKeyPair(pKeyPair);
 
@@ -127,7 +127,7 @@ public abstract class GordianCoreEncryptor
     }
 
     @Override
-    public void initForDecrypt(final GordianKeyPair pKeyPair) throws OceanusException {
+    public void initForDecrypt(final GordianKeyPair pKeyPair) throws GordianException {
         /* Check that the keyPair matches */
         checkKeyPair(pKeyPair);
 
@@ -144,9 +144,9 @@ public abstract class GordianCoreEncryptor
     /**
      * Check that we are in the correct mode.
      * @param pMode the required mode
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    protected void checkMode(final GordianEncryptMode pMode) throws OceanusException {
+    protected void checkMode(final GordianEncryptMode pMode) throws GordianException {
         if (!pMode.equals(theMode)) {
             throw new GordianDataException("Incorrect encryption Mode");
         }

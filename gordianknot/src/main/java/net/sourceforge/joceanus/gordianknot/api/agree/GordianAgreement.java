@@ -16,7 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.api.agree;
 
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 
 /**
  * Key Agreement Specification.
@@ -48,9 +48,9 @@ public interface GordianAgreement {
      *     <dd>To obtain the raw agreement</dd>
      * </dl>
      * @param pResultType the resultType.
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    void setResultType(Object pResultType) throws OceanusException;
+    void setResultType(Object pResultType) throws GordianException;
 
     /**
      * Obtain resultType.
@@ -61,9 +61,9 @@ public interface GordianAgreement {
     /**
      * Obtain result.
      * @return the result
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    Object getResult() throws OceanusException;
+    Object getResult() throws GordianException;
 
     /**
      * Obtain agreement status.

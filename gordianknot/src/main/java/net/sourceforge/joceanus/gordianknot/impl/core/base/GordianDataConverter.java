@@ -16,8 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.core.base;
 
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -217,9 +217,9 @@ public final class GordianDataConverter {
      * parse a byte array from a hexadecimal string.
      * @param pHexString the hex string
      * @return the bytes
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    public static byte[] hexStringToBytes(final String pHexString) throws OceanusException {
+    public static byte[] hexStringToBytes(final String pHexString) throws GordianException {
         /* Access the length of the hex string */
         final int myLen = pHexString.length();
 
@@ -275,9 +275,9 @@ public final class GordianDataConverter {
      * parse a long from a hexadecimal string.
      * @param pHexString the hex string
      * @return the bytes
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    public static long hexStringToLong(final String pHexString) throws OceanusException {
+    public static long hexStringToLong(final String pHexString) throws GordianException {
         /* Access the length of the hex string */
         String myHexString = pHexString;
         int myLen = myHexString.length();
@@ -327,9 +327,9 @@ public final class GordianDataConverter {
      * Convert character array to byte array.
      * @param pChars the character array
      * @return the byte array
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    public static byte[] charsToByteArray(final char[] pChars) throws OceanusException {
+    public static byte[] charsToByteArray(final char[] pChars) throws GordianException {
         /* protect against exceptions */
         try {
             /* Transform the character array to a byte array */
@@ -347,9 +347,9 @@ public final class GordianDataConverter {
      * Convert byte array to character array.
      * @param pBytes the byte array
      * @return the character array
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    public static char[] bytesToCharArray(final byte[] pBytes) throws OceanusException {
+    public static char[] bytesToCharArray(final byte[] pBytes) throws GordianException {
         /* protect against exceptions */
         try {
             /* Allocate the character array allowing for one character per byte */

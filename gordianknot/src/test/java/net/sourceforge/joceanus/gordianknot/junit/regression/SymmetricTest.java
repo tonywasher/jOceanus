@@ -16,6 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.junit.regression;
 
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianIdSpec;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
@@ -68,7 +69,6 @@ import net.sourceforge.joceanus.gordianknot.junit.regression.SymmetricStore.Fact
 import net.sourceforge.joceanus.gordianknot.junit.regression.SymmetricStore.FactorySymKeySpec;
 import net.sourceforge.joceanus.gordianknot.junit.regression.SymmetricStore.FactorySymPBECipherSpec;
 import net.sourceforge.joceanus.gordianknot.util.GordianGenerator;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.util.Arrays;
 import org.junit.jupiter.api.Assertions;
@@ -131,10 +131,10 @@ class SymmetricTest {
 
     /**
      * Initialise Factories.
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     @BeforeAll
-    public static void createSecurityFactories() throws OceanusException {
+    public static void createSecurityFactories() throws GordianException {
         BCFACTORY = GordianGenerator.createRandomFactory(GordianFactoryType.BC);
         JCAFACTORY = GordianGenerator.createRandomFactory(GordianFactoryType.JCA);
     }
@@ -609,7 +609,7 @@ class SymmetricTest {
      * Profile digest.
      * @param pDigestSpec the digest to profile
      */
-    private void profileDigest(final FactoryDigestSpec pDigestSpec) throws OceanusException {
+    private void profileDigest(final FactoryDigestSpec pDigestSpec) throws GordianException {
         /* Create the digest */
         final GordianFactory myFactory = pDigestSpec.getFactory();
         final GordianDigestSpec mySpec = pDigestSpec.getSpec();
@@ -639,7 +639,7 @@ class SymmetricTest {
      * Check partner digest.
      * @param pDigestSpec the digest to check
      */
-    private void checkPartnerDigest(final FactoryDigestSpec pDigestSpec) throws OceanusException {
+    private void checkPartnerDigest(final FactoryDigestSpec pDigestSpec) throws GordianException {
         /* Create the digests */
         final GordianFactory myFactory = pDigestSpec.getFactory();
         final GordianFactory myPartner = pDigestSpec.getPartner();
@@ -676,9 +676,9 @@ class SymmetricTest {
     /**
      * Profile mac.
      * @param pMacSpec the mac to profile
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private void profileMac(final FactoryMacSpec pMacSpec) throws OceanusException {
+    private void profileMac(final FactoryMacSpec pMacSpec) throws GordianException {
         final GordianFactory myFactory = pMacSpec.getFactory();
         final GordianMacSpec mySpec = pMacSpec.getSpec();
         final GordianMacFactory myMacFactory = myFactory.getMacFactory();
@@ -734,7 +734,7 @@ class SymmetricTest {
      * Check partner mac.
      * @param pMacSpec the mac to check
      */
-    private void checkPartnerMac(final FactoryMacSpec pMacSpec) throws OceanusException {
+    private void checkPartnerMac(final FactoryMacSpec pMacSpec) throws GordianException {
         /* Create the macs */
         final GordianFactory myFactory = pMacSpec.getFactory();
         final GordianFactory myPartner = pMacSpec.getPartner();
@@ -767,10 +767,10 @@ class SymmetricTest {
     /**
      * Check symKey CipherMode.
      * @param pCipherSpec the cipherSpec
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     @SuppressWarnings("unchecked")
-    private void checkSymCipher(final FactorySymCipherSpec pCipherSpec) throws OceanusException {
+    private void checkSymCipher(final FactorySymCipherSpec pCipherSpec) throws GordianException {
         /* Split out AAD cipher */
         if (pCipherSpec.getSpec().isAAD()) {
             checkAADCipher(pCipherSpec);
@@ -812,9 +812,9 @@ class SymmetricTest {
     /**
      * Check symKey PBE CipherMode.
      * @param pCipherSpec the cipherSpec
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private void checkSymPBECipher(final FactorySymPBECipherSpec pCipherSpec) throws OceanusException {
+    private void checkSymPBECipher(final FactorySymPBECipherSpec pCipherSpec) throws GordianException {
         /* Access details */
         final GordianFactory myFactory = pCipherSpec.getFactory();
         final FactorySymCipherSpec myOwner = pCipherSpec.getOwner();
@@ -843,9 +843,9 @@ class SymmetricTest {
     /**
      * Check partner symKey CipherMode.
      * @param pCipherSpec the cipherSpec
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private void checkPartnerSymCipher(final FactorySymCipherSpec pCipherSpec) throws OceanusException {
+    private void checkPartnerSymCipher(final FactorySymCipherSpec pCipherSpec) throws GordianException {
         /* Split out AAD cipher */
         if (pCipherSpec.getSpec().isAAD()) {
             checkPartnerAADCipher(pCipherSpec);
@@ -884,9 +884,9 @@ class SymmetricTest {
     /**
      * Check AAD cipher mode.
      * @param pCipherSpec the cipherSpec
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private void checkAADCipher(final FactorySymCipherSpec pCipherSpec) throws OceanusException {
+    private void checkAADCipher(final FactorySymCipherSpec pCipherSpec) throws GordianException {
         /* Access details */
         final GordianFactory myFactory = pCipherSpec.getFactory();
         final GordianSymCipherSpec mySpec = pCipherSpec.getSpec();
@@ -921,9 +921,9 @@ class SymmetricTest {
     /**
      * Check Partner AAD cipher mode.
      * @param pCipherSpec the cipherSpec
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private void checkPartnerAADCipher(final FactorySymCipherSpec pCipherSpec) throws OceanusException {
+    private void checkPartnerAADCipher(final FactorySymCipherSpec pCipherSpec) throws GordianException {
         /* Access details */
         final GordianFactory myFactory = pCipherSpec.getFactory();
         final GordianFactory myPartner = pCipherSpec.getPartner();
@@ -955,9 +955,9 @@ class SymmetricTest {
     /**
      * Check stream cipher.
      * @param pCipherSpec the keySpec
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private void checkCipher(final FactoryStreamCipherSpec pCipherSpec) throws OceanusException {
+    private void checkCipher(final FactoryStreamCipherSpec pCipherSpec) throws GordianException {
         /* Access details */
         final FactoryStreamKeySpec myOwner = pCipherSpec.getOwner();
         final GordianFactory myFactory = myOwner.getFactory();
@@ -991,9 +991,9 @@ class SymmetricTest {
     /**
      * Check streamKey PBE CipherMode.
      * @param pCipherSpec the cipherSpec
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private void checkStreamPBECipher(final FactoryStreamPBECipherSpec pCipherSpec) throws OceanusException {
+    private void checkStreamPBECipher(final FactoryStreamPBECipherSpec pCipherSpec) throws GordianException {
         /* Access details */
         final GordianFactory myFactory = pCipherSpec.getFactory();
         final FactoryStreamCipherSpec myOwner = pCipherSpec.getOwner();
@@ -1022,9 +1022,9 @@ class SymmetricTest {
     /**
      * Check AAD cipher mode.
      * @param pCipherSpec the cipherSpec
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private void checkAADCipher(final FactoryStreamCipherSpec pCipherSpec) throws OceanusException {
+    private void checkAADCipher(final FactoryStreamCipherSpec pCipherSpec) throws GordianException {
         /* Access details */
         final GordianFactory myFactory = pCipherSpec.getFactory();
         final GordianStreamCipherSpec mySpec = pCipherSpec.getSpec();
@@ -1053,7 +1053,7 @@ class SymmetricTest {
      * Check partner streamKey.
      * @param pKeySpec the streamKey to check
      */
-    private void checkPartnerStreamKey(final FactoryStreamKeySpec pKeySpec) throws OceanusException {
+    private void checkPartnerStreamKey(final FactoryStreamKeySpec pKeySpec) throws GordianException {
         /* Create the macs */
         final GordianFactory myFactory = pKeySpec.getFactory();
         final GordianFactory myPartner = pKeySpec.getPartner();
@@ -1084,9 +1084,9 @@ class SymmetricTest {
     /**
      * Check wrap cipher.
      * @param pKeySpec the keySpec
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private void checkWrapCipher(final FactorySymKeySpec pKeySpec) throws OceanusException {
+    private void checkWrapCipher(final FactorySymKeySpec pKeySpec) throws GordianException {
         /* Access details */
         final GordianFactory myFactory = pKeySpec.getFactory();
         final GordianCipherFactory myCipherFactory = myFactory.getCipherFactory();
@@ -1112,9 +1112,9 @@ class SymmetricTest {
     /**
      * Check partner wrap cipher.
      * @param pKeySpec the keySpec
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private void checkPartnerWrapCipher(final FactorySymKeySpec pKeySpec) throws OceanusException {
+    private void checkPartnerWrapCipher(final FactorySymKeySpec pKeySpec) throws GordianException {
         /* Access details */
         final GordianFactory myFactory = pKeySpec.getFactory();
         final GordianFactory myPartner = pKeySpec.getPartner();
@@ -1144,9 +1144,9 @@ class SymmetricTest {
     /**
      * Profile symKey.
      * @param pKeySpec the keySpec
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private void profileSymKey(final FactorySymKeySpec pKeySpec) throws OceanusException {
+    private void profileSymKey(final FactorySymKeySpec pKeySpec) throws GordianException {
         /* Access details */
         final GordianFactory myFactory = pKeySpec.getFactory();
         final GordianSymKeySpec mySpec = pKeySpec.getSpec();
@@ -1176,9 +1176,9 @@ class SymmetricTest {
     /**
      * Profile streamKey.
      * @param pStreamKeySpec the keySpec
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private void profileStreamKey(final FactoryStreamKeySpec pStreamKeySpec) throws OceanusException {
+    private void profileStreamKey(final FactoryStreamKeySpec pStreamKeySpec) throws GordianException {
         final GordianFactory myFactory = pStreamKeySpec.getFactory();
         final GordianStreamKeySpec myKeySpec = pStreamKeySpec.getSpec();
         final GordianCipherFactory myCipherFactory = myFactory.getCipherFactory();
@@ -1202,9 +1202,9 @@ class SymmetricTest {
     /**
      * check randomSpec.
      * @param pRandomSpec the randomSpec
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private void checkRandomSpec(final FactoryRandomSpec pRandomSpec) throws OceanusException {
+    private void checkRandomSpec(final FactoryRandomSpec pRandomSpec) throws GordianException {
         /* Create the secure random */
         final GordianFactory myFactory = pRandomSpec.getFactory();
         final GordianRandomSpec mySpec = pRandomSpec.getSpec();
@@ -1220,9 +1220,9 @@ class SymmetricTest {
     /**
      * Check externalId.
      * @param pSpec the Spec to check
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private void checkExternalId(final FactorySpec<? extends GordianIdSpec> pSpec) throws OceanusException {
+    private void checkExternalId(final FactorySpec<? extends GordianIdSpec> pSpec) throws GordianException {
         /* Access the factories */
         final GordianKnuthObfuscater myKnuth = pSpec.getFactory().getObfuscater();
 

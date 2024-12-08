@@ -19,10 +19,10 @@ package net.sourceforge.joceanus.gordianknot.impl.core.agree;
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementSpec;
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementStatus;
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianHandshakeAgreement;
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianAgreementMessageASN1.GordianMessageType;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 /**
  * New Handshake Basic Agreement.
@@ -54,7 +54,7 @@ public abstract class GordianCoreBasicAgreement
     }
 
     @Override
-    public byte[] createClientHello(final GordianKeyPair pServer) throws OceanusException {
+    public byte[] createClientHello(final GordianKeyPair pServer) throws GordianException {
         /* Create the clientHello and extract the encoded bytes */
         return createClientHelloASN1(pServer).getEncodedBytes();
     }
@@ -63,9 +63,9 @@ public abstract class GordianCoreBasicAgreement
      * Create the clientHello ASN1.
      * @param pClient the client keyPair
      * @return the clientHello message
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    public GordianAgreementMessageASN1 createClientHelloASN1(final GordianKeyPair pClient) throws OceanusException {
+    public GordianAgreementMessageASN1 createClientHelloASN1(final GordianKeyPair pClient) throws GordianException {
         /* Check the keyPair */
         checkKeyPair(pClient);
 
@@ -85,7 +85,7 @@ public abstract class GordianCoreBasicAgreement
     @Override
     public byte[] acceptClientHello(final GordianKeyPair pClient,
                                     final GordianKeyPair pServer,
-                                    final byte[] pClientHello) throws OceanusException {
+                                    final byte[] pClientHello) throws GordianException {
         /* Must be in clean state */
         checkStatus(GordianAgreementStatus.CLEAN);
 
@@ -104,20 +104,20 @@ public abstract class GordianCoreBasicAgreement
      * @param pServer the server keyPair
      * @param pClientHello the incoming clientHello message
      * @return the serverHello message
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     public abstract GordianAgreementMessageASN1 acceptClientHelloASN1(GordianKeyPair pClient,
                                                                       GordianKeyPair pServer,
-                                                                      GordianAgreementMessageASN1 pClientHello) throws OceanusException;
+                                                                      GordianAgreementMessageASN1 pClientHello) throws GordianException;
 
     /**
      * Process the incoming clientHello message request.
      * @param pServer the server keyPair
      * @param pClientHello the incoming clientHello message
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     protected void processClientHelloASN1(final GordianKeyPair pServer,
-                                          final GordianAgreementMessageASN1 pClientHello) throws OceanusException {
+                                          final GordianAgreementMessageASN1 pClientHello) throws GordianException {
         /* Check the keyPair */
         checkKeyPair(pServer);
 
@@ -130,7 +130,7 @@ public abstract class GordianCoreBasicAgreement
 
     @Override
     public byte[] acceptServerHello(final GordianKeyPair pServer,
-                                    final byte[] pServerHello) throws OceanusException {
+                                    final byte[] pServerHello) throws GordianException {
         /* Must be in clean state */
         checkStatus(GordianAgreementStatus.AWAITING_SERVERHELLO);
 
@@ -147,23 +147,23 @@ public abstract class GordianCoreBasicAgreement
      * Accept the serverHello.
      * @param pServer the server keyPair
      * @param pServerHello the incoming serverHello message
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     public abstract void acceptServerHelloASN1(GordianKeyPair pServer,
-                                               GordianAgreementMessageASN1 pServerHello) throws OceanusException;
+                                               GordianAgreementMessageASN1 pServerHello) throws GordianException;
 
     /**
      * Process the serverHello.
      * @param pServerHello the serverHello message
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    protected void processServerHelloASN1(final GordianAgreementMessageASN1 pServerHello) throws OceanusException {
+    protected void processServerHelloASN1(final GordianAgreementMessageASN1 pServerHello) throws GordianException {
         /* Parse the server hello */
         parseServerHelloASN1(pServerHello);
     }
 
     @Override
-    public void acceptClientConfirm(final byte[] pClientConfirm) throws OceanusException {
+    public void acceptClientConfirm(final byte[] pClientConfirm) throws GordianException {
         /* We will never hit this status so this will reject the request */
         checkStatus(GordianAgreementStatus.AWAITING_CLIENTCONFIRM);
     }

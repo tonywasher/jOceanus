@@ -16,9 +16,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.core.base;
 
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactoryType;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 import java.security.SecureRandom;
 import java.util.Arrays;
@@ -142,10 +142,10 @@ public class GordianParameters {
      * Constructor.
      * @param pFactoryType the factory type
      * @param pSecurityPhrase the security phrase (or null)
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     public GordianParameters(final GordianFactoryType pFactoryType,
-                             final char[] pSecurityPhrase) throws OceanusException {
+                             final char[] pSecurityPhrase) throws GordianException {
         /* Store factory Type */
         theFactoryType = pFactoryType;
 
@@ -287,9 +287,9 @@ public class GordianParameters {
      * Create random parameters.
      * @param pType the factory type
      * @return the parameters
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    public static GordianParameters randomParams(final GordianFactoryType pType) throws OceanusException {
+    public static GordianParameters randomParams(final GordianFactoryType pType) throws GordianException {
         return new GordianParameters(pType, GordianRandomSource.getStrongRandom());
     }
 }

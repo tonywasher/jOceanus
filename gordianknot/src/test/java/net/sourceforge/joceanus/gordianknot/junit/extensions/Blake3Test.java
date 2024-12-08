@@ -1,8 +1,8 @@
 package net.sourceforge.joceanus.gordianknot.junit.extensions;
 
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.impl.ext.digests.GordianBlake3Digest;
 import net.sourceforge.joceanus.gordianknot.impl.ext.params.GordianBlake3Parameters;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import org.bouncycastle.util.encoders.Hex;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DynamicContainer;
@@ -221,10 +221,10 @@ class Blake3Test {
     /**
      * Create the blockCipher test suite.
      * @return the test stream
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     @TestFactory
-    Stream<DynamicNode> blake3Tests() throws OceanusException {
+    Stream<DynamicNode> blake3Tests() throws GordianException {
         /* Create an empty stream */
         Stream<DynamicNode> myStream = buildTests(TEST0);
         myStream = Stream.concat(myStream, buildTests(TEST1));
@@ -267,9 +267,9 @@ class Blake3Test {
     /**
      * Create the blockCipher test suite.
      * @return the test stream
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-     public Stream<DynamicNode> buildTests(final TestDef pTest) throws OceanusException {
+     public Stream<DynamicNode> buildTests(final TestDef pTest) throws GordianException {
         /* Create test Stream */
         return Stream.of(DynamicContainer.dynamicContainer(Integer.toString(pTest.theLength), Stream.of(
                 DynamicTest.dynamicTest("hash", () -> testHash(pTest)),

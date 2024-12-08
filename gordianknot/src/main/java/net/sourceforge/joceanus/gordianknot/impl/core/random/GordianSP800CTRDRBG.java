@@ -16,11 +16,11 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.core.random;
 
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymKeySpec;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianByteArrayInteger;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianDataConverter;
 import net.sourceforge.joceanus.gordianknot.impl.core.cipher.GordianCoreCipher;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import org.bouncycastle.crypto.prng.EntropySource;
 import org.bouncycastle.util.Arrays;
 
@@ -77,12 +77,12 @@ public class GordianSP800CTRDRBG
      * @param pEntropy source of entropy to use for seeding/reSeeding.
      * @param pSecurityBytes personalisation string to distinguish this DRBG (may be null).
      * @param pInitVector nonce to further distinguish this DRBG (may be null).
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     public GordianSP800CTRDRBG(final GordianCoreCipher<GordianSymKeySpec> pCipher,
                                final EntropySource pEntropy,
                                final byte[] pSecurityBytes,
-                               final byte[] pInitVector) throws OceanusException {
+                               final byte[] pInitVector) throws GordianException {
         /* Store cipher and entropy source */
         theCipher = pCipher;
         theEntropy = pEntropy;
@@ -112,10 +112,10 @@ public class GordianSP800CTRDRBG
      * @param pInput the seed material
      * @param pNumBits the number of bits to return
      * @return the derived seed
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     private byte[] blockCipherDF(final byte[] pInput,
-                                 final int pNumBits) throws OceanusException {
+                                 final int pNumBits) throws GordianException {
         /* Check valid # of bits */
         if (pNumBits > GordianCoreRandomFactory.MAX_BITS_REQUEST) {
             throw new IllegalArgumentException("Number of bits per request limited to "
@@ -202,12 +202,12 @@ public class GordianSP800CTRDRBG
      * @param pKey the key
      * @param pIV the initVector
      * @param pData the data
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     private void blockCC(final byte[] pOutput,
                          final byte[] pKey,
                          final byte[] pIV,
-                         final byte[] pData) throws OceanusException {
+                         final byte[] pData) throws GordianException {
         /* Build the buffers */
         final byte[] myChain = new byte[theBlockLen];
         final byte[] myIn  = new byte[theBlockLen];
@@ -236,9 +236,9 @@ public class GordianSP800CTRDRBG
     /**
      * Update state.
      * @param pSeed the seed material
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private void ctrDRBGUpdate(final byte[] pSeed) throws OceanusException {
+    private void ctrDRBGUpdate(final byte[] pSeed) throws GordianException {
         /* Create the buffers */
         final byte[] myOut = new byte[theBlockLen];
         final byte[] myResult = new byte[theSeedLen / Byte.SIZE];
@@ -287,7 +287,7 @@ public class GordianSP800CTRDRBG
             /* re-initialise reSeed counter */
             theReseedCounter.reset();
             theReseedCounter.iterate();
-        } catch (OceanusException e) {
+        } catch (GordianException e) {
             throw new IllegalStateException(e);
         }
     }
@@ -360,7 +360,7 @@ public class GordianSP800CTRDRBG
 
             /* Return the bytes */
             System.arraycopy(myResult, 0, pOutput, 0, pOutput.length);
-        } catch (OceanusException e) {
+        } catch (GordianException e) {
             throw new IllegalStateException(e);
         }
 

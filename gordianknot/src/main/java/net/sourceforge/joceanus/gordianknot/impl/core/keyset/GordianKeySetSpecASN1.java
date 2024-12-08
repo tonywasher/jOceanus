@@ -16,9 +16,14 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.core.keyset;
 
-import java.util.Enumeration;
-import java.util.Objects;
-
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
+import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
+import net.sourceforge.joceanus.gordianknot.api.key.GordianKeyLengths;
+import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySetSpec;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianASN1Util;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianASN1Util.GordianASN1Object;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianIOException;
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.ASN1Integer;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
@@ -27,14 +32,8 @@ import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.DERSequence;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 
-import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
-import net.sourceforge.joceanus.gordianknot.api.key.GordianKeyLengths;
-import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySetSpec;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianASN1Util;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianASN1Util.GordianASN1Object;
-import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
-import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianIOException;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import java.util.Enumeration;
+import java.util.Objects;
 
 /**
  * ASN1 Encoding of KeySetSpec.
@@ -69,9 +68,9 @@ public class GordianKeySetSpecASN1
     /**
      * Constructor.
      * @param pSequence the Sequence
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private GordianKeySetSpecASN1(final ASN1Sequence pSequence) throws OceanusException {
+    private GordianKeySetSpecASN1(final ASN1Sequence pSequence) throws GordianException {
         /* Protect against exceptions */
         try {
            /* Extract the parameters from the sequence */
@@ -98,9 +97,9 @@ public class GordianKeySetSpecASN1
      * Parse the ASN1 object.
      * @param pObject the object to parse
      * @return the parsed object
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    public static GordianKeySetSpecASN1 getInstance(final Object pObject) throws OceanusException {
+    public static GordianKeySetSpecASN1 getInstance(final Object pObject) throws GordianException {
         if (pObject instanceof GordianKeySetSpecASN1) {
             return (GordianKeySetSpecASN1) pObject;
         } else if (pObject != null) {

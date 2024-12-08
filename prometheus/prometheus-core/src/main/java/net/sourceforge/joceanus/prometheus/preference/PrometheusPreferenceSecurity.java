@@ -16,6 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.prometheus.preference;
 
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactoryType;
@@ -32,6 +33,7 @@ import net.sourceforge.joceanus.oceanus.convert.OceanusDataConverter;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.logger.OceanusLogManager;
 import net.sourceforge.joceanus.oceanus.logger.OceanusLogger;
+import net.sourceforge.joceanus.prometheus.exc.PrometheusSecurityException;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -64,34 +66,39 @@ public class PrometheusPreferenceSecurity {
      * @throws OceanusException on error
      */
     PrometheusPreferenceSecurity(final PrometheusPreferenceManager pManager) throws OceanusException {
-        /* Create a Security Factory */
-        final GordianFactory myFactory = GordianGenerator.createFactory(GordianFactoryType.BC);
-        final GordianLockFactory myLocks = myFactory.getLockFactory();
+        /* Protect against exceptions */
+        try {
+            /* Create a Security Factory */
+            final GordianFactory myFactory = GordianGenerator.createFactory(GordianFactoryType.BC);
+            final GordianLockFactory myLocks = myFactory.getLockFactory();
 
-        /* Obtain the hash as a preference */
-        final PrometheusBaseSecurityPreferences myPrefs = pManager.getPreferenceSet(PrometheusBaseSecurityPreferences.class);
-        final byte[] myLock = myPrefs.getByteArrayValue(PrometheusSecurityPreferenceKey.LOCK);
+            /* Obtain the hash as a preference */
+            final PrometheusBaseSecurityPreferences myPrefs = pManager.getPreferenceSet(PrometheusBaseSecurityPreferences.class);
+            final byte[] myLock = myPrefs.getByteArrayValue(PrometheusSecurityPreferenceKey.LOCK);
 
-        /* Derive the password */
-        final char[] myHost = getHostName();
-        final char[] myUser = System.getProperty("user.name").toCharArray();
-        final char[] myPassword = new char[myHost.length + myUser.length];
-        System.arraycopy(myHost, 0, myPassword, 0, myHost.length);
-        System.arraycopy(myUser, 0, myPassword, myHost.length, myUser.length);
+            /* Derive the password */
+            final char[] myHost = getHostName();
+            final char[] myUser = System.getProperty("user.name").toCharArray();
+            final char[] myPassword = new char[myHost.length + myUser.length];
+            System.arraycopy(myHost, 0, myPassword, 0, myHost.length);
+            System.arraycopy(myUser, 0, myPassword, myHost.length, myUser.length);
 
-        /* Derive or create the lock */
-        final GordianKeySetLock myKeySetLock = myLock == null
-                ? myLocks.newKeySetLock(new GordianPasswordLockSpec(), myPassword)
-                : myLocks.resolveKeySetLock(myLock, myPassword);
+            /* Derive or create the lock */
+            final GordianKeySetLock myKeySetLock = myLock == null
+                    ? myLocks.newKeySetLock(new GordianPasswordLockSpec(), myPassword)
+                    : myLocks.resolveKeySetLock(myLock, myPassword);
 
-        /* record the KeySet */
-        theKeySet = myKeySetLock.getKeySet();
+            /* record the KeySet */
+            theKeySet = myKeySetLock.getKeySet();
 
-        /* If we have created a new lock */
-        if (myLock == null) {
-            /* Record the lock */
-            myPrefs.setHash(myKeySetLock.getLockBytes());
-            myPrefs.storeChanges();
+            /* If we have created a new lock */
+            if (myLock == null) {
+                /* Record the lock */
+                myPrefs.setHash(myKeySetLock.getLockBytes());
+                myPrefs.storeChanges();
+            }
+        } catch (GordianException e) {
+            throw new PrometheusSecurityException(e);
         }
     }
 
@@ -103,8 +110,13 @@ public class PrometheusPreferenceSecurity {
      * @throws OceanusException on error
      */
     protected byte[] encryptValue(final char[] pValue) throws OceanusException {
-        final byte[] myBytes = OceanusDataConverter.charsToByteArray(pValue);
-        return theKeySet.encryptBytes(myBytes);
+        /* Protect against exceptions */
+        try {
+            final byte[] myBytes = OceanusDataConverter.charsToByteArray(pValue);
+            return theKeySet.encryptBytes(myBytes);
+        } catch (GordianException e) {
+            throw new PrometheusSecurityException(e);
+        }
     }
 
     /**
@@ -115,8 +127,13 @@ public class PrometheusPreferenceSecurity {
      * @throws OceanusException on error
      */
     protected char[] decryptValue(final byte[] pValue) throws OceanusException {
-        final byte[] myBytes = theKeySet.decryptBytes(pValue);
-        return OceanusDataConverter.bytesToCharArray(myBytes);
+        /* Protect against exceptions */
+        try {
+            final byte[] myBytes = theKeySet.decryptBytes(pValue);
+            return OceanusDataConverter.bytesToCharArray(myBytes);
+        } catch (GordianException e) {
+            throw new PrometheusSecurityException(e);
+        }
     }
 
     /**

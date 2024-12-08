@@ -16,6 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.bc;
 
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.encrypt.GordianEncryptor;
 import net.sourceforge.joceanus.gordianknot.api.encrypt.GordianEncryptorSpec;
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyElGamalKeyPair.BouncyElGamalEncryptor;
@@ -23,10 +24,9 @@ import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyEllipticKeyPair.Bouncy
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyRSAKeyPair.BouncyRSAEncryptor;
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncySM2KeyPair.BouncySM2Encryptor;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
-import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.encrypt.GordianCompositeEncryptor;
 import net.sourceforge.joceanus.gordianknot.impl.core.encrypt.GordianCoreEncryptorFactory;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 
 /**
  * Bouncy Encryptor Factory.
@@ -49,7 +49,7 @@ public class BouncyEncryptorFactory
     }
 
     @Override
-    public GordianEncryptor createEncryptor(final GordianEncryptorSpec pEncryptorSpec) throws OceanusException {
+    public GordianEncryptor createEncryptor(final GordianEncryptorSpec pEncryptorSpec) throws GordianException {
         /* Check validity of Encryptor */
         checkEncryptorSpec(pEncryptorSpec);
 
@@ -62,9 +62,9 @@ public class BouncyEncryptorFactory
      *
      * @param pSpec the agreementSpec
      * @return the Agreement
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private GordianEncryptor getBCEncryptor(final GordianEncryptorSpec pSpec) throws OceanusException {
+    private GordianEncryptor getBCEncryptor(final GordianEncryptorSpec pSpec) throws GordianException {
         switch (pSpec.getKeyPairType()) {
             case RSA:
                 return new BouncyRSAEncryptor(getFactory(), pSpec);

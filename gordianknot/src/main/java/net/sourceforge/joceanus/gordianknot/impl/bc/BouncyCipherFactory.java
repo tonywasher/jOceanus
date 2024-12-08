@@ -16,6 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.bc;
 
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianCipherMode;
@@ -60,7 +61,6 @@ import net.sourceforge.joceanus.gordianknot.impl.ext.engines.GordianZuc128Engine
 import net.sourceforge.joceanus.gordianknot.impl.ext.engines.GordianZuc256Engine;
 import net.sourceforge.joceanus.gordianknot.impl.ext.modes.GordianChaChaPoly1305;
 import net.sourceforge.joceanus.gordianknot.impl.ext.modes.GordianGCMSIVBlockCipher;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import org.bouncycastle.crypto.BlockCipher;
 import org.bouncycastle.crypto.BufferedBlockCipher;
 import org.bouncycastle.crypto.CipherKeyGenerator;
@@ -169,7 +169,7 @@ public class BouncyCipherFactory
 
     @Override
     @SuppressWarnings("unchecked")
-    public <T extends GordianKeySpec> BouncyKeyGenerator<T> getKeyGenerator(final T pKeySpec) throws OceanusException {
+    public <T extends GordianKeySpec> BouncyKeyGenerator<T> getKeyGenerator(final T pKeySpec) throws GordianException {
         /* Look up in the cache */
         BouncyKeyGenerator<T> myGenerator = (BouncyKeyGenerator<T>) theCache.get(pKeySpec);
         if (myGenerator == null) {
@@ -184,7 +184,7 @@ public class BouncyCipherFactory
     }
 
     @Override
-    public GordianSymCipher createSymKeyCipher(final GordianSymCipherSpec pCipherSpec) throws OceanusException {
+    public GordianSymCipher createSymKeyCipher(final GordianSymCipherSpec pCipherSpec) throws GordianException {
         /* Check validity of SymKeySpec */
         checkSymCipherSpec(pCipherSpec);
 
@@ -203,7 +203,7 @@ public class BouncyCipherFactory
     }
 
     @Override
-    public GordianStreamCipher createStreamKeyCipher(final GordianStreamCipherSpec pCipherSpec) throws OceanusException {
+    public GordianStreamCipher createStreamKeyCipher(final GordianStreamCipherSpec pCipherSpec) throws GordianException {
         /* Check validity of StreamKeySpec */
         checkStreamCipherSpec(pCipherSpec);
 
@@ -214,7 +214,7 @@ public class BouncyCipherFactory
     }
 
     @Override
-    public GordianWrapper createKeyWrapper(final GordianKey<GordianSymKeySpec> pKey) throws OceanusException {
+    public GordianWrapper createKeyWrapper(final GordianKey<GordianSymKeySpec> pKey) throws GordianException {
         /* Create the cipher */
         final BouncyKey<GordianSymKeySpec> myKey = BouncyKey.accessKey(pKey);
         final GordianSymCipherSpec mySpec = GordianSymCipherSpecBuilder.ecb(myKey.getKeyType(), GordianPadding.NONE);
@@ -227,9 +227,9 @@ public class BouncyCipherFactory
      *
      * @param pKeySpec the keySpec
      * @return the KeyGenerator
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private CipherKeyGenerator getBCKeyGenerator(final GordianKeySpec pKeySpec) throws OceanusException {
+    private CipherKeyGenerator getBCKeyGenerator(final GordianKeySpec pKeySpec) throws GordianException {
         checkKeySpec(pKeySpec);
         return pKeySpec instanceof GordianSymKeySpec
                 && GordianSymKeyType.DESEDE.equals(((GordianSymKeySpec) pKeySpec).getSymKeyType())
@@ -242,9 +242,9 @@ public class BouncyCipherFactory
      *
      * @param pCipherSpec the cipherSpec
      * @return the Cipher
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private static BufferedBlockCipher getBCBlockCipher(final GordianSymCipherSpec pCipherSpec) throws OceanusException {
+    private static BufferedBlockCipher getBCBlockCipher(final GordianSymCipherSpec pCipherSpec) throws GordianException {
         /* Build the cipher */
         final BlockCipher myEngine = getBCSymEngine(pCipherSpec.getKeyType());
         final BlockCipher myMode = getBCSymModeCipher(myEngine, pCipherSpec.getCipherMode());
@@ -256,9 +256,9 @@ public class BouncyCipherFactory
      *
      * @param pCipherSpec the cipherSpec
      * @return the Cipher
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private static StreamCipher getBCStreamCipher(final GordianStreamCipherSpec pCipherSpec) throws OceanusException {
+    private static StreamCipher getBCStreamCipher(final GordianStreamCipherSpec pCipherSpec) throws GordianException {
         final GordianStreamKeySpec mySpec = pCipherSpec.getKeyType();
         switch (mySpec.getStreamKeyType()) {
             case HC:
@@ -318,9 +318,9 @@ public class BouncyCipherFactory
      *
      * @param pCipherSpec the cipherSpec
      * @return the Cipher
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private static AEADCipher getBCAEADStreamCipher(final GordianStreamCipherSpec pCipherSpec) throws OceanusException {
+    private static AEADCipher getBCAEADStreamCipher(final GordianStreamCipherSpec pCipherSpec) throws GordianException {
         final GordianStreamKeySpec mySpec = pCipherSpec.getKeyType();
         switch (mySpec.getStreamKeyType()) {
             case CHACHA20:
@@ -353,9 +353,9 @@ public class BouncyCipherFactory
      *
      * @param pKeySpec the SymKeySpec
      * @return the Engine
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    static BlockCipher getBCSymEngine(final GordianSymKeySpec pKeySpec) throws OceanusException {
+    static BlockCipher getBCSymEngine(final GordianSymKeySpec pKeySpec) throws GordianException {
         switch (pKeySpec.getSymKeyType()) {
             case AES:
                 return AESEngine.newInstance();
@@ -428,10 +428,10 @@ public class BouncyCipherFactory
      * @param pEngine the underlying engine
      * @param pMode   the cipher mode
      * @return the Cipher
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     private static BlockCipher getBCSymModeCipher(final BlockCipher pEngine,
-                                                  final GordianCipherMode pMode) throws OceanusException {
+                                                  final GordianCipherMode pMode) throws GordianException {
         switch (pMode) {
             case ECB:
                 return pEngine;
@@ -471,9 +471,9 @@ public class BouncyCipherFactory
      *
      * @param pCipherSpec the cipherSpec
      * @return the Cipher
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private static AEADBlockCipher getBCAADCipher(final GordianSymCipherSpec pCipherSpec) throws OceanusException {
+    private static AEADBlockCipher getBCAADCipher(final GordianSymCipherSpec pCipherSpec) throws GordianException {
         final GordianSymKeySpec mySpec = pCipherSpec.getKeyType();
         switch (pCipherSpec.getCipherMode()) {
             case EAX:

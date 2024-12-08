@@ -16,6 +16,15 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.bc;
 
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
+import net.sourceforge.joceanus.gordianknot.api.cipher.GordianCipherParameters;
+import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymCipher;
+import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymCipherSpec;
+import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymKeySpec;
+import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymKeyType;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.cipher.GordianCoreCipher;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
 import org.bouncycastle.crypto.BufferedBlockCipher;
 import org.bouncycastle.crypto.CipherParameters;
 import org.bouncycastle.crypto.DataLengthException;
@@ -23,16 +32,6 @@ import org.bouncycastle.crypto.InvalidCipherTextException;
 import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.crypto.params.ParametersWithIV;
 import org.bouncycastle.crypto.params.RC5Parameters;
-
-import net.sourceforge.joceanus.gordianknot.api.cipher.GordianCipherParameters;
-import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymCipher;
-import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymCipherSpec;
-import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymKeySpec;
-import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymKeyType;
-import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
-import net.sourceforge.joceanus.gordianknot.impl.core.cipher.GordianCoreCipher;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 /**
  * Cipher for BouncyCastle Symmetric Ciphers.
@@ -75,7 +74,7 @@ public final class BouncySymKeyCipher
 
     @Override
     public void init(final boolean pEncrypt,
-                     final GordianCipherParameters pParams) throws OceanusException {
+                     final GordianCipherParameters pParams) throws GordianException {
         /* Process the parameters and access the key */
         processParameters(pParams);
         final BouncyKey<GordianSymKeySpec> myKey = BouncyKey.accessKey(getKey());
@@ -125,7 +124,7 @@ public final class BouncySymKeyCipher
                         final int pOffset,
                         final int pLength,
                         final byte[] pOutput,
-                        final int pOutOffset) throws OceanusException {
+                        final int pOutOffset) throws GordianException {
         /* Protect against exceptions */
         try {
             /* Process the bytes */
@@ -140,7 +139,7 @@ public final class BouncySymKeyCipher
 
     @Override
     public int doFinish(final byte[] pOutput,
-                        final int pOutOffset) throws OceanusException {
+                        final int pOutOffset) throws GordianException {
         /* Protect against exceptions */
         try {
             /* Finish the operation */

@@ -16,13 +16,13 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.core.mac;
 
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMac;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacParameters;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacSpec;
-import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianLogicException;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianLogicException;
 
 /**
  * GordianKnot interface for Message Authentication Codes.
@@ -70,16 +70,16 @@ public abstract class GordianCoreMac
      * Check that the key matches the keyType.
      *
      * @param pKey the passed key.
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private void checkValidKey(final GordianKey<GordianMacSpec> pKey) throws OceanusException {
+    private void checkValidKey(final GordianKey<GordianMacSpec> pKey) throws GordianException {
         if (!theMacSpec.equals(pKey.getKeyType())) {
             throw new GordianLogicException("MisMatch on macSpec");
         }
     }
 
     @Override
-    public void initKeyBytes(final byte[] pKeyBytes) throws OceanusException {
+    public void initKeyBytes(final byte[] pKeyBytes) throws GordianException {
         /* Create the key and initialise */
         final GordianKey<GordianMacSpec> myKey = theParameters.buildKeyFromBytes(pKeyBytes);
         init(GordianMacParameters.key(myKey));
@@ -88,9 +88,9 @@ public abstract class GordianCoreMac
     /**
      * Process macParameters.
      * @param pParams the mac parameters
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    protected void processParameters(final GordianMacParameters pParams) throws OceanusException {
+    protected void processParameters(final GordianMacParameters pParams) throws GordianException {
         /* Process the parameters */
         theParameters.processParameters(pParams);
         checkValidKey(getKey());
@@ -121,7 +121,7 @@ public abstract class GordianCoreMac
                                   int pLength);
     @Override
     public int finish(final byte[] pBuffer,
-                      final int pOffset) throws OceanusException {
+                      final int pOffset) throws GordianException {
         /* Check that the buffers are sufficient */
         if (pBuffer.length < (getMacSize() + pOffset)) {
             throw new IllegalArgumentException("Output buffer too short.");
@@ -136,8 +136,8 @@ public abstract class GordianCoreMac
      * @param pBuffer the buffer to return the digest in.
      * @param pOffset the offset in the buffer to store the digest.
      * @return the number of bytes placed into buffer
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     public abstract int doFinish(byte[] pBuffer,
-                                 int pOffset) throws OceanusException;
+                                 int pOffset) throws GordianException;
 }

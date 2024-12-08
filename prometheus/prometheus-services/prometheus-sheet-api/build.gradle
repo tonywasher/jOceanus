@@ -1,6 +1,5 @@
 /* Dependencies */
 dependencies {
-    implementation project(':tethys-core')
     implementation project(':oceanus')
 }
 

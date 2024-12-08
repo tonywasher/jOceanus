@@ -16,11 +16,11 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.core.keystore;
 
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianDataConverter;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianIOException;
 import net.sourceforge.joceanus.gordianknot.impl.core.keystore.GordianPEMObject.GordianPEMObjectType;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -71,10 +71,10 @@ public class GordianPEMParser {
      * Write PEM objects to stream.
      * @param pStream the stream
      * @param pObjects the list of objects
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     void writePEMFile(final OutputStream pStream,
-                      final List<GordianPEMObject> pObjects) throws OceanusException {
+                      final List<GordianPEMObject> pObjects) throws GordianException {
         /* Protect against exceptions */
         try (OutputStreamWriter myOutputWriter = new OutputStreamWriter(pStream, StandardCharsets.UTF_8);
              BufferedWriter myWriter = new BufferedWriter(myOutputWriter)) {
@@ -91,9 +91,9 @@ public class GordianPEMParser {
      * Parse PEM Object stream.
      * @param pStream the stream
      * @return the list of parsed objects
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    List<GordianPEMObject> parsePEMFile(final InputStream pStream) throws OceanusException {
+    List<GordianPEMObject> parsePEMFile(final InputStream pStream) throws GordianException {
         /* Protect against exceptions */
         try (InputStreamReader myInputReader = new InputStreamReader(pStream, StandardCharsets.UTF_8);
              BufferedReader myReader = new BufferedReader(myInputReader)) {
@@ -110,10 +110,10 @@ public class GordianPEMParser {
      * Write PEM Objects.
      * @param pWriter the writer
      * @param pObjects the list of objects
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     private static void writeObjects(final BufferedWriter pWriter,
-                                     final List<GordianPEMObject> pObjects) throws OceanusException {
+                                     final List<GordianPEMObject> pObjects) throws GordianException {
         /* Protect against exceptions */
         try {
             /* Loop through the objects */
@@ -155,9 +155,9 @@ public class GordianPEMParser {
      * Parse certificates.
      * @param pReader the reader
      * @return the list of objects
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private List<GordianPEMObject> parseObjects(final BufferedReader pReader) throws OceanusException {
+    private List<GordianPEMObject> parseObjects(final BufferedReader pReader) throws GordianException {
         /* Protect against exceptions */
         try {
             /* Create variables */
@@ -202,9 +202,9 @@ public class GordianPEMParser {
     /**
      * Process the start boundary.
      * @param pBoundary the boundary
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private void processStartBoundary(final String pBoundary) throws OceanusException {
+    private void processStartBoundary(final String pBoundary) throws GordianException {
         /* If this is not a begin boundary */
         if (!pBoundary.startsWith(BEGIN)) {
             throw new GordianDataException("Sequencing error");
@@ -220,11 +220,11 @@ public class GordianPEMParser {
      * @param pBoundary the boundary
      * @param pCurrent the current item
      * @param pList the list of parsed objects
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     private void processEndBoundary(final String pBoundary,
                                     final StringBuilder pCurrent,
-                                    final List<GordianPEMObject> pList) throws OceanusException {
+                                    final List<GordianPEMObject> pList) throws GordianException {
         /* If this is not an end boundary */
         if (!pBoundary.startsWith(END)) {
             throw new GordianDataException("Sequencing error");

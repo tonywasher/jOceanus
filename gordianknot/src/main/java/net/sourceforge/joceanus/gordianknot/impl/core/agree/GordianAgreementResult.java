@@ -16,6 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.core.agree;
 
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianCipherFactory;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianCipherParameters;
@@ -40,7 +41,6 @@ import net.sourceforge.joceanus.gordianknot.impl.core.kdf.GordianHKDFParams;
 import net.sourceforge.joceanus.gordianknot.impl.core.key.GordianCoreKeyGenerator;
 import net.sourceforge.joceanus.gordianknot.impl.core.keyset.GordianCoreKeySet;
 import net.sourceforge.joceanus.gordianknot.impl.core.keyset.GordianCoreKeySetFactory;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import org.bouncycastle.util.Arrays;
 
 import java.nio.charset.StandardCharsets;
@@ -119,10 +119,10 @@ public class GordianAgreementResult {
      * @param pSecret the secret
      * @param pResultType the resultType
      * @return teh result
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     Object processSecret(final byte[] pSecret,
-                         final Object pResultType) throws OceanusException {
+                         final Object pResultType) throws GordianException {
         /* If the resultType is a FactoryType */
         if (pResultType instanceof GordianFactoryType) {
             /* derive the factory */
@@ -161,10 +161,10 @@ public class GordianAgreementResult {
      * @param pFactoryType the factoryType
      * @param pSecret the secret
      * @return the factory
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     private GordianFactory deriveFactory(final GordianFactoryType pFactoryType,
-                                         final byte[] pSecret) throws OceanusException {
+                                         final byte[] pSecret) throws GordianException {
         /* Ensure that we clear out the seed */
         byte[] mySeed = null;
         try {
@@ -188,10 +188,10 @@ public class GordianAgreementResult {
      * @param pSpec the keySetSpec
      * @param pSecret the secret
      * @return the derived keySet
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     private GordianKeySet deriveKeySet(final GordianKeySetSpec pSpec,
-                                       final byte[] pSecret) throws OceanusException {
+                                       final byte[] pSecret) throws GordianException {
         /* Derive a shared factory */
         final GordianFactory myFactory = deriveFactory(GordianFactoryType.BC, pSecret);
 
@@ -219,10 +219,10 @@ public class GordianAgreementResult {
      * @param pCipherSpec the cipherSpec
      * @param pSecret the secret
      * @return the ciphers
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     private GordianSymCipher[] deriveCipher(final GordianSymCipherSpec pCipherSpec,
-                                            final byte[] pSecret) throws OceanusException {
+                                            final byte[] pSecret) throws GordianException {
         /* Derive a shared factory */
         final GordianFactory myFactory = deriveFactory(GordianFactoryType.BC, pSecret);
 
@@ -258,10 +258,10 @@ public class GordianAgreementResult {
      * @param pCipherSpec the cipherSpec
      * @param pSecret the secret
      * @return the ciphers
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     private GordianStreamCipher[] deriveCipher(final GordianStreamCipherSpec pCipherSpec,
-                                               final byte[] pSecret) throws OceanusException {
+                                               final byte[] pSecret) throws GordianException {
         /* Derive a shared factory */
         final GordianFactory myFactory = deriveFactory(GordianFactoryType.BC, pSecret);
 
@@ -300,11 +300,11 @@ public class GordianAgreementResult {
      * @param pKeyType the keyType
      * @param pSecret the secret
      * @return the key
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     private <T extends GordianKeySpec> GordianKey<T> deriveKey(final GordianFactory pFactory,
                                                                final T pKeyType,
-                                                               final byte[] pSecret) throws OceanusException {
+                                                               final byte[] pSecret) throws GordianException {
         /* Ensure that we clear out the key */
         byte[] myKey = null;
         try {
@@ -329,10 +329,10 @@ public class GordianAgreementResult {
      * @param pSecret the secret
      * @param pIVLen the IV length
      * @return the derived IV
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     private byte[] deriveIV(final byte[] pSecret,
-                            final int pIVLen) throws OceanusException {
+                            final int pIVLen) throws GordianException {
         /* Calculate the secret */
         return calculateDerivedSecret(pSecret, GordianDerivationId.IV, pIVLen);
     }
@@ -342,10 +342,10 @@ public class GordianAgreementResult {
      * @param pSecret the secret
      * @param pLength the length of bytes
      * @return the factory
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     private byte[] deriveBytes(final byte[] pSecret,
-                               final int pLength) throws OceanusException {
+                               final int pLength) throws GordianException {
         /* Return the secret */
         return calculateDerivedSecret(pSecret, GordianDerivationId.BYTES, pLength);
     }
@@ -356,11 +356,11 @@ public class GordianAgreementResult {
      * @param pId the derivation Id
      * @param pResultLen the length of the result
      * @return the derived secret
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     byte[] calculateDerivedSecret(final byte[] pSecret,
                                   final GordianDerivationId pId,
-                                  final int pResultLen) throws OceanusException {
+                                  final int pResultLen) throws GordianException {
         /* Build the 64-bit seed and create the seeded random */
         final long mySeed = GordianDataConverter.byteArrayToLong(pSecret);
         final Random myRandom = new Random(mySeed);

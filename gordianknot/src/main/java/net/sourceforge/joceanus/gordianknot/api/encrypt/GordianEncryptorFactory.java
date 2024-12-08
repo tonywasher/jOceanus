@@ -16,14 +16,14 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.api.encrypt;
 
-import java.util.List;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairType;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
+
+import java.util.List;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 /**
  * GordianKnot EncryptorFactory API.
@@ -33,9 +33,9 @@ public interface GordianEncryptorFactory {
      * Create keyPairEncryptor.
      * @param pSpec the encryptorSpec
      * @return the Encryptor
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    GordianEncryptor createEncryptor(GordianEncryptorSpec pSpec) throws OceanusException;
+    GordianEncryptor createEncryptor(GordianEncryptorSpec pSpec) throws GordianException;
 
     /**
      * Obtain predicate for Encryptor.

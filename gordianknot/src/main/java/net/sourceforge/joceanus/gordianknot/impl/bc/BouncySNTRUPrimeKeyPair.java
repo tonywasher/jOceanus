@@ -16,13 +16,17 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.bc;
 
-import java.io.IOException;
-import java.security.spec.PKCS8EncodedKeySpec;
-import java.security.spec.X509EncodedKeySpec;
-import java.util.Arrays;
-
-import javax.security.auth.DestroyFailedException;
-
+import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementSpec;
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
+import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
+import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
+import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPrivateKey;
+import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPublicKey;
+import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianAgreementMessageASN1;
+import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianCoreAnonymousAgreement;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianIOException;
+import net.sourceforge.joceanus.gordianknot.impl.core.keypair.GordianKeyPairValidity;
 import org.bouncycastle.asn1.ASN1Encoding;
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
@@ -41,17 +45,11 @@ import org.bouncycastle.pqc.crypto.util.PrivateKeyInfoFactory;
 import org.bouncycastle.pqc.crypto.util.PublicKeyFactory;
 import org.bouncycastle.pqc.crypto.util.SubjectPublicKeyInfoFactory;
 
-import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementSpec;
-import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
-import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
-import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPrivateKey;
-import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPublicKey;
-import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianAgreementMessageASN1;
-import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianCoreAnonymousAgreement;
-import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
-import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianIOException;
-import net.sourceforge.joceanus.gordianknot.impl.core.keypair.GordianKeyPairValidity;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import javax.security.auth.DestroyFailedException;
+import java.io.IOException;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
+import java.util.Arrays;
 
 /**
  * SNTRUPrime KeyPair classes.
@@ -130,10 +128,10 @@ public final class BouncySNTRUPrimeKeyPair {
          * Constructor.
          * @param pFactory the Security Factory
          * @param pKeySpec the keySpec
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
         BouncySNTRUPrimeKeyPairGenerator(final BouncyFactory pFactory,
-                                         final GordianKeyPairSpec pKeySpec) throws OceanusException {
+                                         final GordianKeyPairSpec pKeySpec) throws GordianException {
             /* Initialise underlying class */
             super(pFactory, pKeySpec);
 
@@ -158,7 +156,7 @@ public final class BouncySNTRUPrimeKeyPair {
         }
 
         @Override
-        public PKCS8EncodedKeySpec getPKCS8Encoding(final GordianKeyPair pKeyPair) throws OceanusException {
+        public PKCS8EncodedKeySpec getPKCS8Encoding(final GordianKeyPair pKeyPair) throws GordianException {
             /* Protect against exceptions */
             try {
                 /* Check the keyPair type and keySpecs */
@@ -177,7 +175,7 @@ public final class BouncySNTRUPrimeKeyPair {
 
         @Override
         public BouncyKeyPair deriveKeyPair(final X509EncodedKeySpec pPublicKey,
-                                           final PKCS8EncodedKeySpec pPrivateKey) throws OceanusException {
+                                           final PKCS8EncodedKeySpec pPrivateKey) throws GordianException {
             /* Protect against exceptions */
             try {
                 /* Check the keySpecs */
@@ -202,7 +200,7 @@ public final class BouncySNTRUPrimeKeyPair {
         }
 
         @Override
-        public X509EncodedKeySpec getX509Encoding(final GordianKeyPair pKeyPair) throws OceanusException {
+        public X509EncodedKeySpec getX509Encoding(final GordianKeyPair pKeyPair) throws GordianException {
             /* Protect against exceptions */
             try {
                 /* Check the keyPair type and keySpecs */
@@ -221,7 +219,7 @@ public final class BouncySNTRUPrimeKeyPair {
         }
 
         @Override
-        public BouncyKeyPair derivePublicOnlyKeyPair(final X509EncodedKeySpec pEncodedKey) throws OceanusException {
+        public BouncyKeyPair derivePublicOnlyKeyPair(final X509EncodedKeySpec pEncodedKey) throws GordianException {
             final BouncySNTRUPrimePublicKey myPublic = derivePublicKey(pEncodedKey);
             return new BouncyKeyPair(myPublic);
         }
@@ -230,9 +228,9 @@ public final class BouncySNTRUPrimeKeyPair {
          * Derive public key from encoded.
          * @param pEncodedKey the encoded key
          * @return the public key
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
-        private BouncySNTRUPrimePublicKey derivePublicKey(final X509EncodedKeySpec pEncodedKey) throws OceanusException {
+        private BouncySNTRUPrimePublicKey derivePublicKey(final X509EncodedKeySpec pEncodedKey) throws GordianException {
             /* Protect against exceptions */
             try {
                 /* Check the keySpecs */
@@ -274,7 +272,7 @@ public final class BouncySNTRUPrimeKeyPair {
         }
 
         @Override
-        public GordianAgreementMessageASN1 createClientHelloASN1(final GordianKeyPair pServer) throws OceanusException {
+        public GordianAgreementMessageASN1 createClientHelloASN1(final GordianKeyPair pServer) throws GordianException {
             /* Protect against exceptions */
             try {
                 /* Check keyPair */
@@ -301,7 +299,7 @@ public final class BouncySNTRUPrimeKeyPair {
 
         @Override
         public void acceptClientHelloASN1(final GordianKeyPair pServer,
-                                          final GordianAgreementMessageASN1 pClientHello) throws OceanusException {
+                                          final GordianAgreementMessageASN1 pClientHello) throws GordianException {
             /* Check keyPair */
             BouncyKeyPair.checkKeyPair(pServer);
             checkKeyPair(pServer);

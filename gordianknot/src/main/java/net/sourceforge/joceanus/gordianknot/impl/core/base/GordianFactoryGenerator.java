@@ -16,8 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.core.base;
 
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactory;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 /**
  * FactoryGenerator.
@@ -27,7 +27,7 @@ public interface GordianFactoryGenerator {
      * Create a new factory for the given parameters.
      * @param pParams the parameters
      * @return the new factory
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    GordianFactory newFactory(GordianParameters pParams) throws OceanusException;
+    GordianFactory newFactory(GordianParameters pParams) throws GordianException;
 }

@@ -16,20 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.core.keyset;
 
-import java.util.Enumeration;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Objects;
-
-import org.bouncycastle.asn1.ASN1EncodableVector;
-import org.bouncycastle.asn1.ASN1Integer;
-import org.bouncycastle.asn1.ASN1OctetString;
-import org.bouncycastle.asn1.ASN1Primitive;
-import org.bouncycastle.asn1.ASN1Sequence;
-import org.bouncycastle.asn1.DEROctetString;
-import org.bouncycastle.asn1.DERSequence;
-
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianCipherFactory;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymKeySpec;
@@ -43,7 +30,19 @@ import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianIOException;
 import net.sourceforge.joceanus.gordianknot.impl.core.key.GordianCoreKey;
 import net.sourceforge.joceanus.gordianknot.impl.core.key.GordianCoreKeyGenerator;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import org.bouncycastle.asn1.ASN1EncodableVector;
+import org.bouncycastle.asn1.ASN1Integer;
+import org.bouncycastle.asn1.ASN1OctetString;
+import org.bouncycastle.asn1.ASN1Primitive;
+import org.bouncycastle.asn1.ASN1Sequence;
+import org.bouncycastle.asn1.DEROctetString;
+import org.bouncycastle.asn1.DERSequence;
+
+import java.util.Enumeration;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Objects;
 
 /**
  * ASN1 Encoding of KeySet.
@@ -95,9 +94,9 @@ public class GordianKeySetASN1
     /**
      * Constructor.
      * @param pSequence the Sequence
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private GordianKeySetASN1(final ASN1Sequence pSequence) throws OceanusException {
+    private GordianKeySetASN1(final ASN1Sequence pSequence) throws GordianException {
         /* Protect against exceptions */
         try {
             /* Create the map */
@@ -132,9 +131,9 @@ public class GordianKeySetASN1
      * Parse the ASN1 object.
      * @param pObject the object to parse
      * @return the parsed object
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    public static GordianKeySetASN1 getInstance(final Object pObject) throws OceanusException {
+    public static GordianKeySetASN1 getInstance(final Object pObject) throws GordianException {
         if (pObject instanceof GordianKeySetASN1) {
             return (GordianKeySetASN1) pObject;
         } else if (pObject != null) {
@@ -165,9 +164,9 @@ public class GordianKeySetASN1
      * Build a keySet from the details.
      * @param pFactory the keySet factory
      * @return the new keySet
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    GordianCoreKeySet buildKeySet(final GordianCoreFactory pFactory) throws OceanusException {
+    GordianCoreKeySet buildKeySet(final GordianCoreFactory pFactory) throws GordianException {
         /* Create the new keySet */
         final GordianCoreKeySetFactory myKeySetFactory = (GordianCoreKeySetFactory) pFactory.getKeySetFactory();
         final GordianCipherFactory myCipherFactory = pFactory.getCipherFactory();

@@ -16,6 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.core.keyset;
 
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianCipher;
@@ -39,7 +40,6 @@ import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.key.GordianCoreKey;
 import net.sourceforge.joceanus.gordianknot.impl.core.key.GordianCoreKeyGenerator;
 import net.sourceforge.joceanus.gordianknot.impl.core.keyset.GordianKeySetRecipe.GordianKeySetParameters;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import org.bouncycastle.util.Arrays;
 
 import java.security.spec.PKCS8EncodedKeySpec;
@@ -84,9 +84,9 @@ public final class GordianMultiCipher
     /**
      * Constructor.
      * @param pKeySet the keySet
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    GordianMultiCipher(final GordianCoreKeySet pKeySet) throws OceanusException {
+    GordianMultiCipher(final GordianCoreKeySet pKeySet) throws GordianException {
         /* Access the factory and determine number of steps */
         theFactory = pKeySet.getFactory();
         theNumSteps = pKeySet.getKeySetSpec().getCipherSteps();
@@ -115,7 +115,7 @@ public final class GordianMultiCipher
                       final int pOffset,
                       final int pLength,
                       final byte[] pOutput,
-                      final int pOutOffset) throws OceanusException {
+                      final int pOutOffset) throws GordianException {
         /* Protect against exceptions */
         try {
             /* Initialise counters */
@@ -157,13 +157,13 @@ public final class GordianMultiCipher
      * @param pOutput the output buffer to receive processed data
      * @param pOutOffset offset within pOutput to write bytes to
      * @return the length of data written to the output buffer
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     private int processBlock(final byte[] pBytes,
                              final int pOffset,
                              final int pLength,
                              final byte[] pOutput,
-                             final int pOutOffset) throws OceanusException {
+                             final int pOutOffset) throws GordianException {
         /* Access initial buffer */
         byte[] mySource = pBytes;
         int myBufIndex = 0;
@@ -211,7 +211,7 @@ public final class GordianMultiCipher
 
     @Override
     public int finish(final byte[] pOutput,
-                      final int pOutOffset) throws OceanusException {
+                      final int pOutOffset) throws GordianException {
             /* Access initial buffers */
         int myDataLen = 0;
         int myBufIndex = 0;
@@ -266,10 +266,10 @@ public final class GordianMultiCipher
      * Initialise the ciphers.
      * @param pParams the parameters
      * @param pEncrypt true/false
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     void initCiphers(final GordianKeySetParameters pParams,
-                     final boolean pEncrypt) throws OceanusException {
+                     final boolean pEncrypt) throws GordianException {
         /* Check the parameters */
         checkParameters(pParams);
 
@@ -309,9 +309,9 @@ public final class GordianMultiCipher
     /**
      * Declare symmetricKey.
      * @param pKey the key
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    void declareSymKey(final GordianKey<GordianSymKeySpec> pKey) throws OceanusException {
+    void declareSymKey(final GordianKey<GordianSymKeySpec> pKey) throws GordianException {
         final GordianSymKeyCipherSet myCiphers = new GordianSymKeyCipherSet(theFactory, pKey);
         theCipherMap.put(pKey.getKeyType().getSymKeyType(), myCiphers);
     }
@@ -319,9 +319,9 @@ public final class GordianMultiCipher
     /**
      * Check SymKeys.
      * @param pParams the parameters
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private void checkParameters(final GordianKeySetParameters pParams) throws OceanusException {
+    private void checkParameters(final GordianKeySetParameters pParams) throws GordianException {
         /* Check length */
         final GordianSymKeyType[] mySymKeyTypes = pParams.getSymKeyTypes();
         if (mySymKeyTypes.length != theNumSteps) {
@@ -390,10 +390,10 @@ public final class GordianMultiCipher
      * @param pParams the parameters
      * @param pKeyToSecure the key to secure
      * @return the securedKey
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     byte[] secureKey(final GordianKeySetParameters pParams,
-                     final GordianKey<?> pKeyToSecure) throws OceanusException {
+                     final GordianKey<?> pKeyToSecure) throws GordianException {
         /* Check the parameters */
         checkParameters(pParams);
 
@@ -409,12 +409,12 @@ public final class GordianMultiCipher
      * @param pOffset the offset within the secured key buffer
      * @param pKeyType the type of key to be derived
      * @return the derived key
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     <T extends GordianKeySpec> GordianKey<T> deriveKey(final GordianKeySetParameters pParams,
                                                        final byte[] pSecuredKey,
                                                        final int pOffset,
-                                                       final T pKeyType) throws OceanusException {
+                                                       final T pKeyType) throws GordianException {
         /* Check the parameters */
         checkParameters(pParams);
 
@@ -435,10 +435,10 @@ public final class GordianMultiCipher
      * @param pParams the parameters
      * @param pKeyPairToSecure the key to secure
      * @return the securedKey
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     byte[] securePrivateKey(final GordianKeySetParameters pParams,
-                            final GordianKeyPair pKeyPairToSecure) throws OceanusException {
+                            final GordianKeyPair pKeyPairToSecure) throws GordianException {
         /* Check the parameters */
         checkParameters(pParams);
 
@@ -455,11 +455,11 @@ public final class GordianMultiCipher
      * @param pSecuredPrivateKey the securedPrivateKey
      * @param pOffset the offset within the secured key
      * @return the derived keySpec
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     PKCS8EncodedKeySpec derivePrivateKeySpec(final GordianKeySetParameters pParams,
                                              final byte[] pSecuredPrivateKey,
-                                             final int pOffset) throws OceanusException {
+                                             final int pOffset) throws GordianException {
         /* Check the parameters */
         checkParameters(pParams);
 
@@ -473,10 +473,10 @@ public final class GordianMultiCipher
      * @param pParams the parameters
      * @param pBytesToSecure the key to secure
      * @return the securedBytes
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     byte[] secureBytes(final GordianKeySetParameters pParams,
-                       final byte[] pBytesToSecure) throws OceanusException {
+                       final byte[] pBytesToSecure) throws GordianException {
         /* Access the parameters */
         final GordianSymKeyType[] mySymKeyTypes = pParams.getSymKeyTypes();
         final byte[] myInitVector = pParams.getInitVector();
@@ -508,11 +508,11 @@ public final class GordianMultiCipher
      * @param pSecuredBytes the securedBytes
      * @param pOffset the offset within the secured key
      * @return the derived bytes
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     byte[] deriveBytes(final GordianKeySetParameters pParams,
                        final byte[] pSecuredBytes,
-                       final int pOffset) throws OceanusException {
+                       final int pOffset) throws GordianException {
         /* Check the parameters */
         checkParameters(pParams);
 
@@ -545,9 +545,9 @@ public final class GordianMultiCipher
      * Derive PolyMac key.
      * @param pParams the parameters
      * @return the key
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    public GordianKey<GordianMacSpec> derivePoly1305Key(final GordianKeySetParameters pParams) throws OceanusException {
+    public GordianKey<GordianMacSpec> derivePoly1305Key(final GordianKeySetParameters pParams) throws GordianException {
         /* Access keyType from parameters */
         final GordianSymKeyType myKeyType = pParams.getPoly1305SymKeyType();
 
@@ -574,10 +574,10 @@ public final class GordianMultiCipher
      * @param pSymKeyType teh symKeyType to use
      * @param pMac the mac to encrypt
      * @return the encrypted Mac
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     public byte[] encryptMac(final GordianSymKeyType pSymKeyType,
-                             final byte[] pMac) throws OceanusException {
+                             final byte[] pMac) throws GordianException {
         /* Access the required cipher */
         final GordianSymKeyCipherSet myCiphers = theCipherMap.get(pSymKeyType);
         final GordianSymCipher myCipher = myCiphers.getStandardCipher();
@@ -615,10 +615,10 @@ public final class GordianMultiCipher
          * Constructor.
          * @param pFactory the factory
          * @param pKey the key
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
         GordianSymKeyCipherSet(final GordianCoreFactory pFactory,
-                               final GordianKey<GordianSymKeySpec> pKey) throws OceanusException {
+                               final GordianKey<GordianSymKeySpec> pKey) throws GordianException {
             /* Store parameters */
             theKey = pKey;
             final GordianSymKeySpec myKeySpec = theKey.getKeyType();

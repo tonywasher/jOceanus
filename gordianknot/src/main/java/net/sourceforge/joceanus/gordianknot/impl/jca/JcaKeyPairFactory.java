@@ -16,6 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.jca;
 
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairGenerator;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairType;
@@ -28,7 +29,6 @@ import net.sourceforge.joceanus.gordianknot.impl.core.keystore.GordianCoreKeySto
 import net.sourceforge.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaBIKEKeyPairGenerator;
 import net.sourceforge.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaCMCEKeyPairGenerator;
 import net.sourceforge.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaDHKeyPairGenerator;
-import net.sourceforge.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaMLDSAKeyPairGenerator;
 import net.sourceforge.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaDSAKeyPairGenerator;
 import net.sourceforge.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaECKeyPairGenerator;
 import net.sourceforge.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaEdKeyPairGenerator;
@@ -37,6 +37,7 @@ import net.sourceforge.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaFALC
 import net.sourceforge.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaFrodoKeyPairGenerator;
 import net.sourceforge.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaHQCKeyPairGenerator;
 import net.sourceforge.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaLMSKeyPairGenerator;
+import net.sourceforge.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaMLDSAKeyPairGenerator;
 import net.sourceforge.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaMLKEMKeyPairGenerator;
 import net.sourceforge.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaNTRUKeyPairGenerator;
 import net.sourceforge.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaNTRULPrimeKeyPairGenerator;
@@ -44,10 +45,9 @@ import net.sourceforge.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaPICN
 import net.sourceforge.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaRSAKeyPairGenerator;
 import net.sourceforge.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaRainbowKeyPairGenerator;
 import net.sourceforge.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaSABERKeyPairGenerator;
-import net.sourceforge.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaSNTRUPrimeKeyPairGenerator;
 import net.sourceforge.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaSLHDSAKeyPairGenerator;
+import net.sourceforge.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaSNTRUPrimeKeyPairGenerator;
 import net.sourceforge.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaXMSSKeyPairGenerator;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 import java.security.KeyFactory;
 import java.security.KeyPairGenerator;
@@ -105,7 +105,7 @@ public class JcaKeyPairFactory
     }
 
     @Override
-    public GordianKeyPairGenerator getKeyPairGenerator(final GordianKeyPairSpec pKeySpec) throws OceanusException {
+    public GordianKeyPairGenerator getKeyPairGenerator(final GordianKeyPairSpec pKeySpec) throws GordianException {
         /* Handle composite keyPairGenerator */
         if (GordianKeyPairType.COMPOSITE.equals(pKeySpec.getKeyPairType())) {
             return super.getKeyPairGenerator(pKeySpec);
@@ -130,9 +130,9 @@ public class JcaKeyPairFactory
      * Create the Jca KeyPairGenerator.
      * @param pKeySpec the keySpec
      * @return the KeyGenerator
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private JcaKeyPairGenerator getJcaKeyPairGenerator(final GordianKeyPairSpec pKeySpec) throws OceanusException {
+    private JcaKeyPairGenerator getJcaKeyPairGenerator(final GordianKeyPairSpec pKeySpec) throws GordianException {
         switch (pKeySpec.getKeyPairType()) {
             case RSA:
                 return new JcaRSAKeyPairGenerator(getFactory(), pKeySpec);
@@ -192,10 +192,10 @@ public class JcaKeyPairFactory
      * @param pAlgorithm the Algorithm
      * @param postQuantum is this a postQuantum algorithm?
      * @return the KeyFactory
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     static KeyFactory getJavaKeyFactory(final String pAlgorithm,
-                                        final boolean postQuantum) throws OceanusException {
+                                        final boolean postQuantum) throws GordianException {
         /* Protect against exceptions */
         try {
             /* Return a KeyFactory for the algorithm */
@@ -215,10 +215,10 @@ public class JcaKeyPairFactory
      * @param pAlgorithm the Algorithm
      * @param postQuantum is this a postQuantum algorithm?
      * @return the KeyPairGenerator
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     static KeyPairGenerator getJavaKeyPairGenerator(final String pAlgorithm,
-                                                    final boolean postQuantum) throws OceanusException {
+                                                    final boolean postQuantum) throws GordianException {
         /* Protect against exceptions */
         try {
             /* Return a KeyPairGenerator for the algorithm */

@@ -16,13 +16,12 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.core.stream;
 
-import java.io.InputStream;
-
-import org.bouncycastle.util.Arrays;
-
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigest;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import org.bouncycastle.util.Arrays;
+
+import java.io.InputStream;
 
 /**
  * Input stream Digest implementation.
@@ -80,9 +79,9 @@ class GordianDigestInputStream
 
     /**
      * Check result.
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    void checkResult() throws OceanusException {
+    void checkResult() throws GordianException {
         /* Calculate digest */
         final byte[] myResult = theDigest.finish();
 
@@ -118,7 +117,7 @@ class GordianDigestInputStream
 
         @Override
         public int processBytes(final byte[] pBuffer,
-                                final int pLength) throws OceanusException {
+                                final int pLength) throws GordianException {
             /* Initialise variables */
             final int iLength = pLength;
 

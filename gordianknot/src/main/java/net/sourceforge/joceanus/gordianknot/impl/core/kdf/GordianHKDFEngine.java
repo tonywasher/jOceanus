@@ -16,6 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.core.kdf;
 
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigest;
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestFactory;
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestSpec;
@@ -24,7 +25,6 @@ import net.sourceforge.joceanus.gordianknot.api.mac.GordianMac;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacFactory;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacSpec;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacSpecBuilder;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 import java.util.Arrays;
 import java.util.Iterator;
@@ -52,10 +52,10 @@ public class GordianHKDFEngine {
      * Constructor.
      * @param pFactory the security factory
      * @param pDigestSpec the digestSpec
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     public GordianHKDFEngine(final GordianFactory pFactory,
-                             final GordianDigestSpec pDigestSpec) throws OceanusException {
+                             final GordianDigestSpec pDigestSpec) throws GordianException {
         /* Create the digest */
         final GordianDigestFactory myDigestFactory = pFactory.getDigestFactory();
         theDigest = myDigestFactory.createDigest(pDigestSpec);
@@ -70,9 +70,9 @@ public class GordianHKDFEngine {
      * Derive bytes.
      * @param pParams the parameters
      * @return the derived bytes
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    public byte[] deriveBytes(final GordianHKDFParams pParams) throws OceanusException {
+    public byte[] deriveBytes(final GordianHKDFParams pParams) throws GordianException {
         /* Check parameters */
         if (pParams == null) {
             throw new IllegalStateException("Null HKDF parameters");
@@ -111,10 +111,10 @@ public class GordianHKDFEngine {
      * @param saltIterator the iterator over the salts
      * @param ikmIterator the iterator over the initial keying material
      * @return the extracted material
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     private byte[] extractKeyingMaterial(final Iterator<byte[]> saltIterator,
-                                         final Iterator<byte[]> ikmIterator) throws OceanusException {
+                                         final Iterator<byte[]> ikmIterator) throws GordianException {
         /* Determine the key */
         while (saltIterator.hasNext()) {
             theDigest.update(saltIterator.next());
@@ -133,10 +133,10 @@ public class GordianHKDFEngine {
      * @param pParams the parameters
      * @param pPRK the pseudo-random key
      * @return the expanded material
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     private byte[] expandKeyingMaterial(final GordianHKDFParams pParams,
-                                        final byte[] pPRK) throws OceanusException {
+                                        final byte[] pPRK) throws GordianException {
         /* Initialise the HMac */
         theHMac.initKeyBytes(pPRK);
 

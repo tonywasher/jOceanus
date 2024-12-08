@@ -18,6 +18,7 @@ package net.sourceforge.joceanus.gordianknot.impl.jca;
 
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementSpec;
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianKDFType;
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymKeyType;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianKeyPairFactory;
@@ -32,7 +33,6 @@ import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianCoreSignedAgr
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
 import net.sourceforge.joceanus.gordianknot.impl.jca.JcaKeyPair.JcaPrivateKey;
 import net.sourceforge.joceanus.gordianknot.impl.jca.JcaKeyPair.JcaPublicKey;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import org.bouncycastle.jcajce.SecretKeyWithEncapsulation;
 import org.bouncycastle.jcajce.spec.DHUParameterSpec;
 import org.bouncycastle.jcajce.spec.KEMExtractSpec;
@@ -90,7 +90,7 @@ public final class JcaAgreement {
         }
 
         @Override
-        public GordianAgreementMessageASN1 createClientHelloASN1(final GordianKeyPair pServer) throws OceanusException {
+        public GordianAgreementMessageASN1 createClientHelloASN1(final GordianKeyPair pServer) throws GordianException {
             /* Protect against exceptions */
             try {
                 /* Check keyPairs */
@@ -115,7 +115,7 @@ public final class JcaAgreement {
 
         @Override
         public void acceptClientHelloASN1(final GordianKeyPair pServer,
-                                          final GordianAgreementMessageASN1 pClientHello) throws OceanusException {
+                                          final GordianAgreementMessageASN1 pClientHello) throws GordianException {
             /* Protect against exceptions */
             try {
                 /* Check keyPair */
@@ -171,7 +171,7 @@ public final class JcaAgreement {
         }
 
         @Override
-        public GordianAgreementMessageASN1 createClientHelloASN1(final GordianKeyPair pServer) throws OceanusException {
+        public GordianAgreementMessageASN1 createClientHelloASN1(final GordianKeyPair pServer) throws GordianException {
             /* Protect against exceptions */
             try {
                 /* Check keyPairs */
@@ -197,7 +197,7 @@ public final class JcaAgreement {
 
         @Override
         public void acceptClientHelloASN1(final GordianKeyPair pServer,
-                                          final GordianAgreementMessageASN1 pClientHello) throws OceanusException {
+                                          final GordianAgreementMessageASN1 pClientHello) throws GordianException {
             /* Protect against exceptions */
             try {
                 /* Check keyPair */
@@ -247,7 +247,7 @@ public final class JcaAgreement {
         }
 
         @Override
-        public GordianAgreementMessageASN1 createClientHelloASN1(final GordianKeyPair pServer) throws OceanusException {
+        public GordianAgreementMessageASN1 createClientHelloASN1(final GordianKeyPair pServer) throws GordianException {
             /* Protect against exceptions */
             try {
                 /* Check keyPairs */
@@ -289,7 +289,7 @@ public final class JcaAgreement {
 
         @Override
         public void acceptClientHelloASN1(final GordianKeyPair pServer,
-                                          final GordianAgreementMessageASN1 pClientHello) throws OceanusException {
+                                          final GordianAgreementMessageASN1 pClientHello) throws GordianException {
             /* Protect against exceptions */
             try {
                 /* Check keyPair */
@@ -329,9 +329,9 @@ public final class JcaAgreement {
         /**
          * Establish the agreement.
          * @param pKeyPair the keyPair
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
-        private void establishAgreement(final GordianKeyPair pKeyPair) throws OceanusException {
+        private void establishAgreement(final GordianKeyPair pKeyPair) throws GordianException {
             if (getAgreementSpec().getKeyPairSpec().getKeyPairType().equals(GordianKeyPairType.XDH)) {
                 final String myBase = pKeyPair.getKeyPairSpec().toString();
                 final String myName = JcaAgreementFactory.getFullAgreementName(myBase, getAgreementSpec());
@@ -369,7 +369,7 @@ public final class JcaAgreement {
         @Override
         public GordianAgreementMessageASN1 acceptClientHelloASN1(final GordianKeyPair pClient,
                                                                  final GordianKeyPair pServer,
-                                                                 final GordianAgreementMessageASN1 pClientHello) throws OceanusException {
+                                                                 final GordianAgreementMessageASN1 pClientHello) throws GordianException {
             /* Protect against exceptions */
             try {
                 /* Check keyPair */
@@ -408,7 +408,7 @@ public final class JcaAgreement {
 
         @Override
         public void acceptServerHelloASN1(final GordianKeyPair pServer,
-                                          final GordianAgreementMessageASN1 pServerHello) throws OceanusException {
+                                          final GordianAgreementMessageASN1 pServerHello) throws GordianException {
             /* Protect against exceptions */
             try {
                 /* Check keyPair */
@@ -443,9 +443,9 @@ public final class JcaAgreement {
         /**
          * Establish the agreement.
          * @param pKeyPair the keyPair
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
-        private void establishAgreement(final GordianKeyPair pKeyPair) throws OceanusException {
+        private void establishAgreement(final GordianKeyPair pKeyPair) throws GordianException {
             if (getAgreementSpec().getKeyPairSpec().getKeyPairType().equals(GordianKeyPairType.XDH)) {
                 final String myBase = pKeyPair.getKeyPairSpec().toString();
                 final String myName = JcaAgreementFactory.getFullAgreementName(myBase, getAgreementSpec());
@@ -482,7 +482,7 @@ public final class JcaAgreement {
 
         @Override
         public GordianAgreementMessageASN1 acceptClientHelloASN1(final GordianKeyPair pServer,
-                                                                 final GordianAgreementMessageASN1 pClientHello) throws OceanusException {
+                                                                 final GordianAgreementMessageASN1 pClientHello) throws GordianException {
             /* Protect against exceptions */
             try {
                 /* Process the clientHello */
@@ -516,7 +516,7 @@ public final class JcaAgreement {
 
         @Override
         public void acceptServerHelloASN1(final GordianKeyPair pServer,
-                                          final GordianAgreementMessageASN1 pServerHello) throws OceanusException {
+                                          final GordianAgreementMessageASN1 pServerHello) throws GordianException {
             /* Protect against exceptions */
             try {
                 /* process the serverHello */
@@ -548,9 +548,9 @@ public final class JcaAgreement {
         /**
          * Establish the agreement.
          * @param pKeyPair the keyPair
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
-        private void establishAgreement(final GordianKeyPair pKeyPair) throws OceanusException {
+        private void establishAgreement(final GordianKeyPair pKeyPair) throws GordianException {
             if (getAgreementSpec().getKeyPairSpec().getKeyPairType().equals(GordianKeyPairType.XDH)) {
                 final String myBase = pKeyPair.getKeyPairSpec().toString();
                 final String myName = JcaAgreementFactory.getFullAgreementName(myBase, getAgreementSpec());
@@ -588,7 +588,7 @@ public final class JcaAgreement {
         @Override
         public GordianAgreementMessageASN1 acceptClientHelloASN1(final GordianKeyPair pClient,
                                                                  final GordianKeyPair pServer,
-                                                                 final GordianAgreementMessageASN1 pClientHello) throws OceanusException {
+                                                                 final GordianAgreementMessageASN1 pClientHello) throws GordianException {
             /* Protect against exceptions */
             try {
                 /* Establish agreement */
@@ -624,7 +624,7 @@ public final class JcaAgreement {
 
         @Override
         public GordianAgreementMessageASN1 acceptServerHelloASN1(final GordianKeyPair pServer,
-                                                                 final GordianAgreementMessageASN1 pServerHello) throws OceanusException {
+                                                                 final GordianAgreementMessageASN1 pServerHello) throws GordianException {
             /* Protect against exceptions */
             try {
                 /* Establish agreement */
@@ -662,9 +662,9 @@ public final class JcaAgreement {
         /**
          * Establish the agreement.
          * @param pKeyPair the keyPair
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
-        private void establishAgreement(final GordianKeyPair pKeyPair) throws OceanusException {
+        private void establishAgreement(final GordianKeyPair pKeyPair) throws GordianException {
             if (getAgreementSpec().getKeyPairSpec().getKeyPairType().equals(GordianKeyPairType.XDH)) {
                 final String myBase = pKeyPair.getKeyPairSpec().toString();
                 final String myName = JcaAgreementFactory.getFullAgreementName(myBase + "U", getAgreementSpec());
@@ -702,7 +702,7 @@ public final class JcaAgreement {
         @Override
         public GordianAgreementMessageASN1 acceptClientHelloASN1(final GordianKeyPair pClient,
                                                                  final GordianKeyPair pServer,
-                                                                 final GordianAgreementMessageASN1 pClientHello) throws OceanusException {
+                                                                 final GordianAgreementMessageASN1 pClientHello) throws GordianException {
             /* Protect against exceptions */
             try {
                 /* process clientHello */
@@ -735,7 +735,7 @@ public final class JcaAgreement {
 
         @Override
         public GordianAgreementMessageASN1 acceptServerHelloASN1(final GordianKeyPair pServer,
-                                                                 final GordianAgreementMessageASN1 pServerHello) throws OceanusException {
+                                                                 final GordianAgreementMessageASN1 pServerHello) throws GordianException {
             /* Protect against exceptions */
             try {
                 /* process the serverHello */

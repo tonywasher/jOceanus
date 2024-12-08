@@ -16,13 +16,12 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.core.stream;
 
-import java.io.InputStream;
-
-import org.bouncycastle.util.Arrays;
-
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMac;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import org.bouncycastle.util.Arrays;
+
+import java.io.InputStream;
 
 /**
  * Input stream MAC implementation.
@@ -82,9 +81,9 @@ class GordianMacInputStream
 
     /**
      * Check result.
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    void checkResult() throws OceanusException {
+    void checkResult() throws GordianException {
         /* Record the digest */
         theMac.update(theDigest);
 
@@ -123,7 +122,7 @@ class GordianMacInputStream
 
         @Override
         public int processBytes(final byte[] pBuffer,
-                                final int pLength) throws OceanusException {
+                                final int pLength) throws GordianException {
             /* If we have EOF from the input stream */
             if (pLength == -1) {
                 /* Record the fact and reset the read length to zero */

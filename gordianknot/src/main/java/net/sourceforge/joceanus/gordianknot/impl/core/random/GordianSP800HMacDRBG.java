@@ -16,12 +16,11 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.core.random;
 
-import org.bouncycastle.crypto.prng.EntropySource;
-import org.bouncycastle.util.Arrays;
-
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMac;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianByteArrayInteger;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import org.bouncycastle.crypto.prng.EntropySource;
+import org.bouncycastle.util.Arrays;
 
 /**
  * Implementation of HMacSP800DRBG based on the BouncyCastle Code.
@@ -108,7 +107,7 @@ public final class GordianSP800HMacDRBG
             if (pSeed != null) {
                 updateState(pSeed, SEED_ID);
             }
-        } catch (OceanusException e) {
+        } catch (GordianException e) {
             throw new IllegalStateException(e);
         }
     }
@@ -117,10 +116,10 @@ public final class GordianSP800HMacDRBG
      * Update the state.
      * @param pSeed optional seed material
      * @param pCycle the cycle id
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     private void updateState(final byte[] pSeed,
-                             final byte[] pCycle) throws OceanusException {
+                             final byte[] pCycle) throws GordianException {
 
         /* Initialise the hMac */
         theHMac.initKeyBytes(theKey);
@@ -216,7 +215,7 @@ public final class GordianSP800HMacDRBG
                 System.arraycopy(theHash, 0, myResult, myBuilt, myNeeded);
                 myBuilt += myNeeded;
             }
-        } catch (OceanusException e) {
+        } catch (GordianException e) {
             throw new IllegalStateException(e);
         }
 

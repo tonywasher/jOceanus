@@ -16,11 +16,11 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.api.keystore;
 
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.gordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySet;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 import java.io.File;
 import java.io.OutputStream;
@@ -35,20 +35,20 @@ public interface GordianKeyStore {
      * Store the keyStore to a file.
      * @param pTarget the file to store to
      * @param pPassword the password
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     void storeToFile(File pTarget,
-                     char[] pPassword) throws OceanusException;
+                     char[] pPassword) throws GordianException;
 
     /**
      * Store the keyStore to an OutputStream
      * .
      * @param pTarget the stream to store to
      * @param pPassword the password
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     void storeToStream(OutputStream pTarget,
-                       char[] pPassword) throws OceanusException;
+                       char[] pPassword) throws GordianException;
 
     /**
      * Obtain a list of all aliases.
@@ -79,10 +79,10 @@ public interface GordianKeyStore {
      * Set certificate entry.
      * @param pAlias the alias
      * @param pCertificate the certificate
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     void setCertificate(String pAlias,
-                        GordianCertificate pCertificate) throws OceanusException;
+                        GordianCertificate pCertificate) throws GordianException;
 
     /**
      * Set keyPair entry.
@@ -90,21 +90,21 @@ public interface GordianKeyStore {
      * @param pKeyPair the keyPair
      * @param pPassword the securing password.
      * @param pCertificateChain the certificateChain
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     void setKeyPair(String pAlias,
                     GordianKeyPair pKeyPair,
                     char[] pPassword,
-                    List<GordianCertificate> pCertificateChain) throws OceanusException;
+                    List<GordianCertificate> pCertificateChain) throws GordianException;
 
     /**
      * Update certificateChain.
      * @param pAlias the alias
      * @param pCertificateChain the certificateChain
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     void updateCertificateChain(String pAlias,
-                                List<GordianCertificate> pCertificateChain) throws OceanusException;
+                                List<GordianCertificate> pCertificateChain) throws GordianException;
 
     /**
      * Set key entry.
@@ -112,22 +112,22 @@ public interface GordianKeyStore {
      * @param pAlias the alias
      * @param pKey the key
      * @param pPassword the securing password.
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     <T extends GordianKeySpec> void setKey(String pAlias,
                                            GordianKey<T> pKey,
-                                           char[] pPassword) throws OceanusException;
+                                           char[] pPassword) throws GordianException;
 
     /**
      * Set keySet entry.
      * @param pAlias the alias
      * @param pKeySet the keySet
      * @param pPassword the securing password.
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     void setKeySet(String pAlias,
                    GordianKeySet pKeySet,
-                   char[] pPassword) throws OceanusException;
+                   char[] pPassword) throws GordianException;
 
     /**
      * Determine whether the alias is a specified entry type.
@@ -181,10 +181,10 @@ public interface GordianKeyStore {
      * @param pAlias the alias
      * @param pPassword the password (or null if not required)
      * @return the entry (or null)
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     GordianKeyStoreEntry getEntry(String pAlias,
-                                  char[] pPassword) throws OceanusException;
+                                  char[] pPassword) throws GordianException;
 
     /**
      * Obtain the Certificate for the alias.
@@ -205,10 +205,10 @@ public interface GordianKeyStore {
      * @param pAlias the alias
      * @param pPassword the password
      * @return the keyPair (or null)
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     GordianKeyPair getKeyPair(String pAlias,
-                              char[] pPassword) throws OceanusException;
+                              char[] pPassword) throws GordianException;
 
     /**
      * Obtain the key for the alias.
@@ -216,20 +216,20 @@ public interface GordianKeyStore {
      * @param pAlias the alias
      * @param pPassword the password
      * @return the key (or null)
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
      <T extends GordianKeySpec> GordianKey<T> getKey(String pAlias,
-                                                     char[] pPassword) throws OceanusException;
+                                                     char[] pPassword) throws GordianException;
 
     /**
      * Obtain the keySet for the alias.
      * @param pAlias the alias
      * @param pPassword the password
      * @return the keySet (or null)
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     GordianKeySet getKeySet(String pAlias,
-                            char[] pPassword) throws OceanusException;
+                            char[] pPassword) throws GordianException;
 
     /**
      * Obtain the creationDate of the alias.

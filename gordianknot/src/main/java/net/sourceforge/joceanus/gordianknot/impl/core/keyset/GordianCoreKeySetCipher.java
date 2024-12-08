@@ -16,6 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.core.keyset;
 
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySetCipher;
 import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySetSpec;
@@ -23,7 +24,6 @@ import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianLogicException;
 import net.sourceforge.joceanus.gordianknot.impl.core.keyset.GordianKeySetRecipe.GordianKeySetParameters;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 /**
  * Core keySetCipher.
@@ -79,10 +79,10 @@ public class GordianCoreKeySetCipher
      * Constructor.
      * @param pKeySet the keySet.
      * @param pAead are we in AEAD mode
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     public GordianCoreKeySetCipher(final GordianCoreKeySet pKeySet,
-                                   final boolean pAead) throws OceanusException  {
+                                   final boolean pAead) throws GordianException  {
         theFactory = pKeySet.getFactory();
         aead = pAead;
         theSpec = pKeySet.getKeySetSpec();
@@ -123,22 +123,22 @@ public class GordianCoreKeySetCipher
     }
 
     @Override
-    public void initForEncrypt() throws OceanusException {
+    public void initForEncrypt() throws GordianException {
         encrypting = true;
         reset();
     }
 
     @Override
-    public void initForDecrypt() throws OceanusException {
+    public void initForDecrypt() throws GordianException {
         encrypting = false;
         reset();
     }
 
     /**
      * Reset the cipher.
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    protected void reset() throws OceanusException {
+    protected void reset() throws GordianException {
         /* Set flags */
         hdrBytes = 0;
         initialised = true;
@@ -148,18 +148,18 @@ public class GordianCoreKeySetCipher
     /**
      * Initialise the ciphers.
      * @param pParams the keySet parameters
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    protected void initCiphers(final GordianKeySetParameters pParams) throws OceanusException {
+    protected void initCiphers(final GordianKeySetParameters pParams) throws GordianException {
         /* Initialise the ciphers */
         theCipher.initCiphers(pParams, encrypting);
     }
 
     /**
      * check status.
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    protected void checkStatus() throws OceanusException {
+    protected void checkStatus() throws GordianException {
         /* Check we are initialised */
         if (!initialised) {
             throw new GordianLogicException("Cipher is not initialised");
@@ -184,7 +184,7 @@ public class GordianCoreKeySetCipher
                       final int pOffset,
                       final int pLength,
                       final byte[] pOutput,
-                      final int pOutOffset) throws OceanusException {
+                      final int pOutOffset) throws GordianException {
         /* Check status */
         checkStatus();
 
@@ -220,13 +220,13 @@ public class GordianCoreKeySetCipher
      * @param pOutput the output buffer to receive processed data
      * @param pOutOffset offset within pOutput to write bytes to
      * @return is there overlap between the two buffers? true/false overlap
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     private boolean check4UpdateOverLap(final byte[] pBytes,
                                         final int pOffset,
                                         final int pLength,
                                         final byte[] pOutput,
-                                        final int pOutOffset) throws OceanusException {
+                                        final int pOutOffset) throws GordianException {
         /* Check that the buffers are sufficient */
         if (bufLength(pBytes) < (pLength + pOffset)) {
             throw new GordianLogicException("Input buffer too short.");
@@ -253,13 +253,13 @@ public class GordianCoreKeySetCipher
      * @param pOutput the output buffer
      * @param pOutOffset the offset from which to start writing output
      * @return the length of data written out
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     protected int updateEncryption(final byte[] pBytes,
                                    final int pOffset,
                                    final int pLength,
                                    final byte[] pOutput,
-                                   final int pOutOffset) throws OceanusException {
+                                   final int pOutOffset) throws GordianException {
         /* If we have not initialised the ciphers yet */
         if (hdrBytes == 0) {
             /* Generate a new KeySetRecipe */
@@ -298,13 +298,13 @@ public class GordianCoreKeySetCipher
      * @param pOutput the output buffer
      * @param pOutOffset the offset from which to start writing output
      * @return the length of data written out
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     protected int updateDecryption(final byte[] pBytes,
                                    final int pOffset,
                                    final int pLength,
                                    final byte[] pOutput,
-                                   final int pOutOffset) throws OceanusException {
+                                   final int pOutOffset) throws GordianException {
         /* If we have not yet processed the header*/
         int numRead = 0;
         if (!hdrProcessed) {
@@ -334,7 +334,7 @@ public class GordianCoreKeySetCipher
 
     @Override
     public int finish(final byte[] pOutput,
-                      final int pOutOffset) throws OceanusException {
+                      final int pOutOffset) throws GordianException {
         /* Check that the buffers are sufficient */
         if (bufLength(pOutput) < (getOutputLength(0) + pOutOffset)) {
             throw new GordianLogicException("Output buffer too short.");
@@ -349,10 +349,10 @@ public class GordianCoreKeySetCipher
      * @param pOutput the output buffer to receive processed data
      * @param pOutOffset offset within pOutput to write bytes to
      * @return the number of bytes transferred to the output buffer
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     public int doFinish(final byte[] pOutput,
-                        final int pOutOffset) throws OceanusException {
+                        final int pOutOffset) throws GordianException {
         /* Finish the cipher */
         final int myLen = finishCipher(pOutput, pOutOffset);
 
@@ -368,10 +368,10 @@ public class GordianCoreKeySetCipher
      * @param pOutput the output buffer to receive processed data
      * @param pOutOffset offset within pOutput to write bytes to
      * @return the length of data processed
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     protected int finishCipher(final byte[] pOutput,
-                               final int pOutOffset) throws OceanusException {
+                               final int pOutOffset) throws GordianException {
         /* Check status */
         checkStatus();
 

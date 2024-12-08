@@ -16,6 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.core.encrypt;
 
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestSpecBuilder;
 import net.sourceforge.joceanus.gordianknot.api.encrypt.GordianEncryptorFactory;
@@ -27,7 +28,6 @@ import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairType;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 
 import java.util.ArrayList;
@@ -75,9 +75,9 @@ public abstract class GordianCoreEncryptorFactory
     /**
      * Check the encryptorSpec.
      * @param pEncryptorSpec the encryptorSpec
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    protected void checkEncryptorSpec(final GordianEncryptorSpec pEncryptorSpec) throws OceanusException {
+    protected void checkEncryptorSpec(final GordianEncryptorSpec pEncryptorSpec) throws GordianException {
         /* Check validity of encryptor */
         if (!validEncryptorSpec(pEncryptorSpec)) {
             throw new GordianDataException(GordianCoreFactory.getInvalidText(pEncryptorSpec));

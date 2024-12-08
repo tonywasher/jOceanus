@@ -16,6 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.bc;
 
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianStateAwareKeyPair;
@@ -24,7 +25,6 @@ import net.sourceforge.joceanus.gordianknot.impl.core.keypair.GordianCoreKeyPair
 import net.sourceforge.joceanus.gordianknot.impl.core.keypair.GordianPrivateKey;
 import net.sourceforge.joceanus.gordianknot.impl.core.keypair.GordianPrivateKey.GordianStateAwarePrivateKey;
 import net.sourceforge.joceanus.gordianknot.impl.core.keypair.GordianPublicKey;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import org.bouncycastle.crypto.params.AsymmetricKeyParameter;
 
 import java.util.Objects;
@@ -70,9 +70,9 @@ public class BouncyKeyPair
     /**
      * Check for bouncyKeyPair.
      * @param pKeyPair the keyPair to check
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    public static void checkKeyPair(final GordianKeyPair pKeyPair) throws OceanusException {
+    public static void checkKeyPair(final GordianKeyPair pKeyPair) throws GordianException {
         /* Check that it is a BouncyKeyPair */
         if (!(pKeyPair instanceof BouncyKeyPair)) {
             /* Reject keyPair */
@@ -84,10 +84,10 @@ public class BouncyKeyPair
      * Check for bouncyKeyPair.
      * @param pKeyPair the keyPair to check
      * @param pSpec the required keySpec
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     public static void checkKeyPair(final GordianKeyPair pKeyPair,
-                                    final GordianKeyPairSpec pSpec) throws OceanusException {
+                                    final GordianKeyPairSpec pSpec) throws GordianException {
         /* Check the keyPair */
         checkKeyPair(pKeyPair);
 

@@ -16,6 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.bc;
 
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignatureSpec;
@@ -24,7 +25,6 @@ import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPublicKe
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncySignature.BouncyDigestSignature;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
 import net.sourceforge.joceanus.gordianknot.impl.core.keypair.GordianKeyPairValidity;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.bouncycastle.crypto.AsymmetricCipherKeyPair;
@@ -175,7 +175,7 @@ public final class BouncySLHDSAKeyPair {
         }
 
         @Override
-        public PKCS8EncodedKeySpec getPKCS8Encoding(final GordianKeyPair pKeyPair) throws OceanusException {
+        public PKCS8EncodedKeySpec getPKCS8Encoding(final GordianKeyPair pKeyPair) throws GordianException {
             /* Protect against exceptions */
             try {
                 /* Check the keyPair type and keySpecs */
@@ -194,7 +194,7 @@ public final class BouncySLHDSAKeyPair {
 
         @Override
         public BouncyKeyPair deriveKeyPair(final X509EncodedKeySpec pPublicKey,
-                                           final PKCS8EncodedKeySpec pPrivateKey) throws OceanusException {
+                                           final PKCS8EncodedKeySpec pPrivateKey) throws GordianException {
             /* Protect against exceptions */
             try {
                 /* Check the keySpecs */
@@ -219,7 +219,7 @@ public final class BouncySLHDSAKeyPair {
         }
 
         @Override
-        public X509EncodedKeySpec getX509Encoding(final GordianKeyPair pKeyPair) throws OceanusException {
+        public X509EncodedKeySpec getX509Encoding(final GordianKeyPair pKeyPair) throws GordianException {
             /* Protect against exceptions */
             try {
                 /* Check the keyPair type and keySpecs */
@@ -237,7 +237,7 @@ public final class BouncySLHDSAKeyPair {
         }
 
         @Override
-        public BouncyKeyPair derivePublicOnlyKeyPair(final X509EncodedKeySpec pEncodedKey) throws OceanusException {
+        public BouncyKeyPair derivePublicOnlyKeyPair(final X509EncodedKeySpec pEncodedKey) throws GordianException {
             final BouncySLHDSAPublicKey myPublic = derivePublicKey(pEncodedKey);
             return new BouncyKeyPair(myPublic);
         }
@@ -246,9 +246,9 @@ public final class BouncySLHDSAKeyPair {
          * Derive public key from encoded.
          * @param pEncodedKey the encoded key
          * @return the public key
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
-        private BouncySLHDSAPublicKey derivePublicKey(final X509EncodedKeySpec pEncodedKey) throws OceanusException {
+        private BouncySLHDSAPublicKey derivePublicKey(final X509EncodedKeySpec pEncodedKey) throws GordianException {
             /* Protect against exceptions */
             try {
                 /* Check the keySpecs */
@@ -289,10 +289,10 @@ public final class BouncySLHDSAKeyPair {
          * Constructor.
          * @param pFactory the factory
          * @param pSpec the signatureSpec.
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
         BouncySLHDSASignature(final BouncyFactory pFactory,
-                              final GordianSignatureSpec pSpec) throws OceanusException {
+                              final GordianSignatureSpec pSpec) throws GordianException {
             /* Initialise underlying class */
             super(pFactory, pSpec);
             theSigner = new SLHDSASigner();
@@ -300,7 +300,7 @@ public final class BouncySLHDSAKeyPair {
         }
 
         @Override
-        public void initForSigning(final GordianKeyPair pKeyPair) throws OceanusException {
+        public void initForSigning(final GordianKeyPair pKeyPair) throws GordianException {
             /* Initialise detail */
             BouncyKeyPair.checkKeyPair(pKeyPair);
             super.initForSigning(pKeyPair);
@@ -319,7 +319,7 @@ public final class BouncySLHDSAKeyPair {
         }
 
         @Override
-        public void initForVerify(final GordianKeyPair pKeyPair) throws OceanusException {
+        public void initForVerify(final GordianKeyPair pKeyPair) throws GordianException {
             /* Initialise detail */
             BouncyKeyPair.checkKeyPair(pKeyPair);
             super.initForVerify(pKeyPair);
@@ -375,7 +375,7 @@ public final class BouncySLHDSAKeyPair {
         }
 
         @Override
-        public byte[] sign() throws OceanusException {
+        public byte[] sign() throws GordianException {
             /* Check that we are in signing mode */
             checkMode(GordianSignatureMode.SIGN);
 
@@ -390,7 +390,7 @@ public final class BouncySLHDSAKeyPair {
          }
 
         @Override
-        public boolean verify(final byte[] pSignature) throws OceanusException {
+        public boolean verify(final byte[] pSignature) throws GordianException {
             /* Check that we are in verify mode */
             checkMode(GordianSignatureMode.VERIFY);
 

@@ -18,6 +18,7 @@ package net.sourceforge.joceanus.gordianknot.impl.core.keystore;
 
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementSpec;
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianAnonymousAgreement;
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.gordianknot.api.encrypt.GordianEncryptor;
 import net.sourceforge.joceanus.gordianknot.api.encrypt.GordianEncryptorSpec;
@@ -37,7 +38,6 @@ import net.sourceforge.joceanus.gordianknot.impl.core.encrypt.GordianCoreEncrypt
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianIOException;
 import net.sourceforge.joceanus.gordianknot.impl.core.keyset.GordianKeySetSpecASN1;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import org.bouncycastle.asn1.BEROctetString;
 import org.bouncycastle.asn1.cms.EncryptedContentInfo;
 import org.bouncycastle.asn1.cms.IssuerAndSerialNumber;
@@ -77,9 +77,9 @@ public class GordianCRMEncryptor {
      * convert a certificate.
      * @param pCertificate the certificate
      * @return the converted certificate
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    GordianCoreCertificate convertCertificate(final Certificate pCertificate) throws OceanusException {
+    GordianCoreCertificate convertCertificate(final Certificate pCertificate) throws GordianException {
         return new GordianCoreCertificate(theFactory, pCertificate);
     }
 
@@ -87,9 +87,9 @@ public class GordianCRMEncryptor {
      * Prepare for encryption.
      * @param pCertificate the target certificate
      * @return the CRM result
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    GordianCRMResult prepareForEncryption(final GordianCoreCertificate pCertificate) throws OceanusException {
+    GordianCRMResult prepareForEncryption(final GordianCoreCertificate pCertificate) throws GordianException {
         /* Try to send an encrypted proof */
         final GordianKeyPair myKeyPair = pCertificate.getKeyPair();
         final GordianKeyPairSpec mySpec = myKeyPair.getKeyPairSpec();
@@ -113,10 +113,10 @@ public class GordianCRMEncryptor {
      * @param pAgreeSpec the agreementSpec
      * @param pCertificate the target certificate
      * @return the CRM result
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     private GordianCRMResult prepareAgreedEncryption(final GordianAgreementSpec pAgreeSpec,
-                                                     final GordianCoreCertificate pCertificate) throws OceanusException {
+                                                     final GordianCoreCertificate pCertificate) throws GordianException {
         /* Create the agreement */
         final GordianKeyPairFactory myFactory = theFactory.getKeyPairFactory();
         final GordianCoreAgreementFactory myAgreeFactory = (GordianCoreAgreementFactory) myFactory.getAgreementFactory();
@@ -140,10 +140,10 @@ public class GordianCRMEncryptor {
      * @param pEncryptSpec the encryptionSpec
      * @param pCertificate the target certificate
      * @return the CRM result
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     private GordianCRMResult prepareForEncryption(final GordianEncryptorSpec pEncryptSpec,
-                                                  final GordianCoreCertificate pCertificate) throws OceanusException {
+                                                  final GordianCoreCertificate pCertificate) throws GordianException {
         /* Create the random key */
         final byte[] myKey = createKeyForKeySet();
 
@@ -171,9 +171,9 @@ public class GordianCRMEncryptor {
      * Derive a keySet from a key.
      * @param pKey the key
      * @return the keySet
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private GordianKeySet deriveKeySetFromKey(final byte[] pKey) throws OceanusException {
+    private GordianKeySet deriveKeySetFromKey(final byte[] pKey) throws GordianException {
         /* Create a new Factory using the key */
         final GordianParameters myParams = new GordianParameters(pKey);
         final GordianFactory myFactory = theFactory.newFactory(myParams);
@@ -186,11 +186,11 @@ public class GordianCRMEncryptor {
      * @param pCertificate the target certificate
      * @param pSpec the encryptorSpec
      * @return the encrypted key
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     private RecipientInfo createRecipientInfo(final byte[] pKey,
                                               final GordianCoreCertificate pCertificate,
-                                              final GordianEncryptorSpec pSpec) throws OceanusException {
+                                              final GordianEncryptorSpec pSpec) throws GordianException {
         /* Create the encrypted key */
         final GordianKeyPairFactory myKPFactory = theFactory.getKeyPairFactory();
         final GordianCoreEncryptorFactory myEncFactory = (GordianCoreEncryptorFactory) myKPFactory.getEncryptorFactory();
@@ -214,11 +214,11 @@ public class GordianCRMEncryptor {
      * @param pPKCS8Encoding the PKCS8Encoded privateKey
      * @param pCertificate the local certificate
      * @return the encryptedContentInfo
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     public static EncryptedContentInfo buildEncryptedContentInfo(final GordianKeySet pKeySet,
                                                                  final PKCS8EncodedKeySpec pPKCS8Encoding,
-                                                                 final GordianCertificate pCertificate) throws OceanusException {
+                                                                 final GordianCertificate pCertificate) throws GordianException {
         /* Protect against exceptions */
         try {
             /* Obtain the PrivateKeyInfo */
@@ -239,10 +239,10 @@ public class GordianCRMEncryptor {
      * @param pKeySet the keySet to encrypt with
      * @param pCertificate the certificate to encrypt
      * @return the encryptedContentInfo
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     public static EncryptedContentInfo buildEncryptedContentInfo(final GordianKeySet pKeySet,
-                                                                 final GordianCertificate pCertificate) throws OceanusException {
+                                                                 final GordianCertificate pCertificate) throws GordianException {
         /* Obtain the encrypted certificate */
         final byte[] myData = pKeySet.encryptBytes(pCertificate.getEncoded());
         final GordianKeySetSpecASN1 myASN1 = new GordianKeySetSpecASN1(pKeySet.getKeySetSpec());
@@ -256,11 +256,11 @@ public class GordianCRMEncryptor {
      * @param pCertificate the receiving certificate
      * @param pKeyPair the keyPair
      * @return the keySet
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     public GordianKeySet deriveKeySetFromRecInfo(final KeyTransRecipientInfo pRecInfo,
                                                  final GordianCertificate pCertificate,
-                                                 final GordianKeyPair pKeyPair) throws OceanusException {
+                                                 final GordianKeyPair pKeyPair) throws GordianException {
         /* Extract details */
         final AlgorithmIdentifier myAlgId = pRecInfo.getKeyEncryptionAlgorithm();
         final byte[] myEncryptedKey = pRecInfo.getEncryptedKey().getOctets();
@@ -278,11 +278,11 @@ public class GordianCRMEncryptor {
      * @param pAlgId the algorithm Identifier
      * @param pEncryptedKey the encrypted key
      * @return the derived keySet
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     private GordianKeySet deriveEncryptedKeySet(final GordianKeyPair pKeyPair,
                                                 final AlgorithmIdentifier pAlgId,
-                                                final byte[] pEncryptedKey) throws OceanusException {
+                                                final byte[] pEncryptedKey) throws GordianException {
         /* Handle decryption */
         final GordianKeyPairFactory myKPFactory = theFactory.getKeyPairFactory();
         final GordianCoreEncryptorFactory myEncFactory = (GordianCoreEncryptorFactory) myKPFactory.getEncryptorFactory();
@@ -300,10 +300,10 @@ public class GordianCRMEncryptor {
      * @param pKeyPair the keyPair
      * @param pHello the clientHello
      * @return the derived keySet
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
    private GordianKeySet deriveAgreedKeySet(final GordianKeyPair pKeyPair,
-                                            final byte[] pHello) throws OceanusException {
+                                            final byte[] pHello) throws GordianException {
         /* Handle agreement */
         final GordianKeyPairFactory myKPFactory = theFactory.getKeyPairFactory();
         final GordianCoreAgreementFactory myAgreeFactory = (GordianCoreAgreementFactory) myKPFactory.getAgreementFactory();

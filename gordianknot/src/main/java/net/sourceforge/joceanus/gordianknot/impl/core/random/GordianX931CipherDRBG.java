@@ -16,12 +16,11 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.core.random;
 
-import org.bouncycastle.crypto.prng.EntropySource;
-
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymCipher;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymCipherSpec;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianByteArrayInteger;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import org.bouncycastle.crypto.prng.EntropySource;
 
 /**
  * Implementation of X931DRBG based on the BouncyCastle Code.
@@ -159,7 +158,7 @@ public class GordianX931CipherDRBG
 
             /* Return the bytes */
             System.arraycopy(myResult, 0, pOutput, 0, pOutput.length);
-        } catch (OceanusException e) {
+        } catch (GordianException e) {
             throw new IllegalStateException(e);
         }
 
@@ -171,9 +170,9 @@ public class GordianX931CipherDRBG
      * Stretch a cipher output to required # of bits.
      * @param pNumBits the number of output bits
      * @return the stretched cipher output
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private byte[] cipherGen(final int pNumBits) throws OceanusException {
+    private byte[] cipherGen(final int pNumBits) throws GordianException {
         /* Determine # of iterations */
         final int mySize = getBlockSize() >> BIT_SHIFT;
         final int myLen = pNumBits >> BIT_SHIFT;
@@ -241,11 +240,11 @@ public class GordianX931CipherDRBG
      * @param pResult the result
      * @param pFirst the first array
      * @param pSecond the second array
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     private void processBytes(final byte[] pResult,
                               final byte[] pFirst,
-                              final byte[] pSecond) throws OceanusException {
+                              final byte[] pSecond) throws GordianException {
         /* Combine the two inputs */
         for (int i = 0; i != pResult.length; i++) {
             pResult[i] = (byte) (pFirst[i] ^ pSecond[i]);

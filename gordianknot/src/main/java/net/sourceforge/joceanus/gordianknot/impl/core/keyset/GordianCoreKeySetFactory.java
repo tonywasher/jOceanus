@@ -16,10 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.core.keyset;
 
-import java.util.function.Predicate;
-
-import org.bouncycastle.asn1.ASN1ObjectIdentifier;
-
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySet;
 import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySetFactory;
 import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySetSpec;
@@ -27,7 +24,9 @@ import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianASN1Util;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory.GordianKeySetGenerate;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+
+import java.util.function.Predicate;
 
 /**
  * GordianKnot Core KeySet Factory.
@@ -47,9 +46,9 @@ public class GordianCoreKeySetFactory
     /**
      * Constructor.
      * @param pFactory the factory.
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    public GordianCoreKeySetFactory(final GordianCoreFactory pFactory) throws OceanusException {
+    public GordianCoreKeySetFactory(final GordianCoreFactory pFactory) throws GordianException {
         theFactory = pFactory;
     }
 
@@ -65,9 +64,9 @@ public class GordianCoreKeySetFactory
      * create an empty keySet.
      * @param pSpec the keySetSpec
      * @return the empty keySedt
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    public GordianCoreKeySet createKeySet(final GordianKeySetSpec pSpec) throws OceanusException {
+    public GordianCoreKeySet createKeySet(final GordianKeySetSpec pSpec) throws GordianException {
         /* Check Spec */
         checkKeySetSpec(pSpec);
 
@@ -76,7 +75,7 @@ public class GordianCoreKeySetFactory
     }
 
     @Override
-    public GordianCoreKeySet generateKeySet(final GordianKeySetSpec pSpec) throws OceanusException {
+    public GordianCoreKeySet generateKeySet(final GordianKeySetSpec pSpec) throws GordianException {
         /* Check Spec */
         checkKeySetSpec(pSpec);
 
@@ -87,7 +86,7 @@ public class GordianCoreKeySetFactory
     }
 
     @Override
-    public GordianKeySet generateKeySet(final byte[] pSeed) throws OceanusException {
+    public GordianKeySet generateKeySet(final byte[] pSeed) throws GordianException {
         final GordianCoreKeySet myKeySet = generateKeySet(new GordianKeySetSpec());
         myKeySet.buildFromSecret(pSeed);
         return myKeySet;
@@ -101,9 +100,9 @@ public class GordianCoreKeySetFactory
     /**
      * Check the keySetSpec.
      * @param pSpec the keySetSpec
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    public void checkKeySetSpec(final GordianKeySetSpec pSpec) throws OceanusException {
+    public void checkKeySetSpec(final GordianKeySetSpec pSpec) throws GordianException {
         /* Check validity of KeySet */
         if (!supportedKeySetSpecs().test(pSpec)) {
             throw new GordianDataException(GordianCoreFactory.getInvalidText(pSpec));

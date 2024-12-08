@@ -17,12 +17,12 @@
 package net.sourceforge.joceanus.gordianknot.impl.core.keypair;
 
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementFactory;
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.encrypt.GordianEncryptorFactory;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianKeyPairFactory;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianBIKESpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianCMCESpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianDHGroup;
-import net.sourceforge.joceanus.gordianknot.api.keypair.GordianMLDSASpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianDSAElliptic;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianDSAKeyType;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianDSTU4145Elliptic;
@@ -36,6 +36,7 @@ import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairSpecBuilde
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairType;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianLMSKeySpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianLMSKeySpec.GordianHSSKeySpec;
+import net.sourceforge.joceanus.gordianknot.api.keypair.GordianMLDSASpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianMLKEMSpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianNTRUPrimeSpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianNTRUSpec;
@@ -43,14 +44,13 @@ import net.sourceforge.joceanus.gordianknot.api.keypair.GordianPICNICSpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianRSAModulus;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianRainbowSpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianSABERSpec;
-import net.sourceforge.joceanus.gordianknot.api.keypair.GordianSM2Elliptic;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianSLHDSASpec;
+import net.sourceforge.joceanus.gordianknot.api.keypair.GordianSM2Elliptic;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianXMSSKeySpec;
 import net.sourceforge.joceanus.gordianknot.api.keystore.GordianKeyStoreFactory;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignatureFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
@@ -169,7 +169,7 @@ public abstract class GordianCoreKeyPairFactory
     }
 
     @Override
-    public GordianKeyPairGenerator getKeyPairGenerator(final GordianKeyPairSpec pKeySpec) throws OceanusException {
+    public GordianKeyPairGenerator getKeyPairGenerator(final GordianKeyPairSpec pKeySpec) throws GordianException {
         /* Look up in the cache */
         GordianCompositeKeyPairGenerator myGenerator = theCache.get(pKeySpec);
         if (myGenerator == null) {
@@ -186,21 +186,21 @@ public abstract class GordianCoreKeyPairFactory
     }
 
     @Override
-    public GordianKeyPairSpec determineKeyPairSpec(final PKCS8EncodedKeySpec pEncoded) throws OceanusException {
+    public GordianKeyPairSpec determineKeyPairSpec(final PKCS8EncodedKeySpec pEncoded) throws GordianException {
         return KEYPAIR_ALG_ID.determineKeyPairSpec(pEncoded);
     }
 
     @Override
-    public GordianKeyPairSpec determineKeyPairSpec(final X509EncodedKeySpec pEncoded) throws OceanusException {
+    public GordianKeyPairSpec determineKeyPairSpec(final X509EncodedKeySpec pEncoded) throws GordianException {
         return KEYPAIR_ALG_ID.determineKeyPairSpec(pEncoded);
     }
 
     /**
      * Check the asymKeySpec.
      * @param pKeySpec the asymKeySpec
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    protected void checkAsymKeySpec(final GordianKeyPairSpec pKeySpec) throws OceanusException {
+    protected void checkAsymKeySpec(final GordianKeyPairSpec pKeySpec) throws GordianException {
         /* Check validity of keySpec */
         if (pKeySpec == null || !pKeySpec.isValid()) {
             throw new GordianDataException(GordianCoreFactory.getInvalidText(pKeySpec));

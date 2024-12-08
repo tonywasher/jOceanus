@@ -16,12 +16,12 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.api.factory;
 
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySet;
 import net.sourceforge.joceanus.gordianknot.api.lock.GordianKeyPairLock;
 import net.sourceforge.joceanus.gordianknot.api.lock.GordianKeySetLock;
 import net.sourceforge.joceanus.gordianknot.api.lock.GordianPasswordLockSpec;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 /**
  * Lock Factory API.
@@ -32,10 +32,10 @@ public interface GordianLockFactory {
      * @param pFactoryToLock the factory to lock
      * @param pPassword the password
      * @return the factoryLock
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     default GordianFactoryLock newFactoryLock(GordianFactory pFactoryToLock,
-                                              char[] pPassword) throws OceanusException {
+                                              char[] pPassword) throws GordianException {
         /* Create the factoryLock */
         return newFactoryLock(pFactoryToLock, new GordianPasswordLockSpec(), pPassword);
     }
@@ -46,21 +46,21 @@ public interface GordianLockFactory {
      * @param pLockSpec the locking spec
      * @param pPassword the password
      * @return the factoryLock
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     GordianFactoryLock newFactoryLock(GordianFactory pFactoryToLock,
                                       GordianPasswordLockSpec pLockSpec,
-                                      char[] pPassword) throws OceanusException;
+                                      char[] pPassword) throws GordianException;
 
     /**
      * Create a new factoryLock.
      * @param pFactoryType the factoryType
      * @param pPassword the password
      * @return the factoryLock
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     default GordianFactoryLock newFactoryLock(GordianFactoryType pFactoryType,
-                                              char[] pPassword) throws OceanusException {
+                                              char[] pPassword) throws GordianException {
         /* Create the factoryLock */
         return newFactoryLock(new GordianPasswordLockSpec(), pFactoryType, pPassword);
     }
@@ -71,31 +71,31 @@ public interface GordianLockFactory {
      * @param pFactoryType the factoryType
      * @param pPassword the password
      * @return the factoryLock
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     GordianFactoryLock newFactoryLock(GordianPasswordLockSpec pLockSpec,
                                       GordianFactoryType pFactoryType,
-                                      char[] pPassword) throws OceanusException;
+                                      char[] pPassword) throws GordianException;
 
     /**
      * Resolve a factoryLock.
      * @param pLockBytes the lockBytes
      * @param pPassword the password
      * @return the resolved factoryLock
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     GordianFactoryLock resolveFactoryLock(byte[] pLockBytes,
-                                          char[] pPassword) throws OceanusException;
+                                          char[] pPassword) throws GordianException;
 
     /**
      * Create a new keySetLock for a keySet.
      * @param pKeySetToLock the keySet to lock
      * @param pPassword the password
      * @return the keySet lock
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     default GordianKeySetLock newKeySetLock(final GordianKeySet pKeySetToLock,
-                                            final char[] pPassword) throws OceanusException {
+                                            final char[] pPassword) throws GordianException {
         return newKeySetLock(pKeySetToLock, new GordianPasswordLockSpec(), pPassword);
     }
 
@@ -105,19 +105,19 @@ public interface GordianLockFactory {
      * @param pLockSpec the locking spec
      * @param pPassword the password
      * @return the keySet lock
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     GordianKeySetLock newKeySetLock(GordianKeySet pKeySetToLock,
                                     GordianPasswordLockSpec pLockSpec,
-                                    char[] pPassword) throws OceanusException;
+                                    char[] pPassword) throws GordianException;
 
     /**
      * Create a new keySetLock for a new random keySet.
      * @param pPassword the password
      * @return the keySet lock
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    default GordianKeySetLock newKeySetLock(final char[] pPassword) throws OceanusException {
+    default GordianKeySetLock newKeySetLock(final char[] pPassword) throws GordianException {
         return newKeySetLock(new GordianPasswordLockSpec(), pPassword);
     }
 
@@ -126,30 +126,30 @@ public interface GordianLockFactory {
      * @param pLockSpec the locking spec
      * @param pPassword the password
      * @return the keySet lock
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     GordianKeySetLock newKeySetLock(GordianPasswordLockSpec pLockSpec,
-                                    char[] pPassword) throws OceanusException;
+                                    char[] pPassword) throws GordianException;
 
     /**
      * Resolve a keySetLock.
      * @param pLockBytes the lockBytes
      * @param pPassword the password
      * @return the resolved keySetLock
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     GordianKeySetLock resolveKeySetLock(byte[] pLockBytes,
-                                        char[] pPassword) throws OceanusException;
+                                        char[] pPassword) throws GordianException;
 
     /**
      * Create a new keyPairLock.
      * @param pKeyPair the keyPair
      * @param pPassword the password
      * @return the keySet lock
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     default GordianKeyPairLock newKeyPairLock(final GordianKeyPair pKeyPair,
-                                              final char[] pPassword) throws OceanusException {
+                                              final char[] pPassword) throws GordianException {
         return newKeyPairLock(new GordianPasswordLockSpec(), pKeyPair, pPassword);
     }
 
@@ -159,11 +159,11 @@ public interface GordianLockFactory {
      * @param pKeyPair the keyPair
      * @param pPassword the password
      * @return the keySet lock
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     GordianKeyPairLock newKeyPairLock(GordianPasswordLockSpec pLockSpec,
                                       GordianKeyPair pKeyPair,
-                                      char[] pPassword) throws OceanusException;
+                                      char[] pPassword) throws GordianException;
 
     /**
      * Resolve a keySetLock.
@@ -171,9 +171,9 @@ public interface GordianLockFactory {
      * @param pKeyPair the keyPair
      * @param pPassword the password
      * @return the resolved keySetLock
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     GordianKeyPairLock resolveKeyPairLock(byte[] pLockBytes,
                                           GordianKeyPair pKeyPair,
-                                          char[] pPassword) throws OceanusException;
+                                          char[] pPassword) throws GordianException;
 }

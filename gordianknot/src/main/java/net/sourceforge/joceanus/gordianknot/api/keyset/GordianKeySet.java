@@ -16,13 +16,13 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.api.keyset;
 
-import java.security.spec.X509EncodedKeySpec;
-
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.gordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
+
+import java.security.spec.X509EncodedKeySpec;
 
 /**
  * keySet API.
@@ -37,40 +37,40 @@ public interface GordianKeySet {
     /**
      * Create a keySetCipher.
      * @return the keySetCipher
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    GordianKeySetCipher createCipher() throws OceanusException;
+    GordianKeySetCipher createCipher() throws GordianException;
 
     /**
      * Encrypt bytes.
      * @param pBytesToEncrypt the bytes to encrypt
      * @return the encrypted bytes
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    byte[] encryptBytes(byte[] pBytesToEncrypt) throws OceanusException;
+    byte[] encryptBytes(byte[] pBytesToEncrypt) throws GordianException;
 
     /**
      * Decrypt bytes.
      * @param pBytesToDecrypt the bytes to decrypt
      * @return the decrypted bytes
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    byte[] decryptBytes(byte[] pBytesToDecrypt) throws OceanusException;
+    byte[] decryptBytes(byte[] pBytesToDecrypt) throws GordianException;
 
     /**
      * Create a keySetAADCipher.
      * @return the keySetCipher
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    GordianKeySetAADCipher createAADCipher() throws OceanusException;
+    GordianKeySetAADCipher createAADCipher() throws GordianException;
 
     /**
      * Encrypt AAD bytes.
      * @param pBytesToEncrypt the bytes to encrypt
      * @return the encrypted bytes
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    default byte[] encryptAADBytes(byte[] pBytesToEncrypt) throws OceanusException {
+    default byte[] encryptAADBytes(byte[] pBytesToEncrypt) throws GordianException {
         return encryptAADBytes(pBytesToEncrypt, null);
     }
 
@@ -79,18 +79,18 @@ public interface GordianKeySet {
      * @param pBytesToEncrypt the bytes to encrypt
      * @param pAAD the AAD data
      * @return the encrypted bytes
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     byte[] encryptAADBytes(byte[] pBytesToEncrypt,
-                           byte[] pAAD) throws OceanusException;
+                           byte[] pAAD) throws GordianException;
 
     /**
      * Decrypt AAD bytes.
      * @param pBytesToDecrypt the bytes to decrypt
      * @return the decrypted bytes
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    default byte[] decryptAADBytes(byte[] pBytesToDecrypt) throws OceanusException {
+    default byte[] decryptAADBytes(byte[] pBytesToDecrypt) throws GordianException {
         return decryptAADBytes(pBytesToDecrypt, null);
     }
 
@@ -99,50 +99,50 @@ public interface GordianKeySet {
      * @param pBytesToDecrypt the bytes to decrypt
      * @param pAAD the AAD data
      * @return the decrypted bytes
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     byte[] decryptAADBytes(byte[] pBytesToDecrypt,
-                           byte[] pAAD) throws OceanusException;
+                           byte[] pAAD) throws GordianException;
 
     /**
      * secure KeySet.
      * @param pKeySetToSecure the keySet to secure
      * @return the encryptedKeySet
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    byte[] secureKeySet(GordianKeySet pKeySetToSecure) throws OceanusException;
+    byte[] secureKeySet(GordianKeySet pKeySetToSecure) throws GordianException;
 
     /**
      * derive KeySet.
      * @param pSecuredKeySet the secured keySet
      * @return the decrypted keySet
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    GordianKeySet deriveKeySet(byte[] pSecuredKeySet) throws OceanusException;
+    GordianKeySet deriveKeySet(byte[] pSecuredKeySet) throws GordianException;
 
     /**
      * secure bytes.
      * @param pBytesToSecure the bytes to secure
      * @return the securedBytes
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    byte[] secureBytes(byte[] pBytesToSecure) throws OceanusException;
+    byte[] secureBytes(byte[] pBytesToSecure) throws GordianException;
 
     /**
      * derive bytes.
      * @param pSecuredBytes the secured bytes
      * @return the derivedBytes
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    byte[] deriveBytes(byte[] pSecuredBytes) throws OceanusException;
+    byte[] deriveBytes(byte[] pSecuredBytes) throws GordianException;
 
     /**
      * secure Key.
      * @param pKeyToSecure the key to secure
      * @return the securedKey
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    byte[] secureKey(GordianKey<?> pKeyToSecure) throws OceanusException;
+    byte[] secureKey(GordianKey<?> pKeyToSecure) throws GordianException;
 
     /**
      * derive Key.
@@ -150,28 +150,28 @@ public interface GordianKeySet {
      * @param pSecuredKey the secured key
      * @param pKeyType the key type
      * @return the derived key
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     <T extends GordianKeySpec> GordianKey<T> deriveKey(byte[] pSecuredKey,
-                                                       T pKeyType) throws OceanusException;
+                                                       T pKeyType) throws GordianException;
 
     /**
      * secure privateKey.
      * @param pKeyPair the keyPair to secure
      * @return the securedPrivateKey
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    byte[] securePrivateKey(GordianKeyPair pKeyPair) throws OceanusException;
+    byte[] securePrivateKey(GordianKeyPair pKeyPair) throws GordianException;
 
     /**
      * derive keyPair.
      * @param pPublicKeySpec the publicKeySpec
      * @param pSecuredPrivateKey the secured privateKey
      * @return the keyPair
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     GordianKeyPair deriveKeyPair(X509EncodedKeySpec pPublicKeySpec,
-                                 byte[] pSecuredPrivateKey) throws OceanusException;
+                                 byte[] pSecuredPrivateKey) throws GordianException;
 
     /**
      * Obtain wrapped size of a key.
@@ -184,9 +184,9 @@ public interface GordianKeySet {
      * Obtain wrapped size of the privateKey of a keyPair.
      * @param pKeyPair the keyPair
      * @return the wrapped length
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    int getPrivateKeyWrapLength(GordianKeyPair pKeyPair) throws OceanusException;
+    int getPrivateKeyWrapLength(GordianKeyPair pKeyPair) throws GordianException;
 
     /**
      * Obtain the keySet wrap length.
@@ -197,7 +197,7 @@ public interface GordianKeySet {
     /**
      * Clone the keySet.
      * @return the cloned keySet
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    GordianKeySet cloneIt() throws OceanusException;
+    GordianKeySet cloneIt() throws GordianException;
 }

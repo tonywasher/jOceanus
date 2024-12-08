@@ -16,9 +16,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.core.zip;
 
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianDataConverter;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -70,9 +70,9 @@ public class GordianZipFileProperties {
     /**
      * Constructor from encoded string.
      * @param pCodedString the encoded string
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    protected GordianZipFileProperties(final String pCodedString) throws OceanusException {
+    protected GordianZipFileProperties(final String pCodedString) throws GordianException {
         /* Initialise normally */
         this();
 
@@ -305,9 +305,9 @@ public class GordianZipFileProperties {
     /**
      * Parse the encoded string representation to obtain the property.
      * @param pValue the encoded property
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private void parseEncodedProperty(final String pValue) throws OceanusException {
+    private void parseEncodedProperty(final String pValue) throws GordianException {
         /* Locate the Value separator in the string */
         int myLoc = pValue.indexOf(SEP_VALUE);
 

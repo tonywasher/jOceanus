@@ -16,8 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.core.stream;
 
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianDataConverter;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import org.bouncycastle.util.Arrays;
 
 import java.io.IOException;
@@ -234,7 +234,7 @@ abstract class GordianInputStream
             return iNumRead;
 
             /* Catch exceptions */
-        } catch (OceanusException e) {
+        } catch (GordianException e) {
             throw new IOException(e);
         }
     }
@@ -371,9 +371,9 @@ abstract class GordianInputStream
          * @param pBuffer the buffer from which to store bytes
          * @param pLength the number of bytes read into the buffer (must not be zero)
          * @return the number of bytes now available in the buffer
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
         protected abstract int processBytes(byte[] pBuffer,
-                                            int pLength) throws OceanusException;
+                                            int pLength) throws GordianException;
     }
 }

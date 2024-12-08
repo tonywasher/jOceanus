@@ -16,19 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.core.cipher;
 
-import org.bouncycastle.crypto.CipherParameters;
-import org.bouncycastle.crypto.Digest;
-import org.bouncycastle.crypto.PBEParametersGenerator;
-import org.bouncycastle.crypto.digests.SHA512Digest;
-import org.bouncycastle.crypto.generators.Argon2BytesGenerator;
-import org.bouncycastle.crypto.generators.PKCS12ParametersGenerator;
-import org.bouncycastle.crypto.generators.PKCS5S2ParametersGenerator;
-import org.bouncycastle.crypto.generators.SCrypt;
-import org.bouncycastle.crypto.params.Argon2Parameters;
-import org.bouncycastle.crypto.params.KeyParameter;
-import org.bouncycastle.crypto.params.ParametersWithIV;
-import org.bouncycastle.util.Arrays;
-
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianCipherFactory;
@@ -44,10 +32,21 @@ import net.sourceforge.joceanus.gordianknot.api.cipher.GordianPBESpec.GordianPBE
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianPBESpec.GordianPBESCryptSpec;
 import net.sourceforge.joceanus.gordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
-import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianRandomSource;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.key.GordianCoreKeyGenerator;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import org.bouncycastle.crypto.CipherParameters;
+import org.bouncycastle.crypto.Digest;
+import org.bouncycastle.crypto.PBEParametersGenerator;
+import org.bouncycastle.crypto.digests.SHA512Digest;
+import org.bouncycastle.crypto.generators.Argon2BytesGenerator;
+import org.bouncycastle.crypto.generators.PKCS12ParametersGenerator;
+import org.bouncycastle.crypto.generators.PKCS5S2ParametersGenerator;
+import org.bouncycastle.crypto.generators.SCrypt;
+import org.bouncycastle.crypto.params.Argon2Parameters;
+import org.bouncycastle.crypto.params.KeyParameter;
+import org.bouncycastle.crypto.params.ParametersWithIV;
+import org.bouncycastle.util.Arrays;
 
 /**
  * Core Cipher parameters implementation.
@@ -160,9 +159,9 @@ public class GordianCoreCipherParameters<T extends GordianKeySpec> {
     /**
      * Process cipherParameters.
      * @param pParams the cipher parameters
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    void processParameters(final GordianCipherParameters pParams) throws OceanusException {
+    void processParameters(final GordianCipherParameters pParams) throws GordianException {
         /* If the cipher parameters are PBE */
         if (pParams instanceof GordianPBECipherParameters) {
             /* Process separately */
@@ -184,9 +183,9 @@ public class GordianCoreCipherParameters<T extends GordianKeySpec> {
     /**
      * Process cipherParameters.
      * @param pParams the cipher parameters
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private void processPBEParameters(final GordianPBECipherParameters pParams) throws OceanusException {
+    private void processPBEParameters(final GordianPBECipherParameters pParams) throws GordianException {
         /* Check that the PBE parameters are supported */
         final GordianPBESpec myPBESpec = pParams.getPBESpec();
         final GordianPBECipherSpec<T> myPBECipherSpec = new GordianPBECipherSpec<>(myPBESpec, theSpec);
@@ -232,9 +231,9 @@ public class GordianCoreCipherParameters<T extends GordianKeySpec> {
      * Build a key from bytes.
      * @param pKeyBytes the bytes to use
      * @return the key
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    GordianKey<T> buildKeyFromBytes(final byte[] pKeyBytes) throws OceanusException {
+    GordianKey<T> buildKeyFromBytes(final byte[] pKeyBytes) throws GordianException {
         /* Create generator if needed */
         if (theGenerator == null) {
             final GordianCipherFactory myFactory = theFactory.getCipherFactory();

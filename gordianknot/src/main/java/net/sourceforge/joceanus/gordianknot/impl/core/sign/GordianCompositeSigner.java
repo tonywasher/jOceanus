@@ -16,18 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.core.sign;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.Iterator;
-import java.util.List;
-
-import org.bouncycastle.asn1.ASN1EncodableVector;
-import org.bouncycastle.asn1.ASN1OctetString;
-import org.bouncycastle.asn1.ASN1Sequence;
-import org.bouncycastle.asn1.DEROctetString;
-import org.bouncycastle.asn1.DERSequence;
-
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignature;
@@ -36,7 +25,17 @@ import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignatureSpec;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianIOException;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianLogicException;
 import net.sourceforge.joceanus.gordianknot.impl.core.keypair.GordianCompositeKeyPair;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import org.bouncycastle.asn1.ASN1EncodableVector;
+import org.bouncycastle.asn1.ASN1OctetString;
+import org.bouncycastle.asn1.ASN1Sequence;
+import org.bouncycastle.asn1.DEROctetString;
+import org.bouncycastle.asn1.DERSequence;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * KeyPairSet signer.
@@ -62,10 +61,10 @@ public class GordianCompositeSigner
      * Constructor.
      * @param pFactory the factory
      * @param pSignatureSpec the signatureSpec
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     public GordianCompositeSigner(final GordianFactory pFactory,
-                                  final GordianSignatureSpec pSignatureSpec) throws OceanusException {
+                                  final GordianSignatureSpec pSignatureSpec) throws GordianException {
         /* Store parameters */
         theFactory = pFactory.getKeyPairFactory().getSignatureFactory();
         theSpec = pSignatureSpec;
@@ -85,7 +84,7 @@ public class GordianCompositeSigner
     }
 
     @Override
-    public void initForSigning(final GordianKeyPair pKeyPair) throws OceanusException {
+    public void initForSigning(final GordianKeyPair pKeyPair) throws GordianException {
         /* Check the keyPairSet */
         checkKeySpec(pKeyPair);
 
@@ -99,7 +98,7 @@ public class GordianCompositeSigner
     }
 
     @Override
-    public void initForVerify(final GordianKeyPair pKeyPair) throws OceanusException {
+    public void initForVerify(final GordianKeyPair pKeyPair) throws GordianException {
         /* Check the keyPairSet */
         checkKeySpec(pKeyPair);
 
@@ -115,9 +114,9 @@ public class GordianCompositeSigner
     /**
      * check the keyPair.
      * @param pKeyPair the keyPair
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private void checkKeySpec(final GordianKeyPair pKeyPair) throws OceanusException {
+    private void checkKeySpec(final GordianKeyPair pKeyPair) throws GordianException {
         if (!theFactory.validSignatureSpecForKeyPairSpec(pKeyPair.getKeyPairSpec(), theSpec)) {
             throw new GordianLogicException("Invalid keyPair for signer");
         }
@@ -150,7 +149,7 @@ public class GordianCompositeSigner
     }
 
     @Override
-    public final byte[] sign() throws OceanusException {
+    public final byte[] sign() throws GordianException {
         /* Protect against exceptions */
         try {
             /* Create the signature */
@@ -181,7 +180,7 @@ public class GordianCompositeSigner
     }
 
     @Override
-    public boolean verify(final byte[] pSignature) throws OceanusException {
+    public boolean verify(final byte[] pSignature) throws GordianException {
         /* Protect against exceptions */
         try {
             /* Parse the signature */

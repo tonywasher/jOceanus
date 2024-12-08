@@ -16,6 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.junit.extensions;
 
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
 import net.sourceforge.joceanus.gordianknot.impl.ext.engines.GordianRabbitEngine;
 import net.sourceforge.joceanus.gordianknot.impl.ext.engines.GordianSnow3GEngine;
@@ -26,7 +27,6 @@ import net.sourceforge.joceanus.gordianknot.impl.ext.engines.GordianZuc256Engine
 import net.sourceforge.joceanus.gordianknot.impl.ext.macs.GordianZuc128Mac;
 import net.sourceforge.joceanus.gordianknot.impl.ext.macs.GordianZuc256Mac;
 import net.sourceforge.joceanus.gordianknot.impl.ext.modes.GordianChaChaPoly1305;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import org.bouncycastle.crypto.InvalidCipherTextException;
 import org.bouncycastle.crypto.Mac;
 import org.bouncycastle.crypto.StreamCipher;
@@ -153,10 +153,10 @@ class StreamCipherTest {
     /**
      * Create the streamCipher test suite.
      * @return the test stream
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     @TestFactory
-    Stream<DynamicNode> streamCipherTests() throws OceanusException {
+    Stream<DynamicNode> streamCipherTests() throws GordianException {
         /* Create tests */
         return Stream.of(DynamicContainer.dynamicContainer("streamCiphers", Stream.of(
                 DynamicContainer.dynamicContainer("Rabbit", Stream.of(
@@ -188,10 +188,10 @@ class StreamCipherTest {
     /**
      * Create the streamMac test suite.
      * @return the test stream
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     @TestFactory
-    Stream<DynamicNode> streamMacTests() throws OceanusException {
+    Stream<DynamicNode> streamMacTests() throws GordianException {
         /* Create tests */
         return Stream.of(DynamicContainer.dynamicContainer("streamMacs", Stream.of(
                 DynamicContainer.dynamicContainer("Zuc128Mac", Stream.of(
@@ -209,10 +209,10 @@ class StreamCipherTest {
      * Test the Cipher against the results.
      * @param pCipher the cipher to test.
      * @param pTestCase the testCase
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     static void testCipher(final StreamCipher pCipher,
-                           final TestCase pTestCase) throws OceanusException {
+                           final TestCase pTestCase) throws GordianException {
         /* Access the expected bytes */
         final byte[] myExpected = Hex.decode(pTestCase.theExpected);
 
@@ -245,11 +245,11 @@ class StreamCipherTest {
      * @param pMac the mac to test.
      * @param pOnes use all ones as data?
      * @param pTestCase the testCase
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     static void testMac(final Mac pMac,
                         final boolean pOnes,
-                        final TestCase pTestCase) throws OceanusException {
+                        final TestCase pTestCase) throws GordianException {
         /* Access the expected bytes */
         final byte[] myExpected = Hex.decode(pTestCase.theExpected);
 
@@ -277,11 +277,11 @@ class StreamCipherTest {
      * @param pCipher the cipher to test.
      * @param pTestCase the testCase
      * @param pLimit the limit in bits.
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     static void testStreamLimit(final StreamCipher pCipher,
                                 final TestCase pTestCase,
-                                final int pLimit) throws OceanusException {
+                                final int pLimit) throws GordianException {
         /* Check the limit is a whole number of integers */
         Assertions.assertTrue((pLimit % Integer.SIZE == 0), "Invalid limit");
         final int myNumBytes = pLimit / Byte.SIZE;
@@ -308,11 +308,11 @@ class StreamCipherTest {
      * @param pMac the mac to test.
      * @param pTestCase the testCase
      * @param pLimit the limit in bits.
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     static void testMacLimit(final Mac pMac,
                              final TestCase pTestCase,
-                             final int pLimit) throws OceanusException {
+                             final int pLimit) throws GordianException {
         /* Check the limit is a whole numbet of integers */
         Assertions.assertTrue((pLimit % Integer.SIZE == 0), "Invalid limit");
         final int myNumBytes = pLimit / Byte.SIZE;
@@ -346,10 +346,10 @@ class StreamCipherTest {
      * Test the Cipher against the results.
      * @param pCipher the cipher to test.
      * @param pTestCase the testCase
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     static void testAADCipher(final GordianChaChaPoly1305 pCipher,
-                              final TestCase pTestCase) throws OceanusException {
+                              final TestCase pTestCase) throws GordianException {
         try {
             /* Access the expected bytes */
             final byte[] myExpected = Hex.decode(pTestCase.theExpected);
@@ -451,9 +451,9 @@ class StreamCipherTest {
 
         /**
          * Test cipher.
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
-        void testTheCipher() throws OceanusException {
+        void testTheCipher() throws GordianException {
             final GordianRabbitEngine myEngine = new GordianRabbitEngine();
             testCipher(myEngine, TEST1);
             testCipher(myEngine, TEST2);
@@ -489,9 +489,9 @@ class StreamCipherTest {
 
         /**
          * Test cipher.
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
-        void testTheCipher() throws OceanusException {
+        void testTheCipher() throws GordianException {
             final GordianSosemanukEngine myEngine = new GordianSosemanukEngine();
             testCipher(myEngine, TEST1);
             testCipher(myEngine, TEST2);
@@ -527,9 +527,9 @@ class StreamCipherTest {
 
         /**
          * Test cipher.
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
-        void testTheCipher() throws OceanusException {
+        void testTheCipher() throws GordianException {
             final GordianSosemanukEngine myEngine = new GordianSosemanukEngine();
             testCipher(myEngine, TEST1);
             testCipher(myEngine, TEST2);
@@ -556,9 +556,9 @@ class StreamCipherTest {
 
         /**
          * Test cipher.
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
-        void testTheCipher() throws OceanusException {
+        void testTheCipher() throws GordianException {
             final GordianSnow3GEngine myEngine = new GordianSnow3GEngine();
             testCipher(myEngine, TEST1);
             testCipher(myEngine, TEST2);
@@ -592,9 +592,9 @@ class StreamCipherTest {
 
         /**
          * Test cipher.
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
-        void testTheCipher() throws OceanusException {
+        void testTheCipher() throws GordianException {
             final GordianZuc128Engine myEngine = new GordianZuc128Engine();
             testCipher(myEngine, TEST1);
             testCipher(myEngine, TEST2);
@@ -630,9 +630,9 @@ class StreamCipherTest {
 
         /**
          * Test cipher.
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
-        void testTheCipher() throws OceanusException {
+        void testTheCipher() throws GordianException {
             final GordianZuc256Engine myEngine = new GordianZuc256Engine();
             testCipher(myEngine, TEST1);
             testCipher(myEngine, TEST2);
@@ -666,9 +666,9 @@ class StreamCipherTest {
 
         /**
          * Test Mac.
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
-        void testTheMac() throws OceanusException {
+        void testTheMac() throws GordianException {
             final GordianZuc128Mac myMac = new GordianZuc128Mac();
             testMac(myMac, false, TEST1);
             testMac(myMac, true, TEST2);
@@ -700,9 +700,9 @@ class StreamCipherTest {
 
         /**
          * Test Mac.
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
-        void testTheMac() throws OceanusException {
+        void testTheMac() throws GordianException {
             final GordianZuc256Mac myMac = new GordianZuc256Mac(32);
             testMac(myMac, false, TEST1);
             testMac(myMac, true, TEST2);
@@ -734,9 +734,9 @@ class StreamCipherTest {
 
         /**
          * Test Mac.
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
-        void testTheMac() throws OceanusException {
+        void testTheMac() throws GordianException {
             final GordianZuc256Mac myMac = new GordianZuc256Mac(64);
             testMac(myMac, false, TEST1);
             testMac(myMac, true, TEST2);
@@ -768,9 +768,9 @@ class StreamCipherTest {
 
         /**
          * Test Mac.
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
-        void testTheMac() throws OceanusException {
+        void testTheMac() throws GordianException {
             final GordianZuc256Mac myMac = new GordianZuc256Mac(128);
             testMac(myMac, false, TEST1);
             testMac(myMac, true, TEST2);
@@ -815,9 +815,9 @@ class StreamCipherTest {
 
         /**
          * Test Cipher.
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
-        void testTheCipher() throws OceanusException {
+        void testTheCipher() throws GordianException {
             final GordianXChaCha20Engine myEngine = new GordianXChaCha20Engine();
             testCipher(myEngine, TEST);
         }
@@ -857,9 +857,9 @@ class StreamCipherTest {
 
         /**
          * Test Cipher.
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
-        void testTheCipher() throws OceanusException {
+        void testTheCipher() throws GordianException {
             final GordianChaChaPoly1305 myEngine = new GordianChaChaPoly1305(new ChaCha7539Engine());
             testAADCipher(myEngine, TEST);
         }
@@ -894,9 +894,9 @@ class StreamCipherTest {
 
         /**
          * Test Cipher.
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
-        void testTheCipher() throws OceanusException {
+        void testTheCipher() throws GordianException {
             final GordianChaChaPoly1305 myEngine = new GordianChaChaPoly1305(new GordianXChaCha20Engine());
             testAADCipher(myEngine, TEST);
         }

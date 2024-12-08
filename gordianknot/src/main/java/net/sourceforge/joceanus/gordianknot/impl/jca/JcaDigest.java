@@ -16,14 +16,14 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.jca;
 
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestSubSpec.GordianDigestState;
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestType;
+import net.sourceforge.joceanus.gordianknot.impl.core.digest.GordianCoreDigest;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
-import net.sourceforge.joceanus.gordianknot.impl.core.digest.GordianCoreDigest;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 import java.security.DigestException;
 import java.security.MessageDigest;
@@ -83,7 +83,7 @@ public final class JcaDigest
 
     @Override
     public int doFinish(final byte[] pBuffer,
-                        final int pOffset) throws OceanusException {
+                        final int pOffset) throws GordianException {
         try {
             return theDigest.digest(pBuffer, pOffset, getDigestSize());
         } catch (DigestException e) {
@@ -95,9 +95,9 @@ public final class JcaDigest
      * Obtain the sha2 signature algorithm.
      * @param pDigestSpec the digestSpec
      * @return the algorithm
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    static String getSignAlgorithm(final GordianDigestSpec pDigestSpec) throws OceanusException {
+    static String getSignAlgorithm(final GordianDigestSpec pDigestSpec) throws GordianException {
         /* If this is a sha2 extended algorithm */
         if (GordianDigestType.SHA2.equals(pDigestSpec.getDigestType())
                 && pDigestSpec.isSha2Hybrid()) {
@@ -114,9 +114,9 @@ public final class JcaDigest
      * Create the sha2 hMac algorithm.
      * @param pDigestSpec the digestSpec
      * @return the algorithm
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    static String getHMacAlgorithm(final GordianDigestSpec pDigestSpec) throws OceanusException {
+    static String getHMacAlgorithm(final GordianDigestSpec pDigestSpec) throws GordianException {
         /* If this is a sha2 extended algorithm */
         if (GordianDigestType.SHA2.equals(pDigestSpec.getDigestType())
                 && pDigestSpec.isSha2Hybrid()) {
@@ -133,9 +133,9 @@ public final class JcaDigest
      * Obtain the full algorithm name.
      * @param pDigestSpec the digestSpec
      * @return the name
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    static String getFullAlgorithm(final GordianDigestSpec pDigestSpec) throws OceanusException {
+    static String getFullAlgorithm(final GordianDigestSpec pDigestSpec) throws GordianException {
         /* Access standard name */
         final String myAlgorithm = getAlgorithm(pDigestSpec);
 
@@ -152,9 +152,9 @@ public final class JcaDigest
      * Obtain the algorithm name.
      * @param pDigestSpec the digestSpec
      * @return the name
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    static String getAlgorithm(final GordianDigestSpec pDigestSpec) throws OceanusException {
+    static String getAlgorithm(final GordianDigestSpec pDigestSpec) throws GordianException {
         /* Access digest details */
         final GordianDigestType myType = pDigestSpec.getDigestType();
         final GordianLength myLen = pDigestSpec.getDigestLength();

@@ -16,6 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.core.keystore;
 
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.keystore.GordianCertificate;
 import net.sourceforge.joceanus.gordianknot.api.keystore.GordianKeyPairUse;
 import net.sourceforge.joceanus.gordianknot.api.keystore.GordianKeyStoreEntry;
@@ -27,7 +28,6 @@ import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianDataConverter;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.keystore.GordianPEMObject.GordianPEMObjectType;
 import net.sourceforge.joceanus.gordianknot.impl.core.zip.GordianCoreZipLock;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import org.bouncycastle.asn1.ASN1Object;
 import org.bouncycastle.asn1.crmf.CertReqMsg;
 import org.bouncycastle.asn1.crmf.PKMACValue;
@@ -202,7 +202,7 @@ public class GordianCoreKeyStoreGateway
     @Override
     public void exportEntry(final String pAlias,
                             final OutputStream pStream,
-                            final GordianZipLock pLock) throws OceanusException {
+                            final GordianZipLock pLock) throws GordianException {
         final char[] myPassword = thePasswordResolver.apply(pAlias);
         final GordianKeyStoreEntry myEntry = theKeyStore.getEntry(pAlias, myPassword);
         final GordianPEMCoder myCoder = new GordianPEMCoder(theKeyStore);
@@ -210,7 +210,7 @@ public class GordianCoreKeyStoreGateway
     }
 
     @Override
-    public void setEncryptionTarget(final String pAlias) throws OceanusException {
+    public void setEncryptionTarget(final String pAlias) throws GordianException {
         final List<GordianCertificate> myKeyPairChain = theKeyStore.getCertificateChain(pAlias);
         if (myKeyPairChain != null) {
             theTarget = (GordianCoreCertificate) myKeyPairChain.get(0);
@@ -226,7 +226,7 @@ public class GordianCoreKeyStoreGateway
 
     @Override
     public void createCertificateRequest(final String pAlias,
-                                         final OutputStream pStream) throws OceanusException {
+                                         final OutputStream pStream) throws GordianException {
         /* Access the requested entry */
         final char[] myPassword = thePasswordResolver.apply(pAlias);
         final GordianKeyStoreEntry myEntry = theKeyStore.getEntry(pAlias, myPassword);
@@ -253,7 +253,7 @@ public class GordianCoreKeyStoreGateway
     }
 
     @Override
-    public void setCertifier(final String pAlias) throws OceanusException {
+    public void setCertifier(final String pAlias) throws GordianException {
         final char[] myPassword = thePasswordResolver.apply(pAlias);
         final GordianKeyStoreEntry myEntry = theKeyStore.getEntry(pAlias, myPassword);
         if (myEntry instanceof GordianKeyStorePair) {
@@ -279,7 +279,7 @@ public class GordianCoreKeyStoreGateway
 
     @Override
     public void processCertificateRequest(final InputStream pInStream,
-                                          final OutputStream pOutStream) throws OceanusException {
+                                          final OutputStream pOutStream) throws GordianException {
         /* Decode the certificate request */
         final GordianPEMParser myParser = new GordianPEMParser();
         final List<GordianPEMObject> myObjects = myParser.parsePEMFile(pInStream);
@@ -325,7 +325,7 @@ public class GordianCoreKeyStoreGateway
 
     @Override
     public Integer processCertificateResponse(final InputStream pInStream,
-                                              final OutputStream pOutStream) throws OceanusException {
+                                              final OutputStream pOutStream) throws GordianException {
         /* Decode the certificate response */
         final GordianPEMParser myParser = new GordianPEMParser();
         final List<GordianPEMObject> myObjects = myParser.parsePEMFile(pInStream);
@@ -359,7 +359,7 @@ public class GordianCoreKeyStoreGateway
     }
 
     @Override
-    public void processCertificateAck(final InputStream pInStream) throws OceanusException {
+    public void processCertificateAck(final InputStream pInStream) throws GordianException {
         /* Decode the certificate ack */
         final GordianPEMParser myParser = new GordianPEMParser();
         final List<GordianPEMObject> myObjects = myParser.parsePEMFile(pInStream);
@@ -384,14 +384,14 @@ public class GordianCoreKeyStoreGateway
     }
 
         @Override
-    public GordianKeyStoreEntry importEntry(final InputStream pStream) throws OceanusException {
+    public GordianKeyStoreEntry importEntry(final InputStream pStream) throws GordianException {
         final GordianPEMCoder myCoder = new GordianPEMCoder(theKeyStore);
         myCoder.setLockResolver(theLockResolver);
         return myCoder.importKeyStoreEntry(pStream);
     }
 
     @Override
-    public List<GordianKeyStoreEntry> importCertificates(final InputStream pStream) throws OceanusException {
+    public List<GordianKeyStoreEntry> importCertificates(final InputStream pStream) throws GordianException {
         final GordianPEMCoder myCoder = new GordianPEMCoder(theKeyStore);
         return myCoder.importCertificates(pStream);
     }

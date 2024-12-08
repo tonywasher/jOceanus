@@ -16,10 +16,15 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.core.keystore;
 
-import java.util.Enumeration;
-import java.util.Iterator;
-import java.util.List;
-
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
+import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySet;
+import net.sourceforge.joceanus.gordianknot.api.keystore.GordianCertificate;
+import net.sourceforge.joceanus.gordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStorePair;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianASN1Util.GordianASN1Object;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianIOException;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianLogicException;
+import net.sourceforge.joceanus.gordianknot.impl.core.keystore.GordianCRMEncryptor.GordianCRMResult;
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.ASN1Integer;
 import org.bouncycastle.asn1.ASN1Object;
@@ -36,15 +41,9 @@ import org.bouncycastle.asn1.cms.RecipientInfo;
 import org.bouncycastle.asn1.crmf.PKMACValue;
 import org.bouncycastle.asn1.x509.Certificate;
 
-import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySet;
-import net.sourceforge.joceanus.gordianknot.api.keystore.GordianCertificate;
-import net.sourceforge.joceanus.gordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStorePair;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianASN1Util.GordianASN1Object;
-import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
-import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianIOException;
-import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianLogicException;
-import net.sourceforge.joceanus.gordianknot.impl.core.keystore.GordianCRMEncryptor.GordianCRMResult;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * ASN1 Encoding of CertificateResponse.
@@ -124,9 +123,9 @@ public final class GordianCertResponseASN1
     /**
      * Constructor.
      * @param pSequence the Sequence
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private GordianCertResponseASN1(final ASN1Sequence pSequence) throws OceanusException {
+    private GordianCertResponseASN1(final ASN1Sequence pSequence) throws GordianException {
         /* Protect against exceptions */
         try {
             /* Extract the request/responseIds from the sequence */
@@ -171,9 +170,9 @@ public final class GordianCertResponseASN1
      * Parse the ASN1 object.
      * @param pObject the object to parse
      * @return the parsed object
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    public static GordianCertResponseASN1 getInstance(final Object pObject) throws OceanusException {
+    public static GordianCertResponseASN1 getInstance(final Object pObject) throws GordianException {
         if (pObject instanceof GordianCertResponseASN1) {
             return (GordianCertResponseASN1) pObject;
         } else if (pObject != null) {
@@ -260,9 +259,9 @@ public final class GordianCertResponseASN1
      * Obtain the certificate.
      * @param pEncryptor the encryptor
      * @return the certificate
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    public GordianCoreCertificate getCertificate(final GordianCRMEncryptor pEncryptor) throws OceanusException {
+    public GordianCoreCertificate getCertificate(final GordianCRMEncryptor pEncryptor) throws GordianException {
         /* If the certificate is still encrypted */
         if (isEncrypted()) {
             throw new GordianLogicException("Certificate still encrypted");
@@ -276,9 +275,9 @@ public final class GordianCertResponseASN1
      * Obtain the certificate chain.
      * @param pEncryptor the encryptor
      * @return the chain
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    public GordianCoreCertificate[] getCertificateChain(final GordianCRMEncryptor pEncryptor) throws OceanusException {
+    public GordianCoreCertificate[] getCertificateChain(final GordianCRMEncryptor pEncryptor) throws GordianException {
         /* If the certificate is still encrypted */
         if (isEncrypted()) {
             throw new GordianLogicException("Certificate still encrypted");
@@ -320,9 +319,9 @@ public final class GordianCertResponseASN1
     /**
      * Encrypt certificate.
      * @param pEncryptor the encryptor
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    public void encryptCertificate(final GordianCRMEncryptor pEncryptor) throws OceanusException {
+    public void encryptCertificate(final GordianCRMEncryptor pEncryptor) throws GordianException {
         /* Only encrypt if not currently encrypted */
         if (theEncrypted == null) {
             /* Prepare for encryption */
@@ -340,10 +339,10 @@ public final class GordianCertResponseASN1
      * Decrypt certificate.
      * @param pEncryptor the encryptor
      * @param pKeyPair the keyPair
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     public void decryptCertificate(final GordianCRMEncryptor pEncryptor,
-                                   final GordianKeyStorePair pKeyPair) throws OceanusException {
+                                   final GordianKeyStorePair pKeyPair) throws GordianException {
         /* Only decrypt if currently encrypted */
         if (theCertificate == null) {
             /* Derive the KeySet */

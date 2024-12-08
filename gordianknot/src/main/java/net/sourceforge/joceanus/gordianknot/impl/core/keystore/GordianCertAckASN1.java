@@ -16,8 +16,10 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.core.keystore;
 
-import java.util.Enumeration;
-
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianASN1Util.GordianASN1Object;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianIOException;
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.ASN1Integer;
 import org.bouncycastle.asn1.ASN1OctetString;
@@ -26,10 +28,7 @@ import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.DEROctetString;
 import org.bouncycastle.asn1.DERSequence;
 
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianASN1Util.GordianASN1Object;
-import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
-import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianIOException;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import java.util.Enumeration;
 
 /**
  * ASN1 Encoding of CertificateAck.
@@ -67,9 +66,9 @@ public class GordianCertAckASN1
     /**
      * Constructor.
      * @param pSequence the Sequence
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private GordianCertAckASN1(final ASN1Sequence pSequence) throws OceanusException {
+    private GordianCertAckASN1(final ASN1Sequence pSequence) throws GordianException {
         /* Protect against exceptions */
         try {
             /* Extract the responseId from the sequence */
@@ -89,9 +88,9 @@ public class GordianCertAckASN1
      * Parse the ASN1 object.
      * @param pObject the object to parse
      * @return the parsed object
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    public static GordianCertAckASN1 getInstance(final Object pObject) throws OceanusException {
+    public static GordianCertAckASN1 getInstance(final Object pObject) throws GordianException {
         if (pObject instanceof GordianCertAckASN1) {
             return (GordianCertAckASN1) pObject;
         } else if (pObject != null) {

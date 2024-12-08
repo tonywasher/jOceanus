@@ -16,9 +16,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.api.keyset;
 
-import java.util.function.Predicate;
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import java.util.function.Predicate;
 
 /**
  * GordianKnot KeySet API.
@@ -28,9 +28,9 @@ public interface GordianKeySetFactory {
      * generate random KeySet.
      * @param pKeySetSpec the keySetSpec
      * @return the new keySet
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    GordianKeySet generateKeySet(GordianKeySetSpec pKeySetSpec) throws OceanusException;
+    GordianKeySet generateKeySet(GordianKeySetSpec pKeySetSpec) throws GordianException;
 
     /**
      * Obtain predicate for supported KeySetSpecs.

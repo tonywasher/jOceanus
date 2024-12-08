@@ -16,8 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.api.agree;
 
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 /**
  * Handshake Two/ThreeShot Agreement.
@@ -28,9 +28,9 @@ public interface GordianHandshakeAgreement
      * create the clientHello.
      * @param pClient the client keyPair
      * @return the clientHello message
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    byte[] createClientHello(GordianKeyPair pClient) throws OceanusException;
+    byte[] createClientHello(GordianKeyPair pClient) throws GordianException;
 
     /**
      * Accept the clientHello.
@@ -38,26 +38,26 @@ public interface GordianHandshakeAgreement
      * @param pServer the server keyPair
      * @param pClientHello the incoming clientHello message
      * @return the serverHello message
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     byte[] acceptClientHello(GordianKeyPair pClient,
                              GordianKeyPair pServer,
-                             byte[] pClientHello) throws OceanusException;
+                             byte[] pClientHello) throws GordianException;
 
     /**
      * Accept the serverHello.
      * @param pServer the server keyPair
      * @param pServerHello the serverHello message
      * @return the clientConfirm (or null if no confirmation)
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     byte[] acceptServerHello(GordianKeyPair pServer,
-                             byte[] pServerHello) throws OceanusException;
+                             byte[] pServerHello) throws GordianException;
 
     /**
      * Accept the clientConfirm.
      * @param pClientConfirm the clientConfirm message
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    void acceptClientConfirm(byte[] pClientConfirm) throws OceanusException;
+    void acceptClientConfirm(byte[] pClientConfirm) throws GordianException;
 }

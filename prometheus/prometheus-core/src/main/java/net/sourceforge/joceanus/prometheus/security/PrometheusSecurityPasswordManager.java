@@ -16,6 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.prometheus.security;
 
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactoryLock;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactoryType;
@@ -31,6 +32,7 @@ import net.sourceforge.joceanus.gordianknot.util.GordianGenerator;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.prometheus.exc.PrometheusDataException;
 import net.sourceforge.joceanus.prometheus.exc.PrometheusLogicException;
+import net.sourceforge.joceanus.prometheus.exc.PrometheusSecurityException;
 
 import java.nio.ByteBuffer;
 import java.util.Arrays;
@@ -128,8 +130,14 @@ public class PrometheusSecurityPasswordManager {
      * @throws OceanusException on error
      */
     public GordianFactoryLock newFactoryLock(final String pSource) throws OceanusException {
-        final GordianFactory myFactory = GordianGenerator.createRandomFactory(GordianFactoryType.BC);
-        return (GordianFactoryLock) requestPassword(pSource, true, p -> createFactoryLock(myFactory, p));
+        /* Protect against exceptions */
+        try {
+            final GordianFactory myFactory = GordianGenerator.createRandomFactory(GordianFactoryType.BC);
+            return (GordianFactoryLock) requestPassword(pSource, true, p -> createFactoryLock(myFactory, p));
+
+        } catch (GordianException e) {
+            throw new PrometheusSecurityException(e);
+        }
     }
 
     /**
@@ -177,14 +185,20 @@ public class PrometheusSecurityPasswordManager {
      * @throws OceanusException on error
      */
     public GordianFactoryLock similarFactoryLock(final Object pReference) throws OceanusException {
-        /* Create a new random factory */
-        final GordianFactory myFactory = GordianGenerator.createRandomFactory(GordianFactoryType.BC);
+        /* Protect against exceptions */
+        try {
+            /* Create a new random factory */
+            final GordianFactory myFactory = GordianGenerator.createRandomFactory(GordianFactoryType.BC);
 
-        /* LookUp the password */
-        final ByteBuffer myPassword = theCache.lookUpResolvedPassword(pReference);
+            /* LookUp the password */
+            final ByteBuffer myPassword = theCache.lookUpResolvedPassword(pReference);
 
-        /* Create a similar factoryLock */
-        return theCache.createSimilarFactoryLock(myFactory, myPassword);
+            /* Create a similar factoryLock */
+            return theCache.createSimilarFactoryLock(myFactory, myPassword);
+
+        } catch (GordianException e) {
+            throw new PrometheusSecurityException(e);
+        }
     }
 
     /**
@@ -194,8 +208,14 @@ public class PrometheusSecurityPasswordManager {
      * @throws OceanusException on error
      */
     public GordianKeySetLock newKeySetLock(final String pSource) throws OceanusException {
-        final GordianKeySet myKeySet = theFactory.getKeySetFactory().generateKeySet(theLockSpec.getKeySetSpec());
-        return (GordianKeySetLock) requestPassword(pSource, true, p -> createKeySetLock(myKeySet, p));
+        /* Protect against exceptions */
+        try {
+            final GordianKeySet myKeySet = theFactory.getKeySetFactory().generateKeySet(theLockSpec.getKeySetSpec());
+            return (GordianKeySetLock) requestPassword(pSource, true, p -> createKeySetLock(myKeySet, p));
+
+        } catch (GordianException e) {
+            throw new PrometheusSecurityException(e);
+        }
     }
 
     /**
@@ -243,14 +263,20 @@ public class PrometheusSecurityPasswordManager {
      * @throws OceanusException on error
      */
     public GordianKeySetLock similarKeySetLock(final Object pReference) throws OceanusException {
-        /* Create a new random keySet */
-        final GordianKeySet myKeySet = theFactory.getKeySetFactory().generateKeySet(theLockSpec.getKeySetSpec());
+        /* Protect against exceptions */
+        try {
+            /* Create a new random keySet */
+            final GordianKeySet myKeySet = theFactory.getKeySetFactory().generateKeySet(theLockSpec.getKeySetSpec());
 
-        /* LookUp the password */
-        final ByteBuffer myPassword = theCache.lookUpResolvedPassword(pReference);
+            /* LookUp the password */
+            final ByteBuffer myPassword = theCache.lookUpResolvedPassword(pReference);
 
-        /* Create a similar keySetLock */
-        return theCache.createSimilarKeySetLock(myKeySet, myPassword);
+            /* Create a similar keySetLock */
+            return theCache.createSimilarKeySetLock(myKeySet, myPassword);
+
+        } catch (GordianException e) {
+            throw new PrometheusSecurityException(e);
+        }
     }
 
     /**
@@ -338,15 +364,21 @@ public class PrometheusSecurityPasswordManager {
      */
     private void resolveKeySetZipLock(final GordianZipLock pZipLock,
                                       final String pSource) throws OceanusException {
-        /* Access lockBytes */
-        final byte[] myLockBytes = pZipLock.getLockBytes();
+        /* Protect against exceptions */
+        try {
+            /* Access lockBytes */
+            final byte[] myLockBytes = pZipLock.getLockBytes();
 
-        /* Look up resolved keySet */
-        final GordianKeySetLock myLock = resolveKeySetLock(myLockBytes, pSource);
+            /* Look up resolved keySet */
+            final GordianKeySetLock myLock = resolveKeySetLock(myLockBytes, pSource);
 
-        /* If we resolved the lock */
-        if (myLock != null) {
-            pZipLock.unlock(myLock);
+            /* If we resolved the lock */
+            if (myLock != null) {
+                pZipLock.unlock(myLock);
+            }
+
+        } catch (GordianException e) {
+            throw new PrometheusSecurityException(e);
         }
     }
 
@@ -358,15 +390,21 @@ public class PrometheusSecurityPasswordManager {
      */
     private void resolveFactoryZipLock(final GordianZipLock pZipLock,
                                        final String pSource) throws OceanusException {
-        /* Access lockBytes */
-        final byte[] myLockBytes = pZipLock.getLockBytes();
+        /* Protect against exceptions */
+        try {
+            /* Access lockBytes */
+            final byte[] myLockBytes = pZipLock.getLockBytes();
 
-        /* Look up resolved keySet */
-        final GordianFactoryLock myLock = resolveFactoryLock(myLockBytes, pSource);
+            /* Look up resolved keySet */
+            final GordianFactoryLock myLock = resolveFactoryLock(myLockBytes, pSource);
 
-        /* If we resolved the lock */
-        if (myLock != null) {
-            pZipLock.unlock(myLock);
+            /* If we resolved the lock */
+            if (myLock != null) {
+                pZipLock.unlock(myLock);
+            }
+
+        } catch (GordianException e) {
+            throw new PrometheusSecurityException(e);
         }
     }
 
@@ -453,9 +491,15 @@ public class PrometheusSecurityPasswordManager {
      */
     private GordianFactoryLock createFactoryLock(final GordianFactory pFactory,
                                                  final char[] pPassword) throws OceanusException {
-        final GordianFactoryLock myLock = theLockFactory.newFactoryLock(pFactory, theLockSpec, pPassword);
-        theCache.addResolvedFactory(myLock, pPassword);
-        return myLock;
+        /* Protect against exceptions */
+        try {
+            final GordianFactoryLock myLock = theLockFactory.newFactoryLock(pFactory, theLockSpec, pPassword);
+            theCache.addResolvedFactory(myLock, pPassword);
+            return myLock;
+
+        } catch (GordianException e) {
+            throw new PrometheusSecurityException(e);
+        }
     }
 
     /**
@@ -467,9 +511,15 @@ public class PrometheusSecurityPasswordManager {
      */
     private GordianFactoryLock resolveFactoryLock(final byte[] pLockBytes,
                                                   final char[] pPassword) throws OceanusException {
-        final GordianFactoryLock myFactory = theLockFactory.resolveFactoryLock(pLockBytes, pPassword);
-        theCache.addResolvedFactory(myFactory, pPassword);
-        return myFactory;
+        /* Protect against exceptions */
+        try {
+            final GordianFactoryLock myFactory = theLockFactory.resolveFactoryLock(pLockBytes, pPassword);
+            theCache.addResolvedFactory(myFactory, pPassword);
+            return myFactory;
+
+        } catch (GordianException e) {
+            throw new PrometheusSecurityException(e);
+        }
     }
 
     /**
@@ -481,9 +531,15 @@ public class PrometheusSecurityPasswordManager {
      */
     private GordianKeySetLock createKeySetLock(final GordianKeySet pKeySet,
                                                final char[] pPassword) throws OceanusException {
-        final GordianKeySetLock myLock = theLockFactory.newKeySetLock(pKeySet, theLockSpec, pPassword);
-        theCache.addResolvedKeySet(myLock, pPassword);
-        return myLock;
+        /* Protect against exceptions */
+        try {
+            final GordianKeySetLock myLock = theLockFactory.newKeySetLock(pKeySet, theLockSpec, pPassword);
+            theCache.addResolvedKeySet(myLock, pPassword);
+            return myLock;
+
+        } catch (GordianException e) {
+            throw new PrometheusSecurityException(e);
+        }
     }
 
     /**
@@ -495,9 +551,15 @@ public class PrometheusSecurityPasswordManager {
      */
     private GordianKeySetLock resolveKeySetLock(final byte[] pLockBytes,
                                                 final char[] pPassword) throws OceanusException {
-        final GordianKeySetLock myKeySet = theLockFactory.resolveKeySetLock(pLockBytes, pPassword);
-        theCache.addResolvedKeySet(myKeySet, pPassword);
-        return myKeySet;
+        /* Protect against exceptions */
+        try {
+            final GordianKeySetLock myKeySet = theLockFactory.resolveKeySetLock(pLockBytes, pPassword);
+            theCache.addResolvedKeySet(myKeySet, pPassword);
+            return myKeySet;
+
+        } catch (GordianException e) {
+            throw new PrometheusSecurityException(e);
+        }
     }
 
     /**
@@ -509,9 +571,15 @@ public class PrometheusSecurityPasswordManager {
      */
     private GordianKeyPairLock createKeyPairLock(final GordianKeyPair pKeyPair,
                                                  final char[] pPassword) throws OceanusException {
-        final GordianKeyPairLock myLock = theLockFactory.newKeyPairLock(theLockSpec, pKeyPair, pPassword);
-        theCache.addResolvedKeyPair(myLock, pPassword);
-        return myLock;
+        /* Protect against exceptions */
+        try {
+            final GordianKeyPairLock myLock = theLockFactory.newKeyPairLock(theLockSpec, pKeyPair, pPassword);
+            theCache.addResolvedKeyPair(myLock, pPassword);
+            return myLock;
+
+        } catch (GordianException e) {
+            throw new PrometheusSecurityException(e);
+        }
     }
 
     /**
@@ -525,8 +593,14 @@ public class PrometheusSecurityPasswordManager {
     private GordianKeyPairLock resolveKeyPairLock(final byte[] pLockBytes,
                                                   final GordianKeyPair pKeyPair,
                                                   final char[] pPassword) throws OceanusException {
-        final GordianKeyPairLock myKeyPair = theLockFactory.resolveKeyPairLock(pLockBytes, pKeyPair, pPassword);
-        theCache.addResolvedKeyPair(myKeyPair, pPassword);
-        return myKeyPair;
+        /* Protect against exceptions */
+        try {
+            final GordianKeyPairLock myKeyPair = theLockFactory.resolveKeyPairLock(pLockBytes, pKeyPair, pPassword);
+            theCache.addResolvedKeyPair(myKeyPair, pPassword);
+            return myKeyPair;
+
+        } catch (GordianException e) {
+            throw new PrometheusSecurityException(e);
+        }
     }
 }

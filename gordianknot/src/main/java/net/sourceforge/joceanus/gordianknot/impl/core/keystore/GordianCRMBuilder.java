@@ -16,10 +16,30 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.core.keystore;
 
-import java.io.IOException;
-import java.security.spec.PKCS8EncodedKeySpec;
-import java.security.spec.X509EncodedKeySpec;
-
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
+import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
+import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigest;
+import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestFactory;
+import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestSpec;
+import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestSpecBuilder;
+import net.sourceforge.joceanus.gordianknot.api.factory.GordianKeyPairFactory;
+import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
+import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairGenerator;
+import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
+import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySet;
+import net.sourceforge.joceanus.gordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStorePair;
+import net.sourceforge.joceanus.gordianknot.api.mac.GordianMac;
+import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacFactory;
+import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacSpec;
+import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignature;
+import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignatureSpec;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianASN1Util;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianRandomSource;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianIOException;
+import net.sourceforge.joceanus.gordianknot.impl.core.keystore.GordianCRMEncryptor.GordianCRMResult;
+import net.sourceforge.joceanus.gordianknot.impl.core.sign.GordianCoreSignatureFactory;
 import org.bouncycastle.asn1.ASN1Object;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.ASN1Primitive;
@@ -48,30 +68,9 @@ import org.bouncycastle.asn1.x509.Extension;
 import org.bouncycastle.asn1.x509.ExtensionsGenerator;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 
-import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
-import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigest;
-import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestFactory;
-import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestSpec;
-import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestSpecBuilder;
-import net.sourceforge.joceanus.gordianknot.api.factory.GordianKeyPairFactory;
-import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
-import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairGenerator;
-import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
-import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySet;
-import net.sourceforge.joceanus.gordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStorePair;
-import net.sourceforge.joceanus.gordianknot.api.mac.GordianMac;
-import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacFactory;
-import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacSpec;
-import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignature;
-import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignatureSpec;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianASN1Util;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
-import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
-import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianIOException;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianRandomSource;
-import net.sourceforge.joceanus.gordianknot.impl.core.keystore.GordianCRMEncryptor.GordianCRMResult;
-import net.sourceforge.joceanus.gordianknot.impl.core.sign.GordianCoreSignatureFactory;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import java.io.IOException;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
 
 /**
  * CRM Builder.
@@ -110,10 +109,10 @@ public class GordianCRMBuilder {
      * @param pKeyPair the keyStore entry
      * @param pRequestId the reqId
      * @return the certificate request message
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     public CertReqMsg createCertificateRequest(final GordianKeyStorePair pKeyPair,
-                                               final int pRequestId) throws OceanusException {
+                                               final int pRequestId) throws GordianException {
         /* Access the certificate */
         final GordianCoreCertificate myCert = (GordianCoreCertificate) pKeyPair.getCertificateChain().get(0);
 
@@ -142,10 +141,10 @@ public class GordianCRMBuilder {
      * @param pCertificate the local certificate
      * @param pRequestId the reqId
      * @return the certificate request
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     private static CertRequest createCertRequest(final GordianCoreCertificate pCertificate,
-                                                 final int pRequestId) throws OceanusException {
+                                                 final int pRequestId) throws GordianException {
         /* Protect against exceptions */
         try {
             /* Create the Certificate template Builder */
@@ -179,11 +178,11 @@ public class GordianCRMBuilder {
      * @param pCertificate the local certificate
      * @param pCertRequest the certificate request
      * @return the proof of possession
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     private ProofOfPossession createKeyPairProofOfPossession(final GordianKeyStorePair pKeyPair,
                                                              final GordianCoreCertificate pCertificate,
-                                                             final CertRequest pCertRequest) throws OceanusException {
+                                                             final CertRequest pCertRequest) throws GordianException {
         /* Try to send a signed proof */
         final GordianKeyPair myKeyPair = pKeyPair.getKeyPair();
         final GordianKeyPairSpec mySpec = myKeyPair.getKeyPairSpec();
@@ -204,10 +203,10 @@ public class GordianCRMBuilder {
      * @param pKeyPair the keyPair
      * @param pCertificate the local certificate
      * @return the proof of possession
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     private ProofOfPossession createTargetedProofOfPossession(final GordianKeyPair pKeyPair,
-                                                              final GordianCoreCertificate pCertificate) throws OceanusException {
+                                                              final GordianCoreCertificate pCertificate) throws GordianException {
         /* Obtain the PKCS8Encoding of the private key */
         final GordianKeyPairFactory myFactory = theGateway.getFactory().getKeyPairFactory();
         final GordianKeyPairSpec mySpec = pKeyPair.getKeyPairSpec();
@@ -236,11 +235,11 @@ public class GordianCRMBuilder {
      * @param pSignSpec the signatureSpec
      * @param pCertRequest the certificate request
      * @return the proof of possession
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     ProofOfPossession createKeyPairSignedProof(final GordianKeyPair pKeyPair,
                                                final GordianSignatureSpec pSignSpec,
-                                               final CertRequest pCertRequest) throws OceanusException {
+                                               final CertRequest pCertRequest) throws GordianException {
         /* Create the signer */
         final GordianKeyPairFactory myFactory = theGateway.getFactory().getKeyPairFactory();
         final GordianCoreSignatureFactory mySignFactory = (GordianCoreSignatureFactory) myFactory.getSignatureFactory();
@@ -258,12 +257,12 @@ public class GordianCRMBuilder {
      * @param pSigner the signer
      * @param pCertRequest the certificate request
      * @return the proof of possession
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     private static ProofOfPossession createSignedProof(final GordianKeyPair pKeyPair,
                                                        final AlgorithmIdentifier pAlgId,
                                                        final GordianSignature pSigner,
-                                                       final CertRequest pCertRequest) throws OceanusException {
+                                                       final CertRequest pCertRequest) throws GordianException {
         /* Protect against exceptions */
         try {
             /* Create the signature */
@@ -309,10 +308,10 @@ public class GordianCRMBuilder {
      * @param pSecret the secret
      * @param pData the data to calculate over
      * @return the MACValue
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     public PKMACValue createPKMACValue(final byte[] pSecret,
-                                       final ASN1Object pData) throws OceanusException {
+                                       final ASN1Object pData) throws GordianException {
         final PBMParameter myParams = generatePBMParameters();
         return calculatePKMacValue(theGateway.getFactory(), pSecret, pData, myParams);
     }
@@ -322,11 +321,11 @@ public class GordianCRMBuilder {
      * @param pSecret the secret
      * @param pData the data to calculate over
      * @param pMACValue the supplied MACValue
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     public void checkPKMACValue(final byte[] pSecret,
                                 final ASN1Object pData,
-                                final PKMACValue pMACValue) throws OceanusException {
+                                final PKMACValue pMACValue) throws GordianException {
         final PBMParameter myParams = PBMParameter.getInstance(pMACValue.getAlgId().getParameters());
         final PKMACValue myMACValue = calculatePKMacValue(theGateway.getFactory(), pSecret, pData, myParams);
         if (!pMACValue.equals(myMACValue)) {
@@ -359,12 +358,12 @@ public class GordianCRMBuilder {
      * @param pObject the object
      * @param pParams the PBM Parameters
      * @return the PKMacValue
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     private static PKMACValue calculatePKMacValue(final GordianCoreFactory pFactory,
                                                   final byte[] pSecret,
                                                   final ASN1Object pObject,
-                                                  final PBMParameter pParams) throws OceanusException {
+                                                  final PBMParameter pParams) throws GordianException {
         /* Protect against exceptions */
         try {
             /* Create the digest */
@@ -405,9 +404,9 @@ public class GordianCRMBuilder {
      * Calculate AckValue.
      * @param pCertificate the certificate
      * @return the AckValue
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    public byte[] calculateAckValue(final GordianCoreCertificate pCertificate) throws OceanusException {
+    public byte[] calculateAckValue(final GordianCoreCertificate pCertificate) throws GordianException {
         /* Access the MACSecret */
         final X500Name mySubject = pCertificate.getSubjectName();
         final byte[] myMACSecret = theGateway.getMACSecret(mySubject);

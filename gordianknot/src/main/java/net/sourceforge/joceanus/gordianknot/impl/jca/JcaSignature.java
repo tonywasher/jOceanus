@@ -16,6 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.jca;
 
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestType;
@@ -28,7 +29,6 @@ import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignatureType;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
 import net.sourceforge.joceanus.gordianknot.impl.core.sign.GordianCoreSignature;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 import java.security.InvalidKeyException;
 import java.security.Signature;
@@ -151,7 +151,7 @@ public abstract class JcaSignature
     }
 
     @Override
-    public void initForSigning(final GordianKeyPair pKeyPair) throws OceanusException {
+    public void initForSigning(final GordianKeyPair pKeyPair) throws GordianException {
         /* Initialise detail */
         JcaKeyPair.checkKeyPair(pKeyPair);
         super.initForSigning(pKeyPair);
@@ -175,7 +175,7 @@ public abstract class JcaSignature
     }
 
     @Override
-    public void initForVerify(final GordianKeyPair pKeyPair) throws OceanusException {
+    public void initForVerify(final GordianKeyPair pKeyPair) throws GordianException {
         /* Initialise detail */
         JcaKeyPair.checkKeyPair(pKeyPair);
         super.initForVerify(pKeyPair);
@@ -212,7 +212,7 @@ public abstract class JcaSignature
     }
 
     @Override
-    public byte[] sign() throws OceanusException {
+    public byte[] sign() throws GordianException {
         /* Check that we are in signing mode */
         checkMode(GordianSignatureMode.SIGN);
 
@@ -226,7 +226,7 @@ public abstract class JcaSignature
     }
 
     @Override
-    public boolean verify(final byte[] pSignature) throws OceanusException {
+    public boolean verify(final byte[] pSignature) throws GordianException {
         /* Check that we are in verify mode */
         checkMode(GordianSignatureMode.VERIFY);
 
@@ -257,10 +257,10 @@ public abstract class JcaSignature
          * Constructor.
          * @param pFactory the factory
          * @param pSignatureSpec the signatureSpec
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
         JcaRSASignature(final GordianCoreFactory pFactory,
-                        final GordianSignatureSpec pSignatureSpec) throws OceanusException {
+                        final GordianSignatureSpec pSignatureSpec) throws GordianException {
             /* Initialise class */
             super(pFactory, pSignatureSpec);
 
@@ -323,10 +323,10 @@ public abstract class JcaSignature
          * Constructor.
          * @param pFactory the factory
          * @param pSignatureSpec the signatureSpec
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
         JcaDSASignature(final GordianCoreFactory pFactory,
-                        final GordianSignatureSpec pSignatureSpec) throws OceanusException {
+                        final GordianSignatureSpec pSignatureSpec) throws GordianException {
             /* Initialise class */
             super(pFactory, pSignatureSpec);
 
@@ -345,10 +345,10 @@ public abstract class JcaSignature
          * Constructor.
          * @param pFactory the factory
          * @param pSignatureSpec the signatureSpec
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
         JcaGOSTSignature(final GordianCoreFactory pFactory,
-                         final GordianSignatureSpec pSignatureSpec) throws OceanusException {
+                         final GordianSignatureSpec pSignatureSpec) throws GordianException {
             /* Initialise class */
             super(pFactory, pSignatureSpec);
 
@@ -394,16 +394,16 @@ public abstract class JcaSignature
          * Constructor.
          * @param pFactory the factory
          * @param pSignatureSpec the signatureSpec
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
         JcaSLHDSASignature(final GordianCoreFactory pFactory,
-                           final GordianSignatureSpec pSignatureSpec) throws OceanusException {
+                           final GordianSignatureSpec pSignatureSpec) throws GordianException {
             /* Initialise class */
             super(pFactory, pSignatureSpec);
         }
 
         @Override
-        public void initForSigning(final GordianKeyPair pKeyPair) throws OceanusException {
+        public void initForSigning(final GordianKeyPair pKeyPair) throws GordianException {
             /* Determine the required signer */
             JcaKeyPair.checkKeyPair(pKeyPair);
             final String mySignName = getAlgorithmForKeyPair(pKeyPair);
@@ -414,7 +414,7 @@ public abstract class JcaSignature
         }
 
         @Override
-        public void initForVerify(final GordianKeyPair pKeyPair) throws OceanusException {
+        public void initForVerify(final GordianKeyPair pKeyPair) throws GordianException {
             /* Determine the required signer */
             JcaKeyPair.checkKeyPair(pKeyPair);
             final String mySignName = getAlgorithmForKeyPair(pKeyPair);
@@ -450,16 +450,16 @@ public abstract class JcaSignature
          * Constructor.
          * @param pFactory the factory
          * @param pSignatureSpec the signatureSpec
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
         JcaMLDSASignature(final GordianCoreFactory pFactory,
-                          final GordianSignatureSpec pSignatureSpec) throws OceanusException {
+                          final GordianSignatureSpec pSignatureSpec) throws GordianException {
             /* Initialise class */
             super(pFactory, pSignatureSpec);
         }
 
         @Override
-        public void initForSigning(final GordianKeyPair pKeyPair) throws OceanusException {
+        public void initForSigning(final GordianKeyPair pKeyPair) throws GordianException {
             /* Determine the required signer */
             JcaKeyPair.checkKeyPair(pKeyPair);
             final String mySignName = getAlgorithmForKeyPair(pKeyPair);
@@ -470,7 +470,7 @@ public abstract class JcaSignature
         }
 
         @Override
-        public void initForVerify(final GordianKeyPair pKeyPair) throws OceanusException {
+        public void initForVerify(final GordianKeyPair pKeyPair) throws GordianException {
             /* Determine the required signer */
             JcaKeyPair.checkKeyPair(pKeyPair);
             final String mySignName = getAlgorithmForKeyPair(pKeyPair);
@@ -501,10 +501,10 @@ public abstract class JcaSignature
          * Constructor.
          * @param pFactory the factory
          * @param pSignatureSpec the signatureSpec
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
         JcaFalconSignature(final GordianCoreFactory pFactory,
-                           final GordianSignatureSpec pSignatureSpec) throws OceanusException {
+                           final GordianSignatureSpec pSignatureSpec) throws GordianException {
             /* Initialise class */
             super(pFactory, pSignatureSpec);
 
@@ -527,10 +527,10 @@ public abstract class JcaSignature
          * Constructor.
          * @param pFactory the factory
          * @param pSignatureSpec the signatureSpec
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
         JcaPicnicSignature(final GordianCoreFactory pFactory,
-                           final GordianSignatureSpec pSignatureSpec) throws OceanusException {
+                           final GordianSignatureSpec pSignatureSpec) throws GordianException {
             /* Initialise class */
             super(pFactory, pSignatureSpec);
 
@@ -574,10 +574,10 @@ public abstract class JcaSignature
          * Constructor.
          * @param pFactory the factory
          * @param pSignatureSpec the signatureSpec
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
         JcaRainbowSignature(final GordianCoreFactory pFactory,
-                            final GordianSignatureSpec pSignatureSpec) throws OceanusException {
+                            final GordianSignatureSpec pSignatureSpec) throws GordianException {
             /* Initialise class */
             super(pFactory, pSignatureSpec);
 
@@ -600,10 +600,10 @@ public abstract class JcaSignature
          * Constructor.
          * @param pFactory the factory
          * @param pSignatureSpec the signatureSpec
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
         JcaXMSSSignature(final GordianCoreFactory pFactory,
-                         final GordianSignatureSpec pSignatureSpec) throws OceanusException {
+                         final GordianSignatureSpec pSignatureSpec) throws GordianException {
             /* Initialise class */
             super(pFactory, pSignatureSpec);
 
@@ -612,7 +612,7 @@ public abstract class JcaSignature
         }
 
         @Override
-        public void initForSigning(final GordianKeyPair pKeyPair) throws OceanusException {
+        public void initForSigning(final GordianKeyPair pKeyPair) throws GordianException {
             /* Determine the required signer */
             JcaKeyPair.checkKeyPair(pKeyPair);
             final String mySignName = getAlgorithmForKeyPair(pKeyPair);
@@ -623,7 +623,7 @@ public abstract class JcaSignature
         }
 
         @Override
-        public void initForVerify(final GordianKeyPair pKeyPair) throws OceanusException {
+        public void initForVerify(final GordianKeyPair pKeyPair) throws GordianException {
             /* Determine the required signer */
             JcaKeyPair.checkKeyPair(pKeyPair);
             final String mySignName = getAlgorithmForKeyPair(pKeyPair);
@@ -637,9 +637,9 @@ public abstract class JcaSignature
          * Obtain algorithmName for keyPair.
          * @param pKeyPair the keyPair
          * @return the name
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
-        private String getAlgorithmForKeyPair(final GordianKeyPair pKeyPair) throws OceanusException {
+        private String getAlgorithmForKeyPair(final GordianKeyPair pKeyPair) throws GordianException {
             /* Determine the required signer */
             final GordianXMSSKeySpec myXMSSKeySpec = pKeyPair.getKeyPairSpec().getXMSSKeySpec();
             final GordianDigestSpec myDigestSpec = myXMSSKeySpec.getDigestType().getDigestSpec();
@@ -669,16 +669,16 @@ public abstract class JcaSignature
          * Constructor.
          * @param pFactory the factory
          * @param pSignatureSpec the signatureSpec
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
         JcaEdDSASignature(final GordianCoreFactory pFactory,
-                          final GordianSignatureSpec pSignatureSpec) throws OceanusException {
+                          final GordianSignatureSpec pSignatureSpec) throws GordianException {
             /* Initialise class */
             super(pFactory, pSignatureSpec);
         }
 
         @Override
-        public void initForSigning(final GordianKeyPair pKeyPair) throws OceanusException {
+        public void initForSigning(final GordianKeyPair pKeyPair) throws GordianException {
             /* Determine the required signer */
             JcaKeyPair.checkKeyPair(pKeyPair);
             final String mySignName = getAlgorithmForKeyPair(pKeyPair);
@@ -689,7 +689,7 @@ public abstract class JcaSignature
         }
 
         @Override
-        public void initForVerify(final GordianKeyPair pKeyPair) throws OceanusException {
+        public void initForVerify(final GordianKeyPair pKeyPair) throws GordianException {
             /* Determine the required signer */
             JcaKeyPair.checkKeyPair(pKeyPair);
             final String mySignName = getAlgorithmForKeyPair(pKeyPair);
@@ -723,10 +723,10 @@ public abstract class JcaSignature
          * Constructor.
          * @param pFactory the factory
          * @param pSignatureSpec the signatureSpec
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
         JcaLMSSignature(final GordianCoreFactory pFactory,
-                        final GordianSignatureSpec pSignatureSpec) throws OceanusException {
+                        final GordianSignatureSpec pSignatureSpec) throws GordianException {
             /* Initialise class */
             super(pFactory, pSignatureSpec);
 

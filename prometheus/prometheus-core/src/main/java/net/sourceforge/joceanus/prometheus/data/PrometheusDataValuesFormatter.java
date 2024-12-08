@@ -16,6 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.prometheus.data;
 
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactoryLock;
 import net.sourceforge.joceanus.gordianknot.api.zip.GordianZipFactory;
 import net.sourceforge.joceanus.gordianknot.api.zip.GordianZipFileContents;
@@ -32,6 +33,7 @@ import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataValues.PrometheusGroupedItem;
 import net.sourceforge.joceanus.prometheus.exc.PrometheusDataException;
 import net.sourceforge.joceanus.prometheus.exc.PrometheusIOException;
+import net.sourceforge.joceanus.prometheus.exc.PrometheusSecurityException;
 import net.sourceforge.joceanus.prometheus.security.PrometheusSecurityPasswordManager;
 import net.sourceforge.joceanus.tethys.ui.api.thread.TethysUIThreadStatusReport;
 import org.w3c.dom.Document;
@@ -164,43 +166,48 @@ public class PrometheusDataValuesFormatter {
         final OceanusProfile myTask = theReport.getActiveTask();
         final OceanusProfile myStage = myTask.startTask("Writing");
 
-        /* Create a similar security control */
-        final PrometheusSecurityPasswordManager myPasswordMgr = pData.getPasswordMgr();
-        final GordianFactoryLock myBase = pData.getFactoryLock();
-        final GordianFactoryLock myLock = myPasswordMgr.similarFactoryLock(myBase);
-        final GordianZipFactory myZips = myPasswordMgr.getSecurityFactory().getZipFactory();
-        final GordianZipLock myZipLock = myZips.zipLock(myLock);
+        /* Protect agains exceptions */
+        try {
+            /* Create a similar security control */
+            final PrometheusSecurityPasswordManager myPasswordMgr = pData.getPasswordMgr();
+            final GordianFactoryLock myBase = pData.getFactoryLock();
+            final GordianFactoryLock myLock = myPasswordMgr.similarFactoryLock(myBase);
+            final GordianZipFactory myZips = myPasswordMgr.getSecurityFactory().getZipFactory();
+            final GordianZipLock myZipLock = myZips.zipLock(myLock);
 
-        /* Access the data version */
-        theVersion = pData.getControl().getDataVersion();
+            /* Access the data version */
+            theVersion = pData.getControl().getDataVersion();
 
-        /* Declare the number of stages */
-        theReport.setNumStages(pData.getListMap().size());
+            /* Declare the number of stages */
+            theReport.setNumStages(pData.getListMap().size());
 
-        /* Protect the workbook access */
-        try (GordianZipWriteFile myZipFile = myZips.createZipFile(myZipLock, pZipStream)) {
-            /* Loop through the data lists */
-            final Iterator<PrometheusDataList<?>> myIterator = pData.iterator();
-            while (myIterator.hasNext()) {
-                final PrometheusDataList<?> myList = myIterator.next();
+            /* Protect the workbook access */
+            try (GordianZipWriteFile myZipFile = myZips.createZipFile(myZipLock, pZipStream)) {
+                /* Loop through the data lists */
+                final Iterator<PrometheusDataList<?>> myIterator = pData.iterator();
+                while (myIterator.hasNext()) {
+                    final PrometheusDataList<?> myList = myIterator.next();
 
-                /* Declare the new stage */
-                theReport.setNewStage(myList.listName());
+                    /* Declare the new stage */
+                    theReport.setNewStage(myList.listName());
 
-                /* If this list should be written */
-                if (myList.includeDataXML()) {
-                    /* Write the list details */
-                    myStage.startTask(myList.listName());
-                    writeXMLListToFile(myList, myZipFile, true);
+                    /* If this list should be written */
+                    if (myList.includeDataXML()) {
+                        /* Write the list details */
+                        myStage.startTask(myList.listName());
+                        writeXMLListToFile(myList, myZipFile, true);
+                    }
                 }
+
+                /* Complete the task */
+                myStage.end();
+
+            } catch (IOException
+                     | OceanusException e) {
+                throw new PrometheusIOException(ERROR_BACKUP, e);
             }
-
-            /* Complete the task */
-            myStage.end();
-
-        } catch (IOException
-                 | OceanusException e) {
-            throw new PrometheusIOException(ERROR_BACKUP, e);
+        } catch (GordianException e) {
+            throw new PrometheusSecurityException(e);
         }
     }
 
@@ -297,7 +304,9 @@ public class PrometheusDataValuesFormatter {
             /* Format the XML and write to stream */
             theXformer.transform(new DOMSource(myDocument), new StreamResult(myStream));
 
-        } catch (TransformerException | IOException e) {
+        } catch (GordianException
+                 | TransformerException
+                 | IOException e) {
             throw new PrometheusIOException("Failed to transform XML", e);
         }
     }
@@ -384,29 +393,35 @@ public class PrometheusDataValuesFormatter {
     public void loadZipFile(final PrometheusDataSet pData,
                             final InputStream pInStream,
                             final String pName) throws OceanusException {
-        /* Obtain the active profile */
-        final OceanusProfile myTask = theReport.getActiveTask();
-        final OceanusProfile myStage = myTask.startTask("Loading");
-        myStage.startTask("Parsing");
+        /* Protect against exceptions */
+        try {
+            /* Obtain the active profile */
+            final OceanusProfile myTask = theReport.getActiveTask();
+            final OceanusProfile myStage = myTask.startTask("Loading");
+            myStage.startTask("Parsing");
 
-        /* Access the zip file */
-        final GordianZipFactory myZips = thePasswordMgr.getSecurityFactory().getZipFactory();
-        final GordianZipReadFile myZipFile = myZips.openZipFile(pInStream);
+            /* Access the zip file */
+            final GordianZipFactory myZips = thePasswordMgr.getSecurityFactory().getZipFactory();
+            final GordianZipReadFile myZipFile = myZips.openZipFile(pInStream);
 
-        /* Obtain the hash bytes from the file */
-        final GordianZipLock myLock = myZipFile.getLock();
+            /* Obtain the hash bytes from the file */
+            final GordianZipLock myLock = myZipFile.getLock();
 
-        /* If this is a secure ZipFile */
-        if (myLock != null) {
-            /* Resolve the lock */
-            thePasswordMgr.resolveZipLock(myLock, pName);
+            /* If this is a secure ZipFile */
+            if (myLock != null) {
+                /* Resolve the lock */
+                thePasswordMgr.resolveZipLock(myLock, pName);
+            }
+
+            /* Parse the Zip File */
+            parseZipFile(myStage, pData, myZipFile);
+
+            /* Complete the task */
+            myStage.end();
+
+        } catch (GordianException e) {
+            throw new PrometheusSecurityException(e);
         }
-
-        /* Parse the Zip File */
-        parseZipFile(myStage, pData, myZipFile);
-
-        /* Complete the task */
-        myStage.end();
     }
 
     /**
@@ -459,27 +474,32 @@ public class PrometheusDataValuesFormatter {
      */
     private void readXMLListFromFile(final PrometheusDataList<?> pList,
                                      final GordianZipReadFile pZipFile) throws OceanusException {
-        /* Access the list name */
-        final String myName = pList.listName() + SUFFIX_ENTRY;
+        /* Protect against exceptions */
+        try {
+            /* Access the list name */
+            final String myName = pList.listName() + SUFFIX_ENTRY;
 
-        /* Locate the correct entry */
-        final GordianZipFileContents myContents = pZipFile.getContents();
-        final GordianZipFileEntry myEntry = myContents.findFileEntry(myName);
-        if (myEntry == null) {
-            throw new PrometheusDataException("List not found " + myName);
-        }
+            /* Locate the correct entry */
+            final GordianZipFileContents myContents = pZipFile.getContents();
+            final GordianZipFileEntry myEntry = myContents.findFileEntry(myName);
+            if (myEntry == null) {
+                throw new PrometheusDataException("List not found " + myName);
+            }
 
-        /* Protect the workbook access */
-        try (InputStream myStream = pZipFile.createInputStream(myEntry)) {
-            /* Read the document from the stream and parse it */
-            final Document myDocument = theBuilder.parse(myStream);
+            /* Protect the workbook access */
+            try (InputStream myStream = pZipFile.createInputStream(myEntry)) {
+                /* Read the document from the stream and parse it */
+                final Document myDocument = theBuilder.parse(myStream);
 
-            /* Populate the list from the document */
-            parseXMLDocument(myDocument, pList);
+                /* Populate the list from the document */
+                parseXMLDocument(myDocument, pList);
 
-        } catch (IOException
-                 | SAXException e) {
-            throw new PrometheusIOException("Failed to parse XML", e);
+            } catch (IOException
+                     | SAXException e) {
+                throw new PrometheusIOException("Failed to parse XML", e);
+            }
+        } catch (GordianException e) {
+            throw new PrometheusSecurityException(e);
         }
     }
 

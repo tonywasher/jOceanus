@@ -16,6 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.core.random;
 
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianCipherFactory;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianCipherParameters;
@@ -43,14 +44,13 @@ import net.sourceforge.joceanus.gordianknot.api.random.GordianRandomSpec;
 import net.sourceforge.joceanus.gordianknot.api.random.GordianRandomSpecBuilder;
 import net.sourceforge.joceanus.gordianknot.api.random.GordianRandomType;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
-import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianIdManager;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianRandomSource;
 import net.sourceforge.joceanus.gordianknot.impl.core.cipher.GordianCoreCipher;
 import net.sourceforge.joceanus.gordianknot.impl.core.cipher.GordianCoreCipherFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.digest.GordianCoreDigestFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.mac.GordianCoreMacFactory;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import org.bouncycastle.crypto.prng.BasicEntropySourceProvider;
 import org.bouncycastle.crypto.prng.EntropySource;
 import org.bouncycastle.crypto.prng.EntropySourceProvider;
@@ -131,9 +131,9 @@ public class GordianCoreRandomFactory
     /**
      * Construct a builder with an EntropySourceProvider based on the initial random.
      * @param pFactory the factory
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    public GordianCoreRandomFactory(final GordianCoreFactory pFactory) throws OceanusException {
+    public GordianCoreRandomFactory(final GordianCoreFactory pFactory) throws GordianException {
         /* Access the initial stringRandom */
         theFactory = pFactory;
         theRandomSource = theFactory.getRandomSource();
@@ -147,7 +147,7 @@ public class GordianCoreRandomFactory
     }
 
     @Override
-    public GordianSecureRandom createRandom(final GordianRandomSpec pRandomSpec) throws OceanusException {
+    public GordianSecureRandom createRandom(final GordianRandomSpec pRandomSpec) throws GordianException {
         /* Check validity of RandomSpec */
         if (!supportedRandomSpecs().test(pRandomSpec)) {
             throw new GordianDataException(GordianCoreFactory.getInvalidText(pRandomSpec));
@@ -180,7 +180,7 @@ public class GordianCoreRandomFactory
 
     @Override
     public GordianCombinedRandom createRandom(final GordianRandomSpec pCtrSpec,
-                                              final GordianRandomSpec pHashSpec) throws OceanusException {
+                                              final GordianRandomSpec pHashSpec) throws GordianException {
         /* Check validity of ctrSpecs */
         if (!validCombinedSpec(pCtrSpec, pHashSpec)) {
             throw new GordianDataException(GordianCoreFactory.getInvalidText(pCtrSpec)
@@ -263,9 +263,9 @@ public class GordianCoreRandomFactory
     /**
      * Create a random combinedRandom.
      * @return the combinedRandom
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    GordianCombinedRandom generateRandomCombined() throws OceanusException {
+    GordianCombinedRandom generateRandomCombined() throws GordianException {
         /* Create a random ctrSpec */
         final GordianSymKeySpec mySymKeySpec = generateRandomSymKeySpec();
         final GordianRandomSpec myCtrSpec = GordianRandomSpecBuilder.ctr(mySymKeySpec);
@@ -325,7 +325,7 @@ public class GordianCoreRandomFactory
     }
 
     @Override
-    public GordianDigest generateRandomDigest(final boolean pLargeData) throws OceanusException {
+    public GordianDigest generateRandomDigest(final boolean pLargeData) throws GordianException {
         /* Access Digest Factory and IdManager */
         final GordianDigestFactory myDigests = theFactory.getDigestFactory();
         final GordianIdManager myIds = theFactory.getIdManager();
@@ -337,7 +337,7 @@ public class GordianCoreRandomFactory
 
     @Override
     public GordianMac generateRandomMac(final GordianLength pKeyLen,
-                                        final boolean pLargeData) throws OceanusException {
+                                        final boolean pLargeData) throws GordianException {
         /* Access Mac Factory and IdManager */
         final GordianMacFactory myMacs = theFactory.getMacFactory();
         final GordianIdManager myIds = theFactory.getIdManager();
@@ -358,7 +358,7 @@ public class GordianCoreRandomFactory
     }
 
     @Override
-    public GordianKey<GordianSymKeySpec> generateRandomSymKey(final GordianLength pKeyLen) throws OceanusException {
+    public GordianKey<GordianSymKeySpec> generateRandomSymKey(final GordianLength pKeyLen) throws GordianException {
         /* Access Cipher Factory and IdManager */
         final GordianCipherFactory myCiphers = theFactory.getCipherFactory();
         final GordianIdManager myIds = theFactory.getIdManager();
@@ -373,7 +373,7 @@ public class GordianCoreRandomFactory
 
     @Override
     public GordianKey<GordianStreamKeySpec> generateRandomStreamKey(final GordianLength pKeyLen,
-                                                                    final boolean pLargeData) throws OceanusException {
+                                                                    final boolean pLargeData) throws GordianException {
         /* Access Cipher Factory and IdManager */
         final GordianCipherFactory myCiphers = theFactory.getCipherFactory();
         final GordianIdManager myIds = theFactory.getIdManager();
@@ -428,11 +428,11 @@ public class GordianCoreRandomFactory
      * @param isPredictionResistant specify whether the underlying DRBG in the resulting
      * SecureRandom should re-seed on each request for bytes.
      * @return a SecureRandom supported by a CTR DRBG.
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     @SuppressWarnings("unchecked")
     private GordianSecureRandom buildCTR(final GordianSymCipher pCipher,
-                                         final boolean isPredictionResistant) throws OceanusException {
+                                         final boolean isPredictionResistant) throws GordianException {
         /* Create initVector */
         final byte[] myInit = theRandom.generateSeed(NUM_ENTROPY_BYTES_REQUIRED);
 
@@ -450,10 +450,10 @@ public class GordianCoreRandomFactory
      * @param isPredictionResistant specify whether the underlying DRBG in the resulting
      * SecureRandom should re-seed on each request for bytes.
      * @return a SecureRandom supported by a HMAC DRBG.
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     private GordianSecureRandom buildX931(final GordianSymCipher pCipher,
-                                          final boolean isPredictionResistant) throws OceanusException {
+                                          final boolean isPredictionResistant) throws GordianException {
         /* Initialise the cipher with a random key */
         final GordianCipherFactory myCiphers = theFactory.getCipherFactory();
         final GordianKeyGenerator<GordianSymKeySpec> myGenerator = myCiphers.getKeyGenerator(pCipher.getKeyType());

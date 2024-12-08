@@ -16,8 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.core.base;
 
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -48,9 +48,9 @@ public class GordianRandomSource {
 
     /**
      * Constructor.
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    GordianRandomSource() throws OceanusException {
+    GordianRandomSource() throws GordianException {
         theRandom = getStrongRandom();
     }
 
@@ -77,9 +77,9 @@ public class GordianRandomSource {
     /**
      * Access the strong Secure Random.
      * @return the secure random
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    public static SecureRandom getStrongRandom() throws OceanusException {
+    public static SecureRandom getStrongRandom() throws GordianException {
         /* Return the entropy if it has been created */
         SecureRandom myStrong = theStrongEntropy;
         if (myStrong != null) {

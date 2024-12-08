@@ -16,9 +16,12 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.bc;
 
-import java.io.IOException;
-import java.math.BigInteger;
-
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
+import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestSpec;
+import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairType;
+import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignatureSpec;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
+import net.sourceforge.joceanus.gordianknot.impl.core.sign.GordianCoreSignature;
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.ASN1Encoding;
 import org.bouncycastle.asn1.ASN1Integer;
@@ -33,12 +36,8 @@ import org.bouncycastle.crypto.signers.ECDSASigner;
 import org.bouncycastle.crypto.signers.ECNRSigner;
 import org.bouncycastle.crypto.signers.HMacDSAKCalculator;
 
-import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestSpec;
-import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairType;
-import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignatureSpec;
-import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
-import net.sourceforge.joceanus.gordianknot.impl.core.sign.GordianCoreSignature;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import java.io.IOException;
+import java.math.BigInteger;
 
 /**
  * BouncyCastle implementation of signature.
@@ -74,10 +73,10 @@ public final class BouncySignature {
          * Constructor.
          * @param pFactory the factory
          * @param pSpec the signatureSpec.
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
         BouncyDigestSignature(final BouncyFactory pFactory,
-                              final GordianSignatureSpec pSpec) throws OceanusException {
+                              final GordianSignatureSpec pSpec) throws GordianException {
             super(pFactory, pSpec);
             theDigest = pSpec.getSignatureSpec() == null
                         ? new BouncyDigest(null, new NullDigest())
@@ -100,9 +99,9 @@ public final class BouncySignature {
         /**
          * Set the digest.
          * @param pSpec the digestSpec.
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
-        protected void setDigest(final GordianDigestSpec pSpec) throws OceanusException {
+        protected void setDigest(final GordianDigestSpec pSpec) throws GordianException {
             theDigest = pSpec == null
                         ? new BouncyDigest(null, new NullDigest())
                         : (BouncyDigest) getDigestFactory().createDigest(pSpec);
@@ -153,18 +152,18 @@ public final class BouncySignature {
          * @param r first integer
          * @param s second integer
          * @return encoded set
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
         byte[] dsaEncode(BigInteger r,
-                         BigInteger s) throws OceanusException;
+                         BigInteger s) throws GordianException;
 
         /**
          * Decode byte array into integersBouncyCastle DSA Decoder. Copied from SignatureSpi.java
          * @param pEncoded the encode set
          * @return array of integers
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
-        BigInteger[] dsaDecode(byte[] pEncoded) throws OceanusException;
+        BigInteger[] dsaDecode(byte[] pEncoded) throws GordianException;
     }
 
     /**
@@ -173,7 +172,7 @@ public final class BouncySignature {
     protected static final class BouncyDERCoder implements BouncyDSACoder {
         @Override
         public byte[] dsaEncode(final BigInteger r,
-                                final BigInteger s) throws OceanusException {
+                                final BigInteger s) throws GordianException {
             try {
                 final ASN1EncodableVector v = new ASN1EncodableVector();
 
@@ -187,7 +186,7 @@ public final class BouncySignature {
         }
 
         @Override
-        public BigInteger[] dsaDecode(final byte[] pEncoded) throws OceanusException {
+        public BigInteger[] dsaDecode(final byte[] pEncoded) throws GordianException {
             try {
                 final ASN1Sequence s = (ASN1Sequence) ASN1Primitive.fromByteArray(pEncoded);
                 final BigInteger[] sig = new BigInteger[2];
@@ -208,10 +207,10 @@ public final class BouncySignature {
      * @param pFactory the factory
      * @param pSpec the signatureSpec
      * @return the ECSigner
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     static DSA getDSASigner(final BouncyFactory pFactory,
-                            final GordianSignatureSpec pSpec) throws OceanusException {
+                            final GordianSignatureSpec pSpec) throws GordianException {
         /* Note if we are DSA */
         final boolean isDSA = GordianKeyPairType.DSA.equals(pSpec.getKeyPairType());
 

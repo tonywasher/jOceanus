@@ -16,18 +16,18 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.api.random;
 
-import java.security.SecureRandom;
-import java.util.List;
-import java.util.function.BiPredicate;
-import java.util.function.Predicate;
-
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianStreamKeySpec;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymKeySpec;
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigest;
 import net.sourceforge.joceanus.gordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMac;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
+
+import java.security.SecureRandom;
+import java.util.List;
+import java.util.function.BiPredicate;
+import java.util.function.Predicate;
 
 /**
  * GordianKnot Random Factory API.
@@ -37,19 +37,19 @@ public interface GordianRandomFactory {
      * create SecureRandom.
      * @param pRandomSpec the randomSpec
      * @return the new SecureRandom
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    SecureRandom createRandom(GordianRandomSpec pRandomSpec) throws OceanusException;
+    SecureRandom createRandom(GordianRandomSpec pRandomSpec) throws GordianException;
 
     /**
      * create CombinedRandom.
      * @param pCtrSpec the ctrRandomSpec
      * @param pHashSpec the hashRandomSpec
      * @return the new SecureRandom
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     SecureRandom createRandom(GordianRandomSpec pCtrSpec,
-                              GordianRandomSpec pHashSpec) throws OceanusException;
+                              GordianRandomSpec pHashSpec) throws GordianException;
 
     /**
      * Obtain predicate for supported randomSpecs.
@@ -67,37 +67,37 @@ public interface GordianRandomFactory {
      * generate random GordianDigest.
      * @param pLargeData only generate a digest that is suitable for processing large amounts of data
      * @return the new Digest
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    GordianDigest generateRandomDigest(boolean pLargeData) throws OceanusException;
+    GordianDigest generateRandomDigest(boolean pLargeData) throws GordianException;
 
     /**
      * generate random GordianMac.
      * @param pKeyLen the keyLength
      * @param pLargeData only generate a Mac that is suitable for parsing large amounts of data
      * @return the new MAC
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     GordianMac generateRandomMac(GordianLength pKeyLen,
-                                 boolean pLargeData) throws OceanusException;
+                                 boolean pLargeData) throws GordianException;
 
     /**
      * generate random SymKey.
      * @param pKeyLen the keyLength
      * @return the new key
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    GordianKey<GordianSymKeySpec> generateRandomSymKey(GordianLength pKeyLen) throws OceanusException;
+    GordianKey<GordianSymKeySpec> generateRandomSymKey(GordianLength pKeyLen) throws GordianException;
 
     /**
      * generate random GordianStreamKey.
      * @param pKeyLen the keyLength
      * @param pLargeData only generate a Mac that is suitable for parsing large amounts of data
      * @return the new StreamKey
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     GordianKey<GordianStreamKeySpec> generateRandomStreamKey(GordianLength pKeyLen,
-                                                             boolean pLargeData) throws OceanusException;
+                                                             boolean pLargeData) throws GordianException;
 
     /**
      * Obtain a list of supported randomSpecs.

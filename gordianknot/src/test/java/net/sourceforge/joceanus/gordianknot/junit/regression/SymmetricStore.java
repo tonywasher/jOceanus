@@ -16,6 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.junit.regression;
 
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianCipherFactory;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianPBESpec;
@@ -40,7 +41,6 @@ import net.sourceforge.joceanus.gordianknot.impl.core.key.GordianCoreKey;
 import net.sourceforge.joceanus.gordianknot.impl.core.key.GordianCoreKeyGenerator;
 import net.sourceforge.joceanus.gordianknot.impl.core.mac.GordianCoreMacFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.random.GordianCoreRandomFactory;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -182,9 +182,9 @@ class SymmetricStore {
         /**
          * Obtain (or create) the key for the FactoryMacSpec.
          * @return the key
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
-        GordianKey<GordianMacSpec> getKey() throws OceanusException {
+        GordianKey<GordianMacSpec> getKey() throws GordianException {
             /* Return key if it exists */
             GordianCoreKey<GordianMacSpec> myKey = theKey;
             if (myKey != null) {
@@ -211,9 +211,9 @@ class SymmetricStore {
         /**
          * Obtain (or translate) the key for the Partner.
          * @return the key
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
-        GordianKey<GordianMacSpec> getPartnerKey() throws OceanusException {
+        GordianKey<GordianMacSpec> getPartnerKey() throws GordianException {
             /* Return key if it exists */
             GordianKey<GordianMacSpec> myPartnerKey = thePartnerKey;
             if (myPartnerKey != null || thePartner == null) {
@@ -306,9 +306,9 @@ class SymmetricStore {
         /**
          * Obtain (or create) the key for the FactorySymKeySpec
          * @return the key
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
-        GordianKey<GordianSymKeySpec> getKey() throws OceanusException {
+        GordianKey<GordianSymKeySpec> getKey() throws GordianException {
             /* Return key if it exists */
             GordianCoreKey<GordianSymKeySpec> myKey = theKey;
             if (myKey != null) {
@@ -335,9 +335,9 @@ class SymmetricStore {
         /**
          * Obtain (or translate) the key for the Partner.
          * @return the key
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
-        GordianKey<GordianSymKeySpec> getPartnerKey() throws OceanusException {
+        GordianKey<GordianSymKeySpec> getPartnerKey() throws GordianException {
             /* Return key if it exists */
             GordianKey<GordianSymKeySpec> myPartnerKey = thePartnerKey;
             if (myPartnerKey != null || thePartner == null) {
@@ -423,18 +423,18 @@ class SymmetricStore {
         /**
          * Obtain (or create) the key for the FactorySymKeySpec
          * @return the key
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
-        GordianKey<GordianSymKeySpec> getKey() throws OceanusException {
+        GordianKey<GordianSymKeySpec> getKey() throws GordianException {
             return theOwner.getKey();
         }
 
         /**
          * Obtain (or translate) the key for the Partner.
          * @return the key
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
-        GordianKey<GordianSymKeySpec> getPartnerKey() throws OceanusException {
+        GordianKey<GordianSymKeySpec> getPartnerKey() throws GordianException {
             return theOwner.getPartnerKey();
         }
 
@@ -565,9 +565,9 @@ class SymmetricStore {
         /**
          * Obtain (or create) the key for the FactoryStreamKeySpec
          * @return the key
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
-        GordianKey<GordianStreamKeySpec> getKey() throws OceanusException {
+        GordianKey<GordianStreamKeySpec> getKey() throws GordianException {
             /* Return key if it exists */
             GordianCoreKey<GordianStreamKeySpec> myKey = theKey;
             if (myKey != null) {
@@ -594,9 +594,9 @@ class SymmetricStore {
         /**
          * Obtain (or translate) the key for the Partner.
          * @return the key
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
-        GordianKey<GordianStreamKeySpec> getPartnerKey() throws OceanusException {
+        GordianKey<GordianStreamKeySpec> getPartnerKey() throws GordianException {
             /* Return key if it exists */
             GordianKey<GordianStreamKeySpec> myPartnerKey = thePartnerKey;
             if (myPartnerKey != null || thePartner == null) {
@@ -706,9 +706,9 @@ class SymmetricStore {
         /**
          * Obtain (or create) the key for the FactoryStreamKeySpec
          * @return the key
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
-        GordianKey<GordianStreamKeySpec> getKey() throws OceanusException {
+        GordianKey<GordianStreamKeySpec> getKey() throws GordianException {
             return theOwner.getKey();
         }
 

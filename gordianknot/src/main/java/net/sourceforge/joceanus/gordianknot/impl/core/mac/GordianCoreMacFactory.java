@@ -16,6 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.core.mac;
 
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymKeySpec;
@@ -33,7 +34,6 @@ import net.sourceforge.joceanus.gordianknot.api.mac.GordianSipHashSpec;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.cipher.GordianCoreCipherFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -123,9 +123,9 @@ public abstract class GordianCoreMacFactory
     /**
      * Check the macSpec.
      * @param pMacSpec the macSpec
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    protected void checkMacSpec(final GordianKeySpec pMacSpec) throws OceanusException {
+    protected void checkMacSpec(final GordianKeySpec pMacSpec) throws GordianException {
         /* Check validity of MacSpec */
         if (!(pMacSpec instanceof GordianMacSpec)
                 || !supportedMacSpecs().test((GordianMacSpec) pMacSpec)) {

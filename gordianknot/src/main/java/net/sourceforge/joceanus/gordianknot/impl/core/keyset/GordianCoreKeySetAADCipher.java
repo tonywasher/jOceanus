@@ -16,11 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.core.keyset;
 
-import java.io.ByteArrayOutputStream;
-
-import org.bouncycastle.util.Arrays;
-import org.bouncycastle.util.Pack;
-
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymKeyType;
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigest;
@@ -36,7 +32,10 @@ import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacSpecBuilder;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianLogicException;
 import net.sourceforge.joceanus.gordianknot.impl.core.keyset.GordianKeySetRecipe.GordianKeySetParameters;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import org.bouncycastle.util.Arrays;
+import org.bouncycastle.util.Pack;
+
+import java.io.ByteArrayOutputStream;
 
 /**
  * Core keySetAADCipher.
@@ -113,9 +112,9 @@ public class GordianCoreKeySetAADCipher
      * Constructor.
      *
      * @param pKeySet the keySet.
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    public GordianCoreKeySetAADCipher(final GordianCoreKeySet pKeySet) throws OceanusException {
+    public GordianCoreKeySetAADCipher(final GordianCoreKeySet pKeySet) throws GordianException {
         /* Initialise underlying class */
         super(pKeySet, true);
 
@@ -127,29 +126,29 @@ public class GordianCoreKeySetAADCipher
     }
 
     @Override
-    public void initForEncrypt(final byte[] pAAD) throws OceanusException {
+    public void initForEncrypt(final byte[] pAAD) throws GordianException {
         initialAEAD = Arrays.clone(pAAD);
         super.initForEncrypt();
     }
 
     @Override
-    public void initForDecrypt(final byte[] pAAD) throws OceanusException {
+    public void initForDecrypt(final byte[] pAAD) throws GordianException {
         initialAEAD = Arrays.clone(pAAD);
         super.initForDecrypt();
     }
 
     @Override
-    public void initForEncrypt() throws OceanusException {
+    public void initForEncrypt() throws GordianException {
         initForEncrypt(null);
     }
 
     @Override
-    public void initForDecrypt() throws OceanusException {
+    public void initForDecrypt() throws GordianException {
         initForDecrypt(null);
     }
 
     @Override
-    protected void reset() throws OceanusException {
+    protected void reset() throws GordianException {
         /* Process underlying reset */
         super.reset();
 
@@ -167,7 +166,7 @@ public class GordianCoreKeySetAADCipher
     @Override
     public void updateAAD(final byte[] pAAD,
                           final int pOffset,
-                          final int pLength) throws OceanusException {
+                          final int pLength) throws GordianException {
         /* Check AAD is allowed */
         checkAEADStatus();
 
@@ -178,9 +177,9 @@ public class GordianCoreKeySetAADCipher
     /**
      * check AEAD status.
      *
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private void checkAEADStatus() throws OceanusException {
+    private void checkAEADStatus() throws GordianException {
         /* Check we are initialised */
         if (!isInitialised()) {
             throw new GordianLogicException("Cipher is not initialised");
@@ -193,7 +192,7 @@ public class GordianCoreKeySetAADCipher
     }
 
     @Override
-    protected void checkStatus() throws OceanusException {
+    protected void checkStatus() throws GordianException {
         /* Check underlying status */
         super.checkStatus();
 
@@ -202,7 +201,7 @@ public class GordianCoreKeySetAADCipher
     }
 
     @Override
-    protected void initCiphers(final GordianKeySetParameters pParams) throws OceanusException {
+    protected void initCiphers(final GordianKeySetParameters pParams) throws GordianException {
         /* Pass call on */
         super.initCiphers(pParams);
 
@@ -247,7 +246,7 @@ public class GordianCoreKeySetAADCipher
                                    final int pOffset,
                                    final int pLength,
                                    final byte[] pOutput,
-                                   final int pOutOffset) throws OceanusException {
+                                   final int pOutOffset) throws GordianException {
         /* Process the bytes */
         final int myLen = super.updateEncryption(pBytes, pOffset, pLength, pOutput, pOutOffset);
 
@@ -266,7 +265,7 @@ public class GordianCoreKeySetAADCipher
                                    final int pOffset,
                                    final int pLength,
                                    final byte[] pOutput,
-                                   final int pOutOffset) throws OceanusException {
+                                   final int pOutOffset) throws GordianException {
         /* Count how much we have processed */
         int processed = 0;
 
@@ -317,7 +316,7 @@ public class GordianCoreKeySetAADCipher
 
     @Override
     public int doFinish(final byte[] pOutput,
-                        final int pOutOffset) throws OceanusException {
+                        final int pOutOffset) throws GordianException {
         /* Finish the cipher */
         int myLen = finishCipher(pOutput, pOutOffset);
 
@@ -353,10 +352,10 @@ public class GordianCoreKeySetAADCipher
      * @param pOutput    the output buffer
      * @param pOutOffset the offset from which to start writing output
      * @return the length of data written out
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     private int finishEncryptionMac(final byte[] pOutput,
-                                    final int pOutOffset) throws OceanusException {
+                                    final int pOutOffset) throws GordianException {
         /* Complete the dataMac */
         completeDataMac();
 
@@ -376,9 +375,9 @@ public class GordianCoreKeySetAADCipher
      * finish the decryption Mac.
      *
      * @return the length of data written out
-     * @throws OceanusException on mac misMatch
+     * @throws GordianException on mac misMatch
      */
-    private int finishDecryptionMac() throws OceanusException {
+    private int finishDecryptionMac() throws GordianException {
         /* If we do not have sufficient data */
         if (cacheBytes < MACSIZE) {
             throw new GordianDataException("data too short");

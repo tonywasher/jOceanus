@@ -16,14 +16,13 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.core.stream;
 
-import java.io.InputStream;
-
-import org.bouncycastle.util.Arrays;
-
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianKeyedCipher;
 import net.sourceforge.joceanus.gordianknot.impl.core.cipher.GordianCoreCipher;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import org.bouncycastle.util.Arrays;
+
+import java.io.InputStream;
 
 /**
  * Input stream Cipher implementation.
@@ -87,7 +86,7 @@ class GordianCipherInputStream<T extends GordianKeySpec>
 
         @Override
         public int processBytes(final byte[] pBuffer,
-                                final int pLength) throws OceanusException {
+                                final int pLength) throws GordianException {
             /* Initialise variables */
             int iNumBytes;
             final int iLength = pLength;

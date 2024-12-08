@@ -16,9 +16,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.api.cipher;
 
-import java.util.Arrays;
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import java.util.Arrays;
 
 /**
  * GordianKnot base for Cipher.
@@ -36,9 +36,9 @@ public interface GordianCipher {
      * Process the passed data and return intermediate results.
      * @param pBytes Bytes to update cipher with
      * @return the intermediate processed data
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    default byte[] update(final byte[] pBytes) throws OceanusException {
+    default byte[] update(final byte[] pBytes) throws GordianException {
         return update(pBytes, 0, pBytes == null ? 0 : pBytes.length);
     }
 
@@ -48,11 +48,11 @@ public interface GordianCipher {
      * @param pOffset offset within pBytes to read bytes from
      * @param pLength length of data to update with
      * @return the intermediate processed data
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     default byte[] update(final byte[] pBytes,
                           final int pOffset,
-                          final int pLength) throws OceanusException {
+                          final int pLength) throws GordianException {
         /* Create output buffer */
         final int myLen = getOutputLength(pLength);
         final byte[] myOutput = new byte[myLen];
@@ -78,12 +78,12 @@ public interface GordianCipher {
      * @param pLength length of data to update with
      * @param pOutput the output buffer to receive processed data
      * @return the number of bytes transferred to the output buffer
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     default int update(final byte[] pBytes,
                        final int pOffset,
                        final int pLength,
-                       final byte[] pOutput) throws OceanusException {
+                       final byte[] pOutput) throws GordianException {
         return update(pBytes, pOffset, pLength, pOutput, 0);
     }
 
@@ -95,20 +95,20 @@ public interface GordianCipher {
      * @param pOutput the output buffer to receive processed data
      * @param pOutOffset offset within pOutput to write bytes to
      * @return the number of bytes transferred to the output buffer
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     int update(byte[] pBytes,
                int pOffset,
                int pLength,
                byte[] pOutput,
-               int pOutOffset) throws OceanusException;
+               int pOutOffset) throws GordianException;
 
     /**
      * Complete the Cipher operation and return final results.
      * @return the remaining processed data
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    default byte[] finish() throws OceanusException {
+    default byte[] finish() throws GordianException {
         /* Create output buffer */
         final int myLen = getOutputLength(0);
         final byte[] myOutput = new byte[myLen];
@@ -131,9 +131,9 @@ public interface GordianCipher {
      * Process the passed data and return final results.
      * @param pBytes Bytes to update cipher with
      * @return the remaining processed data
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    default byte[] finish(final byte[] pBytes) throws OceanusException {
+    default byte[] finish(final byte[] pBytes) throws GordianException {
         return finish(pBytes, 0, pBytes == null ? 0 : pBytes.length);
     }
 
@@ -143,11 +143,11 @@ public interface GordianCipher {
      * @param pOffset offset within pBytes to read bytes from
      * @param pLength length of data to update with
      * @return the remaining processed data
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     default byte[] finish(final byte[] pBytes,
                           final int pOffset,
-                          final int pLength) throws OceanusException {
+                          final int pLength) throws GordianException {
         /* Create output buffer */
         final int myLen = getOutputLength(pLength);
         final byte[] myOutput = new byte[myLen];
@@ -173,12 +173,12 @@ public interface GordianCipher {
      * @param pLength length of data to update with
      * @param pOutput the output buffer to receive processed data
      * @return the number of bytes transferred to the output buffer
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     default int finish(final byte[] pBytes,
                        final int pOffset,
                        final int pLength,
-                       final byte[] pOutput) throws OceanusException {
+                       final byte[] pOutput) throws GordianException {
         return finish(pBytes, pOffset, pLength, pOutput, 0);
     }
 
@@ -190,13 +190,13 @@ public interface GordianCipher {
      * @param pOutput the output buffer to receive processed data
      * @param pOutOffset offset within pOutput to write bytes to
      * @return the number of bytes transferred to the output buffer
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     default int finish(final byte[] pBytes,
                        final int pOffset,
                        final int pLength,
                        final byte[] pOutput,
-                       final int pOutOffset) throws OceanusException {
+                       final int pOutOffset) throws GordianException {
         /* Update the data */
         final int myLen = update(pBytes, pOffset, pLength, pOutput, pOutOffset);
 
@@ -209,8 +209,8 @@ public interface GordianCipher {
      * @param pOutput the output buffer to receive processed data
      * @param pOutOffset offset within pOutput to write bytes to
      * @return the number of bytes transferred to the output buffer
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     int finish(byte[] pOutput,
-               int pOutOffset) throws OceanusException;
+               int pOutOffset) throws GordianException;
 }

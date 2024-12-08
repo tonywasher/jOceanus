@@ -16,13 +16,29 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.core.keystore;
 
-import java.io.IOException;
-import java.security.spec.PKCS8EncodedKeySpec;
-import java.security.spec.X509EncodedKeySpec;
-import java.util.Arrays;
-import java.util.List;
-import java.util.function.Function;
-
+import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementFactory;
+import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementSpec;
+import net.sourceforge.joceanus.gordianknot.api.agree.GordianAnonymousAgreement;
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
+import net.sourceforge.joceanus.gordianknot.api.encrypt.GordianEncryptor;
+import net.sourceforge.joceanus.gordianknot.api.encrypt.GordianEncryptorFactory;
+import net.sourceforge.joceanus.gordianknot.api.encrypt.GordianEncryptorSpec;
+import net.sourceforge.joceanus.gordianknot.api.factory.GordianKeyPairFactory;
+import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
+import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairGenerator;
+import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
+import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySet;
+import net.sourceforge.joceanus.gordianknot.api.keystore.GordianCertificate;
+import net.sourceforge.joceanus.gordianknot.api.keystore.GordianKeyPairUsage;
+import net.sourceforge.joceanus.gordianknot.api.keystore.GordianKeyStoreEntry;
+import net.sourceforge.joceanus.gordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStorePair;
+import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignature;
+import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignatureSpec;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianIOException;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianLogicException;
+import net.sourceforge.joceanus.gordianknot.impl.core.sign.GordianCoreSignatureFactory;
 import org.bouncycastle.asn1.ASN1Integer;
 import org.bouncycastle.asn1.ASN1Object;
 import org.bouncycastle.asn1.cms.EncryptedContentInfo;
@@ -45,29 +61,12 @@ import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.asn1.x509.GeneralName;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 
-import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementFactory;
-import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementSpec;
-import net.sourceforge.joceanus.gordianknot.api.agree.GordianAnonymousAgreement;
-import net.sourceforge.joceanus.gordianknot.api.encrypt.GordianEncryptor;
-import net.sourceforge.joceanus.gordianknot.api.encrypt.GordianEncryptorFactory;
-import net.sourceforge.joceanus.gordianknot.api.encrypt.GordianEncryptorSpec;
-import net.sourceforge.joceanus.gordianknot.api.factory.GordianKeyPairFactory;
-import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
-import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairGenerator;
-import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
-import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySet;
-import net.sourceforge.joceanus.gordianknot.api.keystore.GordianCertificate;
-import net.sourceforge.joceanus.gordianknot.api.keystore.GordianKeyPairUsage;
-import net.sourceforge.joceanus.gordianknot.api.keystore.GordianKeyStoreEntry;
-import net.sourceforge.joceanus.gordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStorePair;
-import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignature;
-import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignatureSpec;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
-import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
-import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianIOException;
-import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianLogicException;
-import net.sourceforge.joceanus.gordianknot.impl.core.sign.GordianCoreSignatureFactory;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import java.io.IOException;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
+import java.util.Arrays;
+import java.util.List;
+import java.util.function.Function;
 
 /**
  * Certificate Request Message Parser.
@@ -123,9 +122,9 @@ public class GordianCRMParser {
      * process a certificate request.
      * @param pRequest the request
      * @return the signed certificate chain
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    List<GordianCertificate> processCertificateRequest(final CertReqMsg pRequest) throws OceanusException {
+    List<GordianCertificate> processCertificateRequest(final CertReqMsg pRequest) throws GordianException {
         /* Derive the certificate request message */
         final CertRequest myCertReq = pRequest.getCertReq();
         final ProofOfPossession myProof = pRequest.getPop();
@@ -154,7 +153,7 @@ public class GordianCRMParser {
      * @param pKeyPair the keyPair
      */
     public void processCertificateResponse(final GordianCertResponseASN1 pResponse,
-                                           final GordianKeyStorePair pKeyPair) throws OceanusException {
+                                           final GordianKeyStorePair pKeyPair) throws GordianException {
         /* Decrypt if necessary */
         if (pResponse.isEncrypted()) {
             final GordianCRMEncryptor myEncryptor = theGateway.getEncryptor();
@@ -197,10 +196,10 @@ public class GordianCRMParser {
      * @param pProof the proof of possession
      * @param pSubject the subject name
      * @return the PKCS8Encoded privateKey
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     PKCS8EncodedKeySpec derivePrivateKey(final ProofOfPossession pProof,
-                                         final X500Name pSubject) throws OceanusException {
+                                         final X500Name pSubject) throws GordianException {
         /* Protect against exceptions */
         try {
             /* Extract details */
@@ -235,9 +234,9 @@ public class GordianCRMParser {
      * Derive the keySet via a keyPairSet issuer.
      * @param pRecInfo the recipient info
      * @return the keySet
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private GordianKeySet deriveKeySetFromRecInfo(final KeyTransRecipientInfo pRecInfo) throws OceanusException {
+    private GordianKeySet deriveKeySetFromRecInfo(final KeyTransRecipientInfo pRecInfo) throws GordianException {
         /* Access issuer details */
         final IssuerAndSerialNumber myIssId = (IssuerAndSerialNumber) pRecInfo.getRecipientIdentifier().getId();
 
@@ -266,12 +265,12 @@ public class GordianCRMParser {
      * @param pSubject the subject name
      * @param pPublicKey the publicKey
      * @return the keyPair
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     private GordianKeyPair deriveKeyPair(final ProofOfPossession pProof,
                                          final CertRequest pCertReq,
                                          final X500Name pSubject,
-                                         final SubjectPublicKeyInfo pPublicKey) throws OceanusException {
+                                         final SubjectPublicKeyInfo pPublicKey) throws GordianException {
         /* Handle signed keyPair */
         switch (pProof.getType()) {
             case ProofOfPossession.TYPE_SIGNING_KEY:
@@ -289,11 +288,11 @@ public class GordianCRMParser {
      * @param pCertReq the certificate request
      * @param pPublicKey the publicKey
      * @return the keyPair
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     private GordianKeyPair deriveSignedKeyPair(final ProofOfPossession pProof,
                                                final CertRequest pCertReq,
-                                               final SubjectPublicKeyInfo pPublicKey) throws OceanusException {
+                                               final SubjectPublicKeyInfo pPublicKey) throws GordianException {
         /* Protect against exceptions */
         try {
             /* Derive the public Key */
@@ -330,11 +329,11 @@ public class GordianCRMParser {
      * @param pSubject the subject name
      * @param pPublicKey the publicKey
      * @return the keyPair
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     private GordianKeyPair deriveEncryptedKeyPair(final ProofOfPossession pProof,
                                                   final X500Name pSubject,
-                                                  final SubjectPublicKeyInfo pPublicKey) throws OceanusException {
+                                                  final SubjectPublicKeyInfo pPublicKey) throws GordianException {
         /* Protect against exceptions */
         try {
             /* Access the generator */
@@ -371,9 +370,9 @@ public class GordianCRMParser {
     /**
      * Check PrivateKey.
      * @param pKeyPair the keyPair
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private void checkPrivateKey(final GordianKeyPair pKeyPair) throws OceanusException {
+    private void checkPrivateKey(final GordianKeyPair pKeyPair) throws GordianException {
         /* Access details */
         final GordianKeyPairFactory myFactory = theGateway.getFactory().getKeyPairFactory();
         final GordianKeyPairSpec mySpec = pKeyPair.getKeyPairSpec();
@@ -399,9 +398,9 @@ public class GordianCRMParser {
     /**
      * Check Encryption PrivateKey.
      * @param pKeyPair the keyPair
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private void checkEncryptionPrivateKey(final GordianKeyPair pKeyPair) throws OceanusException {
+    private void checkEncryptionPrivateKey(final GordianKeyPair pKeyPair) throws GordianException {
         /* Create the data to encrypt */
         final byte[] mySrc = new byte[TESTLEN];
         final GordianCoreFactory myFactory = theGateway.getFactory();
@@ -433,9 +432,9 @@ public class GordianCRMParser {
     /**
      * Check Agreement PrivateKey.
      * @param pKeyPair the keyPair
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private void checkAgreementPrivateKey(final GordianKeyPair pKeyPair) throws OceanusException {
+    private void checkAgreementPrivateKey(final GordianKeyPair pKeyPair) throws GordianException {
         /* Access details */
         final GordianCoreFactory myFactory = theGateway.getFactory();
         final GordianAgreementFactory myAgreeFactory = myFactory.getKeyPairFactory().getAgreementFactory();
@@ -462,11 +461,11 @@ public class GordianCRMParser {
      * @param pSubject the subject name
      * @param pAttrs the attributes
      * @param pPublicKey the public key
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     private void checkPKMACValue(final X500Name pSubject,
                                  final AttributeTypeAndValue[] pAttrs,
-                                 final SubjectPublicKeyInfo pPublicKey) throws OceanusException {
+                                 final SubjectPublicKeyInfo pPublicKey) throws GordianException {
         /* Loop through the Attrs */
         AttributeTypeAndValue myAttr = null;
         if (pAttrs != null) {

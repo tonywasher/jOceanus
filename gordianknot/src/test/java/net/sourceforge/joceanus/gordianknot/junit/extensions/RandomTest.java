@@ -16,18 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.junit.extensions;
 
-import java.util.stream.Stream;
-
-import org.bouncycastle.crypto.prng.EntropySource;
-import org.bouncycastle.crypto.prng.EntropySourceProvider;
-import org.bouncycastle.util.encoders.Hex;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.DynamicContainer;
-import org.junit.jupiter.api.DynamicNode;
-import org.junit.jupiter.api.DynamicTest;
-import org.junit.jupiter.api.TestFactory;
-
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianCipherFactory;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianPadding;
@@ -41,17 +30,27 @@ import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestFactory;
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestSpecBuilder;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactoryType;
-import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacSpecBuilder;
-import net.sourceforge.joceanus.gordianknot.util.GordianGenerator;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMac;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacFactory;
+import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacSpecBuilder;
 import net.sourceforge.joceanus.gordianknot.impl.core.cipher.GordianCoreCipher;
 import net.sourceforge.joceanus.gordianknot.impl.core.random.GordianDRBGenerator;
 import net.sourceforge.joceanus.gordianknot.impl.core.random.GordianSP800CTRDRBG;
 import net.sourceforge.joceanus.gordianknot.impl.core.random.GordianSP800HMacDRBG;
 import net.sourceforge.joceanus.gordianknot.impl.core.random.GordianSP800HashDRBG;
 import net.sourceforge.joceanus.gordianknot.impl.core.random.GordianX931CipherDRBG;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.gordianknot.util.GordianGenerator;
+import org.bouncycastle.crypto.prng.EntropySource;
+import org.bouncycastle.crypto.prng.EntropySourceProvider;
+import org.bouncycastle.util.encoders.Hex;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.DynamicContainer;
+import org.junit.jupiter.api.DynamicNode;
+import org.junit.jupiter.api.DynamicTest;
+import org.junit.jupiter.api.TestFactory;
+
+import java.util.stream.Stream;
 
 /**
  * GordianKnot DRBG testCases.
@@ -189,10 +188,10 @@ class RandomTest {
          * Constructor.
          * @param pData the entropy data
          * @param pResistant is the entropy prediction resistant?
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
         GordianEntropySourceProvider(final String pData,
-                                     final boolean pResistant) throws OceanusException {
+                                     final boolean pResistant) throws GordianException {
             theData = Hex.decode(pData);
             predictionResistant = pResistant;
         }
@@ -266,20 +265,20 @@ class RandomTest {
 
     /**
      * Initialise Factories.
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     @BeforeAll
-    public static void createSecurityFactories() throws OceanusException {
+    public static void createSecurityFactories() throws GordianException {
         BCFACTORY = GordianGenerator.createFactory(GordianFactoryType.BC);
     }
 
     /**
      * Create the drbg test suite.
      * @return the test stream
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     @TestFactory
-    Stream<DynamicNode> drbgTests() throws OceanusException {
+    Stream<DynamicNode> drbgTests() throws GordianException {
         /* Create tests */
         DynamicNode myHash = DynamicContainer.dynamicContainer("Hash", Stream.of(
                 testSHA1HashDRBG(),
@@ -304,11 +303,11 @@ class RandomTest {
      * @param pRandom the random generator
      * @param pResistant is the generator prediction resistant?
      * @param pTestCase the testcase
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     private void testRandom(final GordianDRBGenerator pRandom,
                             final boolean pResistant,
-                            final GordianTestCase pTestCase) throws OceanusException {
+                            final GordianTestCase pTestCase) throws GordianException {
         /* Access the expected bytes */
         final byte[] myExpected = Hex.decode(pTestCase.theExpected);
         final byte[] myActual = new byte[myExpected.length];
@@ -327,11 +326,11 @@ class RandomTest {
      * @param pDigest the Digest
      * @param pInit the initialisation
      * @param pTestCases the testCases
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     private void testHashDRBG(final GordianDigest pDigest,
                               final GordianDRBGInit pInit,
-                              final GordianTestCase[] pTestCases) throws OceanusException {
+                              final GordianTestCase[] pTestCases) throws GordianException {
         /* Access the nonce and personalisation */
         final byte[] myNonce = Hex.decode(pInit.theNonce);
         final String myPers = pInit.thePersonal;
@@ -359,11 +358,11 @@ class RandomTest {
      * @param pMac the HMac.
      * @param pInit the initialisation
      * @param pTestCases the testCases
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     private void testHMacDRBG(final GordianMac pMac,
                               final GordianDRBGInit pInit,
-                              final GordianTestCase[] pTestCases) throws OceanusException {
+                              final GordianTestCase[] pTestCases) throws GordianException {
         /* Access the nonce and personalisation */
         final byte[] myNonce = Hex.decode(pInit.theNonce);
         final String myPers = pInit.thePersonal;
@@ -392,12 +391,12 @@ class RandomTest {
      * @param pKeySize the keySize
      * @param pInit the initialisation
      * @param pTestCases the testCases
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     private void testCTRCipherDRBG(final GordianCoreCipher<GordianSymKeySpec> pCipher,
                                    final GordianLength pKeySize,
                                    final GordianDRBGInit pInit,
-                                   final GordianTestCase[] pTestCases) throws OceanusException {
+                                   final GordianTestCase[] pTestCases) throws GordianException {
         /* Access the nonce and personalisation */
         final byte[] myNonce = Hex.decode(pInit.theNonce);
         final String myPers = pInit.thePersonal;
@@ -424,12 +423,12 @@ class RandomTest {
      * @param pKey the key
      * @param pInit the initialisation
      * @param pTestCases the testCases
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     private void testX931CipherDRBG(final GordianCoreCipher<GordianSymKeySpec> pCipher,
                                     final String pKey,
                                     final GordianDRBGInit pInit,
-                                    final GordianTestCase[] pTestCases) throws OceanusException {
+                                    final GordianTestCase[] pTestCases) throws GordianException {
         /* Access the nonce and key */
         final byte[] myNonce = Hex.decode(pInit.theNonce);
         final byte[] myKey = Hex.decode(pKey);
@@ -464,9 +463,9 @@ class RandomTest {
     /**
      * Create Sha1 Hash DRBG Test.
      * @return the test
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private DynamicNode testSHA1HashDRBG() throws OceanusException {
+    private DynamicNode testSHA1HashDRBG() throws GordianException {
         /* The SHA1 Init */
         final GordianDRBGInit myInitF =  new GordianDRBGInit(false, sha1Nonce, sha1Entropy);
         final GordianDRBGInit myInitFP =  new GordianDRBGInit(false, sha1Nonce, sha1Entropy, sha1Personal);
@@ -528,9 +527,9 @@ class RandomTest {
     /**
      * Create Sha1 HMac DRBG test .
      * @return the test
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private DynamicNode testSHA1HMacDRBG() throws OceanusException {
+    private DynamicNode testSHA1HMacDRBG() throws GordianException {
         /* The SHA1 Init */
         final GordianDRBGInit myInitF =  new GordianDRBGInit(false, sha1Nonce, sha1Entropy);
         final GordianDRBGInit myInitFP =  new GordianDRBGInit(false, sha1Nonce, sha1Entropy, sha1Personal);
@@ -625,9 +624,9 @@ class RandomTest {
     /**
      * Create Sha512 Hash DRBG test.
      * @return the test
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private DynamicNode testSHA512HashDRBG() throws OceanusException {
+    private DynamicNode testSHA512HashDRBG() throws GordianException {
         /* The SHA512 Init */
         final GordianDRBGInit myInitFP =  new GordianDRBGInit(false, sha512Nonce, sha512Entropy, sha512Personal);
         final GordianDRBGInit myInitT =  new GordianDRBGInit(true, sha512Nonce, sha512Entropy);
@@ -732,9 +731,9 @@ class RandomTest {
     /**
      * Create Sha512 HMac DRBG test.
      * @return the test
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private DynamicNode testSHA512HMacDRBG() throws OceanusException {
+    private DynamicNode testSHA512HMacDRBG() throws GordianException {
         /* The SHA512 Init */
         final GordianDRBGInit myInitFP =  new GordianDRBGInit(false, sha512Nonce, sha512Entropy, sha512Personal);
         final GordianDRBGInit myInitT =  new GordianDRBGInit(true, sha512Nonce, sha512Entropy);
@@ -867,10 +866,10 @@ class RandomTest {
     /**
      * Create aes128 Ctr DRBG test.
      * @return the test
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     @SuppressWarnings("unchecked")
-    private DynamicNode testAES128CtrDRBG() throws OceanusException {
+    private DynamicNode testAES128CtrDRBG() throws GordianException {
         /* The AES128 Init */
         final GordianDRBGInit myInitF =  new GordianDRBGInit(false, aes128Nonce, aes128Entropy);
         final GordianDRBGInit myInitFP =  new GordianDRBGInit(false, aes128Nonce, aes128Entropy, aes128Personal);
@@ -933,10 +932,10 @@ class RandomTest {
     /**
      * Create aes128 X931 DRBG test.
      * @return the test
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     @SuppressWarnings("unchecked")
-    private DynamicNode testAES128X931DRBG() throws OceanusException {
+    private DynamicNode testAES128X931DRBG() throws GordianException {
         /* The AES128 Init */
         final GordianDRBGInit myInitF =  new GordianDRBGInit(false, "259e67249288597a4d61e7c0e690afae", "35cc0ea481fc8a4f5f05c7d4667233b2");
 
@@ -978,10 +977,10 @@ class RandomTest {
     /**
      * Create aes128 Ctr DRBG test.
      * @return the test
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     @SuppressWarnings("unchecked")
-    private DynamicNode testAES256CtrDRBG() throws OceanusException {
+    private DynamicNode testAES256CtrDRBG() throws GordianException {
         /* The AES256 Init */
         final GordianDRBGInit myInitFP =  new GordianDRBGInit(false, aes256Nonce, aes256Entropy, aes256Personal);
         final GordianDRBGInit myInitT =  new GordianDRBGInit(true, aes256Nonce, aes256Entropy);

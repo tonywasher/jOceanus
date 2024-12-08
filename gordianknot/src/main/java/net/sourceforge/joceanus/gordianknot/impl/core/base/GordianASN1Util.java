@@ -16,15 +16,14 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.core.base;
 
-import java.io.IOException;
-
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianIOException;
 import org.bouncycastle.asn1.ASN1Object;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.bc.BCObjectIdentifiers;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import java.io.IOException;
 
 /**
  * ASN1 Utilities.
@@ -142,9 +141,9 @@ public final class GordianASN1Util {
         /**
          * Obtain encodedBytes.
          * @return the bytes
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
-        public byte[] getEncodedBytes() throws OceanusException {
+        public byte[] getEncodedBytes() throws GordianException {
             try {
                 return toASN1Primitive().getEncoded();
             } catch (IOException e) {

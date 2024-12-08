@@ -16,6 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.core.zip;
 
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySet;
 import net.sourceforge.joceanus.gordianknot.api.zip.GordianZipFileEntry;
@@ -27,7 +28,6 @@ import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianLogicException;
 import net.sourceforge.joceanus.gordianknot.impl.core.keyset.GordianCoreKeySet;
 import net.sourceforge.joceanus.gordianknot.impl.core.stream.GordianStreamDefinition;
 import net.sourceforge.joceanus.gordianknot.impl.core.stream.GordianStreamManager;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import org.w3c.dom.Document;
 
 import javax.xml.XMLConstants;
@@ -113,10 +113,10 @@ public class GordianCoreZipWriteFile
      * Constructor for new output zip file with security.
      * @param pLock the lock to use
      * @param pOutputStream the output stream to write to
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     GordianCoreZipWriteFile(final GordianCoreZipLock pLock,
-                            final OutputStream pOutputStream) throws OceanusException {
+                            final OutputStream pOutputStream) throws GordianException {
         /* Check that the lock is usable */
         if (pLock == null || !pLock.isFresh()) {
             throw new GordianDataException("Invalid lock");
@@ -192,7 +192,7 @@ public class GordianCoreZipWriteFile
 
     @Override
     public void writeXMLDocument(final File pFile,
-                                 final Document pDocument) throws OceanusException {
+                                 final Document pDocument) throws GordianException {
         /* Access the entry as an input stream */
         try (OutputStream myOutputStream = createOutputStream(pFile, true)) {
             /* Create the transformer */
@@ -214,7 +214,7 @@ public class GordianCoreZipWriteFile
 
     @Override
     public OutputStream createOutputStream(final File pFile,
-                                           final boolean pCompress) throws OceanusException {
+                                           final boolean pCompress) throws GordianException {
         /* Reject call if we have closed the stream */
         if (theStream == null) {
             throw new GordianLogicException("ZipFile is closed");
@@ -293,7 +293,7 @@ public class GordianCoreZipWriteFile
             theOutput = null;
 
             /* Catch exceptions */
-        } catch (OceanusException e) {
+        } catch (GordianException e) {
             throw new IOException(e);
         }
     }
@@ -344,7 +344,7 @@ public class GordianCoreZipWriteFile
                 theStream = null;
 
                 /* Catch exceptions */
-            } catch (OceanusException e) {
+            } catch (GordianException e) {
                 throw new IOException(e);
             }
         }

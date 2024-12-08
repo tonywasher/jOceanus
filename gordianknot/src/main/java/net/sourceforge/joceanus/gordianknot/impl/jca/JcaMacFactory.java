@@ -16,6 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.jca;
 
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymKeySpec;
@@ -28,7 +29,6 @@ import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.mac.GordianCoreMacFactory;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 import javax.crypto.KeyGenerator;
 import javax.crypto.Mac;
@@ -81,7 +81,7 @@ public class JcaMacFactory
 
     @Override
     @SuppressWarnings("unchecked")
-    public <T extends GordianKeySpec> GordianKeyGenerator<T> getKeyGenerator(final T pMacSpec) throws OceanusException {
+    public <T extends GordianKeySpec> GordianKeyGenerator<T> getKeyGenerator(final T pMacSpec) throws GordianException {
         /* Look up in the cache */
         JcaKeyGenerator<T> myGenerator = (JcaKeyGenerator<T>) theCache.get(pMacSpec);
         if (myGenerator == null) {
@@ -100,7 +100,7 @@ public class JcaMacFactory
     }
 
     @Override
-    public JcaMac createMac(final GordianMacSpec pMacSpec) throws OceanusException {
+    public JcaMac createMac(final GordianMacSpec pMacSpec) throws GordianException {
         /* Check validity of MacSpec */
         checkMacSpec(pMacSpec);
 
@@ -127,9 +127,9 @@ public class JcaMacFactory
      * Create the BouncyCastle MAC via JCA.
      * @param pMacSpec the MacSpec
      * @return the MAC
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private Mac getJavaMac(final GordianMacSpec pMacSpec) throws OceanusException {
+    private Mac getJavaMac(final GordianMacSpec pMacSpec) throws GordianException {
         switch (pMacSpec.getMacType()) {
             case HMAC:
             case GMAC:
@@ -153,9 +153,9 @@ public class JcaMacFactory
      * Create the BouncyCastle MAC via JCA.
      * @param pAlgorithm the Algorithm
      * @return the MAC
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private static Mac getJavaMac(final String pAlgorithm) throws OceanusException {
+    private static Mac getJavaMac(final String pAlgorithm) throws GordianException {
         /* Protect against exceptions */
         try {
             /* Return a MAC for the algorithm */
@@ -172,9 +172,9 @@ public class JcaMacFactory
      * Create the BouncyCastle KeyGenerator via JCA.
      * @param pAlgorithm the Algorithm
      * @return the KeyGenerator
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private static KeyGenerator getJavaKeyGenerator(final String pAlgorithm) throws OceanusException {
+    private static KeyGenerator getJavaKeyGenerator(final String pAlgorithm) throws GordianException {
         /* Protect against exceptions */
         try {
             /* Massage the keyGenerator name */
@@ -209,9 +209,9 @@ public class JcaMacFactory
      * Obtain the MacSpec Key algorithm.
      * @param pMacSpec the MacSpec
      * @return the Algorithm
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private static String getMacSpecAlgorithm(final GordianMacSpec pMacSpec) throws OceanusException {
+    private static String getMacSpecAlgorithm(final GordianMacSpec pMacSpec) throws GordianException {
         switch (pMacSpec.getMacType()) {
             case HMAC:
                 return getHMacAlgorithm(pMacSpec.getDigestSpec());
@@ -244,9 +244,9 @@ public class JcaMacFactory
      * Return the associated HMac algorithm.
      * @param pDigestSpec the digestSpec
      * @return the algorithm
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private static String getHMacAlgorithm(final GordianDigestSpec pDigestSpec) throws OceanusException {
+    private static String getHMacAlgorithm(final GordianDigestSpec pDigestSpec) throws GordianException {
         return "HMac" + JcaDigest.getHMacAlgorithm(pDigestSpec);
     }
 
@@ -254,9 +254,9 @@ public class JcaMacFactory
      * Obtain the GMAC algorithm.
      * @param pKeySpec the symmetric keySpec
      * @return the algorithm
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private static String getGMacAlgorithm(final GordianSymKeySpec pKeySpec) throws OceanusException {
+    private static String getGMacAlgorithm(final GordianSymKeySpec pKeySpec) throws GordianException {
         /* Return algorithm name */
         return JcaCipherFactory.getSymKeyAlgorithm(pKeySpec) + "GMAC";
     }
@@ -265,9 +265,9 @@ public class JcaMacFactory
      * Obtain the GMAC algorithm.
      * @param pKeySpec the symmetric keySpec
      * @return the algorithm
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private static String getCMacAlgorithm(final GordianSymKeySpec pKeySpec) throws OceanusException {
+    private static String getCMacAlgorithm(final GordianSymKeySpec pKeySpec) throws GordianException {
         /* Return algorithm name */
         return JcaCipherFactory.getSymKeyAlgorithm(pKeySpec) + CMAC_ALGORITHM;
     }
@@ -276,9 +276,9 @@ public class JcaMacFactory
      * Obtain the Poly1305 algorithm.
      * @param pKeySpec the symmetric keySpec
      * @return the algorithm
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private static String getPoly1305Algorithm(final GordianSymKeySpec pKeySpec) throws OceanusException {
+    private static String getPoly1305Algorithm(final GordianSymKeySpec pKeySpec) throws GordianException {
         /* Return algorithm name */
         return pKeySpec == null
                ? "POLY1305"
@@ -319,9 +319,9 @@ public class JcaMacFactory
      * Obtain the Kupyna MAC algorithm.
      * @param pSpec the digestSpec
      * @return the algorithm
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private static String getKupynaMacAlgorithm(final GordianDigestSpec pSpec) throws OceanusException {
+    private static String getKupynaMacAlgorithm(final GordianDigestSpec pSpec) throws GordianException {
         /* For some reason this is accessed as HMAC !!! */
         return getHMacAlgorithm(pSpec);
     }

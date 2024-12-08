@@ -16,6 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.core.base;
 
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianCipherFactory;
@@ -29,7 +30,6 @@ import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySetFactory;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacFactory;
 import net.sourceforge.joceanus.gordianknot.api.random.GordianRandomFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 
@@ -47,9 +47,9 @@ public abstract class GordianCoreFactory
          * create and build a keySet from seed.
          * @param pSeed the base seed
          * @return the keySet
-         * @throws OceanusException on error
+         * @throws GordianException on error
          */
-        GordianKeySet generateKeySet(byte[] pSeed) throws OceanusException;
+        GordianKeySet generateKeySet(byte[] pSeed) throws GordianException;
     }
 
     /**
@@ -161,10 +161,10 @@ public abstract class GordianCoreFactory
      * Constructor.
      * @param pGenerator the factory generator
      * @param pParameters the parameters
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     protected GordianCoreFactory(final GordianFactoryGenerator pGenerator,
-                                 final GordianParameters pParameters) throws OceanusException {
+                                 final GordianParameters pParameters) throws GordianException {
         /* Check parameters */
         if (pParameters == null || !pParameters.validate()) {
             throw new GordianDataException("Invalid Parameters");
@@ -189,12 +189,12 @@ public abstract class GordianCoreFactory
 
     /**
      * Declare factories.
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    protected abstract void declareFactories() throws OceanusException;
+    protected abstract void declareFactories() throws GordianException;
 
     @Override
-    public GordianFactory newFactory(final GordianParameters pParameters) throws OceanusException {
+    public GordianFactory newFactory(final GordianParameters pParameters) throws GordianException {
         return theGenerator.newFactory(pParameters);
     }
 
@@ -259,9 +259,9 @@ public abstract class GordianCoreFactory
     /**
      * Create embedded keySet.
      * @return the embedded keySet
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private GordianKeySet createEmbeddedKeySet() throws OceanusException {
+    private GordianKeySet createEmbeddedKeySet() throws GordianException {
         /* Obtain the keySet seed */
         final byte[] mySeed = thePersonalisation.getKeySetVector();
 

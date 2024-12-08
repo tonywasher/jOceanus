@@ -16,6 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.core.base;
 
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianIdSpec;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianCipherMode;
@@ -49,7 +50,6 @@ import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacType;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianSipHashSpec;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianPersonalisation.GordianPersonalId;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 import java.math.BigInteger;
 
@@ -81,9 +81,9 @@ public class GordianCoreKnuthObfuscater
     /**
      * Constructor.
      * @param pFactory the factory
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    GordianCoreKnuthObfuscater(final GordianCoreFactory pFactory) throws OceanusException {
+    GordianCoreKnuthObfuscater(final GordianCoreFactory pFactory) throws GordianException {
         /* Generate Knuth Prime/Inverse */
         final GordianPersonalisation myPersonal = pFactory.getPersonalisation();
         final BigInteger[] myKnuth = generatePrime(myPersonal.getPersonalisedInteger(GordianPersonalId.KNUTHPRIME));
@@ -213,12 +213,12 @@ public class GordianCoreKnuthObfuscater
 
     @Override
     public int deriveExternalIdFromType(final GordianIdSpec pType,
-                                        final int pAdjustment) throws OceanusException {
+                                        final int pAdjustment) throws GordianException {
         return knuthEncodeInteger(deriveEncodedIdFromType(pType), pAdjustment);
     }
 
     @Override
-    public int deriveExternalIdFromType(final GordianIdSpec pType) throws OceanusException {
+    public int deriveExternalIdFromType(final GordianIdSpec pType) throws GordianException {
         return knuthEncodeInteger(deriveEncodedIdFromType(pType));
     }
 
@@ -227,9 +227,9 @@ public class GordianCoreKnuthObfuscater
      * @param <T> the type class
      * @param pType the type
      * @return the externalId
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private static <T extends GordianIdSpec> int deriveEncodedIdFromType(final T pType) throws OceanusException {
+    private static <T extends GordianIdSpec> int deriveEncodedIdFromType(final T pType) throws GordianException {
         if (pType instanceof GordianDigestSpec) {
             final int myId = deriveEncodedIdFromDigestSpec((GordianDigestSpec) pType);
             return GordianIdMarker.DIGEST.applyMarker(myId);
@@ -259,12 +259,12 @@ public class GordianCoreKnuthObfuscater
 
     @Override
     public GordianIdSpec deriveTypeFromExternalId(final int pId,
-                                                  final int pAdjustment) throws OceanusException {
+                                                  final int pAdjustment) throws GordianException {
         return deriveTypeFromEncodedId(knuthDecodeInteger(pId, pAdjustment));
     }
 
     @Override
-    public GordianIdSpec deriveTypeFromExternalId(final int pId) throws OceanusException {
+    public GordianIdSpec deriveTypeFromExternalId(final int pId) throws GordianException {
         return deriveTypeFromEncodedId(knuthDecodeInteger(pId));
     }
 
@@ -272,9 +272,9 @@ public class GordianCoreKnuthObfuscater
      * Obtain Type from external Id.
      * @param pId the external id
      * @return the Type
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private static GordianIdSpec deriveTypeFromEncodedId(final int pId) throws OceanusException {
+    private static GordianIdSpec deriveTypeFromEncodedId(final int pId) throws GordianException {
         final GordianIdMarker myMarker = GordianIdMarker.determine(pId);
         final int myId = GordianIdMarker.removeMarker(pId);
         switch (myMarker) {
@@ -322,9 +322,9 @@ public class GordianCoreKnuthObfuscater
      * Obtain digestSpec from encodedId.
      * @param pEncodedId the encoded id
      * @return the digestSpec
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private static GordianDigestSpec deriveDigestSpecFromEncodedId(final int pEncodedId) throws OceanusException {
+    private static GordianDigestSpec deriveDigestSpecFromEncodedId(final int pEncodedId) throws GordianException {
         /* Isolate id Components */
         final int myLenCode = pEncodedId & determineMaskForEnum(GordianLength.class);
         final int myCode = pEncodedId >> determineShiftForEnum(GordianLength.class);
@@ -366,9 +366,9 @@ public class GordianCoreKnuthObfuscater
      * Obtain symKeySpec from encodedId.
      * @param pEncodedId the encoded id
      * @return the symKeySpec
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private static GordianSymKeySpec deriveSymKeySpecFromEncodedId(final int pEncodedId) throws OceanusException {
+    private static GordianSymKeySpec deriveSymKeySpecFromEncodedId(final int pEncodedId) throws GordianException {
         /* Isolate id Components */
         final int myKeyLenCode = pEncodedId & determineMaskForEnum(GordianLength.class);
         final int myCode = pEncodedId >> determineShiftForEnum(GordianLength.class);
@@ -405,9 +405,9 @@ public class GordianCoreKnuthObfuscater
      * Obtain cipherSpec from encoded symCipherSpecId.
      * @param pEncodedId the encoded id
      * @return the symCipherSpec
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private static GordianSymCipherSpec deriveSymCipherSpecFromEncodedId(final int pEncodedId) throws OceanusException {
+    private static GordianSymCipherSpec deriveSymCipherSpecFromEncodedId(final int pEncodedId) throws GordianException {
         /* Isolate id Components */
         final int myPaddingCode = pEncodedId & determineMaskForEnum(GordianPadding.class);
         final int myCode = pEncodedId >> determineShiftForEnum(GordianPadding.class);
@@ -444,9 +444,9 @@ public class GordianCoreKnuthObfuscater
      * Obtain streamKeySpec from encodedId.
      * @param pEncodedId the encoded id
      * @return the streamKeySpec
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private static GordianStreamKeySpec deriveStreamKeySpecFromEncodedId(final int pEncodedId) throws OceanusException {
+    private static GordianStreamKeySpec deriveStreamKeySpecFromEncodedId(final int pEncodedId) throws GordianException {
         /* Isolate id Components */
         final int mySubKeyCode = pEncodedId & determineMaskForStreamKeySubType();
         final int myCode = pEncodedId >> determineShiftForStreamKeySubType();
@@ -481,9 +481,9 @@ public class GordianCoreKnuthObfuscater
      * Obtain cipherSpec from encoded symCipherSpecId.
      * @param pEncodedId the encoded id
      * @return the symCipherSpec
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private static GordianStreamCipherSpec deriveStreamCipherSpecFromEncodedId(final int pEncodedId) throws OceanusException {
+    private static GordianStreamCipherSpec deriveStreamCipherSpecFromEncodedId(final int pEncodedId) throws GordianException {
         /* Determine KeySpec */
         final int myAAD = pEncodedId & 1;
         final int myCode = pEncodedId >> 1;
@@ -529,10 +529,10 @@ public class GordianCoreKnuthObfuscater
      * @param pKeyType the keyType
      * @param pEncodedId the encodedId
      * @return the subKeyType
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     private static GordianStreamSubKeyType deriveStreamSubKeyTypeFromEncodedId(final GordianStreamKeyType pKeyType,
-                                                                               final int pEncodedId) throws OceanusException {
+                                                                               final int pEncodedId) throws GordianException {
         /* Switch on keyType */
         switch (pKeyType) {
             case CHACHA20:
@@ -652,9 +652,9 @@ public class GordianCoreKnuthObfuscater
      * Obtain macSpec from encoded macSpecId.
      * @param pEncodedId the encoded id
      * @return the macSpec
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private static GordianMacSpec deriveMacSpecFromEncodedId(final int pEncodedId) throws OceanusException {
+    private static GordianMacSpec deriveMacSpecFromEncodedId(final int pEncodedId) throws GordianException {
         /* Isolate id Components */
         final int myMacId = pEncodedId & determineMaskForEnum(GordianMacType.class);
         final int myCode = pEncodedId >> determineShiftForEnum(GordianMacType.class);
@@ -717,9 +717,9 @@ public class GordianCoreKnuthObfuscater
      * Obtain sipHashSpec from encoded Id.
      * @param pEncodedId the encoded id
      * @return the sipHashSpec
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private static GordianSipHashSpec deriveSipHashSpecFromEncodedId(final int pEncodedId) throws OceanusException {
+    private static GordianSipHashSpec deriveSipHashSpecFromEncodedId(final int pEncodedId) throws GordianException {
         return deriveEnumFromEncodedId(pEncodedId, GordianSipHashSpec.class);
     }
 
@@ -736,9 +736,9 @@ public class GordianCoreKnuthObfuscater
      * Obtain digestType from encoded Id.
      * @param pEncodedId the encoded id
      * @return the digestType
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private static GordianDigestType deriveDigestTypeFromEncodedId(final int pEncodedId) throws OceanusException {
+    private static GordianDigestType deriveDigestTypeFromEncodedId(final int pEncodedId) throws GordianException {
         return deriveEnumFromEncodedId(pEncodedId, GordianDigestType.class);
     }
 
@@ -755,9 +755,9 @@ public class GordianCoreKnuthObfuscater
      * Obtain symKeyType from encoded Id.
      * @param pEncodedId the encoded id
      * @return the symKeyType
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private static GordianSymKeyType deriveSymKeyTypeFromEncodedId(final int pEncodedId) throws OceanusException {
+    private static GordianSymKeyType deriveSymKeyTypeFromEncodedId(final int pEncodedId) throws GordianException {
         return deriveEnumFromEncodedId(pEncodedId, GordianSymKeyType.class);
     }
 
@@ -774,9 +774,9 @@ public class GordianCoreKnuthObfuscater
      * Obtain streamKeyType from encoded Id.
      * @param pEncodedId the encoded id
      * @return the streamKeyType
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private static GordianStreamKeyType deriveStreamKeyTypeFromEncodedId(final int pEncodedId) throws OceanusException {
+    private static GordianStreamKeyType deriveStreamKeyTypeFromEncodedId(final int pEncodedId) throws GordianException {
         return deriveEnumFromEncodedId(pEncodedId, GordianStreamKeyType.class);
     }
 
@@ -793,9 +793,9 @@ public class GordianCoreKnuthObfuscater
      * Obtain macType from encoded Id.
      * @param pEncodedId the encoded id
      * @return the macType
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private static GordianMacType deriveMacTypeFromEncodedId(final int pEncodedId) throws OceanusException {
+    private static GordianMacType deriveMacTypeFromEncodedId(final int pEncodedId) throws GordianException {
         return deriveEnumFromEncodedId(pEncodedId, GordianMacType.class);
     }
 
@@ -812,9 +812,9 @@ public class GordianCoreKnuthObfuscater
      * Obtain length from encoded Id.
      * @param pEncodedId the encoded id
      * @return the length
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private static GordianLength deriveLengthFromEncodedId(final int pEncodedId) throws OceanusException {
+    private static GordianLength deriveLengthFromEncodedId(final int pEncodedId) throws GordianException {
         return deriveEnumFromEncodedId(pEncodedId, GordianLength.class);
     }
 
@@ -831,9 +831,9 @@ public class GordianCoreKnuthObfuscater
      * Obtain digestState from encoded Id.
      * @param pEncodedId the encoded id
      * @return the state
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private static GordianDigestState deriveDigestStateFromEncodedId(final int pEncodedId) throws OceanusException {
+    private static GordianDigestState deriveDigestStateFromEncodedId(final int pEncodedId) throws GordianException {
         return deriveEnumFromEncodedId(pEncodedId, GordianDigestState.class);
     }
 
@@ -850,9 +850,9 @@ public class GordianCoreKnuthObfuscater
      * Obtain asconSubSpec from encoded Id.
      * @param pEncodedId the encoded id
      * @return the subSpec
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private static GordianAsconSubSpec deriveAsconSubSpecFromEncodedId(final int pEncodedId) throws OceanusException {
+    private static GordianAsconSubSpec deriveAsconSubSpecFromEncodedId(final int pEncodedId) throws GordianException {
         return deriveEnumFromEncodedId(pEncodedId, GordianAsconSubSpec.class);
     }
 
@@ -869,9 +869,9 @@ public class GordianCoreKnuthObfuscater
      * Obtain cipherMode from encoded Id.
      * @param pEncodedId the encoded id
      * @return the cipherMode
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private static GordianCipherMode deriveCipherModeFromEncodedId(final int pEncodedId) throws OceanusException {
+    private static GordianCipherMode deriveCipherModeFromEncodedId(final int pEncodedId) throws GordianException {
         return deriveEnumFromEncodedId(pEncodedId, GordianCipherMode.class);
     }
 
@@ -888,9 +888,9 @@ public class GordianCoreKnuthObfuscater
      * Obtain padding from encoded Id.
      * @param pEncodedId the encoded id
      * @return the padding
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private static GordianPadding derivePaddingFromEncodedId(final int pEncodedId) throws OceanusException {
+    private static GordianPadding derivePaddingFromEncodedId(final int pEncodedId) throws GordianException {
         return deriveEnumFromEncodedId(pEncodedId, GordianPadding.class);
     }
 
@@ -910,10 +910,10 @@ public class GordianCoreKnuthObfuscater
      * @param pEncodedId the encoded id
      * @param pClazz the Enum class
      * @return the padding
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     private static <E extends Enum<E>> E deriveEnumFromEncodedId(final int pEncodedId,
-                                                                 final Class<E> pClazz) throws OceanusException {
+                                                                 final Class<E> pClazz) throws GordianException {
         final int myId = pEncodedId - 1;
         for (final E myEnum : pClazz.getEnumConstants()) {
             if (myEnum.ordinal() == myId) {

@@ -16,6 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.junit.regression;
 
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianStreamKeySpec;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymKeySpec;
@@ -33,7 +34,6 @@ import net.sourceforge.joceanus.gordianknot.impl.core.cipher.GordianCoreCipherFa
 import net.sourceforge.joceanus.gordianknot.impl.core.digest.GordianCoreDigestFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.mac.GordianCoreMacFactory;
 import net.sourceforge.joceanus.gordianknot.util.GordianGenerator;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DynamicContainer;
@@ -57,10 +57,10 @@ class RandomSpecTest {
 
     /**
      * Initialise Factories.
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     @BeforeAll
-    public static void createSecurityFactories() throws OceanusException {
+    public static void createSecurityFactories() throws GordianException {
         BCFACTORY = GordianGenerator.createRandomFactory(GordianFactoryType.BC);
         JCAFACTORY = GordianGenerator.createRandomFactory(GordianFactoryType.JCA);
     }
@@ -68,10 +68,10 @@ class RandomSpecTest {
     /**
      * Create the randomSpec test suite.
      * @return the test stream
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     @TestFactory
-    Stream<DynamicNode> randomSpecTests() throws OceanusException {
+    Stream<DynamicNode> randomSpecTests() throws GordianException {
         /* Create tests */
         final Stream<DynamicNode> myBC = randomSpecTests(BCFACTORY);
         final Stream<DynamicNode> myJCA = randomSpecTests(JCAFACTORY);
@@ -82,9 +82,9 @@ class RandomSpecTest {
      * Create the randomSpec test suite for a factory.
      * @param pFactory the factory
      * @return the test stream
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private Stream<DynamicNode> randomSpecTests(final GordianFactory pFactory) throws OceanusException {
+    private Stream<DynamicNode> randomSpecTests(final GordianFactory pFactory) throws GordianException {
         /* Add digestSpec test */
         Stream<DynamicNode> myStream = Stream.of(DynamicTest.dynamicTest("digestSpec", () -> checkDigestSpecs(pFactory)));
 
@@ -169,9 +169,9 @@ class RandomSpecTest {
     /**
      * Check DigestSpecs.
      * @param pFactory the factory
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
-    private void checkDigestSpecs(final GordianFactory pFactory) throws OceanusException {
+    private void checkDigestSpecs(final GordianFactory pFactory) throws GordianException {
         /* Generate digestSpecs */
         final GordianRandomFactory myRandom = pFactory.getRandomFactory();
         final GordianCoreDigestFactory myDigests = (GordianCoreDigestFactory) pFactory.getDigestFactory();
@@ -192,10 +192,10 @@ class RandomSpecTest {
      * Check symKeySpecs.
      * @param pFactory the factory
      * @param pLength the key length
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     private void checkSymKeySpecs(final GordianFactory pFactory,
-                                  final GordianLength pLength) throws OceanusException {
+                                  final GordianLength pLength) throws GordianException {
         /* Generate digestSpecs */
         final GordianRandomFactory myRandom = pFactory.getRandomFactory();
         final GordianCoreCipherFactory myCiphers = (GordianCoreCipherFactory) pFactory.getCipherFactory();
@@ -216,10 +216,10 @@ class RandomSpecTest {
      * Check streamKeySpecs.
      * @param pFactory the factory
      * @param pLength the key length
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     private void checkStreamKeySpecs(final GordianFactory pFactory,
-                                     final GordianLength pLength) throws OceanusException {
+                                     final GordianLength pLength) throws GordianException {
         /* Generate digestSpecs */
         final GordianRandomFactory myRandom = pFactory.getRandomFactory();
         final GordianCoreCipherFactory myCiphers = (GordianCoreCipherFactory) pFactory.getCipherFactory();
@@ -240,10 +240,10 @@ class RandomSpecTest {
      * Check MacSpecs.
      * @param pFactory the factory
      * @param pLength the key length
-     * @throws OceanusException on error
+     * @throws GordianException on error
      */
     private void checkMacSpecs(final GordianFactory pFactory,
-                               final GordianLength pLength) throws OceanusException {
+                               final GordianLength pLength) throws GordianException {
         /* Generate macSpecs */
         final GordianRandomFactory myRandom = pFactory.getRandomFactory();
         final GordianCoreMacFactory myMacs = (GordianCoreMacFactory) pFactory.getMacFactory();
