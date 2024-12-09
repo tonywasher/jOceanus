@@ -24,9 +24,9 @@ import net.sourceforge.joceanus.prometheus.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.TethysEventProvider;
-import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIComponent;
-import net.sourceforge.joceanus.tethys.ui.api.pane.TethysUITabPaneManager;
-import net.sourceforge.joceanus.tethys.ui.api.pane.TethysUITabPaneManager.TethysUITabItem;
+import net.sourceforge.joceanus.tethys.api.base.TethysUIComponent;
+import net.sourceforge.joceanus.tethys.api.pane.TethysUITabPaneManager;
+import net.sourceforge.joceanus.tethys.api.pane.TethysUITabPaneManager.TethysUITabItem;
 
 /**
  * Market Tab panel.

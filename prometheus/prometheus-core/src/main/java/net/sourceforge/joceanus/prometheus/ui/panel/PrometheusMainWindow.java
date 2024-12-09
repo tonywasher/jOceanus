@@ -40,18 +40,18 @@ import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.logger.OceanusLogManager;
 import net.sourceforge.joceanus.oceanus.logger.OceanusLogger;
 import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
-import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIComponent;
-import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIEvent;
-import net.sourceforge.joceanus.tethys.ui.api.dialog.TethysUIAlert;
-import net.sourceforge.joceanus.tethys.ui.api.factory.TethysUIFactory;
-import net.sourceforge.joceanus.tethys.ui.api.factory.TethysUIMainPanel;
-import net.sourceforge.joceanus.tethys.ui.api.menu.TethysUIMenuBarManager;
-import net.sourceforge.joceanus.tethys.ui.api.menu.TethysUIMenuBarManager.TethysUIMenuSubMenu;
-import net.sourceforge.joceanus.tethys.ui.api.pane.TethysUIBorderPaneManager;
-import net.sourceforge.joceanus.tethys.ui.api.thread.TethysUIThread;
-import net.sourceforge.joceanus.tethys.ui.api.thread.TethysUIThreadEvent;
-import net.sourceforge.joceanus.tethys.ui.api.thread.TethysUIThreadManager;
-import net.sourceforge.joceanus.tethys.ui.api.thread.TethysUIThreadStatusManager;
+import net.sourceforge.joceanus.tethys.api.base.TethysUIComponent;
+import net.sourceforge.joceanus.tethys.api.base.TethysUIEvent;
+import net.sourceforge.joceanus.tethys.api.dialog.TethysUIAlert;
+import net.sourceforge.joceanus.tethys.api.factory.TethysUIFactory;
+import net.sourceforge.joceanus.tethys.api.factory.TethysUIMainPanel;
+import net.sourceforge.joceanus.tethys.api.menu.TethysUIMenuBarManager;
+import net.sourceforge.joceanus.tethys.api.menu.TethysUIMenuBarManager.TethysUIMenuSubMenu;
+import net.sourceforge.joceanus.tethys.api.pane.TethysUIBorderPaneManager;
+import net.sourceforge.joceanus.tethys.api.thread.TethysUIThread;
+import net.sourceforge.joceanus.tethys.api.thread.TethysUIThreadEvent;
+import net.sourceforge.joceanus.tethys.api.thread.TethysUIThreadManager;
+import net.sourceforge.joceanus.tethys.api.thread.TethysUIThreadStatusManager;
 
 /**
  * Main window for application.

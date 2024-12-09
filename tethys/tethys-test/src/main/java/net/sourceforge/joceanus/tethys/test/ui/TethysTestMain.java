@@ -16,10 +16,10 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.tethys.test.ui;
 
-import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIComponent;
-import net.sourceforge.joceanus.tethys.ui.api.factory.TethysUIFactory;
-import net.sourceforge.joceanus.tethys.ui.api.factory.TethysUIMainPanel;
-import net.sourceforge.joceanus.tethys.ui.api.pane.TethysUITabPaneManager;
+import net.sourceforge.joceanus.tethys.api.base.TethysUIComponent;
+import net.sourceforge.joceanus.tethys.api.factory.TethysUIFactory;
+import net.sourceforge.joceanus.tethys.api.factory.TethysUIMainPanel;
+import net.sourceforge.joceanus.tethys.api.pane.TethysUITabPaneManager;
 
 /**
  * Test Main.

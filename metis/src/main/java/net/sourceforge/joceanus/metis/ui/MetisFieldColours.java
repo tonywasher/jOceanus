@@ -22,8 +22,8 @@ import net.sourceforge.joceanus.metis.preference.MetisPreferenceKey;
 import net.sourceforge.joceanus.metis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.metis.preference.MetisPreferenceSet;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIValueKey;
-import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIValueSet;
+import net.sourceforge.joceanus.tethys.api.base.TethysUIValueKey;
+import net.sourceforge.joceanus.tethys.api.base.TethysUIValueSet;
 
 /**
  * Preferences for colours.

@@ -20,7 +20,7 @@ import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataSet;
 import net.sourceforge.joceanus.prometheus.security.PrometheusSecurityPasswordManager;
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetWorkBookType;
-import net.sourceforge.joceanus.tethys.ui.api.thread.TethysUIThreadStatusReport;
+import net.sourceforge.joceanus.tethys.api.thread.TethysUIThreadStatusReport;
 
 import java.io.File;
 import java.io.InputStream;

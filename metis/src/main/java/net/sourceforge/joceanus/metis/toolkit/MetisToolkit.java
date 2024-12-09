@@ -33,11 +33,11 @@ import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.oceanus.logger.OceanusLogManager;
 import net.sourceforge.joceanus.oceanus.logger.OceanusLogger;
 import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
-import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIProgram;
-import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIValueSet;
-import net.sourceforge.joceanus.tethys.ui.api.factory.TethysUIFactory;
-import net.sourceforge.joceanus.tethys.ui.api.thread.TethysUIThreadEvent;
-import net.sourceforge.joceanus.tethys.ui.api.thread.TethysUIThreadManager;
+import net.sourceforge.joceanus.tethys.api.base.TethysUIProgram;
+import net.sourceforge.joceanus.tethys.api.base.TethysUIValueSet;
+import net.sourceforge.joceanus.tethys.api.factory.TethysUIFactory;
+import net.sourceforge.joceanus.tethys.api.thread.TethysUIThreadEvent;
+import net.sourceforge.joceanus.tethys.api.thread.TethysUIThreadManager;
 
 import java.io.File;
 import java.io.IOException;

@@ -19,10 +19,10 @@ package net.sourceforge.joceanus.prometheus.ui.fieldset;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIComponent;
-import net.sourceforge.joceanus.tethys.ui.api.factory.TethysUIFactory;
-import net.sourceforge.joceanus.tethys.ui.api.pane.TethysUITabPaneManager;
-import net.sourceforge.joceanus.tethys.ui.api.pane.TethysUITabPaneManager.TethysUITabItem;
+import net.sourceforge.joceanus.tethys.api.base.TethysUIComponent;
+import net.sourceforge.joceanus.tethys.api.factory.TethysUIFactory;
+import net.sourceforge.joceanus.tethys.api.pane.TethysUITabPaneManager;
+import net.sourceforge.joceanus.tethys.api.pane.TethysUITabPaneManager.TethysUITabItem;
 
 /**
  * FieldSet Tab pane.

@@ -18,12 +18,12 @@ package net.sourceforge.joceanus.metis.ui;
 
 import java.io.InputStream;
 
-import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIConstant;
-import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIIconId;
-import net.sourceforge.joceanus.tethys.ui.api.button.TethysUIButton;
-import net.sourceforge.joceanus.tethys.ui.api.button.TethysUIScrollButtonManager;
-import net.sourceforge.joceanus.tethys.ui.api.control.TethysUIControl.TethysUIIconMapSet;
-import net.sourceforge.joceanus.tethys.ui.api.factory.TethysUIFactory;
+import net.sourceforge.joceanus.tethys.api.base.TethysUIConstant;
+import net.sourceforge.joceanus.tethys.api.base.TethysUIIconId;
+import net.sourceforge.joceanus.tethys.api.button.TethysUIButton;
+import net.sourceforge.joceanus.tethys.api.button.TethysUIScrollButtonManager;
+import net.sourceforge.joceanus.tethys.api.control.TethysUIControl.TethysUIIconMapSet;
+import net.sourceforge.joceanus.tethys.api.factory.TethysUIFactory;
 
 /**
  * Metis Icon IDs.

@@ -34,11 +34,11 @@ import net.sourceforge.joceanus.prometheus.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
-import net.sourceforge.joceanus.tethys.ui.api.button.TethysUIButton;
-import net.sourceforge.joceanus.tethys.ui.api.control.TethysUIControl.TethysUIIconMapSet;
-import net.sourceforge.joceanus.tethys.ui.api.factory.TethysUIFactory;
-import net.sourceforge.joceanus.tethys.ui.api.pane.TethysUIBoxPaneManager;
-import net.sourceforge.joceanus.tethys.ui.api.table.TethysUITableManager;
+import net.sourceforge.joceanus.tethys.api.button.TethysUIButton;
+import net.sourceforge.joceanus.tethys.api.control.TethysUIControl.TethysUIIconMapSet;
+import net.sourceforge.joceanus.tethys.api.factory.TethysUIFactory;
+import net.sourceforge.joceanus.tethys.api.pane.TethysUIBoxPaneManager;
+import net.sourceforge.joceanus.tethys.api.table.TethysUITableManager;
 
 /**
  * MoneyWise Tag Table.

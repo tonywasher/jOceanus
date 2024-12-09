@@ -17,7 +17,7 @@
 package net.sourceforge.joceanus.moneywise.ui.swing;
 
 import net.sourceforge.joceanus.moneywise.launch.MoneyWiseApp;
-import net.sourceforge.joceanus.tethys.ui.swing.launch.TethysUISwingLaunch;
+import net.sourceforge.joceanus.tethys.swing.launch.TethysUISwingLaunch;
 
 /**
  * MoneyWise Swing StartUp.

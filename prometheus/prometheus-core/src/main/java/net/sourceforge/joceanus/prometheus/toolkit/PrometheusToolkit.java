@@ -25,9 +25,9 @@ import net.sourceforge.joceanus.prometheus.preference.PrometheusPreferenceSecuri
 import net.sourceforge.joceanus.prometheus.preference.PrometheusPreferenceView;
 import net.sourceforge.joceanus.prometheus.security.PrometheusSecurityGenerator;
 import net.sourceforge.joceanus.prometheus.security.PrometheusSecurityPasswordManager;
-import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIProgram;
-import net.sourceforge.joceanus.tethys.ui.api.factory.TethysUIFactory;
-import net.sourceforge.joceanus.tethys.ui.api.thread.TethysUIThreadManager;
+import net.sourceforge.joceanus.tethys.api.base.TethysUIProgram;
+import net.sourceforge.joceanus.tethys.api.factory.TethysUIFactory;
+import net.sourceforge.joceanus.tethys.api.thread.TethysUIThreadManager;
 
 /**
  * Prometheus Toolkit.

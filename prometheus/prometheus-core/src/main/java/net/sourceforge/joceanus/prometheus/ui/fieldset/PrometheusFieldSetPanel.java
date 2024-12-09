@@ -19,7 +19,7 @@ package net.sourceforge.joceanus.prometheus.ui.fieldset;
 import java.util.function.Consumer;
 
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
-import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIComponent;
+import net.sourceforge.joceanus.tethys.api.base.TethysUIComponent;
 
 /**
  * FieldSet Panel.

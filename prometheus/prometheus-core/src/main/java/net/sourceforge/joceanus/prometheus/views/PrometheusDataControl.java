@@ -34,7 +34,7 @@ import net.sourceforge.joceanus.prometheus.preference.PrometheusPreferenceManage
 import net.sourceforge.joceanus.prometheus.security.PrometheusSecurityPasswordManager;
 import net.sourceforge.joceanus.prometheus.sheets.PrometheusSpreadSheet;
 import net.sourceforge.joceanus.prometheus.toolkit.PrometheusToolkit;
-import net.sourceforge.joceanus.tethys.ui.api.factory.TethysUIFactory;
+import net.sourceforge.joceanus.tethys.api.factory.TethysUIFactory;
 
 import java.util.EnumMap;
 import java.util.Map;

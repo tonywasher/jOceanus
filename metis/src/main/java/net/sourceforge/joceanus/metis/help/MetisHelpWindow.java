@@ -23,15 +23,15 @@ import net.sourceforge.joceanus.oceanus.event.OceanusEvent;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.TethysEventProvider;
-import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIEvent;
-import net.sourceforge.joceanus.tethys.ui.api.control.TethysUIHTMLManager;
-import net.sourceforge.joceanus.tethys.ui.api.control.TethysUIHTMLManager.TethysUIStyleSheetId;
-import net.sourceforge.joceanus.tethys.ui.api.control.TethysUISplitTreeManager;
-import net.sourceforge.joceanus.tethys.ui.api.control.TethysUITreeManager;
-import net.sourceforge.joceanus.tethys.ui.api.control.TethysUITreeManager.TethysUITreeItem;
-import net.sourceforge.joceanus.tethys.ui.api.dialog.TethysUIChildDialog;
-import net.sourceforge.joceanus.tethys.ui.api.factory.TethysUIFactory;
-import net.sourceforge.joceanus.tethys.ui.api.pane.TethysUIBorderPaneManager;
+import net.sourceforge.joceanus.tethys.api.base.TethysUIEvent;
+import net.sourceforge.joceanus.tethys.api.control.TethysUIHTMLManager;
+import net.sourceforge.joceanus.tethys.api.control.TethysUIHTMLManager.TethysUIStyleSheetId;
+import net.sourceforge.joceanus.tethys.api.control.TethysUISplitTreeManager;
+import net.sourceforge.joceanus.tethys.api.control.TethysUITreeManager;
+import net.sourceforge.joceanus.tethys.api.control.TethysUITreeManager.TethysUITreeItem;
+import net.sourceforge.joceanus.tethys.api.dialog.TethysUIChildDialog;
+import net.sourceforge.joceanus.tethys.api.factory.TethysUIFactory;
+import net.sourceforge.joceanus.tethys.api.pane.TethysUIBorderPaneManager;
 
 /**
  * Help Manager class, responsible for displaying the help.

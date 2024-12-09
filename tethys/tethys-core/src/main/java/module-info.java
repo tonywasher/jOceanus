@@ -26,29 +26,29 @@ module net.sourceforge.joceanus.tethys.core {
     requires net.sourceforge.joceanus.oceanus;
 
     /* New exports */
-    exports net.sourceforge.joceanus.tethys.ui.api.base;
-    exports net.sourceforge.joceanus.tethys.ui.api.button;
-    exports net.sourceforge.joceanus.tethys.ui.api.chart;
-    exports net.sourceforge.joceanus.tethys.ui.api.control;
-    exports net.sourceforge.joceanus.tethys.ui.api.dialog;
-    exports net.sourceforge.joceanus.tethys.ui.api.factory;
-    exports net.sourceforge.joceanus.tethys.ui.api.field;
-    exports net.sourceforge.joceanus.tethys.ui.api.menu;
-    exports net.sourceforge.joceanus.tethys.ui.api.pane;
-    exports net.sourceforge.joceanus.tethys.ui.api.table;
-    exports net.sourceforge.joceanus.tethys.ui.api.thread;
-    exports net.sourceforge.joceanus.tethys.ui.helper;
+    exports net.sourceforge.joceanus.tethys.api.base;
+    exports net.sourceforge.joceanus.tethys.api.button;
+    exports net.sourceforge.joceanus.tethys.api.chart;
+    exports net.sourceforge.joceanus.tethys.api.control;
+    exports net.sourceforge.joceanus.tethys.api.dialog;
+    exports net.sourceforge.joceanus.tethys.api.factory;
+    exports net.sourceforge.joceanus.tethys.api.field;
+    exports net.sourceforge.joceanus.tethys.api.menu;
+    exports net.sourceforge.joceanus.tethys.api.pane;
+    exports net.sourceforge.joceanus.tethys.api.table;
+    exports net.sourceforge.joceanus.tethys.api.thread;
+    exports net.sourceforge.joceanus.tethys.helper;
 
     /* Restricted exports */
-    exports net.sourceforge.joceanus.tethys.ui.core.base to net.sourceforge.joceanus.tethys.javafx, net.sourceforge.joceanus.tethys.swing;
-    exports net.sourceforge.joceanus.tethys.ui.core.button to net.sourceforge.joceanus.tethys.javafx, net.sourceforge.joceanus.tethys.swing;
-    exports net.sourceforge.joceanus.tethys.ui.core.chart to net.sourceforge.joceanus.tethys.javafx, net.sourceforge.joceanus.tethys.swing;
-    exports net.sourceforge.joceanus.tethys.ui.core.control to net.sourceforge.joceanus.tethys.javafx, net.sourceforge.joceanus.tethys.swing;
-    exports net.sourceforge.joceanus.tethys.ui.core.dialog to net.sourceforge.joceanus.tethys.javafx, net.sourceforge.joceanus.tethys.swing;
-    exports net.sourceforge.joceanus.tethys.ui.core.factory to net.sourceforge.joceanus.tethys.javafx, net.sourceforge.joceanus.tethys.swing;
-    exports net.sourceforge.joceanus.tethys.ui.core.field to net.sourceforge.joceanus.tethys.javafx, net.sourceforge.joceanus.tethys.swing;
-    exports net.sourceforge.joceanus.tethys.ui.core.menu to net.sourceforge.joceanus.tethys.javafx, net.sourceforge.joceanus.tethys.swing;
-    exports net.sourceforge.joceanus.tethys.ui.core.pane to net.sourceforge.joceanus.tethys.javafx, net.sourceforge.joceanus.tethys.swing;
-    exports net.sourceforge.joceanus.tethys.ui.core.table to net.sourceforge.joceanus.tethys.javafx, net.sourceforge.joceanus.tethys.swing;
-    exports net.sourceforge.joceanus.tethys.ui.core.thread to net.sourceforge.joceanus.tethys.javafx, net.sourceforge.joceanus.tethys.swing;
+    exports net.sourceforge.joceanus.tethys.core.base to net.sourceforge.joceanus.tethys.javafx, net.sourceforge.joceanus.tethys.swing;
+    exports net.sourceforge.joceanus.tethys.core.button to net.sourceforge.joceanus.tethys.javafx, net.sourceforge.joceanus.tethys.swing;
+    exports net.sourceforge.joceanus.tethys.core.chart to net.sourceforge.joceanus.tethys.javafx, net.sourceforge.joceanus.tethys.swing;
+    exports net.sourceforge.joceanus.tethys.core.control to net.sourceforge.joceanus.tethys.javafx, net.sourceforge.joceanus.tethys.swing;
+    exports net.sourceforge.joceanus.tethys.core.dialog to net.sourceforge.joceanus.tethys.javafx, net.sourceforge.joceanus.tethys.swing;
+    exports net.sourceforge.joceanus.tethys.core.factory to net.sourceforge.joceanus.tethys.javafx, net.sourceforge.joceanus.tethys.swing;
+    exports net.sourceforge.joceanus.tethys.core.field to net.sourceforge.joceanus.tethys.javafx, net.sourceforge.joceanus.tethys.swing;
+    exports net.sourceforge.joceanus.tethys.core.menu to net.sourceforge.joceanus.tethys.javafx, net.sourceforge.joceanus.tethys.swing;
+    exports net.sourceforge.joceanus.tethys.core.pane to net.sourceforge.joceanus.tethys.javafx, net.sourceforge.joceanus.tethys.swing;
+    exports net.sourceforge.joceanus.tethys.core.table to net.sourceforge.joceanus.tethys.javafx, net.sourceforge.joceanus.tethys.swing;
+    exports net.sourceforge.joceanus.tethys.core.thread to net.sourceforge.joceanus.tethys.javafx, net.sourceforge.joceanus.tethys.swing;
 }

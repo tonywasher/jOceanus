@@ -17,8 +17,8 @@
 package net.sourceforge.joceanus.coeus.ui.javafx;
 
 import net.sourceforge.joceanus.coeus.ui.launch.CoeusApp;
-import net.sourceforge.joceanus.tethys.ui.api.factory.TethysUILaunchProgram;
-import net.sourceforge.joceanus.tethys.ui.javafx.launch.TethysUIFXLaunch;
+import net.sourceforge.joceanus.tethys.api.factory.TethysUILaunchProgram;
+import net.sourceforge.joceanus.tethys.javafx.launch.TethysUIFXLaunch;
 
 /**
  * Coeus javaFX StartUp.

@@ -36,16 +36,16 @@ import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.event.OceanusEvent;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
 import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
-import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIComponent;
-import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIEvent;
-import net.sourceforge.joceanus.tethys.ui.api.dialog.TethysUIAboutBox;
-import net.sourceforge.joceanus.tethys.ui.api.factory.TethysUIFactory;
-import net.sourceforge.joceanus.tethys.ui.api.factory.TethysUILogTextArea;
-import net.sourceforge.joceanus.tethys.ui.api.factory.TethysUIMainPanel;
-import net.sourceforge.joceanus.tethys.ui.api.menu.TethysUIMenuBarManager;
-import net.sourceforge.joceanus.tethys.ui.api.menu.TethysUIMenuBarManager.TethysUIMenuSubMenu;
-import net.sourceforge.joceanus.tethys.ui.api.pane.TethysUITabPaneManager;
-import net.sourceforge.joceanus.tethys.ui.api.pane.TethysUITabPaneManager.TethysUITabItem;
+import net.sourceforge.joceanus.tethys.api.base.TethysUIComponent;
+import net.sourceforge.joceanus.tethys.api.base.TethysUIEvent;
+import net.sourceforge.joceanus.tethys.api.dialog.TethysUIAboutBox;
+import net.sourceforge.joceanus.tethys.api.factory.TethysUIFactory;
+import net.sourceforge.joceanus.tethys.api.factory.TethysUILogTextArea;
+import net.sourceforge.joceanus.tethys.api.factory.TethysUIMainPanel;
+import net.sourceforge.joceanus.tethys.api.menu.TethysUIMenuBarManager;
+import net.sourceforge.joceanus.tethys.api.menu.TethysUIMenuBarManager.TethysUIMenuSubMenu;
+import net.sourceforge.joceanus.tethys.api.pane.TethysUITabPaneManager;
+import net.sourceforge.joceanus.tethys.api.pane.TethysUITabPaneManager.TethysUITabItem;
 
 /**
  * Main Window for MoneyWise.

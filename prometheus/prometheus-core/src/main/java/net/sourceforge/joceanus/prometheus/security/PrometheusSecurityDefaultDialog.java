@@ -16,8 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.prometheus.security;
 
-import net.sourceforge.joceanus.tethys.ui.api.dialog.TethysUIPasswordDialog;
-import net.sourceforge.joceanus.tethys.ui.api.factory.TethysUIFactory;
+import net.sourceforge.joceanus.tethys.api.dialog.TethysUIPasswordDialog;
+import net.sourceforge.joceanus.tethys.api.factory.TethysUIFactory;
 
 /**
  * DialogControl.

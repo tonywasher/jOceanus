@@ -29,5 +29,5 @@ module net.sourceforge.joceanus.tethys.swing {
     requires net.sourceforge.joceanus.tethys.core;
 
     /* Exports */
-    exports net.sourceforge.joceanus.tethys.ui.swing.launch;
+    exports net.sourceforge.joceanus.tethys.swing.launch;
 }

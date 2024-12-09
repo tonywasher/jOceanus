@@ -23,7 +23,7 @@ import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.TethysEventProvider;
 import net.sourceforge.joceanus.oceanus.logger.OceanusLogManager;
 import net.sourceforge.joceanus.oceanus.logger.OceanusLogger;
-import net.sourceforge.joceanus.tethys.ui.api.control.TethysUIHTMLManager;
+import net.sourceforge.joceanus.tethys.api.control.TethysUIHTMLManager;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;

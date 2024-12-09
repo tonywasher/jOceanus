@@ -21,7 +21,7 @@ import net.sourceforge.joceanus.coeus.data.CoeusMarketProvider;
 import net.sourceforge.joceanus.coeus.ui.report.CoeusReportType;
 import net.sourceforge.joceanus.metis.data.MetisDataDifference;
 import net.sourceforge.joceanus.oceanus.date.OceanusDate;
-import net.sourceforge.joceanus.tethys.ui.api.button.TethysUIDateButtonManager;
+import net.sourceforge.joceanus.tethys.api.button.TethysUIDateButtonManager;
 
 /**
  * Report Select State.

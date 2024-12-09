@@ -16,7 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.coeus.ui;
 
-import net.sourceforge.joceanus.tethys.ui.api.menu.TethysUIMenuBarManager.TethysUIMenuId;
+import net.sourceforge.joceanus.tethys.api.menu.TethysUIMenuBarManager.TethysUIMenuId;
 
 /**
  * Coeus Menu Items.

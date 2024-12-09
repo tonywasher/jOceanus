@@ -39,7 +39,7 @@ import net.sourceforge.joceanus.prometheus.preference.PrometheusPreferenceSecuri
 import net.sourceforge.joceanus.prometheus.preference.PrometheusPreferenceSecurity.PrometheusSecurityPreferences;
 import net.sourceforge.joceanus.prometheus.security.PrometheusSecurityPasswordManager;
 import net.sourceforge.joceanus.prometheus.toolkit.PrometheusToolkit;
-import net.sourceforge.joceanus.tethys.ui.api.thread.TethysUIThreadStatusReport;
+import net.sourceforge.joceanus.tethys.api.thread.TethysUIThreadStatusReport;
 
 import java.util.Iterator;
 import java.util.LinkedHashMap;

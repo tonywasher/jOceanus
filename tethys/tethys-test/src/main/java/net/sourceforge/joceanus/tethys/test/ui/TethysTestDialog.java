@@ -18,23 +18,23 @@ package net.sourceforge.joceanus.tethys.test.ui;
 
 import java.io.File;
 
-import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIComponent;
-import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIEvent;
-import net.sourceforge.joceanus.tethys.ui.api.button.TethysUIButton;
-import net.sourceforge.joceanus.tethys.ui.api.button.TethysUIButtonFactory;
-import net.sourceforge.joceanus.tethys.ui.api.control.TethysUIControlFactory;
-import net.sourceforge.joceanus.tethys.ui.api.control.TethysUILabel;
-import net.sourceforge.joceanus.tethys.ui.api.dialog.TethysUIAboutBox;
-import net.sourceforge.joceanus.tethys.ui.api.dialog.TethysUIAlert;
-import net.sourceforge.joceanus.tethys.ui.api.dialog.TethysUIChildDialog;
-import net.sourceforge.joceanus.tethys.ui.api.dialog.TethysUIDialogFactory;
-import net.sourceforge.joceanus.tethys.ui.api.dialog.TethysUIDirectorySelector;
-import net.sourceforge.joceanus.tethys.ui.api.dialog.TethysUIFileSelector;
-import net.sourceforge.joceanus.tethys.ui.api.dialog.TethysUIPasswordDialog;
-import net.sourceforge.joceanus.tethys.ui.api.factory.TethysUIFactory;
-import net.sourceforge.joceanus.tethys.ui.api.pane.TethysUIBorderPaneManager;
-import net.sourceforge.joceanus.tethys.ui.api.pane.TethysUIBoxPaneManager;
-import net.sourceforge.joceanus.tethys.ui.api.pane.TethysUIPaneFactory;
+import net.sourceforge.joceanus.tethys.api.base.TethysUIComponent;
+import net.sourceforge.joceanus.tethys.api.base.TethysUIEvent;
+import net.sourceforge.joceanus.tethys.api.button.TethysUIButton;
+import net.sourceforge.joceanus.tethys.api.button.TethysUIButtonFactory;
+import net.sourceforge.joceanus.tethys.api.control.TethysUIControlFactory;
+import net.sourceforge.joceanus.tethys.api.control.TethysUILabel;
+import net.sourceforge.joceanus.tethys.api.dialog.TethysUIAboutBox;
+import net.sourceforge.joceanus.tethys.api.dialog.TethysUIAlert;
+import net.sourceforge.joceanus.tethys.api.dialog.TethysUIChildDialog;
+import net.sourceforge.joceanus.tethys.api.dialog.TethysUIDialogFactory;
+import net.sourceforge.joceanus.tethys.api.dialog.TethysUIDirectorySelector;
+import net.sourceforge.joceanus.tethys.api.dialog.TethysUIFileSelector;
+import net.sourceforge.joceanus.tethys.api.dialog.TethysUIPasswordDialog;
+import net.sourceforge.joceanus.tethys.api.factory.TethysUIFactory;
+import net.sourceforge.joceanus.tethys.api.pane.TethysUIBorderPaneManager;
+import net.sourceforge.joceanus.tethys.api.pane.TethysUIBoxPaneManager;
+import net.sourceforge.joceanus.tethys.api.pane.TethysUIPaneFactory;
 
 /**
  * Test Dialog options.

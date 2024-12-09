@@ -18,8 +18,8 @@ package net.sourceforge.joceanus.moneywise.quicken.file;
 
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
-import net.sourceforge.joceanus.tethys.ui.api.factory.TethysUIFactory;
-import net.sourceforge.joceanus.tethys.ui.api.thread.TethysUIThreadStatusReport;
+import net.sourceforge.joceanus.tethys.api.factory.TethysUIFactory;
+import net.sourceforge.joceanus.tethys.api.thread.TethysUIThreadStatusReport;
 
 import java.util.Iterator;
 

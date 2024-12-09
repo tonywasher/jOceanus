@@ -41,9 +41,9 @@ import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.date.OceanusDate;
 import net.sourceforge.joceanus.oceanus.date.OceanusDateConfig;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusRate;
-import net.sourceforge.joceanus.tethys.ui.api.control.TethysUIControl.TethysUIIconMapSet;
-import net.sourceforge.joceanus.tethys.ui.api.table.TethysUITableColumn;
-import net.sourceforge.joceanus.tethys.ui.api.table.TethysUITableManager;
+import net.sourceforge.joceanus.tethys.api.control.TethysUIControl.TethysUIIconMapSet;
+import net.sourceforge.joceanus.tethys.api.table.TethysUITableColumn;
+import net.sourceforge.joceanus.tethys.api.table.TethysUITableManager;
 
 /**
  * Deposit Rate Table.

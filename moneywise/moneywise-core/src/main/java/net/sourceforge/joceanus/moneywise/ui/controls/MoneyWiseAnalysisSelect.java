@@ -37,20 +37,20 @@ import net.sourceforge.joceanus.oceanus.date.OceanusDateResource;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.TethysEventProvider;
-import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIArrowIconId;
-import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIComponent;
-import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIEvent;
-import net.sourceforge.joceanus.tethys.ui.api.button.TethysUIButton;
-import net.sourceforge.joceanus.tethys.ui.api.button.TethysUIButtonFactory;
-import net.sourceforge.joceanus.tethys.ui.api.button.TethysUIDateRangeSelector;
-import net.sourceforge.joceanus.tethys.ui.api.button.TethysUIScrollButtonManager;
-import net.sourceforge.joceanus.tethys.ui.api.control.TethysUIControlFactory;
-import net.sourceforge.joceanus.tethys.ui.api.control.TethysUILabel;
-import net.sourceforge.joceanus.tethys.ui.api.factory.TethysUIFactory;
-import net.sourceforge.joceanus.tethys.ui.api.menu.TethysUIScrollMenu;
-import net.sourceforge.joceanus.tethys.ui.api.pane.TethysUIBoxPaneManager;
-import net.sourceforge.joceanus.tethys.ui.api.pane.TethysUICardPaneManager;
-import net.sourceforge.joceanus.tethys.ui.api.pane.TethysUIPaneFactory;
+import net.sourceforge.joceanus.tethys.api.base.TethysUIArrowIconId;
+import net.sourceforge.joceanus.tethys.api.base.TethysUIComponent;
+import net.sourceforge.joceanus.tethys.api.base.TethysUIEvent;
+import net.sourceforge.joceanus.tethys.api.button.TethysUIButton;
+import net.sourceforge.joceanus.tethys.api.button.TethysUIButtonFactory;
+import net.sourceforge.joceanus.tethys.api.button.TethysUIDateRangeSelector;
+import net.sourceforge.joceanus.tethys.api.button.TethysUIScrollButtonManager;
+import net.sourceforge.joceanus.tethys.api.control.TethysUIControlFactory;
+import net.sourceforge.joceanus.tethys.api.control.TethysUILabel;
+import net.sourceforge.joceanus.tethys.api.factory.TethysUIFactory;
+import net.sourceforge.joceanus.tethys.api.menu.TethysUIScrollMenu;
+import net.sourceforge.joceanus.tethys.api.pane.TethysUIBoxPaneManager;
+import net.sourceforge.joceanus.tethys.api.pane.TethysUICardPaneManager;
+import net.sourceforge.joceanus.tethys.api.pane.TethysUIPaneFactory;
 
 /**
  * Selection panel for Analysis Statement.

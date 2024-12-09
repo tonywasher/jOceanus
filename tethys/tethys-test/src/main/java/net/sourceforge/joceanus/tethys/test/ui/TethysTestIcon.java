@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.tethys.test.ui;
 
 import java.io.InputStream;
 
-import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIIconId;
+import net.sourceforge.joceanus.tethys.api.base.TethysUIIconId;
 
 /**
  * Helper Icon IDs.

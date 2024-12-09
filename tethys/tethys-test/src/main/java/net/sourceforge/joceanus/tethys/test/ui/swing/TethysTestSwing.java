@@ -17,7 +17,7 @@
 package net.sourceforge.joceanus.tethys.test.ui.swing;
 
 import net.sourceforge.joceanus.tethys.test.ui.TethysTest;
-import net.sourceforge.joceanus.tethys.ui.swing.launch.TethysUISwingLaunch;
+import net.sourceforge.joceanus.tethys.swing.launch.TethysUISwingLaunch;
 
 /**
  * Tethys Swing Test main.

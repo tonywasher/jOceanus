@@ -29,8 +29,8 @@ import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetRow;
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetView;
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetWorkBook;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.tethys.ui.api.thread.TethysUIThreadCancelException;
-import net.sourceforge.joceanus.tethys.ui.api.thread.TethysUIThreadStatusReport;
+import net.sourceforge.joceanus.tethys.api.thread.TethysUIThreadCancelException;
+import net.sourceforge.joceanus.tethys.api.thread.TethysUIThreadStatusReport;
 
 /**
  * SheetDataItem extension for TransactionCategory.
