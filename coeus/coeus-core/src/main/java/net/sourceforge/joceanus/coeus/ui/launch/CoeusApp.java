@@ -19,10 +19,10 @@ package net.sourceforge.joceanus.coeus.ui.launch;
 import net.sourceforge.joceanus.coeus.ui.CoeusIcon;
 import net.sourceforge.joceanus.coeus.ui.panels.CoeusMainPanel;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIIconId;
-import net.sourceforge.joceanus.tethys.ui.api.factory.TethysUIFactory;
-import net.sourceforge.joceanus.tethys.ui.api.factory.TethysUILaunchProgram;
-import net.sourceforge.joceanus.tethys.ui.api.factory.TethysUIMainPanel;
+import net.sourceforge.joceanus.tethys.api.base.TethysUIIconId;
+import net.sourceforge.joceanus.tethys.api.factory.TethysUIFactory;
+import net.sourceforge.joceanus.tethys.api.factory.TethysUILaunchProgram;
+import net.sourceforge.joceanus.tethys.api.factory.TethysUIMainPanel;
 
 /**
  * Coeus Application definition.

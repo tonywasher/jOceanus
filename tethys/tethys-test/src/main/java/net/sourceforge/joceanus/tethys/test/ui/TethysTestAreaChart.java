@@ -20,13 +20,13 @@ import java.time.Month;
 
 import net.sourceforge.joceanus.oceanus.date.OceanusDate;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
-import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIComponent;
-import net.sourceforge.joceanus.tethys.ui.api.chart.TethysUIAreaChart;
-import net.sourceforge.joceanus.tethys.ui.api.chart.TethysUIAreaChart.TethysUIAreaChartData;
-import net.sourceforge.joceanus.tethys.ui.api.chart.TethysUIAreaChart.TethysUIAreaChartSeries;
-import net.sourceforge.joceanus.tethys.ui.api.chart.TethysUIChartFactory;
-import net.sourceforge.joceanus.tethys.ui.api.control.TethysUITextArea;
-import net.sourceforge.joceanus.tethys.ui.api.factory.TethysUIFactory;
+import net.sourceforge.joceanus.tethys.api.base.TethysUIComponent;
+import net.sourceforge.joceanus.tethys.api.chart.TethysUIAreaChart;
+import net.sourceforge.joceanus.tethys.api.chart.TethysUIAreaChart.TethysUIAreaChartData;
+import net.sourceforge.joceanus.tethys.api.chart.TethysUIAreaChart.TethysUIAreaChartSeries;
+import net.sourceforge.joceanus.tethys.api.chart.TethysUIChartFactory;
+import net.sourceforge.joceanus.tethys.api.control.TethysUITextArea;
+import net.sourceforge.joceanus.tethys.api.factory.TethysUIFactory;
 
 /**
  * AreaChart Test Example.

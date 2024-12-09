@@ -43,9 +43,9 @@ import net.sourceforge.joceanus.oceanus.date.OceanusDate;
 import net.sourceforge.joceanus.oceanus.date.OceanusDateConfig;
 import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
-import net.sourceforge.joceanus.tethys.ui.api.control.TethysUIControl.TethysUIIconMapSet;
-import net.sourceforge.joceanus.tethys.ui.api.table.TethysUITableColumn;
-import net.sourceforge.joceanus.tethys.ui.api.table.TethysUITableManager;
+import net.sourceforge.joceanus.tethys.api.control.TethysUIControl.TethysUIIconMapSet;
+import net.sourceforge.joceanus.tethys.api.table.TethysUITableColumn;
+import net.sourceforge.joceanus.tethys.api.table.TethysUITableManager;
 
 /**
  * Security Price Table.

@@ -24,7 +24,7 @@ import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.prometheus.security.PrometheusSecurityPasswordManager;
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetWorkBookType;
 import net.sourceforge.joceanus.prometheus.toolkit.PrometheusToolkit;
-import net.sourceforge.joceanus.tethys.ui.api.thread.TethysUIThreadManager;
+import net.sourceforge.joceanus.tethys.api.thread.TethysUIThreadManager;
 import org.junit.jupiter.api.Assertions;
 
 import java.io.ByteArrayInputStream;

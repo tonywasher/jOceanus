@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.moneywise.atlas.reports;
 
 import java.io.InputStream;
 
-import net.sourceforge.joceanus.tethys.ui.api.control.TethysUIHTMLManager.TethysUIStyleSheetId;
+import net.sourceforge.joceanus.tethys.api.control.TethysUIHTMLManager.TethysUIStyleSheetId;
 
 /**
  * Report StyleSheets.

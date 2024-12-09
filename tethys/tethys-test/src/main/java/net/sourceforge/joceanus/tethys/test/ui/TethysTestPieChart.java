@@ -17,13 +17,13 @@
 package net.sourceforge.joceanus.tethys.test.ui;
 
 import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
-import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIComponent;
-import net.sourceforge.joceanus.tethys.ui.api.chart.TethysUIChartFactory;
-import net.sourceforge.joceanus.tethys.ui.api.chart.TethysUIPieChart;
-import net.sourceforge.joceanus.tethys.ui.api.chart.TethysUIPieChart.TethysUIPieChartData;
-import net.sourceforge.joceanus.tethys.ui.api.chart.TethysUIPieChart.TethysUIPieChartSection;
-import net.sourceforge.joceanus.tethys.ui.api.control.TethysUITextArea;
-import net.sourceforge.joceanus.tethys.ui.api.factory.TethysUIFactory;
+import net.sourceforge.joceanus.tethys.api.base.TethysUIComponent;
+import net.sourceforge.joceanus.tethys.api.chart.TethysUIChartFactory;
+import net.sourceforge.joceanus.tethys.api.chart.TethysUIPieChart;
+import net.sourceforge.joceanus.tethys.api.chart.TethysUIPieChart.TethysUIPieChartData;
+import net.sourceforge.joceanus.tethys.api.chart.TethysUIPieChart.TethysUIPieChartSection;
+import net.sourceforge.joceanus.tethys.api.control.TethysUITextArea;
+import net.sourceforge.joceanus.tethys.api.factory.TethysUIFactory;
 
 /**
  * PieChart Test Example.

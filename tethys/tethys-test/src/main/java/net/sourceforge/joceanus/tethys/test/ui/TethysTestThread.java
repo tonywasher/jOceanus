@@ -17,8 +17,8 @@
 package net.sourceforge.joceanus.tethys.test.ui;
 
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.tethys.ui.api.thread.TethysUIThread;
-import net.sourceforge.joceanus.tethys.ui.api.thread.TethysUIThreadManager;
+import net.sourceforge.joceanus.tethys.api.thread.TethysUIThread;
+import net.sourceforge.joceanus.tethys.api.thread.TethysUIThreadManager;
 
 import java.util.concurrent.TimeUnit;
 

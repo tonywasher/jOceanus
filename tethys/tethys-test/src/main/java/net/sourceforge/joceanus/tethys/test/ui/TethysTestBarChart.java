@@ -20,14 +20,14 @@ import java.time.Month;
 
 import net.sourceforge.joceanus.oceanus.date.OceanusDate;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
-import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIComponent;
-import net.sourceforge.joceanus.tethys.ui.api.chart.TethysUIBarChart;
-import net.sourceforge.joceanus.tethys.ui.api.chart.TethysUIBarChart.TethysUIBarChartData;
-import net.sourceforge.joceanus.tethys.ui.api.chart.TethysUIBarChart.TethysUIBarChartDataSection;
-import net.sourceforge.joceanus.tethys.ui.api.chart.TethysUIBarChart.TethysUIBarChartSeries;
-import net.sourceforge.joceanus.tethys.ui.api.chart.TethysUIChartFactory;
-import net.sourceforge.joceanus.tethys.ui.api.control.TethysUITextArea;
-import net.sourceforge.joceanus.tethys.ui.api.factory.TethysUIFactory;
+import net.sourceforge.joceanus.tethys.api.base.TethysUIComponent;
+import net.sourceforge.joceanus.tethys.api.chart.TethysUIBarChart;
+import net.sourceforge.joceanus.tethys.api.chart.TethysUIBarChart.TethysUIBarChartData;
+import net.sourceforge.joceanus.tethys.api.chart.TethysUIBarChart.TethysUIBarChartDataSection;
+import net.sourceforge.joceanus.tethys.api.chart.TethysUIBarChart.TethysUIBarChartSeries;
+import net.sourceforge.joceanus.tethys.api.chart.TethysUIChartFactory;
+import net.sourceforge.joceanus.tethys.api.control.TethysUITextArea;
+import net.sourceforge.joceanus.tethys.api.factory.TethysUIFactory;
 
 /**
  * BarChart Test Example.

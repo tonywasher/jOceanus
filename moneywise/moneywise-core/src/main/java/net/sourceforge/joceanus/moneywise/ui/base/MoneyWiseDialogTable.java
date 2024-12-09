@@ -23,13 +23,13 @@ import net.sourceforge.joceanus.moneywise.views.MoneyWiseView;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
 import net.sourceforge.joceanus.prometheus.data.PrometheusListKey;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
-import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIComponent;
-import net.sourceforge.joceanus.tethys.ui.api.button.TethysUIButton;
-import net.sourceforge.joceanus.tethys.ui.api.factory.TethysUIFactory;
-import net.sourceforge.joceanus.tethys.ui.api.pane.TethysUIBorderPaneManager;
-import net.sourceforge.joceanus.tethys.ui.api.pane.TethysUIBoxPaneManager;
-import net.sourceforge.joceanus.tethys.ui.api.pane.TethysUIPaneFactory;
-import net.sourceforge.joceanus.tethys.ui.api.table.TethysUITableManager;
+import net.sourceforge.joceanus.tethys.api.base.TethysUIComponent;
+import net.sourceforge.joceanus.tethys.api.button.TethysUIButton;
+import net.sourceforge.joceanus.tethys.api.factory.TethysUIFactory;
+import net.sourceforge.joceanus.tethys.api.pane.TethysUIBorderPaneManager;
+import net.sourceforge.joceanus.tethys.api.pane.TethysUIBoxPaneManager;
+import net.sourceforge.joceanus.tethys.api.pane.TethysUIPaneFactory;
+import net.sourceforge.joceanus.tethys.api.table.TethysUITableManager;
 
 /**
  * MoneyWise Dialog Base Table.

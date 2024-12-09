@@ -20,12 +20,12 @@ import net.sourceforge.joceanus.metis.preference.MetisPreferenceSet.MetisPrefere
 import net.sourceforge.joceanus.metis.ui.MetisPreferenceSetView;
 import net.sourceforge.joceanus.prometheus.preference.PrometheusPreferenceSet.PrometheusByteArrayPreference;
 import net.sourceforge.joceanus.prometheus.preference.PrometheusPreferenceSet.PrometheusCharArrayPreference;
-import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIAlignment;
-import net.sourceforge.joceanus.tethys.ui.api.control.TethysUILabel;
-import net.sourceforge.joceanus.tethys.ui.api.factory.TethysUIFactory;
-import net.sourceforge.joceanus.tethys.ui.api.field.TethysUIDataEditField.TethysUICharArrayEditField;
-import net.sourceforge.joceanus.tethys.ui.api.field.TethysUIFieldAttribute;
-import net.sourceforge.joceanus.tethys.ui.api.pane.TethysUIGridPaneManager;
+import net.sourceforge.joceanus.tethys.api.base.TethysUIAlignment;
+import net.sourceforge.joceanus.tethys.api.control.TethysUILabel;
+import net.sourceforge.joceanus.tethys.api.factory.TethysUIFactory;
+import net.sourceforge.joceanus.tethys.api.field.TethysUIDataEditField.TethysUICharArrayEditField;
+import net.sourceforge.joceanus.tethys.api.field.TethysUIFieldAttribute;
+import net.sourceforge.joceanus.tethys.api.pane.TethysUIGridPaneManager;
 
 /**
  * Panel for editing a preference Set.

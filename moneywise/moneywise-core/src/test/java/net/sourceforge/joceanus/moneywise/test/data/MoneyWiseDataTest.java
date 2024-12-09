@@ -49,11 +49,11 @@ import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
 import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
-import net.sourceforge.joceanus.tethys.ui.api.thread.TethysUIThread;
-import net.sourceforge.joceanus.tethys.ui.api.thread.TethysUIThreadEvent;
-import net.sourceforge.joceanus.tethys.ui.api.thread.TethysUIThreadManager;
-import net.sourceforge.joceanus.tethys.ui.api.thread.TethysUIThreadStatusManager;
-import net.sourceforge.joceanus.tethys.ui.helper.TethysUIHelperFactory;
+import net.sourceforge.joceanus.tethys.api.thread.TethysUIThread;
+import net.sourceforge.joceanus.tethys.api.thread.TethysUIThreadEvent;
+import net.sourceforge.joceanus.tethys.api.thread.TethysUIThreadManager;
+import net.sourceforge.joceanus.tethys.api.thread.TethysUIThreadStatusManager;
+import net.sourceforge.joceanus.tethys.helper.TethysUIHelperFactory;
 
 /**
  * Test security.

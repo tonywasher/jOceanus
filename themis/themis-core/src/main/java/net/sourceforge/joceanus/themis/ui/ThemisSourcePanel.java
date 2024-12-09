@@ -21,12 +21,12 @@ import java.util.Iterator;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIComponent;
-import net.sourceforge.joceanus.tethys.ui.api.control.TethysUIHTMLManager;
-import net.sourceforge.joceanus.tethys.ui.api.control.TethysUISplitTreeManager;
-import net.sourceforge.joceanus.tethys.ui.api.control.TethysUITreeManager;
-import net.sourceforge.joceanus.tethys.ui.api.control.TethysUITreeManager.TethysUITreeItem;
-import net.sourceforge.joceanus.tethys.ui.api.factory.TethysUIFactory;
+import net.sourceforge.joceanus.tethys.api.base.TethysUIComponent;
+import net.sourceforge.joceanus.tethys.api.control.TethysUIHTMLManager;
+import net.sourceforge.joceanus.tethys.api.control.TethysUISplitTreeManager;
+import net.sourceforge.joceanus.tethys.api.control.TethysUITreeManager;
+import net.sourceforge.joceanus.tethys.api.control.TethysUITreeManager.TethysUITreeItem;
+import net.sourceforge.joceanus.tethys.api.factory.TethysUIFactory;
 import net.sourceforge.joceanus.themis.analysis.ThemisAnalysisAnonClass;
 import net.sourceforge.joceanus.themis.analysis.ThemisAnalysisBlock;
 import net.sourceforge.joceanus.themis.analysis.ThemisAnalysisCase;

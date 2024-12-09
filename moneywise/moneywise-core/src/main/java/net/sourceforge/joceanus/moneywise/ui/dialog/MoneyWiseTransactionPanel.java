@@ -70,22 +70,22 @@ import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusRatio;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusUnits;
-import net.sourceforge.joceanus.tethys.ui.api.control.TethysUIControl.TethysUIIconMapSet;
-import net.sourceforge.joceanus.tethys.ui.api.factory.TethysUIFactory;
-import net.sourceforge.joceanus.tethys.ui.api.field.TethysUIDataEditField.TethysUIDateButtonField;
-import net.sourceforge.joceanus.tethys.ui.api.field.TethysUIDataEditField.TethysUIIconButtonField;
-import net.sourceforge.joceanus.tethys.ui.api.field.TethysUIDataEditField.TethysUIIntegerEditField;
-import net.sourceforge.joceanus.tethys.ui.api.field.TethysUIDataEditField.TethysUIListButtonField;
-import net.sourceforge.joceanus.tethys.ui.api.field.TethysUIDataEditField.TethysUIMoneyEditField;
-import net.sourceforge.joceanus.tethys.ui.api.field.TethysUIDataEditField.TethysUIPriceEditField;
-import net.sourceforge.joceanus.tethys.ui.api.field.TethysUIDataEditField.TethysUIRatioEditField;
-import net.sourceforge.joceanus.tethys.ui.api.field.TethysUIDataEditField.TethysUIScrollButtonField;
-import net.sourceforge.joceanus.tethys.ui.api.field.TethysUIDataEditField.TethysUIStringEditField;
-import net.sourceforge.joceanus.tethys.ui.api.field.TethysUIDataEditField.TethysUIUnitsEditField;
-import net.sourceforge.joceanus.tethys.ui.api.field.TethysUIFieldFactory;
-import net.sourceforge.joceanus.tethys.ui.api.menu.TethysUIScrollItem;
-import net.sourceforge.joceanus.tethys.ui.api.menu.TethysUIScrollMenu;
-import net.sourceforge.joceanus.tethys.ui.api.menu.TethysUIScrollSubMenu;
+import net.sourceforge.joceanus.tethys.api.control.TethysUIControl.TethysUIIconMapSet;
+import net.sourceforge.joceanus.tethys.api.factory.TethysUIFactory;
+import net.sourceforge.joceanus.tethys.api.field.TethysUIDataEditField.TethysUIDateButtonField;
+import net.sourceforge.joceanus.tethys.api.field.TethysUIDataEditField.TethysUIIconButtonField;
+import net.sourceforge.joceanus.tethys.api.field.TethysUIDataEditField.TethysUIIntegerEditField;
+import net.sourceforge.joceanus.tethys.api.field.TethysUIDataEditField.TethysUIListButtonField;
+import net.sourceforge.joceanus.tethys.api.field.TethysUIDataEditField.TethysUIMoneyEditField;
+import net.sourceforge.joceanus.tethys.api.field.TethysUIDataEditField.TethysUIPriceEditField;
+import net.sourceforge.joceanus.tethys.api.field.TethysUIDataEditField.TethysUIRatioEditField;
+import net.sourceforge.joceanus.tethys.api.field.TethysUIDataEditField.TethysUIScrollButtonField;
+import net.sourceforge.joceanus.tethys.api.field.TethysUIDataEditField.TethysUIStringEditField;
+import net.sourceforge.joceanus.tethys.api.field.TethysUIDataEditField.TethysUIUnitsEditField;
+import net.sourceforge.joceanus.tethys.api.field.TethysUIFieldFactory;
+import net.sourceforge.joceanus.tethys.api.menu.TethysUIScrollItem;
+import net.sourceforge.joceanus.tethys.api.menu.TethysUIScrollMenu;
+import net.sourceforge.joceanus.tethys.api.menu.TethysUIScrollSubMenu;
 
 /**
  * Panel to display/edit/create a Transaction.

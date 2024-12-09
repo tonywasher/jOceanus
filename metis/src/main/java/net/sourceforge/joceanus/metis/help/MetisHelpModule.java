@@ -22,7 +22,7 @@ import java.util.List;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.resource.OceanusResourceId;
 import net.sourceforge.joceanus.oceanus.resource.OceanusResourceLoader;
-import net.sourceforge.joceanus.tethys.ui.api.control.TethysUIHTMLManager.TethysUIStyleSheetId;
+import net.sourceforge.joceanus.tethys.api.control.TethysUIHTMLManager.TethysUIStyleSheetId;
 
 /**
  * The help module that is implemented by each Help System.

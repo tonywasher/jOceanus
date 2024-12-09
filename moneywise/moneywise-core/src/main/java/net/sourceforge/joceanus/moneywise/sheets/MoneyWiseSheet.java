@@ -20,8 +20,8 @@ import net.sourceforge.joceanus.prometheus.security.PrometheusSecurityPasswordMa
 import net.sourceforge.joceanus.prometheus.sheets.PrometheusSheetReader;
 import net.sourceforge.joceanus.prometheus.sheets.PrometheusSheetWriter;
 import net.sourceforge.joceanus.prometheus.sheets.PrometheusSpreadSheet;
-import net.sourceforge.joceanus.tethys.ui.api.factory.TethysUIFactory;
-import net.sourceforge.joceanus.tethys.ui.api.thread.TethysUIThreadStatusReport;
+import net.sourceforge.joceanus.tethys.api.factory.TethysUIFactory;
+import net.sourceforge.joceanus.tethys.api.thread.TethysUIThreadStatusReport;
 
 /**
  * SpreadSheet extension for MoneyWiseData.

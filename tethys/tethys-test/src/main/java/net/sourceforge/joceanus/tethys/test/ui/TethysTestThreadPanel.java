@@ -17,14 +17,14 @@
 package net.sourceforge.joceanus.tethys.test.ui;
 
 
-import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIComponent;
-import net.sourceforge.joceanus.tethys.ui.api.button.TethysUIButton;
-import net.sourceforge.joceanus.tethys.ui.api.factory.TethysUIFactory;
-import net.sourceforge.joceanus.tethys.ui.api.pane.TethysUIBorderPaneManager;
-import net.sourceforge.joceanus.tethys.ui.api.pane.TethysUIBoxPaneManager;
-import net.sourceforge.joceanus.tethys.ui.api.pane.TethysUIPaneFactory;
-import net.sourceforge.joceanus.tethys.ui.api.thread.TethysUIThreadManager;
-import net.sourceforge.joceanus.tethys.ui.api.thread.TethysUIThreadStatusManager;
+import net.sourceforge.joceanus.tethys.api.base.TethysUIComponent;
+import net.sourceforge.joceanus.tethys.api.button.TethysUIButton;
+import net.sourceforge.joceanus.tethys.api.factory.TethysUIFactory;
+import net.sourceforge.joceanus.tethys.api.pane.TethysUIBorderPaneManager;
+import net.sourceforge.joceanus.tethys.api.pane.TethysUIBoxPaneManager;
+import net.sourceforge.joceanus.tethys.api.pane.TethysUIPaneFactory;
+import net.sourceforge.joceanus.tethys.api.thread.TethysUIThreadManager;
+import net.sourceforge.joceanus.tethys.api.thread.TethysUIThreadStatusManager;
 
 /**
  * Thread Tester panel.

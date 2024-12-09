@@ -30,7 +30,7 @@ import net.sourceforge.joceanus.coeus.ui.CoeusFilter.CoeusSnapShotFilter;
 import net.sourceforge.joceanus.coeus.ui.CoeusMarketCache;
 import net.sourceforge.joceanus.metis.data.MetisDataDifference;
 import net.sourceforge.joceanus.oceanus.date.OceanusDate;
-import net.sourceforge.joceanus.tethys.ui.api.menu.TethysUIScrollMenu;
+import net.sourceforge.joceanus.tethys.api.menu.TethysUIScrollMenu;
 
 /**
  * Statement Select State.

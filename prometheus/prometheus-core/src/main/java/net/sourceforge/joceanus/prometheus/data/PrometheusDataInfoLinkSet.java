@@ -22,7 +22,7 @@ import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataObjectFormat;
 import net.sourceforge.joceanus.metis.data.MetisDataState;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
-import net.sourceforge.joceanus.tethys.ui.api.base.TethysUIConstant;
+import net.sourceforge.joceanus.tethys.api.base.TethysUIConstant;
 
 import java.util.ArrayList;
 import java.util.Iterator;
