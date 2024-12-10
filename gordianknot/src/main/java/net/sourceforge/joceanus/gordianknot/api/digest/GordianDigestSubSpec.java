@@ -39,8 +39,7 @@ public interface GordianDigestSubSpec {
             case KANGAROO:
                 return new GordianDigestState[] { GordianDigestState.STATE128, GordianDigestState.STATE256 };
             case ASCON:
-                return new GordianAsconSubSpec[] { GordianAsconSubSpec.ASCONHASH, GordianAsconSubSpec.ASCONHASHA,
-                        GordianAsconSubSpec.ASCONXOF, GordianAsconSubSpec.ASCONXOFA };
+                return new GordianAsconSubSpec[] { GordianAsconSubSpec.ASCONHASH, GordianAsconSubSpec.ASCONXOF };
             default:
                 return new GordianDigestState[] { null };
         }
@@ -377,28 +376,16 @@ public interface GordianDigestSubSpec {
         ASCONHASH,
 
         /**
-         * HashA.
-         */
-        ASCONHASHA,
-
-        /**
          * Xof.
          */
-        ASCONXOF,
-
-        /**
-         * XofA.
-         */
-        ASCONXOFA;
+        ASCONXOF;
 
         @Override
         public String toString() {
             switch (this) {
                 case ASCONHASH:  return "AsconHash";
-                case ASCONHASHA: return "AsconHashA";
-                case ASCONXOF:   return "AsconXof";
-                case ASCONXOFA:
-                default:         return "AsconXofA";
+                case ASCONXOF:
+                default:         return "AsconXof";
             }
         }
     }
