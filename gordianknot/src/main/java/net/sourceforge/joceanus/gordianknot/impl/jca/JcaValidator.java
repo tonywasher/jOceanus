@@ -16,6 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.jca;
 
+import net.sourceforge.joceanus.gordianknot.api.cipher.GordianStreamKeyType;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymKeyType;
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestType;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianValidator;
@@ -27,7 +28,7 @@ public class JcaValidator
         extends GordianValidator {
     @Override
     public boolean validSymKeyType(final GordianSymKeyType pKeyType) {
-        return JcaCipherFactory.supportedSymKeyType(pKeyType)
+        return supportedSymKeyType(pKeyType)
                 && super.validSymKeyType(pKeyType);
     }
 
@@ -59,5 +60,56 @@ public class JcaValidator
             default:
                 return true;
         }
+    }
+
+    @Override
+    public boolean validStreamKeyType(final GordianStreamKeyType pKeyType) {
+        if (pKeyType == null) {
+            return false;
+        }
+        switch (pKeyType) {
+            case ISAAC:
+            case SOSEMANUK:
+            case RABBIT:
+            case SNOW3G:
+            case SKEINXOF:
+            case BLAKE2XOF:
+            case BLAKE3XOF:
+            case ASCON:
+            case ELEPHANT:
+            case ISAP:
+            case PHOTONBEETLE:
+            case SPARKLE:
+            case XOODYAK:
+                return false;
+            default:
+                return super.validStreamKeyType(pKeyType);
+        }
+    }
+
+    /**
+     * Is this symKeyType supported by Jca?
+     * @param pKeyType the keyType
+     * @return true/false
+     */
+    private static boolean supportedSymKeyType(final GordianSymKeyType pKeyType) {
+        if (pKeyType == null) {
+            return false;
+        }
+        switch (pKeyType) {
+            case SPECK:
+            case ANUBIS:
+            case SIMON:
+            case MARS:
+            case LEA:
+                return false;
+            default:
+                return true;
+        }
+    }
+
+    @Override
+    public boolean isXofSupported() {
+        return false;
     }
 }

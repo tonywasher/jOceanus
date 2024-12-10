@@ -17,9 +17,11 @@
 package net.sourceforge.joceanus.gordianknot.impl.ext.macs;
 
 import net.sourceforge.joceanus.gordianknot.impl.ext.digests.GordianSkeinBase;
+import net.sourceforge.joceanus.gordianknot.impl.ext.digests.GordianSkeinXof;
 import net.sourceforge.joceanus.gordianknot.impl.ext.params.GordianSkeinParameters;
 import org.bouncycastle.crypto.CipherParameters;
 import org.bouncycastle.crypto.Mac;
+import org.bouncycastle.crypto.Xof;
 import org.bouncycastle.crypto.engines.ThreefishEngine;
 import org.bouncycastle.crypto.params.KeyParameter;
 
@@ -36,8 +38,8 @@ import org.bouncycastle.crypto.params.KeyParameter;
  * @see GordianSkeinBase
  * @see GordianSkeinParameters
  */
-public class GordianSkeinMac
-        implements Mac {
+public class GordianSkeinXMac
+        implements Mac, Xof {
     /**
      * 256 bit block size - Skein MAC-256.
      */
@@ -59,23 +61,28 @@ public class GordianSkeinMac
     private final GordianSkeinBase theEngine;
 
     /**
+     * The Xof.
+     */
+    private final GordianSkeinXof theXof;
+
+    /**
      * Constructs a Skein MAC with an internal state size and output size.
      *
      * @param stateSizeBits  the internal state size in bits - one of {@link #SKEIN_256}, {@link #SKEIN_512} or
      *                       {@link #SKEIN_1024}.
-     * @param digestSizeBits the output/MAC size to produce in bits, which must be an integral number of bytes.
      */
-    public GordianSkeinMac(final int stateSizeBits,
-                           final int digestSizeBits) {
-        this.theEngine = new GordianSkeinBase(stateSizeBits, digestSizeBits);
+    public GordianSkeinXMac(final int stateSizeBits) {
+        this.theEngine = new GordianSkeinBase(stateSizeBits, stateSizeBits);
+        this.theXof = new GordianSkeinXof(theEngine);
     }
 
     /**
      * Copy constructor.
      * @param mac the source mac
      */
-    public GordianSkeinMac(final GordianSkeinMac mac) {
+    public GordianSkeinXMac(final GordianSkeinXMac mac) {
         this.theEngine = new GordianSkeinBase(mac.theEngine);
+        this.theXof = new GordianSkeinXof(theEngine);
     }
 
     /**
@@ -83,7 +90,7 @@ public class GordianSkeinMac
      * @return the name
      */
     public String getAlgorithmName() {
-        return "Skein-MAC-" + (theEngine.getBlockSize() * Byte.SIZE) + "-" + (theEngine.getOutputSize() * Byte.SIZE);
+        return "SkeinX-MAC-" + (theEngine.getBlockSize() * Byte.SIZE);
     }
 
     /**
@@ -116,24 +123,44 @@ public class GordianSkeinMac
 
     @Override
     public void reset() {
-        theEngine.reset();
+        theXof.reset();
     }
 
     @Override
     public void update(final byte in) {
-        theEngine.update(in);
+        theXof.update(in);
     }
 
     @Override
     public void update(final byte[] in,
                        final int inOff,
                        final int len) {
-        theEngine.update(in, inOff, len);
+        theXof.update(in, inOff, len);
     }
 
     @Override
     public int doFinal(final byte[] out,
                        final int outOff) {
-        return theEngine.doFinal(out, outOff);
+        return theXof.doFinal(out, outOff);
+    }
+
+    @Override
+    public int doFinal(final byte[] out, final int outOff, final int outLen) {
+        return theXof.doFinal(out, outOff, outLen);
+    }
+
+    @Override
+    public int doOutput(final byte[] out, final int outOff, final int outLen) {
+        return theXof.doOutput(out, outOff, outLen);
+    }
+
+    @Override
+    public int getByteLength() {
+        return theXof.getByteLength();
+    }
+
+    @Override
+    public int getDigestSize() {
+        return theXof.getDigestSize();
     }
 }

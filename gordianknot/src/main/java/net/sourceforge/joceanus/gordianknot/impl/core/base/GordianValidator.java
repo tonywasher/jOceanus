@@ -17,6 +17,7 @@
 package net.sourceforge.joceanus.gordianknot.impl.core.base;
 
 import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
+import net.sourceforge.joceanus.gordianknot.api.cipher.GordianStreamKeyType;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymKeySpec;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymKeyType;
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestType;
@@ -176,5 +177,22 @@ public class GordianValidator {
      */
     public boolean validSymKeyType(final GordianSymKeyType pKeyType) {
         return pKeyType != null;
+    }
+
+    /**
+     * Check StreamKeyType.
+     * @param pKeyType the streamKeyType
+     * @return true/false
+     */
+    public boolean validStreamKeyType(final GordianStreamKeyType pKeyType) {
+        return pKeyType != null;
+    }
+
+    /**
+     * Is Xof supported?
+     * @return true/false
+     */
+    public boolean isXofSupported() {
+        return true;
     }
 }

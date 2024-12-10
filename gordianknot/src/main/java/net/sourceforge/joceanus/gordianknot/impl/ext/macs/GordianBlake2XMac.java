@@ -16,33 +16,34 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.ext.macs;
 
-import net.sourceforge.joceanus.gordianknot.impl.ext.digests.GordianBlake2Base;
+import net.sourceforge.joceanus.gordianknot.impl.ext.digests.GordianBlake2Xof;
 import net.sourceforge.joceanus.gordianknot.impl.ext.params.GordianBlake2Parameters;
 import org.bouncycastle.crypto.CipherParameters;
 import org.bouncycastle.crypto.Mac;
+import org.bouncycastle.crypto.Xof;
 import org.bouncycastle.crypto.params.KeyParameter;
 
 /**
  * Bouncy implementation of Blake2Mac.
  */
-public class GordianBlake2Mac
-        implements Mac {
+public class GordianBlake2XMac
+        implements Mac, Xof {
     /**
      * Digest.
      */
-    private final GordianBlake2Base theDigest;
+    private final GordianBlake2Xof theXof;
 
     /**
-     * Create a blake2Mac with the specified digest.
-     * @param pDigest the base digest.
+     * Create a blake2XMac with the specified xof.
+     * @param pXof the base xof.
      */
-    public GordianBlake2Mac(final GordianBlake2Base pDigest) {
-         theDigest = pDigest;
+    public GordianBlake2XMac(final GordianBlake2Xof pXof) {
+        theXof = pXof;
     }
 
     @Override
     public String getAlgorithmName() {
-        return theDigest.getAlgorithmName() + "Mac";
+        return theXof.getAlgorithmName() + "Mac";
     }
 
     @Override
@@ -54,40 +55,60 @@ public class GordianBlake2Mac
                     .build();
         }
         if (!(myParams instanceof GordianBlake2Parameters)) {
-            throw new IllegalArgumentException("Invalid parameter passed to Blake2Mac init - "
+            throw new IllegalArgumentException("Invalid parameter passed to Blake2XMac init - "
                     + pParams.getClass().getName());
         }
         final GordianBlake2Parameters myBlakeParams = (GordianBlake2Parameters) myParams;
         if (myBlakeParams.getKey() == null) {
-            throw new IllegalArgumentException("Blake2Mac requires a key parameter.");
+            throw new IllegalArgumentException("Blake2XMac requires a key parameter.");
         }
 
-        /* Configure the digest */
-        theDigest.init(myBlakeParams);
+        /* Configure the xof */
+        theXof.init(myBlakeParams);
     }
 
     @Override
     public int getMacSize() {
-        return theDigest.getDigestSize();
+        return theXof.getDigestSize();
     }
 
     @Override
     public void update(final byte in) {
-        theDigest.update(in);
+        theXof.update(in);
     }
 
     @Override
     public void update(final byte[] in, final int inOff, final int len) {
-        theDigest.update(in, inOff, len);
+        theXof.update(in, inOff, len);
     }
 
     @Override
     public int doFinal(final byte[] out, final int outOff) {
-        return theDigest.doFinal(out, outOff);
+        return theXof.doFinal(out, outOff);
+    }
+
+    @Override
+    public int doFinal(final byte[] out, final int outOff, final int outLen) {
+        return theXof.doFinal(out, outOff, outLen);
+    }
+
+    @Override
+    public int doOutput(final byte[] out, final int outOff, final int outLen) {
+        return theXof.doOutput(out, outOff, outLen);
+    }
+
+    @Override
+    public int getByteLength() {
+        return theXof.getByteLength();
+    }
+
+    @Override
+    public int getDigestSize() {
+        return theXof.getDigestSize();
     }
 
     @Override
     public void reset() {
-        theDigest.reset();
+        theXof.reset();
     }
 }

@@ -144,6 +144,31 @@ public final class GordianDigestSpecBuilder {
     }
 
     /**
+     * Create blake2XsDigestSpec.
+     * @return the DigestSpec
+     */
+    public static GordianDigestSpec blake2Xs() {
+        return blake2X(GordianDigestState.STATE256);
+    }
+
+    /**
+     * Create blake2XbDigestSpec.
+     * @return the DigestSpec
+     */
+    public static GordianDigestSpec blake2Xb() {
+        return blake2X(GordianDigestState.STATE512);
+    }
+
+    /**
+     * Create blake2XDigestSpec.
+     * @param pState the state
+     * @return the DigestSpec
+     */
+    public static GordianDigestSpec blake2X(final GordianDigestState pState) {
+        return new GordianDigestSpec(GordianDigestType.BLAKE2, pState, pState.getLength(), Boolean.TRUE);
+    }
+
+    /**
      * Create blake3DigestSpec.
      * @param pLength the length
      * @return the DigestSpec
@@ -187,6 +212,15 @@ public final class GordianDigestSpecBuilder {
     public static GordianDigestSpec skein(final GordianDigestState pState,
                                           final GordianLength pLength) {
         return new GordianDigestSpec(GordianDigestType.SKEIN, pState, pLength);
+    }
+
+    /**
+     * Create skeinXDigestSpec.
+     * @param pState the state
+     * @return the DigestSpec
+     */
+    public static GordianDigestSpec skeinX(final GordianDigestState pState) {
+        return new GordianDigestSpec(GordianDigestType.SKEIN, pState, pState.getLength(), Boolean.TRUE);
     }
 
     /**

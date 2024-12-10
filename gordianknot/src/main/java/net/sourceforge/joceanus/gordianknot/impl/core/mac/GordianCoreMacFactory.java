@@ -37,6 +37,7 @@ import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -145,6 +146,7 @@ public abstract class GordianCoreMacFactory
 
         /* Check validity */
         return theFactory.getValidator().supportedHMacDigestTypes().test(myType)
+                && !pDigestSpec.isXof()
                 && myDigests.supportedDigestSpecs().test(pDigestSpec);
     }
 
@@ -180,23 +182,23 @@ public abstract class GordianCoreMacFactory
             case POLY1305:
                 return supportedPoly1305SymKeySpecs().test(mySymSpec);
             case SKEIN:
-                return GordianDigestType.SKEIN.equals(mySpec.getDigestType())
+                return GordianDigestType.SKEIN.equals(Objects.requireNonNull(mySpec).getDigestType())
                         && myDigests.supportedDigestSpecs().test(mySpec);
             case BLAKE2:
-                return GordianDigestType.BLAKE2.equals(mySpec.getDigestType())
+                return GordianDigestType.BLAKE2.equals(Objects.requireNonNull(mySpec).getDigestType())
                         && myDigests.supportedDigestSpecs().test(mySpec);
             case BLAKE3:
-                return GordianDigestType.BLAKE3.equals(mySpec.getDigestType())
+                return GordianDigestType.BLAKE3.equals(Objects.requireNonNull(mySpec).getDigestType())
                         && myDigests.supportedDigestSpecs().test(mySpec);
             case KUPYNA:
-                return GordianDigestType.KUPYNA.equals(mySpec.getDigestType())
+                return GordianDigestType.KUPYNA.equals(Objects.requireNonNull(mySpec).getDigestType())
                         && myDigests.supportedDigestSpecs().test(mySpec);
             case KALYNA:
-                return GordianSymKeyType.KALYNA.equals(mySymSpec.getSymKeyType())
+                return GordianSymKeyType.KALYNA.equals(Objects.requireNonNull(mySymSpec).getSymKeyType())
                         && myCiphers.validSymKeySpec(mySymSpec);
             case CBCMAC:
             case CFBMAC:
-                return (!GordianSymKeyType.RC5.equals(mySymSpec.getSymKeyType())
+                return (!GordianSymKeyType.RC5.equals(Objects.requireNonNull(mySymSpec).getSymKeyType())
                         || !GordianLength.LEN_128.equals(mySymSpec.getBlockLength()))
                     && myCiphers.validSymKeySpec(mySymSpec);
             case ZUC:
@@ -319,18 +321,27 @@ public abstract class GordianCoreMacFactory
         for (final GordianDigestState myState : GordianDigestState.values()) {
             /* Add SkeinMacs */
             for (final GordianLength myLength : GordianDigestType.SKEIN.getSupportedLengths()) {
-                final GordianMacSpec mySpec = GordianMacSpecBuilder.skeinMac(pKeyLen, myState, myLength);
-                if (mySpec.isValid()) {
-                    myList.add(mySpec);
+                final GordianMacSpec mySkeinSpec = GordianMacSpecBuilder.skeinMac(pKeyLen, myState, myLength);
+                if (mySkeinSpec.isValid()) {
+                    myList.add(mySkeinSpec);
                 }
+            }
+            final GordianMacSpec mySkeinSpec = GordianMacSpecBuilder.skeinXMac(pKeyLen, myState);
+            if (mySkeinSpec.isValid()) {
+                myList.add(mySkeinSpec);
             }
 
             /* Add blake2Macs */
             for (final GordianLength myLength : GordianDigestType.BLAKE2.getSupportedLengths()) {
-                final GordianMacSpec mySpec = GordianMacSpecBuilder.blake2Mac(pKeyLen, GordianDigestSpecBuilder.blake2(myState, myLength));
-                if (mySpec.isValid()) {
-                    myList.add(mySpec);
+                final GordianMacSpec myBlakeSpec = GordianMacSpecBuilder.blake2Mac(pKeyLen, GordianDigestSpecBuilder.blake2(myState, myLength));
+                if (myBlakeSpec.isValid()) {
+                    myList.add(myBlakeSpec);
                 }
+            }
+
+            final GordianMacSpec myBlakeSpec = GordianMacSpecBuilder.blake2XMac(pKeyLen, myState);
+            if (myBlakeSpec.isValid()) {
+                myList.add(myBlakeSpec);
             }
         }
 

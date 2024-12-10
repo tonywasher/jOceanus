@@ -116,7 +116,7 @@ public abstract class GordianCoreCipherFactory
 
     @Override
     public Predicate<GordianStreamKeyType> supportedStreamKeyTypes() {
-        return this::validStreamKeyType;
+        return t -> theFactory.getValidator().validStreamKeyType(t);
     }
 
     /**
@@ -315,15 +315,6 @@ public abstract class GordianCoreCipherFactory
             return false;
         }
         return supportedStreamKeyTypes().test(pKeySpec.getStreamKeyType());
-    }
-
-    /**
-     * Check StreamKeyType.
-     * @param pKeyType the streamKeyType
-     * @return true/false
-     */
-    protected boolean validStreamKeyType(final GordianStreamKeyType pKeyType) {
-        return pKeyType != null;
     }
 
     /**

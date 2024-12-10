@@ -52,6 +52,7 @@ import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianPersonalisatio
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 
 import java.math.BigInteger;
+import java.util.Objects;
 
 /**
  * Knuth Obfuscater.
@@ -313,6 +314,8 @@ public class GordianCoreKnuthObfuscater
         }
         myCode <<= determineShiftForEnum(GordianLength.class);
         myCode += deriveEncodedIdFromLength(pDigestSpec.getDigestLength());
+        myCode <<= 1;
+        myCode += pDigestSpec.isXof() ? 1 : 0;
 
         /* return the code */
         return myCode;
@@ -326,8 +329,10 @@ public class GordianCoreKnuthObfuscater
      */
     private static GordianDigestSpec deriveDigestSpecFromEncodedId(final int pEncodedId) throws GordianException {
         /* Isolate id Components */
-        final int myLenCode = pEncodedId & determineMaskForEnum(GordianLength.class);
-        final int myCode = pEncodedId >> determineShiftForEnum(GordianLength.class);
+        final boolean isXof = (pEncodedId & 1) == 1;
+        int myCode = pEncodedId >> 1;
+        final int myLenCode = myCode & determineMaskForEnum(GordianLength.class);
+        myCode = myCode >> determineShiftForEnum(GordianLength.class);
         final int mySubSpecCode = myCode & determineMaskForDigestSubSpec();
         final int myId = myCode >> determineShiftForDigestSubSpec();
 
@@ -342,7 +347,7 @@ public class GordianCoreKnuthObfuscater
         }
 
         /* Create DigestSpec */
-        return new GordianDigestSpec(myType, mySubSpec, myLength);
+        return new GordianDigestSpec(myType, mySubSpec, myLength, isXof);
     }
 
     /**
@@ -620,14 +625,14 @@ public class GordianCoreKnuthObfuscater
             case BLAKE3:
             case KUPYNA:
             case KMAC:
-                myCode += deriveEncodedIdFromDigestSpec(pMacSpec.getDigestSpec()) << myShift;
+                myCode += deriveEncodedIdFromDigestSpec(Objects.requireNonNull(pMacSpec.getDigestSpec())) << myShift;
                 break;
             case GMAC:
             case CMAC:
             case KALYNA:
             case CBCMAC:
             case CFBMAC:
-                myCode += deriveEncodedIdFromSymKeySpec(pMacSpec.getSymKeySpec()) << myShift;
+                myCode += deriveEncodedIdFromSymKeySpec(Objects.requireNonNull(pMacSpec.getSymKeySpec())) << myShift;
                 break;
             case POLY1305:
                 if (pMacSpec.getSymKeySpec() != null) {
@@ -680,20 +685,20 @@ public class GordianCoreKnuthObfuscater
                             ? GordianMacSpecBuilder.poly1305Mac()
                             : new GordianMacSpec(myMacType, deriveSymKeySpecFromEncodedId(myId));
             case SKEIN:
-                GordianDigestSpec mySpec = deriveDigestSpecFromEncodedId(myId);
-                return GordianMacSpecBuilder.skeinMac(myKeyLen, mySpec);
+                final GordianDigestSpec mySkeinSpec = deriveDigestSpecFromEncodedId(myId);
+                return GordianMacSpecBuilder.skeinMac(myKeyLen, mySkeinSpec);
             case BLAKE2:
-                mySpec = deriveDigestSpecFromEncodedId(myId);
-                return GordianMacSpecBuilder.blake2Mac(myKeyLen, mySpec);
+                final GordianDigestSpec myBlake2Spec = deriveDigestSpecFromEncodedId(myId);
+                return GordianMacSpecBuilder.blake2Mac(myKeyLen, myBlake2Spec);
             case BLAKE3:
-                mySpec = deriveDigestSpecFromEncodedId(myId);
-                return GordianMacSpecBuilder.blake3Mac(mySpec.getDigestLength());
+                final GordianDigestSpec myBlake3Spec = deriveDigestSpecFromEncodedId(myId);
+                return GordianMacSpecBuilder.blake3Mac(myBlake3Spec.getDigestLength());
             case KMAC:
-                mySpec = deriveDigestSpecFromEncodedId(myId);
-                return GordianMacSpecBuilder.kMac(myKeyLen, mySpec);
+                final GordianDigestSpec myKMACSpec = deriveDigestSpecFromEncodedId(myId);
+                return GordianMacSpecBuilder.kMac(myKeyLen, myKMACSpec);
             case KUPYNA:
-                mySpec = deriveDigestSpecFromEncodedId(myId);
-                return GordianMacSpecBuilder.kupynaMac(myKeyLen, mySpec.getDigestLength());
+                final GordianDigestSpec myKupynaSpec = deriveDigestSpecFromEncodedId(myId);
+                return GordianMacSpecBuilder.kupynaMac(myKeyLen, myKupynaSpec.getDigestLength());
             case ZUC:
                 final GordianLength myLength = deriveLengthFromEncodedId(myId);
                 return GordianMacSpecBuilder.zucMac(myKeyLen, myLength);

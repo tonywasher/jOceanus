@@ -25,6 +25,7 @@ import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.digest.GordianCoreDigestFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.ext.digests.GordianBlake2Base;
+import net.sourceforge.joceanus.gordianknot.impl.ext.digests.GordianBlake2Xof;
 import net.sourceforge.joceanus.gordianknot.impl.ext.digests.GordianBlake2bDigest;
 import net.sourceforge.joceanus.gordianknot.impl.ext.digests.GordianBlake2sDigest;
 import net.sourceforge.joceanus.gordianknot.impl.ext.digests.GordianBlake3Digest;
@@ -35,6 +36,7 @@ import net.sourceforge.joceanus.gordianknot.impl.ext.digests.GordianKangarooDige
 import net.sourceforge.joceanus.gordianknot.impl.ext.digests.GordianKangarooDigest.GordianKangarooTwelve;
 import net.sourceforge.joceanus.gordianknot.impl.ext.digests.GordianKangarooDigest.GordianMarsupilamiFourteen;
 import net.sourceforge.joceanus.gordianknot.impl.ext.digests.GordianSkeinDigest;
+import net.sourceforge.joceanus.gordianknot.impl.ext.digests.GordianSkeinXof;
 import org.bouncycastle.crypto.Digest;
 import org.bouncycastle.crypto.Xof;
 import org.bouncycastle.crypto.digests.AsconDigest;
@@ -120,7 +122,9 @@ public class BouncyDigestFactory
             case RIPEMD:
                 return getRIPEMDDigest(myLen);
             case SKEIN:
-                return getSkeinDigest(pDigestSpec.getDigestState(), myLen);
+                return pDigestSpec.isXof()
+                    ? getSkeinXof(pDigestSpec.getDigestState())
+                    : getSkeinDigest(pDigestSpec.getDigestState(), myLen);
             case SHA3:
                 return getSHA3Digest(myLen);
             case SHAKE:
@@ -130,7 +134,9 @@ public class BouncyDigestFactory
             case HARAKA:
                 return getHarakaDigest(pDigestSpec);
             case BLAKE2:
-                return getBlake2Digest(pDigestSpec);
+                return pDigestSpec.isXof()
+                        ? getBlake2Xof(pDigestSpec)
+                        : getBlake2Digest(pDigestSpec);
             case BLAKE3:
                 return new GordianBlake3Digest(myLen.getByteLength());
             case STREEBOG:
@@ -205,6 +211,20 @@ public class BouncyDigestFactory
         return pSpec.getDigestState().isBlake2bState()
                ? new GordianBlake2bDigest(myLength)
                : new GordianBlake2sDigest(myLength);
+    }
+
+    /**
+     * Create the BouncyCastle Blake2Xof digest.
+     *
+     * @param pSpec the digest spec
+     * @return the digest
+     */
+    static GordianBlake2Xof getBlake2Xof(final GordianDigestSpec pSpec) {
+        final GordianDigestState myState = pSpec.getDigestState();
+        final int myLength = pSpec.getDigestLength().getLength();
+        return myState.isBlake2bState()
+                ? new GordianBlake2Xof(new GordianBlake2bDigest(myLength))
+                : new GordianBlake2Xof(new GordianBlake2sDigest(myLength));
     }
 
     /**
@@ -320,6 +340,17 @@ public class BouncyDigestFactory
     private static Digest getSkeinDigest(final GordianDigestState pState,
                                          final GordianLength pLength) {
         return new GordianSkeinDigest(pState.getLength().getLength(), pLength.getLength());
+    }
+
+    /**
+     * Create the BouncyCastle skeinXof.
+     *
+     * @param pState the state
+     * @return the digest
+     */
+    private static Digest getSkeinXof(final GordianDigestState pState) {
+        final int myLength = pState.getLength().getLength();
+        return new GordianSkeinXof(new GordianSkeinDigest(myLength, myLength));
     }
 
     /**

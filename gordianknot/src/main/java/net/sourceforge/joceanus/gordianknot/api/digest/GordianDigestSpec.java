@@ -49,6 +49,11 @@ public class GordianDigestSpec
     private final GordianLength theLength;
 
     /**
+     * Is this a Xof variant?
+     */
+    private final Boolean isXof;
+
+    /**
      * The Validity.
      */
     private final boolean isValid;
@@ -86,10 +91,25 @@ public class GordianDigestSpec
     public GordianDigestSpec(final GordianDigestType pDigestType,
                              final GordianDigestSubSpec pState,
                              final GordianLength pLength) {
+        this(pDigestType, pState, pLength, Boolean.FALSE);
+    }
+
+    /**
+     * Constructor.
+     * @param pDigestType the digestType
+     * @param pState the digestState
+     * @param pLength the length
+     * @param pXof is this an explicit Xof?
+     */
+    public GordianDigestSpec(final GordianDigestType pDigestType,
+                             final GordianDigestSubSpec pState,
+                             final GordianLength pLength,
+                             final Boolean pXof) {
         /* Store parameters */
         theDigestType = pDigestType;
         theSubSpec = pState;
         theLength = pLength;
+        isXof = pXof;
         isValid = checkValidity();
     }
 
@@ -138,6 +158,14 @@ public class GordianDigestSpec
     }
 
     /**
+     * Is the digestSpec a Xof variant?
+     * @return true/false.
+     */
+    public Boolean isXof() {
+        return isXof;
+    }
+
+    /**
      * Is the digestSpec valid?
      * @return true/false.
      */
@@ -161,7 +189,7 @@ public class GordianDigestSpec
      * @return valid true/false
      */
     private boolean checkValidity() {
-        /* Handle null spec/length */
+        /* Handle null type */
         if (theDigestType == null || theLength == null) {
             return false;
         }
@@ -169,18 +197,24 @@ public class GordianDigestSpec
         /* Switch on keyType */
         switch (theDigestType) {
             case SHA2:
-            case SKEIN:
-            case BLAKE2:
             case SHAKE:
             case KANGAROO:
             case HARAKA:
                 return theSubSpec instanceof GordianDigestState
+                        && !isXof
                         && getDigestState().validForTypeAndLength(theDigestType, theLength);
+            case SKEIN:
+            case BLAKE2:
+                return theSubSpec instanceof GordianDigestState
+                        && (isXof ? getDigestState().lengthForXofType(theDigestType) == theLength
+                                  : getDigestState().validForTypeAndLength(theDigestType, theLength));
             case ASCON:
                 return theSubSpec instanceof GordianAsconSubSpec
+                        && !isXof
                         && theDigestType.isLengthValid(theLength);
             default:
                 return theSubSpec == null
+                        && !isXof
                         && theDigestType.isLengthValid(theLength);
         }
     }
@@ -204,12 +238,17 @@ public class GordianDigestSpec
                         theName += theSubSpec;
                         break;
                     case SKEIN:
-                        theName += SEP + theSubSpec;
-                        theName += SEP + theLength;
+                        if (isXof) {
+                            theName += "X" + SEP + theSubSpec;
+                        } else {
+                            theName += SEP + theSubSpec + SEP + theLength;
+                        }
                         break;
                     case BLAKE2:
-                        theName = getDigestState().getBlake2Algorithm();
-                        theName += SEP + theLength;
+                        theName += getDigestState().getBlake2Algorithm(isXof);
+                        if (!isXof) {
+                            theName += SEP + theLength;
+                        }
                         break;
                     case KANGAROO:
                         theName = getDigestState().getKangarooAlgorithm();
@@ -262,6 +301,6 @@ public class GordianDigestSpec
 
     @Override
     public int hashCode() {
-        return Objects.hash(theDigestType, theSubSpec, theLength);
+        return Objects.hash(theDigestType, theSubSpec, theLength, isXof);
     }
 }

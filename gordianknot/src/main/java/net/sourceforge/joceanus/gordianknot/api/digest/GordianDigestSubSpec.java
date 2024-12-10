@@ -149,6 +149,35 @@ public interface GordianDigestSubSpec {
         }
 
         /**
+         * Obtain the length for an explicit Xof variant.
+         * @param pType the digestType
+         * @return the length
+         */
+        GordianLength lengthForXofType(final GordianDigestType pType) {
+            switch (pType) {
+                case SKEIN:
+                    switch (this) {
+                        case STATE256:
+                        case STATE512:
+                        case STATE1024:
+                            return theLength;
+                        default:
+                            return null;
+                    }
+                case BLAKE2:
+                    switch (this) {
+                        case STATE256:
+                        case STATE512:
+                            return theLength;
+                        default:
+                            return null;
+                    }
+                default:
+                    return null;
+            }
+        }
+
+        /**
          * is length available for this type and length?
          * @param pType the digestType
          * @param pLength the length
@@ -294,7 +323,6 @@ public interface GordianDigestSubSpec {
             }
         }
 
-
         /**
          * Is this state valid for the harakaLength.
          * @param pLength the length
@@ -320,12 +348,12 @@ public interface GordianDigestSubSpec {
 
         /**
          * Obtain the blakeAlgorithm name for State.
+         * @param pXof is the a Xof variant
          * @return the algorithm name
          */
-        public String getBlake2Algorithm() {
-            return GordianDigestType.BLAKE2.toString() + (this == STATE512
-                    ? "b"
-                    : "s");
+        public String getBlake2Algorithm(final boolean pXof) {
+            return (pXof ? "X" : "")
+                    + (isBlake2bState() ? "b" : "s");
         }
 
         /**

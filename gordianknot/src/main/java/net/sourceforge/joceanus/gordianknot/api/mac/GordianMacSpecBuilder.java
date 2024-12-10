@@ -175,6 +175,18 @@ public final class GordianMacSpecBuilder {
     }
 
     /**
+     * Create skeinXMacSpec.
+     * @param pKeyLength the keyLength
+     * @param pState the state
+     * @return the MacSpec
+     */
+    public static GordianMacSpec skeinXMac(final GordianLength pKeyLength,
+                                           final GordianDigestState pState) {
+        final GordianDigestSpec mySpec = GordianDigestSpecBuilder.skeinX(pState);
+        return skeinMac(pKeyLength, mySpec);
+    }
+
+    /**
      * Create blake2sMacSpec.
      * @param pKeyLength the length
      * @param pLength the length
@@ -207,6 +219,17 @@ public final class GordianMacSpecBuilder {
     public static GordianMacSpec blake2Mac(final GordianLength pKeyLength,
                                            final GordianDigestSpec pSpec) {
         return new GordianMacSpec(GordianMacType.BLAKE2, pKeyLength, pSpec);
+    }
+
+    /**
+     * Create blake2MacSpec.
+     * @param pKeyLength the keyLength
+     * @param pState the blake state
+     * @return the MacSpec
+     */
+    public static GordianMacSpec blake2XMac(final GordianLength pKeyLength,
+                                            final GordianDigestState pState) {
+        return new GordianMacSpec(GordianMacType.BLAKE2, pKeyLength, GordianDigestSpecBuilder.blake2X(pState));
     }
 
     /**
