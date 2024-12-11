@@ -25,7 +25,7 @@ public class GordianAsconXof128
 
     public GordianAsconXof128()
     {
-        baseReset();
+        xofReset();
     }
 
     protected long pad(int i)
@@ -146,7 +146,11 @@ public class GordianAsconXof128
     }
 
     @Override
-    public void reset()
+    public void reset() {
+        xofReset();
+    }
+
+    private void xofReset()
     {
         m_squeezing = false;
         bytesInBuffer = 0;

@@ -31,7 +31,7 @@ public class ElephantMulti {
 
     /**
      * Main.
-     * @params pArgs the arguments
+     * @param pArgs the arguments
      */
     public static void main(final String[] pArgs) {
         //checkCipher(new GordianElephantEngine(ElephantParameters.elephant160), 12);

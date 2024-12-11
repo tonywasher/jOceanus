@@ -154,7 +154,7 @@ abstract class AsconBaseDigest
 
     protected int hash(byte[] output, int outOff, int outLen)
     {
-        if (CRYPTO_BYTES + outOff > output.length)
+        if (outLen + outOff > output.length)
         {
             throw new OutputLengthException("output buffer is too short");
         }

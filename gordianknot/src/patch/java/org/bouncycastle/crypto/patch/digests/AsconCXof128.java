@@ -111,7 +111,7 @@ public class AsconCXof128
     @Override
     public int doOutput(byte[] output, int outOff, int outLen)
     {
-        if (CRYPTO_BYTES + outOff > output.length)
+        if (outLen + outOff > output.length)
         {
             throw new OutputLengthException("output buffer is too short");
         }
