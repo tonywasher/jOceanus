@@ -146,7 +146,7 @@ public abstract class GordianCoreMacFactory
 
         /* Check validity */
         return theFactory.getValidator().supportedHMacDigestTypes().test(myType)
-                && !pDigestSpec.isXof()
+                && !pDigestSpec.isXofMode()
                 && myDigests.supportedDigestSpecs().test(pDigestSpec);
     }
 

@@ -327,6 +327,14 @@ public final class GordianDigestSpecBuilder {
     }
 
     /**
+     * Create asconDigestSpec.
+     * @return the DigestSpec
+     */
+    public static GordianDigestSpec asconX() {
+        return new GordianDigestSpec(GordianDigestType.ASCON, GordianLength.LEN_256, Boolean.TRUE);
+    }
+
+    /**
      * Create ISAPDigestSpec.
      * @return the DigestSpec
      */

@@ -531,7 +531,7 @@ public final class GordianMacSpec implements GordianKeySpec {
                     theName += getDigestState() + SEP + theKeyLength;
                     break;
                 case SKEIN:
-                    final Boolean isSkeinXof = Objects.requireNonNull(getDigestSpec()).isXof();
+                    final Boolean isSkeinXof = Objects.requireNonNull(getDigestSpec()).isXofMode();
                     theName = GordianDigestType.SKEIN
                                + (isSkeinXof ? "X" : "")
                                + "Mac"
@@ -544,7 +544,7 @@ public final class GordianMacSpec implements GordianKeySpec {
                     theName += theSubSpec.toString() + SEP + theKeyLength;
                     break;
                 case BLAKE2:
-                    final Boolean isBlakeXof = Objects.requireNonNull(getDigestSpec()).isXof();
+                    final Boolean isBlakeXof = Objects.requireNonNull(getDigestSpec()).isXofMode();
                     theName = GordianDigestType.BLAKE2
                             + Objects.requireNonNull(getDigestState())
                                      .getBlake2Algorithm(Objects.requireNonNull(isBlakeXof))

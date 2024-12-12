@@ -40,7 +40,6 @@ import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymKeySpec;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymKeyType;
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestSubSpec;
-import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestSubSpec.GordianAsconSubSpec;
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestSubSpec.GordianDigestState;
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestType;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianKnuthObfuscater;
@@ -305,17 +304,14 @@ public class GordianCoreKnuthObfuscater
         /* Build the encoded id */
         int myCode = deriveEncodedIdFromDigestType(pDigestSpec.getDigestType());
         final GordianDigestState myState = pDigestSpec.getDigestState();
-        final GordianAsconSubSpec myAscon = pDigestSpec.getAsconSubSpec();
         myCode <<= determineShiftForDigestSubSpec();
         if (myState != null) {
             myCode += deriveEncodedIdFromDigestState(myState);
-        } else if (myAscon != null) {
-            myCode += deriveEncodedIdFromAsconSubSpec(myAscon);
         }
         myCode <<= determineShiftForEnum(GordianLength.class);
         myCode += deriveEncodedIdFromLength(pDigestSpec.getDigestLength());
         myCode <<= 1;
-        myCode += pDigestSpec.isXof() ? 1 : 0;
+        myCode += pDigestSpec.isXofMode() ? 1 : 0;
 
         /* return the code */
         return myCode;
@@ -340,9 +336,7 @@ public class GordianCoreKnuthObfuscater
         final GordianDigestType myType = deriveDigestTypeFromEncodedId(myId);
         final GordianLength myLength = deriveLengthFromEncodedId(myLenCode);
         GordianDigestSubSpec mySubSpec = null;
-        if (GordianDigestType.ASCON.equals(myType)) {
-            mySubSpec = deriveAsconSubSpecFromEncodedId(mySubSpecCode);
-        } else if (mySubSpecCode != 0) {
+        if (mySubSpecCode != 0) {
             mySubSpec = deriveDigestStateFromEncodedId(mySubSpecCode);
         }
 
@@ -576,8 +570,7 @@ public class GordianCoreKnuthObfuscater
      * @return the bit shift
      */
     private static int determineShiftForDigestSubSpec() {
-        final int myShift = determineShiftForEnum(GordianDigestState.class);
-        return Math.max(myShift, determineShiftForEnum(GordianAsconSubSpec.class));
+        return determineShiftForEnum(GordianDigestState.class);
     }
 
     /**
@@ -840,25 +833,6 @@ public class GordianCoreKnuthObfuscater
      */
     private static GordianDigestState deriveDigestStateFromEncodedId(final int pEncodedId) throws GordianException {
         return deriveEnumFromEncodedId(pEncodedId, GordianDigestState.class);
-    }
-
-    /**
-     * Obtain encoded asconSubSpec.
-     * @param pAscon the ascon subSpec
-     * @return the encoded id
-     */
-    private static int deriveEncodedIdFromAsconSubSpec(final GordianAsconSubSpec pAscon) {
-        return deriveEncodedIdFromEnum(pAscon);
-    }
-
-    /**
-     * Obtain asconSubSpec from encoded Id.
-     * @param pEncodedId the encoded id
-     * @return the subSpec
-     * @throws GordianException on error
-     */
-    private static GordianAsconSubSpec deriveAsconSubSpecFromEncodedId(final int pEncodedId) throws GordianException {
-        return deriveEnumFromEncodedId(pEncodedId, GordianAsconSubSpec.class);
     }
 
     /**

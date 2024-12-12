@@ -122,7 +122,7 @@ public class BouncyDigestFactory
             case RIPEMD:
                 return getRIPEMDDigest(myLen);
             case SKEIN:
-                return pDigestSpec.isXof()
+                return pDigestSpec.isXofMode()
                     ? getSkeinXof(pDigestSpec.getDigestState())
                     : getSkeinDigest(pDigestSpec.getDigestState(), myLen);
             case SHA3:
@@ -134,7 +134,7 @@ public class BouncyDigestFactory
             case HARAKA:
                 return getHarakaDigest(pDigestSpec);
             case BLAKE2:
-                return pDigestSpec.isXof()
+                return pDigestSpec.isXofMode()
                         ? getBlake2Xof(pDigestSpec)
                         : getBlake2Digest(pDigestSpec);
             case BLAKE3:
@@ -259,13 +259,8 @@ public class BouncyDigestFactory
      * @return the digest
      */
     private static Digest getAsconDigest(final GordianDigestSpec pSpec) {
-        switch (pSpec.getAsconSubSpec()) {
-            case ASCONHASH:
-                return new GordianAsconHash256();
-            case ASCONXOF:
-            default:
-                return new GordianAsconXof128();
-        }
+        return pSpec.isXofMode() ? new GordianAsconXof128()
+                                 : new GordianAsconHash256();
     }
 
     /**

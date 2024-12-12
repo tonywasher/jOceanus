@@ -38,8 +38,6 @@ public interface GordianDigestSubSpec {
             case SHAKE:
             case KANGAROO:
                 return new GordianDigestState[] { GordianDigestState.STATE128, GordianDigestState.STATE256 };
-            case ASCON:
-                return new GordianAsconSubSpec[] { GordianAsconSubSpec.ASCONHASH, GordianAsconSubSpec.ASCONXOF };
             default:
                 return new GordianDigestState[] { null };
         }
@@ -79,8 +77,6 @@ public interface GordianDigestSubSpec {
                         : GordianDigestState.STATE512;
             case HARAKA:
                 return GordianDigestState.STATE256;
-            case ASCON:
-                return GordianAsconSubSpec.ASCONHASH;
             default:
                 return null;
         }
@@ -346,12 +342,12 @@ public interface GordianDigestSubSpec {
         }
 
         /**
-         * Obtain the blakeAlgorithm name for State.
-         * @param pXof is the a Xof variant
+         * Obtain the blake2Algorithm name for State.
+         * @param pXofMode is this a Xof variant
          * @return the algorithm name
          */
-        public String getBlake2Algorithm(final boolean pXof) {
-            return (pXof ? "X" : "")
+        public String getBlake2Algorithm(final boolean pXofMode) {
+            return (pXofMode ? "X" : "")
                     + (isBlake2bState() ? "b" : "s");
         }
 
@@ -363,30 +359,6 @@ public interface GordianDigestSubSpec {
             return this == STATE256
                     ? GordianDigestResource.DIGEST_MARSUPILAMI.getValue()
                     : GordianDigestResource.DIGEST_KANGAROO.getValue();
-        }
-    }
-
-    /**
-     * Ascon subSpecification.
-     */
-    enum GordianAsconSubSpec implements GordianDigestSubSpec {
-        /**
-         * Hash.
-         */
-        ASCONHASH,
-
-        /**
-         * Xof.
-         */
-        ASCONXOF;
-
-        @Override
-        public String toString() {
-            switch (this) {
-                case ASCONHASH:  return "AsconHash";
-                case ASCONXOF:
-                default:         return "AsconXof";
-            }
         }
     }
 }

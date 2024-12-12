@@ -92,7 +92,7 @@ public abstract class GordianCoreDigestFactory
         }
 
         /* If we have an explicit Xof, check support */
-        if (pDigestSpec.isXof()
+        if (pDigestSpec.isXofMode()
                 && !theFactory.getValidator().isXofSupported()) {
             return false;
         }
@@ -139,6 +139,15 @@ public abstract class GordianCoreDigestFactory
                 if (mySubSpec instanceof GordianDigestState) {
                     final GordianDigestState myState = (GordianDigestState) mySubSpec;
                     final GordianDigestSpec mySpec = new GordianDigestSpec(myType, myState, myState.getLength(), Boolean.TRUE);
+
+                    /* Add if valid */
+                    if (mySpec.isValid()) {
+                        myList.add(mySpec);
+                    }
+
+                    /* Else look for null Xof type */
+                } else {
+                    final GordianDigestSpec mySpec = new GordianDigestSpec(myType, null, myType.getDefaultLength(), Boolean.TRUE);
 
                     /* Add if valid */
                     if (mySpec.isValid()) {

@@ -19,7 +19,6 @@ package net.sourceforge.joceanus.gordianknot.impl.core.sign;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestSpecBuilder;
-import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestSubSpec.GordianAsconSubSpec;
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestSubSpec.GordianDigestState;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairSpecBuilder;
@@ -648,11 +647,8 @@ public class GordianSignatureAlgId {
                 myId = myId.branch(Integer.toString(myState.ordinal() + 1));
             }
 
-            /* Add a branch if there is an Ascon subSpec */
-            final GordianAsconSubSpec mySubSpec = myDigestSpec.getAsconSubSpec();
-            if (mySubSpec != null) {
-                myId = myId.branch(Integer.toString(mySubSpec.ordinal() + 1));
-            }
+            /* Add Xof indication */
+            myId = myId.branch(myDigestSpec.isXofMode() ? "1" : "2");
         }
 
         /* Add the id to the maps */

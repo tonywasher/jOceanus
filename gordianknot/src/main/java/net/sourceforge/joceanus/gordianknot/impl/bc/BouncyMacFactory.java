@@ -232,7 +232,7 @@ public class BouncyMacFactory
      * @return the MAC
      */
     private static Mac getBCSkeinMac(final GordianDigestSpec pSpec) {
-        return pSpec.isXof()
+        return pSpec.isXofMode()
                     ? new GordianSkeinXMac(pSpec.getDigestState().getLength().getLength())
                     : new GordianSkeinMac(pSpec.getDigestState().getLength().getLength(), pSpec.getDigestLength().getLength());
     }
@@ -265,7 +265,7 @@ public class BouncyMacFactory
      * @return the MAC
      */
     private static Mac getBCBlake2Mac(final GordianDigestSpec pSpec) {
-        return pSpec.isXof()
+        return pSpec.isXofMode()
                 ? new GordianBlake2XMac(BouncyDigestFactory.getBlake2Xof(pSpec))
                 : new GordianBlake2Mac(BouncyDigestFactory.getBlake2Digest(pSpec));
     }
