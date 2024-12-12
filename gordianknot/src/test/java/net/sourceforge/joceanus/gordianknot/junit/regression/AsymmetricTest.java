@@ -116,11 +116,19 @@ class AsymmetricTest {
     private static final Integer BYTEARRAY = GordianLength.LEN_128.getLength();
 
     /**
+     * Perform setup operations.
+     */
+    @BeforeAll
+    public static void setUp() throws GordianException {
+        AsymmetricStore.parseOptions();
+        createSecurityFactories();
+    }
+
+    /**
      * Initialise Factories.
      * @throws GordianException on error
      */
-    @BeforeAll
-    public static void createSecurityFactories() throws GordianException {
+    private static void createSecurityFactories() throws GordianException {
         /* Create the factories */
         BCFACTORY = GordianGenerator.createRandomFactory(GordianFactoryType.BC);
         JCAFACTORY = GordianGenerator.createRandomFactory(GordianFactoryType.JCA);

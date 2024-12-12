@@ -54,7 +54,6 @@ import net.sourceforge.joceanus.gordianknot.api.random.GordianRandomSpec;
 import net.sourceforge.joceanus.gordianknot.api.random.GordianRandomType;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianDataConverter;
-import net.sourceforge.joceanus.gordianknot.impl.core.cipher.GordianCoreCipher;
 import net.sourceforge.joceanus.gordianknot.impl.core.cipher.GordianCoreCipherFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.cipher.GordianCoreWrapper;
 import net.sourceforge.joceanus.gordianknot.junit.regression.SymmetricStore.FactoryDigestSpec;
@@ -93,19 +92,38 @@ class SymmetricTest {
     static final int MILLINANOS = 1000;
 
     /**
-     * Run full profiles.
+     * DataLength (a prime #).
      */
-    private static final boolean fullProfiles;
+    private static final int DATALEN = 1021; // 1429;
+
+    /**
+     * Partial length (a smaller prime #)..
+     */
+    private static final int PARTIALLEN = 317;
 
     /**
      * Run full profiles.
      */
-    private static final int profileRepeat;
+    private static boolean fullProfiles;
+
+    /**
+     * Run full profiles.
+     */
+    private static int profileRepeat;
+
+    /**
+     * Perform setup operations.
+     */
+    @BeforeAll
+    public static void setUp() throws GordianException {
+        parseOptions();
+        createSecurityFactories();
+    }
 
     /**
      * Configure the test according to system properties.
      */
-    static {
+    private static void parseOptions() {
         /* If this is a full build */
         final String myBuildType = System.getProperty("joceanus.fullBuild");
         if (myBuildType != null) {
@@ -133,8 +151,7 @@ class SymmetricTest {
      * Initialise Factories.
      * @throws GordianException on error
      */
-    @BeforeAll
-    public static void createSecurityFactories() throws GordianException {
+    private static void createSecurityFactories() throws GordianException {
         BCFACTORY = GordianGenerator.createRandomFactory(GordianFactoryType.BC);
         JCAFACTORY = GordianGenerator.createRandomFactory(GordianFactoryType.JCA);
     }
@@ -228,6 +245,11 @@ class SymmetricTest {
         /* Add profile test */
         Stream<DynamicNode> myTests = Stream.of(DynamicTest.dynamicTest("profile", () -> profileDigest(pDigestSpec)));
 
+        /* Add Multi test as long as large data is supported */
+        if (pDigestSpec.getSpec().getDigestType().supportsLargeData()) {
+            myTests = Stream.concat(myTests, Stream.of(DynamicTest.dynamicTest("multi", () -> multiDigest(pDigestSpec))));
+        }
+
         /* Add algorithmId test */
         myTests = Stream.concat(myTests, Stream.of(DynamicTest.dynamicTest("checkAlgId", () -> checkDigestAlgId(pDigestSpec))));
 
@@ -299,6 +321,9 @@ class SymmetricTest {
     private Stream<DynamicNode> macTests(final FactoryMacSpec pMacSpec) {
         /* Add profile test */
         Stream<DynamicNode> myTests = Stream.of(DynamicTest.dynamicTest("profile", () -> profileMac(pMacSpec)));
+
+        /* Add Multi test */
+        myTests = Stream.concat(myTests, Stream.of(DynamicTest.dynamicTest("multi", () -> multiMac(pMacSpec))));
 
         /* Add algorithmId test */
         myTests = Stream.concat(myTests, Stream.of(DynamicTest.dynamicTest("checkAlgId", () -> checkMacAlgId(pMacSpec))));
@@ -403,6 +428,9 @@ class SymmetricTest {
         /* Add profile test */
         Stream<DynamicNode> myTests = Stream.of(DynamicTest.dynamicTest("cipher", () -> checkSymCipher(pCipherSpec)));
 
+        /* Add multi test */
+        myTests = Stream.concat(myTests, Stream.of(DynamicTest.dynamicTest("multi", () -> multiSymCipher(pCipherSpec))));
+
         /* Add externalId test */
         myTests = Stream.concat(myTests, Stream.of(DynamicTest.dynamicTest("externalId", () -> checkExternalId(pCipherSpec))));
 
@@ -414,12 +442,8 @@ class SymmetricTest {
             myTests = Stream.concat(myTests, Stream.of(DynamicTest.dynamicTest("Partner", () -> checkPartnerSymCipher(pCipherSpec))));
         }
 
-        /* Add PBE tests, ignoring ECB/CBC with no padding */
-        final GordianSymCipherSpec mySpec = pCipherSpec.getSpec();
-        if (!mySpec.getCipherMode().hasPadding()
-                || !GordianPadding.NONE.equals(mySpec.getPadding())) {
-            myTests = Stream.concat(myTests, Stream.of(DynamicContainer.dynamicContainer("PBE", symPBECipherTests(pCipherSpec))));
-        }
+        /* Add PBE tests */
+        myTests = Stream.concat(myTests, Stream.of(DynamicContainer.dynamicContainer("PBE", symPBECipherTests(pCipherSpec))));
 
         /* Return the tests */
         return myTests;
@@ -500,7 +524,10 @@ class SymmetricTest {
 
         /* Add cipher test */
         final FactoryStreamCipherSpec myCipherSpec = new FactoryStreamCipherSpec(pKeySpec, GordianStreamCipherSpecBuilder.stream(pKeySpec.getSpec()));
-        myTests = Stream.concat(myTests, Stream.of(DynamicTest.dynamicTest("checkCipher", () -> checkCipher(myCipherSpec))));
+        myTests = Stream.concat(myTests, Stream.of(DynamicTest.dynamicTest("checkCipher", () -> checkStreamCipher(myCipherSpec))));
+
+        /* Add multi test */
+        myTests = Stream.concat(myTests, Stream.of(DynamicTest.dynamicTest("multi", () -> multiStreamCipher(myCipherSpec))));
 
         /* Add externalId tests */
         myTests = Stream.concat(myTests, Stream.of(DynamicTest.dynamicTest("externalKeyId", () -> checkExternalId(pKeySpec))));
@@ -519,7 +546,7 @@ class SymmetricTest {
         myTests = Stream.concat(myTests, Stream.of(DynamicContainer.dynamicContainer("PBE", streamPBECipherTests(myCipherSpec))));
 
         /* Add AAD cipher tests if required */
-        if (pKeySpec.hasAAD()) {
+        if (pKeySpec.hasAADVersion()) {
             final FactoryStreamCipherSpec myAADSpec = new FactoryStreamCipherSpec(pKeySpec, GordianStreamCipherSpecBuilder.stream(pKeySpec.getSpec(), true));
             myTests = Stream.concat(myTests, Stream.of(DynamicContainer.dynamicContainer("AAD", streamAADCipherTests(myAADSpec))));
         }
@@ -551,7 +578,7 @@ class SymmetricTest {
      */
     private Stream<DynamicNode> streamAADCipherTests(final FactoryStreamCipherSpec pCipherSpec) {
         /* Build standard tests */
-        Stream<DynamicNode> myTests = Stream.of(DynamicTest.dynamicTest("checkCipher", () -> checkAADCipher(pCipherSpec)));
+        Stream<DynamicNode> myTests = Stream.of(DynamicTest.dynamicTest("checkCipher", () -> checkStreamAADCipher(pCipherSpec)));
         myTests = Stream.concat(myTests, Stream.of(DynamicTest.dynamicTest("externalCipherId", () -> checkExternalId(pCipherSpec))));
         myTests = Stream.concat(myTests, Stream.of(DynamicTest.dynamicTest("algorithmId", () -> checkStreamCipherAlgId(pCipherSpec))));
 
@@ -629,10 +656,40 @@ class SymmetricTest {
 
         /* Calculate elapsed time */
         long myElapsed = System.nanoTime() - myStart;
-        myElapsed /= MILLINANOS * profileRepeat;
+        myElapsed /= MILLINANOS * (long) profileRepeat;
         if (fullProfiles) {
-            System.out.println(pDigestSpec.toString() + ":" + myElapsed);
+            System.out.println(pDigestSpec + ":" + myElapsed);
         }
+    }
+
+    /**
+     * Multi-call digest.
+     * @param pDigestSpec the digest to profile
+     */
+    private void multiDigest(final FactoryDigestSpec pDigestSpec) throws GordianException {
+        /* Create the digest */
+        final GordianFactory myFactory = pDigestSpec.getFactory();
+        final GordianDigestSpec mySpec = pDigestSpec.getSpec();
+        final GordianDigestFactory myDigestFactory = myFactory.getDigestFactory();
+        final GordianDigest myDigest = myDigestFactory.createDigest(mySpec);
+
+        /* Check that the digestLength is correct */
+        Assertions.assertEquals(mySpec.getDigestLength().getByteLength(), myDigest.getDigestSize(), "DigestLength incorrect");
+
+        /* Create the digest as a single block */
+        final byte[] myBytes = getTestData();
+        myDigest.update(myBytes);
+        final byte[] mySingle = myDigest.finish();
+
+        /* Create the digest as partial blocks */
+        for (int myPos = 0; myPos < DATALEN; myPos += PARTIALLEN) {
+            final int myLen = Math.min(PARTIALLEN, DATALEN - myPos);
+            myDigest.update(myBytes, myPos, myLen);
+        }
+        final byte[] myMulti = myDigest.finish();
+
+        /* Check that the results are identical */
+        Assertions.assertArrayEquals(mySingle, myMulti, "Multi-Block and Single-Block results differ");
     }
 
     /**
@@ -671,7 +728,7 @@ class SymmetricTest {
         return pDigestSpec.getDigestType().supportsLargeData()
                ? myBytes
                : Arrays.copyOf(myBytes, pDigestSpec.getDigestState().getLength().getByteLength());
-      }
+    }
 
     /**
      * Profile mac.
@@ -723,11 +780,45 @@ class SymmetricTest {
 
         /* Record elapsed */
         long myElapsed = System.nanoTime() - myStart;
-        myElapsed /= 2 * MILLINANOS * profileRepeat;
+        myElapsed /= 2 * MILLINANOS * (long) profileRepeat;
         if (fullProfiles) {
-            System.out.println(pMacSpec.toString() + ":" + myElapsed);
+            System.out.println(pMacSpec + ":" + myElapsed);
         }
-        Assertions.assertFalse(isInconsistent, pMacSpec.toString() + " inconsistent");
+        Assertions.assertFalse(isInconsistent, pMacSpec + " inconsistent");
+    }
+
+    /**
+     * Multi-call mac.
+     * @param pMacSpec the mac to profile
+     */
+    private void multiMac(final FactoryMacSpec pMacSpec) throws GordianException {
+        /* Create the mac */
+        final GordianFactory myFactory = pMacSpec.getFactory();
+        final GordianMacSpec mySpec = pMacSpec.getSpec();
+        final GordianMacFactory myMacFactory = myFactory.getMacFactory();
+        final GordianMac myMac1 = myMacFactory.createMac(mySpec);
+        final GordianMac myMac2 = myMacFactory.createMac(mySpec);
+        final GordianKey<GordianMacSpec> myKey = pMacSpec.getKey();
+
+        /* Check that the macLength is correct */
+        Assertions.assertEquals(mySpec.getMacLength().getByteLength(), myMac1.getMacSize(), "MacLength incorrect");
+
+        /* Create the mac as a single block */
+        final byte[] myBytes = getTestData();
+        myMac1.init(GordianMacParameters.keyWithRandomNonce(myKey));
+        myMac1.update(myBytes);
+        final byte[] mySingle = myMac1.finish();
+
+        /* Create the mac as partial blocks */
+        myMac2.init(GordianMacParameters.keyAndNonce(myKey, myMac1.getInitVector()));
+        for (int myPos = 0; myPos < DATALEN; myPos += PARTIALLEN) {
+            final int myLen = Math.min(PARTIALLEN, DATALEN - myPos);
+            myMac2.update(myBytes, myPos, myLen);
+        }
+        final byte[] myMulti = myMac2.finish();
+
+        /* Check that the results are identical */
+        Assertions.assertArrayEquals(mySingle, myMulti, "Multi-Block and Single-Block results differ");
     }
 
     /**
@@ -769,11 +860,10 @@ class SymmetricTest {
      * @param pCipherSpec the cipherSpec
      * @throws GordianException on error
      */
-    @SuppressWarnings("unchecked")
     private void checkSymCipher(final FactorySymCipherSpec pCipherSpec) throws GordianException {
         /* Split out AAD cipher */
         if (pCipherSpec.getSpec().isAAD()) {
-            checkAADCipher(pCipherSpec);
+            checkSymAADCipher(pCipherSpec);
             return;
         }
 
@@ -784,29 +874,105 @@ class SymmetricTest {
         final GordianKey<GordianSymKeySpec> myKey = pCipherSpec.getKey();
 
         /* Access Data */
-        final byte[] myTestData = getTestData();
+        final byte[] myTestData = getSymCipherTestData(mySpec);
 
         /* Create the Spec */
-        final GordianCoreCipher<GordianSymKeySpec> myCipher = (GordianCoreCipher<GordianSymKeySpec>) myCipherFactory.createSymKeyCipher(mySpec);
+        final GordianSymCipher myCipher = myCipherFactory.createSymKeyCipher(mySpec);
         GordianCipherParameters myParms = GordianCipherParameters.keyWithRandomNonce(myKey);
-        myCipher.init(true, myParms);
-        if (!mySpec.getCipherMode().hasPadding()
-                || !GordianPadding.NONE.equals(mySpec.getPadding())) {
-            /* Check encryption */
-            final byte[] myIV = myCipher.getInitVector();
-            myParms = GordianCipherParameters.keyAndNonce(myKey, myIV);
-            final byte[] myEncrypted = myCipher.finish(myTestData);
-            final byte[] myEncrypted2 = myCipher.finish(myTestData);
-            myCipher.init(false, myParms);
-            final byte[] myResult = myCipher.finish(myEncrypted);
-            myCipher.init(false, myParms);
-            final byte[] myResult2 = myCipher.finish(myEncrypted2);
-            Assertions.assertArrayEquals(myTestData, myResult, "Failed to encrypt/decrypt");
-            Assertions.assertArrayEquals(myResult, myResult2, "Failed to reset properly");
-        } else {
-            /* Check that the blockLength is correct */
-            Assertions.assertEquals(mySpec.getBlockLength().getByteLength(), myCipher.getBlockSize(), "BlockLength incorrect");
+        myCipher.initForEncrypt(myParms);
+
+        /* Check encryption */
+        final byte[] myIV = Arrays.clone(myCipher.getInitVector());
+        myParms = GordianCipherParameters.keyAndNonce(myKey, myIV);
+        final byte[] myEncrypted = myCipher.finish(myTestData);
+        final byte[] myEncrypted2 = myCipher.finish(myTestData);
+        myCipher.initForDecrypt(myParms);
+        final byte[] myResult = myCipher.finish(myEncrypted);
+        myCipher.initForDecrypt(myParms);
+        final byte[] myResult2 = myCipher.finish(myEncrypted2);
+        Assertions.assertArrayEquals(myTestData, myResult, "Failed to encrypt/decrypt");
+        Assertions.assertArrayEquals(myResult, myResult2, "Failed to reset properly");
+    }
+
+    /**
+     * Obtain testData for CipherSpec.
+     * @param pSpec the cipherSpec
+     */
+    private byte[] getSymCipherTestData(final GordianSymCipherSpec pSpec) {
+        /* Access Data */
+        final byte[] myTestData = getTestData();
+
+        /* If we need to process in blocks but have no padding */
+        if (pSpec.getCipherMode().hasPadding()
+                && GordianPadding.NONE.equals(pSpec.getPadding())) {
+            /* Limit test data to multiple of blocks */
+            final int myBlockLen = pSpec.getBlockLength().getByteLength();
+            final int myDataLen = myBlockLen * (myTestData.length / myBlockLen);
+            return Arrays.copyOf(myTestData, myDataLen);
         }
+
+        /* Eles return the standard data */
+        return myTestData;
+    }
+
+    /**
+     * Multi-call symCipher.
+     * @param pCipherSpec the cipher to profile
+     */
+    private void multiSymCipher(final FactorySymCipherSpec pCipherSpec) throws GordianException {
+        /* Create the cipher */
+        final GordianFactory myFactory = pCipherSpec.getFactory();
+        final GordianSymCipherSpec mySpec = pCipherSpec.getSpec();
+        final GordianCipherFactory myCipherFactory = myFactory.getCipherFactory();
+        final GordianSymCipher myCipher1 = myCipherFactory.createSymKeyCipher(mySpec);
+        final GordianSymCipher myCipher2 = myCipherFactory.createSymKeyCipher(mySpec);
+        final GordianKey<GordianSymKeySpec> myKey = pCipherSpec.getKey();
+
+        /* Access Data */
+        final byte[] myBytes = getSymCipherTestData(mySpec);
+
+        /* Encrypt the data as a single block */
+        myCipher1.initForEncrypt(GordianCipherParameters.keyWithRandomNonce(myKey));
+        byte[] myEncrypt = new byte[myCipher1.getOutputLength(myBytes.length)];
+        int myOut = myCipher1.update(myBytes, 0, myBytes.length, myEncrypt, 0);
+        myOut += myCipher1.finish(myEncrypt, myOut);
+        myEncrypt = Arrays.copyOf(myEncrypt, myOut);
+
+        /* Decrypt the data as partial blocks */
+        myCipher2.initForDecrypt(GordianCipherParameters.keyAndNonce(myKey, myCipher1.getInitVector()));
+        byte[] myMulti = new byte[myCipher2.getOutputLength(myEncrypt.length)];
+        myOut = 0;
+        for (int myPos = 0; myPos < myEncrypt.length; myPos += PARTIALLEN) {
+            final int myLen = Math.min(PARTIALLEN, myEncrypt.length - myPos);
+            myOut += myCipher2.update(myEncrypt, myPos, myLen, myMulti, myOut);
+        }
+        myOut += myCipher2.finish(myMulti, myOut);
+        myMulti = Arrays.copyOf(myMulti, myOut);
+
+        /* Check that the results are identical */
+        Assertions.assertEquals(myBytes.length, myOut, "Multi-Block decrypt length failed");
+        Assertions.assertArrayEquals(myBytes, myMulti, "Multi-Block decrypt failed");
+
+        /* Encrypt the data as partial blocks */
+        myCipher2.initForEncrypt(GordianCipherParameters.keyWithRandomNonce(myKey));
+        myOut = 0;
+        for (int myPos = 0; myPos < myBytes.length; myPos += PARTIALLEN) {
+            final int myLen = Math.min(PARTIALLEN, myBytes.length - myPos);
+            myOut += myCipher2.update(myBytes, myPos, myLen, myEncrypt, myOut);
+        }
+        myOut += myCipher2.finish(myEncrypt, myOut);
+        myEncrypt = Arrays.copyOf(myEncrypt, myOut);
+
+        /* Decrypt the data as single block */
+        myCipher1.initForDecrypt(GordianCipherParameters.keyAndNonce(myKey, myCipher2.getInitVector()));
+        byte[] mySingle = new byte[myCipher1.getOutputLength(myEncrypt.length)];
+        myOut = myCipher1.update(myEncrypt, 0, myEncrypt.length, mySingle, 0);
+        myOut += myCipher1.finish(mySingle, myOut);
+        mySingle = Arrays.copyOf(mySingle, myOut);
+
+        /* Check that the results are identical */
+        Assertions.assertEquals(myBytes.length, myOut, "Multi-Block encrypt length failed");
+        Assertions.assertArrayEquals(myBytes, mySingle, "Multi-Block encrypt failed");
     }
 
     /**
@@ -823,7 +989,7 @@ class SymmetricTest {
         final GordianCipherFactory myCipherFactory = myFactory.getCipherFactory();
 
         /* Access Data */
-        final byte[] myTestData = getTestData();
+        final byte[] myTestData = getSymCipherTestData(myCipherSpec);
         final char[] myPassword = "HelloThere".toCharArray();
 
         /* Create the Spec */
@@ -848,7 +1014,7 @@ class SymmetricTest {
     private void checkPartnerSymCipher(final FactorySymCipherSpec pCipherSpec) throws GordianException {
         /* Split out AAD cipher */
         if (pCipherSpec.getSpec().isAAD()) {
-            checkPartnerAADCipher(pCipherSpec);
+            checkPartnerSymAADCipher(pCipherSpec);
             return;
         }
 
@@ -886,7 +1052,7 @@ class SymmetricTest {
      * @param pCipherSpec the cipherSpec
      * @throws GordianException on error
      */
-    private void checkAADCipher(final FactorySymCipherSpec pCipherSpec) throws GordianException {
+    private void checkSymAADCipher(final FactorySymCipherSpec pCipherSpec) throws GordianException {
         /* Access details */
         final GordianFactory myFactory = pCipherSpec.getFactory();
         final GordianSymCipherSpec mySpec = pCipherSpec.getSpec();
@@ -923,7 +1089,7 @@ class SymmetricTest {
      * @param pCipherSpec the cipherSpec
      * @throws GordianException on error
      */
-    private void checkPartnerAADCipher(final FactorySymCipherSpec pCipherSpec) throws GordianException {
+    private void checkPartnerSymAADCipher(final FactorySymCipherSpec pCipherSpec) throws GordianException {
         /* Access details */
         final GordianFactory myFactory = pCipherSpec.getFactory();
         final GordianFactory myPartner = pCipherSpec.getPartner();
@@ -957,7 +1123,15 @@ class SymmetricTest {
      * @param pCipherSpec the keySpec
      * @throws GordianException on error
      */
-    private void checkCipher(final FactoryStreamCipherSpec pCipherSpec) throws GordianException {
+    private void checkStreamCipher(final FactoryStreamCipherSpec pCipherSpec) throws GordianException {
+        /* If this cipher is in fact an AEAD cipher */
+        /* Elephant, ISAP, PhotonBeetle and Xoodyak do not currenctly support AEADParameters so treat as non-AEAD for the time being */
+        //if (pCipherSpec.getSpec().isAEAD()) {
+        //    /* Test as AEAD cipher */
+        //    checkStreamAADCipher(pCipherSpec);
+        //    return;
+        //}
+
         /* Access details */
         final FactoryStreamKeySpec myOwner = pCipherSpec.getOwner();
         final GordianFactory myFactory = myOwner.getFactory();
@@ -986,6 +1160,66 @@ class SymmetricTest {
         final byte[] myResult2 = myCipher.finish(myEncrypted2);
         Assertions.assertArrayEquals(myTestData, myResult, "Failed to encrypt/decrypt");
         Assertions.assertArrayEquals(myResult, myResult2, "Failed to reset properly");
+    }
+
+    /**
+     * Multi-call symCipher.
+     * @param pCipherSpec the cipher to profile
+     */
+    private void multiStreamCipher(final FactoryStreamCipherSpec pCipherSpec) throws GordianException {
+        /* Create the cipher */
+        final GordianFactory myFactory = pCipherSpec.getFactory();
+        final GordianStreamCipherSpec mySpec = pCipherSpec.getSpec();
+        final GordianCipherFactory myCipherFactory = myFactory.getCipherFactory();
+        final GordianStreamCipher myCipher1 = myCipherFactory.createStreamKeyCipher(mySpec);
+        final GordianStreamCipher myCipher2 = myCipherFactory.createStreamKeyCipher(mySpec);
+        final GordianKey<GordianStreamKeySpec> myKey = pCipherSpec.getKey();
+
+        /* Access the test data */
+        final byte[] myBytes = getTestData();
+
+        /* Encrypt the data as a single block */
+        myCipher1.initForEncrypt(GordianCipherParameters.keyWithRandomNonce(myKey));
+        byte[] myEncrypt = new byte[myCipher1.getOutputLength(myBytes.length)];
+        int myOut = myCipher1.update(myBytes, 0, myBytes.length, myEncrypt, 0);
+        myOut += myCipher1.finish(myEncrypt, myOut);
+        myEncrypt = Arrays.copyOf(myEncrypt, myOut);
+
+        /* Decrypt the data as partial blocks */
+        myCipher2.initForDecrypt(GordianCipherParameters.keyAndNonce(myKey, myCipher1.getInitVector()));
+        byte[] myMulti = new byte[myCipher2.getOutputLength(myEncrypt.length)];
+        myOut = 0;
+        for (int myPos = 0; myPos < myEncrypt.length; myPos += PARTIALLEN) {
+            final int myLen = Math.min(PARTIALLEN, myEncrypt.length - myPos);
+            myOut += myCipher2.update(myEncrypt, myPos, myLen, myMulti, myOut);
+        }
+        myOut += myCipher2.finish(myMulti, myOut);
+        myMulti = Arrays.copyOf(myMulti, myOut);
+
+        /* Check that the results are identical */
+        Assertions.assertEquals(myBytes.length, myOut, "Multi-Block decrypt length failed");
+        Assertions.assertArrayEquals(myBytes, myMulti, "Multi-Block decrypt failed");
+
+        /* Encrypt the data as partial blocks */
+        myCipher2.initForEncrypt(GordianCipherParameters.keyWithRandomNonce(myKey));
+        myOut = 0;
+        for (int myPos = 0; myPos < myBytes.length; myPos += PARTIALLEN) {
+            final int myLen = Math.min(PARTIALLEN, myBytes.length - myPos);
+            myOut += myCipher2.update(myBytes, myPos, myLen, myEncrypt, myOut);
+        }
+        myOut += myCipher2.finish(myEncrypt, myOut);
+        myEncrypt = Arrays.copyOf(myEncrypt, myOut);
+
+        /* Decrypt the data as single block */
+        myCipher1.initForDecrypt(GordianCipherParameters.keyAndNonce(myKey, myCipher2.getInitVector()));
+        byte[] mySingle = new byte[myCipher1.getOutputLength(myEncrypt.length)];
+        myOut = myCipher1.update(myEncrypt, 0, myEncrypt.length, mySingle, 0);
+        myOut += myCipher1.finish(mySingle, myOut);
+        mySingle = Arrays.copyOf(mySingle, myOut);
+
+        /* Check that the results are identical */
+        Assertions.assertEquals(myBytes.length, myOut, "Multi-Block encrypt length failed");
+        Assertions.assertArrayEquals(myBytes, mySingle, "Multi-Block encrypt failed");
     }
 
     /**
@@ -1024,7 +1258,7 @@ class SymmetricTest {
      * @param pCipherSpec the cipherSpec
      * @throws GordianException on error
      */
-    private void checkAADCipher(final FactoryStreamCipherSpec pCipherSpec) throws GordianException {
+    private void checkStreamAADCipher(final FactoryStreamCipherSpec pCipherSpec) throws GordianException {
         /* Access details */
         final GordianFactory myFactory = pCipherSpec.getFactory();
         final GordianStreamCipherSpec mySpec = pCipherSpec.getSpec();
@@ -1167,9 +1401,9 @@ class SymmetricTest {
             myBytes = myCipher.finish(myBytes);
         }
         long myElapsed = System.nanoTime() - myStart;
-        myElapsed /= MILLINANOS * profileRepeat;
+        myElapsed /= MILLINANOS * (long) profileRepeat;
         if (fullProfiles) {
-            System.out.println(mySpec.toString() + ":" + myElapsed);
+            System.out.println(mySpec + ":" + myElapsed);
         }
     }
 
@@ -1193,7 +1427,7 @@ class SymmetricTest {
             myBytes = myCipher.finish(myBytes);
         }
         long myElapsed = System.nanoTime() - myStart;
-        myElapsed /= MILLINANOS * profileRepeat;
+        myElapsed /= MILLINANOS * (long) profileRepeat;
         if (fullProfiles) {
             System.out.println(myKeySpec.toString() + ":" + myElapsed);
         }
@@ -1348,8 +1582,7 @@ class SymmetricTest {
      */
     private byte[] getTestData() {
         if (theTestData == null) {
-            /* Needs to be larger than the largest block size to enable CTS Mode to work */
-            theTestData = new byte[GordianLength.LEN_1024.getByteLength() + 1];
+            theTestData = new byte[DATALEN];
             final SecureRandom myRandom = new SecureRandom();
             myRandom.nextBytes(theTestData);
         }

@@ -54,13 +54,13 @@
                     <tr><td>Blake2Xb</td><td/><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td/><td/></tr>
                     <tr><td>Blake3Xof</td><td/><td/><td/><td/><td>Y</td><td/><td/><td/></tr>
                     <tr><td>Ascon</td><td>128, 128A</td><td/><td>Y</td><td/><td/><td/><td/><td/></tr>
+                    <tr><td>Elephant</td><td>160, 176, 200</td><td/><td>Y</td><td/><td/><td/><td/><td/></tr>
                     <tr><td>ISAP</td><td>A128, A128A, K128, K128A</td><td/><td>Y</td><td/><td/><td/><td/><td/></tr>
                     <tr><td>PhotonBeetle</td><td/><td/><td>Y</td><td/><td/><td/><td/><td/></tr>
                     <tr><td rowspan="3">Sparkle</td><td>128_128, 256_128</td><td/><td>Y</td><td/><td/><td/><td/><td/></tr>
                     <tr><td>192_192</td><td/><td/><td>Y</td><td/><td/><td/><td/></tr>
                     <tr><td>256_256</td><td/><td/><td/><td>Y</td><td/><td/><td/></tr>
                     <tr><td>Xoodyak</td><td/><td/><td>Y</td><td/><td/><td/><td/><td/></tr>
-                    <tr><td rowspan="2">KMACXof</td><td>KMAC128</td><td/><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td/></tr>
                 </table>
             </subsection>
         </section>
