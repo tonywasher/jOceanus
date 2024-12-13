@@ -155,7 +155,7 @@ public class GordianSkeinXof
 
     @Override
     public int getDigestSize() {
-        return theXofLen == 0 ? theUnderlying.getOutputSize() : (int) theXofLen;
+        return (theXofLen == 0 || theXofLen == -1) ? theUnderlying.getOutputSize() : (int) theXofLen;
     }
 
     @Override
@@ -182,9 +182,6 @@ public class GordianSkeinXof
     @Override
     public int doFinal(final byte[] pOut,
                        final int pOutOffset) {
-        if (theXofLen == -1) {
-            throw new IllegalStateException("No defined output length");
-        }
         return doFinal(pOut, pOutOffset, getDigestSize());
     }
 

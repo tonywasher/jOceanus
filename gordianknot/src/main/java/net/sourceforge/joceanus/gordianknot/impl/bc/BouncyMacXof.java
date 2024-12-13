@@ -62,6 +62,6 @@ public class BouncyMacXof
     @Override
     public int doFinish(final byte[] pBuffer,
                         final int pOffset) {
-        return theXof.doFinal(pBuffer, pOffset, getMacSize());
+        return theXof.doFinal(pBuffer, pOffset);
     }
 }

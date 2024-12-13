@@ -177,9 +177,6 @@ public class GordianBlake2Xof
     @Override
     public int doFinal(final byte[] pOut,
                        final int pOutOffset) {
-        if (theXofLen == -1) {
-            throw new IllegalStateException("No defined output length");
-        }
         return doFinal(pOut, pOutOffset, getDigestSize());
     }
 

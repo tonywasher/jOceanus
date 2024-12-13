@@ -119,6 +119,7 @@ public abstract class GordianCoreMac
     public abstract void doUpdate(byte[] pBytes,
                                   int pOffset,
                                   int pLength);
+
     @Override
     public int finish(final byte[] pBuffer,
                       final int pOffset) throws GordianException {
