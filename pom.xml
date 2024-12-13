@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>net.sourceforge.joceanus</groupId>
   <artifactId>joceanus</artifactId>
-  <version>1.6.3-SNAPSHOT</version>
+  <version>1.6.3-b3</version>
   <packaging>pom</packaging>
   <name>Java Oceanus package</name>
   <description>Parent project for jOceanus</description>
@@ -60,11 +60,11 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <scmMaster>master</scmMaster>
     <currentBranch>1.6.3</currentBranch>
-    <currentTag>SNAPSHOT</currentTag>
+    <currentTag>b3</currentTag>
     <baseBranch>1.6.3</baseBranch>
     <baseTag>b2</baseTag>
-    <currentRef>${scmMaster}</currentRef>
-    <!--<currentRef>${currentBranch}-${currentTag}</currentRef>-->
+    <!--<currentRef>${scmMaster}</currentRef>-->
+    <currentRef>${currentBranch}-${currentTag}</currentRef>
     <baseRef>${baseBranch}-${baseTag}</baseRef>
     <packageKey>net.sourceforge.joceanus</packageKey>
     <packageMain/>
@@ -89,7 +89,7 @@
     <JavaVersion>11</JavaVersion>
     <JavaFXVersion>17.0.13</JavaFXVersion>
     <JavaLanguageVersion>11</JavaLanguageVersion>
-    <CheckStyleVersion>10.20.2</CheckStyleVersion>
+    <CheckStyleVersion>10.21.0</CheckStyleVersion>
     <PMDVersion>7.8.0</PMDVersion>
     <CleanPluginVersion>3.4.0</CleanPluginVersion>
     <ResourcesPluginVersion>3.3.1</ResourcesPluginVersion>
@@ -106,7 +106,7 @@
     <JarPluginVersion>3.4.2</JarPluginVersion>
     <ProjectInfoPluginVersion>3.8.0</ProjectInfoPluginVersion>
     <JxrPluginVersion>3.6.0</JxrPluginVersion>
-    <JavaDocPluginVersion>3.11.1</JavaDocPluginVersion>
+    <JavaDocPluginVersion>3.11.2</JavaDocPluginVersion>
     <JavaNCSSPluginVersion>2.1</JavaNCSSPluginVersion>
     <SourcePluginVersion>3.3.1</SourcePluginVersion>
     <ChangelogPluginVersion>2.3</ChangelogPluginVersion>
