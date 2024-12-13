@@ -148,7 +148,7 @@ public class GordianCRMEncryptor {
         final byte[] myKey = createKeyForKeySet();
 
         /* Derive the keySet from the key */
-        final GordianKeySet myKeySet = deriveKeySetFromKey(myKey);
+        final GordianKeySet myKeySet = deriveKeySetFromKey(myKey.clone());
 
         /* Create recipientInfo */
         final RecipientInfo myInfo = createRecipientInfo(myKey, pCertificate, pEncryptSpec);
