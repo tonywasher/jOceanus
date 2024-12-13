@@ -5,12 +5,11 @@ import org.bouncycastle.crypto.DataLengthException;
 import org.bouncycastle.crypto.InvalidCipherTextException;
 import org.bouncycastle.crypto.OutputLengthException;
 import org.bouncycastle.crypto.modes.AEADCipher;
-import org.bouncycastle.crypto.params.AEADParameters;
 import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.crypto.params.ParametersWithIV;
+import org.bouncycastle.crypto.patch.digests.GordianPack;
 import org.bouncycastle.util.Arrays;
 import org.bouncycastle.util.Integers;
-import org.bouncycastle.util.Pack;
 
 import java.io.ByteArrayOutputStream;
 
@@ -21,11 +20,10 @@ import java.io.ByteArrayOutputStream;
  * </p>
  */
 
-public class GordianXoodyakEngine
+public class XoodyakEngine
         implements AEADCipher
 {
     private boolean forEncryption;
-    private byte[] initialAEADData;
     private byte[] state;
     private int phase;
     private MODE mode;
@@ -62,35 +60,21 @@ public class GordianXoodyakEngine
             throws IllegalArgumentException
     {
         this.forEncryption = forEncryption;
-        KeyParameter key;
-        if (params instanceof AEADParameters)
-        {
-            AEADParameters aeadParams = (AEADParameters) params;
-            iv = aeadParams.getNonce();
-            key = aeadParams.getKey();
-            initialAEADData = aeadParams.getAssociatedText();
-        }
-        else if (!(params instanceof ParametersWithIV))
+        if (!(params instanceof ParametersWithIV))
         {
             throw new IllegalArgumentException("Xoodyak init parameters must include an IV");
         }
-        else
-        {
-            initialAEADData = null;
-            ParametersWithIV ivParams = (ParametersWithIV) params;
-            iv = ivParams.getIV();
-            if (!(ivParams.getParameters() instanceof KeyParameter))
-            {
-                throw new IllegalArgumentException("Xoodyak init parameters must include a key");
-            }
-            key = (KeyParameter)ivParams.getParameters();
-        }
-
+        ParametersWithIV ivParams = (ParametersWithIV)params;
+        iv = ivParams.getIV();
         if (iv == null || iv.length != 16)
         {
             throw new IllegalArgumentException("Xoodyak requires exactly 16 bytes of IV");
         }
-
+        if (!(ivParams.getParameters() instanceof KeyParameter))
+        {
+            throw new IllegalArgumentException("Xoodyak init parameters must include a key");
+        }
+        KeyParameter key = (KeyParameter)ivParams.getParameters();
         K = key.getKey();
         if (K.length != 16)
         {
@@ -276,7 +260,8 @@ public class GordianXoodyakEngine
     @Override
     public int getUpdateOutputSize(int len)
     {
-        return len + message.size();
+        int total = Math.max(0, len + message.size() + (forEncryption ? 0 : -TAGLEN));
+        return total - total % Rkout;
     }
 
     @Override
@@ -307,11 +292,6 @@ public class GordianXoodyakEngine
         phase = PhaseUp;
         message.reset();
         aadData.reset();
-        if (initialAEADData != null)
-        {
-            aadData.write(initialAEADData, 0, initialAEADData.length);
-        }
-
         //Absorb key
         int KLen = K.length;
         int IDLen = iv.length;
@@ -349,18 +329,18 @@ public class GordianXoodyakEngine
             state[f_bPrime - 1] ^= Cu;
         }
 
-        int a0 = Pack.littleEndianToInt(state, 0);
-        int a1 = Pack.littleEndianToInt(state, 4);
-        int a2 = Pack.littleEndianToInt(state, 8);
-        int a3 = Pack.littleEndianToInt(state, 12);
-        int a4 = Pack.littleEndianToInt(state, 16);
-        int a5 = Pack.littleEndianToInt(state, 20);
-        int a6 = Pack.littleEndianToInt(state, 24);
-        int a7 = Pack.littleEndianToInt(state, 28);
-        int a8 = Pack.littleEndianToInt(state, 32);
-        int a9 = Pack.littleEndianToInt(state, 36);
-        int a10 = Pack.littleEndianToInt(state, 40);
-        int a11 = Pack.littleEndianToInt(state, 44);
+        int a0 = GordianPack.littleEndianToInt(state, 0);
+        int a1 = GordianPack.littleEndianToInt(state, 4);
+        int a2 = GordianPack.littleEndianToInt(state, 8);
+        int a3 = GordianPack.littleEndianToInt(state, 12);
+        int a4 = GordianPack.littleEndianToInt(state, 16);
+        int a5 = GordianPack.littleEndianToInt(state, 20);
+        int a6 = GordianPack.littleEndianToInt(state, 24);
+        int a7 = GordianPack.littleEndianToInt(state, 28);
+        int a8 = GordianPack.littleEndianToInt(state, 32);
+        int a9 = GordianPack.littleEndianToInt(state, 36);
+        int a10 = GordianPack.littleEndianToInt(state, 40);
+        int a11 = GordianPack.littleEndianToInt(state, 44);
 
         for (int i = 0; i < MAXROUNDS; ++i)
         {
@@ -438,18 +418,18 @@ public class GordianXoodyakEngine
             a11 = Integers.rotateLeft(b9, 8);
         }
 
-        Pack.intToLittleEndian(a0, state, 0);
-        Pack.intToLittleEndian(a1, state, 4);
-        Pack.intToLittleEndian(a2, state, 8);
-        Pack.intToLittleEndian(a3, state, 12);
-        Pack.intToLittleEndian(a4, state, 16);
-        Pack.intToLittleEndian(a5, state, 20);
-        Pack.intToLittleEndian(a6, state, 24);
-        Pack.intToLittleEndian(a7, state, 28);
-        Pack.intToLittleEndian(a8, state, 32);
-        Pack.intToLittleEndian(a9, state, 36);
-        Pack.intToLittleEndian(a10, state, 40);
-        Pack.intToLittleEndian(a11, state, 44);
+        GordianPack.intToLittleEndian(a0, state, 0);
+        GordianPack.intToLittleEndian(a1, state, 4);
+        GordianPack.intToLittleEndian(a2, state, 8);
+        GordianPack.intToLittleEndian(a3, state, 12);
+        GordianPack.intToLittleEndian(a4, state, 16);
+        GordianPack.intToLittleEndian(a5, state, 20);
+        GordianPack.intToLittleEndian(a6, state, 24);
+        GordianPack.intToLittleEndian(a7, state, 28);
+        GordianPack.intToLittleEndian(a8, state, 32);
+        GordianPack.intToLittleEndian(a9, state, 36);
+        GordianPack.intToLittleEndian(a10, state, 40);
+        GordianPack.intToLittleEndian(a11, state, 44);
 
         phase = PhaseUp;
         if (Yi != null)

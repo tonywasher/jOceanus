@@ -5,7 +5,6 @@ import org.bouncycastle.crypto.DataLengthException;
 import org.bouncycastle.crypto.InvalidCipherTextException;
 import org.bouncycastle.crypto.OutputLengthException;
 import org.bouncycastle.crypto.modes.AEADCipher;
-import org.bouncycastle.crypto.params.AEADParameters;
 import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.crypto.params.ParametersWithIV;
 
@@ -19,7 +18,7 @@ import java.io.ByteArrayOutputStream;
  * </p>
  */
 
-public class GordianPhotonBeetleEngine
+public class PhotonBeetleEngine
         implements AEADCipher
 {
     public enum PhotonBeetleParameters
@@ -30,7 +29,6 @@ public class GordianPhotonBeetleEngine
 
     private boolean input_empty;
     private boolean forEncryption;
-    private byte[] initialAEADData;
     private byte[] K;
     private byte[] N;
     private byte[] state;
@@ -78,7 +76,7 @@ public class GordianPhotonBeetleEngine
 
     private final byte[] sbox = {12, 5, 6, 11, 9, 0, 10, 13, 3, 14, 15, 8, 4, 7, 1, 2};
 
-    public GordianPhotonBeetleEngine(PhotonBeetleParameters pbp)
+    public PhotonBeetleEngine(PhotonBeetleParameters pbp)
     {
         int CAPACITY_INBITS = 0, RATE_INBITS = 0;
         switch (pbp)
@@ -105,34 +103,21 @@ public class GordianPhotonBeetleEngine
             throws IllegalArgumentException
     {
         this.forEncryption = forEncryption;
-        KeyParameter key;
-        if (params instanceof AEADParameters)
-        {
-            AEADParameters aeadParams = (AEADParameters) params;
-            N = aeadParams.getNonce();
-            key = aeadParams.getKey();
-            initialAEADData = aeadParams.getAssociatedText();
-        }
-        else if (!(params instanceof ParametersWithIV))
+        if (!(params instanceof ParametersWithIV))
         {
             throw new IllegalArgumentException("Photon-Beetle AEAD init parameters must include an IV");
         }
-        else
-        {
-            initialAEADData = null;
-            ParametersWithIV ivParams = (ParametersWithIV) params;
-            N = ivParams.getIV();
-            if (!(ivParams.getParameters() instanceof KeyParameter))
-            {
-                throw new IllegalArgumentException("Photon-Beetle AEAD init parameters must include a key");
-            }
-            key = (KeyParameter)ivParams.getParameters();
-        }
-
+        ParametersWithIV ivParams = (ParametersWithIV)params;
+        N = ivParams.getIV();
         if (N == null || N.length != CRYPTO_NPUBBYTES)
         {
             throw new IllegalArgumentException("Photon-Beetle AEAD requires exactly 16 bytes of IV");
         }
+        if (!(ivParams.getParameters() instanceof KeyParameter))
+        {
+            throw new IllegalArgumentException("Photon-Beetle AEAD init parameters must include a key");
+        }
+        KeyParameter key = (KeyParameter)ivParams.getParameters();
         K = key.getKey();
         if (K.length != CRYPTO_KEYBYTES)
         {
@@ -283,7 +268,8 @@ public class GordianPhotonBeetleEngine
     @Override
     public int getUpdateOutputSize(int len)
     {
-        return len + message.size();
+        int total = Math.max(0, len + message.size() + (forEncryption ? 0 : -TAG_INBYTES));
+        return total - total % RATE_INBYTES;
     }
 
     @Override
@@ -311,10 +297,6 @@ public class GordianPhotonBeetleEngine
         }
         input_empty = true;
         aadData.reset();
-        if (initialAEADData != null)
-        {
-            aadData.write(initialAEADData, 0, initialAEADData.length);
-        }
         message.reset();
         System.arraycopy(K, 0, state, 0, K.length);
         System.arraycopy(N, 0, state, K.length, N.length);
