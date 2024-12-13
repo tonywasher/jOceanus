@@ -17,7 +17,6 @@
 package net.sourceforge.joceanus.gordianknot.api.cipher;
 
 import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
-import net.sourceforge.joceanus.gordianknot.api.cipher.GordianStreamKeySpec.GordianAsconKey;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianStreamKeySpec.GordianChaCha20Key;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianStreamKeySpec.GordianElephantKey;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianStreamKeySpec.GordianISAPKey;
@@ -201,11 +200,10 @@ public final class GordianStreamKeySpecBuilder {
 
     /**
      * Create asconKeySpec.
-     * @param pSubSpec the subSpec
      * @return the keySpec
      */
-    public static GordianStreamKeySpec ascon(final GordianAsconKey pSubSpec) {
-        return new GordianStreamKeySpec(GordianStreamKeyType.ASCON, GordianLength.LEN_256, pSubSpec);
+    public static GordianStreamKeySpec ascon() {
+        return new GordianStreamKeySpec(GordianStreamKeyType.ASCON, GordianLength.LEN_256);
     }
 
     /**

@@ -256,4 +256,19 @@ public enum GordianDigestType {
     public boolean supportsLargeData() {
         return this != HARAKA;
     }
+
+    /**
+     * Is this digestType a natural Xof?
+     * @return true/false
+     */
+    public boolean isXof() {
+        switch (this) {
+            case SHAKE:
+            case KANGAROO:
+            case BLAKE3:
+                return true;
+            default:
+                return false;
+        }
+    }
 }

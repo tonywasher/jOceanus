@@ -38,9 +38,6 @@ public interface GordianDigestSubSpec {
             case SHAKE:
             case KANGAROO:
                 return new GordianDigestState[] { GordianDigestState.STATE128, GordianDigestState.STATE256 };
-            case ASCON:
-                return new GordianAsconSubSpec[] { GordianAsconSubSpec.ASCONHASH, GordianAsconSubSpec.ASCONHASHA,
-                        GordianAsconSubSpec.ASCONXOF, GordianAsconSubSpec.ASCONXOFA };
             default:
                 return new GordianDigestState[] { null };
         }
@@ -80,8 +77,6 @@ public interface GordianDigestSubSpec {
                         : GordianDigestState.STATE512;
             case HARAKA:
                 return GordianDigestState.STATE256;
-            case ASCON:
-                return GordianAsconSubSpec.ASCONHASH;
             default:
                 return null;
         }
@@ -146,6 +141,35 @@ public interface GordianDigestSubSpec {
             return this == STATE512
                     && (GordianLength.LEN_224.equals(pLength)
                     || GordianLength.LEN_256.equals(pLength));
+        }
+
+        /**
+         * Obtain the length for an explicit Xof variant.
+         * @param pType the digestType
+         * @return the length
+         */
+        GordianLength lengthForXofType(final GordianDigestType pType) {
+            switch (pType) {
+                case SKEIN:
+                    switch (this) {
+                        case STATE256:
+                        case STATE512:
+                        case STATE1024:
+                            return theLength;
+                        default:
+                            return null;
+                    }
+                case BLAKE2:
+                    switch (this) {
+                        case STATE256:
+                        case STATE512:
+                            return theLength;
+                        default:
+                            return null;
+                    }
+                default:
+                    return null;
+            }
         }
 
         /**
@@ -294,7 +318,6 @@ public interface GordianDigestSubSpec {
             }
         }
 
-
         /**
          * Is this state valid for the harakaLength.
          * @param pLength the length
@@ -319,13 +342,13 @@ public interface GordianDigestSubSpec {
         }
 
         /**
-         * Obtain the blakeAlgorithm name for State.
+         * Obtain the blake2Algorithm name for State.
+         * @param pXofMode is this a Xof variant
          * @return the algorithm name
          */
-        public String getBlake2Algorithm() {
-            return GordianDigestType.BLAKE2.toString() + (this == STATE512
-                    ? "b"
-                    : "s");
+        public String getBlake2Algorithm(final boolean pXofMode) {
+            return (pXofMode ? "X" : "")
+                    + (isBlake2bState() ? "b" : "s");
         }
 
         /**
@@ -336,42 +359,6 @@ public interface GordianDigestSubSpec {
             return this == STATE256
                     ? GordianDigestResource.DIGEST_MARSUPILAMI.getValue()
                     : GordianDigestResource.DIGEST_KANGAROO.getValue();
-        }
-    }
-
-    /**
-     * Ascon subSpecification.
-     */
-    enum GordianAsconSubSpec implements GordianDigestSubSpec {
-        /**
-         * Hash.
-         */
-        ASCONHASH,
-
-        /**
-         * HashA.
-         */
-        ASCONHASHA,
-
-        /**
-         * Xof.
-         */
-        ASCONXOF,
-
-        /**
-         * XofA.
-         */
-        ASCONXOFA;
-
-        @Override
-        public String toString() {
-            switch (this) {
-                case ASCONHASH:  return "AsconHash";
-                case ASCONHASHA: return "AsconHashA";
-                case ASCONXOF:   return "AsconXof";
-                case ASCONXOFA:
-                default:         return "AsconXofA";
-            }
         }
     }
 }

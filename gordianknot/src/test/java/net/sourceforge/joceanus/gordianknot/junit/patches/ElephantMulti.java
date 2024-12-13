@@ -6,8 +6,13 @@ import org.bouncycastle.crypto.KeyGenerationParameters;
 import org.bouncycastle.crypto.modes.AEADCipher;
 import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.crypto.params.ParametersWithIV;
-import org.bouncycastle.crypto.patch.engines.GordianElephantEngine;
-import org.bouncycastle.crypto.patch.engines.GordianElephantEngine.ElephantParameters;
+import org.bouncycastle.crypto.patch.engines.ElephantEngine;
+import org.bouncycastle.crypto.patch.engines.ElephantEngine.ElephantParameters;
+import org.bouncycastle.crypto.patch.engines.ISAPEngine;
+import org.bouncycastle.crypto.patch.engines.ISAPEngine.IsapType;
+import org.bouncycastle.crypto.patch.engines.PhotonBeetleEngine;
+import org.bouncycastle.crypto.patch.engines.PhotonBeetleEngine.PhotonBeetleParameters;
+import org.bouncycastle.crypto.patch.engines.XoodyakEngine;
 
 import java.security.SecureRandom;
 import java.util.Arrays;
@@ -31,13 +36,16 @@ public class ElephantMulti {
 
     /**
      * Main.
-     * @params pArgs the arguments
+     * @param pArgs the arguments
      */
     public static void main(final String[] pArgs) {
         //checkCipher(new GordianElephantEngine(ElephantParameters.elephant160), 12);
-        checkCipher(new GordianElephantEngine(ElephantParameters.elephant160), 12, 20);
-        checkCipher(new GordianElephantEngine(ElephantParameters.elephant176), 12, 22);
-        checkCipher(new GordianElephantEngine(ElephantParameters.elephant200), 12, 25);
+        //checkCipher(new ElephantEngine(ElephantParameters.elephant160), 12, 20);
+        //checkCipher(new ElephantEngine(ElephantParameters.elephant176), 12, 22);
+        checkCipher(new ElephantEngine(ElephantParameters.elephant200), 12, 25);
+        checkCipher(new ISAPEngine(IsapType.ISAP_A_128), 16, 25);
+        checkCipher(new PhotonBeetleEngine(PhotonBeetleParameters.pb128), 16, 25);
+        checkCipher(new XoodyakEngine(), 16, 25);
     }
 
     /**
@@ -79,18 +87,18 @@ public class ElephantMulti {
             int myOutLen = pCipher.processBytes(myData, 0, PARTLEN, myEncrypted, 0);
 
             /* Note that myOutLen is incorrect so calculate what it should have been */
-            myOutLen = pBufferLen * (PARTLEN / pBufferLen);
+            //myOutLen = pBufferLen * (PARTLEN / pBufferLen);
             int myXtra = PARTLEN << 1;
 
             /* FAILS on this call */
             myOutLen += pCipher.processBytes(myData, PARTLEN, PARTLEN, myEncrypted, myOutLen);
-            myOutLen = pBufferLen * (myXtra / pBufferLen);
+            //myOutLen = pBufferLen * (myXtra / pBufferLen);
 
             /* FAILS on this call if the previous call is fixed */
             myOutLen += pCipher.processBytes(myData, myXtra, DATALEN - myXtra, myEncrypted, myOutLen);
 
             /* If it succeeded myOutLen is again incorrect, so recalculate it  */
-            myOutLen = pBufferLen * (DATALEN / pBufferLen);
+            //myOutLen = pBufferLen * (DATALEN / pBufferLen);
 
             /* Finish the encryption */
             myOutLen += pCipher.doFinal(myEncrypted, myOutLen);
@@ -102,9 +110,8 @@ public class ElephantMulti {
             pCipher.processAADBytes(myAEAD, 0, AEADLEN);
             int myPartLen = pBufferLen + 3;
             int myClearLen = pCipher.processBytes(myEncrypted, 0, myPartLen, myDecrypted, 0);
-            myClearLen = 0;
             myClearLen += pCipher.processBytes(myEncrypted, myPartLen, myOutLen - myPartLen, myDecrypted, myClearLen);
-            myClearLen = pBufferLen * (DATALEN / pBufferLen);
+            //myClearLen = pBufferLen * (DATALEN / pBufferLen);
             pCipher.doFinal(myDecrypted, myClearLen);
             final byte[] myResult = Arrays.copyOf(myDecrypted, DATALEN);
 

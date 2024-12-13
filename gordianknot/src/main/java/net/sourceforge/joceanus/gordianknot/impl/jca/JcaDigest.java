@@ -43,8 +43,8 @@ public final class JcaDigest
      * @param pDigestSpec the digestSpec
      * @param pDigest the digest
      */
-    protected JcaDigest(final GordianDigestSpec pDigestSpec,
-                        final MessageDigest pDigest) {
+    JcaDigest(final GordianDigestSpec pDigestSpec,
+              final MessageDigest pDigest) {
         super(pDigestSpec);
         theDigest = pDigest;
     }

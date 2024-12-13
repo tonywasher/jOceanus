@@ -18,7 +18,6 @@ package net.sourceforge.joceanus.gordianknot.api.cipher;
 
 import net.sourceforge.joceanus.gordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
-import org.bouncycastle.crypto.engines.AsconEngine.AsconParameters;
 import org.bouncycastle.crypto.engines.SparkleEngine.SparkleParameters;
 import org.bouncycastle.crypto.patch.engines.GordianElephantEngine.ElephantParameters;
 import org.bouncycastle.crypto.patch.engines.GordianISAPEngine.IsapType;
@@ -146,9 +145,6 @@ public class GordianStreamKeySpec
                 return checkSkeinValidity();
             case BLAKE2XOF:
                 return checkBlake2Validity();
-            case ASCON:
-                return theSubKeyType instanceof GordianAsconKey
-                        && theStreamKeyType.validForKeyLength(theKeyLength);
             case ELEPHANT:
                 return theSubKeyType instanceof GordianElephantKey
                         && theStreamKeyType.validForKeyLength(theKeyLength);
@@ -310,7 +306,6 @@ public class GordianStreamKeySpec
         /* Handle Remaining types */
         switch (theStreamKeyType) {
             case BLAKE2XOF:
-            case ASCON:
             case ELEPHANT:
             case ISAP:
             case SPARKLE:
@@ -439,8 +434,6 @@ public class GordianStreamKeySpec
                 return GordianSkeinXofKey.STATE1024;
             case BLAKE2XOF:
                 return GordianBlakeXofKey.BLAKE2XB;
-            case ASCON:
-                return GordianAsconKey.ASCON128;
             case ELEPHANT:
                 return GordianElephantKey.ELEPHANT160;
             case ISAP:
@@ -634,35 +627,6 @@ public class GordianStreamKeySpec
                 default:
                     return GordianLength.LEN_128;
             }
-        }
-    }
-
-    /**
-     * Ascon Key styles.
-     */
-    public enum GordianAsconKey
-            implements GordianStreamSubKeyType {
-        /**
-         * Ascon128.
-         */
-        ASCON128,
-
-        /**
-         * Ascon128a.
-         */
-        ASCON128A;
-
-        @Override
-        public String toString() {
-            return GordianStreamKeyType.ASCON.toString() + (this == ASCON128 ? "128" : "128a");
-        }
-
-        /**
-         * Obtain the Ascon parameters.
-         * @return the parameters
-         */
-        public AsconParameters getParameters() {
-            return this == ASCON128 ? AsconParameters.ascon128 : AsconParameters.ascon128a;
         }
     }
 

@@ -32,7 +32,6 @@ import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymCipher;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymCipherSpec;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymCipherSpecBuilder;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymKeySpec;
-import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymKeyType;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianWrapper;
 import net.sourceforge.joceanus.gordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.gordianknot.api.key.GordianKeyGenerator;
@@ -395,27 +394,6 @@ public class JcaCipherFactory
         }
     }
 
-    /**
-     * Is this symKeyType supported by Jca?
-     * @param pKeyType the keyType
-     * @return true/false
-     */
-    static boolean supportedSymKeyType(final GordianSymKeyType pKeyType) {
-        if (pKeyType == null) {
-            return false;
-        }
-        switch (pKeyType) {
-            case SPECK:
-            case ANUBIS:
-            case SIMON:
-            case MARS:
-            case LEA:
-                return false;
-            default:
-                return true;
-        }
-    }
-
     @Override
     protected boolean validStreamKeySpec(final GordianStreamKeySpec pKeySpec) {
         /* Check basic validity */
@@ -426,31 +404,6 @@ public class JcaCipherFactory
         /* Reject XChaCha20 */
         return pKeySpec.getStreamKeyType() != GordianStreamKeyType.CHACHA20
                 || pKeySpec.getSubKeyType() != GordianChaCha20Key.XCHACHA;
-    }
-
-    @Override
-    protected boolean validStreamKeyType(final GordianStreamKeyType pKeyType) {
-        if (pKeyType == null) {
-            return false;
-        }
-        switch (pKeyType) {
-            case ISAAC:
-            case SOSEMANUK:
-            case RABBIT:
-            case SNOW3G:
-            case SKEINXOF:
-            case BLAKE2XOF:
-            case BLAKE3XOF:
-            case ASCON:
-            case ELEPHANT:
-            case ISAP:
-            case PHOTONBEETLE:
-            case SPARKLE:
-            case XOODYAK:
-                return false;
-            default:
-                return super.validStreamKeyType(pKeyType);
-        }
     }
 
     @Override

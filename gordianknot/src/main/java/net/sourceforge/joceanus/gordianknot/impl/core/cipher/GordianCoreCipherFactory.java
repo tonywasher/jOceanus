@@ -28,7 +28,6 @@ import net.sourceforge.joceanus.gordianknot.api.cipher.GordianPadding;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianStreamCipherSpec;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianStreamCipherSpecBuilder;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianStreamKeySpec;
-import net.sourceforge.joceanus.gordianknot.api.cipher.GordianStreamKeySpec.GordianAsconKey;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianStreamKeySpec.GordianBlakeXofKey;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianStreamKeySpec.GordianChaCha20Key;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianStreamKeySpec.GordianElephantKey;
@@ -116,7 +115,7 @@ public abstract class GordianCoreCipherFactory
 
     @Override
     public Predicate<GordianStreamKeyType> supportedStreamKeyTypes() {
-        return this::validStreamKeyType;
+        return t -> theFactory.getValidator().validStreamKeyType(t);
     }
 
     /**
@@ -315,15 +314,6 @@ public abstract class GordianCoreCipherFactory
             return false;
         }
         return supportedStreamKeyTypes().test(pKeySpec.getStreamKeyType());
-    }
-
-    /**
-     * Check StreamKeyType.
-     * @param pKeyType the streamKeyType
-     * @return true/false
-     */
-    protected boolean validStreamKeyType(final GordianStreamKeyType pKeyType) {
-        return pKeyType != null;
     }
 
     /**
@@ -559,8 +549,6 @@ public abstract class GordianCoreCipherFactory
                 return Arrays.asList(GordianSkeinXofKey.values());
             case BLAKE2XOF:
                 return Arrays.asList(GordianBlakeXofKey.values());
-            case ASCON:
-                return Arrays.asList(GordianAsconKey.values());
             case ELEPHANT:
                 return Arrays.asList(GordianElephantKey.values());
             case ISAP:

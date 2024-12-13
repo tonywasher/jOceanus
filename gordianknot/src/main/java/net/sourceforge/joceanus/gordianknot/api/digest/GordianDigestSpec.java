@@ -18,7 +18,6 @@ package net.sourceforge.joceanus.gordianknot.api.digest;
 
 import net.sourceforge.joceanus.gordianknot.api.base.GordianIdSpec;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
-import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestSubSpec.GordianAsconSubSpec;
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestSubSpec.GordianDigestState;
 
 import java.util.Objects;
@@ -49,6 +48,11 @@ public class GordianDigestSpec
     private final GordianLength theLength;
 
     /**
+     * Is this a Xof mode?
+     */
+    private final Boolean isXofMode;
+
+    /**
      * The Validity.
      */
     private final boolean isValid;
@@ -74,7 +78,19 @@ public class GordianDigestSpec
     public GordianDigestSpec(final GordianDigestType pDigestType,
                              final GordianLength pLength) {
         /* Store parameters */
-        this(pDigestType, GordianDigestSubSpec.getDefaultSubSpecForTypeAndLength(pDigestType, pLength), pLength);
+        this(pDigestType, pLength, Boolean.FALSE);
+    }
+
+    /**
+     * Constructor.
+     * @param pDigestType the digestType
+     * @param pLength the length
+     * @param pXofMode is this an explicit Xof?
+     */
+    public GordianDigestSpec(final GordianDigestType pDigestType,
+                             final GordianLength pLength,
+                             final Boolean pXofMode) {
+        this(pDigestType, GordianDigestSubSpec.getDefaultSubSpecForTypeAndLength(pDigestType, pLength), pLength, pXofMode);
     }
 
     /**
@@ -86,10 +102,25 @@ public class GordianDigestSpec
     public GordianDigestSpec(final GordianDigestType pDigestType,
                              final GordianDigestSubSpec pState,
                              final GordianLength pLength) {
+        this(pDigestType, pState, pLength, Boolean.FALSE);
+    }
+
+    /**
+     * Constructor.
+     * @param pDigestType the digestType
+     * @param pState the digestState
+     * @param pLength the length
+     * @param pXofMode is this an explicit Xof?
+     */
+    public GordianDigestSpec(final GordianDigestType pDigestType,
+                             final GordianDigestSubSpec pState,
+                             final GordianLength pLength,
+                             final Boolean pXofMode) {
         /* Store parameters */
         theDigestType = pDigestType;
         theSubSpec = pState;
         theLength = pLength;
+        isXofMode = pXofMode;
         isValid = checkValidity();
     }
 
@@ -120,21 +151,27 @@ public class GordianDigestSpec
     }
 
     /**
-     * Obtain AsconSubSpec.
-     * @return the SubSpec
-     */
-    public GordianAsconSubSpec getAsconSubSpec() {
-        return theSubSpec instanceof GordianAsconSubSpec
-                ? (GordianAsconSubSpec) theSubSpec
-                : null;
-    }
-
-    /**
      * Obtain Digest Length.
      * @return the Length
      */
     public GordianLength getDigestLength() {
         return theLength;
+    }
+
+    /**
+     * Is the digestSpec a Xof mode?
+     * @return true/false.
+     */
+    public Boolean isXofMode() {
+        return isXofMode;
+    }
+
+    /**
+     * Is the digestSpec a Xof?
+     * @return true/false.
+     */
+    public Boolean isXof() {
+        return isXofMode || theDigestType.isXof();
     }
 
     /**
@@ -161,7 +198,7 @@ public class GordianDigestSpec
      * @return valid true/false
      */
     private boolean checkValidity() {
-        /* Handle null spec/length */
+        /* Handle null type */
         if (theDigestType == null || theLength == null) {
             return false;
         }
@@ -169,18 +206,23 @@ public class GordianDigestSpec
         /* Switch on keyType */
         switch (theDigestType) {
             case SHA2:
-            case SKEIN:
-            case BLAKE2:
             case SHAKE:
             case KANGAROO:
             case HARAKA:
                 return theSubSpec instanceof GordianDigestState
+                        && !isXofMode
                         && getDigestState().validForTypeAndLength(theDigestType, theLength);
+            case SKEIN:
+            case BLAKE2:
+                return theSubSpec instanceof GordianDigestState
+                        && (isXofMode ? getDigestState().lengthForXofType(theDigestType) == theLength
+                                      : getDigestState().validForTypeAndLength(theDigestType, theLength));
             case ASCON:
-                return theSubSpec instanceof GordianAsconSubSpec
+                return theSubSpec == null
                         && theDigestType.isLengthValid(theLength);
             default:
                 return theSubSpec == null
+                        && !isXofMode
                         && theDigestType.isLengthValid(theLength);
         }
     }
@@ -204,12 +246,17 @@ public class GordianDigestSpec
                         theName += theSubSpec;
                         break;
                     case SKEIN:
-                        theName += SEP + theSubSpec;
-                        theName += SEP + theLength;
+                        if (isXofMode) {
+                            theName += "X" + SEP + theSubSpec;
+                        } else {
+                            theName += SEP + theSubSpec + SEP + theLength;
+                        }
                         break;
                     case BLAKE2:
-                        theName = getDigestState().getBlake2Algorithm();
-                        theName += SEP + theLength;
+                        theName += getDigestState().getBlake2Algorithm(isXofMode);
+                        if (!isXofMode) {
+                            theName += SEP + theLength;
+                        }
                         break;
                     case KANGAROO:
                         theName = getDigestState().getKangarooAlgorithm();
@@ -218,7 +265,7 @@ public class GordianDigestSpec
                         theName += SEP + theSubSpec;
                         break;
                     case ASCON:
-                        theName = theSubSpec.toString();
+                        theName += isXofMode ? "X" : "";
                         break;
                     default:
                         if (theDigestType.getSupportedLengths().length > 1) {
@@ -228,7 +275,7 @@ public class GordianDigestSpec
                 }
             }  else {
                 /* Report invalid spec */
-                theName = "InvalidDigestSpec: " + theDigestType + ":" + theSubSpec + ":" + theLength;
+                theName = "InvalidDigestSpec: " + theDigestType + ":" + theSubSpec + ":" + theLength + ":" + isXofMode;
             }
         }
 
@@ -257,11 +304,12 @@ public class GordianDigestSpec
         /* Check subFields */
         return theDigestType == myThat.getDigestType()
                 && theSubSpec == myThat.getSubSpec()
-                && theLength == myThat.getDigestLength();
+                && theLength == myThat.getDigestLength()
+                && isXofMode == myThat.isXofMode();
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(theDigestType, theSubSpec, theLength);
+        return Objects.hash(theDigestType, theSubSpec, theLength, isXofMode);
     }
 }

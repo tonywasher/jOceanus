@@ -37,8 +37,7 @@ public class GordianBlake2Mac
      * @param pDigest the base digest.
      */
     public GordianBlake2Mac(final GordianBlake2Base pDigest) {
-        /* Store the digest */
-        theDigest = pDigest;
+         theDigest = pDigest;
     }
 
     @Override

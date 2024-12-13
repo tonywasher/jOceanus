@@ -28,12 +28,13 @@ import net.sourceforge.joceanus.gordianknot.api.mac.GordianSipHashSpec;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.mac.GordianCoreMacFactory;
-import net.sourceforge.joceanus.gordianknot.impl.ext.digests.GordianBlake2Base;
 import net.sourceforge.joceanus.gordianknot.impl.ext.digests.GordianBlake3Digest;
 import net.sourceforge.joceanus.gordianknot.impl.ext.macs.GordianBlake2Mac;
+import net.sourceforge.joceanus.gordianknot.impl.ext.macs.GordianBlake2XMac;
 import net.sourceforge.joceanus.gordianknot.impl.ext.macs.GordianBlake3Mac;
 import net.sourceforge.joceanus.gordianknot.impl.ext.macs.GordianKMACWrapper;
 import net.sourceforge.joceanus.gordianknot.impl.ext.macs.GordianSkeinMac;
+import net.sourceforge.joceanus.gordianknot.impl.ext.macs.GordianSkeinXMac;
 import net.sourceforge.joceanus.gordianknot.impl.ext.macs.GordianZuc128Mac;
 import net.sourceforge.joceanus.gordianknot.impl.ext.macs.GordianZuc256Mac;
 import org.bouncycastle.crypto.CipherKeyGenerator;
@@ -57,6 +58,7 @@ import org.bouncycastle.crypto.patch.modes.GordianKGCMBlockCipher;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Factory for BouncyCastle Macs.
@@ -141,31 +143,31 @@ public class BouncyMacFactory
             case HMAC:
                 return getBCHMac(pMacSpec);
             case GMAC:
-                return getBCGMac(pMacSpec.getSymKeySpec());
+                return getBCGMac(Objects.requireNonNull(pMacSpec.getSymKeySpec()));
             case CMAC:
-                return getBCCMac(pMacSpec.getSymKeySpec());
+                return getBCCMac(Objects.requireNonNull(pMacSpec.getSymKeySpec()));
             case POLY1305:
                 return getBCPoly1305Mac(pMacSpec.getSymKeySpec());
             case SKEIN:
-                return getBCSkeinMac(pMacSpec.getDigestSpec());
+                return getBCSkeinMac(Objects.requireNonNull(pMacSpec.getDigestSpec()));
             case BLAKE2:
-                return getBCBlake2Mac(pMacSpec);
+                return getBCBlake2Mac(Objects.requireNonNull(pMacSpec.getDigestSpec()));
             case BLAKE3:
-                return getBCBlake3Mac(pMacSpec);
+                return getBCBlake3Mac(Objects.requireNonNull(pMacSpec.getDigestSpec()));
             case KMAC:
-                return getBCKMAC(pMacSpec);
+                return getBCKMAC(Objects.requireNonNull(pMacSpec.getDigestSpec()));
             case KALYNA:
-                return getBCKalynaMac(pMacSpec.getSymKeySpec());
+                return getBCKalynaMac(Objects.requireNonNull(pMacSpec.getSymKeySpec()));
             case KUPYNA:
-                return getBCKupynaMac(pMacSpec.getDigestSpec());
+                return getBCKupynaMac(Objects.requireNonNull(pMacSpec.getDigestSpec()));
             case VMPC:
                 return getBCVMPCMac();
             case CBCMAC:
-                return getBCCBCMac(pMacSpec.getSymKeySpec());
+                return getBCCBCMac(Objects.requireNonNull(pMacSpec.getSymKeySpec()));
             case CFBMAC:
-                return getBCCFBMac(pMacSpec.getSymKeySpec());
+                return getBCCFBMac(Objects.requireNonNull(pMacSpec.getSymKeySpec()));
             case SIPHASH:
-                return getBCSipHash(pMacSpec.getSipHashSpec());
+                return getBCSipHash(Objects.requireNonNull(pMacSpec.getSipHashSpec()));
             case GOST:
                 return getBCGOSTMac();
             case ZUC:
@@ -230,7 +232,9 @@ public class BouncyMacFactory
      * @return the MAC
      */
     private static Mac getBCSkeinMac(final GordianDigestSpec pSpec) {
-        return new GordianSkeinMac(pSpec.getDigestState().getLength().getLength(), pSpec.getDigestLength().getLength());
+        return pSpec.isXofMode()
+                    ? new GordianSkeinXMac(pSpec.getDigestState().getLength().getLength())
+                    : new GordianSkeinMac(pSpec.getDigestState().getLength().getLength(), pSpec.getDigestLength().getLength());
     }
 
     /**
@@ -260,9 +264,10 @@ public class BouncyMacFactory
      * @param pSpec the digestSpec
      * @return the MAC
      */
-    private static Mac getBCBlake2Mac(final GordianMacSpec pSpec) {
-        final GordianBlake2Base myDigest = BouncyDigestFactory.getBlake2Digest(pSpec.getDigestSpec());
-        return new GordianBlake2Mac(myDigest);
+    private static Mac getBCBlake2Mac(final GordianDigestSpec pSpec) {
+        return pSpec.isXofMode()
+                ? new GordianBlake2XMac(BouncyDigestFactory.getBlake2Xof(pSpec))
+                : new GordianBlake2Mac(BouncyDigestFactory.getBlake2Digest(pSpec));
     }
 
     /**
@@ -271,8 +276,8 @@ public class BouncyMacFactory
      * @param pSpec the digestSpec
      * @return the MAC
      */
-    private static Mac getBCBlake3Mac(final GordianMacSpec pSpec) {
-        final GordianBlake3Digest myDigest = new GordianBlake3Digest(pSpec.getDigestSpec().getDigestLength().getByteLength());
+    private static Mac getBCBlake3Mac(final GordianDigestSpec pSpec) {
+        final GordianBlake3Digest myDigest = new GordianBlake3Digest(pSpec.getDigestLength().getByteLength());
         return new GordianBlake3Mac(myDigest);
     }
 
@@ -282,9 +287,8 @@ public class BouncyMacFactory
      * @param pSpec the digestSpec
      * @return the MAC
      */
-    private static Mac getBCKMAC(final GordianMacSpec pSpec) {
-        final GordianDigestSpec mySpec = pSpec.getDigestSpec();
-        return new GordianKMACWrapper(mySpec.getDigestState().getLength().getLength());
+    private static Mac getBCKMAC(final GordianDigestSpec pSpec) {
+        return new GordianKMACWrapper(pSpec.getDigestState().getLength().getLength());
     }
 
     /**

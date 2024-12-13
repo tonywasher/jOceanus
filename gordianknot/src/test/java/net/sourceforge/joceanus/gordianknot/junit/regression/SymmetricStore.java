@@ -637,10 +637,10 @@ class SymmetricStore {
         }
 
         /**
-         * Does this keySpec have an AAD Mode?
+         * Does this keySpec have an AAD Version?
          * @return true/false
          */
-        public boolean hasAAD() {
+        public boolean hasAADVersion() {
             if (theKeySpec.supportsAEAD()) {
                 final GordianStreamCipherSpec myAADSpec = GordianStreamCipherSpecBuilder.stream(theKeySpec, true);
                 return theFactory.getCipherFactory().supportedStreamCipherSpecs().test(myAADSpec);

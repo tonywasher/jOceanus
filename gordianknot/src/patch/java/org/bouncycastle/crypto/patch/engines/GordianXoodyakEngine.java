@@ -5,6 +5,7 @@ import org.bouncycastle.crypto.DataLengthException;
 import org.bouncycastle.crypto.InvalidCipherTextException;
 import org.bouncycastle.crypto.OutputLengthException;
 import org.bouncycastle.crypto.modes.AEADCipher;
+import org.bouncycastle.crypto.params.AEADParameters;
 import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.crypto.params.ParametersWithIV;
 import org.bouncycastle.util.Arrays;
@@ -24,6 +25,7 @@ public class GordianXoodyakEngine
         implements AEADCipher
 {
     private boolean forEncryption;
+    private byte[] initialAEADData;
     private byte[] state;
     private int phase;
     private MODE mode;
@@ -60,21 +62,35 @@ public class GordianXoodyakEngine
             throws IllegalArgumentException
     {
         this.forEncryption = forEncryption;
-        if (!(params instanceof ParametersWithIV))
+        KeyParameter key;
+        if (params instanceof AEADParameters)
+        {
+            AEADParameters aeadParams = (AEADParameters) params;
+            iv = aeadParams.getNonce();
+            key = aeadParams.getKey();
+            initialAEADData = aeadParams.getAssociatedText();
+        }
+        else if (!(params instanceof ParametersWithIV))
         {
             throw new IllegalArgumentException("Xoodyak init parameters must include an IV");
         }
-        ParametersWithIV ivParams = (ParametersWithIV)params;
-        iv = ivParams.getIV();
+        else
+        {
+            initialAEADData = null;
+            ParametersWithIV ivParams = (ParametersWithIV) params;
+            iv = ivParams.getIV();
+            if (!(ivParams.getParameters() instanceof KeyParameter))
+            {
+                throw new IllegalArgumentException("Xoodyak init parameters must include a key");
+            }
+            key = (KeyParameter)ivParams.getParameters();
+        }
+
         if (iv == null || iv.length != 16)
         {
             throw new IllegalArgumentException("Xoodyak requires exactly 16 bytes of IV");
         }
-        if (!(ivParams.getParameters() instanceof KeyParameter))
-        {
-            throw new IllegalArgumentException("Xoodyak init parameters must include a key");
-        }
-        KeyParameter key = (KeyParameter)ivParams.getParameters();
+
         K = key.getKey();
         if (K.length != 16)
         {
@@ -291,6 +307,11 @@ public class GordianXoodyakEngine
         phase = PhaseUp;
         message.reset();
         aadData.reset();
+        if (initialAEADData != null)
+        {
+            aadData.write(initialAEADData, 0, initialAEADData.length);
+        }
+
         //Absorb key
         int KLen = K.length;
         int IDLen = iv.length;

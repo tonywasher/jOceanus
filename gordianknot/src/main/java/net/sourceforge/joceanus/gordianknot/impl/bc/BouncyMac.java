@@ -28,6 +28,8 @@ import org.bouncycastle.crypto.Mac;
 import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.crypto.params.ParametersWithIV;
 
+import java.util.Objects;
+
 /**
  * Wrapper for BouncyCastle MAC.
  */
@@ -96,6 +98,9 @@ public class BouncyMac
             myBuilder.setKey(pKey.getKey());
             if (pIV != null) {
                 myBuilder.setSalt(pIV);
+            }
+            if (Objects.requireNonNull(getMacSpec().getDigestSpec()).isXof()) {
+                myBuilder.setMaxOutputLen(-1);
             }
             return myBuilder.build();
         }

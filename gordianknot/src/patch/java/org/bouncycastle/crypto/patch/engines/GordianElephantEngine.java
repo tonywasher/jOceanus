@@ -5,6 +5,7 @@ import org.bouncycastle.crypto.DataLengthException;
 import org.bouncycastle.crypto.InvalidCipherTextException;
 import org.bouncycastle.crypto.OutputLengthException;
 import org.bouncycastle.crypto.modes.AEADCipher;
+import org.bouncycastle.crypto.params.AEADParameters;
 import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.crypto.params.ParametersWithIV;
 
@@ -37,6 +38,7 @@ public class GordianElephantEngine
     }
 
     private boolean forEncryption;
+    private byte[] initialAEADData;
     private final String algorithmName;
     private final ElephantParameters parameters;
     private final int BLOCK_SIZE;
@@ -256,18 +258,33 @@ public class GordianElephantEngine
     public void init(boolean forEncryption, CipherParameters params)
             throws IllegalArgumentException {
         this.forEncryption = forEncryption;
-        if (!(params instanceof ParametersWithIV)) {
+        KeyParameter key;
+
+        if (params instanceof AEADParameters)
+        {
+            AEADParameters aeadParams = (AEADParameters) params;
+            npub = aeadParams.getNonce();
+            key = aeadParams.getKey();
+            initialAEADData = aeadParams.getAssociatedText();
+        }
+        else if (!(params instanceof ParametersWithIV))
+        {
             throw new IllegalArgumentException(algorithmName + " init parameters must include an IV");
         }
-        ParametersWithIV ivParams = (ParametersWithIV) params;
-        npub = ivParams.getIV();
+        else
+        {
+            initialAEADData = null;
+            ParametersWithIV ivParams = (ParametersWithIV) params;
+            npub = ivParams.getIV();
+            if (!(ivParams.getParameters() instanceof KeyParameter)) {
+                throw new IllegalArgumentException(algorithmName + " init parameters must include a key");
+            }
+            key = (KeyParameter) ivParams.getParameters();
+        }
+
         if (npub == null || npub.length != CRYPTO_NPUBBYTES) {
             throw new IllegalArgumentException(algorithmName + " requires exactly 12 bytes of IV");
         }
-        if (!(ivParams.getParameters() instanceof KeyParameter)) {
-            throw new IllegalArgumentException(algorithmName + " init parameters must include a key");
-        }
-        KeyParameter key = (KeyParameter) ivParams.getParameters();
         byte[] k = key.getKey();
         if (k.length != CRYPTO_KEYBYTES) {
             throw new IllegalArgumentException(algorithmName + " key must be 128 bits long");
@@ -444,6 +461,10 @@ public class GordianElephantEngine
             tag = null;
         }
         aadData.reset();
+        if (initialAEADData != null)
+        {
+            aadData.write(initialAEADData, 0, initialAEADData.length);
+        }
         Arrays.fill(tag_buffer, (byte) 0);
         Arrays.fill(previous_outputMessage, (byte) 0);
         inputOff = 0;

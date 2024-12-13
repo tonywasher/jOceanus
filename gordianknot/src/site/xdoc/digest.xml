@@ -63,7 +63,7 @@
                     <tr><td rowspan="2">Kangaroo</td><td>128</td><td>128,160,224,256</td><td/><td>Kangaroo12</td></tr>
                     <tr><td>256</td><td>256,384,512</td><td/><td>Marsupilami14</td></tr>
                     <tr><td>Haraka</td><td>256, 512</td><td>256</td><td>Y</td><td>Note that input must be same length as stateLength</td></tr>
-                    <tr><td>Ascon</td><td>Hash, HashA, Xof, XofA</td><td>256</td><td/><td/></tr>
+                    <tr><td>Ascon</td><td>Hash, Xof</td><td>256</td><td/><td/></tr>
                     <tr><td>ISAP</td><td/><td>256</td><td/><td/></tr>
                     <tr><td>PhotonBeetle</td><td/><td>256</td><td/><td/></tr>
                     <tr><td>Sparkle</td><td/><td>256, 384</td><td/><td/></tr>

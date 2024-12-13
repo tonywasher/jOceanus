@@ -495,6 +495,23 @@ public final class GordianMacSpec implements GordianKeySpec {
         }
     }
 
+    /**
+     * Is this a Xof Mac?
+     * @return true/false
+     */
+    public boolean isXof() {
+        switch (theMacType) {
+            case KMAC:
+            case BLAKE3:
+                return true;
+            case BLAKE2:
+            case SKEIN:
+                return Objects.requireNonNull(getDigestSpec()).isXof();
+            default:
+                return false;
+        }
+    }
+
     @Override
     public String toString() {
         /* If we have not yet loaded the name */
@@ -531,15 +548,25 @@ public final class GordianMacSpec implements GordianKeySpec {
                     theName += getDigestState() + SEP + theKeyLength;
                     break;
                 case SKEIN:
-                    theName += SEP + getDigestState() + SEP + getDigestLength() + SEP + theKeyLength;
+                    final Boolean isSkeinXof = Objects.requireNonNull(getDigestSpec()).isXofMode();
+                    theName = GordianDigestType.SKEIN
+                               + (isSkeinXof ? "X" : "")
+                               + "Mac"
+                               + SEP + getDigestState()
+                               + (isSkeinXof ? "" : SEP + getDigestLength())
+                               + SEP + theKeyLength;
                     break;
                 case HMAC:
                 case ZUC:
                     theName += theSubSpec.toString() + SEP + theKeyLength;
                     break;
                 case BLAKE2:
-                    theName = getDigestState().getBlake2Algorithm()
-                                 + "Mac" + getDigestLength() + SEP + theKeyLength;
+                    final Boolean isBlakeXof = Objects.requireNonNull(getDigestSpec()).isXofMode();
+                    theName = GordianDigestType.BLAKE2
+                            + Objects.requireNonNull(getDigestState())
+                                     .getBlake2Algorithm(Objects.requireNonNull(isBlakeXof))
+                            + "Mac" + (isBlakeXof ? "" : SEP + getDigestLength())
+                            + SEP + theKeyLength;
                     break;
                 case BLAKE3:
                     theName += SEP + getDigestLength();

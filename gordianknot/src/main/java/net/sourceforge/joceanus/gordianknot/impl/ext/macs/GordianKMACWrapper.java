@@ -20,8 +20,8 @@ import net.sourceforge.joceanus.gordianknot.impl.ext.params.GordianKeccakParamet
 import org.bouncycastle.crypto.CipherParameters;
 import org.bouncycastle.crypto.Mac;
 import org.bouncycastle.crypto.Xof;
-import org.bouncycastle.crypto.macs.KMAC;
 import org.bouncycastle.crypto.params.KeyParameter;
+import org.bouncycastle.crypto.patch.macs.GordianKMAC;
 
 /**
  * KMAC.
@@ -36,7 +36,7 @@ public class GordianKMACWrapper
     /**
      * The base digest.
      */
-    private KMAC theMac;
+    private GordianKMAC theMac;
 
     /**
      * Constructor.
@@ -44,7 +44,7 @@ public class GordianKMACWrapper
      */
     public GordianKMACWrapper(final int pBitLength) {
         theBitLength = pBitLength;
-        theMac = new KMAC(theBitLength, null);
+        theMac = new GordianKMAC(theBitLength, null);
     }
 
     @Override
@@ -71,7 +71,7 @@ public class GordianKMACWrapper
         }
 
         /* Configure the Mac */
-        theMac = new KMAC(theBitLength, myPersonal);
+        theMac = new GordianKMAC(theBitLength, myPersonal);
         theMac.init(myKeyParams);
     }
 

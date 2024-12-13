@@ -139,7 +139,6 @@ public enum GordianStreamKeyType {
             case VMPC:
             case SKEINXOF:
             case BLAKE2XOF:
-            case ASCON:
             case ELEPHANT:
             case ISAP:
             case SPARKLE:

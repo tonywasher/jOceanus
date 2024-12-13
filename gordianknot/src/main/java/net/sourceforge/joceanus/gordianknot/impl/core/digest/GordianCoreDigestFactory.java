@@ -21,6 +21,7 @@ import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestFactory;
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestSubSpec;
+import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestSubSpec.GordianDigestState;
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestType;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
@@ -90,6 +91,12 @@ public abstract class GordianCoreDigestFactory
             return false;
         }
 
+        /* If we have an explicit Xof, check support */
+        if (pDigestSpec.isXofMode()
+                && !theFactory.getValidator().isXofSupported()) {
+            return false;
+        }
+
         /* Check validity */
         return supportedDigestTypes().test(pDigestSpec.getDigestType());
     }
@@ -121,6 +128,28 @@ public abstract class GordianCoreDigestFactory
                 /* For each length */
                 for (final GordianLength myLength : myType.getSupportedLengths()) {
                     final GordianDigestSpec mySpec = new GordianDigestSpec(myType, mySubSpec, myLength);
+
+                    /* Add if valid */
+                    if (mySpec.isValid()) {
+                        myList.add(mySpec);
+                    }
+                }
+
+                /* If we have a possible Xof */
+                if (mySubSpec instanceof GordianDigestState) {
+                    final GordianDigestState myState = (GordianDigestState) mySubSpec;
+                    final GordianDigestSpec mySpec = new GordianDigestSpec(myType, myState, myState.getLength(), Boolean.TRUE);
+
+                    /* Add if valid */
+                    if (mySpec.isValid()) {
+                        myList.add(mySpec);
+                    }
+
+                    /* Else look for null Xof type */
+                } else {
+                    final GordianDigestSpec mySpec = new GordianDigestSpec(myType, null, myType.getDefaultLength(), Boolean.TRUE);
+
+                    /* Add if valid */
                     if (mySpec.isValid()) {
                         myList.add(mySpec);
                     }

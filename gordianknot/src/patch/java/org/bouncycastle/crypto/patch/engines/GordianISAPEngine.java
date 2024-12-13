@@ -5,6 +5,7 @@ import org.bouncycastle.crypto.DataLengthException;
 import org.bouncycastle.crypto.InvalidCipherTextException;
 import org.bouncycastle.crypto.OutputLengthException;
 import org.bouncycastle.crypto.modes.AEADCipher;
+import org.bouncycastle.crypto.params.AEADParameters;
 import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.crypto.params.ParametersWithIV;
 import org.bouncycastle.util.Pack;
@@ -21,6 +22,7 @@ import java.io.ByteArrayOutputStream;
 public class GordianISAPEngine
         implements AEADCipher
 {
+    private byte[] initialAEADData;
 
     public enum IsapType
     {
@@ -791,29 +793,42 @@ public class GordianISAPEngine
             throws IllegalArgumentException
     {
         this.forEncryption = forEncryption;
-        if (!(params instanceof ParametersWithIV))
+        byte[] iv;
+        KeyParameter key;
+
+        if (params instanceof AEADParameters)
+        {
+            AEADParameters aeadParams = (AEADParameters) params;
+            iv = aeadParams.getNonce();
+            key = aeadParams.getKey();
+            initialAEADData = aeadParams.getAssociatedText();
+        }
+        else if (!(params instanceof ParametersWithIV))
         {
             throw new IllegalArgumentException(
                     "ISAP AEAD init parameters must include an IV");
         }
+        else
+        {
+            initialAEADData = null;
+            ParametersWithIV ivParams = (ParametersWithIV) params;
 
-        ParametersWithIV ivParams = (ParametersWithIV)params;
+            iv = ivParams.getIV();
 
-        byte[] iv = ivParams.getIV();
+            if (!(ivParams.getParameters() instanceof KeyParameter))
+            {
+                throw new IllegalArgumentException(
+                        "ISAP AEAD init parameters must include a key");
+            }
+            key = (KeyParameter)ivParams.getParameters();
+        }
 
         if (iv == null || iv.length != 16)
         {
             throw new IllegalArgumentException(
-                    "ISAP AEAD requires exactly 12 bytes of IV");
+                    "ISAP AEAD requires exactly 16 bytes of IV");
         }
 
-        if (!(ivParams.getParameters() instanceof KeyParameter))
-        {
-            throw new IllegalArgumentException(
-                    "ISAP AEAD init parameters must include a key");
-        }
-
-        KeyParameter key = (KeyParameter)ivParams.getParameters();
         byte[] keyBytes = key.getKey();
         if (keyBytes.length != 16)
         {
@@ -979,6 +994,10 @@ public class GordianISAPEngine
         ISAPAEAD.reset();
         message.reset();
         outputStream.reset();
+        if (initialAEADData != null)
+        {
+            aadData.write(initialAEADData, 0, initialAEADData.length);
+        }
     }
 
     public int getKeyBytesSize()

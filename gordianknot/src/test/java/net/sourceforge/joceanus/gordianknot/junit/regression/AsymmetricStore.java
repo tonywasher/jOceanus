@@ -50,6 +50,7 @@ import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignatureSpec;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignatureType;
 import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianCoreAgreementFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.keypair.GordianCoreKeyPairFactory;
+import org.junit.jupiter.api.BeforeAll;
 
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
@@ -64,22 +65,23 @@ class AsymmetricStore {
     /**
      * The single keyType to test.
      */
-    private static final GordianKeyPairType theKeyType;
+    private static GordianKeyPairType theKeyType;
 
     /**
      * The single signatureType to test.
      */
-    private static final GordianSignatureType theSigType;
+    private static GordianSignatureType theSigType;
 
     /**
      * Do we process all specs.
      */
-    private static final boolean allSpecs;
+    private static boolean allSpecs;
 
     /**
      * Configure the test according to system properties.
      */
-    static {
+    @BeforeAll
+    public static void parseOptions() {
         /* If this is a full build */
         final String myBuildType = System.getProperty("joceanus.fullBuild");
         if (myBuildType != null) {

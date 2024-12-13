@@ -17,11 +17,9 @@
 package net.sourceforge.joceanus.gordianknot.impl.ext.macs;
 
 import net.sourceforge.joceanus.gordianknot.impl.ext.digests.GordianSkeinBase;
-import net.sourceforge.joceanus.gordianknot.impl.ext.digests.GordianSkeinXof;
 import net.sourceforge.joceanus.gordianknot.impl.ext.params.GordianSkeinParameters;
 import org.bouncycastle.crypto.CipherParameters;
 import org.bouncycastle.crypto.Mac;
-import org.bouncycastle.crypto.Xof;
 import org.bouncycastle.crypto.engines.ThreefishEngine;
 import org.bouncycastle.crypto.params.KeyParameter;
 
@@ -39,15 +37,17 @@ import org.bouncycastle.crypto.params.KeyParameter;
  * @see GordianSkeinParameters
  */
 public class GordianSkeinMac
-        implements Mac, Xof {
+        implements Mac {
     /**
      * 256 bit block size - Skein MAC-256.
      */
     public static final int SKEIN_256 = GordianSkeinBase.SKEIN_256;
+
     /**
      * 512 bit block size - Skein MAC-512.
      */
     public static final int SKEIN_512 = GordianSkeinBase.SKEIN_512;
+
     /**
      * 1024 bit block size - Skein MAC-1024.
      */
@@ -56,12 +56,7 @@ public class GordianSkeinMac
     /**
      * The engine.
      */
-    private final GordianSkeinBase engine;
-
-    /**
-     * The Xof.
-     */
-    private final GordianSkeinXof xof;
+    private final GordianSkeinBase theEngine;
 
     /**
      * Constructs a Skein MAC with an internal state size and output size.
@@ -72,8 +67,7 @@ public class GordianSkeinMac
      */
     public GordianSkeinMac(final int stateSizeBits,
                            final int digestSizeBits) {
-        this.engine = new GordianSkeinBase(stateSizeBits, digestSizeBits);
-        this.xof = new GordianSkeinXof(engine);
+        this.theEngine = new GordianSkeinBase(stateSizeBits, digestSizeBits);
     }
 
     /**
@@ -81,8 +75,7 @@ public class GordianSkeinMac
      * @param mac the source mac
      */
     public GordianSkeinMac(final GordianSkeinMac mac) {
-        this.engine = new GordianSkeinBase(mac.engine);
-        this.xof = new GordianSkeinXof(engine);
+        this.theEngine = new GordianSkeinBase(mac.theEngine);
     }
 
     /**
@@ -90,7 +83,7 @@ public class GordianSkeinMac
      * @return the name
      */
     public String getAlgorithmName() {
-        return "Skein-MAC-" + (engine.getBlockSize() * Byte.SIZE) + "-" + (engine.getOutputSize() * Byte.SIZE);
+        return "Skein-MAC-" + (theEngine.getBlockSize() * Byte.SIZE) + "-" + (theEngine.getOutputSize() * Byte.SIZE);
     }
 
     /**
@@ -113,54 +106,34 @@ public class GordianSkeinMac
         if (skeinParameters.getKey() == null) {
             throw new IllegalArgumentException("Skein MAC requires a key parameter.");
         }
-        engine.init(skeinParameters);
+        theEngine.init(skeinParameters);
     }
 
     @Override
     public int getMacSize() {
-        return engine.getOutputSize();
+        return theEngine.getOutputSize();
     }
 
     @Override
     public void reset() {
-        xof.reset();
+        theEngine.reset();
     }
 
     @Override
     public void update(final byte in) {
-        xof.update(in);
+        theEngine.update(in);
     }
 
     @Override
     public void update(final byte[] in,
                        final int inOff,
                        final int len) {
-        xof.update(in, inOff, len);
+        theEngine.update(in, inOff, len);
     }
 
     @Override
     public int doFinal(final byte[] out,
                        final int outOff) {
-        return xof.doFinal(out, outOff);
-    }
-
-    @Override
-    public int doFinal(final byte[] out, final int outOff, final int outLen) {
-        return xof.doFinal(out, outOff, outLen);
-    }
-
-    @Override
-    public int doOutput(final byte[] out, final int outOff, final int outLen) {
-        return xof.doOutput(out, outOff, outLen);
-    }
-
-    @Override
-    public int getByteLength() {
-        return xof.getByteLength();
-    }
-
-    @Override
-    public int getDigestSize() {
-        return xof.getDigestSize();
+        return theEngine.doFinal(out, outOff);
     }
 }

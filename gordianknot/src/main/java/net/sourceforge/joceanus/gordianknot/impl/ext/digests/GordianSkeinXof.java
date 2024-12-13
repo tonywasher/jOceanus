@@ -88,6 +88,7 @@ public class GordianSkeinXof
 
         /* Clear outputting flag */
         theXofRemaining = -1L;
+        theXofLen = -1;
     }
 
     /**
@@ -154,7 +155,7 @@ public class GordianSkeinXof
 
     @Override
     public int getDigestSize() {
-        return theXofLen == 0 ? theUnderlying.getOutputSize() : (int) theXofLen;
+        return (theXofLen == 0 || theXofLen == -1) ? theUnderlying.getOutputSize() : (int) theXofLen;
     }
 
     @Override
@@ -181,9 +182,6 @@ public class GordianSkeinXof
     @Override
     public int doFinal(final byte[] pOut,
                        final int pOutOffset) {
-        if (theXofLen == -1) {
-            throw new IllegalStateException("No defined output length");
-        }
         return doFinal(pOut, pOutOffset, getDigestSize());
     }
 
@@ -191,11 +189,6 @@ public class GordianSkeinXof
     public int doFinal(final byte[] pOut,
                        final int pOutOffset,
                        final int pOutLen) {
-        /* Reject if we are already outputting */
-        if (theXofRemaining != -1) {
-            throw new IllegalStateException("Already outputting");
-        }
-
         /* Build the required output */
         final int length = doOutput(pOut, pOutOffset, pOutLen);
 
