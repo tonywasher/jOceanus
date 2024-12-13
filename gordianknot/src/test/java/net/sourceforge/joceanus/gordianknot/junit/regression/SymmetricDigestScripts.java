@@ -20,7 +20,9 @@ import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigest;
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestFactory;
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestSpec;
+import net.sourceforge.joceanus.gordianknot.api.digest.GordianXof;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactory;
+import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactoryType;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.gordianknot.junit.regression.SymmetricStore.FactoryDigestSpec;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
@@ -69,15 +71,22 @@ public class SymmetricDigestScripts {
      */
     private static Stream<DynamicNode> digestTests(final FactoryDigestSpec pDigestSpec) {
         /* Add profile test */
-        Stream<DynamicNode> myTests = java.util.stream.Stream.of(DynamicTest.dynamicTest("profile", () -> profileDigest(pDigestSpec)));
+        Stream<DynamicNode> myTests = Stream.of(DynamicTest.dynamicTest("profile", () -> profileDigest(pDigestSpec)));
 
         /* Add Multi test as long as large data is supported */
         if (pDigestSpec.getSpec().getDigestType().supportsLargeData()) {
-            myTests = java.util.stream.Stream.concat(myTests, java.util.stream.Stream.of(DynamicTest.dynamicTest("multi", () -> multiDigest(pDigestSpec))));
+            myTests = Stream.concat(myTests, Stream.of(DynamicTest.dynamicTest("multi", () -> multiDigest(pDigestSpec))));
+        }
+
+        /* Add Xof test if this is a Xof */
+        if (pDigestSpec.getSpec().isXof()
+                && GordianFactoryType.BC.equals(pDigestSpec.getFactory().getFactoryType())) {
+            myTests = Stream.concat(myTests, Stream.of(DynamicTest.dynamicTest("xof", () -> checkXof(pDigestSpec))));
         }
 
         /* Add algorithmId test */
         myTests = Stream.concat(myTests, Stream.of(DynamicTest.dynamicTest("checkAlgId", () -> checkDigestAlgId(pDigestSpec))));
+
 
         /* Add externalId test */
         myTests = Stream.concat(myTests, Stream.of(DynamicTest.dynamicTest("externalId", () -> SymmetricTest.checkExternalId(pDigestSpec))));
@@ -149,6 +158,43 @@ public class SymmetricDigestScripts {
 
         /* Check that the results are identical */
         Assertions.assertArrayEquals(mySingle, myMulti, "Multi-Block and Single-Block results differ");
+    }
+
+    /**
+     * Check xof.
+     * @param pDigestSpec the digestSpec
+     * @throws GordianException on error
+     */
+    private static void checkXof(final FactoryDigestSpec pDigestSpec) throws GordianException {
+        /* Create the digest */
+        final GordianFactory myFactory = pDigestSpec.getFactory();
+        final GordianDigestSpec mySpec = pDigestSpec.getSpec();
+        final GordianDigestFactory myDigestFactory = myFactory.getDigestFactory();
+        final GordianXof myXof = (GordianXof) myDigestFactory.createDigest(mySpec);
+
+        /* Create the data */
+        final byte[] myData = SymmetricTest.getTestData();
+
+        /* Update the Xofs with the data */
+        myXof.update(myData, 0, SymmetricTest.DATALEN);
+
+        /* Extract Xofs as single block */
+        final byte[] myFull = new byte[SymmetricTest.DATALEN];
+        myXof.finish(myFull, 0, SymmetricTest.DATALEN);
+
+        /* Update the Xofs with the data */
+        myXof.update(myData, 0, SymmetricTest.DATALEN);
+        final byte[] myPart = new byte[SymmetricTest.DATALEN];
+
+        /* Create the xof as partial blocks */
+        for (int myPos = 0; myPos < SymmetricTest.DATALEN;) {
+            final int myLen = Math.min(SymmetricTest.PARTIALLEN, SymmetricTest.DATALEN - myPos);
+            myPos += myXof.output(myPart, myPos, myLen);
+        }
+        myXof.finish(myPart, 0, 0);
+
+        /* Check that they are identical */
+        Assertions.assertArrayEquals(myPart, myFull, "Mismatch on partial vs full xof");
     }
 
     /**

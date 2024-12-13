@@ -52,6 +52,7 @@ public class GordianBlake2XMac
         if (myParams instanceof KeyParameter) {
             myParams = new GordianBlake2Parameters.Builder()
                     .setKey(((KeyParameter) myParams).getKey())
+                    .setMaxOutputLen(-1L)
                     .build();
         }
         if (!(myParams instanceof GordianBlake2Parameters)) {

@@ -436,11 +436,6 @@ public class GordianBlake3Digest
     public int doFinal(final byte[] pOut,
                        final int pOutOffset,
                        final int pOutLen) {
-        /* Reject if we are already outputting */
-        if (outputting) {
-            throw new IllegalStateException(ERR_OUTPUTTING);
-        }
-
         /* Build the required output */
         final int length = doOutput(pOut, pOutOffset, pOutLen);
 

@@ -495,6 +495,23 @@ public final class GordianMacSpec implements GordianKeySpec {
         }
     }
 
+    /**
+     * Is this a Xof Mac?
+     * @return true/false
+     */
+    public boolean isXof() {
+        switch (theMacType) {
+            case KMAC:
+            case BLAKE3:
+                return true;
+            case BLAKE2:
+            case SKEIN:
+                return Objects.requireNonNull(getDigestSpec()).isXof();
+            default:
+                return false;
+        }
+    }
+
     @Override
     public String toString() {
         /* If we have not yet loaded the name */

@@ -19,7 +19,9 @@ package net.sourceforge.joceanus.gordianknot.junit.regression;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
+import net.sourceforge.joceanus.gordianknot.api.digest.GordianXof;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactory;
+import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactoryType;
 import net.sourceforge.joceanus.gordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.gordianknot.api.key.GordianKeyLengths;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMac;
@@ -109,6 +111,12 @@ public final class SymmetricMacScripts {
 
         /* Add Multi test */
         myTests = Stream.concat(myTests, Stream.of(DynamicTest.dynamicTest("multi", () -> multiMac(pMacSpec))));
+
+        /* Add Xof test if this is a Xof */
+        if (pMacSpec.getSpec().isXof()
+                && GordianFactoryType.BC.equals(pMacSpec.getFactory().getFactoryType())) {
+            myTests = Stream.concat(myTests, Stream.of(DynamicTest.dynamicTest("xof", () -> checkXof(pMacSpec))));
+        }
 
         /* Add algorithmId test */
         myTests = Stream.concat(myTests, Stream.of(DynamicTest.dynamicTest("checkAlgId", () -> checkMacAlgId(pMacSpec))));
@@ -214,6 +222,46 @@ public final class SymmetricMacScripts {
 
         /* Check that the results are identical */
         Assertions.assertArrayEquals(mySingle, myMulti, "Multi-Block and Single-Block results differ");
+    }
+
+    /**
+     * Check xof.
+     * @param pMacSpec the macSpec
+     * @throws GordianException on error
+     */
+    private static void checkXof(final FactoryMacSpec pMacSpec) throws GordianException {
+        /* Create the digest */
+        final GordianFactory myFactory = pMacSpec.getFactory();
+        final GordianMacSpec mySpec = pMacSpec.getSpec();
+        final GordianMacFactory myMacFactory = myFactory.getMacFactory();
+        final GordianMac myMac = myMacFactory.createMac(mySpec);
+        final GordianXof myXof = (GordianXof) myMac;
+        final GordianKey<GordianMacSpec> myKey = pMacSpec.getKey();
+
+        /* Create the data */
+        final byte[] myData = SymmetricTest.getTestData();
+        myMac.init(GordianMacParameters.keyWithRandomNonce(myKey));
+
+        /* Update the Xofs with the data */
+        myXof.update(myData, 0, SymmetricTest.DATALEN);
+
+        /* Extract Xofs as single block */
+        final byte[] myFull = new byte[SymmetricTest.DATALEN];
+        myXof.finish(myFull, 0, SymmetricTest.DATALEN);
+
+        /* Update the Xofs with the data */
+        myXof.update(myData, 0, SymmetricTest.DATALEN);
+        final byte[] myPart = new byte[SymmetricTest.DATALEN];
+
+        /* Create the xof as partial blocks */
+        for (int myPos = 0; myPos < SymmetricTest.DATALEN;) {
+            final int myLen = Math.min(SymmetricTest.PARTIALLEN, SymmetricTest.DATALEN - myPos);
+            myPos += myXof.output(myPart, myPos, myLen);
+        }
+        myXof.finish(myPart, 0, 0);
+
+        /* Check that they are identical */
+        Assertions.assertArrayEquals(myPart, myFull, "Mismatch on partial vs full xof");
     }
 
     /**
