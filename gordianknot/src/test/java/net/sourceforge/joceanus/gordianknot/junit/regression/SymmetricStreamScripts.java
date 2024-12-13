@@ -188,7 +188,7 @@ public class SymmetricStreamScripts {
      */
     private static void checkStreamCipher(final FactoryStreamCipherSpec pCipherSpec) throws GordianException {
         /* If this cipher is in fact an AEAD cipher */
-        /* Elephant, ISAP, PhotonBeetle and Xoodyak do not currenctly support AEADParameters so treat as non-AEAD for the time being */
+        /* Elephant, ISAP, PhotonBeetle and Xoodyak do not currently support AEADParameters so treat as non-AEAD for the time being */
         //if (pCipherSpec.getSpec().isAEAD()) {
         //    /* Test as AEAD cipher */
         //    checkStreamAADCipher(pCipherSpec);

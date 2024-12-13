@@ -24,7 +24,6 @@ import net.sourceforge.joceanus.gordianknot.api.cipher.GordianPadding;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianStreamCipherSpec;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianStreamCipherSpecBuilder;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianStreamKeySpec;
-import net.sourceforge.joceanus.gordianknot.api.cipher.GordianStreamKeySpec.GordianAsconKey;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianStreamKeySpec.GordianBlakeXofKey;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianStreamKeySpec.GordianChaCha20Key;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianStreamKeySpec.GordianElephantKey;
@@ -510,8 +509,6 @@ public class GordianCoreKnuthObfuscater
                 return deriveEncodedIdFromEnum((GordianSkeinXofKey) pStreamKeySpec.getSubKeyType());
             case BLAKE2XOF:
                 return deriveEncodedIdFromEnum((GordianBlakeXofKey) pStreamKeySpec.getSubKeyType());
-            case ASCON:
-                return deriveEncodedIdFromEnum((GordianAsconKey) pStreamKeySpec.getSubKeyType());
             case ELEPHANT:
                 return deriveEncodedIdFromEnum((GordianElephantKey) pStreamKeySpec.getSubKeyType());
             case ISAP:
@@ -544,8 +541,6 @@ public class GordianCoreKnuthObfuscater
                 return deriveEnumFromEncodedId(pEncodedId, GordianSkeinXofKey.class);
             case BLAKE2XOF:
                 return deriveEnumFromEncodedId(pEncodedId, GordianBlakeXofKey.class);
-            case ASCON:
-                return deriveEnumFromEncodedId(pEncodedId, GordianAsconKey.class);
             case ELEPHANT:
                 return deriveEnumFromEncodedId(pEncodedId, GordianElephantKey.class);
             case ISAP:
@@ -591,7 +586,6 @@ public class GordianCoreKnuthObfuscater
         myShift = Math.max(myShift, determineShiftForEnum(GordianChaCha20Key.class));
         myShift = Math.max(myShift, determineShiftForEnum(GordianSkeinXofKey.class));
         myShift = Math.max(myShift, determineShiftForEnum(GordianBlakeXofKey.class));
-        myShift = Math.max(myShift, determineShiftForEnum(GordianAsconKey.class));
         myShift = Math.max(myShift, determineShiftForEnum(GordianElephantKey.class));
         myShift = Math.max(myShift, determineShiftForEnum(GordianISAPKey.class));
         return Math.max(myShift, determineShiftForEnum(GordianSparkleKey.class));

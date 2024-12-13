@@ -24,7 +24,6 @@ import net.sourceforge.joceanus.gordianknot.api.cipher.GordianPadding;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianStreamCipher;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianStreamCipherSpec;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianStreamKeySpec;
-import net.sourceforge.joceanus.gordianknot.api.cipher.GordianStreamKeySpec.GordianAsconKey;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianStreamKeySpec.GordianBlakeXofKey;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianStreamKeySpec.GordianChaCha20Key;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianStreamKeySpec.GordianElephantKey;
@@ -68,7 +67,6 @@ import org.bouncycastle.crypto.DefaultBufferedBlockCipher;
 import org.bouncycastle.crypto.StreamCipher;
 import org.bouncycastle.crypto.engines.AESEngine;
 import org.bouncycastle.crypto.engines.ARIAEngine;
-import org.bouncycastle.crypto.engines.AsconEngine;
 import org.bouncycastle.crypto.engines.BlowfishEngine;
 import org.bouncycastle.crypto.engines.CAST5Engine;
 import org.bouncycastle.crypto.engines.CAST6Engine;
@@ -116,7 +114,6 @@ import org.bouncycastle.crypto.modes.G3413CBCBlockCipher;
 import org.bouncycastle.crypto.modes.G3413CFBBlockCipher;
 import org.bouncycastle.crypto.modes.G3413CTRBlockCipher;
 import org.bouncycastle.crypto.modes.G3413OFBBlockCipher;
-import org.bouncycastle.crypto.modes.GCFBBlockCipher;
 import org.bouncycastle.crypto.modes.GCMBlockCipher;
 import org.bouncycastle.crypto.modes.GOFBBlockCipher;
 import org.bouncycastle.crypto.modes.KCTRBlockCipher;
@@ -128,11 +125,13 @@ import org.bouncycastle.crypto.paddings.PKCS7Padding;
 import org.bouncycastle.crypto.paddings.PaddedBufferedBlockCipher;
 import org.bouncycastle.crypto.paddings.TBCPadding;
 import org.bouncycastle.crypto.paddings.X923Padding;
+import org.bouncycastle.crypto.patch.engines.GordianAsconAEAD128;
 import org.bouncycastle.crypto.patch.engines.GordianElephantEngine;
 import org.bouncycastle.crypto.patch.engines.GordianISAPEngine;
 import org.bouncycastle.crypto.patch.engines.GordianPhotonBeetleEngine;
 import org.bouncycastle.crypto.patch.engines.GordianPhotonBeetleEngine.PhotonBeetleParameters;
 import org.bouncycastle.crypto.patch.engines.GordianXoodyakEngine;
+import org.bouncycastle.crypto.patch.modes.GordianGCFBBlockCipher;
 import org.bouncycastle.crypto.patch.modes.GordianKCCMBlockCipher;
 import org.bouncycastle.crypto.patch.modes.GordianKGCMBlockCipher;
 
@@ -332,7 +331,7 @@ public class BouncyCipherFactory
                         return new GordianChaChaPoly1305(new ChaCha7539Engine());
                 }
             case ASCON:
-                return new AsconEngine(((GordianAsconKey) mySpec.getSubKeyType()).getParameters());
+                return new GordianAsconAEAD128();
             case ELEPHANT:
                 return new GordianElephantEngine(((GordianElephantKey) mySpec.getSubKeyType()).getParameters());
             case ISAP:
@@ -446,7 +445,7 @@ public class BouncyCipherFactory
             case CFB8:
                 return CFBBlockCipher.newInstance(pEngine, Byte.SIZE);
             case GCFB:
-                return new GCFBBlockCipher(pEngine);
+                return new GordianGCFBBlockCipher(pEngine);
             case OFB:
                 return new OFBBlockCipher(pEngine, Byte.SIZE * pEngine.getBlockSize());
             case OFB8:
