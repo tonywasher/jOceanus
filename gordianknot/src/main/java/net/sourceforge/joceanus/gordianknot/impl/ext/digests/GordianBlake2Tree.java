@@ -17,7 +17,7 @@
 package net.sourceforge.joceanus.gordianknot.impl.ext.digests;
 
 import net.sourceforge.joceanus.gordianknot.impl.ext.params.GordianBlake2Parameters;
-import net.sourceforge.joceanus.gordianknot.impl.ext.params.GordianBlake2Parameters.Builder;
+import net.sourceforge.joceanus.gordianknot.impl.ext.params.GordianBlake2Parameters.GordianBlake2ParametersBuilder;
 import org.bouncycastle.crypto.DataLengthException;
 import org.bouncycastle.crypto.Digest;
 import org.bouncycastle.crypto.OutputLengthException;
@@ -94,7 +94,7 @@ public class GordianBlake2Tree
         theHash = new byte[theDigest.getDigestSize()];
 
         /* Initialise to default values */
-        final Builder myBuilder = new Builder();
+        final GordianBlake2ParametersBuilder myBuilder = new GordianBlake2ParametersBuilder();
         myBuilder.setTreeConfig(0, 2, DEFAULT_LEAFLEN);
         init(myBuilder.build());
     }

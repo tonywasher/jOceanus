@@ -67,7 +67,7 @@ public class GordianSkeinParameters
     /**
      * A builder for {@link GordianSkeinParameters}.
      */
-    public static class Builder
+    public static class GordianSkeinParametersBuilder
             extends SkeinParameters.Builder {
         /**
          * The maximum xofLen.
@@ -90,49 +90,49 @@ public class GordianSkeinParameters
         private int theLeafLen;
 
         @Override
-        public Builder set(final int type,
-                           final byte[] value) {
-            return (Builder) super.set(type, value);
+        public GordianSkeinParametersBuilder set(final int type,
+                                                 final byte[] value) {
+            return (GordianSkeinParametersBuilder) super.set(type, value);
         }
 
         @Override
-        public Builder setKey(final byte[] key) {
-            return (Builder) super.setKey(key);
+        public GordianSkeinParametersBuilder setKey(final byte[] key) {
+            return (GordianSkeinParametersBuilder) super.setKey(key);
         }
 
         @Override
-        public Builder setPersonalisation(final byte[] personalisation) {
-            return (Builder) super.setPersonalisation(personalisation);
+        public GordianSkeinParametersBuilder setPersonalisation(final byte[] personalisation) {
+            return (GordianSkeinParametersBuilder) super.setPersonalisation(personalisation);
         }
 
         @Override
-        public Builder setPersonalisation(final Date date,
-                                          final String emailAddress,
-                                          final String distinguisher) {
-            return (Builder) super.setPersonalisation(date, emailAddress, distinguisher);
+        public GordianSkeinParametersBuilder setPersonalisation(final Date date,
+                                                                final String emailAddress,
+                                                                final String distinguisher) {
+            return (GordianSkeinParametersBuilder) super.setPersonalisation(date, emailAddress, distinguisher);
         }
 
         @Override
-        public Builder setPersonalisation(final Date date,
-                                          final Locale dateLocale,
-                                          final String emailAddress,
-                                          final String distinguisher) {
-            return (Builder) super.setPersonalisation(date, dateLocale, emailAddress, distinguisher);
+        public GordianSkeinParametersBuilder setPersonalisation(final Date date,
+                                                                final Locale dateLocale,
+                                                                final String emailAddress,
+                                                                final String distinguisher) {
+            return (GordianSkeinParametersBuilder) super.setPersonalisation(date, dateLocale, emailAddress, distinguisher);
         }
 
         @Override
-        public Builder setPublicKey(final byte[] publicKey) {
-            return (Builder) super.setPublicKey(publicKey);
+        public GordianSkeinParametersBuilder setPublicKey(final byte[] publicKey) {
+            return (GordianSkeinParametersBuilder) super.setPublicKey(publicKey);
         }
 
         @Override
-        public Builder setKeyIdentifier(final byte[] keyId) {
-            return (Builder) super.setKeyIdentifier(keyId);
+        public GordianSkeinParametersBuilder setKeyIdentifier(final byte[] keyId) {
+            return (GordianSkeinParametersBuilder) super.setKeyIdentifier(keyId);
         }
 
         @Override
-        public Builder setNonce(final byte[] nonce) {
-            return (Builder) super.setNonce(nonce);
+        public GordianSkeinParametersBuilder setNonce(final byte[] nonce) {
+            return (GordianSkeinParametersBuilder) super.setNonce(nonce);
         }
 
         /**
@@ -140,7 +140,7 @@ public class GordianSkeinParameters
          * @param pMaxOutLen the maximum output length
          * @return the Builder
          */
-        public Builder setMaxOutputLen(final long pMaxOutLen) {
+        public GordianSkeinParametersBuilder setMaxOutputLen(final long pMaxOutLen) {
             theMaxXofLen = pMaxOutLen;
             return this;
         }
@@ -152,9 +152,9 @@ public class GordianSkeinParameters
          * @param pLeafLen the leafLength (powers of two times outputLength - 1-255).
          * @return the Builder
          */
-        public Builder setTreeConfig(final int pFanOut,
-                                     final int pMaxDepth,
-                                     final int pLeafLen) {
+        public GordianSkeinParametersBuilder setTreeConfig(final int pFanOut,
+                                                           final int pMaxDepth,
+                                                           final int pLeafLen) {
             theFanOut = (short) pFanOut;
             theMaxDepth = (short) pMaxDepth;
             theLeafLen = pLeafLen;

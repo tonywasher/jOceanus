@@ -18,6 +18,7 @@ package net.sourceforge.joceanus.gordianknot.impl.ext.digests;
 
 import net.sourceforge.joceanus.gordianknot.impl.ext.digests.GordianSkeinBase.Configuration;
 import net.sourceforge.joceanus.gordianknot.impl.ext.params.GordianSkeinParameters;
+import net.sourceforge.joceanus.gordianknot.impl.ext.params.GordianSkeinParameters.GordianSkeinParametersBuilder;
 import org.bouncycastle.crypto.DataLengthException;
 import org.bouncycastle.crypto.Digest;
 import org.bouncycastle.crypto.OutputLengthException;
@@ -114,7 +115,7 @@ public class GordianSkeinTree
         theHash = new byte[theDigest.getOutputSize()];
 
         /* Initialise to default values */
-        final GordianSkeinParameters.Builder myBuilder = new GordianSkeinParameters.Builder();
+        final GordianSkeinParametersBuilder myBuilder = new GordianSkeinParametersBuilder();
         myBuilder.setTreeConfig(1, MAXBYTE, 1);
         init(myBuilder.build());
     }

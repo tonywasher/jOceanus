@@ -18,6 +18,7 @@ package net.sourceforge.joceanus.gordianknot.impl.ext.macs;
 
 import net.sourceforge.joceanus.gordianknot.impl.ext.digests.GordianBlake2Xof;
 import net.sourceforge.joceanus.gordianknot.impl.ext.params.GordianBlake2Parameters;
+import net.sourceforge.joceanus.gordianknot.impl.ext.params.GordianBlake2Parameters.GordianBlake2ParametersBuilder;
 import org.bouncycastle.crypto.CipherParameters;
 import org.bouncycastle.crypto.Mac;
 import org.bouncycastle.crypto.Xof;
@@ -50,7 +51,7 @@ public class GordianBlake2XMac
     public void init(final CipherParameters pParams) {
         CipherParameters myParams = pParams;
         if (myParams instanceof KeyParameter) {
-            myParams = new GordianBlake2Parameters.Builder()
+            myParams = new GordianBlake2ParametersBuilder()
                     .setKey(((KeyParameter) myParams).getKey())
                     .setMaxOutputLen(-1L)
                     .build();

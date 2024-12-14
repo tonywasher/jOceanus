@@ -21,8 +21,8 @@ import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacParameters;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacSpec;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacType;
 import net.sourceforge.joceanus.gordianknot.impl.core.mac.GordianCoreMac;
-import net.sourceforge.joceanus.gordianknot.impl.ext.params.GordianBlake2Parameters;
-import net.sourceforge.joceanus.gordianknot.impl.ext.params.GordianSkeinParameters;
+import net.sourceforge.joceanus.gordianknot.impl.ext.params.GordianBlake2Parameters.GordianBlake2ParametersBuilder;
+import net.sourceforge.joceanus.gordianknot.impl.ext.params.GordianSkeinParameters.GordianSkeinParametersBuilder;
 import org.bouncycastle.crypto.CipherParameters;
 import org.bouncycastle.crypto.Mac;
 import org.bouncycastle.crypto.params.KeyParameter;
@@ -84,7 +84,7 @@ public class BouncyMac
                                              final byte[] pIV) {
         /* Handle Skein Parameters */
         if (GordianMacType.SKEIN.equals(getMacSpec().getMacType())) {
-            final GordianSkeinParameters.Builder myBuilder = new GordianSkeinParameters.Builder();
+            final GordianSkeinParametersBuilder myBuilder = new GordianSkeinParametersBuilder();
             myBuilder.setKey(pKey.getKey());
             if (pIV != null) {
                 myBuilder.setNonce(pIV);
@@ -94,7 +94,7 @@ public class BouncyMac
 
         /* Handle Blake Parameters */
         if (GordianMacType.BLAKE2.equals(getMacSpec().getMacType())) {
-            final GordianBlake2Parameters.Builder myBuilder = new GordianBlake2Parameters.Builder();
+            final GordianBlake2ParametersBuilder myBuilder = new GordianBlake2ParametersBuilder();
             myBuilder.setKey(pKey.getKey());
             if (pIV != null) {
                 myBuilder.setSalt(pIV);

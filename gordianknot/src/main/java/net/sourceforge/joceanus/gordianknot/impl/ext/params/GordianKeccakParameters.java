@@ -58,7 +58,7 @@ public class GordianKeccakParameters
     /**
      * Parameter Builder.
      */
-    public static class Builder {
+    public static class GordianKeccakParametersBuilder {
         /**
          * The key.
          */
@@ -74,7 +74,7 @@ public class GordianKeccakParameters
          * @param pKey the key
          * @return the Builder
          */
-        public Builder setKey(final byte[] pKey) {
+        public GordianKeccakParametersBuilder setKey(final byte[] pKey) {
             theKey = Arrays.clone(pKey);
             return this;
         }
@@ -84,7 +84,7 @@ public class GordianKeccakParameters
          * @param pPersonal the personalisation
          * @return the Builder
          */
-        public Builder setPersonalisation(final byte[] pPersonal) {
+        public GordianKeccakParametersBuilder setPersonalisation(final byte[] pPersonal) {
             thePersonal = Arrays.clone(pPersonal);
             return this;
         }

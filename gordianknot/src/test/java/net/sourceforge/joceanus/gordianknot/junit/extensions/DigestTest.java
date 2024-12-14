@@ -32,8 +32,11 @@ import net.sourceforge.joceanus.gordianknot.impl.ext.digests.GordianSkeinTree;
 import net.sourceforge.joceanus.gordianknot.impl.ext.digests.GordianSkeinXof;
 import net.sourceforge.joceanus.gordianknot.impl.ext.macs.GordianBlake2Mac;
 import net.sourceforge.joceanus.gordianknot.impl.ext.params.GordianBlake2Parameters;
+import net.sourceforge.joceanus.gordianknot.impl.ext.params.GordianBlake2Parameters.GordianBlake2ParametersBuilder;
 import net.sourceforge.joceanus.gordianknot.impl.ext.params.GordianKeccakParameters;
+import net.sourceforge.joceanus.gordianknot.impl.ext.params.GordianKeccakParameters.GordianKeccakParametersBuilder;
 import net.sourceforge.joceanus.gordianknot.impl.ext.params.GordianSkeinParameters;
+import net.sourceforge.joceanus.gordianknot.impl.ext.params.GordianSkeinParameters.GordianSkeinParametersBuilder;
 import org.bouncycastle.crypto.Digest;
 import org.bouncycastle.crypto.Mac;
 import org.bouncycastle.crypto.params.KeyParameter;
@@ -230,7 +233,7 @@ class DigestTest {
         final byte[] myOutput = new byte[myXofLen];
 
         /* Calculate the Xof */
-        final GordianBlake2Parameters myParams = new GordianBlake2Parameters.Builder()
+        final GordianBlake2Parameters myParams = new GordianBlake2ParametersBuilder()
                 .setKey(myKey)
                 .setMaxOutputLen(myXofLen)
                 .build();
@@ -257,7 +260,7 @@ class DigestTest {
         final byte[] myBlake2X = new byte[myLen];
 
         /* Initialise the Xof */
-        final GordianBlake2Parameters myParams = new GordianBlake2Parameters.Builder()
+        final GordianBlake2Parameters myParams = new GordianBlake2ParametersBuilder()
                 .setMaxOutputLen(0)
                 .build();
         myXof.init(myParams);
@@ -289,7 +292,7 @@ class DigestTest {
         final byte[] myOutput = new byte[myXofLen];
 
         /* Create the parameters */
-        final GordianSkeinParameters.Builder myBuilder = new GordianSkeinParameters.Builder()
+        final GordianSkeinParametersBuilder myBuilder = new GordianSkeinParametersBuilder()
                 .setMaxOutputLen(myXofLen);
         if (pKeyLen > 0) {
             /* Create the key */
@@ -324,7 +327,7 @@ class DigestTest {
         final byte[] myXofResult = new byte[myLen];
 
         /* Initialise the Xof */
-        final GordianSkeinParameters myParams = new GordianSkeinParameters.Builder()
+        final GordianSkeinParameters myParams = new GordianSkeinParametersBuilder()
                 .setMaxOutputLen(0)
                 .build();
         myXof.init(myParams);
@@ -390,7 +393,7 @@ class DigestTest {
 
         /* Initialise the mac */
         final GordianKangarooTwelve myDigest = new GordianKangarooTwelve();
-        final GordianKeccakParameters myParams = new GordianKeccakParameters.Builder()
+        final GordianKeccakParameters myParams = new GordianKeccakParametersBuilder()
                 .setPersonalisation(myPers)
                 .build();
         myDigest.init(myParams);
@@ -432,7 +435,7 @@ class DigestTest {
         final int myLeafLen = 4096;
 
         /* Build the parameters */
-        final GordianBlake2Parameters.Builder myBuilder = new GordianBlake2Parameters.Builder();
+        final GordianBlake2ParametersBuilder myBuilder = new GordianBlake2ParametersBuilder();
         myBuilder.setKey(Arrays.copyOf(BLAKE2DATA, 32));
         myBuilder.setTreeConfig(pFanOut, pMaxDepth, myLeafLen);
         myTree.init(myBuilder.build());
@@ -488,7 +491,7 @@ class DigestTest {
         final int myLeafShift = 6;
 
         /* Build the parameters */
-        final GordianSkeinParameters.Builder myBuilder = new GordianSkeinParameters.Builder();
+        final GordianSkeinParametersBuilder myBuilder = new GordianSkeinParametersBuilder();
         myBuilder.setKey(Arrays.copyOf(BLAKE2DATA, 32));
         myBuilder.setTreeConfig(pFanOut, pMaxDepth, myLeafShift);
         myTree.init(myBuilder.build());

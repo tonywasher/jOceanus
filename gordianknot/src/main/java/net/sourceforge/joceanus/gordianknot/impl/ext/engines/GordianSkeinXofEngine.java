@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.gordianknot.impl.ext.engines;
 
 import net.sourceforge.joceanus.gordianknot.impl.ext.digests.GordianSkeinBase;
 import net.sourceforge.joceanus.gordianknot.impl.ext.digests.GordianSkeinXof;
-import net.sourceforge.joceanus.gordianknot.impl.ext.params.GordianSkeinParameters.Builder;
+import net.sourceforge.joceanus.gordianknot.impl.ext.params.GordianSkeinParameters.GordianSkeinParametersBuilder;
 import org.bouncycastle.crypto.CipherParameters;
 import org.bouncycastle.crypto.DataLengthException;
 import org.bouncycastle.crypto.OutputLengthException;
@@ -103,7 +103,7 @@ public class GordianSkeinXofEngine
         }
 
         /* Initialise engine and mark as initialised */
-        final Builder myBuilder = new Builder()
+        final GordianSkeinParametersBuilder myBuilder = new GordianSkeinParametersBuilder()
                 .setKey(newKey)
                 .setNonce(newIV)
                 .setMaxOutputLen(-1);

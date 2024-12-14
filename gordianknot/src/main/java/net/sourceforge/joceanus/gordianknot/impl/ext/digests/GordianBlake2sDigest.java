@@ -38,10 +38,10 @@ public class GordianBlake2sDigest
     /**
      * Blake2s Initialization Vector.
      */
-    private static final int[] IV =
+    private static final int[] IV = {
             // Produced from the square root of primes 2, 3, 5, 7, 11, 13, 17, 19.
             // The same as SHA-256 IV.
-            {
+
                     0x6a09e667, 0xbb67ae85, 0x3c6ef372,
                     0xa54ff53a, 0x510e527f, 0x9b05688c,
                     0x1f83d9ab, 0x5be0cd19

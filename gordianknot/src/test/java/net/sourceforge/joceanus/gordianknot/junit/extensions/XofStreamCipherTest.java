@@ -25,8 +25,8 @@ import net.sourceforge.joceanus.gordianknot.impl.ext.digests.GordianSkeinBase;
 import net.sourceforge.joceanus.gordianknot.impl.ext.digests.GordianSkeinXof;
 import net.sourceforge.joceanus.gordianknot.impl.ext.engines.GordianBlake2XEngine;
 import net.sourceforge.joceanus.gordianknot.impl.ext.engines.GordianSkeinXofEngine;
-import net.sourceforge.joceanus.gordianknot.impl.ext.params.GordianBlake2Parameters;
-import net.sourceforge.joceanus.gordianknot.impl.ext.params.GordianSkeinParameters;
+import net.sourceforge.joceanus.gordianknot.impl.ext.params.GordianBlake2Parameters.GordianBlake2ParametersBuilder;
+import net.sourceforge.joceanus.gordianknot.impl.ext.params.GordianSkeinParameters.GordianSkeinParametersBuilder;
 import org.bouncycastle.crypto.CipherParameters;
 import org.bouncycastle.crypto.StreamCipher;
 import org.bouncycastle.crypto.Xof;
@@ -153,7 +153,7 @@ class XofStreamCipherTest {
         /* Handle Blake2X */
         if (pXof instanceof GordianBlake2Xof) {
             final GordianBlake2Xof myXof = (GordianBlake2Xof) pXof;
-            final GordianBlake2Parameters.Builder myBuilder = new GordianBlake2Parameters.Builder()
+            final GordianBlake2ParametersBuilder myBuilder = new GordianBlake2ParametersBuilder()
                     .setKey(pKey)
                     .setMaxOutputLen(-1);
             if (pIV != null) {
@@ -165,7 +165,7 @@ class XofStreamCipherTest {
         /* Handle SkeinXof */
         if (pXof instanceof GordianSkeinXof) {
             final GordianSkeinXof myXof = (GordianSkeinXof) pXof;
-            final GordianSkeinParameters.Builder myBuilder = new GordianSkeinParameters.Builder()
+            final GordianSkeinParametersBuilder myBuilder = new GordianSkeinParametersBuilder()
                     .setKey(pKey)
                     .setMaxOutputLen(-1);
             if (pIV != null) {

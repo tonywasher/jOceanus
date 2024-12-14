@@ -83,8 +83,7 @@ public class GordianGroestlDigest
 
     @Override
     public void update(final byte arg0) {
-        final byte[] myByte = new byte[]
-                { arg0 };
+        final byte[] myByte = new byte[] { arg0 };
         update(myByte, 0, 1);
     }
 
@@ -135,9 +134,7 @@ public class GordianGroestlDigest
         private long[] chaining; /* actual state */
         private byte[] buffer; /* data buffer */
         private int bufPtr; /* data buffer pointer */
-        private int bitsInLastByte; /*
-         * no. of message bits in last byte of data buffer
-         */
+        private int bitsInLastByte; /* no. of message bits in last byte of data buffer */
 
         /* Work ScratchPad fields */
         private long[] tmpY;
@@ -146,8 +143,8 @@ public class GordianGroestlDigest
         private long[] tmpInP;
 
         /* Lookup Table */
-        private static final long[] T =
-                {
+        private static final long[] T = {
+
                         0xc6a597f4a5f432c6L, 0xf884eb9784976ff8L, 0xee99c7b099b05eeeL, 0xf68df78c8d8c7af6L, 0xff0de5170d17e8ffL, 0xd6bdb7dcbddc0ad6L, 0xdeb1a7c8b1c816deL, 0x915439fc54fc6d91L,
                         0x6050c0f050f09060L, 0x0203040503050702L, 0xcea987e0a9e02eceL, 0x567dac877d87d156L, 0xe719d52b192bcce7L, 0xb56271a662a613b5L, 0x4de69a31e6317c4dL, 0xec9ac3b59ab559ecL,
                         0x8f4505cf45cf408fL, 0x1f9d3ebc9dbca31fL, 0x894009c040c04989L, 0xfa87ef92879268faL, 0xef15c53f153fd0efL, 0xb2eb7f26eb2694b2L, 0x8ec90740c940ce8eL, 0xfb0bed1d0b1de6fbL,
@@ -403,7 +400,8 @@ public class GordianGroestlDigest
                         0xd9d938a948384891L, 0xebeb13cd351335deL, 0x2b2bb356ceb3cee5L, 0x2222334455335577L, 0xd2d2bbbfd6bbd604L, 0xa9a9704990709039L, 0x0707890e80898087L, 0x3333a766f2a7f2c1L,
                         0x2d2db65ac1b6c1ecL, 0x3c3c22786622665aL, 0x1515922aad92adb8L, 0xc9c92089602060a9L, 0x87874915db49db5cL, 0xaaaaff4f1aff1ab0L, 0x505078a0887888d8L, 0xa5a57a518e7a8e2bL,
                         0x03038f068a8f8a89L, 0x5959f8b213f8134aL, 0x090980129b809b92L, 0x1a1a173439173923L, 0x6565daca75da7510L, 0xd7d731b553315384L, 0x8484c61351c651d5L, 0xd0d0b8bbd3b8d303L,
-                        0x8282c31f5ec35edcL, 0x2929b052cbb0cbe2L, 0x5a5a77b4997799c3L, 0x1e1e113c3311332dL, 0x7b7bcbf646cb463dL, 0xa8a8fc4b1ffc1fb7L, 0x6d6dd6da61d6610cL, 0x2c2c3a584e3a4e62L };
+                        0x8282c31f5ec35edcL, 0x2929b052cbb0cbe2L, 0x5a5a77b4997799c3L, 0x1e1e113c3311332dL, 0x7b7bcbf646cb463dL, 0xa8a8fc4b1ffc1fb7L, 0x6d6dd6da61d6610cL, 0x2c2c3a584e3a4e62L
+        };
 
         /**
          * Constructor.

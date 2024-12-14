@@ -102,7 +102,7 @@ public class GordianBlake2Parameters
     /**
      * Parameter Builder.
      */
-    public static class Builder {
+    public static class GordianBlake2ParametersBuilder {
         /**
          * The key.
          */
@@ -143,7 +143,7 @@ public class GordianBlake2Parameters
          * @param pKey the key
          * @return the Builder
          */
-        public Builder setKey(final byte[] pKey) {
+        public GordianBlake2ParametersBuilder setKey(final byte[] pKey) {
             theKey = Arrays.clone(pKey);
             return this;
         }
@@ -153,7 +153,7 @@ public class GordianBlake2Parameters
          * @param pSalt the salt
          * @return the Builder
          */
-        public Builder setSalt(final byte[] pSalt) {
+        public GordianBlake2ParametersBuilder setSalt(final byte[] pSalt) {
             theSalt = Arrays.clone(pSalt);
             return this;
         }
@@ -163,7 +163,7 @@ public class GordianBlake2Parameters
          * @param pPersonal the personalisation
          * @return the Builder
          */
-        public Builder setPersonalisation(final byte[] pPersonal) {
+        public GordianBlake2ParametersBuilder setPersonalisation(final byte[] pPersonal) {
             thePersonal = Arrays.clone(pPersonal);
             return this;
         }
@@ -173,7 +173,7 @@ public class GordianBlake2Parameters
          * @param pMaxOutLen the maximum output length
          * @return the Builder
          */
-        public Builder setMaxOutputLen(final long pMaxOutLen) {
+        public GordianBlake2ParametersBuilder setMaxOutputLen(final long pMaxOutLen) {
             theMaxXofLen = pMaxOutLen;
             return this;
         }
@@ -185,9 +185,9 @@ public class GordianBlake2Parameters
          * @param pLeafLen the leafLength (in bytes).
          * @return the Builder
          */
-        public Builder setTreeConfig(final int pFanOut,
-                                     final int pMaxDepth,
-                                     final int pLeafLen) {
+        public GordianBlake2ParametersBuilder setTreeConfig(final int pFanOut,
+                                                            final int pMaxDepth,
+                                                            final int pLeafLen) {
             theFanOut = (short) pFanOut;
             theMaxDepth = (short) pMaxDepth;
             theLeafLen = pLeafLen;

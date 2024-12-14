@@ -33,7 +33,7 @@ import net.sourceforge.joceanus.themis.statistics.ThemisStatsProject;
 /**
  * Test Analysis.
  */
-class TestAnalysis {
+class DoAnalysis {
     /**
      * The project.
      */
@@ -62,8 +62,8 @@ class TestAnalysis {
     @TestFactory
     Stream<DynamicNode> analyseSource() throws OceanusException {
         return Stream.of(
-                    DynamicTest.dynamicTest("analyseSource", TestAnalysis::testProjectSource),
-                    DynamicTest.dynamicTest("analyseDependencies", TestAnalysis::testProjectDependencies)
+                    DynamicTest.dynamicTest("analyseSource", DoAnalysis::testProjectSource),
+                    DynamicTest.dynamicTest("analyseDependencies", DoAnalysis::testProjectDependencies)
                 );
     }
 

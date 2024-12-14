@@ -16,11 +16,11 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.themis.analysis;
 
-import java.util.ArrayDeque;
-import java.util.Deque;
-
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.exc.ThemisDataException;
+
+import java.util.ArrayDeque;
+import java.util.Deque;
 
 /**
  * Scanner for headers and trailers.
@@ -449,7 +449,11 @@ public class ThemisAnalysisScanner {
         }
 
         /* Access the next line */
-        theCurLine = (ThemisAnalysisLine) theSource.popNextLine();
+        final ThemisAnalysisElement myEl = theSource.popNextLine();
+        if (!(myEl instanceof ThemisAnalysisLine)) {
+            int i = 0;
+        }
+        theCurLine = (ThemisAnalysisLine) myEl;
         theLength = theCurLine.getLength();
         theCurPos = 0;
 

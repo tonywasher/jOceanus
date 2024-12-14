@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.gordianknot.impl.ext.engines;
 
 import net.sourceforge.joceanus.gordianknot.impl.ext.digests.GordianBlake2Base;
 import net.sourceforge.joceanus.gordianknot.impl.ext.digests.GordianBlake2Xof;
-import net.sourceforge.joceanus.gordianknot.impl.ext.params.GordianBlake2Parameters.Builder;
+import net.sourceforge.joceanus.gordianknot.impl.ext.params.GordianBlake2Parameters.GordianBlake2ParametersBuilder;
 import org.bouncycastle.crypto.CipherParameters;
 import org.bouncycastle.crypto.DataLengthException;
 import org.bouncycastle.crypto.OutputLengthException;
@@ -102,7 +102,7 @@ public class GordianBlake2XEngine
         }
 
         /* Initialise engine and mark as initialised */
-        final Builder myBuilder = new Builder()
+        final GordianBlake2ParametersBuilder myBuilder = new GordianBlake2ParametersBuilder()
                 .setKey(newKey)
                 .setSalt(newIV)
                 .setMaxOutputLen(-1);

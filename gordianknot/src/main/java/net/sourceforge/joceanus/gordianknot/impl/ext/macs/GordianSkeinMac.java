@@ -18,6 +18,7 @@ package net.sourceforge.joceanus.gordianknot.impl.ext.macs;
 
 import net.sourceforge.joceanus.gordianknot.impl.ext.digests.GordianSkeinBase;
 import net.sourceforge.joceanus.gordianknot.impl.ext.params.GordianSkeinParameters;
+import net.sourceforge.joceanus.gordianknot.impl.ext.params.GordianSkeinParameters.GordianSkeinParametersBuilder;
 import org.bouncycastle.crypto.CipherParameters;
 import org.bouncycastle.crypto.Mac;
 import org.bouncycastle.crypto.engines.ThreefishEngine;
@@ -98,7 +99,7 @@ public class GordianSkeinMac
         if (params instanceof GordianSkeinParameters) {
             skeinParameters = (GordianSkeinParameters) params;
         } else if (params instanceof KeyParameter) {
-            skeinParameters = new GordianSkeinParameters.Builder().setKey(((KeyParameter) params).getKey()).build();
+            skeinParameters = new GordianSkeinParametersBuilder().setKey(((KeyParameter) params).getKey()).build();
         } else {
             throw new IllegalArgumentException("Invalid parameter passed to Skein MAC init - "
                     + params.getClass().getName());
