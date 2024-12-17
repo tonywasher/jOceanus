@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>net.sourceforge.joceanus</groupId>
   <artifactId>joceanus</artifactId>
-  <version>1.6.3-b3</version>
+  <version>1.6.3-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>Java Oceanus package</name>
   <description>Parent project for jOceanus</description>
@@ -60,11 +60,11 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <scmMaster>master</scmMaster>
     <currentBranch>1.6.3</currentBranch>
-    <currentTag>b3</currentTag>
+    <currentTag>SNAPSHOT</currentTag>
     <baseBranch>1.6.3</baseBranch>
-    <baseTag>b2</baseTag>
-    <!--<currentRef>${scmMaster}</currentRef>-->
-    <currentRef>${currentBranch}-${currentTag}</currentRef>
+    <baseTag>b3</baseTag>
+    <currentRef>${scmMaster}</currentRef>
+    <!--<currentRef>${currentBranch}-${currentTag}</currentRef>-->
     <baseRef>${baseBranch}-${baseTag}</baseRef>
     <packageKey>net.sourceforge.joceanus</packageKey>
     <packageMain/>
@@ -117,6 +117,8 @@
     <GPGPluginVersion>3.2.7</GPGPluginVersion>
     <JetBrainsAnnotationsVersion>26.0.1</JetBrainsAnnotationsVersion>
     <VersionsPluginVersion>2.18.0</VersionsPluginVersion>
+    <sonar.projectKey>jOceanus</sonar.projectKey>
+    <sonar.host.url>http://localhost:9000</sonar.host.url>
   </properties>
   <build>
     <resources>
