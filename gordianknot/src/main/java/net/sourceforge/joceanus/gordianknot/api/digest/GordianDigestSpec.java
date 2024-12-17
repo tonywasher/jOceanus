@@ -199,7 +199,7 @@ public class GordianDigestSpec
      */
     private boolean checkValidity() {
         /* Handle null type */
-        if (theDigestType == null || theLength == null) {
+        if (theDigestType == null || theLength == null || isXofMode == null) {
             return false;
         }
 
@@ -246,7 +246,7 @@ public class GordianDigestSpec
                         theName += theSubSpec;
                         break;
                     case SKEIN:
-                        if (isXofMode) {
+                        if (Boolean.TRUE.equals(isXofMode)) {
                             theName += "X" + SEP + theSubSpec;
                         } else {
                             theName += SEP + theSubSpec + SEP + theLength;
@@ -254,7 +254,7 @@ public class GordianDigestSpec
                         break;
                     case BLAKE2:
                         theName += getDigestState().getBlake2Algorithm(isXofMode);
-                        if (!isXofMode) {
+                        if (!Boolean.TRUE.equals(isXofMode)) {
                             theName += SEP + theLength;
                         }
                         break;
@@ -265,7 +265,7 @@ public class GordianDigestSpec
                         theName += SEP + theSubSpec;
                         break;
                     case ASCON:
-                        theName += isXofMode ? "X" : "";
+                        theName += Boolean.TRUE.equals(isXofMode) ? "X" : "";
                         break;
                     default:
                         if (theDigestType.getSupportedLengths().length > 1) {

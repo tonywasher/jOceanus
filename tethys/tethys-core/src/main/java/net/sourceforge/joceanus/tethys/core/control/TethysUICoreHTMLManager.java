@@ -145,7 +145,7 @@ public abstract class TethysUICoreHTMLManager
             myInternal = myTokens[1];
 
             /* Handle an internal reference */
-            if (myRef.length() == 0) {
+            if (myRef.isEmpty()) {
                 myRef = null;
             }
         }

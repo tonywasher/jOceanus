@@ -68,8 +68,7 @@ public class GordianAnubisEngine
     /**
      * Table T0.
      */
-    private static final int[] T0 =
-            {
+    private static final int[] T0 = {
                     0xa753a6f5, 0xd3bb6bd0, 0xe6d1bf6e, 0x71e2d93b,
                     0xd0bd67da, 0xac458acf, 0x4d9a29b3, 0x79f2f90b,
                     0x3a74e89c, 0xc98f038c, 0x913f7e41, 0xfce5d732,
@@ -139,8 +138,7 @@ public class GordianAnubisEngine
     /**
      * Table T1.
      */
-    private static final int[] T1 =
-            {
+    private static final int[] T1 = {
                     0x53a7f5a6, 0xbbd3d06b, 0xd1e66ebf, 0xe2713bd9,
                     0xbdd0da67, 0x45accf8a, 0x9a4db329, 0xf2790bf9,
                     0x743a9ce8, 0x8fc98c03, 0x3f91417e, 0xe5fc32d7,
@@ -210,8 +208,7 @@ public class GordianAnubisEngine
     /**
      * Table T2.
      */
-    private static final int[] T2 =
-            {
+    private static final int[] T2 = {
                     0xa6f5a753, 0x6bd0d3bb, 0xbf6ee6d1, 0xd93b71e2,
                     0x67dad0bd, 0x8acfac45, 0x29b34d9a, 0xf90b79f2,
                     0xe89c3a74, 0x038cc98f, 0x7e41913f, 0xd732fce5,
@@ -281,8 +278,7 @@ public class GordianAnubisEngine
     /**
      * Table T3.
      */
-    private static final int[] T3 =
-            {
+    private static final int[] T3 = {
                     0xf5a653a7, 0xd06bbbd3, 0x6ebfd1e6, 0x3bd9e271,
                     0xda67bdd0, 0xcf8a45ac, 0xb3299a4d, 0x0bf9f279,
                     0x9ce8743a, 0x8c038fc9, 0x417e3f91, 0x32d7e5fc,
@@ -352,8 +348,7 @@ public class GordianAnubisEngine
     /**
      * Table T4.
      */
-    private static final int[] T4 =
-            {
+    private static final int[] T4 = {
                     0xa7a7a7a7, 0xd3d3d3d3, 0xe6e6e6e6, 0x71717171,
                     0xd0d0d0d0, 0xacacacac, 0x4d4d4d4d, 0x79797979,
                     0x3a3a3a3a, 0xc9c9c9c9, 0x91919191, 0xfcfcfcfc,
@@ -423,8 +418,7 @@ public class GordianAnubisEngine
     /**
      * Table T5.
      */
-    private static final int[] T5 =
-            {
+    private static final int[] T5 = {
                     0x00000000, 0x01020608, 0x02040c10, 0x03060a18,
                     0x04081820, 0x050a1e28, 0x060c1430, 0x070e1238,
                     0x08103040, 0x09123648, 0x0a143c50, 0x0b163a58,
@@ -494,12 +488,13 @@ public class GordianAnubisEngine
     /**
      * The round constants.
      */
-    private static final int[] RC =
-            { 0xa7d3e671, 0xd0ac4d79, 0x3ac991fc, 0x1e4754bd,
+    private static final int[] RC = {
+                    0xa7d3e671, 0xd0ac4d79, 0x3ac991fc, 0x1e4754bd,
                     0x8ca57afb, 0x63b8ddd4, 0xe5b3c5be, 0xa9880ca2,
                     0x39df29da, 0x2ba8cb4c, 0x4b22aa24, 0x4170a6f9,
                     0x5ae2b036, 0x7de433ff, 0x6020088b, 0x5eab7f78,
-                    0x7c2c57d2, 0xdc6d7e0d, 0x5394c328, };
+                    0x7c2c57d2, 0xdc6d7e0d, 0x5394c328
+    };
 
     /**
      * Create the Anubis key schedule for a given cipher key. Both encryption and decryption key

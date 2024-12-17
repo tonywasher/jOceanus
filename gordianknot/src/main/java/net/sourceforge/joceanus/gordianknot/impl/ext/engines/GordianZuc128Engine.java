@@ -34,7 +34,7 @@ public class GordianZuc128Engine implements StreamCipher, Memoable {
     /**
      * s-box0.
      */
-    private static final byte[] S0 = new byte[] {
+    private static final byte[] S0 = {
             (byte) 0x3e, (byte) 0x72, (byte) 0x5b, (byte) 0x47, (byte) 0xca, (byte) 0xe0, (byte) 0x00, (byte) 0x33,
             (byte) 0x04, (byte) 0xd1, (byte) 0x54, (byte) 0x98, (byte) 0x09, (byte) 0xb9, (byte) 0x6d, (byte) 0xcb,
             (byte) 0x7b, (byte) 0x1b, (byte) 0xf9, (byte) 0x32, (byte) 0xaf, (byte) 0x9d, (byte) 0x6a, (byte) 0xa5,
@@ -72,7 +72,7 @@ public class GordianZuc128Engine implements StreamCipher, Memoable {
     /**
      * s-box1.
      */
-    private static final byte[] S1 = new byte[] {
+    private static final byte[] S1 = {
             (byte) 0x55, (byte) 0xc2, (byte) 0x63, (byte) 0x71, (byte) 0x3b, (byte) 0xc8, (byte) 0x47, (byte) 0x86,
             (byte) 0x9f, (byte) 0x3c, (byte) 0xda, (byte) 0x5b, (byte) 0x29, (byte) 0xaa, (byte) 0xfd, (byte) 0x77,
             (byte) 0x8c, (byte) 0xc5, (byte) 0x94, (byte) 0x0c, (byte) 0xa6, (byte) 0x1a, (byte) 0x13, (byte) 0x00,
@@ -110,7 +110,7 @@ public class GordianZuc128Engine implements StreamCipher, Memoable {
     /**
      * The constants D.
      */
-    private static final short[] EK_D = new short[] {
+    private static final short[] EK_D = {
             0x44D7, 0x26BC, 0x626B, 0x135E, 0x5789, 0x35E2, 0x7135, 0x09AF,
             0x4D78, 0x2F13, 0x6BC4, 0x1AF1, 0x5E26, 0x3C4D, 0x789A, 0x47AC
     };
@@ -524,7 +524,7 @@ public class GordianZuc128Engine implements StreamCipher, Memoable {
             nCount--;
         }
         bitReorganization();
-        f(); /* discard the output of F */
+        f(); // discard the output of F */
         lfsrWithWorkMode();
     }
 

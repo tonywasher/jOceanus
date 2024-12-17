@@ -450,9 +450,6 @@ public class ThemisAnalysisScanner {
 
         /* Access the next line */
         final ThemisAnalysisElement myEl = theSource.popNextLine();
-        if (!(myEl instanceof ThemisAnalysisLine)) {
-            int i = 0;
-        }
         theCurLine = (ThemisAnalysisLine) myEl;
         theLength = theCurLine.getLength();
         theCurPos = 0;

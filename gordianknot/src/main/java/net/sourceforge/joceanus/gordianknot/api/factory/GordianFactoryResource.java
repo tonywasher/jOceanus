@@ -105,7 +105,6 @@ public enum GordianFactoryResource
      * @return the resource key
      */
     static GordianBundleId getKeyForFactoryType(final GordianFactoryType pFactoryType) {
-        final GordianBundleId myResource = FACTORY_MAP.get(pFactoryType);
         return GordianBundleLoader.getKeyForEnum(FACTORY_MAP, pFactoryType);
     }
 }

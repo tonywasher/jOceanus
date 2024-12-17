@@ -519,9 +519,11 @@ public class GordianSnow3GEngine
             final int f = clockFSM();
             clockLFSRInitializationMode(f);
         }
-        clockFSM(); /* Clock FSM once. Discard the output. */
-        clockLFSRKeyStreamMode(); /* Clock LFSR in keystream mode once. */
-    }
+        /* Clock FSM once. Discard the output. */
+        clockFSM();
+        /* Clock LFSR in keystream mode once. */
+        clockLFSRKeyStreamMode();
+     }
 
     /* Generation of Keystream.
      * input n: number of 32-bit words of keystream.
@@ -534,10 +536,11 @@ public class GordianSnow3GEngine
         if (theIterations++ >= getMaxIterations()) {
             throw new IllegalStateException("Too much data processed by singleKey/IV");
         }
-        final int f = clockFSM(); /* STEP 1 */
-        encode32be(f ^ lfsrState[0], keyStream, 0); /* STEP 2 */
+
+        final int f = clockFSM(); // STEP 1 */
+        encode32be(f ^ lfsrState[0], keyStream, 0); // STEP 2 */
         /* Note that ks[t] corresponds to z_{t+1} in section 4.2 */
-        clockLFSRKeyStreamMode(); /* STEP 3 */
+        clockLFSRKeyStreamMode(); // STEP 3 */
     }
 
     @Override
@@ -545,7 +548,8 @@ public class GordianSnow3GEngine
         return new GordianSnow3GEngine(this);
     }
 
-    @Override    public void reset(final Memoable pState) {
+    @Override
+    public void reset(final Memoable pState) {
         final GordianSnow3GEngine e = (GordianSnow3GEngine) pState;
         System.arraycopy(e.lfsrState, 0, lfsrState, 0, lfsrState.length);
         System.arraycopy(e.fsmState, 0, fsmState, 0, fsmState.length);

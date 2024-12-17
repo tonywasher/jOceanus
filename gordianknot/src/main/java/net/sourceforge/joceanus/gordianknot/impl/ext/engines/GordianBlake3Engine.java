@@ -69,7 +69,7 @@ public class GordianBlake3Engine
     }
 
     /**
-     * initialise a Blake2X cipher.
+     * initialise a Blake3 cipher.
      * @param forEncryption whether or not we are for encryption.
      * @param params the parameters required to set up the cipher.
      * @exception IllegalArgumentException if the params argument is inappropriate.
@@ -77,7 +77,7 @@ public class GordianBlake3Engine
     public void init(final boolean forEncryption,
                      final CipherParameters params) {
         /*
-         * Blake2X encryption and decryption is completely symmetrical, so the 'forEncryption' is
+         * Blake3 encryption and decryption is completely symmetrical, so the 'forEncryption' is
          * irrelevant. (Like 90% of stream ciphers)
          */
 

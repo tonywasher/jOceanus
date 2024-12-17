@@ -232,8 +232,8 @@ public final class GordianMacSpec implements GordianKeySpec {
      */
     private int getSymKeyBlockByteLength() {
         return theSubSpec instanceof GordianSymKeySpec
-               ? ((GordianSymKeySpec) theSubSpec).getBlockLength().getByteLength()
-               : null;
+               ? Objects.requireNonNull(((GordianSymKeySpec) theSubSpec).getBlockLength()).getByteLength()
+               : 0;
     }
 
     /**
@@ -305,7 +305,7 @@ public final class GordianMacSpec implements GordianKeySpec {
                        ? 0
                        : GordianLength.LEN_128.getByteLength();
             case BLAKE2:
-                return getDigestState().isBlake2bState()
+                return Objects.requireNonNull(getDigestState()).isBlake2bState()
                        ? GordianLength.LEN_128.getByteLength()
                        : GordianLength.LEN_64.getByteLength();
             case GMAC:
@@ -548,7 +548,7 @@ public final class GordianMacSpec implements GordianKeySpec {
                     theName += getDigestState() + SEP + theKeyLength;
                     break;
                 case SKEIN:
-                    final Boolean isSkeinXof = Objects.requireNonNull(getDigestSpec()).isXofMode();
+                    final boolean isSkeinXof = Objects.requireNonNull(getDigestSpec()).isXofMode();
                     theName = GordianDigestType.SKEIN
                                + (isSkeinXof ? "X" : "")
                                + "Mac"
@@ -561,10 +561,10 @@ public final class GordianMacSpec implements GordianKeySpec {
                     theName += theSubSpec.toString() + SEP + theKeyLength;
                     break;
                 case BLAKE2:
-                    final Boolean isBlakeXof = Objects.requireNonNull(getDigestSpec()).isXofMode();
+                    final boolean isBlakeXof = Objects.requireNonNull(getDigestSpec()).isXofMode();
                     theName = GordianDigestType.BLAKE2
                             + Objects.requireNonNull(getDigestState())
-                                     .getBlake2Algorithm(Objects.requireNonNull(isBlakeXof))
+                                     .getBlake2Algorithm(isBlakeXof)
                             + "Mac" + (isBlakeXof ? "" : SEP + getDigestLength())
                             + SEP + theKeyLength;
                     break;
