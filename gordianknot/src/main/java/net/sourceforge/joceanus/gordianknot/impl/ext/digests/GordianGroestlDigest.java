@@ -762,11 +762,9 @@ public class GordianGroestlDigest
 
         /* given state h, do h <- P(h)+h */
         private void outputTransformation() {
-            int j;
-
             /* determine variant */
             if (isShort) {
-                for (j = 0; j < COLS512; j++) {
+                for (int j = 0; j < COLS512; j++) {
                     tmpInP[j] = chaining[j];
                 }
                 rnd512P(tmpInP, tmpZ, 0x0000000000000000L);
@@ -779,21 +777,21 @@ public class GordianGroestlDigest
                 rnd512P(tmpZ, tmpY, 0x0000000000000007L);
                 rnd512P(tmpY, tmpZ, 0x0000000000000008L);
                 rnd512P(tmpZ, tmpInP, 0x0000000000000009L);
-                for (j = 0; j < COLS512; j++) {
+                for (int j = 0; j < COLS512; j++) {
                     chaining[j] ^= tmpInP[j];
                 }
 
             } else {
-                for (j = 0; j < COLS1024; j++) {
+                for (int j = 0; j < COLS1024; j++) {
                     tmpInP[j] = chaining[j];
                 }
                 rnd1024P(tmpInP, tmpY, 0);
-                for (j = 1; j < ROUNDS1024 - 1; j += 2) {
+                for (int j = 1; j < ROUNDS1024 - 1; j += 2) {
                     rnd1024P(tmpY, tmpZ, u64Big(((long) j) << 56));
                     rnd1024P(tmpZ, tmpY, u64Big(((long) j + 1) << 56));
                 }
                 rnd1024P(tmpY, tmpInP, u64Big(((long) (ROUNDS1024 - 1)) << 56));
-                for (j = 0; j < COLS1024; j++) {
+                for (int j = 0; j < COLS1024; j++) {
                     chaining[j] ^= tmpInP[j];
                 }
             }

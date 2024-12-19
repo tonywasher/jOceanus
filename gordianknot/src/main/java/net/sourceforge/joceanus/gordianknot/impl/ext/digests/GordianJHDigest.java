@@ -514,20 +514,16 @@ public class GordianJHDigest
 
         /* The bijective function E8, in bitslice form */
         private void e8() {
-            int i;
-
             /* perform 42 rounds */
-            for (i = 0; i < 42; i++) {
+            for (int i = 0; i < 42; i++) {
                 roundFunction(i);
             }
         }
 
         /* The compression function F8 */
         private void f8() {
-            int i;
-
             /* xor the 512-bit message with the first half of the 1024-bit hash state */
-            for (i = 0; i < 8; i++) {
+            for (int i = 0; i < 8; i++) {
                 x[i >> 1][i & 1] ^= leBytesToLong(buffer, i);
             }
 
@@ -535,7 +531,7 @@ public class GordianJHDigest
             e8();
 
             /* xor the 512-bit message with the second half of the 1024-bit hash state */
-            for (i = 0; i < 8; i++) {
+            for (int i = 0; i < 8; i++) {
                 x[(8 + i) >> 1][(8 + i) & 1] ^= leBytesToLong(buffer, i);
             }
         }
@@ -676,8 +672,6 @@ public class GordianJHDigest
          * message digest
          */
         void finalise(final byte[] hashval, final int pOffset) {
-            int i;
-
             /* Ensure that we are initialised */
             ensureInitialised();
 
@@ -700,11 +694,11 @@ public class GordianJHDigest
             } else {
                 /* set the rest of the bytes in the buffer to 0 */
                 if ((datasizeInBuffer & 7) == 0) {
-                    for (i = (int) (databitlen & 0x1ff) >> 3; i < 64; i++) {
+                    for (int i = (int) (databitlen & 0x1ff) >> 3; i < 64; i++) {
                         buffer[i] = 0;
                     }
                 } else {
-                    for (i = (int) ((databitlen & 0x1ff) >> 3) + 1; i < 64; i++) {
+                    for (int i = (int) ((databitlen & 0x1ff) >> 3) + 1; i < 64; i++) {
                         buffer[i] = 0;
                     }
                 }

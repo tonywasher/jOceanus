@@ -27,8 +27,8 @@ allprojects {
     version = '1.6.3-SNAPSHOT'
 
     /* java compatibility */
-    java.sourceCompatibility = JavaVersion.VERSION_11
-    java.targetCompatibility = JavaVersion.VERSION_11
+    java.sourceCompatibility = JavaVersion.VERSION_17
+    java.targetCompatibility = JavaVersion.VERSION_17
 
     /* Maven repositories */
     repositories {
@@ -40,7 +40,7 @@ allprojects {
     project.ext { 
         /* Dependency versions */
         bouncyCastleVersion = "1.79"
-        jUnitVersion = "5.11.3"
+        jUnitVersion = "5.11.4"
         jsonVersion = "20240303"
         mySQLVersion = "9.1.0"
         MariaDBVersion = "3.5.1"

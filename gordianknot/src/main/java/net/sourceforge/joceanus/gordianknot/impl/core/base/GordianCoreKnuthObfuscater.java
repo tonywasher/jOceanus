@@ -310,7 +310,7 @@ public class GordianCoreKnuthObfuscater
         myCode <<= determineShiftForEnum(GordianLength.class);
         myCode += deriveEncodedIdFromLength(pDigestSpec.getDigestLength());
         myCode <<= 1;
-        myCode += pDigestSpec.isXofMode() ? 1 : 0;
+        myCode += Boolean.TRUE.equals(pDigestSpec.isXofMode()) ? 1 : 0;
 
         /* return the code */
         return myCode;

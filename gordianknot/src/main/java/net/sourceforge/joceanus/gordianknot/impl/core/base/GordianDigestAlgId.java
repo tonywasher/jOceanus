@@ -206,7 +206,7 @@ public class GordianDigestAlgId {
         }
 
         /* Add Xof indication */
-        myId = myId.branch(pSpec.isXofMode() ? "1" : "2");
+        myId = myId.branch(Boolean.TRUE.equals(pSpec.isXofMode()) ? "1" : "2");
 
         /* Add length */
         return myId.branch(Integer.toString(pSpec.getDigestLength().ordinal() + 1));

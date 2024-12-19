@@ -126,7 +126,17 @@ public enum ThemisAnalysisJavaLang
     /**
      * AutoCloseable.
      */
-    AUTOCLOSEABLE("AutoCloseable");
+    AUTOCLOSEABLE("AutoCloseable"),
+
+    /**
+     * IllegalArgumentException.
+     */
+    ILLEGALARGEXC("IllegalArgumentException"),
+
+    /**
+     * IllegalStateException.
+     */
+    ILLEGALSTATEECEPTION("IllegalStateException");
 
     /**
      * The class name.

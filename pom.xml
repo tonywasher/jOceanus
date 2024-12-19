@@ -58,13 +58,14 @@
     <currentYear>${maven.build.timestamp}</currentYear>
     <maven.build.timestamp.format>yyyy</maven.build.timestamp.format>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <scmMaster>master</scmMaster>
+    <scmMain>main</scmMain>
     <currentBranch>1.6.3</currentBranch>
     <currentTag>SNAPSHOT</currentTag>
-    <baseBranch>1.6.3</baseBranch>
+    <baseBranch>${currentBranch}</baseBranch>
     <baseTag>b3</baseTag>
-    <currentRef>${scmMaster}</currentRef>
-    <!--<currentRef>${currentBranch}-${currentTag}</currentRef>-->
+    <currentRef>${snapshotRef}</currentRef>
+    <snapshotRef>${scmMain}</snapshotRef>
+    <tagRef>${currentBranch}-${currentTag}</tagRef>
     <baseRef>${baseBranch}-${baseTag}</baseRef>
     <packageKey>net.sourceforge.joceanus</packageKey>
     <packageMain/>
@@ -74,7 +75,7 @@
     <appBinDir>bin/</appBinDir>
     <appLibDir>lib/</appLibDir>
     <BouncyCastleVersion>1.79</BouncyCastleVersion>
-    <JUnitVersion>5.11.3</JUnitVersion>
+    <JUnitVersion>5.11.4</JUnitVersion>
     <JSONVersion>20240303</JSONVersion>
     <ApacheMavenVersion>3.9.9</ApacheMavenVersion>
     <MySQLVersion>9.1.0</MySQLVersion>
@@ -86,9 +87,9 @@
     <JSoupVersion>1.18.3</JSoupVersion>
     <JFreeChartVersion>1.5.5</JFreeChartVersion>
     <ZipSDKVersion>9.20</ZipSDKVersion>
-    <JavaVersion>11</JavaVersion>
+    <JavaVersion>17</JavaVersion>
     <JavaFXVersion>17.0.13</JavaFXVersion>
-    <JavaLanguageVersion>11</JavaLanguageVersion>
+    <JavaLanguageVersion>17</JavaLanguageVersion>
     <CheckStyleVersion>10.21.0</CheckStyleVersion>
     <PMDVersion>7.8.0</PMDVersion>
     <CleanPluginVersion>3.4.0</CleanPluginVersion>
@@ -117,8 +118,10 @@
     <GPGPluginVersion>3.2.7</GPGPluginVersion>
     <JetBrainsAnnotationsVersion>26.0.1</JetBrainsAnnotationsVersion>
     <VersionsPluginVersion>2.18.0</VersionsPluginVersion>
+    <sonar.organisation>tonywasher</sonar.organisation>
     <sonar.projectKey>jOceanus</sonar.projectKey>
-    <sonar.host.url>http://localhost:9000</sonar.host.url>
+    <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+    <sonar.exclusions>*/embedded/**,*/patch/**</sonar.exclusions>
   </properties>
   <build>
     <resources>
@@ -282,7 +285,6 @@
             <id>javadoc</id>
             <goals>
               <goal>javadoc</goal>
-              <!--<goal>test-javadoc</goal>-->
             </goals>
             <phase>site</phase>
           </execution>
@@ -496,7 +498,7 @@
         <configuration>
           <show>package</show>
           <nohelp>true</nohelp>
-          <excludePackageNames>SevenZip:SevenZip.*:*.ext.*:*.patch.*</excludePackageNames>
+          <excludePackageNames>SevenZip:SevenZip.*:*.patch.*</excludePackageNames>
         </configuration>
         <reportSets>
           <reportSet>
@@ -506,7 +508,6 @@
             </configuration>
             <reports>
               <report>javadoc-no-fork</report>
-              <!--<report>test-javadoc-no-fork</report>-->
             </reports>
           </reportSet>
           <reportSet>
@@ -514,7 +515,6 @@
             <inherited>false</inherited>
             <reports>
               <report>aggregate-no-fork</report>
-              <!--<report>test-aggregate-no-fork</report>-->
             </reports>
           </reportSet>
         </reportSets>
@@ -530,11 +530,6 @@
           </reportSet>
         </reportSets>
       </plugin>
-      <!--<plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>javancss-maven-plugin</artifactId>
-        <version>${JavaNCSSPluginVersion}</version>
-      </plugin>-->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-changelog-plugin</artifactId>

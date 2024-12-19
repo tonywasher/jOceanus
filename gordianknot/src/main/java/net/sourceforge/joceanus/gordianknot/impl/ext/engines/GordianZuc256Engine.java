@@ -28,7 +28,7 @@ public class GordianZuc256Engine
     /**
      * the constants D.
      */
-    private static final byte[] EK_D = new byte[] {
+    private static final byte[] EK_D = {
             0b0100010, 0b0101111, 0b0100100, 0b0101010, 0b1101101, 0b1000000, 0b1000000, 0b1000000,
             0b1000000, 0b1000000, 0b1000000, 0b1000000, 0b1000000, 0b1010010, 0b0010000, 0b0110000
     };
@@ -36,7 +36,7 @@ public class GordianZuc256Engine
     /**
      * the constants D for 32 bit Mac.
      */
-    private static final byte[] EK_D32 = new byte[] {
+    private static final byte[] EK_D32 = {
             0b0100010, 0b0101111, 0b0100101, 0b0101010, 0b1101101, 0b1000000, 0b1000000, 0b1000000,
             0b1000000, 0b1000000, 0b1000000, 0b1000000, 0b1000000, 0b1010010, 0b0010000, 0b0110000
     };
@@ -44,7 +44,7 @@ public class GordianZuc256Engine
     /**
      * the constants D for 64 bit Mac.
      */
-    private static final byte[] EK_D64 = new byte[] {
+    private static final byte[] EK_D64 = {
             0b0100011, 0b0101111, 0b0100100, 0b0101010, 0b1101101, 0b1000000, 0b1000000, 0b1000000,
             0b1000000, 0b1000000, 0b1000000, 0b1000000, 0b1000000, 0b1010010, 0b0010000, 0b0110000
     };
@@ -52,7 +52,7 @@ public class GordianZuc256Engine
     /**
      * the constants D for 128 bit Mac.
      */
-    private static final byte[] EK_D128 = new byte[] {
+    private static final byte[] EK_D128 = {
             0b0100011, 0b0101111, 0b0100101, 0b0101010, 0b1101101, 0b1000000, 0b1000000, 0b1000000,
             0b1000000, 0b1000000, 0b1000000, 0b1000000, 0b1000000, 0b1010010, 0b0010000, 0b0110000
     };
