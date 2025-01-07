@@ -27,7 +27,7 @@ the <<BigDecimal>> class
 
 * Data classes (<<Metis>>/<<Prometheus>>)
 
-  * Access classes for MySQL/PostgreSQL/SQLServer databases as well as OpenOffice/Excel spreadsheets.
+  * Access classes for MySQL/PostgreSQL/SQLServer/MariaDB databases as well as OpenOffice/Excel spreadsheets.
 
   * Secure data model for database.
 
