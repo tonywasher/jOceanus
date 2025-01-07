@@ -125,10 +125,15 @@ public final class MoneyWiseUKSchemeFactory {
             getRate(20), getRate(18), getRate(28));
 
     /**
-     * The Residential Capital Gains Scheme.
+     * The Residential Capital Gains Scheme2.
      */
     static final MoneyWiseUKCapitalScheme CAPITAL_RESIDENTIAL2 = new MoneyWiseUKCapitalResidentialScheme(getRate(10),
             getRate(20), getRate(18), getRate(24));
+
+    /**
+     * The Split Capital Gains Scheme2.
+     */
+    static final MoneyWiseUKCapitalScheme CAPITAL_SPLIT2 = new MoneyWiseUKCapitalSplitRateScheme(getRate(18), getRate(24));
 
     /**
      * Constructor.
