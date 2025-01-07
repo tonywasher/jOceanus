@@ -266,12 +266,13 @@ public class GordianElephantEngine
             npub = aeadParams.getNonce();
             key = aeadParams.getKey();
             initialAEADData = aeadParams.getAssociatedText();
+            int macSizeBits = aeadParams.getMacSize();
+            if (macSizeBits != CRYPTO_ABYTES * 8)
+            {
+                throw new IllegalArgumentException("Invalid value for MAC size: " + macSizeBits);
+            }
         }
-        else if (!(params instanceof ParametersWithIV))
-        {
-            throw new IllegalArgumentException(algorithmName + " init parameters must include an IV");
-        }
-        else
+        else if (params instanceof ParametersWithIV)
         {
             initialAEADData = null;
             ParametersWithIV ivParams = (ParametersWithIV) params;
@@ -280,6 +281,10 @@ public class GordianElephantEngine
                 throw new IllegalArgumentException(algorithmName + " init parameters must include a key");
             }
             key = (KeyParameter) ivParams.getParameters();
+        }
+        else
+        {
+            throw new IllegalArgumentException(algorithmName + " init parameters must include an IV");
         }
 
         if (npub == null || npub.length != CRYPTO_NPUBBYTES) {

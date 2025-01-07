@@ -69,12 +69,13 @@ public class GordianXoodyakEngine
             iv = aeadParams.getNonce();
             key = aeadParams.getKey();
             initialAEADData = aeadParams.getAssociatedText();
+            int macSizeBits = aeadParams.getMacSize();
+            if (macSizeBits != TAGLEN * 8)
+            {
+                throw new IllegalArgumentException("Invalid value for MAC size: " + macSizeBits);
+            }
         }
-        else if (!(params instanceof ParametersWithIV))
-        {
-            throw new IllegalArgumentException("Xoodyak init parameters must include an IV");
-        }
-        else
+        else if (params instanceof ParametersWithIV)
         {
             initialAEADData = null;
             ParametersWithIV ivParams = (ParametersWithIV) params;
@@ -84,6 +85,10 @@ public class GordianXoodyakEngine
                 throw new IllegalArgumentException("Xoodyak init parameters must include a key");
             }
             key = (KeyParameter)ivParams.getParameters();
+        }
+        else
+        {
+            throw new IllegalArgumentException("Xoodyak init parameters must include an IV");
         }
 
         if (iv == null || iv.length != 16)
