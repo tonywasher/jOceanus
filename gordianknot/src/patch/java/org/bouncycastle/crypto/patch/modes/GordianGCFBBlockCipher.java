@@ -28,7 +28,6 @@ public class GordianGCFBBlockCipher
     private ParametersWithIV initParams;
 
     private KeyParameter key;
-    private byte[]       intIV;
     private long         counter = 0;
     private boolean      forEncryption;
 
@@ -44,12 +43,15 @@ public class GordianGCFBBlockCipher
     {
         counter = 0;
         cfbEngine.init(forEncryption, params);
+        byte[] iv = null;
 
         this.forEncryption = forEncryption;
 
         if (params instanceof ParametersWithIV)
         {
-            params = ((ParametersWithIV)params).getParameters();
+            ParametersWithIV ivParams = (ParametersWithIV) params;
+            params = ivParams.getParameters();
+            iv = ivParams.getIV();
         }
 
         if (params instanceof ParametersWithRandom)
@@ -63,9 +65,19 @@ public class GordianGCFBBlockCipher
         }
 
         key = (KeyParameter)params;
+        if (key == null && initParams != null) {
+            key = (KeyParameter) initParams.getParameters();
+        }
+        if (iv == null && initParams != null) {
+            iv = initParams.getIV();
+        }
+        else
+        {
+            iv = cfbEngine.getCurrentIV();
+        }
 
         /* Save the initParameters */
-        initParams = new ParametersWithIV(key, cfbEngine.getCurrentIV());
+        initParams = new ParametersWithIV(key, iv);
     }
 
     public String getAlgorithmName()

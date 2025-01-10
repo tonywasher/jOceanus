@@ -112,12 +112,13 @@ public class GordianPhotonBeetleEngine
             N = aeadParams.getNonce();
             key = aeadParams.getKey();
             initialAEADData = aeadParams.getAssociatedText();
+            int macSizeBits = aeadParams.getMacSize();
+            if (macSizeBits != TAG_INBYTES * 8)
+            {
+                throw new IllegalArgumentException("Invalid value for MAC size: " + macSizeBits);
+            }
         }
-        else if (!(params instanceof ParametersWithIV))
-        {
-            throw new IllegalArgumentException("Photon-Beetle AEAD init parameters must include an IV");
-        }
-        else
+        else if (params instanceof ParametersWithIV)
         {
             initialAEADData = null;
             ParametersWithIV ivParams = (ParametersWithIV) params;
@@ -127,6 +128,10 @@ public class GordianPhotonBeetleEngine
                 throw new IllegalArgumentException("Photon-Beetle AEAD init parameters must include a key");
             }
             key = (KeyParameter)ivParams.getParameters();
+        }
+        else
+        {
+            throw new IllegalArgumentException("Photon-Beetle AEAD init parameters must include an IV");
         }
 
         if (N == null || N.length != CRYPTO_NPUBBYTES)

@@ -40,12 +40,12 @@ public class ElephantMulti {
      */
     public static void main(final String[] pArgs) {
         //checkCipher(new GordianElephantEngine(ElephantParameters.elephant160), 12);
-        //checkCipher(new ElephantEngine(ElephantParameters.elephant160), 12, 20);
-        //checkCipher(new ElephantEngine(ElephantParameters.elephant176), 12, 22);
-        checkCipher(new ElephantEngine(ElephantParameters.elephant200), 12, 25);
-        checkCipher(new ISAPEngine(IsapType.ISAP_A_128), 16, 25);
-        checkCipher(new PhotonBeetleEngine(PhotonBeetleParameters.pb128), 16, 25);
-        checkCipher(new XoodyakEngine(), 16, 25);
+        checkCipher(new ElephantEngine(ElephantParameters.elephant160), 12);
+        checkCipher(new ElephantEngine(ElephantParameters.elephant176), 12);
+        checkCipher(new ElephantEngine(ElephantParameters.elephant200), 12);
+        checkCipher(new ISAPEngine(IsapType.ISAP_A_128), 16);
+        checkCipher(new PhotonBeetleEngine(PhotonBeetleParameters.pb128), 16);
+        checkCipher(new XoodyakEngine(), 16);
     }
 
     /**
@@ -53,8 +53,7 @@ public class ElephantMulti {
      * @param pCipher the cipher
      */
     private static void checkCipher(final AEADCipher pCipher,
-                                    final int pNonceLen,
-                                    final int pBufferLen) {
+                                    final int pNonceLen) {
         try {
             /* Obtain some random data */
             final byte[] myData = new byte[DATALEN];
@@ -83,37 +82,28 @@ public class ElephantMulti {
             final byte[] myEncrypted = new byte[myExpectedOutLen];
             pCipher.processAADBytes(myAEAD, 0, AEADLEN);
 
-            /* Process some initial data */
-            int myOutLen = pCipher.processBytes(myData, 0, PARTLEN, myEncrypted, 0);
-
-            /* Note that myOutLen is incorrect so calculate what it should have been */
-            //myOutLen = pBufferLen * (PARTLEN / pBufferLen);
-            int myXtra = PARTLEN << 1;
-
-            /* FAILS on this call */
-            myOutLen += pCipher.processBytes(myData, PARTLEN, PARTLEN, myEncrypted, myOutLen);
-            //myOutLen = pBufferLen * (myXtra / pBufferLen);
-
-            /* FAILS on this call if the previous call is fixed */
-            myOutLen += pCipher.processBytes(myData, myXtra, DATALEN - myXtra, myEncrypted, myOutLen);
-
-            /* If it succeeded myOutLen is again incorrect, so recalculate it  */
-            //myOutLen = pBufferLen * (DATALEN / pBufferLen);
+            /* Loop processing partial data */
+            int myOutLen = 0;
+            for (int myPos = 0; myPos < DATALEN; myPos += PARTLEN) {
+                final int myLen = Math.min(PARTLEN, DATALEN - myPos);
+                myOutLen += pCipher.processBytes(myData, myPos, myLen, myEncrypted, myOutLen);
+            }
 
             /* Finish the encryption */
             myOutLen += pCipher.doFinal(myEncrypted, myOutLen);
 
             /* Initialise the cipher for decryption */
             pCipher.init(false, myParams);
-            final int myExpectedClearLen = pCipher.getOutputSize(myExpectedOutLen);
+            final int myExpectedClearLen = pCipher.getOutputSize(myOutLen);
             final byte[] myDecrypted = new byte[myExpectedClearLen];
             pCipher.processAADBytes(myAEAD, 0, AEADLEN);
-            int myPartLen = pBufferLen + 3;
-            int myClearLen = pCipher.processBytes(myEncrypted, 0, myPartLen, myDecrypted, 0);
-            myClearLen += pCipher.processBytes(myEncrypted, myPartLen, myOutLen - myPartLen, myDecrypted, myClearLen);
-            //myClearLen = pBufferLen * (DATALEN / pBufferLen);
-            pCipher.doFinal(myDecrypted, myClearLen);
-            final byte[] myResult = Arrays.copyOf(myDecrypted, DATALEN);
+            int myClearLen = 0;
+            for (int myPos = 0; myPos < myOutLen; myPos += PARTLEN) {
+                final int myLen = Math.min(PARTLEN, myOutLen - myPos);
+                myClearLen += pCipher.processBytes(myEncrypted, myPos, myLen, myDecrypted, myClearLen);
+            }
+            myClearLen += pCipher.doFinal(myDecrypted, myClearLen);
+            final byte[] myResult = Arrays.copyOf(myDecrypted, myClearLen);
 
             /* Check that we have the same result */
             if (!Arrays.equals(myData, myResult)) {

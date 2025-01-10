@@ -25,8 +25,8 @@ import net.sourceforge.joceanus.gordianknot.api.cipher.GordianKeyedCipher;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianPBESpec;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianStreamCipherSpec;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianStreamKeySpec;
+import net.sourceforge.joceanus.gordianknot.api.cipher.GordianStreamKeySpec.GordianElephantKey;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianStreamKeySpec.GordianSparkleKey;
-import net.sourceforge.joceanus.gordianknot.api.cipher.GordianStreamKeyType;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymCipherSpec;
 import net.sourceforge.joceanus.gordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
@@ -203,16 +203,27 @@ public abstract class GordianCoreCipher<T extends GordianKeySpec>
             /* Stream Cipher uses Poly1305 */
         } else if (theCipherSpec instanceof GordianStreamCipherSpec) {
             final GordianStreamKeySpec mySpec = ((GordianStreamCipherSpec) theCipherSpec).getKeyType();
-            if (GordianStreamKeyType.SPARKLE.equals(mySpec.getStreamKeyType())) {
-                final GordianSparkleKey myKeyType = (GordianSparkleKey) mySpec.getSubKeyType();
-                switch (myKeyType) {
-                    case SPARKLE256_256:
-                        return GordianLength.LEN_256.getLength();
-                    case SPARKLE192_192:
-                        return GordianLength.LEN_192.getLength();
-                    default:
-                        return GordianLength.LEN_128.getLength();
-                }
+            switch (mySpec.getStreamKeyType()) {
+                case SPARKLE:
+                    switch ((GordianSparkleKey) mySpec.getSubKeyType()) {
+                        case SPARKLE256_256:
+                            return GordianLength.LEN_256.getLength();
+                        case SPARKLE192_192:
+                            return GordianLength.LEN_192.getLength();
+                        default:
+                            return GordianLength.LEN_128.getLength();
+                    }
+                case ELEPHANT:
+                    switch ((GordianElephantKey) mySpec.getSubKeyType()) {
+                        case ELEPHANT160:
+                        case ELEPHANT176:
+                            return GordianLength.LEN_64.getLength();
+                        case ELEPHANT200:
+                        default:
+                            return GordianLength.LEN_128.getLength();
+                    }
+                default:
+                    break;
             }
             return GordianLength.LEN_128.getLength();
         }

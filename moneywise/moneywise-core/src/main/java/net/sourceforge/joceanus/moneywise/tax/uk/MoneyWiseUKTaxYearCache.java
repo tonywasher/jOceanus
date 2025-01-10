@@ -99,9 +99,10 @@ public class MoneyWiseUKTaxYearCache
         setTaxYearInCache(MoneyWiseUKTaxYearFactory.YEAR_2023);
         setTaxYearInCache(MoneyWiseUKTaxYearFactory.YEAR_2024);
         setTaxYearInCache(MoneyWiseUKTaxYearFactory.YEAR_2025);
+        setTaxYearInCache(MoneyWiseUKTaxYearFactory.YEAR_2026);
 
         /* Determine the dateRange */
-        final OceanusDate myEnd = MoneyWiseUKTaxYearFactory.YEAR_2025.getYearEnd();
+        final OceanusDate myEnd = MoneyWiseUKTaxYearFactory.YEAR_2026.getYearEnd();
         OceanusDate myStart = MoneyWiseUKTaxYearFactory.YEAR_1981.getYearEnd();
         myStart = new OceanusDate(myStart);
         myStart.adjustDay(1);
