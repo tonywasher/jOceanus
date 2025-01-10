@@ -40,12 +40,12 @@ public class ElephantMulti {
      */
     public static void main(final String[] pArgs) {
         //checkCipher(new GordianElephantEngine(ElephantParameters.elephant160), 12);
-        checkCipher(new ElephantEngine(ElephantParameters.elephant160), 12, 20);
-        checkCipher(new ElephantEngine(ElephantParameters.elephant176), 12, 22);
-        checkCipher(new ElephantEngine(ElephantParameters.elephant200), 12, 25);
-        checkCipher(new ISAPEngine(IsapType.ISAP_A_128), 16, 25);
-        checkCipher(new PhotonBeetleEngine(PhotonBeetleParameters.pb128), 16, 25);
-        checkCipher(new XoodyakEngine(), 16, 25);
+        checkCipher(new ElephantEngine(ElephantParameters.elephant160), 12);
+        checkCipher(new ElephantEngine(ElephantParameters.elephant176), 12);
+        checkCipher(new ElephantEngine(ElephantParameters.elephant200), 12);
+        checkCipher(new ISAPEngine(IsapType.ISAP_A_128), 16);
+        checkCipher(new PhotonBeetleEngine(PhotonBeetleParameters.pb128), 16);
+        checkCipher(new XoodyakEngine(), 16);
     }
 
     /**
@@ -53,8 +53,7 @@ public class ElephantMulti {
      * @param pCipher the cipher
      */
     private static void checkCipher(final AEADCipher pCipher,
-                                    final int pNonceLen,
-                                    final int pBufferLen) {
+                                    final int pNonceLen) {
         try {
             /* Obtain some random data */
             final byte[] myData = new byte[DATALEN];
@@ -89,17 +88,6 @@ public class ElephantMulti {
                 final int myLen = Math.min(PARTLEN, DATALEN - myPos);
                 myOutLen += pCipher.processBytes(myData, myPos, myLen, myEncrypted, myOutLen);
             }
-            /* Process some initial data */
-            //int myOutLen = pCipher.processBytes(myData, 0, PARTLEN, myEncrypted, 0);
-
-            /* Process a second part */
-            //myOutLen += pCipher.processBytes(myData, PARTLEN, PARTLEN, myEncrypted, myOutLen);
-
-            /* Note how much data we have processed */
-            //int myXtra = PARTLEN << 1;
-
-            /* Process remaining part */
-            //myOutLen += pCipher.processBytes(myData, myXtra, DATALEN - myXtra, myEncrypted, myOutLen);
 
             /* Finish the encryption */
             myOutLen += pCipher.doFinal(myEncrypted, myOutLen);
@@ -114,9 +102,6 @@ public class ElephantMulti {
                 final int myLen = Math.min(PARTLEN, myOutLen - myPos);
                 myClearLen += pCipher.processBytes(myEncrypted, myPos, myLen, myDecrypted, myClearLen);
             }
-            //int myPartLen = pBufferLen + 3;
-            //int myClearLen = pCipher.processBytes(myEncrypted, 0, myPartLen, myDecrypted, 0);
-            //myClearLen += pCipher.processBytes(myEncrypted, myPartLen, myOutLen - myPartLen, myDecrypted, myClearLen);
             myClearLen += pCipher.doFinal(myDecrypted, myClearLen);
             final byte[] myResult = Arrays.copyOf(myDecrypted, myClearLen);
 
