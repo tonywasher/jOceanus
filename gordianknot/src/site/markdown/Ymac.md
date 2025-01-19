@@ -1,0 +1,91 @@
+# GordianKnot Macs
+
+## Overview
+MACs are supported via the **GordianMacFactory** interface.
+
+GordianKnot supports most Macs available from BouncyCastle plus some additional algorithms.
+
+JCA provides a subset of available algorithms as indicated
+
+## Macs
+A mac is created by specifying a macSpec which comprises the macType plus additional configuration (e.g. digestSpec/symKeySpec) as appropriate.
+The mac can be used in much the same way as a JCA Mac, allowing init, reset, update and finalise methods.
+
+A keyGenerator for a macSpec can be created, which can be used to generate random keys for the mac
+
+### Sample
+```
+/* Access factory */
+final GordianFactory myBaseFactory = GordianGenerator.createFactory();
+final GordianMacFactory myMacFactory = myBaseFactory.getMacFactory();
+
+/* Create mac */
+final GordianMacSpec mySpec = GordianMacSpecBuilder.poly1305(GordianSymKeySpec.aes(GordianLength.LEN_256));
+final GordianMac myMac = myMacFactory.createMac(mySpec);
+
+/* Create key */
+final GordianKeyGenerator<GordianMacSpec> myGenerator = myMacFactory.getKeyGenerator(mySpec);
+final GordianKey<GordianMacSpec> myKey = myGenerator.generateKey();
+
+/* Calculate mac */
+final byte[] myMessage = ...
+final GordianMacParameters myParams = GordianMacParameters.keyWithRandomNonce(myKey);
+myMac.init(myParams);
+myMac.update(myMessage);
+final byte[] myResult = myMac.finish();
+``` 
+
+## Extensible Output functions
+Some macs can operate as extensible output functions, although the functionality is not available in JCA.
+
+The **GordianMacSpec** for the mac will indicate whether the mac supports Xof or not via the **isXof()** call.
+If the mac supports Xof then the mac will present the **GordianXof** interface
+
+### Sample
+```
+/* Access factory */
+final GordianFactory myBaseFactory = GordianGenerator.createFactory();
+final GordianMacFactory myMacFactory = myBaseFactory.getMacFactory();
+
+/* Create mac */
+final GordianMacSpec mySpec = GordianMacSpecBuilder.blake3Mac(GordianLength.LEN_256);
+final GordianMac myMac = myMacFactory.createMac(mySpec);
+final GordianXof myXof = (GordianXof) myMac;
+
+/* Create key */
+final GordianKeyGenerator<GordianMacSpec> myGenerator = myMacFactory.getKeyGenerator(mySpec);
+final GordianKey<GordianMacSpec> myKey = myGenerator.generateKey();
+
+/* Calculate mac */
+final byte[] myMessage = ...
+final GordianMacParameters myParams = GordianMacParameters.key(myKey);
+myMac.init(myParams);
+myDigest.update(myMessage);
+final byte[] myOutput = new byte[200];
+myDigest.output(myOutput, 0, 100);
+myDigest.output(myOutput, 100, 100);
+```
+
+## Algorithms
+The following algorithms are supported, with the JCA subset indicated.
+
+<table class="defTable">
+  <tr><th class="defHdr">Algorithm</th><th class="defHdr">OutputLengths</th><th class="defHdr">KeyLengths</th>
+      <th class="defHdr">JCA</th><th class="defHdr">Xof</th><th class="defHdr">Notes</th></tr>
+  <tr><td>HMac</td><td>digest length</td><td>All</td><td>Y</td><td/><td>Jca does not support SM3, BLAKE, SHAKE, JH, Groestl, CubeHash or Kupyna</td></tr>
+  <tr><td>GMac</td><td>128</td><td>As per cipher</td><td>Y</td><td/><td>For all supported 128 bit block ciphers except Kalyna (BUG). Jca does not support Kuznyechik</td></tr>
+  <tr><td>CMac</td><td>cipher block length</td><td>As per cipher</td><td>Y</td><td/><td>Jca has limited  set of supported ciphers</td></tr>
+  <tr><td>Poly1305Mac</td><td>128</td><td>256</td><td>Y</td><td/><td>For all supported 128 bit block ciphers with 128 bit keys. JCA does not support Kalyna.</td></tr>
+  <tr><td>SkeinMac</td><td>digest length</td><td>All</td><td>Y</td><td>As per Digest</td><td/></tr>
+  <tr><td>VMPCMac</td><td>160</td><td>All</td><td>Y</td><td/><td/></tr>
+  <tr><td>Blake2Mac</td><td>digest length</td><td>less or equal to stateLength</td><td/><td>As per Digest</td><td/></tr>
+  <tr><td>Blake3Mac</td><td>digest length</td><td>256</td><td/><td>Y</td><td/></tr>
+  <tr><td>KupynaMac</td><td>digest length</td><td/><td/><td/><td/></tr>
+  <tr><td>KalynaMac</td><td>cipher block length</td><td>As per cipher</td><td/><td/><td/></tr>
+  <tr><td>CBCMac</td><td>cipher block length</td><td>As per cipher</td><td/><td/><td/></tr>
+  <tr><td>CFBMac</td><td>cipher block length</td><td>As per cipher</td><td/><td/><td/></tr>
+  <tr><td>GOSTMac</td><td>32</td><td>256</td><td>Y</td><td/><td/></tr>
+  <tr><td>SipHash</td><td>64, 128</td><td>128</td><td>Y</td><td/><td/></tr>
+  <tr><td>ZucMac</td><td>32,64,128</td><td>128,256</td><td>Y</td><td/><td>For 128 bit keys the only output length supported is 32</td></tr>
+  <tr><td>KMAC</td><td>as per SHAKE</td><td>All</td><td>Y</td><td>Y</td><td>Key Length must be at least as long as the underlying SHAKE state length</td></tr>
+</table>

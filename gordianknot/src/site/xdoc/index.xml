@@ -18,30 +18,32 @@
                 that is required.</p>
             <subsection name="Symmetric API">
                 <ol>
-                    <li><a href="blockCipher.html">Block Ciphers</a></li>
-                    <li><a href="streamCipher.html">Stream Ciphers</a></li>
-                    <li><a href="pbe.html">Password Based Ciphers</a></li>
-                    <li><a href="digest.html">Digests</a></li>
-                    <li><a href="mac.html">MACs</a></li>
-                    <li><a href="random.html">Randoms</a></li>
+                    <li><a href="sym/blockCipher.html">Block Ciphers</a></li>
+                    <li><a href="sym/streamCipher.html">Stream Ciphers</a></li>
+                    <li><a href="sym/pbe.html">Password Based Ciphers</a></li>
+                    <li><a href="sym/digest.html">Digests</a></li>
+                    <li><a href="sym/mac.html">MACs</a></li>
+                    <li><a href="sym/random.html">Randoms</a></li>
                 </ol>
             </subsection>
             <subsection name="Asymmetric API">
                 <ol>
-                    <li><a href="keyPair.html">KeyPairs</a></li>
-                    <li><a href="signature.html">Signatures</a></li>
-                    <li><a href="agreement.html">Agreements</a></li>
-                    <li><a href="encryptor.html">Encryptors</a></li>
+                    <li><a href="asym/keyPair.html">KeyPairs</a></li>
+                    <li><a href="asym/signature.html">Signatures</a></li>
+                    <li><a href="asym/agreement.html">Agreements</a></li>
+                    <li><a href="asym/encryptor.html">Encryptors</a></li>
                 </ol>
             </subsection>
         </section>
         <section name="Extended API">
             <p>The Extended API provides access to additional features that are not provided by BouncyCastle.</p>
             <ol>
-                <li><a href="personal.html">Personalisation</a></li>
-                <li><a href="keySet.html">KeySets</a></li>
-                <li><a href="lock.html">Locks</a></li>
-                <li><a href="zip.html">Secure ZipFile</a></li>
+                <li><a href="ext/personal.html">Personalisation</a></li>
+                <li><a href="ext/keySet.html">KeySets</a></li>
+                <li><a href="ext/lock.html">Locks</a></li>
+                <li><a href="ext/zip.html">Secure ZipFile</a></li>
+                <li><a href="ext/keyStore.html">Key Store</a></li>
+                <li><a href="ext/certGateway.html">Certificate Gateway</a></li>
             </ol>
         </section>
     </body>

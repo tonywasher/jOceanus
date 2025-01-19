@@ -1,0 +1,247 @@
+<document>
+    <properties>
+        <title>GordianKnot Asymmetric Agreements</title>
+        <author email="Tony.Washer@yahoo.co.uk">Tony Washer</author>
+    </properties>
+    <body>
+        <section name="GordianKnot Asymmetric Agreements">
+            <subsection name="Overview">
+                <p>Agreements are supported via the <strong>GordianAgreementFactory</strong> interface.</p>
+                <p>Algorithms are represented by <b>GordianAgreementSpec</b>. A <b>GordianAgreement</b> is obtained via the agreementSpec,
+                    and then agreements are created between the two parties depending on the type of the agreement and the resultType.
+                    The resultTypes can be any of the following</p>
+                <table class="defTable">
+                    <tr><th>ResultType</th><th>Description</th></tr>
+                    <tr><td>GordianParameters</td><td>The underlying agreement is used as the input to the HKDF algorithm to
+                        generate a new personalised <strong>GordianFactory</strong></td></tr>
+                    <tr><td>GordianKeySetSpec</td><td>The underlying agreement is used as the input to the HKDF algorithm to generate a new
+                        <strong>GordianKeySet</strong> of the specified type, belonging to an agreed BC factory.</td></tr>
+                    <tr><td>GordianSymCipherSpec</td><td>The underlying agreement is used as the input to the HKDF algorithm to generate a new
+                        <strong>GordianSymCipher</strong> Key and InitVector (if required),
+                        belonging to an agreed BC factory. A pair of <strong>GordianSymCipher</strong>s are returned as the result, one for encryption
+                        and one for decryption</td></tr>
+                    <tr><td>GordianStreamCipherSpec</td><td>Similar to <strong>GordianSymKeySpec</strong>.</td></tr>
+                    <tr><td>Integer</td><td>The underlying agreement is used as the input to the HKDF algorithm to generate a byte array
+                        of the desired length</td></tr>
+                    <tr><td>null</td><td>The raw agreement bytes are returned.</td></tr>
+                </table>
+                <p>Agreements are always targeted by a <strong>Client</strong> towards a <strong>Server</strong>. The <strong>GordianAgreement</strong>
+                    that is created will implement an appropriate interface as per the following sections</p>
+            </subsection>
+            <subsection name="Anonymous Agreement">
+                <p><strong>GordianAnonymousAgreement</strong> is a oneShot process where the <strong>Client</strong> must already
+                    know the publicKey of the <strong>Server</strong>. It will generate a <strong>ClientHello</strong> message that is sent to
+                    the <strong>Server</strong>. The <strong>Server</strong> knows nothing about the <strong>Client</strong>. A random client InitVector
+                    is included in the message to randomise the result.</p>
+                <subsection name="Sample">
+                    <source>
+/* Access factory */
+final GordianFactory myBaseFactory = GordianGenerator.createFactory();
+final GordianKeyPairFactory myKeyPairFactory = myBase.getKeyPairFactory();
+final GordianAgreementFactory myAgreementFactory = myKeyPairFactory.getAgreementFactory();
+
+/* Access keyPairGenerator and create sending/receiving pairs */
+final GordianKeyPairSpec mySpec = GordianKeyPairSpecBuilder.dh(GordianDHGroup.FFDHE2048);
+final GordianKeyPairGenerator myGenerator = myKeyPairFactory.getKeyPairGenerator(mySpec);
+final GordianKeyPair myClientPair = myGenerator.generateKeyPair();
+final GordianKeyPair myServerPair = myGenerator.generateKeyPair();
+
+/* Create anonymous agreement */
+final GordianAgreementSpec myAgreeSpec = GordianAgreementSpecBuilder.anon(mySpec, GordianKDFType.SHA256KDF);
+final GordianSymCipherSpec myCipherSpec = GordianSymCipherSpecBuilder.cbc(GordianGordianSymKeySpec.aes(GordianLength.LEN_256), GordianPadding.PKCS7);
+final GordianAnonymousAgreement myAnonClient = (GordianAnonymousAgreement) myAgreementFactory.createAgreement(myAgreeSpec);
+final GordianAnonymousAgreement myAnonServer = (GordianAnonymousAgreement) myAgreementFactory.createAgreement(myAgreeSpec);
+
+/* Client side */
+myAnonClient.setResultType(myCipherSpec);
+final byte[] myClientHello = myAnonClient.createClientHello(myServerPair);
+final GordianSymCipher[] myClientCiphers = (GordianSymCipher[]) myAnonClient.getResult();
+
+/* Send myClientHello to server */
+
+/* Server side */
+myAnonServer.acceptClientHello(myServerPair, myClientHello);
+final GordianSymCipherSpec myResultCipherSpec = (GordianSymCipherSpec) myAnonServer.getResultType();
+final GordianSymCipher[] myServerCiphers = (GordianSymCipher[]) myAnonServer.getResult();
+                    </source>
+                </subsection>
+            </subsection>
+            <subsection name="Handshake Agreement">
+                <p><strong>GordianHandshakeAgreement</strong> requires the <strong>Client</strong> to generate a <strong>ClientHello</strong>
+                    message that is sent to the <strong>Server</strong>. The <strong>Server</strong> will process the <strong>ClientHello</strong> and generate
+                    a <strong>ServerHello</strong> message in response which is returned to the <strong>Client</strong>. Generally both parties should know
+                    the publicKey of the partner, and it is expected that the user would pass the certificates for the publicKeys along with the
+                    <strong>ClientHello</strong> and <strong>ServerHello</strong> messages. A random client InitVector is included in the <strong>ClientHello</strong>
+                    message and a random server InitVector in the <strong>ServerHello</strong> message to randomise the result.</p>
+                <p>Confirmation can also be required by the agreementSpec. In this case the <strong>Client</strong> will send an additional <strong>ClientConfirm</strong> message to the <strong>Server</strong>
+                    after processing the <strong>ServerHello</strong> message. The <strong>Server</strong> can determine that a confirmation is due either by
+                    checking the agreementSpec or by checking the status of the agreement. The <strong>SM2</strong> confirm is defined by the SM2 algorithm.
+                    For <strong>UNIFIED</strong> and <strong>MQV</strong> agreements the confirmation tags are calculated over the well-known and ephemeral keyPairs
+                    using an hMac keyed by the agreed result.</p>
+                <subsection name="Sample">
+                    <source>
+/* Access factory */
+final GordianFactory myBaseFactory = GordianGenerator.createFactory();
+final GordianKeyPairFactory myKeyPairFactory = myBase.getKeyPairFactory();
+final GordianAgreementFactory myAgreementFactory = myKeyPairFactory.getAgreementFactory();
+
+/* Access keyPairGenerator and create sending/receiving pairs */
+final GordianKeyPairSpec mySpec = GordianKeyPairSpecBuilder.dh(GordianDHGroup.FFDHE2048);
+final GordianKeyPairGenerator myGenerator = myKeyPairFactory.getKeyPairGenerator(mySpec);
+final GordianKeyPair myClientPair = myGenerator.generateKeyPair();
+final GordianKeyPair myServerPair = myGenerator.generateKeyPair();
+
+/* Create handshake agreement */
+final GordianAgreementSpec myAgreeSpec = GordianAgreementSpecBuilder.unified(mySpec, GordianKDFType.SHA256KDF);
+final GordianKeySetSpec myKeySetSpec = new GordianKeySetSpec(GordianLength.LEN_256);
+final GordianHandshakeAgreement myHandshakeClient = (GordianHandshakeAgreement) myAgreementFactory.createAgreement(myAgreeSpec);
+final GordianHandshakeAgreement myHandshakeServer = (GordianHandshakeAgreement) myAgreementFactory.createAgreement(myAgreeSpec);
+
+/* Client side */
+myHandshakeClient.setResultType(myKeySetSpec);
+final byte[] myClientHello = myHandshakeClient.createClientHello(myClientPair);
+
+/* Send myClientHello (plus Client Certificate) to server */
+
+/* Server side */
+final byte[] myServerHello = myHandshakeServer.acceptClientHello(myClientPair, myServerPair, myClientHello);
+if (myHandshakeServer.getStatus() == GordianAgreementStatus.RESULT_AVAILABLE) {
+    /* Can access result now without waiting for confirmation */
+}
+
+/* Send myServerHello (plus Server Certificate) to server */
+
+/* Client side */
+final byte[] myClientConfirm = myHandshakeClient.acceptServerHello(myServerPair, myServerHello);
+final GordianKeySet myClientKeySet = (GordianKeySet) myHandshakeClient.getResult();
+
+/* If we are performing a confirm */
+if (myClientConfirm != null) {
+    /* Send myClientConfirm to server */
+
+    /* Server side */
+    myHandshakeServer.processClientConfirm(myClientConfirm);
+}
+
+/* Server side */
+final GordianKeySetSpec myResultKeySetSpec = (GordianKeySetSpec) myHandshakeServer.getResultType();
+final GordianKeySet myServerKeySet = (GordianKeySet) myHandshakeServer.getResult();
+                    </source>
+                </subsection>
+            </subsection>
+            <subsection name="Signed Agreement">
+                <p><strong>GordianSignedAgreement</strong> works similarly to the Handshake agreement without the confirmation message. The difference is that
+                    the keys used in the agreement are ephemeral and the only well-known key is the publicKey of the server which is used to authenticate the
+                    <strong>ServerHello</strong> message. A pair of random InitVectors are included in the messages as per the handshake agreement to randomise
+                    the result.</p>
+                <p>The signature is calculated over the two ephemeral keys and the initVectors</p>
+                <subsection name="Sample">
+                    <source>
+/* Access factory */
+final GordianFactory myBaseFactory = GordianGenerator.createFactory();
+final GordianKeyPairFactory myKeyPairFactory = myBase.getKeyPairFactory();
+final GordianAgreementFactory myAgreementFactory = myKeyPairFactory.getAgreementFactory();
+
+/* Access keyPairGenerator and create server pair */
+final GordianKeyPairSpec mySpec = GordianKeyPairSpecBuilder.ed448();
+final GordianKeyPairGenerator myGenerator = myKeyPairFactory.getKeyPairGenerator(mySpec);
+final GordianKeyPair myServerPair = myGenerator.generateKeyPair();
+
+/* Create signed agreement */
+final GordianAgreementSpec myAgreeSpec = GordianAgreementSpecBuilder.signed(mySpec, GordianKDFType.SHA256KDF);
+final GordianKeySetSpec myKeySetSpec = new GordianKeySetSpec(GordianLength.LEN_256);
+final GordianSignedAgreement myHandshakeClient = (GordianSignedAgreement) myAgreementFactory.createAgreement(myAgreeSpec);
+final GordianSignedAgreement myHandshakeServer = (GordianSignedAgreement) myAgreementFactory.createAgreement(myAgreeSpec);
+
+/* Client side */
+myHandshakeClient.setResultType(myKeySetSpec);
+final byte[] myClientHello = myHandshakeClient.createClientHello(GordianAsymKeySpec.dh(GordianDHGroup.rfc7919_ffdhe2048));
+
+/* Send myClientHello (plus Client Certificate) to server */
+
+/* Server side */
+final byte[] myServerHello = myHandshakeServer.acceptClientHello(myServerPair, myClientHello);
+final GordianKeySetSpec myResultKeySetSpec = (GordianKeySetSpec) myHandshakeServer.getResultType();
+final GordianKeySet myServerKeySet = (GordianKeySet) myHandshakeServer.getResult();
+
+/* Send myServerHello (plus Server Certificate) to server */
+
+/* Client side */
+myHandshakeClient.acceptServerHello(myServerPair, myServerHello);
+final GordianKeySet myClientKeySet = (GordianKeySet) myHandshakeClient.getResult();
+                    </source>
+                </subsection>
+            </subsection>
+            <subsection name="Receiving a ClientHello">
+                <p>In all the above examples the server supports a single <strong>GordianAgreementSpec</strong>. In reality it might support a number
+                    of different specs. It can obtain the required <strong>GordianAgreementSpec</strong> from the ClientHello and switch strategies accordingly.
+                    It can also interrogate the KeyPairType should it support multiple keyPairs.</p>
+                <subsection name="Sample">
+                    <source>
+/* Access factory */
+final GordianFactory myBaseFactory = GordianGenerator.createFactory();
+final GordianKeyPairFactory myKeyPairFactory = myBase.getKeyPairFactory();
+final GordianAgreementFactory myAgreementFactory = myKeyPairFactory.getAgreementFactory();
+
+/* Access clientHello and determine the agreementSpec that it represents */
+final byte[] myClientHello = .....
+final GordianAgreement myAgreement = myAgreementFactory.createAgreement(myClientHello);
+if (myAgreement instanceof GordianAnonymousAgreement) {
+    ....
+} else if (myAgreement instanceof GordianHandshakeAgreement) {
+    ....
+} else if (myAgreement instanceof GordianSignedAgreement) {
+    ....
+}
+                    </source>
+                </subsection>
+            </subsection>
+            <subsection name="Composite Agreements">
+                <p>Composite agreements may be created by a composite keyPair, as long as each element of the composite keyPair is capable of supporting the
+                    desired AgreementSpec. There are three small variations.
+                    <ol>
+                        <li>Confirm is not supported for <strong>SM2</strong> agreements</li>
+                        <li>Signed agreements are implemented as a set of <strong>Basic</strong> Agreements with the results signed.</li>
+                        <li>The various individual agreements are used as inputs to the HKDF algorithm to extract a combined agreement secret</li>
+                    </ol>
+                </p>
+                <subsection name="Sample">
+                    <source>
+/* Access factory */
+final GordianFactory myBaseFactory = GordianGenerator.createFactory();
+final GordianKeyPairFactory myKeyPairFactory = myBase.getKeyPairFactory();
+final GordianAgreementFactory myAgreementFactory = myKeyPairFactory.getAgreementFactory();
+
+/* Access keyPairGenerator */
+final GordianKeyPairSpec mySpec = GordianKeyPairSpecBuilder.composite(GordianKeyPairSpec.dh(GordianDGroup.FFDHE2048),
+                                                                      GordianKeyPairSpec.ec(GordianDSAElliptic.SECP256R1));
+final GordianKeyPairGenerator myGenerator = myKeyPairFactory.getKeyPairGenerator(mySpec);
+final GordianKeyPair myKeyPair = myGenerator.generateKeyPair();
+GordianKeyPair mySigningPair = myKeyPair;
+
+/* Access agreement */
+final GordianAgreementSpec myAgreeSpec = GordianAgreementSpecBuilder.composite(mySpec, GordianKDFType.SHA256KDF);
+final GordianAgreement myAgree = myAgreementFactory.createAgreement(myAgreeSpec);
+
+/* Handle as standard */
+....
+                    </source>
+                </subsection>
+            </subsection>
+            <subsection name="Algorithms">
+                <p>The following agreement algorithms are supported.</p>
+                <table class="defTable">
+                    <tr><th class="defHdr">Algorithm</th><th>Type</th><th class="defHdr">KeyTypes</th><th>Notes</th></tr>
+                    <tr><td>KEM</td><td>Anonymous</td><td>RSA, EC, GOST2012, DSTU4145, SM2, CMCE, Frodo, SABER
+                            MLKEM, BIKE, HQC, NTRU, NTRUPRIME</td><td>RSA, EC, GOST2012, DSTU4145 and SM2 are not available on JCA</td></tr>
+                    <tr><td>Anonymous</td><td>Anonymous</td><td>DH, EC, GOST2012, DSTU4145, SM2, XDH</td><td/></tr>
+                    <tr><td>Basic</td><td>Handshake</td><td>DH, EC, GOST2012, DSTU4145, SM2, XDH</td><td/></tr>
+                    <tr><td>Signed</td><td>Signed</td><td>DH, EC, GOST2012, DSTU4145, SM2, XDH</td><td/></tr>
+                    <tr><td>MQV</td><td>Handshake</td><td>DH, EC, GOST2012, DSTU4145, SM2</td><td/></tr>
+                    <tr><td>Unified</td><td>Handshake</td><td>DH, EC, GOST2012, DSTU4145, SM2, XDH</td><td/></tr>
+                    <tr><td>SM2</td><td>Handshake</td><td>EC, GOST2012, SM2</td><td>Not available on JCA</td></tr>
+                </table>
+            </subsection>
+        </section>
+    </body>
+</document>

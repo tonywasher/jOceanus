@@ -1,0 +1,142 @@
+# GordianKnot KeyStore
+
+## Overview
+GordianKnot provide a keyStore implementation that can be used to store privateKeys,
+public keys with certificate chains and external trusted certificates.
+
+It can also be used to store symmetric keys and keySets (and in future factories).
+
+## Creating a keyStore
+```
+/* Access the factory */
+final GordianFactory myFactory = ...;
+
+/* Access keyStoreFactory and create a keyStore */
+final GordianKeyStoreFactory myKSFactory = myFactory.getKeyPairFactory().getKeyStoreFactory();
+final GordianKeyStore myStore = myKSFactory.createKeyStore(new GordianPasswordLockSpec(new GordianKeySetSpec(GordianLength.LEN_256)));
+```
+
+## Write the keyStore to disk/Read keyStore from disk
+It should be noted that the keyStore should be written and read by the same keyStore that was used to create it
+```
+/* Access the factory and store */
+final GordianFactory myFactory = ...;
+final GordianKeyStore myStore = ...;
+
+/* Create keyStore documents */
+final char[] myPassword = ...;
+final ByteArrayOutputStream myZipStream = new ByteArrayOutputStream();
+myStore.storeToStream(myZipStream, myPassword);
+final ByteArrayInputStream myInputStream = new ByteArrayInputStream(myZipStream.toByteArray());
+final GordianKeyStore myStore2 = myFactory.loadKeyStore(myInputStream, myPassword);
+```
+
+## Storing/Reading a key (Symmetric/Stream/Mac)
+```
+/* Access the factory and store */
+final GordianFactory myFactory = ...;
+final GordianKeyStore myStore = ...;
+
+/* Create a manager for the store */
+final GordianKeyStoreFactory myKSFactory = myFactory.getKeyPairFactory().getKeyStoreFactory();
+final GordianKeyStoreManager myMgr = myKSFactory.createKeyStoreManager(myStore);
+
+/* Create an entry for a symmetric AES key */ 
+final byte[] myPassword = ...;
+final String myName = ...;
+final GordianKeyStoreKey<?> myEntry = pManager.createKey(GordianSymKeySpecBuilder.aes(GordianLength.LEN_256), myName, myPassword);
+final GordianKey<?> myKey = myEntry.getKey();
+
+/* Read key from store */
+final GordianKey<?> myRead = myStore.getKey(myName, myPassword);        
+
+/* Store an existing key */
+myStore.setKey(myName, myKey, myPassword);        
+```
+
+## Storing/Reading a keySet
+```
+/* Access the factory and store */
+final GordianFactory myFactory = ...;
+final GordianKeyStore myStore = ...;
+
+/* Create a manager for the store */
+final GordianKeyStoreFactory myKSFactory = myFactory.getKeyPairFactory().getKeyStoreFactory();
+final GordianKeyStoreManager myMgr = myKSFactory.createKeyStoreManager(myStore);
+
+/* Create an entry for a keySet */ 
+final byte[] myPassword = ...;
+final String myName = ...;
+final GordianKeyStoreKeySet myEntry = pManager.createKeySet(new GordianKeySetSpec(GordianLength.LEN_256), myName, myPassword);
+final GordianKeySet myKeySet = myEntry.getKeySet();
+
+/* Read key from store */
+final GordianKeySet myRead = myStore.getKeySet(myName, myPassword);        
+
+/* Store an existing keySet */
+myStore.setKeySet(myName, myKeySet, myPassword);        
+```
+
+## Storing/Reading a root keyPair
+In order to create keyPairs it is necessary to have a local root certificate plus signer as follows.
+```
+/* Access the factory and store */
+final GordianFactory myFactory = ...;
+final GordianKeyStore myStore = ...;
+
+/* Create a manager for the store */
+final GordianKeyStoreFactory myKSFactory = myFactory.getKeyPairFactory().getKeyStoreFactory();
+final GordianKeyStoreManager myMgr = myKSFactory.createKeyStoreManager(myStore);
+
+/* Define the root keyPair */
+final GordianKeyPairSpec mySpec = GordianKeyPairSpecBuilder.ec(GordianDSAElliptic.SECT571K1);
+final X500Name myRootX500Name = ...;
+final String myRootName = ...;
+final byte[] myRootPassword = ...;
+final GordianKeyStorePair myRoot = pManager.createRootKeyPair(mySpec, myRootX500Name, myRootName, myRootPassword);
+       
+/* Create the signer */       
+final X500Name mySignerX500Name = ...; 
+final GordianKeyPairSpec mySpec = GordianKeyPairSpecBuilder.ed448();
+final GordianKeyPairUsage myUsage = new GordianKeyPairUsage(GordianKeyPairUse.CERTIFICATE);
+final String mySignerName = ...;
+final byte[] myPassword = ...;
+final GordianKeyStorePair mySigner = pManager.createKeyPair(mySpec, mySignerX500Name, myUsage, myRoot, mySignerName, myPassword);
+```
+
+## Storing/Reading a keyPair
+To create a keyPair entry, it is best to create a new keyPair via the manager with a local personal signer. 
+
+It would be expected that the self-signed certificate would be passed to a certification authority which would then return a full certificate chain 
+that can then be updated into the keyStore
+```
+/* Access the factory and store */
+final GordianFactory myFactory = ...;
+final GordianKeyStore myStore = ...;
+
+/* Create a manager for the store */
+final GordianKeyStoreFactory myKSFactory = myFactory.getKeyPairFactory().getKeyStoreFactory();
+final GordianKeyStoreManager myMgr = myKSFactory.createKeyStoreManager(myStore);
+
+/* Define the keyPair and signer */
+final X500Name myPairName = ...; 
+final GordianKeyPairSpec mySpec = GordianKeyPairSpecBuilder.x448();
+final GordianKeyPairUsage myUsage = new GordianKeyPairUsage(GordianKeyPairUse.AGREEMENT);
+final GordianKeyStorePair mySigner = ...;
+
+/* Create an entry for a keyPair */
+final byte[] myPassword = ...;
+final String myName = ...;
+final GordianKeyStorePair myEntry = pManager.createKeyPair(mySpec, myPairName, myUsage, mySigner, myName, myPassword);
+final GordianKeyPair myKeyPair = myEntry.getKeyPair();
+final List<GordianCertificate> myChain = myEntry.getCertificateChain();
+
+/* Read keyPair from store */
+final GordianKeyPair myRead = myStore.getKeyPair(myName, myPassword);        
+
+/* Store an existing keyPair */
+myStore.setKeyPair(myName, myKeyPair, myPassword. myChain);        
+
+/* Update the certificate chain */
+myStore.updateCertificateChain(myName, myChain);
+```

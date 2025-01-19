@@ -208,7 +208,7 @@ public class MoneyWiseMarketPricesTable
         }
 
         /* Update other details */
-        getTable().setItems(thePrices.getUnderlyingList());
+        getTable().setItems(thePrices == null ? null : thePrices.getUnderlyingList());
         getEditEntry().setDataList(thePrices);
         theSelect.setEnabled(true);
     }
