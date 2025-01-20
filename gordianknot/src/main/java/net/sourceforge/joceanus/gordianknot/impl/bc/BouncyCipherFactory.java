@@ -67,6 +67,7 @@ import org.bouncycastle.crypto.DefaultBufferedBlockCipher;
 import org.bouncycastle.crypto.StreamCipher;
 import org.bouncycastle.crypto.engines.AESEngine;
 import org.bouncycastle.crypto.engines.ARIAEngine;
+import org.bouncycastle.crypto.engines.AsconAEAD128;
 import org.bouncycastle.crypto.engines.BlowfishEngine;
 import org.bouncycastle.crypto.engines.CAST5Engine;
 import org.bouncycastle.crypto.engines.CAST6Engine;
@@ -75,6 +76,7 @@ import org.bouncycastle.crypto.engines.ChaCha7539Engine;
 import org.bouncycastle.crypto.engines.ChaChaEngine;
 import org.bouncycastle.crypto.engines.DESedeEngine;
 import org.bouncycastle.crypto.engines.DSTU7624Engine;
+import org.bouncycastle.crypto.engines.ElephantEngine;
 import org.bouncycastle.crypto.engines.GOST28147Engine;
 import org.bouncycastle.crypto.engines.GOST3412_2015Engine;
 import org.bouncycastle.crypto.engines.Grain128Engine;
@@ -82,7 +84,10 @@ import org.bouncycastle.crypto.engines.HC128Engine;
 import org.bouncycastle.crypto.engines.HC256Engine;
 import org.bouncycastle.crypto.engines.IDEAEngine;
 import org.bouncycastle.crypto.engines.ISAACEngine;
+import org.bouncycastle.crypto.engines.ISAPEngine;
 import org.bouncycastle.crypto.engines.NoekeonEngine;
+import org.bouncycastle.crypto.engines.PhotonBeetleEngine;
+import org.bouncycastle.crypto.engines.PhotonBeetleEngine.PhotonBeetleParameters;
 import org.bouncycastle.crypto.engines.RC2Engine;
 import org.bouncycastle.crypto.engines.RC4Engine;
 import org.bouncycastle.crypto.engines.RC532Engine;
@@ -102,6 +107,7 @@ import org.bouncycastle.crypto.engines.VMPCEngine;
 import org.bouncycastle.crypto.engines.VMPCKSA3Engine;
 import org.bouncycastle.crypto.engines.XSalsa20Engine;
 import org.bouncycastle.crypto.engines.XTEAEngine;
+import org.bouncycastle.crypto.engines.XoodyakEngine;
 import org.bouncycastle.crypto.generators.DESedeKeyGenerator;
 import org.bouncycastle.crypto.modes.AEADBlockCipher;
 import org.bouncycastle.crypto.modes.AEADCipher;
@@ -114,6 +120,7 @@ import org.bouncycastle.crypto.modes.G3413CBCBlockCipher;
 import org.bouncycastle.crypto.modes.G3413CFBBlockCipher;
 import org.bouncycastle.crypto.modes.G3413CTRBlockCipher;
 import org.bouncycastle.crypto.modes.G3413OFBBlockCipher;
+import org.bouncycastle.crypto.modes.GCFBBlockCipher;
 import org.bouncycastle.crypto.modes.GCMBlockCipher;
 import org.bouncycastle.crypto.modes.GOFBBlockCipher;
 import org.bouncycastle.crypto.modes.KCTRBlockCipher;
@@ -125,13 +132,6 @@ import org.bouncycastle.crypto.paddings.PKCS7Padding;
 import org.bouncycastle.crypto.paddings.PaddedBufferedBlockCipher;
 import org.bouncycastle.crypto.paddings.TBCPadding;
 import org.bouncycastle.crypto.paddings.X923Padding;
-import org.bouncycastle.crypto.patch.engines.GordianAsconAEAD128;
-import org.bouncycastle.crypto.patch.engines.GordianElephantEngine;
-import org.bouncycastle.crypto.patch.engines.GordianISAPEngine;
-import org.bouncycastle.crypto.patch.engines.GordianPhotonBeetleEngine;
-import org.bouncycastle.crypto.patch.engines.GordianPhotonBeetleEngine.PhotonBeetleParameters;
-import org.bouncycastle.crypto.patch.engines.GordianXoodyakEngine;
-import org.bouncycastle.crypto.patch.modes.GordianGCFBBlockCipher;
 import org.bouncycastle.crypto.patch.modes.GordianKCCMBlockCipher;
 import org.bouncycastle.crypto.patch.modes.GordianKGCMBlockCipher;
 
@@ -331,17 +331,17 @@ public class BouncyCipherFactory
                         return new GordianChaChaPoly1305(new ChaCha7539Engine());
                 }
             case ASCON:
-                return new GordianAsconAEAD128();
+                return new AsconAEAD128();
             case ELEPHANT:
-                return new GordianElephantEngine(((GordianElephantKey) mySpec.getSubKeyType()).getParameters());
+                return new ElephantEngine(((GordianElephantKey) mySpec.getSubKeyType()).getParameters());
             case ISAP:
-                return new GordianISAPEngine(((GordianISAPKey) mySpec.getSubKeyType()).getType());
+                return new ISAPEngine(((GordianISAPKey) mySpec.getSubKeyType()).getType());
             case PHOTONBEETLE:
-                return new GordianPhotonBeetleEngine(PhotonBeetleParameters.pb128);
+                return new PhotonBeetleEngine(PhotonBeetleParameters.pb128);
             case SPARKLE:
                 return new SparkleEngine(((GordianSparkleKey) mySpec.getSubKeyType()).getParameters());
             case XOODYAK:
-                return new GordianXoodyakEngine();
+                return new XoodyakEngine();
             default:
                 throw new GordianDataException(GordianCoreFactory.getInvalidText(pCipherSpec));
         }
@@ -445,7 +445,7 @@ public class BouncyCipherFactory
             case CFB8:
                 return CFBBlockCipher.newInstance(pEngine, Byte.SIZE);
             case GCFB:
-                return new GordianGCFBBlockCipher(pEngine);
+                return new GCFBBlockCipher(pEngine);
             case OFB:
                 return new OFBBlockCipher(pEngine, Byte.SIZE * pEngine.getBlockSize());
             case OFB8:

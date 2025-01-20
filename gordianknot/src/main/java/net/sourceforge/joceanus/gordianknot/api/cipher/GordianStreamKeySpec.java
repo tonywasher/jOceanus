@@ -18,9 +18,9 @@ package net.sourceforge.joceanus.gordianknot.api.cipher;
 
 import net.sourceforge.joceanus.gordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
+import org.bouncycastle.crypto.engines.ElephantEngine.ElephantParameters;
+import org.bouncycastle.crypto.engines.ISAPEngine.IsapType;
 import org.bouncycastle.crypto.engines.SparkleEngine.SparkleParameters;
-import org.bouncycastle.crypto.patch.engines.GordianElephantEngine.ElephantParameters;
-import org.bouncycastle.crypto.patch.engines.GordianISAPEngine.IsapType;
 
 import java.util.Objects;
 
