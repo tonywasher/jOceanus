@@ -275,6 +275,9 @@ public abstract class GordianCoreKeyPairFactory
         mySpecs.add(GordianKeyPairSpecBuilder.x448());
         mySpecs.add(GordianKeyPairSpecBuilder.x25519());
 
+        /* Add NewHope */
+        mySpecs.add(GordianKeyPairSpecBuilder.newHope());
+
         /* Add XMSS/XMSSMT */
         GordianXMSSKeySpec.listPossibleKeySpecs().forEach(t -> mySpecs.add(new GordianKeyPairSpec(GordianKeyPairType.XMSS, t)));
 

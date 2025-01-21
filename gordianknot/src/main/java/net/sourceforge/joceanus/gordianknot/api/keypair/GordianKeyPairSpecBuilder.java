@@ -183,6 +183,14 @@ public final class GordianKeyPairSpecBuilder {
     }
 
     /**
+     * Create newHopeKey.
+     * @return the KeySpec
+     */
+    public static GordianKeyPairSpec newHope() {
+        return new GordianKeyPairSpec(GordianKeyPairType.NEWHOPE, null);
+    }
+
+    /**
      * Create SLHDSAKey.
      * @param pSpec the SLHDSA Spec
      * @return the KeySpec

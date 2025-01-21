@@ -233,7 +233,7 @@ final GordianAgreement myAgree = myAgreementFactory.createAgreement(myAgreeSpec)
                 <table class="defTable">
                     <tr><th class="defHdr">Algorithm</th><th>Type</th><th class="defHdr">KeyTypes</th><th>Notes</th></tr>
                     <tr><td>KEM</td><td>Anonymous</td><td>RSA, EC, GOST2012, DSTU4145, SM2, CMCE, Frodo, SABER
-                            MLKEM, BIKE, HQC, NTRU, NTRUPRIME</td><td>RSA, EC, GOST2012, DSTU4145 and SM2 are not available on JCA</td></tr>
+                            MLKEM, BIKE, HQC, NTRU, NTRUPRIME, NEWHOPE</td><td>RSA, EC, GOST2012, DSTU4145 and SM2 are not available on JCA</td></tr>
                     <tr><td>Anonymous</td><td>Anonymous</td><td>DH, EC, GOST2012, DSTU4145, SM2, XDH</td><td/></tr>
                     <tr><td>Basic</td><td>Handshake</td><td>DH, EC, GOST2012, DSTU4145, SM2, XDH</td><td/></tr>
                     <tr><td>Signed</td><td>Signed</td><td>DH, EC, GOST2012, DSTU4145, SM2, XDH</td><td/></tr>

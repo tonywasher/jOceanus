@@ -335,7 +335,7 @@ public final class JcaAgreement {
             if (getAgreementSpec().getKeyPairSpec().getKeyPairType().equals(GordianKeyPairType.XDH)) {
                 final String myBase = pKeyPair.getKeyPairSpec().toString();
                 final String myName = JcaAgreementFactory.getFullAgreementName(myBase, getAgreementSpec());
-                theAgreement = JcaAgreementFactory.getJavaKeyAgreement(myName);
+                theAgreement = JcaAgreementFactory.getJavaKeyAgreement(myName, false);
             }
         }
     }
@@ -449,7 +449,7 @@ public final class JcaAgreement {
             if (getAgreementSpec().getKeyPairSpec().getKeyPairType().equals(GordianKeyPairType.XDH)) {
                 final String myBase = pKeyPair.getKeyPairSpec().toString();
                 final String myName = JcaAgreementFactory.getFullAgreementName(myBase, getAgreementSpec());
-                theAgreement = JcaAgreementFactory.getJavaKeyAgreement(myName);
+                theAgreement = JcaAgreementFactory.getJavaKeyAgreement(myName,false);
             }
         }
     }
@@ -554,7 +554,7 @@ public final class JcaAgreement {
             if (getAgreementSpec().getKeyPairSpec().getKeyPairType().equals(GordianKeyPairType.XDH)) {
                 final String myBase = pKeyPair.getKeyPairSpec().toString();
                 final String myName = JcaAgreementFactory.getFullAgreementName(myBase, getAgreementSpec());
-                theAgreement = JcaAgreementFactory.getJavaKeyAgreement(myName);
+                theAgreement = JcaAgreementFactory.getJavaKeyAgreement(myName, false);
             }
         }
     }
@@ -668,7 +668,7 @@ public final class JcaAgreement {
             if (getAgreementSpec().getKeyPairSpec().getKeyPairType().equals(GordianKeyPairType.XDH)) {
                 final String myBase = pKeyPair.getKeyPairSpec().toString();
                 final String myName = JcaAgreementFactory.getFullAgreementName(myBase + "U", getAgreementSpec());
-                theAgreement = JcaAgreementFactory.getJavaKeyAgreement(myName);
+                theAgreement = JcaAgreementFactory.getJavaKeyAgreement(myName, false);
             }
         }
     }

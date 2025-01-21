@@ -23,6 +23,7 @@ import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianLMSKeySpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianLMSKeySpec.GordianHSSKeySpec;
+import net.sourceforge.joceanus.gordianknot.api.keypair.GordianRSAModulus;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianXMSSKeySpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianXMSSKeySpec.GordianXMSSDigestType;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
@@ -1345,6 +1346,50 @@ public abstract class JcaKeyPairGenerator
             } catch (InvalidAlgorithmParameterException e) {
                 throw new GordianCryptoException("Failed to create EdwardsGenerator", e);
             }
+        }
+
+        @Override
+        public JcaKeyPair generateKeyPair() {
+            /* Generate and return the keyPair */
+            final KeyPair myPair = theGenerator.generateKeyPair();
+            final JcaPublicKey myPublic = createPublic(myPair.getPublic());
+            final JcaPrivateKey myPrivate = createPrivate(myPair.getPrivate());
+            return new JcaKeyPair(myPublic, myPrivate);
+        }
+    }
+
+    /**
+     * Jca NewHope KeyPair generator.
+     */
+    public static class JcaNewHopeKeyPairGenerator
+            extends JcaKeyPairGenerator {
+        /**
+         * NewHope algorithm.
+         */
+        private static final String NEWHOPE_ALGO = "NH";
+
+        /**
+         * Generator.
+         */
+        private final KeyPairGenerator theGenerator;
+
+        /**
+         * Constructor.
+         * @param pFactory the Security Factory
+         * @param pKeySpec the keySpec
+         * @throws GordianException on error
+         */
+        JcaNewHopeKeyPairGenerator(final JcaFactory pFactory,
+                                   final GordianKeyPairSpec pKeySpec) throws GordianException {
+            /* Initialise underlying class */
+            super(pFactory, pKeySpec);
+
+            /* Create and initialise the generator */
+            theGenerator = JcaKeyPairFactory.getJavaKeyPairGenerator(NEWHOPE_ALGO, true);
+            theGenerator.initialize(GordianRSAModulus.MOD1024.getLength(), getRandom());
+
+            /* Create the factory */
+            setKeyFactory(JcaKeyPairFactory.getJavaKeyFactory(NEWHOPE_ALGO, true));
         }
 
         @Override

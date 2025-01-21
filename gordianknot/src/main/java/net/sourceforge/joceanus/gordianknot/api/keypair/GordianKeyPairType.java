@@ -148,6 +148,11 @@ public enum GordianKeyPairType {
     RAINBOW,
 
     /**
+     * NewHope.
+     */
+    NEWHOPE,
+
+    /**
      * Composite.
      */
     COMPOSITE;

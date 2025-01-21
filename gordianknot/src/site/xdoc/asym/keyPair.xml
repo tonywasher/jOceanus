@@ -78,6 +78,7 @@ final GordianKeyPair myDerived = myGenerator.deriveKeyPair(myX509, myPKCS8);
                         <tr><td>FALCON</td><td>512, 1024</td></tr>
                         <tr><td>HQC</td><td>128, 192, 256</td></tr>
                         <tr><td>PICNIC</td><td>(L1, L3, L5) * (FS, UR, FULL, 3)</td></tr>
+                        <tr><td>NEWHOPE</td><td/></tr>
                     </table>
                 </subsection>
             </subsection>
