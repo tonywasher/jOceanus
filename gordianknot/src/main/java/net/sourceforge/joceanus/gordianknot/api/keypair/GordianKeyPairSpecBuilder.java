@@ -168,7 +168,7 @@ public final class GordianKeyPairSpecBuilder {
      * @return the KeySpec
      */
     public static GordianKeyPairSpec lms(final GordianLMSKeySpec pKeySpec) {
-        return new GordianKeyPairSpec(GordianKeyPairType.LMS, pKeySpec);
+        return hss(pKeySpec, 1);
     }
 
     /**

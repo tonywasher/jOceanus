@@ -16,15 +16,14 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.api.keypair;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-
+import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
 import org.bouncycastle.pqc.crypto.lms.LMOtsParameters;
 import org.bouncycastle.pqc.crypto.lms.LMSParameters;
 import org.bouncycastle.pqc.crypto.lms.LMSigParameters;
 
-import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * LMS KeyTypes.
@@ -343,8 +342,8 @@ public class GordianLMSKeySpec {
          * @return valid true/false
          */
         private boolean checkValidity() {
-            /* Depth must be at least 2 and  no more that MAX */
-            if (theDepth <= 1 || theDepth > MAX_DEPTH) {
+            /* Depth must be at least 1 and  no more that MAX */
+            if (theDepth < 1 || theDepth > MAX_DEPTH) {
                 return false;
             }
 

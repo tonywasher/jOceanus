@@ -695,10 +695,7 @@ class AsymmetricStore {
             /* If the keyType is LMS */
             if (pKeyType == GordianKeyPairType.LMS) {
                 /* Access the keySpec */
-                GordianLMSKeySpec myLMSSpec = myKeySpec.getLMSKeySpec();
-                if (myLMSSpec == null) {
-                    myLMSSpec = myKeySpec.getHSSKeySpec().getKeySpec();
-                }
+                GordianLMSKeySpec myLMSSpec = myKeySpec.getHSSKeySpec().getKeySpec();
 
                 /* Ignore high configs for performance */
                 if (myLMSSpec.isHigh()) {
@@ -734,9 +731,9 @@ class AsymmetricStore {
      * Update the list of Signatures to test.
      * @param pKeySpec the keySpec
      */
-    static void signatureProvider(final FactoryKeySpec pKeySpec) {
+    static void signatureProvider(final AsymmetricStore.FactoryKeySpec pKeySpec) {
         /* Access the list */
-        List<FactorySignature> myResult = pKeySpec.theSignatures;
+        List<AsymmetricStore.FactorySignature> myResult = pKeySpec.theSignatures;
 
         /* Access the list of possible signatures */
         final GordianKeyPairFactory myFactory = pKeySpec.theFactory;
@@ -771,7 +768,7 @@ class AsymmetricStore {
      */
     static void agreementProvider(final FactoryKeySpec pKeySpec) {
         /* Access the list */
-        List<FactoryAgreement> myResult = pKeySpec.theAgreements;
+        List<AsymmetricStore.FactoryAgreement> myResult = pKeySpec.theAgreements;
 
         /* Access the list of possible agreements */
         final GordianKeyPairFactory myFactory = pKeySpec.theFactory;
@@ -800,7 +797,7 @@ class AsymmetricStore {
      */
     static void encryptorProvider(final FactoryKeySpec pKeySpec) {
         /* Access the list */
-        List<FactoryEncryptor> myResult = pKeySpec.theEncryptors;
+        List<AsymmetricStore.FactoryEncryptor> myResult = pKeySpec.theEncryptors;
 
         /* Access the list of possible encryptors */
         final GordianKeyPairFactory myFactory = pKeySpec.theFactory;

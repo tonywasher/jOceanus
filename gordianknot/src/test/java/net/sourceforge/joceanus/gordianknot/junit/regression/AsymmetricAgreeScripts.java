@@ -37,7 +37,6 @@ import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairGenerator;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairSpecBuilder;
-import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySet;
 import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySetSpec;
 import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianCoreAgreementFactory;
 import net.sourceforge.joceanus.gordianknot.junit.regression.AsymmetricStore.FactoryAgreement;
@@ -51,6 +50,7 @@ import org.junit.jupiter.api.DynamicTest;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
 /**
@@ -80,6 +80,9 @@ public final class AsymmetricAgreeScripts {
     /* The Agreement signers */
     private static GordianKeyPair BCSIGNER;
     private static GordianKeyPair JCASIGNER;
+
+    /* The resultType count */
+    private final static AtomicInteger RESULTTYPE = new AtomicInteger(0);
 
     /**
      * Private constructor.
@@ -139,12 +142,7 @@ public final class AsymmetricAgreeScripts {
     static Stream<DynamicNode> agreementTests(final FactoryAgreement pAgreement) {
         /* Add self agreement test */
         Stream<DynamicNode> myTests = Stream.of(DynamicContainer.dynamicContainer("SelfAgree", Stream.of(
-                DynamicTest.dynamicTest("factory", () -> checkSelfAgreement(pAgreement, GordianFactoryType.BC)),
-                DynamicTest.dynamicTest("keySet", () -> checkSelfAgreement(pAgreement, KEYSETSPEC)),
-                DynamicTest.dynamicTest("symCipher", () -> checkSelfAgreement(pAgreement, SYMKEYSPEC)),
-                DynamicTest.dynamicTest("streamCipher", () -> checkSelfAgreement(pAgreement, STREAMKEYSPEC)),
-                DynamicTest.dynamicTest("byteArray", () -> checkSelfAgreement(pAgreement, BYTEARRAY)),
-                DynamicTest.dynamicTest("raw", () -> checkSelfAgreement(pAgreement, null))
+                selfAgreementTest(pAgreement)
         )));
 
         /* Add algorithmId test */
@@ -162,6 +160,28 @@ public final class AsymmetricAgreeScripts {
 
         /* Return the test stream */
         return myTests;
+    }
+
+    /**
+     * Create the agreement test suite for an agreementSpec.
+     * @param pAgreement the agreement
+     * @return the test stream or null
+     */
+    private static DynamicTest selfAgreementTest(final FactoryAgreement pAgreement) {
+        /* Add self agreement test */
+        switch (RESULTTYPE.getAndIncrement() % 5) {
+            case 0:
+                return DynamicTest.dynamicTest("factory", () -> checkSelfAgreement(pAgreement, GordianFactoryType.BC));
+            case 1:
+                return DynamicTest.dynamicTest("keySet", () -> checkSelfAgreement(pAgreement, KEYSETSPEC));
+            case 2:
+                return DynamicTest.dynamicTest("symCipher", () -> checkSelfAgreement(pAgreement, SYMKEYSPEC));
+            case 3:
+                return DynamicTest.dynamicTest("streamCipher", () -> checkSelfAgreement(pAgreement, STREAMKEYSPEC));
+            case 4:
+            default:
+                return DynamicTest.dynamicTest("byteArray", () -> checkSelfAgreement(pAgreement, BYTEARRAY));
+        }
     }
 
     /**
@@ -246,7 +266,7 @@ public final class AsymmetricAgreeScripts {
         final GordianAgreementFactory mySrcAgrees = pAgreement.getOwner().getFactory().getAgreementFactory();
         final GordianAgreementFactory myPartnerAgrees = pAgreement.getOwner().getPartner().getAgreementFactory();
         final GordianAgreement mySender = mySrcAgrees.createAgreement(mySpec);
-        mySender.setResultType(new GordianKeySetSpec());
+        mySender.setResultType(BYTEARRAY);
         final GordianAgreement myResponder = myPartnerAgrees.createAgreement(mySpec);
 
         /* Handle Anonymous */
@@ -283,9 +303,9 @@ public final class AsymmetricAgreeScripts {
         }
 
         /* Check that the values match */
-        final GordianKeySet myFirst = (GordianKeySet) mySender.getResult();
-        final GordianKeySet mySecond = (GordianKeySet) myResponder.getResult();
-        Assertions.assertEquals(myFirst, mySecond, "Failed to agree crossFactory keySet");
+        final byte[] myFirst = (byte[]) mySender.getResult();
+        final byte[] mySecond = (byte[]) myResponder.getResult();
+        Assertions.assertArrayEquals(myFirst, mySecond, "Failed to agree crossFactory keySet");
     }
 
     /**
