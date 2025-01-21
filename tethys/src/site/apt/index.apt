@@ -1,60 +1,9 @@
 Tethys Project
 
-  Tethys is a subComponent of the jOceanus project. It provides various utilities for the jOceanus project.
+  Tethys is a subComponent of the jOceanus project. It provides GUI utilities for the jOceanus project.
 It is named after the titaness Tethys who was the embodiment of the waters of the world.
 
-  The following utilities are provided
+  Each Gui element is abstracted and provided by a factor of which there are javaFX and Swing variants. Events are
+provided via the <<OceanusEvent>> interface and all differences between javaFX and Swing implementations are hidden.
 
-* A generic <<OceanusException>> exception class
-
-  This class extends a standard exception by allowing an object to be associated with the exception. This is particularly
-useful for data applications since the data that caused the exception can be associated with it.
-
-* A <<DataConverter>> class
-
-  This provides methods to convert between byteArrays and charArrays/longs/integers/strings and also methods to 
-format/parse a byteArray to/from hexStrings and Base64Strings.
-
-* A generic EventManager.
-
-    This provides a <<TethysEventManager>> class which supports <<ActionEvents>> and <<ChangeEvents>> on a generic object.
-It is particularly useful for JPanels and JTables which only have the base capability of firing PropertyChangeEvents.
-Three classes <<JEventObject>>, <<JEventPanel>> and <<JEventTable>> are provided as extensions of Object, 
-JPanel and JTables respectively, with added ChangeEvent and ActionEvent support.
-
-    In addition a set of wrapper classes are provided to extend <<JTabbedPane>>, <<JPanel>> and <<JScrollPane>> such that
-it will pass the setEnabled() method on to all subcomponents.
-	
-* A set of Swing Utilities
-
-    * Utilities to help with SpringLayout (based on the Oracle SpringUtilities example), and GridBagLayout
-
-    * A set of classes to enable Scrollable Menus
-
-    * A set of JButton extensions to utilise Scrollable menus and icons
-
-    * A class to provide simple sorting/filtering in a JTable
-
-* A Simple Date class
-
-  This provides a simple Date object that represents a simple Date without any concept of time-of-day. A gui is provided
-to select a Date value from a calendar-like interface.
-
-  In addition a DateRange class which handles a contiguous range of Dates with a start and an end. A gui selector object
-is provided to enable selection of such ranges.
-  
-* A set of decimal classes
-
-  TethysDecimal is a package that provides a Decimal implementation in many ways similar to that provided by BigDecimal,
-except that the class is mutable, allowing for much faster arithmetic.
-
-  Rather than deal with arbitrarily large numbers, TethysDecimal stores the value as a simple long, and so is not suitable for
-extremely large values, since precision will be lost. Users should continue to use BigDecimal for these situations.
-
-  This implementation is particularly suited to financial applications since a monetary value of
-$10,000,000,000,000,000.00 can easily be accommodated within a long. As long as you are not dealing with the
-US National Debt, this will be sufficient for most purposes.
-
-* A simple Help Manager
-
-    This is still under development.
+  This allows applications to be written without references to either Swing or javaFX implementation details.

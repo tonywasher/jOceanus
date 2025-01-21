@@ -474,6 +474,8 @@ public class GordianKeyPairSpec {
                 return theSubKeyType instanceof GordianPICNICSpec;
             case RAINBOW:
                 return theSubKeyType instanceof GordianRainbowSpec;
+            case NEWHOPE:
+                return theSubKeyType == null;
             case LMS:
                 return (theSubKeyType instanceof GordianLMSKeySpec
                          && ((GordianLMSKeySpec) theSubKeyType).isValid())

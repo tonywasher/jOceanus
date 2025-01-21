@@ -160,6 +160,7 @@ public class GordianKeyPairAlgId {
         GordianXMSSEncodedParser.register(this);
         GordianXMSSMTEncodedParser.register(this);
         GordianLMSEncodedParser.register(this);
+        GordianNewHopeEncodedParser.register(this);
         GordianCMCEEncodedParser.register(this);
         GordianFrodoEncodedParser.register(this);
         GordianSABEREncodedParser.register(this);
@@ -1143,6 +1144,29 @@ public class GordianKeyPairAlgId {
         @Override
         public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws GordianException {
             return theKeySpec;
+        }
+    }
+
+    /**
+     * NewHope Encoded parser.
+     */
+    private static class GordianNewHopeEncodedParser implements GordianEncodedParser {
+        /**
+         * Registrar.
+         * @param pIdManager the idManager
+         */
+        static void register(final GordianKeyPairAlgId pIdManager) {
+            pIdManager.registerParser(PQCObjectIdentifiers.newHope, new GordianNewHopeEncodedParser());
+        }
+
+        @Override
+        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws GordianException {
+            return GordianKeyPairSpecBuilder.newHope();
+        }
+
+        @Override
+        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws GordianException {
+            return GordianKeyPairSpecBuilder.newHope();
         }
     }
 

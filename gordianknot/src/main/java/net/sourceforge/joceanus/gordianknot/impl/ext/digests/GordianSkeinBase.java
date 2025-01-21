@@ -169,39 +169,39 @@ public class GordianSkeinBase
 
     static {
         // From Appendix C of the Skein 1.3 NIST submission
-        final long[] skein256_128 = {
+        final long[] skein256o128 = {
                 0xe1111906964d7260L,
                 0x883daaa77c8d811cL,
                 0x10080df491960f7aL,
                 0xccf7dde5b45bc1c2L
         };
-        initialState(SKEIN_256, 128, skein256_128);
+        initialState(SKEIN_256, 128, skein256o128);
 
-        final long[] skein256_160 = {
+        final long[] skein256o160 = {
                 0x1420231472825e98L,
                 0x2ac4e9a25a77e590L,
                 0xd47a58568838d63eL,
                 0x2dd2e4968586ab7dL
         };
-        initialState(SKEIN_256, 160, skein256_160);
+        initialState(SKEIN_256, 160, skein256o160);
 
-        final long[] skein256_224 = {
+        final long[] skein256o224 = {
                 0xc6098a8c9ae5ea0bL,
                 0x876d568608c5191cL,
                 0x99cb88d7d7f53884L,
                 0x384bddb1aeddb5deL
         };
-        initialState(SKEIN_256, 224, skein256_224);
+        initialState(SKEIN_256, 224, skein256o224);
 
-        final long[] skein256_256 = {
+        final long[] skein256o256 = {
                 0xfc9da860d048b449L,
                 0x2fca66479fa7d833L,
                 0xb33bc3896656840fL,
                 0x6a54e920fde8da69L
         };
-        initialState(SKEIN_256, 256, skein256_256);
+        initialState(SKEIN_256, 256, skein256o256);
 
-        final long[] skein512_128 = {
+        final long[] skein512o128 = {
                 0xa8bc7bf36fbf9f52L,
                 0x1e9872cebd1af0aaL,
                 0x309b1790b32190d3L,
@@ -211,9 +211,9 @@ public class GordianSkeinBase
                 0xa2cc5b18ce84aa82L,
                 0x6982ab289d46982dL
         };
-        initialState(SKEIN_512, 128, skein512_128);
+        initialState(SKEIN_512, 128, skein512o128);
 
-        final long[] skein512_160 = {
+        final long[] skein512o160 = {
                 0x28b81a2ae013bd91L,
                 0xc2f11668b5bdf78fL,
                 0x1760d8f3f6a56f12L,
@@ -223,9 +223,9 @@ public class GordianSkeinBase
                 0xb8ec76ffeccb52faL,
                 0x01a47bb8a3f27a6eL
         };
-        initialState(SKEIN_512, 160, skein512_160);
+        initialState(SKEIN_512, 160, skein512o160);
 
-        final long[] skein512_224 = {
+        final long[] skein512o224 = {
                 0xccd0616248677224L,
                 0xcba65cf3a92339efL,
                 0x8ccd69d652ff4b64L,
@@ -235,9 +235,9 @@ public class GordianSkeinBase
                 0x99fbc70e997413e9L,
                 0x9e2cfccfe1c41ef7L
         };
-        initialState(SKEIN_512, 224, skein512_224);
+        initialState(SKEIN_512, 224, skein512o224);
 
-        final long[] skein512_384 = {
+        final long[] skein512o384 = {
                 0xa3f6c6bf3a75ef5fL,
                 0xb0fef9ccfd84faa4L,
                 0x9d77dd663d770cfeL,
@@ -247,9 +247,9 @@ public class GordianSkeinBase
                 0x548fc1acd4ec44d6L,
                 0x266e17546aa18ff8L
         };
-        initialState(SKEIN_512, 384, skein512_384);
+        initialState(SKEIN_512, 384, skein512o384);
 
-        final long[] skein512_512 = {
+        final long[] skein512o512 = {
                 0x4903adff749c51ceL,
                 0x0d95de399746df03L,
                 0x8fd1934127c79bceL,
@@ -259,7 +259,7 @@ public class GordianSkeinBase
                 0x991112c71a75b523L,
                 0xae18a40b660fcc33L
         };
-        initialState(SKEIN_512, 512, skein512_512);
+        initialState(SKEIN_512, 512, skein512o512);
     }
 
     private static void initialState(final int blockSize, final int outputSize, final long[] state) {

@@ -168,7 +168,7 @@ public final class GordianKeyPairSpecBuilder {
      * @return the KeySpec
      */
     public static GordianKeyPairSpec lms(final GordianLMSKeySpec pKeySpec) {
-        return new GordianKeyPairSpec(GordianKeyPairType.LMS, pKeySpec);
+        return hss(pKeySpec, 1);
     }
 
     /**
@@ -180,6 +180,14 @@ public final class GordianKeyPairSpecBuilder {
     public static GordianKeyPairSpec hss(final GordianLMSKeySpec pKeySpec,
                                          final int pDepth) {
         return new GordianKeyPairSpec(GordianKeyPairType.LMS, new GordianHSSKeySpec(pKeySpec, pDepth));
+    }
+
+    /**
+     * Create newHopeKey.
+     * @return the KeySpec
+     */
+    public static GordianKeyPairSpec newHope() {
+        return new GordianKeyPairSpec(GordianKeyPairType.NEWHOPE, null);
     }
 
     /**

@@ -30,6 +30,7 @@ public class GordianAsconCXof128
 
     public GordianAsconCXof128(byte[] s, int off, int len)
     {
+        super(false);
         if ((off + len) > s.length)
         {
             throw new DataLengthException("input buffer too short");
@@ -56,7 +57,7 @@ public class GordianAsconCXof128
     @Override
     public void reset()
     {
-        super.baseReset();
+        baseReset();
         m_squeezing = false;
         bytesInBuffer = 0;
         /* initialize */
@@ -65,11 +66,6 @@ public class GordianAsconCXof128
         x2 = z2;
         x3 = z3;
         x4 = z4;
-    }
-
-    @Override
-    protected void baseReset() {
-        /* NoOp */
     }
 
     private void initState(byte[] z, int zOff, int zLen)
@@ -85,5 +81,6 @@ public class GordianAsconCXof128
         update(z, zOff, zLen);
         padAndAbsorb();
         m_squeezing = false;
+        bytesInBuffer = 0;
     }
 }

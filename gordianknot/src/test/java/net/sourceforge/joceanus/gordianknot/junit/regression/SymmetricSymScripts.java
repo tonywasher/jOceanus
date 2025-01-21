@@ -241,7 +241,7 @@ public class SymmetricSymScripts {
             return Arrays.copyOf(myTestData, myDataLen);
         }
 
-        /* Eles return the standard data */
+        /* Else return the standard data */
         return myTestData;
     }
 

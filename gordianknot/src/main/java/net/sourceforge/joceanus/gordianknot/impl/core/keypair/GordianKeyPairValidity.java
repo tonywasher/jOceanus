@@ -198,6 +198,7 @@ public final class GordianKeyPairValidity {
                 return mySpec.getEdwardsElliptic().is25519()
                         ? GordianAgreementSpecBuilder.anon(mySpec, GordianKDFType.SHA256KDF)
                         : GordianAgreementSpecBuilder.anon(mySpec, GordianKDFType.SHA512KDF);
+            case NEWHOPE:
             case CMCE:
             case FRODO:
             case SABER:

@@ -2,14 +2,40 @@ Oceanus Core
 
   Oceanus Core provides utility classes including the following.
 
-* A simple date class representing a financial Date, with additional utility classes involving date ranges and finacial periods.
+* A generic <<OceanusException>> exception class
 
-* A simple decimal class representing exact values (i.e. not floating point) with fixed numbers of decimals.
+  This class extends a standard exception by allowing an object to be associated with the exception. This is particularly
+useful for data applications since the data that caused the exception can be associated with it.
+
+* A simple set of <<OceanusDate>> classes
+
+    A simple date class representing a financial Date, with additional utility classes involving date ranges, financial periods,
+and parsing/formatting of dates.
+
+* A simple <<OceanusDecimal>> class
+
+    These represent exact values (i.e. not floating point) with fixed numbers of decimals, and is available in various flavors
+such as <<OceanusMoney>>, <<OceanusRate>>, <<OceanusPrice>>, <<OceanusRatio>> and <<OceanusUnits>>. Parsing and formatting utilities are
+also provided.
 
 * Simple event classes
 
+    These provide a set of event classes that can be used to send events to registered listeners. It's main usage is to provide an
+event interface common to both swing and javaFX implementations in <<Tethys>>
+
 * A simple logger class
+
+    This provides a simple alternative to <<log4j>> and <<slf4j>>
 
 * A simple profile class
 
+    This provides a simple mechanism to record structured timing and performance information.
+
 * Simple properties bundle classes
+
+    This provides a simple mechanism to access property files across module boundaries.
+
+* Simple data conversion and formatting utilities
+
+    This provides methods to convert between byteArrays and charArrays/longs/integers/strings and also methods to
+format/parse a byteArray to/from hexStrings and Base64Strings.

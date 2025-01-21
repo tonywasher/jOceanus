@@ -3,8 +3,8 @@ Prometheus Project
   Prometheus is a subComponent of the jOceanus project, which provides a framework for applications. It is named after the titan
 Prometheus, who was viewed as the champion of mankind. 
 
-  Prometheus provides a framework for a secure application with data backed up by database (MySQL/PostgreSQL/SQLServer).
-It is primarily intended to support the <<jMoneyWise>> package, and comprises the generic parts of that application.
+  Prometheus provides a framework for a secure application with data backed up by database (MySQL/PostgreSQL/SQLServer/MariaDB).
+It is primarily intended to support the <<MoneyWise>> package, and comprises the generic parts of that application.
 
   The model used is that of a single set of encrypted data that is loaded into memory, and edited in situ.
   

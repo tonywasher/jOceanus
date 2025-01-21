@@ -25,7 +25,15 @@ public class GordianAsconXof128
 
     public GordianAsconXof128()
     {
-        xofReset();
+        this(true);
+    }
+
+    protected GordianAsconXof128(final boolean doReset)
+    {
+        if (doReset)
+        {
+            reset();
+        }
     }
 
     protected long pad(int i)
@@ -116,7 +124,8 @@ public class GordianAsconXof128
         }
 
         /* If we need to output a partial buffer */
-        if (bytesOutput < outLen) {
+        if (bytesOutput < outLen)
+        {
             /* Access the next buffer's worth of data */
             hash(buffer, 0, ASCON_HASH_RATE);
 
@@ -146,11 +155,7 @@ public class GordianAsconXof128
     }
 
     @Override
-    public void reset() {
-        xofReset();
-    }
-
-    private void xofReset()
+    public void reset()
     {
         m_squeezing = false;
         bytesInBuffer = 0;
@@ -163,7 +168,8 @@ public class GordianAsconXof128
         x4 = -2282070310009238562L;
     }
 
-    protected void baseReset() {
+    protected void baseReset()
+    {
         super.reset();
     }
 }

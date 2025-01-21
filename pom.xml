@@ -74,16 +74,16 @@
     <appDir>${session.executionRootDirectory}/dist</appDir>
     <appBinDir>bin/</appBinDir>
     <appLibDir>lib/</appLibDir>
-    <BouncyCastleVersion>1.79</BouncyCastleVersion>
+    <BouncyCastleVersion>1.80</BouncyCastleVersion>
     <JUnitVersion>5.11.4</JUnitVersion>
-    <JSONVersion>20241224</JSONVersion>
+    <JSONVersion>20250107</JSONVersion>
     <ApacheMavenVersion>3.9.9</ApacheMavenVersion>
     <MySQLVersion>9.1.0</MySQLVersion>
     <MariaDBVersion>3.5.1</MariaDBVersion>
-    <PostGreSQLVersion>42.7.4</PostGreSQLVersion>
+    <PostGreSQLVersion>42.7.5</PostGreSQLVersion>
     <MSSQLVersion>12.8.1.jre11</MSSQLVersion>
     <H2Version>2.3.232</H2Version>
-    <ApachePOIVersion>5.3.0</ApachePOIVersion>
+    <ApachePOIVersion>5.4.0</ApachePOIVersion>
     <JSoupVersion>1.18.3</JSoupVersion>
     <JFreeChartVersion>1.5.5</JFreeChartVersion>
     <ZipSDKVersion>9.20</ZipSDKVersion>
