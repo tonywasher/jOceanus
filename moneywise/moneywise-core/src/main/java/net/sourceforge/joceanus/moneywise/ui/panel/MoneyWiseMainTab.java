@@ -21,7 +21,7 @@ import net.sourceforge.joceanus.moneywise.exc.MoneyWiseIOException;
 import net.sourceforge.joceanus.moneywise.tax.uk.MoneyWiseUKTaxYearCache;
 import net.sourceforge.joceanus.moneywise.threads.MoneyWiseThreadLoadArchive;
 import net.sourceforge.joceanus.moneywise.threads.MoneyWiseThreadWriteQIF;
-import net.sourceforge.joceanus.moneywise.ui.controls.MoneyWiseAnalysisSelect.MoneyWiseStatementSelect;
+import net.sourceforge.joceanus.moneywise.lethe.ui.controls.MoneyWiseAnalysisSelect.MoneyWiseStatementSelect;
 import net.sourceforge.joceanus.moneywise.ui.panel.MoneyWiseTransactionTable.MoneyWiseStatementPanel;
 import net.sourceforge.joceanus.moneywise.views.MoneyWiseView;
 import net.sourceforge.joceanus.moneywise.help.MoneyWiseHelp;

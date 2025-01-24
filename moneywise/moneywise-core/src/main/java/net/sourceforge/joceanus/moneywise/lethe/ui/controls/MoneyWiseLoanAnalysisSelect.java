@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.moneywise.ui.controls;
+package net.sourceforge.joceanus.moneywise.lethe.ui.controls;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -22,15 +22,15 @@ import java.util.Map;
 
 import net.sourceforge.joceanus.metis.data.MetisDataDifference;
 import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysis;
-import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisCashBucket;
-import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisCashBucket.MoneyWiseAnalysisCashBucketList;
-import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisCashCategoryBucket;
-import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisCashCategoryBucket.MoneyWiseAnalysisCashCategoryBucketList;
+import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisLoanBucket;
+import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisLoanBucket.MoneyWiseAnalysisLoanBucketList;
+import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisLoanCategoryBucket;
+import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisLoanCategoryBucket.MoneyWiseAnalysisLoanCategoryBucketList;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
-import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseCashCategory;
-import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCashCategoryClass;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseLoanCategory;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseLoanCategoryClass;
 import net.sourceforge.joceanus.moneywise.lethe.views.MoneyWiseAnalysisFilter;
-import net.sourceforge.joceanus.moneywise.lethe.views.MoneyWiseAnalysisFilter.MoneyWiseAnalysisCashFilter;
+import net.sourceforge.joceanus.moneywise.lethe.views.MoneyWiseAnalysisFilter.MoneyWiseAnalysisLoanFilter;
 import net.sourceforge.joceanus.prometheus.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
@@ -50,19 +50,19 @@ import net.sourceforge.joceanus.tethys.api.menu.TethysUIScrollSubMenu;
 import net.sourceforge.joceanus.tethys.api.pane.TethysUIBoxPaneManager;
 
 /**
- * Cash Analysis Selection.
+ * Loan Analysis Selection.
  */
-public class MoneyWiseCashAnalysisSelect
+public class MoneyWiseLoanAnalysisSelect
         implements MoneyWiseAnalysisFilterSelection, TethysEventProvider<PrometheusDataEvent> {
     /**
      * Text for Category Label.
      */
-    private static final String NLS_CATEGORY = MoneyWiseBasicDataType.CASHCATEGORY.getItemName();
+    private static final String NLS_CATEGORY = MoneyWiseBasicDataType.LOANCATEGORY.getItemName();
 
     /**
-     * Text for Account Label.
+     * Text for Loan Label.
      */
-    private static final String NLS_CASH = MoneyWiseBasicDataType.CASH.getItemName();
+    private static final String NLS_LOAN = MoneyWiseBasicDataType.LOAN.getItemName();
 
     /**
      * The Event Manager.
@@ -75,56 +75,56 @@ public class MoneyWiseCashAnalysisSelect
     private final TethysUIBoxPaneManager thePanel;
 
     /**
-     * The cash button.
+     * The loan button.
      */
-    private final TethysUIScrollButtonManager<MoneyWiseAnalysisCashBucket> theCashButton;
+    private final TethysUIScrollButtonManager<MoneyWiseAnalysisLoanBucket> theLoanButton;
 
     /**
      * The category button.
      */
-    private final TethysUIScrollButtonManager<MoneyWiseCashCategory> theCatButton;
+    private final TethysUIScrollButtonManager<MoneyWiseLoanCategory> theCatButton;
 
     /**
      * Category menu.
      */
-    private final TethysUIScrollMenu<MoneyWiseCashCategory> theCategoryMenu;
+    private final TethysUIScrollMenu<MoneyWiseLoanCategory> theCategoryMenu;
 
     /**
-     * Cash menu.
+     * Loan menu.
      */
-    private final TethysUIScrollMenu<MoneyWiseAnalysisCashBucket> theCashMenu;
+    private final TethysUIScrollMenu<MoneyWiseAnalysisLoanBucket> theLoanMenu;
 
     /**
      * The active category bucket list.
      */
-    private MoneyWiseAnalysisCashCategoryBucketList theCategories;
+    private MoneyWiseAnalysisLoanCategoryBucketList theCategories;
 
     /**
-     * The active cash bucket list.
+     * The active loan bucket list.
      */
-    private MoneyWiseAnalysisCashBucketList theCash;
+    private MoneyWiseAnalysisLoanBucketList theLoans;
 
     /**
      * The state.
      */
-    private MoneyWiseCashState theState;
+    private MoneyWiseLoanState theState;
 
     /**
      * The savePoint.
      */
-    private MoneyWiseCashState theSavePoint;
+    private MoneyWiseLoanState theSavePoint;
 
     /**
      * Constructor.
      * @param pFactory the GUI factory
      */
-    protected MoneyWiseCashAnalysisSelect(final TethysUIFactory<?> pFactory) {
-        /* Create the cash button */
+    protected MoneyWiseLoanAnalysisSelect(final TethysUIFactory<?> pFactory) {
+        /* Create the loan button */
         final TethysUIButtonFactory<?> myButtons = pFactory.buttonFactory();
-        theCashButton = myButtons.newScrollButton(MoneyWiseAnalysisCashBucket.class);
+        theLoanButton = myButtons.newScrollButton(MoneyWiseAnalysisLoanBucket.class);
 
         /* Create the category button */
-        theCatButton = myButtons.newScrollButton(MoneyWiseCashCategory.class);
+        theCatButton = myButtons.newScrollButton(MoneyWiseLoanCategory.class);
 
         /* Create Event Manager */
         theEventManager = new OceanusEventManager<>();
@@ -132,7 +132,7 @@ public class MoneyWiseCashAnalysisSelect
         /* Create the labels */
         final TethysUIControlFactory myControls = pFactory.controlFactory();
         final TethysUILabel myCatLabel = myControls.newLabel(NLS_CATEGORY + TethysUIConstant.STR_COLON);
-        final TethysUILabel myCshLabel = myControls.newLabel(NLS_CASH + TethysUIConstant.STR_COLON);
+        final TethysUILabel myLoanLabel = myControls.newLabel(NLS_LOAN + TethysUIConstant.STR_COLON);
 
         /* Define the layout */
         thePanel = pFactory.paneFactory().newHBoxPane();
@@ -140,24 +140,24 @@ public class MoneyWiseCashAnalysisSelect
         thePanel.addNode(myCatLabel);
         thePanel.addNode(theCatButton);
         thePanel.addStrut();
-        thePanel.addNode(myCshLabel);
-        thePanel.addNode(theCashButton);
+        thePanel.addNode(myLoanLabel);
+        thePanel.addNode(theLoanButton);
 
         /* Create initial state */
-        theState = new MoneyWiseCashState();
+        theState = new MoneyWiseLoanState();
         theState.applyState();
 
         /* Access the menus */
         theCategoryMenu = theCatButton.getMenu();
-        theCashMenu = theCashButton.getMenu();
+        theLoanMenu = theLoanButton.getMenu();
 
-        /* Create the listeners */
+        /* Create the listener */
         OceanusEventRegistrar<TethysUIEvent> myRegistrar = theCatButton.getEventRegistrar();
         myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewCategory());
         theCatButton.setMenuConfigurator(e -> buildCategoryMenu());
-        myRegistrar = theCashButton.getEventRegistrar();
-        myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewCash());
-        theCashButton.setMenuConfigurator(e -> buildCashMenu());
+        myRegistrar = theLoanButton.getEventRegistrar();
+        myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewLoan());
+        theLoanButton.setMenuConfigurator(e -> buildLoanMenu());
     }
 
     @Override
@@ -171,14 +171,14 @@ public class MoneyWiseCashAnalysisSelect
     }
 
     @Override
-    public MoneyWiseAnalysisCashFilter getFilter() {
+    public MoneyWiseAnalysisLoanFilter getFilter() {
         return theState.getFilter();
     }
 
     @Override
     public boolean isAvailable() {
-        return theCash != null
-                && !theCash.isEmpty();
+        return theLoans != null
+                && !theLoans.isEmpty();
     }
 
     /**
@@ -186,7 +186,7 @@ public class MoneyWiseCashAnalysisSelect
      */
     protected void createSavePoint() {
         /* Create the savePoint */
-        theSavePoint = new MoneyWiseCashState(theState);
+        theSavePoint = new MoneyWiseLoanState(theState);
     }
 
     /**
@@ -194,7 +194,7 @@ public class MoneyWiseCashAnalysisSelect
      */
     protected void restoreSavePoint() {
         /* Restore the savePoint */
-        theState = new MoneyWiseCashState(theSavePoint);
+        theState = new MoneyWiseLoanState(theSavePoint);
 
         /* Apply the state */
         theState.applyState();
@@ -202,17 +202,12 @@ public class MoneyWiseCashAnalysisSelect
 
     @Override
     public void setEnabled(final boolean bEnabled) {
-        /* Determine whether there are any Accounts to select */
-        final boolean csAvailable = bEnabled && isAvailable();
+        /* Determine whether there are any Loans to select */
+        final boolean lnAvailable = bEnabled && isAvailable();
 
         /* Pass call on to buttons */
-        theCashButton.setEnabled(csAvailable);
-        theCatButton.setEnabled(csAvailable);
-    }
-
-    @Override
-    public void setVisible(final boolean pVisible) {
-        thePanel.setVisible(pVisible);
+        theLoanButton.setEnabled(lnAvailable);
+        theCatButton.setEnabled(lnAvailable);
     }
 
     /**
@@ -221,19 +216,19 @@ public class MoneyWiseCashAnalysisSelect
      */
     public void setAnalysis(final MoneyWiseAnalysis pAnalysis) {
         /* Access buckets */
-        theCategories = pAnalysis.getCashCategories();
-        theCash = pAnalysis.getCash();
+        theCategories = pAnalysis.getLoanCategories();
+        theLoans = pAnalysis.getLoans();
 
-        /* Obtain the current cash */
-        MoneyWiseAnalysisCashBucket myCash = theState.getCash();
+        /* Obtain the current account */
+        MoneyWiseAnalysisLoanBucket myLoan = theState.getLoan();
 
         /* Switch to versions from the analysis */
-        myCash = myCash != null
-                ? theCash.getMatchingCash(myCash.getAccount())
-                : theCash.getDefaultCash();
+        myLoan = myLoan != null
+                ? theLoans.getMatchingLoan(myLoan.getAccount())
+                : theLoans.getDefaultLoan();
 
-        /* Set the cash */
-        theState.setTheCash(myCash);
+        /* Set the loan */
+        theState.setTheLoan(myLoan);
         theState.setDateRange(pAnalysis.getDateRange());
         theState.applyState();
     }
@@ -241,30 +236,30 @@ public class MoneyWiseCashAnalysisSelect
     @Override
     public void setFilter(final MoneyWiseAnalysisFilter<?, ?> pFilter) {
         /* If this is the correct filter type */
-        if (pFilter instanceof MoneyWiseAnalysisCashFilter) {
+        if (pFilter instanceof MoneyWiseAnalysisLoanFilter) {
             /* Access filter */
-            final MoneyWiseAnalysisCashFilter myFilter = (MoneyWiseAnalysisCashFilter) pFilter;
+            final MoneyWiseAnalysisLoanFilter myFilter = (MoneyWiseAnalysisLoanFilter) pFilter;
 
             /* Obtain the filter bucket */
-            MoneyWiseAnalysisCashBucket myCash = myFilter.getBucket();
+            MoneyWiseAnalysisLoanBucket myLoan = myFilter.getBucket();
 
             /* Obtain equivalent bucket */
-            myCash = theCash.getMatchingCash(myCash.getAccount());
+            myLoan = theLoans.getMatchingLoan(myLoan.getAccount());
 
-            /* Set the cash */
-            theState.setTheCash(myCash);
+            /* Set the loan */
+            theState.setTheLoan(myLoan);
             theState.setDateRange(myFilter.getDateRange());
             theState.applyState();
         }
     }
 
     /**
-     * Obtain the default Cash for the category.
+     * Obtain the default Loan for the category.
      * @param pCategory the category
      * @return the bucket
      */
-    protected MoneyWiseAnalysisCashBucket getDefaultCash(final MoneyWiseCashCategory pCategory) {
-        return theCash.getDefaultCash(pCategory);
+    protected MoneyWiseAnalysisLoanBucket getDefaultLoan(final MoneyWiseLoanCategory pCategory) {
+        return theLoans.getDefaultLoan(pCategory);
     }
 
     /**
@@ -279,11 +274,11 @@ public class MoneyWiseCashAnalysisSelect
     }
 
     /**
-     * Handle new Cash.
+     * Handle new Loan.
      */
-    private void handleNewCash() {
-        /* Select the new cash */
-        if (theState.setCash(theCashButton.getValue())) {
+    private void handleNewLoan() {
+        /* Select the new loan */
+        if (theState.setLoan(theLoanButton.getValue())) {
             theState.applyState();
             theEventManager.fireEvent(PrometheusDataEvent.SELECTIONCHANGED);
         }
@@ -297,30 +292,37 @@ public class MoneyWiseCashAnalysisSelect
         theCategoryMenu.removeAllItems();
 
         /* Create a simple map for top-level categories */
-        final Map<String, TethysUIScrollSubMenu<MoneyWiseCashCategory>> myMap = new HashMap<>();
+        final Map<String, TethysUIScrollSubMenu<MoneyWiseLoanCategory>> myMap = new HashMap<>();
 
         /* Record active item */
-        final MoneyWiseCashCategory myCurrent = theState.getCategory();
-        TethysUIScrollItem<MoneyWiseCashCategory> myActive = null;
+        final MoneyWiseLoanCategory myCurrent = theState.getCategory();
+        TethysUIScrollItem<MoneyWiseLoanCategory> myActive = null;
 
-        /* Loop through the available category values */
-        final Iterator<MoneyWiseAnalysisCashCategoryBucket> myIterator = theCategories.iterator();
+        /* Re-Loop through the available category values */
+        final Iterator<MoneyWiseAnalysisLoanCategoryBucket> myIterator = theCategories.iterator();
         while (myIterator.hasNext()) {
-            final MoneyWiseAnalysisCashCategoryBucket myBucket = myIterator.next();
+            final MoneyWiseAnalysisLoanCategoryBucket myBucket = myIterator.next();
 
             /* Only process low-level items */
-            if (myBucket.getAccountCategory().isCategoryClass(MoneyWiseCashCategoryClass.PARENT)) {
+            if (myBucket.getAccountCategory().isCategoryClass(MoneyWiseLoanCategoryClass.PARENT)) {
                 continue;
             }
 
             /* Determine menu to add to */
-            final MoneyWiseCashCategory myParent = myBucket.getAccountCategory().getParentCategory();
+            final MoneyWiseLoanCategory myParent = myBucket.getAccountCategory().getParentCategory();
             final String myParentName = myParent.getName();
-            final TethysUIScrollSubMenu<MoneyWiseCashCategory> myMenu = myMap.computeIfAbsent(myParentName, theCategoryMenu::addSubMenu);
+            TethysUIScrollSubMenu<MoneyWiseLoanCategory> myMenu = myMap.get(myParent.getName());
+
+            /* If this is a new menu */
+            if (myMenu == null) {
+                /* Create a new JMenu and add it to the popUp */
+                myMenu = theCategoryMenu.addSubMenu(myParentName);
+                myMap.put(myParentName, myMenu);
+            }
 
             /* Create a new JMenuItem and add it to the popUp */
-            final MoneyWiseCashCategory myCategory = myBucket.getAccountCategory();
-            final TethysUIScrollItem<MoneyWiseCashCategory> myItem = myMenu.getSubMenu().addItem(myCategory, myCategory.getSubCategory());
+            final MoneyWiseLoanCategory myCategory = myBucket.getAccountCategory();
+            final TethysUIScrollItem<MoneyWiseLoanCategory> myItem = myMenu.getSubMenu().addItem(myCategory, myCategory.getSubCategory());
 
             /* If this is the active category */
             if (myCategory.equals(myCurrent)) {
@@ -336,34 +338,34 @@ public class MoneyWiseCashAnalysisSelect
     }
 
     /**
-     * Build Cash menu.
+     * Build Loan menu.
      */
-    private void buildCashMenu() {
+    private void buildLoanMenu() {
         /* Reset the popUp menu */
-        theCashMenu.removeAllItems();
+        theLoanMenu.removeAllItems();
 
-        /* Access current category and Account */
-        final MoneyWiseCashCategory myCategory = theState.getCategory();
-        final MoneyWiseAnalysisCashBucket myCash = theState.getCash();
+        /* Access current category and Loan */
+        final MoneyWiseLoanCategory myCategory = theState.getCategory();
+        final MoneyWiseAnalysisLoanBucket myLoan = theState.getLoan();
 
         /* Record active item */
-        TethysUIScrollItem<MoneyWiseAnalysisCashBucket> myActive = null;
+        TethysUIScrollItem<MoneyWiseAnalysisLoanBucket> myActive = null;
 
         /* Loop through the available account values */
-        final Iterator<MoneyWiseAnalysisCashBucket> myIterator = theCash.iterator();
+        final Iterator<MoneyWiseAnalysisLoanBucket> myIterator = theLoans.iterator();
         while (myIterator.hasNext()) {
-            final MoneyWiseAnalysisCashBucket myBucket = myIterator.next();
+            final MoneyWiseAnalysisLoanBucket myBucket = myIterator.next();
 
             /* Ignore if not the correct category */
             if (!MetisDataDifference.isEqual(myCategory, myBucket.getCategory())) {
                 continue;
             }
 
-            /* Create a new JMenuItem and add it to the popUp */
-            final TethysUIScrollItem<MoneyWiseAnalysisCashBucket> myItem = theCashMenu.addItem(myBucket);
+            /* Create a new MenuItem and add it to the popUp */
+            final TethysUIScrollItem<MoneyWiseAnalysisLoanBucket> myItem = theLoanMenu.addItem(myBucket);
 
-            /* If this is the active cash */
-            if (myBucket.equals(myCash)) {
+            /* If this is the active loan */
+            if (myBucket.equals(myLoan)) {
                 /* Record it */
                 myActive = myItem;
             }
@@ -378,16 +380,16 @@ public class MoneyWiseCashAnalysisSelect
     /**
      * SavePoint values.
      */
-    private final class MoneyWiseCashState {
+    private final class MoneyWiseLoanState {
         /**
          * The active Category.
          */
-        private MoneyWiseCashCategory theCategory;
+        private MoneyWiseLoanCategory theCategory;
 
         /**
-         * The active CashBucket.
+         * The active LoanBucket.
          */
-        private MoneyWiseAnalysisCashBucket theCash;
+        private MoneyWiseAnalysisLoanBucket theLoan;
 
         /**
          * The dateRange.
@@ -397,39 +399,39 @@ public class MoneyWiseCashAnalysisSelect
         /**
          * The active Filter.
          */
-        private MoneyWiseAnalysisCashFilter theFilter;
+        private MoneyWiseAnalysisLoanFilter theFilter;
 
         /**
          * Constructor.
          */
-        private MoneyWiseCashState() {
+        private MoneyWiseLoanState() {
         }
 
         /**
          * Constructor.
          * @param pState state to copy from
          */
-        private MoneyWiseCashState(final MoneyWiseCashState pState) {
+        private MoneyWiseLoanState(final MoneyWiseLoanState pState) {
             /* Initialise state */
-            theCash = pState.getCash();
+            theLoan = pState.getLoan();
             theCategory = pState.getCategory();
             theDateRange = pState.getDateRange();
             theFilter = pState.getFilter();
         }
 
         /**
-         * Obtain the Cash Bucket.
-         * @return the Cash
+         * Obtain the Loan Bucket.
+         * @return the Loan
          */
-        private MoneyWiseAnalysisCashBucket getCash() {
-            return theCash;
+        private MoneyWiseAnalysisLoanBucket getLoan() {
+            return theLoan;
         }
 
         /**
          * Obtain the Category.
          * @return the category
          */
-        private MoneyWiseCashCategory getCategory() {
+        private MoneyWiseLoanCategory getCategory() {
             return theCategory;
         }
 
@@ -445,51 +447,51 @@ public class MoneyWiseCashAnalysisSelect
          * Obtain the Filter.
          * @return the filter
          */
-        private MoneyWiseAnalysisCashFilter getFilter() {
+        private MoneyWiseAnalysisLoanFilter getFilter() {
             return theFilter;
         }
 
         /**
-         * Set new Cash Account.
-         * @param pCash the Cash Account
+         * Set new Loan Account.
+         * @param pLoan the Loan Account
          * @return true/false did a change occur
          */
-        private boolean setCash(final MoneyWiseAnalysisCashBucket pCash) {
-            /* Adjust the selected cash */
-            if (!MetisDataDifference.isEqual(pCash, theCash)) {
-                /* Store the cash */
-                setTheCash(pCash);
+        private boolean setLoan(final MoneyWiseAnalysisLoanBucket pLoan) {
+            /* Adjust the selected loan */
+            if (!MetisDataDifference.isEqual(pLoan, theLoan)) {
+                /* Set the Loan */
+                setTheLoan(pLoan);
                 return true;
             }
             return false;
         }
 
         /**
-         * Set the Cash.
-         * @param pCash the Cash
+         * Set the Loan.
+         * @param pLoan the Loan
          */
-        private void setTheCash(final MoneyWiseAnalysisCashBucket pCash) {
+        private void setTheLoan(final MoneyWiseAnalysisLoanBucket pLoan) {
             /* Access category for account */
-            final MoneyWiseCashCategory myCategory = pCash == null
+            final MoneyWiseLoanCategory myCategory = pLoan == null
                     ? null
-                    : pCash.getCategory();
-            setTheCash(myCategory, pCash);
+                    : pLoan.getCategory();
+            setTheLoan(myCategory, pLoan);
         }
 
         /**
-         * Set the Cash.
+         * Set the Loan.
          * @param pCategory the category
-         * @param pCash the Cash
+         * @param pLoan the Loan
          */
-        private void setTheCash(final MoneyWiseCashCategory pCategory,
-                                final MoneyWiseAnalysisCashBucket pCash) {
-            /* Store the cash */
-            theCash = pCash;
+        private void setTheLoan(final MoneyWiseLoanCategory pCategory,
+                                final MoneyWiseAnalysisLoanBucket pLoan) {
+            /* Store the loan */
+            theLoan = pLoan;
             theCategory = pCategory;
 
             /* Access filter */
-            if (theCash != null) {
-                theFilter = new MoneyWiseAnalysisCashFilter(theCash);
+            if (theLoan != null) {
+                theFilter = new MoneyWiseAnalysisLoanFilter(theLoan);
                 theFilter.setDateRange(theDateRange);
             } else {
                 theFilter = null;
@@ -501,10 +503,10 @@ public class MoneyWiseCashAnalysisSelect
          * @param pCategory the Category
          * @return true/false did a change occur
          */
-        private boolean setCategory(final MoneyWiseCashCategory pCategory) {
+        private boolean setCategory(final MoneyWiseLoanCategory pCategory) {
             /* Adjust the selected category */
             if (!MetisDataDifference.isEqual(pCategory, theCategory)) {
-                setTheCash(pCategory, getDefaultCash(pCategory));
+                setTheLoan(pCategory, getDefaultLoan(pCategory));
                 return true;
             }
             return false;
@@ -528,7 +530,7 @@ public class MoneyWiseCashAnalysisSelect
         private void applyState() {
             /* Adjust the lock-down */
             setEnabled(true);
-            theCashButton.setValue(theCash);
+            theLoanButton.setValue(theLoan);
             theCatButton.setValue(theCategory);
         }
     }

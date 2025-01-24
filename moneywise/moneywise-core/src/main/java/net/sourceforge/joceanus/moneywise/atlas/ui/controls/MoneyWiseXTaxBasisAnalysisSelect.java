@@ -14,24 +14,22 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.moneywise.ui.controls;
-
-import java.util.Iterator;
+package net.sourceforge.joceanus.moneywise.atlas.ui.controls;
 
 import net.sourceforge.joceanus.metis.data.MetisDataDifference;
-import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysis;
-import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisDataResource;
-import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisTaxBasisAccountBucket;
-import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisTaxBasisBucket;
-import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisTaxBasisBucket.MoneyWiseAnalysisTaxBasisBucketList;
+import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysis;
+import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisBucketResource;
+import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisTaxBasisAccountBucket;
+import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisTaxBasisBucket;
+import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisTaxBasisBucket.MoneyWiseXAnalysisTaxBasisBucketList;
+import net.sourceforge.joceanus.moneywise.atlas.views.MoneyWiseXAnalysisFilter;
+import net.sourceforge.joceanus.moneywise.atlas.views.MoneyWiseXAnalysisFilter.MoneyWiseXAnalysisTaxBasisFilter;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
-import net.sourceforge.joceanus.moneywise.lethe.views.MoneyWiseAnalysisFilter;
-import net.sourceforge.joceanus.moneywise.lethe.views.MoneyWiseAnalysisFilter.MoneyWiseAnalysisTaxBasisFilter;
-import net.sourceforge.joceanus.prometheus.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.prometheus.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIConstant;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIEvent;
@@ -44,11 +42,13 @@ import net.sourceforge.joceanus.tethys.api.menu.TethysUIScrollItem;
 import net.sourceforge.joceanus.tethys.api.menu.TethysUIScrollMenu;
 import net.sourceforge.joceanus.tethys.api.pane.TethysUIBoxPaneManager;
 
+import java.util.Iterator;
+
 /**
  * TaxBasisAnalysis Selection.
  */
-public class MoneyWiseTaxBasisAnalysisSelect
-        implements MoneyWiseAnalysisFilterSelection, TethysEventProvider<PrometheusDataEvent> {
+public class MoneyWiseXTaxBasisAnalysisSelect
+        implements MoneyWiseXAnalysisFilterSelection, TethysEventProvider<PrometheusDataEvent> {
     /**
      * Text for TaxBasis Label.
      */
@@ -57,7 +57,7 @@ public class MoneyWiseTaxBasisAnalysisSelect
     /**
      * Text for Account Label.
      */
-    private static final String NLS_ACCOUNT = MoneyWiseAnalysisDataResource.BUCKET_ACCOUNT.getValue();
+    private static final String NLS_ACCOUNT = MoneyWiseXAnalysisBucketResource.BUCKET_ACCOUNT.getValue();
 
     /**
      * Text for All Item.
@@ -77,27 +77,27 @@ public class MoneyWiseTaxBasisAnalysisSelect
     /**
      * The basis button.
      */
-    private final TethysUIScrollButtonManager<MoneyWiseAnalysisTaxBasisBucket> theBasisButton;
+    private final TethysUIScrollButtonManager<MoneyWiseXAnalysisTaxBasisBucket> theBasisButton;
 
     /**
      * The account button.
      */
-    private final TethysUIScrollButtonManager<MoneyWiseAnalysisTaxBasisAccountBucket> theAccountButton;
+    private final TethysUIScrollButtonManager<MoneyWiseXAnalysisTaxBasisAccountBucket> theAccountButton;
 
     /**
      * Tax menu.
      */
-    private final TethysUIScrollMenu<MoneyWiseAnalysisTaxBasisBucket> theTaxMenu;
+    private final TethysUIScrollMenu<MoneyWiseXAnalysisTaxBasisBucket> theTaxMenu;
 
     /**
      * Account menu.
      */
-    private final TethysUIScrollMenu<MoneyWiseAnalysisTaxBasisAccountBucket> theAccountMenu;
+    private final TethysUIScrollMenu<MoneyWiseXAnalysisTaxBasisAccountBucket> theAccountMenu;
 
     /**
      * The active tax basis bucket list.
      */
-    private MoneyWiseAnalysisTaxBasisBucketList theTaxBases;
+    private MoneyWiseXAnalysisTaxBasisBucketList theTaxBases;
 
     /**
      * The state.
@@ -113,11 +113,11 @@ public class MoneyWiseTaxBasisAnalysisSelect
      * Constructor.
      * @param pFactory the GUI factory
      */
-    protected MoneyWiseTaxBasisAnalysisSelect(final TethysUIFactory<?> pFactory) {
+    protected MoneyWiseXTaxBasisAnalysisSelect(final TethysUIFactory<?> pFactory) {
         /* Create the buttons */
         final TethysUIButtonFactory<?> myButtons = pFactory.buttonFactory();
-        theBasisButton = myButtons.newScrollButton(MoneyWiseAnalysisTaxBasisBucket.class);
-        theAccountButton = myButtons.newScrollButton(MoneyWiseAnalysisTaxBasisAccountBucket.class);
+        theBasisButton = myButtons.newScrollButton(MoneyWiseXAnalysisTaxBasisBucket.class);
+        theAccountButton = myButtons.newScrollButton(MoneyWiseXAnalysisTaxBasisAccountBucket.class);
 
         /* Create Event Manager */
         theEventManager = new OceanusEventManager<>();
@@ -164,7 +164,7 @@ public class MoneyWiseTaxBasisAnalysisSelect
     }
 
     @Override
-    public MoneyWiseAnalysisTaxBasisFilter getFilter() {
+    public MoneyWiseXAnalysisTaxBasisFilter getFilter() {
         return theState.getFilter();
     }
 
@@ -208,12 +208,12 @@ public class MoneyWiseTaxBasisAnalysisSelect
      * Set analysis.
      * @param pAnalysis the analysis.
      */
-    public void setAnalysis(final MoneyWiseAnalysis pAnalysis) {
+    public void setAnalysis(final MoneyWiseXAnalysis pAnalysis) {
         /* Access buckets */
         theTaxBases = pAnalysis.getTaxBasis();
 
         /* Obtain the current basis */
-        MoneyWiseAnalysisTaxBasisBucket myBasis = theState.getTaxBasis();
+        MoneyWiseXAnalysisTaxBasisBucket myBasis = theState.getTaxBasis();
 
         /* Switch to versions from the analysis */
         myBasis = myBasis != null
@@ -227,14 +227,14 @@ public class MoneyWiseTaxBasisAnalysisSelect
     }
 
     @Override
-    public void setFilter(final MoneyWiseAnalysisFilter<?, ?> pFilter) {
+    public void setFilter(final MoneyWiseXAnalysisFilter<?, ?> pFilter) {
         /* If this is the correct filter type */
-        if (pFilter instanceof MoneyWiseAnalysisTaxBasisFilter) {
+        if (pFilter instanceof MoneyWiseXAnalysisTaxBasisFilter) {
             /* Access filter */
-            final MoneyWiseAnalysisTaxBasisFilter myFilter = (MoneyWiseAnalysisTaxBasisFilter) pFilter;
+            final MoneyWiseXAnalysisTaxBasisFilter myFilter = (MoneyWiseXAnalysisTaxBasisFilter) pFilter;
 
             /* Obtain the filter bucket */
-            MoneyWiseAnalysisTaxBasisBucket myTaxBasis = myFilter.getBucket();
+            MoneyWiseXAnalysisTaxBasisBucket myTaxBasis = myFilter.getBucket();
 
             /* Obtain equivalent bucket */
             myTaxBasis = theTaxBases.getMatchingBasis(myTaxBasis);
@@ -276,16 +276,16 @@ public class MoneyWiseTaxBasisAnalysisSelect
         theTaxMenu.removeAllItems();
 
         /* Record active item */
-        TethysUIScrollItem<MoneyWiseAnalysisTaxBasisBucket> myActive = null;
-        final MoneyWiseAnalysisTaxBasisBucket myCurr = theState.getTaxBasis();
+        TethysUIScrollItem<MoneyWiseXAnalysisTaxBasisBucket> myActive = null;
+        final MoneyWiseXAnalysisTaxBasisBucket myCurr = theState.getTaxBasis();
 
         /* Loop through the available basis values */
-        final Iterator<MoneyWiseAnalysisTaxBasisBucket> myIterator = theTaxBases.iterator();
+        final Iterator<MoneyWiseXAnalysisTaxBasisBucket> myIterator = theTaxBases.iterator();
         while (myIterator.hasNext()) {
-            final MoneyWiseAnalysisTaxBasisBucket myBucket = myIterator.next();
+            final MoneyWiseXAnalysisTaxBasisBucket myBucket = myIterator.next();
 
             /* Create a new MenuItem and add it to the popUp */
-            final TethysUIScrollItem<MoneyWiseAnalysisTaxBasisBucket> myItem = theTaxMenu.addItem(myBucket);
+            final TethysUIScrollItem<MoneyWiseXAnalysisTaxBasisBucket> myItem = theTaxMenu.addItem(myBucket);
 
             /* If this is the active bucket */
             if (myBucket.equals(myCurr)) {
@@ -308,19 +308,19 @@ public class MoneyWiseTaxBasisAnalysisSelect
         theAccountMenu.removeAllItems();
 
         /* Record active item */
-        final MoneyWiseAnalysisTaxBasisBucket myBasis = theState.getTaxBasis();
-        final MoneyWiseAnalysisTaxBasisAccountBucket myCurr = theState.getAccount();
+        final MoneyWiseXAnalysisTaxBasisBucket myBasis = theState.getTaxBasis();
+        final MoneyWiseXAnalysisTaxBasisAccountBucket myCurr = theState.getAccount();
 
         /* Add the all item menu */
-        TethysUIScrollItem<MoneyWiseAnalysisTaxBasisAccountBucket> myActive = theAccountMenu.addItem(null, NLS_ALL);
+        TethysUIScrollItem<MoneyWiseXAnalysisTaxBasisAccountBucket> myActive = theAccountMenu.addItem(null, NLS_ALL);
 
         /* Loop through the available account values */
-        final Iterator<MoneyWiseAnalysisTaxBasisAccountBucket> myIterator = myBasis.accountIterator();
+        final Iterator<MoneyWiseXAnalysisTaxBasisAccountBucket> myIterator = myBasis.accountIterator();
         while (myIterator.hasNext()) {
-            final MoneyWiseAnalysisTaxBasisAccountBucket myBucket = myIterator.next();
+            final MoneyWiseXAnalysisTaxBasisAccountBucket myBucket = myIterator.next();
 
             /* Create a new MenuItem and add it to the popUp */
-            final TethysUIScrollItem<MoneyWiseAnalysisTaxBasisAccountBucket> myItem = theAccountMenu.addItem(myBucket, myBucket.getSimpleName());
+            final TethysUIScrollItem<MoneyWiseXAnalysisTaxBasisAccountBucket> myItem = theAccountMenu.addItem(myBucket, myBucket.getSimpleName());
 
             /* If this is the active bucket */
             if (myBucket.equals(myCurr)) {
@@ -342,12 +342,12 @@ public class MoneyWiseTaxBasisAnalysisSelect
         /**
          * The active TaxBasisBucket.
          */
-        private MoneyWiseAnalysisTaxBasisBucket theBasis;
+        private MoneyWiseXAnalysisTaxBasisBucket theBasis;
 
         /**
          * The account TaxBasisBucket.
          */
-        private MoneyWiseAnalysisTaxBasisAccountBucket theAccount;
+        private MoneyWiseXAnalysisTaxBasisAccountBucket theAccount;
 
         /**
          * The dateRange.
@@ -357,7 +357,7 @@ public class MoneyWiseTaxBasisAnalysisSelect
         /**
          * The active filter.
          */
-        private MoneyWiseAnalysisTaxBasisFilter theFilter;
+        private MoneyWiseXAnalysisTaxBasisFilter theFilter;
 
         /**
          * Constructor.
@@ -381,7 +381,7 @@ public class MoneyWiseTaxBasisAnalysisSelect
          * Obtain the TaxBasis Bucket.
          * @return the Basis
          */
-        private MoneyWiseAnalysisTaxBasisBucket getTaxBasis() {
+        private MoneyWiseXAnalysisTaxBasisBucket getTaxBasis() {
             return theBasis;
         }
 
@@ -389,7 +389,7 @@ public class MoneyWiseTaxBasisAnalysisSelect
          * Obtain the Account Bucket.
          * @return the Account
          */
-        private MoneyWiseAnalysisTaxBasisAccountBucket getAccount() {
+        private MoneyWiseXAnalysisTaxBasisAccountBucket getAccount() {
             return theAccount;
         }
 
@@ -405,7 +405,7 @@ public class MoneyWiseTaxBasisAnalysisSelect
          * Obtain the Filter.
          * @return the Filter
          */
-        private MoneyWiseAnalysisTaxBasisFilter getFilter() {
+        private MoneyWiseXAnalysisTaxBasisFilter getFilter() {
             return theFilter;
         }
 
@@ -414,7 +414,7 @@ public class MoneyWiseTaxBasisAnalysisSelect
          * @param pTaxBasis the TaxBasis
          * @return true/false did a change occur
          */
-        private boolean setTaxBasis(final MoneyWiseAnalysisTaxBasisBucket pTaxBasis) {
+        private boolean setTaxBasis(final MoneyWiseXAnalysisTaxBasisBucket pTaxBasis) {
             /* Adjust the selected taxBasis */
             if (!MetisDataDifference.isEqual(pTaxBasis, theBasis)) {
                 setTheTaxBasis(pTaxBasis);
@@ -427,18 +427,18 @@ public class MoneyWiseTaxBasisAnalysisSelect
          * Set the TaxBasis.
          * @param pTaxBasis the TaxBasis
          */
-        private void setTheTaxBasis(final MoneyWiseAnalysisTaxBasisBucket pTaxBasis) {
+        private void setTheTaxBasis(final MoneyWiseXAnalysisTaxBasisBucket pTaxBasis) {
             /* Adjust the selected taxBasis */
-            if (pTaxBasis instanceof MoneyWiseAnalysisTaxBasisAccountBucket) {
-                theAccount = (MoneyWiseAnalysisTaxBasisAccountBucket) pTaxBasis;
+            if (pTaxBasis instanceof MoneyWiseXAnalysisTaxBasisAccountBucket) {
+                theAccount = (MoneyWiseXAnalysisTaxBasisAccountBucket) pTaxBasis;
                 theBasis = theAccount.getParent();
-                theFilter = new MoneyWiseAnalysisTaxBasisFilter(theAccount);
+                theFilter = new MoneyWiseXAnalysisTaxBasisFilter(theAccount);
                 theFilter.setDateRange(theDateRange);
             } else {
                 theAccount = null;
                 theBasis = pTaxBasis;
                 if (theBasis != null) {
-                    theFilter = new MoneyWiseAnalysisTaxBasisFilter(theBasis);
+                    theFilter = new MoneyWiseXAnalysisTaxBasisFilter(theBasis);
                     theFilter.setDateRange(theDateRange);
                 } else {
                     theFilter = null;

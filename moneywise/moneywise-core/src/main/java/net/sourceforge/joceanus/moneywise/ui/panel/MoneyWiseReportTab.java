@@ -33,8 +33,8 @@ import net.sourceforge.joceanus.moneywise.lethe.reports.MoneyWiseReportStyleShee
 import net.sourceforge.joceanus.moneywise.lethe.reports.MoneyWiseReportType;
 import net.sourceforge.joceanus.moneywise.ui.MoneyWiseGoToId;
 import net.sourceforge.joceanus.moneywise.ui.MoneyWiseUIResource;
-import net.sourceforge.joceanus.moneywise.ui.controls.MoneyWiseAnalysisSelect.MoneyWiseStatementSelect;
-import net.sourceforge.joceanus.moneywise.ui.controls.MoneyWiseReportSelect;
+import net.sourceforge.joceanus.moneywise.lethe.ui.controls.MoneyWiseAnalysisSelect.MoneyWiseStatementSelect;
+import net.sourceforge.joceanus.moneywise.lethe.ui.controls.MoneyWiseReportSelect;
 import net.sourceforge.joceanus.moneywise.lethe.views.MoneyWiseAnalysisFilter;
 import net.sourceforge.joceanus.moneywise.lethe.views.MoneyWiseAnalysisFilter.MoneyWiseAnalysisSecurityFilter;
 import net.sourceforge.joceanus.moneywise.views.MoneyWiseView;

@@ -56,7 +56,7 @@ import net.sourceforge.joceanus.moneywise.ui.MoneyWiseIcon;
 import net.sourceforge.joceanus.moneywise.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.moneywise.ui.base.MoneyWiseBaseTable;
 import net.sourceforge.joceanus.moneywise.ui.base.MoneyWiseItemPanel;
-import net.sourceforge.joceanus.moneywise.ui.controls.MoneyWiseAnalysisSelect;
+import net.sourceforge.joceanus.moneywise.lethe.ui.controls.MoneyWiseAnalysisSelect;
 import net.sourceforge.joceanus.moneywise.lethe.views.MoneyWiseAnalysisFilter;
 import net.sourceforge.joceanus.moneywise.lethe.views.MoneyWiseTransactionFilters;
 import net.sourceforge.joceanus.prometheus.ui.fieldset.PrometheusFieldSet;

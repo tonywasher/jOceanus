@@ -14,29 +14,25 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.moneywise.ui.controls;
-
-import java.util.EnumMap;
-import java.util.Map;
-import java.util.Map.Entry;
+package net.sourceforge.joceanus.moneywise.atlas.ui.controls;
 
 import net.sourceforge.joceanus.metis.data.MetisDataDifference;
 import net.sourceforge.joceanus.metis.ui.MetisIcon;
-import net.sourceforge.joceanus.moneywise.lethe.data.analysis.base.MoneyWiseAnalysisAttribute;
-import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysis;
-import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisType;
+import net.sourceforge.joceanus.moneywise.atlas.data.analysis.base.MoneyWiseXAnalysisAttribute;
+import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysis;
+import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisManager;
+import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisType;
+import net.sourceforge.joceanus.moneywise.atlas.views.MoneyWiseXAnalysisFilter;
+import net.sourceforge.joceanus.moneywise.atlas.views.MoneyWiseXAnalysisFilter.MoneyWiseXAnalysisAllFilter;
 import net.sourceforge.joceanus.moneywise.ui.MoneyWiseAnalysisColumnSet;
 import net.sourceforge.joceanus.moneywise.ui.MoneyWiseUIResource;
-import net.sourceforge.joceanus.moneywise.lethe.views.MoneyWiseAnalysisFilter;
-import net.sourceforge.joceanus.moneywise.lethe.views.MoneyWiseAnalysisFilter.MoneyWiseAnalysisAllFilter;
-import net.sourceforge.joceanus.moneywise.views.MoneyWiseAnalysisView;
 import net.sourceforge.joceanus.moneywise.views.MoneyWiseView;
-import net.sourceforge.joceanus.prometheus.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
 import net.sourceforge.joceanus.oceanus.date.OceanusDateResource;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.prometheus.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIArrowIconId;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIEvent;
@@ -52,10 +48,14 @@ import net.sourceforge.joceanus.tethys.api.pane.TethysUIBoxPaneManager;
 import net.sourceforge.joceanus.tethys.api.pane.TethysUICardPaneManager;
 import net.sourceforge.joceanus.tethys.api.pane.TethysUIPaneFactory;
 
+import java.util.EnumMap;
+import java.util.Map;
+import java.util.Map.Entry;
+
 /**
  * Selection panel for Analysis Statement.
  */
-public class MoneyWiseAnalysisSelect
+public class MoneyWiseXAnalysisSelect
         implements TethysEventProvider<PrometheusDataEvent>, TethysUIComponent {
     /**
      * Text for DateRange Label.
@@ -130,12 +130,12 @@ public class MoneyWiseAnalysisSelect
     /**
      * Filter Type Button.
      */
-    private final TethysUIScrollButtonManager<MoneyWiseAnalysisType> theFilterTypeButton;
+    private final TethysUIScrollButtonManager<MoneyWiseXAnalysisType> theFilterTypeButton;
 
     /**
      * Bucket Type Button.
      */
-    private final TethysUIScrollButtonManager<MoneyWiseAnalysisAttribute> theBucketButton;
+    private final TethysUIScrollButtonManager<MoneyWiseXAnalysisAttribute> theBucketButton;
 
     /**
      * ColumnSet Button.
@@ -170,77 +170,77 @@ public class MoneyWiseAnalysisSelect
     /**
      * Deposit Select Panel.
      */
-    private final MoneyWiseDepositAnalysisSelect theDepositSelect;
+    private final MoneyWiseXDepositAnalysisSelect theDepositSelect;
 
     /**
      * Cash Select Panel.
      */
-    private final MoneyWiseCashAnalysisSelect theCashSelect;
+    private final MoneyWiseXCashAnalysisSelect theCashSelect;
 
     /**
      * Loan Select Panel.
      */
-    private final MoneyWiseLoanAnalysisSelect theLoanSelect;
+    private final MoneyWiseXLoanAnalysisSelect theLoanSelect;
 
     /**
      * Security Select Panel.
      */
-    private final MoneyWiseSecurityAnalysisSelect theSecuritySelect;
+    private final MoneyWiseXSecurityAnalysisSelect theSecuritySelect;
 
     /**
      * Portfolio Select Panel.
      */
-    private final MoneyWisePortfolioAnalysisSelect thePortfolioSelect;
+    private final MoneyWiseXPortfolioAnalysisSelect thePortfolioSelect;
 
     /**
      * Payee Select Panel.
      */
-    private final MoneyWisePayeeAnalysisSelect thePayeeSelect;
+    private final MoneyWiseXPayeeAnalysisSelect thePayeeSelect;
 
     /**
      * TransCategory Select Panel.
      */
-    private final MoneyWiseTransCategoryAnalysisSelect theCategorySelect;
+    private final MoneyWiseXTransCategoryAnalysisSelect theCategorySelect;
 
     /**
      * TaxBasis Select Panel.
      */
-    private final MoneyWiseTaxBasisAnalysisSelect theTaxBasisSelect;
+    private final MoneyWiseXTaxBasisAnalysisSelect theTaxBasisSelect;
 
     /**
      * TransactionTag Select Panel.
      */
-    private final MoneyWiseTransTagSelect theTagSelect;
+    private final MoneyWiseXTransTagSelect theTagSelect;
 
     /**
      * All Select Panel.
      */
-    private final MoneyWiseAllSelect theAllSelect;
+    private final MoneyWiseXAllSelect theAllSelect;
 
     /**
      * The card panel.
      */
-    private final TethysUICardPaneManager<MoneyWiseAnalysisFilterSelection> theCardPanel;
+    private final TethysUICardPaneManager<MoneyWiseXAnalysisFilterSelection> theCardPanel;
 
     /**
-     * The analysis view.
+     * The analysis manager.
      */
-    private final MoneyWiseAnalysisView theAnalysisView;
+    private final MoneyWiseXAnalysisManager theAnalysisMgr;
 
     /**
      * Select panel map.
      */
-    private final Map<MoneyWiseAnalysisType, MoneyWiseAnalysisFilterSelection> theMap;
+    private final Map<MoneyWiseXAnalysisType, MoneyWiseXAnalysisFilterSelection> theMap;
 
     /**
      * AnalysisType menu.
      */
-    private final TethysUIScrollMenu<MoneyWiseAnalysisType> theTypeMenu;
+    private final TethysUIScrollMenu<MoneyWiseXAnalysisType> theTypeMenu;
 
     /**
      * Bucket menu.
      */
-    private final TethysUIScrollMenu<MoneyWiseAnalysisAttribute> theBucketMenu;
+    private final TethysUIScrollMenu<MoneyWiseXAnalysisAttribute> theBucketMenu;
 
     /**
      * Column menu.
@@ -250,7 +250,7 @@ public class MoneyWiseAnalysisSelect
     /**
      * Analysis.
      */
-    private MoneyWiseAnalysis theAnalysis;
+    private MoneyWiseXAnalysis theAnalysis;
 
     /**
      * Analysis State.
@@ -281,16 +281,16 @@ public class MoneyWiseAnalysisSelect
      * Constructor.
      * @param pFactory the GUI factory
      * @param pView the view
-     * @param pAnalysisView the analysis view
+     * @param pAnalysisMgr the analysis manager
      * @param pNewButton the new button
      */
-    public MoneyWiseAnalysisSelect(final TethysUIFactory<?> pFactory,
-                                   final MoneyWiseView pView,
-                                   final MoneyWiseAnalysisView pAnalysisView,
-                                   final TethysUIButton pNewButton) {
+    public MoneyWiseXAnalysisSelect(final TethysUIFactory<?> pFactory,
+                                    final MoneyWiseView pView,
+                                    final MoneyWiseXAnalysisManager pAnalysisMgr,
+                                    final TethysUIButton pNewButton) {
         /* Access the analysis manager */
         theView = pView;
-        theAnalysisView = pAnalysisView;
+        theAnalysisMgr = pAnalysisMgr;
 
         /* Create Event Manager */
         theEventManager = new OceanusEventManager<>();
@@ -307,7 +307,7 @@ public class MoneyWiseAnalysisSelect
         theFilterButton.setTextAndIcon();
 
         /* Create the filter type button */
-        theFilterTypeButton = myButtons.newScrollButton(MoneyWiseAnalysisType.class);
+        theFilterTypeButton = myButtons.newScrollButton(MoneyWiseXAnalysisType.class);
 
         /* Create the columnSet button */
         final TethysUIControlFactory myControls = pFactory.controlFactory();
@@ -316,26 +316,26 @@ public class MoneyWiseAnalysisSelect
 
         /* Create the bucket button */
         theBucketLabel = myControls.newLabel(NLS_BUCKET);
-        theBucketButton = myButtons.newScrollButton(MoneyWiseAnalysisAttribute.class);
+        theBucketButton = myButtons.newScrollButton(MoneyWiseXAnalysisAttribute.class);
 
         /* Create the Range Select panel */
         theRangeSelect = myButtons.newDateRangeSelector();
         theRangeSelect.setBorderTitle(NLS_RANGETITLE);
 
         /* Create the panel map */
-        theMap = new EnumMap<>(MoneyWiseAnalysisType.class);
+        theMap = new EnumMap<>(MoneyWiseXAnalysisType.class);
 
         /* Create the filter selection panels */
-        theDepositSelect = new MoneyWiseDepositAnalysisSelect(pFactory);
-        theCashSelect = new MoneyWiseCashAnalysisSelect(pFactory);
-        theLoanSelect = new MoneyWiseLoanAnalysisSelect(pFactory);
-        theSecuritySelect = new MoneyWiseSecurityAnalysisSelect(pFactory);
-        thePortfolioSelect = new MoneyWisePortfolioAnalysisSelect(pFactory);
-        thePayeeSelect = new MoneyWisePayeeAnalysisSelect(pFactory);
-        theCategorySelect = new MoneyWiseTransCategoryAnalysisSelect(pFactory);
-        theTaxBasisSelect = new MoneyWiseTaxBasisAnalysisSelect(pFactory);
-        theTagSelect = new MoneyWiseTransTagSelect(pFactory);
-        theAllSelect = new MoneyWiseAllSelect(pFactory);
+        theDepositSelect = new MoneyWiseXDepositAnalysisSelect(pFactory);
+        theCashSelect = new MoneyWiseXCashAnalysisSelect(pFactory);
+        theLoanSelect = new MoneyWiseXLoanAnalysisSelect(pFactory);
+        theSecuritySelect = new MoneyWiseXSecurityAnalysisSelect(pFactory);
+        thePortfolioSelect = new MoneyWiseXPortfolioAnalysisSelect(pFactory);
+        thePayeeSelect = new MoneyWiseXPayeeAnalysisSelect(pFactory);
+        theCategorySelect = new MoneyWiseXTransCategoryAnalysisSelect(pFactory);
+        theTaxBasisSelect = new MoneyWiseXTaxBasisAnalysisSelect(pFactory);
+        theTagSelect = new MoneyWiseXTransTagSelect(pFactory);
+        theAllSelect = new MoneyWiseXAllSelect(pFactory);
 
         /* Create the card panel */
         final TethysUIPaneFactory myPanes = pFactory.paneFactory();
@@ -363,7 +363,7 @@ public class MoneyWiseAnalysisSelect
         /* Create initial state */
         theState = new MoneyWiseAnalysisState();
         theState.showColumns(true);
-        final MoneyWiseStatementSelect mySelect = new MoneyWiseStatementSelect(theRangeSelect, new MoneyWiseAnalysisAllFilter());
+        final MoneyWiseXStatementSelect mySelect = new MoneyWiseXStatementSelect(theRangeSelect, new MoneyWiseXAnalysisAllFilter());
         selectStatement(mySelect);
 
         /* Access the menus */
@@ -381,7 +381,6 @@ public class MoneyWiseAnalysisSelect
         myRegistrar = theColumnButton.getEventRegistrar();
         myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewColumns());
         theColumnButton.setMenuConfigurator(e -> buildColumnsMenu());
-        theAnalysisView.getEventRegistrar().addEventListener(e -> setAnalysisView());
 
         /* Handle buttons */
         theRangeButton.getEventRegistrar().addEventListener(e -> setRangeVisibility(!isRangeVisible));
@@ -422,7 +421,7 @@ public class MoneyWiseAnalysisSelect
      * Obtain the analysis.
      * @return the range.
      */
-    public MoneyWiseAnalysis getAnalysis() {
+    public MoneyWiseXAnalysis getAnalysis() {
         return theAnalysis;
     }
 
@@ -430,7 +429,7 @@ public class MoneyWiseAnalysisSelect
      * Obtain the Filter.
      * @return the filter.
      */
-    public MoneyWiseAnalysisFilter<?, ?> getFilter() {
+    public MoneyWiseXAnalysisFilter<?, ?> getFilter() {
         return theState.getFilter();
     }
 
@@ -524,28 +523,27 @@ public class MoneyWiseAnalysisSelect
         final TethysUILabel myTypeLabel = pFactory.controlFactory().newLabel(NLS_FILTERTYPE);
 
         /* Add to the card panels */
-        theCardPanel.addCard(MoneyWiseAnalysisType.DEPOSIT.name(), theDepositSelect);
-        theCardPanel.addCard(MoneyWiseAnalysisType.CASH.name(), theCashSelect);
-        theCardPanel.addCard(MoneyWiseAnalysisType.LOAN.name(), theLoanSelect);
-        theCardPanel.addCard(MoneyWiseAnalysisType.SECURITY.name(), theSecuritySelect);
-        theCardPanel.addCard(MoneyWiseAnalysisType.PORTFOLIO.name(), thePortfolioSelect);
-        theCardPanel.addCard(MoneyWiseAnalysisType.PAYEE.name(), thePayeeSelect);
-        theCardPanel.addCard(MoneyWiseAnalysisType.CATEGORY.name(), theCategorySelect);
-        theCardPanel.addCard(MoneyWiseAnalysisType.TAXBASIS.name(), theTaxBasisSelect);
-        theCardPanel.addCard(MoneyWiseAnalysisType.TRANSTAG.name(), theTagSelect);
-        theCardPanel.addCard(MoneyWiseAnalysisType.ALL.name(), theAllSelect);
+        theCardPanel.addCard(MoneyWiseXAnalysisType.DEPOSIT.name(), theDepositSelect);
+        theCardPanel.addCard(MoneyWiseXAnalysisType.CASH.name(), theCashSelect);
+        theCardPanel.addCard(MoneyWiseXAnalysisType.LOAN.name(), theLoanSelect);
+        theCardPanel.addCard(MoneyWiseXAnalysisType.SECURITY.name(), theSecuritySelect);
+        theCardPanel.addCard(MoneyWiseXAnalysisType.PORTFOLIO.name(), thePortfolioSelect);
+        theCardPanel.addCard(MoneyWiseXAnalysisType.PAYEE.name(), thePayeeSelect);
+        theCardPanel.addCard(MoneyWiseXAnalysisType.CATEGORY.name(), theCategorySelect);
+        theCardPanel.addCard(MoneyWiseXAnalysisType.TAXBASIS.name(), theTaxBasisSelect);
+        theCardPanel.addCard(MoneyWiseXAnalysisType.TRANSTAG.name(), theTagSelect);
+        theCardPanel.addCard(MoneyWiseXAnalysisType.ALL.name(), theAllSelect);
 
         /* Build the map */
-        theMap.put(MoneyWiseAnalysisType.DEPOSIT, theDepositSelect);
-        theMap.put(MoneyWiseAnalysisType.CASH, theCashSelect);
-        theMap.put(MoneyWiseAnalysisType.LOAN, theLoanSelect);
-        theMap.put(MoneyWiseAnalysisType.SECURITY, theSecuritySelect);
-        theMap.put(MoneyWiseAnalysisType.PORTFOLIO, thePortfolioSelect);
-        theMap.put(MoneyWiseAnalysisType.PAYEE, thePayeeSelect);
-        theMap.put(MoneyWiseAnalysisType.CATEGORY, theCategorySelect);
-        theMap.put(MoneyWiseAnalysisType.TAXBASIS, theTaxBasisSelect);
-        theMap.put(MoneyWiseAnalysisType.TRANSTAG, theTagSelect);
-        theMap.put(MoneyWiseAnalysisType.ALL, theAllSelect);
+        theMap.put(MoneyWiseXAnalysisType.DEPOSIT, theDepositSelect);
+        theMap.put(MoneyWiseXAnalysisType.CASH, theCashSelect);
+        theMap.put(MoneyWiseXAnalysisType.LOAN, theLoanSelect);
+        theMap.put(MoneyWiseXAnalysisType.SECURITY, theSecuritySelect);
+        theMap.put(MoneyWiseXAnalysisType.PORTFOLIO, thePortfolioSelect);
+        theMap.put(MoneyWiseXAnalysisType.PAYEE, thePayeeSelect);
+        theMap.put(MoneyWiseXAnalysisType.TAXBASIS, theTaxBasisSelect);
+        theMap.put(MoneyWiseXAnalysisType.TRANSTAG, theTagSelect);
+        theMap.put(MoneyWiseXAnalysisType.ALL, theAllSelect);
 
         /* Create the panel */
         myPanel.setBorderTitle(NLS_FILTERTITLE);
@@ -562,7 +560,7 @@ public class MoneyWiseAnalysisSelect
      * Select Statement.
      * @param pSelect the selection
      */
-    public void selectStatement(final MoneyWiseStatementSelect pSelect) {
+    public void selectStatement(final MoneyWiseXStatementSelect pSelect) {
         /* Set refreshing flag */
         isRefreshing = true;
 
@@ -574,15 +572,14 @@ public class MoneyWiseAnalysisSelect
             theState.setRange(mySelect);
 
             /* Update the analysis */
-            theAnalysisView.setRange(mySelect.getRange());
-            theAnalysis = theAnalysisView.getAnalysis();
+            theAnalysis = theAnalysisMgr.getRangedAnalysis(mySelect.getRange());
             setAnalysis();
         }
 
         /* Access the filter and the selection panel */
-        final MoneyWiseAnalysisFilter<?, ?> myFilter = pSelect.getFilter();
-        final MoneyWiseAnalysisType myType = myFilter.getAnalysisType();
-        final MoneyWiseAnalysisFilterSelection myPanel = theMap.get(myType);
+        final MoneyWiseXAnalysisFilter<?, ?> myFilter = pSelect.getFilter();
+        final MoneyWiseXAnalysisType myType = myFilter.getAnalysisType();
+        final MoneyWiseXAnalysisFilterSelection myPanel = theMap.get(myType);
 
         /* Move correct card to front and update it */
         theCardPanel.selectCard(myType.name());
@@ -604,7 +601,7 @@ public class MoneyWiseAnalysisSelect
         theRangeSelect.setOverallRange(myRange);
 
         /* Refresh the analysisView */
-        theAnalysisView.refreshData();
+        theAnalysis = theAnalysisMgr.getRangedAnalysis(getRange());
 
         /* Update the filter selection */
         checkType();
@@ -638,12 +635,12 @@ public class MoneyWiseAnalysisSelect
      */
     private void updateFilter() {
         /* Access the active panel */
-        final MoneyWiseAnalysisType myType = theState.getType();
-        final MoneyWiseAnalysisFilterSelection myPanel = theMap.get(myType);
+        final MoneyWiseXAnalysisType myType = theState.getType();
+        final MoneyWiseXAnalysisFilterSelection myPanel = theMap.get(myType);
 
         /* Update filters */
         if (myPanel != null) {
-            final MoneyWiseAnalysisFilter<?, ?> myFilter = myPanel.getFilter();
+            final MoneyWiseXAnalysisFilter<?, ?> myFilter = myPanel.getFilter();
             myFilter.setCurrentAttribute(theState.getBucket());
             theState.setFilter(myFilter);
         }
@@ -715,7 +712,7 @@ public class MoneyWiseAnalysisSelect
      */
     private boolean isAvailable() {
         /* Loop through the panels */
-        for (MoneyWiseAnalysisFilterSelection myEntry : theMap.values()) {
+        for (MoneyWiseXAnalysisFilterSelection myEntry : theMap.values()) {
             /* If the filter is possible */
             if (myEntry.isAvailable()) {
                 /* Filter available */
@@ -732,24 +729,24 @@ public class MoneyWiseAnalysisSelect
      */
     private void checkType() {
         /* If the type is not appropriate */
-        MoneyWiseAnalysisType myType = theState.getType();
+        MoneyWiseXAnalysisType myType = theState.getType();
 
         /* If the type is selected */
         if (myType != null) {
             /* Check that the filter is appropriate */
-            final MoneyWiseAnalysisFilterSelection myPanel = theMap.get(myType);
+            final MoneyWiseXAnalysisFilterSelection myPanel = theMap.get(myType);
             if (myPanel.isAvailable()) {
                 /* We are OK */
-                final MoneyWiseAnalysisFilter<?, ?> myFilter = myPanel.getFilter();
+                final MoneyWiseXAnalysisFilter<?, ?> myFilter = myPanel.getFilter();
                 theState.setFilter(myFilter);
                 return;
             }
         }
 
         /* Loop through the panels */
-        for (Entry<MoneyWiseAnalysisType, MoneyWiseAnalysisFilterSelection> myEntry : theMap.entrySet()) {
+        for (Entry<MoneyWiseXAnalysisType, MoneyWiseXAnalysisFilterSelection> myEntry : theMap.entrySet()) {
             /* If the filter is possible */
-            final MoneyWiseAnalysisFilterSelection myPanel = myEntry.getValue();
+            final MoneyWiseXAnalysisFilterSelection myPanel = myEntry.getValue();
             if (myPanel.isAvailable()) {
                 /* Access Analysis type */
                 myType = myEntry.getKey();
@@ -758,8 +755,8 @@ public class MoneyWiseAnalysisSelect
                 theCardPanel.selectCard(myType.name());
 
                 /* Obtain the relevant filter */
-                final MoneyWiseAnalysisFilter<?, ?> myFilter = myPanel.getFilter();
-                final MoneyWiseAnalysisAttribute myDefault = myType.getDefaultValue();
+                final MoneyWiseXAnalysisFilter<?, ?> myFilter = myPanel.getFilter();
+                final MoneyWiseXAnalysisAttribute myDefault = myType.getDefaultValue();
                 if (myFilter != null) {
                     myFilter.setCurrentAttribute(myDefault);
                 }
@@ -789,7 +786,7 @@ public class MoneyWiseAnalysisSelect
         theTypeMenu.removeAllItems();
 
         /* Loop through the panels */
-        for (Entry<MoneyWiseAnalysisType, MoneyWiseAnalysisFilterSelection> myEntry : theMap.entrySet()) {
+        for (Entry<MoneyWiseXAnalysisType, MoneyWiseXAnalysisFilterSelection> myEntry : theMap.entrySet()) {
             /* If the filter is possible */
             if (myEntry.getValue().isAvailable()) {
                 /* Create a new MenuItem and add it to the popUp */
@@ -806,10 +803,10 @@ public class MoneyWiseAnalysisSelect
         theBucketMenu.removeAllItems();
 
         /* Loop through the buckets */
-        final MoneyWiseAnalysisFilter<?, ?> myFilter = theState.getFilter();
-        for (MoneyWiseAnalysisAttribute myAttr : theState.getType().getValues()) {
+        final MoneyWiseXAnalysisFilter<?, ?> myFilter = theState.getFilter();
+        for (MoneyWiseXAnalysisAttribute myAttr : theState.getType().getValues()) {
             /* If the value is a counter */
-            if (myAttr.isCounter()
+            if (!myAttr.isPreserved()
                     && myFilter.isRelevantCounter(myAttr)) {
                 /* Create a new MenuItem and add it to the popUp */
                 theBucketMenu.addItem(myAttr);
@@ -908,10 +905,10 @@ public class MoneyWiseAnalysisSelect
      * Apply Filter.
      * @param pFilter the filter
      */
-    private void applyFilter(final MoneyWiseAnalysisFilter<?, ?> pFilter) {
+    private void applyFilter(final MoneyWiseXAnalysisFilter<?, ?> pFilter) {
         /* Ignore if we are refreshing */
         if (!isRefreshing) {
-            final MoneyWiseAnalysisAttribute myBucket = theState.getBucket();
+            final MoneyWiseXAnalysisAttribute myBucket = theState.getBucket();
             if (pFilter.isRelevantCounter(myBucket)) {
                 pFilter.setCurrentAttribute(theState.getBucket());
             } else {
@@ -919,25 +916,6 @@ public class MoneyWiseAnalysisSelect
             }
             theState.setFilter(pFilter);
             theState.applyState();
-            theEventManager.fireEvent(PrometheusDataEvent.SELECTIONCHANGED);
-        }
-    }
-
-    /**
-     * Set AnalysisView.
-     */
-    private void setAnalysisView() {
-        /* Ignore if we are refreshing */
-        if (!isRefreshing) {
-            /* Declare the analysis */
-            theAnalysis = theAnalysisView.getAnalysis();
-            setAnalysis();
-
-            /* Validate state and apply */
-            checkType();
-            theState.applyState();
-
-            /* Notify listeners */
             theEventManager.fireEvent(PrometheusDataEvent.SELECTIONCHANGED);
         }
     }
@@ -957,8 +935,7 @@ public class MoneyWiseAnalysisSelect
             isRefreshing = true;
 
             /* Obtain new analysis */
-            theAnalysisView.setRange(getRange());
-            theAnalysis = theAnalysisView.getAnalysis();
+            theAnalysis = theAnalysisMgr.getRangedAnalysis(getRange());
             setAnalysis();
 
             /* Validate state and apply */
@@ -1004,9 +981,9 @@ public class MoneyWiseAnalysisSelect
             return;
         }
 
-        final MoneyWiseAnalysisAttribute myBucket = theBucketButton.getValue();
+        final MoneyWiseXAnalysisAttribute myBucket = theBucketButton.getValue();
         if (theState.setBucket(myBucket)) {
-            final MoneyWiseAnalysisFilter<?, ?> myFilter = theState.getFilter();
+            final MoneyWiseXAnalysisFilter<?, ?> myFilter = theState.getFilter();
             if (myBucket != null) {
                 myFilter.setCurrentAttribute(myBucket);
             }
@@ -1042,7 +1019,7 @@ public class MoneyWiseAnalysisSelect
         }
 
         /* If the type has changed */
-        final MoneyWiseAnalysisType myType = theFilterTypeButton.getValue();
+        final MoneyWiseXAnalysisType myType = theFilterTypeButton.getValue();
         if (theState.setAnalysisType(myType)) {
             /* Determine whether we are showing balances */
             final boolean showingBalances = !theState.showColumns();
@@ -1055,8 +1032,8 @@ public class MoneyWiseAnalysisSelect
             theCardPanel.selectCard(myType.name());
 
             /* Obtain the relevant filter */
-            final MoneyWiseAnalysisFilterSelection myPanel = theMap.get(myType);
-            final MoneyWiseAnalysisFilter<?, ?> myFilter = myPanel.getFilter();
+            final MoneyWiseXAnalysisFilterSelection myPanel = theMap.get(myType);
+            final MoneyWiseXAnalysisFilter<?, ?> myFilter = myPanel.getFilter();
             myFilter.setCurrentAttribute(myType.getDefaultValue());
 
             /* Set new bucket type and apply state */
@@ -1079,12 +1056,12 @@ public class MoneyWiseAnalysisSelect
         /**
          * The AnalysisType.
          */
-        private MoneyWiseAnalysisType theType;
+        private MoneyWiseXAnalysisType theType;
 
         /**
          * The BucketAttribute.
          */
-        private MoneyWiseAnalysisAttribute theBucket;
+        private MoneyWiseXAnalysisAttribute theBucket;
 
         /**
          * The ColumnSet.
@@ -1094,7 +1071,7 @@ public class MoneyWiseAnalysisSelect
         /**
          * The filter.
          */
-        private MoneyWiseAnalysisFilter<?, ?> theFilter;
+        private MoneyWiseXAnalysisFilter<?, ?> theFilter;
 
         /**
          * Are we showing Columns?
@@ -1138,7 +1115,7 @@ public class MoneyWiseAnalysisSelect
          * Obtain the AnalysisType.
          * @return the analysis type.
          */
-        private MoneyWiseAnalysisType getType() {
+        private MoneyWiseXAnalysisType getType() {
             return theType;
         }
 
@@ -1146,7 +1123,7 @@ public class MoneyWiseAnalysisSelect
          * Obtain the BucketType.
          * @return the bucket type.
          */
-        private MoneyWiseAnalysisAttribute getBucket() {
+        private MoneyWiseXAnalysisAttribute getBucket() {
             return theBucket;
         }
 
@@ -1162,7 +1139,7 @@ public class MoneyWiseAnalysisSelect
          * Obtain the Filter.
          * @return the filter.
          */
-        private MoneyWiseAnalysisFilter<?, ?> getFilter() {
+        private MoneyWiseXAnalysisFilter<?, ?> getFilter() {
             return theFilter;
         }
 
@@ -1178,7 +1155,7 @@ public class MoneyWiseAnalysisSelect
          * Determine selection from panels.
          * @param pFilter selection panel
          */
-        private void determineState(final MoneyWiseAnalysisFilterSelection pFilter) {
+        private void determineState(final MoneyWiseXAnalysisFilterSelection pFilter) {
             /* Update the selection panels */
             theRange = theRangeSelect.getRange();
             theFilter = pFilter.getFilter();
@@ -1208,7 +1185,7 @@ public class MoneyWiseAnalysisSelect
          * @param pType the analysis type
          * @return true/false did a change occur
          */
-        private boolean setAnalysisType(final MoneyWiseAnalysisType pType) {
+        private boolean setAnalysisType(final MoneyWiseXAnalysisType pType) {
             if (!MetisDataDifference.isEqual(pType, theType)) {
                 theType = pType;
                 return true;
@@ -1221,7 +1198,7 @@ public class MoneyWiseAnalysisSelect
          * @param pBucket the bucket type
          * @return true/false did a change occur
          */
-        private boolean setBucket(final MoneyWiseAnalysisAttribute pBucket) {
+        private boolean setBucket(final MoneyWiseXAnalysisAttribute pBucket) {
             if (!MetisDataDifference.isEqual(pBucket, theBucket)) {
                 /* If this is the null bucket */
                 if (pBucket == null) {
@@ -1256,7 +1233,7 @@ public class MoneyWiseAnalysisSelect
          * Set filter.
          * @param pFilter the filter
          */
-        private void setFilter(final MoneyWiseAnalysisFilter<?, ?> pFilter) {
+        private void setFilter(final MoneyWiseXAnalysisFilter<?, ?> pFilter) {
             theFilter = pFilter;
         }
 
@@ -1297,7 +1274,7 @@ public class MoneyWiseAnalysisSelect
     /**
      * The Statement Select class.
      */
-    public static final class MoneyWiseStatementSelect {
+    public static final class MoneyWiseXStatementSelect {
         /**
          * The Range Selection.
          */
@@ -1306,15 +1283,15 @@ public class MoneyWiseAnalysisSelect
         /**
          * The AnalysisFilter.
          */
-        private final MoneyWiseAnalysisFilter<?, ?> theFilter;
+        private final MoneyWiseXAnalysisFilter<?, ?> theFilter;
 
         /**
          * Constructor.
          * @param pRangeSelect the range selection
          * @param pFilter the analysis filter
          */
-        public MoneyWiseStatementSelect(final TethysUIDateRangeSelector pRangeSelect,
-                                        final MoneyWiseAnalysisFilter<?, ?> pFilter) {
+        public MoneyWiseXStatementSelect(final TethysUIDateRangeSelector pRangeSelect,
+                                         final MoneyWiseXAnalysisFilter<?, ?> pFilter) {
             /* Store parameters */
             theRangeSelect = pRangeSelect;
             theFilter = pFilter;
@@ -1332,7 +1309,7 @@ public class MoneyWiseAnalysisSelect
          * Obtain the Filter.
          * @return the filter
          */
-        public MoneyWiseAnalysisFilter<?, ?> getFilter() {
+        public MoneyWiseXAnalysisFilter<?, ?> getFilter() {
             return theFilter;
         }
     }

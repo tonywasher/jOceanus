@@ -1150,7 +1150,7 @@ public class GordianKeyPairAlgId {
     /**
      * NewHope Encoded parser.
      */
-    private static class GordianNewHopeEncodedParser implements GordianEncodedParser {
+    private static final class GordianNewHopeEncodedParser implements GordianEncodedParser {
         /**
          * Registrar.
          * @param pIdManager the idManager

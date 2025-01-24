@@ -14,23 +14,21 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.moneywise.ui.controls;
-
-import java.util.Iterator;
+package net.sourceforge.joceanus.moneywise.atlas.ui.controls;
 
 import net.sourceforge.joceanus.metis.data.MetisDataDifference;
-import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysis;
-import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisPortfolioBucket;
-import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisPortfolioBucket.MoneyWiseAnalysisPortfolioBucketList;
-import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisSecurityBucket;
+import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysis;
+import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisPortfolioBucket;
+import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisPortfolioBucket.MoneyWiseXAnalysisPortfolioBucketList;
+import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisSecurityBucket;
+import net.sourceforge.joceanus.moneywise.atlas.views.MoneyWiseXAnalysisFilter;
+import net.sourceforge.joceanus.moneywise.atlas.views.MoneyWiseXAnalysisFilter.MoneyWiseXAnalysisSecurityFilter;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
-import net.sourceforge.joceanus.moneywise.lethe.views.MoneyWiseAnalysisFilter;
-import net.sourceforge.joceanus.moneywise.lethe.views.MoneyWiseAnalysisFilter.MoneyWiseAnalysisSecurityFilter;
-import net.sourceforge.joceanus.prometheus.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.prometheus.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIConstant;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIEvent;
@@ -43,11 +41,13 @@ import net.sourceforge.joceanus.tethys.api.menu.TethysUIScrollItem;
 import net.sourceforge.joceanus.tethys.api.menu.TethysUIScrollMenu;
 import net.sourceforge.joceanus.tethys.api.pane.TethysUIBoxPaneManager;
 
+import java.util.Iterator;
+
 /**
  * Security Analysis Selection.
  */
-public class MoneyWiseSecurityAnalysisSelect
-        implements MoneyWiseAnalysisFilterSelection, TethysEventProvider<PrometheusDataEvent> {
+public class MoneyWiseXSecurityAnalysisSelect
+        implements MoneyWiseXAnalysisFilterSelection, TethysEventProvider<PrometheusDataEvent> {
     /**
      * Text for Portfolio Label.
      */
@@ -71,27 +71,27 @@ public class MoneyWiseSecurityAnalysisSelect
     /**
      * The security button.
      */
-    private final TethysUIScrollButtonManager<MoneyWiseAnalysisSecurityBucket> theSecButton;
+    private final TethysUIScrollButtonManager<MoneyWiseXAnalysisSecurityBucket> theSecButton;
 
     /**
      * The portfolio button.
      */
-    private final TethysUIScrollButtonManager<MoneyWiseAnalysisPortfolioBucket> thePortButton;
+    private final TethysUIScrollButtonManager<MoneyWiseXAnalysisPortfolioBucket> thePortButton;
 
     /**
      * Portfolio menu.
      */
-    private final TethysUIScrollMenu<MoneyWiseAnalysisPortfolioBucket> thePortfolioMenu;
+    private final TethysUIScrollMenu<MoneyWiseXAnalysisPortfolioBucket> thePortfolioMenu;
 
     /**
      * Security menu.
      */
-    private final TethysUIScrollMenu<MoneyWiseAnalysisSecurityBucket> theSecurityMenu;
+    private final TethysUIScrollMenu<MoneyWiseXAnalysisSecurityBucket> theSecurityMenu;
 
     /**
      * The active portfolio bucket list.
      */
-    private MoneyWiseAnalysisPortfolioBucketList thePortfolios;
+    private MoneyWiseXAnalysisPortfolioBucketList thePortfolios;
 
     /**
      * The state.
@@ -107,13 +107,13 @@ public class MoneyWiseSecurityAnalysisSelect
      * Constructor.
      * @param pFactory the GUI factory
      */
-    protected MoneyWiseSecurityAnalysisSelect(final TethysUIFactory<?> pFactory) {
+    protected MoneyWiseXSecurityAnalysisSelect(final TethysUIFactory<?> pFactory) {
         /* Create the security button */
         final TethysUIButtonFactory<?> myButtons = pFactory.buttonFactory();
-        theSecButton = myButtons.newScrollButton(MoneyWiseAnalysisSecurityBucket.class);
+        theSecButton = myButtons.newScrollButton(MoneyWiseXAnalysisSecurityBucket.class);
 
         /* Create the portfolio button */
-        thePortButton = myButtons.newScrollButton(MoneyWiseAnalysisPortfolioBucket.class);
+        thePortButton = myButtons.newScrollButton(MoneyWiseXAnalysisPortfolioBucket.class);
 
         /* Create Event Manager */
         theEventManager = new OceanusEventManager<>();
@@ -160,7 +160,7 @@ public class MoneyWiseSecurityAnalysisSelect
     }
 
     @Override
-    public MoneyWiseAnalysisSecurityFilter getFilter() {
+    public MoneyWiseXAnalysisSecurityFilter getFilter() {
         return theState.getFilter();
     }
 
@@ -208,18 +208,18 @@ public class MoneyWiseSecurityAnalysisSelect
      * Set analysis.
      * @param pAnalysis the analysis.
      */
-    public void setAnalysis(final MoneyWiseAnalysis pAnalysis) {
+    public void setAnalysis(final MoneyWiseXAnalysis pAnalysis) {
         /* Access buckets */
         thePortfolios = pAnalysis.getPortfolios();
 
         /* Obtain the current security */
-        MoneyWiseAnalysisSecurityBucket mySecurity = theState.getSecurity();
+        MoneyWiseXAnalysisSecurityBucket mySecurity = theState.getSecurity();
 
         /* Switch to versions from the analysis */
         mySecurity = mySecurity != null
                 ? thePortfolios.getMatchingSecurityHolding(mySecurity.getSecurityHolding())
                 : thePortfolios.getDefaultSecurityHolding();
-        final MoneyWiseAnalysisPortfolioBucket myPortfolio = mySecurity != null
+        final MoneyWiseXAnalysisPortfolioBucket myPortfolio = mySecurity != null
                 ? thePortfolios.getMatchingPortfolio(mySecurity.getPortfolio())
                 : thePortfolios.getDefaultPortfolio();
 
@@ -230,20 +230,20 @@ public class MoneyWiseSecurityAnalysisSelect
     }
 
     @Override
-    public void setFilter(final MoneyWiseAnalysisFilter<?, ?> pFilter) {
+    public void setFilter(final MoneyWiseXAnalysisFilter<?, ?> pFilter) {
         /* If this is the correct filter type */
-        if (pFilter instanceof MoneyWiseAnalysisSecurityFilter) {
+        if (pFilter instanceof MoneyWiseXAnalysisSecurityFilter) {
             /* Access filter */
-            final MoneyWiseAnalysisSecurityFilter myFilter = (MoneyWiseAnalysisSecurityFilter) pFilter;
+            final MoneyWiseXAnalysisSecurityFilter myFilter = (MoneyWiseXAnalysisSecurityFilter) pFilter;
 
             /* Obtain the filter buckets */
-            MoneyWiseAnalysisSecurityBucket mySecurity = myFilter.getBucket();
+            MoneyWiseXAnalysisSecurityBucket mySecurity = myFilter.getBucket();
 
             /* Look for the equivalent buckets */
             mySecurity = thePortfolios.getMatchingSecurityHolding(mySecurity.getSecurityHolding());
 
             /* Determine the matching portfolio bucket */
-            final MoneyWiseAnalysisPortfolioBucket myPortfolio = thePortfolios.getMatchingPortfolio(mySecurity.getPortfolio());
+            final MoneyWiseXAnalysisPortfolioBucket myPortfolio = thePortfolios.getMatchingPortfolio(mySecurity.getPortfolio());
 
             /* Set the security */
             theState.setTheSecurity(myPortfolio, mySecurity);
@@ -282,16 +282,16 @@ public class MoneyWiseSecurityAnalysisSelect
         thePortfolioMenu.removeAllItems();
 
         /* Record active item */
-        TethysUIScrollItem<MoneyWiseAnalysisPortfolioBucket> myActive = null;
-        final MoneyWiseAnalysisPortfolioBucket myCurr = theState.getPortfolio();
+        TethysUIScrollItem<MoneyWiseXAnalysisPortfolioBucket> myActive = null;
+        final MoneyWiseXAnalysisPortfolioBucket myCurr = theState.getPortfolio();
 
         /* Loop through the available portfolio values */
-        final Iterator<MoneyWiseAnalysisPortfolioBucket> myIterator = thePortfolios.iterator();
+        final Iterator<MoneyWiseXAnalysisPortfolioBucket> myIterator = thePortfolios.iterator();
         while (myIterator.hasNext()) {
-            final MoneyWiseAnalysisPortfolioBucket myBucket = myIterator.next();
+            final MoneyWiseXAnalysisPortfolioBucket myBucket = myIterator.next();
 
             /* Create a new MenuItem and add it to the popUp */
-            final TethysUIScrollItem<MoneyWiseAnalysisPortfolioBucket> myItem = thePortfolioMenu.addItem(myBucket);
+            final TethysUIScrollItem<MoneyWiseXAnalysisPortfolioBucket> myItem = thePortfolioMenu.addItem(myBucket);
 
             /* If this is the active bucket */
             if (myBucket.equals(myCurr)) {
@@ -314,17 +314,17 @@ public class MoneyWiseSecurityAnalysisSelect
         theSecurityMenu.removeAllItems();
 
         /* Access current portfolio */
-        final MoneyWiseAnalysisPortfolioBucket myPortfolio = theState.getPortfolio();
-        final MoneyWiseAnalysisSecurityBucket myCurr = theState.getSecurity();
-        TethysUIScrollItem<MoneyWiseAnalysisSecurityBucket> myActive = null;
+        final MoneyWiseXAnalysisPortfolioBucket myPortfolio = theState.getPortfolio();
+        final MoneyWiseXAnalysisSecurityBucket myCurr = theState.getSecurity();
+        TethysUIScrollItem<MoneyWiseXAnalysisSecurityBucket> myActive = null;
 
         /* Loop through the available security values */
-        final Iterator<MoneyWiseAnalysisSecurityBucket> myIterator = myPortfolio.securityIterator();
+        final Iterator<MoneyWiseXAnalysisSecurityBucket> myIterator = myPortfolio.securityIterator();
         while (myIterator.hasNext()) {
-            final MoneyWiseAnalysisSecurityBucket myBucket = myIterator.next();
+            final MoneyWiseXAnalysisSecurityBucket myBucket = myIterator.next();
 
             /* Create a new MenuItem and add it to the popUp */
-            final TethysUIScrollItem<MoneyWiseAnalysisSecurityBucket> myItem = theSecurityMenu.addItem(myBucket, myBucket.getSecurityName());
+            final TethysUIScrollItem<MoneyWiseXAnalysisSecurityBucket> myItem = theSecurityMenu.addItem(myBucket, myBucket.getSecurityName());
 
             /* If this is the active bucket */
             if (myBucket.equals(myCurr)) {
@@ -346,12 +346,12 @@ public class MoneyWiseSecurityAnalysisSelect
         /**
          * The active Portfolio.
          */
-        private MoneyWiseAnalysisPortfolioBucket thePortfolio;
+        private MoneyWiseXAnalysisPortfolioBucket thePortfolio;
 
         /**
          * The active SecurityBucket.
          */
-        private MoneyWiseAnalysisSecurityBucket theSecurity;
+        private MoneyWiseXAnalysisSecurityBucket theSecurity;
 
         /**
          * The dateRange.
@@ -361,7 +361,7 @@ public class MoneyWiseSecurityAnalysisSelect
         /**
          * The filter.
          */
-        private MoneyWiseAnalysisSecurityFilter theFilter;
+        private MoneyWiseXAnalysisSecurityFilter theFilter;
 
         /**
          * Constructor.
@@ -385,7 +385,7 @@ public class MoneyWiseSecurityAnalysisSelect
          * Obtain the Security Bucket.
          * @return the Security
          */
-        private MoneyWiseAnalysisSecurityBucket getSecurity() {
+        private MoneyWiseXAnalysisSecurityBucket getSecurity() {
             return theSecurity;
         }
 
@@ -393,7 +393,7 @@ public class MoneyWiseSecurityAnalysisSelect
          * Obtain the Portfolio.
          * @return the portfolio
          */
-        private MoneyWiseAnalysisPortfolioBucket getPortfolio() {
+        private MoneyWiseXAnalysisPortfolioBucket getPortfolio() {
             return thePortfolio;
         }
 
@@ -409,7 +409,7 @@ public class MoneyWiseSecurityAnalysisSelect
          * Obtain the Filter.
          * @return the filter
          */
-        private MoneyWiseAnalysisSecurityFilter getFilter() {
+        private MoneyWiseXAnalysisSecurityFilter getFilter() {
             return theFilter;
         }
 
@@ -418,7 +418,7 @@ public class MoneyWiseSecurityAnalysisSelect
          * @param pSecurity the Security
          * @return true/false did a change occur
          */
-        private boolean setSecurity(final MoneyWiseAnalysisSecurityBucket pSecurity) {
+        private boolean setSecurity(final MoneyWiseXAnalysisSecurityBucket pSecurity) {
             /* Adjust the selected security */
             if (!MetisDataDifference.isEqual(pSecurity, theSecurity)) {
                 /* Store the security */
@@ -433,13 +433,13 @@ public class MoneyWiseSecurityAnalysisSelect
          * @param pPortfolio the Portfolio
          * @param pSecurity the Security
          */
-        private void setTheSecurity(final MoneyWiseAnalysisPortfolioBucket pPortfolio,
-                                    final MoneyWiseAnalysisSecurityBucket pSecurity) {
+        private void setTheSecurity(final MoneyWiseXAnalysisPortfolioBucket pPortfolio,
+                                    final MoneyWiseXAnalysisSecurityBucket pSecurity) {
             /* Store the portfolio and security */
             thePortfolio = pPortfolio;
             theSecurity = pSecurity;
             if (theSecurity != null) {
-                theFilter = new MoneyWiseAnalysisSecurityFilter(theSecurity);
+                theFilter = new MoneyWiseXAnalysisSecurityFilter(theSecurity);
                 theFilter.setDateRange(theDateRange);
             } else {
                 theFilter = null;
@@ -451,7 +451,7 @@ public class MoneyWiseSecurityAnalysisSelect
          * @param pPortfolio the Portfolio
          * @return true/false did a change occur
          */
-        private boolean setPortfolio(final MoneyWiseAnalysisPortfolioBucket pPortfolio) {
+        private boolean setPortfolio(final MoneyWiseXAnalysisPortfolioBucket pPortfolio) {
             /* Adjust the selected portfolio */
             if (!MetisDataDifference.isEqual(pPortfolio, thePortfolio)) {
                 setTheSecurity(pPortfolio, getFirstSecurity(pPortfolio));
@@ -465,9 +465,9 @@ public class MoneyWiseSecurityAnalysisSelect
          * @param pPortfolio the portfolio
          * @return the first security
          */
-        private MoneyWiseAnalysisSecurityBucket getFirstSecurity(final MoneyWiseAnalysisPortfolioBucket pPortfolio) {
+        private MoneyWiseXAnalysisSecurityBucket getFirstSecurity(final MoneyWiseXAnalysisPortfolioBucket pPortfolio) {
             /* Loop through the available security values */
-            final Iterator<MoneyWiseAnalysisSecurityBucket> myIterator = pPortfolio.securityIterator();
+            final Iterator<MoneyWiseXAnalysisSecurityBucket> myIterator = pPortfolio.securityIterator();
             return myIterator.hasNext()
                     ? myIterator.next()
                     : null;
