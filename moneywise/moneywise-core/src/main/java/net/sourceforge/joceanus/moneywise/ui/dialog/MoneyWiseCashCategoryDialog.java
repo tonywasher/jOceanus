@@ -21,11 +21,11 @@ import java.util.Iterator;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicResource;
-import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDepositCategory;
-import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDepositCategory.MoneyWiseDepositCategoryList;
-import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseDepositCategoryClass;
-import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseDepositCategoryType;
-import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseDepositCategoryType.MoneyWiseDepositCategoryTypeList;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseCashCategory;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseCashCategory.MoneyWiseCashCategoryList;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCashCategoryClass;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCashCategoryType;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCashCategoryType.MoneyWiseCashCategoryTypeList;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
 import net.sourceforge.joceanus.moneywise.ui.base.MoneyWiseBaseTable;
 import net.sourceforge.joceanus.moneywise.ui.base.MoneyWiseItemPanel;
@@ -42,24 +42,24 @@ import net.sourceforge.joceanus.tethys.api.menu.TethysUIScrollItem;
 import net.sourceforge.joceanus.tethys.api.menu.TethysUIScrollMenu;
 
 /**
- * Panel to display/edit/create a DepositCategory.
+ * Panel to display/edit/create a CashCategory.
  */
-public class MoneyWiseDepositCategoryPanel
-        extends MoneyWiseItemPanel<MoneyWiseDepositCategory> {
+public class MoneyWiseCashCategoryDialog
+        extends MoneyWiseItemPanel<MoneyWiseCashCategory> {
     /**
      * Constructor.
      * @param pFactory the GUI factory
      * @param pEditSet the edit set
      * @param pOwner the owning table
      */
-    public MoneyWiseDepositCategoryPanel(final TethysUIFactory<?> pFactory,
-                                         final PrometheusEditSet pEditSet,
-                                         final MoneyWiseBaseTable<MoneyWiseDepositCategory> pOwner) {
+    public MoneyWiseCashCategoryDialog(final TethysUIFactory<?> pFactory,
+                                       final PrometheusEditSet pEditSet,
+                                       final MoneyWiseBaseTable<MoneyWiseCashCategory> pOwner) {
         /* Initialise the panel */
         super(pFactory, pEditSet, pOwner);
 
         /* Create a new panel */
-        final PrometheusFieldSet<MoneyWiseDepositCategory> myFieldSet = getFieldSet();
+        final PrometheusFieldSet<MoneyWiseCashCategory> myFieldSet = getFieldSet();
 
         /* Create the text fields */
         final TethysUIFieldFactory myFields = pFactory.fieldFactory();
@@ -68,15 +68,15 @@ public class MoneyWiseDepositCategoryPanel
         final TethysUIStringEditField myDesc = myFields.newStringField();
 
         /* Create the buttons */
-        final TethysUIScrollButtonField<MoneyWiseDepositCategoryType> myTypeButton = myFields.newScrollField(MoneyWiseDepositCategoryType.class);
-        final TethysUIScrollButtonField<MoneyWiseDepositCategory> myParentButton = myFields.newScrollField(MoneyWiseDepositCategory.class);
+        final TethysUIScrollButtonField<MoneyWiseCashCategoryType> myTypeButton = myFields.newScrollField(MoneyWiseCashCategoryType.class);
+        final TethysUIScrollButtonField<MoneyWiseCashCategory> myParentButton = myFields.newScrollField(MoneyWiseCashCategory.class);
 
         /* Assign the fields to the panel */
-        myFieldSet.addField(PrometheusDataResource.DATAITEM_FIELD_NAME, myName, MoneyWiseDepositCategory::getName);
-        myFieldSet.addField(MoneyWiseBasicResource.CATEGORY_SUBCAT, mySubName, MoneyWiseDepositCategory::getSubCategory);
-        myFieldSet.addField(PrometheusDataResource.DATAITEM_FIELD_DESC, myDesc, MoneyWiseDepositCategory::getDesc);
-        myFieldSet.addField(MoneyWiseStaticDataType.DEPOSITTYPE, myTypeButton, MoneyWiseDepositCategory::getCategoryType);
-        myFieldSet.addField(PrometheusDataResource.DATAGROUP_PARENT, myParentButton, MoneyWiseDepositCategory::getParentCategory);
+        myFieldSet.addField(PrometheusDataResource.DATAITEM_FIELD_NAME, myName, MoneyWiseCashCategory::getName);
+        myFieldSet.addField(MoneyWiseBasicResource.CATEGORY_SUBCAT, mySubName, MoneyWiseCashCategory::getSubCategory);
+        myFieldSet.addField(PrometheusDataResource.DATAITEM_FIELD_DESC, myDesc, MoneyWiseCashCategory::getDesc);
+        myFieldSet.addField(MoneyWiseStaticDataType.CASHTYPE, myTypeButton, MoneyWiseCashCategory::getCategoryType);
+        myFieldSet.addField(PrometheusDataResource.DATAGROUP_PARENT, myParentButton, MoneyWiseCashCategory::getParentCategory);
 
         /* Configure the menuBuilders */
         myTypeButton.setMenuConfigurator(c -> buildCategoryTypeMenu(c, getItem()));
@@ -94,9 +94,9 @@ public class MoneyWiseDepositCategoryPanel
     @Override
     public void refreshData() {
         /* If we have an item */
-        final MoneyWiseDepositCategory myItem = getItem();
+        final MoneyWiseCashCategory myItem = getItem();
         if (myItem != null) {
-            final MoneyWiseDepositCategoryList myCategories = getDataList(MoneyWiseBasicDataType.DEPOSITCATEGORY, MoneyWiseDepositCategoryList.class);
+            final MoneyWiseCashCategoryList myCategories = getDataList(MoneyWiseBasicDataType.CASHCATEGORY, MoneyWiseCashCategoryList.class);
             setItem(myCategories.findItemById(myItem.getIndexedId()));
         }
 
@@ -107,12 +107,12 @@ public class MoneyWiseDepositCategoryPanel
     @Override
     protected void adjustFields(final boolean isEditable) {
         /* Access the fieldSet */
-        final PrometheusFieldSet<MoneyWiseDepositCategory> myFieldSet = getFieldSet();
+        final PrometheusFieldSet<MoneyWiseCashCategory> myFieldSet = getFieldSet();
 
         /* Determine whether parent/full-name fields are visible */
-        final MoneyWiseDepositCategory myCategory = getItem();
-        final MoneyWiseDepositCategoryType myType = myCategory.getCategoryType();
-        final boolean isParent = myType.isDepositCategory(MoneyWiseDepositCategoryClass.PARENT);
+        final MoneyWiseCashCategory myCategory = getItem();
+        final MoneyWiseCashCategoryType myType = myCategory.getCategoryType();
+        final boolean isParent = myType.isCashCategory(MoneyWiseCashCategoryClass.PARENT);
 
         /* Determine whether the description field should be visible */
         final boolean bShowDesc = isEditable || myCategory.getDesc() != null;
@@ -127,7 +127,7 @@ public class MoneyWiseDepositCategoryPanel
 
         /* We cannot change a parent category type */
         canEdit &= !isParent;
-        myFieldSet.setFieldEditable(MoneyWiseStaticDataType.DEPOSITTYPE, canEdit);
+        myFieldSet.setFieldEditable(MoneyWiseStaticDataType.CASHTYPE, canEdit);
 
         /* If the category is not a parent then we cannot edit the full name */
         myFieldSet.setFieldEditable(PrometheusDataResource.DATAITEM_FIELD_NAME, isEditable && isParent);
@@ -137,7 +137,7 @@ public class MoneyWiseDepositCategoryPanel
     protected void updateField(final PrometheusFieldSetEvent pUpdate) throws OceanusException {
         /* Access the field */
         final MetisDataFieldId myField = pUpdate.getFieldId();
-        final MoneyWiseDepositCategory myCategory = getItem();
+        final MoneyWiseCashCategory myCategory = getItem();
 
         /* Process updates */
         if (PrometheusDataResource.DATAITEM_FIELD_NAME.equals(myField)) {
@@ -148,22 +148,22 @@ public class MoneyWiseDepositCategoryPanel
             myCategory.setSubCategoryName(pUpdate.getValue(String.class));
         } else if (PrometheusDataResource.DATAGROUP_PARENT.equals(myField)) {
             /* Update the Parent */
-            myCategory.setParentCategory(pUpdate.getValue(MoneyWiseDepositCategory.class));
+            myCategory.setParentCategory(pUpdate.getValue(MoneyWiseCashCategory.class));
         } else if (PrometheusDataResource.DATAITEM_FIELD_DESC.equals(myField)) {
             /* Update the Description */
             myCategory.setDescription(pUpdate.getValue(String.class));
-        } else if (MoneyWiseStaticDataType.DEPOSITTYPE.equals(myField)) {
+        } else if (MoneyWiseStaticDataType.CASHTYPE.equals(myField)) {
             /* Update the Category Type */
-            myCategory.setCategoryType(pUpdate.getValue(MoneyWiseDepositCategoryType.class));
+            myCategory.setCategoryType(pUpdate.getValue(MoneyWiseCashCategoryType.class));
         }
     }
 
     @Override
     protected void declareGoToItems(final boolean pUpdates) {
-        final MoneyWiseDepositCategory myItem = getItem();
-        final MoneyWiseDepositCategory myParent = myItem.getParentCategory();
+        final MoneyWiseCashCategory myItem = getItem();
+        final MoneyWiseCashCategory myParent = myItem.getParentCategory();
         if (!pUpdates) {
-            final MoneyWiseDepositCategoryType myType = myItem.getCategoryType();
+            final MoneyWiseCashCategoryType myType = myItem.getCategoryType();
             declareGoToItem(myType);
         }
         declareGoToItem(myParent);
@@ -174,34 +174,34 @@ public class MoneyWiseDepositCategoryPanel
      * @param pMenu the menu
      * @param pCategory the category to build for
      */
-    public void buildCategoryTypeMenu(final TethysUIScrollMenu<MoneyWiseDepositCategoryType> pMenu,
-                                      final MoneyWiseDepositCategory pCategory) {
+    public void buildCategoryTypeMenu(final TethysUIScrollMenu<MoneyWiseCashCategoryType> pMenu,
+                                      final MoneyWiseCashCategory pCategory) {
         /* Clear the menu */
         pMenu.removeAllItems();
 
         /* Record active item */
-        final MoneyWiseDepositCategoryType myCurr = pCategory.getCategoryType();
-        TethysUIScrollItem<MoneyWiseDepositCategoryType> myActive = null;
+        final MoneyWiseCashCategoryType myCurr = pCategory.getCategoryType();
+        TethysUIScrollItem<MoneyWiseCashCategoryType> myActive = null;
 
-        /* Access Deposit Category types */
-        final MoneyWiseDepositCategoryTypeList myCategoryTypes = getDataList(MoneyWiseStaticDataType.DEPOSITTYPE, MoneyWiseDepositCategoryTypeList.class);
+        /* Access Cash Category types */
+        final MoneyWiseCashCategoryTypeList myCategoryTypes = getDataList(MoneyWiseStaticDataType.CASHTYPE, MoneyWiseCashCategoryTypeList.class);
 
-        /* Loop through the DepositCategoryTypes */
-        final Iterator<MoneyWiseDepositCategoryType> myIterator = myCategoryTypes.iterator();
+        /* Loop through the CashCategoryTypes */
+        final Iterator<MoneyWiseCashCategoryType> myIterator = myCategoryTypes.iterator();
         while (myIterator.hasNext()) {
-            final MoneyWiseDepositCategoryType myType = myIterator.next();
+            final MoneyWiseCashCategoryType myType = myIterator.next();
 
             /* Ignore deleted or disabled */
             boolean bIgnore = myType.isDeleted() || !myType.getEnabled();
 
             /* Ignore category if it is a parent */
-            bIgnore |= myType.getDepositClass().isParentCategory();
+            bIgnore |= myType.getCashClass().isParentCategory();
             if (bIgnore) {
                 continue;
             }
 
             /* Create a new action for the type */
-            final TethysUIScrollItem<MoneyWiseDepositCategoryType> myItem = pMenu.addItem(myType);
+            final TethysUIScrollItem<MoneyWiseCashCategoryType> myItem = pMenu.addItem(myType);
 
             /* If this is the active type */
             if (myType.equals(myCurr)) {
@@ -221,29 +221,29 @@ public class MoneyWiseDepositCategoryPanel
      * @param pMenu the menu
      * @param pCategory the category to build for
      */
-    private static void buildParentMenu(final TethysUIScrollMenu<MoneyWiseDepositCategory> pMenu,
-                                        final MoneyWiseDepositCategory pCategory) {
+    private static void buildParentMenu(final TethysUIScrollMenu<MoneyWiseCashCategory> pMenu,
+                                        final MoneyWiseCashCategory pCategory) {
         /* Clear the menu */
         pMenu.removeAllItems();
 
         /* Record active item */
-        final MoneyWiseDepositCategory myCurr = pCategory.getParentCategory();
-        TethysUIScrollItem<MoneyWiseDepositCategory> myActive = null;
+        final MoneyWiseCashCategory myCurr = pCategory.getParentCategory();
+        TethysUIScrollItem<MoneyWiseCashCategory> myActive = null;
 
-        /* Loop through the DepositCategories */
-        final MoneyWiseDepositCategoryList myCategories = pCategory.getList();
-        final Iterator<MoneyWiseDepositCategory> myIterator = myCategories.iterator();
+        /* Loop through the CashCategories */
+        final MoneyWiseCashCategoryList myCategories = pCategory.getList();
+        final Iterator<MoneyWiseCashCategory> myIterator = myCategories.iterator();
         while (myIterator.hasNext()) {
-            final MoneyWiseDepositCategory myCat = myIterator.next();
+            final MoneyWiseCashCategory myCat = myIterator.next();
 
             /* Ignore deleted and non-parent items */
-            final MoneyWiseDepositCategoryClass myClass = myCat.getCategoryTypeClass();
+            final MoneyWiseCashCategoryClass myClass = myCat.getCategoryTypeClass();
             if (myCat.isDeleted() || !myClass.isParentCategory()) {
                 continue;
             }
 
-            /* Create a new action for the parent */
-            final TethysUIScrollItem<MoneyWiseDepositCategory> myItem = pMenu.addItem(myCat);
+            /* Create a new action for the type */
+            final TethysUIScrollItem<MoneyWiseCashCategory> myItem = pMenu.addItem(myCat);
 
             /* If this is the active parent */
             if (myCat.equals(myCurr)) {

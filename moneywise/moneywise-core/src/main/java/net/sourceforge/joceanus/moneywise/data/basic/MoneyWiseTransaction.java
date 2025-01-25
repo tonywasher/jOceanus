@@ -827,11 +827,11 @@ public class MoneyWiseTransaction
     }
 
     /**
-     * Set a new Benefit.
+     * Set a new deemed`Benefit.
      * @param pBenefit the new benefit
      * @throws OceanusException on error
      */
-    public final void setBenefit(final OceanusMoney pBenefit) throws OceanusException {
+    public final void setDeemedBenefit(final OceanusMoney pBenefit) throws OceanusException {
         setInfoSetValue(MoneyWiseTransInfoClass.DEEMEDBENEFIT, pBenefit);
     }
 

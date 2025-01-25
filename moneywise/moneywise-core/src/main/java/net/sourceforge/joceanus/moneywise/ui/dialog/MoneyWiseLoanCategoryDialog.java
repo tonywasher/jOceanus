@@ -44,7 +44,7 @@ import net.sourceforge.joceanus.tethys.api.menu.TethysUIScrollMenu;
 /**
  * Panel to display/edit/create a LoanCategory.
  */
-public class MoneyWiseLoanCategoryPanel
+public class MoneyWiseLoanCategoryDialog
         extends MoneyWiseItemPanel<MoneyWiseLoanCategory> {
     /**
      * Constructor.
@@ -52,9 +52,9 @@ public class MoneyWiseLoanCategoryPanel
      * @param pEditSet the edit set
      * @param pOwner the owning table
      */
-    public MoneyWiseLoanCategoryPanel(final TethysUIFactory<?> pFactory,
-                                      final PrometheusEditSet pEditSet,
-                                      final MoneyWiseBaseTable<MoneyWiseLoanCategory> pOwner) {
+    public MoneyWiseLoanCategoryDialog(final TethysUIFactory<?> pFactory,
+                                       final PrometheusEditSet pEditSet,
+                                       final MoneyWiseBaseTable<MoneyWiseLoanCategory> pOwner) {
         /* Initialise the panel */
         super(pFactory, pEditSet, pOwner);
 

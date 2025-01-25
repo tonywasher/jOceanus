@@ -16,12 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.moneywise.atlas.data.analysis.base;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Objects;
-
 import net.sourceforge.joceanus.metis.field.MetisFieldItem;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.metis.field.MetisFieldVersionedItem;
@@ -34,11 +28,18 @@ import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransAsset;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransCategory;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransTag;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransaction;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.date.OceanusDate;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusRatio;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusUnits;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * Analysis Event.
@@ -370,11 +371,31 @@ public class MoneyWiseXAnalysisEvent
     }
 
     /**
+     * Set the account.
+     * @param pAccount the account
+     */
+    public void setAccount(final MoneyWiseTransAsset pAccount) {
+        if (theTransaction != null) {
+            theTransaction.setAccount(pAccount);
+        }
+    }
+
+    /**
      * Obtain the category.
      * @return the category
      */
     public MoneyWiseTransCategory getCategory() {
         return theTransaction == null ? null : theTransaction.getCategory();
+    }
+
+    /**
+     * Set the category.
+     * @param pCategory the category
+     */
+    public void setCategory(final MoneyWiseTransCategory pCategory) {
+        if (theTransaction != null) {
+            theTransaction.setCategory(pCategory);
+        }
     }
 
     /**
@@ -386,11 +407,31 @@ public class MoneyWiseXAnalysisEvent
     }
 
     /**
+     * Set the direction.
+     * @param pDirection the account
+     */
+    public void setDirection(final MoneyWiseAssetDirection pDirection) {
+        if (theTransaction != null) {
+            theTransaction.setDirection(pDirection);
+        }
+    }
+
+    /**
      * Obtain the partner.
      * @return the partner
      */
     public MoneyWiseTransAsset getPartner() {
         return theTransaction == null ? null : theTransaction.getPartner();
+    }
+
+    /**
+     * Set the partner.
+     * @param pPartner the partner
+     */
+    public void setPartner(final MoneyWiseTransAsset pPartner) {
+        if (theTransaction != null) {
+            theTransaction.setPartner(pPartner);
+        }
     }
 
     /**
@@ -402,11 +443,32 @@ public class MoneyWiseXAnalysisEvent
     }
 
     /**
+     * Set the amount.
+     * @param pAmount the amount
+     * @throws OceanusException on error
+     */
+    public void setAmount(final OceanusMoney pAmount) throws OceanusException {
+        if (theTransaction != null) {
+            theTransaction.setAmount(pAmount);
+        }
+    }
+
+    /**
      * is the event reconciled?
      * @return true/false
      */
     public Boolean isReconciled() {
         return theTransaction == null ? Boolean.TRUE : theTransaction.isReconciled();
+    }
+
+    /**
+     * Set the reconciled
+     * @param pReconciled the reconciled flag
+     */
+    public void setReconciled(final Boolean pReconciled) {
+        if (theTransaction != null) {
+            theTransaction.setReconciled(pReconciled);
+        }
     }
 
     /**
@@ -418,11 +480,33 @@ public class MoneyWiseXAnalysisEvent
     }
 
     /**
+     * Set the comment.
+     * @param pComment the comment
+     * @throws OceanusException on error
+     */
+    public void setComments(final String pComment) throws OceanusException {
+        if (theTransaction != null) {
+            theTransaction.setComments(pComment);
+        }
+    }
+
+    /**
      * Obtain the reference.
      * @return the reference
      */
     public String getReference() {
         return theTransaction == null ? null : theTransaction.getReference();
+    }
+
+    /**
+     * Set the reference.
+     * @param pReference the reference
+     * @throws OceanusException on error
+     */
+    public void setReference(final String pReference) throws OceanusException {
+        if (theTransaction != null) {
+            theTransaction.setReference(pReference);
+        }
     }
 
     /**
@@ -434,11 +518,33 @@ public class MoneyWiseXAnalysisEvent
     }
 
     /**
+     * Set the taxCredit.
+     * @param pCredit the taxCredit
+     * @throws OceanusException on error
+     */
+    public void setTaxCredit(final OceanusMoney pCredit) throws OceanusException {
+        if (theTransaction != null) {
+            theTransaction.setTaxCredit(pCredit);
+        }
+    }
+
+    /**
      * Obtain the employeesNI.
      * @return the employeesNI
      */
     public OceanusMoney getEmployeeNatIns() {
         return theTransaction == null ? null : theTransaction.getEmployeeNatIns();
+    }
+
+    /**
+     * Set the employeeNI.
+     * @param pNatIns the employeeNI
+     * @throws OceanusException on error
+     */
+    public void setEmployeeNatIns(final OceanusMoney pNatIns) throws OceanusException {
+        if (theTransaction != null) {
+            theTransaction.setEmployeeNatIns(pNatIns);
+        }
     }
 
     /**
@@ -450,11 +556,33 @@ public class MoneyWiseXAnalysisEvent
     }
 
     /**
+     * Set the employerNI.
+     * @param pNatIns the employerNI
+     * @throws OceanusException on error
+     */
+    public void setEmployerNatIns(final OceanusMoney pNatIns) throws OceanusException {
+        if (theTransaction != null) {
+            theTransaction.setEmployerNatIns(pNatIns);
+        }
+    }
+
+    /**
      * Obtain the deemedBenefit.
      * @return the deemedBenefit
      */
     public OceanusMoney getDeemedBenefit() {
         return theTransaction == null ? null : theTransaction.getDeemedBenefit();
+    }
+
+    /**
+     * Set the deemedBenefit.
+     * @param pBenefit the benefit
+     * @throws OceanusException on error
+     */
+    public void setDeemedBenefit(final OceanusMoney pBenefit) throws OceanusException {
+        if (theTransaction != null) {
+            theTransaction.setDeemedBenefit(pBenefit);
+        }
     }
 
     /**
@@ -466,11 +594,14 @@ public class MoneyWiseXAnalysisEvent
     }
 
     /**
-     * Obtain the qualifyingYears.
-     * @return the qualifyingYears
+     * Set the withheld.
+     * @param pWithheld the employeeNI
+     * @throws OceanusException on error
      */
-    public Integer getQualifyingYears() {
-        return theTransaction == null ? null : theTransaction.getYears();
+    public void setWithheld(final OceanusMoney pWithheld) throws OceanusException {
+        if (theTransaction != null) {
+            theTransaction.setWithheld(pWithheld);
+        }
     }
 
     /**
@@ -482,6 +613,17 @@ public class MoneyWiseXAnalysisEvent
     }
 
     /**
+     * Set the partnerAmount.
+     * @param pAmount the amount
+     * @throws OceanusException on error
+     */
+    public void setPartnerAmount(final OceanusMoney pAmount) throws OceanusException {
+        if (theTransaction != null) {
+            theTransaction.setEmployeeNatIns(pAmount);
+        }
+    }
+
+    /**
      * Obtain the returnedCashAccount.
      * @return the returnedCashAccount
      */
@@ -490,19 +632,33 @@ public class MoneyWiseXAnalysisEvent
     }
 
     /**
-     * Obtain the partnerAmount.
-     * @return the partnerAmount
+     * Set the returnedCashAccount.
+     * @param pAccount the returnedCashAccount
+     * @throws OceanusException on error
+     */
+    public void setReturnedCashAccount(final MoneyWiseTransAsset pAccount) throws OceanusException {
+        if (theTransaction != null) {
+            theTransaction.setReturnedCashAccount(pAccount);
+        }
+    }
+
+    /**
+     * Obtain the returnedCash.
+     * @return the returnedCash
      */
     public OceanusMoney getReturnedCash() {
         return theTransaction == null ? null : theTransaction.getReturnedCash();
     }
 
     /**
-     * Obtain the exchangeRate.
-     * @return the exchangeRate
+     * Set the returnedCash.
+     * @param pAmount the amount
+     * @throws OceanusException on error
      */
-    public OceanusRatio getExchangeRate() {
-        return theTransaction == null ? null : theTransaction.getExchangeRate();
+    public void setReturnedCash(final OceanusMoney pAmount) throws OceanusException {
+        if (theTransaction != null) {
+            theTransaction.setReturnedCash(pAmount);
+        }
     }
 
     /**
@@ -514,11 +670,33 @@ public class MoneyWiseXAnalysisEvent
     }
 
     /**
+     * Set the accountDeltaUnits.
+     * @param pDelta the deltaUnits
+     * @throws OceanusException on error
+     */
+    public void setAccountDeltaUnits(final OceanusUnits pDelta) throws OceanusException {
+        if (theTransaction != null) {
+            theTransaction.setAccountDeltaUnits(pDelta);
+        }
+    }
+
+    /**
      * Obtain the partnerDeltaUnits.
      * @return the partnerDeltaUnits
      */
     public OceanusUnits getPartnerDeltaUnits() {
         return theTransaction == null ? null : theTransaction.getPartnerDeltaUnits();
+    }
+
+    /**
+     * Set the partnerDeltaUnits.
+     * @param pDelta the deltaUnits
+     * @throws OceanusException on error
+     */
+    public void setPartnerDeltaUnits(final OceanusUnits pDelta) throws OceanusException {
+        if (theTransaction != null) {
+            theTransaction.setPartnerDeltaUnits(pDelta);
+        }
     }
 
     /**
@@ -530,19 +708,14 @@ public class MoneyWiseXAnalysisEvent
     }
 
     /**
-     * Obtain the price.
-     * @return the price
+     * Set the dilution.
+     * @param pDilution the dilution
+     * @throws OceanusException on error
      */
-    public OceanusPrice getPrice() {
-        return theTransaction == null ? null : theTransaction.getPrice();
-    }
-
-    /**
-     * Obtain the commission.
-     * @return the commission
-     */
-    public OceanusMoney getCommission() {
-        return theTransaction == null ? null : theTransaction.getCommission();
+    public void setDilution(final OceanusRatio pDilution) throws OceanusException {
+        if (theTransaction != null) {
+            theTransaction.setDilution(pDilution);
+        }
     }
 
     /**
@@ -551,6 +724,17 @@ public class MoneyWiseXAnalysisEvent
      */
     public List<MoneyWiseTransTag> getTransactionTags() {
         return theTransaction == null ? null : theTransaction.getTransactionTags();
+    }
+
+    /**
+     * Set the transactionTags.
+     * @param pTags the tags
+     * @throws OceanusException on error
+     */
+    public void setTransactionTags(final List<MoneyWiseTransTag> pTags) throws OceanusException {
+        if (theTransaction != null) {
+            theTransaction.setTransactionTags(pTags);
+        }
     }
 
     @Override

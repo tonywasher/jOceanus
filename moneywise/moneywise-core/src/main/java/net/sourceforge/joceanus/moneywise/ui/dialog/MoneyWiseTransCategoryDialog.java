@@ -44,7 +44,7 @@ import net.sourceforge.joceanus.tethys.api.menu.TethysUIScrollMenu;
 /**
  * Dialog to display/edit/create a TransactionCategory.
  */
-public class MoneyWiseTransCategoryPanel
+public class MoneyWiseTransCategoryDialog
         extends MoneyWiseItemPanel<MoneyWiseTransCategory> {
     /**
      * Constructor.
@@ -52,9 +52,9 @@ public class MoneyWiseTransCategoryPanel
      * @param pEditSet the edit set
      * @param pOwner the owning table
      */
-    public MoneyWiseTransCategoryPanel(final TethysUIFactory<?> pFactory,
-                                       final PrometheusEditSet pEditSet,
-                                       final MoneyWiseBaseTable<MoneyWiseTransCategory> pOwner) {
+    public MoneyWiseTransCategoryDialog(final TethysUIFactory<?> pFactory,
+                                        final PrometheusEditSet pEditSet,
+                                        final MoneyWiseBaseTable<MoneyWiseTransCategory> pOwner) {
         /* Initialise the panel */
         super(pFactory, pEditSet, pOwner);
 

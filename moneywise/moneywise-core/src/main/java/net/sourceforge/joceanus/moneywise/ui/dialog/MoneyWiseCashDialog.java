@@ -61,8 +61,8 @@ import net.sourceforge.joceanus.tethys.api.menu.TethysUIScrollSubMenu;
 /**
  * Panel to display/edit/create a Cash.
  */
-public class MoneyWiseCashPanel
-        extends MoneyWiseAssetPanel<MoneyWiseCash> {
+public class MoneyWiseCashDialog
+        extends MoneyWiseAssetDialog<MoneyWiseCash> {
     /**
      * The fieldSet.
      */
@@ -79,9 +79,9 @@ public class MoneyWiseCashPanel
      * @param pEditSet the edit set
      * @param pOwner the owning table
      */
-    public MoneyWiseCashPanel(final TethysUIFactory<?> pFactory,
-                              final PrometheusEditSet pEditSet,
-                              final MoneyWiseAssetTable<MoneyWiseCash> pOwner) {
+    public MoneyWiseCashDialog(final TethysUIFactory<?> pFactory,
+                               final PrometheusEditSet pEditSet,
+                               final MoneyWiseAssetTable<MoneyWiseCash> pOwner) {
         /* Initialise the panel */
         super(pFactory, pEditSet, pOwner);
 

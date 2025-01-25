@@ -51,8 +51,8 @@ import net.sourceforge.joceanus.tethys.api.menu.TethysUIScrollMenu;
 /**
  * Panel to display/edit/create a Payee.
  */
-public class MoneyWisePayeePanel
-        extends MoneyWiseAssetPanel<MoneyWisePayee> {
+public class MoneyWisePayeeDialog
+        extends MoneyWiseAssetDialog<MoneyWisePayee> {
     /**
      * The fieldSet.
      */
@@ -69,9 +69,9 @@ public class MoneyWisePayeePanel
      * @param pEditSet the edit set
      * @param pOwner the owning table
      */
-    public MoneyWisePayeePanel(final TethysUIFactory<?> pFactory,
-                               final PrometheusEditSet pEditSet,
-                               final MoneyWiseAssetTable<MoneyWisePayee> pOwner) {
+    public MoneyWisePayeeDialog(final TethysUIFactory<?> pFactory,
+                                final PrometheusEditSet pEditSet,
+                                final MoneyWiseAssetTable<MoneyWisePayee> pOwner) {
         /* Initialise the panel */
         super(pFactory, pEditSet, pOwner);
 

@@ -54,8 +54,8 @@ import net.sourceforge.joceanus.tethys.api.menu.TethysUIScrollMenu;
 /**
  * Panel to display/edit/create a Portfolio.
  */
-public class MoneyWisePortfolioPanel
-        extends MoneyWiseAssetPanel<MoneyWisePortfolio> {
+public class MoneyWisePortfolioDialog
+        extends MoneyWiseAssetDialog<MoneyWisePortfolio> {
     /**
      * The fieldSet.
      */
@@ -72,9 +72,9 @@ public class MoneyWisePortfolioPanel
      * @param pEditSet the edit set
      * @param pOwner the owning table
      */
-    public MoneyWisePortfolioPanel(final TethysUIFactory<?> pFactory,
-                                   final PrometheusEditSet pEditSet,
-                                   final MoneyWiseAssetTable<MoneyWisePortfolio> pOwner) {
+    public MoneyWisePortfolioDialog(final TethysUIFactory<?> pFactory,
+                                    final PrometheusEditSet pEditSet,
+                                    final MoneyWiseAssetTable<MoneyWisePortfolio> pOwner) {
         /* Initialise the panel */
         super(pFactory, pEditSet, pOwner);
 

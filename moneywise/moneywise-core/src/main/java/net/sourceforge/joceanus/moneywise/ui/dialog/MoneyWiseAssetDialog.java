@@ -27,7 +27,7 @@ import net.sourceforge.joceanus.tethys.api.factory.TethysUIFactory;
  * Panel to display/edit/create an asset.
  * @param <T> the Asset type
  */
-public abstract class MoneyWiseAssetPanel<T extends MoneyWiseAssetBase>
+public abstract class MoneyWiseAssetDialog<T extends MoneyWiseAssetBase>
         extends MoneyWiseItemPanel<T> {
     /**
      * Constructor.
@@ -35,9 +35,9 @@ public abstract class MoneyWiseAssetPanel<T extends MoneyWiseAssetBase>
      * @param pEditSet the edit set
      * @param pOwner the owning table
      */
-    protected MoneyWiseAssetPanel(final TethysUIFactory<?> pFactory,
-                                  final PrometheusEditSet pEditSet,
-                                  final MoneyWiseAssetTable<T> pOwner) {
+    protected MoneyWiseAssetDialog(final TethysUIFactory<?> pFactory,
+                                   final PrometheusEditSet pEditSet,
+                                   final MoneyWiseAssetTable<T> pOwner) {
         /* Initialise the panel */
         super(pFactory, pEditSet, pOwner);
     }

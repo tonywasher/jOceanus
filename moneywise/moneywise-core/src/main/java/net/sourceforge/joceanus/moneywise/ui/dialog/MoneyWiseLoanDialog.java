@@ -59,8 +59,8 @@ import net.sourceforge.joceanus.tethys.api.menu.TethysUIScrollSubMenu;
 /**
  * Panel to display/edit/create a Loan.
  */
-public class MoneyWiseLoanPanel
-        extends MoneyWiseAssetPanel<MoneyWiseLoan> {
+public class MoneyWiseLoanDialog
+        extends MoneyWiseAssetDialog<MoneyWiseLoan> {
     /**
      * The fieldSet.
      */
@@ -77,9 +77,9 @@ public class MoneyWiseLoanPanel
      * @param pEditSet the edit set
      * @param pOwner the owning table
      */
-    public MoneyWiseLoanPanel(final TethysUIFactory<?> pFactory,
-                              final PrometheusEditSet pEditSet,
-                              final MoneyWiseAssetTable<MoneyWiseLoan> pOwner) {
+    public MoneyWiseLoanDialog(final TethysUIFactory<?> pFactory,
+                               final PrometheusEditSet pEditSet,
+                               final MoneyWiseAssetTable<MoneyWiseLoan> pOwner) {
         /* Initialise the panel */
         super(pFactory, pEditSet, pOwner);
 

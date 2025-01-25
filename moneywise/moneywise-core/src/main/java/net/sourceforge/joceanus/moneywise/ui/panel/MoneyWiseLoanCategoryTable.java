@@ -31,7 +31,7 @@ import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseLoanCategoryClas
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseLoanCategoryType;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
 import net.sourceforge.joceanus.moneywise.ui.base.MoneyWiseCategoryTable;
-import net.sourceforge.joceanus.moneywise.ui.dialog.MoneyWiseLoanCategoryPanel;
+import net.sourceforge.joceanus.moneywise.ui.dialog.MoneyWiseLoanCategoryDialog;
 import net.sourceforge.joceanus.moneywise.views.MoneyWiseView;
 import net.sourceforge.joceanus.prometheus.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
@@ -49,7 +49,7 @@ public class MoneyWiseLoanCategoryTable
     /**
      * The Category dialog.
      */
-    private final MoneyWiseLoanCategoryPanel theActiveCategory;
+    private final MoneyWiseLoanCategoryDialog theActiveCategory;
 
     /**
      * The edit list.
@@ -72,7 +72,7 @@ public class MoneyWiseLoanCategoryTable
         final TethysUIFactory<?> myGuiFactory = pView.getGuiFactory();
 
         /* Create a category panel */
-        theActiveCategory = new MoneyWiseLoanCategoryPanel(myGuiFactory, pEditSet, this);
+        theActiveCategory = new MoneyWiseLoanCategoryDialog(myGuiFactory, pEditSet, this);
         declareItemPanel(theActiveCategory);
 
         /* Add listeners */

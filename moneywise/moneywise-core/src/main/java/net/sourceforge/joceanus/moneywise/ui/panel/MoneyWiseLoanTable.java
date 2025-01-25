@@ -29,7 +29,7 @@ import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePayee;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseAssetCategory;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrency;
 import net.sourceforge.joceanus.moneywise.ui.base.MoneyWiseAssetTable;
-import net.sourceforge.joceanus.moneywise.ui.dialog.MoneyWiseLoanPanel;
+import net.sourceforge.joceanus.moneywise.ui.dialog.MoneyWiseLoanDialog;
 import net.sourceforge.joceanus.moneywise.views.MoneyWiseView;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
 import net.sourceforge.joceanus.prometheus.views.PrometheusDataEvent;
@@ -47,7 +47,7 @@ public class MoneyWiseLoanTable
     /**
      * The Loan dialog.
      */
-    private final MoneyWiseLoanPanel theActiveLoan;
+    private final MoneyWiseLoanDialog theActiveLoan;
 
     /**
      * The edit list.
@@ -73,7 +73,7 @@ public class MoneyWiseLoanTable
         final TethysUIFactory<?> myGuiFactory = pView.getGuiFactory();
 
         /* Create a Loan panel */
-        theActiveLoan = new MoneyWiseLoanPanel(myGuiFactory, pEditSet, this);
+        theActiveLoan = new MoneyWiseLoanDialog(myGuiFactory, pEditSet, this);
         declareItemPanel(theActiveLoan);
 
         /* Finish the table */

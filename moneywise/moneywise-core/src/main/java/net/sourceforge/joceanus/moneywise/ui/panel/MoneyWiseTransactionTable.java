@@ -16,12 +16,10 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.moneywise.ui.panel;
 
-import java.util.Map;
-
-import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
-import net.sourceforge.joceanus.metis.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.metis.data.MetisDataDifference;
+import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.metis.ui.MetisAction;
+import net.sourceforge.joceanus.metis.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.metis.ui.MetisIcon;
 import net.sourceforge.joceanus.metis.viewer.MetisViewerEntry;
 import net.sourceforge.joceanus.metis.viewer.MetisViewerManager;
@@ -35,22 +33,16 @@ import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransTag;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransaction;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransaction.MoneyWiseTransactionList;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransInfoClass;
-import net.sourceforge.joceanus.moneywise.ui.MoneyWiseAnalysisColumnSet;
-import net.sourceforge.joceanus.moneywise.ui.MoneyWiseIcon;
-import net.sourceforge.joceanus.moneywise.ui.base.MoneyWiseBaseTable;
-import net.sourceforge.joceanus.moneywise.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.moneywise.lethe.ui.controls.MoneyWiseAnalysisSelect;
 import net.sourceforge.joceanus.moneywise.lethe.ui.controls.MoneyWiseAnalysisSelect.MoneyWiseStatementSelect;
-import net.sourceforge.joceanus.moneywise.ui.dialog.MoneyWiseTransactionPanel;
 import net.sourceforge.joceanus.moneywise.lethe.views.MoneyWiseAnalysisFilter;
+import net.sourceforge.joceanus.moneywise.ui.MoneyWiseAnalysisColumnSet;
+import net.sourceforge.joceanus.moneywise.ui.MoneyWiseIcon;
+import net.sourceforge.joceanus.moneywise.ui.MoneyWiseUIResource;
+import net.sourceforge.joceanus.moneywise.ui.base.MoneyWiseBaseTable;
+import net.sourceforge.joceanus.moneywise.ui.dialog.MoneyWiseTransactionDialog;
 import net.sourceforge.joceanus.moneywise.views.MoneyWiseAnalysisView;
 import net.sourceforge.joceanus.moneywise.views.MoneyWiseView;
-import net.sourceforge.joceanus.prometheus.data.PrometheusDataResource;
-import net.sourceforge.joceanus.prometheus.ui.PrometheusActionButtons;
-import net.sourceforge.joceanus.prometheus.views.PrometheusDataEvent;
-import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
-import net.sourceforge.joceanus.prometheus.views.PrometheusUIEvent;
-import net.sourceforge.joceanus.prometheus.views.PrometheusViewerEntryId;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.date.OceanusDate;
 import net.sourceforge.joceanus.oceanus.date.OceanusDateConfig;
@@ -61,6 +53,12 @@ import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.TethysEventProvider;
 import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
+import net.sourceforge.joceanus.prometheus.data.PrometheusDataResource;
+import net.sourceforge.joceanus.prometheus.ui.PrometheusActionButtons;
+import net.sourceforge.joceanus.prometheus.views.PrometheusDataEvent;
+import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
+import net.sourceforge.joceanus.prometheus.views.PrometheusUIEvent;
+import net.sourceforge.joceanus.prometheus.views.PrometheusViewerEntryId;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.tethys.api.button.TethysUIButton;
 import net.sourceforge.joceanus.tethys.api.control.TethysUIControl.TethysUIIconMapSet;
@@ -69,6 +67,8 @@ import net.sourceforge.joceanus.tethys.api.menu.TethysUIScrollMenu;
 import net.sourceforge.joceanus.tethys.api.pane.TethysUIBorderPaneManager;
 import net.sourceforge.joceanus.tethys.api.pane.TethysUIPaneFactory;
 import net.sourceforge.joceanus.tethys.api.table.TethysUITableManager;
+
+import java.util.Map;
 
 /**
  * MoneyWise Transaction Table.
@@ -88,7 +88,7 @@ public class MoneyWiseTransactionTable
     /**
      * The transaction dialog.
      */
-    private final MoneyWiseTransactionPanel theActiveTran;
+    private final MoneyWiseTransactionDialog theActiveTran;
 
     /**
      * The new button.
@@ -190,7 +190,7 @@ public class MoneyWiseTransactionTable
         theBuilder = new MoneyWiseTransDefaults(getEditSet());
 
         /* Create a transaction panel */
-        theActiveTran = new MoneyWiseTransactionPanel(myGuiFactory, pEditSet, theBuilder, theSelect, this);
+        theActiveTran = new MoneyWiseTransactionDialog(myGuiFactory, pEditSet, theBuilder, theSelect, this);
         declareItemPanel(theActiveTran);
 
         /* Set table configuration */
@@ -309,7 +309,7 @@ public class MoneyWiseTransactionTable
                 .setCellValueFactory(MoneyWiseTransaction::getDeemedBenefit)
                 .setEditable(true)
                 .setColumnWidth(WIDTH_MONEY)
-                .setOnCommit((r, v) -> updateField(MoneyWiseTransaction::setBenefit, r, v));
+                .setOnCommit((r, v) -> updateField(MoneyWiseTransaction::setDeemedBenefit, r, v));
 
         /* Create the Withheld column */
         myTable.declareMoneyColumn(MoneyWiseTransInfoClass.WITHHELD)

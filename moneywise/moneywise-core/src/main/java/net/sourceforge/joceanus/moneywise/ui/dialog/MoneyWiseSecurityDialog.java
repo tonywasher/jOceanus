@@ -62,8 +62,8 @@ import net.sourceforge.joceanus.tethys.api.menu.TethysUIScrollMenu;
 /**
  * Panel to display/edit/create a Security.
  */
-public class MoneyWiseSecurityPanel
-        extends MoneyWiseAssetPanel<MoneyWiseSecurity> {
+public class MoneyWiseSecurityDialog
+        extends MoneyWiseAssetDialog<MoneyWiseSecurity> {
     /**
      * Prices Tab Title.
      */
@@ -91,10 +91,10 @@ public class MoneyWiseSecurityPanel
      * @param pEditSet the edit set
      * @param pOwner the owning table
      */
-    public MoneyWiseSecurityPanel(final TethysUIFactory<?> pFactory,
-                                  final MoneyWiseView pView,
-                                  final PrometheusEditSet pEditSet,
-                                  final MoneyWiseAssetTable<MoneyWiseSecurity> pOwner) {
+    public MoneyWiseSecurityDialog(final TethysUIFactory<?> pFactory,
+                                   final MoneyWiseView pView,
+                                   final PrometheusEditSet pEditSet,
+                                   final MoneyWiseAssetTable<MoneyWiseSecurity> pOwner) {
         /* Initialise the panel */
         super(pFactory, pEditSet, pOwner);
 

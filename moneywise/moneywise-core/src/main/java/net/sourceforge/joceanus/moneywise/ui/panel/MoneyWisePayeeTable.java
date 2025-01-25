@@ -27,7 +27,7 @@ import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePayee;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePayee.MoneyWisePayeeList;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseAssetCategory;
 import net.sourceforge.joceanus.moneywise.ui.base.MoneyWiseAssetTable;
-import net.sourceforge.joceanus.moneywise.ui.dialog.MoneyWisePayeePanel;
+import net.sourceforge.joceanus.moneywise.ui.dialog.MoneyWisePayeeDialog;
 import net.sourceforge.joceanus.moneywise.views.MoneyWiseView;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
 import net.sourceforge.joceanus.prometheus.views.PrometheusDataEvent;
@@ -45,7 +45,7 @@ public class MoneyWisePayeeTable
     /**
      * The Payee dialog.
      */
-    private final MoneyWisePayeePanel theActivePayee;
+    private final MoneyWisePayeeDialog theActivePayee;
 
     /**
      * The edit list.
@@ -71,7 +71,7 @@ public class MoneyWisePayeeTable
         final TethysUIFactory<?> myGuiFactory = pView.getGuiFactory();
 
         /* Create a payee panel */
-        theActivePayee = new MoneyWisePayeePanel(myGuiFactory, pEditSet, this);
+        theActivePayee = new MoneyWisePayeeDialog(myGuiFactory, pEditSet, this);
         declareItemPanel(theActivePayee);
 
         /* Finish the table */

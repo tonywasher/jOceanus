@@ -34,7 +34,7 @@ import net.sourceforge.joceanus.tethys.api.field.TethysUIFieldFactory;
 /**
  * Panel to display/edit/create a Region.
  */
-public class MoneyWiseRegionPanel
+public class MoneyWiseRegionDialog
         extends MoneyWiseItemPanel<MoneyWiseRegion> {
     /**
      * Constructor.
@@ -42,9 +42,9 @@ public class MoneyWiseRegionPanel
      * @param pEditSet the edit set
      * @param pOwner the owning table
      */
-    public MoneyWiseRegionPanel(final TethysUIFactory<?> pFactory,
-                                final PrometheusEditSet pEditSet,
-                                final MoneyWiseBaseTable<MoneyWiseRegion> pOwner) {
+    public MoneyWiseRegionDialog(final TethysUIFactory<?> pFactory,
+                                 final PrometheusEditSet pEditSet,
+                                 final MoneyWiseBaseTable<MoneyWiseRegion> pOwner) {
         /* Initialise the panel */
         super(pFactory, pEditSet, pOwner);
 

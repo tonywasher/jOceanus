@@ -63,8 +63,8 @@ import net.sourceforge.joceanus.tethys.api.menu.TethysUIScrollSubMenu;
 /**
  * Panel to display/edit/create a Deposit.
  */
-public class MoneyWiseDepositPanel
-        extends MoneyWiseAssetPanel<MoneyWiseDeposit> {
+public class MoneyWiseDepositDialog
+        extends MoneyWiseAssetDialog<MoneyWiseDeposit> {
     /**
      * Rates Tab Title.
      */
@@ -92,10 +92,10 @@ public class MoneyWiseDepositPanel
      * @param pEditSet the edit set
      * @param pOwner the owning table
      */
-    public MoneyWiseDepositPanel(final TethysUIFactory<?> pFactory,
-                                 final MoneyWiseView pView,
-                                 final PrometheusEditSet pEditSet,
-                                 final MoneyWiseAssetTable<MoneyWiseDeposit> pOwner) {
+    public MoneyWiseDepositDialog(final TethysUIFactory<?> pFactory,
+                                  final MoneyWiseView pView,
+                                  final PrometheusEditSet pEditSet,
+                                  final MoneyWiseAssetTable<MoneyWiseDeposit> pOwner) {
         /* Initialise the panel */
         super(pFactory, pEditSet, pOwner);
 

@@ -34,7 +34,7 @@ import net.sourceforge.joceanus.tethys.api.field.TethysUIFieldFactory;
 /**
  * Panel to display/edit/create a TransactionTag.
  */
-public class MoneyWiseTagPanel
+public class MoneyWiseTagDialog
         extends MoneyWiseItemPanel<MoneyWiseTransTag> {
     /**
      * Constructor.
@@ -42,9 +42,9 @@ public class MoneyWiseTagPanel
      * @param pEditSet the edit set
      * @param pOwner the owning table
      */
-    public MoneyWiseTagPanel(final TethysUIFactory<?> pFactory,
-                             final PrometheusEditSet pEditSet,
-                             final MoneyWiseBaseTable<MoneyWiseTransTag> pOwner) {
+    public MoneyWiseTagDialog(final TethysUIFactory<?> pFactory,
+                              final PrometheusEditSet pEditSet,
+                              final MoneyWiseBaseTable<MoneyWiseTransTag> pOwner) {
         /* Initialise the panel */
         super(pFactory, pEditSet, pOwner);
 
