@@ -45,9 +45,9 @@ import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransCategory.Mone
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransDefaults;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransInfoSet;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransTag;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransTag.MoneyWiseTransTagList;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransValidator;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransaction;
-import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransaction.MoneyWiseTransactionList;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransCategoryClass;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransInfoClass;
 import net.sourceforge.joceanus.moneywise.ui.MoneyWiseIcon;
@@ -72,7 +72,6 @@ import net.sourceforge.joceanus.tethys.api.field.TethysUIDataEditField.TethysUII
 import net.sourceforge.joceanus.tethys.api.field.TethysUIDataEditField.TethysUIIntegerEditField;
 import net.sourceforge.joceanus.tethys.api.field.TethysUIDataEditField.TethysUIListButtonField;
 import net.sourceforge.joceanus.tethys.api.field.TethysUIDataEditField.TethysUIMoneyEditField;
-import net.sourceforge.joceanus.tethys.api.field.TethysUIDataEditField.TethysUIPriceEditField;
 import net.sourceforge.joceanus.tethys.api.field.TethysUIDataEditField.TethysUIRatioEditField;
 import net.sourceforge.joceanus.tethys.api.field.TethysUIDataEditField.TethysUIScrollButtonField;
 import net.sourceforge.joceanus.tethys.api.field.TethysUIDataEditField.TethysUIStringEditField;
@@ -334,10 +333,10 @@ public class MoneyWiseXTransactionDialog
     @Override
     public void refreshData() {
         /* If we have an item */
-        final MoneyWiseTransaction myItem = getItem().getTransaction();
+        final MoneyWiseXAnalysisEvent myItem = getItem();
         if (myItem != null) {
-            final MoneyWiseTransactionList myTrans = getDataList(MoneyWiseBasicDataType.TRANSACTION, MoneyWiseTransactionList.class);
-            setItem(myTrans.findItemById(myItem.getIndexedId()));
+            /* TODO Reselect from list of Events - Where is this list? */
+            //setItem(myTrans.findItemById(myItem.getIndexedId()));
         }
 
         /* Make sure that the item is not editable */
@@ -966,7 +965,8 @@ public class MoneyWiseXTransactionDialog
         final List<MoneyWiseTransTag> myList = new ArrayList<>();
 
         /* Loop through the TransactionTags */
-        final Iterator<MoneyWiseTransTag> myIterator = getItem().getDataSet().getTransactionTags().iterator();
+        final Iterator<MoneyWiseTransTag> myIterator = getEditSet()
+                .getDataList(MoneyWiseBasicDataType.TRANSTAG, MoneyWiseTransTagList.class).iterator();
         while (myIterator.hasNext()) {
             final MoneyWiseTransTag myTag = myIterator.next();
 

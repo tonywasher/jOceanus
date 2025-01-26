@@ -16,13 +16,10 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.moneywise.atlas.data.analysis.analyse;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
 import net.sourceforge.joceanus.metis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.base.MoneyWiseNewDepositRate;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.base.MoneyWiseXAnalysisEvent;
+import net.sourceforge.joceanus.moneywise.atlas.data.analysis.base.MoneyWiseXAnalysisEventList;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysis;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisAccountBucket;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisDepositBucket;
@@ -34,10 +31,12 @@ import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseExchangeRate;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePortfolio.MoneyWisePortfolioList;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurityHolding.MoneyWiseSecurityHoldingMap;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurityPrice;
-import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
 import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
+import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
+
+import java.util.Iterator;
 
 /**
  * Evebt Analyser.
@@ -81,7 +80,7 @@ public class MoneyWiseXAnalysisEventAnalyser {
     /**
      * The list of events.
      */
-    private final List<MoneyWiseXAnalysisEvent> theEvents;
+    private final MoneyWiseXAnalysisEventList theEvents;
 
     /**
      * Constructor.
@@ -107,7 +106,6 @@ public class MoneyWiseXAnalysisEventAnalyser {
         theMarket = new MoneyWiseXAnalysisMarket(this);
         theTax = new MoneyWiseXAnalysisTax(this);
         theTrans = new MoneyWiseXAnalysisTransAnalyser(this);
-        theEvents = new ArrayList<>();
 
         /* Loop through the Events */
         for (;;) {
@@ -116,9 +114,6 @@ public class MoneyWiseXAnalysisEventAnalyser {
             if (myEvent == null) {
                 break;
             }
-
-            /* Store the event */
-            theEvents.add(myEvent);
 
             /* Switch on eventType */
             switch (myEvent.getEventType()) {
@@ -140,6 +135,9 @@ public class MoneyWiseXAnalysisEventAnalyser {
                     break;
             }
         }
+
+        /* Obtain the eventList */
+        theEvents = theState.getEventList();
 
         /* Complete the task */
         myTask.end();

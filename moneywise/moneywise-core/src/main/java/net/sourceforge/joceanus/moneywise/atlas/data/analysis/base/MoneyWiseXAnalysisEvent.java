@@ -16,9 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.moneywise.atlas.data.analysis.base;
 
-import net.sourceforge.joceanus.metis.field.MetisFieldItem;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
-import net.sourceforge.joceanus.metis.field.MetisFieldVersionedItem;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseAssetBase;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseAssetDirection;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicResource;
@@ -31,9 +29,9 @@ import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransaction;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.date.OceanusDate;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusRatio;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusUnits;
+import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -45,12 +43,11 @@ import java.util.Objects;
  * Analysis Event.
  */
 public class MoneyWiseXAnalysisEvent
-        extends MetisFieldVersionedItem
-        implements MetisFieldItem, Comparable<Object> {
+        extends PrometheusDataItem {
     /**
      * Local Report fields.
      */
-    private static final MetisFieldSet<MoneyWiseXAnalysisEvent> FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseXAnalysisEvent.class);
+    static final MetisFieldSet<MoneyWiseXAnalysisEvent> FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseXAnalysisEvent.class);
 
     /*
      * FieldIds.
@@ -107,10 +104,13 @@ public class MoneyWiseXAnalysisEvent
 
     /**
      * Transaction constructor.
+     * @param pList the owning list
      * @param pTrans the transaction.
      */
-    public MoneyWiseXAnalysisEvent(final MoneyWiseTransaction pTrans) {
-        theId = pTrans.getIndexedId();
+    public MoneyWiseXAnalysisEvent(final MoneyWiseXAnalysisEventList pList,
+                                   final MoneyWiseTransaction pTrans) {
+        super(pList, pTrans.getIndexedId());
+        theId = getIndexedId();
         theEventType = MoneyWiseXAnalysisEventType.TRANSACTION;
         theTransaction = pTrans;
         theDate = pTrans.getDate();
@@ -121,20 +121,23 @@ public class MoneyWiseXAnalysisEvent
     }
 
     /**
-     * List constructor.
-     * @param pType the eventType.
+     * Event constructor.
+     * @param pList the owning list
+     * @param pEventType the eventType.
      * @param pDate the date
      */
-    public MoneyWiseXAnalysisEvent(final MoneyWiseXAnalysisEventType pType,
+    public MoneyWiseXAnalysisEvent(final MoneyWiseXAnalysisEventList pList,
+                                   final MoneyWiseXAnalysisEventType pEventType,
                                    final OceanusDate pDate) {
-        theEventType = pType;
+        super(pList, determineId(pEventType, pDate));
+        theEventType = pEventType;
         theTransaction = null;
         theDate = pDate;
-        theId = determineId();
-        thePrices = MoneyWiseXAnalysisEventType.SECURITYPRICE == pType ? new ArrayList<>() : null;
-        theXchgRates = MoneyWiseXAnalysisEventType.XCHANGERATE == pType ? new ArrayList<>() : null;
-        theDepRates = MoneyWiseXAnalysisEventType.DEPOSITRATE == pType ? new ArrayList<>() : null;
-        theBalances = MoneyWiseXAnalysisEventType.OPENINGBALANCE == pType ? new ArrayList<>() : null;
+        theId = getIndexedId();
+        thePrices = MoneyWiseXAnalysisEventType.SECURITYPRICE == theEventType ? new ArrayList<>() : null;
+        theXchgRates = MoneyWiseXAnalysisEventType.XCHANGERATE == theEventType ? new ArrayList<>() : null;
+        theDepRates = MoneyWiseXAnalysisEventType.DEPOSITRATE == theEventType ? new ArrayList<>() : null;
+        theBalances = MoneyWiseXAnalysisEventType.OPENINGBALANCE == theEventType ? new ArrayList<>() : null;
     }
 
     @Override
@@ -146,9 +149,10 @@ public class MoneyWiseXAnalysisEvent
      * Determine the id of a non-transaction event.
      * @return the id
      */
-    private Integer determineId() {
-        final int myId = -(theDate.getId() << 2);
-        switch (theEventType) {
+    private static Integer determineId(final MoneyWiseXAnalysisEventType pEventType,
+                                       final OceanusDate pDate) {
+        final int myId = -(pDate.getId() << 2);
+        switch (pEventType) {
             case SECURITYPRICE:
                 return myId - 1;
             case XCHANGERATE:
@@ -241,6 +245,11 @@ public class MoneyWiseXAnalysisEvent
 
         /* Only event types with same date are transactions */
         return theTransaction == null ? 0 : theTransaction.compareTo(myThat.getTransaction());
+    }
+
+    @Override
+    protected int compareValues(PrometheusDataItem pThat) {
+        return 0;
     }
 
     @Override

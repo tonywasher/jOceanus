@@ -16,16 +16,10 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.moneywise.atlas.data.analysis.analyse;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.base.MoneyWiseNewDepositRate;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.base.MoneyWiseNewDepositRate.MoneyWiseNewDepositRateList;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.base.MoneyWiseXAnalysisEvent;
+import net.sourceforge.joceanus.moneywise.atlas.data.analysis.base.MoneyWiseXAnalysisEventList;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.base.MoneyWiseXAnalysisEventType;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisInterfaces.MoneyWiseXAnalysisBucketForeign;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisInterfaces.MoneyWiseXAnalysisBucketPriced;
@@ -44,12 +38,19 @@ import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurityPrice.Mone
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransaction;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransaction.MoneyWiseTransactionList;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrency;
-import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
 import net.sourceforge.joceanus.oceanus.date.OceanusDate;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusRate;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusRatio;
+import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Analysis Cursor.
@@ -117,6 +118,11 @@ public class MoneyWiseXAnalysisState
     private final OceanusDate theStartDate;
 
     /**
+     * The editSet.
+     */
+    private final MoneyWiseXAnalysisEventList theEvents;
+
+    /**
      * Have balances been built?.
      */
     private boolean balancesBuilt;
@@ -150,9 +156,10 @@ public class MoneyWiseXAnalysisState
      * Constructor.
      * @param pEditSet the editSet
      */
-    MoneyWiseXAnalysisState(final PrometheusEditSet pEditSet) {
+    public MoneyWiseXAnalysisState(final PrometheusEditSet pEditSet) {
         /* Store parameters */
         theEditSet = pEditSet;
+        theEvents = new MoneyWiseXAnalysisEventList(theEditSet);
 
         final MoneyWiseSecurityPriceList myPrices = theEditSet.getDataList(MoneyWiseBasicDataType.SECURITYPRICE, MoneyWiseSecurityPriceList.class);
         thePriceIterator = myPrices.iterator();
@@ -176,6 +183,14 @@ public class MoneyWiseXAnalysisState
         iterateXchgRate();
         iterateDepRate();
         iterateTrans();
+    }
+
+    /**
+     * Obtain the EventList.
+     * @return the list
+     */
+    public MoneyWiseXAnalysisEventList getEventList() {
+        return theEvents;
     }
 
     /**
@@ -267,7 +282,7 @@ public class MoneyWiseXAnalysisState
      */
     private void nextSecurityPrice() {
         final OceanusDate myDate = theNextPrice.getDate();
-        theNextEvent = new MoneyWiseXAnalysisEvent(MoneyWiseXAnalysisEventType.SECURITYPRICE, myDate);
+        theNextEvent = theEvents.newSecurityPrice(myDate);
         do {
             processSecurityPrice();
         } while (theNextPrice != null && myDate.equals(theNextPrice.getDate()));
@@ -287,7 +302,7 @@ public class MoneyWiseXAnalysisState
      */
     private void nextXchgRate() {
         final OceanusDate myDate = theNextXchgRate.getDate();
-        theNextEvent = new MoneyWiseXAnalysisEvent(MoneyWiseXAnalysisEventType.XCHANGERATE, myDate);
+        theNextEvent = theEvents.newXchangeRate(myDate);
         do {
             processXchgRate();
         } while (theNextXchgRate != null && myDate.equals(theNextXchgRate.getDate()));
@@ -307,7 +322,7 @@ public class MoneyWiseXAnalysisState
      */
     private void nextDepRate() {
         final OceanusDate myDate = theNextDepRate.getDate();
-        theNextEvent = new MoneyWiseXAnalysisEvent(MoneyWiseXAnalysisEventType.DEPOSITRATE, myDate);
+        theNextEvent = theEvents.newDepositRate(myDate);
         do {
             processDepRate();
         } while (theNextDepRate != null && myDate.equals(theNextDepRate.getDate()));
@@ -326,7 +341,7 @@ public class MoneyWiseXAnalysisState
      * Build next transaction event.
      */
     private void nextTransaction() {
-        theNextEvent = new MoneyWiseXAnalysisEvent(theNextTrans);
+        theNextEvent = theEvents.newTransaction(theNextTrans);
         iterateTrans();
     }
 
@@ -445,7 +460,7 @@ public class MoneyWiseXAnalysisState
      * Build opening balances.
      */
     private void buildBalances() {
-        theNextEvent = new MoneyWiseXAnalysisEvent(MoneyWiseXAnalysisEventType.OPENINGBALANCE, theStartDate);
+        theNextEvent = theEvents.newOpeningBalance(theStartDate);
         buildBalances(MoneyWiseBasicDataType.DEPOSIT);
         buildBalances(MoneyWiseBasicDataType.CASH);
         buildBalances(MoneyWiseBasicDataType.LOAN);
