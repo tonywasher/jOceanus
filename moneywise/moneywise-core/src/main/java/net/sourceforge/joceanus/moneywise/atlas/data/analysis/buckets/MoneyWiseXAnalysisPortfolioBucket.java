@@ -835,7 +835,7 @@ public final class MoneyWiseXAnalysisPortfolioBucket
         /**
          * Analyse securities.
           */
-        void analyseSecurities() {
+        public void analyseSecurities() {
             /* Access details */
             final MoneyWiseXAnalysisPortfolioCashBucket myCashTotals = theTotals.getPortfolioCash();
 

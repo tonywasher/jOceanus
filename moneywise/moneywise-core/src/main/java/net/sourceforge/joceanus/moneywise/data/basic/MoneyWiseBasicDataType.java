@@ -143,6 +143,11 @@ public enum MoneyWiseBasicDataType
     TRANSACTIONINFO(MoneyWiseStaticDataType.MAXKEYID + 23);
 
     /**
+     * Maximum keyId.
+     */
+    public static final Integer MAXKEYID = TRANSACTIONINFO.getItemKey();
+
+    /**
      * The list key.
      */
     private final Integer theKey;

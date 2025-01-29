@@ -875,7 +875,7 @@ public class MoneyWiseXAnalysisTaxBasisBucket
         /**
          * produce Totals.
          */
-        protected void produceTotals() {
+        public void produceTotals() {
             /* Loop through the buckets */
             final Iterator<MoneyWiseXAnalysisTaxBasisBucket> myIterator = iterator();
             while (myIterator.hasNext()) {

@@ -212,9 +212,9 @@ public class MoneyWiseXTransactionDialog
 
         /* Configure the menuBuilders */
         myDateButton.setDateConfigurator(this::handleDateConfig);
-        myAccountButton.setMenuConfigurator(c -> buildAccountMenu(c, getItem().getTransaction()));
-        myCategoryButton.setMenuConfigurator(c -> buildCategoryMenu(c, getItem().getTransaction()));
-        myPartnerButton.setMenuConfigurator(c -> buildPartnerMenu(c, getItem().getTransaction()));
+        myAccountButton.setMenuConfigurator(c -> buildAccountMenu(c, getItem()));
+        myCategoryButton.setMenuConfigurator(c -> buildCategoryMenu(c, getItem()));
+        myPartnerButton.setMenuConfigurator(c -> buildPartnerMenu(c, getItem()));
         final Map<Boolean, TethysUIIconMapSet<Boolean>> myRecMapSets = MoneyWiseIcon.configureReconciledIconButton(pFactory);
         myReconciledButton.setIconMapSet(() -> myRecMapSets.get(theReconciledState));
         final Map<Boolean, TethysUIIconMapSet<MoneyWiseAssetDirection>> myDirMapSets = MoneyWiseIcon.configureDirectionIconButton(pFactory);
@@ -324,7 +324,7 @@ public class MoneyWiseXTransactionDialog
         theFieldSet.addField(MoneyWiseTransInfoClass.RETURNEDCASH, myReturnedCash, MoneyWiseXAnalysisEvent::getReturnedCash);
 
         /* Configure the menuBuilders */
-        myReturnedAccountButton.setMenuConfigurator(c -> buildReturnedAccountMenu(c, getItem().getTransaction()));
+        myReturnedAccountButton.setMenuConfigurator(c -> buildReturnedAccountMenu(c, getItem()));
 
         /* Set currency */
         myReturnedCash.setDeemedCurrency(() -> getItem().getReturnedCashAccount().getCurrency());
@@ -334,10 +334,10 @@ public class MoneyWiseXTransactionDialog
     public void refreshData() {
         /* If we have an item */
         final MoneyWiseXAnalysisEvent myItem = getItem();
-        if (myItem != null) {
+        //if (myItem != null) {
             /* TODO Reselect from list of Events - Where is this list? */
             //setItem(myTrans.findItemById(myItem.getIndexedId()));
-        }
+        //}
 
         /* Make sure that the item is not editable */
         setEditable(false);
@@ -664,38 +664,40 @@ public class MoneyWiseXTransactionDialog
     /**
      * Build the account menu for an item.
      * @param pMenu the menu
-     * @param pTrans the transaction to build for
+     * @param pEvent the event to build for
      */
     public void buildAccountMenu(final TethysUIScrollMenu<MoneyWiseTransAsset> pMenu,
-                                 final MoneyWiseTransaction pTrans) {
+                                 final MoneyWiseXAnalysisEvent pEvent) {
         /* Clear the menu */
         pMenu.removeAllItems();
 
         /* Add possible items */
-        buildAssetMenu(pMenu, getDataList(MoneyWiseBasicDataType.DEPOSIT, MoneyWiseDepositList.class), true, pTrans);
-        buildAssetMenu(pMenu, getDataList(MoneyWiseBasicDataType.CASH, MoneyWiseCashList.class), true, pTrans);
-        buildAssetMenu(pMenu, getDataList(MoneyWiseBasicDataType.LOAN, MoneyWiseLoanList.class), true, pTrans);
-        buildHoldingMenu(pMenu, true, pTrans);
-        buildAssetMenu(pMenu, getDataList(MoneyWiseBasicDataType.PORTFOLIO, MoneyWisePortfolioList.class), true, pTrans);
+        final MoneyWiseTransaction myTrans = pEvent.getTransaction();
+        buildAssetMenu(pMenu, getDataList(MoneyWiseBasicDataType.DEPOSIT, MoneyWiseDepositList.class), true, myTrans);
+        buildAssetMenu(pMenu, getDataList(MoneyWiseBasicDataType.CASH, MoneyWiseCashList.class), true, myTrans);
+        buildAssetMenu(pMenu, getDataList(MoneyWiseBasicDataType.LOAN, MoneyWiseLoanList.class), true, myTrans);
+        buildHoldingMenu(pMenu, true, myTrans);
+        buildAssetMenu(pMenu, getDataList(MoneyWiseBasicDataType.PORTFOLIO, MoneyWisePortfolioList.class), true, myTrans);
     }
 
     /**
      * Build the partner menu for an item.
      * @param pMenu the menu
-     * @param pTrans the transaction to build for
+     * @param pEvent the event to build for
      */
     public void buildPartnerMenu(final TethysUIScrollMenu<MoneyWiseTransAsset> pMenu,
-                                 final MoneyWiseTransaction pTrans) {
+                                 final MoneyWiseXAnalysisEvent pEvent) {
         /* Clear the menu */
         pMenu.removeAllItems();
 
         /* Add possible items */
-        buildAssetMenu(pMenu, getDataList(MoneyWiseBasicDataType.DEPOSIT, MoneyWiseDepositList.class), false, pTrans);
-        buildAssetMenu(pMenu, getDataList(MoneyWiseBasicDataType.CASH, MoneyWiseCashList.class), false, pTrans);
-        buildAssetMenu(pMenu, getDataList(MoneyWiseBasicDataType.LOAN, MoneyWiseLoanList.class), false, pTrans);
-        buildHoldingMenu(pMenu, false, pTrans);
-        buildAssetMenu(pMenu, getDataList(MoneyWiseBasicDataType.PORTFOLIO, MoneyWisePortfolioList.class), false, pTrans);
-        buildAssetMenu(pMenu, getDataList(MoneyWiseBasicDataType.PAYEE, MoneyWisePayeeList.class), false, pTrans);
+        final MoneyWiseTransaction myTrans = pEvent.getTransaction();
+        buildAssetMenu(pMenu, getDataList(MoneyWiseBasicDataType.DEPOSIT, MoneyWiseDepositList.class), false, myTrans);
+        buildAssetMenu(pMenu, getDataList(MoneyWiseBasicDataType.CASH, MoneyWiseCashList.class), false, myTrans);
+        buildAssetMenu(pMenu, getDataList(MoneyWiseBasicDataType.LOAN, MoneyWiseLoanList.class), false, myTrans);
+        buildHoldingMenu(pMenu, false, myTrans);
+        buildAssetMenu(pMenu, getDataList(MoneyWiseBasicDataType.PORTFOLIO, MoneyWisePortfolioList.class), false, myTrans);
+        buildAssetMenu(pMenu, getDataList(MoneyWiseBasicDataType.PAYEE, MoneyWisePayeeList.class), false, myTrans);
     }
 
     /**
@@ -878,16 +880,16 @@ public class MoneyWiseXTransactionDialog
     /**
      * Build the category menu for an item.
      * @param pMenu the menu
-     * @param pTrans the transaction to build for
+     * @param pEvent the event to build for
      */
     public void buildCategoryMenu(final TethysUIScrollMenu<MoneyWiseTransCategory> pMenu,
-                                  final MoneyWiseTransaction pTrans) {
+                                  final MoneyWiseXAnalysisEvent pEvent) {
         /* Clear the menu */
         pMenu.removeAllItems();
 
         /* Record active item */
-        final MoneyWiseTransAsset myAccount = pTrans.getAccount();
-        final MoneyWiseTransCategory myCurr = pTrans.getCategory();
+        final MoneyWiseTransAsset myAccount = pEvent.getAccount();
+        final MoneyWiseTransCategory myCurr = pEvent.getCategory();
         TethysUIScrollItem<MoneyWiseTransCategory> myActive = null;
         TethysUIScrollItem<MoneyWiseTransCategory> myItem;
 
@@ -944,16 +946,17 @@ public class MoneyWiseXTransactionDialog
     /**
      * Build the ReturnedAccount menu for an item.
      * @param pMenu the menu
-     * @param pTrans the transaction to build for
+     * @param pEvent the event to build for
      */
     public void buildReturnedAccountMenu(final TethysUIScrollMenu<MoneyWiseTransAsset> pMenu,
-                                         final MoneyWiseTransaction pTrans) {
+                                         final MoneyWiseXAnalysisEvent pEvent) {
         /* Clear the menu */
         pMenu.removeAllItems();
 
         /* Add possible items */
-        buildAssetMenu(pMenu, getDataList(MoneyWiseBasicDataType.DEPOSIT, MoneyWiseDepositList.class), false, pTrans);
-        buildAssetMenu(pMenu, getDataList(MoneyWiseBasicDataType.PORTFOLIO, MoneyWisePortfolioList.class), false, pTrans);
+        final MoneyWiseTransaction myTrans = pEvent.getTransaction();
+        buildAssetMenu(pMenu, getDataList(MoneyWiseBasicDataType.DEPOSIT, MoneyWiseDepositList.class), false, myTrans);
+        buildAssetMenu(pMenu, getDataList(MoneyWiseBasicDataType.PORTFOLIO, MoneyWisePortfolioList.class), false, myTrans);
     }
 
     /**

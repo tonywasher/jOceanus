@@ -216,6 +216,9 @@ public class MoneyWiseXAnalysisEventAnalyser {
         /* Mark relevant securities */
         theAnalysis.getPortfolios().markActiveSecurities();
 
+        /* Record the events */
+        theAnalysis.setEvents(theEvents);
+
         /* Complete the task */
         myTask.end();
     }

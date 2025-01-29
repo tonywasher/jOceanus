@@ -14,20 +14,29 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets;
+package net.sourceforge.joceanus.moneywise.atlas.data.analysis.analyse;
 
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataMap;
 import net.sourceforge.joceanus.metis.field.MetisFieldItem;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
+import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysis;
+import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisBucketResource;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisCashBucket.MoneyWiseXAnalysisCashBucketList;
+import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisCashCategoryBucket;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisCashCategoryBucket.MoneyWiseXAnalysisCashCategoryBucketList;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisDepositBucket.MoneyWiseXAnalysisDepositBucketList;
+import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisDepositCategoryBucket;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisDepositCategoryBucket.MoneyWiseXAnalysisDepositCategoryBucketList;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisLoanBucket.MoneyWiseXAnalysisLoanBucketList;
+import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisLoanCategoryBucket;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisLoanCategoryBucket.MoneyWiseXAnalysisLoanCategoryBucketList;
+import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisPayeeBucket;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisPayeeBucket.MoneyWiseXAnalysisPayeeBucketList;
+import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisPortfolioBucket;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisPortfolioBucket.MoneyWiseXAnalysisPortfolioBucketList;
+import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisTaxBasisBucket;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisTaxBasisBucket.MoneyWiseXAnalysisTaxBasisBucketList;
+import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisTransCategoryBucket;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisTransCategoryBucket.MoneyWiseXAnalysisTransCategoryBucketList;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisTransTagBucket.MoneyWiseXAnalysisTransTagBucketList;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.values.MoneyWiseXAnalysisAccountAttr;
@@ -35,12 +44,23 @@ import net.sourceforge.joceanus.moneywise.atlas.data.analysis.values.MoneyWiseXA
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.values.MoneyWiseXAnalysisSecurityAttr;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.values.MoneyWiseXAnalysisTaxBasisAttr;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.values.MoneyWiseXAnalysisTransAttr;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataSet;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransaction.MoneyWiseTransactionList;
+import net.sourceforge.joceanus.moneywise.views.MoneyWiseView;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.date.OceanusDate;
 import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.TethysEventProvider;
 import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.oceanus.logger.OceanusLogManager;
 import net.sourceforge.joceanus.oceanus.logger.OceanusLogger;
+import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
+import net.sourceforge.joceanus.prometheus.views.PrometheusDataEvent;
+import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -49,7 +69,7 @@ import java.util.Map;
  * Analysis manager.
  */
 public class MoneyWiseXAnalysisManager
-        implements MetisFieldItem, MetisDataMap<OceanusDateRange, MoneyWiseXAnalysis> {
+        implements TethysEventProvider<PrometheusDataEvent>,  MetisFieldItem, MetisDataMap<OceanusDateRange, MoneyWiseXAnalysis> {
     /**
      * Logger.
      */
@@ -68,6 +88,11 @@ public class MoneyWiseXAnalysisManager
     }
 
     /**
+     * The Event Manager.
+     */
+    private final OceanusEventManager<PrometheusDataEvent> theEventManager;
+
+    /**
      * The analysis map.
      */
     private final Map<OceanusDateRange, MoneyWiseXAnalysis> theAnalysisMap;
@@ -75,7 +100,7 @@ public class MoneyWiseXAnalysisManager
     /**
      * The base analysis.
      */
-    private final MoneyWiseXAnalysis theAnalysis;
+    private MoneyWiseXAnalysis theAnalysis;
 
     /**
      * Do we have active securities?
@@ -95,6 +120,9 @@ public class MoneyWiseXAnalysisManager
         /* Store the parameters */
         theAnalysis = pAnalysis;
 
+        /* Create the event manager */
+        theEventManager = new OceanusEventManager<>();
+
         /* Create the analysis map */
         theAnalysisMap = new HashMap<>();
     }
@@ -102,6 +130,11 @@ public class MoneyWiseXAnalysisManager
     @Override
     public MetisFieldSet<MoneyWiseXAnalysisManager> getDataFieldSet() {
         return FIELD_DEFS;
+    }
+
+    @Override
+    public OceanusEventRegistrar<PrometheusDataEvent> getEventRegistrar() {
+        return theEventManager.getEventRegistrar();
     }
 
     @Override
@@ -120,6 +153,83 @@ public class MoneyWiseXAnalysisManager
      */
     public boolean isIdle() {
         return theAnalysis.isIdle();
+    }
+
+    /**
+     * analysis on editSet change.
+     * @param pView the view
+     * @param pEditSet the editSet
+     */
+    private void analyseChangedData(final MoneyWiseView pView,
+                                    final PrometheusEditSet pEditSet) {
+        /* Obtain the active profile */
+        OceanusProfile myTask = pView.getActiveTask();
+        myTask = myTask.startTask("calculateAnalysis");
+
+        /* Protect against exceptions */
+        try {
+            /* Sort the transaction list */
+            myTask.startTask("sortTransactions");
+            pEditSet.getDataList(MoneyWiseBasicDataType.TRANSACTION, MoneyWiseTransactionList.class).reSort();
+
+            /* TODO initialise analysis */
+
+            /* Create a new analysis on the editSet */
+            final MoneyWiseXAnalysisEventAnalyser myAnalyser = new MoneyWiseXAnalysisEventAnalyser(myTask, pEditSet, pView.getPreferenceManager());
+
+            /* Record analysis and clear the map */
+            theAnalysis = myAnalyser.getAnalysis();
+            theAnalysisMap.clear();
+
+            /* Report to listeners */
+            theEventManager.fireEvent(PrometheusDataEvent.DATACHANGED);
+
+            /* Catch exceptions */
+        } catch (OceanusException e) {
+            LOGGER.error("Failed to analyse changes", e);
+        }
+    }
+
+    /**
+     * analyse new data.
+     * @param pView the view
+     * @param pData the new data
+     * @return the analysis
+     * @throws OceanusException on error
+     */
+    public MoneyWiseXAnalysis analyseNewData(final MoneyWiseView pView,
+                                             final MoneyWiseDataSet pData) throws OceanusException {
+        /* Obtain the active profile */
+        OceanusProfile myTask = pView.getActiveTask();
+        myTask = myTask.startTask("calculateAnalysis");
+
+        /* Create a dummy editSet TODO unlink from View */
+        final PrometheusEditSet myEditSet = new PrometheusEditSet(pView);
+
+        /* Initialise the analysis */
+        pData.initialiseAnalysis();
+
+        /* Create a new analysis on the editSet */
+        final MoneyWiseXAnalysisEventAnalyser myAnalyser = new MoneyWiseXAnalysisEventAnalyser(myTask, myEditSet, pView.getPreferenceManager());
+
+        /* post-process analysis */
+        myAnalyser.postProcessAnalysis();
+
+        /* return the analysis */
+        return myAnalyser.getAnalysis();
+    }
+
+    /**
+     * Set analysis.
+     * @param pAnalysis the analysis
+     */
+    public void setAnalysis(final MoneyWiseXAnalysis pAnalysis) {
+        /* Record analysis and clear the map */
+        theAnalysis = pAnalysis;
+        theAnalysisMap.clear();
+
+        /* Report to listeners */
+        theEventManager.fireEvent(PrometheusDataEvent.DATACHANGED);
     }
 
     /**
@@ -159,7 +269,7 @@ public class MoneyWiseXAnalysisManager
         MoneyWiseXAnalysis myAnalysis = theAnalysisMap.get(myRange);
         if (myAnalysis == null) {
             /* Create the new event analysis */
-            myAnalysis = new MoneyWiseXAnalysis(this, pDate);
+            myAnalysis = new MoneyWiseXAnalysis(theAnalysis, pDate);
             produceTotals(myAnalysis);
 
             /* Check the totals */
@@ -182,7 +292,7 @@ public class MoneyWiseXAnalysisManager
         /* Look for the existing analysis */
         return theAnalysisMap.computeIfAbsent(pRange, r -> {
             /* Create the new event analysis */
-            final MoneyWiseXAnalysis myAnalysis = new MoneyWiseXAnalysis(this, r);
+            final MoneyWiseXAnalysis myAnalysis = new MoneyWiseXAnalysis(theAnalysis, r);
             produceTotals(myAnalysis);
 
             /* Check the totals */

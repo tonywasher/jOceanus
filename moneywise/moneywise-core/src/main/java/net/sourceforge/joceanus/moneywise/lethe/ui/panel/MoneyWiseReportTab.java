@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.moneywise.ui.panel;
+package net.sourceforge.joceanus.moneywise.lethe.ui.panel;
 
 import org.w3c.dom.Document;
 
@@ -117,7 +117,7 @@ public class MoneyWiseReportTab
      * @param pView the data view
      * @throws OceanusException on error
      */
-    MoneyWiseReportTab(final MoneyWiseView pView) throws OceanusException {
+    public MoneyWiseReportTab(final MoneyWiseView pView) throws OceanusException {
         /* Store the view */
         theView = pView;
 

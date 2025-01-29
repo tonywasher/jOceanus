@@ -255,7 +255,7 @@ public final class MoneyWiseXAnalysisDepositCategoryBucket
          * Analyse deposit accounts.
          * @param pDeposits the deposit account buckets
          */
-        void analyseDeposits(final MoneyWiseXAnalysisDepositBucketList pDeposits) {
+        public void analyseDeposits(final MoneyWiseXAnalysisDepositBucketList pDeposits) {
             /* Sort the deposits */
             pDeposits.sortBuckets();
 
@@ -302,7 +302,7 @@ public final class MoneyWiseXAnalysisDepositCategoryBucket
         /**
          * Produce totals for the categories.
          */
-        void produceTotals() {
+        public void produceTotals() {
             /* Create a list of new buckets (to avoid breaking iterator on add) */
             final MetisListIndexed<MoneyWiseXAnalysisDepositCategoryBucket> myTotals = new MetisListIndexed<>();
 

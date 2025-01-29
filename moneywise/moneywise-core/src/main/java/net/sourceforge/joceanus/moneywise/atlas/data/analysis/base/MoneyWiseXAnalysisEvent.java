@@ -63,9 +63,9 @@ public class MoneyWiseXAnalysisEvent
     }
 
     /**
-     * Id.
+     * Non-transaction indicator.
      */
-    private final Integer theId;
+    private static final int NONTRANS = 0x40000000;
 
     /**
      * EventType.
@@ -104,13 +104,13 @@ public class MoneyWiseXAnalysisEvent
 
     /**
      * Transaction constructor.
-     * @param pList the owning list
+     *
+     * @param pList  the owning list
      * @param pTrans the transaction.
      */
     public MoneyWiseXAnalysisEvent(final MoneyWiseXAnalysisEventList pList,
                                    final MoneyWiseTransaction pTrans) {
         super(pList, pTrans.getIndexedId());
-        theId = getIndexedId();
         theEventType = MoneyWiseXAnalysisEventType.TRANSACTION;
         theTransaction = pTrans;
         theDate = pTrans.getDate();
@@ -122,9 +122,10 @@ public class MoneyWiseXAnalysisEvent
 
     /**
      * Event constructor.
-     * @param pList the owning list
+     *
+     * @param pList      the owning list
      * @param pEventType the eventType.
-     * @param pDate the date
+     * @param pDate      the date
      */
     public MoneyWiseXAnalysisEvent(final MoneyWiseXAnalysisEventList pList,
                                    final MoneyWiseXAnalysisEventType pEventType,
@@ -133,7 +134,6 @@ public class MoneyWiseXAnalysisEvent
         theEventType = pEventType;
         theTransaction = null;
         theDate = pDate;
-        theId = getIndexedId();
         thePrices = MoneyWiseXAnalysisEventType.SECURITYPRICE == theEventType ? new ArrayList<>() : null;
         theXchgRates = MoneyWiseXAnalysisEventType.XCHANGERATE == theEventType ? new ArrayList<>() : null;
         theDepRates = MoneyWiseXAnalysisEventType.DEPOSITRATE == theEventType ? new ArrayList<>() : null;
@@ -147,11 +147,13 @@ public class MoneyWiseXAnalysisEvent
 
     /**
      * Determine the id of a non-transaction event.
+     * @param pEventType the eventType
+     * @param pDate the date
      * @return the id
      */
     private static Integer determineId(final MoneyWiseXAnalysisEventType pEventType,
                                        final OceanusDate pDate) {
-        final int myId = -(pDate.getId() << 2);
+        final int myId = NONTRANS + (pDate.getId() << 2);
         switch (pEventType) {
             case SECURITYPRICE:
                 return myId - 1;
@@ -165,13 +167,9 @@ public class MoneyWiseXAnalysisEvent
         }
     }
 
-    @Override
-    public Integer getIndexedId() {
-        return theId;
-    }
-
     /**
      * Obtain the event type.
+     *
      * @return the eventType
      */
     public MoneyWiseXAnalysisEventType getEventType() {
@@ -180,6 +178,7 @@ public class MoneyWiseXAnalysisEvent
 
     /**
      * Obtain the transaction.
+     *
      * @return the transaction
      */
     public MoneyWiseTransaction getTransaction() {
@@ -188,6 +187,7 @@ public class MoneyWiseXAnalysisEvent
 
     /**
      * Obtain the priceList.
+     *
      * @return the priceList
      */
     private List<MoneyWiseSecurityPrice> getPrices() {
@@ -196,6 +196,7 @@ public class MoneyWiseXAnalysisEvent
 
     /**
      * Obtain the xchgRateList.
+     *
      * @return the xchgRateList
      */
     private List<MoneyWiseExchangeRate> getXchgRates() {
@@ -204,6 +205,7 @@ public class MoneyWiseXAnalysisEvent
 
     /**
      * Obtain the depositRateList.
+     *
      * @return the depositRateList
      */
     private List<MoneyWiseNewDepositRate> getDepRates() {
@@ -212,6 +214,7 @@ public class MoneyWiseXAnalysisEvent
 
     /**
      * Obtain the openingBalanceList.
+     *
      * @return the openingBalanceList
      */
     private List<MoneyWiseAssetBase> getBalances() {
@@ -248,8 +251,19 @@ public class MoneyWiseXAnalysisEvent
     }
 
     @Override
-    protected int compareValues(PrometheusDataItem pThat) {
-        return 0;
+    protected int compareValues(final PrometheusDataItem pThat) {
+        /* Check date and then data type */
+        final MoneyWiseXAnalysisEvent myThat = (MoneyWiseXAnalysisEvent) pThat;
+        final int iDiff = theDate.compareTo(myThat.getDate());
+        if (iDiff != 0) {
+            return iDiff;
+        }
+        if (theEventType != myThat.getEventType()) {
+            return theEventType.compareTo(myThat.getEventType());
+        }
+
+        /* Only event types with same date are transactions */
+        return theTransaction == null ? 0 : theTransaction.compareTo(myThat.getTransaction());
     }
 
     @Override
@@ -285,6 +299,7 @@ public class MoneyWiseXAnalysisEvent
 
     /**
      * declare securityPrice.
+     *
      * @param pPrice the security Price.
      */
     public void declareSecurityPrice(final MoneyWiseSecurityPrice pPrice) {
@@ -295,6 +310,7 @@ public class MoneyWiseXAnalysisEvent
 
     /**
      * declare exchangeRate.
+     *
      * @param pRate the exchangeRate.
      */
     public void declareExchangeRate(final MoneyWiseExchangeRate pRate) {
@@ -305,6 +321,7 @@ public class MoneyWiseXAnalysisEvent
 
     /**
      * declare depositRate.
+     *
      * @param pRate the depositRate.
      */
     public void declareDepositRate(final MoneyWiseNewDepositRate pRate) {
@@ -315,6 +332,7 @@ public class MoneyWiseXAnalysisEvent
 
     /**
      * declare opening balance.
+     *
      * @param pAsset the asset.
      */
     public void declareOpeningBalance(final MoneyWiseAssetBase pAsset) {
@@ -325,6 +343,7 @@ public class MoneyWiseXAnalysisEvent
 
     /**
      * obtain the securityPrice iterator.
+     *
      * @return the iterator.
      */
     public Iterator<MoneyWiseSecurityPrice> priceIterator() {
@@ -333,6 +352,7 @@ public class MoneyWiseXAnalysisEvent
 
     /**
      * obtain the exchangeRate iterator.
+     *
      * @return the iterator.
      */
     public Iterator<MoneyWiseExchangeRate> xchgRateIterator() {
@@ -341,6 +361,7 @@ public class MoneyWiseXAnalysisEvent
 
     /**
      * obtain the depositRate iterator.
+     *
      * @return the iterator.
      */
     public Iterator<MoneyWiseNewDepositRate> depRateIterator() {
@@ -349,6 +370,7 @@ public class MoneyWiseXAnalysisEvent
 
     /**
      * obtain the openingBalance iterator.
+     *
      * @return the iterator.
      */
     public Iterator<MoneyWiseAssetBase> balanceIterator() {
@@ -357,6 +379,7 @@ public class MoneyWiseXAnalysisEvent
 
     /**
      * Obtain the date.
+     *
      * @return the date
      */
     public OceanusDate getDate() {
@@ -364,7 +387,19 @@ public class MoneyWiseXAnalysisEvent
     }
 
     /**
+     * Set the date.
+     *
+     * @param pDate the date
+     */
+    public void setDate(final OceanusDate pDate) {
+        if (theTransaction != null) {
+            theTransaction.setDate(pDate);
+        }
+    }
+
+    /**
      * Is the event a header?.
+     *
      * @return true/false
      */
     public boolean isHeader() {
@@ -373,6 +408,7 @@ public class MoneyWiseXAnalysisEvent
 
     /**
      * Obtain the account.
+     *
      * @return the account
      */
     public MoneyWiseTransAsset getAccount() {
@@ -381,6 +417,7 @@ public class MoneyWiseXAnalysisEvent
 
     /**
      * Set the account.
+     *
      * @param pAccount the account
      */
     public void setAccount(final MoneyWiseTransAsset pAccount) {
@@ -391,6 +428,7 @@ public class MoneyWiseXAnalysisEvent
 
     /**
      * Obtain the category.
+     *
      * @return the category
      */
     public MoneyWiseTransCategory getCategory() {
@@ -399,6 +437,7 @@ public class MoneyWiseXAnalysisEvent
 
     /**
      * Set the category.
+     *
      * @param pCategory the category
      */
     public void setCategory(final MoneyWiseTransCategory pCategory) {
@@ -409,6 +448,7 @@ public class MoneyWiseXAnalysisEvent
 
     /**
      * Obtain the direction.
+     *
      * @return the direction
      */
     public MoneyWiseAssetDirection getDirection() {
@@ -417,7 +457,8 @@ public class MoneyWiseXAnalysisEvent
 
     /**
      * Set the direction.
-     * @param pDirection the account
+     *
+     * @param pDirection the direction
      */
     public void setDirection(final MoneyWiseAssetDirection pDirection) {
         if (theTransaction != null) {
@@ -427,6 +468,7 @@ public class MoneyWiseXAnalysisEvent
 
     /**
      * Obtain the partner.
+     *
      * @return the partner
      */
     public MoneyWiseTransAsset getPartner() {
@@ -435,6 +477,7 @@ public class MoneyWiseXAnalysisEvent
 
     /**
      * Set the partner.
+     *
      * @param pPartner the partner
      */
     public void setPartner(final MoneyWiseTransAsset pPartner) {
@@ -445,6 +488,7 @@ public class MoneyWiseXAnalysisEvent
 
     /**
      * Obtain the amount.
+     *
      * @return the amount
      */
     public OceanusMoney getAmount() {
@@ -453,6 +497,7 @@ public class MoneyWiseXAnalysisEvent
 
     /**
      * Set the amount.
+     *
      * @param pAmount the amount
      * @throws OceanusException on error
      */
@@ -464,6 +509,7 @@ public class MoneyWiseXAnalysisEvent
 
     /**
      * is the event reconciled?
+     *
      * @return true/false
      */
     public Boolean isReconciled() {
@@ -471,7 +517,8 @@ public class MoneyWiseXAnalysisEvent
     }
 
     /**
-     * Set the reconciled
+     * Set the reconciled.
+     *
      * @param pReconciled the reconciled flag
      */
     public void setReconciled(final Boolean pReconciled) {
@@ -482,6 +529,7 @@ public class MoneyWiseXAnalysisEvent
 
     /**
      * Obtain the comment.
+     *
      * @return the comment
      */
     public String getComments() {
@@ -490,6 +538,7 @@ public class MoneyWiseXAnalysisEvent
 
     /**
      * Set the comment.
+     *
      * @param pComment the comment
      * @throws OceanusException on error
      */
@@ -501,6 +550,7 @@ public class MoneyWiseXAnalysisEvent
 
     /**
      * Obtain the reference.
+     *
      * @return the reference
      */
     public String getReference() {
@@ -509,6 +559,7 @@ public class MoneyWiseXAnalysisEvent
 
     /**
      * Set the reference.
+     *
      * @param pReference the reference
      * @throws OceanusException on error
      */
@@ -520,6 +571,7 @@ public class MoneyWiseXAnalysisEvent
 
     /**
      * Obtain the taxCredit.
+     *
      * @return the taxCredit
      */
     public OceanusMoney getTaxCredit() {
@@ -528,6 +580,7 @@ public class MoneyWiseXAnalysisEvent
 
     /**
      * Set the taxCredit.
+     *
      * @param pCredit the taxCredit
      * @throws OceanusException on error
      */
@@ -539,6 +592,7 @@ public class MoneyWiseXAnalysisEvent
 
     /**
      * Obtain the employeesNI.
+     *
      * @return the employeesNI
      */
     public OceanusMoney getEmployeeNatIns() {
@@ -547,6 +601,7 @@ public class MoneyWiseXAnalysisEvent
 
     /**
      * Set the employeeNI.
+     *
      * @param pNatIns the employeeNI
      * @throws OceanusException on error
      */
@@ -558,6 +613,7 @@ public class MoneyWiseXAnalysisEvent
 
     /**
      * Obtain the employerNI.
+     *
      * @return the employerNI
      */
     public OceanusMoney getEmployerNatIns() {
@@ -566,6 +622,7 @@ public class MoneyWiseXAnalysisEvent
 
     /**
      * Set the employerNI.
+     *
      * @param pNatIns the employerNI
      * @throws OceanusException on error
      */
@@ -577,6 +634,7 @@ public class MoneyWiseXAnalysisEvent
 
     /**
      * Obtain the deemedBenefit.
+     *
      * @return the deemedBenefit
      */
     public OceanusMoney getDeemedBenefit() {
@@ -585,6 +643,7 @@ public class MoneyWiseXAnalysisEvent
 
     /**
      * Set the deemedBenefit.
+     *
      * @param pBenefit the benefit
      * @throws OceanusException on error
      */
@@ -596,6 +655,7 @@ public class MoneyWiseXAnalysisEvent
 
     /**
      * Obtain the withheld.
+     *
      * @return the withheld
      */
     public OceanusMoney getWithheld() {
@@ -604,7 +664,8 @@ public class MoneyWiseXAnalysisEvent
 
     /**
      * Set the withheld.
-     * @param pWithheld the employeeNI
+     *
+     * @param pWithheld the withheld
      * @throws OceanusException on error
      */
     public void setWithheld(final OceanusMoney pWithheld) throws OceanusException {
@@ -615,6 +676,7 @@ public class MoneyWiseXAnalysisEvent
 
     /**
      * Obtain the partnerAmount.
+     *
      * @return the partnerAmount
      */
     public OceanusMoney getPartnerAmount() {
@@ -623,6 +685,7 @@ public class MoneyWiseXAnalysisEvent
 
     /**
      * Set the partnerAmount.
+     *
      * @param pAmount the amount
      * @throws OceanusException on error
      */
@@ -634,6 +697,7 @@ public class MoneyWiseXAnalysisEvent
 
     /**
      * Obtain the returnedCashAccount.
+     *
      * @return the returnedCashAccount
      */
     public MoneyWiseTransAsset getReturnedCashAccount() {
@@ -642,6 +706,7 @@ public class MoneyWiseXAnalysisEvent
 
     /**
      * Set the returnedCashAccount.
+     *
      * @param pAccount the returnedCashAccount
      * @throws OceanusException on error
      */
@@ -653,6 +718,7 @@ public class MoneyWiseXAnalysisEvent
 
     /**
      * Obtain the returnedCash.
+     *
      * @return the returnedCash
      */
     public OceanusMoney getReturnedCash() {
@@ -661,6 +727,7 @@ public class MoneyWiseXAnalysisEvent
 
     /**
      * Set the returnedCash.
+     *
      * @param pAmount the amount
      * @throws OceanusException on error
      */
@@ -672,6 +739,7 @@ public class MoneyWiseXAnalysisEvent
 
     /**
      * Obtain the accountDeltaUnits.
+     *
      * @return the accountDeltaUnits
      */
     public OceanusUnits getAccountDeltaUnits() {
@@ -680,6 +748,7 @@ public class MoneyWiseXAnalysisEvent
 
     /**
      * Set the accountDeltaUnits.
+     *
      * @param pDelta the deltaUnits
      * @throws OceanusException on error
      */
@@ -691,6 +760,7 @@ public class MoneyWiseXAnalysisEvent
 
     /**
      * Obtain the partnerDeltaUnits.
+     *
      * @return the partnerDeltaUnits
      */
     public OceanusUnits getPartnerDeltaUnits() {
@@ -699,6 +769,7 @@ public class MoneyWiseXAnalysisEvent
 
     /**
      * Set the partnerDeltaUnits.
+     *
      * @param pDelta the deltaUnits
      * @throws OceanusException on error
      */
@@ -710,6 +781,7 @@ public class MoneyWiseXAnalysisEvent
 
     /**
      * Obtain the dilution.
+     *
      * @return the dilution
      */
     public OceanusRatio getDilution() {
@@ -718,6 +790,7 @@ public class MoneyWiseXAnalysisEvent
 
     /**
      * Set the dilution.
+     *
      * @param pDilution the dilution
      * @throws OceanusException on error
      */
@@ -729,6 +802,7 @@ public class MoneyWiseXAnalysisEvent
 
     /**
      * Obtain the transactionTags.
+     *
      * @return the transactionTags
      */
     public List<MoneyWiseTransTag> getTransactionTags() {
@@ -737,6 +811,7 @@ public class MoneyWiseXAnalysisEvent
 
     /**
      * Set the transactionTags.
+     *
      * @param pTags the tags
      * @throws OceanusException on error
      */
@@ -746,8 +821,31 @@ public class MoneyWiseXAnalysisEvent
         }
     }
 
+    /**
+     * Switch direction.
+     */
+    public void switchDirection() {
+        if (theTransaction != null) {
+            theTransaction.switchDirection();
+        }
+    }
+
     @Override
     public int getNextVersion() {
         return 0;
+    }
+
+    @Override
+    public boolean isLocked() {
+        return theTransaction == null || theTransaction.isLocked();
+    }
+
+    /**
+     * Determines whether we can switch direction.
+     *
+     * @return true/false
+     */
+    public boolean canSwitchDirection() {
+        return theTransaction != null && theTransaction.canSwitchDirection();
     }
 }

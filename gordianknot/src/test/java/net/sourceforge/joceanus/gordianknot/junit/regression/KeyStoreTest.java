@@ -185,6 +185,7 @@ public class KeyStoreTest {
             agreedKeyPairRequestTest(myState, GordianKeyPairSpecBuilder.dh(GordianDHGroup.FFDHE2048)),
             agreedKeyPairRequestTest(myState, GordianKeyPairSpecBuilder.x25519()),
             agreedKeyPairRequestTest(myState, GordianKeyPairSpecBuilder.x448()),
+            agreedKeyPairRequestTest(myState, GordianKeyPairSpecBuilder.newHope()),
             agreedKeyPairRequestTest(myState, GordianKeyPairSpecBuilder.cmce(GordianCMCESpec.BASE3488)),
             agreedKeyPairRequestTest(myState, GordianKeyPairSpecBuilder.frodo(GordianFRODOSpec.AES640)),
             agreedKeyPairRequestTest(myState, GordianKeyPairSpecBuilder.saber(GordianSABERSpec.BASE128)),

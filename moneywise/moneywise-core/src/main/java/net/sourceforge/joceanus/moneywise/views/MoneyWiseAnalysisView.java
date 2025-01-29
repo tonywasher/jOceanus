@@ -320,7 +320,7 @@ public class MoneyWiseAnalysisView
 
                 /* Notify listeners */
                 myTask.startTask("Notify");
-                 theEventManager.fireEvent(PrometheusDataEvent.ADJUSTVISIBILITY);
+                theEventManager.fireEvent(PrometheusDataEvent.ADJUSTVISIBILITY);
 
                 /* Catch exceptions */
             } catch (OceanusException e) {

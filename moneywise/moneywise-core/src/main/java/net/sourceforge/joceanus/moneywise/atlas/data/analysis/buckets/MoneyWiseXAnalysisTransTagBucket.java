@@ -408,7 +408,7 @@ public final class MoneyWiseXAnalysisTransTagBucket
         /**
          * SortBuckets.
          */
-        void sortBuckets() {
+        public void sortBuckets() {
             theList.sortList();
         }
 

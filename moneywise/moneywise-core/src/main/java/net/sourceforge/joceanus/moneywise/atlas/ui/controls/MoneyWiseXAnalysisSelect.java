@@ -20,7 +20,7 @@ import net.sourceforge.joceanus.metis.data.MetisDataDifference;
 import net.sourceforge.joceanus.metis.ui.MetisIcon;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.base.MoneyWiseXAnalysisAttribute;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysis;
-import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisManager;
+import net.sourceforge.joceanus.moneywise.atlas.data.analysis.analyse.MoneyWiseXAnalysisManager;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisType;
 import net.sourceforge.joceanus.moneywise.atlas.views.MoneyWiseXAnalysisFilter;
 import net.sourceforge.joceanus.moneywise.atlas.views.MoneyWiseXAnalysisFilter.MoneyWiseXAnalysisAllFilter;
@@ -382,6 +382,9 @@ public class MoneyWiseXAnalysisSelect
         myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewColumns());
         theColumnButton.setMenuConfigurator(e -> buildColumnsMenu());
 
+        /* Handle Analysis Manager */
+        theAnalysisMgr.getEventRegistrar().addEventListener(e -> refreshData());
+
         /* Handle buttons */
         theRangeButton.getEventRegistrar().addEventListener(e -> setRangeVisibility(!isRangeVisible));
         theFilterButton.getEventRegistrar().addEventListener(e -> setFilterVisibility(!isFilterVisible));
@@ -595,7 +598,7 @@ public class MoneyWiseXAnalysisSelect
     /**
      * Refresh data.
      */
-    public void refreshData() {
+    private void refreshData() {
         /* Update the range selection */
         final OceanusDateRange myRange = theView.getRange();
         theRangeSelect.setOverallRange(myRange);

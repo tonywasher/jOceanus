@@ -651,7 +651,7 @@ public final class MoneyWiseXAnalysisPayeeBucket
         /**
          * Produce totals for the Payees.
          */
-        void produceTotals() {
+        public void produceTotals() {
             /* Loop through the buckets */
             final Iterator<MoneyWiseXAnalysisPayeeBucket> myIterator = iterator();
             while (myIterator.hasNext()) {

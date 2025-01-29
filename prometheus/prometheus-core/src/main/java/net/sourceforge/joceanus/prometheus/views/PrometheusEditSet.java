@@ -328,7 +328,7 @@ public class PrometheusEditSet
         mySubTask = myTask.startTask("Notify");
 
         /* Fire that we have rewound the updateSet */
-        theEventManager.fireEvent(PrometheusDataEvent.REWINDUPDATES);
+        theEventManager.fireEvent(PrometheusDataEvent.DATACHANGED);
 
         /* Complete the task */
         mySubTask.end();
@@ -383,7 +383,7 @@ public class PrometheusEditSet
             mySubTask.startTask("Notify");
 
             /* Fire that we have rewound the updateSet */
-            theEventManager.fireEvent(PrometheusDataEvent.REWINDUPDATES);
+            theEventManager.fireEvent(PrometheusDataEvent.DATACHANGED);
 
             /* Complete the task */
             mySubTask.end();
@@ -685,6 +685,9 @@ public class PrometheusEditSet
 
         /* Store version */
         theVersion = pNewVersion;
+
+        /* Fire that we have added to updateSet */
+        theEventManager.fireEvent(PrometheusDataEvent.DATACHANGED);
 
         /* Complete the task */
         mySubTask.end();

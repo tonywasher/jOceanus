@@ -1,5 +1,5 @@
-/*******************************************************************************
- * Prometheus: Application Framework
+/* *****************************************************************************
+ * MoneyWise: Finance Application
  * Copyright 2012,2025 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
@@ -14,49 +14,8 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.prometheus.views;
 
 /**
- * Prometheus Data Events.
+ * Gui panels.
  */
-public enum PrometheusDataEvent {
-    /**
-     * Refresh Views.
-     */
-    REFRESHVIEWS,
-
-    /**
-     * DataChanged.
-     */
-    DATACHANGED,
-
-    /**
-     * GoTo Window.
-     */
-    GOTOWINDOW,
-
-    /**
-     * Adjust Visibility.
-     */
-    ADJUSTVISIBILITY,
-
-    /**
-     * Selection Changed.
-     */
-    SELECTIONCHANGED,
-
-    /**
-     * Download.
-     */
-    DOWNLOAD,
-
-    /**
-     * Print.
-     */
-    PRINT,
-
-    /**
-     * SaveToFile.
-     */
-    SAVETOFILE,
-}
+package net.sourceforge.joceanus.moneywise.lethe.ui.panel;

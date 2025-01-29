@@ -721,7 +721,7 @@ public final class MoneyWiseXAnalysisTransCategoryBucket
         /**
          * Produce totals for the TransactionCategories.
          */
-        void produceTotals() {
+        public void produceTotals() {
             /* Create a list of new buckets */
             final MetisListIndexed<MoneyWiseXAnalysisTransCategoryBucket> myTotals = new MetisListIndexed<>();
 

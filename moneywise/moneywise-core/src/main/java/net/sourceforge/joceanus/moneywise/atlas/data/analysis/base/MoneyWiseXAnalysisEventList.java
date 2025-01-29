@@ -17,7 +17,6 @@
 package net.sourceforge.joceanus.moneywise.atlas.data.analysis.base;
 
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
-import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransaction;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.date.OceanusDate;
@@ -42,7 +41,7 @@ public class MoneyWiseXAnalysisEventList
      * @param pEditSet the editSet
      */
     public MoneyWiseXAnalysisEventList(final PrometheusEditSet pEditSet) {
-        super(MoneyWiseXAnalysisEvent.class, pEditSet.getDataSet(), MoneyWiseBasicDataType.TRANSACTION, PrometheusListStyle.EDIT);
+        super(MoneyWiseXAnalysisEvent.class, pEditSet.getDataSet(), MoneyWiseXAnalysisDataType.EVENT, PrometheusListStyle.EDIT);
     }
 
     @Override
@@ -57,7 +56,7 @@ public class MoneyWiseXAnalysisEventList
 
     @Override
     public String listName() {
-        return "AnalysisEvents";
+        return MoneyWiseXAnalysisDataType.EVENT.getListName();
     }
 
     @Override
@@ -88,6 +87,7 @@ public class MoneyWiseXAnalysisEventList
     /**
      * Create and add an event for a transaction.
      * @param pTrans the transaction
+     * @return the event
      */
     public MoneyWiseXAnalysisEvent newTransaction(final MoneyWiseTransaction pTrans) {
         final MoneyWiseXAnalysisEvent myEvent = new MoneyWiseXAnalysisEvent(this, pTrans);
@@ -98,6 +98,7 @@ public class MoneyWiseXAnalysisEventList
     /**
      * Create and add an event for a securityPrice change.
      * @param pDate the date
+     * @return the event
      */
     public MoneyWiseXAnalysisEvent newSecurityPrice(final OceanusDate pDate) {
         final MoneyWiseXAnalysisEvent myEvent = new MoneyWiseXAnalysisEvent(this, MoneyWiseXAnalysisEventType.SECURITYPRICE, pDate);
@@ -108,6 +109,7 @@ public class MoneyWiseXAnalysisEventList
     /**
      * Create and add an event for an exchangeRate change.
      * @param pDate the date
+     * @return the event
      */
     public MoneyWiseXAnalysisEvent newXchangeRate(final OceanusDate pDate) {
         final MoneyWiseXAnalysisEvent myEvent = new MoneyWiseXAnalysisEvent(this, MoneyWiseXAnalysisEventType.XCHANGERATE, pDate);
@@ -118,6 +120,7 @@ public class MoneyWiseXAnalysisEventList
     /**
      * Create and add an event for a depositRate change.
      * @param pDate the date
+     * @return the event
      */
     public MoneyWiseXAnalysisEvent newDepositRate(final OceanusDate pDate) {
         final MoneyWiseXAnalysisEvent myEvent = new MoneyWiseXAnalysisEvent(this, MoneyWiseXAnalysisEventType.DEPOSITRATE, pDate);
@@ -128,6 +131,7 @@ public class MoneyWiseXAnalysisEventList
     /**
      * Create and add an event for opening balances.
      * @param pDate the date
+     * @return the event
      */
     public MoneyWiseXAnalysisEvent newOpeningBalance(final OceanusDate pDate) {
         final MoneyWiseXAnalysisEvent myEvent = new MoneyWiseXAnalysisEvent(this, MoneyWiseXAnalysisEventType.OPENINGBALANCE, pDate);
