@@ -1,6 +1,6 @@
 /*******************************************************************************
  * MoneyWise: Finance Application
- * Copyright 2012,2024 Tony Washer
+ * Copyright 2012,2025 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -16,14 +16,14 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.moneywise.data.basic;
 
-import java.util.EnumMap;
-import java.util.Map;
-import java.util.ResourceBundle;
-
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseStaticResource;
 import net.sourceforge.joceanus.oceanus.resource.OceanusBundleId;
 import net.sourceforge.joceanus.oceanus.resource.OceanusBundleLoader;
+
+import java.util.EnumMap;
+import java.util.Map;
+import java.util.ResourceBundle;
 
 /**
  * Resource IDs for jMoneyWise Data Fields.
@@ -923,7 +923,7 @@ public enum MoneyWiseBasicResource
      * @param pValue the Value
      * @return the resource key
      */
-    protected static OceanusBundleId getKeyForAssetType(final MoneyWiseAssetType pValue) {
+    static OceanusBundleId getKeyForAssetType(final MoneyWiseAssetType pValue) {
         return OceanusBundleLoader.getKeyForEnum(TYPE_MAP, pValue);
     }
 
@@ -944,7 +944,7 @@ public enum MoneyWiseBasicResource
      * @param pValue the Value
      * @return the resource key
      */
-    protected static OceanusBundleId getKeyForAssetDirection(final MoneyWiseAssetDirection pValue) {
+    static OceanusBundleId getKeyForAssetDirection(final MoneyWiseAssetDirection pValue) {
         return OceanusBundleLoader.getKeyForEnum(DIRECTION_MAP, pValue);
     }
 
@@ -986,7 +986,7 @@ public enum MoneyWiseBasicResource
      * @param pValue the Value
      * @return the resource key
      */
-    protected static OceanusBundleId getKeyForDataType(final MoneyWiseBasicDataType pValue) {
+    static OceanusBundleId getKeyForDataType(final MoneyWiseBasicDataType pValue) {
         return OceanusBundleLoader.getKeyForEnum(NAME_MAP, pValue);
     }
 
@@ -1028,7 +1028,7 @@ public enum MoneyWiseBasicResource
      * @param pValue the Value
      * @return the resource key
      */
-    protected static OceanusBundleId getKeyForDataList(final MoneyWiseBasicDataType pValue) {
+    static OceanusBundleId getKeyForDataList(final MoneyWiseBasicDataType pValue) {
         return OceanusBundleLoader.getKeyForEnum(LIST_MAP, pValue);
     }
 }

@@ -1,6 +1,6 @@
 /*******************************************************************************
  * MoneyWise: Finance Application
- * Copyright 2012,2024 Tony Washer
+ * Copyright 2012,2025 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -27,7 +27,7 @@ import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseRegion;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseRegion.MoneyWiseRegionList;
 import net.sourceforge.joceanus.moneywise.ui.base.MoneyWiseBaseTable;
 import net.sourceforge.joceanus.moneywise.ui.MoneyWiseUIResource;
-import net.sourceforge.joceanus.moneywise.ui.dialog.MoneyWiseRegionPanel;
+import net.sourceforge.joceanus.moneywise.ui.dialog.MoneyWiseRegionDialog;
 import net.sourceforge.joceanus.moneywise.views.MoneyWiseView;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataResource;
 import net.sourceforge.joceanus.prometheus.views.PrometheusDataEvent;
@@ -53,7 +53,7 @@ public class MoneyWiseRegionTable
     /**
      * The Region dialog.
      */
-    private final MoneyWiseRegionPanel theActiveRegion;
+    private final MoneyWiseRegionDialog theActiveRegion;
 
     /**
      * The edit list.
@@ -86,7 +86,7 @@ public class MoneyWiseRegionTable
         theFilterPanel.addNode(myNewButton);
 
         /* Create a region panel */
-        theActiveRegion = new MoneyWiseRegionPanel(myGuiFactory, pEditSet, this);
+        theActiveRegion = new MoneyWiseRegionDialog(myGuiFactory, pEditSet, this);
         declareItemPanel(theActiveRegion);
 
         /* Set table configuration */

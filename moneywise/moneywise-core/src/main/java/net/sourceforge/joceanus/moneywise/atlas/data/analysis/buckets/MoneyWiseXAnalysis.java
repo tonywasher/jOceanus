@@ -1,6 +1,6 @@
 /*******************************************************************************
  * MoneyWise: Finance Application
- * Copyright 2012,2024 Tony Washer
+ * Copyright 2012,2025 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -19,6 +19,7 @@ package net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets;
 import net.sourceforge.joceanus.metis.field.MetisFieldItem;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.metis.preference.MetisPreferenceManager;
+import net.sourceforge.joceanus.moneywise.atlas.data.analysis.base.MoneyWiseXAnalysisEventList;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisCashBucket.MoneyWiseXAnalysisCashBucketList;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisCashCategoryBucket.MoneyWiseXAnalysisCashCategoryBucketList;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisDepositBucket.MoneyWiseXAnalysisDepositBucketList;
@@ -168,6 +169,11 @@ public class MoneyWiseXAnalysis
     private final MoneyWiseTaxAnalysis theTaxAnalysis;
 
     /**
+     * The Events.
+     */
+    private MoneyWiseXAnalysisEventList theEvents;
+
+    /**
      * Constructor for a full analysis.
      * @param pEditSet the editSet to analyse events for
      * @param pCursor the cursor
@@ -206,32 +212,32 @@ public class MoneyWiseXAnalysis
 
     /**
      * Constructor for a dated analysis.
-     * @param pManager the analysis manager
+     * @param pBase the base analysis
      * @param pDate the date for the analysis
      */
-    public MoneyWiseXAnalysis(final MoneyWiseXAnalysisManager pManager,
+    public MoneyWiseXAnalysis(final MoneyWiseXAnalysis pBase,
                               final OceanusDate pDate) {
         /* Store the data */
-        final MoneyWiseXAnalysis myBase = pManager.getAnalysis();
-        theEditSet = myBase.getEditSet();
+        theEditSet = pBase.getEditSet();
         final MoneyWiseDataSet myDataSet = getData();
-        theCurrency = myBase.getCurrency();
-        thePreferences = myBase.getPreferenceMgr();
+        theCurrency = pBase.getCurrency();
+        thePreferences = pBase.getPreferenceMgr();
         theDateRange = new OceanusDateRange(myDataSet.getDateRange().getStart(), pDate);
+        theEvents = pBase.getEvents();
         theCursor = null;
 
         /* Access the TaxYearCache */
         theTaxYearCache = (MoneyWiseUKTaxYearCache) myDataSet.getTaxFactory();
 
         /* Create a new set of buckets */
-        theDeposits = new MoneyWiseXAnalysisDepositBucketList(this, myBase.getDeposits(), pDate);
-        theCash = new MoneyWiseXAnalysisCashBucketList(this, myBase.getCash(), pDate);
-        theLoans = new MoneyWiseXAnalysisLoanBucketList(this, myBase.getLoans(), pDate);
-        thePortfolios = new MoneyWiseXAnalysisPortfolioBucketList(this, myBase.getPortfolios(), pDate);
-        thePayees = new MoneyWiseXAnalysisPayeeBucketList(this, myBase.getPayees(), pDate);
-        theTaxBasis = new MoneyWiseXAnalysisTaxBasisBucketList(this, myBase.getTaxBasis(), pDate);
-        theTransCategories = new MoneyWiseXAnalysisTransCategoryBucketList(this, myBase.getTransCategories(), pDate);
-        theTransTags = new MoneyWiseXAnalysisTransTagBucketList(this, myBase.getTransactionTags(), pDate);
+        theDeposits = new MoneyWiseXAnalysisDepositBucketList(this, pBase.getDeposits(), pDate);
+        theCash = new MoneyWiseXAnalysisCashBucketList(this, pBase.getCash(), pDate);
+        theLoans = new MoneyWiseXAnalysisLoanBucketList(this, pBase.getLoans(), pDate);
+        thePortfolios = new MoneyWiseXAnalysisPortfolioBucketList(this, pBase.getPortfolios(), pDate);
+        thePayees = new MoneyWiseXAnalysisPayeeBucketList(this, pBase.getPayees(), pDate);
+        theTaxBasis = new MoneyWiseXAnalysisTaxBasisBucketList(this, pBase.getTaxBasis(), pDate);
+        theTransCategories = new MoneyWiseXAnalysisTransCategoryBucketList(this, pBase.getTransCategories(), pDate);
+        theTransTags = new MoneyWiseXAnalysisTransTagBucketList(this, pBase.getTransactionTags(), pDate);
 
         /* Create totalling buckets */
         theDepositCategories = new MoneyWiseXAnalysisDepositCategoryBucketList(this);
@@ -242,32 +248,32 @@ public class MoneyWiseXAnalysis
 
     /**
      * Constructor for a ranged analysis.
-     * @param pManager the analysis manager
+     * @param pBase the base analysis
      * @param pRange the range for the analysis
      */
-    public MoneyWiseXAnalysis(final MoneyWiseXAnalysisManager pManager,
+    public MoneyWiseXAnalysis(final MoneyWiseXAnalysis pBase,
                               final OceanusDateRange pRange) {
         /* Store the data */
-        final MoneyWiseXAnalysis myBase = pManager.getAnalysis();
-        theEditSet = myBase.getEditSet();
+        theEditSet = pBase.getEditSet();
         final MoneyWiseDataSet myDataSet = getData();
-        theCurrency = myBase.getCurrency();
-        thePreferences = myBase.getPreferenceMgr();
+        theCurrency = pBase.getCurrency();
+        thePreferences = pBase.getPreferenceMgr();
         theDateRange = pRange;
+        theEvents = pBase.getEvents();
         theCursor = null;
 
         /* Access the TaxYearCache */
         theTaxYearCache = (MoneyWiseUKTaxYearCache) myDataSet.getTaxFactory();
 
         /* Create a new set of buckets */
-        theDeposits = new MoneyWiseXAnalysisDepositBucketList(this, myBase.getDeposits(), pRange);
-        theCash = new MoneyWiseXAnalysisCashBucketList(this, myBase.getCash(), pRange);
-        theLoans = new MoneyWiseXAnalysisLoanBucketList(this, myBase.getLoans(), pRange);
-        thePortfolios = new MoneyWiseXAnalysisPortfolioBucketList(this, myBase.getPortfolios(), pRange);
-        thePayees = new MoneyWiseXAnalysisPayeeBucketList(this, myBase.getPayees(), pRange);
-        theTaxBasis = new MoneyWiseXAnalysisTaxBasisBucketList(this, myBase.getTaxBasis(), pRange);
-        theTransCategories = new MoneyWiseXAnalysisTransCategoryBucketList(this, myBase.getTransCategories(), pRange);
-        theTransTags = new MoneyWiseXAnalysisTransTagBucketList(this, myBase.getTransactionTags(), pRange);
+        theDeposits = new MoneyWiseXAnalysisDepositBucketList(this, pBase.getDeposits(), pRange);
+        theCash = new MoneyWiseXAnalysisCashBucketList(this, pBase.getCash(), pRange);
+        theLoans = new MoneyWiseXAnalysisLoanBucketList(this, pBase.getLoans(), pRange);
+        thePortfolios = new MoneyWiseXAnalysisPortfolioBucketList(this, pBase.getPortfolios(), pRange);
+        thePayees = new MoneyWiseXAnalysisPayeeBucketList(this, pBase.getPayees(), pRange);
+        theTaxBasis = new MoneyWiseXAnalysisTaxBasisBucketList(this, pBase.getTaxBasis(), pRange);
+        theTransCategories = new MoneyWiseXAnalysisTransCategoryBucketList(this, pBase.getTransCategories(), pRange);
+        theTransTags = new MoneyWiseXAnalysisTransTagBucketList(this, pBase.getTransactionTags(), pRange);
 
         /* Create totalling buckets */
         theDepositCategories = new MoneyWiseXAnalysisDepositCategoryBucketList(this);
@@ -305,6 +311,22 @@ public class MoneyWiseXAnalysis
      */
     public PrometheusEditSet getEditSet() {
         return theEditSet;
+    }
+
+    /**
+     * Obtain the events.
+     * @return the events
+     */
+    public MoneyWiseXAnalysisEventList getEvents() {
+        return theEvents;
+    }
+
+    /**
+     * Set the events.
+     * @param pEvents the events
+     */
+    public void setEvents(final MoneyWiseXAnalysisEventList pEvents) {
+        theEvents = pEvents;
     }
 
     /**

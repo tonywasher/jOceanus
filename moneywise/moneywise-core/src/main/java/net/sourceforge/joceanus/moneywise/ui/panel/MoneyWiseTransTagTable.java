@@ -1,6 +1,6 @@
 /*******************************************************************************
  * MoneyWise: Finance Application
- * Copyright 2012,2024 Tony Washer
+ * Copyright 2012,2025 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -27,7 +27,7 @@ import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransTag;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransTag.MoneyWiseTransTagList;
 import net.sourceforge.joceanus.moneywise.ui.base.MoneyWiseBaseTable;
 import net.sourceforge.joceanus.moneywise.ui.MoneyWiseUIResource;
-import net.sourceforge.joceanus.moneywise.ui.dialog.MoneyWiseTagPanel;
+import net.sourceforge.joceanus.moneywise.ui.dialog.MoneyWiseTagDialog;
 import net.sourceforge.joceanus.moneywise.views.MoneyWiseView;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataResource;
 import net.sourceforge.joceanus.prometheus.views.PrometheusDataEvent;
@@ -53,7 +53,7 @@ public class MoneyWiseTransTagTable
     /**
      * The tag dialog.
      */
-    private final MoneyWiseTagPanel theActiveTag;
+    private final MoneyWiseTagDialog theActiveTag;
 
     /**
      * The edit list.
@@ -86,7 +86,7 @@ public class MoneyWiseTransTagTable
         theFilterPanel.addNode(myNewButton);
 
         /* Create a tag panel */
-        theActiveTag = new MoneyWiseTagPanel(myGuiFactory, pEditSet, this);
+        theActiveTag = new MoneyWiseTagDialog(myGuiFactory, pEditSet, this);
         declareItemPanel(theActiveTag);
 
         /* Set table configuration */

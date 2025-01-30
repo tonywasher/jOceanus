@@ -1,6 +1,6 @@
 /*******************************************************************************
  * MoneyWise: Finance Application
- * Copyright 2012,2024 Tony Washer
+ * Copyright 2012,2025 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -18,11 +18,12 @@ package net.sourceforge.joceanus.moneywise.ui.panel;
 
 import net.sourceforge.joceanus.metis.help.MetisHelpModule;
 import net.sourceforge.joceanus.moneywise.exc.MoneyWiseIOException;
+import net.sourceforge.joceanus.moneywise.lethe.ui.panel.MoneyWiseReportTab;
 import net.sourceforge.joceanus.moneywise.tax.uk.MoneyWiseUKTaxYearCache;
 import net.sourceforge.joceanus.moneywise.threads.MoneyWiseThreadLoadArchive;
 import net.sourceforge.joceanus.moneywise.threads.MoneyWiseThreadWriteQIF;
-import net.sourceforge.joceanus.moneywise.ui.controls.MoneyWiseAnalysisSelect.MoneyWiseStatementSelect;
-import net.sourceforge.joceanus.moneywise.ui.panel.MoneyWiseTransactionTable.MoneyWiseStatementPanel;
+import net.sourceforge.joceanus.moneywise.lethe.ui.controls.MoneyWiseAnalysisSelect.MoneyWiseStatementSelect;
+import net.sourceforge.joceanus.moneywise.lethe.ui.panel.MoneyWiseTransactionTable.MoneyWiseStatementPanel;
 import net.sourceforge.joceanus.moneywise.views.MoneyWiseView;
 import net.sourceforge.joceanus.moneywise.help.MoneyWiseHelp;
 import net.sourceforge.joceanus.moneywise.ui.MoneyWiseGoToId;

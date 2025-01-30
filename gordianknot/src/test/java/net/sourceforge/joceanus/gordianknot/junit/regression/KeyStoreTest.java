@@ -1,6 +1,6 @@
 /*******************************************************************************
  * GordianKnot: Security Suite
- * Copyright 2012,2024 Tony Washer
+ * Copyright 2012,2025 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -185,6 +185,7 @@ public class KeyStoreTest {
             agreedKeyPairRequestTest(myState, GordianKeyPairSpecBuilder.dh(GordianDHGroup.FFDHE2048)),
             agreedKeyPairRequestTest(myState, GordianKeyPairSpecBuilder.x25519()),
             agreedKeyPairRequestTest(myState, GordianKeyPairSpecBuilder.x448()),
+            agreedKeyPairRequestTest(myState, GordianKeyPairSpecBuilder.newHope()),
             agreedKeyPairRequestTest(myState, GordianKeyPairSpecBuilder.cmce(GordianCMCESpec.BASE3488)),
             agreedKeyPairRequestTest(myState, GordianKeyPairSpecBuilder.frodo(GordianFRODOSpec.AES640)),
             agreedKeyPairRequestTest(myState, GordianKeyPairSpecBuilder.saber(GordianSABERSpec.BASE128)),

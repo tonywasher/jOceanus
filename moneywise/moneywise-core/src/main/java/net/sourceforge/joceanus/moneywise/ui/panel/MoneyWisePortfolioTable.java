@@ -1,6 +1,6 @@
 /*******************************************************************************
  * MoneyWise: Finance Application
- * Copyright 2012,2024 Tony Washer
+ * Copyright 2012,2025 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -29,7 +29,7 @@ import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePortfolio.MoneyWis
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseAssetCategory;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrency;
 import net.sourceforge.joceanus.moneywise.ui.base.MoneyWiseAssetTable;
-import net.sourceforge.joceanus.moneywise.ui.dialog.MoneyWisePortfolioPanel;
+import net.sourceforge.joceanus.moneywise.ui.dialog.MoneyWisePortfolioDialog;
 import net.sourceforge.joceanus.moneywise.views.MoneyWiseView;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
 import net.sourceforge.joceanus.prometheus.views.PrometheusDataEvent;
@@ -47,7 +47,7 @@ public class MoneyWisePortfolioTable
     /**
      * The Portfolio dialog.
      */
-    private final MoneyWisePortfolioPanel theActivePortfolio;
+    private final MoneyWisePortfolioDialog theActivePortfolio;
 
     /**
      * The edit list.
@@ -73,7 +73,7 @@ public class MoneyWisePortfolioTable
         final TethysUIFactory<?> myGuiFactory = pView.getGuiFactory();
 
         /* Create a portfolio panel */
-        theActivePortfolio = new MoneyWisePortfolioPanel(myGuiFactory, pEditSet, this);
+        theActivePortfolio = new MoneyWisePortfolioDialog(myGuiFactory, pEditSet, this);
         declareItemPanel(theActivePortfolio);
 
         /* Finish the table */

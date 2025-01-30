@@ -1,6 +1,6 @@
 /*******************************************************************************
  * MoneyWise: Finance Application
- * Copyright 2012,2024 Tony Washer
+ * Copyright 2012,2025 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -320,7 +320,7 @@ public class MoneyWiseAnalysisView
 
                 /* Notify listeners */
                 myTask.startTask("Notify");
-                 theEventManager.fireEvent(PrometheusDataEvent.ADJUSTVISIBILITY);
+                theEventManager.fireEvent(PrometheusDataEvent.ADJUSTVISIBILITY);
 
                 /* Catch exceptions */
             } catch (OceanusException e) {

@@ -1,6 +1,6 @@
 /*******************************************************************************
  * MoneyWise: Finance Application
- * Copyright 2012,2024 Tony Washer
+ * Copyright 2012,2025 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -255,7 +255,7 @@ public final class MoneyWiseXAnalysisDepositCategoryBucket
          * Analyse deposit accounts.
          * @param pDeposits the deposit account buckets
          */
-        void analyseDeposits(final MoneyWiseXAnalysisDepositBucketList pDeposits) {
+        public void analyseDeposits(final MoneyWiseXAnalysisDepositBucketList pDeposits) {
             /* Sort the deposits */
             pDeposits.sortBuckets();
 
@@ -302,7 +302,7 @@ public final class MoneyWiseXAnalysisDepositCategoryBucket
         /**
          * Produce totals for the categories.
          */
-        void produceTotals() {
+        public void produceTotals() {
             /* Create a list of new buckets (to avoid breaking iterator on add) */
             final MetisListIndexed<MoneyWiseXAnalysisDepositCategoryBucket> myTotals = new MetisListIndexed<>();
 

@@ -1,6 +1,6 @@
 /*******************************************************************************
  * MoneyWise: Finance Application
- * Copyright 2012,2024 Tony Washer
+ * Copyright 2012,2025 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -31,7 +31,7 @@ import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseDepositCategoryC
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseDepositCategoryType;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
 import net.sourceforge.joceanus.moneywise.ui.base.MoneyWiseCategoryTable;
-import net.sourceforge.joceanus.moneywise.ui.dialog.MoneyWiseDepositCategoryPanel;
+import net.sourceforge.joceanus.moneywise.ui.dialog.MoneyWiseDepositCategoryDialog;
 import net.sourceforge.joceanus.moneywise.views.MoneyWiseView;
 import net.sourceforge.joceanus.prometheus.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
@@ -49,7 +49,7 @@ public class MoneyWiseDepositCategoryTable
     /**
      * The Category dialog.
      */
-    private final MoneyWiseDepositCategoryPanel theActiveCategory;
+    private final MoneyWiseDepositCategoryDialog theActiveCategory;
 
     /**
      * The edit list.
@@ -72,7 +72,7 @@ public class MoneyWiseDepositCategoryTable
         final TethysUIFactory<?> myGuiFactory = pView.getGuiFactory();
 
         /* Create a category panel */
-        theActiveCategory = new MoneyWiseDepositCategoryPanel(myGuiFactory, pEditSet, this);
+        theActiveCategory = new MoneyWiseDepositCategoryDialog(myGuiFactory, pEditSet, this);
         declareItemPanel(theActiveCategory);
 
         /* Add listeners */

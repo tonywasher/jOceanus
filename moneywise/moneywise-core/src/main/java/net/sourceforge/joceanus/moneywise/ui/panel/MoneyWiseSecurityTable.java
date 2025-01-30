@@ -1,6 +1,6 @@
 /*******************************************************************************
  * MoneyWise: Finance Application
- * Copyright 2012,2024 Tony Washer
+ * Copyright 2012,2025 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -31,7 +31,7 @@ import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseAccountInfoClass
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseAssetCategory;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrency;
 import net.sourceforge.joceanus.moneywise.ui.base.MoneyWiseAssetTable;
-import net.sourceforge.joceanus.moneywise.ui.dialog.MoneyWiseSecurityPanel;
+import net.sourceforge.joceanus.moneywise.ui.dialog.MoneyWiseSecurityDialog;
 import net.sourceforge.joceanus.moneywise.views.MoneyWiseView;
 import net.sourceforge.joceanus.prometheus.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditEntry;
@@ -55,7 +55,7 @@ public class MoneyWiseSecurityTable
     /**
      * The Security dialog.
      */
-    private final MoneyWiseSecurityPanel theActiveSecurity;
+    private final MoneyWiseSecurityDialog theActiveSecurity;
 
     /**
      * The edit list.
@@ -83,7 +83,7 @@ public class MoneyWiseSecurityTable
         final TethysUITableManager<MetisDataFieldId, MoneyWiseSecurity> myTable = getTable();
 
         /* Create a security panel */
-        theActiveSecurity = new MoneyWiseSecurityPanel(myGuiFactory, pView, pEditSet, this);
+        theActiveSecurity = new MoneyWiseSecurityDialog(myGuiFactory, pView, pEditSet, this);
         declareItemPanel(theActiveSecurity);
 
         /* Create the symbol column */

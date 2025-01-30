@@ -1,6 +1,6 @@
 /*******************************************************************************
  * MoneyWise: Finance Application
- * Copyright 2012,2024 Tony Washer
+ * Copyright 2012,2025 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -827,11 +827,11 @@ public class MoneyWiseTransaction
     }
 
     /**
-     * Set a new Benefit.
+     * Set a new deemed`Benefit.
      * @param pBenefit the new benefit
      * @throws OceanusException on error
      */
-    public final void setBenefit(final OceanusMoney pBenefit) throws OceanusException {
+    public final void setDeemedBenefit(final OceanusMoney pBenefit) throws OceanusException {
         setInfoSetValue(MoneyWiseTransInfoClass.DEEMEDBENEFIT, pBenefit);
     }
 
