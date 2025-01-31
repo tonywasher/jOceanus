@@ -18,6 +18,7 @@
       <item name="Release Notes" href="releaseNotes.html" />
       <item name="JavaDoc" href="apidocs/index.html" />
       <item name="Source Xref" href="xref/index.html" />
+      <item name="SonarQube" href="https://sonarcloud.io/dashboard?id=jOceanus" />
     </menu>
     <menu ref="modules"/>
     <menu ref="reports"/>
