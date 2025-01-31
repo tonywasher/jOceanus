@@ -6,7 +6,7 @@
     <parent>
         <groupId>net.sourceforge.joceanus</groupId>
         <artifactId>prometheus-services</artifactId>
-        <version>1.6.3-b4</version>
+        <version>1.6.3-SNAPSHOT</version>
     </parent>
     <artifactId>prometheus-sheet-odf</artifactId>
     <name>Prometheus Sheet ODF Service</name>
