@@ -63,7 +63,7 @@ allprojects {
         checkStyleConfig = "$rootDir/src/main/checkstyle/checks.xml"
 
         /* pmd config */
-        pmdVersion = "7.9.0"
+        pmdVersion = "7.10.0"
 
         /* jacoco config */
         jacocoVersion = "0.8.12"

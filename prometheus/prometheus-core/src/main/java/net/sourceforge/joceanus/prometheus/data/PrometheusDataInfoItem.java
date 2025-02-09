@@ -917,7 +917,7 @@ public abstract class PrometheusDataInfoItem
                                          Object pValue) throws OceanusException;
 
         @Override
-        public void prepareForAnalysis() {
+        public void updateMaps() {
             /* No activity, managed by owner */
         }
 

@@ -188,6 +188,7 @@ public class MoneyWiseAnalysisView
         try {
             /* Access the new analysis manager */
             theManager = theView.getAnalysisManager();
+            theEditSet.setDataSet(theView.getData());
 
             /* If we have a range */
             if (theRange != null) {
@@ -308,8 +309,8 @@ public class MoneyWiseAnalysisView
                 reSort();
 
                 /* Initialise the analysis */
-                myTask.startTask("Initialise");
-                theView.getData().initialiseAnalysis();
+                myTask.startTask("UpdateMaps");
+                theView.getData().updateMaps();
 
                 /* Analyse the data */
                 myTask.startTask("analyseData");

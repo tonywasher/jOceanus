@@ -16,44 +16,44 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.moneywise.test.data;
 
-import java.util.stream.Stream;
-
+import net.sourceforge.joceanus.moneywise.atlas.data.analysis.analyse.MoneyWiseXAnalysisBuilder;
+import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysis;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataSet;
+import net.sourceforge.joceanus.moneywise.lethe.data.analysis.analyse.MoneyWiseAnalysisTransAnalyser;
+import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysis;
+import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisCashCategoryBucket;
+import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisDepositCategoryBucket;
+import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisLoanCategoryBucket;
+import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisManager;
+import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisPayeeBucket;
+import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisPortfolioBucket;
+import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisTaxBasisBucket;
+import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisTransCategoryBucket;
+import net.sourceforge.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisAccountAttr;
+import net.sourceforge.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisPayeeAttr;
+import net.sourceforge.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisSecurityAttr;
+import net.sourceforge.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisTaxBasisAttr;
+import net.sourceforge.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisTransAttr;
+import net.sourceforge.joceanus.moneywise.tax.uk.MoneyWiseUKTaxYearCache;
+import net.sourceforge.joceanus.moneywise.views.MoneyWiseView;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
+import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
+import net.sourceforge.joceanus.prometheus.toolkit.PrometheusToolkit;
+import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
+import net.sourceforge.joceanus.tethys.api.thread.TethysUIThread;
+import net.sourceforge.joceanus.tethys.api.thread.TethysUIThreadEvent;
+import net.sourceforge.joceanus.tethys.api.thread.TethysUIThreadManager;
+import net.sourceforge.joceanus.tethys.api.thread.TethysUIThreadStatusManager;
+import net.sourceforge.joceanus.tethys.helper.TethysUIHelperFactory;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DynamicContainer;
 import org.junit.jupiter.api.DynamicNode;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 
-import net.sourceforge.joceanus.moneywise.atlas.data.analysis.analyse.MoneyWiseXAnalysisEventAnalyser;
-import net.sourceforge.joceanus.moneywise.lethe.data.analysis.analyse.MoneyWiseAnalysisTransAnalyser;
-import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysis;
-import net.sourceforge.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisAccountAttr;
-import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisCashCategoryBucket;
-import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisDepositCategoryBucket;
-import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisLoanCategoryBucket;
-import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisManager;
-import net.sourceforge.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisPayeeAttr;
-import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisPayeeBucket;
-import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisPortfolioBucket;
-import net.sourceforge.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisSecurityAttr;
-import net.sourceforge.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisTaxBasisAttr;
-import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisTaxBasisBucket;
-import net.sourceforge.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisTransAttr;
-import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisTransCategoryBucket;
-import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataSet;
-import net.sourceforge.joceanus.moneywise.tax.uk.MoneyWiseUKTaxYearCache;
-import net.sourceforge.joceanus.moneywise.views.MoneyWiseView;
-import net.sourceforge.joceanus.prometheus.toolkit.PrometheusToolkit;
-import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
-import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
-import net.sourceforge.joceanus.tethys.api.thread.TethysUIThread;
-import net.sourceforge.joceanus.tethys.api.thread.TethysUIThreadEvent;
-import net.sourceforge.joceanus.tethys.api.thread.TethysUIThreadManager;
-import net.sourceforge.joceanus.tethys.api.thread.TethysUIThreadStatusManager;
-import net.sourceforge.joceanus.tethys.helper.TethysUIHelperFactory;
+import java.util.stream.Stream;
 
 /**
  * Test security.
@@ -111,8 +111,8 @@ public class MoneyWiseDataTest {
      */
     public void analyseData(final MoneyWiseDataSet pData,
                             final PrometheusToolkit pToolkit) throws OceanusException {
-        /* Initialise the analysis */
-        pData.initialiseAnalysis();
+        /* Update the maps */
+        pData.updateMaps();
 
         /* Create the analysis */
         final MoneyWiseView myView = new MoneyWiseView(pToolkit, new MoneyWiseUKTaxYearCache());
@@ -177,33 +177,19 @@ public class MoneyWiseDataTest {
         Assertions.assertEquals(myDepTotal, myTaxTotal, "TaxBasis total mismatch");
     }
 
-
     /**
      * Analyse the data.
      * @param pData the dataSet to analyse
      * @param pToolkit the toolkit
      * @throws OceanusException on error
      */
-    public void analyse1Data(final MoneyWiseDataSet pData,
+    public void analyseXData(final MoneyWiseDataSet pData,
                              final PrometheusToolkit pToolkit) throws OceanusException {
-        /* Initialise the analysis */
-        pData.initialiseAnalysis();
-
-        /* Create the analysis */
+        /* Create the analyser */
         final MoneyWiseView myView = new MoneyWiseView(pToolkit, new MoneyWiseUKTaxYearCache());
-        final OceanusProfile myTask = myView.getNewProfile("Dummy");
-        myView.setData(pData);
-        final PrometheusEditSet myEditSet = new PrometheusEditSet(myView);
-        final MoneyWiseAnalysisTransAnalyser myAnalyser = new MoneyWiseAnalysisTransAnalyser(myTask, myEditSet, pToolkit.getPreferenceManager());
-
-        /* Post process the analysis */
-        myAnalyser.postProcessAnalysis();
-
-        /* Create secondary analysis */
-        final MoneyWiseXAnalysisEventAnalyser myAnalyser1 = new MoneyWiseXAnalysisEventAnalyser(myTask, myEditSet, pToolkit.getPreferenceManager());
-
-        /* Post process the analysis */
-        myAnalyser1.postProcessAnalysis();
+        final MoneyWiseXAnalysisBuilder myBuilder = new MoneyWiseXAnalysisBuilder(myView);
+        final MoneyWiseXAnalysis myAnalysis = myBuilder.analyseNewData(pData);
+        new MoneyWiseTestTransactions(pData).checkAnalysis(myAnalysis);
     }
 
     /**
@@ -216,7 +202,7 @@ public class MoneyWiseDataTest {
         final MoneyWiseDataSet myData = new MoneyWiseDataSet(pToolkit, new MoneyWiseUKTaxYearCache());
         Stream<DynamicNode> myStream = Stream.of(DynamicTest.dynamicTest("initData", () -> initLocalData(myData, pToolkit)));
         myStream = Stream.concat(myStream, storageTests(myData, pToolkit));
-        myStream = Stream.concat(myStream, Stream.of(DynamicTest.dynamicTest("analyseData", () -> analyse1Data(myData, pToolkit))));
+        myStream = Stream.concat(myStream, Stream.of(DynamicTest.dynamicTest("analyseData", () -> analyseXData(myData, pToolkit))));
         myStream = Stream.concat(myStream, Stream.of(DynamicTest.dynamicTest("editSet", () -> checkEditSet(myData, pToolkit))));
 
         /* Return the stream */

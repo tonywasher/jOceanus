@@ -32,6 +32,11 @@ import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseX
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisTaxBasisBucket.MoneyWiseXAnalysisTaxBasisBucketList;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisTransCategoryBucket.MoneyWiseXAnalysisTransCategoryBucketList;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisTransTagBucket.MoneyWiseXAnalysisTransTagBucketList;
+import net.sourceforge.joceanus.moneywise.atlas.data.analysis.values.MoneyWiseXAnalysisAccountAttr;
+import net.sourceforge.joceanus.moneywise.atlas.data.analysis.values.MoneyWiseXAnalysisPayeeAttr;
+import net.sourceforge.joceanus.moneywise.atlas.data.analysis.values.MoneyWiseXAnalysisSecurityAttr;
+import net.sourceforge.joceanus.moneywise.atlas.data.analysis.values.MoneyWiseXAnalysisTaxBasisAttr;
+import net.sourceforge.joceanus.moneywise.atlas.data.analysis.values.MoneyWiseXAnalysisTransAttr;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicResource;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataSet;
@@ -43,7 +48,10 @@ import net.sourceforge.joceanus.moneywise.tax.MoneyWiseTaxYearCache;
 import net.sourceforge.joceanus.moneywise.tax.uk.MoneyWiseUKTaxYearCache;
 import net.sourceforge.joceanus.oceanus.date.OceanusDate;
 import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
 import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
+import net.sourceforge.joceanus.oceanus.logger.OceanusLogManager;
+import net.sourceforge.joceanus.oceanus.logger.OceanusLogger;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
 
 /**
@@ -52,6 +60,11 @@ import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
  */
 public class MoneyWiseXAnalysis
         implements MetisFieldItem {
+    /**
+     * Logger.
+     */
+    private static final OceanusLogger LOGGER = OceanusLogManager.getLogger(MoneyWiseXAnalysis.class);
+
     /**
      * Local Report fields.
      */
@@ -172,6 +185,16 @@ public class MoneyWiseXAnalysis
      * The Events.
      */
     private MoneyWiseXAnalysisEventList theEvents;
+
+    /**
+     * Do we have active securities?
+     */
+    private Boolean haveActiveSecurities = Boolean.FALSE;
+
+    /**
+     * Do we have a foreign account?
+     */
+    private Boolean haveForeignCurrency = Boolean.FALSE;
 
     /**
      * Constructor for a full analysis.
@@ -303,6 +326,22 @@ public class MoneyWiseXAnalysis
     @Override
     public String formatObject(final OceanusDataFormatter pFormatter) {
         return FIELD_DEFS.getName();
+    }
+
+    /**
+     * Do we have a foreign currency?
+     * @return true/false
+     */
+    public Boolean haveForeignCurrency() {
+        return haveForeignCurrency;
+    }
+
+    /**
+     * Do we have active securities?
+     * @return true/false
+     */
+    public Boolean haveActiveSecurities() {
+        return haveActiveSecurities;
     }
 
     /**
@@ -479,5 +518,89 @@ public class MoneyWiseXAnalysis
      */
     public MoneyWiseTaxAnalysis getTaxAnalysis() {
         return theTaxAnalysis;
+    }
+
+    /**
+     * Produce Totals.
+     */
+    public void produceTotals() {
+        /* Analyse the deposits */
+        theDepositCategories.analyseDeposits(theDeposits);
+        theDepositCategories.produceTotals();
+        haveForeignCurrency = theDepositCategories.haveForeignCurrency();
+
+        /* Analyse the cash */
+        theCashCategories.analyseCash(theCash);
+        theCashCategories.produceTotals();
+        haveForeignCurrency |= theCashCategories.haveForeignCurrency();
+
+        /* Analyse the loans */
+        theLoanCategories.analyseLoans(theLoans);
+        theLoanCategories.produceTotals();
+        haveForeignCurrency |= theLoanCategories.haveForeignCurrency();
+
+        /* Analyse the securities */
+        thePortfolios.analyseSecurities();
+        haveForeignCurrency |= thePortfolios.haveForeignCurrency();
+        haveActiveSecurities = thePortfolios.haveActiveSecurities();
+
+        /* Analyse the Payees */
+        thePayees.produceTotals();
+
+        /* Analyse the TransactionCategories */
+        theTransCategories.produceTotals();
+
+        /* Analyse the TaxBasis */
+        theTaxBasis.produceTotals();
+
+        /* Sort the transaction Tag list */
+        theTransTags.sortBuckets();
+    }
+
+    /**
+     * Check totals.
+     */
+    public void checkTotals() {
+        /* Obtain Totals bucket */
+        final MoneyWiseXAnalysisDepositCategoryBucket myDepCat = theDepositCategories.getTotals();
+        final MoneyWiseXAnalysisCashCategoryBucket myCashCat = theCashCategories.getTotals();
+        final MoneyWiseXAnalysisLoanCategoryBucket myLoanCat = theLoanCategories.getTotals();
+        final MoneyWiseXAnalysisPortfolioBucket myPort = thePortfolios.getTotals();
+        final MoneyWiseXAnalysisPayeeBucket myPayee = thePayees.getTotals();
+        final MoneyWiseXAnalysisTransCategoryBucket myTrans = theTransCategories.getTotals();
+        final MoneyWiseXAnalysisTaxBasisBucket myTax = theTaxBasis.getTotals();
+
+        /* Handle null data */
+        if (myDepCat == null) {
+            return;
+        }
+
+        /* Access totals */
+        OceanusMoney myDepTotal = myDepCat.getValues().getMoneyValue(MoneyWiseXAnalysisAccountAttr.VALUEDELTA);
+        final OceanusMoney myCashTotal = myCashCat.getValues().getMoneyValue(MoneyWiseXAnalysisAccountAttr.VALUEDELTA);
+        final OceanusMoney myLoanTotal = myLoanCat.getValues().getMoneyValue(MoneyWiseXAnalysisAccountAttr.VALUEDELTA);
+        final OceanusMoney myPortTotal = myPort.getValues().getMoneyValue(MoneyWiseXAnalysisSecurityAttr.VALUEDELTA);
+        final OceanusMoney myPayTotal = myPayee.getValues().getMoneyValue(MoneyWiseXAnalysisPayeeAttr.PROFIT);
+        final OceanusMoney myEvtTotal = myTrans.getValues().getMoneyValue(MoneyWiseXAnalysisTransAttr.PROFIT);
+        final OceanusMoney myTaxTotal = myTax.getValues().getMoneyValue(MoneyWiseXAnalysisTaxBasisAttr.GROSS);
+
+        /* Create a copy */
+        myDepTotal = new OceanusMoney(myDepTotal);
+
+        /* Add sub-accounts */
+        myDepTotal.addAmount(myCashTotal);
+        myDepTotal.addAmount(myLoanTotal);
+        myDepTotal.addAmount(myPortTotal);
+
+        /* Check identities */
+        if (!myDepTotal.equals(myPayTotal)) {
+            LOGGER.error("Payee total mismatch");
+        }
+        if (!myDepTotal.equals(myEvtTotal)) {
+            LOGGER.error("TransactionCategory total mismatch");
+        }
+        if (!myDepTotal.equals(myTaxTotal)) {
+            LOGGER.error("TaxBasis total mismatch");
+        }
     }
 }

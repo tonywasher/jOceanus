@@ -83,11 +83,11 @@ public class MoneyWiseTestTransactions {
      * @throws OceanusException on error
      */
     public void buildTransactions() throws OceanusException {
-        //createXchgRates();
-        //createTransfers();
+        createXchgRates();
+        createTransfers();
         //createExpenses();
         //createAutoExpenses();
-        createIncomes();
+        //createIncomes();
     }
 
     /**
@@ -97,7 +97,7 @@ public class MoneyWiseTestTransactions {
      */
     public void checkAnalysis(final MoneyWiseXAnalysis pAnalysis) throws OceanusException {
         theAnalysis = pAnalysis;
-        //checkTransferTotals();
+        checkTransferTotals();
         //checkExpenseTotals();
         //checkAutoExpenseTotals();
         //checkIncomeTotals();
@@ -108,8 +108,8 @@ public class MoneyWiseTestTransactions {
      * @throws OceanusException on error
      */
     private void createXchgRates() throws OceanusException {
-        theXchgRateBuilder.currency(MoneyWiseCurrencyClass.USD).date("01-Jun-1980").rate("0.8").build();
-        theXchgRateBuilder.currency(MoneyWiseCurrencyClass.EUR).date("01-Jun-1980").rate("0.9").build();
+        theXchgRateBuilder.currency(MoneyWiseCurrencyClass.USD).date("06-Apr-1980").rate("0.8").build();
+        theXchgRateBuilder.currency(MoneyWiseCurrencyClass.EUR).date("06-Apr-1980").rate("0.9").build();
         theXchgRateBuilder.currency(MoneyWiseCurrencyClass.USD).date("01-Jun-2010").rate("0.85").build();
         theXchgRateBuilder.currency(MoneyWiseCurrencyClass.EUR).date("01-Jun-2010").rate("0.95").build();
     }
@@ -163,11 +163,11 @@ public class MoneyWiseTestTransactions {
     private void checkTransferTotals() {
         checkAccountValue(MoneyWiseTestAccounts.idDP_BarclaysCurrent, "6950");
         checkAccountValue(MoneyWiseTestAccounts.idDP_NatWideFlexDirect, "12000");
-        checkAccountValue(MoneyWiseTestAccounts.idDP_StarlingEuro, "570");
-        checkAccountValue(MoneyWiseTestAccounts.idDP_StarlingDollar, "467.5");
-        checkPayeeValue(MoneyWiseTestAccounts.idPY_Market, "107.5", "120");
-        checkCategoryValue(MoneyWiseTestCategories.idTC_MktCurrAdjust, "107.5", "120");
-        checkTaxBasisValue(MoneyWiseTaxClass.MARKET, "-12.5");
+        checkAccountValue(MoneyWiseTestAccounts.idDP_StarlingEuro, "5320");
+        checkAccountValue(MoneyWiseTestAccounts.idDP_StarlingDollar, "4717.5");
+        checkPayeeValue(MoneyWiseTestAccounts.idPY_Market, "607.5", "120");
+        checkCategoryValue(MoneyWiseTestCategories.idTC_MktCurrAdjust, "607.5", "120");
+        checkTaxBasisValue(MoneyWiseTaxClass.MARKET, "487.5");
     }
 
     /**
@@ -319,7 +319,8 @@ public class MoneyWiseTestTransactions {
     }
 
     /**
-     * Create simple share buy/sell.
+     * Create simple share buy/sell.1/6/86
+     *
      * @throws OceanusException on error
      */
     private void createShareBuySell() throws OceanusException {

@@ -16,6 +16,14 @@
     font-size: 120%;
 }
 
+table.defTable th {
+  border: 1px solid white;
+}
+
+table.defTable td {
+  border: 1px solid white;
+}
+
 table.defTable tr.a {
   background-color: lavender;
 }

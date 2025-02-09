@@ -714,7 +714,7 @@ public class MoneyWiseTransactionTable
         }
 
         /* Update lists */
-        getTable().setItems(theTransactions.getUnderlyingList());
+        getTable().setItems(theTransactions == null ? null : theTransactions.getUnderlyingList());
         theActionButtons.setEnabled(true);
         theSelect.setEnabled(!hasUpdates());
 

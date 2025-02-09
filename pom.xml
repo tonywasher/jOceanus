@@ -60,10 +60,10 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <scmMain>main</scmMain>
     <currentBranch>1.6.3</currentBranch>
-    <currentTag>b4</currentTag>
+    <currentTag>SNAPSHOT</currentTag>
     <baseBranch>${currentBranch}</baseBranch>
     <baseTag>b3</baseTag>
-    <currentRef>${tagRef}</currentRef>
+    <currentRef>${snapshotRef}</currentRef>
     <snapshotRef>${scmMain}</snapshotRef>
     <tagRef>${currentBranch}-${currentTag}</tagRef>
     <baseRef>${baseBranch}-${baseTag}</baseRef>
@@ -91,7 +91,7 @@
     <JavaFXVersion>17.0.14</JavaFXVersion>
     <JavaLanguageVersion>17</JavaLanguageVersion>
     <CheckStyleVersion>10.21.2</CheckStyleVersion>
-    <PMDVersion>7.9.0</PMDVersion>
+    <PMDVersion>7.10.0</PMDVersion>
     <CleanPluginVersion>3.4.0</CleanPluginVersion>
     <ResourcesPluginVersion>3.3.1</ResourcesPluginVersion>
     <InstallPluginVersion>3.1.3</InstallPluginVersion>

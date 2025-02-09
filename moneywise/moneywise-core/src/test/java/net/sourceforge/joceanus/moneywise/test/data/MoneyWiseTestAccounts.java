@@ -199,8 +199,8 @@ public class MoneyWiseTestAccounts {
         theDepositBuilder.name(idDP_NatWideFlexDirect).parent(idPY_Nationwide).category(MoneyWiseTestCategories.idDC_Current).openingBalance("10000").build();
         theDepositBuilder.name(idDP_NatWideLoyalty).parent(idPY_Nationwide).category(MoneyWiseTestCategories.idDC_Savings).openingBalance("10000").build();
         theDepositBuilder.name(idDP_StarlingSterling).parent(idPY_Starling).category(MoneyWiseTestCategories.idDC_Current).openingBalance("10000").build();
-        theDepositBuilder.name(idDP_StarlingEuro).parent(idPY_Starling).category(MoneyWiseTestCategories.idDC_Current).currency(MoneyWiseCurrencyClass.EUR).build();
-        theDepositBuilder.name(idDP_StarlingDollar).parent(idPY_Starling).category(MoneyWiseTestCategories.idDC_Current).currency(MoneyWiseCurrencyClass.USD).build();
+        theDepositBuilder.name(idDP_StarlingEuro).parent(idPY_Starling).category(MoneyWiseTestCategories.idDC_Current).currency(MoneyWiseCurrencyClass.EUR).openingBalance("5000").build();
+        theDepositBuilder.name(idDP_StarlingDollar).parent(idPY_Starling).category(MoneyWiseTestCategories.idDC_Current).currency(MoneyWiseCurrencyClass.USD).openingBalance("5000").build();
         theDepositBuilder.name(idDP_FundingCircleLoans).parent(idPY_FundingCircle).category(MoneyWiseTestCategories.idDC_Peer2Peer).build();
     }
 
