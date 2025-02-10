@@ -41,7 +41,7 @@ import net.sourceforge.joceanus.moneywise.ui.MoneyWiseIcon;
 import net.sourceforge.joceanus.moneywise.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.moneywise.ui.base.MoneyWiseBaseTable;
 import net.sourceforge.joceanus.moneywise.lethe.ui.dialog.MoneyWiseTransactionDialog;
-import net.sourceforge.joceanus.moneywise.views.MoneyWiseAnalysisView;
+import net.sourceforge.joceanus.moneywise.lethe.views.MoneyWiseAnalysisView;
 import net.sourceforge.joceanus.moneywise.views.MoneyWiseView;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.date.OceanusDate;

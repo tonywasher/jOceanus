@@ -136,6 +136,10 @@ public final class MoneyWiseXAnalysisPortfolioBucket
         theValues = new MoneyWiseXAnalysisSecurityValues(myCurrency);
         theBaseValues = new MoneyWiseXAnalysisSecurityValues(myCurrency);
 
+        /* Create the valuation value */
+        theValues.setValue(MoneyWiseXAnalysisSecurityAttr.VALUATION, new OceanusMoney(myCurrency));
+        theBaseValues.setValue(MoneyWiseXAnalysisSecurityAttr.VALUATION, new OceanusMoney(myCurrency));
+
         /* Determine whether the portfolio is a foreign currency */
         isForeignCurrency = !MetisDataDifference.isEqual(pAnalysis.getCurrency(), theCurrency);
         hasForeignCurrency = isForeignCurrency;
@@ -828,8 +832,8 @@ public final class MoneyWiseXAnalysisPortfolioBucket
          * @return the bucket
          */
         private MoneyWiseXAnalysisPortfolioBucket allocateTotalsBucket() {
-            /* Obtain the totals portfolio */
-            return new MoneyWiseXAnalysisPortfolioBucket(theAnalysis, (MoneyWisePortfolio) null);
+            /* Create the totals portfolio */
+            return new MoneyWiseXAnalysisPortfolioBucket(theAnalysis, null);
         }
 
         /**

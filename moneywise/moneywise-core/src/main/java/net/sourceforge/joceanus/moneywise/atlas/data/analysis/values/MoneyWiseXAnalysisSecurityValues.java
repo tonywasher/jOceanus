@@ -16,11 +16,11 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.moneywise.atlas.data.analysis.values;
 
-import java.util.Currency;
-
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.base.MoneyWiseXAnalysisValues;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusUnits;
+
+import java.util.Currency;
 
 /**
  * SecurityValues class.
@@ -48,9 +48,11 @@ public final class MoneyWiseXAnalysisSecurityValues
         /* Initialise units etc. to zero */
         setValue(MoneyWiseXAnalysisSecurityAttr.UNITS, new OceanusUnits());
         setValue(MoneyWiseXAnalysisSecurityAttr.VALUE, new OceanusMoney(pCurrency));
+        setValue(MoneyWiseXAnalysisSecurityAttr.VALUATION, new OceanusMoney(pReportingCurrency));
         setValue(MoneyWiseXAnalysisSecurityAttr.RESIDUALCOST, new OceanusMoney(pReportingCurrency));
         setValue(MoneyWiseXAnalysisSecurityAttr.REALISEDGAINS, new OceanusMoney(pReportingCurrency));
         setValue(MoneyWiseXAnalysisSecurityAttr.UNREALISEDGAINS, new OceanusMoney(pReportingCurrency));
+        setValue(MoneyWiseXAnalysisSecurityAttr.GAINSADJUST, new OceanusMoney(pReportingCurrency));
         setValue(MoneyWiseXAnalysisSecurityAttr.DIVIDEND, new OceanusMoney(pReportingCurrency));
         setValue(MoneyWiseXAnalysisSecurityAttr.FUNDED, new OceanusMoney(pReportingCurrency));
     }

@@ -730,6 +730,12 @@ public final class MoneyWiseXAnalysisTransCategoryBucket
             while (myIterator.hasNext()) {
                 final MoneyWiseXAnalysisTransCategoryBucket myCurr = myIterator.next();
 
+                /* If the item is idle */
+                if (myCurr.isIdle()) {
+                    myIterator.remove();
+                    continue;
+                }
+
                 /* Obtain category and parent category */
                 final MoneyWiseTransCategory myCategory = myCurr.getTransactionCategory();
                 final MoneyWiseTransCategory myParent = myCategory.getParentCategory();
