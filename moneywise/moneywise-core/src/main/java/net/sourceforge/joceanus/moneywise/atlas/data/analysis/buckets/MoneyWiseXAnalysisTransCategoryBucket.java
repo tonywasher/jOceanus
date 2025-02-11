@@ -730,7 +730,7 @@ public final class MoneyWiseXAnalysisTransCategoryBucket
             while (myIterator.hasNext()) {
                 final MoneyWiseXAnalysisTransCategoryBucket myCurr = myIterator.next();
 
-                /* If the item is idle */
+                /* Remove idle items */
                 if (myCurr.isIdle()) {
                     myIterator.remove();
                     continue;
