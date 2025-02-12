@@ -18,7 +18,6 @@ package net.sourceforge.joceanus.moneywise.data.builder;
 
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseAssetDirection;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataSet;
-import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePayee;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePortfolio;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurity;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransAsset;
@@ -66,9 +65,9 @@ public class MoneyWiseTransactionBuilder {
     private MoneyWiseTransAsset thePartner;
 
     /**
-     * Switch directions?.
+     * The direction.
      */
-    private boolean switchDirection;
+    private MoneyWiseAssetDirection theDirection;
 
     /**
      * The Transaction Category.
@@ -190,28 +189,61 @@ public class MoneyWiseTransactionBuilder {
     }
 
     /**
-     * Set Pair.
-     * @param pFrom the from account.
-     * @param pTo the to account.
+     * Set Account.
+     * @param pAccount the account.
      * @return the builder
      */
-    public MoneyWiseTransactionBuilder pair(final MoneyWiseTransAsset pFrom,
-                                            final MoneyWiseTransAsset pTo) {
-        switchDirection = pFrom instanceof MoneyWisePayee;
-        theAccount = switchDirection ? pTo : pFrom;
-        thePartner = switchDirection ? pFrom : pTo;
+    public MoneyWiseTransactionBuilder account(final MoneyWiseTransAsset pAccount) {
+        theAccount = pAccount;
         return this;
     }
 
     /**
-     * Set Pair.
-     * @param pFrom the from account.
-     * @param pTo the to account.
+     * Set Account.
+     * @param pAccount the account.
      * @return the builder
      */
-    public MoneyWiseTransactionBuilder pair(final String pFrom,
-                                            final String pTo) {
-        return pair(resolveTransactionAsset(pFrom), resolveTransactionAsset(pTo));
+    public MoneyWiseTransactionBuilder account(final String pAccount) {
+        theAccount = resolveTransactionAsset(pAccount);
+        return this;
+    }
+
+    /**
+     * Set Partner.
+     * @param pPartner the partner.
+     * @return the builder
+     */
+    public MoneyWiseTransactionBuilder partner(final MoneyWiseTransAsset pPartner) {
+        thePartner = pPartner;
+        return this;
+    }
+
+    /**
+     * Set Partner.
+     * @param pPartner the partner.
+     * @return the builder
+     */
+    public MoneyWiseTransactionBuilder partner(final String pPartner) {
+        thePartner = resolveTransactionAsset(pPartner);
+        return this;
+    }
+
+    /**
+     * Set To.
+     * @return the builder
+     */
+    public MoneyWiseTransactionBuilder to() {
+        theDirection = MoneyWiseAssetDirection.TO;
+        return this;
+    }
+
+    /**
+     * Set From.
+     * @return the builder
+     */
+    public MoneyWiseTransactionBuilder from() {
+        theDirection = MoneyWiseAssetDirection.FROM;
+        return this;
     }
 
     /**
@@ -538,10 +570,7 @@ public class MoneyWiseTransactionBuilder {
         myTrans.setDate(theDate);
         myTrans.setAccount(theAccount);
         myTrans.setPartner(thePartner);
-        myTrans.setDirection(MoneyWiseAssetDirection.TO);
-        if (switchDirection) {
-            myTrans.switchDirection();
-        }
+        myTrans.setDirection(theDirection);
         myTrans.setCategory(theCategory);
         myTrans.setAmount(theAmount);
         myTrans.setReconciled(theReconciled);
@@ -564,6 +593,9 @@ public class MoneyWiseTransactionBuilder {
         myTrans.setPrice(thePrice);
         myTrans.setTransactionTags(theTags);
 
+        /* Reset the values */
+        reset();
+
         /* Check for errors */
         myTrans.validate();
         if (myTrans.hasErrors()) {
@@ -571,11 +603,19 @@ public class MoneyWiseTransactionBuilder {
             throw new MoneyWiseDataException(myTrans, "Failed validation");
         }
 
+        /* Return the transaction */
+        return myTrans;
+    }
+
+    /**
+     * Reset the builder.
+     */
+    public void reset() {
         /* Reset values */
         theDate = null;
         theAccount = null;
         thePartner = null;
-        switchDirection = false;
+        theDirection = null;
         theCategory = null;
         theAmount = null;
         theComment = null;
@@ -595,9 +635,6 @@ public class MoneyWiseTransactionBuilder {
         thePrice = null;
         theTags.clear();
         theReconciled = Boolean.FALSE;
-
-        /* Return the transaction */
-        return myTrans;
     }
 
     /**

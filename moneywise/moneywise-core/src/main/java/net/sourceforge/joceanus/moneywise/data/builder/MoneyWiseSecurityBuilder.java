@@ -236,6 +236,9 @@ public class MoneyWiseSecurityBuilder {
         mySecurity.setOptionPrice(theOptionPrice);
         mySecurity.setClosed(Boolean.FALSE);
 
+        /* Reset the values */
+        reset();
+
         /* Check for errors */
         mySecurity.adjustMapForItem();
         mySecurity.validate();
@@ -244,6 +247,13 @@ public class MoneyWiseSecurityBuilder {
             throw new MoneyWiseDataException(mySecurity, "Failed validation");
         }
 
+        /* Return the security */
+        return mySecurity;
+    }
+    /**
+     * Reset the builder.
+     */
+    public void reset() {
         /* Reset values */
         theName = null;
         theType = null;
@@ -253,8 +263,5 @@ public class MoneyWiseSecurityBuilder {
         theUnderlying = null;
         theOptionPrice = null;
         reportingCurrency();
-
-        /* Return the security */
-        return mySecurity;
     }
 }

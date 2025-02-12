@@ -657,6 +657,12 @@ public final class MoneyWiseXAnalysisPayeeBucket
             while (myIterator.hasNext()) {
                 final MoneyWiseXAnalysisPayeeBucket myCurr = myIterator.next();
 
+                /* Remove idle items */
+                if (myCurr.isIdle()) {
+                    myIterator.remove();
+                    continue;
+                }
+
                 /* Calculate the delta */
                 myCurr.calculateDelta();
 

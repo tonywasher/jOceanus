@@ -92,6 +92,9 @@ public class MoneyWisePayeeBuilder {
         myPayee.setCategory(theType);
         myPayee.setClosed(Boolean.FALSE);
 
+        /* Reset the values */
+        reset();
+
         /* Check for errors */
         myPayee.adjustMapForItem();
         myPayee.validate();
@@ -100,11 +103,16 @@ public class MoneyWisePayeeBuilder {
             throw new MoneyWiseDataException(myPayee, "Failed validation");
         }
 
+        /* Return the payee */
+        return myPayee;
+    }
+
+    /**
+     * Reset the builder.
+     */
+    public void reset() {
         /* Reset values */
         theName = null;
         theType = null;
-
-        /* Return the payee */
-        return myPayee;
     }
 }

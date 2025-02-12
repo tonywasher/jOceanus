@@ -35,6 +35,7 @@ import net.sourceforge.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAn
 import net.sourceforge.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisTaxBasisAttr;
 import net.sourceforge.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisTransAttr;
 import net.sourceforge.joceanus.moneywise.tax.uk.MoneyWiseUKTaxYearCache;
+import net.sourceforge.joceanus.moneywise.test.data.trans.MoneyWiseDataTestRunner;
 import net.sourceforge.joceanus.moneywise.views.MoneyWiseView;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
@@ -71,7 +72,8 @@ public class MoneyWiseDataTest {
         final PrometheusToolkit myToolkit = new PrometheusToolkit(myFactory);
 
         /* Create tests */
-        Stream<DynamicNode> myStream = localDataTests(myToolkit);
+        Stream<DynamicNode> myStream = MoneyWiseDataTestRunner.createTests(myToolkit);
+        myStream = Stream.concat(myStream, localDataTests(myToolkit));
         return Stream.concat(myStream, archiveDataTests(myToolkit));
     }
 

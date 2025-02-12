@@ -119,6 +119,12 @@ public abstract class MoneyWiseDataTestCase {
     }
 
     /**
+     * Check errors.
+     */
+    void checkErrors() {
+    }
+
+    /**
      * Check analysis.
      */
     void checkAnalysis() {

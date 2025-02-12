@@ -569,14 +569,6 @@ public class MoneyWiseXAnalysisTaxBasisBucket
     }
 
     /**
-     * Is the bucket active?
-     * @return true/false
-     */
-    public boolean isActive() {
-        return theValues.isActive();
-    }
-
-    /**
      * Value adjust Modes.
      */
     public enum MoneyWiseXTaxBasisAdjust {
@@ -881,6 +873,12 @@ public class MoneyWiseXAnalysisTaxBasisBucket
             while (myIterator.hasNext()) {
                 final MoneyWiseXAnalysisTaxBasisBucket myBucket = myIterator.next();
 
+                /* Remove idle items */
+                if (myBucket.isIdle()) {
+                    myIterator.remove();
+                    continue;
+                }
+
                 /* Sort the accounts */
                 if (myBucket.hasAccounts()) {
                     myBucket.getAccounts().sortBuckets();
@@ -892,22 +890,6 @@ public class MoneyWiseXAnalysisTaxBasisBucket
 
             /* Sort the bases */
             theList.sortList();
-        }
-
-        /**
-         * Prune the list to remove irrelevant items.
-         */
-        protected void prune() {
-            /* Loop through the buckets */
-            final Iterator<MoneyWiseXAnalysisTaxBasisBucket> myIterator = iterator();
-            while (myIterator.hasNext()) {
-                final MoneyWiseXAnalysisTaxBasisBucket myCurr = myIterator.next();
-
-                /* Remove the bucket if it is inactive */
-                if (!myCurr.isActive()) {
-                    myIterator.remove();
-                }
-            }
         }
 
         @Override

@@ -82,6 +82,8 @@ public class MoneyWiseDataTestAccounts {
      */
     final static String idCS_Cash = "Cash";
     final static String idCS_EurosCash = "EurosCash";
+    final static String idCS_CashWallet = "CashWallet";
+    final static String idCS_EurosWallet = "EurosWallet";
 
     /**
      * Loan ids.
@@ -184,6 +186,10 @@ public class MoneyWiseDataTestAccounts {
         /* Store the dataSet */
         theDataSet = pDataSet;
 
+        /* Create the static and categories */
+        final MoneyWiseDataTestCategories myCategories = new MoneyWiseDataTestCategories(theDataSet);
+        myCategories.buildBasic();
+
         /* Create the builders */
         thePayeeBuilder = new MoneyWisePayeeBuilder(theDataSet);
         theDepositBuilder = new MoneyWiseDepositBuilder(theDataSet);
@@ -199,10 +205,6 @@ public class MoneyWiseDataTestAccounts {
         theNameMap = new HashMap<>();
         thePriceMap = new HashMap<>();
         theRateMap = new EnumMap<>(MoneyWiseCurrencyClass.class);
-
-        /* Create the static and categories */
-        final MoneyWiseDataTestCategories myCategories = new MoneyWiseDataTestCategories(theDataSet);
-        myCategories.buildBasic();
 
         /* Create the base accounts */
         createBaseAccounts();
@@ -374,12 +376,20 @@ public class MoneyWiseDataTestAccounts {
             /* Create the cash */
             switch (myCash) {
                 case idCS_Cash:
+                    createPayees(idPY_CashExpense);
                     theCashBuilder.name(myCash).category(MoneyWiseDataTestCategories.idCC_Cash)
                             .autoExpense(MoneyWiseDataTestCategories.idTC_ExpCash, idPY_CashExpense).build();
                     break;
                 case idCS_EurosCash:
+                    createPayees(idPY_CashExpense);
                     theCashBuilder.name(myCash).category(MoneyWiseDataTestCategories.idCC_Cash).currency(MoneyWiseCurrencyClass.EUR)
                             .autoExpense(MoneyWiseDataTestCategories.idTC_ExpCash, idPY_CashExpense).build();
+                    break;
+                case idCS_CashWallet:
+                    theCashBuilder.name(myCash).category(MoneyWiseDataTestCategories.idCC_Cash).build();
+                    break;
+                case idCS_EurosWallet:
+                    theCashBuilder.name(myCash).category(MoneyWiseDataTestCategories.idCC_Cash).currency(MoneyWiseCurrencyClass.EUR).build();
                     break;
                 default:
                     throw new MoneyWiseDataException("Unexpected Cash:- " + myCash);
@@ -562,40 +572,54 @@ public class MoneyWiseDataTestAccounts {
     void resetData() throws OceanusException {
         /* Clear all exchangeRate details */
         theDataSet.getExchangeRates().clear();
+        theDataSet.getExchangeRates().updateMaps();
 
         /* Clear all securityPrice details */
         theDataSet.getSecurityPrices().clear();
+        theDataSet.getSecurityPrices().updateMaps();
 
         /* Clear all depositRate details */
         theDataSet.getDepositRates().clear();
+        theDataSet.getDepositRates().updateMaps();
 
         /* Clear all payee details */
-        theDataSet.getPayees().clear();
         theDataSet.getPayeeInfo().clear();
+        theDataSet.getPayees().clear();
+        theDataSet.getPayees().updateMaps();
 
         /* Clear all deposit details */
-        theDataSet.getDeposits().clear();
         theDataSet.getDepositInfo().clear();
+        theDataSet.getDeposits().clear();
+        theDataSet.getDeposits().updateMaps();
 
         /* Clear all cash details */
-        theDataSet.getCash().clear();
         theDataSet.getCashInfo().clear();
+        theDataSet.getCash().clear();
+        theDataSet.getCash().updateMaps();
 
         /* Clear all loan details */
-        theDataSet.getLoans().clear();
         theDataSet.getLoanInfo().clear();
+        theDataSet.getLoans().clear();
+        theDataSet.getLoans().updateMaps();
 
         /* Clear all portfolio details */
-        theDataSet.getPortfolios().clear();
         theDataSet.getPortfolioInfo().clear();
+        theDataSet.getPortfolios().clear();
+        theDataSet.getPortfolios().updateMaps();
 
         /* Clear all security details */
-        theDataSet.getSecurities().clear();
         theDataSet.getSecurityInfo().clear();
+        theDataSet.getSecurities().clear();
+        theDataSet.getSecurities().updateMaps();
 
         /* Clear all transaction details */
         theDataSet.getTransactions().clear();
         theDataSet.getTransactionInfo().clear();
+
+        /* Clear maps */
+        theNameMap.clear();
+        thePriceMap.clear();
+        theRateMap.clear();
 
         /* recreate the base accounts */
         createBaseAccounts();

@@ -73,6 +73,9 @@ public class MoneyWiseRegionBuilder {
         final MoneyWiseRegion myRegion = theDataSet.getRegions().addNewItem();
         myRegion.setName(theName);
 
+        /* Reset the values */
+        reset();
+
         /* Check for errors */
         myRegion.adjustMapForItem();
         myRegion.validate();
@@ -81,10 +84,14 @@ public class MoneyWiseRegionBuilder {
             throw new MoneyWiseDataException(myRegion, "Failed validation");
         }
 
-        /* Reset values */
-        theName = null;
-
         /* Return the region */
         return myRegion;
+    }
+    /**
+     * Reset the builder.
+     */
+    public void reset() {
+        /* Reset values */
+        theName = null;
     }
 }

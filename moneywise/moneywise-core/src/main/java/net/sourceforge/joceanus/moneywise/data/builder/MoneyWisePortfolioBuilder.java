@@ -161,6 +161,9 @@ public class MoneyWisePortfolioBuilder {
         myPortfolio.setAssetCurrency(theCurrency);
         myPortfolio.setClosed(Boolean.FALSE);
 
+        /* Reset the values */
+        reset();
+
         /* Check for errors */
         myPortfolio.adjustMapForItem();
         myPortfolio.validate();
@@ -169,13 +172,18 @@ public class MoneyWisePortfolioBuilder {
             throw new MoneyWiseDataException(myPortfolio, "Failed validation");
         }
 
+        /* Return the portfolio */
+        return myPortfolio;
+    }
+
+    /**
+     * Reset the builder.
+     */
+    public void reset() {
         /* Reset values */
         theName = null;
         theParent = null;
         theType = null;
         reportingCurrency();
-
-        /* Return the portfolio */
-        return myPortfolio;
     }
 }

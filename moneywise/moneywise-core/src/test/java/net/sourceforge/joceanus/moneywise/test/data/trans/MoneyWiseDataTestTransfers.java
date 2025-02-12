@@ -63,44 +63,49 @@ public class MoneyWiseDataTestTransfers
         createXchgRate(MoneyWiseCurrencyClass.EUR, "01-Jun-2010", "0.95");
     }
 
-    /**
-     * Create simple transfers.
-     * @throws OceanusException on error
-     */
     @Override
     public void defineTransactions() throws OceanusException {
         /* A simple transfer from one account to another */
         theTransBuilder.date("01-Jun-1985").category(MoneyWiseDataTestCategories.idTC_Transfer)
-                .pair(MoneyWiseDataTestAccounts.idDP_BarclaysCurrent, MoneyWiseDataTestAccounts.idDP_NatWideFlexDirect)
-                .amount("2000").build();
+                .account(MoneyWiseDataTestAccounts.idDP_BarclaysCurrent).amount("2000")
+                .to().partner(MoneyWiseDataTestAccounts.idDP_NatWideFlexDirect)
+                .build();
 
         /* A simple transfer from standard currency to non-standard currency */
         theTransBuilder.date("02-Jun-1985").category(MoneyWiseDataTestCategories.idTC_Transfer)
-                .pair(MoneyWiseDataTestAccounts.idDP_BarclaysCurrent, MoneyWiseDataTestAccounts.idDP_StarlingEuro)
-                .amount("2000").partnerAmount("2100").build();
+                .account(MoneyWiseDataTestAccounts.idDP_BarclaysCurrent).amount("2000")
+                .to().partner(MoneyWiseDataTestAccounts.idDP_StarlingEuro).partnerAmount("2100")
+                .build();
 
         /* A simple transfer from non-standard currency to standard currency */
         theTransBuilder.date("03-Jun-1985").category(MoneyWiseDataTestCategories.idTC_Transfer)
-                .pair(MoneyWiseDataTestAccounts.idDP_StarlingEuro, MoneyWiseDataTestAccounts.idDP_BarclaysCurrent)
-                .amount("1000").partnerAmount("950").build();
+                .account(MoneyWiseDataTestAccounts.idDP_StarlingEuro).amount("1000")
+                .to().partner(MoneyWiseDataTestAccounts.idDP_BarclaysCurrent).partnerAmount("950")
+                .build();
 
         /* A simple transfer from non-standard currency to non-standard currency */
         theTransBuilder.date("04-Jun-1985").category(MoneyWiseDataTestCategories.idTC_Transfer)
-                .pair(MoneyWiseDataTestAccounts.idDP_StarlingEuro, MoneyWiseDataTestAccounts.idDP_StarlingDollar)
-                .amount("500").partnerAmount("550").build();
+                .account(MoneyWiseDataTestAccounts.idDP_StarlingEuro).amount("500")
+                .to().partner(MoneyWiseDataTestAccounts.idDP_StarlingDollar).partnerAmount("550")
+                .build();
+    }
 
+    @Override
+    public void checkErrors() {
         /* Check for failure on a transfer with same account as debit/credit */
         Assertions.assertThrows(MoneyWiseDataException.class,
                 () -> theTransBuilder.date("05-Jun-1985").category(MoneyWiseDataTestCategories.idTC_Transfer)
-                        .pair(MoneyWiseDataTestAccounts.idDP_BarclaysCurrent, MoneyWiseDataTestAccounts.idDP_BarclaysCurrent)
-                        .amount("500").partnerAmount("550").build(),
+                        .account(MoneyWiseDataTestAccounts.idDP_BarclaysCurrent).amount("500")
+                        .to().partner(MoneyWiseDataTestAccounts.idDP_BarclaysCurrent).partnerAmount("550")
+                        .build(),
                 "Failed to reject identical Debit/Credit for transfer");
 
         /* Check for failure on a transfer from standard currency to non-standard currency with no partnerAmount */
         Assertions.assertThrows(MoneyWiseDataException.class,
                 () -> theTransBuilder.date("06-Jun-1985").category(MoneyWiseDataTestCategories.idTC_Transfer)
-                        .pair(MoneyWiseDataTestAccounts.idDP_BarclaysCurrent, MoneyWiseDataTestAccounts.idDP_StarlingEuro)
-                        .amount("2000").build(),
+                        .account(MoneyWiseDataTestAccounts.idDP_BarclaysCurrent).amount("2000")
+                        .to().partner(MoneyWiseDataTestAccounts.idDP_StarlingEuro)
+                        .build(),
                 "Failed to reject missing partnerAmount when transferring between accounts with differing currencies");
     }
 

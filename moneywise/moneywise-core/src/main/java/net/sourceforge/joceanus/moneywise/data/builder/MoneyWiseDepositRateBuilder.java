@@ -151,6 +151,9 @@ public class MoneyWiseDepositRateBuilder {
         myRate.setBonus(theBonus);
         myRate.setEndDate(theEndDate);
 
+        /* Reset the values */
+        reset();
+
         /* Check for errors */
         myRate.adjustMapForItem();
         myRate.validate();
@@ -159,13 +162,18 @@ public class MoneyWiseDepositRateBuilder {
             throw new MoneyWiseDataException(myRate, "Failed validation");
         }
 
+        /* Return the rate */
+        return myRate;
+    }
+
+    /**
+     * Reset the builder.
+     */
+    public void reset() {
         /* Reset values */
         theDeposit = null;
         theRate = null;
         theBonus = null;
         theEndDate = null;
-
-        /* Return the rate */
-        return myRate;
     }
 }
