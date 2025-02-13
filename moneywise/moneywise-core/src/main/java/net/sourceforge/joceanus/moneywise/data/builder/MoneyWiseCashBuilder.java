@@ -200,6 +200,9 @@ public class MoneyWiseCashBuilder {
         myCash.setAutoPayee(theAutoPayee);
         myCash.setClosed(Boolean.FALSE);
 
+        /* Reset the values */
+        reset();
+
         /* Check for errors */
         myCash.adjustMapForItem();
         myCash.validate();
@@ -208,6 +211,14 @@ public class MoneyWiseCashBuilder {
             throw new MoneyWiseDataException(myCash, "Failed validation");
         }
 
+        /* Return the cash */
+        return myCash;
+    }
+
+    /**
+     * Reset the builder.
+     */
+    public void reset() {
         /* Reset values */
         theName = null;
         theCategory = null;
@@ -215,8 +226,5 @@ public class MoneyWiseCashBuilder {
         theAutoExpense = null;
         theAutoPayee = null;
         reportingCurrency();
-
-        /* Return the cash */
-        return myCash;
     }
 }

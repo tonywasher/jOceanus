@@ -113,6 +113,9 @@ public class MoneyWiseLoanCategoryBuilder {
         myCategory.setParentCategory(theParent);
         myCategory.setSubCategoryName(theName);
 
+        /* Reset the values */
+        reset();
+
         /* Check for errors */
         myCategory.adjustMapForItem();
         myCategory.validate();
@@ -121,12 +124,16 @@ public class MoneyWiseLoanCategoryBuilder {
             throw new MoneyWiseDataException(myCategory, "Failed validation");
         }
 
+        /* Return the category */
+        return myCategory;
+    }
+    /**
+     * Reset the builder.
+     */
+    public void reset() {
         /* Reset values */
         theName = null;
         theParent = null;
         theType = null;
-
-        /* Return the category */
-        return myCategory;
     }
 }

@@ -1254,7 +1254,7 @@ public class MoneyWiseTransaction
         }
 
         @Override
-        public void prepareForAnalysis() {
+        public void updateMaps() {
             /* Null operation */
         }
     }

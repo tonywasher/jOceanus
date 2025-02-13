@@ -623,7 +623,7 @@ public final class MoneyWiseXAnalysisSecurityBucket
         }
 
         /* If we have a funded value */
-        final OceanusMoney myFunded = theValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.FUNDED);
+        OceanusMoney myFunded = theValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.FUNDED);
         if (myFunded.isNonZero()) {
             /* Add to valuation */
             myBalance.addAmount(myFunded);

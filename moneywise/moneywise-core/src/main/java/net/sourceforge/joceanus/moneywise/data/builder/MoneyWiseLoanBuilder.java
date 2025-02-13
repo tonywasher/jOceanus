@@ -186,6 +186,9 @@ public class MoneyWiseLoanBuilder {
         myLoan.setOpeningBalance(theOpeningBalance);
         myLoan.setClosed(Boolean.FALSE);
 
+        /* Reset the values */
+        reset();
+
         /* Check for errors */
         myLoan.adjustMapForItem();
         myLoan.validate();
@@ -194,17 +197,19 @@ public class MoneyWiseLoanBuilder {
             throw new MoneyWiseDataException(myLoan, "Failed validation");
         }
 
-        /* Update maps to reflect the new object */
-        myLoan.adjustMapForItem();
+        /* Return the loan */
+        return myLoan;
+    }
 
+    /**
+     * Reset the builder.
+     */
+    public void reset() {
         /* Reset values */
         theName = null;
         theCategory = null;
         theParent = null;
         theOpeningBalance = null;
         reportingCurrency();
-
-        /* Return the loan */
-        return myLoan;
     }
 }

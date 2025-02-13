@@ -449,9 +449,9 @@ public abstract class PrometheusDataItem
     }
 
     /**
-     * Prepare for analysis.
+     * update Maps.
      */
-    public void prepareForAnalysis() {
+    public void updateMaps() {
         /* Clear active flag and touch underlying items */
         clearActive();
         touchUnderlyingItems();

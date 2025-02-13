@@ -64,6 +64,9 @@ public class MoneyWiseTagBuilder {
         final MoneyWiseTransTag myTag = theDataSet.getTransactionTags().addNewItem();
         myTag.setName(theName);
 
+        /* Reset the values */
+        reset();
+
         /* Check for errors */
         myTag.adjustMapForItem();
         myTag.validate();
@@ -72,10 +75,15 @@ public class MoneyWiseTagBuilder {
             throw new MoneyWiseDataException(myTag, "Failed validation");
         }
 
+       /* Return the tag */
+        return myTag;
+    }
+
+    /**
+     * Reset the builder.
+     */
+    public void reset() {
         /* Reset values */
         theName = null;
-
-        /* Return the tag */
-        return myTag;
     }
 }

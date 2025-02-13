@@ -788,9 +788,9 @@ public abstract class PrometheusDataList<T extends PrometheusDataItem>
     }
 
     /**
-     * Prepare for Analysis.
+     * Update Maps.
      */
-    public void prepareForAnalysis() {
+    public void updateMaps() {
         /* Ensure the map */
         ensureMap();
 
@@ -801,8 +801,8 @@ public abstract class PrometheusDataList<T extends PrometheusDataItem>
 
             /* If the item is not deleted */
             if (!myItem.isDeleted()) {
-                /* Prepare item for analysis */
-                myItem.prepareForAnalysis();
+                /* Update Maps */
+                myItem.updateMaps();
             }
         }
     }

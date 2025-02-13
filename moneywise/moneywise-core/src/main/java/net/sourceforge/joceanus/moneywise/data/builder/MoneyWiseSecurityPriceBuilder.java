@@ -126,6 +126,9 @@ public class MoneyWiseSecurityPriceBuilder {
         myPrice.setPrice(thePrice);
         myPrice.setDate(theDate);
 
+        /* Reset the values */
+        reset();
+
         /* Check for errors */
         myPrice.adjustMapForItem();
         myPrice.validate();
@@ -134,12 +137,17 @@ public class MoneyWiseSecurityPriceBuilder {
             throw new MoneyWiseDataException(myPrice, "Failed validation");
         }
 
+        /* Return the price */
+        return myPrice;
+    }
+
+    /**
+     * Reset the builder.
+     */
+    public void reset() {
         /* Reset values */
         theSecurity = null;
         thePrice = null;
         theDate = null;
-
-        /* Return the price */
-        return myPrice;
     }
 }

@@ -186,6 +186,9 @@ public class MoneyWiseDepositBuilder {
         myDeposit.setOpeningBalance(theOpeningBalance);
         myDeposit.setClosed(Boolean.FALSE);
 
+        /* Reset the values */
+        reset();
+
         /* Check for errors */
         myDeposit.adjustMapForItem();
         myDeposit.validate();
@@ -194,14 +197,19 @@ public class MoneyWiseDepositBuilder {
             throw new MoneyWiseDataException(myDeposit, "Failed validation");
         }
 
+        /* Return the deposit */
+        return myDeposit;
+    }
+
+    /**
+     * Reset the builder.
+     */
+    public void reset() {
         /* Reset values */
         theName = null;
         theCategory = null;
         theParent = null;
         theOpeningBalance = null;
         reportingCurrency();
-
-        /* Return the deposit */
-        return myDeposit;
     }
 }

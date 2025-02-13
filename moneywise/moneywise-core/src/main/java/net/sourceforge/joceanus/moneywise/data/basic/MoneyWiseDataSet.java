@@ -634,9 +634,9 @@ public class MoneyWiseDataSet
     }
 
     /**
-     * Initialise the analysis.
+     * Update Maps.
      */
-    public void initialiseAnalysis() {
+    public void updateMaps() {
         /* Loop through the list types */
         final Iterator<Entry<PrometheusListKey, PrometheusDataList<?>>> myIterator = entryIterator();
         while (myIterator.hasNext()) {
@@ -645,7 +645,7 @@ public class MoneyWiseDataSet
             /* Prepare list for analysis (ignoring cryptography tables) */
             if (!(myEntry.getKey() instanceof PrometheusCryptographyDataType)) {
                 final PrometheusDataList<?> myList = myEntry.getValue();
-                myList.prepareForAnalysis();
+                myList.updateMaps();
             }
         }
     }

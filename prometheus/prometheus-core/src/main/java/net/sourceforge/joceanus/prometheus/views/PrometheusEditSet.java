@@ -85,6 +85,11 @@ public class PrometheusEditSet
     private final PrometheusDataControl theControl;
 
     /**
+     * The DataSet.
+     */
+    private PrometheusDataSet theDataSet;
+
+    /**
      * The version.
      */
     private int theVersion;
@@ -99,8 +104,19 @@ public class PrometheusEditSet
      * @param pControl the Data Control
      */
     public PrometheusEditSet(final PrometheusDataControl pControl) {
+        this(pControl, pControl.getData());
+    }
+
+    /**
+     * Constructor for an update list.
+     * @param pControl the Data Control
+     * @param pDataSet the DataSet
+     */
+    public PrometheusEditSet(final PrometheusDataControl pControl,
+                             final PrometheusDataSet pDataSet) {
         /* Store the Control */
         theControl = pControl;
+        theDataSet = pDataSet;
 
         /* Create event manager */
         theEventManager = new OceanusEventManager<>();
@@ -157,7 +173,15 @@ public class PrometheusEditSet
      * @return the dataSet
      */
     public PrometheusDataSet getDataSet() {
-        return theControl.getData();
+        return theDataSet;
+    }
+
+    /**
+     * Set the dataSet.
+     * @param pDataSet the dataSet
+     */
+    public void setDataSet(final PrometheusDataSet pDataSet) {
+        theDataSet = pDataSet;
     }
 
     /**
@@ -201,7 +225,7 @@ public class PrometheusEditSet
         /* Cast correctly */
         return myEntry != null
                 ? pClass.cast(myEntry.getDataList())
-                : theControl.getData().getDataList(pDataType, pClass);
+                : theDataSet.getDataList(pDataType, pClass);
     }
 
     @Override

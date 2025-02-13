@@ -138,6 +138,9 @@ public class MoneyWiseXchgRateBuilder {
         myRate.setExchangeRate(theRate);
         myRate.setDate(theDate);
 
+        /* Reset the values */
+        reset();
+
         /* Check for errors */
         myRate.adjustMapForItem();
         myRate.validate();
@@ -146,12 +149,17 @@ public class MoneyWiseXchgRateBuilder {
             throw new MoneyWiseDataException(myRate, "Failed validation");
         }
 
+        /* Return the rate */
+        return myRate;
+    }
+
+    /**
+     * Reset the builder.
+     */
+    public void reset() {
         /* Reset values */
         theCurrency = null;
         theRate = null;
         theDate = null;
-
-        /* Return the rate */
-        return myRate;
     }
 }

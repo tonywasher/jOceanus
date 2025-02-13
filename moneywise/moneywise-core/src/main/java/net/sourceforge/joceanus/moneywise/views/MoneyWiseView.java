@@ -183,9 +183,9 @@ public class MoneyWiseView
         OceanusProfile myTask = getActiveTask();
         myTask = myTask.startTask("analyseData");
 
-        /* Initialise the analysis */
-        myTask.startTask("Initialise");
-        pData.initialiseAnalysis();
+        /* Update the maps */
+        myTask.startTask("updateMaps");
+        pData.updateMaps();
 
         /* Create the analysis */
         final PrometheusEditSet myEditSet = new PrometheusEditSet(this);
