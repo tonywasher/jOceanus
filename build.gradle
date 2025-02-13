@@ -39,11 +39,11 @@ allprojects {
     /* Standard properties */
     project.ext { 
         /* Dependency versions */
-        bouncyCastleVersion = "1.79"
+        bouncyCastleVersion = "1.80"
         jUnitVersion = "5.11.4"
         jsonVersion = "20250107"
         mySQLVersion = "9.2.0"
-        MariaDBVersion = "3.5.1"
+        MariaDBVersion = "3.5.2"
         postGreSQLVersion = "42.7.5"
         mssqlVersion = "12.8.1.jre11"
         h2Version = "2.3.232"

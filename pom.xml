@@ -39,7 +39,7 @@
   <scm>
     <connection>scm:git:git://sourceforge.net/p/joceanus/git</connection>
     <developerConnection>scm:git:ssh:sourceforge.net/p/joceanus/git</developerConnection>
-    <url>http://sourceforge.net/p/joceanus/git/ci/${scmMaster}/tree/</url>
+    <url>http://sourceforge.net/p/joceanus/git/ci/${scmMain}/tree/</url>
   </scm>
   <issueManagement>
     <system>Sourceforge</system>
@@ -79,7 +79,7 @@
     <JSONVersion>20250107</JSONVersion>
     <ApacheMavenVersion>3.9.9</ApacheMavenVersion>
     <MySQLVersion>9.2.0</MySQLVersion>
-    <MariaDBVersion>3.5.1</MariaDBVersion>
+    <MariaDBVersion>3.5.2</MariaDBVersion>
     <PostGreSQLVersion>42.7.5</PostGreSQLVersion>
     <MSSQLVersion>12.8.1.jre11</MSSQLVersion>
     <H2Version>2.3.232</H2Version>
