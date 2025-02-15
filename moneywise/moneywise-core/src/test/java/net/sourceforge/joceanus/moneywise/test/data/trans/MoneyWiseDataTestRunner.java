@@ -19,11 +19,9 @@ package net.sourceforge.joceanus.moneywise.test.data.trans;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.analyse.MoneyWiseXAnalysisBuilder;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysis;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataSet;
-import net.sourceforge.joceanus.moneywise.tax.uk.MoneyWiseUKTaxYearCache;
 import net.sourceforge.joceanus.moneywise.views.MoneyWiseView;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
-import net.sourceforge.joceanus.prometheus.toolkit.PrometheusToolkit;
 import org.junit.jupiter.api.DynamicContainer;
 import org.junit.jupiter.api.DynamicNode;
 import org.junit.jupiter.api.DynamicTest;
@@ -58,12 +56,12 @@ public class MoneyWiseDataTestRunner {
 
     /**
      * Constructor.
-     * @param pToolkit the toolkit
+     * @param pView the view
      * @throws OceanusException on error
      */
-    MoneyWiseDataTestRunner(final PrometheusToolkit pToolkit) throws OceanusException {
+    MoneyWiseDataTestRunner(final MoneyWiseView pView) throws OceanusException {
         /* Create the analyser */
-        theView = new MoneyWiseView(pToolkit, new MoneyWiseUKTaxYearCache());
+        theView = pView;
         theAnalysisBuilder = new MoneyWiseXAnalysisBuilder(theView);
 
         /* Create the dataSet */
@@ -75,13 +73,13 @@ public class MoneyWiseDataTestRunner {
 
     /**
      * Create the test suite.
-     * @param pToolkit the toolkit
+     * @param pView the view
      * @return the test stream
      * @throws OceanusException on error
      */
-    public static Stream<DynamicNode> createTests(final PrometheusToolkit pToolkit) throws OceanusException {
+    public static Stream<DynamicNode> createTests(final MoneyWiseView pView) throws OceanusException {
         /* Create the testRunner */
-        final MoneyWiseDataTestRunner myRunner = new MoneyWiseDataTestRunner(pToolkit);
+        final MoneyWiseDataTestRunner myRunner = new MoneyWiseDataTestRunner(pView);
 
         /* Create the testCases */
         final List<MoneyWiseDataTestCase> myList = myRunner.createTestCases();
@@ -114,7 +112,7 @@ public class MoneyWiseDataTestRunner {
      */
     public void runTestCase(final MoneyWiseDataTestCase pTest) throws OceanusException {
         /* Run the test */
-        final OceanusProfile myTask = theView.getNewProfile("TestCase");
+        final OceanusProfile myTask = theView.getNewProfile("Transaction TestCases");
         prepareDataForTest(pTest);
         pTest.checkErrors();
         final MoneyWiseXAnalysis myAnalysis = theAnalysisBuilder.analyseNewData(theDataSet);

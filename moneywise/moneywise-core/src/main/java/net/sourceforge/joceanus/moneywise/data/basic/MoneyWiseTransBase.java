@@ -255,7 +255,7 @@ public abstract class MoneyWiseTransBase
         if (myDir == null) {
             myBuilder.append("??");
         } else {
-            myBuilder.append(Boolean.TRUE.equals(myDir)
+            myBuilder.append(MoneyWiseAssetDirection.FROM.equals(myDir)
                     ? "<-"
                     : "->");
         }

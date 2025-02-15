@@ -18,11 +18,10 @@ package net.sourceforge.joceanus.moneywise.test.data;
 
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataSet;
 import net.sourceforge.joceanus.moneywise.sheets.MoneyWiseArchiveLoader;
-import net.sourceforge.joceanus.moneywise.tax.uk.MoneyWiseUKTaxYearCache;
-import net.sourceforge.joceanus.prometheus.toolkit.PrometheusToolkit;
+import net.sourceforge.joceanus.moneywise.views.MoneyWiseView;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.prometheus.preference.PrometheusBackup.PrometheusBackupPreferences;
 import net.sourceforge.joceanus.prometheus.preference.PrometheusPreferenceManager;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.tethys.api.thread.TethysUIThreadManager;
 
 /**
@@ -45,21 +44,21 @@ public class MoneyWiseTestArchiveFile {
     /**
      * Perform test.
      * @param pData    the data to test with.
-     * @param pToolkit the toolkit
+     * @param pView    the view
      * @throws OceanusException on error
      */
     public void performTest(final MoneyWiseDataSet pData,
-                            final PrometheusToolkit pToolkit) throws OceanusException {
+                            final MoneyWiseView pView) throws OceanusException {
         /* Create the new dataSet and access preferences */
-        final PrometheusPreferenceManager myMgr = pToolkit.getPreferenceManager();
+        final PrometheusPreferenceManager myMgr = pView.getPreferenceManager();
         final PrometheusBackupPreferences myPrefs = myMgr.getPreferenceSet(PrometheusBackupPreferences.class);
 
         /* Access the Password manager and disable prompting */
-        final MoneyWiseArchiveLoader myLoader = new MoneyWiseArchiveLoader(pToolkit.getToolkit().getGuiFactory());
+        final MoneyWiseArchiveLoader myLoader = new MoneyWiseArchiveLoader(pView.getGuiFactory());
         myLoader.loadArchive(theManager, pData, myPrefs);
 
         /* Initialise the security, from the original data */
-        final MoneyWiseDataSet myNullData = new MoneyWiseDataSet(pToolkit, new MoneyWiseUKTaxYearCache());
+        final MoneyWiseDataSet myNullData = pView.getNewData();
         pData.initialiseSecurity(theManager, myNullData);
         pData.reBase(theManager, myNullData);
     }

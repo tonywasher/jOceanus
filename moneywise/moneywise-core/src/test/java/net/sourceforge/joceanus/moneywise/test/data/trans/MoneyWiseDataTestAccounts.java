@@ -386,10 +386,10 @@ public class MoneyWiseDataTestAccounts {
                             .autoExpense(MoneyWiseDataTestCategories.idTC_ExpCash, idPY_CashExpense).build();
                     break;
                 case idCS_CashWallet:
-                    theCashBuilder.name(myCash).category(MoneyWiseDataTestCategories.idCC_Cash).build();
+                    theCashBuilder.name(myCash).category(MoneyWiseDataTestCategories.idCC_Wallet).build();
                     break;
                 case idCS_EurosWallet:
-                    theCashBuilder.name(myCash).category(MoneyWiseDataTestCategories.idCC_Cash).currency(MoneyWiseCurrencyClass.EUR).build();
+                    theCashBuilder.name(myCash).category(MoneyWiseDataTestCategories.idCC_Wallet).currency(MoneyWiseCurrencyClass.EUR).build();
                     break;
                 default:
                     throw new MoneyWiseDataException("Unexpected Cash:- " + myCash);

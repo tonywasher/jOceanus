@@ -96,10 +96,10 @@ public class MoneyWiseDataTestExpense
         checkAccountValue(MoneyWiseDataTestAccounts.idDP_BarclaysCurrent, "9988.04");
         checkAccountValue(MoneyWiseDataTestAccounts.idDP_StarlingEuro, "4725.22");
         checkPayeeValue(MoneyWiseDataTestAccounts.idPY_Market, "248.69", "0");
-        checkPayeeValue(MoneyWiseDataTestAccounts.idPY_ASDA, "14.6", "50.03");
-        checkCategoryValue(MoneyWiseDataTestCategories.idTC_ShopFood, "14.6", "50.03");
+        checkPayeeValue(MoneyWiseDataTestAccounts.idPY_ASDA, "0", "35.43");
+        checkCategoryValue(MoneyWiseDataTestCategories.idTC_ShopFood, "0", "35.43");
         checkCategoryValue(MoneyWiseDataTestCategories.idTC_MktCurrAdjust, "248.69", "0");
-        checkTaxBasisValue(MoneyWiseTaxClass.MARKET, "248.49");
+        checkTaxBasisValue(MoneyWiseTaxClass.MARKET, "248.69");
         checkTaxBasisValue(MoneyWiseTaxClass.EXPENSE, "-35.43");
     }
 }

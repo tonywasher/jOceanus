@@ -96,7 +96,7 @@ public class MoneyWiseXAnalysisTransaction {
         theTrans = theEvent.getTransaction();
 
         /* Access account and partner */
-        isTo = theTrans.getDirection() == MoneyWiseAssetDirection.TO;
+        isTo = MoneyWiseAssetDirection.TO.equals(theTrans.getDirection());
         theDebit = isTo ? theTrans.getAccount() : theTrans.getPartner();
         theCredit = isTo ? theTrans.getPartner() : theTrans.getAccount();
 
@@ -257,7 +257,7 @@ public class MoneyWiseXAnalysisTransaction {
      */
     void setDebitAmount(final OceanusMoney pAmount) {
         theDebitAmount = pAmount;
-        if (theCredit instanceof MoneyWisePayee) {
+        if (!theCredit.getAssetType().isValued()) {
             theCreditAmount = new OceanusMoney(pAmount);
             theCreditAmount.negate();
         }
@@ -269,7 +269,7 @@ public class MoneyWiseXAnalysisTransaction {
      */
     void setCreditAmount(final OceanusMoney pAmount) {
         theCreditAmount = pAmount;
-        if (theDebit instanceof MoneyWisePayee) {
+        if (!theDebit.getAssetType().isValued()) {
             theDebitAmount = new OceanusMoney(pAmount);
             theDebitAmount.negate();
         }

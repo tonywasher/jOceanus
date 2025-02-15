@@ -70,58 +70,58 @@ public class MoneyWiseDataTest {
         /* Create the data */
         final TethysUIHelperFactory myFactory = new TethysUIHelperFactory();
         final PrometheusToolkit myToolkit = new PrometheusToolkit(myFactory);
+        final MoneyWiseView myView = new MoneyWiseView(myToolkit, new MoneyWiseUKTaxYearCache());
 
         /* Create tests */
-        Stream<DynamicNode> myStream = MoneyWiseDataTestRunner.createTests(myToolkit);
-        myStream = Stream.concat(myStream, localDataTests(myToolkit));
-        return Stream.concat(myStream, archiveDataTests(myToolkit));
+        Stream<DynamicNode> myStream = MoneyWiseDataTestRunner.createTests(myView);
+        myStream = Stream.concat(myStream, localDataTests(myView));
+        return Stream.concat(myStream, archiveDataTests(myView));
     }
 
     /**
      * Populate local data.
      * @param pData the dataSet to populate
-     * @param pToolkit the toolkit
+     * @param pView the view
      * @throws OceanusException on error
      */
     public void initLocalData(final MoneyWiseDataSet pData,
-                              final PrometheusToolkit pToolkit) throws OceanusException {
+                              final MoneyWiseView pView) throws OceanusException {
         /* Initialise the data */
         new MoneyWiseTestCategories(pData).buildBasic();
         new MoneyWiseTestAccounts(pData).createAccounts();
         new MoneyWiseTestTransactions(pData).buildTransactions();
-        new MoneyWiseTestSecurity(pData).initSecurity(pToolkit);
+        new MoneyWiseTestSecurity(pData).initSecurity(pView.getToolkit());
     }
 
     /**
      * Populate local data.
      * @param pData the dataSet to populate
-     * @param pToolkit the toolkit
+     * @param pView the view
      * @throws OceanusException on error
      */
     public void checkEditSet(final MoneyWiseDataSet pData,
-                             final PrometheusToolkit pToolkit) throws OceanusException {
+                             final MoneyWiseView pView) throws OceanusException {
         /* Initialise the data */
-        new MoneyWiseTestEditSet(pData).checkSeparateEditSets(pToolkit);
-        new MoneyWiseTestEditSet(pData).checkCombinedEditSet(pToolkit);
+        new MoneyWiseTestEditSet(pData).checkSeparateEditSets(pView);
+        new MoneyWiseTestEditSet(pData).checkCombinedEditSet(pView);
     }
 
     /**
      * Analyse the data.
      * @param pData the dataSet to analyse
-     * @param pToolkit the toolkit
+     * @param pView the view
      * @throws OceanusException on error
      */
     public void analyseData(final MoneyWiseDataSet pData,
-                            final PrometheusToolkit pToolkit) throws OceanusException {
+                            final MoneyWiseView pView) throws OceanusException {
         /* Update the maps */
         pData.updateMaps();
 
         /* Create the analysis */
-        final MoneyWiseView myView = new MoneyWiseView(pToolkit, new MoneyWiseUKTaxYearCache());
-        final OceanusProfile myTask = myView.getNewProfile("Dummy");
-        myView.setData(pData);
-        final PrometheusEditSet myEditSet = new PrometheusEditSet(myView);
-        final MoneyWiseAnalysisTransAnalyser myAnalyser = new MoneyWiseAnalysisTransAnalyser(myTask, myEditSet, pToolkit.getPreferenceManager());
+        final OceanusProfile myTask = pView.getNewProfile("Dummy");
+        pView.setData(pData);
+        final PrometheusEditSet myEditSet = new PrometheusEditSet(pView);
+        final MoneyWiseAnalysisTransAnalyser myAnalyser = new MoneyWiseAnalysisTransAnalyser(myTask, myEditSet, pView.getPreferenceManager());
 
         /* Post process the analysis */
         myAnalyser.postProcessAnalysis();
@@ -182,30 +182,30 @@ public class MoneyWiseDataTest {
     /**
      * Analyse the data.
      * @param pData the dataSet to analyse
-     * @param pToolkit the toolkit
+     * @param pView the view
      * @throws OceanusException on error
      */
     public void analyseXData(final MoneyWiseDataSet pData,
-                             final PrometheusToolkit pToolkit) throws OceanusException {
+                             final MoneyWiseView pView) throws OceanusException {
         /* Create the analyser */
-        final MoneyWiseView myView = new MoneyWiseView(pToolkit, new MoneyWiseUKTaxYearCache());
-        final MoneyWiseXAnalysisBuilder myBuilder = new MoneyWiseXAnalysisBuilder(myView);
+        pView.getNewProfile("AnalyseXData");
+        final MoneyWiseXAnalysisBuilder myBuilder = new MoneyWiseXAnalysisBuilder(pView);
         final MoneyWiseXAnalysis myAnalysis = myBuilder.analyseNewData(pData);
         new MoneyWiseTestTransactions(pData).checkAnalysis(myAnalysis);
     }
 
     /**
      * Create the localData tests.
-     * @param pToolkit the toolkit
+     * @param pView the view
      * @return the testStream
      */
-    private Stream<DynamicNode> localDataTests(final PrometheusToolkit pToolkit) {
+    private Stream<DynamicNode> localDataTests(final MoneyWiseView pView) {
         /* Create the stream */
-        final MoneyWiseDataSet myData = new MoneyWiseDataSet(pToolkit, new MoneyWiseUKTaxYearCache());
-        Stream<DynamicNode> myStream = Stream.of(DynamicTest.dynamicTest("initData", () -> initLocalData(myData, pToolkit)));
-        myStream = Stream.concat(myStream, storageTests(myData, pToolkit));
-        myStream = Stream.concat(myStream, Stream.of(DynamicTest.dynamicTest("analyseData", () -> analyseXData(myData, pToolkit))));
-        myStream = Stream.concat(myStream, Stream.of(DynamicTest.dynamicTest("editSet", () -> checkEditSet(myData, pToolkit))));
+        final MoneyWiseDataSet myData = pView.getNewData();
+        Stream<DynamicNode> myStream = Stream.of(DynamicTest.dynamicTest("initData", () -> initLocalData(myData, pView)));
+        myStream = Stream.concat(myStream, storageTests(myData, pView));
+        myStream = Stream.concat(myStream, Stream.of(DynamicTest.dynamicTest("analyseData", () -> analyseXData(myData, pView))));
+        myStream = Stream.concat(myStream, Stream.of(DynamicTest.dynamicTest("editSet", () -> checkEditSet(myData, pView))));
 
         /* Return the stream */
         return Stream.of(DynamicContainer.dynamicContainer("localData", myStream));
@@ -213,17 +213,18 @@ public class MoneyWiseDataTest {
 
     /**
      * Create the archiveData tests.
-     * @param pToolkit the toolkit
+     * @param pView the view
      * @return the testStream
      */
-    private Stream<DynamicNode> archiveDataTests(final PrometheusToolkit pToolkit) {
+    private Stream<DynamicNode> archiveDataTests(final MoneyWiseView pView) {
         /* Create the stream */
-        final MoneyWiseDataSet myData = new MoneyWiseDataSet(pToolkit, new MoneyWiseUKTaxYearCache());
+        final MoneyWiseDataSet myData = pView.getNewData();
         final TethysUIThreadManager myThreadMgr = new NullThreadMgr();
-        Stream<DynamicNode> myStream = Stream.of(DynamicTest.dynamicTest("initData", () -> new MoneyWiseTestArchiveFile(myThreadMgr).performTest(myData, pToolkit)));
-        myStream = Stream.concat(myStream, storageTests(myData, pToolkit));
-        myStream = Stream.concat(myStream, Stream.of(DynamicTest.dynamicTest("analyseData", () -> analyseData(myData, pToolkit))));
-        myStream = Stream.concat(myStream, Stream.of(DynamicTest.dynamicTest("editSet", () -> checkEditSet(myData, pToolkit))));
+        Stream<DynamicNode> myStream = Stream.of(DynamicTest.dynamicTest("initData",
+                () -> new MoneyWiseTestArchiveFile(myThreadMgr).performTest(myData, pView)));
+        myStream = Stream.concat(myStream, storageTests(myData, pView));
+        myStream = Stream.concat(myStream, Stream.of(DynamicTest.dynamicTest("analyseData", () -> analyseData(myData, pView))));
+        myStream = Stream.concat(myStream, Stream.of(DynamicTest.dynamicTest("editSet", () -> checkEditSet(myData, pView))));
 
         /* Return the stream */
         return Stream.of(DynamicContainer.dynamicContainer("archiveData", myStream));
@@ -232,17 +233,17 @@ public class MoneyWiseDataTest {
     /**
      * Create the storage tests.
      * @param pData the dataSet to populate
-     * @param pToolkit the toolkit
+     * @param pView the view
      * @return the testStream
      */
     private Stream<DynamicNode> storageTests(final MoneyWiseDataSet pData,
-                                             final PrometheusToolkit pToolkit) {
+                                             final MoneyWiseView pView) {
         /* Return the stream */
         final TethysUIThreadManager myThreadMgr = new NullThreadMgr();
         return Stream.of(DynamicContainer.dynamicContainer("Storage Tests", Stream.of(
-                DynamicTest.dynamicTest("XML File", () -> new MoneyWiseTestXMLFile(myThreadMgr).performTest(pData, pToolkit)),
-                DynamicTest.dynamicTest("ODS File", () -> new MoneyWiseTestODSFile(myThreadMgr).performTest(pData, pToolkit)),
-                DynamicTest.dynamicTest("dataBase", () -> new MoneyWiseTestDatabase(myThreadMgr).performTest(pData, pToolkit)))));
+                DynamicTest.dynamicTest("XML File", () -> new MoneyWiseTestXMLFile(myThreadMgr).performTest(pData, pView)),
+                DynamicTest.dynamicTest("ODS File", () -> new MoneyWiseTestODSFile(myThreadMgr).performTest(pData, pView)),
+                DynamicTest.dynamicTest("dataBase", () -> new MoneyWiseTestDatabase(myThreadMgr).performTest(pData, pView)))));
     }
 
     /**

@@ -17,12 +17,11 @@
 package net.sourceforge.joceanus.moneywise.test.data;
 
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataSet;
-import net.sourceforge.joceanus.moneywise.tax.uk.MoneyWiseUKTaxYearCache;
 import net.sourceforge.joceanus.moneywise.test.data.MoneyWiseTestSecurity.NullPasswordDialog;
+import net.sourceforge.joceanus.moneywise.views.MoneyWiseView;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataValuesFormatter;
 import net.sourceforge.joceanus.prometheus.security.PrometheusSecurityPasswordManager;
-import net.sourceforge.joceanus.prometheus.toolkit.PrometheusToolkit;
 import net.sourceforge.joceanus.tethys.api.thread.TethysUIThreadManager;
 import org.junit.jupiter.api.Assertions;
 
@@ -49,11 +48,11 @@ public class MoneyWiseTestXMLFile {
     /**
      * Perform test.
      * @param pData the data to test with.
-     * @param pToolkit the toolkit
+     * @param pView the view
      * @throws OceanusException on error
      */
     public void performTest(final MoneyWiseDataSet pData,
-                            final PrometheusToolkit pToolkit) throws OceanusException {
+                            final MoneyWiseView pView) throws OceanusException {
         /* Access the Password manager and disable prompting */
         final PrometheusSecurityPasswordManager myManager = pData.getPasswordMgr();
         myManager.setDialogController(new NullPasswordDialog());
@@ -68,7 +67,7 @@ public class MoneyWiseTestXMLFile {
         final byte[] myBytes = myZipStream.toByteArray();
 
         /* Create the new dataSet */
-        final MoneyWiseDataSet myNewData = new MoneyWiseDataSet(pToolkit, new MoneyWiseUKTaxYearCache());
+        final MoneyWiseDataSet myNewData = pView.getNewData();
 
         /* Access the file */
         final ByteArrayInputStream myInputStream = new ByteArrayInputStream(myBytes);

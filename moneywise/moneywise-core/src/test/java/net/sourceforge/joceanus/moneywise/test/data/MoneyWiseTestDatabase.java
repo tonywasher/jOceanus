@@ -16,17 +16,15 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.moneywise.test.data;
 
-import org.junit.jupiter.api.Assertions;
-
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataSet;
 import net.sourceforge.joceanus.moneywise.database.MoneyWiseDataStore;
-import net.sourceforge.joceanus.moneywise.tax.uk.MoneyWiseUKTaxYearCache;
 import net.sourceforge.joceanus.moneywise.test.data.MoneyWiseTestSecurity.NullThreadStatusReport;
-import net.sourceforge.joceanus.prometheus.toolkit.PrometheusToolkit;
-import net.sourceforge.joceanus.prometheus.database.PrometheusDBConfig;
+import net.sourceforge.joceanus.moneywise.views.MoneyWiseView;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.prometheus.database.PrometheusDBConfig;
 import net.sourceforge.joceanus.tethys.api.thread.TethysUIThreadManager;
 import net.sourceforge.joceanus.tethys.api.thread.TethysUIThreadStatusReport;
+import org.junit.jupiter.api.Assertions;
 
 /**
  * Test Database.
@@ -50,11 +48,11 @@ public class MoneyWiseTestDatabase {
      * Perform test.
      *
      * @param pData    the data to test with.
-     * @param pToolkit the toolkit
+     * @param pView    the view
      * @throws OceanusException on error
      */
     public void performTest(final MoneyWiseDataSet pData,
-                            final PrometheusToolkit pToolkit) throws OceanusException {
+                            final MoneyWiseView pView) throws OceanusException {
         /* Create config */
         final PrometheusDBConfig myConfig = PrometheusDBConfig.h2();
 
@@ -71,7 +69,7 @@ public class MoneyWiseTestDatabase {
         myDatabase.updateDatabase(myReport, myUpdates);
 
         /* Create the new dataSet */
-        final MoneyWiseDataSet myNewData = new MoneyWiseDataSet(pToolkit, new MoneyWiseUKTaxYearCache());
+        final MoneyWiseDataSet myNewData = pView.getNewData();
 
         /* Load the database */
         theManager.setNewProfile("LoadDB");
