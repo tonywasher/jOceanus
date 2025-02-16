@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.moneywise.test.data;
+package net.sourceforge.joceanus.moneywise.test.data.storage;
 
 import net.sourceforge.joceanus.metis.field.MetisFieldItem.MetisFieldDef;
 import net.sourceforge.joceanus.metis.field.MetisFieldItem.MetisFieldSetDef;
@@ -51,7 +51,7 @@ import org.junit.jupiter.api.Assertions;
 
 import java.util.Iterator;
 
-public class MoneyWiseTestEditSet {
+public class MoneyWiseDataTestEditSet {
     /**
      * The dataSet.
      */
@@ -61,7 +61,7 @@ public class MoneyWiseTestEditSet {
      * Constructor.
      * @param pDataSet the dataSet
      */
-    MoneyWiseTestEditSet(final MoneyWiseDataSet pDataSet) {
+    public MoneyWiseDataTestEditSet(final MoneyWiseDataSet pDataSet) {
         theDataSet = pDataSet;
     }
 
@@ -70,7 +70,7 @@ public class MoneyWiseTestEditSet {
      * @param pView the view
      * @throws OceanusException on error
      */
-    void checkSeparateEditSets(final MoneyWiseView pView) throws OceanusException {
+    public void checkSeparateEditSets(final MoneyWiseView pView) throws OceanusException {
         /* Create view */
         pView.getNewProfile("createView");
         pView.getNewProfile("setData");
@@ -99,11 +99,11 @@ public class MoneyWiseTestEditSet {
     }
 
     /**
-     * Check separate editSets.
+     * Check combined editSets.
      * @param pView the view
      * @throws OceanusException on error
      */
-    void checkCombinedEditSet(final MoneyWiseView pView) throws OceanusException {
+    public void checkCombinedEditSet(final MoneyWiseView pView) throws OceanusException {
         /* Create view */
         pView.getNewProfile("createView");
         pView.getNewProfile("setData");

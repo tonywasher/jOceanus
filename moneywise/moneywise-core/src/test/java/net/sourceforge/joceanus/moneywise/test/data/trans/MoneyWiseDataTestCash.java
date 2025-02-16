@@ -34,19 +34,19 @@ public class MoneyWiseDataTestCash
     /**
      * Constructor.
      */
-    MoneyWiseDataTestCash(final MoneyWiseDataTestAccounts pBuilder) {
+    public MoneyWiseDataTestCash(final MoneyWiseDataTestAccounts pBuilder) {
         /* Store parameters */
         super(pBuilder);
         theTransBuilder = getTransBuilder();
     }
 
     @Override
-    String getName() {
+    public String getName() {
         return "Cash";
     }
 
     @Override
-    void setUpAccounts() throws OceanusException {
+    public void setUpAccounts() throws OceanusException {
         createPayees(MoneyWiseDataTestAccounts.idPY_ASDA);
         createDeposits(MoneyWiseDataTestAccounts.idDP_BarclaysCurrent,
                 MoneyWiseDataTestAccounts.idDP_StarlingEuro);
@@ -57,7 +57,7 @@ public class MoneyWiseDataTestCash
     }
 
     @Override
-    void defineRates() throws OceanusException {
+    public void defineRates() throws OceanusException {
         createXchgRate(MoneyWiseCurrencyClass.USD, "06-Apr-1980", "0.8");
         createXchgRate(MoneyWiseCurrencyClass.EUR, "06-Apr-1980", "0.9");
         createXchgRate(MoneyWiseCurrencyClass.USD, "01-Jun-2010", "0.85");
@@ -144,7 +144,7 @@ public class MoneyWiseDataTestCash
     }
 
     @Override
-    void checkAnalysis() {
+    public void checkAnalysis() {
         checkAccountValue(MoneyWiseDataTestAccounts.idDP_BarclaysCurrent, "9955");
         checkAccountValue(MoneyWiseDataTestAccounts.idDP_StarlingEuro, "4697.28");
         checkAccountValue(MoneyWiseDataTestAccounts.idCS_CashWallet, "15");

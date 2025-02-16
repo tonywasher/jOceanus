@@ -14,11 +14,10 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.moneywise.test.data;
+package net.sourceforge.joceanus.moneywise.test.data.storage;
 
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataSet;
 import net.sourceforge.joceanus.moneywise.sheets.MoneyWiseSheet;
-import net.sourceforge.joceanus.moneywise.test.data.MoneyWiseTestSecurity.NullPasswordDialog;
 import net.sourceforge.joceanus.moneywise.views.MoneyWiseView;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.prometheus.security.PrometheusSecurityPasswordManager;
@@ -32,7 +31,7 @@ import java.io.ByteArrayOutputStream;
 /**
  * Test XML File.
  */
-public class MoneyWiseTestODSFile {
+public class MoneyWiseDataTestODSFile {
     /**
      * The Thread manager.
      */
@@ -42,7 +41,7 @@ public class MoneyWiseTestODSFile {
      * Constructor.
      * @param pManager the thread manager
      */
-    public MoneyWiseTestODSFile(final TethysUIThreadManager pManager) {
+    public MoneyWiseDataTestODSFile(final TethysUIThreadManager pManager) {
         theManager = pManager;
     }
 
@@ -56,7 +55,7 @@ public class MoneyWiseTestODSFile {
                             final MoneyWiseView pView) throws OceanusException {
         /* Access the Password manager and disable prompting */
         final PrometheusSecurityPasswordManager myManager = pData.getPasswordMgr();
-        myManager.setDialogController(new NullPasswordDialog());
+        myManager.setDialogController(new MoneyWiseNullPasswordDialog());
 
         /* Create a new sheet */
         final MoneyWiseSheet mySheet = new MoneyWiseSheet(pView.getGuiFactory());

@@ -16,8 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.moneywise.test.data;
 
-import net.sourceforge.joceanus.moneywise.atlas.data.analysis.analyse.MoneyWiseXAnalysisBuilder;
-import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysis;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataSet;
 import net.sourceforge.joceanus.moneywise.lethe.data.analysis.analyse.MoneyWiseAnalysisTransAnalyser;
 import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysis;
@@ -35,18 +33,19 @@ import net.sourceforge.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAn
 import net.sourceforge.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisTaxBasisAttr;
 import net.sourceforge.joceanus.moneywise.lethe.data.analysis.values.MoneyWiseAnalysisTransAttr;
 import net.sourceforge.joceanus.moneywise.tax.uk.MoneyWiseUKTaxYearCache;
-import net.sourceforge.joceanus.moneywise.test.data.trans.MoneyWiseDataTestRunner;
+import net.sourceforge.joceanus.moneywise.test.data.storage.MoneyWiseDataTestArchiveFile;
+import net.sourceforge.joceanus.moneywise.test.data.storage.MoneyWiseDataTestDatabase;
+import net.sourceforge.joceanus.moneywise.test.data.storage.MoneyWiseDataTestEditSet;
+import net.sourceforge.joceanus.moneywise.test.data.storage.MoneyWiseDataTestODSFile;
+import net.sourceforge.joceanus.moneywise.test.data.storage.MoneyWiseDataTestXMLFile;
+import net.sourceforge.joceanus.moneywise.test.data.storage.MoneyWiseNullThreadMgr;
 import net.sourceforge.joceanus.moneywise.views.MoneyWiseView;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
 import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
 import net.sourceforge.joceanus.prometheus.toolkit.PrometheusToolkit;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
-import net.sourceforge.joceanus.tethys.api.thread.TethysUIThread;
-import net.sourceforge.joceanus.tethys.api.thread.TethysUIThreadEvent;
 import net.sourceforge.joceanus.tethys.api.thread.TethysUIThreadManager;
-import net.sourceforge.joceanus.tethys.api.thread.TethysUIThreadStatusManager;
 import net.sourceforge.joceanus.tethys.helper.TethysUIHelperFactory;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DynamicContainer;
@@ -74,7 +73,6 @@ public class MoneyWiseDataTest {
 
         /* Create tests */
         Stream<DynamicNode> myStream = MoneyWiseDataTestRunner.createTests(myView);
-        myStream = Stream.concat(myStream, localDataTests(myView));
         return Stream.concat(myStream, archiveDataTests(myView));
     }
 
@@ -84,26 +82,11 @@ public class MoneyWiseDataTest {
      * @param pView the view
      * @throws OceanusException on error
      */
-    public void initLocalData(final MoneyWiseDataSet pData,
-                              final MoneyWiseView pView) throws OceanusException {
+    public static void checkEditSet(final MoneyWiseDataSet pData,
+                                    final MoneyWiseView pView) throws OceanusException {
         /* Initialise the data */
-        new MoneyWiseTestCategories(pData).buildBasic();
-        new MoneyWiseTestAccounts(pData).createAccounts();
-        new MoneyWiseTestTransactions(pData).buildTransactions();
-        new MoneyWiseTestSecurity(pData).initSecurity(pView.getToolkit());
-    }
-
-    /**
-     * Populate local data.
-     * @param pData the dataSet to populate
-     * @param pView the view
-     * @throws OceanusException on error
-     */
-    public void checkEditSet(final MoneyWiseDataSet pData,
-                             final MoneyWiseView pView) throws OceanusException {
-        /* Initialise the data */
-        new MoneyWiseTestEditSet(pData).checkSeparateEditSets(pView);
-        new MoneyWiseTestEditSet(pData).checkCombinedEditSet(pView);
+        new MoneyWiseDataTestEditSet(pData).checkSeparateEditSets(pView);
+        new MoneyWiseDataTestEditSet(pData).checkCombinedEditSet(pView);
     }
 
     /**
@@ -180,38 +163,6 @@ public class MoneyWiseDataTest {
     }
 
     /**
-     * Analyse the data.
-     * @param pData the dataSet to analyse
-     * @param pView the view
-     * @throws OceanusException on error
-     */
-    public void analyseXData(final MoneyWiseDataSet pData,
-                             final MoneyWiseView pView) throws OceanusException {
-        /* Create the analyser */
-        pView.getNewProfile("AnalyseXData");
-        final MoneyWiseXAnalysisBuilder myBuilder = new MoneyWiseXAnalysisBuilder(pView);
-        final MoneyWiseXAnalysis myAnalysis = myBuilder.analyseNewData(pData);
-        new MoneyWiseTestTransactions(pData).checkAnalysis(myAnalysis);
-    }
-
-    /**
-     * Create the localData tests.
-     * @param pView the view
-     * @return the testStream
-     */
-    private Stream<DynamicNode> localDataTests(final MoneyWiseView pView) {
-        /* Create the stream */
-        final MoneyWiseDataSet myData = pView.getNewData();
-        Stream<DynamicNode> myStream = Stream.of(DynamicTest.dynamicTest("initData", () -> initLocalData(myData, pView)));
-        myStream = Stream.concat(myStream, storageTests(myData, pView));
-        myStream = Stream.concat(myStream, Stream.of(DynamicTest.dynamicTest("analyseData", () -> analyseXData(myData, pView))));
-        myStream = Stream.concat(myStream, Stream.of(DynamicTest.dynamicTest("editSet", () -> checkEditSet(myData, pView))));
-
-        /* Return the stream */
-        return Stream.of(DynamicContainer.dynamicContainer("localData", myStream));
-    }
-
-    /**
      * Create the archiveData tests.
      * @param pView the view
      * @return the testStream
@@ -219,9 +170,9 @@ public class MoneyWiseDataTest {
     private Stream<DynamicNode> archiveDataTests(final MoneyWiseView pView) {
         /* Create the stream */
         final MoneyWiseDataSet myData = pView.getNewData();
-        final TethysUIThreadManager myThreadMgr = new NullThreadMgr();
+        final TethysUIThreadManager myThreadMgr = new MoneyWiseNullThreadMgr();
         Stream<DynamicNode> myStream = Stream.of(DynamicTest.dynamicTest("initData",
-                () -> new MoneyWiseTestArchiveFile(myThreadMgr).performTest(myData, pView)));
+                () -> new MoneyWiseDataTestArchiveFile(myThreadMgr).performTest(myData, pView)));
         myStream = Stream.concat(myStream, storageTests(myData, pView));
         myStream = Stream.concat(myStream, Stream.of(DynamicTest.dynamicTest("analyseData", () -> analyseData(myData, pView))));
         myStream = Stream.concat(myStream, Stream.of(DynamicTest.dynamicTest("editSet", () -> checkEditSet(myData, pView))));
@@ -236,151 +187,13 @@ public class MoneyWiseDataTest {
      * @param pView the view
      * @return the testStream
      */
-    private Stream<DynamicNode> storageTests(final MoneyWiseDataSet pData,
-                                             final MoneyWiseView pView) {
+    static Stream<DynamicNode> storageTests(final MoneyWiseDataSet pData,
+                                            final MoneyWiseView pView) {
         /* Return the stream */
-        final TethysUIThreadManager myThreadMgr = new NullThreadMgr();
+        final TethysUIThreadManager myThreadMgr = new MoneyWiseNullThreadMgr();
         return Stream.of(DynamicContainer.dynamicContainer("Storage Tests", Stream.of(
-                DynamicTest.dynamicTest("XML File", () -> new MoneyWiseTestXMLFile(myThreadMgr).performTest(pData, pView)),
-                DynamicTest.dynamicTest("ODS File", () -> new MoneyWiseTestODSFile(myThreadMgr).performTest(pData, pView)),
-                DynamicTest.dynamicTest("dataBase", () -> new MoneyWiseTestDatabase(myThreadMgr).performTest(pData, pView)))));
-    }
-
-    /**
-     * ThreadManager stub.
-     */
-    static class NullThreadMgr
-            implements TethysUIThreadManager {
-        /**
-         * The active task.
-         */
-        private OceanusProfile theProfile;
-
-        /**
-         * Constructor.
-         */
-        NullThreadMgr() {
-            setNewProfile("Dummy");
-        }
-
-        @Override
-        public void setNewProfile(final String pTask) {
-            theProfile = new OceanusProfile(pTask);
-        }
-
-        @Override
-        public OceanusEventRegistrar<TethysUIThreadEvent> getEventRegistrar() {
-            return null;
-        }
-
-        @Override
-        public TethysUIThreadStatusManager getStatusManager() {
-            return null;
-        }
-
-        @Override
-        public String getTaskName() {
-            return null;
-        }
-
-        @Override
-        public boolean hasWorker() {
-            return false;
-        }
-
-        @Override
-        public void setReportingSteps(int pSteps) {
-
-        }
-
-        @Override
-        public Throwable getError() {
-            return null;
-        }
-
-        @Override
-        public void setThreadData(Object pThreadData) {
-
-        }
-
-        @Override
-        public Object getThreadData() {
-            return null;
-        }
-
-        @Override
-        public <T> void startThread(TethysUIThread<T> pThread) {
-
-        }
-
-        @Override
-        public void shutdown() {
-
-        }
-
-        @Override
-        public void cancelWorker() {
-
-        }
-
-        @Override
-        public OceanusProfile getActiveProfile() {
-            return null;
-        }
-
-        @Override
-        public void initTask(String pTask) throws OceanusException {
-
-        }
-
-        @Override
-        public void setNumStages(int pNumStages) throws OceanusException {
-
-        }
-
-        @Override
-        public void setNewStage(String pStage) throws OceanusException {
-
-        }
-
-        @Override
-        public void setNumSteps(int pNumSteps) throws OceanusException {
-
-        }
-
-        @Override
-        public void setStepsDone(int pSteps) throws OceanusException {
-
-        }
-
-        @Override
-        public void setNextStep() throws OceanusException {
-
-        }
-
-        @Override
-        public void setNextStep(String pStep) throws OceanusException {
-
-        }
-
-        @Override
-        public void setCompletion() throws OceanusException {
-
-        }
-
-        @Override
-        public void checkForCancellation() throws OceanusException {
-
-        }
-
-        @Override
-        public void throwCancelException() throws OceanusException {
-
-        }
-
-        @Override
-        public OceanusProfile getActiveTask() {
-            return theProfile;
-        }
+                DynamicTest.dynamicTest("XML File", () -> new MoneyWiseDataTestXMLFile(myThreadMgr).performTest(pData, pView)),
+                DynamicTest.dynamicTest("ODS File", () -> new MoneyWiseDataTestODSFile(myThreadMgr).performTest(pData, pView)),
+                DynamicTest.dynamicTest("dataBase", () -> new MoneyWiseDataTestDatabase(myThreadMgr).performTest(pData, pView)))));
     }
 }

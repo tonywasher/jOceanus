@@ -201,9 +201,9 @@ public class MoneyWiseMaintenance
         /* Protect against exceptions */
         try {
             /* Refresh sub-panels */
-            theAccountTab.refreshData();
-            theCategoryTab.refreshData();
             theStatic.refreshData();
+            theCategoryTab.refreshData();
+            theAccountTab.refreshData();
 
         } catch (OceanusException e) {
             /* Show the error */

@@ -14,11 +14,10 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.moneywise.test.data;
+package net.sourceforge.joceanus.moneywise.test.data.storage;
 
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataSet;
 import net.sourceforge.joceanus.moneywise.database.MoneyWiseDataStore;
-import net.sourceforge.joceanus.moneywise.test.data.MoneyWiseTestSecurity.NullThreadStatusReport;
 import net.sourceforge.joceanus.moneywise.views.MoneyWiseView;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.prometheus.database.PrometheusDBConfig;
@@ -29,7 +28,7 @@ import org.junit.jupiter.api.Assertions;
 /**
  * Test Database.
  */
-public class MoneyWiseTestDatabase {
+public class MoneyWiseDataTestDatabase {
     /**
      * The Thread manager.
      */
@@ -40,7 +39,7 @@ public class MoneyWiseTestDatabase {
      *
      * @param pManager the thread manager
      */
-    public MoneyWiseTestDatabase(final TethysUIThreadManager pManager) {
+    public MoneyWiseDataTestDatabase(final TethysUIThreadManager pManager) {
         theManager = pManager;
     }
 
@@ -60,7 +59,7 @@ public class MoneyWiseTestDatabase {
         final MoneyWiseDataStore myDatabase = new MoneyWiseDataStore("TestDB", myConfig);
 
         /* Create database */
-        final TethysUIThreadStatusReport myReport = new NullThreadStatusReport();
+        final TethysUIThreadStatusReport myReport = new MoneyWiseNullThreadStatusReport();
         myDatabase.createTables(myReport);
 
         /* Update the database */

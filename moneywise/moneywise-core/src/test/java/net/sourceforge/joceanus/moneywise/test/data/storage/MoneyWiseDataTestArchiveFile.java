@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.moneywise.test.data;
+package net.sourceforge.joceanus.moneywise.test.data.storage;
 
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataSet;
 import net.sourceforge.joceanus.moneywise.sheets.MoneyWiseArchiveLoader;
@@ -27,7 +27,7 @@ import net.sourceforge.joceanus.tethys.api.thread.TethysUIThreadManager;
 /**
  * Test archive file.
  */
-public class MoneyWiseTestArchiveFile {
+public class MoneyWiseDataTestArchiveFile {
     /**
      * The Thread manager.
      */
@@ -37,7 +37,7 @@ public class MoneyWiseTestArchiveFile {
      * Constructor.
      * @param pManager the thread manager
      */
-    public MoneyWiseTestArchiveFile(final TethysUIThreadManager pManager) {
+    public MoneyWiseDataTestArchiveFile(final TethysUIThreadManager pManager) {
         theManager = pManager;
     }
 

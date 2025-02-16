@@ -182,7 +182,7 @@ public class MoneyWiseDataTestAccounts {
      * @param pDataSet the dataSet
      * @throws OceanusException on error
      */
-    MoneyWiseDataTestAccounts(final MoneyWiseDataSet pDataSet) throws OceanusException {
+    public MoneyWiseDataTestAccounts(final MoneyWiseDataSet pDataSet) throws OceanusException {
         /* Store the dataSet */
         theDataSet = pDataSet;
 
@@ -569,7 +569,7 @@ public class MoneyWiseDataTestAccounts {
      * Reset data.
      * @throws OceanusException on error
      */
-    void resetData() throws OceanusException {
+    public void resetData() throws OceanusException {
         /* Clear all exchangeRate details */
         theDataSet.getExchangeRates().clear();
         theDataSet.getExchangeRates().updateMaps();

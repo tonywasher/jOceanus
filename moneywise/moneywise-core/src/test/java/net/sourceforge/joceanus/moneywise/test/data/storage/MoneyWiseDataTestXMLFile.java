@@ -14,10 +14,9 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.moneywise.test.data;
+package net.sourceforge.joceanus.moneywise.test.data.storage;
 
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataSet;
-import net.sourceforge.joceanus.moneywise.test.data.MoneyWiseTestSecurity.NullPasswordDialog;
 import net.sourceforge.joceanus.moneywise.views.MoneyWiseView;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataValuesFormatter;
@@ -31,7 +30,7 @@ import java.io.ByteArrayOutputStream;
 /**
  * Test XML File.
  */
-public class MoneyWiseTestXMLFile {
+public class MoneyWiseDataTestXMLFile {
     /**
      * The Thread manager.
      */
@@ -41,7 +40,7 @@ public class MoneyWiseTestXMLFile {
      * Constructor.
      * @param pManager the thread manager
      */
-    public MoneyWiseTestXMLFile(final TethysUIThreadManager pManager) {
+    public MoneyWiseDataTestXMLFile(final TethysUIThreadManager pManager) {
         theManager = pManager;
     }
 
@@ -55,7 +54,7 @@ public class MoneyWiseTestXMLFile {
                             final MoneyWiseView pView) throws OceanusException {
         /* Access the Password manager and disable prompting */
         final PrometheusSecurityPasswordManager myManager = pData.getPasswordMgr();
-        myManager.setDialogController(new NullPasswordDialog());
+        myManager.setDialogController(new MoneyWiseNullPasswordDialog());
 
         /* Create a new formatter */
         final PrometheusDataValuesFormatter myFormatter = new PrometheusDataValuesFormatter(theManager, myManager);

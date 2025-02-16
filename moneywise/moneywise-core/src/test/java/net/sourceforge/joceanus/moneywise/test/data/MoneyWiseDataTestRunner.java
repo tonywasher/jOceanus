@@ -14,11 +14,17 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.moneywise.test.data.trans;
+package net.sourceforge.joceanus.moneywise.test.data;
 
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.analyse.MoneyWiseXAnalysisBuilder;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysis;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataSet;
+import net.sourceforge.joceanus.moneywise.test.data.storage.MoneyWiseDataTestSecurity;
+import net.sourceforge.joceanus.moneywise.test.data.trans.MoneyWiseDataTestAccounts;
+import net.sourceforge.joceanus.moneywise.test.data.trans.MoneyWiseDataTestCase;
+import net.sourceforge.joceanus.moneywise.test.data.trans.MoneyWiseDataTestCash;
+import net.sourceforge.joceanus.moneywise.test.data.trans.MoneyWiseDataTestExpense;
+import net.sourceforge.joceanus.moneywise.test.data.trans.MoneyWiseDataTestTransfers;
 import net.sourceforge.joceanus.moneywise.views.MoneyWiseView;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
@@ -55,7 +61,13 @@ public class MoneyWiseDataTestRunner {
     private final MoneyWiseXAnalysisBuilder theAnalysisBuilder;
 
     /**
+     * The testCases.
+     */
+    private final List<MoneyWiseDataTestCase> theTestCases;
+
+    /**
      * Constructor.
+     *
      * @param pView the view
      * @throws OceanusException on error
      */
@@ -69,10 +81,13 @@ public class MoneyWiseDataTestRunner {
 
         /* Create the account builder */
         theAccountBuilder = new MoneyWiseDataTestAccounts(theDataSet);
+
+        theTestCases = createTestCases();
     }
 
     /**
      * Create the test suite.
+     *
      * @param pView the view
      * @return the test stream
      * @throws OceanusException on error
@@ -81,20 +96,31 @@ public class MoneyWiseDataTestRunner {
         /* Create the testRunner */
         final MoneyWiseDataTestRunner myRunner = new MoneyWiseDataTestRunner(pView);
 
-        /* Create the testCases */
-        final List<MoneyWiseDataTestCase> myList = myRunner.createTestCases();
-        Stream<DynamicNode> myTests = Stream.empty();
-        for (MoneyWiseDataTestCase myTestCase : myList) {
-            myTests = Stream.concat(myTests, Stream.of(DynamicTest.dynamicTest(myTestCase.getName(),
-                                                                               () -> myRunner.runTestCase(myTestCase))));
+        /* Create the transaction testCases */
+        Stream<DynamicNode> myTranTests = Stream.empty();
+        for (MoneyWiseDataTestCase myTestCase : myRunner.getTestCases()) {
+            myTranTests = Stream.concat(myTranTests, Stream.of(DynamicTest.dynamicTest(myTestCase.getName(),
+                    () -> myRunner.runTestCase(myTestCase))));
         }
 
-        /* Return container of tests */
-        return Stream.of(DynamicContainer.dynamicContainer("transactionTests", myTests));
+        /* Create container for tests */
+        myTranTests = Stream.of(DynamicContainer.dynamicContainer("transactionTests", myTranTests));
+        return Stream.of(DynamicContainer.dynamicContainer("transactionTests", Stream.concat(
+                myTranTests, myRunner.createStorageTests())));
+    }
+
+    /**
+     * Obtain the testCase list.
+     *
+     * @return the testCase list
+     */
+    private List<MoneyWiseDataTestCase> getTestCases() {
+        return theTestCases;
     }
 
     /**
      * Create the testCases.
+     *
      * @return the testCases
      */
     private List<MoneyWiseDataTestCase> createTestCases() {
@@ -107,6 +133,7 @@ public class MoneyWiseDataTestRunner {
 
     /**
      * Run the testCase.
+     *
      * @param pTest the testCase
      * @throws OceanusException on error
      */
@@ -123,6 +150,7 @@ public class MoneyWiseDataTestRunner {
 
     /**
      * Prepare dataSet.
+     *
      * @param pTest the testCase
      * @throws OceanusException on error
      */
@@ -138,5 +166,42 @@ public class MoneyWiseDataTestRunner {
 
         /* Resolve the transactions */
         theDataSet.getTransactions().resolveDataSetLinks();
+    }
+
+    /**
+     * Run the storage tests.
+     *
+     * @throws OceanusException on error
+     */
+    public Stream<DynamicNode> createStorageTests() throws OceanusException {
+        Stream<DynamicNode> myStream = Stream.of(DynamicTest.dynamicTest("initData", () -> prepareFullData()));
+        myStream = Stream.concat(myStream, MoneyWiseDataTest.storageTests(theDataSet, theView));
+        //myStream = Stream.concat(myStream, Stream.of(DynamicTest.dynamicTest("editSet",
+        //        () -> MoneyWiseDataTest.checkEditSet(theDataSet, theView))));
+        return Stream.of(DynamicContainer.dynamicContainer("localData", myStream));
+    }
+
+    /**
+     * Prepare full data for test.
+     * @throws OceanusException on error
+     */
+    private void prepareFullData() throws OceanusException {
+        /* Reset all data */
+        theAccountBuilder.resetData();
+
+        /* Loop through the tests */
+        for (MoneyWiseDataTestCase myTest : theTestCases) {
+            /* Create data */
+            myTest.setUpAccounts();
+            myTest.defineRates();
+            myTest.definePrices();
+            myTest.defineTransactions();
+        }
+
+        /* Resolve the transactions */
+        theDataSet.getTransactions().resolveDataSetLinks();
+
+        /* Initialise the security */
+        new MoneyWiseDataTestSecurity(theDataSet).initSecurity(theView);
     }
 }
