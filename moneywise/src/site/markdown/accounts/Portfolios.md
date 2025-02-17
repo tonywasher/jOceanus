@@ -11,8 +11,8 @@ Each **portfolio** account belongs to a **portfolioType** that controls reportin
 can be performed against an account.
 
 The various categories are as follows
-<table  class="defTable">
-<tr><th>Category</th><th>Description</th></tr>
+<table class="defTable">
+<tr><th class="defHdr">Category</th><th class="defHdr">Description</th></tr>
 <tr><td>Standard</td><td>A standard portfolio</td></tr>
 <tr><td>TaxFree</td><td>A taxFree portfolio</td></tr>
 <tr><td>SIPP</td><td>A SIPP portfolio</td></tr>

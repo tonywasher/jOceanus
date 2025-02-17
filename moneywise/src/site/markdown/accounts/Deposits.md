@@ -17,8 +17,8 @@ Each **deposit** account belongs to a **deposit category** that controls reporti
 can be performed against an account.
 
 The various categories are as follows
-<table  class="defTable">
-<tr><th>Category</th><th>Description</th></tr>
+<table class="defTable">
+<tr><th class="defHdr">Category</th><th class="defHdr">Description</th></tr>
 <tr><td>Checking</td><td>This is a standard current or checking account</td></tr>
 <tr><td>Savings</td><td>This is a standard savings account. There is no difference between the treatment of Checking and
 Savings accounts other than the reporting split</td></tr>

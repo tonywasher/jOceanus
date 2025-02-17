@@ -6,8 +6,8 @@ Most monetary accounts (other than **Cash**) have a **Payee** as a parent, and t
 to that account.
 
 The various types of Payees are as follows
-<table  class="defTable">
-<tr><th>PayeeType</th><th>Description</th></tr>
+<table class="defTable">
+<tr><th class="defHdr">PayeeType</th><th class="defHdr">Description</th></tr>
 <tr><td>Payee</td><td>This is a simple payee that represents an entity that monies are paid to/received from.</td></tr>
 <tr><td>Institution</td><td>This is an institution (e.g. a bank) that holds another account of behalf of the client. It
 is a specialised form of payee.</td></tr>

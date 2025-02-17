@@ -19,8 +19,8 @@ Each **security** account belongs to a **securityType** that controls reporting 
 can be performed against a security.
 
 The various tytpes of security are as follows
-<table  class="defTable">
-<tr><th>SecurityType</th><th>Description</th></tr>
+<table class="defTable">
+<tr><th class="defHdr">SecurityType</th><th class="defHdr">Description</th></tr>
 <tr><td>Shares</td><td>A standard stock or share</td></tr>
 <tr><td>GrowthUnitTrust</td><td>A unit trust where underlying income is re-invested in the trust, and is reflected either
 in additional units or as an enhanced price</td></tr>

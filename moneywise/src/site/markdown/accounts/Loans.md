@@ -15,8 +15,8 @@ Each **loan** account belongs to a **loan category** that controls reporting of 
 can be performed against an account.
 
 The various categories are as follows
-<table  class="defTable">
-<tr><th>Category</th><th>Description</th></tr>
+<table class="defTable">
+<tr><th class="defHdr">Category</th><th class="defHdr">Description</th></tr>
 <tr><td>CreditCard</td><td>This is a standard creditCard current</td></tr>
 <tr><td>PersonalLoan</td><td>This is a loan to/from an individual</td></tr>
 <tr><td>Loan</td><td>This is a standard loan, such as a mortgage or commercial loan</td></tr>
