@@ -72,28 +72,29 @@ public class MoneyWiseDataTestEditSet {
      */
     public void checkSeparateEditSets(final MoneyWiseView pView) throws OceanusException {
         /* Create view */
-        pView.getNewProfile("createView");
-        pView.getNewProfile("setData");
-        pView.setData(theDataSet);
         pView.getNewProfile("separateEditSet");
 
         /* Build and validate statics */
         PrometheusEditSet myEditSet = new PrometheusEditSet(pView);
+        myEditSet.setDataSet(theDataSet);
         populateStaticsEditSet(myEditSet);
         validateEditSet(myEditSet);
 
         /* Build and validate categories */
         myEditSet = new PrometheusEditSet(pView);
+        myEditSet.setDataSet(theDataSet);
         populateCategoryEditSet(myEditSet);
         validateEditSet(myEditSet);
 
         /* Build and validate accounts */
         myEditSet = new PrometheusEditSet(pView);
+        myEditSet.setDataSet(theDataSet);
         populateAccountEditSet(myEditSet);
         validateEditSet(myEditSet);
 
         /* Build and validate transactions */
         myEditSet = new PrometheusEditSet(pView);
+        myEditSet.setDataSet(theDataSet);
         populateTransEditSet(myEditSet);
         validateEditSet(myEditSet);
     }
@@ -105,13 +106,11 @@ public class MoneyWiseDataTestEditSet {
      */
     public void checkCombinedEditSet(final MoneyWiseView pView) throws OceanusException {
         /* Create view */
-        pView.getNewProfile("createView");
-        pView.getNewProfile("setData");
-        pView.setData(theDataSet);
         pView.getNewProfile("combinedEditSet");
 
         /* Build and validate editSet */
         PrometheusEditSet myEditSet = new PrometheusEditSet(pView);
+        myEditSet.setDataSet(theDataSet);
         populateStaticsEditSet(myEditSet);
         populateCategoryEditSet(myEditSet);
         populateAccountEditSet(myEditSet);

@@ -24,6 +24,7 @@ import net.sourceforge.joceanus.moneywise.test.data.trans.MoneyWiseDataTestAccou
 import net.sourceforge.joceanus.moneywise.test.data.trans.MoneyWiseDataTestCase;
 import net.sourceforge.joceanus.moneywise.test.data.trans.MoneyWiseDataTestCash;
 import net.sourceforge.joceanus.moneywise.test.data.trans.MoneyWiseDataTestExpense;
+import net.sourceforge.joceanus.moneywise.test.data.trans.MoneyWiseDataTestSalary;
 import net.sourceforge.joceanus.moneywise.test.data.trans.MoneyWiseDataTestTransfers;
 import net.sourceforge.joceanus.moneywise.views.MoneyWiseView;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
@@ -104,8 +105,8 @@ public class MoneyWiseDataTestRunner {
         }
 
         /* Create container for tests */
-        myTranTests = Stream.of(DynamicContainer.dynamicContainer("transactionTests", myTranTests));
-        return Stream.of(DynamicContainer.dynamicContainer("transactionTests", Stream.concat(
+        myTranTests = Stream.of(DynamicContainer.dynamicContainer("transactions", myTranTests));
+        return Stream.of(DynamicContainer.dynamicContainer("localData", Stream.concat(
                 myTranTests, myRunner.createStorageTests())));
     }
 
@@ -128,6 +129,7 @@ public class MoneyWiseDataTestRunner {
         myList.add(new MoneyWiseDataTestTransfers(theAccountBuilder));
         myList.add(new MoneyWiseDataTestExpense(theAccountBuilder));
         myList.add(new MoneyWiseDataTestCash(theAccountBuilder));
+        myList.add(new MoneyWiseDataTestSalary(theAccountBuilder));
         return myList;
     }
 
@@ -176,9 +178,9 @@ public class MoneyWiseDataTestRunner {
     public Stream<DynamicNode> createStorageTests() throws OceanusException {
         Stream<DynamicNode> myStream = Stream.of(DynamicTest.dynamicTest("initData", () -> prepareFullData()));
         myStream = Stream.concat(myStream, MoneyWiseDataTest.storageTests(theDataSet, theView));
-        //myStream = Stream.concat(myStream, Stream.of(DynamicTest.dynamicTest("editSet",
-        //        () -> MoneyWiseDataTest.checkEditSet(theDataSet, theView))));
-        return Stream.of(DynamicContainer.dynamicContainer("localData", myStream));
+        myStream = Stream.concat(myStream, Stream.of(DynamicTest.dynamicTest("editSet",
+                () -> MoneyWiseDataTest.checkEditSet(theDataSet, theView))));
+        return Stream.of(DynamicContainer.dynamicContainer("allTrans", myStream));
     }
 
     /**

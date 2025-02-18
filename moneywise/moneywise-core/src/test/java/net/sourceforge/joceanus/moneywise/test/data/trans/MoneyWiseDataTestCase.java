@@ -275,7 +275,7 @@ public abstract class MoneyWiseDataTestCase {
         /* Obtain the value */
         final OceanusMoney myAmount = new OceanusMoney(pValue);
         final MoneyWiseXAnalysisTaxBasisBucket myBucket = theAnalysis.getTaxBasis().getBucket(pTaxBasis);
-        Assertions.assertEquals(myAmount, myBucket.getValues().getMoneyValue(MoneyWiseXAnalysisTaxBasisAttr.NETT),
+        Assertions.assertEquals(myAmount, myBucket.getValues().getMoneyValue(MoneyWiseXAnalysisTaxBasisAttr.GROSS),
                 "Bad value for " + pTaxBasis);
     }
 

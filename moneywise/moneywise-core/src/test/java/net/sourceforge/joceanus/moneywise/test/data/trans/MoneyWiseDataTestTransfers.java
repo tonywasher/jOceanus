@@ -59,8 +59,8 @@ public class MoneyWiseDataTestTransfers
     public void defineRates() throws OceanusException {
         createXchgRate(MoneyWiseCurrencyClass.USD, "06-Apr-1980", "0.8");
         createXchgRate(MoneyWiseCurrencyClass.EUR, "06-Apr-1980", "0.9");
-        createXchgRate(MoneyWiseCurrencyClass.USD, "01-Jun-2010", "0.85");
-        createXchgRate(MoneyWiseCurrencyClass.EUR, "01-Jun-2010", "0.95");
+        createXchgRate(MoneyWiseCurrencyClass.USD, "01-Jan-2025", "0.85");
+        createXchgRate(MoneyWiseCurrencyClass.EUR, "01-Jan-2025", "0.95");
     }
 
     @Override

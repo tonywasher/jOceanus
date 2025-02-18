@@ -72,8 +72,10 @@ public class MoneyWiseDataTestAccounts {
     final static String idDP_BarclaysCurrent = "BarclaysCurrent";
     final static String idDP_NatWideFlexDirect = "NatWideFlexDirect";
     final static String idDP_NatWideLoyalty = "NatWideLoyalty";
+    final static String idDP_NatWideISA = "NatWideISA";
     final static String idDP_StarlingSterling = "StarlingSterling";
     final static String idDP_StarlingEuro = "StarlingEuro";
+    final static String idDP_StarlingEuroISA = "StarlingEuroISA";
     final static String idDP_StarlingDollar = "StarlingDollar";
     final static String idDP_FundingCircleLoans = "FundingCircleLoans";
 
@@ -326,6 +328,11 @@ public class MoneyWiseDataTestAccounts {
                     theDepositBuilder.name(myDeposit).parent(idPY_Nationwide)
                             .category(MoneyWiseDataTestCategories.idDC_Savings).openingBalance("10000").build();
                     break;
+                case idDP_NatWideISA:
+                    createPayees(idPY_Nationwide);
+                    theDepositBuilder.name(myDeposit).parent(idPY_Nationwide)
+                            .category(MoneyWiseDataTestCategories.idDC_TaxFreeSavings).openingBalance("10000").build();
+                    break;
                 case idDP_StarlingSterling:
                     createPayees(idPY_Starling);
                     theDepositBuilder.name(myDeposit).parent(idPY_Starling)
@@ -334,7 +341,13 @@ public class MoneyWiseDataTestAccounts {
                 case idDP_StarlingEuro:
                     createPayees(idPY_Starling);
                     theDepositBuilder.name(myDeposit).parent(idPY_Starling)
-                            .category(MoneyWiseDataTestCategories.idDC_Savings)
+                            .category(MoneyWiseDataTestCategories.idDC_Current)
+                            .currency(MoneyWiseCurrencyClass.EUR).openingBalance("5000").build();
+                    break;
+                case idDP_StarlingEuroISA:
+                    createPayees(idPY_Starling);
+                    theDepositBuilder.name(myDeposit).parent(idPY_Starling)
+                            .category(MoneyWiseDataTestCategories.idDC_TaxFreeSavings)
                             .currency(MoneyWiseCurrencyClass.EUR).openingBalance("5000").build();
                     break;
                 case idDP_StarlingDollar:
