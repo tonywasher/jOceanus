@@ -531,6 +531,14 @@ public abstract class MoneyWiseTransBase
         return (MoneyWiseDataSet) super.getDataSet();
     }
 
+    /**
+     * Obtain the validator.
+     * @return the validator
+     */
+    public MoneyWiseTransValidator getValidator() {
+        return getList().getValidator();
+    }
+
     @Override
     public MoneyWiseTransBaseList<?> getList() {
         return (MoneyWiseTransBaseList<?>) super.getList();
@@ -666,7 +674,7 @@ public abstract class MoneyWiseTransBase
      * @return true/false
      */
     public boolean canSwitchDirection() {
-        return MoneyWiseTransValidator.isValidDirection(getAccount(), getCategory(), getDirection().reverse());
+        return getValidator().isValidDirection(getAccount(), getCategory(), getDirection().reverse());
     }
 
     /**
@@ -866,6 +874,7 @@ public abstract class MoneyWiseTransBase
         final MoneyWiseAssetDirection myDir = getDirection();
         final OceanusMoney myAmount = getAmount();
         final MoneyWiseTransCategory myCategory = getCategory();
+        final MoneyWiseTransValidator myValidator = getValidator();
         boolean doCheckCombo = true;
 
         /* Account must be non-null */
@@ -875,7 +884,7 @@ public abstract class MoneyWiseTransBase
 
         } else {
             /* Account must be valid */
-            if (!MoneyWiseTransValidator.isValidAccount(myAccount)) {
+            if (!myValidator.isValidAccount(myAccount)) {
                 addError(ERROR_COMBO, MoneyWiseBasicResource.TRANSACTION_ACCOUNT);
                 doCheckCombo = false;
             }
@@ -888,7 +897,7 @@ public abstract class MoneyWiseTransBase
 
             /* Category must be valid for Account */
         } else if (doCheckCombo
-                && !MoneyWiseTransValidator.isValidCategory(myAccount, myCategory)) {
+                && !myValidator.isValidCategory(myAccount, myCategory)) {
             addError(ERROR_COMBO, MoneyWiseBasicDataType.TRANSCATEGORY);
             doCheckCombo = false;
         }
@@ -900,7 +909,7 @@ public abstract class MoneyWiseTransBase
 
             /* Direction must be valid for Account */
         } else if (doCheckCombo
-                && !MoneyWiseTransValidator.isValidDirection(myAccount, myCategory, myDir)) {
+                && !myValidator.isValidDirection(myAccount, myCategory, myDir)) {
             addError(ERROR_COMBO, MoneyWiseBasicResource.TRANSACTION_DIRECTION);
             doCheckCombo = false;
         }
@@ -912,7 +921,7 @@ public abstract class MoneyWiseTransBase
         } else {
             /* Partner must be valid for Account */
             if (doCheckCombo
-                    && !MoneyWiseTransValidator.isValidPartner(myAccount, myCategory, myPartner)) {
+                    && !myValidator.isValidPartner(myAccount, myCategory, myPartner)) {
                 addError(ERROR_COMBO, MoneyWiseBasicResource.TRANSACTION_PARTNER);
             }
         }
@@ -996,6 +1005,11 @@ public abstract class MoneyWiseTransBase
         }
 
         /**
+         * The validator.
+         */
+        private final MoneyWiseTransValidator theValidator;
+
+        /**
          * Construct an empty CORE Event list.
          * @param pData the DataSet for the list
          * @param pClass the class of the item
@@ -1006,6 +1020,7 @@ public abstract class MoneyWiseTransBase
                                          final MoneyWiseBasicDataType pItemType) {
             /* Call super-constructor */
             super(pClass, pData, pItemType, PrometheusListStyle.CORE);
+            theValidator = new MoneyWiseTransValidator(pData.newValidityChecks());
         }
 
         /**
@@ -1015,11 +1030,20 @@ public abstract class MoneyWiseTransBase
         protected MoneyWiseTransBaseList(final MoneyWiseTransBaseList<T> pSource) {
             /* Call super-constructor */
             super(pSource);
+            theValidator = pSource.getValidator();
         }
 
         @Override
         public MoneyWiseDataSet getDataSet() {
             return (MoneyWiseDataSet) super.getDataSet();
+        }
+
+        /**
+         * Obtain the validator.
+         * @return the validator
+         */
+        public MoneyWiseTransValidator getValidator() {
+            return theValidator;
         }
     }
 }

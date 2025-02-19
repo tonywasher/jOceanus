@@ -24,6 +24,7 @@ import net.sourceforge.joceanus.moneywise.test.data.trans.MoneyWiseDataTestAccou
 import net.sourceforge.joceanus.moneywise.test.data.trans.MoneyWiseDataTestCase;
 import net.sourceforge.joceanus.moneywise.test.data.trans.MoneyWiseDataTestCash;
 import net.sourceforge.joceanus.moneywise.test.data.trans.MoneyWiseDataTestExpense;
+import net.sourceforge.joceanus.moneywise.test.data.trans.MoneyWiseDataTestInterest;
 import net.sourceforge.joceanus.moneywise.test.data.trans.MoneyWiseDataTestSalary;
 import net.sourceforge.joceanus.moneywise.test.data.trans.MoneyWiseDataTestTransfers;
 import net.sourceforge.joceanus.moneywise.views.MoneyWiseView;
@@ -79,6 +80,7 @@ public class MoneyWiseDataTestRunner {
 
         /* Create the dataSet */
         theDataSet = theView.getNewData();
+        theDataSet.doNewValidityChecks();
 
         /* Create the account builder */
         theAccountBuilder = new MoneyWiseDataTestAccounts(theDataSet);
@@ -130,6 +132,7 @@ public class MoneyWiseDataTestRunner {
         myList.add(new MoneyWiseDataTestExpense(theAccountBuilder));
         myList.add(new MoneyWiseDataTestCash(theAccountBuilder));
         myList.add(new MoneyWiseDataTestSalary(theAccountBuilder));
+        myList.add(new MoneyWiseDataTestInterest(theAccountBuilder));
         return myList;
     }
 

@@ -29,9 +29,15 @@ import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransCategoryCla
  */
 public final class MoneyWiseTransValidator {
     /**
+     * new Validation?.
+     */
+    private final boolean newValidation;
+
+    /**
      * Prevent instantiation.
      */
-    private MoneyWiseTransValidator() {
+    MoneyWiseTransValidator(final boolean doNewValidation) {
+        newValidation = doNewValidation;
     }
 
     /**
@@ -39,7 +45,7 @@ public final class MoneyWiseTransValidator {
      * @param pAccount the account
      * @return true/false
      */
-    public static boolean isValidAccount(final MoneyWiseTransAsset pAccount) {
+    public boolean isValidAccount(final MoneyWiseTransAsset pAccount) {
         /* Validate securityHolding */
         if (pAccount instanceof MoneyWiseSecurityHolding
                 && !checkSecurityHolding((MoneyWiseSecurityHolding) pAccount)) {
@@ -63,8 +69,8 @@ public final class MoneyWiseTransValidator {
      * @param pCategory The category of the event
      * @return true/false
      */
-    public static boolean isValidCategory(final MoneyWiseTransAsset pAccount,
-                                          final MoneyWiseTransCategory pCategory) {
+    public boolean isValidCategory(final MoneyWiseTransAsset pAccount,
+                                   final MoneyWiseTransCategory pCategory) {
         /* Access details */
         final MoneyWiseAssetType myType = pAccount.getAssetType();
         final MoneyWiseTransCategoryClass myCatClass = pCategory.getCategoryTypeClass();
@@ -168,9 +174,9 @@ public final class MoneyWiseTransValidator {
      * @param pDirection the direction
      * @return true/false
      */
-    public static boolean isValidDirection(final MoneyWiseTransAsset pAccount,
-                                           final MoneyWiseTransCategory pCategory,
-                                           final MoneyWiseAssetDirection pDirection) {
+    public boolean isValidDirection(final MoneyWiseTransAsset pAccount,
+                                    final MoneyWiseTransCategory pCategory,
+                                    final MoneyWiseAssetDirection pDirection) {
         /* TODO relax some of these rules */
 
         /* Access details */
@@ -244,9 +250,9 @@ public final class MoneyWiseTransValidator {
      * @param pPartner the partner
      * @return true/false
      */
-    public static boolean isValidPartner(final MoneyWiseTransAsset pAccount,
-                                         final MoneyWiseTransCategory pCategory,
-                                         final MoneyWiseTransAsset pPartner) {
+    public boolean isValidPartner(final MoneyWiseTransAsset pAccount,
+                                  final MoneyWiseTransCategory pCategory,
+                                  final MoneyWiseTransAsset pPartner) {
         /* Access details */
         final boolean isRecursive = MetisDataDifference.isEqual(pAccount, pPartner);
         final MoneyWiseAssetType myPartnerType = pPartner.getAssetType();

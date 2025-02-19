@@ -44,7 +44,7 @@ public class MoneyWiseXAnalysisTransaction {
     /**
      * The direction.
      */
-    private final boolean isTo;
+    private boolean isTo;
 
     /**
      * The debit amount.
@@ -296,6 +296,7 @@ public class MoneyWiseXAnalysisTransaction {
                 } else {
                     theCredit = theCredit.getParent();
                 }
+                isTo = !isTo;
                 break;
             case LOANINTERESTEARNED:
             case CASHBACK:
@@ -306,6 +307,7 @@ public class MoneyWiseXAnalysisTransaction {
                 } else {
                     theCredit = theCredit.getParent();
                 }
+                isTo = !isTo;
                 break;
             case RENTALINCOME:
             case ROOMRENTALINCOME:

@@ -105,6 +105,11 @@ public class MoneyWiseDataSet
     private boolean ignoreCheckClosedAccounts;
 
     /**
+     * New validity checks.
+     */
+    private boolean newValidityChecks;
+
+    /**
      * Standard constructor.
      * @param pUtilitySet the utility set
      * @param pTaxFactory the tax factory
@@ -487,6 +492,21 @@ public class MoneyWiseDataSet
      */
     public void hitEventLimit() {
         ignoreCheckClosedAccounts = true;
+    }
+
+    /**
+     * Set new Validity checks.
+     */
+    public void doNewValidityChecks() {
+        newValidityChecks = true;
+    }
+
+    /**
+     * Should we perform new validity checks?
+     * @return true/false
+     */
+    public boolean newValidityChecks() {
+        return newValidityChecks;
     }
 
     /**
