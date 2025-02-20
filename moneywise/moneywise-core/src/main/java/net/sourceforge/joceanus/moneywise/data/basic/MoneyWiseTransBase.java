@@ -1020,7 +1020,7 @@ public abstract class MoneyWiseTransBase
                                          final MoneyWiseBasicDataType pItemType) {
             /* Call super-constructor */
             super(pClass, pData, pItemType, PrometheusListStyle.CORE);
-            theValidator = new MoneyWiseTransValidator(pData.newValidityChecks());
+            theValidator = new MoneyWiseTransValidator(pData);
         }
 
         /**

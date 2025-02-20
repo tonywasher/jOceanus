@@ -68,6 +68,9 @@ public class MoneyWiseDataTestODSFile {
 
         /* Create the new dataSet */
         final MoneyWiseDataSet myNewData = pView.getNewData();
+        if (pData.newValidityChecks()) {
+            myNewData.doNewValidityChecks();
+        }
 
         /* Access the file */
         final ByteArrayInputStream myInputStream = new ByteArrayInputStream(myBytes);

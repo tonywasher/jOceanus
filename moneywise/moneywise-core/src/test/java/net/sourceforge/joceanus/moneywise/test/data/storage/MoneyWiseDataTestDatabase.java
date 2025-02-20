@@ -69,6 +69,9 @@ public class MoneyWiseDataTestDatabase {
 
         /* Create the new dataSet */
         final MoneyWiseDataSet myNewData = pView.getNewData();
+        if (pData.newValidityChecks()) {
+            myNewData.doNewValidityChecks();
+        }
 
         /* Load the database */
         theManager.setNewProfile("LoadDB");

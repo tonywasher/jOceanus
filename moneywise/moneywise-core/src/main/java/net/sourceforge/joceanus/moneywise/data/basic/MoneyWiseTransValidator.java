@@ -31,13 +31,14 @@ public final class MoneyWiseTransValidator {
     /**
      * new Validation?.
      */
-    private final boolean newValidation;
+    private final MoneyWiseDataSet theDataSet;
 
     /**
      * Prevent instantiation.
+     * @param pDataSet the dataSet
      */
-    MoneyWiseTransValidator(final boolean doNewValidation) {
-        newValidation = doNewValidation;
+    MoneyWiseTransValidator(final MoneyWiseDataSet pDataSet) {
+        theDataSet = pDataSet;
     }
 
     /**
@@ -181,13 +182,14 @@ public final class MoneyWiseTransValidator {
 
         /* Access details */
         final MoneyWiseTransCategoryClass myCatClass = pCategory.getCategoryTypeClass();
+        final boolean newValidation = theDataSet.newValidityChecks();
 
         /* Switch on the CategoryClass */
         switch (myCatClass) {
             case TAXEDINCOME:
             case GROSSINCOME:
                 /* Cannot refund Taxed Income yet */
-                return pDirection.isFrom();
+                return newValidation || pDirection.isFrom();
 
             case PENSIONCONTRIB:
                 /* Cannot refund Pension Contribution */
@@ -196,7 +198,7 @@ public final class MoneyWiseTransValidator {
             case GIFTEDINCOME:
             case INHERITED:
                 /* Cannot refund Gifted/Inherited Income yet */
-                return pDirection.isFrom();
+                return newValidation || pDirection.isFrom();
 
             case RENTALINCOME:
             case ROOMRENTALINCOME:
@@ -209,7 +211,7 @@ public final class MoneyWiseTransValidator {
 
             case INTEREST:
                 /* Cannot refund Interest yet */
-                return pDirection.isTo();
+                return newValidation || pDirection.isTo();
 
             case DIVIDEND:
             case SECURITYCLOSURE:
@@ -218,7 +220,7 @@ public final class MoneyWiseTransValidator {
 
             case LOYALTYBONUS:
                 /* Cannot refund loyaltyBonus yet */
-                return pDirection.isTo();
+                return newValidation || pDirection.isTo();
 
             case WRITEOFF:
             case LOANINTERESTCHARGED:
@@ -506,10 +508,11 @@ public final class MoneyWiseTransValidator {
      * @param pAccount the account providing bonus.
      * @return valid true/false
      */
-    private static boolean checkLoyaltyBonus(final MoneyWiseTransAsset pAccount) {
+    private boolean checkLoyaltyBonus(final MoneyWiseTransAsset pAccount) {
         /* If this is deposit then check whether it can support loyaltyBonus */
         if (pAccount instanceof MoneyWiseDeposit) {
-            return ((MoneyWiseDeposit) pAccount).getCategoryClass().canLoyaltyBonus();
+            return theDataSet.newValidityChecks()
+                    || ((MoneyWiseDeposit) pAccount).getCategoryClass().canLoyaltyBonus();
         }
 
         /* must be portfolio */

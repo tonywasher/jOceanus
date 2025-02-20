@@ -16,30 +16,30 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.moneywise.data.basic;
 
-import java.util.Currency;
-import java.util.Map;
-
 import net.sourceforge.joceanus.metis.data.MetisDataDifference;
 import net.sourceforge.joceanus.metis.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.metis.field.MetisFieldRequired;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTax.MoneyWiseTaxCredit;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransInfo.MoneyWiseTransInfoList;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrency;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseSecurityClass;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransCategoryClass;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransInfoClass;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransInfoType.MoneyWiseTransInfoTypeList;
-import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTax.MoneyWiseTaxCredit;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRatio;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusUnits;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataInfoClass;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataInfoSet;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataList.PrometheusDataListSet;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusRatio;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusUnits;
+
+import java.util.Currency;
+import java.util.Map;
 
 /**
  * TransactionInfoSet class.
@@ -327,10 +327,6 @@ public class MoneyWiseTransInfoSet
             case LOANINTERESTCHARGED:
                 return MetisFieldRequired.CANEXIST;
             case LOYALTYBONUS:
-                return myAccount.isTaxFree()
-                        || myAccount.isGross()
-                        ? MetisFieldRequired.NOTALLOWED
-                        : MetisFieldRequired.MUSTEXIST;
             case INTEREST:
                 return myAccount.isTaxFree()
                         || myAccount.isGross()

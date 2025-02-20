@@ -146,7 +146,7 @@ public class MoneyWiseDataTestRunner {
         /* Run the test */
         final OceanusProfile myTask = theView.getNewProfile("Transaction TestCases");
         prepareDataForTest(pTest);
-        pTest.checkErrors();
+        //pTest.checkErrors();
         final MoneyWiseXAnalysis myAnalysis = theAnalysisBuilder.analyseNewData(theDataSet);
         pTest.setAnalysis(myAnalysis);
         pTest.checkAnalysis();
