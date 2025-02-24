@@ -231,7 +231,7 @@ public abstract class MoneyWiseXAnalysisAccountBucket<T extends MoneyWiseAssetBa
 
     @Override
     public String toString() {
-        return getName();
+        return getName() + " " + theValues;
     }
 
     /**

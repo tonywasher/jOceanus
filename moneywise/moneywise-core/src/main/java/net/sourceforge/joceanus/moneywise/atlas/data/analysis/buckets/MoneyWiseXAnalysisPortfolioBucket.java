@@ -213,7 +213,7 @@ public final class MoneyWiseXAnalysisPortfolioBucket
 
     @Override
     public String toString() {
-        return getName();
+        return getName() + theValues;
     }
 
     /**

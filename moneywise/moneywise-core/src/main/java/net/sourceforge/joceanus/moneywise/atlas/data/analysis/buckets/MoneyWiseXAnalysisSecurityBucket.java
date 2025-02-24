@@ -261,7 +261,7 @@ public final class MoneyWiseXAnalysisSecurityBucket
 
     @Override
     public String toString() {
-        return getDecoratedName();
+        return getDecoratedName() + theValues;
     }
 
     /**

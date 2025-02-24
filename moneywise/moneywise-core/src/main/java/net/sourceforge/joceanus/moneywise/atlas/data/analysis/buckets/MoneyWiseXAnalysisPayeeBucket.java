@@ -174,7 +174,7 @@ public final class MoneyWiseXAnalysisPayeeBucket
 
     @Override
     public String toString() {
-        return getName();
+        return getName() + " " + theValues;
     }
 
     /**

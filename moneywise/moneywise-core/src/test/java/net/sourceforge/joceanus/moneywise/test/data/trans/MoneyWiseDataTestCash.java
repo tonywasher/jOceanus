@@ -147,7 +147,7 @@ public class MoneyWiseDataTestCash
     public void checkAnalysis() {
         checkAccountValue(MoneyWiseDataTestAccounts.idDP_BarclaysCurrent, "9955");
         checkAccountValue(MoneyWiseDataTestAccounts.idDP_StarlingEuro, "4697.28");
-        checkAccountValue(MoneyWiseDataTestAccounts.idCS_CashWallet, "15");
+        checkAccountValue(MoneyWiseDataTestAccounts.idCS_CashWallet, "25");
         checkAccountValue(MoneyWiseDataTestAccounts.idCS_EurosWallet, "4.28");
         checkPayeeValue(MoneyWiseDataTestAccounts.idPY_Market, "247.46", "0");
         checkPayeeValue(MoneyWiseDataTestAccounts.idPY_ASDA, "0", "14.1");

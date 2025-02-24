@@ -60,10 +60,10 @@ public class MoneyWiseDataTestSalary
                 .build();
 
         /* A refund of inheritance */
-        //theTransBuilder.date("02-Aug-1986").category(MoneyWiseDataTestCategories.idTC_Inheritance)
-        //        .account(MoneyWiseDataTestAccounts.idDP_BarclaysCurrent).amount("60")
-        //        .to().partner(MoneyWiseDataTestAccounts.idPY_Parents)
-        //        .build();
+        theTransBuilder.date("02-Aug-1986").category(MoneyWiseDataTestCategories.idTC_Inheritance)
+                .account(MoneyWiseDataTestAccounts.idDP_BarclaysCurrent).amount("60")
+                .to().partner(MoneyWiseDataTestAccounts.idPY_Parents)
+                .build();
 
         /* A simple salary payment */
         theTransBuilder.date("03-Aug-1986").category(MoneyWiseDataTestCategories.idTC_Salary)
@@ -72,10 +72,10 @@ public class MoneyWiseDataTestSalary
                 .build();
 
         /* A refund of salary */
-        //theTransBuilder.date("04-Aug-1986").category(MoneyWiseDataTestCategories.idTC_Salary)
-        //        .account(MoneyWiseDataTestAccounts.idDP_BarclaysCurrent).amount("100")
-        //        .to().partner(MoneyWiseDataTestAccounts.idPY_IBM).taxCredit("0.9").benefit("0.5")
-        //        .build();
+        theTransBuilder.date("04-Aug-1986").category(MoneyWiseDataTestCategories.idTC_Salary)
+                .account(MoneyWiseDataTestAccounts.idDP_BarclaysCurrent).amount("100")
+                .to().partner(MoneyWiseDataTestAccounts.idPY_IBM).taxCredit("0.9").benefit("0.5")
+                .build();
 
         /* A simple untaxed payment */
         theTransBuilder.date("05-Aug-1986").category(MoneyWiseDataTestCategories.idTC_SocialSecurity)
@@ -84,10 +84,10 @@ public class MoneyWiseDataTestSalary
                 .build();
 
         /* A refund of untaxed payment */
-        //theTransBuilder.date("06-Aug-1986").category(MoneyWiseDataTestCategories.idTC_SocialSecurity)
-        //        .account(MoneyWiseDataTestAccounts.idDP_BarclaysCurrent).amount("10")
-        //        .to().partner(MoneyWiseDataTestAccounts.idPY_Government)
-        //        .build();
+        theTransBuilder.date("06-Aug-1986").category(MoneyWiseDataTestCategories.idTC_SocialSecurity)
+                .account(MoneyWiseDataTestAccounts.idDP_BarclaysCurrent).amount("10")
+                .to().partner(MoneyWiseDataTestAccounts.idPY_Government)
+                .build();
 
         /* A simple gift */
         theTransBuilder.date("07-Aug-1986").category(MoneyWiseDataTestCategories.idTC_IncGifts)
@@ -96,29 +96,29 @@ public class MoneyWiseDataTestSalary
                 .build();
 
         /* A refund of gift */
-        //theTransBuilder.date("08-Aug-1986").category(MoneyWiseDataTestCategories.idTC_IncGifts)
-        //        .account(MoneyWiseDataTestAccounts.idDP_BarclaysCurrent).amount("5")
-        //        .to().partner(MoneyWiseDataTestAccounts.idPY_Parents)
-        //        .build();
+        theTransBuilder.date("08-Aug-1986").category(MoneyWiseDataTestCategories.idTC_IncGifts)
+                .account(MoneyWiseDataTestAccounts.idDP_BarclaysCurrent).amount("5")
+                .to().partner(MoneyWiseDataTestAccounts.idPY_Parents)
+                .build();
     }
 
     @Override
     public void checkAnalysis() {
-        checkAccountValue(MoneyWiseDataTestAccounts.idDP_BarclaysCurrent, "11650");
-        checkPayeeValue(MoneyWiseDataTestAccounts.idPY_IBM, "1030", "10");
-        checkPayeeValue(MoneyWiseDataTestAccounts.idPY_Parents, "550", "0");
-        checkPayeeValue(MoneyWiseDataTestAccounts.idPY_Government, "100", "0");
-        checkPayeeValue(MoneyWiseDataTestAccounts.idPY_HMRC, "0", "20");
-        checkCategoryValue(MoneyWiseDataTestCategories.idTC_Inheritance, "500", "0");
-        checkCategoryValue(MoneyWiseDataTestCategories.idTC_Salary, "1020", "0");
-        checkCategoryValue(MoneyWiseDataTestCategories.idTC_SocialSecurity, "100", "0");
-        checkCategoryValue(MoneyWiseDataTestCategories.idTC_IncGifts, "50", "0");
-        checkCategoryValue(MoneyWiseDataTestCategories.idTC_Benefit, "10", "0");
-        checkCategoryValue(MoneyWiseDataTestCategories.idTC_TaxIncome, "0", "20");
-        checkCategoryValue(MoneyWiseDataTestCategories.idTC_ExpVirtual, "0", "10");
-        checkTaxBasisValue(MoneyWiseTaxClass.SALARY, "1130");
-        checkTaxBasisValue(MoneyWiseTaxClass.TAXPAID, "-20");
-        checkTaxBasisValue(MoneyWiseTaxClass.TAXFREE, "550");
-        checkTaxBasisValue(MoneyWiseTaxClass.VIRTUAL, "-10");
+        checkAccountValue(MoneyWiseDataTestAccounts.idDP_BarclaysCurrent, "11475");
+        checkPayeeValue(MoneyWiseDataTestAccounts.idPY_IBM, "928.6", "9.5");
+        checkPayeeValue(MoneyWiseDataTestAccounts.idPY_Parents, "485", "0");
+        checkPayeeValue(MoneyWiseDataTestAccounts.idPY_Government, "90", "0");
+        checkPayeeValue(MoneyWiseDataTestAccounts.idPY_HMRC, "0", "19.1");
+        checkCategoryValue(MoneyWiseDataTestCategories.idTC_Inheritance, "440", "0");
+        checkCategoryValue(MoneyWiseDataTestCategories.idTC_Salary, "919.1", "0");
+        checkCategoryValue(MoneyWiseDataTestCategories.idTC_SocialSecurity, "90", "0");
+        checkCategoryValue(MoneyWiseDataTestCategories.idTC_IncGifts, "45", "0");
+        checkCategoryValue(MoneyWiseDataTestCategories.idTC_Benefit, "9.5", "0");
+        checkCategoryValue(MoneyWiseDataTestCategories.idTC_TaxIncome, "0", "19.1");
+        checkCategoryValue(MoneyWiseDataTestCategories.idTC_ExpVirtual, "0", "9.5");
+        checkTaxBasisValue(MoneyWiseTaxClass.SALARY, "1018.6");
+        checkTaxBasisValue(MoneyWiseTaxClass.TAXPAID, "-19.1");
+        checkTaxBasisValue(MoneyWiseTaxClass.TAXFREE, "485");
+        checkTaxBasisValue(MoneyWiseTaxClass.VIRTUAL, "-9.5");
     }
 }

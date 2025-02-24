@@ -225,11 +225,11 @@ public final class MoneyWiseTransValidator {
             case WRITEOFF:
             case LOANINTERESTCHARGED:
                 /* All need to be TO */
-                return pDirection.isTo();
+                return newValidation || pDirection.isTo();
 
             case LOANINTERESTEARNED:
                 /* All need to be FROM */
-                return pDirection.isFrom();
+                return newValidation || pDirection.isFrom();
 
             case UNITSADJUST:
             case STOCKSPLIT:

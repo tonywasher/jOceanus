@@ -23,8 +23,11 @@ import net.sourceforge.joceanus.moneywise.test.data.storage.MoneyWiseDataTestSec
 import net.sourceforge.joceanus.moneywise.test.data.trans.MoneyWiseDataTestAccounts;
 import net.sourceforge.joceanus.moneywise.test.data.trans.MoneyWiseDataTestCase;
 import net.sourceforge.joceanus.moneywise.test.data.trans.MoneyWiseDataTestCash;
+import net.sourceforge.joceanus.moneywise.test.data.trans.MoneyWiseDataTestCreditCard;
 import net.sourceforge.joceanus.moneywise.test.data.trans.MoneyWiseDataTestExpense;
 import net.sourceforge.joceanus.moneywise.test.data.trans.MoneyWiseDataTestInterest;
+import net.sourceforge.joceanus.moneywise.test.data.trans.MoneyWiseDataTestMortgage;
+import net.sourceforge.joceanus.moneywise.test.data.trans.MoneyWiseDataTestPrivateLoan;
 import net.sourceforge.joceanus.moneywise.test.data.trans.MoneyWiseDataTestSalary;
 import net.sourceforge.joceanus.moneywise.test.data.trans.MoneyWiseDataTestTransfers;
 import net.sourceforge.joceanus.moneywise.views.MoneyWiseView;
@@ -133,6 +136,9 @@ public class MoneyWiseDataTestRunner {
         myList.add(new MoneyWiseDataTestCash(theAccountBuilder));
         myList.add(new MoneyWiseDataTestSalary(theAccountBuilder));
         myList.add(new MoneyWiseDataTestInterest(theAccountBuilder));
+        myList.add(new MoneyWiseDataTestCreditCard(theAccountBuilder));
+        myList.add(new MoneyWiseDataTestMortgage(theAccountBuilder));
+        myList.add(new MoneyWiseDataTestPrivateLoan(theAccountBuilder));
         return myList;
     }
 
@@ -146,7 +152,7 @@ public class MoneyWiseDataTestRunner {
         /* Run the test */
         final OceanusProfile myTask = theView.getNewProfile("Transaction TestCases");
         prepareDataForTest(pTest);
-        //pTest.checkErrors();
+        pTest.checkErrors();
         final MoneyWiseXAnalysis myAnalysis = theAnalysisBuilder.analyseNewData(theDataSet);
         pTest.setAnalysis(myAnalysis);
         pTest.checkAnalysis();

@@ -300,6 +300,8 @@ public class MoneyWiseXAnalysisTransaction {
                 break;
             case LOANINTERESTEARNED:
             case CASHBACK:
+            case WRITEOFF:
+            case LOANINTERESTCHARGED:
                 /* True debit account is the parent of the asset */
                 /* Note that debit and credit must be identical */
                 if (isTo) {
@@ -316,16 +318,6 @@ public class MoneyWiseXAnalysisTransaction {
                         ? null
                         : theDebit;
                 theDebit = theCredit.getParent();
-                break;
-            case WRITEOFF:
-            case LOANINTERESTCHARGED:
-                /* True credit account is the parent of the loan */
-                /* Note that credit and debit must be identical */
-                if (isTo) {
-                    theCredit = theCredit.getParent();
-                } else {
-                    theDebit = theDebit.getParent();
-                }
                 break;
             default:
                 break;

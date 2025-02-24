@@ -306,9 +306,12 @@ public class MoneyWiseXAnalysisTax {
             checkForValidAdditional();
 
             /* If this is a refund, negate the taxCredit */
+            OceanusMoney myNegTaxCredit = new OceanusMoney(myTaxCredit);
             if (theTransaction.isRefund()) {
                 myTaxCredit = new OceanusMoney(myTaxCredit);
                 myTaxCredit.negate();
+            } else {
+                myNegTaxCredit.negate();
             }
 
             /* If this is an income */
@@ -319,11 +322,11 @@ public class MoneyWiseXAnalysisTax {
 
                 /* Income from category and Expense to taxCredit */
                 theCategoryBucket.addIncome(myTaxCredit);
-                theTaxCreditCat.addExpense(myTaxCredit);
+                theTaxReliefCat.addExpense(myTaxCredit);
 
                 /* Register income and expense for tax */
-                final MoneyWiseXAnalysisTaxBasisAccountBucket myAccBucket = theTaxBucket.adjustGrossAndTax(theAccount, myTaxCredit);
-                theExpenseTax.adjustGrossAndNett(myTaxCredit);
+                final MoneyWiseXAnalysisTaxBasisAccountBucket myAccBucket = theTaxBucket.adjustGrossAndNett(theAccount, myTaxCredit);
+                theVirtualTax.adjustGrossAndNett(myNegTaxCredit);
                 if (myAccBucket != null) {
                     theState.registerBucketInterest(myAccBucket);
                 }
@@ -336,11 +339,11 @@ public class MoneyWiseXAnalysisTax {
 
                 /* Expense to category and Income from taxCredit */
                 theCategoryBucket.addExpense(myTaxCredit);
-                theTaxCreditCat.addIncome(myTaxCredit);
+                theTaxReliefCat.addIncome(myTaxCredit);
 
                 /* Register income and expense for tax */
-                final MoneyWiseXAnalysisTaxBasisAccountBucket myAccBucket = theTaxBucket.adjustGrossAndTax(theAccount, myTaxCredit);
-                theExpenseTax.adjustGrossAndNett(myTaxCredit);
+                final MoneyWiseXAnalysisTaxBasisAccountBucket myAccBucket = theTaxBucket.adjustGrossAndNett(theAccount, myTaxCredit);
+                theVirtualTax.adjustGrossAndNett(myNegTaxCredit);
                 if (myAccBucket != null) {
                     theState.registerBucketInterest(myAccBucket);
                 }
@@ -348,8 +351,9 @@ public class MoneyWiseXAnalysisTax {
 
             /* Register the various interests */
             theState.registerBucketInterest(theTaxManPayee);
-            theState.registerBucketInterest(theTaxCreditCat);
+            theState.registerBucketInterest(theTaxReliefCat);
             theState.registerBucketInterest(theExpenseTax);
+            theState.registerBucketInterest(theVirtualTax);
         }
     }
 

@@ -399,7 +399,8 @@ public class MoneyWiseDataTestAccounts {
                             .autoExpense(MoneyWiseDataTestCategories.idTC_ExpCash, idPY_CashExpense).build();
                     break;
                 case idCS_CashWallet:
-                    theCashBuilder.name(myCash).category(MoneyWiseDataTestCategories.idCC_Wallet).build();
+                    theCashBuilder.name(myCash).category(MoneyWiseDataTestCategories.idCC_Wallet)
+                            .openingBalance("10").build();
                     break;
                 case idCS_EurosWallet:
                     theCashBuilder.name(myCash).category(MoneyWiseDataTestCategories.idCC_Wallet).currency(MoneyWiseCurrencyClass.EUR).build();
@@ -433,7 +434,8 @@ public class MoneyWiseDataTestAccounts {
             switch (myLoan) {
                 case idLN_Barclaycard:
                     createPayees(idPY_Barclays);
-                    theLoanBuilder.name(myLoan).parent(idPY_Barclays).category(MoneyWiseDataTestCategories.idLC_CreditCards).build();
+                    theLoanBuilder.name(myLoan).parent(idPY_Barclays).category(MoneyWiseDataTestCategories.idLC_CreditCards)
+                            .openingBalance("-100.00").build();
                     break;
                 case idLN_BarclaysMortgage:
                     createPayees(idPY_Barclays);

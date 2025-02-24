@@ -315,4 +315,21 @@ public abstract class MoneyWiseXAnalysisValues<T extends MoneyWiseXAnalysisValue
         /* Obtain the attribute */
         return getValue(pAttr, pClass);
     }
+
+    @Override
+    public String toString() {
+        final StringBuilder myBuilder = new StringBuilder();
+        for (Map.Entry<E, Object> myEntry : theMap.entrySet()) {
+            final Object myValue = myEntry.getValue();
+            if (!(myValue instanceof OceanusDecimal) || ((OceanusDecimal) myValue).isNonZero()) {
+                if (myBuilder.length() > 0) {
+                    myBuilder.append(", ");
+                }
+                myBuilder.append(myEntry.getKey());
+                myBuilder.append("=");
+                myBuilder.append(myEntry.getValue());
+            }
+        }
+        return myBuilder.toString();
+    }
 }

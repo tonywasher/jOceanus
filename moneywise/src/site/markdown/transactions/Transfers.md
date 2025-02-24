@@ -7,17 +7,20 @@ Suppose we start with the following deposit accounts
 <details open="true" name="accounts">
 <summary>Deposit Accounts</summary>
 <table class="defTable">
-<tr><th class="defHdr">Name</th><th class="defHdr">Category</th><th class="defHdr">Currency</th><th class="defHdr">Starting Balance</th></tr>
-<tr><td>BarclaysCurrent</td><td>Checking</td><td>GBP</td><td>£10,000.00</td></tr>
-<tr><td>NatWideFlexDirect</td><td>Checking</td><td>GBP</td><td>£10,000.00</td></tr>
-<tr><td>StarlingEuros</td><td>Checking</td><td>EUR</td><td>€5,000.00</td></tr>
-<tr><td>StarlingDollars</td><td>Checking</td><td>USD</td><td>$5,000.00</td></tr>
+<tr><th class="defHdr">Name</th><th class="defHdr">Parent</th><th class="defHdr">Category</th><th class="defHdr">Currency</th><th class="defHdr">Starting Balance</th></tr>
+<tr><td>BarclaysCurrent</td><td>Barclays</td><td>Checking</td><td>GBP</td><td>£10,000.00</td></tr>
+<tr><td>NatWideFlexDirect</td><td>NationWide</td><td>Checking</td><td>GBP</td><td>£10,000.00</td></tr>
+<tr><td>StarlingEuros</td><td>Starling</td><td>Checking</td><td>EUR</td><td>€5,000.00</td></tr>
+<tr><td>StarlingDollars</td><td>Starling</td><td>Checking</td><td>USD</td><td>$5,000.00</td></tr>
 </table>
 </details>
 <details name="accounts">
 <summary>Payee Accounts</summary>
 <table class="defTable">
 <tr><th class="defHdr">Name</th><th class="defHdr">Type</th></tr>
+<tr><td>Barclays</td><td>Institution</td></tr>
+<tr><td>NationWide</td><td>Institution</td></tr>
+<tr><td>Starling</td><td>Institution</td></tr>
 <tr><td>Market</td><td>Market</td></tr>
 </table>
 </details>
@@ -26,7 +29,9 @@ Suppose we start with the following deposit accounts
 <table class="defTable">
 <tr><th class="defHdr">Name</th><th class="defHdr">Type</th></tr>
 <tr><td>Market:CurrencyFluctuation</td><td>CurrencyFluctuation</td></tr>
-</table><br>
+</table>
+</details>
+<br>
 
 Then we have the following transactions
 
