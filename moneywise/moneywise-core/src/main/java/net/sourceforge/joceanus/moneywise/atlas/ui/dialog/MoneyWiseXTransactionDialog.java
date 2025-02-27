@@ -715,6 +715,7 @@ public class MoneyWiseXTransactionDialog
         /* Record active item */
         final MoneyWiseTransAsset myAccount = pTrans.getAccount();
         final MoneyWiseTransCategory myCategory = pTrans.getCategory();
+        final MoneyWiseTransValidator myValidator = pTrans.getValidator();
         final MoneyWiseTransAsset myCurr = pIsAccount
                 ? myAccount
                 : pTrans.getPartner();
@@ -731,8 +732,8 @@ public class MoneyWiseXTransactionDialog
 
             /* Check whether the asset is allowable for the owner */
             bIgnore |= !(pIsAccount
-                    ? MoneyWiseTransValidator.isValidAccount(myAsset)
-                    : MoneyWiseTransValidator.isValidPartner(myAccount, myCategory, myAsset));
+                    ? myValidator.isValidAccount(myAsset)
+                    : myValidator.isValidPartner(myAccount, myCategory, myAsset));
             if (bIgnore) {
                 continue;
             }
@@ -771,6 +772,7 @@ public class MoneyWiseXTransactionDialog
         /* Record active item */
         final MoneyWiseTransAsset myAccount = pTrans.getAccount();
         final MoneyWiseTransCategory myCategory = pTrans.getCategory();
+        final MoneyWiseTransValidator myValidator = pTrans.getValidator();
         final MoneyWiseTransAsset myCurr = pIsAccount
                 ? myAccount
                 : pTrans.getPartner();
@@ -807,8 +809,8 @@ public class MoneyWiseXTransactionDialog
 
                         /* Check whether the asset is allowable for the owner */
                         final boolean bIgnore = !(pIsAccount
-                                ? MoneyWiseTransValidator.isValidAccount(myHolding)
-                                : MoneyWiseTransValidator.isValidPartner(myAccount, myCategory, myHolding));
+                                ? myValidator.isValidAccount(myHolding)
+                                : myValidator.isValidPartner(myAccount, myCategory, myHolding));
                         if (bIgnore) {
                             continue;
                         }
@@ -819,7 +821,7 @@ public class MoneyWiseXTransactionDialog
                             myMenu = pMenu.addSubMenu(MoneyWiseAssetType.SECURITYHOLDING.toString());
                         }
                         if (myCoreMenu == null) {
-                            /* Create a new JMenu and add it to the popUp */
+                            /* Create a new Menu and add it to the popUp */
                             myCoreMenu = myMenu.getSubMenu().addSubMenu(myPortfolio.getName());
                         }
 
@@ -844,8 +846,8 @@ public class MoneyWiseXTransactionDialog
 
                         /* Check whether the asset is allowable for the owner */
                         final boolean bIgnore = !(pIsAccount
-                                ? MoneyWiseTransValidator.isValidAccount(myHolding)
-                                : MoneyWiseTransValidator.isValidPartner(myAccount, myCategory, myHolding));
+                                ? myValidator.isValidAccount(myHolding)
+                                : myValidator.isValidPartner(myAccount, myCategory, myHolding));
                         if (bIgnore) {
                             continue;
                         }
@@ -898,6 +900,7 @@ public class MoneyWiseXTransactionDialog
 
         /* Access Categories */
         final MoneyWiseTransCategoryList myCategories = getDataList(MoneyWiseBasicDataType.TRANSCATEGORY, MoneyWiseTransCategoryList.class);
+        final MoneyWiseTransValidator myValidator = pEvent.getTransaction().getValidator();
 
         /* Loop through the available category values */
         final Iterator<MoneyWiseTransCategory> myIterator = myCategories.iterator();
@@ -909,7 +912,7 @@ public class MoneyWiseXTransactionDialog
             boolean bIgnore = myCategory.isDeleted() || myClass.canParentCategory();
 
             /* Check whether the category is allowable for the owner */
-            bIgnore |= !MoneyWiseTransValidator.isValidCategory(myAccount, myCategory);
+            bIgnore |= !myValidator.isValidCategory(myAccount, myCategory);
             if (bIgnore) {
                 continue;
             }

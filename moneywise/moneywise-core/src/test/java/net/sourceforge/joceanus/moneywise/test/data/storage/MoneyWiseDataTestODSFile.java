@@ -14,15 +14,14 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.moneywise.test.data;
+package net.sourceforge.joceanus.moneywise.test.data.storage;
 
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataSet;
-import net.sourceforge.joceanus.moneywise.tax.uk.MoneyWiseUKTaxYearCache;
-import net.sourceforge.joceanus.moneywise.test.data.MoneyWiseTestSecurity.NullPasswordDialog;
+import net.sourceforge.joceanus.moneywise.sheets.MoneyWiseSheet;
+import net.sourceforge.joceanus.moneywise.views.MoneyWiseView;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.prometheus.data.PrometheusDataValuesFormatter;
 import net.sourceforge.joceanus.prometheus.security.PrometheusSecurityPasswordManager;
-import net.sourceforge.joceanus.prometheus.toolkit.PrometheusToolkit;
+import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetWorkBookType;
 import net.sourceforge.joceanus.tethys.api.thread.TethysUIThreadManager;
 import org.junit.jupiter.api.Assertions;
 
@@ -32,7 +31,7 @@ import java.io.ByteArrayOutputStream;
 /**
  * Test XML File.
  */
-public class MoneyWiseTestXMLFile {
+public class MoneyWiseDataTestODSFile {
     /**
      * The Thread manager.
      */
@@ -42,44 +41,44 @@ public class MoneyWiseTestXMLFile {
      * Constructor.
      * @param pManager the thread manager
      */
-    public MoneyWiseTestXMLFile(final TethysUIThreadManager pManager) {
+    public MoneyWiseDataTestODSFile(final TethysUIThreadManager pManager) {
         theManager = pManager;
     }
 
     /**
      * Perform test.
      * @param pData the data to test with.
-     * @param pToolkit the toolkit
+     * @param pView the view
      * @throws OceanusException on error
      */
     public void performTest(final MoneyWiseDataSet pData,
-                            final PrometheusToolkit pToolkit) throws OceanusException {
+                            final MoneyWiseView pView) throws OceanusException {
         /* Access the Password manager and disable prompting */
         final PrometheusSecurityPasswordManager myManager = pData.getPasswordMgr();
-        myManager.setDialogController(new NullPasswordDialog());
+        myManager.setDialogController(new MoneyWiseNullPasswordDialog());
 
-        /* Create a new formatter */
-        final PrometheusDataValuesFormatter myFormatter = new PrometheusDataValuesFormatter(theManager, myManager);
+        /* Create a new sheet */
+        final MoneyWiseSheet mySheet = new MoneyWiseSheet(pView.getGuiFactory());
 
         /* Create the output xmlZipFile */
         final ByteArrayOutputStream myZipStream = new ByteArrayOutputStream();
-        theManager.setNewProfile("WriteZip");
-        myFormatter.createBackup(pData, myZipStream);
+        theManager.setNewProfile("WriteODS");
+        mySheet.createBackup(theManager, pData, myZipStream, PrometheusSheetWorkBookType.OASIS);
         final byte[] myBytes = myZipStream.toByteArray();
 
         /* Create the new dataSet */
-        final MoneyWiseDataSet myNewData = new MoneyWiseDataSet(pToolkit, new MoneyWiseUKTaxYearCache());
+        final MoneyWiseDataSet myNewData = pView.getNewData();
+        if (pData.newValidityChecks()) {
+            myNewData.doNewValidityChecks();
+        }
 
         /* Access the file */
         final ByteArrayInputStream myInputStream = new ByteArrayInputStream(myBytes);
-        theManager.setNewProfile("LoadZip");
-        myFormatter.loadZipFile(myNewData, myInputStream, "Test");
-
-        /* Initialise the security, from the original data */
-        myNewData.initialiseSecurity(theManager, pData);
+        theManager.setNewProfile("LoadODS");
+        mySheet.loadBackup(theManager, myManager, myNewData, myInputStream, "Test");
 
         /* Create a difference set between the two data copies */
         final MoneyWiseDataSet myDiff = myNewData.getDifferenceSet(theManager, pData);
-        Assertions.assertTrue(myDiff.isEmpty(), "Failed to save/load XML File");
+        Assertions.assertTrue(myDiff.isEmpty(), "Failed to save/load ODS File");
     }
 }

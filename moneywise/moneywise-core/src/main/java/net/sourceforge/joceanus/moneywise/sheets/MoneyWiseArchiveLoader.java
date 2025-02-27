@@ -16,8 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.moneywise.sheets;
 
-import net.sourceforge.joceanus.moneywise.exc.MoneyWiseDataException;
-import net.sourceforge.joceanus.moneywise.exc.MoneyWiseIOException;
+import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseAssetBase;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseAssetDirection;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseAssetType;
@@ -50,6 +49,8 @@ import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTaxBasis;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransCategoryClass;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransCategoryType;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransInfoType;
+import net.sourceforge.joceanus.moneywise.exc.MoneyWiseDataException;
+import net.sourceforge.joceanus.moneywise.exc.MoneyWiseIOException;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.date.OceanusDate;
 import net.sourceforge.joceanus.oceanus.date.OceanusFiscalYear;
@@ -111,11 +112,6 @@ public class MoneyWiseArchiveLoader {
     private static final String AREA_YEARRANGE = "AssetsYears";
 
     /**
-     * The gui Factory.
-     */
-    private final TethysUIFactory<?> theGuiFactory;
-
-    /**
      * The list of years.
      */
     private final List<MoneyWiseArchiveYear> theYears;
@@ -146,13 +142,15 @@ public class MoneyWiseArchiveLoader {
     private boolean hitEventLimit;
 
     /**
+     * Are we filtering?.
+     */
+    private boolean enableFiltering;
+
+    /**
      * Constructor.
      * @param pFactory the Gui factory
      */
     public MoneyWiseArchiveLoader(final TethysUIFactory<?> pFactory) {
-        /* Store parameters */
-        theGuiFactory = pFactory;
-
         /* Create the Years Array */
         theYears = new ArrayList<>();
 
@@ -209,6 +207,13 @@ public class MoneyWiseArchiveLoader {
      */
     protected boolean checkDate(final OceanusDate pDate) {
         return theLastEvent.compareTo(pDate) >= 0;
+    }
+
+    /**
+     * Enable filtering.
+     */
+    public void enableFiltering() {
+        enableFiltering = true;
     }
 
     /**
@@ -300,7 +305,7 @@ public class MoneyWiseArchiveLoader {
             myTask.startTask("ParseWorkBook");
 
             /* Create the Data */
-            theParentCache = new MoneyWiseParentCache(pData);
+            theParentCache = new MoneyWiseParentCache(this, pData);
 
             /* Access the workbook from the stream */
             final PrometheusSheetWorkBook myWorkbook = PrometheusSheetProvider.loadFromStream(pType, pStream);
@@ -374,6 +379,36 @@ public class MoneyWiseArchiveLoader {
         } catch (IOException e) {
             /* Report the error */
             throw new MoneyWiseIOException("Failed to load Workbook", e);
+        }
+    }
+
+    /**
+     * should we filter this transaction?
+     * @param pTrans the transaction
+     * @return true/false
+     */
+    boolean filterTransaction(final PrometheusDataValues pTrans) {
+        return enableFiltering
+                && (filterAsset(pTrans, MoneyWiseBasicResource.TRANSACTION_ACCOUNT)
+                    || filterAsset(pTrans, MoneyWiseBasicResource.TRANSACTION_PARTNER));
+    }
+
+    /**
+     * Should we filter this asset?
+     * @param pAsset the asset
+     * @return true/false
+     */
+    private boolean filterAsset(final PrometheusDataValues pTrans,
+                                final MetisDataFieldId pAsset) {
+        final MoneyWiseTransAsset myAsset = pTrans.getValue(pAsset, MoneyWiseTransAsset.class);
+        switch (myAsset.getAssetType()) {
+            case DEPOSIT:
+            case CASH:
+            case PAYEE:
+            case LOAN:
+                return false;
+            default:
+                return true;
         }
     }
 
@@ -627,6 +662,11 @@ public class MoneyWiseArchiveLoader {
      */
     public class MoneyWiseParentCache {
         /**
+         * Loader.
+         */
+        private final MoneyWiseArchiveLoader theLoader;
+
+        /**
          * DataSet.
          */
         private final MoneyWiseDataSet theData;
@@ -698,10 +738,13 @@ public class MoneyWiseArchiveLoader {
 
         /**
          * Constructor.
+         * @param pLoader the loader
          * @param pData the dataSet
          */
-        protected MoneyWiseParentCache(final MoneyWiseDataSet pData) {
+        protected MoneyWiseParentCache(final MoneyWiseArchiveLoader pLoader,
+                                       final MoneyWiseDataSet pData) {
             /* Store lists */
+            theLoader = pLoader;
             theData = pData;
             theList = theData.getTransactions();
         }
@@ -725,6 +768,10 @@ public class MoneyWiseArchiveLoader {
             myValues.addValue(MoneyWiseBasicResource.TRANSACTION_RECONCILED, pReconciled);
             if (pAmount != null) {
                 myValues.addValue(MoneyWiseBasicResource.TRANSACTION_AMOUNT, pAmount);
+            }
+
+            if (theLoader.filterTransaction(myValues)) {
+                return null;
             }
 
             /* Add the value into the list */
@@ -886,7 +933,12 @@ public class MoneyWiseArchiveLoader {
                         break;
                     case LOANINTERESTEARNED:
                         /* Use credit as account */
-                        isDebitReversed = true;
+                        isDebitReversed = !theData.newValidityChecks();
+                        break;
+                    case LOANINTERESTCHARGED:
+                    case WRITEOFF:
+                        /* Use credit as account */
+                        isDebitReversed = theData.newValidityChecks();
                         break;
                     default:
                         /* Use debit as account */

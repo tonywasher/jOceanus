@@ -151,7 +151,6 @@ abstract class GordianAsconBaseDigest
         }
         /* squeeze final output block */
         setBytes(x0, output, outOff, len);
-        p(ASCON_PB_ROUNDS);
     }
 
     protected int hash(byte[] output, int outOff, int outLen)

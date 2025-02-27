@@ -333,6 +333,7 @@ public class MoneyWiseCategoryPanel
 
         /* Note that we are refreshing */
         isRefreshing = true;
+        theEditSet.setDataSet(theView.getData());
 
         /* Refresh the tables */
         theDepositTable.refreshData();

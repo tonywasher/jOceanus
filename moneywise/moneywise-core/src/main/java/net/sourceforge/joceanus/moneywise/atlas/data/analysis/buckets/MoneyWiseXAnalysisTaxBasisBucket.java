@@ -220,7 +220,7 @@ public class MoneyWiseXAnalysisTaxBasisBucket
 
     @Override
     public String toString() {
-        return getName();
+        return getName() + " " + theValues;
     }
 
     @Override

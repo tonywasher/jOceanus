@@ -16,9 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.moneywise.sheets;
 
-import java.util.ListIterator;
-
-import net.sourceforge.joceanus.moneywise.exc.MoneyWiseIOException;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicResource;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataSet;
@@ -26,19 +23,22 @@ import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransInfo.MoneyWis
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransaction;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransaction.MoneyWiseTransactionList;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransInfoClass;
+import net.sourceforge.joceanus.moneywise.exc.MoneyWiseIOException;
 import net.sourceforge.joceanus.moneywise.sheets.MoneyWiseArchiveLoader.MoneyWiseArchiveYear;
 import net.sourceforge.joceanus.moneywise.sheets.MoneyWiseArchiveLoader.MoneyWiseParentCache;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataValues;
-import net.sourceforge.joceanus.prometheus.sheets.PrometheusSheetEncrypted;
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetCell;
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetRow;
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetView;
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetWorkBook;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.prometheus.sheets.PrometheusSheetEncrypted;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIConstant;
 import net.sourceforge.joceanus.tethys.api.thread.TethysUIThreadCancelException;
 import net.sourceforge.joceanus.tethys.api.thread.TethysUIThreadStatusReport;
+
+import java.util.ListIterator;
 
 /**
  * SheetDataItem extension for Transaction.
@@ -276,6 +276,9 @@ public class MoneyWiseSheetTransaction
 
         /* Build transaction */
         final MoneyWiseTransaction myTrans = myCache.buildTransaction(myAmount, myReconciled);
+        if (myTrans == null) {
+            return true;
+        }
 
         /* Process TransactionInfo */
         final int myLast = pRow.getMaxValuedCellIndex();

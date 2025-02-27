@@ -189,7 +189,7 @@ public final class MoneyWiseXAnalysisTransCategoryBucket
 
     @Override
     public String toString() {
-        return getName();
+        return getName() + " " + theValues;
     }
 
     @Override

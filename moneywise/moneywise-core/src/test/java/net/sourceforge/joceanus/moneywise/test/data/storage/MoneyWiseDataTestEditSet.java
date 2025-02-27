@@ -14,11 +14,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.moneywise.test.data;
-
-import java.util.Iterator;
-
-import org.junit.jupiter.api.Assertions;
+package net.sourceforge.joceanus.moneywise.test.data.storage;
 
 import net.sourceforge.joceanus.metis.field.MetisFieldItem.MetisFieldDef;
 import net.sourceforge.joceanus.metis.field.MetisFieldItem.MetisFieldSetDef;
@@ -42,9 +38,8 @@ import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTaxBasis;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransCategoryType;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransInfoType;
-import net.sourceforge.joceanus.moneywise.tax.uk.MoneyWiseUKTaxYearCache;
 import net.sourceforge.joceanus.moneywise.views.MoneyWiseView;
-import net.sourceforge.joceanus.prometheus.toolkit.PrometheusToolkit;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataList;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataList.PrometheusListStyle;
@@ -52,9 +47,11 @@ import net.sourceforge.joceanus.prometheus.data.PrometheusDataResource;
 import net.sourceforge.joceanus.prometheus.data.PrometheusListKey;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditEntry;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import org.junit.jupiter.api.Assertions;
 
-public class MoneyWiseTestEditSet {
+import java.util.Iterator;
+
+public class MoneyWiseDataTestEditSet {
     /**
      * The dataSet.
      */
@@ -64,57 +61,56 @@ public class MoneyWiseTestEditSet {
      * Constructor.
      * @param pDataSet the dataSet
      */
-    MoneyWiseTestEditSet(final MoneyWiseDataSet pDataSet) {
+    public MoneyWiseDataTestEditSet(final MoneyWiseDataSet pDataSet) {
         theDataSet = pDataSet;
     }
 
     /**
      * Check separate editSets.
+     * @param pView the view
      * @throws OceanusException on error
      */
-    void checkSeparateEditSets(final PrometheusToolkit pToolkit) throws OceanusException {
+    public void checkSeparateEditSets(final MoneyWiseView pView) throws OceanusException {
         /* Create view */
-        pToolkit.getToolkit().getNewProfile("createView");
-        final MoneyWiseView myView = new MoneyWiseView(pToolkit, new MoneyWiseUKTaxYearCache());
-        pToolkit.getToolkit().getNewProfile("setData");
-        myView.setData(theDataSet);
-        myView.getNewProfile("separateEditSet");
+        pView.getNewProfile("separateEditSet");
 
         /* Build and validate statics */
-        PrometheusEditSet myEditSet = new PrometheusEditSet(myView);
+        PrometheusEditSet myEditSet = new PrometheusEditSet(pView);
+        myEditSet.setDataSet(theDataSet);
         populateStaticsEditSet(myEditSet);
         validateEditSet(myEditSet);
 
         /* Build and validate categories */
-        myEditSet = new PrometheusEditSet(myView);
+        myEditSet = new PrometheusEditSet(pView);
+        myEditSet.setDataSet(theDataSet);
         populateCategoryEditSet(myEditSet);
         validateEditSet(myEditSet);
 
         /* Build and validate accounts */
-        myEditSet = new PrometheusEditSet(myView);
+        myEditSet = new PrometheusEditSet(pView);
+        myEditSet.setDataSet(theDataSet);
         populateAccountEditSet(myEditSet);
         validateEditSet(myEditSet);
 
         /* Build and validate transactions */
-        myEditSet = new PrometheusEditSet(myView);
+        myEditSet = new PrometheusEditSet(pView);
+        myEditSet.setDataSet(theDataSet);
         populateTransEditSet(myEditSet);
         validateEditSet(myEditSet);
     }
 
     /**
-     * Check separate editSets.
+     * Check combined editSets.
+     * @param pView the view
      * @throws OceanusException on error
      */
-    void checkCombinedEditSet(final PrometheusToolkit pToolkit) throws OceanusException {
+    public void checkCombinedEditSet(final MoneyWiseView pView) throws OceanusException {
         /* Create view */
-        pToolkit.getToolkit().getNewProfile("createView");
-        final MoneyWiseView myView = new MoneyWiseView(pToolkit, new MoneyWiseUKTaxYearCache());
-        pToolkit.getToolkit().getNewProfile("setData");
-        myView.setData(theDataSet);
-        myView.getNewProfile("combinedEditSet");
+        pView.getNewProfile("combinedEditSet");
 
         /* Build and validate editSet */
-        PrometheusEditSet myEditSet = new PrometheusEditSet(myView);
+        PrometheusEditSet myEditSet = new PrometheusEditSet(pView);
+        myEditSet.setDataSet(theDataSet);
         populateStaticsEditSet(myEditSet);
         populateCategoryEditSet(myEditSet);
         populateAccountEditSet(myEditSet);

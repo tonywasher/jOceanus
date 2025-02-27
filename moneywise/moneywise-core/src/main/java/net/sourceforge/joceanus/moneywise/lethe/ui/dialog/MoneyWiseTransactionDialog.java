@@ -743,6 +743,7 @@ public class MoneyWiseTransactionDialog
         /* Record active item */
         final MoneyWiseTransAsset myAccount = pTrans.getAccount();
         final MoneyWiseTransCategory myCategory = pTrans.getCategory();
+        final MoneyWiseTransValidator myValidator = pTrans.getValidator();
         final MoneyWiseTransAsset myCurr = pIsAccount
                 ? myAccount
                 : pTrans.getPartner();
@@ -759,8 +760,8 @@ public class MoneyWiseTransactionDialog
 
             /* Check whether the asset is allowable for the owner */
             bIgnore |= !(pIsAccount
-                    ? MoneyWiseTransValidator.isValidAccount(myAsset)
-                    : MoneyWiseTransValidator.isValidPartner(myAccount, myCategory, myAsset));
+                    ? myValidator.isValidAccount(myAsset)
+                    : myValidator.isValidPartner(myAccount, myCategory, myAsset));
             if (bIgnore) {
                 continue;
             }
@@ -799,6 +800,7 @@ public class MoneyWiseTransactionDialog
         /* Record active item */
         final MoneyWiseTransAsset myAccount = pTrans.getAccount();
         final MoneyWiseTransCategory myCategory = pTrans.getCategory();
+        final MoneyWiseTransValidator myValidator = pTrans.getValidator();
         final MoneyWiseTransAsset myCurr = pIsAccount
                 ? myAccount
                 : pTrans.getPartner();
@@ -835,8 +837,8 @@ public class MoneyWiseTransactionDialog
 
                         /* Check whether the asset is allowable for the owner */
                         final boolean bIgnore = !(pIsAccount
-                                ? MoneyWiseTransValidator.isValidAccount(myHolding)
-                                : MoneyWiseTransValidator.isValidPartner(myAccount, myCategory, myHolding));
+                                ? myValidator.isValidAccount(myHolding)
+                                : myValidator.isValidPartner(myAccount, myCategory, myHolding));
                         if (bIgnore) {
                             continue;
                         }
@@ -872,8 +874,8 @@ public class MoneyWiseTransactionDialog
 
                         /* Check whether the asset is allowable for the owner */
                         final boolean bIgnore = !(pIsAccount
-                                ? MoneyWiseTransValidator.isValidAccount(myHolding)
-                                : MoneyWiseTransValidator.isValidPartner(myAccount, myCategory, myHolding));
+                                ? myValidator.isValidAccount(myHolding)
+                                : myValidator.isValidPartner(myAccount, myCategory, myHolding));
                         if (bIgnore) {
                             continue;
                         }
@@ -926,6 +928,7 @@ public class MoneyWiseTransactionDialog
 
         /* Access Categories */
         final MoneyWiseTransCategoryList myCategories = getDataList(MoneyWiseBasicDataType.TRANSCATEGORY, MoneyWiseTransCategoryList.class);
+        final MoneyWiseTransValidator myValidator = pTrans.getValidator();
 
         /* Loop through the available category values */
         final Iterator<MoneyWiseTransCategory> myIterator = myCategories.iterator();
@@ -937,7 +940,7 @@ public class MoneyWiseTransactionDialog
             boolean bIgnore = myCategory.isDeleted() || myClass.canParentCategory();
 
             /* Check whether the category is allowable for the owner */
-            bIgnore |= !MoneyWiseTransValidator.isValidCategory(myAccount, myCategory);
+            bIgnore |= !myValidator.isValidCategory(myAccount, myCategory);
             if (bIgnore) {
                 continue;
             }

@@ -72,7 +72,7 @@ public abstract class MoneyWiseDataTestCase {
      * Obtain testCase name.
      * @return the name
      */
-    abstract String getName();
+    public abstract String getName();
 
     /**
      * Obtain transaction builder.
@@ -86,7 +86,7 @@ public abstract class MoneyWiseDataTestCase {
      * Set analysis.
      * @param pAnalysis the analysis
      */
-    void setAnalysis(final MoneyWiseXAnalysis pAnalysis) {
+    public void setAnalysis(final MoneyWiseXAnalysis pAnalysis) {
         theAnalysis = pAnalysis;
     }
 
@@ -94,40 +94,40 @@ public abstract class MoneyWiseDataTestCase {
      * Setup accounts.
      * @throws OceanusException on error
      */
-    void setUpAccounts() throws OceanusException {
+    public void setUpAccounts() throws OceanusException {
     }
 
     /**
      * Define Prices.
      * @throws OceanusException on error
      */
-    void definePrices() throws OceanusException {
+    public void definePrices() throws OceanusException {
     }
 
     /**
      * Define Rates.
      * @throws OceanusException on error
      */
-    void defineRates() throws OceanusException {
+    public void defineRates() throws OceanusException {
     }
 
     /**
      * Define transactions.
      * @throws OceanusException on error
      */
-    void defineTransactions() throws OceanusException {
+    public void defineTransactions() throws OceanusException {
     }
 
     /**
      * Check errors.
      */
-    void checkErrors() {
+    public void checkErrors() {
     }
 
     /**
      * Check analysis.
      */
-    void checkAnalysis() {
+    public void checkAnalysis() {
     }
 
     /**
@@ -275,8 +275,8 @@ public abstract class MoneyWiseDataTestCase {
         /* Obtain the value */
         final OceanusMoney myAmount = new OceanusMoney(pValue);
         final MoneyWiseXAnalysisTaxBasisBucket myBucket = theAnalysis.getTaxBasis().getBucket(pTaxBasis);
-        Assertions.assertEquals(myAmount, myBucket.getValues().getMoneyValue(MoneyWiseXAnalysisTaxBasisAttr.NETT),
-                "Bad value for " + pTaxBasis);
+        Assertions.assertEquals(myAmount, myBucket.getValues().getMoneyValue(MoneyWiseXAnalysisTaxBasisAttr.GROSS),
+                "Bad taxValue for " + pTaxBasis);
     }
 
     /**

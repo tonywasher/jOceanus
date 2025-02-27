@@ -370,6 +370,7 @@ public class MoneyWiseAccountPanel
 
         /* Note that we are refreshing */
         isRefreshing = true;
+        theEditSet.setDataSet(theView.getData());
 
         /* Must be done in dataType order to ensure that links are resolved correctly */
         thePayeeTable.refreshData();

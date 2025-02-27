@@ -72,8 +72,10 @@ public class MoneyWiseDataTestAccounts {
     final static String idDP_BarclaysCurrent = "BarclaysCurrent";
     final static String idDP_NatWideFlexDirect = "NatWideFlexDirect";
     final static String idDP_NatWideLoyalty = "NatWideLoyalty";
+    final static String idDP_NatWideISA = "NatWideISA";
     final static String idDP_StarlingSterling = "StarlingSterling";
     final static String idDP_StarlingEuro = "StarlingEuro";
+    final static String idDP_StarlingEuroISA = "StarlingEuroISA";
     final static String idDP_StarlingDollar = "StarlingDollar";
     final static String idDP_FundingCircleLoans = "FundingCircleLoans";
 
@@ -182,7 +184,7 @@ public class MoneyWiseDataTestAccounts {
      * @param pDataSet the dataSet
      * @throws OceanusException on error
      */
-    MoneyWiseDataTestAccounts(final MoneyWiseDataSet pDataSet) throws OceanusException {
+    public MoneyWiseDataTestAccounts(final MoneyWiseDataSet pDataSet) throws OceanusException {
         /* Store the dataSet */
         theDataSet = pDataSet;
 
@@ -326,6 +328,11 @@ public class MoneyWiseDataTestAccounts {
                     theDepositBuilder.name(myDeposit).parent(idPY_Nationwide)
                             .category(MoneyWiseDataTestCategories.idDC_Savings).openingBalance("10000").build();
                     break;
+                case idDP_NatWideISA:
+                    createPayees(idPY_Nationwide);
+                    theDepositBuilder.name(myDeposit).parent(idPY_Nationwide)
+                            .category(MoneyWiseDataTestCategories.idDC_TaxFreeSavings).openingBalance("10000").build();
+                    break;
                 case idDP_StarlingSterling:
                     createPayees(idPY_Starling);
                     theDepositBuilder.name(myDeposit).parent(idPY_Starling)
@@ -334,7 +341,13 @@ public class MoneyWiseDataTestAccounts {
                 case idDP_StarlingEuro:
                     createPayees(idPY_Starling);
                     theDepositBuilder.name(myDeposit).parent(idPY_Starling)
-                            .category(MoneyWiseDataTestCategories.idDC_Savings)
+                            .category(MoneyWiseDataTestCategories.idDC_Current)
+                            .currency(MoneyWiseCurrencyClass.EUR).openingBalance("5000").build();
+                    break;
+                case idDP_StarlingEuroISA:
+                    createPayees(idPY_Starling);
+                    theDepositBuilder.name(myDeposit).parent(idPY_Starling)
+                            .category(MoneyWiseDataTestCategories.idDC_TaxFreeSavings)
                             .currency(MoneyWiseCurrencyClass.EUR).openingBalance("5000").build();
                     break;
                 case idDP_StarlingDollar:
@@ -386,10 +399,11 @@ public class MoneyWiseDataTestAccounts {
                             .autoExpense(MoneyWiseDataTestCategories.idTC_ExpCash, idPY_CashExpense).build();
                     break;
                 case idCS_CashWallet:
-                    theCashBuilder.name(myCash).category(MoneyWiseDataTestCategories.idCC_Cash).build();
+                    theCashBuilder.name(myCash).category(MoneyWiseDataTestCategories.idCC_Wallet)
+                            .openingBalance("10").build();
                     break;
                 case idCS_EurosWallet:
-                    theCashBuilder.name(myCash).category(MoneyWiseDataTestCategories.idCC_Cash).currency(MoneyWiseCurrencyClass.EUR).build();
+                    theCashBuilder.name(myCash).category(MoneyWiseDataTestCategories.idCC_Wallet).currency(MoneyWiseCurrencyClass.EUR).build();
                     break;
                 default:
                     throw new MoneyWiseDataException("Unexpected Cash:- " + myCash);
@@ -420,7 +434,8 @@ public class MoneyWiseDataTestAccounts {
             switch (myLoan) {
                 case idLN_Barclaycard:
                     createPayees(idPY_Barclays);
-                    theLoanBuilder.name(myLoan).parent(idPY_Barclays).category(MoneyWiseDataTestCategories.idLC_CreditCards).build();
+                    theLoanBuilder.name(myLoan).parent(idPY_Barclays).category(MoneyWiseDataTestCategories.idLC_CreditCards)
+                            .openingBalance("-100.00").build();
                     break;
                 case idLN_BarclaysMortgage:
                     createPayees(idPY_Barclays);
@@ -569,7 +584,7 @@ public class MoneyWiseDataTestAccounts {
      * Reset data.
      * @throws OceanusException on error
      */
-    void resetData() throws OceanusException {
+    public void resetData() throws OceanusException {
         /* Clear all exchangeRate details */
         theDataSet.getExchangeRates().clear();
         theDataSet.getExchangeRates().updateMaps();

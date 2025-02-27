@@ -16,6 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.moneywise.atlas.data.analysis.analyse;
 
+import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisInterfaces.MoneyWiseXAnalysisCursor;
 import net.sourceforge.joceanus.moneywise.exc.MoneyWiseLogicException;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.base.MoneyWiseXAnalysisEvent;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysis;
@@ -216,19 +217,22 @@ public class MoneyWiseXAnalysisTransAnalyser {
         /* Access debit and credit accounts and amounts */
         final MoneyWiseAssetBase myDebit = (MoneyWiseAssetBase) theTransaction.getDebitAccount();
         final MoneyWiseAssetBase myCredit = (MoneyWiseAssetBase) theTransaction.getCreditAccount();
-        OceanusMoney myDebitAmount = theTransaction.getDebitAmount();
-        OceanusMoney myCreditAmount = theTransaction.getCreditAmount();
 
         /* If the debit account is an asset */
+        OceanusMoney myDebitAmount = theTransaction.getDebitAmount();
         if (isAsset(myDebit)) {
             /* Process the debit asset bucket */
             myDebitAmount = processDebitAsset(myDebit);
         }
 
         /* If the credit account is an asset */
+        OceanusMoney myCreditAmount = theTransaction.getCreditAmount();
         if (isAsset(myCredit)) {
             /* Process the credit asset bucket */
             myCreditAmount = processCreditAsset(myCredit);
+
+            /* Reload the debitAmount which changes if debit is payee and credit is foreign */
+            myDebitAmount = theTransaction.getDebitAmount();
         }
 
         /* Adjust for currencyFluctuation */
@@ -318,6 +322,18 @@ public class MoneyWiseXAnalysisTransAnalyser {
         final MoneyWiseTransCategory myAuto = pDebit.getAutoExpense();
         final MoneyWisePayee myDebit = pDebit.getAutoPayee();
 
+        /* If the debit is foreign and the credit is a payee */
+        if (pDebit.isForeign()) {
+            final MoneyWiseTransAsset myCredit = theTransaction.getCreditAccount();
+            if (myCredit instanceof MoneyWisePayee) {
+                /* Convert the debit amount to reporting currency */
+                final MoneyWiseXAnalysisCursor myCursor = theAnalysis.getCursor();
+                final OceanusRatio myRate = myCursor.getCurrentXchgRate(pDebit.getAssetCurrency());
+                final OceanusMoney myAmount = theTransaction.getDebitAmount();
+                theTransaction.setDebitAmount(myAmount.convertCurrency(theAnalysis.getCurrency().getCurrency(), myRate));
+            }
+        }
+
         /* Adjust expense for autoPayee bucket */
         final OceanusMoney myAmount = theTransaction.getDebitAmount();
         final MoneyWiseXAnalysisPayeeBucket myPayee = theAnalysis.getPayees().getBucket(myDebit);
@@ -342,6 +358,18 @@ public class MoneyWiseXAnalysisTransAnalyser {
         /* Access credit Payee/Category auto-expense */
         final MoneyWiseTransCategory myAuto = pCredit.getAutoExpense();
         final MoneyWisePayee myCredit = pCredit.getAutoPayee();
+
+        /* If the credit is foreign and the debit is a payee */
+        if (pCredit.isForeign()) {
+            final MoneyWiseTransAsset myDebit = theTransaction.getDebitAccount();
+            if (myDebit instanceof MoneyWisePayee) {
+                /* Convert the debit amount to reporting currency */
+                final MoneyWiseXAnalysisCursor myCursor = theAnalysis.getCursor();
+                final OceanusRatio myRate = myCursor.getCurrentXchgRate(pCredit.getAssetCurrency());
+                final OceanusMoney myAmount = theTransaction.getCreditAmount();
+                theTransaction.setCreditAmount(myAmount.convertCurrency(theAnalysis.getCurrency().getCurrency(), myRate));
+            }
+        }
 
         /* Adjust expense for autoPayee bucket */
         final OceanusMoney myAmount = theTransaction.getCreditAmount();
@@ -428,7 +456,9 @@ public class MoneyWiseXAnalysisTransAnalyser {
      */
     void adjustCategoryBucket() {
         /* Access the credit amount and category */
-        final OceanusMoney myAmount = theTransaction.getCreditAmount();
+        final OceanusMoney myAmount = theTransaction.isTo()
+                ? theTransaction.getCreditAmount()
+                : theTransaction.getDebitAmount();
         final MoneyWiseTransCategory myCategory = theTransaction.getCategory();
 
         /* Ignore transfers */

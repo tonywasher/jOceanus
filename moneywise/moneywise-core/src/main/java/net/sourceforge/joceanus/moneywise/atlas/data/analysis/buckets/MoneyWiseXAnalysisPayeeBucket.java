@@ -174,7 +174,7 @@ public final class MoneyWiseXAnalysisPayeeBucket
 
     @Override
     public String toString() {
-        return getName();
+        return getName() + " " + theValues;
     }
 
     /**
@@ -359,7 +359,7 @@ public final class MoneyWiseXAnalysisPayeeBucket
         if (pValue.isNonZero()) {
             final OceanusMoney myIncome = new OceanusMoney(pValue);
             myIncome.negate();
-            setValue(MoneyWiseXAnalysisPayeeAttr.INCOME, myIncome);
+            adjustCounter(MoneyWiseXAnalysisPayeeAttr.INCOME, myIncome);
         }
     }
 

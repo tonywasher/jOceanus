@@ -88,6 +88,11 @@ public class MoneyWiseXAnalysisTax {
     private final MoneyWiseXAnalysisTaxBasisBucket theExpenseTax;
 
     /**
+     * The taxPaid TaxBasis.
+     */
+    private final MoneyWiseXAnalysisTaxBasisBucket theTaxPaidTax;
+
+    /**
      * The taxFree TaxBasis.
      */
     private final MoneyWiseXAnalysisTaxBasisBucket theTaxFreeTax;
@@ -150,6 +155,7 @@ public class MoneyWiseXAnalysisTax {
 
         /* Store the various taxBuckets */
         final MoneyWiseXAnalysisTaxBasisBucketList myBases = theAnalysis.getTaxBasis();
+        theTaxPaidTax = myBases.getBucket(MoneyWiseTaxClass.TAXPAID);
         theTaxFreeTax = myBases.getBucket(MoneyWiseTaxClass.TAXFREE);
         theExpenseTax = myBases.getBucket(MoneyWiseTaxClass.EXPENSE);
         theVirtualTax = myBases.getBucket(MoneyWiseTaxClass.VIRTUAL);
@@ -213,9 +219,9 @@ public class MoneyWiseXAnalysisTax {
     private void adjustForAdditionalTax() throws OceanusException {
         /* adjust for various additions */
         if (theTransaction.getCategory().isCategoryClass(MoneyWiseTransCategoryClass.LOANINTERESTCHARGED)) {
-            adjustForTaxCredit();
-        } else {
             adjustForTaxRelief();
+        } else {
+            adjustForTaxCredit();
         }
         adjustForEmployerNI();
         adjustForEmployeeNI();
@@ -255,7 +261,7 @@ public class MoneyWiseXAnalysisTax {
 
                 /* Register income and expense for tax */
                 final MoneyWiseXAnalysisTaxBasisAccountBucket myAccBucket = theTaxBucket.adjustGrossAndTax(theAccount, myTaxCredit);
-                theExpenseTax.adjustGrossAndNett(myTaxCredit);
+                theTaxPaidTax.adjustGrossAndNett(myTaxCredit);
                 if (myAccBucket != null) {
                     theState.registerBucketInterest(myAccBucket);
                 }
@@ -272,7 +278,7 @@ public class MoneyWiseXAnalysisTax {
 
                 /* Register income and expense for tax */
                 final MoneyWiseXAnalysisTaxBasisAccountBucket myAccBucket = theTaxBucket.adjustGrossAndTax(theAccount, myTaxCredit);
-                theExpenseTax.adjustGrossAndNett(myTaxCredit);
+                theTaxPaidTax.adjustGrossAndNett(myTaxCredit);
                 if (myAccBucket != null) {
                     theState.registerBucketInterest(myAccBucket);
                 }
@@ -281,7 +287,7 @@ public class MoneyWiseXAnalysisTax {
             /* Register the various interests */
             theState.registerBucketInterest(theTaxManPayee);
             theState.registerBucketInterest(theTaxCreditCat);
-            theState.registerBucketInterest(theExpenseTax);
+            theState.registerBucketInterest(theTaxPaidTax);
         }
     }
 
@@ -300,9 +306,12 @@ public class MoneyWiseXAnalysisTax {
             checkForValidAdditional();
 
             /* If this is a refund, negate the taxCredit */
+            OceanusMoney myNegTaxCredit = new OceanusMoney(myTaxCredit);
             if (theTransaction.isRefund()) {
                 myTaxCredit = new OceanusMoney(myTaxCredit);
                 myTaxCredit.negate();
+            } else {
+                myNegTaxCredit.negate();
             }
 
             /* If this is an income */
@@ -313,11 +322,11 @@ public class MoneyWiseXAnalysisTax {
 
                 /* Income from category and Expense to taxCredit */
                 theCategoryBucket.addIncome(myTaxCredit);
-                theTaxCreditCat.addExpense(myTaxCredit);
+                theTaxReliefCat.addExpense(myTaxCredit);
 
                 /* Register income and expense for tax */
-                final MoneyWiseXAnalysisTaxBasisAccountBucket myAccBucket = theTaxBucket.adjustGrossAndTax(theAccount, myTaxCredit);
-                theExpenseTax.adjustGrossAndNett(myTaxCredit);
+                final MoneyWiseXAnalysisTaxBasisAccountBucket myAccBucket = theTaxBucket.adjustGrossAndNett(theAccount, myTaxCredit);
+                theVirtualTax.adjustGrossAndNett(myNegTaxCredit);
                 if (myAccBucket != null) {
                     theState.registerBucketInterest(myAccBucket);
                 }
@@ -330,11 +339,11 @@ public class MoneyWiseXAnalysisTax {
 
                 /* Expense to category and Income from taxCredit */
                 theCategoryBucket.addExpense(myTaxCredit);
-                theTaxCreditCat.addIncome(myTaxCredit);
+                theTaxReliefCat.addIncome(myTaxCredit);
 
                 /* Register income and expense for tax */
-                final MoneyWiseXAnalysisTaxBasisAccountBucket myAccBucket = theTaxBucket.adjustGrossAndTax(theAccount, myTaxCredit);
-                theExpenseTax.adjustGrossAndNett(myTaxCredit);
+                final MoneyWiseXAnalysisTaxBasisAccountBucket myAccBucket = theTaxBucket.adjustGrossAndNett(theAccount, myTaxCredit);
+                theVirtualTax.adjustGrossAndNett(myNegTaxCredit);
                 if (myAccBucket != null) {
                     theState.registerBucketInterest(myAccBucket);
                 }
@@ -342,8 +351,9 @@ public class MoneyWiseXAnalysisTax {
 
             /* Register the various interests */
             theState.registerBucketInterest(theTaxManPayee);
-            theState.registerBucketInterest(theTaxCreditCat);
+            theState.registerBucketInterest(theTaxReliefCat);
             theState.registerBucketInterest(theExpenseTax);
+            theState.registerBucketInterest(theVirtualTax);
         }
     }
 
@@ -517,6 +527,7 @@ public class MoneyWiseXAnalysisTax {
 
             /* Register the various interests */
             theState.registerBucketInterest(theDeemedBenefitCat);
+            theState.registerBucketInterest(theWithheldCat);
             theState.registerBucketInterest(theVirtualTax);
         }
     }

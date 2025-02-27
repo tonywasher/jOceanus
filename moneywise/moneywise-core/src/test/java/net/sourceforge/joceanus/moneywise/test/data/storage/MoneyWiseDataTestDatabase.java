@@ -14,24 +14,21 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.moneywise.test.data;
-
-import org.junit.jupiter.api.Assertions;
+package net.sourceforge.joceanus.moneywise.test.data.storage;
 
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataSet;
 import net.sourceforge.joceanus.moneywise.database.MoneyWiseDataStore;
-import net.sourceforge.joceanus.moneywise.tax.uk.MoneyWiseUKTaxYearCache;
-import net.sourceforge.joceanus.moneywise.test.data.MoneyWiseTestSecurity.NullThreadStatusReport;
-import net.sourceforge.joceanus.prometheus.toolkit.PrometheusToolkit;
-import net.sourceforge.joceanus.prometheus.database.PrometheusDBConfig;
+import net.sourceforge.joceanus.moneywise.views.MoneyWiseView;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.prometheus.database.PrometheusDBConfig;
 import net.sourceforge.joceanus.tethys.api.thread.TethysUIThreadManager;
 import net.sourceforge.joceanus.tethys.api.thread.TethysUIThreadStatusReport;
+import org.junit.jupiter.api.Assertions;
 
 /**
  * Test Database.
  */
-public class MoneyWiseTestDatabase {
+public class MoneyWiseDataTestDatabase {
     /**
      * The Thread manager.
      */
@@ -42,7 +39,7 @@ public class MoneyWiseTestDatabase {
      *
      * @param pManager the thread manager
      */
-    public MoneyWiseTestDatabase(final TethysUIThreadManager pManager) {
+    public MoneyWiseDataTestDatabase(final TethysUIThreadManager pManager) {
         theManager = pManager;
     }
 
@@ -50,11 +47,11 @@ public class MoneyWiseTestDatabase {
      * Perform test.
      *
      * @param pData    the data to test with.
-     * @param pToolkit the toolkit
+     * @param pView    the view
      * @throws OceanusException on error
      */
     public void performTest(final MoneyWiseDataSet pData,
-                            final PrometheusToolkit pToolkit) throws OceanusException {
+                            final MoneyWiseView pView) throws OceanusException {
         /* Create config */
         final PrometheusDBConfig myConfig = PrometheusDBConfig.h2();
 
@@ -62,7 +59,7 @@ public class MoneyWiseTestDatabase {
         final MoneyWiseDataStore myDatabase = new MoneyWiseDataStore("TestDB", myConfig);
 
         /* Create database */
-        final TethysUIThreadStatusReport myReport = new NullThreadStatusReport();
+        final TethysUIThreadStatusReport myReport = new MoneyWiseNullThreadStatusReport();
         myDatabase.createTables(myReport);
 
         /* Update the database */
@@ -71,7 +68,10 @@ public class MoneyWiseTestDatabase {
         myDatabase.updateDatabase(myReport, myUpdates);
 
         /* Create the new dataSet */
-        final MoneyWiseDataSet myNewData = new MoneyWiseDataSet(pToolkit, new MoneyWiseUKTaxYearCache());
+        final MoneyWiseDataSet myNewData = pView.getNewData();
+        if (pData.newValidityChecks()) {
+            myNewData.doNewValidityChecks();
+        }
 
         /* Load the database */
         theManager.setNewProfile("LoadDB");

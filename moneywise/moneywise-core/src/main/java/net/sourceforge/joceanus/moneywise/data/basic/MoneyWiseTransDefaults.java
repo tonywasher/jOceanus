@@ -16,9 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.moneywise.data.basic;
 
-import java.util.Currency;
-import java.util.Iterator;
-
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseAssetBase.MoneyWiseAssetBaseList;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseCash.MoneyWiseCashList;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDeposit.MoneyWiseDepositList;
@@ -29,13 +26,16 @@ import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurityHolding.Mo
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransCategory.MoneyWiseTransCategoryList;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransaction.MoneyWiseTransactionList;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransCategoryClass;
-import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.date.OceanusDate;
 import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
 import net.sourceforge.joceanus.oceanus.logger.OceanusLogManager;
 import net.sourceforge.joceanus.oceanus.logger.OceanusLogger;
+import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
+
+import java.util.Currency;
+import java.util.Iterator;
 
 /**
  * Transaction builder.
@@ -100,24 +100,25 @@ public class MoneyWiseTransDefaults {
         MoneyWiseTransAsset myPartner = pTrans.getPartner();
         MoneyWiseTransCategory myCategory = pTrans.getCategory();
         final MoneyWiseAssetDirection myDir = pTrans.getDirection();
+        final MoneyWiseTransValidator myValidator = pTrans.getValidator();
         final OceanusMoney myAmount = pTrans.getAmount();
         final Currency myCurrency = myAccount.getCurrency();
 
         /* Check that category is valid */
-        if (!MoneyWiseTransValidator.isValidCategory(myAccount, myCategory)) {
+        if (!myValidator.isValidCategory(myAccount, myCategory)) {
             /* Determine valid category */
             myCategory = getDefaultCategoryForAccount(myAccount);
             pTrans.setCategory(myCategory);
         }
 
         /* Check that direction is valid */
-        if (!MoneyWiseTransValidator.isValidDirection(myAccount, myCategory, myDir)) {
+        if (!myValidator.isValidDirection(myAccount, myCategory, myDir)) {
             /* Reverse direction */
             pTrans.switchDirection();
         }
 
         /* Check that partner is valid */
-        if (!MoneyWiseTransValidator.isValidPartner(myAccount, myCategory, myPartner)) {
+        if (!myValidator.isValidPartner(myAccount, myCategory, myPartner)) {
             /* Determine valid partner */
             myPartner = getDefaultPartnerForAccountAndCategory(myAccount, myCategory);
             pTrans.setPartner(myPartner);
@@ -269,7 +270,7 @@ public class MoneyWiseTransDefaults {
         myTrans.setAccount(myAccount);
 
         /* Check that we are valid after all this */
-        if (!MoneyWiseTransValidator.isValidPartner(myAccount, myCategory, pPayee)) {
+        if (!myTrans.getValidator().isValidPartner(myAccount, myCategory, pPayee)) {
             return null;
         }
 
@@ -506,6 +507,7 @@ public class MoneyWiseTransDefaults {
     private MoneyWiseTransCategory getDefaultCategoryForAccount(final MoneyWiseTransAsset pAccount) {
         /* Access Categories */
         final MoneyWiseTransCategoryList myCategories = theUpdateSet.getDataList(MoneyWiseBasicDataType.TRANSCATEGORY, MoneyWiseTransCategoryList.class);
+        final MoneyWiseTransValidator myValidator = theList.getValidator();
 
         /* Loop through the available category values */
         final Iterator<MoneyWiseTransCategory> myIterator = myCategories.iterator();
@@ -519,7 +521,7 @@ public class MoneyWiseTransDefaults {
             }
 
             /* Check whether the category is allowable for the owner */
-            if (MoneyWiseTransValidator.isValidCategory(pAccount, myCategory)) {
+            if (myValidator.isValidCategory(pAccount, myCategory)) {
                 return myCategory;
             }
         }
@@ -543,7 +545,6 @@ public class MoneyWiseTransDefaults {
         if (myPartner == null) {
             myPartner = getDefaultPartnerAsset(theUpdateSet.getDataList(MoneyWiseBasicDataType.DEPOSIT, MoneyWiseDepositList.class), pAccount, pCategory);
         }
-
         if (myPartner == null) {
             myPartner = getDefaultPartnerAsset(theUpdateSet.getDataList(MoneyWiseBasicDataType.CASH, MoneyWiseCashList.class), pAccount, pCategory);
         }
@@ -572,9 +573,10 @@ public class MoneyWiseTransDefaults {
      * @param pCategory the category
      * @return the default partner or null
      */
-    private static <X extends MoneyWiseAssetBase> MoneyWiseTransAsset getDefaultAssetForCategory(final MoneyWiseAssetBaseList<X> pList,
-                                                                                                 final MoneyWiseTransCategory pCategory) {
+    private <X extends MoneyWiseAssetBase> MoneyWiseTransAsset getDefaultAssetForCategory(final MoneyWiseAssetBaseList<X> pList,
+                                                                                          final MoneyWiseTransCategory pCategory) {
         /* Loop through the available values */
+        final MoneyWiseTransValidator myValidator = theList.getValidator();
         final Iterator<X> myIterator = pList.iterator();
         while (myIterator.hasNext()) {
             final X myAsset = myIterator.next();
@@ -585,7 +587,7 @@ public class MoneyWiseTransDefaults {
             }
 
             /* Check whether the asset is allowable for the owner */
-            if (MoneyWiseTransValidator.isValidCategory(myAsset, pCategory)) {
+            if (myValidator.isValidCategory(myAsset, pCategory)) {
                 return myAsset;
             }
         }
@@ -602,10 +604,11 @@ public class MoneyWiseTransDefaults {
      * @param pCategory the category
      * @return the default partner or null
      */
-    private static <X extends MoneyWiseAssetBase> MoneyWiseTransAsset getDefaultPartnerAsset(final MoneyWiseAssetBaseList<X> pList,
-                                                                                             final MoneyWiseTransAsset pAccount,
-                                                                                             final MoneyWiseTransCategory pCategory) {
+    private <X extends MoneyWiseAssetBase> MoneyWiseTransAsset getDefaultPartnerAsset(final MoneyWiseAssetBaseList<X> pList,
+                                                                                      final MoneyWiseTransAsset pAccount,
+                                                                                      final MoneyWiseTransCategory pCategory) {
         /* Loop through the available values */
+        final MoneyWiseTransValidator myValidator = theList.getValidator();
         final Iterator<X> myIterator = pList.iterator();
         while (myIterator.hasNext()) {
             final X myAsset = myIterator.next();
@@ -616,7 +619,7 @@ public class MoneyWiseTransDefaults {
             }
 
             /* Check whether the asset is allowable for the owner */
-            if (MoneyWiseTransValidator.isValidPartner(pAccount, pCategory, myAsset)) {
+            if (myValidator.isValidPartner(pAccount, pCategory, myAsset)) {
                 return myAsset;
             }
         }
@@ -631,12 +634,13 @@ public class MoneyWiseTransDefaults {
      * @param pCategory the category
      * @return the default partner
      */
-    private static MoneyWiseSecurityHolding getDefaultHolding(final PrometheusEditSet pUpdateSet,
-                                                              final MoneyWiseTransCategory pCategory) {
+    private MoneyWiseSecurityHolding getDefaultHolding(final PrometheusEditSet pUpdateSet,
+                                                       final MoneyWiseTransCategory pCategory) {
         /* Access Portfolios and Holdings Map */
         final MoneyWiseDataSet myData = (MoneyWiseDataSet) pUpdateSet.getDataSet();
         final MoneyWisePortfolioList myPortfolios = pUpdateSet.getDataList(MoneyWiseBasicDataType.PORTFOLIO, MoneyWisePortfolioList.class);
         final MoneyWiseSecurityHoldingMap myMap = myData.getPortfolios().getSecurityHoldingsMap();
+        final MoneyWiseTransValidator myValidator = theList.getValidator();
 
         /* Loop through the Portfolios */
         final Iterator<MoneyWisePortfolio> myPortIterator = myPortfolios.iterator();
@@ -656,7 +660,7 @@ public class MoneyWiseTransDefaults {
                     final MoneyWiseSecurityHolding myHolding = myExistIterator.next();
 
                     /* Check whether the asset is allowable for the combination */
-                    if (MoneyWiseTransValidator.isValidCategory(myHolding, pCategory)) {
+                    if (myValidator.isValidCategory(myHolding, pCategory)) {
                         return myHolding;
                     }
                 }
@@ -674,13 +678,14 @@ public class MoneyWiseTransDefaults {
      * @param pCategory the category
      * @return the default partner
      */
-    private static MoneyWiseSecurityHolding getDefaultPartnerHolding(final PrometheusEditSet pEditSet,
-                                                                     final MoneyWiseTransAsset pAccount,
-                                                                     final MoneyWiseTransCategory pCategory) {
+    private MoneyWiseSecurityHolding getDefaultPartnerHolding(final PrometheusEditSet pEditSet,
+                                                              final MoneyWiseTransAsset pAccount,
+                                                              final MoneyWiseTransCategory pCategory) {
         /* Access Portfolios and Holdings Map */
         final MoneyWiseDataSet myData = (MoneyWiseDataSet) pEditSet.getDataSet();
         final MoneyWisePortfolioList myPortfolios = pEditSet.getDataList(MoneyWiseBasicDataType.PORTFOLIO, MoneyWisePortfolioList.class);
         final MoneyWiseSecurityHoldingMap myMap = myData.getPortfolios().getSecurityHoldingsMap();
+        final MoneyWiseTransValidator myValidator = theList.getValidator();
 
         /* Loop through the Portfolios */
         final Iterator<MoneyWisePortfolio> myPortIterator = myPortfolios.iterator();
@@ -700,7 +705,7 @@ public class MoneyWiseTransDefaults {
                     final MoneyWiseSecurityHolding myHolding = myExistIterator.next();
 
                     /* Check whether the asset is allowable for the combination */
-                    if (MoneyWiseTransValidator.isValidPartner(pAccount, pCategory, myHolding)) {
+                    if (myValidator.isValidPartner(pAccount, pCategory, myHolding)) {
                         return myHolding;
                     }
                 }

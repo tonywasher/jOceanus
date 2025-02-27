@@ -29,9 +29,16 @@ import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransCategoryCla
  */
 public final class MoneyWiseTransValidator {
     /**
-     * Prevent instantiation.
+     * new Validation?.
      */
-    private MoneyWiseTransValidator() {
+    private final MoneyWiseDataSet theDataSet;
+
+    /**
+     * Prevent instantiation.
+     * @param pDataSet the dataSet
+     */
+    MoneyWiseTransValidator(final MoneyWiseDataSet pDataSet) {
+        theDataSet = pDataSet;
     }
 
     /**
@@ -39,7 +46,7 @@ public final class MoneyWiseTransValidator {
      * @param pAccount the account
      * @return true/false
      */
-    public static boolean isValidAccount(final MoneyWiseTransAsset pAccount) {
+    public boolean isValidAccount(final MoneyWiseTransAsset pAccount) {
         /* Validate securityHolding */
         if (pAccount instanceof MoneyWiseSecurityHolding
                 && !checkSecurityHolding((MoneyWiseSecurityHolding) pAccount)) {
@@ -63,8 +70,8 @@ public final class MoneyWiseTransValidator {
      * @param pCategory The category of the event
      * @return true/false
      */
-    public static boolean isValidCategory(final MoneyWiseTransAsset pAccount,
-                                          final MoneyWiseTransCategory pCategory) {
+    public boolean isValidCategory(final MoneyWiseTransAsset pAccount,
+                                   final MoneyWiseTransCategory pCategory) {
         /* Access details */
         final MoneyWiseAssetType myType = pAccount.getAssetType();
         final MoneyWiseTransCategoryClass myCatClass = pCategory.getCategoryTypeClass();
@@ -168,20 +175,21 @@ public final class MoneyWiseTransValidator {
      * @param pDirection the direction
      * @return true/false
      */
-    public static boolean isValidDirection(final MoneyWiseTransAsset pAccount,
-                                           final MoneyWiseTransCategory pCategory,
-                                           final MoneyWiseAssetDirection pDirection) {
+    public boolean isValidDirection(final MoneyWiseTransAsset pAccount,
+                                    final MoneyWiseTransCategory pCategory,
+                                    final MoneyWiseAssetDirection pDirection) {
         /* TODO relax some of these rules */
 
         /* Access details */
         final MoneyWiseTransCategoryClass myCatClass = pCategory.getCategoryTypeClass();
+        final boolean newValidation = theDataSet.newValidityChecks();
 
         /* Switch on the CategoryClass */
         switch (myCatClass) {
             case TAXEDINCOME:
             case GROSSINCOME:
                 /* Cannot refund Taxed Income yet */
-                return pDirection.isFrom();
+                return newValidation || pDirection.isFrom();
 
             case PENSIONCONTRIB:
                 /* Cannot refund Pension Contribution */
@@ -190,7 +198,7 @@ public final class MoneyWiseTransValidator {
             case GIFTEDINCOME:
             case INHERITED:
                 /* Cannot refund Gifted/Inherited Income yet */
-                return pDirection.isFrom();
+                return newValidation || pDirection.isFrom();
 
             case RENTALINCOME:
             case ROOMRENTALINCOME:
@@ -203,7 +211,7 @@ public final class MoneyWiseTransValidator {
 
             case INTEREST:
                 /* Cannot refund Interest yet */
-                return pDirection.isTo();
+                return newValidation || pDirection.isTo();
 
             case DIVIDEND:
             case SECURITYCLOSURE:
@@ -212,16 +220,16 @@ public final class MoneyWiseTransValidator {
 
             case LOYALTYBONUS:
                 /* Cannot refund loyaltyBonus yet */
-                return pDirection.isTo();
+                return newValidation || pDirection.isTo();
 
             case WRITEOFF:
             case LOANINTERESTCHARGED:
                 /* All need to be TO */
-                return pDirection.isTo();
+                return newValidation || pDirection.isTo();
 
             case LOANINTERESTEARNED:
                 /* All need to be FROM */
-                return pDirection.isFrom();
+                return newValidation || pDirection.isFrom();
 
             case UNITSADJUST:
             case STOCKSPLIT:
@@ -244,9 +252,9 @@ public final class MoneyWiseTransValidator {
      * @param pPartner the partner
      * @return true/false
      */
-    public static boolean isValidPartner(final MoneyWiseTransAsset pAccount,
-                                         final MoneyWiseTransCategory pCategory,
-                                         final MoneyWiseTransAsset pPartner) {
+    public boolean isValidPartner(final MoneyWiseTransAsset pAccount,
+                                  final MoneyWiseTransCategory pCategory,
+                                  final MoneyWiseTransAsset pPartner) {
         /* Access details */
         final boolean isRecursive = MetisDataDifference.isEqual(pAccount, pPartner);
         final MoneyWiseAssetType myPartnerType = pPartner.getAssetType();
@@ -500,10 +508,11 @@ public final class MoneyWiseTransValidator {
      * @param pAccount the account providing bonus.
      * @return valid true/false
      */
-    private static boolean checkLoyaltyBonus(final MoneyWiseTransAsset pAccount) {
+    private boolean checkLoyaltyBonus(final MoneyWiseTransAsset pAccount) {
         /* If this is deposit then check whether it can support loyaltyBonus */
         if (pAccount instanceof MoneyWiseDeposit) {
-            return ((MoneyWiseDeposit) pAccount).getCategoryClass().canLoyaltyBonus();
+            return theDataSet.newValidityChecks()
+                    || ((MoneyWiseDeposit) pAccount).getCategoryClass().canLoyaltyBonus();
         }
 
         /* must be portfolio */

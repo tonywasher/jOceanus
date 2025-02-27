@@ -100,7 +100,7 @@ public class MoneyWiseLoanInfo
             /* Resolve links */
             final MoneyWiseDataSet myData = getDataSet();
             resolveDataLink(PrometheusDataResource.DATAINFO_TYPE, myData.getActInfoTypes());
-            resolveDataLink(PrometheusDataResource.DATAINFO_OWNER, myData.getDeposits());
+            resolveDataLink(PrometheusDataResource.DATAINFO_OWNER, myData.getLoans());
 
             /* Set the value */
             setValue(pValues.getValue(PrometheusDataResource.DATAINFO_VALUE));
