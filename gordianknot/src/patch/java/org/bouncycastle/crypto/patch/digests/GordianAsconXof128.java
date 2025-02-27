@@ -68,6 +68,10 @@ public class GordianAsconXof128
             m_squeezing = true;
             super.padAndAbsorb();
         }
+        else
+        {
+            p(ASCON_PB_ROUNDS);
+        }
     }
 
     @Override

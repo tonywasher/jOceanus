@@ -23,5 +23,6 @@ Transactions
 1. [Transfers](transactions/Transfers.html)
 2. [Expenses](transactions/Expenses.html)
 3. [Cash](transactions/Cash.html)
-4. [Salary](transactions/Salary.html)
-5. [Interest](transactions/Interest.html)
+4. [PayeeIncome](transactions/PayeeIncome.html)
+5. [DepositIncome](transactions/DepositIncome.html)
+6. [CreditCard](transactions/CreditCard.html)

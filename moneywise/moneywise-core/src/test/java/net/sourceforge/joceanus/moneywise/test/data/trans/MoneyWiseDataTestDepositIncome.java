@@ -23,7 +23,7 @@ import net.sourceforge.joceanus.oceanus.base.OceanusException;
 /**
  * Test Interest.
  */
-public class MoneyWiseDataTestInterest
+public class MoneyWiseDataTestDepositIncome
         extends MoneyWiseDataTestCase {
     /**
      * TransactionBuilder.
@@ -33,7 +33,7 @@ public class MoneyWiseDataTestInterest
     /**
      * Constructor.
      */
-    public MoneyWiseDataTestInterest(final MoneyWiseDataTestAccounts pBuilder) {
+    public MoneyWiseDataTestDepositIncome(final MoneyWiseDataTestAccounts pBuilder) {
         /* Store parameters */
         super(pBuilder);
         theTransBuilder = getTransBuilder();
@@ -41,7 +41,7 @@ public class MoneyWiseDataTestInterest
 
     @Override
     public String getName() {
-        return "Interest";
+        return "DepositIncome";
     }
 
     @Override

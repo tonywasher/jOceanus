@@ -75,20 +75,32 @@ public class MoneyWiseDataTestCreditCard
                 .to().partner(MoneyWiseDataTestAccounts.idPY_Barclays)
                 .build();
 
+        /* A refunded late payment fine */
+        theTransBuilder.date("04-Jan-1986").category(MoneyWiseDataTestCategories.idTC_ChgFines)
+                .account(MoneyWiseDataTestAccounts.idLN_Barclaycard).amount("0.13")
+                .from().partner(MoneyWiseDataTestAccounts.idPY_Barclays)
+                .build();
+
         /* A payment */
-        theTransBuilder.date("04-Jan-1986").category(MoneyWiseDataTestCategories.idTC_Transfer)
+        theTransBuilder.date("05-Jan-1986").category(MoneyWiseDataTestCategories.idTC_Transfer)
                 .account(MoneyWiseDataTestAccounts.idDP_BarclaysCurrent).amount("50.00")
                 .to().partner(MoneyWiseDataTestAccounts.idLN_Barclaycard)
                 .build();
 
         /* An interest charge */
-        theTransBuilder.date("05-Jan-1986").category(MoneyWiseDataTestCategories.idTC_MortgageInterest)
+        theTransBuilder.date("06-Jan-1986").category(MoneyWiseDataTestCategories.idTC_LoanInterestChg)
                 .account(MoneyWiseDataTestAccounts.idLN_Barclaycard).amount("25.67")
                 .from().partner(MoneyWiseDataTestAccounts.idLN_Barclaycard)
                 .build();
 
+        /* A refunded interest charge */
+        theTransBuilder.date("07-Jan-1986").category(MoneyWiseDataTestCategories.idTC_LoanInterestChg)
+                .account(MoneyWiseDataTestAccounts.idLN_Barclaycard).amount("1.56")
+                .to().partner(MoneyWiseDataTestAccounts.idLN_Barclaycard)
+                .build();
+
         /* A cashback */
-        theTransBuilder.date("06-Jan-1986").category(MoneyWiseDataTestCategories.idTC_CashBack)
+        theTransBuilder.date("08-Jan-1986").category(MoneyWiseDataTestCategories.idTC_CashBack)
                 .account(MoneyWiseDataTestAccounts.idLN_Barclaycard).amount("10.00")
                 .to().partner(MoneyWiseDataTestAccounts.idLN_Barclaycard)
                 .build();
@@ -97,14 +109,14 @@ public class MoneyWiseDataTestCreditCard
     @Override
     public void checkAnalysis() {
         checkAccountValue(MoneyWiseDataTestAccounts.idDP_BarclaysCurrent, "9950.00");
-        checkAccountValue(MoneyWiseDataTestAccounts.idLN_Barclaycard, "-143.89");
-        checkPayeeValue(MoneyWiseDataTestAccounts.idPY_Barclays, "10.00", "32.56");
+        checkAccountValue(MoneyWiseDataTestAccounts.idLN_Barclaycard, "-142.20");
+        checkPayeeValue(MoneyWiseDataTestAccounts.idPY_Barclays, "10.00", "30.87");
         checkPayeeValue(MoneyWiseDataTestAccounts.idPY_ASDA, "0", "71.33");
         checkCategoryValue(MoneyWiseDataTestCategories.idTC_ShopFood, "0", "71.33");
-        checkCategoryValue(MoneyWiseDataTestCategories.idTC_ChgFines, "0", "6.89");
-        checkCategoryValue(MoneyWiseDataTestCategories.idTC_MortgageInterest, "0", "25.67");
+        checkCategoryValue(MoneyWiseDataTestCategories.idTC_ChgFines, "0", "6.76");
+        checkCategoryValue(MoneyWiseDataTestCategories.idTC_LoanInterestChg, "0", "24.11");
         checkCategoryValue(MoneyWiseDataTestCategories.idTC_CashBack, "10", "0");
         checkTaxBasisValue(MoneyWiseTaxClass.TAXFREE, "10.00");
-        checkTaxBasisValue(MoneyWiseTaxClass.EXPENSE, "-103.89");
+        checkTaxBasisValue(MoneyWiseTaxClass.EXPENSE, "-102.20");
     }
 }

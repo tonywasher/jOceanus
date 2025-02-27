@@ -1,14 +1,14 @@
-# Simple Salary transactions
+# Payee Income transactions
 
-Simple income transactions expenses can be made as follows
+Income from Payees can be made as follows
 
-Suppose we start with the following deposit/payee accounts and transactions
+Suppose we start with the following deposit/payee accounts and transaction categories
 
 <details open="true" name="accounts">
 <summary>Deposit Accounts</summary>
 <table class="defTable">
-<tr><th class="defHdr">Name</th><th class="defHdr">Parent</th><th class="defHdr">Currency</th><th class="defHdr">Starting Balance</th></tr>
-<tr><td>BarclaysCurrent</td><td>Barclays</td><td>GBP</td><td>£10,000.00</td></tr>
+<tr><th class="defHdr">Name</th><th class="defHdr">Parent</th><th class="defHdr">Category</th><th class="defHdr">Currency</th><th class="defHdr">Starting Balance</th></tr>
+<tr><td>BarclaysCurrent</td><td>Barclays</td><td>Checking</td></td><td>GBP</td><td>£10,000.00</td></tr>
 </table>
 </details>
 <details name="accounts">
@@ -88,7 +88,7 @@ The analysis of these transactions is as follows
 <tr><td>05-Aug-86</td><td>£440.00</td><td>£919.10</td><td>£100.00</td><td>-£19.10</td></tr>
 <tr><td>06-Aug-86</td><td>£440.00</td><td>£919.10</td><td>£90.00</td><td>-£19.10</td></tr>
 <tr><td>07-Aug-86</td><td>£490.00</td><td>£919.10</td><td>£90.00</td><td>-£19.10</td></tr>
-<tr><td>08-Aug-86</td><td>£485.00</td><td>£919.10</td><td>£90.00<td>-£19.10</td></tr>
+<tr><td>08-Aug-86</td><td>£485.00</td><td>£919.10</td><td>£90.00</td><td>-£19.10</td></tr>
 <tr><td>Profit</td><th colspan="4">£1.475.00</th></tr>
 </table>
 </details>
@@ -96,9 +96,9 @@ The analysis of these transactions is as follows
 <details name="analysis">
 <summary>Categories</summary>
 <table class="defTable">
-<tr><th class="defHdr">Date</th><th class="defHdr">Income:Inheritance</th><th class="defHdr">Income:Gifts</th>
-<th class="defHdr">Income:Salary</th><th class="defHdr">Income:Benefit</th>
-<th class="defHdr">Income:SocialSecurity</th><th class="defHdr">Taxes:IncomeTax</th><th class="defHdr">Expenses:Virtual</th></tr>
+<tr><th class="defHdr">Date</th><th class="defHdr">Income:<br/>Inheritance</th><th class="defHdr">Income:<br/>Gifts</th>
+<th class="defHdr">Income:<br/>Salary</th><th class="defHdr">Income:<br/>Benefit</th>
+<th class="defHdr">Income:<br/>SocialSecurity</th><th class="defHdr">Taxes:<br/>IncomeTax</th><th class="defHdr">Expenses:<br/>Virtual</th></tr>
 <tr><td>01-Aug-86</td><td>£500.00</td><td/><td/><td/><td/><td/><td/></tr>
 <tr><td>02-Aug-86</td><td>£440.00</td><td/><td/><td/><td/><td/><td/></tr>
 <tr><td>03-Aug-86</td><td>£440.00</td><td/><td>£1020.00</td><td>£10.00</td><td/><td>-£20.00</td><td>-£10.00</td></tr>

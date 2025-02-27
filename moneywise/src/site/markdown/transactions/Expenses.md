@@ -2,14 +2,14 @@
 
 Simple expenses can be made from any valued account to/from any payee
 
-Suppose we start with the following deposit/payee accounts and transactions
+Suppose we start with the following deposit/payee accounts and transaction  categories
 
 <details open="true" name="accounts">
 <summary>Deposit Accounts</summary>
 <table class="defTable">
-<tr><th class="defHdr">Name</th><th class="defHdr">Parent</th><th class="defHdr">Currency</th><th class="defHdr">Starting Balance</th></tr>
-<tr><td>BarclaysCurrent</td><td>Barclays</td><td>GBP</td><td>£10,000.00</td></tr>
-<tr><td>StarlingEuros</td><td>Starling</td><td>EUR</td><td>€5,000.00</td></tr>
+<tr><th class="defHdr">Name</th><th class="defHdr">Parent</th><th class="defHdr">Category</th><th class="defHdr">Currency</th><th class="defHdr">Starting Balance</th></tr>
+<tr><td>BarclaysCurrent</td><td>Barclays</td><td>Checking</td></td><td>GBP</td><td>£10,000.00</td></tr>
+<tr><td>StarlingEuros</td><td>Starling</td><td>Checking</td></td><td>EUR</td><td>€5,000.00</td></tr>
 </table>
 </details>
 <details name="accounts">
@@ -94,7 +94,7 @@ The analysis of these transactions is as follows
 <details name="analysis">
 <summary>Categories</summary>
 <table class="defTable">
-<tr><th class="defHdr">Date</th><th class="defHdr">Shopping:Food</th><th class="defHdr">Market:CurrencyFluctuation</th></tr>
+<tr><th class="defHdr">Date</th><th class="defHdr">Shopping:<br/>Food</th><th class="defHdr">Market:<br/>CurrencyFluctuation</th></tr>
 <tr><td>06-Apr-80</td><td/></tr>
 <tr><td>01-Jun-86</td><td>-£21.95</td><td/></tr>
 <tr><td>02-Jun-86</td><td>-£11.96</td><td/></tr>

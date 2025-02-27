@@ -2,25 +2,25 @@
 
 Cash accounts can be used as normal accounts or as autoCash
 
-Suppose we start with the following deposit/payee accounts and transactions
+Suppose we start with the following deposit/cash/payee accounts and transaction categories
 
 <details open="true" name="accounts">
 <summary>Deposit Accounts</summary>
 <table class="defTable">
-<tr><th class="defHdr">Name</th><th class="defHdr">Currency</th><th class="defHdr">Starting Balance</th></tr>
-<tr><td>BarclaysCurrent</td><td>GBP</td><td>£10,000.00</td></tr>
-<tr><td>StarlingEuros</td><td>EUR</td><td>€5,000.00</td></tr>
+<tr><th class="defHdr">Name</th><th class="defHdr">Parent</th><th class="defHdr">Category</th><th class="defHdr">Currency</th><th class="defHdr">Starting Balance</th></tr>
+<tr><td>BarclaysCurrent</td><td>Barclays</td><td>Checking</td></td><td>GBP</td><td>£10,000.00</td></tr>
+<tr><td>StarlingEuros</td><td>Starling</td></td><td>Checking</td></td><td>EUR</td><td>€5,000.00</td></tr>
 </table>
 </details>
 <details name="Accounts">
 <summary>Cash Accounts</summary>
 <table class="defTable">
-<tr><th class="defHdr">Name</th><th class="defHdr">Currency</th><th class="defHdr">Starting Balance</th>
+<tr><th class="defHdr">Name</th><th class="defHdr">Category</th><th class="defHdr">Currency</th><th class="defHdr">Starting Balance</th>
 <th class="defHdr">AutoPayee</th><th class="defHdr">autoExpense</th></tr>
-<tr><td>Cash</td><td>GBP</td><td/><td>CashExpense</td><td>Expenses:Cash</td></tr>
-<tr><td>Euros</td><td>EUR</td><td>CashExpense</td><td>Expenses:Cash</td></tr>
-<tr><td>CashWallet</td><td>GBP</td><td>£10.00</td></td><td/><td/></tr>
-<tr><td>EuroWallet</td><td>EUR</td><td/><td/></tr>
+<tr><td>Cash</td><td>AutoExpense</td></td><td>GBP</td><td/><td>CashExpense</td><td>Expenses:Cash</td></tr>
+<tr><td>Euros</td><td>AutoExpense</td></td><td>EUR</td><td>CashExpense</td><td>Expenses:Cash</td></tr>
+<tr><td>CashWallet</td><td>Cash</td></td><td>GBP</td><td>£10.00</td></td><td/><td/></tr>
+<tr><td>EuroWallet</td><td>Cash</td></td><td>EUR</td><td/><td/></tr>
 </table>
 </details>
 <details name="accounts">
@@ -129,8 +129,8 @@ The analysis of these transactions is as follows
 <details name="analysis">
 <summary>Categories</summary>
 <table class="defTable">
-<tr><th class="defHdr">Date</th><th class="defHdr">Shopping:Food</th><th class="defHdr">Expenses:Cash</th>
-<th class="defHdr">Market:CurrencyFluctuation</th></tr>
+<tr><th class="defHdr">Date</th><th class="defHdr">Shopping:<br/>Food</th><th class="defHdr">Expenses:<br/>Cash</th>
+<th class="defHdr">Market:<br/>CurrencyFluctuation</th></tr>
 <tr><td>06-Apr-80</td><td/><td/><td/></tr>
 <tr><td>01-Jul-86</td><td/><td>-£50.00</td><td/></tr>
 <tr><td>02-Jul-86</td><td/><td>-£30.00</td><td/></tr>

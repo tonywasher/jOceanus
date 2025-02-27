@@ -159,6 +159,7 @@ public class MoneyWiseDataTestCategories {
     final static String idTC_LeisTheatre = idTC_Leisure + ":Theatre";
     final static String idTC_Loan = "Loan";
     final static String idTC_LoanWriteDown = idTC_Loan + ":WriteDown";
+    final static String idTC_LoanInterestChg = idTC_Loan + ":InterestCharged";
     final static String idTC_Mortgage = "Mortgage";
     final static String idTC_MortgageDeedAdmin = idTC_Mortgage + ":DeedAdmin";
     final static String idTC_MortgageInterest = idTC_Mortgage + ":Interest";
@@ -471,8 +472,9 @@ public class MoneyWiseDataTestCategories {
         /* Loans */
         theTransBuilder.name(idTC_Loan).parent(myTotals).type(MoneyWiseTransCategoryClass.EXPENSETOTALS).build();
         theTransBuilder.name(idTC_LoanWriteDown).type(MoneyWiseTransCategoryClass.WRITEOFF).build();
+        theTransBuilder.name(idTC_LoanInterestChg).type(MoneyWiseTransCategoryClass.LOANINTERESTCHARGED).build();
 
-        /* Loans */
+        /* Mortgage */
         theTransBuilder.name(idTC_Mortgage).parent(myTotals).type(MoneyWiseTransCategoryClass.EXPENSETOTALS).build();
         theTransBuilder.name(idTC_MortgageDeedAdmin).type(MoneyWiseTransCategoryClass.EXPENSE).build();
         theTransBuilder.name(idTC_MortgageInterest).type(MoneyWiseTransCategoryClass.LOANINTERESTCHARGED).build();
