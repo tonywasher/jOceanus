@@ -46,6 +46,16 @@ public class MoneyWiseDataTestCash
     }
 
     @Override
+    public String getTitle() {
+        return "Cash and AutoCash Transactions";
+    }
+
+    @Override
+    public String getDesc() {
+        return "Cash accounts can be used as normal accounts or as autoCash";
+    }
+
+    @Override
     public void setUpAccounts() throws OceanusException {
         createPayees(MoneyWiseDataTestAccounts.idPY_ASDA);
         createDeposits(MoneyWiseDataTestAccounts.idDP_BarclaysCurrent,

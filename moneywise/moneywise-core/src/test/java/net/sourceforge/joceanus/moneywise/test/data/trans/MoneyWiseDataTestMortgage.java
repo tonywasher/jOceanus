@@ -18,6 +18,7 @@ package net.sourceforge.joceanus.moneywise.test.data.trans;
 
 import net.sourceforge.joceanus.moneywise.data.builder.MoneyWiseTransactionBuilder;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTaxClass;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransInfoClass;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 /**
@@ -45,10 +46,25 @@ public class MoneyWiseDataTestMortgage
     }
 
     @Override
+    public String getTitle() {
+        return "Mortgage Transactions";
+    }
+
+    @Override
+    public String getDesc() {
+        return "Mortgage transactions can be made as follows";
+    }
+
+    @Override
     public void setUpAccounts() throws OceanusException {
         createPayees(MoneyWiseDataTestAccounts.idPY_Barclays);
         createDeposits(MoneyWiseDataTestAccounts.idDP_BarclaysCurrent);
         createLoans(MoneyWiseDataTestAccounts.idLN_BarclaysMortgage);
+    }
+
+    @Override
+    public boolean useInfoClass(final MoneyWiseTransInfoClass pInfoClass) {
+        return MoneyWiseTransInfoClass.TAXCREDIT.equals(pInfoClass);
     }
 
     /**

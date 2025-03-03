@@ -19,6 +19,7 @@ package net.sourceforge.joceanus.moneywise.test.data.trans;
 import net.sourceforge.joceanus.moneywise.data.builder.MoneyWiseTransactionBuilder;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrencyClass;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTaxClass;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransInfoClass;
 import net.sourceforge.joceanus.moneywise.exc.MoneyWiseDataException;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import org.junit.jupiter.api.Assertions;
@@ -48,6 +49,16 @@ public class MoneyWiseDataTestTransfers
     }
 
     @Override
+    public String getTitle() {
+        return "Simple Transfer Transactions";
+    }
+
+    @Override
+    public String getDesc() {
+        return "Simple transfers can be made between any valued account.";
+    }
+
+    @Override
     public void setUpAccounts() throws OceanusException {
         createDeposits(MoneyWiseDataTestAccounts.idDP_BarclaysCurrent,
                        MoneyWiseDataTestAccounts.idDP_NatWideFlexDirect,
@@ -61,6 +72,11 @@ public class MoneyWiseDataTestTransfers
         createXchgRate(MoneyWiseCurrencyClass.EUR, "06-Apr-1980", "0.9");
         createXchgRate(MoneyWiseCurrencyClass.USD, "01-Jan-2025", "0.85");
         createXchgRate(MoneyWiseCurrencyClass.EUR, "01-Jan-2025", "0.95");
+    }
+
+    @Override
+    public boolean useInfoClass(final MoneyWiseTransInfoClass pInfoClass) {
+        return MoneyWiseTransInfoClass.PARTNERAMOUNT.equals(pInfoClass);
     }
 
     @Override

@@ -26,6 +26,7 @@ import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransAsset;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransCategory;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransTag;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransaction;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransInfoClass;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.date.OceanusDate;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
@@ -847,5 +848,37 @@ public class MoneyWiseXAnalysisEvent
      */
     public boolean canSwitchDirection() {
         return theTransaction != null && theTransaction.canSwitchDirection();
+    }
+
+    /**
+     * Obtain EventInfo.
+     * @param pInfoClass the infoClass
+     * @return the Info
+     */
+    public Object getEventInfo(final MoneyWiseTransInfoClass pInfoClass) {
+        /* No info unless this is a transaction */
+        if (theTransaction == null) {
+            return null;
+        }
+
+        /* Obtain the relevant info */
+        switch (pInfoClass) {
+            case TAXCREDIT:           return theTransaction.getTaxCredit();
+            case EMPLOYEENATINS:      return theTransaction.getEmployeeNatIns();
+            case EMPLOYERNATINS:      return theTransaction.getEmployerNatIns();
+            case DEEMEDBENEFIT:       return theTransaction.getDeemedBenefit();
+            case WITHHELD:            return theTransaction.getWithheld();
+            case ACCOUNTDELTAUNITS:   return theTransaction.getAccountDeltaUnits();
+            case PARTNERDELTAUNITS:   return theTransaction.getPartnerDeltaUnits();
+            case DILUTION:            return theTransaction.getDilution();
+            case PRICE:               return theTransaction.getPrice();
+            case RETURNEDCASH:        return theTransaction.getReturnedCash();
+            case RETURNEDCASHACCOUNT: return theTransaction.getReturnedCashAccount();
+            case PARTNERAMOUNT:       return theTransaction.getPartnerAmount();
+            case REFERENCE:           return theTransaction.getReference();
+            case COMMENTS:            return theTransaction.getComments();
+            case TRANSTAG:            return theTransaction.getTransactionTags();
+            default:                  return null;
+        }
     }
 }

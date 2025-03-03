@@ -1,0 +1,292 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document>
+  <properties>
+    <title>PrivateLoan Transactions</title>
+    <author email="tony.washer@yahoo.co.uk">Tony Washer</author>
+  </properties>
+  <body>
+    <section name="PrivateLoan Transactions">
+      <p>PrivateLoan transactions can be made as follows</p>
+      <subsection name="Definitions">
+        <p>We start with the following accounts and transaction categories</p>
+        <details name="accounts" open="true">
+          <summary>Deposit Accounts</summary>
+          <table class="defTable">
+            <tr>
+              <th class="defHdr">Name</th>
+              <th class="defHdr">Parent</th>
+              <th class="defHdr">Category</th>
+              <th class="defHdr">Currency</th>
+              <th class="defHdr">Starting Balance</th>
+            </tr>
+            <tr>
+              <td>BarclaysCurrent</td>
+              <td>Barclays</td>
+              <td>Checking</td>
+              <td>GBP</td>
+              <td class="dataValue">£10,000.00</td>
+            </tr>
+          </table>
+        </details>
+        <details name="accounts">
+          <summary>Loan Accounts</summary>
+          <table class="defTable">
+            <tr>
+              <th class="defHdr">Name</th>
+              <th class="defHdr">Parent</th>
+              <th class="defHdr">Category</th>
+              <th class="defHdr">Currency</th>
+              <th class="defHdr">Starting Balance</th>
+            </tr>
+            <tr>
+              <td/>
+            </tr>
+          </table>
+        </details>
+        <details name="accounts">
+          <summary>Payee Accounts</summary>
+          <table class="defTable">
+            <tr>
+              <th class="defHdr">Name</th>
+              <th class="defHdr">Type</th>
+            </tr>
+            <tr>
+              <td>Damage</td>
+              <td>Individual</td>
+            </tr>
+            <tr>
+              <td>Barclays</td>
+              <td>Institution</td>
+            </tr>
+          </table>
+        </details>
+        <details name="accounts">
+          <summary>TransactionCategories</summary>
+          <table class="defTable">
+            <tr>
+              <th class="defHdr">Name</th>
+              <th class="defHdr">Type</th>
+            </tr>
+            <tr>
+              <td>Income:LoanInterest</td>
+              <td>LoanInterestEarned</td>
+            </tr>
+            <tr>
+              <td>Loan:WriteDown</td>
+              <td>WriteOff</td>
+            </tr>
+          </table>
+        </details>
+      </subsection>
+      <subsection name="Transactions">
+        <p>We have the following events</p>
+        <details name="data" open="true">
+          <summary>Transactions</summary>
+          <table class="defTable">
+            <tr>
+              <th class="defHdr">Date</th>
+              <th class="defHdr">Account</th>
+              <th class="defHdr">Category</th>
+              <th class="defHdr">Amount</th>
+              <th class="defHdr">Direction</th>
+              <th class="defHdr">Partner</th>
+            </tr>
+            <tr>
+              <td>01-Mar-1986</td>
+              <td>BarclaysCurrent</td>
+              <td>Transfer</td>
+              <td class="dataValue">£1,000.00</td>
+              <td>To</td>
+              <td>DamageLoan</td>
+            </tr>
+            <tr>
+              <td>02-Mar-1986</td>
+              <td>DamageLoan</td>
+              <td>Income:LoanInterest</td>
+              <td class="dataValue">£10.00</td>
+              <td>To</td>
+              <td>DamageLoan</td>
+            </tr>
+            <tr>
+              <td>02-Mar-1986</td>
+              <td>DamageLoan</td>
+              <td>Income:LoanInterest</td>
+              <td class="dataValue">£1.00</td>
+              <td>From</td>
+              <td>DamageLoan</td>
+            </tr>
+            <tr>
+              <td>03-Mar-1986</td>
+              <td>DamageLoan</td>
+              <td>Loan:WriteDown</td>
+              <td class="dataValue">£489.00</td>
+              <td>From</td>
+              <td>DamageLoan</td>
+            </tr>
+            <tr>
+              <td>04-Mar-1986</td>
+              <td>DamageLoan</td>
+              <td>Loan:WriteDown</td>
+              <td class="dataValue">£23.00</td>
+              <td>To</td>
+              <td>DamageLoan</td>
+            </tr>
+          </table>
+        </details>
+      </subsection>
+      <subsection name="Analysis">
+        <p>The analysis of these transactions is as follows</p>
+        <details name="analysis" open="true">
+          <summary>AssetAnalysis</summary>
+          <table class="defTable">
+            <tr>
+              <th class="defHdr">Date</th>
+              <th class="defHdr">BarclaysCurrent</th>
+              <th class="defHdr">DamageLoan</th>
+            </tr>
+            <tr>
+              <td>06-Apr-1980</td>
+              <td class="dataValue">£10,000.00</td>
+              <td/>
+            </tr>
+            <tr>
+              <td>01-Mar-1986</td>
+              <td class="dataValue">£9,000.00</td>
+              <td class="dataValue">£1,000.00</td>
+            </tr>
+            <tr>
+              <td>02-Mar-1986</td>
+              <td class="dataValue">£9,000.00</td>
+              <td class="dataValue">£1,010.00</td>
+            </tr>
+            <tr>
+              <td>02-Mar-1986</td>
+              <td class="dataValue">£9,000.00</td>
+              <td class="dataValue">£1,009.00</td>
+            </tr>
+            <tr>
+              <td>03-Mar-1986</td>
+              <td class="dataValue">£9,000.00</td>
+              <td class="dataValue">£520.00</td>
+            </tr>
+            <tr>
+              <td>04-Mar-1986</td>
+              <td class="dataValue">£9,000.00</td>
+              <td class="dataValue">£543.00</td>
+            </tr>
+            <tr>
+              <td>Profit</td>
+              <th class="negValue" colspan="2">-£457.00</th>
+            </tr>
+          </table>
+        </details>
+        <details name="analysis">
+          <summary>PayeeAnalysis</summary>
+          <table class="defTable">
+            <tr>
+              <th class="defHdr">Date</th>
+              <th class="defHdr">Damage</th>
+            </tr>
+            <tr>
+              <td>02-Mar-1986</td>
+              <td class="dataValue">£10.00</td>
+            </tr>
+            <tr>
+              <td>02-Mar-1986</td>
+              <td class="dataValue">£9.00</td>
+            </tr>
+            <tr>
+              <td>03-Mar-1986</td>
+              <td class="negValue">-£480.00</td>
+            </tr>
+            <tr>
+              <td>04-Mar-1986</td>
+              <td class="negValue">-£457.00</td>
+            </tr>
+            <tr>
+              <td>Profit</td>
+              <th class="negValue">-£457.00</th>
+            </tr>
+          </table>
+        </details>
+        <details name="analysis">
+          <summary>TransactionCategoryAnalysis</summary>
+          <table class="defTable">
+            <tr>
+              <th class="defHdr">Date</th>
+              <th class="defHdr">
+                Income:
+                <br/>
+                LoanInterest
+              </th>
+              <th class="defHdr">
+                Loan:
+                <br/>
+                WriteDown
+              </th>
+            </tr>
+            <tr>
+              <td>02-Mar-1986</td>
+              <td class="dataValue">£10.00</td>
+              <td/>
+            </tr>
+            <tr>
+              <td>02-Mar-1986</td>
+              <td class="dataValue">£9.00</td>
+              <td/>
+            </tr>
+            <tr>
+              <td>03-Mar-1986</td>
+              <td class="dataValue">£9.00</td>
+              <td class="negValue">-£489.00</td>
+            </tr>
+            <tr>
+              <td>04-Mar-1986</td>
+              <td class="dataValue">£9.00</td>
+              <td class="negValue">-£466.00</td>
+            </tr>
+            <tr>
+              <td>Profit</td>
+              <th class="negValue" colspan="2">-£457.00</th>
+            </tr>
+          </table>
+        </details>
+        <details name="analysis">
+          <summary>TaxAnalysis</summary>
+          <table class="defTable">
+            <tr>
+              <th class="defHdr">Date</th>
+              <th class="defHdr">TaxFree</th>
+              <th class="defHdr">Expense</th>
+            </tr>
+            <tr>
+              <td>02-Mar-1986</td>
+              <td class="dataValue">£10.00</td>
+              <td/>
+            </tr>
+            <tr>
+              <td>02-Mar-1986</td>
+              <td class="dataValue">£9.00</td>
+              <td/>
+            </tr>
+            <tr>
+              <td>03-Mar-1986</td>
+              <td class="dataValue">£9.00</td>
+              <td class="negValue">-£489.00</td>
+            </tr>
+            <tr>
+              <td>04-Mar-1986</td>
+              <td class="dataValue">£9.00</td>
+              <td class="negValue">-£466.00</td>
+            </tr>
+            <tr>
+              <td>Profit</td>
+              <th class="negValue" colspan="2">-£457.00</th>
+            </tr>
+          </table>
+        </details>
+      </subsection>
+    </section>
+  </body>
+</document>
+

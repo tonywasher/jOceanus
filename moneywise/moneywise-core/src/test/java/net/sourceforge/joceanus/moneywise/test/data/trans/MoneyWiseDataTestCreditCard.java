@@ -45,6 +45,16 @@ public class MoneyWiseDataTestCreditCard
     }
 
     @Override
+    public String getTitle() {
+        return "CreditCard Transactions";
+    }
+
+    @Override
+    public String getDesc() {
+        return "CreditCard transactions can be made as follows";
+    }
+
+    @Override
     public void setUpAccounts() throws OceanusException {
         createPayees(MoneyWiseDataTestAccounts.idPY_ASDA);
         createDeposits(MoneyWiseDataTestAccounts.idDP_BarclaysCurrent);

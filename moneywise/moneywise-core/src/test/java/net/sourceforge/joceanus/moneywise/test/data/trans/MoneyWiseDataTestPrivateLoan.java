@@ -45,6 +45,16 @@ public class MoneyWiseDataTestPrivateLoan
     }
 
     @Override
+    public String getTitle() {
+        return "PrivateLoan Transactions";
+    }
+
+    @Override
+    public String getDesc() {
+        return "PrivateLoan transactions can be made as follows";
+    }
+
+    @Override
     public void setUpAccounts() throws OceanusException {
         createPayees(MoneyWiseDataTestAccounts.idPY_Damage);
         createDeposits(MoneyWiseDataTestAccounts.idDP_BarclaysCurrent);

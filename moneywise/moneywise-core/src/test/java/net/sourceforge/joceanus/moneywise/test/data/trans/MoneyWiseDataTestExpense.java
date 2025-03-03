@@ -46,6 +46,16 @@ public class MoneyWiseDataTestExpense
     }
 
     @Override
+    public String getTitle() {
+        return "Simple Expense Transactions";
+    }
+
+    @Override
+    public String getDesc() {
+        return "Simple expenses can be made from any valued account to/from any payee";
+    }
+
+    @Override
     public void setUpAccounts() throws OceanusException {
         createPayees(MoneyWiseDataTestAccounts.idPY_ASDA);
         createDeposits(MoneyWiseDataTestAccounts.idDP_BarclaysCurrent,
