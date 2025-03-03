@@ -18,6 +18,7 @@ package net.sourceforge.joceanus.moneywise.test.data.trans;
 
 import net.sourceforge.joceanus.moneywise.data.builder.MoneyWiseTransactionBuilder;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTaxClass;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransInfoClass;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 /**
@@ -45,9 +46,30 @@ public class MoneyWiseDataTestDepositIncome
     }
 
     @Override
+    public String getTitle() {
+        return "Deposit Income Transactions";
+    }
+
+    @Override
+    public String getDesc() {
+        return "Income from Deposits transactions can be made as follows";
+    }
+
+    @Override
     public void setUpAccounts() throws OceanusException {
         createDeposits(MoneyWiseDataTestAccounts.idDP_BarclaysCurrent,
                 MoneyWiseDataTestAccounts.idDP_NatWideISA);
+    }
+
+    @Override
+    public boolean useInfoClass(final MoneyWiseTransInfoClass pInfoClass) {
+        switch (pInfoClass) {
+            case TAXCREDIT:
+            case WITHHELD:
+                return true;
+            default:
+                return false;
+        }
     }
 
     @Override

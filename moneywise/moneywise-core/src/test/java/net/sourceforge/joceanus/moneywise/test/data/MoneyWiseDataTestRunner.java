@@ -24,12 +24,13 @@ import net.sourceforge.joceanus.moneywise.test.data.trans.MoneyWiseDataTestAccou
 import net.sourceforge.joceanus.moneywise.test.data.trans.MoneyWiseDataTestCase;
 import net.sourceforge.joceanus.moneywise.test.data.trans.MoneyWiseDataTestCash;
 import net.sourceforge.joceanus.moneywise.test.data.trans.MoneyWiseDataTestCreditCard;
-import net.sourceforge.joceanus.moneywise.test.data.trans.MoneyWiseDataTestExpense;
 import net.sourceforge.joceanus.moneywise.test.data.trans.MoneyWiseDataTestDepositIncome;
+import net.sourceforge.joceanus.moneywise.test.data.trans.MoneyWiseDataTestExpense;
 import net.sourceforge.joceanus.moneywise.test.data.trans.MoneyWiseDataTestMortgage;
-import net.sourceforge.joceanus.moneywise.test.data.trans.MoneyWiseDataTestPrivateLoan;
 import net.sourceforge.joceanus.moneywise.test.data.trans.MoneyWiseDataTestPayeeIncome;
+import net.sourceforge.joceanus.moneywise.test.data.trans.MoneyWiseDataTestPrivateLoan;
 import net.sourceforge.joceanus.moneywise.test.data.trans.MoneyWiseDataTestTransfers;
+import net.sourceforge.joceanus.moneywise.test.data.xdoc.MoneyWiseDataXDocBuilder;
 import net.sourceforge.joceanus.moneywise.views.MoneyWiseView;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
@@ -156,7 +157,20 @@ public class MoneyWiseDataTestRunner {
         final MoneyWiseXAnalysis myAnalysis = theAnalysisBuilder.analyseNewData(theDataSet);
         pTest.setAnalysis(myAnalysis);
         pTest.checkAnalysis();
+
+        reportTestCase(pTest);
         myTask.end();
+    }
+
+    /**
+     * Run the testCase.
+     *
+     * @param pTest the testCase
+     * @throws OceanusException on error
+     */
+    public void reportTestCase(final MoneyWiseDataTestCase pTest) throws OceanusException {
+        /* Run the test */
+        new MoneyWiseDataXDocBuilder(pTest);
     }
 
     /**

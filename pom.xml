@@ -62,7 +62,7 @@
     <currentBranch>1.6.3</currentBranch>
     <currentTag>SNAPSHOT</currentTag>
     <baseBranch>${currentBranch}</baseBranch>
-    <baseTag>b3</baseTag>
+    <baseTag>b4</baseTag>
     <currentRef>${snapshotRef}</currentRef>
     <snapshotRef>${scmMain}</snapshotRef>
     <tagRef>${currentBranch}-${currentTag}</tagRef>
@@ -75,7 +75,7 @@
     <appBinDir>bin/</appBinDir>
     <appLibDir>lib/</appLibDir>
     <BouncyCastleVersion>1.80</BouncyCastleVersion>
-    <JUnitVersion>5.11.4</JUnitVersion>
+    <JUnitVersion>5.12.0</JUnitVersion>
     <JSONVersion>20250107</JSONVersion>
     <ApacheMavenVersion>3.9.9</ApacheMavenVersion>
     <MySQLVersion>9.2.0</MySQLVersion>
@@ -90,22 +90,22 @@
     <JavaVersion>17</JavaVersion>
     <JavaFXVersion>17.0.14</JavaFXVersion>
     <JavaLanguageVersion>17</JavaLanguageVersion>
-    <CheckStyleVersion>10.21.2</CheckStyleVersion>
-    <PMDVersion>7.10.0</PMDVersion>
-    <CleanPluginVersion>3.4.0</CleanPluginVersion>
+    <CheckStyleVersion>10.21.3</CheckStyleVersion>
+    <PMDVersion>7.11.0</PMDVersion>
+    <CleanPluginVersion>3.4.1</CleanPluginVersion>
     <ResourcesPluginVersion>3.3.1</ResourcesPluginVersion>
-    <InstallPluginVersion>3.1.3</InstallPluginVersion>
+    <InstallPluginVersion>3.1.4</InstallPluginVersion>
     <SitePluginVersion>3.21.0</SitePluginVersion>
-    <DeployPluginVersion>3.1.3</DeployPluginVersion>
+    <DeployPluginVersion>3.1.4</DeployPluginVersion>
     <EnforcerPluginVersion>3.5.0</EnforcerPluginVersion>
-    <CompilerPluginVersion>3.13.0</CompilerPluginVersion>
+    <CompilerPluginVersion>3.14.0</CompilerPluginVersion>
     <ShadePluginVersion>3.6.0</ShadePluginVersion>
     <DependencyPluginVersion>3.8.1</DependencyPluginVersion>
     <SurefirePluginVersion>3.5.2</SurefirePluginVersion>
     <BuildNumberPluginVersion>3.2.1</BuildNumberPluginVersion>
     <BuildHelperPluginVersion>3.6.0</BuildHelperPluginVersion>
     <JarPluginVersion>3.4.2</JarPluginVersion>
-    <ProjectInfoPluginVersion>3.8.0</ProjectInfoPluginVersion>
+    <ProjectInfoPluginVersion>3.9.0</ProjectInfoPluginVersion>
     <JxrPluginVersion>3.6.0</JxrPluginVersion>
     <JavaDocPluginVersion>3.11.2</JavaDocPluginVersion>
     <JavaNCSSPluginVersion>2.1</JavaNCSSPluginVersion>
@@ -458,7 +458,7 @@
         <version>${CheckStylePluginVersion}</version>
         <configuration>
           <configLocation>src/main/checkstyle/checks.xml</configLocation>
-          <excludes>**/test/**/*.java,**/embedded/**/*.java,**/patch/**/*.java,**/module-info.java</excludes>
+          <excludes>**/SevenZip/**/*.java,**/test/**/*.java,**/embedded/**/*.java,**/patch/**/*.java,**/module-info.java</excludes>
         </configuration>
       </plugin>
       <plugin>

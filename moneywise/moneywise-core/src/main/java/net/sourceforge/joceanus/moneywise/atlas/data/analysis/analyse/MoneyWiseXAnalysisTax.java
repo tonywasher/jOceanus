@@ -306,7 +306,7 @@ public class MoneyWiseXAnalysisTax {
             checkForValidAdditional();
 
             /* If this is a refund, negate the taxCredit */
-            OceanusMoney myNegTaxCredit = new OceanusMoney(myTaxCredit);
+            final OceanusMoney myNegTaxCredit = new OceanusMoney(myTaxCredit);
             if (theTransaction.isRefund()) {
                 myTaxCredit = new OceanusMoney(myTaxCredit);
                 myTaxCredit.negate();

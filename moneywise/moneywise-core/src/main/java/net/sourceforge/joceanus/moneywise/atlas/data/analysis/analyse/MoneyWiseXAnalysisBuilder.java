@@ -107,6 +107,7 @@ public class MoneyWiseXAnalysisBuilder {
     /**
      * analysis on editSet change.
      * @param pEditSet the editSet
+     * @return the analysis
      * @throws OceanusException on error
      */
     public MoneyWiseXAnalysis analyseChangedData(final PrometheusEditSet pEditSet) throws OceanusException {

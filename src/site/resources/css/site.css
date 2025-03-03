@@ -37,7 +37,6 @@ details {
     16px "Open Sans",
     Calibri,
     sans-serif;
-  width: 620px;
 }
 
 details > summary {
@@ -53,4 +52,16 @@ details > table {
   padding: 2px 6px;
   margin: 0;
   box-shadow: 3px 3px 4px black;
+}
+
+/* Define colour and alignment for data values */
+.dataValue {
+  text-align: right;
+  color: black;
+}
+
+/* Define colour and alignment for data values */
+.negValue {
+  text-align: right;
+  color: red;
 }

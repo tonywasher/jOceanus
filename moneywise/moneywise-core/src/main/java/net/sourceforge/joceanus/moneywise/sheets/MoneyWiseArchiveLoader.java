@@ -395,6 +395,7 @@ public class MoneyWiseArchiveLoader {
 
     /**
      * Should we filter this asset?
+     * @param pTrans the transaction values
      * @param pAsset the asset
      * @return true/false
      */

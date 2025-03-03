@@ -34,6 +34,7 @@ import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransCategory;
 import net.sourceforge.joceanus.moneywise.data.builder.MoneyWiseTransactionBuilder;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrencyClass;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTaxClass;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransInfoClass;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
 import org.junit.jupiter.api.Assertions;
@@ -75,6 +76,18 @@ public abstract class MoneyWiseDataTestCase {
     public abstract String getName();
 
     /**
+     * Obtain testCase title.
+     * @return the title
+     */
+    public abstract String getTitle();
+
+    /**
+     * Obtain testCase description.
+     * @return the description
+     */
+    public abstract String getDesc();
+
+    /**
      * Obtain transaction builder.
      * @return the builder
      */
@@ -88,6 +101,14 @@ public abstract class MoneyWiseDataTestCase {
      */
     public void setAnalysis(final MoneyWiseXAnalysis pAnalysis) {
         theAnalysis = pAnalysis;
+    }
+
+    /**
+     * Get analysis.
+     * @return the analysis
+     */
+    public MoneyWiseXAnalysis getAnalysis() {
+        return theAnalysis;
     }
 
     /**
@@ -128,6 +149,15 @@ public abstract class MoneyWiseDataTestCase {
      * Check analysis.
      */
     public void checkAnalysis() {
+    }
+
+    /**
+     * Use infoClass.
+     * @param pInfoClass the infoClass
+     * @return true/false
+     */
+    public boolean useInfoClass(final MoneyWiseTransInfoClass pInfoClass) {
+        return false;
     }
 
     /**

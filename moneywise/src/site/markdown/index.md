@@ -26,3 +26,5 @@ Transactions
 4. [PayeeIncome](transactions/PayeeIncome.html)
 5. [DepositIncome](transactions/DepositIncome.html)
 6. [CreditCard](transactions/CreditCard.html)
+7. [Mortgage](transactions/Mortgage.html)
+8. [PrivateLoan](transactions/PrivateLoan.html)
