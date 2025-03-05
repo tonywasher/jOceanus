@@ -86,6 +86,11 @@ public class MoneyWiseDataXDocReport {
     private Element theDetail;
 
     /**
+     * The subdetail.
+     */
+    private Element theSubDetail;
+
+    /**
      * The table.
      */
     private Element theTable;
@@ -201,6 +206,7 @@ public class MoneyWiseDataXDocReport {
         mySummary.setTextContent(pSummary);
         theDetail.appendChild(mySummary);
         theSection.appendChild(theDetail);
+        theSubDetail = theDetail;
     }
 
     /**
@@ -212,6 +218,21 @@ public class MoneyWiseDataXDocReport {
                        final String pSummary) {
         newDetail(pGroup, pSummary);
         theDetail.setAttribute("open", "true");
+    }
+
+    /**
+     * Create New subDetail for table.
+     * @param pGroup the group
+     * @param pSummary the summary
+     */
+    void newSubDetail(final String pGroup,
+                      final String pSummary) {
+        theSubDetail = theDocument.createElement("details");
+        theSubDetail.setAttribute(ATTR_NAME, pGroup);
+        final Element mySummary = theDocument.createElement("summary");
+        mySummary.setTextContent(pSummary);
+        theSubDetail.appendChild(mySummary);
+        theDetail.appendChild(theSubDetail);
     }
 
     /**
@@ -227,7 +248,7 @@ public class MoneyWiseDataXDocReport {
     void newTable() {
         theTable = theDocument.createElement("table");
         theTable.setAttribute(ATTR_CLASS, "defTable");
-        theDetail.appendChild(theTable);
+        theSubDetail.appendChild(theTable);
     }
 
     /**

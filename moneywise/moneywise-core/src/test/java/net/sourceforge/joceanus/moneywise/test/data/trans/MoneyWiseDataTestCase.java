@@ -23,6 +23,7 @@ import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseX
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisTransCategoryBucket;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.values.MoneyWiseXAnalysisAccountAttr;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.values.MoneyWiseXAnalysisPayeeAttr;
+import net.sourceforge.joceanus.moneywise.atlas.data.analysis.values.MoneyWiseXAnalysisSecurityAttr;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.values.MoneyWiseXAnalysisTaxBasisAttr;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.values.MoneyWiseXAnalysisTransAttr;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseAssetBase;
@@ -158,6 +159,27 @@ public abstract class MoneyWiseDataTestCase {
      */
     public boolean useInfoClass(final MoneyWiseTransInfoClass pInfoClass) {
         return false;
+    }
+
+    /**
+     * Use infoClass.
+     * @param pAttr the security attribute
+     * @return true/false
+     */
+    public boolean useSecurityAttr(final MoneyWiseXAnalysisSecurityAttr pAttr) {
+        switch (pAttr) {
+            case FUNDED:
+            case UNITS:
+            case PRICE:
+            case VALUATION:
+            case RESIDUALCOST:
+            case REALISEDGAINS:
+            case UNREALISEDGAINS:
+            case PROFIT:
+                return true;
+            default:
+                return false;
+        }
     }
 
     /**

@@ -18,14 +18,13 @@ package net.sourceforge.joceanus.moneywise.test.data.xdoc;
 
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.base.MoneyWiseXAnalysisEvent;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysis;
-import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisLoanBucket;
-import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisLoanBucket.MoneyWiseXAnalysisLoanBucketList;
-import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisLoanCategoryBucket;
-import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisLoanCategoryBucket.MoneyWiseXAnalysisLoanCategoryBucketList;
+import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisPortfolioBucket;
+import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisPortfolioBucket.MoneyWiseXAnalysisPortfolioBucketList;
+import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisPortfolioCashBucket;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.values.MoneyWiseXAnalysisAccountAttr;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.values.MoneyWiseXAnalysisAccountValues;
-import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseLoan;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePayee;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePortfolio;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrency;
 import net.sourceforge.joceanus.moneywise.test.data.trans.MoneyWiseDataTestCase;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
@@ -36,9 +35,9 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * XDoc Report Loan Builder.
+ * XDoc Report Portfolio Builder.
  */
-public class MoneyWiseDataXDocLoan {
+public class MoneyWiseDataXDocPortfolio {
     /**
      * Report.
      */
@@ -55,43 +54,51 @@ public class MoneyWiseDataXDocLoan {
     private final List<MoneyWisePayee> theParents;
 
     /**
+     * The securities builder.
+     */
+    private final MoneyWiseDataXDocSecurity theSecurities;
+
+    /**
      * The value map.
      */
-    private final Map<MoneyWiseLoan, OceanusMoney> theValueMap;
+    private final Map<MoneyWisePortfolio, OceanusMoney> theValueMap;
 
     /**
      * The foreign map.
      */
-    private final Map<MoneyWiseLoan, OceanusMoney> theForeignMap;
+    private final Map<MoneyWisePortfolio, OceanusMoney> theForeignMap;
 
     /**
      * Constructor.
      * @param pReport the report
      * @param pTest the test case
      * @param pParents the parents list
+     * @param pSecurity the security builder
      */
-    MoneyWiseDataXDocLoan(final MoneyWiseDataXDocReport pReport,
-                          final MoneyWiseDataTestCase pTest,
-                          final List<MoneyWisePayee> pParents) {
+    MoneyWiseDataXDocPortfolio(final MoneyWiseDataXDocReport pReport,
+                               final MoneyWiseDataTestCase pTest,
+                               final List<MoneyWisePayee> pParents,
+                               final MoneyWiseDataXDocSecurity pSecurity) {
         theReport = pReport;
         theAnalysis = pTest.getAnalysis();
         theParents = pParents;
+        theSecurities = pSecurity;
         theValueMap = new HashMap<>();
         theForeignMap = new HashMap<>();
     }
 
     /**
-     * create loan definitions table.
+     * create portfolio definitions table.
      */
-    void createLoanDefinitions() {
-        /* Obtain the loans and return if we have none */
-        final MoneyWiseXAnalysisLoanBucketList myLoans = theAnalysis.getLoans();
-        if (myLoans.isEmpty()) {
+    void createPortfolioDefinitions() {
+        /* Obtain the portfolios and return if we have none */
+        final MoneyWiseXAnalysisPortfolioBucketList myPortfolios = theAnalysis.getPortfolios();
+        if (myPortfolios.isEmpty()) {
             return;
         }
 
         /* Create detail and table */
-        theReport.newDetail(MoneyWiseDataXDocBuilder.GRP_ACCOUNTS, "Loan Accounts");
+        theReport.newDetail(MoneyWiseDataXDocBuilder.GRP_ACCOUNTS, "Portfolio Accounts");
         theReport.newTable();
 
         /* Add the headers */
@@ -109,18 +116,18 @@ public class MoneyWiseDataXDocLoan {
         theReport.addRowToTable();
 
         /* Create the detail */
-        Iterator<MoneyWiseXAnalysisLoanBucket> myLoanIterator = myLoans.iterator();
-        while (myLoanIterator.hasNext()) {
-            final MoneyWiseXAnalysisLoanBucket myBucket = myLoanIterator.next();
-            final MoneyWiseLoan myLoan = myBucket.getAccount();
+        Iterator<MoneyWiseXAnalysisPortfolioBucket> myPortIterator = myPortfolios.iterator();
+        while (myPortIterator.hasNext()) {
+            final MoneyWiseXAnalysisPortfolioBucket myBucket = myPortIterator.next();
+            final MoneyWisePortfolio myPortfolio = myBucket.getPortfolio();
 
             /* Set name */
             theReport.newRow();
             theReport.newCell();
-            theReport.setCellValue(myLoan.getName());
+            theReport.setCellValue(myPortfolio.getName());
 
             /* Set parent */
-            final MoneyWisePayee myParent = myLoan.getParent();
+            final MoneyWisePayee myParent = myPortfolio.getParent();
             theReport.newRow();
             theReport.newCell();
             theReport.setCellValue(myParent.getName());
@@ -131,17 +138,17 @@ public class MoneyWiseDataXDocLoan {
             /* Set type */
             theReport.newRow();
             theReport.newCell();
-            theReport.setCellValue(myLoan.getCategory().getCategoryType().getName());
+            theReport.setCellValue(myPortfolio.getCategory().getName());
 
             /* Set currency */
             theReport.newRow();
             theReport.newCell();
-            theReport.setCellValue(myLoan.getAssetCurrency().getName());
+            theReport.setCellValue(myPortfolio.getAssetCurrency().getName());
 
             /* Set opening balance */
             theReport.newRow();
             theReport.newCell();
-            final OceanusMoney myStarting = myLoan.getOpeningBalance();
+            final OceanusMoney myStarting = myPortfolio.getOpeningBalance();
             if (myStarting != null) {
                 theReport.setCellValue(myStarting);
             }
@@ -152,17 +159,17 @@ public class MoneyWiseDataXDocLoan {
     }
 
     /**
-     * create main loan headers.
+     * create main portfolio headers.
      * @param pForeign are there foreign assets?
      * @return the number of header cells
      */
-    int createMainLoanHeaders(final boolean pForeign) {
+    int createMainPortfolioHeaders(final boolean pForeign) {
         /* Create the initial headers */
         int myNumCells = 0;
-        final MoneyWiseXAnalysisLoanBucketList myLoans = theAnalysis.getLoans();
-        Iterator<MoneyWiseXAnalysisLoanBucket> myLoanIterator = myLoans.iterator();
-        while (myLoanIterator.hasNext()) {
-            final MoneyWiseXAnalysisLoanBucket myBucket = myLoanIterator.next();
+        final MoneyWiseXAnalysisPortfolioBucketList myPortfolios = theAnalysis.getPortfolios();
+        Iterator<MoneyWiseXAnalysisPortfolioBucket> myPortIterator = myPortfolios.iterator();
+        while (myPortIterator.hasNext()) {
+            final MoneyWiseXAnalysisPortfolioBucket myBucket = myPortIterator.next();
 
             /* If this is a foreign account */
             if (pForeign) {
@@ -182,6 +189,9 @@ public class MoneyWiseDataXDocLoan {
             /* Store the name */
             theReport.setCellValue(myBucket.getName());
             myNumCells++;
+
+            /* Add security headers */
+            myNumCells += theSecurities.createMainHoldingHeaders(myBucket, pForeign);
         }
 
         /* Return the number of cells */
@@ -189,64 +199,70 @@ public class MoneyWiseDataXDocLoan {
     }
 
     /**
-     * create foreign loan headers.
+     * create foreign portfolio headers.
      */
-    void createForeignLoanHeaders() {
+    void createForeignPortfolioHeaders() {
         /* Create the initial headers */
         final MoneyWiseCurrency myCurrency = theAnalysis.getCurrency();
-        final MoneyWiseXAnalysisLoanBucketList myLoans = theAnalysis.getLoans();
-        Iterator<MoneyWiseXAnalysisLoanBucket> myLoanIterator = myLoans.iterator();
-        while (myLoanIterator.hasNext()) {
-            final MoneyWiseXAnalysisLoanBucket myBucket = myLoanIterator.next();
+        final MoneyWiseXAnalysisPortfolioBucketList myPortfolios = theAnalysis.getPortfolios();
+        Iterator<MoneyWiseXAnalysisPortfolioBucket> myPortIterator = myPortfolios.iterator();
+        while (myPortIterator.hasNext()) {
+            final MoneyWiseXAnalysisPortfolioBucket myBucket = myPortIterator.next();
             if (myBucket.isForeignCurrency()) {
                 theReport.newHeader();
-                theReport.setCellValue(myBucket.getAccount().getAssetCurrency().getName());
+                theReport.setCellValue(myBucket.getPortfolio().getAssetCurrency().getName());
                 theReport.newHeader();
                 theReport.setCellValue(myCurrency.getName());
             }
+            theSecurities.createForeignHoldingHeaders(myBucket);
         }
     }
 
     /**
-     * update loan asset row for event.
+     * update portfolio asset row for event.
      * @param pEvent the event
      * @return isNonEmpty true/false
      */
-    boolean updateLoanAssetRow(final MoneyWiseXAnalysisEvent pEvent) {
-        /* Loop through the loans */
-        final MoneyWiseXAnalysisLoanBucketList myLoans = theAnalysis.getLoans();
-        Iterator<MoneyWiseXAnalysisLoanBucket> myLoanIterator = myLoans.iterator();
-        while (myLoanIterator.hasNext()) {
-            final MoneyWiseXAnalysisLoanBucket myBucket = myLoanIterator.next();
-            final MoneyWiseLoan myLoan = myBucket.getAccount();
+    boolean updatePortfolioAssetRow(final MoneyWiseXAnalysisEvent pEvent) {
+        /* Loop through the portfolios */
+        boolean nonEmpty = false;
+        final MoneyWiseXAnalysisPortfolioBucketList myPortfolios = theAnalysis.getPortfolios();
+        Iterator<MoneyWiseXAnalysisPortfolioBucket> myPortIterator = myPortfolios.iterator();
+        while (myPortIterator.hasNext()) {
+            final MoneyWiseXAnalysisPortfolioBucket myBucket = myPortIterator.next();
+            final MoneyWisePortfolio myPortfolio = myBucket.getPortfolio();
+            final MoneyWiseXAnalysisPortfolioCashBucket myCash = myBucket.getPortfolioCash();
 
             /* Obtain values for the event */
-            final MoneyWiseXAnalysisAccountValues myValues = myBucket.getValuesForEvent(pEvent);
+            final MoneyWiseXAnalysisAccountValues myValues = myCash.getValuesForEvent(pEvent);
 
             /* If this is a foreign account */
-            if (myLoan.isForeign()) {
+            if (myPortfolio.isForeign()) {
                 /* Report foreign valuation */
                 theReport.newCell();
                 OceanusMoney myForeign = myValues == null ? null : myValues.getMoneyValue(MoneyWiseXAnalysisAccountAttr.BALANCE);
-                myForeign = myForeign == null ? theForeignMap.get(myLoan) : myForeign;
+                myForeign = myForeign == null ? theForeignMap.get(myPortfolio) : myForeign;
                 if (myForeign != null) {
                     theReport.setCellValue(myForeign);
-                    theForeignMap.put(myLoan, myForeign);
+                    theForeignMap.put(myPortfolio, myForeign);
                 }
             }
 
             /* Report standard valuation */
             theReport.newCell();
             OceanusMoney myValue = myValues == null ? null : myValues.getMoneyValue(MoneyWiseXAnalysisAccountAttr.VALUATION);
-            myValue = myValue == null ? theValueMap.get(myLoan) : myValue;
+            myValue = myValue == null ? theValueMap.get(myPortfolio) : myValue;
             if (myValue != null) {
                 theReport.setCellValue(myValue);
-                theValueMap.put(myLoan, myValue);
+                theValueMap.put(myPortfolio, myValue);
             }
+
+            /* Update holdings for this portfolio */
+            nonEmpty |= theSecurities.updateHoldingAssetRow(myBucket, pEvent);
         }
 
         /* Return nonEmpty indication */
-        return !theValueMap.isEmpty() || !theForeignMap.isEmpty();
+        return nonEmpty || !theValueMap.isEmpty() || !theForeignMap.isEmpty();
     }
 
     /**
@@ -254,12 +270,17 @@ public class MoneyWiseDataXDocLoan {
      * @return true/false
      */
     boolean haveForeignAssets() {
-        /* Check for foreign loans */
-        final MoneyWiseXAnalysisLoanCategoryBucketList myLoans = theAnalysis.getLoanCategories();
-        Iterator<MoneyWiseXAnalysisLoanCategoryBucket> myLoanIterator = myLoans.iterator();
-        while (myLoanIterator.hasNext()) {
-            final MoneyWiseXAnalysisLoanCategoryBucket myBucket = myLoanIterator.next();
+        /* Check for foreign portfolios */
+        final MoneyWiseXAnalysisPortfolioBucketList myPortfolios = theAnalysis.getPortfolios();
+        Iterator<MoneyWiseXAnalysisPortfolioBucket> myPortIterator = myPortfolios.iterator();
+        while (myPortIterator.hasNext()) {
+            final MoneyWiseXAnalysisPortfolioBucket myBucket = myPortIterator.next();
             if (myBucket.hasForeignCurrency()) {
+                return true;
+            }
+
+            /* If we have foreign holdings */
+            if (theSecurities.haveForeignAssets(myBucket)) {
                 return true;
             }
         }

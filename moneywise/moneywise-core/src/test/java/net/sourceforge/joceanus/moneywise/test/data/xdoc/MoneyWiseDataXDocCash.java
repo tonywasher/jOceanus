@@ -33,7 +33,6 @@ import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
 
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -51,11 +50,6 @@ public class MoneyWiseDataXDocCash {
     private final MoneyWiseXAnalysis theAnalysis;
 
     /**
-     * The parent payees.
-     */
-    private final List<MoneyWisePayee> theParents;
-
-    /**
      * The value map.
      */
     private final Map<MoneyWiseCash, OceanusMoney> theValueMap;
@@ -69,14 +63,11 @@ public class MoneyWiseDataXDocCash {
      * Constructor.
      * @param pReport the report
      * @param pTest the test case
-     * @param pParents the parents list
      */
     MoneyWiseDataXDocCash(final MoneyWiseDataXDocReport pReport,
-                          final MoneyWiseDataTestCase pTest,
-                          final List<MoneyWisePayee> pParents) {
+                          final MoneyWiseDataTestCase pTest) {
         theReport = pReport;
         theAnalysis = pTest.getAnalysis();
-        theParents = pParents;
         theValueMap = new HashMap<>();
         theForeignMap = new HashMap<>();
     }
@@ -98,13 +89,13 @@ public class MoneyWiseDataXDocCash {
         /* Add the headers */
         theReport.newRow();
         theReport.newHeader();
-        theReport.setCellValue("Name");
+        theReport.setCellValue(MoneyWiseDataXDocBuilder.HDR_NAME);
         theReport.newHeader();
-        theReport.setCellValue("Category");
+        theReport.setCellValue(MoneyWiseDataXDocBuilder.HDR_CATEGORY);
         theReport.newHeader();
-        theReport.setCellValue("Currency");
+        theReport.setCellValue(MoneyWiseDataXDocBuilder.HDR_CURRENCY);
         theReport.newHeader();
-        theReport.setCellValue("Starting Balance");
+        theReport.setCellValue(MoneyWiseDataXDocBuilder.HDR_OPENING);
         theReport.newHeader();
         theReport.setCellValue("AutoPayee");
         theReport.newHeader();
@@ -150,6 +141,8 @@ public class MoneyWiseDataXDocCash {
             if (myAutoExpense != null) {
                 theReport.setCellValue(myAutoExpense.getName());
             }
+
+            /* Add row to table */
             theReport.addRowToTable();
         }
     }
@@ -161,26 +154,34 @@ public class MoneyWiseDataXDocCash {
      */
     int createMainCashHeaders(final boolean pForeign) {
         /* Create the initial headers */
-        int myNumHeaders = 0;
+        int myNumCells = 0;
         final MoneyWiseXAnalysisCashBucketList myCash = theAnalysis.getCash();
         Iterator<MoneyWiseXAnalysisCashBucket> myCashIterator = myCash.iterator();
         while (myCashIterator.hasNext()) {
             final MoneyWiseXAnalysisCashBucket myBucket = myCashIterator.next();
 
+            /* If this is a foreign account */
             if (pForeign) {
+                /* Create the correct spanning header */
                 if (myBucket.isForeignCurrency()) {
                     theReport.newColSpanHeader(2);
-                    myNumHeaders++;
+                    myNumCells++;
                 } else {
                     theReport.newRowSpanHeader(2);
                 }
+
+                /* else standard account */
             } else {
                 theReport.newHeader();
             }
+
+            /* Store the name */
             theReport.setCellValue(myBucket.getName());
-            myNumHeaders++;
+            myNumCells++;
         }
-        return myNumHeaders;
+
+        /* Return the number of cells */
+        return myNumCells;
     }
 
 

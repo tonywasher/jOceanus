@@ -21,6 +21,7 @@ import net.sourceforge.joceanus.moneywise.atlas.data.analysis.base.MoneyWiseXAna
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.base.MoneyWiseXAnalysisEventType;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysis;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.values.MoneyWiseXAnalysisAccountAttr;
+import net.sourceforge.joceanus.moneywise.atlas.data.analysis.values.MoneyWiseXAnalysisSecurityAttr;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePayee;
 import net.sourceforge.joceanus.moneywise.test.data.trans.MoneyWiseDataTestCase;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
@@ -64,6 +65,16 @@ public class MoneyWiseDataXDocAssets {
     private final MoneyWiseDataXDocLoan theLoans;
 
     /**
+     * The portfolio builder.
+     */
+    private final MoneyWiseDataXDocPortfolio thePortfolios;
+
+    /**
+     * The securities builder.
+     */
+    private final MoneyWiseDataXDocSecurity theSecurities;
+
+    /**
      * Constructor.
      *
      * @param pReport the report
@@ -78,8 +89,10 @@ public class MoneyWiseDataXDocAssets {
 
         /* Create submodules */
         theDeposits = new MoneyWiseDataXDocDeposit(pReport, pTest, theParents);
-        theCash = new MoneyWiseDataXDocCash(pReport, pTest, theParents);
+        theCash = new MoneyWiseDataXDocCash(pReport, pTest);
         theLoans = new MoneyWiseDataXDocLoan(pReport, pTest, theParents);
+        theSecurities = new MoneyWiseDataXDocSecurity(pReport, pTest, theParents);
+        thePortfolios = new MoneyWiseDataXDocPortfolio(pReport, pTest, theParents, theSecurities);
     }
 
     /**
@@ -98,6 +111,8 @@ public class MoneyWiseDataXDocAssets {
         theDeposits.createDepositDefinitions();
         theCash.createCashDefinitions();
         theLoans.createLoanDefinitions();
+        thePortfolios.createPortfolioDefinitions();
+        theSecurities.createSecurityDefinitions();
     }
 
     /**
@@ -133,7 +148,8 @@ public class MoneyWiseDataXDocAssets {
             /* Create the detail */
             boolean nonEmpty = theDeposits.updateDepositAssetRow(myEvent);
             nonEmpty |= theCash.updateCashAssetRow(myEvent);
-            nonEmpty |= theLoans.updateDepositAssetRow(myEvent);
+            nonEmpty |= theLoans.updateLoanAssetRow(myEvent);
+            nonEmpty |= thePortfolios.updatePortfolioAssetRow(myEvent);
             if (nonEmpty) {
                 theReport.addRowToTable();
             }
@@ -146,6 +162,9 @@ public class MoneyWiseDataXDocAssets {
         theReport.newBoldSpanCell(myNumCols);
         theReport.setCellValue(getValueDelta());
         theReport.addRowToTable();
+
+        /* Create the holdings history */
+        theSecurities.createHoldingHistory();
     }
 
     /**
@@ -173,6 +192,7 @@ public class MoneyWiseDataXDocAssets {
         int myNumColumns = theDeposits.createMainDepositHeaders(haveForeign);
         myNumColumns += theCash.createMainCashHeaders(haveForeign);
         myNumColumns += theLoans.createMainLoanHeaders(haveForeign);
+        myNumColumns += thePortfolios.createMainPortfolioHeaders(haveForeign);
         theReport.addRowToTable();
 
         /* If we have foreign assets */
@@ -182,6 +202,7 @@ public class MoneyWiseDataXDocAssets {
             theDeposits.createForeignDepositHeaders();
             theCash.createForeignCashHeaders();
             theLoans.createForeignLoanHeaders();
+            thePortfolios.createForeignPortfolioHeaders();
             theReport.addRowToTable();
         }
 
@@ -196,7 +217,8 @@ public class MoneyWiseDataXDocAssets {
     private boolean haveForeignAssets() {
         return theDeposits.haveForeignAssets()
                 || theCash.haveForeignAssets()
-                || theLoans.haveForeignAssets();
+                || theLoans.haveForeignAssets()
+                || thePortfolios.haveForeignAssets();
     }
 
     /**
@@ -209,6 +231,7 @@ public class MoneyWiseDataXDocAssets {
         myTotal.addAmount(theAnalysis.getDepositCategories().getTotals().getValues().getMoneyValue(MoneyWiseXAnalysisAccountAttr.VALUEDELTA));
         myTotal.addAmount(theAnalysis.getCashCategories().getTotals().getValues().getMoneyValue(MoneyWiseXAnalysisAccountAttr.VALUEDELTA));
         myTotal.addAmount(theAnalysis.getLoanCategories().getTotals().getValues().getMoneyValue(MoneyWiseXAnalysisAccountAttr.VALUEDELTA));
+        myTotal.addAmount(theAnalysis.getPortfolios().getTotals().getValues().getMoneyValue(MoneyWiseXAnalysisSecurityAttr.VALUEDELTA));
         return myTotal;
     }
 }

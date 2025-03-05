@@ -29,7 +29,6 @@ import net.sourceforge.joceanus.moneywise.test.data.trans.MoneyWiseDataTestCase;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimal;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -52,7 +51,7 @@ public class MoneyWiseDataXDocPayee {
     /**
      * The parent payees.
      */
-    private List<MoneyWisePayee> theParents = Collections.EMPTY_LIST;
+    private List<MoneyWisePayee> theParents;
 
     /**
      * Constructor.
@@ -84,9 +83,9 @@ public class MoneyWiseDataXDocPayee {
         /* Add the headers */
         theReport.newRow();
         theReport.newHeader();
-        theReport.setCellValue("Name");
+        theReport.setCellValue(MoneyWiseDataXDocBuilder.HDR_NAME);
         theReport.newHeader();
-        theReport.setCellValue("Type");
+        theReport.setCellValue(MoneyWiseDataXDocBuilder.HDR_CATEGORY);
         theReport.addRowToTable();
 
         /* Create the detail */
@@ -104,6 +103,8 @@ public class MoneyWiseDataXDocPayee {
             /* Set type */
             theReport.newCell();
             theReport.setCellValue(myPayee.getCategoryName());
+
+            /* Add row to table */
             theReport.addRowToTable();
 
             /* Remove payee from parents list if present */
