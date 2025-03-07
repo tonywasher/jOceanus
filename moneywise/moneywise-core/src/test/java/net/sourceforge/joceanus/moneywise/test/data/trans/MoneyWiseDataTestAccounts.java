@@ -47,17 +47,19 @@ public class MoneyWiseDataTestAccounts {
      * Payee ids.
      */
     final static String idPY_Barclays = "Barclays";
+    final static String idPY_Lloyds = "Lloyds";
+    final static String idPY_TSB = "TSB";
+    final static String idPY_Halifax = "Halifax";
     final static String idPY_Nationwide = "Nationwide";
     final static String idPY_Starling = "Starling";
     final static String idPY_InteractiveInvestor = "InteractiveInvestor";
+    final static String idPY_AJBell = "AJBell";
+    final static String idPY_StandardLife = "StandardLife";
     final static String idPY_FundingCircle = "FundingCircle";
-    final static String idPY_BallCorp = "BallCorp";
     final static String idPY_IBM = "IBM";
     final static String idPY_Petrol = "Petrol";
     final static String idPY_Parking = "Parking";
     final static String idPY_ASDA = "ASDA";
-    final static String idPY_CoOp = "CoOp";
-    final static String idPY_Tesco = "Tesco";
     final static String idPY_Potters = "PottersHeron";
     final static String idPY_Government = "Government";
     final static String idPY_HMRC = "InlandRevenue";
@@ -65,6 +67,7 @@ public class MoneyWiseDataTestAccounts {
     final static String idPY_CashExpense = "CashExpense";
     final static String idPY_Damage = "Damage";
     final static String idPY_Parents = "Parents";
+    final static String idPY_AssetHolder = "AssetHolder";
 
     /**
      * Deposit ids.
@@ -98,21 +101,47 @@ public class MoneyWiseDataTestAccounts {
     /**
      * Portfolio ids.
      */
+    final static String idPF_AJBellStock = "AJBellStock";
     final static String idPF_InteractiveInvestorStock = "InteractiveInvestorStock";
+    final static String idPF_InteractiveInvestorISA = "InteractiveInvestorISA";
+    final static String idPF_InteractiveInvestorSIPP = "InteractiveInvestorSIPP";
+    final static String idPF_Assets = "Assets";
+    final static String idPF_Residence = "Residence";
     final static String idPF_Pensions = "Pensions";
 
     /**
      * Security ids.
      */
     final static String idSC_BarclaysShares = "BarclaysShares";
-    final static String idSC_BallShares = "BallShares";
+    final static String idSC_LloydsShares = "LloydsShares";
+    final static String idSC_HalifaxShares = "HalifaxShares";
+    final static String idSC_TSBShares = "TSBShares";
+    final static String idSC_StarlingShares = "StarlingShares";
+    final static String idSC_BarclaysSharesUS = "BarclaysSharesUS";
+    final static String idSC_LloydsSharesUS = "LloydsSharesUS";
+    final static String idSC_HalifaxSharesUS = "HalifaxSharesUS";
+    final static String idSC_TSBSharesUS = "TSBSharesUS";
+    final static String idSC_StarlingSharesUS = "StarlingSharesUS";
+    final static String idSC_FordEscort = "FordEscort";
+    final static String idSC_Mazda6 = "Mazda6";
+    final static String idSC_12MainSt = "12MainSt";
+    final static String idSC_56HighSt= "56HighSt";
+    final static String idSC_41KiteSt = "41KiteSt";
+    final static String idSC_IBMPension = "IBMPension";
+    final static String idSC_IBMAvc = "IBMAvc";
+    final static String idSC_StdLifePolicy = "StdLifePolicy";
+    final static String idSC_StdLifeBond = "StdLifeBond";
     final static String idSC_StatePension = "StatePension";
 
     /**
      * Security holding ids.
      */
     final static String idSH_BarclaysShares = idPF_InteractiveInvestorStock + ":" + idSC_BarclaysShares;
-    final static String idSH_BallShares = idPF_InteractiveInvestorStock + ":" + idSC_BallShares;
+    final static String idSH_LloydsShares = idPF_InteractiveInvestorStock + ":" + idSC_LloydsShares;
+    final static String idSH_LloydsSharesISA = idPF_InteractiveInvestorISA + ":" + idSC_LloydsShares;
+    final static String idSH_HalifaxShares = idPF_InteractiveInvestorStock + ":" + idSC_HalifaxShares;
+    final static String idSH_TSBShares = idPF_InteractiveInvestorStock + ":" + idSC_TSBShares;
+    final static String idSH_StarlingShares = idPF_InteractiveInvestorStock + ":" + idSC_StarlingShares;
 
     /**
      * The dataSet.
@@ -256,9 +285,14 @@ public class MoneyWiseDataTestAccounts {
                 case idPY_Barclays:
                 case idPY_Nationwide:
                 case idPY_Starling:
-                case idPY_BallCorp:
+                case idPY_Lloyds:
+                case idPY_Halifax:
+                case idPY_TSB:
                 case idPY_InteractiveInvestor:
                 case idPY_FundingCircle:
+                case idPY_AJBell:
+                case idPY_StandardLife:
+                case idPY_AssetHolder:
                     thePayeeBuilder.name(myPayee).type(MoneyWisePayeeClass.INSTITUTION).build();
                     break;
                 case idPY_IBM:
@@ -278,8 +312,6 @@ public class MoneyWiseDataTestAccounts {
                     thePayeeBuilder.name(myPayee).type(MoneyWisePayeeClass.INDIVIDUAL).build();
                     break;
                 case idPY_ASDA:
-                case idPY_CoOp:
-                case idPY_Tesco:
                 case idPY_Petrol:
                 case idPY_Parking:
                 case idPY_Potters:
@@ -477,7 +509,25 @@ public class MoneyWiseDataTestAccounts {
             switch (myPortfolio) {
                 case idPF_InteractiveInvestorStock:
                     createPayees(idPY_InteractiveInvestor);
+                    thePortfolioBuilder.name(myPortfolio).parent(idPY_InteractiveInvestor).type(MoneyWisePortfolioClass.STANDARD).build();
+                    break;
+                case idPF_InteractiveInvestorISA:
+                    createPayees(idPY_InteractiveInvestor);
                     thePortfolioBuilder.name(myPortfolio).parent(idPY_InteractiveInvestor).type(MoneyWisePortfolioClass.TAXFREE).build();
+                    break;
+                case idPF_InteractiveInvestorSIPP:
+                    createPayees(idPY_InteractiveInvestor);
+                    thePortfolioBuilder.name(myPortfolio).parent(idPY_InteractiveInvestor).type(MoneyWisePortfolioClass.SIPP).build();
+                    break;
+                case idPF_AJBellStock:
+                    createPayees(idPY_AJBell);
+                    thePortfolioBuilder.name(myPortfolio).parent(idPY_AJBell).type(MoneyWisePortfolioClass.STANDARD).build();
+                    break;
+                case idPF_Assets:
+                    thePortfolioBuilder.name(myPortfolio).parent(idPY_AssetHolder).type(MoneyWisePortfolioClass.STANDARD).build();
+                    break;
+                case idPF_Residence:
+                    thePortfolioBuilder.name(myPortfolio).parent(idPY_AssetHolder).type(MoneyWisePortfolioClass.TAXFREE).build();
                     break;
                 case idPF_Pensions:
                     thePortfolioBuilder.name(myPortfolio).parent(idPY_Government).type(MoneyWisePortfolioClass.PENSION).build();
@@ -511,12 +561,80 @@ public class MoneyWiseDataTestAccounts {
             switch (mySecurity) {
                 case idSC_BarclaysShares:
                     createPayees(idPY_Barclays);
-                    theSecurityBuilder.name(mySecurity).parent(idPY_Barclays).type(MoneyWiseSecurityClass.SHARES).symbol("BARC.L").build();
+                    theSecurityBuilder.name(mySecurity).parent(idPY_Barclays).type(MoneyWiseSecurityClass.SHARES)
+                            .symbol("BARC.L").build();
                     break;
-                case idSC_BallShares:
-                    createPayees(idPY_BallCorp);
-                    theSecurityBuilder.name(mySecurity).parent(idPY_BallCorp).type(MoneyWiseSecurityClass.SHARES)
-                            .symbol("BALL.NY").currency(MoneyWiseCurrencyClass.USD).build();
+                case idSC_LloydsShares:
+                    createPayees(idPY_Lloyds);
+                    theSecurityBuilder.name(mySecurity).parent(idPY_Lloyds).type(MoneyWiseSecurityClass.SHARES)
+                            .symbol("LLOY.L").build();
+                    break;
+                case idSC_HalifaxShares:
+                    createPayees(idPY_Halifax);
+                    theSecurityBuilder.name(mySecurity).parent(idPY_Halifax).type(MoneyWiseSecurityClass.SHARES)
+                            .symbol("HLFX.L").build();
+                    break;
+                case idSC_TSBShares:
+                    createPayees(idPY_TSB);
+                    theSecurityBuilder.name(mySecurity).parent(idPY_TSB).type(MoneyWiseSecurityClass.SHARES)
+                            .symbol("TSB.L").build();
+                    break;
+                case idSC_StarlingShares:
+                    createPayees(idPY_Starling);
+                    theSecurityBuilder.name(mySecurity).parent(idPY_Starling).type(MoneyWiseSecurityClass.SHARES)
+                            .symbol("STAR.L").build();
+                    break;
+                case idSC_BarclaysSharesUS:
+                    createPayees(idPY_Barclays);
+                    theSecurityBuilder.name(mySecurity).parent(idPY_Barclays).type(MoneyWiseSecurityClass.SHARES)
+                            .symbol("BARC.NY").currency(MoneyWiseCurrencyClass.USD).build();
+                    break;
+                case idSC_LloydsSharesUS:
+                    createPayees(idPY_Lloyds);
+                    theSecurityBuilder.name(mySecurity).parent(idPY_Lloyds).type(MoneyWiseSecurityClass.SHARES)
+                            .symbol("LLOY.NY").currency(MoneyWiseCurrencyClass.USD).build();
+                    break;
+                case idSC_HalifaxSharesUS:
+                    createPayees(idPY_Halifax);
+                    theSecurityBuilder.name(mySecurity).parent(idPY_Halifax).type(MoneyWiseSecurityClass.SHARES)
+                            .symbol("HLFX.NY").currency(MoneyWiseCurrencyClass.USD).build();
+                    break;
+                case idSC_TSBSharesUS:
+                    createPayees(idPY_TSB);
+                    theSecurityBuilder.name(mySecurity).parent(idPY_TSB).type(MoneyWiseSecurityClass.SHARES)
+                            .symbol("TSB.NY").currency(MoneyWiseCurrencyClass.USD).build();
+                    break;
+                case idSC_StarlingSharesUS:
+                    createPayees(idPY_Starling);
+                    theSecurityBuilder.name(mySecurity).parent(idPY_Starling).type(MoneyWiseSecurityClass.SHARES)
+                            .symbol("STAR.NY").currency(MoneyWiseCurrencyClass.USD).build();
+                    break;
+                case idSC_FordEscort:
+                    theSecurityBuilder.name(mySecurity).parent(idPY_AssetHolder).type(MoneyWiseSecurityClass.VEHICLE).build();
+                    break;
+                case idSC_Mazda6:
+                    theSecurityBuilder.name(mySecurity).parent(idPY_AssetHolder).type(MoneyWiseSecurityClass.VEHICLE).build();
+                    break;
+                case idSC_12MainSt:
+                    theSecurityBuilder.name(mySecurity).parent(idPY_AssetHolder).type(MoneyWiseSecurityClass.PROPERTY).build();
+                    break;
+                case idSC_56HighSt:
+                    theSecurityBuilder.name(mySecurity).parent(idPY_AssetHolder).type(MoneyWiseSecurityClass.PROPERTY).build();
+                    break;
+                case idSC_41KiteSt:
+                    theSecurityBuilder.name(mySecurity).parent(idPY_AssetHolder).type(MoneyWiseSecurityClass.PROPERTY).build();
+                    break;
+                case idSC_StdLifePolicy:
+                    theSecurityBuilder.name(mySecurity).parent(idPY_StandardLife).type(MoneyWiseSecurityClass.ENDOWMENT).build();
+                    break;
+                case idSC_StdLifeBond:
+                    theSecurityBuilder.name(mySecurity).parent(idPY_StandardLife).type(MoneyWiseSecurityClass.LIFEBOND).build();
+                    break;
+                case idSC_IBMPension:
+                    theSecurityBuilder.name(mySecurity).parent(idPY_IBM).type(MoneyWiseSecurityClass.DEFINEDBENEFIT).build();
+                    break;
+                case idSC_IBMAvc:
+                    theSecurityBuilder.name(mySecurity).parent(idPY_StandardLife).type(MoneyWiseSecurityClass.DEFINEDCONTRIBUTION).build();
                     break;
                 case idSC_StatePension:
                     theSecurityBuilder.name(mySecurity).parent(idPY_Government).type(MoneyWiseSecurityClass.STATEPENSION).build();

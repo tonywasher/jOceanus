@@ -300,7 +300,7 @@ public class MoneyWiseTransactionBuilder {
      * @return the builder
      */
     public MoneyWiseTransactionBuilder taxCredit(final String pTaxCredit) {
-        return taxCredit(new OceanusMoney(pTaxCredit, theDataSet.getReportingCurrency().getCurrency()));
+        return taxCredit(new OceanusMoney(pTaxCredit, theAccount.getCurrency()));
     }
 
     /**
@@ -319,7 +319,7 @@ public class MoneyWiseTransactionBuilder {
      * @return the builder
      */
     public MoneyWiseTransactionBuilder employersNI(final String pNI) {
-        return employersNI(new OceanusMoney(pNI, theDataSet.getReportingCurrency().getCurrency()));
+        return employersNI(new OceanusMoney(pNI, theAccount.getCurrency()));
     }
 
     /**
@@ -338,7 +338,7 @@ public class MoneyWiseTransactionBuilder {
      * @return the builder
      */
     public MoneyWiseTransactionBuilder employeesNI(final String pNI) {
-        return employeesNI(new OceanusMoney(pNI, theDataSet.getReportingCurrency().getCurrency()));
+        return employeesNI(new OceanusMoney(pNI, theAccount.getCurrency()));
     }
 
     /**
@@ -376,7 +376,7 @@ public class MoneyWiseTransactionBuilder {
      * @return the builder
      */
     public MoneyWiseTransactionBuilder withheld(final String pWithheld) {
-        return withheld(new OceanusMoney(pWithheld, theDataSet.getReportingCurrency().getCurrency()));
+        return withheld(new OceanusMoney(pWithheld, theAccount.getCurrency()));
     }
 
     /**

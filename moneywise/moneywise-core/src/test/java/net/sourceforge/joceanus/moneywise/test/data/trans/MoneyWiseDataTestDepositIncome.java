@@ -17,6 +17,7 @@
 package net.sourceforge.joceanus.moneywise.test.data.trans;
 
 import net.sourceforge.joceanus.moneywise.data.builder.MoneyWiseTransactionBuilder;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrencyClass;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTaxClass;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransInfoClass;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
@@ -58,7 +59,16 @@ public class MoneyWiseDataTestDepositIncome
     @Override
     public void setUpAccounts() throws OceanusException {
         createDeposits(MoneyWiseDataTestAccounts.idDP_BarclaysCurrent,
-                MoneyWiseDataTestAccounts.idDP_NatWideISA);
+                MoneyWiseDataTestAccounts.idDP_NatWideISA,
+                MoneyWiseDataTestAccounts.idDP_StarlingEuro);
+    }
+
+    @Override
+    public void defineRates() throws OceanusException {
+        createXchgRate(MoneyWiseCurrencyClass.USD, "06-Apr-1980", "0.8");
+        createXchgRate(MoneyWiseCurrencyClass.EUR, "06-Apr-1980", "0.9");
+        createXchgRate(MoneyWiseCurrencyClass.USD, "01-Jan-2025", "0.85");
+        createXchgRate(MoneyWiseCurrencyClass.EUR, "01-Jan-2025", "0.95");
     }
 
     @Override
@@ -134,6 +144,18 @@ public class MoneyWiseDataTestDepositIncome
                 .from().partner(MoneyWiseDataTestAccounts.idDP_NatWideISA)
                 .build();
 
+        /* A simple foreign interest with tax and withheld */
+        theTransBuilder.date("11-Sept-1986").category(MoneyWiseDataTestCategories.idTC_Interest)
+                .account(MoneyWiseDataTestAccounts.idDP_StarlingEuro).amount("47")
+                .to().partner(MoneyWiseDataTestAccounts.idDP_StarlingEuro).taxCredit("11.76").withheld("0.93")
+                .build();
+
+        /* A refund of foreign interest with tax and withheld */
+        theTransBuilder.date("12-Sept-1986").category(MoneyWiseDataTestCategories.idTC_Interest)
+                .account(MoneyWiseDataTestAccounts.idDP_StarlingEuro).amount("5.21")
+                .from().partner(MoneyWiseDataTestAccounts.idDP_StarlingEuro).taxCredit("1.65").withheld("0.12")
+                .build();
+
         /* A gross interest */
         theTransBuilder.date("01-Sept-2020").category(MoneyWiseDataTestCategories.idTC_Interest)
                 .account(MoneyWiseDataTestAccounts.idDP_BarclaysCurrent).amount("7.34")
@@ -157,6 +179,18 @@ public class MoneyWiseDataTestDepositIncome
                 .account(MoneyWiseDataTestAccounts.idDP_BarclaysCurrent).amount("1.45")
                 .from().partner(MoneyWiseDataTestAccounts.idDP_BarclaysCurrent)
                 .build();
+
+        /* A foreign interest */
+        theTransBuilder.date("01-Oct-2020").category(MoneyWiseDataTestCategories.idTC_Interest)
+                .account(MoneyWiseDataTestAccounts.idDP_StarlingEuro).amount("8.62")
+                .to().partner(MoneyWiseDataTestAccounts.idDP_StarlingEuro)
+                .build();
+
+        /* A refund of foreign gross interest */
+        theTransBuilder.date("02-Oct-2020").category(MoneyWiseDataTestCategories.idTC_Interest)
+                .account(MoneyWiseDataTestAccounts.idDP_StarlingEuro).amount("1.31")
+                .from().partner(MoneyWiseDataTestAccounts.idDP_StarlingEuro)
+                .build();
     }
 
     @Override
@@ -167,22 +201,27 @@ public class MoneyWiseDataTestDepositIncome
     public void checkAnalysis() {
         checkAccountValue(MoneyWiseDataTestAccounts.idDP_BarclaysCurrent, "10031.08");
         checkAccountValue(MoneyWiseDataTestAccounts.idDP_NatWideISA, "10053.88");
+        checkAccountValue(MoneyWiseDataTestAccounts.idDP_StarlingEuro, "4796.65");
         checkPayeeValue(MoneyWiseDataTestAccounts.idPY_Barclays, "35.83", "0.74");
         checkPayeeValue(MoneyWiseDataTestAccounts.idPY_Nationwide, "53.88", "0");
-        checkPayeeValue(MoneyWiseDataTestAccounts.idPY_HMRC, "0", "4.01");
-        checkCategoryValue(MoneyWiseDataTestCategories.idTC_TaxedInterest, "12.57", "0");
-        checkCategoryValue(MoneyWiseDataTestCategories.idTC_GrossInterest, "4.36", "0");
+        checkPayeeValue(MoneyWiseDataTestAccounts.idPY_Starling, "54.01", "0.73");
+        checkPayeeValue(MoneyWiseDataTestAccounts.idPY_HMRC, "0", "13.10");
+        checkPayeeValue(MoneyWiseDataTestAccounts.idPY_Market, "252.46", "0");
+        checkCategoryValue(MoneyWiseDataTestCategories.idTC_TaxedInterest, "60.00", "0");
+        checkCategoryValue(MoneyWiseDataTestCategories.idTC_GrossInterest, "10.94", "0");
         checkCategoryValue(MoneyWiseDataTestCategories.idTC_TaxFreeInt, "47.3", "0");
         checkCategoryValue(MoneyWiseDataTestCategories.idTC_CashBack, "0.90", "0");
-        checkCategoryValue(MoneyWiseDataTestCategories.idTC_TaxIncome, "0", "4.01");
-        checkCategoryValue(MoneyWiseDataTestCategories.idTC_ExpVirtual, "0", "0.74");
+        checkCategoryValue(MoneyWiseDataTestCategories.idTC_TaxIncome, "0", "13.10");
+        checkCategoryValue(MoneyWiseDataTestCategories.idTC_ExpVirtual, "0", "1.47");
         checkCategoryValue(MoneyWiseDataTestCategories.idTC_TaxedLoyaltyBonus, "11.00", "0");
         checkCategoryValue(MoneyWiseDataTestCategories.idTC_GrossLoyaltyBonus, "7.00", "0");
         checkCategoryValue(MoneyWiseDataTestCategories.idTC_TaxFreeLoyaltyBonus, "6.58", "0");
-        checkTaxBasisValue(MoneyWiseTaxClass.TAXEDINTEREST, "23.57");
-        checkTaxBasisValue(MoneyWiseTaxClass.UNTAXEDINTEREST, "11.36");
-        checkTaxBasisValue(MoneyWiseTaxClass.TAXPAID, "-4.01");
-        checkTaxBasisValue(MoneyWiseTaxClass.VIRTUAL, "-0.74");
+        checkCategoryValue(MoneyWiseDataTestCategories.idTC_MktCurrAdjust, "252.46", "0");
+        checkTaxBasisValue(MoneyWiseTaxClass.TAXEDINTEREST, "71.00");
+        checkTaxBasisValue(MoneyWiseTaxClass.UNTAXEDINTEREST, "17.94");
+        checkTaxBasisValue(MoneyWiseTaxClass.TAXPAID, "-13.10");
+        checkTaxBasisValue(MoneyWiseTaxClass.VIRTUAL, "-1.47");
         checkTaxBasisValue(MoneyWiseTaxClass.TAXFREE, "54.78");
+        checkTaxBasisValue(MoneyWiseTaxClass.MARKET, "252.46");
     }
 }
