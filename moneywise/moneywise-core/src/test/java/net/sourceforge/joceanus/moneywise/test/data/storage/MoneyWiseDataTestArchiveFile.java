@@ -16,10 +16,15 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.moneywise.test.data.storage;
 
+import net.sourceforge.joceanus.moneywise.atlas.data.analysis.analyse.MoneyWiseXAnalysisBuilder;
+import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysis;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataSet;
+import net.sourceforge.joceanus.moneywise.lethe.data.analysis.analyse.MoneyWiseAnalysisBuilder;
+import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysis;
 import net.sourceforge.joceanus.moneywise.sheets.MoneyWiseArchiveLoader;
 import net.sourceforge.joceanus.moneywise.views.MoneyWiseView;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
 import net.sourceforge.joceanus.prometheus.preference.PrometheusBackup.PrometheusBackupPreferences;
 import net.sourceforge.joceanus.prometheus.preference.PrometheusPreferenceManager;
 import net.sourceforge.joceanus.tethys.api.thread.TethysUIThreadManager;
@@ -54,12 +59,71 @@ public class MoneyWiseDataTestArchiveFile {
         final PrometheusBackupPreferences myPrefs = myMgr.getPreferenceSet(PrometheusBackupPreferences.class);
 
         /* Access the Password manager and disable prompting */
-        final MoneyWiseArchiveLoader myLoader = new MoneyWiseArchiveLoader(pView.getGuiFactory());
+        final MoneyWiseArchiveLoader myLoader = new MoneyWiseArchiveLoader();
         myLoader.loadArchive(theManager, pData, myPrefs);
 
         /* Initialise the security, from the original data */
         final MoneyWiseDataSet myNullData = pView.getNewData();
         pData.initialiseSecurity(theManager, myNullData);
         pData.reBase(theManager, myNullData);
+    }
+
+    /**
+     * Obtain old style analysis on archive data.
+     * @param pView    the view
+     * @param pLastEvent the last event date
+     * @return the analysis
+     * @throws OceanusException on error
+     */
+    public MoneyWiseAnalysis oldAnalysis(final MoneyWiseView pView,
+                                         final OceanusDate pLastEvent) throws OceanusException {
+        /* Create the new dataSet and access preferences */
+        final PrometheusPreferenceManager myMgr = pView.getPreferenceManager();
+        final PrometheusBackupPreferences myPrefs = myMgr.getPreferenceSet(PrometheusBackupPreferences.class);
+        final MoneyWiseDataSet myDataSet = pView.getNewData();
+
+        /* Access the Password manager and disable prompting */
+        final MoneyWiseArchiveLoader myLoader = new MoneyWiseArchiveLoader();
+        myLoader.setLastEvent(pLastEvent);
+        myLoader.loadArchive(theManager, myDataSet, myPrefs);
+
+        /* Initialise the security, from the original data */
+        final MoneyWiseDataSet myNullData = pView.getNewData();
+        myDataSet.initialiseSecurity(theManager, myNullData);
+        myDataSet.reBase(theManager, myNullData);
+
+        /* Create the analysis builder */
+        final MoneyWiseAnalysisBuilder myBuilder = new MoneyWiseAnalysisBuilder(pView);
+        return myBuilder.analyseNewData(myDataSet);
+    }
+
+    /**
+     * Obtain new style analysis on archive data.
+     * @param pView    the view
+     * @param pLastEvent the last event date
+     * @return the analysis
+     * @throws OceanusException on error
+     */
+    public MoneyWiseXAnalysis newAnalysis(final MoneyWiseView pView,
+                                          final OceanusDate pLastEvent) throws OceanusException {
+        /* Create the new dataSet and access preferences */
+        final PrometheusPreferenceManager myMgr = pView.getPreferenceManager();
+        final PrometheusBackupPreferences myPrefs = myMgr.getPreferenceSet(PrometheusBackupPreferences.class);
+        final MoneyWiseDataSet myDataSet = pView.getNewData();
+        myDataSet.newValidityChecks();
+
+        /* Access the Password manager and disable prompting */
+        final MoneyWiseArchiveLoader myLoader = new MoneyWiseArchiveLoader();
+        myLoader.setLastEvent(pLastEvent);
+        myLoader.loadArchive(theManager, myDataSet, myPrefs);
+
+        /* Initialise the security, from the original data */
+        final MoneyWiseDataSet myNullData = pView.getNewData();
+        myDataSet.initialiseSecurity(theManager, myNullData);
+        myDataSet.reBase(theManager, myNullData);
+
+        /* Create the analysis builder */
+        final MoneyWiseXAnalysisBuilder myBuilder = new MoneyWiseXAnalysisBuilder(pView);
+        return myBuilder.analyseNewData(myDataSet);
     }
 }

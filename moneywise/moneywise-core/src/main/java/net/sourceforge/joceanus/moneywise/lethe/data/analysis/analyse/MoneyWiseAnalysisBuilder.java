@@ -14,12 +14,12 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.moneywise.atlas.data.analysis.analyse;
+package net.sourceforge.joceanus.moneywise.lethe.data.analysis.analyse;
 
-import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysis;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataSet;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransaction.MoneyWiseTransactionList;
+import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysis;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataList;
@@ -35,7 +35,7 @@ import java.util.Map.Entry;
 /**
  * Analysis Builder.
  */
-public class MoneyWiseXAnalysisBuilder {
+public class MoneyWiseAnalysisBuilder {
     /**
      * The dataControl.
      */
@@ -45,7 +45,7 @@ public class MoneyWiseXAnalysisBuilder {
      * Constructor.
      * @param pControl the dataControl
      */
-    public MoneyWiseXAnalysisBuilder(final PrometheusDataControl pControl) {
+    public MoneyWiseAnalysisBuilder(final PrometheusDataControl pControl) {
         theControl = pControl;
     }
 
@@ -55,7 +55,7 @@ public class MoneyWiseXAnalysisBuilder {
      * @return the analysis
      * @throws OceanusException on error
      */
-    public MoneyWiseXAnalysis analyseNewData(final MoneyWiseDataSet pData) throws OceanusException {
+    public MoneyWiseAnalysis analyseNewData(final MoneyWiseDataSet pData) throws OceanusException {
         /* Obtain the active profile */
         OceanusProfile myTask = theControl.getActiveTask();
         myTask = myTask.startTask("calculateAnalysis");
@@ -69,21 +69,18 @@ public class MoneyWiseXAnalysisBuilder {
         final PrometheusEditSet myEditSet = new PrometheusEditSet(theControl, pData);
 
         /* Create a new analysis on the editSet */
-        final MoneyWiseXAnalysisEventAnalyser myAnalyser = new MoneyWiseXAnalysisEventAnalyser(myTask, myEditSet, theControl.getPreferenceManager());
+        final MoneyWiseAnalysisTransAnalyser myAnalyser = new MoneyWiseAnalysisTransAnalyser(myTask, myEditSet, theControl.getPreferenceManager());
 
         /* post-process analysis */
         myAnalyser.postProcessAnalysis();
 
-        /* Create totals */
-        final MoneyWiseXAnalysis myAnalysis = myAnalyser.getAnalysis();
-        myAnalysis.produceTotals();
-        myAnalysis.checkTotals();
+        /* Don't create totals for the moment */
 
         /* Complete the task */
         myTask.end();
 
         /* return the analysis */
-        return myAnalysis;
+        return myAnalyser.getAnalysis();
     }
 
     /**
@@ -110,7 +107,7 @@ public class MoneyWiseXAnalysisBuilder {
      * @return the analysis
      * @throws OceanusException on error
      */
-    public MoneyWiseXAnalysis analyseChangedData(final PrometheusEditSet pEditSet) throws OceanusException {
+    public MoneyWiseAnalysis analyseChangedData(final PrometheusEditSet pEditSet) throws OceanusException {
         /* Obtain the active profile */
         OceanusProfile myTask = theControl.getActiveTask();
         myTask = myTask.startTask("calculateAnalysis");
@@ -124,15 +121,10 @@ public class MoneyWiseXAnalysisBuilder {
         updateEditSetMaps(pEditSet);
 
         /* Create a new analysis on the editSet */
-        final MoneyWiseXAnalysisEventAnalyser myAnalyser = new MoneyWiseXAnalysisEventAnalyser(myTask, pEditSet, theControl.getPreferenceManager());
+        final MoneyWiseAnalysisTransAnalyser myAnalyser = new MoneyWiseAnalysisTransAnalyser(myTask, pEditSet, theControl.getPreferenceManager());
 
         /* post-process analysis */
         myAnalyser.postProcessAnalysis();
-
-        /* Create totals */
-        final MoneyWiseXAnalysis myAnalysis = myAnalyser.getAnalysis();
-        myAnalysis.produceTotals();
-        myAnalysis.checkTotals();
 
         /* Complete the task */
         myTask.end();

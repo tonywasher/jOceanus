@@ -65,7 +65,6 @@ import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetProvider
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetView;
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetWorkBook;
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetWorkBookType;
-import net.sourceforge.joceanus.tethys.api.factory.TethysUIFactory;
 import net.sourceforge.joceanus.tethys.api.thread.TethysUIThreadStatusReport;
 
 import java.io.BufferedInputStream;
@@ -148,9 +147,8 @@ public class MoneyWiseArchiveLoader {
 
     /**
      * Constructor.
-     * @param pFactory the Gui factory
      */
-    public MoneyWiseArchiveLoader(final TethysUIFactory<?> pFactory) {
+    public MoneyWiseArchiveLoader() {
         /* Create the Years Array */
         theYears = new ArrayList<>();
 
@@ -217,6 +215,14 @@ public class MoneyWiseArchiveLoader {
     }
 
     /**
+     * Set lastEvent.
+     * @param pLastEvent the last event date
+     */
+    public void setLastEvent(final OceanusDate pLastEvent) {
+        theLastEvent = pLastEvent;
+    }
+
+    /**
      * Load an Archive Workbook.
      * @param pReport the report
      * @param pData the data to load into
@@ -228,8 +234,12 @@ public class MoneyWiseArchiveLoader {
                             final PrometheusBackupPreferences pPreferences) throws OceanusException {
         /* Determine the archive name */
         final String myName = pPreferences.getStringValue(PrometheusBackupPreferenceKey.ARCHIVE);
-        theLastEvent = pPreferences.getDateValue(PrometheusBackupPreferenceKey.LASTEVENT);
         final File myArchive = new File(myName);
+
+        /* Look up last event if it has not been explicitly set */
+        if (theLastEvent == null) {
+            theLastEvent = pPreferences.getDateValue(PrometheusBackupPreferenceKey.LASTEVENT);
+        }
 
         /* Protect the workbook retrieval */
         try (FileInputStream myInFile = new FileInputStream(myArchive);
