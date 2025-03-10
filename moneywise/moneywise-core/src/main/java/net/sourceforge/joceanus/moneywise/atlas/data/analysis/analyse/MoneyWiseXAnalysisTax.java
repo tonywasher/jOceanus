@@ -733,6 +733,7 @@ public class MoneyWiseXAnalysisTax {
                 return MoneyWiseTaxClass.RENTALINCOME;
             case UNITSADJUST:
             case SECURITYREPLACE:
+            case SECURITYCLOSURE:
             case STOCKTAKEOVER:
             case STOCKSPLIT:
             case STOCKDEMERGER:

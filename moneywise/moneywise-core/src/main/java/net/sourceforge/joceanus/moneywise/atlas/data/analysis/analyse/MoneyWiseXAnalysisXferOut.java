@@ -140,9 +140,11 @@ public class MoneyWiseXAnalysisXferOut {
         final OceanusMoney myStockValue = myValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.VALUATION);
 
         /* Determine the debit amount */
-        final OceanusMoney myAmount = myAsset.isForeignCurrency()
+        OceanusMoney myAmount = myAsset.isForeignCurrency()
                 ? theTransAnalyser.adjustForeignAssetDebit(myValues.getRatioValue(MoneyWiseXAnalysisSecurityAttr.EXCHANGERATE))
                 : theTransaction.getDebitAmount();
+        myAmount = new OceanusMoney(myAmount);
+        myAmount.negate();
 
         /* Assume that the allowed cost is the full value */
         final OceanusUnits myUnits = myValues.getUnitsValue(MoneyWiseXAnalysisSecurityAttr.UNITS);
@@ -150,7 +152,7 @@ public class MoneyWiseXAnalysisXferOut {
         final OceanusMoney myCost = myValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.RESIDUALCOST);
 
         /* Determine the delta units */
-        OceanusUnits myDeltaUnits = theTransaction.getCategoryClass().isSecurityClosure()
+        final OceanusUnits myDeltaUnits = theTransaction.getCategoryClass().isSecurityClosure()
                 ? myUnits
                 : theTransaction.getDebitUnitsDelta();
         final boolean isCapitalDistribution = myDeltaUnits == null;
@@ -159,10 +161,7 @@ public class MoneyWiseXAnalysisXferOut {
         if (!isCapitalDistribution) {
             /* The allowed cost is the relevant fraction of the cost */
             myAllowedCost = myCost.valueAtWeight(myDeltaUnits, myUnits);
-
-            /* Access units as negative value */
-            myDeltaUnits = new OceanusUnits(myDeltaUnits);
-            myDeltaUnits.negate();
+            myAllowedCost.negate();
 
             /* Record delta to units and costDilution */
             myAsset.adjustUnits(myDeltaUnits);

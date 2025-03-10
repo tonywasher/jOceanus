@@ -85,6 +85,16 @@ public abstract class MoneyWiseXAnalysisInterfaces {
         void recordSecurityPrice();
 
         /**
+         * Value asset.
+         */
+        void valueAsset();
+
+        /**
+         * Calculate unrealisedGains.
+         */
+        public void calculateUnrealisedGains();
+
+        /**
          * Is this bucket a StockOption?
          * @return true/false
          */

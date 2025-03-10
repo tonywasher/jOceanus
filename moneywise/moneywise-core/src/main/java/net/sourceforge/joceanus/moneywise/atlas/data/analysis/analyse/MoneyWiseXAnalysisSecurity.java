@@ -16,7 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.moneywise.atlas.data.analysis.analyse;
 
-import net.sourceforge.joceanus.moneywise.exc.MoneyWiseLogicException;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysis;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisPortfolioBucket.MoneyWiseXAnalysisPortfolioBucketList;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisSecurityBucket;
@@ -30,6 +29,7 @@ import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurityHolding;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseSecurityClass;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTaxClass;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransCategoryClass;
+import net.sourceforge.joceanus.moneywise.exc.MoneyWiseLogicException;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
@@ -343,6 +343,7 @@ public class MoneyWiseXAnalysisSecurity {
             myCategory.subtractExpense(pGains);
         }
         myTaxBasis.adjustGrossAndNett(pGains);
+        theMarket.adjustForGains(pGains);
 
         /* Register the buckets */
         theState.registerBucketInterest(myCategory);

@@ -979,6 +979,14 @@ public class MoneyWisePortfolio
         }
 
         @Override
+        public void clear() {
+            super.clear();
+            if (theSecurityHoldings != null) {
+                theSecurityHoldings.clear();
+            }
+        }
+
+        @Override
         public MoneyWisePortfolio findItemByName(final String pName) {
             /* look up the name in the map */
             return getDataMap().findItemByName(pName);

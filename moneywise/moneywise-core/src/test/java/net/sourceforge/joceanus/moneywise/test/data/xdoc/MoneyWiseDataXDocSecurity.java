@@ -80,6 +80,11 @@ public class MoneyWiseDataXDocSecurity {
     private boolean noSecurities;
 
     /**
+     * Note if this is first holding.
+     */
+    private boolean firstHolding;
+
+    /**
      * Constructor.
      * @param pReport the report
      * @param pTest the test case
@@ -157,7 +162,6 @@ public class MoneyWiseDataXDocSecurity {
 
                 /* Set parent */
                 final MoneyWisePayee myParent = mySecurity.getParent();
-                theReport.newRow();
                 theReport.newCell();
                 theReport.setCellValue(myParent.getName());
                 if (!theParents.contains(myParent)) {
@@ -165,12 +169,10 @@ public class MoneyWiseDataXDocSecurity {
                 }
 
                 /* Set type */
-                theReport.newRow();
                 theReport.newCell();
                 theReport.setCellValue(mySecurity.getCategory().getName());
 
                 /* Set currency */
-                theReport.newRow();
                 theReport.newCell();
                 theReport.setCellValue(mySecurity.getAssetCurrency().getName());
 
@@ -314,6 +316,7 @@ public class MoneyWiseDataXDocSecurity {
 
         /* Create the detail */
         theReport.newDetail(MoneyWiseDataXDocBuilder.GRP_ANALYSIS, "Holding History");
+        firstHolding = true;
 
         /* Loop through the portfolios */
         final Iterator<MoneyWiseXAnalysisPortfolioBucket> myPortIterator = theAnalysis.getPortfolios().iterator();
@@ -334,7 +337,12 @@ public class MoneyWiseDataXDocSecurity {
      */
     private void createHoldingHistory(final MoneyWiseXAnalysisSecurityBucket pHolding) {
         /* Create the table */
-        theReport.newSubDetail(MoneyWiseDataXDocBuilder.GRP_HOLDINGS, pHolding.getDecoratedName());
+        if (firstHolding) {
+            theReport.newOpenSubDetail(MoneyWiseDataXDocBuilder.GRP_HOLDINGS, pHolding.getDecoratedName());
+            firstHolding = false;
+        } else {
+            theReport.newSubDetail(MoneyWiseDataXDocBuilder.GRP_HOLDINGS, pHolding.getDecoratedName());
+        }
         theReport.newTable();
         theReport.newRow();
 

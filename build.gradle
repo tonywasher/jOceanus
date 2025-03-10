@@ -48,7 +48,7 @@ allprojects {
         mssqlVersion = "12.8.1.jre11"
         h2Version = "2.3.232"
         apachePOIVersion = "5.4.0"
-        jsoupVersion = "1.18.3"
+        jsoupVersion = "1.19.1"
         jFreeChartVersion = "1.5.5"
 
         /* javaFX versions */
@@ -59,7 +59,7 @@ allprojects {
         jetBrainsAnnotationsVersion = "26.0.1"
 
         /* checkStyle config */
-        checkStyleVersion = "10.21.3"
+        checkStyleVersion = "10.21.4"
         checkStyleConfig = "$rootDir/src/main/checkstyle/checks.xml"
 
         /* pmd config */

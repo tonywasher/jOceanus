@@ -535,9 +535,7 @@ public final class MoneyWiseXAnalysisSecurityBucket
         }
     }
 
-    /**
-     * Calculate unrealisedGains.
-     */
+    @Override
     public void calculateUnrealisedGains() {
         /* Unrealised gains is VALUATION - RESIDUALCOST */
         OceanusMoney myValue = theValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.VALUATION);
@@ -594,9 +592,7 @@ public final class MoneyWiseXAnalysisSecurityBucket
         theHistory.registerEvent(pEvent, theValues);
     }
 
-    /**
-     * value the asset.
-     */
+    @Override
     public void valueAsset() {
         /* Access units and price */
         final OceanusUnits myUnits = theValues.getUnitsValue(MoneyWiseXAnalysisSecurityAttr.UNITS);

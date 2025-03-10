@@ -128,7 +128,6 @@ public class MoneyWiseDataXDocPortfolio {
 
             /* Set parent */
             final MoneyWisePayee myParent = myPortfolio.getParent();
-            theReport.newRow();
             theReport.newCell();
             theReport.setCellValue(myParent.getName());
             if (!theParents.contains(myParent)) {
@@ -136,17 +135,14 @@ public class MoneyWiseDataXDocPortfolio {
             }
 
             /* Set type */
-            theReport.newRow();
             theReport.newCell();
             theReport.setCellValue(myPortfolio.getCategory().getName());
 
             /* Set currency */
-            theReport.newRow();
             theReport.newCell();
             theReport.setCellValue(myPortfolio.getAssetCurrency().getName());
 
             /* Set opening balance */
-            theReport.newRow();
             theReport.newCell();
             final OceanusMoney myStarting = myPortfolio.getOpeningBalance();
             if (myStarting != null) {
@@ -171,24 +167,28 @@ public class MoneyWiseDataXDocPortfolio {
         while (myPortIterator.hasNext()) {
             final MoneyWiseXAnalysisPortfolioBucket myBucket = myPortIterator.next();
 
-            /* If this is a foreign account */
-            if (pForeign) {
-                /* Create the correct spanning header */
-                if (myBucket.isForeignCurrency()) {
-                    theReport.newColSpanHeader(2);
-                    myNumCells++;
+            /* Don't process portfolio cash if it is idle */
+            final MoneyWiseXAnalysisPortfolioCashBucket myCash = myBucket.getPortfolioCash();
+            if (!myCash.isIdle() || myCash.isActive()) {
+                /* If this is a foreign account */
+                if (pForeign) {
+                    /* Create the correct spanning header */
+                    if (myBucket.isForeignCurrency()) {
+                        theReport.newColSpanHeader(2);
+                        myNumCells++;
+                    } else {
+                        theReport.newRowSpanHeader(2);
+                    }
+
+                    /* else standard account */
                 } else {
-                    theReport.newRowSpanHeader(2);
+                    theReport.newHeader();
                 }
 
-                /* else standard account */
-            } else {
-                theReport.newHeader();
+                /* Store the name */
+                theReport.setCellValue(myBucket.getName());
+                myNumCells++;
             }
-
-            /* Store the name */
-            theReport.setCellValue(myBucket.getName());
-            myNumCells++;
 
             /* Add security headers */
             myNumCells += theSecurities.createMainHoldingHeaders(myBucket, pForeign);
@@ -208,12 +208,20 @@ public class MoneyWiseDataXDocPortfolio {
         Iterator<MoneyWiseXAnalysisPortfolioBucket> myPortIterator = myPortfolios.iterator();
         while (myPortIterator.hasNext()) {
             final MoneyWiseXAnalysisPortfolioBucket myBucket = myPortIterator.next();
-            if (myBucket.isForeignCurrency()) {
-                theReport.newHeader();
-                theReport.setCellValue(myBucket.getPortfolio().getAssetCurrency().getName());
-                theReport.newHeader();
-                theReport.setCellValue(myCurrency.getName());
+
+            /* Don't process portfolio cash if it is idle */
+            final MoneyWiseXAnalysisPortfolioCashBucket myCash = myBucket.getPortfolioCash();
+            if (!myCash.isIdle() || myCash.isActive()) {
+                /* Create foreign headers for portfolio if necessary */
+                if (myBucket.isForeignCurrency()) {
+                    theReport.newHeader();
+                    theReport.setCellValue(myBucket.getPortfolio().getAssetCurrency().getName());
+                    theReport.newHeader();
+                    theReport.setCellValue(myCurrency.getName());
+                }
             }
+
+            /* Create foreign headers for securities */
             theSecurities.createForeignHoldingHeaders(myBucket);
         }
     }
@@ -233,28 +241,31 @@ public class MoneyWiseDataXDocPortfolio {
             final MoneyWisePortfolio myPortfolio = myBucket.getPortfolio();
             final MoneyWiseXAnalysisPortfolioCashBucket myCash = myBucket.getPortfolioCash();
 
-            /* Obtain values for the event */
-            final MoneyWiseXAnalysisAccountValues myValues = myCash.getValuesForEvent(pEvent);
+            /* Don't process portfolio cash if it is idle */
+            if (!myCash.isIdle() || myCash.isActive()) {
+                /* Obtain values for the event */
+                final MoneyWiseXAnalysisAccountValues myValues = myCash.getValuesForEvent(pEvent);
 
-            /* If this is a foreign account */
-            if (myPortfolio.isForeign()) {
-                /* Report foreign valuation */
-                theReport.newCell();
-                OceanusMoney myForeign = myValues == null ? null : myValues.getMoneyValue(MoneyWiseXAnalysisAccountAttr.BALANCE);
-                myForeign = myForeign == null ? theForeignMap.get(myPortfolio) : myForeign;
-                if (myForeign != null) {
-                    theReport.setCellValue(myForeign);
-                    theForeignMap.put(myPortfolio, myForeign);
+                /* If this is a foreign account */
+                if (myPortfolio.isForeign()) {
+                    /* Report foreign valuation */
+                    theReport.newCell();
+                    OceanusMoney myForeign = myValues == null ? null : myValues.getMoneyValue(MoneyWiseXAnalysisAccountAttr.BALANCE);
+                    myForeign = myForeign == null ? theForeignMap.get(myPortfolio) : myForeign;
+                    if (myForeign != null) {
+                        theReport.setCellValue(myForeign);
+                        theForeignMap.put(myPortfolio, myForeign);
+                    }
                 }
-            }
 
-            /* Report standard valuation */
-            theReport.newCell();
-            OceanusMoney myValue = myValues == null ? null : myValues.getMoneyValue(MoneyWiseXAnalysisAccountAttr.VALUATION);
-            myValue = myValue == null ? theValueMap.get(myPortfolio) : myValue;
-            if (myValue != null) {
-                theReport.setCellValue(myValue);
-                theValueMap.put(myPortfolio, myValue);
+                /* Report standard valuation */
+                theReport.newCell();
+                OceanusMoney myValue = myValues == null ? null : myValues.getMoneyValue(MoneyWiseXAnalysisAccountAttr.VALUATION);
+                myValue = myValue == null ? theValueMap.get(myPortfolio) : myValue;
+                if (myValue != null) {
+                    theReport.setCellValue(myValue);
+                    theValueMap.put(myPortfolio, myValue);
+                }
             }
 
             /* Update holdings for this portfolio */

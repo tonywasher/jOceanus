@@ -204,6 +204,7 @@ public class MoneyWiseDataXDocReport {
         theDetail.setAttribute(ATTR_NAME, pGroup);
         final Element mySummary = theDocument.createElement("summary");
         mySummary.setTextContent(pSummary);
+        mySummary.setAttribute(ATTR_CLASS, "mainDtl");
         theDetail.appendChild(mySummary);
         theSection.appendChild(theDetail);
         theSubDetail = theDetail;
@@ -230,9 +231,21 @@ public class MoneyWiseDataXDocReport {
         theSubDetail = theDocument.createElement("details");
         theSubDetail.setAttribute(ATTR_NAME, pGroup);
         final Element mySummary = theDocument.createElement("summary");
+        mySummary.setAttribute(ATTR_CLASS, "subDtl");
         mySummary.setTextContent(pSummary);
         theSubDetail.appendChild(mySummary);
         theDetail.appendChild(theSubDetail);
+    }
+
+    /**
+     * Create New open subDetail for table.
+     * @param pGroup the group
+     * @param pSummary the summary
+     */
+    void newOpenSubDetail(final String pGroup,
+                          final String pSummary) {
+        newSubDetail(pGroup, pSummary);
+        theSubDetail.setAttribute("open", "true");
     }
 
     /**
@@ -368,7 +381,7 @@ public class MoneyWiseDataXDocReport {
         String myClass = "dataValue";
 
         /* Ignore value if zero */
-        if (pValue.isZero()) {
+        if (pValue == null || pValue.isZero()) {
             myValue = null;
 
         /* Switch class if negative */

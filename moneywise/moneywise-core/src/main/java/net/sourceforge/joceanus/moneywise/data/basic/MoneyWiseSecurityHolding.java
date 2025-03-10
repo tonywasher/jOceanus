@@ -377,6 +377,13 @@ public final class MoneyWiseSecurityHolding
         }
 
         /**
+         * Clear the map.
+         */
+        public void clear() {
+            theMap.clear();
+        }
+
+        /**
          * Look up a security holding.
          * @param pId the id of the security holding
          * @return the security holding

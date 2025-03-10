@@ -16,8 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.moneywise.atlas.data.analysis.analyse;
 
-import java.util.Currency;
-
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.base.MoneyWiseXAnalysisEvent;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysis;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisPayeeBucket;
@@ -28,6 +26,8 @@ import net.sourceforge.joceanus.moneywise.data.statics.MoneyWisePayeeClass;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTaxClass;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransCategoryClass;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
+
+import java.util.Currency;
 
 /**
  * Process NatInsurance.
@@ -171,5 +171,18 @@ public class MoneyWiseXAnalysisMarket {
             isGrowth = false;
             isFluctuation = false;
         }
+    }
+
+    /**
+     * Adjust for standard gains.
+     * @param pGains the gains amount
+     */
+    void adjustForGains(final OceanusMoney pGains) {
+        if (pGains.isPositive()) {
+            theMarketBucket.addIncome(pGains);
+        } else {
+            theMarketBucket.subtractExpense(pGains);
+        }
+        theState.registerBucketInterest(theMarketBucket);
     }
 }
