@@ -21,6 +21,8 @@ import net.sourceforge.joceanus.moneywise.atlas.data.analysis.base.MoneyWiseXAna
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.base.MoneyWiseXAnalysisEventList;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.base.MoneyWiseXAnalysisEventType;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysis;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurityHolding;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransAsset;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransInfoClass;
 import net.sourceforge.joceanus.moneywise.test.data.trans.MoneyWiseDataTestCase;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimal;
@@ -77,7 +79,7 @@ public class MoneyWiseDataXDocTrans {
 
             /* Only process transactions */
             final MoneyWiseXAnalysisEventType myType = myEvent.getEventType();
-            if (MoneyWiseXAnalysisEventType.TRANSACTION.equals(myEvent.getEventType())) {
+            if (MoneyWiseXAnalysisEventType.TRANSACTION.equals(myType)) {
                 /* New row */
                 theReport.newRow();
                 theReport.newCell();
@@ -85,7 +87,12 @@ public class MoneyWiseDataXDocTrans {
 
                 /* Set account */
                 theReport.newCell();
-                theReport.setCellValue(myEvent.getAccount().getName());
+                final MoneyWiseTransAsset myAccount = myEvent.getAccount();
+                if (myAccount instanceof MoneyWiseSecurityHolding) {
+                    theReport.setSplitCellValue(myAccount.getName());
+                } else {
+                    theReport.setCellValue(myAccount.getName());
+                }
 
                 /* Set transaction category */
                 theReport.newCell();
@@ -101,7 +108,12 @@ public class MoneyWiseDataXDocTrans {
 
                 /* Set partner */
                 theReport.newCell();
-                theReport.setCellValue(myEvent.getPartner().getName());
+                final MoneyWiseTransAsset myPartner = myEvent.getPartner();
+                if (myPartner instanceof MoneyWiseSecurityHolding) {
+                    theReport.setSplitCellValue(myPartner.getName());
+                } else if (myPartner != null){
+                    theReport.setCellValue(myPartner.getName());
+                }
 
                 /* Loop through the infoClasses */
                 for (MoneyWiseTransInfoClass myInfoClass : MoneyWiseTransInfoClass.values()) {

@@ -58,7 +58,7 @@ public class MoneyWiseThreadLoadArchive
         /* Load workbook */
         final PrometheusToolkit myPromToolkit = (PrometheusToolkit) pManager.getThreadData();
         final PrometheusPreferenceManager myMgr = myPromToolkit.getPreferenceManager();
-        final MoneyWiseArchiveLoader myLoader = new MoneyWiseArchiveLoader(myPromToolkit.getToolkit().getGuiFactory());
+        final MoneyWiseArchiveLoader myLoader = new MoneyWiseArchiveLoader();
         final MoneyWiseDataSet myData = theView.getNewData();
         myLoader.loadArchive(pManager, myData, myMgr.getPreferenceSet(PrometheusBackupPreferences.class));
 

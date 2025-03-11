@@ -16,8 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.moneywise.atlas.data.analysis.analyse;
 
-import net.sourceforge.joceanus.moneywise.exc.MoneyWiseLogicException;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysis;
+import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisInterfaces.MoneyWiseXAnalysisCursor;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisPayeeBucket;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisTaxBasisAccountBucket;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisTaxBasisBucket;
@@ -30,8 +30,10 @@ import net.sourceforge.joceanus.moneywise.data.statics.MoneyWisePayeeClass;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTaxClass;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransCategoryClass;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransInfoClass;
+import net.sourceforge.joceanus.moneywise.exc.MoneyWiseLogicException;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRatio;
 
 /**
  * Tax Analysis.
@@ -237,6 +239,9 @@ public class MoneyWiseXAnalysisTax {
         /* If we have taxCredit */
         OceanusMoney myTaxCredit = theTransaction.getTransaction().getTaxCredit();
         if (myTaxCredit != null && myTaxCredit.isNonZero()) {
+            /* Ensure taxCredit is in reporting currency */
+            myTaxCredit = getReportingAmount(myTaxCredit);
+
             /* Determine whether this is income or expense */
             final boolean isIncome = theTransaction.isIncomeCategory();
 
@@ -299,6 +304,9 @@ public class MoneyWiseXAnalysisTax {
         /* If we have taxCredit */
         OceanusMoney myTaxCredit = theTransaction.getTransaction().getTaxCredit();
         if (myTaxCredit != null && myTaxCredit.isNonZero()) {
+            /* Ensure taxCredit is in reporting currency */
+            myTaxCredit = getReportingAmount(myTaxCredit);
+
             /* Determine whether this is income or expense */
             final boolean isIncome = theTransaction.isIncomeCategory();
 
@@ -365,6 +373,9 @@ public class MoneyWiseXAnalysisTax {
         /* If we have NatIns */
         OceanusMoney myNatIns = theTransaction.getTransaction().getEmployeeNatIns();
         if (myNatIns != null && myNatIns.isNonZero()) {
+            /* Ensure natIns is in reporting currency */
+            myNatIns = getReportingAmount(myNatIns);
+
             /* Determine whether this is income or expense */
             final boolean isIncome = theTransaction.isIncomeCategory();
             final boolean isPension = theTransaction.getCategory().isCategoryClass(MoneyWiseTransCategoryClass.PENSIONCONTRIB);
@@ -420,6 +431,9 @@ public class MoneyWiseXAnalysisTax {
         /* If we have NatIns */
         OceanusMoney myNatIns = theTransaction.getTransaction().getEmployerNatIns();
         if (myNatIns != null && myNatIns.isNonZero()) {
+            /* Ensure natIns is in reporting currency */
+            myNatIns = getReportingAmount(myNatIns);
+
             /* Determine whether this is income or expense */
             final boolean isIncome = theTransaction.isIncomeCategory();
             final boolean isPension = theTransaction.getCategory().isCategoryClass(MoneyWiseTransCategoryClass.PENSIONCONTRIB);
@@ -478,6 +492,9 @@ public class MoneyWiseXAnalysisTax {
         /* If we have benefit */
         OceanusMoney myBenefit = theTransaction.getTransaction().getDeemedBenefit();
         if (myBenefit != null && myBenefit.isNonZero()) {
+            /* Ensure benefit is in reporting currency */
+            myBenefit = getReportingAmount(myBenefit);
+
             /* Determine whether this is income or expense */
             final boolean isIncome = theTransaction.isIncomeCategory();
 
@@ -540,6 +557,9 @@ public class MoneyWiseXAnalysisTax {
         /* If we have withheld */
         OceanusMoney myWithheld = theTransaction.getTransaction().getWithheld();
         if (myWithheld != null && myWithheld.isNonZero()) {
+            /* Ensure withheld is in reporting currency */
+            myWithheld = getReportingAmount(myWithheld);
+
             /* Determine whether this is income or expense */
             final boolean isIncome = theTransaction.isIncomeCategory();
 
@@ -591,6 +611,25 @@ public class MoneyWiseXAnalysisTax {
             theState.registerBucketInterest(theWithheldCat);
             theState.registerBucketInterest(theVirtualTax);
         }
+    }
+
+    /**
+     * Convert infoAmount to reporting currency if necessary.
+     * @param pAmount the relevant amount
+     * @return the reportingAmount
+     * @throws OceanusException on error
+     */
+    private OceanusMoney getReportingAmount(final OceanusMoney pAmount) throws OceanusException {
+        /* If the account is foreign */
+        if (theAccount.isForeign()) {
+            /* Convert the infoAmount to reporting currency */
+            final MoneyWiseXAnalysisCursor myCursor = theAnalysis.getCursor();
+            final OceanusRatio myRate = myCursor.getCurrentXchgRate(theAccount.getAssetCurrency());
+            return pAmount.convertCurrency(theAnalysis.getCurrency().getCurrency(), myRate);
+        }
+
+        /* else just return the infoAmount */
+        return pAmount;
     }
 
     /**
@@ -694,6 +733,7 @@ public class MoneyWiseXAnalysisTax {
                 return MoneyWiseTaxClass.RENTALINCOME;
             case UNITSADJUST:
             case SECURITYREPLACE:
+            case SECURITYCLOSURE:
             case STOCKTAKEOVER:
             case STOCKSPLIT:
             case STOCKDEMERGER:

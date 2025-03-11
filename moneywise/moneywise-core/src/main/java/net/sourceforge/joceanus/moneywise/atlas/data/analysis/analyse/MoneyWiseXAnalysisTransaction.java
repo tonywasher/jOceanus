@@ -97,14 +97,18 @@ public class MoneyWiseXAnalysisTransaction {
 
         /* Access account and partner */
         isTo = MoneyWiseAssetDirection.TO.equals(theTrans.getDirection());
-        theDebit = isTo ? theTrans.getAccount() : theTrans.getPartner();
-        theCredit = isTo ? theTrans.getPartner() : theTrans.getAccount();
+        final MoneyWiseTransAsset myAccount = theTrans.getAccount();
+        MoneyWiseTransAsset myPartner = theTrans.getPartner();
+        myPartner = myPartner == null ? myAccount : myPartner;
+        theDebit = isTo ? myAccount : myPartner;
+        theCredit = isTo ? myPartner : myAccount;
 
         /* Store the category */
         theCategory = theTrans.getCategory();
 
         /* Sort out amounts */
-        final OceanusMoney myAmount = theTrans.getAmount();
+        OceanusMoney myAmount = theTrans.getAmount();
+        myAmount = myAmount == null ? new OceanusMoney() : myAmount;
         OceanusMoney myPartnerAmount = theTrans.getPartnerAmount();
         myPartnerAmount = myPartnerAmount == null ? myAmount : myPartnerAmount;
         if (isTo) {

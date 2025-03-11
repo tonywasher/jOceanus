@@ -844,29 +844,21 @@ public final class MoneyWiseXAnalysisPortfolioBucket
             final MoneyWiseXAnalysisPortfolioCashBucket myCashTotals = theTotals.getPortfolioCash();
 
             /* Loop through the portfolio buckets */
-            final Iterator<MoneyWiseXAnalysisPortfolioBucket> myIterator = iterator();
-            while (myIterator.hasNext()) {
-                final MoneyWiseXAnalysisPortfolioBucket myPortfolio = myIterator.next();
-
-                /* Access the cash bucket */
-                final MoneyWiseXAnalysisPortfolioCashBucket myCash = myPortfolio.getPortfolioCash();
-
-                /* Handle foreign asset */
-                if (myCash.isForeignCurrency()) {
-                    haveForeignCurrency = Boolean.TRUE;
-                }
-
-                /* Calculate the delta */
-                myCash.calculateDelta();
-                myPortfolio.addValues(myCash);
-                theTotals.addValues(myCash);
-                myCashTotals.addValues(myCash);
+            final Iterator<MoneyWiseXAnalysisPortfolioBucket> myPortIterator = iterator();
+            while (myPortIterator.hasNext()) {
+                final MoneyWiseXAnalysisPortfolioBucket myPortfolio = myPortIterator.next();
 
                 /* Loop through the buckets */
                 final Iterator<MoneyWiseXAnalysisSecurityBucket> mySecIterator = myPortfolio.securityIterator();
                 while (mySecIterator.hasNext()) {
                     /* Access bucket and category */
                     final MoneyWiseXAnalysisSecurityBucket myCurr = mySecIterator.next();
+
+                    /* Remove idle items */
+                    if (myCurr.isIdle() && !myCurr.isActive()) {
+                        mySecIterator.remove();
+                        continue;
+                    }
 
                     /* Add to the portfolio bucket and add values */
                     myPortfolio.addValues(myCurr);
@@ -880,6 +872,27 @@ public final class MoneyWiseXAnalysisPortfolioBucket
                         haveForeignCurrency = Boolean.TRUE;
                     }
                 }
+
+                /* Access the cash bucket */
+                final MoneyWiseXAnalysisPortfolioCashBucket myCash = myPortfolio.getPortfolioCash();
+
+                /* Remove idle items */
+                if (myPortfolio.getSecurities().isEmpty()
+                    && myCash.isIdle() && !myCash.isActive()) {
+                    myPortIterator.remove();
+                    continue;
+                }
+
+                /* Handle foreign asset */
+                if (myCash.isForeignCurrency()) {
+                    haveForeignCurrency = Boolean.TRUE;
+                }
+
+                /* Calculate the delta */
+                myCash.calculateDelta();
+                myPortfolio.addValues(myCash);
+                theTotals.addValues(myCash);
+                myCashTotals.addValues(myCash);
 
                 /* Sort the list */
                 myPortfolio.getSecurities().sortBuckets();

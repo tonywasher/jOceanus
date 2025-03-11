@@ -84,13 +84,13 @@
     <MSSQLVersion>12.8.1.jre11</MSSQLVersion>
     <H2Version>2.3.232</H2Version>
     <ApachePOIVersion>5.4.0</ApachePOIVersion>
-    <JSoupVersion>1.18.3</JSoupVersion>
+    <JSoupVersion>1.19.1</JSoupVersion>
     <JFreeChartVersion>1.5.5</JFreeChartVersion>
     <ZipSDKVersion>9.20</ZipSDKVersion>
     <JavaVersion>17</JavaVersion>
     <JavaFXVersion>17.0.14</JavaFXVersion>
     <JavaLanguageVersion>17</JavaLanguageVersion>
-    <CheckStyleVersion>10.21.3</CheckStyleVersion>
+    <CheckStyleVersion>10.21.4</CheckStyleVersion>
     <PMDVersion>7.11.0</PMDVersion>
     <CleanPluginVersion>3.4.1</CleanPluginVersion>
     <ResourcesPluginVersion>3.3.1</ResourcesPluginVersion>

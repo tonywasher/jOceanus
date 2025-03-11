@@ -240,7 +240,9 @@ public class MoneyWiseXAnalysisEventAnalyser {
 
                 /* update the price and determine the value delta */
                 myBucket.recordSecurityPrice();
-                myBucket.adjustValuation();
+                myBucket.valueAsset();
+                myBucket.calculateUnrealisedGains();
+
                 final OceanusMoney myDelta = myBucket.getDeltaValuation();
 
                 /* Register the bucket for the event */

@@ -30,6 +30,7 @@ import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransInfoClass;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransInfoType.MoneyWiseTransInfoTypeList;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusRatio;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusUnits;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataInfoClass;
@@ -455,6 +456,8 @@ public class MoneyWiseTransInfoSet
         /* Dilution is only required for stock split/deMerger */
         switch (pClass) {
             case STOCKSPLIT:
+            case UNITSADJUST:
+                return MetisFieldRequired.CANEXIST;
             case STOCKDEMERGER:
                 return MetisFieldRequired.MUSTEXIST;
             default:
@@ -503,7 +506,7 @@ public class MoneyWiseTransInfoSet
 
         /* If Partner currency is null or the same as Account then Partner amount is not allowed */
         final MoneyWiseCurrency myCurrency = myAccount.getAssetCurrency();
-        final MoneyWiseCurrency myPartnerCurrency = myPartner.getAssetCurrency();
+        final MoneyWiseCurrency myPartnerCurrency = myPartner == null ? null : myPartner.getAssetCurrency();
         if (myCurrency == null || myPartnerCurrency == null) {
             return MetisFieldRequired.NOTALLOWED;
         }
@@ -550,28 +553,14 @@ public class MoneyWiseTransInfoSet
      * @return the status
      */
     private static MetisFieldRequired isPriceClassRequired(final MoneyWiseTransCategoryClass pCategory) {
-        /* Don't allow yet */
-        return MetisFieldRequired.NOTALLOWED;
-        /* Account or Partner must be security holding
-         if (!(pAccount instanceof SecurityHolding)
-         && !(pPartner instanceof SecurityHolding)) {
-         return MetisFieldRequired.NOTALLOWED;
-         }
+        /* Only allowed for stockSplit and UnitsAdjust */
          switch (pCategory) {
-         case STOCKSPLIT:
-         case STOCKTAKEOVER:
-         case STOCKDEMERGER:
-         case SECURITYREPLACE:
-         case OPTIONSEXERCISE:
-         case TRANSFER:
-         return MetisFieldRequired.MUSTEXIST;
-         case DIVIDEND:
-         return MetisDataDifference.isEqual(pAccount, pPartner)
-         ? MetisFieldRequired.MUSTEXIST
-         : MetisFieldRequired.NOTALLOWED;
-         default:
-         return MetisFieldRequired.NOTALLOWED;
-         } */
+             case STOCKSPLIT:
+             case UNITSADJUST:
+                 return MetisFieldRequired.CANEXIST;
+             default:
+                 return MetisFieldRequired.NOTALLOWED;
+         }
     }
 
     /**
@@ -655,6 +644,9 @@ public class MoneyWiseTransInfoSet
             case REFERENCE:
             case COMMENTS:
                 validateInfoLength(pInfo);
+                break;
+            case PRICE:
+                validatePrice(pInfo);
                 break;
             case TRANSTAG:
             case DILUTION:
@@ -781,7 +773,6 @@ public class MoneyWiseTransInfoSet
         }
     }
 
-
     /**
      * Validate the partnerAmount.
      * @param pInfo the info
@@ -821,6 +812,23 @@ public class MoneyWiseTransInfoSet
             getOwner().addError(PrometheusDataItem.ERROR_NEGATIVE, getFieldForClass(MoneyWiseTransInfoClass.RETURNEDCASH));
         } else if (!myAmount.getCurrency().equals(myThirdParty.getCurrency())) {
             getOwner().addError(MoneyWiseTransBase.ERROR_CURRENCY, getFieldForClass(MoneyWiseTransInfoClass.RETURNEDCASH));
+        }
+    }
+
+
+    /**
+     * Validate the price.
+     * @param pInfo the info
+     */
+    private void validatePrice(final MoneyWiseTransInfo pInfo) {
+        final OceanusPrice myPrice = pInfo.getValue(OceanusPrice.class);
+        final Currency myCurrency = getOwner().getAccount().getCurrency();
+        if (myPrice.isZero()) {
+            getOwner().addError(PrometheusDataItem.ERROR_ZERO, getFieldForClass(pInfo.getInfoClass()));
+        } else if (!myPrice.isPositive()) {
+            getOwner().addError(PrometheusDataItem.ERROR_NEGATIVE, getFieldForClass(pInfo.getInfoClass()));
+        } else if (!myPrice.getCurrency().equals(myCurrency)) {
+            getOwner().addError(MoneyWiseTransBase.ERROR_CURRENCY, getFieldForClass(pInfo.getInfoClass()));
         }
     }
 

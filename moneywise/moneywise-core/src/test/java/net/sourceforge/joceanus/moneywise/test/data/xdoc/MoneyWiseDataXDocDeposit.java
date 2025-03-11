@@ -97,15 +97,15 @@ public class MoneyWiseDataXDocDeposit {
         /* Add the headers */
         theReport.newRow();
         theReport.newHeader();
-        theReport.setCellValue("Name");
+        theReport.setCellValue(MoneyWiseDataXDocBuilder.HDR_NAME);
         theReport.newHeader();
-        theReport.setCellValue("Parent");
+        theReport.setCellValue(MoneyWiseDataXDocBuilder.HDR_PARENT);
         theReport.newHeader();
-        theReport.setCellValue("Category");
+        theReport.setCellValue(MoneyWiseDataXDocBuilder.HDR_CATEGORY);
         theReport.newHeader();
-        theReport.setCellValue("Currency");
+        theReport.setCellValue(MoneyWiseDataXDocBuilder.HDR_CURRENCY);
         theReport.newHeader();
-        theReport.setCellValue("Starting Balance");
+        theReport.setCellValue(MoneyWiseDataXDocBuilder.HDR_OPENING);
         theReport.addRowToTable();
 
         /* Create the detail */
@@ -141,6 +141,8 @@ public class MoneyWiseDataXDocDeposit {
             if (myStarting != null) {
                 theReport.setCellValue(myStarting);
             }
+
+            /* Add row to table */
             theReport.addRowToTable();
         }
     }
@@ -152,26 +154,34 @@ public class MoneyWiseDataXDocDeposit {
      */
     int createMainDepositHeaders(final boolean pForeign) {
         /* Create the initial headers */
-        int myNumHeaders = 0;
+        int myNumCells = 0;
         final MoneyWiseXAnalysisDepositBucketList myDeposits = theAnalysis.getDeposits();
         Iterator<MoneyWiseXAnalysisDepositBucket> myDepositIterator = myDeposits.iterator();
         while (myDepositIterator.hasNext()) {
             final MoneyWiseXAnalysisDepositBucket myBucket = myDepositIterator.next();
 
+            /* If this is a foreign account */
             if (pForeign) {
+                /* Create the correct spanning header */
                 if (myBucket.isForeignCurrency()) {
                     theReport.newColSpanHeader(2);
-                    myNumHeaders++;
+                    myNumCells++;
                 } else {
                     theReport.newRowSpanHeader(2);
                 }
+
+                /* else standard account */
             } else {
                 theReport.newHeader();
             }
+
+            /* Store the name */
             theReport.setCellValue(myBucket.getName());
-            myNumHeaders++;
+            myNumCells++;
         }
-        return myNumHeaders;
+
+        /* Return the number of cells */
+        return myNumCells;
     }
 
     /**

@@ -119,6 +119,11 @@ public class MoneyWiseXAnalysisSnapShot<T extends MoneyWiseXAnalysisValues<T, E>
         return theDate.toString();
     }
 
+    @Override
+    public String toString() {
+        return theSnapShot.toString();
+    }
+
     @SuppressWarnings("rawtypes")
     @Override
     public MetisFieldSet<MoneyWiseXAnalysisSnapShot> getDataFieldSet() {

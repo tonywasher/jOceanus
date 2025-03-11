@@ -33,6 +33,11 @@ public class MoneyWiseDataXDocBuilder {
     static final String GRP_ANALYSIS = "analysis";
 
     /**
+     * Holdings Group.
+     */
+    static final String GRP_HOLDINGS = "holdings";
+
+    /**
      * Accounts Group.
      */
     static final String GRP_ACCOUNTS = "accounts";
@@ -46,6 +51,31 @@ public class MoneyWiseDataXDocBuilder {
      * Date Table Header.
      */
     static final String HDR_DATE = "Date";
+
+    /**
+     * Name Table Header.
+     */
+    static final String HDR_NAME = "Name";
+
+    /**
+     * Category Table Header.
+     */
+    static final String HDR_CATEGORY = "Category";
+
+    /**
+     * Parent Table Header.
+     */
+    static final String HDR_PARENT = "Parent";
+
+    /**
+     * Currency Table Header.
+     */
+    static final String HDR_CURRENCY = "Currency";
+
+    /**
+     * Opening Balance Table Header.
+     */
+    static final String HDR_OPENING = "Starting Balance";
 
     /**
      * Profit Table Header.

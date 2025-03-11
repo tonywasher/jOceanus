@@ -97,21 +97,21 @@ public class MoneyWiseDataXDocLoan {
         /* Add the headers */
         theReport.newRow();
         theReport.newHeader();
-        theReport.setCellValue("Name");
+        theReport.setCellValue(MoneyWiseDataXDocBuilder.HDR_NAME);
         theReport.newHeader();
-        theReport.setCellValue("Parent");
+        theReport.setCellValue(MoneyWiseDataXDocBuilder.HDR_PARENT);
         theReport.newHeader();
-        theReport.setCellValue("Category");
+        theReport.setCellValue(MoneyWiseDataXDocBuilder.HDR_CATEGORY);
         theReport.newHeader();
-        theReport.setCellValue("Currency");
+        theReport.setCellValue(MoneyWiseDataXDocBuilder.HDR_CURRENCY);
         theReport.newHeader();
-        theReport.setCellValue("Starting Balance");
+        theReport.setCellValue(MoneyWiseDataXDocBuilder.HDR_OPENING);
         theReport.addRowToTable();
 
         /* Create the detail */
-        Iterator<MoneyWiseXAnalysisLoanBucket> myDepositIterator = myLoans.iterator();
-        while (myDepositIterator.hasNext()) {
-            final MoneyWiseXAnalysisLoanBucket myBucket = myDepositIterator.next();
+        Iterator<MoneyWiseXAnalysisLoanBucket> myLoanIterator = myLoans.iterator();
+        while (myLoanIterator.hasNext()) {
+            final MoneyWiseXAnalysisLoanBucket myBucket = myLoanIterator.next();
             final MoneyWiseLoan myLoan = myBucket.getAccount();
 
             /* Set name */
@@ -145,6 +145,8 @@ public class MoneyWiseDataXDocLoan {
             if (myStarting != null) {
                 theReport.setCellValue(myStarting);
             }
+
+            /* Add row to table */
             theReport.addRowToTable();
         }
     }
@@ -156,26 +158,34 @@ public class MoneyWiseDataXDocLoan {
      */
     int createMainLoanHeaders(final boolean pForeign) {
         /* Create the initial headers */
-        int myNumHeaders = 0;
+        int myNumCells = 0;
         final MoneyWiseXAnalysisLoanBucketList myLoans = theAnalysis.getLoans();
         Iterator<MoneyWiseXAnalysisLoanBucket> myLoanIterator = myLoans.iterator();
         while (myLoanIterator.hasNext()) {
             final MoneyWiseXAnalysisLoanBucket myBucket = myLoanIterator.next();
 
+            /* If this is a foreign account */
             if (pForeign) {
+                /* Create the correct spanning header */
                 if (myBucket.isForeignCurrency()) {
                     theReport.newColSpanHeader(2);
-                    myNumHeaders++;
+                    myNumCells++;
                 } else {
                     theReport.newRowSpanHeader(2);
                 }
+
+                /* else standard account */
             } else {
                 theReport.newHeader();
             }
+
+            /* Store the name */
             theReport.setCellValue(myBucket.getName());
-            myNumHeaders++;
+            myNumCells++;
         }
-        return myNumHeaders;
+
+        /* Return the number of cells */
+        return myNumCells;
     }
 
     /**
@@ -198,11 +208,11 @@ public class MoneyWiseDataXDocLoan {
     }
 
     /**
-     * update deposit asset row for event.
+     * update loan asset row for event.
      * @param pEvent the event
      * @return isNonEmpty true/false
      */
-    boolean updateDepositAssetRow(final MoneyWiseXAnalysisEvent pEvent) {
+    boolean updateLoanAssetRow(final MoneyWiseXAnalysisEvent pEvent) {
         /* Loop through the loans */
         final MoneyWiseXAnalysisLoanBucketList myLoans = theAnalysis.getLoans();
         Iterator<MoneyWiseXAnalysisLoanBucket> myLoanIterator = myLoans.iterator();
