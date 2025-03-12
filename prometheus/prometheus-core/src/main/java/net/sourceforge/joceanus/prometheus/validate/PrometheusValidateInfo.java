@@ -1,5 +1,5 @@
 /*******************************************************************************
- * MoneyWise: Finance Application
+ * Prometheus: Application Framework
  * Copyright 2012,2025 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.moneywise.data.validate;
+package net.sourceforge.joceanus.prometheus.validate;
 
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataInfoItem;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
@@ -26,7 +26,7 @@ import net.sourceforge.joceanus.prometheus.data.PrometheusStaticDataItem;
  * Validator for infoItem.
  * @param <T> the InfoItem type
  */
-public class MoneyWiseValidateInfo<T extends PrometheusDataInfoItem>
+public class PrometheusValidateInfo<T extends PrometheusDataInfoItem>
         implements PrometheusDataValidator<T> {
 
     @Override

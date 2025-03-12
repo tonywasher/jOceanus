@@ -97,7 +97,7 @@ public class MoneyWiseTransaction
     /**
      * Circular update Error Text.
      */
-    private static final String ERROR_CIRCULAR = MoneyWiseBasicResource.TRANSACTION_ERROR_CIRCLE.getValue();
+    public static final String ERROR_CIRCULAR = MoneyWiseBasicResource.TRANSACTION_ERROR_CIRCLE.getValue();
 
     /**
      * Do we have an InfoSet.

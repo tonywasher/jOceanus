@@ -25,12 +25,13 @@ import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseSecurityClass;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataInfoClass;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
+import net.sourceforge.joceanus.prometheus.validate.PrometheusValidateInfoSet;
 
 /**
  * Validate SecurityInfoSet.
  */
 public class MoneyWiseValidateSecurityInfoSet
-        extends MoneyWiseValidateInfoSet<MoneyWiseSecurityInfo> {
+        extends PrometheusValidateInfoSet<MoneyWiseSecurityInfo> {
     @Override
     public MoneyWiseSecurity getOwner() {
         return (MoneyWiseSecurity) super.getOwner();
@@ -89,8 +90,8 @@ public class MoneyWiseValidateSecurityInfoSet
     }
 
     @Override
-    void validateClass(final MoneyWiseSecurityInfo pInfo,
-                       final PrometheusDataInfoClass pClass) {
+    public void validateClass(final MoneyWiseSecurityInfo pInfo,
+                              final PrometheusDataInfoClass pClass) {
         /* Switch on class */
         switch ((MoneyWiseAccountInfoClass) pClass) {
             case NOTES:

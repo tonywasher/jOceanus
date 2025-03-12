@@ -21,12 +21,13 @@ import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrency.MoneyWi
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrency.MoneyWiseCurrencyList;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseStaticResource;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
+import net.sourceforge.joceanus.prometheus.validate.PrometheusValidateStatic;
 
 /**
  * Validator for Currency.
  */
 public class MoneyWiseValidateCurrency
-        extends MoneyWiseValidateStatic<MoneyWiseCurrency> {
+        extends PrometheusValidateStatic<MoneyWiseCurrency> {
 
     @Override
     public void validate(final MoneyWiseCurrency pCurrency) {

@@ -41,5 +41,5 @@ module net.sourceforge.joceanus.prometheus.core {
     exports net.sourceforge.joceanus.prometheus.ui;
     exports net.sourceforge.joceanus.prometheus.ui.fieldset;
     exports net.sourceforge.joceanus.prometheus.ui.panel;
-    //exports net.sourceforge.joceanus.prometheus.exc;
+    exports net.sourceforge.joceanus.prometheus.validate;
 }

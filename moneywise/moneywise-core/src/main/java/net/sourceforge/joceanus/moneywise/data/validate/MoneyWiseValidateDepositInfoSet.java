@@ -26,12 +26,13 @@ import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseDepositCategoryC
 import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataInfoClass;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
+import net.sourceforge.joceanus.prometheus.validate.PrometheusValidateInfoSet;
 
 /**
  * Validate DepositInfoSet.
  */
 public class MoneyWiseValidateDepositInfoSet
-        extends MoneyWiseValidateInfoSet<MoneyWiseDepositInfo> {
+        extends PrometheusValidateInfoSet<MoneyWiseDepositInfo> {
     @Override
     public MoneyWiseDeposit getOwner() {
         return (MoneyWiseDeposit) super.getOwner();
@@ -82,8 +83,8 @@ public class MoneyWiseValidateDepositInfoSet
     }
 
     @Override
-    void validateClass(final MoneyWiseDepositInfo pInfo,
-                       final PrometheusDataInfoClass pClass) {
+    public void validateClass(final MoneyWiseDepositInfo pInfo,
+                              final PrometheusDataInfoClass pClass) {
         /* Switch on class */
         switch ((MoneyWiseAccountInfoClass) pClass) {
             case OPENINGBALANCE:

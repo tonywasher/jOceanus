@@ -23,12 +23,13 @@ import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePayeeInfoSet;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseAccountInfoClass;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataInfoClass;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
+import net.sourceforge.joceanus.prometheus.validate.PrometheusValidateInfoSet;
 
 /**
  * Validate CashInfoSet.
  */
 public class MoneyWiseValidatePayeeInfoSet
-        extends MoneyWiseValidateInfoSet<MoneyWisePayeeInfo> {
+        extends PrometheusValidateInfoSet<MoneyWisePayeeInfo> {
     @Override
     public MoneyWisePayee getOwner() {
         return (MoneyWisePayee) super.getOwner();
@@ -64,8 +65,8 @@ public class MoneyWiseValidatePayeeInfoSet
     }
 
     @Override
-    void validateClass(final MoneyWisePayeeInfo pInfo,
-                       final PrometheusDataInfoClass pClass) {
+    public void validateClass(final MoneyWisePayeeInfo pInfo,
+                              final PrometheusDataInfoClass pClass) {
         /* Switch on class */
         switch ((MoneyWiseAccountInfoClass) pClass) {
             case WEBSITE:

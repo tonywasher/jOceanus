@@ -17,33 +17,47 @@
 package net.sourceforge.joceanus.moneywise.data.validate;
 
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataSet;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
 import net.sourceforge.joceanus.moneywise.exc.MoneyWiseLogicException;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.prometheus.data.PrometheusDataSet;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataSet.PrometheusCryptographyDataType;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataValidator;
 import net.sourceforge.joceanus.prometheus.data.PrometheusListKey;
+import net.sourceforge.joceanus.prometheus.validate.PrometheusValidateBasic;
+import net.sourceforge.joceanus.prometheus.validate.PrometheusValidateInfo;
+import net.sourceforge.joceanus.prometheus.validate.PrometheusValidateStatic;
 
 /**
  * Validator factory.
  */
 public class MoneyWiseValidatorFactory {
     /**
-     * Create validator factory for itemType.
+     * the DataSet.
+     */
+    private final MoneyWiseDataSet theDataSet;
+
+    /**
+     * Constructor.
      * @param pDataSet the dataSet
+     */
+    public MoneyWiseValidatorFactory(final MoneyWiseDataSet pDataSet) {
+        theDataSet = pDataSet;
+    }
+
+    /**
+     * Create validator factory for itemType.
      * @param pItemType the item type
      * @return the validator
      * @throws OceanusException on error
      */
-    public PrometheusDataValidator<?> newValidator(final PrometheusDataSet pDataSet,
-                                                   final PrometheusListKey pItemType) throws OceanusException {
+    public PrometheusDataValidator<?> newValidator(final PrometheusListKey pItemType) throws OceanusException {
         if (pItemType instanceof PrometheusCryptographyDataType) {
-            return new MoneyWiseValidateBasic();
+            return new PrometheusValidateBasic();
         } else if (MoneyWiseStaticDataType.CURRENCY.equals(pItemType)) {
             return new MoneyWiseValidateCurrency();
         } else if (pItemType instanceof MoneyWiseStaticDataType) {
-            return new MoneyWiseValidateStatic<>();
+            return new PrometheusValidateStatic<>();
         } else if (pItemType instanceof MoneyWiseBasicDataType) {
             switch ((MoneyWiseBasicDataType) pItemType) {
                 case TRANSTAG:
@@ -76,13 +90,16 @@ public class MoneyWiseValidatorFactory {
                     return new MoneyWiseValidateLoan();
                 case PORTFOLIO:
                     return new MoneyWiseValidatePortfolio();
+                case TRANSACTION:
+                    return new MoneyWiseValidateTransaction(theDataSet);
                 case PAYEEINFO:
                 case DEPOSITINFO:
                 case SECURITYINFO:
                 case CASHINFO:
                 case LOANINFO:
                 case PORTFOLIOINFO:
-                    return new MoneyWiseValidateInfo<>();
+                case TRANSACTIONINFO:
+                    return new PrometheusValidateInfo<>();
                 default:
                     break;
             }

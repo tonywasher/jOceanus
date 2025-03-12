@@ -1,5 +1,5 @@
 /*******************************************************************************
- * MoneyWise: Finance Application
+ * Prometheus: Application Framework
  * Copyright 2012,2025 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.moneywise.data.validate;
+package net.sourceforge.joceanus.prometheus.validate;
 
 import net.sourceforge.joceanus.metis.field.MetisFieldRequired;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataInfoClass;
@@ -28,7 +28,7 @@ import java.util.Iterator;
  * Validate InfoSet.
  * @param <T> the infoItem type
  */
-public abstract class MoneyWiseValidateInfoSet<T extends PrometheusDataInfoItem> {
+public abstract class PrometheusValidateInfoSet<T extends PrometheusDataInfoItem> {
     /**
      * The infoSet.
      */
@@ -43,7 +43,7 @@ public abstract class MoneyWiseValidateInfoSet<T extends PrometheusDataInfoItem>
      * Validate the infoSet.
      * @param pInfoSet the infoSet
      */
-    void validate(final PrometheusDataInfoSet<T> pInfoSet) {
+    public void validate(final PrometheusDataInfoSet<T> pInfoSet) {
         /* Store the item */
         theInfoSet = pInfoSet;
         theOwner = pInfoSet.getOwner();
@@ -68,7 +68,7 @@ public abstract class MoneyWiseValidateInfoSet<T extends PrometheusDataInfoItem>
      * Obtain the owner.
      * @return the owner
      */
-    PrometheusDataItem getOwner() {
+    public PrometheusDataItem getOwner() {
         return theOwner;
     }
 
@@ -118,6 +118,6 @@ public abstract class MoneyWiseValidateInfoSet<T extends PrometheusDataInfoItem>
      * @param pInfo the info
      * @param pClass the infoClass
      */
-    abstract void validateClass(T pInfo,
-                                PrometheusDataInfoClass pClass);
+    public abstract void validateClass(T pInfo,
+                                       PrometheusDataInfoClass pClass);
 }

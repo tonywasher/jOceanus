@@ -77,7 +77,7 @@ public abstract class MoneyWiseTransBase
     /**
      * Invalid Debit/Credit/Category Combination Error Text.
      */
-    private static final String ERROR_COMBO = MoneyWiseBasicResource.TRANSACTION_ERROR_ASSETPAIR.getValue();
+    public static final String ERROR_COMBO = MoneyWiseBasicResource.TRANSACTION_ERROR_ASSETPAIR.getValue();
 
     /**
      * Zero Amount Error Text.
@@ -87,7 +87,7 @@ public abstract class MoneyWiseTransBase
     /**
      * Currency Error Text.
      */
-    protected static final String ERROR_CURRENCY = MoneyWiseBasicResource.MONEYWISEDATA_ERROR_CURRENCY.getValue();
+    public static final String ERROR_CURRENCY = MoneyWiseBasicResource.MONEYWISEDATA_ERROR_CURRENCY.getValue();
 
     /**
      * Copy Constructor.
