@@ -427,7 +427,7 @@ public class MoneyWiseRegion
         }
 
         @Override
-        protected MoneyWiseRegionDataMap getDataMap() {
+        public MoneyWiseRegionDataMap getDataMap() {
             return (MoneyWiseRegionDataMap) super.getDataMap();
         }
 
@@ -554,7 +554,7 @@ public class MoneyWiseRegion
     /**
      * The dataMap class.
      */
-    protected static class MoneyWiseRegionDataMap
+    public static class MoneyWiseRegionDataMap
             extends PrometheusDataInstanceMap<MoneyWiseRegion, String> {
         @Override
         public void adjustForItem(final PrometheusDataItem pItem) {

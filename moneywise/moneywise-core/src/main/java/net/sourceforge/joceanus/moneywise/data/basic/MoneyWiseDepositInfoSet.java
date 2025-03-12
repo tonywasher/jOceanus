@@ -16,8 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.moneywise.data.basic;
 
-import java.util.Map;
-
 import net.sourceforge.joceanus.metis.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.metis.field.MetisFieldRequired;
@@ -26,12 +24,16 @@ import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDepositInfo.MoneyW
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseAccountInfoClass;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseAccountInfoType.MoneyWiseAccountInfoTypeList;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseDepositCategoryClass;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataInfoClass;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataInfoSet;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
+
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  * DepositInfoSet class.
@@ -57,7 +59,7 @@ public class MoneyWiseDepositInfoSet
     /**
      * Opening Balance Currency Error Text.
      */
-    protected static final String ERROR_CURRENCY = MoneyWiseBasicResource.MONEYWISEDATA_ERROR_CURRENCY.getValue();
+    public static final String ERROR_CURRENCY = MoneyWiseBasicResource.MONEYWISEDATA_ERROR_CURRENCY.getValue();
 
     /**
      * Constructor.
@@ -134,6 +136,12 @@ public class MoneyWiseDepositInfoSet
         return myValue != null
                 ? myValue
                 : MetisDataFieldValue.SKIP;
+    }
+
+    @Override
+    public Iterator<PrometheusDataInfoClass> classIterator() {
+        final PrometheusDataInfoClass[] myValues = MoneyWiseAccountInfoClass.values();
+        return Arrays.stream(myValues).iterator();
     }
 
     /**

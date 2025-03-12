@@ -657,7 +657,7 @@ public abstract class PrometheusStaticDataItem
 
         @Override
         @SuppressWarnings("unchecked")
-        protected PrometheusStaticDataMap<T> getDataMap() {
+        public PrometheusStaticDataMap<T> getDataMap() {
             return (PrometheusStaticDataMap<T>) super.getDataMap();
         }
 
@@ -780,7 +780,7 @@ public abstract class PrometheusStaticDataItem
      * The dataMap class.
      * @param <T> the item type
      */
-    protected static class PrometheusStaticDataMap<T extends PrometheusStaticDataItem>
+    public static class PrometheusStaticDataMap<T extends PrometheusStaticDataItem>
             extends PrometheusDataInstanceMap<T, String> {
         /**
          * Report fields.

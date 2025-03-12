@@ -69,7 +69,7 @@ public final class MoneyWiseTransCategory
     /**
      * Different Parent Error.
      */
-    private static final String ERROR_DIFFPARENT = MoneyWiseBasicResource.TRANSCATEGORY_ERROR_DIFFPARENT.getValue();
+    public static final String ERROR_DIFFPARENT = MoneyWiseBasicResource.TRANSCATEGORY_ERROR_DIFFPARENT.getValue();
 
     /**
      * Copy Constructor.
@@ -429,7 +429,7 @@ public final class MoneyWiseTransCategory
         }
 
         @Override
-        protected MoneyWiseTransCategoryDataMap getDataMap() {
+        public MoneyWiseTransCategoryDataMap getDataMap() {
             return (MoneyWiseTransCategoryDataMap) super.getDataMap();
         }
 
@@ -566,7 +566,7 @@ public final class MoneyWiseTransCategory
     /**
      * The dataMap class.
      */
-    protected static class MoneyWiseTransCategoryDataMap
+    public static class MoneyWiseTransCategoryDataMap
             extends MoneyWiseCategoryDataMap<MoneyWiseTransCategory> {
         /**
          * Report fields.

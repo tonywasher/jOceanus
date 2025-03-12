@@ -427,7 +427,7 @@ public class MoneyWiseTransTag
         }
 
         @Override
-        protected MoneyWiseTagDataMap getDataMap() {
+        public MoneyWiseTagDataMap getDataMap() {
             return (MoneyWiseTagDataMap) super.getDataMap();
         }
 
@@ -554,7 +554,7 @@ public class MoneyWiseTransTag
     /**
      * The dataMap class.
      */
-    protected static class MoneyWiseTagDataMap
+    public static class MoneyWiseTagDataMap
             extends PrometheusDataInstanceMap<MoneyWiseTransTag, String> {
         @Override
         public void adjustForItem(final PrometheusDataItem pItem) {

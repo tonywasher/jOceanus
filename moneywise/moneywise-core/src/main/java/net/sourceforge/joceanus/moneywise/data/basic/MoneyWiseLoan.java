@@ -858,7 +858,7 @@ public class MoneyWiseLoan
         }
 
         @Override
-        protected boolean validNameCount(final String pName) {
+        public boolean validNameCount(final String pName) {
             /* check availability in map */
             return getDataMap().validNameCount(pName);
         }

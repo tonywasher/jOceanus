@@ -81,12 +81,12 @@ public class MoneyWiseExchangeRate
     /**
      * Circular Rate Error.
      */
-    private static final String ERROR_CIRCLE = MoneyWiseBasicResource.XCHGRATE_ERROR_CIRCLE.getValue();
+    public static final String ERROR_CIRCLE = MoneyWiseBasicResource.XCHGRATE_ERROR_CIRCLE.getValue();
 
     /**
      * Default Rate Error.
      */
-    private static final String ERROR_DEF = MoneyWiseBasicResource.XCHGRATE_ERROR_DEFAULT.getValue();
+    public static final String ERROR_DEF = MoneyWiseBasicResource.XCHGRATE_ERROR_DEFAULT.getValue();
 
     /**
      * Copy Constructor.

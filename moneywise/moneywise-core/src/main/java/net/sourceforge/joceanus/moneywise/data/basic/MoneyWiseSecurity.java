@@ -760,7 +760,7 @@ public class MoneyWiseSecurity
     }
 
     @Override
-    protected void validateName(final String pName) {
+    public void validateName(final String pName) {
         /* Perform basic checks */
         super.validateName(pName);
 
@@ -859,7 +859,7 @@ public class MoneyWiseSecurity
         }
 
         @Override
-        protected MoneyWiseSecurityDataMap getDataMap() {
+        public MoneyWiseSecurityDataMap getDataMap() {
             return (MoneyWiseSecurityDataMap) super.getDataMap();
         }
 
@@ -953,7 +953,7 @@ public class MoneyWiseSecurity
         }
 
         @Override
-        protected boolean validNameCount(final String pName) {
+        public boolean validNameCount(final String pName) {
             /* check availability in map */
             return getDataMap().validNameCount(pName);
         }
@@ -973,7 +973,7 @@ public class MoneyWiseSecurity
          * @param pSymbol the symbol
          * @return true/false
          */
-        protected boolean validSymbolCount(final String pSymbol) {
+        public boolean validSymbolCount(final String pSymbol) {
             /* check availability in map */
             return getDataMap().validSymbolCount(pSymbol);
         }
@@ -1063,7 +1063,7 @@ public class MoneyWiseSecurity
     /**
      * The dataMap class.
      */
-    protected static class MoneyWiseSecurityDataMap
+    public static class MoneyWiseSecurityDataMap
             extends PrometheusDataInstanceMap<MoneyWiseSecurity, String> {
         /**
          * Report fields.

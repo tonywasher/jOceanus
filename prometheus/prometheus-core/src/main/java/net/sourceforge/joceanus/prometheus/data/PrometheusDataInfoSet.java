@@ -123,6 +123,12 @@ public abstract class PrometheusDataInfoSet<T extends PrometheusDataInfoItem>
     }
 
     /**
+     * Obtain class iterator for the underlying infoClasses.
+     * @return the Iterator
+     */
+    public abstract Iterator<PrometheusDataInfoClass> classIterator();
+
+    /**
      * Clone the dataInfoSet.
      * @param pSource the InfoSet to clone
      */
@@ -241,7 +247,7 @@ public abstract class PrometheusDataInfoSet<T extends PrometheusDataInfoItem>
      * @param pInfoClass the Info Class
      * @return the value
      */
-    protected T getInfo(final PrometheusDataInfoClass pInfoClass) {
+    public T getInfo(final PrometheusDataInfoClass pInfoClass) {
         /* Reject if called for LinkSet */
         if (pInfoClass.isLinkSet()) {
             throw new UnsupportedOperationException();

@@ -74,12 +74,12 @@ public abstract class MoneyWiseCategoryBase
     /**
      * Invalid Parent Error.
      */
-    protected static final String ERROR_BADPARENT = MoneyWiseBasicResource.CATEGORY_ERROR_BADPARENT.getValue();
+    public static final String ERROR_BADPARENT = MoneyWiseBasicResource.CATEGORY_ERROR_BADPARENT.getValue();
 
     /**
      * NonMatching Parent Error.
      */
-    protected static final String ERROR_MATCHPARENT = MoneyWiseBasicResource.CATEGORY_ERROR_MATCHPARENT.getValue();
+    public static final String ERROR_MATCHPARENT = MoneyWiseBasicResource.CATEGORY_ERROR_MATCHPARENT.getValue();
 
     /**
      * Copy Constructor.
@@ -651,7 +651,7 @@ public abstract class MoneyWiseCategoryBase
 
         @Override
         @SuppressWarnings("unchecked")
-        protected MoneyWiseCategoryDataMap<T> getDataMap() {
+        public MoneyWiseCategoryDataMap<T> getDataMap() {
             return (MoneyWiseCategoryDataMap<T>) super.getDataMap();
         }
 
@@ -759,7 +759,7 @@ public abstract class MoneyWiseCategoryBase
      * The dataMap class.
      * @param <T> the Category Data type
      */
-    protected static class MoneyWiseCategoryDataMap<T extends MoneyWiseCategoryBase>
+    public static class MoneyWiseCategoryDataMap<T extends MoneyWiseCategoryBase>
             extends PrometheusDataInstanceMap<T, String> {
         @Override
         @SuppressWarnings("unchecked")

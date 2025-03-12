@@ -773,7 +773,7 @@ public class MoneyWisePortfolio
     }
 
     @Override
-    protected void validateName(final String pName) {
+    public void validateName(final String pName) {
         /* Perform basic checks */
         super.validateName(pName);
 
@@ -883,7 +883,7 @@ public class MoneyWisePortfolio
         }
 
         @Override
-        protected MoneyWisePortfolioDataMap getDataMap() {
+        public MoneyWisePortfolioDataMap getDataMap() {
             return (MoneyWisePortfolioDataMap) super.getDataMap();
         }
 
@@ -999,7 +999,7 @@ public class MoneyWisePortfolio
         }
 
         @Override
-        protected boolean validNameCount(final String pName) {
+        public boolean validNameCount(final String pName) {
             /* check availability in map */
             return getDataMap().validNameCount(pName);
         }
@@ -1097,7 +1097,7 @@ public class MoneyWisePortfolio
     /**
      * The dataMap class.
      */
-    protected static class MoneyWisePortfolioDataMap
+    public static class MoneyWisePortfolioDataMap
             implements PrometheusDataMapItem, MetisFieldItem {
         /**
          * Report fields.

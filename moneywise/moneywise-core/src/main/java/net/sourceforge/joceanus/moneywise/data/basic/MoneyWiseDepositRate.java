@@ -80,7 +80,7 @@ public class MoneyWiseDepositRate
     /**
      * Null Date Error.
      */
-    private static final String ERROR_NULLDATE = MoneyWiseBasicResource.DEPOSITRATE_ERROR_NULLDATE.getValue();
+    public static final String ERROR_NULLDATE = MoneyWiseBasicResource.DEPOSITRATE_ERROR_NULLDATE.getValue();
 
     /**
      * Copy Constructor.
@@ -665,7 +665,7 @@ public class MoneyWiseDepositRate
         }
 
         @Override
-        protected MoneyWiseDepositRateDataMap getDataMap() {
+        public MoneyWiseDepositRateDataMap getDataMap() {
             return (MoneyWiseDepositRateDataMap) super.getDataMap();
         }
 

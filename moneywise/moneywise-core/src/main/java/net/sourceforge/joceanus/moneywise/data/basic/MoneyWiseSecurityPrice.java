@@ -82,7 +82,7 @@ public class MoneyWiseSecurityPrice
     /**
      * Invalid currency error.
      */
-    private static final String ERROR_CURRENCY = MoneyWiseBasicResource.MONEYWISEDATA_ERROR_CURRENCY.getValue();
+    public static final String ERROR_CURRENCY = MoneyWiseBasicResource.MONEYWISEDATA_ERROR_CURRENCY.getValue();
 
     /**
      * Copy Constructor.
@@ -562,7 +562,7 @@ public class MoneyWiseSecurityPrice
         }
 
         @Override
-        protected MoneyWiseSecurityPriceDataMap getDataMap() {
+        public MoneyWiseSecurityPriceDataMap getDataMap() {
             return (MoneyWiseSecurityPriceDataMap) super.getDataMap();
         }
 

@@ -763,7 +763,7 @@ public class MoneyWisePayee
         }
 
         @Override
-        protected MoneyWisePayeeDataMap getDataMap() {
+        public MoneyWisePayeeDataMap getDataMap() {
             return (MoneyWisePayeeDataMap) super.getDataMap();
         }
 
@@ -857,7 +857,7 @@ public class MoneyWisePayee
         }
 
         @Override
-        protected boolean validNameCount(final String pName) {
+        public boolean validNameCount(final String pName) {
             /* check availability in map */
             return getDataMap().validNameCount(pName);
         }
@@ -947,7 +947,7 @@ public class MoneyWisePayee
     /**
      * The dataMap class.
      */
-    protected static class MoneyWisePayeeDataMap
+    public static class MoneyWisePayeeDataMap
             implements PrometheusDataMapItem, MetisFieldItem {
         /**
          * Report fields.

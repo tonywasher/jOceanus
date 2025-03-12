@@ -73,12 +73,12 @@ public abstract class MoneyWiseAssetBase
     /**
      * Bad category error.
      */
-    protected static final String ERROR_BADCATEGORY = MoneyWiseBasicResource.ASSET_ERROR_BADCAT.getValue();
+    public static final String ERROR_BADCATEGORY = MoneyWiseBasicResource.ASSET_ERROR_BADCAT.getValue();
 
     /**
      * Bad parent error.
      */
-    protected static final String ERROR_BADPARENT = MoneyWiseBasicResource.ASSET_ERROR_BADPARENT.getValue();
+    public static final String ERROR_BADPARENT = MoneyWiseBasicResource.ASSET_ERROR_BADPARENT.getValue();
 
     /**
      * Bad InfoSet Error Text.
@@ -88,12 +88,12 @@ public abstract class MoneyWiseAssetBase
     /**
      * Parent Closed Error Text.
      */
-    protected static final String ERROR_PARCLOSED = MoneyWiseBasicResource.ASSET_ERROR_PARENTCLOSED.getValue();
+    public static final String ERROR_PARCLOSED = MoneyWiseBasicResource.ASSET_ERROR_PARENTCLOSED.getValue();
 
     /**
      * Reserved name error.
      */
-    protected static final String ERROR_RESERVED = MoneyWiseBasicResource.ASSET_ERROR_RESERVED.getValue();
+    public static final String ERROR_RESERVED = MoneyWiseBasicResource.ASSET_ERROR_RESERVED.getValue();
 
     /**
      * Close Date.
@@ -803,7 +803,7 @@ public abstract class MoneyWiseAssetBase
      * Validate the name.
      * @param pName the name
      */
-    protected void validateName(final String pName) {
+    public void validateName(final String pName) {
         /* Access the list */
         final MoneyWiseAssetBaseList<?> myList = getList();
 
@@ -933,7 +933,7 @@ public abstract class MoneyWiseAssetBase
          * @param pName Name of item
          * @return true/false
          */
-        protected abstract boolean validNameCount(String pName);
+        public abstract boolean validNameCount(String pName);
 
         /**
          * Obtain unique name for new account.

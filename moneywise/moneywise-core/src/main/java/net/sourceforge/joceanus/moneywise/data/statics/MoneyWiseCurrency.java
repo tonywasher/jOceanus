@@ -315,7 +315,7 @@ public class MoneyWiseCurrency
         }
 
         @Override
-        protected MoneyWiseCurrencyDataMap getDataMap() {
+        public MoneyWiseCurrencyDataMap getDataMap() {
             return (MoneyWiseCurrencyDataMap) super.getDataMap();
         }
 
@@ -496,7 +496,7 @@ public class MoneyWiseCurrency
     /**
      * The dataMap class.
      */
-    protected static final class MoneyWiseCurrencyDataMap
+    public static final class MoneyWiseCurrencyDataMap
             extends PrometheusStaticDataMap<MoneyWiseCurrency> {
         /**
          * Report fields.
