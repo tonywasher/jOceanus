@@ -218,10 +218,6 @@ public class PrometheusEncryptedValues
             /* Access the value */
             final Object myValue = getValue(myField);
 
-            /* If this is a byte array */
-            if (theEncryptor == null) {
-                int i = 0;
-            }
             /* Encrypt the value */
             setUncheckedValue(myField, theEncryptor.encryptValue(myValue, myField));
         }

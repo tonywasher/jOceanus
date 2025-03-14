@@ -481,47 +481,6 @@ public class MoneyWiseDepositRate
     }
 
     /**
-     * Validate the rate.
-     */
-    //@Override
-    public void valissssdate() {
-        final MoneyWiseDepositRateList myList = getList();
-        final OceanusDate myDate = getEndDate();
-        final OceanusRate myRate = getRate();
-        final OceanusRate myBonus = getBonus();
-
-        /* Count instances of this date for the account */
-        final MoneyWiseDepositRateDataMap myMap = myList.getDataMap();
-        if (!myMap.validRateCount(this)) {
-            /* Each date must be unique for deposit (even null) */
-            addError(myDate == null
-                    ? ERROR_NULLDATE
-                    : ERROR_DUPLICATE, MoneyWiseBasicResource.DEPOSITRATE_ENDDATE);
-        }
-
-        /* The Rate must be non-zero and greater than zero */
-        if (myRate == null) {
-            addError(ERROR_MISSING, MoneyWiseBasicResource.MONEYWISEDATA_FIELD_RATE);
-        } else if (!myRate.isPositive()) {
-            addError(ERROR_NEGATIVE, MoneyWiseBasicResource.MONEYWISEDATA_FIELD_RATE);
-        }
-
-        /* The bonus rate must be non-zero if it exists */
-        if (myBonus != null) {
-            if (myBonus.isZero()) {
-                addError(ERROR_ZERO, MoneyWiseBasicResource.DEPOSITRATE_BONUS);
-            } else if (!myBonus.isPositive()) {
-                addError(ERROR_NEGATIVE, MoneyWiseBasicResource.DEPOSITRATE_BONUS);
-            }
-        }
-
-        /* Set validation flag */
-        if (!hasErrors()) {
-            setValidEdit();
-        }
-    }
-
-    /**
      * Set the deposit.
      * @param pValue the deposit
      */

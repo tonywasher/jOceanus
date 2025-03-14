@@ -33,7 +33,6 @@ import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseAccountInfoClass
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseAccountInfoType.MoneyWiseAccountInfoTypeList;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrency;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrency.MoneyWiseCurrencyList;
-import net.sourceforge.joceanus.moneywise.data.statics.MoneyWisePayeeClass;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseSecurityClass;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseSecurityType;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseSecurityType.MoneyWiseSecurityTypeList;
@@ -669,106 +668,6 @@ public class MoneyWiseSecurity
 
         /* Touch parent */
         getParent().touchItem(this);
-    }
-
-    //@Override
-    public void validssssss3wwate() {
-        final MoneyWiseSecurityList myList = getList();
-        final MoneyWisePayee myParent = getParent();
-        final MoneyWiseSecurityType mySecType = getCategory();
-        final MoneyWiseCurrency myCurrency = getAssetCurrency();
-        final String mySymbol = getSymbol();
-
-        /* Validate base components */
-        super.validate();
-
-        /* SecurityType must be non-null */
-        if (mySecType == null) {
-            addError(ERROR_MISSING, MoneyWiseBasicResource.CATEGORY_NAME);
-        } else {
-            /* Access the class */
-            final MoneyWiseSecurityClass myClass = mySecType.getSecurityClass();
-
-            /* SecurityType must be enabled */
-            if (!mySecType.getEnabled()) {
-                addError(ERROR_DISABLED, MoneyWiseBasicResource.CATEGORY_NAME);
-            }
-
-            /* If the SecurityType is singular */
-            if (myClass.isSingular()) {
-                /* Count the elements of this class */
-                final MoneyWiseSecurityDataMap myMap = myList.getDataMap();
-                if (!myMap.validSingularCount(myClass)) {
-                    addError(ERROR_MULT, MoneyWiseBasicResource.CATEGORY_NAME);
-                }
-            }
-        }
-
-        /* Currency must be non-null and enabled */
-        if (myCurrency == null) {
-            addError(ERROR_MISSING, MoneyWiseStaticDataType.CURRENCY);
-        } else if (!myCurrency.getEnabled()) {
-            addError(ERROR_DISABLED, MoneyWiseStaticDataType.CURRENCY);
-        }
-
-        /* Parent must be non-null */
-        if (myParent == null) {
-            addError(ERROR_MISSING, MoneyWiseBasicResource.ASSET_PARENT);
-        } else {
-            /* If we are open then parent must be open */
-            if (!isClosed() && Boolean.TRUE.equals(myParent.isClosed())) {
-                addError(ERROR_PARCLOSED, MoneyWiseBasicResource.ASSET_CLOSED);
-            }
-
-            /* Check class */
-            if (mySecType != null) {
-                /* Access the classes */
-                final MoneyWiseSecurityClass myClass = mySecType.getSecurityClass();
-                final MoneyWisePayeeClass myParClass = myParent.getCategoryClass();
-
-                /* Parent must be suitable */
-                if (!myParClass.canParentSecurity(myClass)) {
-                    addError(ERROR_BADPARENT, MoneyWiseBasicResource.ASSET_PARENT);
-                }
-            }
-        }
-
-        /* If we have a securityType */
-        if (mySecType != null) {
-            /* Check symbol rules */
-            if (mySecType.getSecurityClass().needsSymbol()) {
-                if (mySymbol == null) {
-                    addError(ERROR_MISSING, MoneyWiseSecurityInfoSet.getFieldForClass(MoneyWiseAccountInfoClass.SYMBOL));
-                } else if (!getList().validSymbolCount(mySymbol)) {
-                    addError(ERROR_DUPLICATE, MoneyWiseSecurityInfoSet.getFieldForClass(MoneyWiseAccountInfoClass.SYMBOL));
-                }
-            } else if (mySymbol != null) {
-                addError(ERROR_EXIST, MoneyWiseSecurityInfoSet.getFieldForClass(MoneyWiseAccountInfoClass.SYMBOL));
-            }
-        }
-
-        /* If we have an infoSet */
-        if (theInfoSet != null) {
-            /* Validate the InfoSet */
-            theInfoSet.validate();
-        }
-
-        /* Set validation flag */
-        if (!hasErrors()) {
-            setValidEdit();
-        }
-    }
-
-    @Override
-    public void validateName(final String pName) {
-        /* Perform basic checks */
-        super.validateName(pName);
-
-        /* Check that the name is not a reserved name */
-        if (pName.equals(MoneyWiseSecurityHolding.SECURITYHOLDING_NEW)
-                || pName.equals(MoneyWisePortfolio.NAME_CASHACCOUNT)) {
-            addError(ERROR_RESERVED, PrometheusDataResource.DATAITEM_FIELD_NAME);
-        }
     }
 
     /**

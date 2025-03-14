@@ -218,64 +218,6 @@ public final class MoneyWiseDepositCategory
         setValueType((MoneyWiseDepositCategoryType) pType);
     }
 
-    //@Override
-    public void valddddidate() {
-        /* Validate the base */
-        super.validate();
-
-        /* Access details */
-        final MoneyWiseDepositCategoryType myCatType = getCategoryType();
-        final MoneyWiseDepositCategory myParent = getParentCategory();
-
-        /* DepositCategoryType must be non-null */
-        if (myCatType == null) {
-            addError(ERROR_MISSING, MoneyWiseStaticDataType.DEPOSITTYPE);
-        } else {
-            /* Access the class */
-            final MoneyWiseDepositCategoryClass myClass = myCatType.getDepositClass();
-
-            /* DepositCategoryType must be enabled */
-            if (!myCatType.getEnabled()) {
-                addError(ERROR_DISABLED, MoneyWiseStaticDataType.DEPOSITTYPE);
-            }
-
-            /* Switch on the account class */
-            switch (myClass) {
-                case PARENT:
-                    /* If parent exists */
-                    if (myParent != null) {
-                        addError(ERROR_EXIST, PrometheusDataResource.DATAGROUP_PARENT);
-                    }
-                    break;
-                default:
-                    /* Check parent */
-                    if (myParent == null) {
-                        addError(ERROR_MISSING, PrometheusDataResource.DATAGROUP_PARENT);
-                    } else if (!myParent.isCategoryClass(MoneyWiseDepositCategoryClass.PARENT)) {
-                        addError(ERROR_BADPARENT, PrometheusDataResource.DATAGROUP_PARENT);
-                    } else {
-                        final String myName = getName();
-
-                        /* Check validity of parent */
-                        final MoneyWiseDepositCategoryClass myParentClass = myParent.getCategoryTypeClass();
-                        if (myParentClass != MoneyWiseDepositCategoryClass.PARENT) {
-                            addError(ERROR_BADPARENT, PrometheusDataResource.DATAGROUP_PARENT);
-                        }
-                        /* Check that name reflects parent */
-                        if ((myName != null) && !myName.startsWith(myParent.getName() + STR_SEP)) {
-                            addError(ERROR_MATCHPARENT, PrometheusDataResource.DATAGROUP_PARENT);
-                        }
-                    }
-                    break;
-            }
-        }
-
-        /* Set validation flag */
-        if (!hasErrors()) {
-            setValidEdit();
-        }
-    }
-
     /**
      * Update base category from an edited category.
      * @param pCategory the edited category

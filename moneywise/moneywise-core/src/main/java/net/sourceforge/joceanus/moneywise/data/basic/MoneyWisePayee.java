@@ -27,7 +27,6 @@ import net.sourceforge.joceanus.metis.field.MetisFieldVersionedSet;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePayeeInfo.MoneyWisePayeeInfoList;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseAccountInfoClass;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseAccountInfoType.MoneyWiseAccountInfoTypeList;
-import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrency;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWisePayeeClass;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWisePayeeType;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWisePayeeType.MoneyWisePayeeTypeList;
@@ -619,60 +618,6 @@ public class MoneyWisePayee
         clearTouches(MoneyWiseBasicDataType.DEPOSIT);
         clearTouches(MoneyWiseBasicDataType.LOAN);
         clearTouches(MoneyWiseBasicDataType.PORTFOLIO);
-    }
-
-    //@Override
-    public void valsssssidate() {
-        final MoneyWisePayeeList myList = getList();
-        final MoneyWisePayeeType myPayeeType = getCategory();
-        final MoneyWisePayee myParent = getParent();
-        final MoneyWiseCurrency myCurrency = getAssetCurrency();
-
-        /* Validate base components */
-        super.validate();
-
-        /* PayeeType must be non-null */
-        if (myPayeeType == null) {
-            addError(ERROR_MISSING, MoneyWiseBasicResource.CATEGORY_NAME);
-        } else {
-            /* Access the class */
-            final MoneyWisePayeeClass myClass = myPayeeType.getPayeeClass();
-
-            /* PayeeType must be enabled */
-            if (!myPayeeType.getEnabled()) {
-                addError(ERROR_DISABLED, MoneyWiseBasicResource.CATEGORY_NAME);
-            }
-
-            /* If the PayeeType is singular */
-            if (myClass.isSingular()) {
-                /* Count the elements of this class */
-                final MoneyWisePayeeDataMap myMap = myList.getDataMap();
-                if (!myMap.validSingularCount(myClass)) {
-                    addError(ERROR_MULT, MoneyWiseBasicResource.CATEGORY_NAME);
-                }
-            }
-        }
-
-        /* Parent must be null */
-        if (myParent != null) {
-            addError(ERROR_EXIST, MoneyWiseBasicResource.ASSET_PARENT);
-        }
-
-        /* Currency must be null */
-        if (myCurrency != null) {
-            addError(ERROR_EXIST, MoneyWiseStaticDataType.CURRENCY);
-        }
-
-        /* If we have an infoSet */
-        if (theInfoSet != null) {
-            /* Validate the InfoSet */
-            theInfoSet.validate();
-        }
-
-        /* Set validation flag */
-        if (!hasErrors()) {
-            setValidEdit();
-        }
     }
 
     /**

@@ -39,8 +39,6 @@ import net.sourceforge.joceanus.prometheus.data.PrometheusEncryptedFieldSet;
 import net.sourceforge.joceanus.prometheus.data.PrometheusEncryptedPair;
 import net.sourceforge.joceanus.prometheus.data.PrometheusEncryptedValues;
 
-import java.util.Currency;
-
 /**
  * Transaction data type.
  * @author Tony Washer
@@ -861,97 +859,6 @@ public abstract class MoneyWiseTransBase
                 myAsset = pData.getDataList(MoneyWiseBasicDataType.PORTFOLIO, MoneyWisePortfolioList.class).findItemByName(pName);
             }
             return myAsset;
-        }
-    }
-
-    /**
-     * Validate the event.
-     */
-    ///@Override
-    public void validdddddate() {
-        final MoneyWiseTransAsset myAccount = getAccount();
-        final MoneyWiseTransAsset myPartner = getPartner();
-        final MoneyWiseAssetDirection myDir = getDirection();
-        final OceanusMoney myAmount = getAmount();
-        final MoneyWiseTransCategory myCategory = getCategory();
-        final MoneyWiseTransValidator myValidator = getValidator();
-        boolean doCheckCombo = true;
-
-        /* Account must be non-null */
-        if (myAccount == null) {
-            addError(ERROR_MISSING, MoneyWiseBasicResource.TRANSACTION_ACCOUNT);
-            doCheckCombo = false;
-
-        } else {
-            /* Account must be valid */
-            if (!myValidator.isValidAccount(myAccount)) {
-                addError(ERROR_COMBO, MoneyWiseBasicResource.TRANSACTION_ACCOUNT);
-                doCheckCombo = false;
-            }
-        }
-
-        /* Category must be non-null */
-        if (myCategory == null) {
-            addError(ERROR_MISSING, MoneyWiseBasicDataType.TRANSCATEGORY);
-            doCheckCombo = false;
-
-            /* Category must be valid for Account */
-        } else if (doCheckCombo
-                && !myValidator.isValidCategory(myAccount, myCategory)) {
-            addError(ERROR_COMBO, MoneyWiseBasicDataType.TRANSCATEGORY);
-            doCheckCombo = false;
-        }
-
-        /* Direction must be non-null */
-        if (myDir == null) {
-            addError(ERROR_MISSING, MoneyWiseBasicResource.TRANSACTION_DIRECTION);
-            doCheckCombo = false;
-
-            /* Direction must be valid for Account */
-        } else if (doCheckCombo
-                && !myValidator.isValidDirection(myAccount, myCategory, myDir)) {
-            addError(ERROR_COMBO, MoneyWiseBasicResource.TRANSACTION_DIRECTION);
-            doCheckCombo = false;
-        }
-
-        /* Partner must be non-null */
-        if (myPartner == null) {
-            addError(ERROR_MISSING, MoneyWiseBasicResource.TRANSACTION_PARTNER);
-
-        } else {
-            /* Partner must be valid for Account */
-            if (doCheckCombo
-                    && !myValidator.isValidPartner(myAccount, myCategory, myPartner)) {
-                addError(ERROR_COMBO, MoneyWiseBasicResource.TRANSACTION_PARTNER);
-            }
-        }
-
-        /* If money is null */
-        if (myAmount == null) {
-            /* Check that it must be null */
-            if (!needsNullAmount()) {
-                addError(ERROR_MISSING, MoneyWiseBasicResource.TRANSACTION_AMOUNT);
-            }
-
-            /* else non-null money */
-        } else {
-            /* Check that it must be null */
-            if (needsNullAmount()) {
-                addError(ERROR_EXIST, MoneyWiseBasicResource.TRANSACTION_AMOUNT);
-            }
-
-            /* Money must not be negative */
-            if (!myAmount.isPositive()) {
-                addError(ERROR_NEGATIVE, MoneyWiseBasicResource.TRANSACTION_AMOUNT);
-            }
-
-            /* Check that amount is correct currency */
-            if (myAccount != null) {
-                final Currency myCurrency = myAccount.getCurrency();
-                if (!myAmount.getCurrency().equals(myCurrency)) {
-                    addError(ERROR_CURRENCY, MoneyWiseBasicResource.TRANSACTION_AMOUNT);
-                }
-            }
         }
     }
 

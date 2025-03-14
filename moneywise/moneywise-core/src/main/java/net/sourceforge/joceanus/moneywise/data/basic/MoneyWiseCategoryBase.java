@@ -537,39 +537,6 @@ public abstract class MoneyWiseCategoryBase
         }
     }
 
-    //@Override
-    public void valisssdate() {
-        final MoneyWiseCategoryBaseList<?> myList = getList();
-        final String myName = getName();
-        final String myDesc = getDesc();
-        final MoneyWiseCategoryDataMap<?> myMap = myList.getDataMap();
-
-        /* Name must be non-null */
-        if (myName == null) {
-            addError(ERROR_MISSING, PrometheusDataResource.DATAITEM_FIELD_NAME);
-
-            /* Check that the name is valid */
-        } else {
-            /* The name must not be too long */
-            if (myName.length() > NAMELEN) {
-                addError(ERROR_LENGTH, PrometheusDataResource.DATAITEM_FIELD_NAME);
-            }
-
-            /* The name must be unique */
-            if (!myMap.validNameCount(myName)) {
-                final String mySubName = getSubCategory();
-                addError(ERROR_DUPLICATE, (mySubName == null)
-                        ? PrometheusDataResource.DATAITEM_FIELD_NAME
-                        : MoneyWiseBasicResource.CATEGORY_SUBCAT);
-            }
-        }
-
-        /* Check description length */
-        if ((myDesc != null) && (myDesc.length() > DESCLEN)) {
-            addError(ERROR_LENGTH, PrometheusDataResource.DATAITEM_FIELD_DESC);
-        }
-    }
-
     /**
      * Update base category from an edited category.
      * @param pCategory the edited category

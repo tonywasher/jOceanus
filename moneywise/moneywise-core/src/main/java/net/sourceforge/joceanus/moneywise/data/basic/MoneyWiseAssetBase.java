@@ -778,51 +778,6 @@ public abstract class MoneyWiseAssetBase
         setValueClosed(isClosed);
     }
 
-    //@Override
-    public void validssssssate() {
-        final String myName = getName();
-        final String myDesc = getDesc();
-
-        /* Name must be non-null */
-        if (myName == null) {
-            addError(ERROR_MISSING, PrometheusDataResource.DATAITEM_FIELD_NAME);
-
-            /* Check that the name is unique */
-        } else {
-            /* Validate the name */
-            validateName(myName);
-        }
-
-        /* Check description length */
-        if ((myDesc != null) && (myDesc.length() > DESCLEN)) {
-            addError(ERROR_LENGTH, PrometheusDataResource.DATAITEM_FIELD_DESC);
-        }
-    }
-
-    /**
-     * Validate the name.
-     * @param pName the name
-     */
-    public void validateName(final String pName) {
-        /* Access the list */
-        final MoneyWiseAssetBaseList<?> myList = getList();
-
-        /* The name must not be too long */
-        if (pName.length() > NAMELEN) {
-            addError(ERROR_LENGTH, PrometheusDataResource.DATAITEM_FIELD_NAME);
-        }
-
-        /* Check name count */
-        if (!myList.validNameCount(pName)) {
-            addError(ERROR_DUPLICATE, PrometheusDataResource.DATAITEM_FIELD_NAME);
-        }
-
-        /* Check that the name does not contain invalid characters */
-        if (pName.contains(MoneyWiseSecurityHolding.SECURITYHOLDING_SEP)) {
-            addError(ERROR_INVALIDCHAR, PrometheusDataResource.DATAITEM_FIELD_NAME);
-        }
-    }
-
     /**
      * Update base asset from an edited asset.
      * @param pAsset the edited asset

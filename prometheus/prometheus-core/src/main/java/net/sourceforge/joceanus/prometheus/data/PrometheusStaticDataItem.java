@@ -410,57 +410,6 @@ public abstract class PrometheusStaticDataItem
         return iDiff != 0 ? iDiff : MetisDataDifference.compareObject(getName(), myThat.getName());
     }
 
-    //@Override
-    public void validaRRte() {
-        final PrometheusStaticList<?> myList = getList();
-        final String myName = getName();
-        final String myDesc = getDesc();
-        final PrometheusStaticDataMap<?> myMap = myList.getDataMap();
-
-        /* Name must be non-null */
-        if (myName == null) {
-            addError(ERROR_MISSING, PrometheusDataResource.DATAITEM_FIELD_NAME);
-
-            /* Else check the name */
-        } else {
-            /* The name must not be too long */
-            if (byteLength(myName) > NAMELEN) {
-                addError(ERROR_LENGTH, PrometheusDataResource.DATAITEM_FIELD_NAME);
-            }
-
-            /* The name must only contain valid characters */
-            if (!validString(myName, null)) {
-                addError(ERROR_BADNAME, PrometheusDataResource.DATAITEM_FIELD_NAME);
-            }
-
-            /* Check that the name is unique */
-            if (!myMap.validNameCount(myName)) {
-                addError(ERROR_DUPLICATE, PrometheusDataResource.DATAITEM_FIELD_NAME);
-            }
-        }
-
-        /* Check description length */
-        if (myDesc != null
-                && byteLength(myDesc) > DESCLEN) {
-            addError(ERROR_LENGTH, PrometheusDataResource.DATAITEM_FIELD_DESC);
-        }
-
-        /* The order must not be negative */
-        if (getOrder() < 0) {
-            addError(ERROR_NEGATIVE, PrometheusDataResource.STATICDATA_SORT);
-        }
-
-        /* Cannot have duplicate order */
-        if (!myMap.validOrderCount(getOrder())) {
-            addError(ERROR_DUPLICATE, PrometheusDataResource.STATICDATA_SORT);
-        }
-
-        /* Set validation flag */
-        if (!hasErrors()) {
-            setValidEdit();
-        }
-    }
-
     @Override
     public PrometheusStaticList<?> getList() {
         return (PrometheusStaticList<?>) super.getList();

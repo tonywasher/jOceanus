@@ -217,32 +217,6 @@ public class MoneyWiseCurrency
         setValueReporting(pReporting);
     }
 
-    //@Override
-    public void validXXate() {
-        final MoneyWiseCurrencyList myList = getList();
-        final MoneyWiseCurrencyDataMap myMap = myList.getDataMap();
-
-        /* Check that reporting is non-null */
-        if (isReporting() == null) {
-            addError(ERROR_MISSING, MoneyWiseStaticResource.CURRENCY_REPORTING);
-
-            /* else check various things for a reporting currency */
-        } else if (Boolean.TRUE.equals(isReporting())) {
-            /* Check that default is enabled */
-            if (!getEnabled()) {
-                addError(ERROR_DISABLED, MoneyWiseStaticResource.CURRENCY_REPORTING);
-            }
-
-            /* Check for multiple reports */
-            if (!myMap.validReportCount()) {
-                addError("Multiple reporting currencies", MoneyWiseStaticResource.CURRENCY_REPORTING);
-            }
-        }
-
-        /* Validate it */
-        super.validate();
-    }
-
     @Override
     public boolean applyChanges(final PrometheusDataItem pData) {
         /* Can only apply changes for AccountCurrency */

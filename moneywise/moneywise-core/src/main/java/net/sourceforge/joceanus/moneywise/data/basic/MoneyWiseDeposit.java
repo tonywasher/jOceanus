@@ -712,61 +712,6 @@ public class MoneyWiseDeposit
         getParent().touchItem(this);
     }
 
-    //@Override
-    public void valisssssdate() {
-        final MoneyWisePayee myParent = getParent();
-        final MoneyWiseDepositCategory myCategory = getCategory();
-        final MoneyWiseCurrency myCurrency = getAssetCurrency();
-        final MoneyWiseDepositCategoryClass myClass = getCategoryClass();
-
-        /* Validate base components */
-        super.validate();
-
-        /* Category must be non-null */
-        if (myCategory == null) {
-            addError(ERROR_MISSING, MoneyWiseBasicResource.CATEGORY_NAME);
-        } else if (myCategory.getCategoryTypeClass().isParentCategory()) {
-            addError(ERROR_BADCATEGORY, MoneyWiseBasicResource.CATEGORY_NAME);
-        }
-
-        /* Currency must be non-null and enabled */
-        if (myCurrency == null) {
-            addError(ERROR_MISSING, MoneyWiseStaticDataType.CURRENCY);
-        } else if (!myCurrency.getEnabled()) {
-            addError(ERROR_DISABLED, MoneyWiseStaticDataType.CURRENCY);
-        }
-
-        /* Deposit must be a child */
-        if (!myClass.isChild()) {
-            addError(ERROR_EXIST, MoneyWiseBasicResource.ASSET_PARENT);
-
-            /* Must have parent */
-        } else if (myParent == null) {
-            addError(ERROR_MISSING, MoneyWiseBasicResource.ASSET_PARENT);
-        } else {
-            /* Parent must be suitable */
-            if (!myParent.getCategoryClass().canParentDeposit(myClass)) {
-                addError(ERROR_BADPARENT, MoneyWiseBasicResource.ASSET_PARENT);
-            }
-
-            /* If we are open then parent must be open */
-            if (!isClosed() && Boolean.TRUE.equals(myParent.isClosed())) {
-                addError(ERROR_PARCLOSED, MoneyWiseBasicResource.ASSET_CLOSED);
-            }
-        }
-
-        /* If we have an infoSet */
-        if (theInfoSet != null) {
-            /* Validate the InfoSet */
-            theInfoSet.validate();
-        }
-
-        /* Set validation flag */
-        if (!hasErrors()) {
-            setValidEdit();
-        }
-    }
-
     /**
      * Update base deposit from an edited deposit.
      * @param pDeposit the edited deposit

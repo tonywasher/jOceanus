@@ -33,7 +33,6 @@ import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseAccountInfoClass
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseAccountInfoType.MoneyWiseAccountInfoTypeList;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrency;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrency.MoneyWiseCurrencyList;
-import net.sourceforge.joceanus.moneywise.data.statics.MoneyWisePayeeClass;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWisePortfolioClass;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWisePortfolioType;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWisePortfolioType.MoneyWisePortfolioTypeList;
@@ -703,84 +702,6 @@ public class MoneyWisePortfolio
     public void touchOnUpdate() {
         /* Touch parent */
         getParent().touchItem(this);
-    }
-
-    //@Override
-    public void validssssate() {
-        final MoneyWisePortfolioList myList = getList();
-        final MoneyWisePayee myParent = getParent();
-        final MoneyWisePortfolioType myPortType = getCategory();
-        final MoneyWiseCurrency myCurrency = getAssetCurrency();
-
-        /* Validate base components */
-        super.validate();
-
-        /* PortfolioType must be non-null */
-        if (myPortType == null) {
-            addError(ERROR_MISSING, MoneyWiseBasicResource.CATEGORY_NAME);
-        } else {
-            /* Access the class */
-            final MoneyWisePortfolioClass myClass = myPortType.getPortfolioClass();
-
-            /* PortfolioType must be enabled */
-            if (!myPortType.getEnabled()) {
-                addError(ERROR_DISABLED, MoneyWiseBasicResource.CATEGORY_NAME);
-            }
-
-            /* If the PortfolioType is singular */
-            if (myClass.isSingular()) {
-                /* Count the elements of this class */
-                final MoneyWisePortfolioDataMap myMap = myList.getDataMap();
-                if (!myMap.validSingularCount(myClass)) {
-                    addError(ERROR_MULT, MoneyWiseBasicResource.CATEGORY_NAME);
-                }
-            }
-        }
-
-        /* Parent account must exist */
-        if (myParent == null) {
-            addError(ERROR_MISSING, MoneyWiseBasicResource.ASSET_PARENT);
-        } else {
-            /* Parent must be suitable */
-            final MoneyWisePayeeClass myParClass = myParent.getCategoryClass();
-            if (!myParClass.canParentPortfolio()) {
-                addError(ERROR_BADPARENT, MoneyWiseBasicResource.ASSET_PARENT);
-            }
-
-            /* If we are open then parent must be open */
-            if (!isClosed() && Boolean.TRUE.equals(myParent.isClosed())) {
-                addError(ERROR_PARCLOSED, MoneyWiseBasicResource.ASSET_CLOSED);
-            }
-        }
-
-        /* Currency must be non-null and enabled */
-        if (myCurrency == null) {
-            addError(ERROR_MISSING, MoneyWiseStaticDataType.CURRENCY);
-        } else if (!myCurrency.getEnabled()) {
-            addError(ERROR_DISABLED, MoneyWiseStaticDataType.CURRENCY);
-        }
-
-        /* If we have an infoSet */
-        if (theInfoSet != null) {
-            /* Validate the InfoSet */
-            theInfoSet.validate();
-        }
-
-        /* Set validation flag */
-        if (!hasErrors()) {
-            setValidEdit();
-        }
-    }
-
-    @Override
-    public void validateName(final String pName) {
-        /* Perform basic checks */
-        super.validateName(pName);
-
-        /* Check that the name does not contain invalid characters */
-        if (pName.contains(MoneyWiseSecurityHolding.SECURITYHOLDING_SEP)) {
-            addError(ERROR_INVALIDCHAR, PrometheusDataResource.DATAITEM_FIELD_NAME);
-        }
     }
 
     /**

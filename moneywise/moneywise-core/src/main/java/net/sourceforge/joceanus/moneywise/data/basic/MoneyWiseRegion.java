@@ -24,7 +24,6 @@ import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.moneywise.exc.MoneyWiseDataException;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
-import net.sourceforge.joceanus.prometheus.data.PrometheusDataInfoLinkSet;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataInstanceMap;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataResource;
@@ -299,47 +298,6 @@ public class MoneyWiseRegion
      */
     public void setDescription(final String pDesc) throws OceanusException {
         setValueDesc(pDesc);
-    }
-
-    //@Override
-    public void valissssdate() {
-        final MoneyWiseRegionList myList = getList();
-        final String myName = getName();
-        final String myDesc = getDesc();
-        final MoneyWiseRegionDataMap myMap = myList.getDataMap();
-
-        /* Name must be non-null */
-        if (myName == null) {
-            addError(ERROR_MISSING, PrometheusDataResource.DATAITEM_FIELD_NAME);
-
-            /* Else check the name */
-        } else {
-            /* The description must not be too long */
-            if (myName.length() > NAMELEN) {
-                addError(ERROR_LENGTH, PrometheusDataResource.DATAITEM_FIELD_NAME);
-            }
-
-            /* Check that the name is unique */
-            if (!myMap.validNameCount(myName)) {
-                addError(ERROR_DUPLICATE, PrometheusDataResource.DATAITEM_FIELD_NAME);
-            }
-
-            /* Check that the name does not contain invalid characters */
-            if (myName.contains(PrometheusDataInfoLinkSet.ITEM_SEP)) {
-                addError(ERROR_INVALIDCHAR, PrometheusDataResource.DATAITEM_FIELD_NAME);
-            }
-        }
-
-        /* Check description length */
-        if (myDesc != null
-                && myDesc.length() > DESCLEN) {
-            addError(ERROR_LENGTH, PrometheusDataResource.DATAITEM_FIELD_DESC);
-        }
-
-        /* Set validation flag */
-        if (!hasErrors()) {
-            setValidEdit();
-        }
     }
 
     /**
