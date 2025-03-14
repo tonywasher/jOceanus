@@ -17,20 +17,30 @@
 package net.sourceforge.joceanus.moneywise.data.validate;
 
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseAssetBase;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicResource;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDeposit;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDeposit.MoneyWiseDepositList;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDepositCategory;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDepositCategory.MoneyWiseDepositCategoryList;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePayee;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePayee.MoneyWisePayeeList;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrency;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseDepositCategoryClass;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
+import net.sourceforge.joceanus.prometheus.data.PrometheusDataValidator.PrometheusDataValidatorAutoCorrect;
+import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
+
+import java.util.Iterator;
 
 /**
  * Validator for Deposit.
  */
 public class MoneyWiseValidateDeposit
-        extends MoneyWiseValidateAccount<MoneyWiseDeposit> {
+        extends MoneyWiseValidateAccount<MoneyWiseDeposit>
+        implements PrometheusDataValidatorAutoCorrect<MoneyWiseDeposit> {
     /**
      * The infoSet validator.
      */
@@ -41,6 +51,12 @@ public class MoneyWiseValidateDeposit
      */
     MoneyWiseValidateDeposit() {
         theInfoSet = new MoneyWiseValidateDepositInfoSet();
+    }
+
+    @Override
+    public void setEditSet(final PrometheusEditSet pEditSet) {
+        super.setEditSet(pEditSet);
+        theInfoSet.storeEditSet(pEditSet);
     }
 
     @Override
@@ -96,5 +112,87 @@ public class MoneyWiseValidateDeposit
         if (!pDeposit.hasErrors()) {
             pDeposit.setValidEdit();
         }
+    }
+
+    @Override
+    public void setDefaults(final MoneyWiseDeposit pDeposit) throws OceanusException {
+        /* Set values */
+        final MoneyWiseDepositList myList = pDeposit.getList();
+        pDeposit.setName(myList.getUniqueName(MoneyWiseDeposit.NAME_NEWACCOUNT));
+        pDeposit.setCategory(getDefaultCategory());
+        pDeposit.setAssetCurrency(getReportingCurrency());
+        pDeposit.setClosed(Boolean.FALSE);
+        autoCorrect(pDeposit);
+    }
+
+    @Override
+    public void autoCorrect(final MoneyWiseDeposit pDeposit) throws OceanusException {
+        /* Ensure that we have a valid parent */
+        final MoneyWiseDepositCategoryClass myClass = pDeposit.getCategoryClass();
+        final MoneyWisePayee myParent = pDeposit.getParent();
+        if (myParent == null
+                || !myParent.getCategoryClass().canParentDeposit(myClass)) {
+            pDeposit.setParent(getDefaultParent(pDeposit));
+        }
+
+        /* autoCorrect the infoSet */
+        theInfoSet.autoCorrect(pDeposit.getInfoSet());
+    }
+
+    /**
+     * Obtain default category for new deposit account.
+     * @return the default category
+     */
+    private MoneyWiseDepositCategory getDefaultCategory() {
+        /* loop through the categories */
+        final MoneyWiseDepositCategoryList myCategories
+                = getEditSet().getDataList(MoneyWiseBasicDataType.DEPOSITCATEGORY, MoneyWiseDepositCategoryList.class);
+        final Iterator<MoneyWiseDepositCategory> myIterator = myCategories.iterator();
+        while (myIterator.hasNext()) {
+            final MoneyWiseDepositCategory myCategory = myIterator.next();
+
+            /* Ignore deleted categories */
+            if (myCategory.isDeleted()) {
+                continue;
+            }
+
+            /* If the category is not a parent */
+            if (!myCategory.isCategoryClass(MoneyWiseDepositCategoryClass.PARENT)) {
+                return myCategory;
+            }
+        }
+
+        /* Return no category */
+        return null;
+    }
+
+    /**
+     * Obtain default parent for new deposit.
+     * @param pDeposit the deposit
+     * @return the default parent
+     */
+    private MoneyWisePayee getDefaultParent(final MoneyWiseDeposit pDeposit) {
+        /* Access details */
+        final MoneyWisePayeeList myPayees = getEditSet().getDataList(MoneyWiseBasicDataType.PAYEE, MoneyWisePayeeList.class);
+        final MoneyWiseDepositCategoryClass myClass = pDeposit.getCategoryClass();
+
+        /* loop through the payees */
+        final Iterator<MoneyWisePayee> myIterator = myPayees.iterator();
+        while (myIterator.hasNext()) {
+            final MoneyWisePayee myPayee = myIterator.next();
+
+            /* Ignore deleted and closed payees */
+            if (myPayee.isDeleted() || Boolean.TRUE.equals(myPayee.isClosed())) {
+                continue;
+            }
+
+            /* If the payee can parent */
+            if (myPayee.getCategoryClass().canParentDeposit(myClass)) {
+                return myPayee;
+            }
+        }
+
+        /* Return no payee */
+        return null;
     }
 }

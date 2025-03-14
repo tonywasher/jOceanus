@@ -18,10 +18,13 @@ package net.sourceforge.joceanus.moneywise.data.validate;
 
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseAssetBase;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseAssetBase.MoneyWiseAssetBaseList;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataSet;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurityHolding;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrency;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataResource;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataValidator;
+import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
 
 /**
  * Validator for assetBase.
@@ -29,6 +32,29 @@ import net.sourceforge.joceanus.prometheus.data.PrometheusDataValidator;
  */
 public abstract class MoneyWiseValidateAccount<T extends MoneyWiseAssetBase>
         implements PrometheusDataValidator<T> {
+    /**
+     * Set the editSet.
+     */
+    private PrometheusEditSet theEditSet;
+
+    /**
+     * Set the editSet.
+     * @param pEditSet the editSet
+     */
+    public void setEditSet(final PrometheusEditSet pEditSet) {
+        theEditSet = pEditSet;
+    }
+
+    /**
+     * Obtain the editSet
+     * @return the editSet
+     */
+    PrometheusEditSet getEditSet() {
+        if (theEditSet == null) {
+            throw new IllegalStateException("editSet not set up");
+        }
+        return theEditSet;
+    }
 
     @Override
     public void validate(final T pAsset) {
@@ -75,5 +101,14 @@ public abstract class MoneyWiseValidateAccount<T extends MoneyWiseAssetBase>
         if (pName.contains(MoneyWiseSecurityHolding.SECURITYHOLDING_SEP)) {
             pAsset.addError(PrometheusDataItem.ERROR_INVALIDCHAR, PrometheusDataResource.DATAITEM_FIELD_NAME);
         }
+    }
+
+    /**
+     * Obtain the reporting currency
+     * @return the reporting currency
+     */
+    MoneyWiseCurrency getReportingCurrency() {
+        final MoneyWiseDataSet myDataSet = (MoneyWiseDataSet) getEditSet().getDataSet();
+        return myDataSet.getReportingCurrency();
     }
 }

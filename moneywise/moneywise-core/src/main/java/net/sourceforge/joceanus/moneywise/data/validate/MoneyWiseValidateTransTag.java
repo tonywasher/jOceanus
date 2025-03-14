@@ -19,16 +19,17 @@ package net.sourceforge.joceanus.moneywise.data.validate;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransTag;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransTag.MoneyWiseTagDataMap;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransTag.MoneyWiseTransTagList;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataInfoLinkSet;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataResource;
-import net.sourceforge.joceanus.prometheus.data.PrometheusDataValidator;
+import net.sourceforge.joceanus.prometheus.data.PrometheusDataValidator.PrometheusDataValidatorDefaults;
 
 /**
  * Validator for transTag.
  */
 public class MoneyWiseValidateTransTag
-        implements PrometheusDataValidator<MoneyWiseTransTag> {
+        implements PrometheusDataValidatorDefaults<MoneyWiseTransTag> {
 
     @Override
     public void validate(final MoneyWiseTransTag pTag) {
@@ -69,5 +70,12 @@ public class MoneyWiseValidateTransTag
         if (!pTag.hasErrors()) {
             pTag.setValidEdit();
         }
+    }
+
+    @Override
+    public void setDefaults(final MoneyWiseTransTag pTag) throws OceanusException {
+        /* Set values */
+        final MoneyWiseTransTagList myList = pTag.getList();
+        pTag.setName(myList.getUniqueName());
     }
 }

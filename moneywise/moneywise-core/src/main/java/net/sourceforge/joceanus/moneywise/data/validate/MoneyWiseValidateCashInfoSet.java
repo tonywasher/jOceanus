@@ -17,27 +17,45 @@
 package net.sourceforge.joceanus.moneywise.data.validate;
 
 import net.sourceforge.joceanus.metis.field.MetisFieldRequired;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseCash;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseCashCategory;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseCashInfo;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseCashInfoSet;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDepositInfoSet;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePayee;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePayee.MoneyWisePayeeList;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransCategory;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransCategory.MoneyWiseTransCategoryList;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseAccountInfoClass;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrency;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransCategoryClass;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataInfoClass;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
 import net.sourceforge.joceanus.prometheus.validate.PrometheusValidateInfoSet;
+
+import java.util.Iterator;
 
 /**
  * Validate CashInfoSet.
  */
 public class MoneyWiseValidateCashInfoSet
         extends PrometheusValidateInfoSet<MoneyWiseCashInfo> {
+    /**
+     * ClosedPayee Error string.
+     */
+    private static final String ERROR_PAYEECLOSED = "AutoPayee is closed for non-closed autoCash";
+
     @Override
     public MoneyWiseCash getOwner() {
         return (MoneyWiseCash) super.getOwner();
+    }
+
+    @Override
+    public MoneyWiseCashInfoSet getInfoSet() {
+        return (MoneyWiseCashInfoSet) super.getInfoSet();
     }
 
     @Override
@@ -61,6 +79,7 @@ public class MoneyWiseValidateCashInfoSet
                 return myCash.isAutoExpense()
                         ? MetisFieldRequired.NOTALLOWED
                         : MetisFieldRequired.CANEXIST;
+
             case AUTOPAYEE:
             case AUTOEXPENSE:
                 return myCash.isAutoExpense()
@@ -96,6 +115,9 @@ public class MoneyWiseValidateCashInfoSet
             case AUTOEXPENSE:
                 validateAutoExpense(pInfo);
                 break;
+            case AUTOPAYEE:
+                validateAutoPayee(pInfo);
+                break;
             case NOTES:
                 validateNotes(pInfo);
                 break;
@@ -128,6 +150,17 @@ public class MoneyWiseValidateCashInfoSet
     }
 
     /**
+     * Validate the autoPayee info.
+     * @param pInfo the info
+     */
+    private void validateAutoPayee(final MoneyWiseCashInfo pInfo) {
+        final MoneyWisePayee myPayee = pInfo.getPayee();
+        if (myPayee.isClosed() && !getOwner().isClosed()) {
+            getOwner().addError(ERROR_PAYEECLOSED, MoneyWiseCashInfoSet.getFieldForClass(MoneyWiseAccountInfoClass.AUTOPAYEE));
+        }
+    }
+
+    /**
      * Validate the Notes info.
      * @param pInfo the info
      */
@@ -135,6 +168,94 @@ public class MoneyWiseValidateCashInfoSet
         final char[] myArray = pInfo.getValue(char[].class);
         if (myArray.length > MoneyWiseAccountInfoClass.NOTES.getMaximumLength()) {
             getOwner().addError(PrometheusDataItem.ERROR_LENGTH, MoneyWiseCashInfoSet.getFieldForClass(MoneyWiseAccountInfoClass.NOTES));
+        }
+    }
+
+    @Override
+    protected void setDefault(final PrometheusDataInfoClass pClass) throws OceanusException {
+        /* Switch on the class */
+        switch ((MoneyWiseAccountInfoClass) pClass) {
+            case AUTOEXPENSE:
+                getInfoSet().setValue(pClass, getDefaultAutoExpense());
+                break;
+            case AUTOPAYEE:
+                getInfoSet().setValue(pClass, getDefaultAutoPayee());
+                break;
+            default:
+                break;
+        }
+    }
+
+    /**
+     * Obtain default expense for autoExpense cash.
+     * @return the default expense
+     */
+    private MoneyWiseTransCategory getDefaultAutoExpense() {
+        /* Access the category list */
+        final MoneyWiseTransCategoryList myCategories
+                = getEditSet().getDataList(MoneyWiseBasicDataType.TRANSCATEGORY, MoneyWiseTransCategoryList.class);
+
+        /* loop through the categories */
+        final Iterator<MoneyWiseTransCategory> myIterator = myCategories.iterator();
+        while (myIterator.hasNext()) {
+            final MoneyWiseTransCategory myCategory = myIterator.next();
+
+            /* Ignore deleted categories */
+            if (myCategory.isDeleted()) {
+                continue;
+            }
+
+            /* Ignore categories that are the wrong class */
+            final MoneyWiseTransCategoryClass myCatClass = myCategory.getCategoryTypeClass();
+            if (myCatClass.isExpense() && !myCatClass.canParentCategory()) {
+                return myCategory;
+            }
+        }
+
+        /* Return no category */
+        return null;
+    }
+
+    /**
+     * Obtain default payee for autoExpense cash.
+     * @return the default payee
+     */
+    private MoneyWisePayee getDefaultAutoPayee() {
+        /* Access the payee list */
+        final MoneyWisePayeeList myPayees
+                = getEditSet().getDataList(MoneyWiseBasicDataType.PAYEE, MoneyWisePayeeList.class);
+
+        /* loop through the payees */
+        final Iterator<MoneyWisePayee> myIterator = myPayees.iterator();
+        while (myIterator.hasNext()) {
+            final MoneyWisePayee myPayee = myIterator.next();
+
+            /* Ignore deleted and closed payees */
+            if (!myPayee.isDeleted() && Boolean.TRUE.equals(!myPayee.isClosed())) {
+                return myPayee;
+            }
+        }
+
+        /* Return no payee */
+        return null;
+    }
+
+    @Override
+    protected void autoCorrect(final PrometheusDataInfoClass pClass) throws OceanusException {
+        /* If the info is Opening balance */
+        if (MoneyWiseAccountInfoClass.OPENINGBALANCE.equals(pClass)) {
+            /* Access the value */
+            final MoneyWiseCashInfo myInfo = getInfoSet().getInfo(pClass);
+            if (myInfo != null) {
+                OceanusMoney myOpening = myInfo.getValue(OceanusMoney.class);
+                final MoneyWiseCurrency myCurrency = getInfoSet().getOwner().getAssetCurrency();
+
+                /* If we need to change currency */
+                if (!myCurrency.getCurrency().equals(myOpening.getCurrency())) {
+                    myOpening = myOpening.changeCurrency(myCurrency.getCurrency());
+                    getInfoSet().setValue(pClass, myOpening);
+                }
+            }
         }
     }
 }

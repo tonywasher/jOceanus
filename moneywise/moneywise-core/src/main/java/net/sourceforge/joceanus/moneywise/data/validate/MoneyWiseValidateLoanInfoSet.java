@@ -23,6 +23,8 @@ import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseLoanCategory;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseLoanInfo;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseLoanInfoSet;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseAccountInfoClass;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrency;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataInfoClass;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
@@ -36,6 +38,11 @@ public class MoneyWiseValidateLoanInfoSet
     @Override
     public MoneyWiseLoan getOwner() {
         return (MoneyWiseLoan) super.getOwner();
+    }
+
+    @Override
+    public MoneyWiseLoanInfoSet getInfoSet() {
+        return (MoneyWiseLoanInfoSet) super.getInfoSet();
     }
 
     @Override
@@ -59,7 +66,7 @@ public class MoneyWiseValidateLoanInfoSet
             case OPENINGBALANCE:
                 return MetisFieldRequired.CANEXIST;
 
-            /* Not allowd */
+            /* Not allowed */
             case WEBSITE:
             case CUSTOMERNO:
             case USERID:
@@ -115,6 +122,25 @@ public class MoneyWiseValidateLoanInfoSet
         final MoneyWiseAccountInfoClass myClass = pInfo.getInfoClass();
         if (myArray.length > myClass.getMaximumLength()) {
             getOwner().addError(PrometheusDataItem.ERROR_LENGTH, MoneyWiseLoanInfoSet.getFieldForClass(myClass));
+        }
+    }
+
+    @Override
+    protected void autoCorrect(final PrometheusDataInfoClass pClass) throws OceanusException {
+        /* If the info is Opening balance */
+        if (MoneyWiseAccountInfoClass.OPENINGBALANCE.equals(pClass)) {
+            /* Access the value */
+            final MoneyWiseLoanInfo myInfo = getInfoSet().getInfo(pClass);
+            if (myInfo != null) {
+                OceanusMoney myOpening = myInfo.getValue(OceanusMoney.class);
+                final MoneyWiseCurrency myCurrency = getInfoSet().getOwner().getAssetCurrency();
+
+                /* If we need to change currency */
+                if (!myCurrency.getCurrency().equals(myOpening.getCurrency())) {
+                    myOpening = myOpening.changeCurrency(myCurrency.getCurrency());
+                    getInfoSet().setValue(pClass, myOpening);
+                }
+            }
         }
     }
 }

@@ -17,19 +17,29 @@
 package net.sourceforge.joceanus.moneywise.data.validate;
 
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseAssetBase;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicResource;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseCash;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseCash.MoneyWiseCashList;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseCashCategory;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseCashCategory.MoneyWiseCashCategoryList;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePayee;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCashCategoryClass;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrency;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
+import net.sourceforge.joceanus.prometheus.data.PrometheusDataValidator.PrometheusDataValidatorAutoCorrect;
+import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
+
+import java.util.Iterator;
 
 /**
  * Validator for Cash.
  */
 public class MoneyWiseValidateCash
-        extends MoneyWiseValidateAccount<MoneyWiseCash> {
+        extends MoneyWiseValidateAccount<MoneyWiseCash>
+        implements PrometheusDataValidatorAutoCorrect<MoneyWiseCash> {
     /**
      * The infoSet validator.
      */
@@ -40,6 +50,12 @@ public class MoneyWiseValidateCash
      */
     MoneyWiseValidateCash() {
         theInfoSet = new MoneyWiseValidateCashInfoSet();
+    }
+
+    @Override
+    public void setEditSet(final PrometheusEditSet pEditSet) {
+        super.setEditSet(pEditSet);
+        theInfoSet.storeEditSet(pEditSet);
     }
 
     @Override
@@ -80,5 +96,49 @@ public class MoneyWiseValidateCash
         if (!pCash.hasErrors()) {
             pCash.setValidEdit();
         }
+    }
+
+    @Override
+    public void setDefaults(final MoneyWiseCash pCash) throws OceanusException {
+        /* Set values */
+        final MoneyWiseCashList myList = pCash.getList();
+        pCash.setName(myList.getUniqueName(MoneyWiseCash.NAME_NEWACCOUNT));
+        pCash.setCategory(getDefaultCategory());
+        pCash.setAssetCurrency(getReportingCurrency());
+        pCash.setClosed(Boolean.FALSE);
+        autoCorrect(pCash);
+    }
+
+    @Override
+    public void autoCorrect(final MoneyWiseCash pCash) throws OceanusException {
+        /* autoCorrect the infoSet */
+        theInfoSet.autoCorrect(pCash.getInfoSet());
+    }
+
+    /**
+     * Obtain default category for new cash account.
+     * @return the default category
+     */
+    private MoneyWiseCashCategory getDefaultCategory() {
+        /* loop through the categories */
+        final MoneyWiseCashCategoryList myCategories
+                = getEditSet().getDataList(MoneyWiseBasicDataType.CASHCATEGORY, MoneyWiseCashCategoryList.class);
+        final Iterator<MoneyWiseCashCategory> myIterator = myCategories.iterator();
+        while (myIterator.hasNext()) {
+            final MoneyWiseCashCategory myCategory = myIterator.next();
+
+            /* Ignore deleted categories */
+            if (myCategory.isDeleted()) {
+                continue;
+            }
+
+            /* If the category is not a parent */
+            if (!myCategory.isCategoryClass(MoneyWiseCashCategoryClass.PARENT)) {
+                return myCategory;
+            }
+        }
+
+        /* Return no category */
+        return null;
     }
 }

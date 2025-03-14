@@ -43,7 +43,7 @@ final GordianKey&lt;GordianSymKeySpec&gt; myKey = myGenerator.generateKey();
                         <tr><td>RC6</td><td>128</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td/><td/></tr>
                         <tr><td>ARIA</td><td>128</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td/><td/></tr>
                         <tr><td rowspan="2">Kalyna</td><td>128</td><td>Y</td><td>Y</td><td/><td>Y</td><td/><td/></tr>
-                        <tr><td>256</td><td>Y</td><td/><td/><td>Y</td><td>Y</td><td/></tr><td/>
+                        <tr><td>256</td><td>Y</td><td/><td/><td>Y</td><td>Y</td><td/></tr>
                         <tr><td>Kuznyechik</td><td>128</td><td>Y</td><td/><td/><td>Y</td><td/><td/></tr>
                         <tr><td>ThreeFish</td><td>256</td><td>Y</td><td/><td/><td>Y</td><td>Y</td><td>Y</td></tr>
                         <tr><td>NoeKeon</td><td>64</td><td>Y</td><td>Y</td><td/><td/><td/><td/></tr>
@@ -54,7 +54,7 @@ final GordianKey&lt;GordianSymKeySpec&gt; myKey = myGenerator.generateKey();
                         <tr><td>RC2</td><td>64</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td></tr>
                         <tr><td>DESede</td><td>64</td><td>Y</td><td>Y</td><td>Y</td><td/><td/><td/></tr>
                         <tr><td>CAST5</td><td>64</td><td>Y</td><td>Y</td><td/><td/><td/><td/></tr>
-                        <tr><td rowspan="2">RC5</td><td>64</td><td>Y</td><td>Y</td><td/><td/><td/><td/><td/></tr>
+                        <tr><td rowspan="2">RC5</td><td>64</td><td>Y</td><td>Y</td><td/><td/><td/><td/></tr>
                         <tr><td>128</td><td>Y</td><td>Y</td><td/><td/><td/><td/></tr>
                         <tr><td>IDEA</td><td>64</td><td>Y</td><td>Y</td><td/><td/><td/><td/></tr>
                         <tr><td>TEA</td><td>64</td><td>Y</td><td>Y</td><td/><td/><td/><td/></tr>

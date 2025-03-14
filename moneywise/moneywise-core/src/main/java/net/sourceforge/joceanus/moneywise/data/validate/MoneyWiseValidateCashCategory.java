@@ -17,10 +17,13 @@
 package net.sourceforge.joceanus.moneywise.data.validate;
 
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseCashCategory;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseCashCategory.MoneyWiseCashCategoryList;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseCategoryBase;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCashCategoryClass;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCashCategoryType;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCashCategoryType.MoneyWiseCashCategoryTypeList;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataResource;
 
@@ -29,7 +32,6 @@ import net.sourceforge.joceanus.prometheus.data.PrometheusDataResource;
  */
 public class MoneyWiseValidateCashCategory
         extends MoneyWiseValidateCategory<MoneyWiseCashCategory> {
-
     @Override
     public void validate(final MoneyWiseCashCategory pCategory) {
         /* Validate the base */
@@ -52,33 +54,30 @@ public class MoneyWiseValidateCashCategory
             }
 
             /* Switch on the account class */
-            switch (myClass) {
-                case PARENT:
-                    /* If parent exists */
-                    if (myParent != null) {
-                        pCategory.addError(PrometheusDataItem.ERROR_EXIST, PrometheusDataResource.DATAGROUP_PARENT);
-                    }
-                    break;
-                default:
-                    /* Check parent */
-                    if (myParent == null) {
-                        pCategory.addError(PrometheusDataItem.ERROR_MISSING, PrometheusDataResource.DATAGROUP_PARENT);
-                    } else if (!myParent.isCategoryClass(MoneyWiseCashCategoryClass.PARENT)) {
-                        pCategory.addError(MoneyWiseCategoryBase.ERROR_BADPARENT, PrometheusDataResource.DATAGROUP_PARENT);
-                    } else {
-                        final String myName = pCategory.getName();
+            if (MoneyWiseCashCategoryClass.PARENT.equals(myClass)) {
+                /* If parent exists */
+                if (myParent != null) {
+                    pCategory.addError(PrometheusDataItem.ERROR_EXIST, PrometheusDataResource.DATAGROUP_PARENT);
+                }
+            } else {
+                /* Check parent */
+                if (myParent == null) {
+                    pCategory.addError(PrometheusDataItem.ERROR_MISSING, PrometheusDataResource.DATAGROUP_PARENT);
+                } else if (!myParent.isCategoryClass(MoneyWiseCashCategoryClass.PARENT)) {
+                    pCategory.addError(MoneyWiseCategoryBase.ERROR_BADPARENT, PrometheusDataResource.DATAGROUP_PARENT);
+                } else {
+                    final String myName = pCategory.getName();
 
-                        /* Check validity of parent */
-                        final MoneyWiseCashCategoryClass myParentClass = myParent.getCategoryTypeClass();
-                        if (!MoneyWiseCashCategoryClass.PARENT.equals(myParentClass)) {
-                            pCategory.addError(MoneyWiseCategoryBase.ERROR_BADPARENT, PrometheusDataResource.DATAGROUP_PARENT);
-                        }
-                        /* Check that name reflects parent */
-                        if ((myName != null) && !myName.startsWith(myParent.getName() + MoneyWiseCategoryBase.STR_SEP)) {
-                            pCategory.addError(MoneyWiseCategoryBase.ERROR_MATCHPARENT, PrometheusDataResource.DATAGROUP_PARENT);
-                        }
+                    /* Check validity of parent */
+                    final MoneyWiseCashCategoryClass myParentClass = myParent.getCategoryTypeClass();
+                    if (!MoneyWiseCashCategoryClass.PARENT.equals(myParentClass)) {
+                        pCategory.addError(MoneyWiseCategoryBase.ERROR_BADPARENT, PrometheusDataResource.DATAGROUP_PARENT);
                     }
-                    break;
+                    /* Check that name reflects parent */
+                    if ((myName != null) && !myName.startsWith(myParent.getName() + MoneyWiseCategoryBase.STR_SEP)) {
+                        pCategory.addError(MoneyWiseCategoryBase.ERROR_MATCHPARENT, PrometheusDataResource.DATAGROUP_PARENT);
+                    }
+                }
             }
         }
 
@@ -86,5 +85,19 @@ public class MoneyWiseValidateCashCategory
         if (!pCategory.hasErrors()) {
             pCategory.setValidEdit();
         }
+    }
+
+    @Override
+    public void setDefaults(final MoneyWiseCashCategory pParent,
+                            final MoneyWiseCashCategory pCategory) throws OceanusException {
+        /* Set values */
+        final MoneyWiseCashCategoryList myList = pCategory.getList();
+        final MoneyWiseCashCategoryTypeList myTypes
+                = getEditSet().getDataList(MoneyWiseStaticDataType.CASHTYPE, MoneyWiseCashCategoryTypeList.class);
+        pCategory.setCategoryType(myTypes.findItemByClass(pParent == null
+                ? MoneyWiseCashCategoryClass.PARENT
+                : MoneyWiseCashCategoryClass.CASH));
+        pCategory.setParentCategory(pParent);
+        pCategory.setSubCategoryName(myList.getUniqueName(pParent));
     }
 }

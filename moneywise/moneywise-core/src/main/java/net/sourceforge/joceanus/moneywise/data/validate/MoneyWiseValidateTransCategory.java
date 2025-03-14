@@ -23,6 +23,8 @@ import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransCategory.Mone
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransCategoryClass;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransCategoryType;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransCategoryType.MoneyWiseTransCategoryTypeList;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataResource;
 
@@ -116,5 +118,28 @@ public class MoneyWiseValidateTransCategory
         if (!pCategory.hasErrors()) {
             pCategory.setValidEdit();
         }
+    }
+
+    @Override
+    public void setDefaults(final MoneyWiseTransCategory pParent,
+                            final MoneyWiseTransCategory pCategory) throws OceanusException {
+        /* Set values */
+        final MoneyWiseTransCategoryList myList = pCategory.getList();
+        final MoneyWiseTransCategoryTypeList myTypes
+                = getEditSet().getDataList(MoneyWiseStaticDataType.TRANSTYPE, MoneyWiseTransCategoryTypeList.class);
+        final MoneyWiseTransCategoryClass myParentClass = pParent == null ? null : pParent.getCategoryTypeClass();
+        final MoneyWiseTransCategoryClass myNewClass;
+        if (myParentClass == null || myParentClass.isTotals()) {
+            myNewClass = MoneyWiseTransCategoryClass.EXPENSETOTALS;
+        } else if (myParentClass.isIncome()) {
+            myNewClass = MoneyWiseTransCategoryClass.TAXEDINCOME;
+        } else if (myParentClass.isTransfer()) {
+            myNewClass = MoneyWiseTransCategoryClass.STOCKSPLIT;
+        } else {
+            myNewClass = MoneyWiseTransCategoryClass.EXPENSE;
+        }
+        pCategory.setCategoryType(myTypes.findItemByClass(myNewClass));
+        pCategory.setParentCategory(pParent);
+        pCategory.setSubCategoryName(myList.getUniqueName(pParent));
     }
 }

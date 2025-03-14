@@ -23,6 +23,7 @@ import net.sourceforge.joceanus.moneywise.exc.MoneyWiseLogicException;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataSet.PrometheusCryptographyDataType;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataValidator;
+import net.sourceforge.joceanus.prometheus.data.PrometheusDataValidator.PrometheusDataValidatorFactory;
 import net.sourceforge.joceanus.prometheus.data.PrometheusListKey;
 import net.sourceforge.joceanus.prometheus.validate.PrometheusValidateBasic;
 import net.sourceforge.joceanus.prometheus.validate.PrometheusValidateInfo;
@@ -31,7 +32,8 @@ import net.sourceforge.joceanus.prometheus.validate.PrometheusValidateStatic;
 /**
  * Validator factory.
  */
-public class MoneyWiseValidatorFactory {
+public class MoneyWiseValidatorFactory
+        implements PrometheusDataValidatorFactory {
     /**
      * the DataSet.
      */
@@ -45,12 +47,7 @@ public class MoneyWiseValidatorFactory {
         theDataSet = pDataSet;
     }
 
-    /**
-     * Create validator factory for itemType.
-     * @param pItemType the item type
-     * @return the validator
-     * @throws OceanusException on error
-     */
+    @Override
     public PrometheusDataValidator<?> newValidator(final PrometheusListKey pItemType) throws OceanusException {
         if (pItemType instanceof PrometheusCryptographyDataType) {
             return new PrometheusValidateBasic();

@@ -23,14 +23,20 @@ import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePayee.MoneyWisePay
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrency;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWisePayeeClass;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWisePayeeType;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWisePayeeType.MoneyWisePayeeTypeList;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
+import net.sourceforge.joceanus.prometheus.data.PrometheusDataValidator.PrometheusDataValidatorDefaults;
+
+import java.util.Iterator;
 
 /**
  * Validator for Payee.
  */
 public class MoneyWiseValidatePayee
-        extends MoneyWiseValidateAccount<MoneyWisePayee> {
+        extends MoneyWiseValidateAccount<MoneyWisePayee>
+        implements PrometheusDataValidatorDefaults<MoneyWisePayee> {
     /**
      * The infoSet validator.
      */
@@ -42,7 +48,6 @@ public class MoneyWiseValidatePayee
     MoneyWiseValidatePayee() {
         theInfoSet = new MoneyWiseValidatePayeeInfoSet();
     }
-
 
     @Override
     public void validate(final MoneyWisePayee pPayee) {
@@ -96,5 +101,38 @@ public class MoneyWiseValidatePayee
         if (!pPayee.hasErrors()) {
             pPayee.setValidEdit();
         }
+    }
+
+    @Override
+    public void setDefaults(final MoneyWisePayee pPayee) throws OceanusException {
+        /* Set values */
+        final MoneyWisePayeeList myList = pPayee.getList();
+        pPayee.setCategory(getDefaultPayeeType());
+        pPayee.setName(myList.getUniqueName(MoneyWisePayee.NAME_NEWACCOUNT));
+        pPayee.setClosed(Boolean.FALSE);
+    }
+
+    /**
+     * Obtain payee type for new payee account.
+     * @return the payee type
+     */
+    private MoneyWisePayeeType getDefaultPayeeType() {
+        /* Access payee types */
+        final MoneyWisePayeeTypeList myTypes
+                = getEditSet().getDataList(MoneyWiseStaticDataType.PAYEETYPE, MoneyWisePayeeTypeList.class);
+
+        /* loop through the payee types */
+        final Iterator<MoneyWisePayeeType> myIterator = myTypes.iterator();
+        while (myIterator.hasNext()) {
+            final MoneyWisePayeeType myType = myIterator.next();
+
+            /* Ignore deleted and singular types */
+            if (!myType.isDeleted() && !myType.getPayeeClass().isSingular()) {
+                return myType;
+            }
+        }
+
+        /* Return no category */
+        return null;
     }
 }

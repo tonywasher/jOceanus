@@ -79,7 +79,7 @@ public class MoneyWiseCash
     /**
      * New Account name.
      */
-    private static final String NAME_NEWACCOUNT = MoneyWiseBasicResource.CASH_NEWACCOUNT.getValue();
+    public static final String NAME_NEWACCOUNT = MoneyWiseBasicResource.CASH_NEWACCOUNT.getValue();
 
     /**
      * Do we have an InfoSet.

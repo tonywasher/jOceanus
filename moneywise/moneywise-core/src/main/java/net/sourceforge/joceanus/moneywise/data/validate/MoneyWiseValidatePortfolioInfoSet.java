@@ -36,6 +36,11 @@ public class MoneyWiseValidatePortfolioInfoSet
     }
 
     @Override
+    public MoneyWisePortfolioInfoSet getInfoSet() {
+        return (MoneyWisePortfolioInfoSet) super.getInfoSet();
+    }
+
+    @Override
     public MetisFieldRequired isClassRequired(final PrometheusDataInfoClass pClass) {
         /* Switch on class */
         switch ((MoneyWiseAccountInfoClass) pClass) {

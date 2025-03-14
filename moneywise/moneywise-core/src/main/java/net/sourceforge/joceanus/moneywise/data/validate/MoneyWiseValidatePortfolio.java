@@ -17,8 +17,10 @@
 package net.sourceforge.joceanus.moneywise.data.validate;
 
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseAssetBase;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicResource;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePayee;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePayee.MoneyWisePayeeList;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePortfolio;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePortfolio.MoneyWisePortfolioDataMap;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePortfolio.MoneyWisePortfolioList;
@@ -27,15 +29,22 @@ import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrency;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWisePayeeClass;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWisePortfolioClass;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWisePortfolioType;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWisePortfolioType.MoneyWisePortfolioTypeList;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataResource;
+import net.sourceforge.joceanus.prometheus.data.PrometheusDataValidator.PrometheusDataValidatorAutoCorrect;
+import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
+
+import java.util.Iterator;
 
 /**
  * Validator for Payee.
  */
 public class MoneyWiseValidatePortfolio
-        extends MoneyWiseValidateAccount<MoneyWisePortfolio> {
+        extends MoneyWiseValidateAccount<MoneyWisePortfolio>
+        implements PrometheusDataValidatorAutoCorrect<MoneyWisePortfolio> {
     /**
      * The infoSet validator.
      */
@@ -48,6 +57,11 @@ public class MoneyWiseValidatePortfolio
         theInfoSet = new MoneyWiseValidatePortfolioInfoSet();
     }
 
+    @Override
+    public void setEditSet(final PrometheusEditSet pEditSet) {
+        super.setEditSet(pEditSet);
+        theInfoSet.storeEditSet(pEditSet);
+    }
 
     @Override
     public void validate(final MoneyWisePortfolio pPortfolio) {
@@ -126,5 +140,74 @@ public class MoneyWiseValidatePortfolio
         if (pName.contains(MoneyWiseSecurityHolding.SECURITYHOLDING_SEP)) {
             pPortfolio.addError(PrometheusDataItem.ERROR_INVALIDCHAR, PrometheusDataResource.DATAITEM_FIELD_NAME);
         }
+    }
+
+    @Override
+    public void setDefaults(final MoneyWisePortfolio pPortfolio) throws OceanusException {
+        /* Set values */
+        final MoneyWisePortfolioList myList = pPortfolio.getList();
+        pPortfolio.setName(myList.getUniqueName(MoneyWisePortfolio.NAME_NEWACCOUNT));
+        pPortfolio.setCategory(getDefaultPortfolioType());
+        pPortfolio.setParent(getDefaultParent());
+        pPortfolio.setAssetCurrency(getReportingCurrency());
+        pPortfolio.setClosed(Boolean.FALSE);
+    }
+
+    @Override
+    public void autoCorrect(final MoneyWisePortfolio pPortfolio) throws OceanusException {
+        /* Ensure that we have a valid parent */
+        final MoneyWisePayee myParent = pPortfolio.getParent();
+        if (myParent == null
+                || !myParent.getCategoryClass().canParentPortfolio()) {
+            pPortfolio.setParent(getDefaultParent());
+        }
+
+        /* autoCorrect the infoSet */
+        theInfoSet.autoCorrect(pPortfolio.getInfoSet());
+    }
+
+    /**
+     * Obtain default parent for portfolio.
+     * @return the default parent
+     */
+    private MoneyWisePayee getDefaultParent() {
+        /* loop through the payees */
+        final MoneyWisePayeeList myPayees = getEditSet().getDataList(MoneyWiseBasicDataType.PAYEE, MoneyWisePayeeList.class);
+        final Iterator<MoneyWisePayee> myIterator = myPayees.iterator();
+        while (myIterator.hasNext()) {
+            final MoneyWisePayee myPayee = myIterator.next();
+
+            /* Ignore deleted and closed payees and those that cannot parent this portfolio */
+            boolean bIgnore = myPayee.isDeleted() || myPayee.isClosed();
+            bIgnore |= !myPayee.getCategoryClass().canParentPortfolio();
+            if (!bIgnore) {
+                return myPayee;
+            }
+        }
+
+        /* Return no payee */
+        return null;
+    }
+
+    /**
+     * Obtain portfolio type for new portfolio account.
+     * @return the security type
+     */
+    private MoneyWisePortfolioType getDefaultPortfolioType() {
+        /* loop through the portfolio types */
+        final MoneyWisePortfolioTypeList myTypes
+                = getEditSet().getDataList(MoneyWiseStaticDataType.PORTFOLIOTYPE, MoneyWisePortfolioTypeList.class);
+        final Iterator<MoneyWisePortfolioType> myIterator = myTypes.iterator();
+        while (myIterator.hasNext()) {
+            final MoneyWisePortfolioType myType = myIterator.next();
+
+            /* Ignore deleted types */
+            if (!myType.isDeleted()) {
+                return myType;
+            }
+        }
+
+        /* Return no category */
+        return null;
     }
 }

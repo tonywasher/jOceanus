@@ -22,7 +22,10 @@ import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDepositCategory;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDepositInfo;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDepositInfoSet;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseAccountInfoClass;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrency;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseDepositCategoryClass;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataInfoClass;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
@@ -36,6 +39,11 @@ public class MoneyWiseValidateDepositInfoSet
     @Override
     public MoneyWiseDeposit getOwner() {
         return (MoneyWiseDeposit) super.getOwner();
+    }
+
+    @Override
+    public MoneyWiseDepositInfoSet getInfoSet() {
+        return (MoneyWiseDepositInfoSet) super.getInfoSet();
     }
 
     @Override
@@ -121,6 +129,35 @@ public class MoneyWiseValidateDepositInfoSet
         final MoneyWiseAccountInfoClass myClass = pInfo.getInfoClass();
         if (myArray.length > myClass.getMaximumLength()) {
             getOwner().addError(PrometheusDataItem.ERROR_LENGTH, MoneyWiseDepositInfoSet.getFieldForClass(myClass));
+        }
+    }
+
+    @Override
+    protected void setDefault(final PrometheusDataInfoClass pClass) throws OceanusException {
+        /* If this is maturity */
+        if (MoneyWiseAccountInfoClass.MATURITY.equals(pClass)) {
+            final OceanusDate myDate = new OceanusDate();
+            myDate.adjustYear(1);
+            getOwner().setMaturity(myDate);
+        }
+    }
+
+    @Override
+    protected void autoCorrect(final PrometheusDataInfoClass pClass) throws OceanusException {
+        /* If the info is Opening balance */
+        if (MoneyWiseAccountInfoClass.OPENINGBALANCE.equals(pClass)) {
+            /* Access the value */
+            final MoneyWiseDepositInfo myInfo = getInfoSet().getInfo(pClass);
+            if (myInfo != null) {
+                OceanusMoney myOpening = myInfo.getValue(OceanusMoney.class);
+                final MoneyWiseCurrency myCurrency = getInfoSet().getOwner().getAssetCurrency();
+
+                /* If we need to change currency */
+                if (!myCurrency.getCurrency().equals(myOpening.getCurrency())) {
+                    myOpening = myOpening.changeCurrency(myCurrency.getCurrency());
+                    getInfoSet().setValue(pClass, myOpening);
+                }
+            }
         }
     }
 }

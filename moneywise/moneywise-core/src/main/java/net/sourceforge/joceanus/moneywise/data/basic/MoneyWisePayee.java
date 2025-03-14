@@ -80,7 +80,7 @@ public class MoneyWisePayee
    /**
      * New Account name.
      */
-    private static final String NAME_NEWACCOUNT = MoneyWiseBasicResource.PAYEE_NEWACCOUNT.getValue();
+    public static final String NAME_NEWACCOUNT = MoneyWiseBasicResource.PAYEE_NEWACCOUNT.getValue();
 
     /**
      * Do we have an InfoSet.

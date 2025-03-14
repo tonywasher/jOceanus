@@ -18,9 +18,12 @@ package net.sourceforge.joceanus.moneywise.data.validate;
 
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseCategoryBase;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDepositCategory;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDepositCategory.MoneyWiseDepositCategoryList;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseDepositCategoryClass;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseDepositCategoryType;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseDepositCategoryType.MoneyWiseDepositCategoryTypeList;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataResource;
 
@@ -52,33 +55,30 @@ public class MoneyWiseValidateDepositCategory
             }
 
             /* Switch on the account class */
-            switch (myClass) {
-                case PARENT:
-                    /* If parent exists */
-                    if (myParent != null) {
-                        pCategory.addError(PrometheusDataItem.ERROR_EXIST, PrometheusDataResource.DATAGROUP_PARENT);
-                    }
-                    break;
-                default:
-                    /* Check parent */
-                    if (myParent == null) {
-                        pCategory.addError(PrometheusDataItem.ERROR_MISSING, PrometheusDataResource.DATAGROUP_PARENT);
-                    } else if (!myParent.isCategoryClass(MoneyWiseDepositCategoryClass.PARENT)) {
-                        pCategory.addError(MoneyWiseCategoryBase.ERROR_BADPARENT, PrometheusDataResource.DATAGROUP_PARENT);
-                    } else {
-                        final String myName = pCategory.getName();
+            if (MoneyWiseDepositCategoryClass.PARENT.equals(myClass)) {
+                /* If parent exists */
+                if (myParent != null) {
+                    pCategory.addError(PrometheusDataItem.ERROR_EXIST, PrometheusDataResource.DATAGROUP_PARENT);
+                }
+            } else {
+                /* Check parent */
+                if (myParent == null) {
+                    pCategory.addError(PrometheusDataItem.ERROR_MISSING, PrometheusDataResource.DATAGROUP_PARENT);
+                } else if (!myParent.isCategoryClass(MoneyWiseDepositCategoryClass.PARENT)) {
+                    pCategory.addError(MoneyWiseCategoryBase.ERROR_BADPARENT, PrometheusDataResource.DATAGROUP_PARENT);
+                } else {
+                    final String myName = pCategory.getName();
 
-                        /* Check validity of parent */
-                        final MoneyWiseDepositCategoryClass myParentClass = myParent.getCategoryTypeClass();
-                        if (!MoneyWiseDepositCategoryClass.PARENT.equals(myParentClass)) {
-                            pCategory.addError(MoneyWiseCategoryBase.ERROR_BADPARENT, PrometheusDataResource.DATAGROUP_PARENT);
-                        }
-                        /* Check that name reflects parent */
-                        if ((myName != null) && !myName.startsWith(myParent.getName() + MoneyWiseCategoryBase.STR_SEP)) {
-                            pCategory.addError(MoneyWiseCategoryBase.ERROR_MATCHPARENT, PrometheusDataResource.DATAGROUP_PARENT);
-                        }
+                    /* Check validity of parent */
+                    final MoneyWiseDepositCategoryClass myParentClass = myParent.getCategoryTypeClass();
+                    if (!MoneyWiseDepositCategoryClass.PARENT.equals(myParentClass)) {
+                        pCategory.addError(MoneyWiseCategoryBase.ERROR_BADPARENT, PrometheusDataResource.DATAGROUP_PARENT);
                     }
-                    break;
+                    /* Check that name reflects parent */
+                    if ((myName != null) && !myName.startsWith(myParent.getName() + MoneyWiseCategoryBase.STR_SEP)) {
+                        pCategory.addError(MoneyWiseCategoryBase.ERROR_MATCHPARENT, PrometheusDataResource.DATAGROUP_PARENT);
+                    }
+                }
             }
         }
 
@@ -86,5 +86,19 @@ public class MoneyWiseValidateDepositCategory
         if (!pCategory.hasErrors()) {
             pCategory.setValidEdit();
         }
+    }
+
+    @Override
+    public void setDefaults(final MoneyWiseDepositCategory pParent,
+                            final MoneyWiseDepositCategory pCategory) throws OceanusException {
+        /* Set values */
+        final MoneyWiseDepositCategoryList myList = pCategory.getList();
+        final MoneyWiseDepositCategoryTypeList myTypes
+                = getEditSet().getDataList(MoneyWiseStaticDataType.DEPOSITTYPE, MoneyWiseDepositCategoryTypeList.class);
+        pCategory.setCategoryType(myTypes.findItemByClass(pParent == null
+                ? MoneyWiseDepositCategoryClass.PARENT
+                : MoneyWiseDepositCategoryClass.SAVINGS));
+        pCategory.setParentCategory(pParent);
+        pCategory.setSubCategoryName(myList.getUniqueName(pParent));
     }
 }

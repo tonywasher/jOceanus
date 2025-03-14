@@ -16,8 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.prometheus.data;
 
-import net.sourceforge.joceanus.metis.field.MetisFieldRequired;
-import net.sourceforge.joceanus.prometheus.data.PrometheusDataValues.PrometheusInfoSetItem;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 /**
  * Item Validator interface.
@@ -31,16 +30,59 @@ public interface PrometheusDataValidator<T extends PrometheusDataItem> {
     void validate(T pItem);
 
     /**
-     * InfoSet validator.
-     * @param <T> the infoSet item type
+     * Validator with Defaults.
+     * @param <T> the item type
      */
-    interface PrometheusInfoSetValidator<T extends PrometheusDataItem & PrometheusInfoSetItem>
+    interface PrometheusDataValidatorDefaults<T extends PrometheusDataItem>
             extends PrometheusDataValidator<T> {
         /**
-         * Determine if an infoSet class is required.
-         * @param pClass the infoSet class
-         * @return the status
+         * Set defaults.
+         * @param pItem the item
+         * @throws OceanusException on error
          */
-        MetisFieldRequired isClassRequired(PrometheusDataInfoClass pClass);
+        void setDefaults(T pItem) throws OceanusException;
+    }
+
+    /**
+     * Validator with parent Defaults.
+     * @param <T> the item type
+     */
+    interface PrometheusDataValidatorParentDefaults<T extends PrometheusDataItem>
+            extends PrometheusDataValidator<T> {
+        /**
+         * Set defaults.
+         * @param pParent the parent
+         * @param pItem the item
+         * @throws OceanusException on error
+         */
+        void setDefaults(T pParent,
+                         T pItem) throws OceanusException;
+    }
+
+    /**
+     * Validator with autoCorrect and Defaults.
+     * @param <T> the item type
+     */
+    interface PrometheusDataValidatorAutoCorrect<T extends PrometheusDataItem>
+            extends PrometheusDataValidatorDefaults<T> {
+        /**
+         * autoCorrect values after change.
+         * @param pItem the item
+         * @throws OceanusException on error
+         */
+        void autoCorrect(T pItem) throws OceanusException;
+    }
+
+    /**
+     * Validator factory.
+     */
+    interface PrometheusDataValidatorFactory {
+        /**
+         * Obtain validator for listItem type.
+         * @param pItemType the itemType
+         * @return the validator
+         * @throws OceanusException on error
+         */
+        PrometheusDataValidator<?> newValidator(final PrometheusListKey pItemType) throws OceanusException;
     }
 }

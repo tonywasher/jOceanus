@@ -17,8 +17,10 @@
 package net.sourceforge.joceanus.moneywise.data.validate;
 
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseAssetBase;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicResource;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePayee;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePayee.MoneyWisePayeeList;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePortfolio;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurity;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurity.MoneyWiseSecurityDataMap;
@@ -30,15 +32,22 @@ import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrency;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWisePayeeClass;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseSecurityClass;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseSecurityType;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseSecurityType.MoneyWiseSecurityTypeList;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataResource;
+import net.sourceforge.joceanus.prometheus.data.PrometheusDataValidator.PrometheusDataValidatorAutoCorrect;
+import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
+
+import java.util.Iterator;
 
 /**
  * Validator for Security.
  */
 public class MoneyWiseValidateSecurity
-        extends MoneyWiseValidateAccount<MoneyWiseSecurity> {
+        extends MoneyWiseValidateAccount<MoneyWiseSecurity>
+        implements PrometheusDataValidatorAutoCorrect<MoneyWiseSecurity> {
     /**
      * The infoSet validator.
      */
@@ -49,6 +58,12 @@ public class MoneyWiseValidateSecurity
      */
     MoneyWiseValidateSecurity() {
         theInfoSet = new MoneyWiseValidateSecurityInfoSet();
+    }
+
+    @Override
+    public void setEditSet(final PrometheusEditSet pEditSet) {
+        super.setEditSet(pEditSet);
+        theInfoSet.storeEditSet(pEditSet);
     }
 
     @Override
@@ -150,5 +165,85 @@ public class MoneyWiseValidateSecurity
                 || pName.equals(MoneyWisePortfolio.NAME_CASHACCOUNT)) {
             pSecurity.addError(MoneyWiseAssetBase.ERROR_RESERVED, PrometheusDataResource.DATAITEM_FIELD_NAME);
         }
+    }
+
+    @Override
+    public void setDefaults(final MoneyWiseSecurity pSecurity) throws OceanusException {
+        /* Set values */
+        final MoneyWiseSecurityList myList = pSecurity.getList();
+        pSecurity.setName(myList.getUniqueName(MoneyWiseSecurity.NAME_NEWACCOUNT));
+        pSecurity.setCategory(getDefaultSecurityType());
+        pSecurity.setAssetCurrency(getReportingCurrency());
+        pSecurity.setSymbol(pSecurity.getName());
+        pSecurity.setClosed(Boolean.FALSE);
+        autoCorrect(pSecurity);
+    }
+
+    @Override
+    public void autoCorrect(final MoneyWiseSecurity pSecurity) throws OceanusException {
+        /* Access category class and parent */
+        final MoneyWiseSecurityClass myClass = pSecurity.getCategoryClass();
+        final MoneyWisePayee myParent = pSecurity.getParent();
+
+        /* Ensure that we have a valid parent */
+        if (myParent == null
+                || myParent.getCategoryClass().canParentSecurity(myClass)) {
+            pSecurity.setParent(getDefaultParent(pSecurity));
+        }
+
+        /* autoCorrect the infoSet */
+        theInfoSet.autoCorrect(pSecurity.getInfoSet());
+    }
+
+    /**
+     * Obtain security type for new security account.
+     * @return the security type
+     */
+    private MoneyWiseSecurityType getDefaultSecurityType() {
+        /* loop through the security types */
+        final MoneyWiseSecurityTypeList myTypes
+                = getEditSet().getDataList(MoneyWiseStaticDataType.SECURITYTYPE, MoneyWiseSecurityTypeList.class);
+        final Iterator<MoneyWiseSecurityType> myIterator = myTypes.iterator();
+        while (myIterator.hasNext()) {
+            final MoneyWiseSecurityType myType = myIterator.next();
+
+            /* Ignore deleted types */
+            if (!myType.isDeleted()) {
+                return myType;
+            }
+        }
+
+        /* Return no category */
+        return null;
+    }
+
+    /**
+     * Obtain default parent for new security.
+     * @param pSecurity the security
+     * @return the default parent
+     */
+    private MoneyWisePayee getDefaultParent(final MoneyWiseSecurity pSecurity) {
+        /* Access details */
+        final MoneyWisePayeeList myPayees = getEditSet().getDataList(MoneyWiseBasicDataType.PAYEE, MoneyWisePayeeList.class);
+        final MoneyWiseSecurityClass myClass = pSecurity.getCategoryClass();
+
+        /* loop through the payees */
+        final Iterator<MoneyWisePayee> myIterator = myPayees.iterator();
+        while (myIterator.hasNext()) {
+            final MoneyWisePayee myPayee = myIterator.next();
+
+            /* Ignore deleted and closed payees */
+            if (myPayee.isDeleted() || Boolean.TRUE.equals(myPayee.isClosed())) {
+                continue;
+            }
+
+            /* If the payee can parent */
+            if (myPayee.getCategoryClass().canParentSecurity(myClass)) {
+                return myPayee;
+            }
+        }
+
+        /* Return no payee */
+        return null;
     }
 }

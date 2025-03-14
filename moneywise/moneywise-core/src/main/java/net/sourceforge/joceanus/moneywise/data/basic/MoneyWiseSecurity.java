@@ -87,7 +87,7 @@ public class MoneyWiseSecurity
     /**
      * New Account name.
      */
-    private static final String NAME_NEWACCOUNT = MoneyWiseBasicResource.SECURITY_NEWACCOUNT.getValue();
+    public static final String NAME_NEWACCOUNT = MoneyWiseBasicResource.SECURITY_NEWACCOUNT.getValue();
 
     /**
      * Do we have an InfoSet.

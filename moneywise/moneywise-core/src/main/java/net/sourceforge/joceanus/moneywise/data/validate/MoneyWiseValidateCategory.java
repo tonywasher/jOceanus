@@ -22,14 +22,35 @@ import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseCategoryBase.Money
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseCategoryBase.MoneyWiseCategoryDataMap;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataResource;
-import net.sourceforge.joceanus.prometheus.data.PrometheusDataValidator;
+import net.sourceforge.joceanus.prometheus.data.PrometheusDataValidator.PrometheusDataValidatorParentDefaults;
+import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
 
 /**
  * Validator for categoryBase.
  * @param <T> the category type
  */
 public abstract class MoneyWiseValidateCategory<T extends MoneyWiseCategoryBase>
-        implements PrometheusDataValidator<T> {
+        implements PrometheusDataValidatorParentDefaults<T> {
+    /**
+     * Set the editSet.
+     */
+    private PrometheusEditSet theEditSet;
+
+    /**
+     * Set the editSet.
+     * @param pEditSet the editSet
+     */
+    public void setEditSet(final PrometheusEditSet pEditSet) {
+        theEditSet = pEditSet;
+    }
+
+    /**
+     * Obtain the editSet
+     * @return the editSet
+     */
+    PrometheusEditSet getEditSet() {
+        return theEditSet;
+    }
 
     @Override
     public void validate(final T pCategory) {

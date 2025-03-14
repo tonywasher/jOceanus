@@ -19,16 +19,17 @@ package net.sourceforge.joceanus.moneywise.data.validate;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseRegion;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseRegion.MoneyWiseRegionDataMap;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseRegion.MoneyWiseRegionList;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataInfoLinkSet;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataResource;
-import net.sourceforge.joceanus.prometheus.data.PrometheusDataValidator;
+import net.sourceforge.joceanus.prometheus.data.PrometheusDataValidator.PrometheusDataValidatorDefaults;
 
 /**
  * Validator for region.
  */
 public class MoneyWiseValidateRegion
-    implements PrometheusDataValidator<MoneyWiseRegion> {
+    implements PrometheusDataValidatorDefaults<MoneyWiseRegion> {
 
     @Override
     public void validate(final MoneyWiseRegion pRegion) {
@@ -69,5 +70,12 @@ public class MoneyWiseValidateRegion
         if (!pRegion.hasErrors()) {
             pRegion.setValidEdit();
         }
+    }
+
+    @Override
+    public void setDefaults(final MoneyWiseRegion pRegion) throws OceanusException {
+        /* Set values */
+        final MoneyWiseRegionList myList = pRegion.getList();
+        pRegion.setName(myList.getUniqueName());
     }
 }
