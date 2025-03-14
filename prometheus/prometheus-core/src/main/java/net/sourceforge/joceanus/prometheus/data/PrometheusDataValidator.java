@@ -27,7 +27,7 @@ public interface PrometheusDataValidator<T extends PrometheusDataItem> {
      * Validate the item.
      * @param pItem the item
      */
-    void validate(T pItem);
+    void validate(PrometheusDataItem pItem);
 
     /**
      * Validator with Defaults.
@@ -81,8 +81,7 @@ public interface PrometheusDataValidator<T extends PrometheusDataItem> {
          * Obtain validator for listItem type.
          * @param pItemType the itemType
          * @return the validator
-         * @throws OceanusException on error
          */
-        PrometheusDataValidator<?> newValidator(final PrometheusListKey pItemType) throws OceanusException;
+        PrometheusDataValidator<?> newValidator(final PrometheusListKey pItemType);
     }
 }

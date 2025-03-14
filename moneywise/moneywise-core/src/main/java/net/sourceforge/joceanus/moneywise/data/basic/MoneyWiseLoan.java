@@ -620,8 +620,8 @@ public class MoneyWiseLoan
         getParent().touchItem(this);
     }
 
-    @Override
-    public void validate() {
+    //@Override
+    public void valisssssdate() {
         final MoneyWisePayee myParent = getParent();
         final MoneyWiseLoanCategory myCategory = getCategory();
         final MoneyWiseCurrency myCurrency = getAssetCurrency();

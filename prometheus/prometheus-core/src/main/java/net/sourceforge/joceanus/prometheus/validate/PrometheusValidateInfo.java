@@ -30,10 +30,11 @@ public class PrometheusValidateInfo<T extends PrometheusDataInfoItem>
         implements PrometheusDataValidator<T> {
 
     @Override
-    public void validate(final T pInfo) {
-        final PrometheusStaticDataItem myType = pInfo.getInfoType();
-        final PrometheusDataItem myOwner = pInfo.getOwner();
-        final Object myValue = pInfo.getValue(Object.class);
+    public void validate(final PrometheusDataItem pInfo) {
+        final PrometheusDataInfoItem myInfo = (PrometheusDataInfoItem) pInfo;
+        final PrometheusStaticDataItem myType = myInfo.getInfoType();
+        final PrometheusDataItem myOwner = myInfo.getOwner();
+        final Object myValue = myInfo.getValue(Object.class);
 
         /* InfoType must be non-null */
         if (myType == null) {

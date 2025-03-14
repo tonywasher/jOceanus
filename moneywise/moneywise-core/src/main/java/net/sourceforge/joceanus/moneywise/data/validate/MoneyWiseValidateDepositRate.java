@@ -32,15 +32,16 @@ public class MoneyWiseValidateDepositRate
         implements PrometheusDataValidator<MoneyWiseDepositRate> {
 
     @Override
-    public void validate(final MoneyWiseDepositRate pRate) {
-        final MoneyWiseDepositRateList myList = pRate.getList();
-        final OceanusDate myDate = pRate.getEndDate();
-        final OceanusRate myRate = pRate.getRate();
-        final OceanusRate myBonus = pRate.getBonus();
+    public void validate(final PrometheusDataItem pRate) {
+        final MoneyWiseDepositRate myRate = (MoneyWiseDepositRate) pRate;
+        final MoneyWiseDepositRateList myList = myRate.getList();
+        final OceanusDate myDate = myRate.getEndDate();
+        final OceanusRate myDepRate = myRate.getRate();
+        final OceanusRate myBonus = myRate.getBonus();
 
         /* Count instances of this date for the account */
         final MoneyWiseDepositRateDataMap myMap = myList.getDataMap();
-        if (!myMap.validRateCount(pRate)) {
+        if (!myMap.validRateCount(myRate)) {
             /* Each date must be unique for deposit (even null) */
             pRate.addError(myDate == null
                     ? MoneyWiseDepositRate.ERROR_NULLDATE
@@ -48,9 +49,9 @@ public class MoneyWiseValidateDepositRate
         }
 
         /* The Rate must be non-zero and greater than zero */
-        if (myRate == null) {
+        if (myDepRate == null) {
             pRate.addError(PrometheusDataItem.ERROR_MISSING, MoneyWiseBasicResource.MONEYWISEDATA_FIELD_RATE);
-        } else if (!myRate.isPositive()) {
+        } else if (!myDepRate.isPositive()) {
             pRate.addError(PrometheusDataItem.ERROR_NEGATIVE, MoneyWiseBasicResource.MONEYWISEDATA_FIELD_RATE);
         }
 

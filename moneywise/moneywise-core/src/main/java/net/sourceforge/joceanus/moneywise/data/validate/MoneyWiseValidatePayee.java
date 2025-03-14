@@ -50,11 +50,12 @@ public class MoneyWiseValidatePayee
     }
 
     @Override
-    public void validate(final MoneyWisePayee pPayee) {
-        final MoneyWisePayeeList myList = pPayee.getList();
-        final MoneyWisePayeeType myPayeeType = pPayee.getCategory();
-        final MoneyWisePayee myParent = pPayee.getParent();
-        final MoneyWiseCurrency myCurrency = pPayee.getAssetCurrency();
+    public void validate(final PrometheusDataItem pPayee) {
+        final MoneyWisePayee myPayee = (MoneyWisePayee) pPayee;
+        final MoneyWisePayeeList myList = myPayee.getList();
+        final MoneyWisePayeeType myPayeeType = myPayee.getCategory();
+        final MoneyWisePayee myParent = myPayee.getParent();
+        final MoneyWiseCurrency myCurrency = myPayee.getAssetCurrency();
 
         /* Validate base components */
         super.validate(pPayee);
@@ -92,9 +93,9 @@ public class MoneyWiseValidatePayee
         }
 
         /* If we have an infoSet */
-        if (pPayee.getInfoSet() != null) {
+        if (myPayee.getInfoSet() != null) {
             /* Validate the InfoSet */
-            theInfoSet.validate(pPayee.getInfoSet());
+            theInfoSet.validate(myPayee.getInfoSet());
         }
 
         /* Set validation flag */

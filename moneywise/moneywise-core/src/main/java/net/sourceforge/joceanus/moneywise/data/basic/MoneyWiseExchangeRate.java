@@ -468,8 +468,8 @@ public class MoneyWiseExchangeRate
         getToCurrency().touchItem(this);
     }
 
-    @Override
-    public void validate() {
+    //@Override
+    public void validdddddate() {
         final MoneyWiseExchangeRateBaseList<? extends MoneyWiseExchangeRate> myList = getList();
         final MoneyWiseCurrency myFrom = getFromCurrency();
         final MoneyWiseCurrency myTo = getToCurrency();

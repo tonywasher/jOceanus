@@ -795,8 +795,8 @@ public abstract class PrometheusDataInfoItem
         return false;
     }
 
-    @Override
-    public void validate() {
+    //@Override
+    public void valisssdate() {
         final PrometheusStaticDataItem myType = getInfoType();
         final PrometheusDataItem myOwner = getOwner();
         final Object myValue = getValue(Object.class);

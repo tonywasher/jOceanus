@@ -621,8 +621,8 @@ public class MoneyWisePayee
         clearTouches(MoneyWiseBasicDataType.PORTFOLIO);
     }
 
-    @Override
-    public void validate() {
+    //@Override
+    public void valsssssidate() {
         final MoneyWisePayeeList myList = getList();
         final MoneyWisePayeeType myPayeeType = getCategory();
         final MoneyWisePayee myParent = getParent();

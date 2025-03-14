@@ -537,8 +537,8 @@ public abstract class MoneyWiseCategoryBase
         }
     }
 
-    @Override
-    public void validate() {
+    //@Override
+    public void valisssdate() {
         final MoneyWiseCategoryBaseList<?> myList = getList();
         final String myName = getName();
         final String myDesc = getDesc();

@@ -134,6 +134,11 @@ public abstract class PrometheusDataList<T extends PrometheusDataItem>
     private int theVersion;
 
     /**
+     * The validator.
+     */
+    private PrometheusDataValidator<T> theValidator;
+
+    /**
      * Construct a new object.
      * @param pBaseClass the class of the underlying object
      * @param pDataSet the owning dataSet
@@ -370,6 +375,18 @@ public abstract class PrometheusDataList<T extends PrometheusDataItem>
      */
     public Map<Integer, T> copyIdMap() {
         return theList.copyIdMap();
+    }
+
+    /**
+     * Obtain the validator.
+     * @return the validator
+     */
+    @SuppressWarnings("unchecked")
+    final PrometheusDataValidator<T> getValidator() {
+        if (theValidator == null) {
+            theValidator = (PrometheusDataValidator<T>) getDataSet().getValidator(theItemType);
+        }
+        return theValidator;
     }
 
     /**

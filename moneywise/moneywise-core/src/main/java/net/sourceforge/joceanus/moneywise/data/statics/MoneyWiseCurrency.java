@@ -217,8 +217,8 @@ public class MoneyWiseCurrency
         setValueReporting(pReporting);
     }
 
-    @Override
-    public void validate() {
+    //@Override
+    public void validXXate() {
         final MoneyWiseCurrencyList myList = getList();
         final MoneyWiseCurrencyDataMap myMap = myList.getDataMap();
 

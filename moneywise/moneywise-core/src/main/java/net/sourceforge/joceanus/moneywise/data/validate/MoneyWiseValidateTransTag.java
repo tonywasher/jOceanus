@@ -32,10 +32,11 @@ public class MoneyWiseValidateTransTag
         implements PrometheusDataValidatorDefaults<MoneyWiseTransTag> {
 
     @Override
-    public void validate(final MoneyWiseTransTag pTag) {
-        final MoneyWiseTransTagList myList = pTag.getList();
-        final String myName = pTag.getName();
-        final String myDesc = pTag.getDesc();
+    public void validate(final PrometheusDataItem pTag) {
+        final MoneyWiseTransTag myTag = (MoneyWiseTransTag) pTag;
+        final MoneyWiseTransTagList myList = myTag.getList();
+        final String myName = myTag.getName();
+        final String myDesc = myTag.getDesc();
         final MoneyWiseTagDataMap myMap = myList.getDataMap();
 
         /* Name must be non-null */

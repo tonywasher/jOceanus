@@ -301,8 +301,8 @@ public class MoneyWiseTransTag
         setValueDesc(pDesc);
     }
 
-    @Override
-    public void validate() {
+    //@Override
+    public void valdddidate() {
         final MoneyWiseTransTagList myList = getList();
         final String myName = getName();
         final String myDesc = getDesc();

@@ -301,8 +301,8 @@ public class MoneyWiseRegion
         setValueDesc(pDesc);
     }
 
-    @Override
-    public void validate() {
+    //@Override
+    public void valissssdate() {
         final MoneyWiseRegionList myList = getList();
         final String myName = getName();
         final String myDesc = getDesc();

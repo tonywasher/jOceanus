@@ -778,8 +778,8 @@ public abstract class MoneyWiseAssetBase
         setValueClosed(isClosed);
     }
 
-    @Override
-    public void validate() {
+    //@Override
+    public void validssssssate() {
         final String myName = getName();
         final String myDesc = getDesc();
 

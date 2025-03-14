@@ -34,13 +34,14 @@ public class MoneyWiseValidateXchangeRate
         implements PrometheusDataValidator<MoneyWiseExchangeRate> {
 
     @Override
-    public void validate(final MoneyWiseExchangeRate pRate) {
-        final MoneyWiseExchangeRateBaseList<? extends MoneyWiseExchangeRate> myList = pRate.getList();
-        final MoneyWiseCurrency myFrom = pRate.getFromCurrency();
-        final MoneyWiseCurrency myTo = pRate.getToCurrency();
-        final OceanusDate myDate = pRate.getDate();
-        final OceanusRatio myRate = pRate.getExchangeRate();
-        final OceanusDateRange myRange = pRate.getDataSet().getDateRange();
+    public void validate(final PrometheusDataItem pRate) {
+        final MoneyWiseExchangeRate myRate = (MoneyWiseExchangeRate) pRate;
+        final MoneyWiseExchangeRateBaseList<? extends MoneyWiseExchangeRate> myList = myRate.getList();
+        final MoneyWiseCurrency myFrom = myRate.getFromCurrency();
+        final MoneyWiseCurrency myTo = myRate.getToCurrency();
+        final OceanusDate myDate = myRate.getDate();
+        final OceanusRatio myXchgRate = myRate.getExchangeRate();
+        final OceanusDateRange myRange = myRate.getDataSet().getDateRange();
 
         /* Date must be non-null */
         if (myDate == null) {
@@ -50,7 +51,7 @@ public class MoneyWiseValidateXchangeRate
         } else {
             /* Date must be unique for this currency */
             final MoneyWiseExchangeRateDataMap myMap = myList.getDataMap();
-            if (!myMap.validRateCount(pRate)) {
+            if (!myMap.validRateCount(myRate)) {
                 pRate.addError(PrometheusDataItem.ERROR_DUPLICATE, MoneyWiseBasicResource.MONEYWISEDATA_FIELD_DATE);
             }
 
@@ -82,18 +83,18 @@ public class MoneyWiseValidateXchangeRate
             }
 
             /* From currency must be the reporting currency */
-            final MoneyWiseCurrency myDefault = pRate.getDataSet().getReportingCurrency();
+            final MoneyWiseCurrency myDefault = myRate.getDataSet().getReportingCurrency();
             if (!myFrom.equals(myDefault)) {
                 pRate.addError(MoneyWiseExchangeRate.ERROR_DEF, MoneyWiseBasicResource.XCHGRATE_FROM);
             }
         }
 
         /* Rate must be non-null and positive non-zero */
-        if (myRate == null) {
+        if (myXchgRate == null) {
             pRate.addError(PrometheusDataItem.ERROR_MISSING, MoneyWiseBasicResource.XCHGRATE_RATE);
-        } else if (!myRate.isNonZero()) {
+        } else if (!myXchgRate.isNonZero()) {
             pRate.addError(PrometheusDataItem.ERROR_ZERO, MoneyWiseBasicResource.XCHGRATE_RATE);
-        } else if (!myRate.isPositive()) {
+        } else if (!myXchgRate.isPositive()) {
             pRate.addError(PrometheusDataItem.ERROR_NEGATIVE, MoneyWiseBasicResource.XCHGRATE_RATE);
         }
 

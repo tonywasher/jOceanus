@@ -398,8 +398,8 @@ public class MoneyWiseSecurityPrice
     /**
      * Validate the price.
      */
-    @Override
-    public void validate() {
+    //@Override
+    public void valdddddidate() {
         final MoneyWiseSecurity mySecurity = getSecurity();
         final OceanusDate myDate = getDate();
         final OceanusPrice myPrice = getPrice();

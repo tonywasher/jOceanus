@@ -102,7 +102,9 @@ public abstract class PrometheusValidateInfoSet<T extends PrometheusDataInfoItem
             final PrometheusDataInfoClass myClass = myIterator.next();
 
             /* Access info for class */
-            final T myInfo = theInfoSet.getInfo(myClass);
+            final T myInfo = myClass.isLinkSet()
+                    ? null
+                    : theInfoSet.getInfo(myClass);
 
             /* If basic checks are passed */
             if (checkClass(myInfo, myClass)) {

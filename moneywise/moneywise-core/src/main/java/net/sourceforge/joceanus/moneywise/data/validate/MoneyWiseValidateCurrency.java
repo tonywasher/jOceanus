@@ -30,18 +30,19 @@ public class MoneyWiseValidateCurrency
         extends PrometheusValidateStatic<MoneyWiseCurrency> {
 
     @Override
-    public void validate(final MoneyWiseCurrency pCurrency) {
-        final MoneyWiseCurrencyList myList = pCurrency.getList();
+    public void validate(final PrometheusDataItem pCurrency) {
+        MoneyWiseCurrency myCurrency = (MoneyWiseCurrency) pCurrency;
+        final MoneyWiseCurrencyList myList = myCurrency.getList();
         final MoneyWiseCurrencyDataMap myMap = myList.getDataMap();
 
         /* Check that reporting is non-null */
-        if (pCurrency.isReporting() == null) {
+        if (myCurrency.isReporting() == null) {
             pCurrency.addError(PrometheusDataItem.ERROR_MISSING, MoneyWiseStaticResource.CURRENCY_REPORTING);
 
             /* else check various things for a reporting currency */
-        } else if (Boolean.TRUE.equals(pCurrency.isReporting())) {
+        } else if (Boolean.TRUE.equals(myCurrency.isReporting())) {
             /* Check that default is enabled */
-            if (!pCurrency.getEnabled()) {
+            if (!myCurrency.getEnabled()) {
                 pCurrency.addError(PrometheusDataItem.ERROR_DISABLED, MoneyWiseStaticResource.CURRENCY_REPORTING);
             }
 

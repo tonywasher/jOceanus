@@ -31,10 +31,11 @@ public class PrometheusValidateStatic<T extends PrometheusStaticDataItem>
         implements PrometheusDataValidator<T> {
 
     @Override
-    public void validate(final T pStatic) {
-        final PrometheusStaticList<?> myList = pStatic.getList();
-        final String myName = pStatic.getName();
-        final String myDesc = pStatic.getDesc();
+    public void validate(final PrometheusDataItem pStatic) {
+        final PrometheusStaticDataItem myStatic = (PrometheusStaticDataItem) pStatic;
+        final PrometheusStaticList<?> myList = myStatic.getList();
+        final String myName = myStatic.getName();
+        final String myDesc = myStatic.getDesc();
         final PrometheusStaticDataMap<?> myMap = myList.getDataMap();
 
         /* Name must be non-null */
@@ -66,12 +67,12 @@ public class PrometheusValidateStatic<T extends PrometheusStaticDataItem>
         }
 
         /* The order must not be negative */
-        if (pStatic.getOrder() < 0) {
+        if (myStatic.getOrder() < 0) {
             pStatic.addError(PrometheusDataItem.ERROR_NEGATIVE, PrometheusDataResource.STATICDATA_SORT);
         }
 
         /* Cannot have duplicate order */
-        if (!myMap.validOrderCount(pStatic.getOrder())) {
+        if (!myMap.validOrderCount(myStatic.getOrder())) {
             pStatic.addError(PrometheusDataItem.ERROR_DUPLICATE, PrometheusDataResource.STATICDATA_SORT);
         }
 

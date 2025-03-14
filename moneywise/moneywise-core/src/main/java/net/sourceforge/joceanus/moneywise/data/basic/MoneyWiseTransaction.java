@@ -635,8 +635,8 @@ public class MoneyWiseTransaction
     /**
      * Validate the transaction.
      */
-    @Override
-    public void validate() {
+    //@Override
+    public void validddddate() {
         final OceanusDate myDate = getDate();
         final MoneyWiseTransAsset myAccount = getAccount();
         final MoneyWiseTransAsset myPartner = getPartner();

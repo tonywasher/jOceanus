@@ -250,8 +250,8 @@ public final class MoneyWiseTransCategory
         setValueType((MoneyWiseTransCategoryType) pType);
     }
 
-    @Override
-    public void validate() {
+    //@Override
+    public void validssssate() {
         /* Validate the base */
         super.validate();
 

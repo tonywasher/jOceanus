@@ -67,12 +67,13 @@ public class MoneyWiseValidateSecurity
     }
 
     @Override
-    public void validate(final MoneyWiseSecurity pSecurity) {
-        final MoneyWiseSecurityList myList = pSecurity.getList();
-        final MoneyWisePayee myParent = pSecurity.getParent();
-        final MoneyWiseSecurityType mySecType = pSecurity.getCategory();
-        final MoneyWiseCurrency myCurrency = pSecurity.getAssetCurrency();
-        final String mySymbol = pSecurity.getSymbol();
+    public void validate(final PrometheusDataItem pSecurity) {
+        final MoneyWiseSecurity mySecurity = (MoneyWiseSecurity) pSecurity;
+        final MoneyWiseSecurityList myList = mySecurity.getList();
+        final MoneyWisePayee myParent = mySecurity.getParent();
+        final MoneyWiseSecurityType mySecType = mySecurity.getCategory();
+        final MoneyWiseCurrency myCurrency = mySecurity.getAssetCurrency();
+        final String mySymbol = mySecurity.getSymbol();
 
         /* Validate base components */
         super.validate(pSecurity);
@@ -111,7 +112,7 @@ public class MoneyWiseValidateSecurity
             pSecurity.addError(PrometheusDataItem.ERROR_MISSING, MoneyWiseBasicResource.ASSET_PARENT);
         } else {
             /* If we are open then parent must be open */
-            if (!pSecurity.isClosed() && Boolean.TRUE.equals(myParent.isClosed())) {
+            if (!mySecurity.isClosed() && Boolean.TRUE.equals(myParent.isClosed())) {
                 pSecurity.addError(MoneyWiseAssetBase.ERROR_PARCLOSED, MoneyWiseBasicResource.ASSET_CLOSED);
             }
 
@@ -134,7 +135,7 @@ public class MoneyWiseValidateSecurity
             if (mySecType.getSecurityClass().needsSymbol()) {
                 if (mySymbol == null) {
                     pSecurity.addError(PrometheusDataItem.ERROR_MISSING, MoneyWiseSecurityInfoSet.getFieldForClass(MoneyWiseAccountInfoClass.SYMBOL));
-                } else if (!pSecurity.getList().validSymbolCount(mySymbol)) {
+                } else if (!myList.validSymbolCount(mySymbol)) {
                     pSecurity.addError(PrometheusDataItem.ERROR_DUPLICATE, MoneyWiseSecurityInfoSet.getFieldForClass(MoneyWiseAccountInfoClass.SYMBOL));
                 }
             } else if (mySymbol != null) {
@@ -143,9 +144,9 @@ public class MoneyWiseValidateSecurity
         }
 
         /* If we have an infoSet */
-        if (pSecurity.getInfoSet() != null) {
+        if (mySecurity.getInfoSet() != null) {
             /* Validate the InfoSet */
-            theInfoSet.validate(pSecurity.getInfoSet());
+            theInfoSet.validate(mySecurity.getInfoSet());
         }
 
         /* Set validation flag */
@@ -155,7 +156,7 @@ public class MoneyWiseValidateSecurity
     }
 
     @Override
-    public void validateName(final MoneyWiseSecurity pSecurity,
+    public void validateName(final MoneyWiseAssetBase pSecurity,
                              final String pName) {
         /* Perform basic checks */
         super.validateName(pSecurity, pName);

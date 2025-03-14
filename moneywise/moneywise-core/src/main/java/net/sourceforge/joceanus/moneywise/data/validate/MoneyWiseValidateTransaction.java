@@ -21,7 +21,6 @@ import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseAssetDirection;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseAssetType;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicResource;
-import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataSet;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDeposit;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseLoan;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePayee;
@@ -54,9 +53,9 @@ import java.util.Currency;
 public class MoneyWiseValidateTransaction
         implements PrometheusDataValidator<MoneyWiseTransaction> {
     /**
-     * the DataSet.
+     * Are we using new validation?
      */
-    private final MoneyWiseDataSet theDataSet;
+    private final boolean newValidation;
 
     /**
      * The infoSet validator.
@@ -65,23 +64,24 @@ public class MoneyWiseValidateTransaction
 
     /**
      * Constructor.
-     * @param pDataSet the dataSet
+     * @param pNewValidation true/false
      */
-    MoneyWiseValidateTransaction(final MoneyWiseDataSet pDataSet) {
-        theDataSet = pDataSet;
-        theInfoSet = new MoneyWiseValidateTransInfoSet(theDataSet);
+    MoneyWiseValidateTransaction(final boolean pNewValidation) {
+        newValidation = pNewValidation;
+        theInfoSet = new MoneyWiseValidateTransInfoSet(pNewValidation);
     }
 
     @Override
-    public void validate(final MoneyWiseTransaction pTrans) {
-        final OceanusDate myDate = pTrans.getDate();
-        final MoneyWiseTransAsset myAccount = pTrans.getAccount();
-        final MoneyWiseTransAsset myPartner = pTrans.getPartner();
-        final MoneyWiseTransCategory myCategory = pTrans.getCategory();
-        final MoneyWiseAssetDirection myDir = pTrans.getDirection();
-        final OceanusMoney myAmount = pTrans.getAmount();
-        final OceanusUnits myAccountUnits = pTrans.getAccountDeltaUnits();
-        final OceanusUnits myPartnerUnits = pTrans.getPartnerDeltaUnits();
+    public void validate(final PrometheusDataItem pTrans) {
+        final MoneyWiseTransaction myTrans = (MoneyWiseTransaction) pTrans;
+        final OceanusDate myDate = myTrans.getDate();
+        final MoneyWiseTransAsset myAccount = myTrans.getAccount();
+        final MoneyWiseTransAsset myPartner = myTrans.getPartner();
+        final MoneyWiseTransCategory myCategory = myTrans.getCategory();
+        final MoneyWiseAssetDirection myDir = myTrans.getDirection();
+        final OceanusMoney myAmount = myTrans.getAmount();
+        final OceanusUnits myAccountUnits = myTrans.getAccountDeltaUnits();
+        final OceanusUnits myPartnerUnits = myTrans.getPartnerDeltaUnits();
         boolean doCheckCombo = true;
 
         /* Header is always valid */
@@ -91,7 +91,7 @@ public class MoneyWiseValidateTransaction
         }
 
         /* Determine date range to check for */
-        final OceanusDateRange myRange = pTrans.getDataSet().getDateRange();
+        final OceanusDateRange myRange = myTrans.getDataSet().getDateRange();
 
         /* The date must be non-null */
         if (myDate == null) {
@@ -153,14 +153,14 @@ public class MoneyWiseValidateTransaction
         /* If money is null */
         if (myAmount == null) {
             /* Check that it must be null */
-            if (!needsNullAmount(pTrans)) {
+            if (!needsNullAmount(myTrans)) {
                 pTrans.addError(PrometheusDataItem.ERROR_MISSING, MoneyWiseBasicResource.TRANSACTION_AMOUNT);
             }
 
             /* else non-null money */
         } else {
             /* Check that it must be null */
-            if (needsNullAmount(pTrans)) {
+            if (needsNullAmount(myTrans)) {
                 pTrans.addError(PrometheusDataItem.ERROR_EXIST, MoneyWiseBasicResource.TRANSACTION_AMOUNT);
             }
 
@@ -187,9 +187,9 @@ public class MoneyWiseValidateTransaction
 
         /* If we have a category and an infoSet */
         if (myCategory != null
-                && pTrans.getInfoSet() != null) {
+                && myTrans.getInfoSet() != null) {
             /* Validate the InfoSet */
-            theInfoSet.validate(pTrans.getInfoSet());
+            theInfoSet.validate(myTrans.getInfoSet());
         }
 
         /* Set validation flag */
@@ -350,7 +350,6 @@ public class MoneyWiseValidateTransaction
 
         /* Access details */
         final MoneyWiseTransCategoryClass myCatClass = pCategory.getCategoryTypeClass();
-        final boolean newValidation = theDataSet.newValidityChecks();
 
         /* Switch on the CategoryClass */
         switch (myCatClass) {
@@ -679,7 +678,7 @@ public class MoneyWiseValidateTransaction
     private boolean checkLoyaltyBonus(final MoneyWiseTransAsset pAccount) {
         /* If this is deposit then check whether it can support loyaltyBonus */
         if (pAccount instanceof MoneyWiseDeposit) {
-            return theDataSet.newValidityChecks()
+            return newValidation
                     || ((MoneyWiseDeposit) pAccount).getCategoryClass().canLoyaltyBonus();
         }
 

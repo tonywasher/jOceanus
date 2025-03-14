@@ -33,24 +33,25 @@ import net.sourceforge.joceanus.prometheus.data.PrometheusDataResource;
 public class MoneyWiseValidateCashCategory
         extends MoneyWiseValidateCategory<MoneyWiseCashCategory> {
     @Override
-    public void validate(final MoneyWiseCashCategory pCategory) {
+    public void validate(final PrometheusDataItem pCategory) {
         /* Validate the base */
         super.validate(pCategory);
 
         /* Access details */
-        final MoneyWiseCashCategoryType myCatType = pCategory.getCategoryType();
-        final MoneyWiseCashCategory myParent = pCategory.getParentCategory();
+        final MoneyWiseCashCategory myCategory = (MoneyWiseCashCategory) pCategory;
+        final MoneyWiseCashCategoryType myCatType = myCategory.getCategoryType();
+        final MoneyWiseCashCategory myParent = myCategory.getParentCategory();
 
         /* CashCategoryType must be non-null */
         if (myCatType == null) {
-            pCategory.addError(PrometheusDataItem.ERROR_MISSING, MoneyWiseStaticDataType.DEPOSITTYPE);
+            pCategory.addError(PrometheusDataItem.ERROR_MISSING, MoneyWiseStaticDataType.CASHTYPE);
         } else {
             /* Access the class */
             final MoneyWiseCashCategoryClass myClass = myCatType.getCashClass();
 
             /* CashCategoryType must be enabled */
             if (!myCatType.getEnabled()) {
-                pCategory.addError(PrometheusDataItem.ERROR_DISABLED, MoneyWiseStaticDataType.DEPOSITTYPE);
+                pCategory.addError(PrometheusDataItem.ERROR_DISABLED, MoneyWiseStaticDataType.CASHTYPE);
             }
 
             /* Switch on the account class */
@@ -66,7 +67,7 @@ public class MoneyWiseValidateCashCategory
                 } else if (!myParent.isCategoryClass(MoneyWiseCashCategoryClass.PARENT)) {
                     pCategory.addError(MoneyWiseCategoryBase.ERROR_BADPARENT, PrometheusDataResource.DATAGROUP_PARENT);
                 } else {
-                    final String myName = pCategory.getName();
+                    final String myName = myCategory.getName();
 
                     /* Check validity of parent */
                     final MoneyWiseCashCategoryClass myParentClass = myParent.getCategoryTypeClass();

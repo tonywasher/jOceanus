@@ -32,10 +32,11 @@ public class MoneyWiseValidateRegion
     implements PrometheusDataValidatorDefaults<MoneyWiseRegion> {
 
     @Override
-    public void validate(final MoneyWiseRegion pRegion) {
-        final MoneyWiseRegionList myList = pRegion.getList();
-        final String myName = pRegion.getName();
-        final String myDesc = pRegion.getDesc();
+    public void validate(final PrometheusDataItem pRegion) {
+        final MoneyWiseRegion myRegion = (MoneyWiseRegion) pRegion;
+        final MoneyWiseRegionList myList = myRegion.getList();
+        final String myName = myRegion.getName();
+        final String myDesc = myRegion.getDesc();
         final MoneyWiseRegionDataMap myMap = myList.getDataMap();
 
         /* Name must be non-null */

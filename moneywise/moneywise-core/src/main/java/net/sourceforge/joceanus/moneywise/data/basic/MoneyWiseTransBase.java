@@ -867,8 +867,8 @@ public abstract class MoneyWiseTransBase
     /**
      * Validate the event.
      */
-    @Override
-    public void validate() {
+    ///@Override
+    public void validdddddate() {
         final MoneyWiseTransAsset myAccount = getAccount();
         final MoneyWiseTransAsset myPartner = getPartner();
         final MoneyWiseAssetDirection myDir = getDirection();

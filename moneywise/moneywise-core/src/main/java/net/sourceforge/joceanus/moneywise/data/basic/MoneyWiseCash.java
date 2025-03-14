@@ -558,8 +558,8 @@ public class MoneyWiseCash
         theInfoSet.touchOnUpdate();
     }
 
-    @Override
-    public void validate() {
+    //@Override
+    public void valssssidate() {
         final MoneyWisePayee myParent = getParent();
         final MoneyWiseCashCategory myCategory = getCategory();
         final MoneyWiseCurrency myCurrency = getAssetCurrency();

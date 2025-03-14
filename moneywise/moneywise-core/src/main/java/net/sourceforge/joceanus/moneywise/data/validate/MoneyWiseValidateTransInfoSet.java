@@ -47,16 +47,16 @@ import java.util.Currency;
 public class MoneyWiseValidateTransInfoSet
         extends PrometheusValidateInfoSet<MoneyWiseTransInfo> {
     /**
-     * the DataSet.
+     * Are we using new validation?
      */
-    private final MoneyWiseDataSet theDataSet;
+    private final boolean newValidation;
 
     /**
      * Constructor.
-     * @param pDataSet the dataSet
+     * @param pNewValidation true/false
      */
-    MoneyWiseValidateTransInfoSet(final MoneyWiseDataSet pDataSet) {
-        theDataSet = pDataSet;
+    MoneyWiseValidateTransInfoSet(final boolean pNewValidation) {
+        newValidation = pNewValidation;
     }
 
     @Override

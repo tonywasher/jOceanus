@@ -410,8 +410,8 @@ public abstract class PrometheusStaticDataItem
         return iDiff != 0 ? iDiff : MetisDataDifference.compareObject(getName(), myThat.getName());
     }
 
-    @Override
-    public void validate() {
+    //@Override
+    public void validaRRte() {
         final PrometheusStaticList<?> myList = getList();
         final String myName = getName();
         final String myDesc = getDesc();

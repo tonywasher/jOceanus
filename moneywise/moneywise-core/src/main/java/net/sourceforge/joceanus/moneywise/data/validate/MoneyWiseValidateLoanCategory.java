@@ -34,13 +34,14 @@ public class MoneyWiseValidateLoanCategory
         extends MoneyWiseValidateCategory<MoneyWiseLoanCategory> {
 
     @Override
-    public void validate(final MoneyWiseLoanCategory pCategory) {
+    public void validate(final PrometheusDataItem pCategory) {
         /* Validate the base */
         super.validate(pCategory);
 
         /* Access details */
-        final MoneyWiseLoanCategoryType myCatType = pCategory.getCategoryType();
-        final MoneyWiseLoanCategory myParent = pCategory.getParentCategory();
+        final MoneyWiseLoanCategory myCategory = (MoneyWiseLoanCategory) pCategory;
+        final MoneyWiseLoanCategoryType myCatType = myCategory.getCategoryType();
+        final MoneyWiseLoanCategory myParent = myCategory.getParentCategory();
 
         /* LoanCategoryType must be non-null */
         if (myCatType == null) {
@@ -67,7 +68,7 @@ public class MoneyWiseValidateLoanCategory
                 } else if (!myParent.isCategoryClass(MoneyWiseLoanCategoryClass.PARENT)) {
                     pCategory.addError(MoneyWiseCategoryBase.ERROR_BADPARENT, PrometheusDataResource.DATAGROUP_PARENT);
                 } else {
-                    final String myName = pCategory.getName();
+                    final String myName = myCategory.getName();
 
                     /* Check validity of parent */
                     final MoneyWiseLoanCategoryClass myParentClass = myParent.getCategoryTypeClass();

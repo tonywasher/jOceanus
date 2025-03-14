@@ -60,11 +60,12 @@ public class MoneyWiseValidateLoan
     }
 
     @Override
-    public void validate(final MoneyWiseLoan pLoan) {
-        final MoneyWisePayee myParent = pLoan.getParent();
-        final MoneyWiseLoanCategory myCategory = pLoan.getCategory();
-        final MoneyWiseCurrency myCurrency = pLoan.getAssetCurrency();
-        final MoneyWiseLoanCategoryClass myClass = pLoan.getCategoryClass();
+    public void validate(final PrometheusDataItem pLoan) {
+        final MoneyWiseLoan myLoan = (MoneyWiseLoan) pLoan;
+        final MoneyWisePayee myParent = myLoan.getParent();
+        final MoneyWiseLoanCategory myCategory = myLoan.getCategory();
+        final MoneyWiseCurrency myCurrency = myLoan.getAssetCurrency();
+        final MoneyWiseLoanCategoryClass myClass = myLoan.getCategoryClass();
 
         /* Validate base components */
         super.validate(pLoan);
@@ -97,15 +98,15 @@ public class MoneyWiseValidateLoan
             }
 
             /* If we are open then parent must be open */
-            if (!pLoan.isClosed() && Boolean.TRUE.equals(myParent.isClosed())) {
+            if (!myLoan.isClosed() && Boolean.TRUE.equals(myParent.isClosed())) {
                 pLoan.addError(MoneyWiseAssetBase.ERROR_PARCLOSED, MoneyWiseBasicResource.ASSET_CLOSED);
             }
         }
 
         /* If we have an infoSet */
-        if (pLoan.getInfoSet() != null) {
+        if (myLoan.getInfoSet() != null) {
             /* Validate the InfoSet */
-            theInfoSet.validate(pLoan.getInfoSet());
+            theInfoSet.validate(myLoan.getInfoSet());
         }
 
         /* Set validation flag */

@@ -712,8 +712,8 @@ public class MoneyWiseDeposit
         getParent().touchItem(this);
     }
 
-    @Override
-    public void validate() {
+    //@Override
+    public void valisssssdate() {
         final MoneyWisePayee myParent = getParent();
         final MoneyWiseDepositCategory myCategory = getCategory();
         final MoneyWiseCurrency myCurrency = getAssetCurrency();

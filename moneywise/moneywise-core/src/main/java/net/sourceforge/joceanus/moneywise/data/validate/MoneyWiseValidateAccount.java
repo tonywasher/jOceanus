@@ -57,9 +57,10 @@ public abstract class MoneyWiseValidateAccount<T extends MoneyWiseAssetBase>
     }
 
     @Override
-    public void validate(final T pAsset) {
-        final String myName = pAsset.getName();
-        final String myDesc = pAsset.getDesc();
+    public void validate(final PrometheusDataItem pAsset) {
+        final MoneyWiseAssetBase myAsset = (MoneyWiseAssetBase) pAsset;
+        final String myName = myAsset.getName();
+        final String myDesc = myAsset.getDesc();
 
         /* Name must be non-null */
         if (myName == null) {
@@ -68,11 +69,12 @@ public abstract class MoneyWiseValidateAccount<T extends MoneyWiseAssetBase>
             /* Check that the name is unique */
         } else {
             /* Validate the name */
-            validateName(pAsset, myName);
+            validateName(myAsset, myName);
         }
 
         /* Check description length */
-        if ((myDesc != null) && (myDesc.length() > PrometheusDataItem.DESCLEN)) {
+        if (myDesc != null
+                && myDesc.length() > PrometheusDataItem.DESCLEN) {
             pAsset.addError(PrometheusDataItem.ERROR_LENGTH, PrometheusDataResource.DATAITEM_FIELD_DESC);
         }
     }
@@ -82,7 +84,7 @@ public abstract class MoneyWiseValidateAccount<T extends MoneyWiseAssetBase>
      * @param pAsset the asset
      * @param pName the name
      */
-    public void validateName(final T pAsset,
+    public void validateName(final MoneyWiseAssetBase pAsset,
                              final String pName) {
         /* Access the list */
         final MoneyWiseAssetBaseList<?> myList = pAsset.getList();

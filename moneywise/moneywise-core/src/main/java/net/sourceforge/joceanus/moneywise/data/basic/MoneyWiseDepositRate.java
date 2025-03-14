@@ -483,8 +483,8 @@ public class MoneyWiseDepositRate
     /**
      * Validate the rate.
      */
-    @Override
-    public void validate() {
+    //@Override
+    public void valissssdate() {
         final MoneyWiseDepositRateList myList = getList();
         final OceanusDate myDate = getEndDate();
         final OceanusRate myRate = getRate();

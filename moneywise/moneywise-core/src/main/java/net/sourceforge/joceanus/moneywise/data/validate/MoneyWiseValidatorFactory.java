@@ -17,10 +17,7 @@
 package net.sourceforge.joceanus.moneywise.data.validate;
 
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
-import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataSet;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
-import net.sourceforge.joceanus.moneywise.exc.MoneyWiseLogicException;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataSet.PrometheusCryptographyDataType;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataValidator;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataValidator.PrometheusDataValidatorFactory;
@@ -35,20 +32,27 @@ import net.sourceforge.joceanus.prometheus.validate.PrometheusValidateStatic;
 public class MoneyWiseValidatorFactory
         implements PrometheusDataValidatorFactory {
     /**
-     * the DataSet.
+     * Are we using new Validation?
      */
-    private final MoneyWiseDataSet theDataSet;
+    private final boolean newValidation;
 
     /**
      * Constructor.
-     * @param pDataSet the dataSet
      */
-    public MoneyWiseValidatorFactory(final MoneyWiseDataSet pDataSet) {
-        theDataSet = pDataSet;
+    public MoneyWiseValidatorFactory() {
+        this(false);
+    }
+
+    /**
+     * Constructor.
+     * @param pNewValidation true/false
+     */
+    public MoneyWiseValidatorFactory(final boolean pNewValidation) {
+        newValidation = pNewValidation;
     }
 
     @Override
-    public PrometheusDataValidator<?> newValidator(final PrometheusListKey pItemType) throws OceanusException {
+    public PrometheusDataValidator<?> newValidator(final PrometheusListKey pItemType) {
         if (pItemType instanceof PrometheusCryptographyDataType) {
             return new PrometheusValidateBasic();
         } else if (MoneyWiseStaticDataType.CURRENCY.equals(pItemType)) {
@@ -88,7 +92,7 @@ public class MoneyWiseValidatorFactory
                 case PORTFOLIO:
                     return new MoneyWiseValidatePortfolio();
                 case TRANSACTION:
-                    return new MoneyWiseValidateTransaction(theDataSet);
+                    return new MoneyWiseValidateTransaction(newValidation);
                 case PAYEEINFO:
                 case DEPOSITINFO:
                 case SECURITYINFO:
@@ -103,6 +107,6 @@ public class MoneyWiseValidatorFactory
         }
 
         /* Throw error */
-        throw new MoneyWiseLogicException(pItemType, "Unexpected itemType");
+        throw new IllegalArgumentException("Unexpected itemType " + pItemType);
     }
 }

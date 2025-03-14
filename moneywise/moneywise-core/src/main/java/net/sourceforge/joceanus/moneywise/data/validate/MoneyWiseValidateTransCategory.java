@@ -35,15 +35,16 @@ public class MoneyWiseValidateTransCategory
         extends MoneyWiseValidateCategory<MoneyWiseTransCategory> {
 
     @Override
-    public void validate(final MoneyWiseTransCategory pCategory) {
+    public void validate(final PrometheusDataItem pCategory) {
         /* Validate the base */
         super.validate(pCategory);
 
         /* Access details */
-        final MoneyWiseTransCategoryList myList = pCategory.getList();
-        final MoneyWiseTransCategoryType myCatType = pCategory.getCategoryType();
-        final MoneyWiseTransCategory myParent = pCategory.getParentCategory();
-        final String myName = pCategory.getName();
+        final MoneyWiseTransCategory myCategory = (MoneyWiseTransCategory) pCategory;
+        final MoneyWiseTransCategoryList myList = myCategory.getList();
+        final MoneyWiseTransCategoryType myCatType = myCategory.getCategoryType();
+        final MoneyWiseTransCategory myParent = myCategory.getParentCategory();
+        final String myName = myCategory.getName();
 
         /* EventCategoryType must be non-null */
         if (myCatType == null) {

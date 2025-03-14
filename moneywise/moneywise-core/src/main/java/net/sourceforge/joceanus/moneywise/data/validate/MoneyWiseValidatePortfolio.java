@@ -64,11 +64,12 @@ public class MoneyWiseValidatePortfolio
     }
 
     @Override
-    public void validate(final MoneyWisePortfolio pPortfolio) {
-        final MoneyWisePortfolioList myList = pPortfolio.getList();
-        final MoneyWisePayee myParent = pPortfolio.getParent();
-        final MoneyWisePortfolioType myPortType = pPortfolio.getCategory();
-        final MoneyWiseCurrency myCurrency = pPortfolio.getAssetCurrency();
+    public void validate(final PrometheusDataItem pPortfolio) {
+        final MoneyWisePortfolio myPortfolio = (MoneyWisePortfolio) pPortfolio;
+        final MoneyWisePortfolioList myList = myPortfolio.getList();
+        final MoneyWisePayee myParent = myPortfolio.getParent();
+        final MoneyWisePortfolioType myPortType = myPortfolio.getCategory();
+        final MoneyWiseCurrency myCurrency = myPortfolio.getAssetCurrency();
 
         /* Validate base components */
         super.validate(pPortfolio);
@@ -106,7 +107,7 @@ public class MoneyWiseValidatePortfolio
             }
 
             /* If we are open then parent must be open */
-            if (!pPortfolio.isClosed() && Boolean.TRUE.equals(myParent.isClosed())) {
+            if (!myPortfolio.isClosed() && Boolean.TRUE.equals(myParent.isClosed())) {
                 pPortfolio.addError(MoneyWiseAssetBase.ERROR_PARCLOSED, MoneyWiseBasicResource.ASSET_CLOSED);
             }
         }
@@ -119,9 +120,9 @@ public class MoneyWiseValidatePortfolio
         }
 
         /* If we have an infoSet */
-        if (pPortfolio.getInfoSet() != null) {
+        if (myPortfolio.getInfoSet() != null) {
             /* Validate the InfoSet */
-            theInfoSet.validate(pPortfolio.getInfoSet());
+            theInfoSet.validate(myPortfolio.getInfoSet());
         }
 
         /* Set validation flag */
@@ -131,7 +132,7 @@ public class MoneyWiseValidatePortfolio
     }
 
     @Override
-    public void validateName(final MoneyWisePortfolio pPortfolio,
+    public void validateName(final MoneyWiseAssetBase pPortfolio,
                              final String pName) {
         /* Perform basic checks */
         super.validateName(pPortfolio, pName);

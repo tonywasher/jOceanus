@@ -671,8 +671,8 @@ public class MoneyWiseSecurity
         getParent().touchItem(this);
     }
 
-    @Override
-    public void validate() {
+    //@Override
+    public void validssssss3wwate() {
         final MoneyWiseSecurityList myList = getList();
         final MoneyWisePayee myParent = getParent();
         final MoneyWiseSecurityType mySecType = getCategory();

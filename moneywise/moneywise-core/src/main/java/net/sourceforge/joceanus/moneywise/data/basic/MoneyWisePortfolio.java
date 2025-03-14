@@ -705,8 +705,8 @@ public class MoneyWisePortfolio
         getParent().touchItem(this);
     }
 
-    @Override
-    public void validate() {
+    //@Override
+    public void validssssate() {
         final MoneyWisePortfolioList myList = getList();
         final MoneyWisePayee myParent = getParent();
         final MoneyWisePortfolioType myPortType = getCategory();
