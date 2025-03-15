@@ -19,9 +19,9 @@ package net.sourceforge.joceanus.moneywise.data.validate;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseAssetBase;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicResource;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataValidator.MoneyWiseDataValidatorAutoCorrect;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePayee;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePayee.MoneyWisePayeeList;
-import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePortfolio;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurity;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurity.MoneyWiseSecurityDataMap;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurity.MoneyWiseSecurityList;
@@ -37,7 +37,6 @@ import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataResource;
-import net.sourceforge.joceanus.prometheus.data.PrometheusDataValidator.PrometheusDataValidatorAutoCorrect;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
 
 import java.util.Iterator;
@@ -47,7 +46,12 @@ import java.util.Iterator;
  */
 public class MoneyWiseValidateSecurity
         extends MoneyWiseValidateAccount<MoneyWiseSecurity>
-        implements PrometheusDataValidatorAutoCorrect<MoneyWiseSecurity> {
+        implements MoneyWiseDataValidatorAutoCorrect<MoneyWiseSecurity> {
+    /**
+     * New Account name.
+     */
+    private static final String NAME_NEWACCOUNT = MoneyWiseBasicResource.SECURITY_NEWACCOUNT.getValue();
+
     /**
      * The infoSet validator.
      */
@@ -113,7 +117,7 @@ public class MoneyWiseValidateSecurity
         } else {
             /* If we are open then parent must be open */
             if (!mySecurity.isClosed() && Boolean.TRUE.equals(myParent.isClosed())) {
-                pSecurity.addError(MoneyWiseAssetBase.ERROR_PARCLOSED, MoneyWiseBasicResource.ASSET_CLOSED);
+                pSecurity.addError(ERROR_PARCLOSED, MoneyWiseBasicResource.ASSET_CLOSED);
             }
 
             /* Check class */
@@ -124,7 +128,7 @@ public class MoneyWiseValidateSecurity
 
                 /* Parent must be suitable */
                 if (!myParClass.canParentSecurity(myClass)) {
-                    pSecurity.addError(MoneyWiseAssetBase.ERROR_BADPARENT, MoneyWiseBasicResource.ASSET_PARENT);
+                    pSecurity.addError(ERROR_BADPARENT, MoneyWiseBasicResource.ASSET_PARENT);
                 }
             }
         }
@@ -163,8 +167,8 @@ public class MoneyWiseValidateSecurity
 
         /* Check that the name is not a reserved name */
         if (pName.equals(MoneyWiseSecurityHolding.SECURITYHOLDING_NEW)
-                || pName.equals(MoneyWisePortfolio.NAME_CASHACCOUNT)) {
-            pSecurity.addError(MoneyWiseAssetBase.ERROR_RESERVED, PrometheusDataResource.DATAITEM_FIELD_NAME);
+                || pName.equals(MoneyWiseValidatePortfolio.NAME_CASHACCOUNT)) {
+            pSecurity.addError(ERROR_RESERVED, PrometheusDataResource.DATAITEM_FIELD_NAME);
         }
     }
 
@@ -172,7 +176,7 @@ public class MoneyWiseValidateSecurity
     public void setDefaults(final MoneyWiseSecurity pSecurity) throws OceanusException {
         /* Set values */
         final MoneyWiseSecurityList myList = pSecurity.getList();
-        pSecurity.setName(myList.getUniqueName(MoneyWiseSecurity.NAME_NEWACCOUNT));
+        pSecurity.setName(getUniqueName(myList, NAME_NEWACCOUNT));
         pSecurity.setCategory(getDefaultSecurityType());
         pSecurity.setAssetCurrency(getReportingCurrency());
         pSecurity.setSymbol(pSecurity.getName());

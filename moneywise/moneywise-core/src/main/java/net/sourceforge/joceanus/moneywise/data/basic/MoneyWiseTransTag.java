@@ -21,6 +21,7 @@ import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataNamedItem;
 import net.sourceforge.joceanus.metis.data.MetisDataResource;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataValidator.MoneyWiseDataValidatorDefaults;
 import net.sourceforge.joceanus.moneywise.exc.MoneyWiseDataException;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
@@ -63,11 +64,6 @@ public class MoneyWiseTransTag
         FIELD_DEFS.declareEncryptedStringField(PrometheusDataResource.DATAITEM_FIELD_NAME, NAMELEN);
         FIELD_DEFS.declareEncryptedStringField(PrometheusDataResource.DATAITEM_FIELD_DESC, DESCLEN);
     }
-
-    /**
-     * New Tag name.
-     */
-    private static final String NAME_NEWTAG = MoneyWiseBasicResource.TRANSTAG_NEWTAG.getValue();
 
     /**
      * Copy Constructor.
@@ -271,8 +267,7 @@ public class MoneyWiseTransTag
      * @throws OceanusException on error
      */
     public void setDefaults() throws OceanusException {
-        /* Set values */
-        setName(getList().getUniqueName());
+        getList().getValidator().setDefaults(this);
     }
 
     @Override
@@ -390,6 +385,11 @@ public class MoneyWiseTransTag
         }
 
         @Override
+        public MoneyWiseDataValidatorDefaults<MoneyWiseTransTag> getValidator() {
+            return (MoneyWiseDataValidatorDefaults<MoneyWiseTransTag>) super.getValidator();
+        }
+
+        @Override
         protected MoneyWiseTransTagList getEmptyList(final PrometheusListStyle pStyle) {
             final MoneyWiseTransTagList myList = new MoneyWiseTransTagList(this);
             myList.setStyle(pStyle);
@@ -406,6 +406,7 @@ public class MoneyWiseTransTag
             final MoneyWiseTransTagList myList = getEmptyList(PrometheusListStyle.EDIT);
             myList.ensureMap();
             pEditSet.setEditEntryList(MoneyWiseBasicDataType.TRANSTAG, myList);
+            myList.getValidator().setEditSet(pEditSet);
 
             /* Loop through the tags */
             final Iterator<MoneyWiseTransTag> myIterator = iterator();
@@ -461,28 +462,6 @@ public class MoneyWiseTransTag
         public MoneyWiseTransTag findItemByName(final String pName) {
             /* look up the name in the map */
             return getDataMap().findItemByName(pName);
-        }
-
-        /**
-         * Obtain unique name for new tag.
-         * @return The new name
-         */
-        public String getUniqueName() {
-            /* Set up base constraints */
-            final String myBase = NAME_NEWTAG;
-            int iNextId = 1;
-
-            /* Loop until we found a name */
-            String myName = myBase;
-            for (;;) {
-                /* try out the name */
-                if (findItemByName(myName) == null) {
-                    return myName;
-                }
-
-                /* Build next name */
-                myName = myBase.concat(Integer.toString(iNextId++));
-            }
         }
 
         @Override

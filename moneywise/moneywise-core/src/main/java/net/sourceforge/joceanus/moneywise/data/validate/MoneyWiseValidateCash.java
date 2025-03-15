@@ -16,20 +16,19 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.moneywise.data.validate;
 
-import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseAssetBase;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicResource;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseCash;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseCash.MoneyWiseCashList;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseCashCategory;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseCashCategory.MoneyWiseCashCategoryList;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataValidator.MoneyWiseDataValidatorAutoCorrect;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePayee;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCashCategoryClass;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrency;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
-import net.sourceforge.joceanus.prometheus.data.PrometheusDataValidator.PrometheusDataValidatorAutoCorrect;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
 
 import java.util.Iterator;
@@ -39,7 +38,12 @@ import java.util.Iterator;
  */
 public class MoneyWiseValidateCash
         extends MoneyWiseValidateAccount<MoneyWiseCash>
-        implements PrometheusDataValidatorAutoCorrect<MoneyWiseCash> {
+        implements MoneyWiseDataValidatorAutoCorrect<MoneyWiseCash> {
+    /**
+     * New Account name.
+     */
+    private static final String NAME_NEWACCOUNT = MoneyWiseBasicResource.CASH_NEWACCOUNT.getValue();
+
     /**
      * The infoSet validator.
      */
@@ -72,7 +76,7 @@ public class MoneyWiseValidateCash
         if (myCategory == null) {
             pCash.addError(PrometheusDataItem.ERROR_MISSING, MoneyWiseBasicResource.CATEGORY_NAME);
         } else if (myCategory.getCategoryTypeClass().isParentCategory()) {
-            pCash.addError(MoneyWiseAssetBase.ERROR_BADCATEGORY, MoneyWiseBasicResource.CATEGORY_NAME);
+            pCash.addError(ERROR_BADCATEGORY, MoneyWiseBasicResource.CATEGORY_NAME);
         }
 
         /* Parent must be null */
@@ -103,7 +107,7 @@ public class MoneyWiseValidateCash
     public void setDefaults(final MoneyWiseCash pCash) throws OceanusException {
         /* Set values */
         final MoneyWiseCashList myList = pCash.getList();
-        pCash.setName(myList.getUniqueName(MoneyWiseCash.NAME_NEWACCOUNT));
+        pCash.setName(getUniqueName(myList, NAME_NEWACCOUNT));
         pCash.setCategory(getDefaultCategory());
         pCash.setAssetCurrency(getReportingCurrency());
         pCash.setClosed(Boolean.FALSE);

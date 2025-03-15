@@ -16,9 +16,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.moneywise.data.validate;
 
-import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseAssetBase;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicResource;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataValidator.MoneyWiseDataValidatorAutoCorrect;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseLoan;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseLoan.MoneyWiseLoanList;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseLoanCategory;
@@ -30,7 +30,6 @@ import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseLoanCategoryClas
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
-import net.sourceforge.joceanus.prometheus.data.PrometheusDataValidator.PrometheusDataValidatorAutoCorrect;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
 
 import java.util.Iterator;
@@ -40,7 +39,12 @@ import java.util.Iterator;
  */
 public class MoneyWiseValidateLoan
         extends MoneyWiseValidateAccount<MoneyWiseLoan>
-        implements PrometheusDataValidatorAutoCorrect<MoneyWiseLoan> {
+        implements MoneyWiseDataValidatorAutoCorrect<MoneyWiseLoan> {
+    /**
+     * New Account name.
+     */
+    private static final String NAME_NEWACCOUNT = MoneyWiseBasicResource.LOAN_NEWACCOUNT.getValue();
+
     /**
      * The infoSet validator.
      */
@@ -74,7 +78,7 @@ public class MoneyWiseValidateLoan
         if (myCategory == null) {
             pLoan.addError(PrometheusDataItem.ERROR_MISSING, MoneyWiseBasicResource.CATEGORY_NAME);
         } else if (myCategory.getCategoryTypeClass().isParentCategory()) {
-            pLoan.addError(MoneyWiseAssetBase.ERROR_BADCATEGORY, MoneyWiseBasicResource.CATEGORY_NAME);
+            pLoan.addError(ERROR_BADCATEGORY, MoneyWiseBasicResource.CATEGORY_NAME);
         }
 
         /* Currency must be non-null and enabled */
@@ -94,12 +98,12 @@ public class MoneyWiseValidateLoan
         } else {
             /* Parent must be suitable */
             if (!myParent.getCategoryClass().canParentLoan(myClass)) {
-                pLoan.addError(MoneyWiseAssetBase.ERROR_BADPARENT, MoneyWiseBasicResource.ASSET_PARENT);
+                pLoan.addError(ERROR_BADPARENT, MoneyWiseBasicResource.ASSET_PARENT);
             }
 
             /* If we are open then parent must be open */
             if (!myLoan.isClosed() && Boolean.TRUE.equals(myParent.isClosed())) {
-                pLoan.addError(MoneyWiseAssetBase.ERROR_PARCLOSED, MoneyWiseBasicResource.ASSET_CLOSED);
+                pLoan.addError(ERROR_PARCLOSED, MoneyWiseBasicResource.ASSET_CLOSED);
             }
         }
 
@@ -119,7 +123,7 @@ public class MoneyWiseValidateLoan
     public void setDefaults(final MoneyWiseLoan pLoan) throws OceanusException {
         /* Set values */
         final MoneyWiseLoanList myList = pLoan.getList();
-        pLoan.setName(myList.getUniqueName(MoneyWiseLoan.NAME_NEWACCOUNT));
+        pLoan.setName(getUniqueName(myList, NAME_NEWACCOUNT));
         pLoan.setCategory(getDefaultCategory());
         pLoan.setAssetCurrency(getReportingCurrency());
         pLoan.setClosed(Boolean.FALSE);

@@ -20,9 +20,9 @@ import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicResource;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseCategoryBase;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseCategoryBase.MoneyWiseCategoryBaseList;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseCategoryBase.MoneyWiseCategoryDataMap;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataValidator.MoneyWiseDataValidatorParentDefaults;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataResource;
-import net.sourceforge.joceanus.prometheus.data.PrometheusDataValidator.PrometheusDataValidatorParentDefaults;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
 
 /**
@@ -30,16 +30,33 @@ import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
  * @param <T> the category type
  */
 public abstract class MoneyWiseValidateCategory<T extends MoneyWiseCategoryBase>
-        implements PrometheusDataValidatorParentDefaults<T> {
+        implements MoneyWiseDataValidatorParentDefaults<T> {
+    /**
+     * Invalid Parent Error.
+     */
+    static final String ERROR_BADPARENT = MoneyWiseBasicResource.CATEGORY_ERROR_BADPARENT.getValue();
+
+    /**
+     * NonMatching Parent Error.
+     */
+    static final String ERROR_MATCHPARENT = MoneyWiseBasicResource.CATEGORY_ERROR_MATCHPARENT.getValue();
+
+    /**
+     * New parent name.
+     */
+    private static final String NAME_NEWPARENT = MoneyWiseBasicResource.CATEGORY_NEWPARENT.getValue();
+
+    /**
+     * New Category name.
+     */
+    private static final String NAME_NEWCATEGORY = MoneyWiseBasicResource.CATEGORY_NEWCAT.getValue();
+
     /**
      * Set the editSet.
      */
     private PrometheusEditSet theEditSet;
 
-    /**
-     * Set the editSet.
-     * @param pEditSet the editSet
-     */
+    @Override
     public void setEditSet(final PrometheusEditSet pEditSet) {
         theEditSet = pEditSet;
     }
@@ -84,6 +101,35 @@ public abstract class MoneyWiseValidateCategory<T extends MoneyWiseCategoryBase>
         if (myDesc != null
                 && myDesc.length() > PrometheusDataItem.DESCLEN) {
             pCategory.addError(PrometheusDataItem.ERROR_LENGTH, PrometheusDataResource.DATAITEM_FIELD_DESC);
+        }
+    }
+
+    /**
+     * Obtain unique name for new category.
+     * @param pParent the parent category
+     * @return The new name
+     */
+    String getUniqueName(final MoneyWiseCategoryBaseList<T> pList,
+                         final T pParent) {
+        /* Set up base constraints */
+        final String myBase = pParent == null
+                ? ""
+                : pParent.getName() + MoneyWiseCategoryBase.STR_SEP;
+        final String myCore = pParent == null
+                ? NAME_NEWPARENT
+                : NAME_NEWCATEGORY;
+        int iNextId = 1;
+
+        /* Loop until we found a name */
+        String myName = myCore;
+        for (;;) {
+            /* try out the name */
+            if (pList.findItemByName(myBase + myName) == null) {
+                return myName;
+            }
+
+            /* Build next name */
+            myName = myCore.concat(Integer.toString(iNextId++));
         }
     }
 }

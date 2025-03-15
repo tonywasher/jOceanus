@@ -23,6 +23,7 @@ import net.sourceforge.joceanus.metis.data.MetisDataResource;
 import net.sourceforge.joceanus.metis.data.MetisDataState;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.metis.field.MetisFieldVersionedSet;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataValidator.MoneyWiseDataValidatorAutoCorrect;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePayee.MoneyWisePayeeList;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePortfolio.MoneyWisePortfolioList;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurityHolding.MoneyWiseSecurityHoldingMap;
@@ -82,11 +83,6 @@ public class MoneyWiseSecurity
     static {
         FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAINFOSET_NAME, MoneyWiseSecurity::getInfoSet);
     }
-
-    /**
-     * New Account name.
-     */
-    public static final String NAME_NEWACCOUNT = MoneyWiseBasicResource.SECURITY_NEWACCOUNT.getValue();
 
     /**
      * Do we have an InfoSet.
@@ -451,84 +447,18 @@ public class MoneyWiseSecurity
 
     /**
      * Set defaults.
-     * @param pEditSet the edit set
      * @throws OceanusException on error
      */
-    public void setDefaults(final PrometheusEditSet pEditSet) throws OceanusException {
-        /* Set values */
-        setName(getList().getUniqueName(NAME_NEWACCOUNT));
-        setCategory(getDefaultSecurityType());
-        setAssetCurrency(getDataSet().getReportingCurrency());
-        setSymbol(getName());
-        setClosed(Boolean.FALSE);
-        autoCorrect(pEditSet);
+    public void setDefaults() throws OceanusException {
+        getList().getValidator().setDefaults(this);
     }
 
     /**
      * autoCorrect values after change.
-     * @param pEditSet the update set
+     * @throws OceanusException on error
      */
-    public void autoCorrect(final PrometheusEditSet pEditSet) {
-        /* Access category class and parent */
-        final MoneyWiseSecurityClass myClass = getCategoryClass();
-        final MoneyWisePayee myParent = getParent();
-
-        /* Ensure that we have a valid parent */
-        if ((myParent == null)
-                || myParent.getCategoryClass().canParentSecurity(myClass)) {
-            setParent(getDefaultParent(pEditSet));
-        }
-    }
-
-    /**
-     * Obtain security type for new security account.
-     * @return the security type
-     */
-    public MoneyWiseSecurityType getDefaultSecurityType() {
-        /* loop through the security types */
-        final MoneyWiseSecurityTypeList myTypes = getDataSet().getSecurityTypes();
-        final Iterator<MoneyWiseSecurityType> myIterator = myTypes.iterator();
-        while (myIterator.hasNext()) {
-            final MoneyWiseSecurityType myType = myIterator.next();
-
-            /* Ignore deleted types */
-            if (!myType.isDeleted()) {
-                return myType;
-            }
-        }
-
-        /* Return no category */
-        return null;
-    }
-
-    /**
-     * Obtain default parent for new security.
-     * @param pEditSet the edit set
-     * @return the default parent
-     */
-    private MoneyWisePayee getDefaultParent(final PrometheusEditSet pEditSet) {
-        /* Access details */
-        final MoneyWisePayeeList myPayees = pEditSet.getDataList(MoneyWiseBasicDataType.PAYEE, MoneyWisePayeeList.class);
-        final MoneyWiseSecurityClass myClass = getCategoryClass();
-
-        /* loop through the payees */
-        final Iterator<MoneyWisePayee> myIterator = myPayees.iterator();
-        while (myIterator.hasNext()) {
-            final MoneyWisePayee myPayee = myIterator.next();
-
-            /* Ignore deleted and closed payees */
-            if (myPayee.isDeleted() || Boolean.TRUE.equals(myPayee.isClosed())) {
-                continue;
-            }
-
-            /* If the payee can parent */
-            if (myPayee.getCategoryClass().canParentSecurity(myClass)) {
-                return myPayee;
-            }
-        }
-
-        /* Return no payee */
-        return null;
+    public void autoCorrect() throws OceanusException {
+        getList().getValidator().autoCorrect(this);
     }
 
     @Override
@@ -762,6 +692,11 @@ public class MoneyWiseSecurity
             return (MoneyWiseSecurityDataMap) super.getDataMap();
         }
 
+        @Override
+        public MoneyWiseDataValidatorAutoCorrect<MoneyWiseSecurity> getValidator() {
+            return (MoneyWiseDataValidatorAutoCorrect<MoneyWiseSecurity>) super.getValidator();
+        }
+
         /**
          * Obtain the securityInfoList.
          * @return the security info list
@@ -804,6 +739,7 @@ public class MoneyWiseSecurity
             final MoneyWiseSecurityList myList = getEmptyList(PrometheusListStyle.EDIT);
             myList.ensureMap();
             pEditSet.setEditEntryList(MoneyWiseBasicDataType.SECURITY, myList);
+            myList.getValidator().setEditSet(pEditSet);
 
             /* Store InfoType list */
             myList.theInfoTypeList = pEditSet.getDataList(MoneyWiseStaticDataType.ACCOUNTINFOTYPE, MoneyWiseAccountInfoTypeList.class);
@@ -846,7 +782,7 @@ public class MoneyWiseSecurity
         }
 
         @Override
-        protected boolean checkAvailableName(final String pName) {
+        public boolean checkAvailableName(final String pName) {
             /* check availability */
             return findItemByName(pName) == null;
         }

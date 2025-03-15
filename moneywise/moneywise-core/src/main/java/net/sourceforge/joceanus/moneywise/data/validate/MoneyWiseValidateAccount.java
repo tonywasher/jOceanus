@@ -18,12 +18,13 @@ package net.sourceforge.joceanus.moneywise.data.validate;
 
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseAssetBase;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseAssetBase.MoneyWiseAssetBaseList;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicResource;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataSet;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataValidator;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurityHolding;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrency;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataResource;
-import net.sourceforge.joceanus.prometheus.data.PrometheusDataValidator;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
 
 /**
@@ -31,16 +32,33 @@ import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
  * @param <T> the asset type
  */
 public abstract class MoneyWiseValidateAccount<T extends MoneyWiseAssetBase>
-        implements PrometheusDataValidator<T> {
+        implements MoneyWiseDataValidator<T> {
+    /**
+     * Bad category error.
+     */
+    static final String ERROR_BADCATEGORY = MoneyWiseBasicResource.ASSET_ERROR_BADCAT.getValue();
+
+    /**
+     * Bad parent error.
+     */
+    static final String ERROR_BADPARENT = MoneyWiseBasicResource.ASSET_ERROR_BADPARENT.getValue();
+
+    /**
+     * Parent Closed Error Text.
+     */
+    static final String ERROR_PARCLOSED = MoneyWiseBasicResource.ASSET_ERROR_PARENTCLOSED.getValue();
+
+    /**
+     * Reserved name error.
+     */
+    static final String ERROR_RESERVED = MoneyWiseBasicResource.ASSET_ERROR_RESERVED.getValue();
+
     /**
      * Set the editSet.
      */
     private PrometheusEditSet theEditSet;
 
-    /**
-     * Set the editSet.
-     * @param pEditSet the editSet
-     */
+    @Override
     public void setEditSet(final PrometheusEditSet pEditSet) {
         theEditSet = pEditSet;
     }
@@ -112,5 +130,29 @@ public abstract class MoneyWiseValidateAccount<T extends MoneyWiseAssetBase>
     MoneyWiseCurrency getReportingCurrency() {
         final MoneyWiseDataSet myDataSet = (MoneyWiseDataSet) getEditSet().getDataSet();
         return myDataSet.getReportingCurrency();
+    }
+
+    /**
+     * Obtain unique name for new account.
+     * @param pList the list
+     * @param pBase the base name
+     * @return The new name
+     */
+    public String getUniqueName(final MoneyWiseAssetBaseList<T> pList,
+                                final String pBase) {
+        /* Set up base constraints */
+        int iNextId = 1;
+
+        /* Loop until we found a name */
+        String myName = pBase;
+        for (;;) {
+            /* try out the name */
+            if (pList.checkAvailableName(myName)) {
+                return myName;
+            }
+
+            /* Build next name */
+            myName = pBase.concat(Integer.toString(iNextId++));
+        }
     }
 }

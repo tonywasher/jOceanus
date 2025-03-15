@@ -16,6 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.moneywise.data.validate;
 
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicResource;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataValidator.MoneyWiseDataValidatorDefaults;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransTag;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransTag.MoneyWiseTagDataMap;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransTag.MoneyWiseTransTagList;
@@ -23,13 +25,22 @@ import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataInfoLinkSet;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataResource;
-import net.sourceforge.joceanus.prometheus.data.PrometheusDataValidator.PrometheusDataValidatorDefaults;
+import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
 
 /**
  * Validator for transTag.
  */
 public class MoneyWiseValidateTransTag
-        implements PrometheusDataValidatorDefaults<MoneyWiseTransTag> {
+        implements MoneyWiseDataValidatorDefaults<MoneyWiseTransTag> {
+    /**
+     * New Tag name.
+     */
+    private static final String NAME_NEWTAG = MoneyWiseBasicResource.TRANSTAG_NEWTAG.getValue();
+
+    @Override
+    public void setEditSet(final PrometheusEditSet pEditSet) {
+        /* NoOp */
+    }
 
     @Override
     public void validate(final PrometheusDataItem pTag) {
@@ -77,6 +88,29 @@ public class MoneyWiseValidateTransTag
     public void setDefaults(final MoneyWiseTransTag pTag) throws OceanusException {
         /* Set values */
         final MoneyWiseTransTagList myList = pTag.getList();
-        pTag.setName(myList.getUniqueName());
+        pTag.setName(getUniqueName(myList));
+    }
+
+    /**
+     * Obtain unique name for new tag.
+     * @param pList the tagList
+     * @return The new name
+     */
+    private String getUniqueName(final MoneyWiseTransTagList pList) {
+        /* Set up base constraints */
+        final String myBase = NAME_NEWTAG;
+        int iNextId = 1;
+
+        /* Loop until we found a name */
+        String myName = myBase;
+        for (;;) {
+            /* try out the name */
+            if (pList.findItemByName(myName) == null) {
+                return myName;
+            }
+
+            /* Build next name */
+            myName = myBase.concat(Integer.toString(iNextId++));
+        }
     }
 }

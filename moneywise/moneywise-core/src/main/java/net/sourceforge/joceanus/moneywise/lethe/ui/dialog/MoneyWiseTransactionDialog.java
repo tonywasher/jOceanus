@@ -26,6 +26,7 @@ import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicResource;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseCash.MoneyWiseCashList;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataSet;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataValidator.MoneyWiseDataValidatorTrans;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDeposit.MoneyWiseDepositList;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseLoan.MoneyWiseLoanList;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePayee.MoneyWisePayeeList;
@@ -40,7 +41,6 @@ import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransCategory.Mone
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransDefaults;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransInfoSet;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransTag;
-import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransValidator;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransaction;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransaction.MoneyWiseTransactionList;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransCategoryClass;
@@ -743,7 +743,7 @@ public class MoneyWiseTransactionDialog
         /* Record active item */
         final MoneyWiseTransAsset myAccount = pTrans.getAccount();
         final MoneyWiseTransCategory myCategory = pTrans.getCategory();
-        final MoneyWiseTransValidator myValidator = pTrans.getValidator();
+        final MoneyWiseDataValidatorTrans myValidator = pTrans.getList().getValidator();
         final MoneyWiseTransAsset myCurr = pIsAccount
                 ? myAccount
                 : pTrans.getPartner();
@@ -800,7 +800,7 @@ public class MoneyWiseTransactionDialog
         /* Record active item */
         final MoneyWiseTransAsset myAccount = pTrans.getAccount();
         final MoneyWiseTransCategory myCategory = pTrans.getCategory();
-        final MoneyWiseTransValidator myValidator = pTrans.getValidator();
+        final MoneyWiseDataValidatorTrans myValidator = pTrans.getList().getValidator();
         final MoneyWiseTransAsset myCurr = pIsAccount
                 ? myAccount
                 : pTrans.getPartner();
@@ -928,7 +928,7 @@ public class MoneyWiseTransactionDialog
 
         /* Access Categories */
         final MoneyWiseTransCategoryList myCategories = getDataList(MoneyWiseBasicDataType.TRANSCATEGORY, MoneyWiseTransCategoryList.class);
-        final MoneyWiseTransValidator myValidator = pTrans.getValidator();
+        final MoneyWiseDataValidatorTrans myValidator = pTrans.getList().getValidator();
 
         /* Loop through the available category values */
         final Iterator<MoneyWiseTransCategory> myIterator = myCategories.iterator();

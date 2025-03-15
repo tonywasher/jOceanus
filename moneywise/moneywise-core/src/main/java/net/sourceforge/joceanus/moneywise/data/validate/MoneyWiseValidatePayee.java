@@ -17,6 +17,7 @@
 package net.sourceforge.joceanus.moneywise.data.validate;
 
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicResource;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataValidator.MoneyWiseDataValidatorDefaults;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePayee;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePayee.MoneyWisePayeeDataMap;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePayee.MoneyWisePayeeList;
@@ -27,7 +28,6 @@ import net.sourceforge.joceanus.moneywise.data.statics.MoneyWisePayeeType.MoneyW
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
-import net.sourceforge.joceanus.prometheus.data.PrometheusDataValidator.PrometheusDataValidatorDefaults;
 
 import java.util.Iterator;
 
@@ -36,7 +36,12 @@ import java.util.Iterator;
  */
 public class MoneyWiseValidatePayee
         extends MoneyWiseValidateAccount<MoneyWisePayee>
-        implements PrometheusDataValidatorDefaults<MoneyWisePayee> {
+        implements MoneyWiseDataValidatorDefaults<MoneyWisePayee> {
+    /**
+     * New Account name.
+     */
+    private static final String NAME_NEWACCOUNT = MoneyWiseBasicResource.PAYEE_NEWACCOUNT.getValue();
+
     /**
      * The infoSet validator.
      */
@@ -109,7 +114,7 @@ public class MoneyWiseValidatePayee
         /* Set values */
         final MoneyWisePayeeList myList = pPayee.getList();
         pPayee.setCategory(getDefaultPayeeType());
-        pPayee.setName(myList.getUniqueName(MoneyWisePayee.NAME_NEWACCOUNT));
+        pPayee.setName(getUniqueName(myList, NAME_NEWACCOUNT));
         pPayee.setClosed(Boolean.FALSE);
     }
 

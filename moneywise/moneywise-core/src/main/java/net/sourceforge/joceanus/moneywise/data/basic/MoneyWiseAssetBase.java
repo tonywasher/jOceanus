@@ -71,29 +71,9 @@ public abstract class MoneyWiseAssetBase
     }
 
     /**
-     * Bad category error.
-     */
-    public static final String ERROR_BADCATEGORY = MoneyWiseBasicResource.ASSET_ERROR_BADCAT.getValue();
-
-    /**
-     * Bad parent error.
-     */
-    public static final String ERROR_BADPARENT = MoneyWiseBasicResource.ASSET_ERROR_BADPARENT.getValue();
-
-    /**
      * Bad InfoSet Error Text.
      */
     protected static final String ERROR_BADINFOSET = PrometheusDataResource.DATAINFOSET_ERROR_BADSET.getValue();
-
-    /**
-     * Parent Closed Error Text.
-     */
-    public static final String ERROR_PARCLOSED = MoneyWiseBasicResource.ASSET_ERROR_PARENTCLOSED.getValue();
-
-    /**
-     * Reserved name error.
-     */
-    public static final String ERROR_RESERVED = MoneyWiseBasicResource.ASSET_ERROR_RESERVED.getValue();
 
     /**
      * Close Date.
@@ -881,7 +861,7 @@ public abstract class MoneyWiseAssetBase
          * @param pName Name of item
          * @return true/false
          */
-        protected abstract boolean checkAvailableName(String pName);
+        public abstract boolean checkAvailableName(String pName);
 
         /**
          * Check whether a name is validly used.
@@ -889,28 +869,6 @@ public abstract class MoneyWiseAssetBase
          * @return true/false
          */
         public abstract boolean validNameCount(String pName);
-
-        /**
-         * Obtain unique name for new account.
-         * @param pBase the base name
-         * @return The new name
-         */
-        public String getUniqueName(final String pBase) {
-            /* Set up base constraints */
-            int iNextId = 1;
-
-            /* Loop until we found a name */
-            String myName = pBase;
-            for (;;) {
-                /* try out the name */
-                if (checkAvailableName(myName)) {
-                    return myName;
-                }
-
-                /* Build next name */
-                myName = pBase.concat(Integer.toString(iNextId++));
-            }
-        }
 
         @Override
         public void postProcessOnLoad() throws OceanusException {

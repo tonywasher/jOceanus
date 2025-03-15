@@ -19,6 +19,7 @@ package net.sourceforge.joceanus.moneywise.data.validate;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseAssetBase;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicResource;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataValidator.MoneyWiseDataValidatorAutoCorrect;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePayee;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePayee.MoneyWisePayeeList;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePortfolio;
@@ -34,7 +35,6 @@ import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataResource;
-import net.sourceforge.joceanus.prometheus.data.PrometheusDataValidator.PrometheusDataValidatorAutoCorrect;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
 
 import java.util.Iterator;
@@ -44,7 +44,17 @@ import java.util.Iterator;
  */
 public class MoneyWiseValidatePortfolio
         extends MoneyWiseValidateAccount<MoneyWisePortfolio>
-        implements PrometheusDataValidatorAutoCorrect<MoneyWisePortfolio> {
+        implements MoneyWiseDataValidatorAutoCorrect<MoneyWisePortfolio> {
+    /**
+     * New Account name.
+     */
+    private static final String NAME_NEWACCOUNT = MoneyWiseBasicResource.PORTFOLIO_NEWACCOUNT.getValue();
+
+    /**
+     * Portfolio Cash account.
+     */
+    static final String NAME_CASHACCOUNT = MoneyWiseBasicResource.PORTFOLIO_CASHACCOUNT.getValue();
+
     /**
      * The infoSet validator.
      */
@@ -103,12 +113,12 @@ public class MoneyWiseValidatePortfolio
             /* Parent must be suitable */
             final MoneyWisePayeeClass myParClass = myParent.getCategoryClass();
             if (!myParClass.canParentPortfolio()) {
-                pPortfolio.addError(MoneyWiseAssetBase.ERROR_BADPARENT, MoneyWiseBasicResource.ASSET_PARENT);
+                pPortfolio.addError(ERROR_BADPARENT, MoneyWiseBasicResource.ASSET_PARENT);
             }
 
             /* If we are open then parent must be open */
             if (!myPortfolio.isClosed() && Boolean.TRUE.equals(myParent.isClosed())) {
-                pPortfolio.addError(MoneyWiseAssetBase.ERROR_PARCLOSED, MoneyWiseBasicResource.ASSET_CLOSED);
+                pPortfolio.addError(ERROR_PARCLOSED, MoneyWiseBasicResource.ASSET_CLOSED);
             }
         }
 
@@ -147,7 +157,7 @@ public class MoneyWiseValidatePortfolio
     public void setDefaults(final MoneyWisePortfolio pPortfolio) throws OceanusException {
         /* Set values */
         final MoneyWisePortfolioList myList = pPortfolio.getList();
-        pPortfolio.setName(myList.getUniqueName(MoneyWisePortfolio.NAME_NEWACCOUNT));
+        pPortfolio.setName(getUniqueName(myList, NAME_NEWACCOUNT));
         pPortfolio.setCategory(getDefaultPortfolioType());
         pPortfolio.setParent(getDefaultParent());
         pPortfolio.setAssetCurrency(getReportingCurrency());

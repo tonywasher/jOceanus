@@ -21,6 +21,7 @@ import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseAssetDirection;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseAssetType;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicResource;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataValidator.MoneyWiseDataValidatorTrans;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDeposit;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseLoan;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePayee;
@@ -38,12 +39,13 @@ import net.sourceforge.joceanus.moneywise.data.statics.MoneyWisePortfolioClass;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseSecurityClass;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransCategoryClass;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransInfoClass;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.date.OceanusDate;
 import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusUnits;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
-import net.sourceforge.joceanus.prometheus.data.PrometheusDataValidator;
+import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
 
 import java.util.Currency;
 
@@ -51,7 +53,7 @@ import java.util.Currency;
  * Validator for transaction.
  */
 public class MoneyWiseValidateTransaction
-        implements PrometheusDataValidator<MoneyWiseTransaction> {
+        implements MoneyWiseDataValidatorTrans<MoneyWiseTransaction> {
     /**
      * Are we using new validation?
      */
@@ -63,12 +65,39 @@ public class MoneyWiseValidateTransaction
     private final MoneyWiseValidateTransInfoSet theInfoSet;
 
     /**
+     * The defaults engine.
+     */
+    private final MoneyWiseValidateTransDefaults theDefaults;
+
+    /**
+     * Set the editSet.
+     */
+    private PrometheusEditSet theEditSet;
+
+    /**
      * Constructor.
      * @param pNewValidation true/false
      */
     MoneyWiseValidateTransaction(final boolean pNewValidation) {
         newValidation = pNewValidation;
         theInfoSet = new MoneyWiseValidateTransInfoSet(pNewValidation);
+        theDefaults = new MoneyWiseValidateTransDefaults(this);
+    }
+
+    @Override
+    public void setEditSet(final PrometheusEditSet pEditSet) {
+        theEditSet = pEditSet;
+    }
+
+    /**
+     * Obtain the editSet
+     * @return the editSet
+     */
+    PrometheusEditSet getEditSet() {
+        if (theEditSet == null) {
+            throw new IllegalStateException("editSet not set up");
+        }
+        return theEditSet;
     }
 
     @Override
@@ -209,11 +238,7 @@ public class MoneyWiseValidateTransaction
                 && myClass.needsNullAmount();
     }
 
-    /**
-     * Is the account valid as the base account in a transaction?
-     * @param pAccount the account
-     * @return true/false
-     */
+    @Override
     public boolean isValidAccount(final MoneyWiseTransAsset pAccount) {
         /* Validate securityHolding */
         if (pAccount instanceof MoneyWiseSecurityHolding
@@ -232,12 +257,7 @@ public class MoneyWiseValidateTransaction
         return myType.isBaseAccount() && !pAccount.isHidden();
     }
 
-    /**
-     * Is the transaction valid for the base account in the transaction?.
-     * @param pAccount the account
-     * @param pCategory The category of the event
-     * @return true/false
-     */
+    @Override
     public boolean isValidCategory(final MoneyWiseTransAsset pAccount,
                                    final MoneyWiseTransCategory pCategory) {
         /* Access details */
@@ -336,13 +356,7 @@ public class MoneyWiseValidateTransaction
         }
     }
 
-    /**
-     * Is the direction valid for the base account and category in the transaction?.
-     * @param pAccount the account
-     * @param pCategory The category of the event
-     * @param pDirection the direction
-     * @return true/false
-     */
+    @Override
     public boolean isValidDirection(final MoneyWiseTransAsset pAccount,
                                     final MoneyWiseTransCategory pCategory,
                                     final MoneyWiseAssetDirection pDirection) {
@@ -412,13 +426,7 @@ public class MoneyWiseValidateTransaction
         }
     }
 
-    /**
-     * Is the partner valid for the base account and category in the transaction?.
-     * @param pAccount the account
-     * @param pCategory The category of the event
-     * @param pPartner the partner
-     * @return true/false
-     */
+    @Override
     public boolean isValidPartner(final MoneyWiseTransAsset pAccount,
                                   final MoneyWiseTransCategory pCategory,
                                   final MoneyWiseTransAsset pPartner) {
@@ -793,5 +801,15 @@ public class MoneyWiseValidateTransaction
 
         /* Not allowed */
         return false;
+    }
+
+    @Override
+    public void autoCorrect(MoneyWiseTransaction pItem) throws OceanusException {
+        theDefaults.autoCorrect(pItem);
+    }
+
+    @Override
+    public void setDefaults(MoneyWiseTransaction pItem) throws OceanusException {
+
     }
 }

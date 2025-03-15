@@ -16,6 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.moneywise.data.validate;
 
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicResource;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataValidator.MoneyWiseDataValidatorDefaults;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseRegion;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseRegion.MoneyWiseRegionDataMap;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseRegion.MoneyWiseRegionList;
@@ -23,13 +25,22 @@ import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataInfoLinkSet;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataResource;
-import net.sourceforge.joceanus.prometheus.data.PrometheusDataValidator.PrometheusDataValidatorDefaults;
+import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
 
 /**
  * Validator for region.
  */
 public class MoneyWiseValidateRegion
-    implements PrometheusDataValidatorDefaults<MoneyWiseRegion> {
+    implements MoneyWiseDataValidatorDefaults<MoneyWiseRegion> {
+    /**
+     * New Region name.
+     */
+    private static final String NAME_NEWREGION = MoneyWiseBasicResource.REGION_NEWREGION.getValue();
+
+    @Override
+    public void setEditSet(final PrometheusEditSet pEditSet) {
+        /* NoOp */
+    }
 
     @Override
     public void validate(final PrometheusDataItem pRegion) {
@@ -77,6 +88,29 @@ public class MoneyWiseValidateRegion
     public void setDefaults(final MoneyWiseRegion pRegion) throws OceanusException {
         /* Set values */
         final MoneyWiseRegionList myList = pRegion.getList();
-        pRegion.setName(myList.getUniqueName());
+        pRegion.setName(getUniqueName(myList));
+    }
+
+    /**
+     * Obtain unique name for new tag.
+     * @param pList the region list
+     * @return The new name
+     */
+    private String getUniqueName(final MoneyWiseRegionList pList) {
+        /* Set up base constraints */
+        final String myBase = NAME_NEWREGION;
+        int iNextId = 1;
+
+        /* Loop until we found a name */
+        String myName = myBase;
+        for (;;) {
+            /* try out the name */
+            if (pList.findItemByName(myName) == null) {
+                return myName;
+            }
+
+            /* Build next name */
+            myName = myBase.concat(Integer.toString(iNextId++));
+        }
     }
 }

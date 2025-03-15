@@ -18,6 +18,7 @@ package net.sourceforge.joceanus.moneywise.data.basic;
 
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseAssetBase.MoneyWiseAssetBaseList;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseCash.MoneyWiseCashList;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataValidator.MoneyWiseDataValidatorTrans;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDeposit.MoneyWiseDepositList;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseLoan.MoneyWiseLoanList;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePayee.MoneyWisePayeeList;
@@ -100,7 +101,7 @@ public class MoneyWiseTransDefaults {
         MoneyWiseTransAsset myPartner = pTrans.getPartner();
         MoneyWiseTransCategory myCategory = pTrans.getCategory();
         final MoneyWiseAssetDirection myDir = pTrans.getDirection();
-        final MoneyWiseTransValidator myValidator = pTrans.getValidator();
+        final MoneyWiseDataValidatorTrans<?> myValidator = pTrans.getList().getValidator();
         final OceanusMoney myAmount = pTrans.getAmount();
         final Currency myCurrency = myAccount.getCurrency();
 
@@ -270,7 +271,7 @@ public class MoneyWiseTransDefaults {
         myTrans.setAccount(myAccount);
 
         /* Check that we are valid after all this */
-        if (!myTrans.getValidator().isValidPartner(myAccount, myCategory, pPayee)) {
+        if (!myTrans.getList().getValidator().isValidPartner(myAccount, myCategory, pPayee)) {
             return null;
         }
 
@@ -507,7 +508,7 @@ public class MoneyWiseTransDefaults {
     private MoneyWiseTransCategory getDefaultCategoryForAccount(final MoneyWiseTransAsset pAccount) {
         /* Access Categories */
         final MoneyWiseTransCategoryList myCategories = theUpdateSet.getDataList(MoneyWiseBasicDataType.TRANSCATEGORY, MoneyWiseTransCategoryList.class);
-        final MoneyWiseTransValidator myValidator = theList.getValidator();
+        final MoneyWiseDataValidatorTrans<?> myValidator = theList.getValidator();
 
         /* Loop through the available category values */
         final Iterator<MoneyWiseTransCategory> myIterator = myCategories.iterator();
@@ -576,7 +577,7 @@ public class MoneyWiseTransDefaults {
     private <X extends MoneyWiseAssetBase> MoneyWiseTransAsset getDefaultAssetForCategory(final MoneyWiseAssetBaseList<X> pList,
                                                                                           final MoneyWiseTransCategory pCategory) {
         /* Loop through the available values */
-        final MoneyWiseTransValidator myValidator = theList.getValidator();
+        final MoneyWiseDataValidatorTrans<?> myValidator = theList.getValidator();
         final Iterator<X> myIterator = pList.iterator();
         while (myIterator.hasNext()) {
             final X myAsset = myIterator.next();
@@ -608,7 +609,7 @@ public class MoneyWiseTransDefaults {
                                                                                       final MoneyWiseTransAsset pAccount,
                                                                                       final MoneyWiseTransCategory pCategory) {
         /* Loop through the available values */
-        final MoneyWiseTransValidator myValidator = theList.getValidator();
+        final MoneyWiseDataValidatorTrans<?> myValidator = theList.getValidator();
         final Iterator<X> myIterator = pList.iterator();
         while (myIterator.hasNext()) {
             final X myAsset = myIterator.next();
@@ -640,7 +641,7 @@ public class MoneyWiseTransDefaults {
         final MoneyWiseDataSet myData = (MoneyWiseDataSet) pUpdateSet.getDataSet();
         final MoneyWisePortfolioList myPortfolios = pUpdateSet.getDataList(MoneyWiseBasicDataType.PORTFOLIO, MoneyWisePortfolioList.class);
         final MoneyWiseSecurityHoldingMap myMap = myData.getPortfolios().getSecurityHoldingsMap();
-        final MoneyWiseTransValidator myValidator = theList.getValidator();
+        final MoneyWiseDataValidatorTrans<?> myValidator = theList.getValidator();
 
         /* Loop through the Portfolios */
         final Iterator<MoneyWisePortfolio> myPortIterator = myPortfolios.iterator();
@@ -685,7 +686,7 @@ public class MoneyWiseTransDefaults {
         final MoneyWiseDataSet myData = (MoneyWiseDataSet) pEditSet.getDataSet();
         final MoneyWisePortfolioList myPortfolios = pEditSet.getDataList(MoneyWiseBasicDataType.PORTFOLIO, MoneyWisePortfolioList.class);
         final MoneyWiseSecurityHoldingMap myMap = myData.getPortfolios().getSecurityHoldingsMap();
-        final MoneyWiseTransValidator myValidator = theList.getValidator();
+        final MoneyWiseDataValidatorTrans<?> myValidator = theList.getValidator();
 
         /* Loop through the Portfolios */
         final Iterator<MoneyWisePortfolio> myPortIterator = myPortfolios.iterator();

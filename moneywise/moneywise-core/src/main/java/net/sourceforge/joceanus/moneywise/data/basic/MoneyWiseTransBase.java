@@ -20,6 +20,7 @@ import net.sourceforge.joceanus.metis.data.MetisDataDifference;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseCash.MoneyWiseCashList;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataValidator.MoneyWiseDataValidatorTrans;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDeposit.MoneyWiseDepositList;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseLoan.MoneyWiseLoanList;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePayee.MoneyWisePayeeList;
@@ -529,14 +530,6 @@ public abstract class MoneyWiseTransBase
         return (MoneyWiseDataSet) super.getDataSet();
     }
 
-    /**
-     * Obtain the validator.
-     * @return the validator
-     */
-    public MoneyWiseTransValidator getValidator() {
-        return getList().getValidator();
-    }
-
     @Override
     public MoneyWiseTransBaseList<?> getList() {
         return (MoneyWiseTransBaseList<?>) super.getList();
@@ -672,7 +665,7 @@ public abstract class MoneyWiseTransBase
      * @return true/false
      */
     public boolean canSwitchDirection() {
-        return getValidator().isValidDirection(getAccount(), getCategory(), getDirection().reverse());
+        return getList().getValidator().isValidDirection(getAccount(), getCategory(), getDirection().reverse());
     }
 
     /**
@@ -912,11 +905,6 @@ public abstract class MoneyWiseTransBase
         }
 
         /**
-         * The validator.
-         */
-        private final MoneyWiseTransValidator theValidator;
-
-        /**
          * Construct an empty CORE Event list.
          * @param pData the DataSet for the list
          * @param pClass the class of the item
@@ -927,7 +915,6 @@ public abstract class MoneyWiseTransBase
                                          final MoneyWiseBasicDataType pItemType) {
             /* Call super-constructor */
             super(pClass, pData, pItemType, PrometheusListStyle.CORE);
-            theValidator = new MoneyWiseTransValidator(pData);
         }
 
         /**
@@ -937,7 +924,6 @@ public abstract class MoneyWiseTransBase
         protected MoneyWiseTransBaseList(final MoneyWiseTransBaseList<T> pSource) {
             /* Call super-constructor */
             super(pSource);
-            theValidator = pSource.getValidator();
         }
 
         @Override
@@ -945,12 +931,9 @@ public abstract class MoneyWiseTransBase
             return (MoneyWiseDataSet) super.getDataSet();
         }
 
-        /**
-         * Obtain the validator.
-         * @return the validator
-         */
-        public MoneyWiseTransValidator getValidator() {
-            return theValidator;
+        @Override
+        public MoneyWiseDataValidatorTrans<T> getValidator() {
+            return (MoneyWiseDataValidatorTrans<T>) super.getValidator();
         }
     }
 }

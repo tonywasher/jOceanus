@@ -65,18 +65,18 @@ public class MoneyWiseValidateCashCategory
                 if (myParent == null) {
                     pCategory.addError(PrometheusDataItem.ERROR_MISSING, PrometheusDataResource.DATAGROUP_PARENT);
                 } else if (!myParent.isCategoryClass(MoneyWiseCashCategoryClass.PARENT)) {
-                    pCategory.addError(MoneyWiseCategoryBase.ERROR_BADPARENT, PrometheusDataResource.DATAGROUP_PARENT);
+                    pCategory.addError(ERROR_BADPARENT, PrometheusDataResource.DATAGROUP_PARENT);
                 } else {
                     final String myName = myCategory.getName();
 
                     /* Check validity of parent */
                     final MoneyWiseCashCategoryClass myParentClass = myParent.getCategoryTypeClass();
                     if (!MoneyWiseCashCategoryClass.PARENT.equals(myParentClass)) {
-                        pCategory.addError(MoneyWiseCategoryBase.ERROR_BADPARENT, PrometheusDataResource.DATAGROUP_PARENT);
+                        pCategory.addError(ERROR_BADPARENT, PrometheusDataResource.DATAGROUP_PARENT);
                     }
                     /* Check that name reflects parent */
                     if ((myName != null) && !myName.startsWith(myParent.getName() + MoneyWiseCategoryBase.STR_SEP)) {
-                        pCategory.addError(MoneyWiseCategoryBase.ERROR_MATCHPARENT, PrometheusDataResource.DATAGROUP_PARENT);
+                        pCategory.addError(ERROR_MATCHPARENT, PrometheusDataResource.DATAGROUP_PARENT);
                     }
                 }
             }
@@ -99,6 +99,6 @@ public class MoneyWiseValidateCashCategory
                 ? MoneyWiseCashCategoryClass.PARENT
                 : MoneyWiseCashCategoryClass.CASH));
         pCategory.setParentCategory(pParent);
-        pCategory.setSubCategoryName(myList.getUniqueName(pParent));
+        pCategory.setSubCategoryName(getUniqueName(myList, pParent));
     }
 }

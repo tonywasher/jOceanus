@@ -382,7 +382,7 @@ public abstract class PrometheusDataList<T extends PrometheusDataItem>
      * @return the validator
      */
     @SuppressWarnings("unchecked")
-    final PrometheusDataValidator<T> getValidator() {
+    public PrometheusDataValidator<T> getValidator() {
         if (theValidator == null) {
             theValidator = (PrometheusDataValidator<T>) getDataSet().getValidator(theItemType);
         }

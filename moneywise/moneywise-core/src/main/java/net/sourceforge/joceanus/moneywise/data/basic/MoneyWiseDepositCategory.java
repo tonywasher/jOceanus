@@ -182,13 +182,7 @@ public final class MoneyWiseDepositCategory
      * @throws OceanusException on error
      */
     public void setDefaults(final MoneyWiseDepositCategory pParent) throws OceanusException {
-        /* Set values */
-        final MoneyWiseDepositCategoryTypeList myTypes = getDataSet().getDepositCategoryTypes();
-        setCategoryType(myTypes.findItemByClass(pParent == null
-                ? MoneyWiseDepositCategoryClass.PARENT
-                : MoneyWiseDepositCategoryClass.SAVINGS));
-        setParentCategory(pParent);
-        setSubCategoryName(getList().getUniqueName(pParent));
+        getList().getValidator().setDefaults(pParent, this);
     }
 
     @Override
@@ -318,6 +312,7 @@ public final class MoneyWiseDepositCategory
             final MoneyWiseDepositCategoryList myList = getEmptyList(PrometheusListStyle.EDIT);
             myList.ensureMap();
             pEditSet.setEditEntryList(MoneyWiseBasicDataType.DEPOSITCATEGORY, myList);
+            myList.getValidator().setEditSet(pEditSet);
 
             /* Store the editSet */
             myList.theEditSet = pEditSet;

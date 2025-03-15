@@ -249,7 +249,7 @@ public class MoneyWiseCashDialog
         } else if (MoneyWiseBasicResource.CATEGORY_NAME.equals(myField)) {
             /* Update the Category */
             myCash.setCategory(pUpdate.getValue(MoneyWiseCashCategory.class));
-            myCash.autoCorrect(getEditSet());
+            myCash.autoCorrect();
         } else if (MoneyWiseStaticDataType.CURRENCY.equals(myField)) {
             /* Update the Currency */
             myCash.setAssetCurrency(pUpdate.getValue(MoneyWiseCurrency.class));

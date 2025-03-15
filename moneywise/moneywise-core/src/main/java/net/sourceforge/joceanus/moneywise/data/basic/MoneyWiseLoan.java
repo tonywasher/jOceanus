@@ -24,6 +24,7 @@ import net.sourceforge.joceanus.metis.data.MetisDataState;
 import net.sourceforge.joceanus.metis.field.MetisFieldItem;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.metis.field.MetisFieldVersionedSet;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataValidator.MoneyWiseDataValidatorAutoCorrect;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseLoanCategory.MoneyWiseLoanCategoryList;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseLoanInfo.MoneyWiseLoanInfoList;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePayee.MoneyWisePayeeList;
@@ -75,11 +76,6 @@ public class MoneyWiseLoan
     static {
         FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAINFOSET_NAME, MoneyWiseLoan::getInfoSet);
     }
-
-    /**
-     * New Account name.
-     */
-    public static final String NAME_NEWACCOUNT = MoneyWiseBasicResource.LOAN_NEWACCOUNT.getValue();
 
     /**
      * Do we have an InfoSet.
@@ -413,89 +409,18 @@ public class MoneyWiseLoan
 
     /**
      * Set defaults.
-     * @param pEditSet the edit set
      * @throws OceanusException on error
      */
-    public void setDefaults(final PrometheusEditSet pEditSet) throws OceanusException {
-        /* Set values */
-        setName(getList().getUniqueName(NAME_NEWACCOUNT));
-        setCategory(getDefaultCategory());
-        setAssetCurrency(getDataSet().getReportingCurrency());
-        setClosed(Boolean.FALSE);
-        autoCorrect(pEditSet);
+    public void setDefaults() throws OceanusException {
+        getList().getValidator().setDefaults(this);
     }
 
     /**
      * adjust values after change.
-     * @param pEditSet the update set
      * @throws OceanusException on error
      */
-    public void autoCorrect(final PrometheusEditSet pEditSet) throws OceanusException {
-        /* Access category class and parent */
-        final MoneyWiseLoanCategoryClass myClass = getCategoryClass();
-        final MoneyWisePayee myParent = getParent();
-
-        /* Ensure that we have valid parent */
-        if ((myParent == null)
-                || !myParent.getCategoryClass().canParentLoan(myClass)) {
-            setParent(getDefaultParent(pEditSet));
-        }
-    }
-
-    /**
-     * Obtain default category for new loan account.
-     * @return the default category
-     */
-    public MoneyWiseLoanCategory getDefaultCategory() {
-        /* loop through the categories */
-        final MoneyWiseLoanCategoryList myCategories = getDataSet().getLoanCategories();
-        final Iterator<MoneyWiseLoanCategory> myIterator = myCategories.iterator();
-        while (myIterator.hasNext()) {
-            final MoneyWiseLoanCategory myCategory = myIterator.next();
-
-            /* Ignore deleted categories */
-            if (myCategory.isDeleted()) {
-                continue;
-            }
-
-            /* If the category is not a parent */
-            if (!myCategory.isCategoryClass(MoneyWiseLoanCategoryClass.PARENT)) {
-                return myCategory;
-            }
-        }
-
-        /* Return no category */
-        return null;
-    }
-
-    /**
-     * Obtain default parent for new loan.
-     * @param pEditSet the edit set
-     * @return the default parent
-     */
-    private MoneyWisePayee getDefaultParent(final PrometheusEditSet pEditSet) {
-        /* Access details */
-        final MoneyWisePayeeList myPayees = pEditSet.getDataList(MoneyWiseBasicDataType.PAYEE, MoneyWisePayeeList.class);
-        final MoneyWiseLoanCategoryClass myClass = getCategoryClass();
-
-        /* loop through the payees */
-        final Iterator<MoneyWisePayee> myIterator = myPayees.iterator();
-        while (myIterator.hasNext()) {
-            final MoneyWisePayee myPayee = myIterator.next();
-
-            /* Ignore deleted and closed payees */
-            if (myPayee.isDeleted() || Boolean.TRUE.equals(myPayee.isClosed())) {
-                continue;
-            }
-
-            /* If the payee can parent */
-            if (myPayee.getCategoryClass().canParentLoan(myClass)) {
-                return myPayee;
-            }
-        }
-
-        /* Return no payee */
-        return null;
+    public void autoCorrect() throws OceanusException {
+        getList().getValidator().autoCorrect(this);
     }
 
     @Override
@@ -712,6 +637,11 @@ public class MoneyWiseLoan
             return (MoneyWiseLoanDataMap) super.getDataMap();
         }
 
+        @Override
+        public MoneyWiseDataValidatorAutoCorrect<MoneyWiseLoan> getValidator() {
+            return (MoneyWiseDataValidatorAutoCorrect<MoneyWiseLoan>) super.getValidator();
+        }
+
         /**
          * Obtain the depositInfoList.
          * @return the deposit info list
@@ -755,6 +685,7 @@ public class MoneyWiseLoan
             final MoneyWisePayeeList myPayees = pEditSet.getDataList(MoneyWiseBasicDataType.PAYEE, MoneyWisePayeeList.class);
             myList.ensureMap(myPayees);
             pEditSet.setEditEntryList(MoneyWiseBasicDataType.LOAN, myList);
+            myList.getValidator().setEditSet(pEditSet);
 
             /* Store InfoType list */
             myList.theInfoTypeList = pEditSet.getDataList(MoneyWiseStaticDataType.ACCOUNTINFOTYPE, MoneyWiseAccountInfoTypeList.class);
@@ -797,7 +728,7 @@ public class MoneyWiseLoan
         }
 
         @Override
-        protected boolean checkAvailableName(final String pName) {
+        public boolean checkAvailableName(final String pName) {
             /* check availability in map */
             return getDataMap().availableName(pName);
         }

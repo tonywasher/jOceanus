@@ -26,6 +26,7 @@ import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.metis.field.MetisFieldVersionedSet;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseCashCategory.MoneyWiseCashCategoryList;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseCashInfo.MoneyWiseCashInfoList;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataValidator.MoneyWiseDataValidatorAutoCorrect;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePayee.MoneyWisePayeeList;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseAccountInfoClass;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseAccountInfoType.MoneyWiseAccountInfoTypeList;
@@ -75,11 +76,6 @@ public class MoneyWiseCash
     static {
         FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAINFOSET_NAME, MoneyWiseCash::getInfoSet);
     }
-
-    /**
-     * New Account name.
-     */
-    public static final String NAME_NEWACCOUNT = MoneyWiseBasicResource.CASH_NEWACCOUNT.getValue();
 
     /**
      * Do we have an InfoSet.
@@ -402,52 +398,18 @@ public class MoneyWiseCash
 
     /**
      * Set defaults.
-     * @param pEditSet the edit set
      * @throws OceanusException on error
      */
-    public void setDefaults(final PrometheusEditSet pEditSet) throws OceanusException {
-        /* Set values */
-        setName(getList().getUniqueName(NAME_NEWACCOUNT));
-        setCategory(getDefaultCategory());
-        setAssetCurrency(getDataSet().getReportingCurrency());
-        setClosed(Boolean.FALSE);
-        autoCorrect(pEditSet);
+    public void setDefaults() throws OceanusException {
+        getList().getValidator().setDefaults(this);
     }
 
     /**
      * autoCorrect values after change.
-     * @param pEditSet the edit set
      * @throws OceanusException on error
      */
-    public void autoCorrect(final PrometheusEditSet pEditSet) throws OceanusException {
-        /* autoCorrect the infoSet */
-        theInfoSet.autoCorrect(pEditSet);
-    }
-
-    /**
-     * Obtain default category for new cash account.
-     * @return the default category
-     */
-    private MoneyWiseCashCategory getDefaultCategory() {
-        /* loop through the categories */
-        final MoneyWiseCashCategoryList myCategories = getDataSet().getCashCategories();
-        final Iterator<MoneyWiseCashCategory> myIterator = myCategories.iterator();
-        while (myIterator.hasNext()) {
-            final MoneyWiseCashCategory myCategory = myIterator.next();
-
-            /* Ignore deleted categories */
-            if (myCategory.isDeleted()) {
-                continue;
-            }
-
-            /* If the category is not a parent */
-            if (!myCategory.isCategoryClass(MoneyWiseCashCategoryClass.PARENT)) {
-                return myCategory;
-            }
-        }
-
-        /* Return no category */
-        return null;
+    public void autoCorrect() throws OceanusException {
+        getList().getValidator().autoCorrect(this);
     }
 
     @Override
@@ -650,6 +612,11 @@ public class MoneyWiseCash
             return (MoneyWiseCashDataMap) super.getDataMap();
         }
 
+        @Override
+        public MoneyWiseDataValidatorAutoCorrect<MoneyWiseCash> getValidator() {
+            return (MoneyWiseDataValidatorAutoCorrect<MoneyWiseCash>) super.getValidator();
+        }
+
         /**
          * Obtain the depositInfoList.
          * @return the deposit info list
@@ -693,6 +660,7 @@ public class MoneyWiseCash
             final MoneyWisePayeeList myPayees = pEditSet.getDataList(MoneyWiseBasicDataType.PAYEE, MoneyWisePayeeList.class);
             myList.ensureMap(myPayees);
             pEditSet.setEditEntryList(MoneyWiseBasicDataType.CASH, myList);
+            myList.getValidator().setEditSet(pEditSet);
 
             /* Store InfoType list */
             myList.theInfoTypeList = pEditSet.getDataList(MoneyWiseStaticDataType.ACCOUNTINFOTYPE, MoneyWiseAccountInfoTypeList.class);
@@ -735,7 +703,7 @@ public class MoneyWiseCash
         }
 
         @Override
-        protected boolean checkAvailableName(final String pName) {
+        public boolean checkAvailableName(final String pName) {
             /* check availability in map */
             return getDataMap().availableName(pName);
         }

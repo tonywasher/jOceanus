@@ -290,7 +290,7 @@ public class MoneyWiseDepositDialog
         } else if (MoneyWiseBasicResource.CATEGORY_NAME.equals(myField)) {
             /* Update the Category */
             myDeposit.setCategory(pUpdate.getValue(MoneyWiseDepositCategory.class));
-            myDeposit.autoCorrect(getEditSet());
+            myDeposit.autoCorrect();
         } else if (MoneyWiseBasicResource.ASSET_PARENT.equals(myField)) {
             /* Update the Parent */
             myDeposit.setParent(pUpdate.getValue(MoneyWisePayee.class));

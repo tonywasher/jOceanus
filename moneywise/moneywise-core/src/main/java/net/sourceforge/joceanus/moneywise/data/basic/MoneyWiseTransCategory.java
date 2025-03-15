@@ -67,11 +67,6 @@ public final class MoneyWiseTransCategory
     }
 
     /**
-     * Different Parent Error.
-     */
-    public static final String ERROR_DIFFPARENT = MoneyWiseBasicResource.TRANSCATEGORY_ERROR_DIFFPARENT.getValue();
-
-    /**
      * Copy Constructor.
      * @param pList the list
      * @param pCategory The Category to copy
@@ -205,22 +200,7 @@ public final class MoneyWiseTransCategory
      * @throws OceanusException on error
      */
     public void setDefaults(final MoneyWiseTransCategory pParent) throws OceanusException {
-        /* Set values */
-        final MoneyWiseTransCategoryTypeList myTypes = getDataSet().getTransCategoryTypes();
-        final MoneyWiseTransCategoryClass myParentClass = pParent == null ? null : pParent.getCategoryTypeClass();
-        final MoneyWiseTransCategoryClass myNewClass;
-        if (myParentClass == null || myParentClass.isTotals()) {
-            myNewClass = MoneyWiseTransCategoryClass.EXPENSETOTALS;
-        } else if (myParentClass.isIncome()) {
-            myNewClass = MoneyWiseTransCategoryClass.TAXEDINCOME;
-        } else if (myParentClass.isTransfer()) {
-            myNewClass = MoneyWiseTransCategoryClass.STOCKSPLIT;
-        } else {
-            myNewClass = MoneyWiseTransCategoryClass.EXPENSE;
-        }
-        setCategoryType(myTypes.findItemByClass(myNewClass));
-        setParentCategory(pParent);
-        setSubCategoryName(getList().getUniqueName(pParent));
+        getList().getValidator().setDefaults(pParent, this);
     }
 
     @Override
@@ -365,6 +345,7 @@ public final class MoneyWiseTransCategory
             final MoneyWiseTransCategoryList myList = getEmptyList(PrometheusListStyle.EDIT);
             myList.ensureMap();
             pEditSet.setEditEntryList(MoneyWiseBasicDataType.TRANSCATEGORY, myList);
+            myList.getValidator().setEditSet(pEditSet);
 
             /* Store the editSet */
             myList.theEditSet = pEditSet;

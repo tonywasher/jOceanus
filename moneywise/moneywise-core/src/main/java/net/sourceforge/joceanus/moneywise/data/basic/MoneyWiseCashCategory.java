@@ -182,13 +182,7 @@ public final class MoneyWiseCashCategory
      * @throws OceanusException on error
      */
     public void setDefaults(final MoneyWiseCashCategory pParent) throws OceanusException {
-        /* Set values */
-        final MoneyWiseCashCategoryTypeList myTypes = getDataSet().getCashCategoryTypes();
-        setCategoryType(myTypes.findItemByClass(pParent == null
-                ? MoneyWiseCashCategoryClass.PARENT
-                : MoneyWiseCashCategoryClass.CASH));
-        setParentCategory(pParent);
-        setSubCategoryName(getList().getUniqueName(pParent));
+        getList().getValidator().setDefaults(pParent, this);
     }
 
     @Override
@@ -318,6 +312,7 @@ public final class MoneyWiseCashCategory
             final MoneyWiseCashCategoryList myList = getEmptyList(PrometheusListStyle.EDIT);
             myList.ensureMap();
             pEditSet.setEditEntryList(MoneyWiseBasicDataType.CASHCATEGORY, myList);
+            myList.getValidator().setEditSet(pEditSet);
 
             /* Store the editSet */
             myList.theEditSet = pEditSet;
