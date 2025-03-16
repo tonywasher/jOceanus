@@ -31,7 +31,7 @@ public class MoneyWiseValidateCurrency
 
     @Override
     public void validate(final PrometheusDataItem pCurrency) {
-        MoneyWiseCurrency myCurrency = (MoneyWiseCurrency) pCurrency;
+        final MoneyWiseCurrency myCurrency = (MoneyWiseCurrency) pCurrency;
         final MoneyWiseCurrencyList myList = myCurrency.getList();
         final MoneyWiseCurrencyDataMap myMap = myList.getDataMap();
 

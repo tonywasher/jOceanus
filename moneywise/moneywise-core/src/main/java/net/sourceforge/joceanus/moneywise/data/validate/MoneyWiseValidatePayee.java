@@ -17,7 +17,6 @@
 package net.sourceforge.joceanus.moneywise.data.validate;
 
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicResource;
-import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataValidator.MoneyWiseDataValidatorDefaults;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePayee;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePayee.MoneyWisePayeeDataMap;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePayee.MoneyWisePayeeList;
@@ -35,8 +34,7 @@ import java.util.Iterator;
  * Validator for Payee.
  */
 public class MoneyWiseValidatePayee
-        extends MoneyWiseValidateAccount<MoneyWisePayee>
-        implements MoneyWiseDataValidatorDefaults<MoneyWisePayee> {
+        extends MoneyWiseValidateAccount<MoneyWisePayee> {
     /**
      * New Account name.
      */
@@ -116,6 +114,11 @@ public class MoneyWiseValidatePayee
         pPayee.setCategory(getDefaultPayeeType());
         pPayee.setName(getUniqueName(myList, NAME_NEWACCOUNT));
         pPayee.setClosed(Boolean.FALSE);
+    }
+
+    @Override
+    public void autoCorrect(final MoneyWisePayee pItem) throws OceanusException {
+        theInfoSet.autoCorrect(pItem.getInfoSet());
     }
 
     /**

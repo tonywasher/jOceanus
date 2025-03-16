@@ -17,6 +17,7 @@
 package net.sourceforge.joceanus.moneywise.data.basic;
 
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataValidator;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
@@ -64,17 +65,33 @@ public interface MoneyWiseDataValidator<T extends PrometheusDataItem>
     }
 
     /**
-     * Validator with autoCorrect and Defaults.
+     * Validator with autoCorrect.
      * @param <T> the item type
      */
     interface MoneyWiseDataValidatorAutoCorrect<T extends PrometheusDataItem>
-            extends MoneyWiseDataValidatorDefaults<T> {
+            extends MoneyWiseDataValidator<T> {
         /**
          * autoCorrect values after change.
          * @param pItem the item
          * @throws OceanusException on error
          */
         void autoCorrect(T pItem) throws OceanusException;
+    }
+
+    /**
+     * Validator for accounts.
+     * @param <T> the item type
+     */
+    interface MoneyWiseDataValidatorAccount<T extends MoneyWiseAssetBase>
+            extends MoneyWiseDataValidatorDefaults<T>, MoneyWiseDataValidatorAutoCorrect<T> {
+    }
+
+    /**
+     * Validator for accounts.
+     * @param <T> the item type
+     */
+    interface MoneyWiseDataValidatorCategory<T extends MoneyWiseCategoryBase>
+            extends MoneyWiseDataValidatorParentDefaults<T> {
     }
 
     /**
@@ -124,5 +141,24 @@ public interface MoneyWiseDataValidator<T extends PrometheusDataItem>
         boolean isValidPartner(MoneyWiseTransAsset pAccount,
                                MoneyWiseTransCategory pCategory,
                                MoneyWiseTransAsset pPartner);
+
+        /**
+         * Build default transaction.
+         * @param pKey the key to base the new transaction around (or null)
+         * @return the new transaction (or null if no possible transaction)
+         */
+        MoneyWiseTransaction buildTransaction(Object pKey);
+
+        /**
+         * Set range.
+         * @param pRange the date range
+         */
+        void setRange(OceanusDateRange pRange);
+
+        /**
+         * Get range.
+         * @return the date range
+         */
+        OceanusDateRange getRange();
     }
 }

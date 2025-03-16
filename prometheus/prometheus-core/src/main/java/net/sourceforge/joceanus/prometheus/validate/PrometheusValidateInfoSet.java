@@ -201,16 +201,16 @@ public abstract class PrometheusValidateInfoSet<T extends PrometheusDataInfoItem
     }
 
     /**
-     * Set default value for a class
+     * Set default value for a class.
      * @param pClass the class to autoCorrect
      * @throws OceanusException on error
      */
-    protected void setDefault(PrometheusDataInfoClass pClass) throws OceanusException {
+    protected void setDefault(final PrometheusDataInfoClass pClass) throws OceanusException {
         throw new IllegalArgumentException();
     }
 
     /**
-     * AutoCorrect an existing value (if necessary)
+     * AutoCorrect an existing value (if necessary).
      * @param pClass the class to autoCorrect
      * @throws OceanusException on error
      */

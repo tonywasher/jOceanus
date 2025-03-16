@@ -24,7 +24,6 @@ import net.sourceforge.joceanus.metis.data.MetisDataState;
 import net.sourceforge.joceanus.metis.field.MetisFieldItem;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.metis.field.MetisFieldVersionedSet;
-import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataValidator.MoneyWiseDataValidatorAutoCorrect;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePayee.MoneyWisePayeeList;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePortfolioInfo.MoneyWisePortfolioInfoList;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurityHolding.MoneyWiseSecurityHoldingMap;
@@ -754,11 +753,6 @@ public class MoneyWisePortfolio
         @Override
         public MoneyWisePortfolioDataMap getDataMap() {
             return (MoneyWisePortfolioDataMap) super.getDataMap();
-        }
-
-        @Override
-        public MoneyWiseDataValidatorAutoCorrect<MoneyWisePortfolio> getValidator() {
-            return (MoneyWiseDataValidatorAutoCorrect<MoneyWisePortfolio>) super.getValidator();
         }
 
         /**

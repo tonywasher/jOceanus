@@ -32,7 +32,6 @@ import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurityHolding.Mo
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransAsset;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransCategory;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransCategory.MoneyWiseTransCategoryList;
-import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransDefaults;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransInfoSet;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransaction;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransaction.MoneyWiseTransactionList;
@@ -56,7 +55,7 @@ public class MoneyWiseValidateTransDefaults {
     /**
      * Logger.
      */
-    private static final OceanusLogger LOGGER = OceanusLogManager.getLogger(MoneyWiseTransDefaults.class);
+    private static final OceanusLogger LOGGER = OceanusLogManager.getLogger(MoneyWiseValidateTransDefaults.class);
 
     /**
      * The transaction validator.

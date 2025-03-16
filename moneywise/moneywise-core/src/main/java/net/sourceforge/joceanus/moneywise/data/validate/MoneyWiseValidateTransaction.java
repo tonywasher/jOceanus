@@ -90,7 +90,7 @@ public class MoneyWiseValidateTransaction
     }
 
     /**
-     * Obtain the editSet
+     * Obtain the editSet.
      * @return the editSet
      */
     PrometheusEditSet getEditSet() {
@@ -98,6 +98,14 @@ public class MoneyWiseValidateTransaction
             throw new IllegalStateException("editSet not set up");
         }
         return theEditSet;
+    }
+
+    /**
+     * Should we perform new validity checks?
+     * @return true/false
+     */
+    public boolean newValidation() {
+        return newValidation;
     }
 
     @Override
@@ -804,12 +812,22 @@ public class MoneyWiseValidateTransaction
     }
 
     @Override
-    public void autoCorrect(MoneyWiseTransaction pItem) throws OceanusException {
+    public void autoCorrect(final MoneyWiseTransaction pItem) throws OceanusException {
         theDefaults.autoCorrect(pItem);
     }
 
     @Override
-    public void setDefaults(MoneyWiseTransaction pItem) throws OceanusException {
+    public MoneyWiseTransaction buildTransaction(final Object pKey) {
+        return theDefaults.buildTransaction(pKey);
+    }
 
+    @Override
+    public void setRange(final OceanusDateRange pRange) {
+        theDefaults.setRange(pRange);
+    }
+
+    @Override
+    public OceanusDateRange getRange() {
+        return theDefaults.getRange();
     }
 }

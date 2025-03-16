@@ -20,7 +20,7 @@ import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseAssetBase;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseAssetBase.MoneyWiseAssetBaseList;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicResource;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataSet;
-import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataValidator;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataValidator.MoneyWiseDataValidatorAccount;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurityHolding;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrency;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
@@ -32,7 +32,7 @@ import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
  * @param <T> the asset type
  */
 public abstract class MoneyWiseValidateAccount<T extends MoneyWiseAssetBase>
-        implements MoneyWiseDataValidator<T> {
+        implements MoneyWiseDataValidatorAccount<T> {
     /**
      * Bad category error.
      */
@@ -64,7 +64,7 @@ public abstract class MoneyWiseValidateAccount<T extends MoneyWiseAssetBase>
     }
 
     /**
-     * Obtain the editSet
+     * Obtain the editSet.
      * @return the editSet
      */
     PrometheusEditSet getEditSet() {
@@ -124,7 +124,7 @@ public abstract class MoneyWiseValidateAccount<T extends MoneyWiseAssetBase>
     }
 
     /**
-     * Obtain the reporting currency
+     * Obtain the reporting currency.
      * @return the reporting currency
      */
     MoneyWiseCurrency getReportingCurrency() {

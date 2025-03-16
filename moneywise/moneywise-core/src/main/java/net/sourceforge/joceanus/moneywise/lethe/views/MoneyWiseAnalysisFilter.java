@@ -24,8 +24,8 @@ import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicResource;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseCash;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDeposit;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseLoan;
-import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransDefaults;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransaction;
+import net.sourceforge.joceanus.moneywise.data.validate.MoneyWiseValidateTransaction;
 import net.sourceforge.joceanus.moneywise.lethe.data.analysis.base.MoneyWiseAnalysisAttribute;
 import net.sourceforge.joceanus.moneywise.lethe.data.analysis.base.MoneyWiseAnalysisValues;
 import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisAccountBucket;
@@ -203,7 +203,7 @@ public abstract class MoneyWiseAnalysisFilter<B, T extends Enum<T> & MoneyWiseAn
      * @param pBuilder the transaction builder
      * @return the new transaction (or null)
      */
-    public abstract MoneyWiseTransaction buildNewTransaction(MoneyWiseTransDefaults pBuilder);
+    public abstract MoneyWiseTransaction buildNewTransaction(MoneyWiseValidateTransaction pBuilder);
 
     /**
      * is the counter relevant?
@@ -346,7 +346,7 @@ public abstract class MoneyWiseAnalysisFilter<B, T extends Enum<T> & MoneyWiseAn
         }
 
         @Override
-        public MoneyWiseTransaction buildNewTransaction(final MoneyWiseTransDefaults pBuilder) {
+        public MoneyWiseTransaction buildNewTransaction(final MoneyWiseValidateTransaction pBuilder) {
             return pBuilder.buildTransaction(getBucket().getAccount());
         }
     }
@@ -508,7 +508,7 @@ public abstract class MoneyWiseAnalysisFilter<B, T extends Enum<T> & MoneyWiseAn
         }
 
         @Override
-        public MoneyWiseTransaction buildNewTransaction(final MoneyWiseTransDefaults pBuilder) {
+        public MoneyWiseTransaction buildNewTransaction(final MoneyWiseValidateTransaction pBuilder) {
             return pBuilder.buildTransaction(getBucket().getSecurityHolding());
         }
 
@@ -589,7 +589,7 @@ public abstract class MoneyWiseAnalysisFilter<B, T extends Enum<T> & MoneyWiseAn
         }
 
         @Override
-        public MoneyWiseTransaction buildNewTransaction(final MoneyWiseTransDefaults pBuilder) {
+        public MoneyWiseTransaction buildNewTransaction(final MoneyWiseValidateTransaction pBuilder) {
             return pBuilder.buildTransaction(getBucket().getAccount());
         }
 
@@ -655,7 +655,7 @@ public abstract class MoneyWiseAnalysisFilter<B, T extends Enum<T> & MoneyWiseAn
         }
 
         @Override
-        public MoneyWiseTransaction buildNewTransaction(final MoneyWiseTransDefaults pBuilder) {
+        public MoneyWiseTransaction buildNewTransaction(final MoneyWiseValidateTransaction pBuilder) {
             return pBuilder.buildTransaction(getBucket().getPayee());
         }
     }
@@ -704,7 +704,7 @@ public abstract class MoneyWiseAnalysisFilter<B, T extends Enum<T> & MoneyWiseAn
         }
 
         @Override
-        public MoneyWiseTransaction buildNewTransaction(final MoneyWiseTransDefaults pBuilder) {
+        public MoneyWiseTransaction buildNewTransaction(final MoneyWiseValidateTransaction pBuilder) {
             return pBuilder.buildTransaction(getBucket().getTransactionCategory());
         }
     }
@@ -750,7 +750,7 @@ public abstract class MoneyWiseAnalysisFilter<B, T extends Enum<T> & MoneyWiseAn
         }
 
         @Override
-        public MoneyWiseTransaction buildNewTransaction(final MoneyWiseTransDefaults pBuilder) {
+        public MoneyWiseTransaction buildNewTransaction(final MoneyWiseValidateTransaction pBuilder) {
             return null;
         }
     }
@@ -802,7 +802,7 @@ public abstract class MoneyWiseAnalysisFilter<B, T extends Enum<T> & MoneyWiseAn
         }
 
         @Override
-        public MoneyWiseTransaction buildNewTransaction(final MoneyWiseTransDefaults pBuilder) {
+        public MoneyWiseTransaction buildNewTransaction(final MoneyWiseValidateTransaction pBuilder) {
             return null;
         }
     }
@@ -868,7 +868,7 @@ public abstract class MoneyWiseAnalysisFilter<B, T extends Enum<T> & MoneyWiseAn
         }
 
         @Override
-        public MoneyWiseTransaction buildNewTransaction(final MoneyWiseTransDefaults pBuilder) {
+        public MoneyWiseTransaction buildNewTransaction(final MoneyWiseValidateTransaction pBuilder) {
             return pBuilder.buildTransaction(null);
         }
     }

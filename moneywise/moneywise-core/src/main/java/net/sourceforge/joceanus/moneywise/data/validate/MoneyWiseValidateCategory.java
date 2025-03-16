@@ -20,7 +20,7 @@ import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicResource;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseCategoryBase;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseCategoryBase.MoneyWiseCategoryBaseList;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseCategoryBase.MoneyWiseCategoryDataMap;
-import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataValidator.MoneyWiseDataValidatorParentDefaults;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataValidator.MoneyWiseDataValidatorCategory;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataResource;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
@@ -30,7 +30,7 @@ import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
  * @param <T> the category type
  */
 public abstract class MoneyWiseValidateCategory<T extends MoneyWiseCategoryBase>
-        implements MoneyWiseDataValidatorParentDefaults<T> {
+        implements MoneyWiseDataValidatorCategory<T> {
     /**
      * Invalid Parent Error.
      */
@@ -62,7 +62,7 @@ public abstract class MoneyWiseValidateCategory<T extends MoneyWiseCategoryBase>
     }
 
     /**
-     * Obtain the editSet
+     * Obtain the editSet.
      * @return the editSet
      */
     PrometheusEditSet getEditSet() {
@@ -106,6 +106,7 @@ public abstract class MoneyWiseValidateCategory<T extends MoneyWiseCategoryBase>
 
     /**
      * Obtain unique name for new category.
+     * @param pList the owning list
      * @param pParent the parent category
      * @return The new name
      */

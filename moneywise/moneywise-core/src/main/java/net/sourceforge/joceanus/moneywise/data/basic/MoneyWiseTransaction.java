@@ -1079,6 +1079,7 @@ public class MoneyWiseTransaction
 
             /* Store the editSet */
             myList.theEditSet = pEditSet;
+            myList.getValidator().setEditSet(pEditSet);
 
             /* Loop through the portfolios */
             final Iterator<MoneyWiseTransaction> myIterator = iterator();

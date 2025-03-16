@@ -19,6 +19,7 @@ package net.sourceforge.joceanus.moneywise.data.basic;
 import net.sourceforge.joceanus.metis.data.MetisDataDifference;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataValidator.MoneyWiseDataValidatorAccount;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTax.MoneyWiseTaxCredit;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransaction.MoneyWiseTransactionList;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseAssetCategory;
@@ -835,6 +836,11 @@ public abstract class MoneyWiseAssetBase
         @Override
         public MoneyWiseDataSet getDataSet() {
             return (MoneyWiseDataSet) super.getDataSet();
+        }
+
+        @Override
+        public MoneyWiseDataValidatorAccount<T> getValidator() {
+            return (MoneyWiseDataValidatorAccount<T>) super.getValidator();
         }
 
         /**

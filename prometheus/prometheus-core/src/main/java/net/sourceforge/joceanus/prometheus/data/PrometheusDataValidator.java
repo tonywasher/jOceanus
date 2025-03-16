@@ -36,6 +36,6 @@ public interface PrometheusDataValidator<T extends PrometheusDataItem> {
          * @param pItemType the itemType
          * @return the validator
          */
-        PrometheusDataValidator<?> newValidator(final PrometheusListKey pItemType);
+        PrometheusDataValidator<?> newValidator(PrometheusListKey pItemType);
     }
 }
