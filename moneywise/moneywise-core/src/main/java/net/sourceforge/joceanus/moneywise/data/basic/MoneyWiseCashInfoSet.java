@@ -16,9 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.moneywise.data.basic;
 
-import java.util.Iterator;
-import java.util.Map;
-
 import net.sourceforge.joceanus.metis.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.metis.field.MetisFieldRequired;
@@ -29,13 +26,17 @@ import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransCategory.Mone
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseAccountInfoClass;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseAccountInfoType.MoneyWiseAccountInfoTypeList;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransCategoryClass;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataInfoClass;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataInfoSet;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataList.PrometheusDataListSet;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
+
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  * CashInfoSet class.
@@ -61,7 +62,7 @@ public class MoneyWiseCashInfoSet
     /**
      * AutoExpense Not Expense Error Text.
      */
-    private static final String ERROR_AUTOEXP = MoneyWiseBasicResource.CASH_ERROR_AUTOEXPENSE.getValue();
+    public static final String ERROR_AUTOEXP = MoneyWiseBasicResource.CASH_ERROR_AUTOEXPENSE.getValue();
 
     /**
      * Constructor.
@@ -190,6 +191,12 @@ public class MoneyWiseCashInfoSet
 
         /* Return the event category */
         return myValue.getEventCategory();
+    }
+
+    @Override
+    public Iterator<PrometheusDataInfoClass> classIterator() {
+        final PrometheusDataInfoClass[] myValues = MoneyWiseAccountInfoClass.values();
+        return Arrays.stream(myValues).iterator();
     }
 
     /**

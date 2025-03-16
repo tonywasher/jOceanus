@@ -22,7 +22,7 @@ import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.metis.field.MetisFieldVersionedItem;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
 import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 
 import java.util.ArrayList;
@@ -37,7 +37,7 @@ import java.util.Map.Entry;
  * Versioned ListSet.
  */
 public class MetisListSetVersioned
-        implements MetisFieldItem, TethysEventProvider<MetisListEvent> {
+        implements MetisFieldItem, OceanusEventProvider<MetisListEvent> {
     /**
      * The number of bits for the itemType.
      */

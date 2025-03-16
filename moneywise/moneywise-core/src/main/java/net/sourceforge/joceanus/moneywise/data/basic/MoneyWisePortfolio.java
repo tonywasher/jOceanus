@@ -33,7 +33,6 @@ import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseAccountInfoClass
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseAccountInfoType.MoneyWiseAccountInfoTypeList;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrency;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrency.MoneyWiseCurrencyList;
-import net.sourceforge.joceanus.moneywise.data.statics.MoneyWisePayeeClass;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWisePortfolioClass;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWisePortfolioType;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWisePortfolioType.MoneyWisePortfolioTypeList;
@@ -83,16 +82,6 @@ public class MoneyWisePortfolio
     static {
         FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAINFOSET_NAME, MoneyWisePortfolio::getInfoSet);
     }
-
-    /**
-     * New Account name.
-     */
-    private static final String NAME_NEWACCOUNT = MoneyWiseBasicResource.PORTFOLIO_NEWACCOUNT.getValue();
-
-    /**
-     * Portfolio Cash account.
-     */
-    public static final String NAME_CASHACCOUNT = MoneyWiseBasicResource.PORTFOLIO_CASHACCOUNT.getValue();
 
     /**
      * Do we have an InfoSet.
@@ -471,61 +460,18 @@ public class MoneyWisePortfolio
 
     /**
      * Set defaults.
-     * @param pEditSet the edit set
      * @throws OceanusException on error
      */
-    public void setDefaults(final PrometheusEditSet pEditSet) throws OceanusException {
-        /* Set values */
-        setName(getList().getUniqueName(NAME_NEWACCOUNT));
-        setCategory(getDefaultPortfolioType());
-        setParent(getDefaultParent(pEditSet));
-        setAssetCurrency(getDataSet().getReportingCurrency());
-        setClosed(Boolean.FALSE);
+    public void setDefaults() throws OceanusException {
+        getList().getValidator().setDefaults(this);
     }
 
     /**
-     * Obtain default parent for portfolio.
-     * @param pEditSet the edit set
-     * @return the default parent
+     * adjust values after change.
+     * @throws OceanusException on error
      */
-    private static MoneyWisePayee getDefaultParent(final PrometheusEditSet pEditSet) {
-        /* loop through the payees */
-        final MoneyWisePayeeList myPayees = pEditSet.getDataList(MoneyWiseBasicDataType.PAYEE, MoneyWisePayeeList.class);
-        final Iterator<MoneyWisePayee> myIterator = myPayees.iterator();
-        while (myIterator.hasNext()) {
-            final MoneyWisePayee myPayee = myIterator.next();
-
-            /* Ignore deleted and closed payees and those that cannot parent this portfolio */
-            boolean bIgnore = myPayee.isDeleted() || myPayee.isClosed();
-            bIgnore |= !myPayee.getCategoryClass().canParentPortfolio();
-            if (!bIgnore) {
-                return myPayee;
-            }
-        }
-
-        /* Return no payee */
-        return null;
-    }
-
-    /**
-     * Obtain portfolio type for new portfolio account.
-     * @return the security type
-     */
-    public MoneyWisePortfolioType getDefaultPortfolioType() {
-        /* loop through the portfolio types */
-        final MoneyWisePortfolioTypeList myTypes = getDataSet().getPortfolioTypes();
-        final Iterator<MoneyWisePortfolioType> myIterator = myTypes.iterator();
-        while (myIterator.hasNext()) {
-            final MoneyWisePortfolioType myType = myIterator.next();
-
-            /* Ignore deleted types */
-            if (!myType.isDeleted()) {
-                return myType;
-            }
-        }
-
-        /* Return no category */
-        return null;
+    public void autoCorrect() throws OceanusException {
+        getList().getValidator().autoCorrect(this);
     }
 
     @Override
@@ -705,84 +651,6 @@ public class MoneyWisePortfolio
         getParent().touchItem(this);
     }
 
-    @Override
-    public void validate() {
-        final MoneyWisePortfolioList myList = getList();
-        final MoneyWisePayee myParent = getParent();
-        final MoneyWisePortfolioType myPortType = getCategory();
-        final MoneyWiseCurrency myCurrency = getAssetCurrency();
-
-        /* Validate base components */
-        super.validate();
-
-        /* PortfolioType must be non-null */
-        if (myPortType == null) {
-            addError(ERROR_MISSING, MoneyWiseBasicResource.CATEGORY_NAME);
-        } else {
-            /* Access the class */
-            final MoneyWisePortfolioClass myClass = myPortType.getPortfolioClass();
-
-            /* PortfolioType must be enabled */
-            if (!myPortType.getEnabled()) {
-                addError(ERROR_DISABLED, MoneyWiseBasicResource.CATEGORY_NAME);
-            }
-
-            /* If the PortfolioType is singular */
-            if (myClass.isSingular()) {
-                /* Count the elements of this class */
-                final MoneyWisePortfolioDataMap myMap = myList.getDataMap();
-                if (!myMap.validSingularCount(myClass)) {
-                    addError(ERROR_MULT, MoneyWiseBasicResource.CATEGORY_NAME);
-                }
-            }
-        }
-
-        /* Parent account must exist */
-        if (myParent == null) {
-            addError(ERROR_MISSING, MoneyWiseBasicResource.ASSET_PARENT);
-        } else {
-            /* Parent must be suitable */
-            final MoneyWisePayeeClass myParClass = myParent.getCategoryClass();
-            if (!myParClass.canParentPortfolio()) {
-                addError(ERROR_BADPARENT, MoneyWiseBasicResource.ASSET_PARENT);
-            }
-
-            /* If we are open then parent must be open */
-            if (!isClosed() && Boolean.TRUE.equals(myParent.isClosed())) {
-                addError(ERROR_PARCLOSED, MoneyWiseBasicResource.ASSET_CLOSED);
-            }
-        }
-
-        /* Currency must be non-null and enabled */
-        if (myCurrency == null) {
-            addError(ERROR_MISSING, MoneyWiseStaticDataType.CURRENCY);
-        } else if (!myCurrency.getEnabled()) {
-            addError(ERROR_DISABLED, MoneyWiseStaticDataType.CURRENCY);
-        }
-
-        /* If we have an infoSet */
-        if (theInfoSet != null) {
-            /* Validate the InfoSet */
-            theInfoSet.validate();
-        }
-
-        /* Set validation flag */
-        if (!hasErrors()) {
-            setValidEdit();
-        }
-    }
-
-    @Override
-    protected void validateName(final String pName) {
-        /* Perform basic checks */
-        super.validateName(pName);
-
-        /* Check that the name does not contain invalid characters */
-        if (pName.contains(MoneyWiseSecurityHolding.SECURITYHOLDING_SEP)) {
-            addError(ERROR_INVALIDCHAR, PrometheusDataResource.DATAITEM_FIELD_NAME);
-        }
-    }
-
     /**
      * Update base portfolio from an edited portfolio.
      * @param pPortfolio the edited portfolio
@@ -883,7 +751,7 @@ public class MoneyWisePortfolio
         }
 
         @Override
-        protected MoneyWisePortfolioDataMap getDataMap() {
+        public MoneyWisePortfolioDataMap getDataMap() {
             return (MoneyWisePortfolioDataMap) super.getDataMap();
         }
 
@@ -943,6 +811,7 @@ public class MoneyWisePortfolio
             final MoneyWisePayeeList myPayees = pEditSet.getDataList(MoneyWiseBasicDataType.PAYEE, MoneyWisePayeeList.class);
             myList.ensureMap(myPayees);
             pEditSet.setEditEntryList(MoneyWiseBasicDataType.PORTFOLIO, myList);
+            myList.getValidator().setEditSet(pEditSet);
 
             /* Store InfoType list */
             myList.theInfoTypeList = pEditSet.getDataList(MoneyWiseStaticDataType.ACCOUNTINFOTYPE, MoneyWiseAccountInfoTypeList.class);
@@ -993,13 +862,13 @@ public class MoneyWisePortfolio
         }
 
         @Override
-        protected boolean checkAvailableName(final String pName) {
+        public boolean checkAvailableName(final String pName) {
             /* check availability in map */
             return getDataMap().availableName(pName);
         }
 
         @Override
-        protected boolean validNameCount(final String pName) {
+        public boolean validNameCount(final String pName) {
             /* check availability in map */
             return getDataMap().validNameCount(pName);
         }
@@ -1097,7 +966,7 @@ public class MoneyWisePortfolio
     /**
      * The dataMap class.
      */
-    protected static class MoneyWisePortfolioDataMap
+    public static class MoneyWisePortfolioDataMap
             implements PrometheusDataMapItem, MetisFieldItem {
         /**
          * Report fields.

@@ -24,7 +24,7 @@ import net.sourceforge.joceanus.metis.viewer.MetisViewerStandardEntry;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.tethys.api.button.TethysUIButton;
 import net.sourceforge.joceanus.tethys.api.control.TethysUILabel;
@@ -35,7 +35,7 @@ import net.sourceforge.joceanus.tethys.api.pane.TethysUIBoxPaneManager;
  * Error panel.
  */
 public class MetisErrorPanel
-        implements TethysEventProvider<MetisUIEvent>, TethysUIComponent {
+        implements OceanusEventProvider<MetisUIEvent>, TethysUIComponent {
     /**
      * Text for Clear Button.
      */

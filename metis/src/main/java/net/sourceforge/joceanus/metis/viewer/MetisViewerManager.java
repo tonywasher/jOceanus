@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.metis.viewer;
 
 import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
 
 import java.util.ArrayList;
 import java.util.EnumMap;
@@ -31,7 +31,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * Viewer Data Manager.
  */
 public class MetisViewerManager
-        implements TethysEventProvider<MetisViewerEvent> {
+        implements OceanusEventProvider<MetisViewerEvent> {
     /**
      * The Event Manager.
      */

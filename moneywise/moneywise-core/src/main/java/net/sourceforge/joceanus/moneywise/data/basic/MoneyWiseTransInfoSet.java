@@ -39,7 +39,9 @@ import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataList.PrometheusDataListSet;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
 
+import java.util.Arrays;
 import java.util.Currency;
+import java.util.Iterator;
 import java.util.Map;
 
 /**
@@ -154,6 +156,12 @@ public class MoneyWiseTransInfoSet
     @Override
     public MetisDataFieldId getFieldForClass(final PrometheusDataInfoClass pClass) {
         return getFieldForClass((MoneyWiseTransInfoClass) pClass);
+    }
+
+    @Override
+    public Iterator<PrometheusDataInfoClass> classIterator() {
+        final PrometheusDataInfoClass[] myValues = MoneyWiseTransInfoClass.values();
+        return Arrays.stream(myValues).iterator();
     }
 
     /**

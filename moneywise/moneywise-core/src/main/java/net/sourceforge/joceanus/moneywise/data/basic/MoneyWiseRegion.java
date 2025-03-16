@@ -21,10 +21,10 @@ import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataNamedItem;
 import net.sourceforge.joceanus.metis.data.MetisDataResource;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataValidator.MoneyWiseDataValidatorDefaults;
 import net.sourceforge.joceanus.moneywise.exc.MoneyWiseDataException;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
-import net.sourceforge.joceanus.prometheus.data.PrometheusDataInfoLinkSet;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataInstanceMap;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataResource;
@@ -64,11 +64,6 @@ public class MoneyWiseRegion
         FIELD_DEFS.declareEncryptedStringField(PrometheusDataResource.DATAITEM_FIELD_NAME, NAMELEN);
         FIELD_DEFS.declareEncryptedStringField(PrometheusDataResource.DATAITEM_FIELD_DESC, DESCLEN);
     }
-
-    /**
-     * New Region name.
-     */
-    private static final String NAME_NEWREGION = MoneyWiseBasicResource.REGION_NEWREGION.getValue();
 
     /**
      * Copy Constructor.
@@ -272,8 +267,7 @@ public class MoneyWiseRegion
      * @throws OceanusException on error
      */
     public void setDefaults() throws OceanusException {
-        /* Set values */
-        setName(getList().getUniqueName());
+        getList().getValidator().setDefaults(this);
     }
 
     @Override
@@ -299,47 +293,6 @@ public class MoneyWiseRegion
      */
     public void setDescription(final String pDesc) throws OceanusException {
         setValueDesc(pDesc);
-    }
-
-    @Override
-    public void validate() {
-        final MoneyWiseRegionList myList = getList();
-        final String myName = getName();
-        final String myDesc = getDesc();
-        final MoneyWiseRegionDataMap myMap = myList.getDataMap();
-
-        /* Name must be non-null */
-        if (myName == null) {
-            addError(ERROR_MISSING, PrometheusDataResource.DATAITEM_FIELD_NAME);
-
-            /* Else check the name */
-        } else {
-            /* The description must not be too long */
-            if (myName.length() > NAMELEN) {
-                addError(ERROR_LENGTH, PrometheusDataResource.DATAITEM_FIELD_NAME);
-            }
-
-            /* Check that the name is unique */
-            if (!myMap.validNameCount(myName)) {
-                addError(ERROR_DUPLICATE, PrometheusDataResource.DATAITEM_FIELD_NAME);
-            }
-
-            /* Check that the name does not contain invalid characters */
-            if (myName.contains(PrometheusDataInfoLinkSet.ITEM_SEP)) {
-                addError(ERROR_INVALIDCHAR, PrometheusDataResource.DATAITEM_FIELD_NAME);
-            }
-        }
-
-        /* Check description length */
-        if (myDesc != null
-                && myDesc.length() > DESCLEN) {
-            addError(ERROR_LENGTH, PrometheusDataResource.DATAITEM_FIELD_DESC);
-        }
-
-        /* Set validation flag */
-        if (!hasErrors()) {
-            setValidEdit();
-        }
     }
 
     /**
@@ -427,8 +380,13 @@ public class MoneyWiseRegion
         }
 
         @Override
-        protected MoneyWiseRegionDataMap getDataMap() {
+        public MoneyWiseRegionDataMap getDataMap() {
             return (MoneyWiseRegionDataMap) super.getDataMap();
+        }
+
+        @Override
+        public MoneyWiseDataValidatorDefaults<MoneyWiseRegion> getValidator() {
+            return (MoneyWiseDataValidatorDefaults<MoneyWiseRegion>) super.getValidator();
         }
 
         @Override
@@ -448,6 +406,7 @@ public class MoneyWiseRegion
             final MoneyWiseRegionList myList = getEmptyList(PrometheusListStyle.EDIT);
             myList.ensureMap();
             pEditSet.setEditEntryList(MoneyWiseBasicDataType.REGION, myList);
+            myList.getValidator().setEditSet(pEditSet);
 
             /* Loop through the regions */
             final Iterator<MoneyWiseRegion> myIterator = iterator();
@@ -505,28 +464,6 @@ public class MoneyWiseRegion
             return getDataMap().findItemByName(pName);
         }
 
-        /**
-         * Obtain unique name for new tag.
-         * @return The new name
-         */
-        public String getUniqueName() {
-            /* Set up base constraints */
-            final String myBase = NAME_NEWREGION;
-            int iNextId = 1;
-
-            /* Loop until we found a name */
-            String myName = myBase;
-            for (;;) {
-                /* try out the name */
-                if (findItemByName(myName) == null) {
-                    return myName;
-                }
-
-                /* Build next name */
-                myName = myBase.concat(Integer.toString(iNextId++));
-            }
-        }
-
         @Override
         public MoneyWiseRegion addValuesItem(final PrometheusDataValues pValues) throws OceanusException {
             /* Create the region */
@@ -554,7 +491,7 @@ public class MoneyWiseRegion
     /**
      * The dataMap class.
      */
-    protected static class MoneyWiseRegionDataMap
+    public static class MoneyWiseRegionDataMap
             extends PrometheusDataInstanceMap<MoneyWiseRegion, String> {
         @Override
         public void adjustForItem(final PrometheusDataItem pItem) {

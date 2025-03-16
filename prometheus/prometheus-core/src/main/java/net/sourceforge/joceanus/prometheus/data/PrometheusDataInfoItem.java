@@ -796,33 +796,6 @@ public abstract class PrometheusDataInfoItem
     }
 
     @Override
-    public void validate() {
-        final PrometheusStaticDataItem myType = getInfoType();
-        final PrometheusDataItem myOwner = getOwner();
-        final Object myValue = getValue(Object.class);
-
-        /* InfoType must be non-null */
-        if (myType == null) {
-            addError(ERROR_MISSING, PrometheusDataResource.DATAINFO_TYPE);
-        }
-
-        /* Owner must be non-null */
-        if (myOwner == null) {
-            addError(ERROR_MISSING, PrometheusDataResource.DATAINFO_OWNER);
-        }
-
-        /* Value must be non-null */
-        if (myValue == null) {
-            addError(ERROR_MISSING, PrometheusDataResource.DATAINFO_VALUE);
-        }
-
-        /* Set validation flag */
-        if (!hasErrors()) {
-            setValidEdit();
-        }
-    }
-
-    @Override
     public void rewindToVersion(final int pVersion) {
         /* Do the actual rewind */
         super.rewindToVersion(pVersion);

@@ -18,13 +18,13 @@ package net.sourceforge.joceanus.tethys.api.base;
 
 import java.util.Map;
 
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
 
 /**
  * A set of keyed values.
  */
 public interface TethysUIValueSet
-        extends TethysEventProvider<TethysUIEvent> {
+        extends OceanusEventProvider<TethysUIEvent> {
     /**
      * Apply new Mappings.
      * @param pMappings the colour mappings

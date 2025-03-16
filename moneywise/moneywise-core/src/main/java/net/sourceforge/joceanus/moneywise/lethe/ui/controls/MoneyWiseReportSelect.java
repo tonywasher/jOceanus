@@ -27,12 +27,12 @@ import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnal
 import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisSecurityBucket.MoneyWiseAnalysisSecurityBucketList;
 import net.sourceforge.joceanus.moneywise.lethe.reports.MoneyWiseReportType;
 import net.sourceforge.joceanus.moneywise.ui.MoneyWiseUIResource;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
 import net.sourceforge.joceanus.prometheus.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.oceanus.date.OceanusDatePeriod;
 import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.TethysEventProvider;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.tethys.api.button.TethysUIButton;
@@ -50,7 +50,7 @@ import net.sourceforge.joceanus.tethys.api.pane.TethysUIBoxPaneManager;
  * Report selection panel.
  */
 public class MoneyWiseReportSelect
-        implements TethysEventProvider<PrometheusDataEvent>, TethysUIComponent {
+        implements OceanusEventProvider<PrometheusDataEvent>, TethysUIComponent {
     /**
      * Text for Report Label.
      */

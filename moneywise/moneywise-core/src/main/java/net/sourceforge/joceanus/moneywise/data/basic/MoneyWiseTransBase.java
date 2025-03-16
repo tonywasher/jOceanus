@@ -20,6 +20,7 @@ import net.sourceforge.joceanus.metis.data.MetisDataDifference;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseCash.MoneyWiseCashList;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataValidator.MoneyWiseDataValidatorTrans;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDeposit.MoneyWiseDepositList;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseLoan.MoneyWiseLoanList;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePayee.MoneyWisePayeeList;
@@ -38,8 +39,6 @@ import net.sourceforge.joceanus.prometheus.data.PrometheusEncryptedDataItem;
 import net.sourceforge.joceanus.prometheus.data.PrometheusEncryptedFieldSet;
 import net.sourceforge.joceanus.prometheus.data.PrometheusEncryptedPair;
 import net.sourceforge.joceanus.prometheus.data.PrometheusEncryptedValues;
-
-import java.util.Currency;
 
 /**
  * Transaction data type.
@@ -77,7 +76,7 @@ public abstract class MoneyWiseTransBase
     /**
      * Invalid Debit/Credit/Category Combination Error Text.
      */
-    private static final String ERROR_COMBO = MoneyWiseBasicResource.TRANSACTION_ERROR_ASSETPAIR.getValue();
+    public static final String ERROR_COMBO = MoneyWiseBasicResource.TRANSACTION_ERROR_ASSETPAIR.getValue();
 
     /**
      * Zero Amount Error Text.
@@ -87,7 +86,7 @@ public abstract class MoneyWiseTransBase
     /**
      * Currency Error Text.
      */
-    protected static final String ERROR_CURRENCY = MoneyWiseBasicResource.MONEYWISEDATA_ERROR_CURRENCY.getValue();
+    public static final String ERROR_CURRENCY = MoneyWiseBasicResource.MONEYWISEDATA_ERROR_CURRENCY.getValue();
 
     /**
      * Copy Constructor.
@@ -531,14 +530,6 @@ public abstract class MoneyWiseTransBase
         return (MoneyWiseDataSet) super.getDataSet();
     }
 
-    /**
-     * Obtain the validator.
-     * @return the validator
-     */
-    public MoneyWiseTransValidator getValidator() {
-        return getList().getValidator();
-    }
-
     @Override
     public MoneyWiseTransBaseList<?> getList() {
         return (MoneyWiseTransBaseList<?>) super.getList();
@@ -674,7 +665,7 @@ public abstract class MoneyWiseTransBase
      * @return true/false
      */
     public boolean canSwitchDirection() {
-        return getValidator().isValidDirection(getAccount(), getCategory(), getDirection().reverse());
+        return getList().getValidator().isValidDirection(getAccount(), getCategory(), getDirection().reverse());
     }
 
     /**
@@ -865,97 +856,6 @@ public abstract class MoneyWiseTransBase
     }
 
     /**
-     * Validate the event.
-     */
-    @Override
-    public void validate() {
-        final MoneyWiseTransAsset myAccount = getAccount();
-        final MoneyWiseTransAsset myPartner = getPartner();
-        final MoneyWiseAssetDirection myDir = getDirection();
-        final OceanusMoney myAmount = getAmount();
-        final MoneyWiseTransCategory myCategory = getCategory();
-        final MoneyWiseTransValidator myValidator = getValidator();
-        boolean doCheckCombo = true;
-
-        /* Account must be non-null */
-        if (myAccount == null) {
-            addError(ERROR_MISSING, MoneyWiseBasicResource.TRANSACTION_ACCOUNT);
-            doCheckCombo = false;
-
-        } else {
-            /* Account must be valid */
-            if (!myValidator.isValidAccount(myAccount)) {
-                addError(ERROR_COMBO, MoneyWiseBasicResource.TRANSACTION_ACCOUNT);
-                doCheckCombo = false;
-            }
-        }
-
-        /* Category must be non-null */
-        if (myCategory == null) {
-            addError(ERROR_MISSING, MoneyWiseBasicDataType.TRANSCATEGORY);
-            doCheckCombo = false;
-
-            /* Category must be valid for Account */
-        } else if (doCheckCombo
-                && !myValidator.isValidCategory(myAccount, myCategory)) {
-            addError(ERROR_COMBO, MoneyWiseBasicDataType.TRANSCATEGORY);
-            doCheckCombo = false;
-        }
-
-        /* Direction must be non-null */
-        if (myDir == null) {
-            addError(ERROR_MISSING, MoneyWiseBasicResource.TRANSACTION_DIRECTION);
-            doCheckCombo = false;
-
-            /* Direction must be valid for Account */
-        } else if (doCheckCombo
-                && !myValidator.isValidDirection(myAccount, myCategory, myDir)) {
-            addError(ERROR_COMBO, MoneyWiseBasicResource.TRANSACTION_DIRECTION);
-            doCheckCombo = false;
-        }
-
-        /* Partner must be non-null */
-        if (myPartner == null) {
-            addError(ERROR_MISSING, MoneyWiseBasicResource.TRANSACTION_PARTNER);
-
-        } else {
-            /* Partner must be valid for Account */
-            if (doCheckCombo
-                    && !myValidator.isValidPartner(myAccount, myCategory, myPartner)) {
-                addError(ERROR_COMBO, MoneyWiseBasicResource.TRANSACTION_PARTNER);
-            }
-        }
-
-        /* If money is null */
-        if (myAmount == null) {
-            /* Check that it must be null */
-            if (!needsNullAmount()) {
-                addError(ERROR_MISSING, MoneyWiseBasicResource.TRANSACTION_AMOUNT);
-            }
-
-            /* else non-null money */
-        } else {
-            /* Check that it must be null */
-            if (needsNullAmount()) {
-                addError(ERROR_EXIST, MoneyWiseBasicResource.TRANSACTION_AMOUNT);
-            }
-
-            /* Money must not be negative */
-            if (!myAmount.isPositive()) {
-                addError(ERROR_NEGATIVE, MoneyWiseBasicResource.TRANSACTION_AMOUNT);
-            }
-
-            /* Check that amount is correct currency */
-            if (myAccount != null) {
-                final Currency myCurrency = myAccount.getCurrency();
-                if (!myAmount.getCurrency().equals(myCurrency)) {
-                    addError(ERROR_CURRENCY, MoneyWiseBasicResource.TRANSACTION_AMOUNT);
-                }
-            }
-        }
-    }
-
-    /**
      * Update base transaction from an edited transaction.
      * @param pTrans the edited transaction
      */
@@ -1005,11 +905,6 @@ public abstract class MoneyWiseTransBase
         }
 
         /**
-         * The validator.
-         */
-        private final MoneyWiseTransValidator theValidator;
-
-        /**
          * Construct an empty CORE Event list.
          * @param pData the DataSet for the list
          * @param pClass the class of the item
@@ -1020,7 +915,6 @@ public abstract class MoneyWiseTransBase
                                          final MoneyWiseBasicDataType pItemType) {
             /* Call super-constructor */
             super(pClass, pData, pItemType, PrometheusListStyle.CORE);
-            theValidator = new MoneyWiseTransValidator(pData);
         }
 
         /**
@@ -1030,7 +924,6 @@ public abstract class MoneyWiseTransBase
         protected MoneyWiseTransBaseList(final MoneyWiseTransBaseList<T> pSource) {
             /* Call super-constructor */
             super(pSource);
-            theValidator = pSource.getValidator();
         }
 
         @Override
@@ -1038,12 +931,9 @@ public abstract class MoneyWiseTransBase
             return (MoneyWiseDataSet) super.getDataSet();
         }
 
-        /**
-         * Obtain the validator.
-         * @return the validator
-         */
-        public MoneyWiseTransValidator getValidator() {
-            return theValidator;
+        @Override
+        public MoneyWiseDataValidatorTrans<T> getValidator() {
+            return (MoneyWiseDataValidatorTrans<T>) super.getValidator();
         }
     }
 }

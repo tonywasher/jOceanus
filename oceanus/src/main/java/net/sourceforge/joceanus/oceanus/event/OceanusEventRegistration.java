@@ -16,7 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.oceanus.event;
 
-import net.sourceforge.joceanus.oceanus.event.OceanusEvent.TethysEventListener;
+import net.sourceforge.joceanus.oceanus.event.OceanusEvent.OceanusEventListener;
 
 /**
  * Registration structure for event listeners.
@@ -31,7 +31,7 @@ public class OceanusEventRegistration<E extends Enum<E>> {
     /**
      * Event listener.
      */
-    private final TethysEventListener<E> theListener;
+    private final OceanusEventListener<E> theListener;
 
     /**
      * Action Id.
@@ -49,7 +49,7 @@ public class OceanusEventRegistration<E extends Enum<E>> {
      * @param pListener the listener
      */
     protected OceanusEventRegistration(final Integer pMgrId,
-                                       final TethysEventListener<E> pListener) {
+                                       final OceanusEventListener<E> pListener) {
         this(pMgrId, null, pListener);
     }
 
@@ -61,7 +61,7 @@ public class OceanusEventRegistration<E extends Enum<E>> {
      */
     protected OceanusEventRegistration(final Integer pMgrId,
                                        final E pEventId,
-                                       final TethysEventListener<E> pListener) {
+                                       final OceanusEventListener<E> pListener) {
         theMgrId = pMgrId;
         theEventId = pEventId;
         theListener = pListener;

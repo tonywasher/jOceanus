@@ -92,7 +92,7 @@ public abstract class MoneyWiseXAnalysisInterfaces {
         /**
          * Calculate unrealisedGains.
          */
-        public void calculateUnrealisedGains();
+        void calculateUnrealisedGains();
 
         /**
          * Is this bucket a StockOption?

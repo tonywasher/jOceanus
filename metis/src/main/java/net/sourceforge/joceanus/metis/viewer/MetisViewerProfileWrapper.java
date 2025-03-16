@@ -22,7 +22,7 @@ import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimal;
 import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
-import net.sourceforge.joceanus.oceanus.profile.OceanusProfile.TethysProfileStatus;
+import net.sourceforge.joceanus.oceanus.profile.OceanusProfile.OceanusProfileStatus;
 
 import java.util.Iterator;
 
@@ -99,7 +99,7 @@ public class MetisViewerProfileWrapper
      * Obtain the status of the profile.
      * @return the status
      */
-    private TethysProfileStatus getStatus() {
+    private OceanusProfileStatus getStatus() {
         return theWrapped.isRunning()
                 ? theWrapped.getStatus()
                 : null;

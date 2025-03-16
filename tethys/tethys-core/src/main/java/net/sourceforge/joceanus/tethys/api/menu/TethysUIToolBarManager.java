@@ -16,8 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.tethys.api.menu;
 
-import net.sourceforge.joceanus.oceanus.event.OceanusEvent.TethysEventListener;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.oceanus.event.OceanusEvent.OceanusEventListener;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIIconId;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIEvent;
@@ -70,7 +70,7 @@ public interface TethysUIToolBarManager
      */
     void newIcon(TethysUIToolBarId pId,
                  String pText,
-                 TethysEventListener<TethysUIEvent> pListener);
+                 OceanusEventListener<TethysUIEvent> pListener);
 
     /**
      * Add a new Icon element.
@@ -95,7 +95,7 @@ public interface TethysUIToolBarManager
      * ToolElement.
      */
     interface TethysUIToolElement
-            extends TethysEventProvider<TethysUIEvent> {
+            extends OceanusEventProvider<TethysUIEvent> {
         /**
          * Set text for icon.
          * @param pText the text

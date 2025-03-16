@@ -25,10 +25,11 @@ import net.sourceforge.joceanus.metis.viewer.MetisViewerStandardEntry;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
 import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataSet;
+import net.sourceforge.joceanus.prometheus.data.PrometheusDataValidator.PrometheusDataValidatorFactory;
 import net.sourceforge.joceanus.prometheus.database.PrometheusDataStore;
 import net.sourceforge.joceanus.prometheus.preference.PrometheusPreferenceManager;
 import net.sourceforge.joceanus.prometheus.security.PrometheusSecurityPasswordManager;
@@ -43,7 +44,7 @@ import java.util.Map;
  * Provides top-level control of data.
  */
 public abstract class PrometheusDataControl
-        implements TethysEventProvider<PrometheusDataEvent> {
+        implements OceanusEventProvider<PrometheusDataEvent> {
     /**
      * The Event Manager.
      */
@@ -80,6 +81,11 @@ public abstract class PrometheusDataControl
     private final Map<PrometheusViewerEntryId, MetisViewerEntry> theViewerMap;
 
     /**
+     * Validator factory.
+     */
+    private PrometheusDataValidatorFactory theValidatorFactory;
+
+    /**
      * Constructor for default control.
      * @param pToolkit the toolkit
      */
@@ -102,6 +108,22 @@ public abstract class PrometheusDataControl
     @Override
     public OceanusEventRegistrar<PrometheusDataEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
+    }
+
+    /**
+     * Set the validator factory.
+     * @param pFactory the validator factory
+     */
+    public void setValidatorFactory(final PrometheusDataValidatorFactory pFactory) {
+        theValidatorFactory = pFactory;
+    }
+
+    /**
+     * Obtain the validator factory.
+     * @return the validator factory
+     */
+    public PrometheusDataValidatorFactory getValidatorFactory() {
+        return theValidatorFactory;
     }
 
     /**

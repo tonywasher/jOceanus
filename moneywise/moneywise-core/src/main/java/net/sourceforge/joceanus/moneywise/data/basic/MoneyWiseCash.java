@@ -77,11 +77,6 @@ public class MoneyWiseCash
     }
 
     /**
-     * New Account name.
-     */
-    private static final String NAME_NEWACCOUNT = MoneyWiseBasicResource.CASH_NEWACCOUNT.getValue();
-
-    /**
      * Do we have an InfoSet.
      */
     private final boolean hasInfoSet;
@@ -402,52 +397,18 @@ public class MoneyWiseCash
 
     /**
      * Set defaults.
-     * @param pEditSet the edit set
      * @throws OceanusException on error
      */
-    public void setDefaults(final PrometheusEditSet pEditSet) throws OceanusException {
-        /* Set values */
-        setName(getList().getUniqueName(NAME_NEWACCOUNT));
-        setCategory(getDefaultCategory());
-        setAssetCurrency(getDataSet().getReportingCurrency());
-        setClosed(Boolean.FALSE);
-        autoCorrect(pEditSet);
+    public void setDefaults() throws OceanusException {
+        getList().getValidator().setDefaults(this);
     }
 
     /**
      * autoCorrect values after change.
-     * @param pEditSet the edit set
      * @throws OceanusException on error
      */
-    public void autoCorrect(final PrometheusEditSet pEditSet) throws OceanusException {
-        /* autoCorrect the infoSet */
-        theInfoSet.autoCorrect(pEditSet);
-    }
-
-    /**
-     * Obtain default category for new cash account.
-     * @return the default category
-     */
-    private MoneyWiseCashCategory getDefaultCategory() {
-        /* loop through the categories */
-        final MoneyWiseCashCategoryList myCategories = getDataSet().getCashCategories();
-        final Iterator<MoneyWiseCashCategory> myIterator = myCategories.iterator();
-        while (myIterator.hasNext()) {
-            final MoneyWiseCashCategory myCategory = myIterator.next();
-
-            /* Ignore deleted categories */
-            if (myCategory.isDeleted()) {
-                continue;
-            }
-
-            /* If the category is not a parent */
-            if (!myCategory.isCategoryClass(MoneyWiseCashCategoryClass.PARENT)) {
-                return myCategory;
-            }
-        }
-
-        /* Return no category */
-        return null;
+    public void autoCorrect() throws OceanusException {
+        getList().getValidator().autoCorrect(this);
     }
 
     @Override
@@ -556,46 +517,6 @@ public class MoneyWiseCash
     public void touchOnUpdate() {
         /* Adjust infoSet update touches */
         theInfoSet.touchOnUpdate();
-    }
-
-    @Override
-    public void validate() {
-        final MoneyWisePayee myParent = getParent();
-        final MoneyWiseCashCategory myCategory = getCategory();
-        final MoneyWiseCurrency myCurrency = getAssetCurrency();
-
-        /* Validate base components */
-        super.validate();
-
-        /* Category must be non-null */
-        if (myCategory == null) {
-            addError(ERROR_MISSING, MoneyWiseBasicResource.CATEGORY_NAME);
-        } else if (myCategory.getCategoryTypeClass().isParentCategory()) {
-            addError(ERROR_BADCATEGORY, MoneyWiseBasicResource.CATEGORY_NAME);
-        }
-
-        /* Parent must be null */
-        if (myParent != null) {
-            addError(ERROR_EXIST, MoneyWiseBasicResource.ASSET_PARENT);
-        }
-
-        /* Currency must be non-null and enabled */
-        if (myCurrency == null) {
-            addError(ERROR_MISSING, MoneyWiseStaticDataType.CURRENCY);
-        } else if (!myCurrency.getEnabled()) {
-            addError(ERROR_DISABLED, MoneyWiseStaticDataType.CURRENCY);
-        }
-
-        /* If we have an infoSet */
-        if (theInfoSet != null) {
-            /* Validate the InfoSet */
-            theInfoSet.validate();
-        }
-
-        /* Set validation flag */
-        if (!hasErrors()) {
-            setValidEdit();
-        }
     }
 
     /**
@@ -733,6 +654,7 @@ public class MoneyWiseCash
             final MoneyWisePayeeList myPayees = pEditSet.getDataList(MoneyWiseBasicDataType.PAYEE, MoneyWisePayeeList.class);
             myList.ensureMap(myPayees);
             pEditSet.setEditEntryList(MoneyWiseBasicDataType.CASH, myList);
+            myList.getValidator().setEditSet(pEditSet);
 
             /* Store InfoType list */
             myList.theInfoTypeList = pEditSet.getDataList(MoneyWiseStaticDataType.ACCOUNTINFOTYPE, MoneyWiseAccountInfoTypeList.class);
@@ -775,13 +697,13 @@ public class MoneyWiseCash
         }
 
         @Override
-        protected boolean checkAvailableName(final String pName) {
+        public boolean checkAvailableName(final String pName) {
             /* check availability in map */
             return getDataMap().availableName(pName);
         }
 
         @Override
-        protected boolean validNameCount(final String pName) {
+        public boolean validNameCount(final String pName) {
             /* check availability in map */
             return getDataMap().validNameCount(pName);
         }

@@ -16,10 +16,10 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.oceanus.logger;
 
+import net.sourceforge.joceanus.oceanus.convert.OceanusDataConverter;
+
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
-
-import net.sourceforge.joceanus.oceanus.convert.OceanusDataConverter;
 
 /**
  * Log Manager.
@@ -38,7 +38,7 @@ public final class OceanusLogManager {
     /**
      * The output stream.
      */
-    private static OceanusLogSink theSink = new TethysLogStdOut();
+    private static OceanusLogSink theSink = new OceanusLogStdOut();
 
     /**
      * The initial time.
@@ -57,7 +57,7 @@ public final class OceanusLogManager {
      * @return the instance.
      */
     private static OceanusLogManager getInstance() {
-        return TethysLogManagerHelper.INSTANCE;
+        return OceanusLogManagerHelper.INSTANCE;
     }
 
     /**
@@ -183,7 +183,7 @@ public final class OceanusLogManager {
     /**
      * Log Manager Helper.
      */
-    private static final class TethysLogManagerHelper  {
+    private static final class OceanusLogManagerHelper {
         /**
          * The Log Manager instance.
          */
@@ -193,7 +193,7 @@ public final class OceanusLogManager {
     /**
      * Default Log Sink.
      */
-    static class TethysLogStdOut
+    static class OceanusLogStdOut
             implements OceanusLogSink {
         /**
          * The output stream.

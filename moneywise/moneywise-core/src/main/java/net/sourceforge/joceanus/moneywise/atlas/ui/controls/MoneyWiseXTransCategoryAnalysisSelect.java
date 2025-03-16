@@ -28,7 +28,7 @@ import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransCategoryCla
 import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
 import net.sourceforge.joceanus.prometheus.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIConstant;
@@ -49,7 +49,7 @@ import java.util.Map;
  * Transaction Category Analysis Selection.
  */
 public class MoneyWiseXTransCategoryAnalysisSelect
-        implements MoneyWiseXAnalysisFilterSelection, TethysEventProvider<PrometheusDataEvent> {
+        implements MoneyWiseXAnalysisFilterSelection, OceanusEventProvider<PrometheusDataEvent> {
     /**
      * Text for TransCategory Label.
      */

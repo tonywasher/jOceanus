@@ -81,11 +81,6 @@ public class MoneyWiseDeposit
     }
 
     /**
-     * New Account name.
-     */
-    private static final String NAME_NEWACCOUNT = MoneyWiseBasicResource.DEPOSIT_NEWACCOUNT.getValue();
-
-    /**
      * Do we have an InfoSet.
      */
     private final boolean hasInfoSet;
@@ -441,98 +436,18 @@ public class MoneyWiseDeposit
 
     /**
      * Set defaults.
-     * @param pEditSet the edit set
      * @throws OceanusException on error
      */
-    public void setDefaults(final PrometheusEditSet pEditSet) throws OceanusException {
-        /* Set values */
-        setName(getList().getUniqueName(NAME_NEWACCOUNT));
-        setCategory(getDefaultCategory());
-        setAssetCurrency(getDataSet().getReportingCurrency());
-        setClosed(Boolean.FALSE);
-        autoCorrect(pEditSet);
+    public void setDefaults() throws OceanusException {
+        getList().getValidator().setDefaults(this);
     }
 
     /**
      * autoCorrect values after change.
-     * @param pEditSet the update set
      * @throws OceanusException on error
      */
-    public void autoCorrect(final PrometheusEditSet pEditSet) throws OceanusException {
-        /* Access category class */
-        final MoneyWiseDepositCategoryClass myClass = getCategoryClass();
-        final MoneyWisePayee myParent = getParent();
-
-        /* Ensure that we have a valid parent */
-        if ((myParent == null)
-                || !myParent.getCategoryClass().canParentDeposit(myClass)) {
-            setParent(getDefaultParent(pEditSet));
-        }
-
-        /* Adjust bond date if required */
-        if (!MoneyWiseDepositCategoryClass.BOND.equals(myClass)) {
-            setMaturity(null);
-        } else if (getMaturity() == null) {
-            final OceanusDate myDate = new OceanusDate();
-            myDate.adjustYear(1);
-            setMaturity(myDate);
-        }
-    }
-
-    /**
-     * Obtain default category for new deposit account.
-     * @return the default category
-     */
-    private MoneyWiseDepositCategory getDefaultCategory() {
-        /* loop through the categories */
-        final MoneyWiseDepositCategoryList myCategories = getDataSet().getDepositCategories();
-        final Iterator<MoneyWiseDepositCategory> myIterator = myCategories.iterator();
-        while (myIterator.hasNext()) {
-            final MoneyWiseDepositCategory myCategory = myIterator.next();
-
-            /* Ignore deleted categories */
-            if (myCategory.isDeleted()) {
-                continue;
-            }
-
-            /* If the category is not a parent */
-            if (!myCategory.isCategoryClass(MoneyWiseDepositCategoryClass.PARENT)) {
-                return myCategory;
-            }
-        }
-
-        /* Return no category */
-        return null;
-    }
-
-    /**
-     * Obtain default parent for new deposit.
-     * @param pEditSet the edit set
-     * @return the default parent
-     */
-    private MoneyWisePayee getDefaultParent(final PrometheusEditSet pEditSet) {
-        /* Access details */
-        final MoneyWisePayeeList myPayees = pEditSet.getDataList(MoneyWiseBasicDataType.PAYEE, MoneyWisePayeeList.class);
-        final MoneyWiseDepositCategoryClass myClass = getCategoryClass();
-
-        /* loop through the payees */
-        final Iterator<MoneyWisePayee> myIterator = myPayees.iterator();
-        while (myIterator.hasNext()) {
-            final MoneyWisePayee myPayee = myIterator.next();
-
-            /* Ignore deleted and closed payees */
-            if (myPayee.isDeleted() || Boolean.TRUE.equals(myPayee.isClosed())) {
-                continue;
-            }
-
-            /* If the payee can parent */
-            if (myPayee.getCategoryClass().canParentDeposit(myClass)) {
-                return myPayee;
-            }
-        }
-
-        /* Return no payee */
-        return null;
+    public void autoCorrect() throws OceanusException {
+        getList().getValidator().autoCorrect(this);
     }
 
     @Override
@@ -712,61 +627,6 @@ public class MoneyWiseDeposit
         getParent().touchItem(this);
     }
 
-    @Override
-    public void validate() {
-        final MoneyWisePayee myParent = getParent();
-        final MoneyWiseDepositCategory myCategory = getCategory();
-        final MoneyWiseCurrency myCurrency = getAssetCurrency();
-        final MoneyWiseDepositCategoryClass myClass = getCategoryClass();
-
-        /* Validate base components */
-        super.validate();
-
-        /* Category must be non-null */
-        if (myCategory == null) {
-            addError(ERROR_MISSING, MoneyWiseBasicResource.CATEGORY_NAME);
-        } else if (myCategory.getCategoryTypeClass().isParentCategory()) {
-            addError(ERROR_BADCATEGORY, MoneyWiseBasicResource.CATEGORY_NAME);
-        }
-
-        /* Currency must be non-null and enabled */
-        if (myCurrency == null) {
-            addError(ERROR_MISSING, MoneyWiseStaticDataType.CURRENCY);
-        } else if (!myCurrency.getEnabled()) {
-            addError(ERROR_DISABLED, MoneyWiseStaticDataType.CURRENCY);
-        }
-
-        /* Deposit must be a child */
-        if (!myClass.isChild()) {
-            addError(ERROR_EXIST, MoneyWiseBasicResource.ASSET_PARENT);
-
-            /* Must have parent */
-        } else if (myParent == null) {
-            addError(ERROR_MISSING, MoneyWiseBasicResource.ASSET_PARENT);
-        } else {
-            /* Parent must be suitable */
-            if (!myParent.getCategoryClass().canParentDeposit(myClass)) {
-                addError(ERROR_BADPARENT, MoneyWiseBasicResource.ASSET_PARENT);
-            }
-
-            /* If we are open then parent must be open */
-            if (!isClosed() && Boolean.TRUE.equals(myParent.isClosed())) {
-                addError(ERROR_PARCLOSED, MoneyWiseBasicResource.ASSET_CLOSED);
-            }
-        }
-
-        /* If we have an infoSet */
-        if (theInfoSet != null) {
-            /* Validate the InfoSet */
-            theInfoSet.validate();
-        }
-
-        /* Set validation flag */
-        if (!hasErrors()) {
-            setValidEdit();
-        }
-    }
-
     /**
      * Update base deposit from an edited deposit.
      * @param pDeposit the edited deposit
@@ -902,6 +762,7 @@ public class MoneyWiseDeposit
             final MoneyWisePayeeList myPayees = pEditSet.getDataList(MoneyWiseBasicDataType.PAYEE, MoneyWisePayeeList.class);
             myList.ensureMap(myPayees);
             pEditSet.setEditEntryList(MoneyWiseBasicDataType.DEPOSIT, myList);
+            myList.getValidator().setEditSet(pEditSet);
 
             /* Store InfoType list */
             myList.theInfoTypeList = pEditSet.getDataList(MoneyWiseStaticDataType.ACCOUNTINFOTYPE, MoneyWiseAccountInfoTypeList.class);
@@ -944,13 +805,13 @@ public class MoneyWiseDeposit
         }
 
         @Override
-        protected boolean checkAvailableName(final String pName) {
+        public boolean checkAvailableName(final String pName) {
             /* check availability in map */
             return getDataMap().availableName(pName);
         }
 
         @Override
-        protected boolean validNameCount(final String pName) {
+        public boolean validNameCount(final String pName) {
             /* check availability in map */
             return getDataMap().validNameCount(pName);
         }

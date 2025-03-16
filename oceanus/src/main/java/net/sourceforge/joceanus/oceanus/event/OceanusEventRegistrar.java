@@ -16,14 +16,14 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.oceanus.event;
 
+import net.sourceforge.joceanus.oceanus.event.OceanusEvent.OceanusEventListener;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
-
-import net.sourceforge.joceanus.oceanus.event.OceanusEvent.TethysEventListener;
 
 /**
  * EventRegister implementation. This maintains a list of
@@ -41,7 +41,7 @@ public class OceanusEventRegistrar<E extends Enum<E>> {
      * @param <E> The event id type
      */
     @FunctionalInterface
-    public interface TethysEventProvider<E extends Enum<E>> {
+    public interface OceanusEventProvider<E extends Enum<E>> {
         /**
          * Obtain registration object for listeners.
          * @return the registrar
@@ -102,7 +102,7 @@ public class OceanusEventRegistrar<E extends Enum<E>> {
      * @param pListener the listener to add
      * @return the registration
      */
-    public OceanusEventRegistration<E> addEventListener(final TethysEventListener<E> pListener) {
+    public OceanusEventRegistration<E> addEventListener(final OceanusEventListener<E> pListener) {
         /* Create the registration */
         final OceanusEventRegistration<E> myReg = new OceanusEventRegistration<>(theMgrId, pListener);
 
@@ -118,7 +118,7 @@ public class OceanusEventRegistrar<E extends Enum<E>> {
      * @return the registration
      */
     public OceanusEventRegistration<E> addEventListener(final E pEventId,
-                                                        final TethysEventListener<E> pListener) {
+                                                        final OceanusEventListener<E> pListener) {
         /* Create the registration */
         final OceanusEventRegistration<E> myReg = new OceanusEventRegistration<>(theMgrId, pEventId, pListener);
 

@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.tethys.api.button;
 
 import net.sourceforge.joceanus.oceanus.date.OceanusDate;
 import net.sourceforge.joceanus.oceanus.date.OceanusDateConfig;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.tethys.api.control.TethysUIControl.TethysUIDateButton;
@@ -33,7 +33,7 @@ import net.sourceforge.joceanus.tethys.api.control.TethysUIControl.TethysUIDateB
  * </ul>
  */
 public interface TethysUIDateButtonManager
-        extends TethysUIDateButton, TethysEventProvider<TethysUIEvent>, TethysUIComponent {
+        extends TethysUIDateButton, OceanusEventProvider<TethysUIEvent>, TethysUIComponent {
     /**
      * Obtain the configuration.
      * @return the configuration

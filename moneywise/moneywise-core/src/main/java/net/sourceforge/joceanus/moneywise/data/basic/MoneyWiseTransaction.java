@@ -97,7 +97,7 @@ public class MoneyWiseTransaction
     /**
      * Circular update Error Text.
      */
-    private static final String ERROR_CIRCULAR = MoneyWiseBasicResource.TRANSACTION_ERROR_CIRCLE.getValue();
+    public static final String ERROR_CIRCULAR = MoneyWiseBasicResource.TRANSACTION_ERROR_CIRCLE.getValue();
 
     /**
      * Do we have an InfoSet.
@@ -633,58 +633,6 @@ public class MoneyWiseTransaction
     }
 
     /**
-     * Validate the transaction.
-     */
-    @Override
-    public void validate() {
-        final OceanusDate myDate = getDate();
-        final MoneyWiseTransAsset myAccount = getAccount();
-        final MoneyWiseTransAsset myPartner = getPartner();
-        final MoneyWiseTransCategory myCategory = getCategory();
-        final OceanusUnits myAccountUnits = getAccountDeltaUnits();
-        final OceanusUnits myPartnerUnits = getPartnerDeltaUnits();
-
-        /* Header is always valid */
-        if (isHeader()) {
-            setValidEdit();
-            return;
-        }
-
-        /* Determine date range to check for */
-        final OceanusDateRange myRange = getDataSet().getDateRange();
-
-        /* The date must be non-null */
-        if (myDate == null) {
-            addError(ERROR_MISSING, MoneyWiseBasicResource.MONEYWISEDATA_FIELD_DATE);
-            /* The date must be in-range */
-        } else if (myRange.compareToDate(myDate) != 0) {
-            addError(ERROR_RANGE, MoneyWiseBasicResource.MONEYWISEDATA_FIELD_DATE);
-        }
-
-        /* Perform underlying checks */
-        super.validate();
-
-        /* Cannot have PartnerUnits if securities are identical */
-        if (myAccountUnits != null
-                && myPartnerUnits != null
-                && MetisDataDifference.isEqual(myAccount, myPartner)) {
-            addError(ERROR_CIRCULAR, MoneyWiseTransInfoSet.getFieldForClass(MoneyWiseTransInfoClass.PARTNERDELTAUNITS));
-        }
-
-        /* If we have a category and an infoSet */
-        if (myCategory != null
-                && theInfoSet != null) {
-            /* Validate the InfoSet */
-            theInfoSet.validate();
-        }
-
-        /* Set validation flag */
-        if (!hasErrors()) {
-            setValidEdit();
-        }
-    }
-
-    /**
      * Obtain default deposit for ReturnedCashAccount.
      * @return the default returnedCashAccount
      */
@@ -1131,6 +1079,7 @@ public class MoneyWiseTransaction
 
             /* Store the editSet */
             myList.theEditSet = pEditSet;
+            myList.getValidator().setEditSet(pEditSet);
 
             /* Loop through the portfolios */
             final Iterator<MoneyWiseTransaction> myIterator = iterator();

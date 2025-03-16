@@ -152,8 +152,13 @@ public class PrometheusEncryptor {
      */
     public PrometheusEncryptedPair encryptValue(final Object pValue,
                                                 final MetisFieldDef pField) throws OceanusException {
-        /* Protect agains exceptions */
+        /* Protect against exceptions */
         try {
+            /* If we are passed a null value just return null */
+            if (pValue == null) {
+                return null;
+            }
+
             /* Handle Context dataType */
             MetisDataType myDataType = pField.getDataType();
             if (myDataType == MetisDataType.CONTEXT) {

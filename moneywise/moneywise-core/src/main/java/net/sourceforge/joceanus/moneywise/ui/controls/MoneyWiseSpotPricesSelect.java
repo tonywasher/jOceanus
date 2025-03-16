@@ -33,7 +33,7 @@ import net.sourceforge.joceanus.oceanus.date.OceanusDate;
 import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIArrowIconId;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIConstant;
@@ -54,7 +54,7 @@ import net.sourceforge.joceanus.tethys.api.pane.TethysUIBoxPaneManager;
  * SpotPrice selection panel.
  */
 public class MoneyWiseSpotPricesSelect
-        implements TethysEventProvider<PrometheusDataEvent>, TethysUIComponent {
+        implements OceanusEventProvider<PrometheusDataEvent>, TethysUIComponent {
     /**
      * Text for Date Label.
      */

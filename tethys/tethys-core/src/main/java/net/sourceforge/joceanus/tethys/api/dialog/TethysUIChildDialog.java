@@ -16,7 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.tethys.api.dialog;
 
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIEvent;
 
@@ -24,7 +24,7 @@ import net.sourceforge.joceanus.tethys.api.base.TethysUIEvent;
  * Child Dialog.
  */
 public interface TethysUIChildDialog
-    extends TethysEventProvider<TethysUIEvent> {
+    extends OceanusEventProvider<TethysUIEvent> {
     /**
      * Set the title.
      * @param pTitle the title

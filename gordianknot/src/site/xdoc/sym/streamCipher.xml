@@ -33,36 +33,38 @@ final GordianKey&lt;GordianStreamKeySpec&gt; myKey = myGenerator.generateKey();
                     <p>The following streamKey algorithms are supported.</p>
                     <table class="defTable">
                         <tr><th class="defHdr" rowspan="2">Algorithm</th><th class="defHdr" rowspan="2">Variant</th><th class="defHdr" rowspan="2">JCA</th>
-                            <th class="defHdr" colspan="5">KeySize</th><td class="defHdr" rowspan="2">Notes</td></tr>
+                            <th class="defHdr" colspan="5">KeySize</th></tr>
                         <tr><th class="defHdr">128</th><td class="defHdr">192</td><th class="defHdr">256</th><th class="defHdr">512</th><th class="defHdr">1024</th></tr>
-                        <tr><td rowspan="3">ChaCha20</td><td>Standard</td><td>Y</td><td>Y</td><td/><td>Y</td><td/><td/><td/></tr>
-                        <tr><td>ChaCha7359</td><td>Y</td><td/><td/><td>Y</td><td/><td/><td/></tr>
-                        <tr><td>XChaCha20</td><td/><td/><td/><td>Y</td><td/><td/><td/></tr>
-                        <tr><td rowspan="2">Salsa20</td><td>Standard</td><td>Y</td><td>Y</td><td/><td>Y</td><td/><td/><td/></tr>
-                        <tr><td>XSalsa20</td><td>Y</td><td/><td/><td>Y</td><td/><td/><td/></tr>
-                        <tr><td>HC</td><td/><td>Y</td><td>Y</td><td/><td>Y</td><td/><td/><td>HC128/HC256 as appropriate</td></tr>
-                        <tr><td>VMPC</td><td>Standard KSA3</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td/></tr>
-                        <tr><td>ISAAC</td><td/><td/><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td/></tr>
-                        <tr><td>RC4</td><td/><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td/></tr>
-                        <tr><td>Grain128</td><td/><td>Y</td><td>Y</td><td/><td/><td/><td/><td/></tr>
-                        <tr><td>Rabbit</td><td/><td/><td>Y</td><td/><td/><td/><td/><td/></tr>
-                        <tr><td>Sosemanuk</td><td/><td/><td>Y</td><td/><td/><td/><td/><td/></tr>
-                        <tr><td>Snow3G</td><td/><td/><td>Y</td><td/><td/><td/><td/><td/></tr>
-                        <tr><td>Zuc</td><td/><td>Y</td><td>Y</td><td/><td>Y</td><td/><td/><td>Zuc-128/Zuc-256 as appropriate</td></tr>
-                        <tr><td rowspan="3">SkeinXof</td><td>Skein-256</td><td/><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td/></tr>
-                        <tr><td>Skein-512</td><td/><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td/></tr>
-                        <tr><td>Skein-1024</td><td/><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td/></tr>
-                        <tr><td rowspan="2">Blake2X</td><td>Blake2Xs</td><td/><td>Y</td><td>Y</td><td>Y</td><td/><td/><td/></tr>
-                        <tr><td>Blake2Xb</td><td/><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td/><td/></tr>
-                        <tr><td>Blake3Xof</td><td/><td/><td/><td/><td>Y</td><td/><td/><td/></tr>
-                        <tr><td>Ascon</td><td>128, 128A</td><td/><td>Y</td><td/><td/><td/><td/><td/></tr>
-                        <tr><td>Elephant</td><td>160, 176, 200</td><td/><td>Y</td><td/><td/><td/><td/><td/></tr>
-                        <tr><td>ISAP</td><td>A128, A128A, K128, K128A</td><td/><td>Y</td><td/><td/><td/><td/><td/></tr>
-                        <tr><td>PhotonBeetle</td><td/><td/><td>Y</td><td/><td/><td/><td/><td/></tr>
-                        <tr><td rowspan="3">Sparkle</td><td>128_128, 256_128</td><td/><td>Y</td><td/><td/><td/><td/><td/></tr>
-                        <tr><td>192_192</td><td/><td/><td>Y</td><td/><td/><td/><td/></tr>
-                        <tr><td>256_256</td><td/><td/><td/><td>Y</td><td/><td/><td/></tr>
-                        <tr><td>Xoodyak</td><td/><td/><td>Y</td><td/><td/><td/><td/><td/></tr>
+                        <tr><td rowspan="3">ChaCha20</td><td>Standard</td><td>Y</td><td>Y</td><td/><td>Y</td><td/><td/></tr>
+                        <tr><td>ChaCha7359</td><td>Y</td><td/><td/><td>Y</td><td/><td/></tr>
+                        <tr><td>XChaCha20</td><td/><td/><td/><td>Y</td><td/><td/></tr>
+                        <tr><td rowspan="2">Salsa20</td><td>Standard</td><td>Y</td><td>Y</td><td/><td>Y</td><td/><td/></tr>
+                        <tr><td>XSalsa20</td><td>Y</td><td/><td/><td>Y</td><td/><td/></tr>
+                        <tr><td rowspan="2">HC</td><td>HC128</td><td>Y</td><td>Y</td><td/><td/><td/><td/></tr>
+                        <tr><td>HC256</td><td>Y</td><td/><td/><td>Y</td><td/><td/></tr>
+                        <tr><td>VMPC</td><td>Standard KSA3</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td></tr>
+                        <tr><td>ISAAC</td><td/><td/><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td></tr>
+                        <tr><td>RC4</td><td/><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td></tr>
+                        <tr><td>Grain128</td><td/><td>Y</td><td>Y</td><td/><td/><td/><td/></tr>
+                        <tr><td>Rabbit</td><td/><td/><td>Y</td><td/><td/><td/><td/></tr>
+                        <tr><td>Sosemanuk</td><td/><td/><td>Y</td><td/><td/><td/><td/></tr>
+                        <tr><td>Snow3G</td><td/><td/><td>Y</td><td/><td/><td/><td/></tr>
+                        <tr><td rowspan="2">Zuc</td><td>Zuc-128</td><td>Y</td><td>Y</td><td/><td/><td/><td/></tr>
+                        <tr><td>Zuc-256</td><td>Y</td><td/><td/><td>Y</td><td/><td/></tr>
+                        <tr><td rowspan="3">SkeinXof</td><td>Skein-256</td><td/><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td></tr>
+                        <tr><td>Skein-512</td><td/><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td></tr>
+                        <tr><td>Skein-1024</td><td/><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td>Y</td></tr>
+                        <tr><td rowspan="2">Blake2X</td><td>Blake2Xs</td><td/><td>Y</td><td>Y</td><td>Y</td><td/><td/></tr>
+                        <tr><td>Blake2Xb</td><td/><td>Y</td><td>Y</td><td>Y</td><td>Y</td><td/></tr>
+                        <tr><td>Blake3Xof</td><td/><td/><td/><td/><td>Y</td><td/><td/></tr>
+                        <tr><td>Ascon</td><td/><td/><td>Y</td><td/><td/><td/><td/></tr>
+                        <tr><td>Elephant</td><td>160, 176, 200</td><td/><td>Y</td><td/><td/><td/><td/></tr>
+                        <tr><td>ISAP</td><td>A128, A128A, K128, K128A</td><td/><td>Y</td><td/><td/><td/><td/></tr>
+                        <tr><td>PhotonBeetle</td><td/><td/><td>Y</td><td/><td/><td/><td/></tr>
+                        <tr><td rowspan="3">Sparkle</td><td>128_128, 256_128</td><td/><td>Y</td><td/><td/><td/><td/></tr>
+                        <tr><td>192_192</td><td/><td/><td>Y</td><td/><td/><td/></tr>
+                        <tr><td>256_256</td><td/><td/><td/><td>Y</td><td/><td/></tr>
+                        <tr><td>Xoodyak</td><td/><td/><td>Y</td><td/><td/><td/><td/></tr>
                     </table>
                 </subsection>
             </subsection>

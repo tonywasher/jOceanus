@@ -75,7 +75,7 @@
     <appBinDir>bin/</appBinDir>
     <appLibDir>lib/</appLibDir>
     <BouncyCastleVersion>1.80</BouncyCastleVersion>
-    <JUnitVersion>5.12.0</JUnitVersion>
+    <JUnitVersion>5.12.1</JUnitVersion>
     <JSONVersion>20250107</JSONVersion>
     <ApacheMavenVersion>3.9.9</ApacheMavenVersion>
     <MySQLVersion>9.2.0</MySQLVersion>

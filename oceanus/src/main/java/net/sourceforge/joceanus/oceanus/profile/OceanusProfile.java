@@ -16,12 +16,12 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.oceanus.profile;
 
+import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimal;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-
-import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimal;
 
 /**
  * Profile data.
@@ -40,7 +40,7 @@ public class OceanusProfile {
     /**
      * Status.
      */
-    private TethysProfileStatus theStatus;
+    private OceanusProfileStatus theStatus;
 
     /**
      * Start time.
@@ -75,7 +75,7 @@ public class OceanusProfile {
         /* Record the name and start the timer */
         theName = pName;
         theStart = System.nanoTime();
-        theStatus = TethysProfileStatus.RUNNING;
+        theStatus = OceanusProfileStatus.RUNNING;
     }
 
     /**
@@ -90,7 +90,7 @@ public class OceanusProfile {
      * Obtain the status of the profile.
      * @return the status
      */
-    public TethysProfileStatus getStatus() {
+    public OceanusProfileStatus getStatus() {
         return theStatus.isRunning()
                 ? theStatus
                 : null;
@@ -194,7 +194,7 @@ public class OceanusProfile {
                     : calculateHidden();
 
             /* Mark time as stopped */
-            theStatus = TethysProfileStatus.STOPPED;
+            theStatus = OceanusProfileStatus.STOPPED;
         }
     }
 
@@ -245,7 +245,7 @@ public class OceanusProfile {
     /**
      * Status of timer.
      */
-    public enum TethysProfileStatus {
+    public enum OceanusProfileStatus {
         /**
          * Running.
          */

@@ -23,9 +23,9 @@ import net.sourceforge.joceanus.metis.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.metis.ui.MetisIcon;
 import net.sourceforge.joceanus.metis.viewer.MetisViewerEntry;
 import net.sourceforge.joceanus.metis.viewer.MetisViewerManager;
+import net.sourceforge.joceanus.moneywise.atlas.data.analysis.analyse.MoneyWiseXAnalysisManager;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.base.MoneyWiseXAnalysisDataType;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.base.MoneyWiseXAnalysisEvent;
-import net.sourceforge.joceanus.moneywise.atlas.data.analysis.analyse.MoneyWiseXAnalysisManager;
 import net.sourceforge.joceanus.moneywise.atlas.ui.controls.MoneyWiseXAnalysisSelect;
 import net.sourceforge.joceanus.moneywise.atlas.ui.controls.MoneyWiseXAnalysisSelect.MoneyWiseXStatementSelect;
 import net.sourceforge.joceanus.moneywise.atlas.ui.dialog.MoneyWiseXTransactionDialog;
@@ -35,11 +35,11 @@ import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicResource;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransAsset;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransCategory;
-import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransDefaults;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransTag;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransaction;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransaction.MoneyWiseTransactionList;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransInfoClass;
+import net.sourceforge.joceanus.moneywise.data.validate.MoneyWiseValidateTransaction;
 import net.sourceforge.joceanus.moneywise.ui.MoneyWiseAnalysisColumnSet;
 import net.sourceforge.joceanus.moneywise.ui.MoneyWiseIcon;
 import net.sourceforge.joceanus.moneywise.ui.MoneyWiseUIResource;
@@ -53,7 +53,7 @@ import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimal;
 import net.sourceforge.joceanus.oceanus.event.OceanusEvent;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
 import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataResource;
 import net.sourceforge.joceanus.prometheus.ui.PrometheusActionButtons;
@@ -111,11 +111,6 @@ public class MoneyWiseXEventTable
      * The action buttons.
      */
     private final PrometheusActionButtons theActionButtons;
-
-    /**
-     * TransactionBuilder.
-     */
-    private final MoneyWiseTransDefaults theBuilder;
 
     /**
      * The UpdateSet.
@@ -188,11 +183,8 @@ public class MoneyWiseXEventTable
         /* Create the action buttons */
         theActionButtons = new PrometheusActionButtons(myGuiFactory, getEditSet());
 
-        /* Create the builder */
-        theBuilder = new MoneyWiseTransDefaults(getEditSet());
-
         /* Create a transaction panel */
-        theActiveTran = new MoneyWiseXTransactionDialog(myGuiFactory, pEditSet, theBuilder, theSelect, this);
+        theActiveTran = new MoneyWiseXTransactionDialog(myGuiFactory, pEditSet, theSelect, this);
         declareItemPanel(theActiveTran);
 
         /* Set table configuration */
@@ -705,7 +697,7 @@ public class MoneyWiseXEventTable
             theActiveTran.updateEditors(theRange);
 
             /* Notify the builder */
-            theBuilder.setParameters(theTransactions, theRange);
+            theTransactions.getValidator().setRange(theRange);
         }
 
         /* Update lists */
@@ -841,7 +833,8 @@ public class MoneyWiseXEventTable
 
         /* Create the new transaction */
         myTask.startTask("buildItem");
-        final MoneyWiseTransaction myTrans = theFilter.buildNewTransaction(theBuilder);
+        final MoneyWiseValidateTransaction myBuilder = (MoneyWiseValidateTransaction) theTransactions.getValidator();
+        final MoneyWiseTransaction myTrans = theFilter.buildNewTransaction(myBuilder);
 
         /* If we have one available */
         if (myTrans != null) {
@@ -1042,7 +1035,7 @@ public class MoneyWiseXEventTable
      * Transaction Panel.
      */
     public static class MoneyWiseXStatementPanel
-            implements TethysUIComponent, TethysEventProvider<PrometheusDataEvent> {
+            implements TethysUIComponent, OceanusEventProvider<PrometheusDataEvent> {
         /**
          * Text for DataEntry Title.
          */

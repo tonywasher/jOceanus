@@ -16,14 +16,14 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.tethys.api.thread;
 
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
 import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
 
 /**
  * Thread Manager.
  */
 public interface TethysUIThreadManager
-        extends TethysEventProvider<TethysUIThreadEvent>, TethysUIThreadStatusReport {
+        extends OceanusEventProvider<TethysUIThreadEvent>, TethysUIThreadStatusReport {
     /**
      * Obtain the status manager.
      * @return the status Manager

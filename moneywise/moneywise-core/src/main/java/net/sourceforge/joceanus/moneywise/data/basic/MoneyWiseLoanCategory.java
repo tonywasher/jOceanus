@@ -16,25 +16,25 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.moneywise.data.basic;
 
-import java.util.Iterator;
-
 import net.sourceforge.joceanus.metis.data.MetisDataDifference;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.metis.data.MetisDataResource;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.metis.field.MetisFieldVersionedSet;
-import net.sourceforge.joceanus.moneywise.exc.MoneyWiseDataException;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseAssetCategory;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseLoanCategoryClass;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseLoanCategoryType;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseLoanCategoryType.MoneyWiseLoanCategoryTypeList;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
+import net.sourceforge.joceanus.moneywise.exc.MoneyWiseDataException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataResource;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataValues;
 import net.sourceforge.joceanus.prometheus.data.PrometheusStaticDataItem;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
+
+import java.util.Iterator;
 
 /**
  * Loan Category class.
@@ -183,13 +183,7 @@ public final class MoneyWiseLoanCategory
      * @throws OceanusException on error
      */
     public void setDefaults(final MoneyWiseLoanCategory pParent) throws OceanusException {
-        /* Set values */
-        final MoneyWiseLoanCategoryTypeList myTypes = getDataSet().getLoanCategoryTypes();
-        setCategoryType(myTypes.findItemByClass(pParent == null
-                ? MoneyWiseLoanCategoryClass.PARENT
-                : MoneyWiseLoanCategoryClass.LOAN));
-        setParentCategory(pParent);
-        setSubCategoryName(getList().getUniqueName(pParent));
+        getList().getValidator().setDefaults(pParent, this);
     }
 
     @Override
@@ -217,64 +211,6 @@ public final class MoneyWiseLoanCategory
     @Override
     public void setCategoryType(final PrometheusStaticDataItem pType) {
         setValueType((MoneyWiseLoanCategoryType) pType);
-    }
-
-    @Override
-    public void validate() {
-        /* Validate the base */
-        super.validate();
-
-        /* Access details */
-        final MoneyWiseLoanCategoryType myCatType = getCategoryType();
-        final MoneyWiseLoanCategory myParent = getParentCategory();
-
-        /* LoanCategoryType must be non-null */
-        if (myCatType == null) {
-            addError(ERROR_MISSING, MoneyWiseStaticDataType.LOANTYPE);
-        } else {
-            /* Access the class */
-            final MoneyWiseLoanCategoryClass myClass = myCatType.getLoanClass();
-
-            /* AccountCategoryType must be enabled */
-            if (!myCatType.getEnabled()) {
-                addError(ERROR_DISABLED, MoneyWiseStaticDataType.LOANTYPE);
-            }
-
-            /* Switch on the loan class */
-            switch (myClass) {
-                case PARENT:
-                    /* If parent exists */
-                    if (myParent != null) {
-                        addError(ERROR_EXIST, PrometheusDataResource.DATAGROUP_PARENT);
-                    }
-                    break;
-                default:
-                    /* Check parent */
-                    if (myParent == null) {
-                        addError(ERROR_MISSING, PrometheusDataResource.DATAGROUP_PARENT);
-                    } else if (!myParent.isCategoryClass(MoneyWiseLoanCategoryClass.PARENT)) {
-                        addError(ERROR_BADPARENT, PrometheusDataResource.DATAGROUP_PARENT);
-                    } else {
-                        final String myName = getName();
-
-                        /* Check validity of parent */
-                        final MoneyWiseLoanCategoryClass myParentClass = myParent.getCategoryTypeClass();
-                        if (myParentClass != MoneyWiseLoanCategoryClass.PARENT) {
-                            addError(ERROR_BADPARENT, PrometheusDataResource.DATAGROUP_PARENT);
-                        }
-                        /* Check that name reflects parent */
-                        if ((myName != null) && !myName.startsWith(myParent.getName() + STR_SEP)) {
-                            addError(ERROR_MATCHPARENT, PrometheusDataResource.DATAGROUP_PARENT);
-                        }
-                    }
-                    break;
-            }
-        }
-
-        /* Set validation flag */
-        if (!hasErrors()) {
-            setValidEdit();
-        }
     }
 
     /**
@@ -377,6 +313,7 @@ public final class MoneyWiseLoanCategory
             final MoneyWiseLoanCategoryList myList = getEmptyList(PrometheusListStyle.EDIT);
             myList.ensureMap();
             pEditSet.setEditEntryList(MoneyWiseBasicDataType.LOANCATEGORY, myList);
+            myList.getValidator().setEditSet(pEditSet);
 
             /* Store the editSet */
             myList.theEditSet = pEditSet;

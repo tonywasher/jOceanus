@@ -29,7 +29,7 @@ public class OceanusEvent<E extends Enum<E>> {
      * @param <E> Event type
      */
     @FunctionalInterface
-    public interface TethysEventListener<E extends Enum<E>> {
+    public interface OceanusEventListener<E extends Enum<E>> {
         /**
          * Handle a TethysEvent.
          * @param pEvent the event to handle

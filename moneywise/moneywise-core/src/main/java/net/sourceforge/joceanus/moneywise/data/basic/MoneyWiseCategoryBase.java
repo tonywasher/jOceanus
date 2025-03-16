@@ -20,6 +20,7 @@ import net.sourceforge.joceanus.metis.data.MetisDataDifference;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataNamedItem;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataValidator.MoneyWiseDataValidatorParentDefaults;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCategoryInterface;
 import net.sourceforge.joceanus.moneywise.exc.MoneyWiseDataException;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
@@ -60,26 +61,6 @@ public abstract class MoneyWiseCategoryBase
         FIELD_DEFS.declareLinkField(PrometheusDataResource.DATAGROUP_PARENT);
         FIELD_DEFS.declareDerivedVersionedField(MoneyWiseBasicResource.CATEGORY_SUBCAT);
     }
-
-    /**
-     * New parent name.
-     */
-    private static final String NAME_NEWPARENT = MoneyWiseBasicResource.CATEGORY_NEWPARENT.getValue();
-
-    /**
-     * New Category name.
-     */
-    private static final String NAME_NEWCATEGORY = MoneyWiseBasicResource.CATEGORY_NEWCAT.getValue();
-
-    /**
-     * Invalid Parent Error.
-     */
-    protected static final String ERROR_BADPARENT = MoneyWiseBasicResource.CATEGORY_ERROR_BADPARENT.getValue();
-
-    /**
-     * NonMatching Parent Error.
-     */
-    protected static final String ERROR_MATCHPARENT = MoneyWiseBasicResource.CATEGORY_ERROR_MATCHPARENT.getValue();
 
     /**
      * Copy Constructor.
@@ -537,39 +518,6 @@ public abstract class MoneyWiseCategoryBase
         }
     }
 
-    @Override
-    public void validate() {
-        final MoneyWiseCategoryBaseList<?> myList = getList();
-        final String myName = getName();
-        final String myDesc = getDesc();
-        final MoneyWiseCategoryDataMap<?> myMap = myList.getDataMap();
-
-        /* Name must be non-null */
-        if (myName == null) {
-            addError(ERROR_MISSING, PrometheusDataResource.DATAITEM_FIELD_NAME);
-
-            /* Check that the name is valid */
-        } else {
-            /* The name must not be too long */
-            if (myName.length() > NAMELEN) {
-                addError(ERROR_LENGTH, PrometheusDataResource.DATAITEM_FIELD_NAME);
-            }
-
-            /* The name must be unique */
-            if (!myMap.validNameCount(myName)) {
-                final String mySubName = getSubCategory();
-                addError(ERROR_DUPLICATE, (mySubName == null)
-                        ? PrometheusDataResource.DATAITEM_FIELD_NAME
-                        : MoneyWiseBasicResource.CATEGORY_SUBCAT);
-            }
-        }
-
-        /* Check description length */
-        if ((myDesc != null) && (myDesc.length() > DESCLEN)) {
-            addError(ERROR_LENGTH, PrometheusDataResource.DATAITEM_FIELD_DESC);
-        }
-    }
-
     /**
      * Update base category from an edited category.
      * @param pCategory the edited category
@@ -651,8 +599,13 @@ public abstract class MoneyWiseCategoryBase
 
         @Override
         @SuppressWarnings("unchecked")
-        protected MoneyWiseCategoryDataMap<T> getDataMap() {
+        public MoneyWiseCategoryDataMap<T> getDataMap() {
             return (MoneyWiseCategoryDataMap<T>) super.getDataMap();
+        }
+
+        @Override
+        public MoneyWiseDataValidatorParentDefaults<T> getValidator() {
+            return (MoneyWiseDataValidatorParentDefaults<T>) super.getValidator();
         }
 
         @Override
@@ -680,34 +633,6 @@ public abstract class MoneyWiseCategoryBase
 
             /* Not found */
             return null;
-        }
-
-        /**
-         * Obtain unique name for new category.
-         * @param pParent the parent category
-         * @return The new name
-         */
-        public String getUniqueName(final T pParent) {
-            /* Set up base constraints */
-            final String myBase = pParent == null
-                    ? ""
-                    : pParent.getName() + STR_SEP;
-            final String myCore = pParent == null
-                    ? NAME_NEWPARENT
-                    : NAME_NEWCATEGORY;
-            int iNextId = 1;
-
-            /* Loop until we found a name */
-            String myName = myCore;
-            for (;;) {
-                /* try out the name */
-                if (findItemByName(myBase + myName) == null) {
-                    return myName;
-                }
-
-                /* Build next name */
-                myName = myCore.concat(Integer.toString(iNextId++));
-            }
         }
 
         /**
@@ -759,7 +684,7 @@ public abstract class MoneyWiseCategoryBase
      * The dataMap class.
      * @param <T> the Category Data type
      */
-    protected static class MoneyWiseCategoryDataMap<T extends MoneyWiseCategoryBase>
+    public static class MoneyWiseCategoryDataMap<T extends MoneyWiseCategoryBase>
             extends PrometheusDataInstanceMap<T, String> {
         @Override
         @SuppressWarnings("unchecked")

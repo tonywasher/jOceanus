@@ -28,7 +28,7 @@ import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.prometheus.ui.fieldset.PrometheusFieldSetTableTab.PrometheusFieldSetTable;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.tethys.api.factory.TethysUIFactory;
@@ -41,7 +41,7 @@ import net.sourceforge.joceanus.tethys.api.pane.TethysUIGridPaneManager;
  * @param <T> the item type
  */
 public class PrometheusFieldSet<T>
-        implements TethysEventProvider<TethysUIEvent> {
+        implements OceanusEventProvider<TethysUIEvent> {
     /**
      * The gui factory.
      */

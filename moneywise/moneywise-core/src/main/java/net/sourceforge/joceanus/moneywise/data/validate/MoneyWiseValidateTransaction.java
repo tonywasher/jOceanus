@@ -14,38 +14,239 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.moneywise.data.basic;
+package net.sourceforge.joceanus.moneywise.data.validate;
 
 import net.sourceforge.joceanus.metis.data.MetisDataDifference;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseAssetDirection;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseAssetType;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicResource;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataValidator.MoneyWiseDataValidatorTrans;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDeposit;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseLoan;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePayee;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePortfolio;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurity;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurityHolding;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransAsset;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransBase;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransCategory;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransInfoSet;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransaction;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseDepositCategoryClass;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWisePayeeClass;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWisePortfolioClass;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseSecurityClass;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransCategoryClass;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransInfoClass;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusUnits;
+import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
+import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
+
+import java.util.Currency;
 
 /**
- * Transaction validator.
- * @author Tony Washer
+ * Validator for transaction.
  */
-public final class MoneyWiseTransValidator {
+public class MoneyWiseValidateTransaction
+        implements MoneyWiseDataValidatorTrans<MoneyWiseTransaction> {
     /**
-     * new Validation?.
+     * Are we using new validation?
      */
-    private final MoneyWiseDataSet theDataSet;
+    private final boolean newValidation;
 
     /**
-     * Prevent instantiation.
-     * @param pDataSet the dataSet
+     * The infoSet validator.
      */
-    MoneyWiseTransValidator(final MoneyWiseDataSet pDataSet) {
-        theDataSet = pDataSet;
+    private final MoneyWiseValidateTransInfoSet theInfoSet;
+
+    /**
+     * The defaults engine.
+     */
+    private final MoneyWiseValidateTransDefaults theDefaults;
+
+    /**
+     * Set the editSet.
+     */
+    private PrometheusEditSet theEditSet;
+
+    /**
+     * Constructor.
+     * @param pNewValidation true/false
+     */
+    MoneyWiseValidateTransaction(final boolean pNewValidation) {
+        newValidation = pNewValidation;
+        theInfoSet = new MoneyWiseValidateTransInfoSet(pNewValidation);
+        theDefaults = new MoneyWiseValidateTransDefaults(this);
+    }
+
+    @Override
+    public void setEditSet(final PrometheusEditSet pEditSet) {
+        theEditSet = pEditSet;
     }
 
     /**
-     * Is the account valid as the base account in a transaction?
-     * @param pAccount the account
+     * Obtain the editSet.
+     * @return the editSet
+     */
+    PrometheusEditSet getEditSet() {
+        if (theEditSet == null) {
+            throw new IllegalStateException("editSet not set up");
+        }
+        return theEditSet;
+    }
+
+    /**
+     * Should we perform new validity checks?
      * @return true/false
      */
+    public boolean newValidation() {
+        return newValidation;
+    }
+
+    @Override
+    public void validate(final PrometheusDataItem pTrans) {
+        final MoneyWiseTransaction myTrans = (MoneyWiseTransaction) pTrans;
+        final OceanusDate myDate = myTrans.getDate();
+        final MoneyWiseTransAsset myAccount = myTrans.getAccount();
+        final MoneyWiseTransAsset myPartner = myTrans.getPartner();
+        final MoneyWiseTransCategory myCategory = myTrans.getCategory();
+        final MoneyWiseAssetDirection myDir = myTrans.getDirection();
+        final OceanusMoney myAmount = myTrans.getAmount();
+        final OceanusUnits myAccountUnits = myTrans.getAccountDeltaUnits();
+        final OceanusUnits myPartnerUnits = myTrans.getPartnerDeltaUnits();
+        boolean doCheckCombo = true;
+
+        /* Header is always valid */
+        if (pTrans.isHeader()) {
+            pTrans.setValidEdit();
+            return;
+        }
+
+        /* Determine date range to check for */
+        final OceanusDateRange myRange = myTrans.getDataSet().getDateRange();
+
+        /* The date must be non-null */
+        if (myDate == null) {
+            pTrans.addError(PrometheusDataItem.ERROR_MISSING, MoneyWiseBasicResource.MONEYWISEDATA_FIELD_DATE);
+            /* The date must be in-range */
+        } else if (myRange.compareToDate(myDate) != 0) {
+            pTrans.addError(PrometheusDataItem.ERROR_RANGE, MoneyWiseBasicResource.MONEYWISEDATA_FIELD_DATE);
+        }
+
+        /* Account must be non-null */
+        if (myAccount == null) {
+            pTrans.addError(PrometheusDataItem.ERROR_MISSING, MoneyWiseBasicResource.TRANSACTION_ACCOUNT);
+            doCheckCombo = false;
+
+        } else {
+            /* Account must be valid */
+            if (!isValidAccount(myAccount)) {
+                pTrans.addError(MoneyWiseTransBase.ERROR_COMBO, MoneyWiseBasicResource.TRANSACTION_ACCOUNT);
+                doCheckCombo = false;
+            }
+        }
+
+        /* Category must be non-null */
+        if (myCategory == null) {
+            pTrans.addError(PrometheusDataItem.ERROR_MISSING, MoneyWiseBasicDataType.TRANSCATEGORY);
+            doCheckCombo = false;
+
+            /* Category must be valid for Account */
+        } else if (doCheckCombo
+                && !isValidCategory(myAccount, myCategory)) {
+            pTrans.addError(MoneyWiseTransBase.ERROR_COMBO, MoneyWiseBasicDataType.TRANSCATEGORY);
+            doCheckCombo = false;
+        }
+
+        /* Direction must be non-null */
+        if (myDir == null) {
+            pTrans.addError(PrometheusDataItem.ERROR_MISSING, MoneyWiseBasicResource.TRANSACTION_DIRECTION);
+            doCheckCombo = false;
+
+            /* Direction must be valid for Account */
+        } else if (doCheckCombo
+                && !isValidDirection(myAccount, myCategory, myDir)) {
+            pTrans.addError(MoneyWiseTransBase.ERROR_COMBO, MoneyWiseBasicResource.TRANSACTION_DIRECTION);
+            doCheckCombo = false;
+        }
+
+        /* Partner must be non-null */
+        if (myPartner == null) {
+            pTrans.addError(PrometheusDataItem.ERROR_MISSING, MoneyWiseBasicResource.TRANSACTION_PARTNER);
+
+        } else {
+            /* Partner must be valid for Account */
+            if (doCheckCombo
+                    && !isValidPartner(myAccount, myCategory, myPartner)) {
+                pTrans.addError(MoneyWiseTransBase.ERROR_COMBO, MoneyWiseBasicResource.TRANSACTION_PARTNER);
+            }
+        }
+
+        /* If money is null */
+        if (myAmount == null) {
+            /* Check that it must be null */
+            if (!needsNullAmount(myTrans)) {
+                pTrans.addError(PrometheusDataItem.ERROR_MISSING, MoneyWiseBasicResource.TRANSACTION_AMOUNT);
+            }
+
+            /* else non-null money */
+        } else {
+            /* Check that it must be null */
+            if (needsNullAmount(myTrans)) {
+                pTrans.addError(PrometheusDataItem.ERROR_EXIST, MoneyWiseBasicResource.TRANSACTION_AMOUNT);
+            }
+
+            /* Money must not be negative */
+            if (!myAmount.isPositive()) {
+                pTrans.addError(PrometheusDataItem.ERROR_NEGATIVE, MoneyWiseBasicResource.TRANSACTION_AMOUNT);
+            }
+
+            /* Check that amount is correct currency */
+            if (myAccount != null) {
+                final Currency myCurrency = myAccount.getCurrency();
+                if (!myAmount.getCurrency().equals(myCurrency)) {
+                    pTrans.addError(MoneyWiseTransBase.ERROR_CURRENCY, MoneyWiseBasicResource.TRANSACTION_AMOUNT);
+                }
+            }
+        }
+
+        /* Cannot have PartnerUnits if securities are identical */
+        if (myAccountUnits != null
+                && myPartnerUnits != null
+                && MetisDataDifference.isEqual(myAccount, myPartner)) {
+            pTrans.addError(MoneyWiseTransaction.ERROR_CIRCULAR, MoneyWiseTransInfoSet.getFieldForClass(MoneyWiseTransInfoClass.PARTNERDELTAUNITS));
+        }
+
+        /* If we have a category and an infoSet */
+        if (myCategory != null
+                && myTrans.getInfoSet() != null) {
+            /* Validate the InfoSet */
+            theInfoSet.validate(myTrans.getInfoSet());
+        }
+
+        /* Set validation flag */
+        if (!pTrans.hasErrors()) {
+            pTrans.setValidEdit();
+        }
+    }
+
+    /**
+     * Determines whether an event needs a zero amount.
+     * @param pTrans the transaction
+     * @return true/false
+     */
+    public boolean needsNullAmount(final MoneyWiseTransaction pTrans) {
+        final MoneyWiseTransCategoryClass myClass = pTrans.getCategoryClass();
+        return myClass != null
+                && myClass.needsNullAmount();
+    }
+
+    @Override
     public boolean isValidAccount(final MoneyWiseTransAsset pAccount) {
         /* Validate securityHolding */
         if (pAccount instanceof MoneyWiseSecurityHolding
@@ -64,12 +265,7 @@ public final class MoneyWiseTransValidator {
         return myType.isBaseAccount() && !pAccount.isHidden();
     }
 
-    /**
-     * Is the transaction valid for the base account in the transaction?.
-     * @param pAccount the account
-     * @param pCategory The category of the event
-     * @return true/false
-     */
+    @Override
     public boolean isValidCategory(final MoneyWiseTransAsset pAccount,
                                    final MoneyWiseTransCategory pCategory) {
         /* Access details */
@@ -168,13 +364,7 @@ public final class MoneyWiseTransValidator {
         }
     }
 
-    /**
-     * Is the direction valid for the base account and category in the transaction?.
-     * @param pAccount the account
-     * @param pCategory The category of the event
-     * @param pDirection the direction
-     * @return true/false
-     */
+    @Override
     public boolean isValidDirection(final MoneyWiseTransAsset pAccount,
                                     final MoneyWiseTransCategory pCategory,
                                     final MoneyWiseAssetDirection pDirection) {
@@ -182,7 +372,6 @@ public final class MoneyWiseTransValidator {
 
         /* Access details */
         final MoneyWiseTransCategoryClass myCatClass = pCategory.getCategoryTypeClass();
-        final boolean newValidation = theDataSet.newValidityChecks();
 
         /* Switch on the CategoryClass */
         switch (myCatClass) {
@@ -245,13 +434,7 @@ public final class MoneyWiseTransValidator {
         }
     }
 
-    /**
-     * Is the partner valid for the base account and category in the transaction?.
-     * @param pAccount the account
-     * @param pCategory The category of the event
-     * @param pPartner the partner
-     * @return true/false
-     */
+    @Override
     public boolean isValidPartner(final MoneyWiseTransAsset pAccount,
                                   final MoneyWiseTransCategory pCategory,
                                   final MoneyWiseTransAsset pPartner) {
@@ -511,7 +694,7 @@ public final class MoneyWiseTransValidator {
     private boolean checkLoyaltyBonus(final MoneyWiseTransAsset pAccount) {
         /* If this is deposit then check whether it can support loyaltyBonus */
         if (pAccount instanceof MoneyWiseDeposit) {
-            return theDataSet.newValidityChecks()
+            return newValidation
                     || ((MoneyWiseDeposit) pAccount).getCategoryClass().canLoyaltyBonus();
         }
 
@@ -626,5 +809,25 @@ public final class MoneyWiseTransValidator {
 
         /* Not allowed */
         return false;
+    }
+
+    @Override
+    public void autoCorrect(final MoneyWiseTransaction pItem) throws OceanusException {
+        theDefaults.autoCorrect(pItem);
+    }
+
+    @Override
+    public MoneyWiseTransaction buildTransaction(final Object pKey) {
+        return theDefaults.buildTransaction(pKey);
+    }
+
+    @Override
+    public void setRange(final OceanusDateRange pRange) {
+        theDefaults.setRange(pRange);
+    }
+
+    @Override
+    public OceanusDateRange getRange() {
+        return theDefaults.getRange();
     }
 }

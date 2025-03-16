@@ -27,7 +27,6 @@ import net.sourceforge.joceanus.metis.field.MetisFieldVersionedSet;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePayeeInfo.MoneyWisePayeeInfoList;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseAccountInfoClass;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseAccountInfoType.MoneyWiseAccountInfoTypeList;
-import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrency;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWisePayeeClass;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWisePayeeType;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWisePayeeType.MoneyWisePayeeTypeList;
@@ -76,11 +75,6 @@ public class MoneyWisePayee
     static {
         FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAINFOSET_NAME, MoneyWisePayee::getInfoSet);
     }
-
-   /**
-     * New Account name.
-     */
-    private static final String NAME_NEWACCOUNT = MoneyWiseBasicResource.PAYEE_NEWACCOUNT.getValue();
 
     /**
      * Do we have an InfoSet.
@@ -449,33 +443,7 @@ public class MoneyWisePayee
      * @throws OceanusException on error
      */
     public void setDefaults() throws OceanusException {
-        /* Set values */
-        setCategory(getDefaultPayeeType());
-        setName(getList().getUniqueName(NAME_NEWACCOUNT));
-        setClosed(Boolean.FALSE);
-    }
-
-    /**
-     * Obtain payee type for new payee account.
-     * @return the payee type
-     */
-    private MoneyWisePayeeType getDefaultPayeeType() {
-        /* Access payee types */
-        final MoneyWisePayeeTypeList myTypes = getDataSet().getPayeeTypes();
-
-        /* loop through the payee types */
-        final Iterator<MoneyWisePayeeType> myIterator = myTypes.iterator();
-        while (myIterator.hasNext()) {
-            final MoneyWisePayeeType myType = myIterator.next();
-
-            /* Ignore deleted and singular types */
-            if (!myType.isDeleted() && !myType.getPayeeClass().isSingular()) {
-                return myType;
-            }
-        }
-
-        /* Return no category */
-        return null;
+         getList().getValidator().setDefaults(this);
     }
 
     @Override
@@ -621,60 +589,6 @@ public class MoneyWisePayee
         clearTouches(MoneyWiseBasicDataType.PORTFOLIO);
     }
 
-    @Override
-    public void validate() {
-        final MoneyWisePayeeList myList = getList();
-        final MoneyWisePayeeType myPayeeType = getCategory();
-        final MoneyWisePayee myParent = getParent();
-        final MoneyWiseCurrency myCurrency = getAssetCurrency();
-
-        /* Validate base components */
-        super.validate();
-
-        /* PayeeType must be non-null */
-        if (myPayeeType == null) {
-            addError(ERROR_MISSING, MoneyWiseBasicResource.CATEGORY_NAME);
-        } else {
-            /* Access the class */
-            final MoneyWisePayeeClass myClass = myPayeeType.getPayeeClass();
-
-            /* PayeeType must be enabled */
-            if (!myPayeeType.getEnabled()) {
-                addError(ERROR_DISABLED, MoneyWiseBasicResource.CATEGORY_NAME);
-            }
-
-            /* If the PayeeType is singular */
-            if (myClass.isSingular()) {
-                /* Count the elements of this class */
-                final MoneyWisePayeeDataMap myMap = myList.getDataMap();
-                if (!myMap.validSingularCount(myClass)) {
-                    addError(ERROR_MULT, MoneyWiseBasicResource.CATEGORY_NAME);
-                }
-            }
-        }
-
-        /* Parent must be null */
-        if (myParent != null) {
-            addError(ERROR_EXIST, MoneyWiseBasicResource.ASSET_PARENT);
-        }
-
-        /* Currency must be null */
-        if (myCurrency != null) {
-            addError(ERROR_EXIST, MoneyWiseStaticDataType.CURRENCY);
-        }
-
-        /* If we have an infoSet */
-        if (theInfoSet != null) {
-            /* Validate the InfoSet */
-            theInfoSet.validate();
-        }
-
-        /* Set validation flag */
-        if (!hasErrors()) {
-            setValidEdit();
-        }
-    }
-
     /**
      * Update base payee from an edited payee.
      * @param pPayee the edited payee
@@ -763,7 +677,7 @@ public class MoneyWisePayee
         }
 
         @Override
-        protected MoneyWisePayeeDataMap getDataMap() {
+        public MoneyWisePayeeDataMap getDataMap() {
             return (MoneyWisePayeeDataMap) super.getDataMap();
         }
 
@@ -809,6 +723,7 @@ public class MoneyWisePayee
             final MoneyWisePayeeList myList = getEmptyList(PrometheusListStyle.EDIT);
             myList.ensureMap();
             pEditSet.setEditEntryList(MoneyWiseBasicDataType.PAYEE, myList);
+            myList.getValidator().setEditSet(pEditSet);
 
             /* Store InfoType list */
             myList.theInfoTypeList = pEditSet.getDataList(MoneyWiseStaticDataType.ACCOUNTINFOTYPE, MoneyWiseAccountInfoTypeList.class);
@@ -851,13 +766,13 @@ public class MoneyWisePayee
         }
 
         @Override
-        protected boolean checkAvailableName(final String pName) {
+        public boolean checkAvailableName(final String pName) {
             /* check availability */
             return findItemByName(pName) == null;
         }
 
         @Override
-        protected boolean validNameCount(final String pName) {
+        public boolean validNameCount(final String pName) {
             /* check availability in map */
             return getDataMap().validNameCount(pName);
         }
@@ -947,7 +862,7 @@ public class MoneyWisePayee
     /**
      * The dataMap class.
      */
-    protected static class MoneyWisePayeeDataMap
+    public static class MoneyWisePayeeDataMap
             implements PrometheusDataMapItem, MetisFieldItem {
         /**
          * Report fields.

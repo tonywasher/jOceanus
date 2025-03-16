@@ -16,11 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.moneywise.ui.panel;
 
-import java.util.Iterator;
-
-import net.sourceforge.joceanus.metis.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.metis.data.MetisDataDifference;
-import net.sourceforge.joceanus.moneywise.exc.MoneyWiseDataException;
+import net.sourceforge.joceanus.metis.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataSet;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDeposit;
@@ -30,17 +27,20 @@ import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDepositRate.MoneyW
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePayee;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseAssetCategory;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrency;
+import net.sourceforge.joceanus.moneywise.exc.MoneyWiseDataException;
 import net.sourceforge.joceanus.moneywise.ui.base.MoneyWiseAssetTable;
 import net.sourceforge.joceanus.moneywise.ui.dialog.MoneyWiseDepositDialog;
 import net.sourceforge.joceanus.moneywise.views.MoneyWiseView;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
 import net.sourceforge.joceanus.prometheus.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditEntry;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
 import net.sourceforge.joceanus.tethys.api.factory.TethysUIFactory;
 import net.sourceforge.joceanus.tethys.api.menu.TethysUIScrollMenu;
+
+import java.util.Iterator;
 
 /**
  * MoneyWise Deposit Table.
@@ -214,7 +214,7 @@ public class MoneyWiseDepositTable
             /* Create the new asset */
             myTask.startTask("buildItem");
             final MoneyWiseDeposit myDeposit = theDeposits.addNewItem();
-            myDeposit.setDefaults(getEditSet());
+            myDeposit.setDefaults();
 
             /* Set as new and adjust map */
             myTask.startTask("incrementVersion");

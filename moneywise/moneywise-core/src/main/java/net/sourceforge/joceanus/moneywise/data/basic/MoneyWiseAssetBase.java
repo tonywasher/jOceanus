@@ -19,6 +19,7 @@ package net.sourceforge.joceanus.moneywise.data.basic;
 import net.sourceforge.joceanus.metis.data.MetisDataDifference;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataValidator.MoneyWiseDataValidatorAccount;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTax.MoneyWiseTaxCredit;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransaction.MoneyWiseTransactionList;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseAssetCategory;
@@ -71,29 +72,9 @@ public abstract class MoneyWiseAssetBase
     }
 
     /**
-     * Bad category error.
-     */
-    protected static final String ERROR_BADCATEGORY = MoneyWiseBasicResource.ASSET_ERROR_BADCAT.getValue();
-
-    /**
-     * Bad parent error.
-     */
-    protected static final String ERROR_BADPARENT = MoneyWiseBasicResource.ASSET_ERROR_BADPARENT.getValue();
-
-    /**
      * Bad InfoSet Error Text.
      */
     protected static final String ERROR_BADINFOSET = PrometheusDataResource.DATAINFOSET_ERROR_BADSET.getValue();
-
-    /**
-     * Parent Closed Error Text.
-     */
-    protected static final String ERROR_PARCLOSED = MoneyWiseBasicResource.ASSET_ERROR_PARENTCLOSED.getValue();
-
-    /**
-     * Reserved name error.
-     */
-    protected static final String ERROR_RESERVED = MoneyWiseBasicResource.ASSET_ERROR_RESERVED.getValue();
 
     /**
      * Close Date.
@@ -778,51 +759,6 @@ public abstract class MoneyWiseAssetBase
         setValueClosed(isClosed);
     }
 
-    @Override
-    public void validate() {
-        final String myName = getName();
-        final String myDesc = getDesc();
-
-        /* Name must be non-null */
-        if (myName == null) {
-            addError(ERROR_MISSING, PrometheusDataResource.DATAITEM_FIELD_NAME);
-
-            /* Check that the name is unique */
-        } else {
-            /* Validate the name */
-            validateName(myName);
-        }
-
-        /* Check description length */
-        if ((myDesc != null) && (myDesc.length() > DESCLEN)) {
-            addError(ERROR_LENGTH, PrometheusDataResource.DATAITEM_FIELD_DESC);
-        }
-    }
-
-    /**
-     * Validate the name.
-     * @param pName the name
-     */
-    protected void validateName(final String pName) {
-        /* Access the list */
-        final MoneyWiseAssetBaseList<?> myList = getList();
-
-        /* The name must not be too long */
-        if (pName.length() > NAMELEN) {
-            addError(ERROR_LENGTH, PrometheusDataResource.DATAITEM_FIELD_NAME);
-        }
-
-        /* Check name count */
-        if (!myList.validNameCount(pName)) {
-            addError(ERROR_DUPLICATE, PrometheusDataResource.DATAITEM_FIELD_NAME);
-        }
-
-        /* Check that the name does not contain invalid characters */
-        if (pName.contains(MoneyWiseSecurityHolding.SECURITYHOLDING_SEP)) {
-            addError(ERROR_INVALIDCHAR, PrometheusDataResource.DATAITEM_FIELD_NAME);
-        }
-    }
-
     /**
      * Update base asset from an edited asset.
      * @param pAsset the edited asset
@@ -902,6 +838,11 @@ public abstract class MoneyWiseAssetBase
             return (MoneyWiseDataSet) super.getDataSet();
         }
 
+        @Override
+        public MoneyWiseDataValidatorAccount<T> getValidator() {
+            return (MoneyWiseDataValidatorAccount<T>) super.getValidator();
+        }
+
         /**
          * Obtain editSet.
          * @return the editSet
@@ -926,36 +867,14 @@ public abstract class MoneyWiseAssetBase
          * @param pName Name of item
          * @return true/false
          */
-        protected abstract boolean checkAvailableName(String pName);
+        public abstract boolean checkAvailableName(String pName);
 
         /**
          * Check whether a name is validly used.
          * @param pName Name of item
          * @return true/false
          */
-        protected abstract boolean validNameCount(String pName);
-
-        /**
-         * Obtain unique name for new account.
-         * @param pBase the base name
-         * @return The new name
-         */
-        public String getUniqueName(final String pBase) {
-            /* Set up base constraints */
-            int iNextId = 1;
-
-            /* Loop until we found a name */
-            String myName = pBase;
-            for (;;) {
-                /* try out the name */
-                if (checkAvailableName(myName)) {
-                    return myName;
-                }
-
-                /* Build next name */
-                myName = pBase.concat(Integer.toString(iNextId++));
-            }
-        }
+        public abstract boolean validNameCount(String pName);
 
         @Override
         public void postProcessOnLoad() throws OceanusException {

@@ -16,14 +16,14 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.prometheus.data;
 
-import java.util.Iterator;
-
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.metis.field.MetisFieldItem.MetisFieldDef;
 import net.sourceforge.joceanus.metis.field.MetisFieldItem.MetisFieldSetDef;
 import net.sourceforge.joceanus.metis.field.MetisFieldItem.MetisFieldVersionedDef;
 import net.sourceforge.joceanus.metis.field.MetisFieldVersionValues;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
+
+import java.util.Iterator;
 
 /**
  * Prometheus Set of versioned Values.
@@ -218,7 +218,6 @@ public class PrometheusEncryptedValues
             /* Access the value */
             final Object myValue = getValue(myField);
 
-            /* If this is a byte array */
             /* Encrypt the value */
             setUncheckedValue(myField, theEncryptor.encryptValue(myValue, myField));
         }

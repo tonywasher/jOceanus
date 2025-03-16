@@ -33,6 +33,7 @@ import net.sourceforge.joceanus.prometheus.data.PrometheusControlKeySet.Promethe
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataKeySet.PrometheusDataKeySetList;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataList.PrometheusDataListSet;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataList.PrometheusListStyle;
+import net.sourceforge.joceanus.prometheus.data.PrometheusDataValidator.PrometheusDataValidatorFactory;
 import net.sourceforge.joceanus.prometheus.data.PrometheusEncryptedDataItem.PrometheusEncryptedList;
 import net.sourceforge.joceanus.prometheus.preference.PrometheusPreferenceManager;
 import net.sourceforge.joceanus.prometheus.preference.PrometheusPreferenceSecurity.PrometheusSecurityPreferenceKey;
@@ -141,6 +142,11 @@ public abstract class PrometheusDataSet
     private final OceanusDataFormatter theFormatter;
 
     /**
+     * Validator factory.
+     */
+    private PrometheusDataValidatorFactory theValidatorFactory;
+
+    /**
      * Constructor for new empty DataSet.
      * @param pToolkit the toolkit set
      */
@@ -201,6 +207,26 @@ public abstract class PrometheusDataSet
      */
     public OceanusDataFormatter getDataFormatter() {
         return theFormatter;
+    }
+
+    /**
+     * Set the validator factory.
+     * @param pFactory the validator factory
+     */
+    public void setValidatorFactory(final PrometheusDataValidatorFactory pFactory) {
+        theValidatorFactory = pFactory;
+    }
+
+    /**
+     * Obtain a validator fot=r the itemType.
+     * @param pItemType the itemType
+     * @return the validator.
+     */
+    PrometheusDataValidator<?> getValidator(final PrometheusListKey pItemType) {
+        if (theValidatorFactory == null) {
+            throw new IllegalStateException("Validator factory not set");
+        }
+        return theValidatorFactory.newValidator(pItemType);
     }
 
     /**

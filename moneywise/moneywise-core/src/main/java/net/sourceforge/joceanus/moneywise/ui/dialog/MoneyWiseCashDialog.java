@@ -16,10 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.moneywise.ui.dialog;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicResource;
@@ -40,12 +36,12 @@ import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransCategoryClass;
 import net.sourceforge.joceanus.moneywise.ui.MoneyWiseIcon;
 import net.sourceforge.joceanus.moneywise.ui.base.MoneyWiseAssetTable;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataResource;
 import net.sourceforge.joceanus.prometheus.ui.fieldset.PrometheusFieldSet;
 import net.sourceforge.joceanus.prometheus.ui.fieldset.PrometheusFieldSetEvent;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
 import net.sourceforge.joceanus.tethys.api.control.TethysUIControl.TethysUIIconMapSet;
 import net.sourceforge.joceanus.tethys.api.factory.TethysUIFactory;
 import net.sourceforge.joceanus.tethys.api.field.TethysUIDataEditField.TethysUICharArrayTextAreaField;
@@ -57,6 +53,10 @@ import net.sourceforge.joceanus.tethys.api.field.TethysUIFieldFactory;
 import net.sourceforge.joceanus.tethys.api.menu.TethysUIScrollItem;
 import net.sourceforge.joceanus.tethys.api.menu.TethysUIScrollMenu;
 import net.sourceforge.joceanus.tethys.api.menu.TethysUIScrollSubMenu;
+
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  * Panel to display/edit/create a Cash.
@@ -249,7 +249,7 @@ public class MoneyWiseCashDialog
         } else if (MoneyWiseBasicResource.CATEGORY_NAME.equals(myField)) {
             /* Update the Category */
             myCash.setCategory(pUpdate.getValue(MoneyWiseCashCategory.class));
-            myCash.autoCorrect(getEditSet());
+            myCash.autoCorrect();
         } else if (MoneyWiseStaticDataType.CURRENCY.equals(myField)) {
             /* Update the Currency */
             myCash.setAssetCurrency(pUpdate.getValue(MoneyWiseCurrency.class));
@@ -412,8 +412,8 @@ public class MoneyWiseCashDialog
         while (myIterator.hasNext()) {
             final MoneyWisePayee myPayee = myIterator.next();
 
-            /* Ignore deleted */
-            if (myPayee.isDeleted()) {
+            /* Ignore deleted/closed */
+            if (myPayee.isDeleted() || myPayee.isClosed()) {
                 continue;
             }
 

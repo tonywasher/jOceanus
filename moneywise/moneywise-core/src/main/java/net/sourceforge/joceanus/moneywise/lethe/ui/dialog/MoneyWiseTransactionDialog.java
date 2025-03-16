@@ -26,6 +26,7 @@ import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicResource;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseCash.MoneyWiseCashList;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataSet;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataValidator.MoneyWiseDataValidatorTrans;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDeposit.MoneyWiseDepositList;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseLoan.MoneyWiseLoanList;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePayee.MoneyWisePayeeList;
@@ -37,14 +38,13 @@ import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurityHolding.Mo
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransAsset;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransCategory;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransCategory.MoneyWiseTransCategoryList;
-import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransDefaults;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransInfoSet;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransTag;
-import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransValidator;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransaction;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransaction.MoneyWiseTransactionList;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransCategoryClass;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransInfoClass;
+import net.sourceforge.joceanus.moneywise.data.validate.MoneyWiseValidateTransaction;
 import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysis;
 import net.sourceforge.joceanus.moneywise.lethe.ui.controls.MoneyWiseAnalysisSelect;
 import net.sourceforge.joceanus.moneywise.lethe.views.MoneyWiseAnalysisFilter;
@@ -123,11 +123,6 @@ public class MoneyWiseTransactionDialog
     private final MoneyWiseAnalysisSelect theAnalysisSelect;
 
     /**
-     * TransactionBuilder.
-     */
-    private final MoneyWiseTransDefaults theBuilder;
-
-    /**
      * dateRange.
      */
     private OceanusDateRange theRange;
@@ -146,19 +141,16 @@ public class MoneyWiseTransactionDialog
      * Constructor.
      * @param pFactory the GUI factory
      * @param pEditSet the edit set
-     * @param pBuilder the transaction builder
      * @param pAnalysisSelect the analysis selection panel
      * @param pOwner the owning table
      */
     public MoneyWiseTransactionDialog(final TethysUIFactory<?> pFactory,
                                       final PrometheusEditSet pEditSet,
-                                      final MoneyWiseTransDefaults pBuilder,
                                       final MoneyWiseAnalysisSelect pAnalysisSelect,
                                       final MoneyWiseBaseTable<MoneyWiseTransaction> pOwner) {
         /* Initialise the panel */
         super(pFactory, pEditSet, pOwner);
         theAnalysisSelect = pAnalysisSelect;
-        theBuilder = pBuilder;
 
         /* Access the fieldSet */
         theFieldSet = getFieldSet();
@@ -505,7 +497,8 @@ public class MoneyWiseTransactionDialog
         theFieldSet.setFieldVisible(MoneyWiseBasicResource.TRANSACTION_AMOUNT, !needsNullAmount);
 
         /* Set the range for the dateButton */
-        theRange = theBuilder.getRange();
+        final MoneyWiseValidateTransaction myBuilder = (MoneyWiseValidateTransaction) myTrans.getList().getValidator();
+        theRange = myBuilder.getRange();
     }
 
     /**
@@ -536,6 +529,7 @@ public class MoneyWiseTransactionDialog
         /* Access the field */
         final MetisDataFieldId myField = pUpdate.getFieldId();
         final MoneyWiseTransaction myTrans = getItem();
+        final MoneyWiseValidateTransaction myBuilder = (MoneyWiseValidateTransaction) myTrans.getList().getValidator();
 
         /* Process updates */
         if (MoneyWiseBasicResource.MONEYWISEDATA_FIELD_DATE.equals(myField)) {
@@ -544,23 +538,23 @@ public class MoneyWiseTransactionDialog
         } else if (MoneyWiseBasicResource.TRANSACTION_AMOUNT.equals(myField)) {
             /* Update the Amount */
             myTrans.setAmount(pUpdate.getValue(OceanusMoney.class));
-            theBuilder.autoCorrect(myTrans);
+            myBuilder.autoCorrect(myTrans);
         } else if (MoneyWiseBasicResource.TRANSACTION_ACCOUNT.equals(myField)) {
             /* Update the Account */
             myTrans.setAccount(resolveAsset(pUpdate.getValue(MoneyWiseTransAsset.class)));
-            theBuilder.autoCorrect(myTrans);
+            myBuilder.autoCorrect(myTrans);
         } else if (MoneyWiseBasicResource.TRANSACTION_DIRECTION.equals(myField)) {
             /* Update the Direction */
             myTrans.switchDirection();
-            theBuilder.autoCorrect(myTrans);
+            myBuilder.autoCorrect(myTrans);
         } else if (MoneyWiseBasicResource.TRANSACTION_PARTNER.equals(myField)) {
             /* Update the Partner */
             myTrans.setPartner(resolveAsset(pUpdate.getValue(MoneyWiseTransAsset.class)));
-            theBuilder.autoCorrect(myTrans);
+            myBuilder.autoCorrect(myTrans);
         } else if (MoneyWiseBasicDataType.TRANSCATEGORY.equals(myField)) {
             /* Update the Category */
             myTrans.setCategory(pUpdate.getValue(MoneyWiseTransCategory.class));
-            theBuilder.autoCorrect(myTrans);
+            myBuilder.autoCorrect(myTrans);
         } else if (MoneyWiseBasicResource.TRANSACTION_RECONCILED.equals(myField)) {
             /* Update the Reconciled indication */
             myTrans.setReconciled(pUpdate.getValue(Boolean.class));
@@ -600,7 +594,7 @@ public class MoneyWiseTransactionDialog
         } else if (MoneyWiseTransInfoClass.RETURNEDCASHACCOUNT.equals(myField)) {
             /* Update the ReturnedCashAccount */
             myTrans.setReturnedCashAccount(pUpdate.getValue(MoneyWiseTransAsset.class));
-            theBuilder.autoCorrect(myTrans);
+            myBuilder.autoCorrect(myTrans);
         } else if (MoneyWiseTransInfoClass.RETURNEDCASH.equals(myField)) {
             /* Update the ReturnedCash */
             myTrans.setReturnedCash(pUpdate.getValue(OceanusMoney.class));
@@ -743,7 +737,7 @@ public class MoneyWiseTransactionDialog
         /* Record active item */
         final MoneyWiseTransAsset myAccount = pTrans.getAccount();
         final MoneyWiseTransCategory myCategory = pTrans.getCategory();
-        final MoneyWiseTransValidator myValidator = pTrans.getValidator();
+        final MoneyWiseDataValidatorTrans myValidator = pTrans.getList().getValidator();
         final MoneyWiseTransAsset myCurr = pIsAccount
                 ? myAccount
                 : pTrans.getPartner();
@@ -800,7 +794,7 @@ public class MoneyWiseTransactionDialog
         /* Record active item */
         final MoneyWiseTransAsset myAccount = pTrans.getAccount();
         final MoneyWiseTransCategory myCategory = pTrans.getCategory();
-        final MoneyWiseTransValidator myValidator = pTrans.getValidator();
+        final MoneyWiseDataValidatorTrans myValidator = pTrans.getList().getValidator();
         final MoneyWiseTransAsset myCurr = pIsAccount
                 ? myAccount
                 : pTrans.getPartner();
@@ -928,7 +922,7 @@ public class MoneyWiseTransactionDialog
 
         /* Access Categories */
         final MoneyWiseTransCategoryList myCategories = getDataList(MoneyWiseBasicDataType.TRANSCATEGORY, MoneyWiseTransCategoryList.class);
-        final MoneyWiseTransValidator myValidator = pTrans.getValidator();
+        final MoneyWiseDataValidatorTrans myValidator = pTrans.getList().getValidator();
 
         /* Loop through the available category values */
         final Iterator<MoneyWiseTransCategory> myIterator = myCategories.iterator();

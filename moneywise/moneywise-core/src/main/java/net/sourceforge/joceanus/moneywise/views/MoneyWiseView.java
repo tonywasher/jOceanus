@@ -17,6 +17,7 @@
 package net.sourceforge.joceanus.moneywise.views;
 
 import net.sourceforge.joceanus.metis.viewer.MetisViewerEntry;
+import net.sourceforge.joceanus.moneywise.data.validate.MoneyWiseValidatorFactory;
 import net.sourceforge.joceanus.moneywise.lethe.data.analysis.analyse.MoneyWiseAnalysisTransAnalyser;
 import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysis;
 import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisManager;
@@ -82,6 +83,9 @@ public class MoneyWiseView
         /* Record the tax factory */
         theTaxFactory = pTaxFactory;
 
+        /* Create the validator factory */
+        setValidatorFactory(new MoneyWiseValidatorFactory());
+
         /* Create an empty data set */
         setData(getNewData());
     }
@@ -124,7 +128,9 @@ public class MoneyWiseView
      */
     @Override
     public final MoneyWiseDataSet getNewData() {
-        return new MoneyWiseDataSet(getToolkit(), theTaxFactory);
+        final MoneyWiseDataSet myDataSet = new MoneyWiseDataSet(getToolkit(), theTaxFactory);
+        myDataSet.setValidatorFactory(getValidatorFactory());
+        return myDataSet;
     }
 
     @Override

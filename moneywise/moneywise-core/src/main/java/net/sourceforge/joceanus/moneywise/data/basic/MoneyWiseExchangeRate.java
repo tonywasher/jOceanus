@@ -81,12 +81,12 @@ public class MoneyWiseExchangeRate
     /**
      * Circular Rate Error.
      */
-    private static final String ERROR_CIRCLE = MoneyWiseBasicResource.XCHGRATE_ERROR_CIRCLE.getValue();
+    public static final String ERROR_CIRCLE = MoneyWiseBasicResource.XCHGRATE_ERROR_CIRCLE.getValue();
 
     /**
      * Default Rate Error.
      */
-    private static final String ERROR_DEF = MoneyWiseBasicResource.XCHGRATE_ERROR_DEFAULT.getValue();
+    public static final String ERROR_DEF = MoneyWiseBasicResource.XCHGRATE_ERROR_DEFAULT.getValue();
 
     /**
      * Copy Constructor.
@@ -466,76 +466,6 @@ public class MoneyWiseExchangeRate
         /* touch the currencies referred to */
         getFromCurrency().touchItem(this);
         getToCurrency().touchItem(this);
-    }
-
-    @Override
-    public void validate() {
-        final MoneyWiseExchangeRateBaseList<? extends MoneyWiseExchangeRate> myList = getList();
-        final MoneyWiseCurrency myFrom = getFromCurrency();
-        final MoneyWiseCurrency myTo = getToCurrency();
-        final OceanusDate myDate = getDate();
-        final OceanusRatio myRate = getExchangeRate();
-        final OceanusDateRange myRange = getDataSet().getDateRange();
-
-        /* Date must be non-null */
-        if (myDate == null) {
-            addError(ERROR_MISSING, MoneyWiseBasicResource.MONEYWISEDATA_FIELD_DATE);
-
-            /* else date is non-null */
-        } else {
-            /* Date must be unique for this currency */
-            final MoneyWiseExchangeRateDataMap myMap = myList.getDataMap();
-            if (!myMap.validRateCount(this)) {
-                addError(ERROR_DUPLICATE, MoneyWiseBasicResource.MONEYWISEDATA_FIELD_DATE);
-            }
-
-            /* The date must be in-range */
-            if (myRange.compareToDate(myDate) != 0) {
-                addError(ERROR_RANGE, MoneyWiseBasicResource.MONEYWISEDATA_FIELD_DATE);
-            }
-        }
-
-        /* FromCurrency must be non-null and enabled */
-        if (myFrom == null) {
-            addError(ERROR_MISSING, MoneyWiseBasicResource.XCHGRATE_FROM);
-        } else if (!myFrom.getEnabled()) {
-            addError(ERROR_DISABLED, MoneyWiseBasicResource.XCHGRATE_FROM);
-        }
-
-        /* ToCurrency must be non-null and enabled */
-        if (myTo == null) {
-            addError(ERROR_MISSING, MoneyWiseBasicResource.XCHGRATE_TO);
-        } else if (!myTo.getEnabled()) {
-            addError(ERROR_DISABLED, MoneyWiseBasicResource.XCHGRATE_TO);
-        }
-
-        /* Check currency combination */
-        if (myFrom != null && myTo != null) {
-            /* Must be different */
-            if (myFrom.equals(myTo)) {
-                addError(ERROR_CIRCLE, MoneyWiseBasicResource.XCHGRATE_TO);
-            }
-
-            /* From currency must be the reporting currency */
-            final MoneyWiseCurrency myDefault = getDataSet().getReportingCurrency();
-            if (!myFrom.equals(myDefault)) {
-                addError(ERROR_DEF, MoneyWiseBasicResource.XCHGRATE_FROM);
-            }
-        }
-
-        /* Rate must be non-null and positive non-zero */
-        if (myRate == null) {
-            addError(ERROR_MISSING, MoneyWiseBasicResource.XCHGRATE_RATE);
-        } else if (!myRate.isNonZero()) {
-            addError(ERROR_ZERO, MoneyWiseBasicResource.XCHGRATE_RATE);
-        } else if (!myRate.isPositive()) {
-            addError(ERROR_NEGATIVE, MoneyWiseBasicResource.XCHGRATE_RATE);
-        }
-
-        /* Set validation flag */
-        if (!hasErrors()) {
-            setValidEdit();
-        }
     }
 
     /**

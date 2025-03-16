@@ -29,11 +29,11 @@ import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransCategory;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransCategoryClass;
 import net.sourceforge.joceanus.moneywise.lethe.views.MoneyWiseAnalysisFilter;
 import net.sourceforge.joceanus.moneywise.lethe.views.MoneyWiseAnalysisFilter.MoneyWiseAnalysisTransCategoryFilter;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
 import net.sourceforge.joceanus.prometheus.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.TethysEventProvider;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIConstant;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIEvent;
@@ -49,7 +49,7 @@ import net.sourceforge.joceanus.tethys.api.pane.TethysUIBoxPaneManager;
  * Transaction Category Analysis Selection.
  */
 public class MoneyWiseTransCategoryAnalysisSelect
-        implements MoneyWiseAnalysisFilterSelection, TethysEventProvider<PrometheusDataEvent> {
+        implements MoneyWiseAnalysisFilterSelection, OceanusEventProvider<PrometheusDataEvent> {
     /**
      * Text for TransCategory Label.
      */

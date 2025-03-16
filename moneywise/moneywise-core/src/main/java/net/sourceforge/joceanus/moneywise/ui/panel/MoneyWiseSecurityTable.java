@@ -223,7 +223,7 @@ public class MoneyWiseSecurityTable
             /* Create the new asset */
             myTask.startTask("buildItem");
             final MoneyWiseSecurity mySecurity = theSecurities.addNewItem();
-            mySecurity.setDefaults(getEditSet());
+            mySecurity.setDefaults();
 
             /* Set as new and adjust map */
             myTask.startTask("incrementVersion");

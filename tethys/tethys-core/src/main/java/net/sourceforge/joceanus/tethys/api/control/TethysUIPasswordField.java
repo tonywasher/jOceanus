@@ -16,7 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.tethys.api.control;
 
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIEvent;
 
@@ -24,7 +24,7 @@ import net.sourceforge.joceanus.tethys.api.base.TethysUIEvent;
  * Password Field.
  */
 public interface TethysUIPasswordField
-        extends TethysEventProvider<TethysUIEvent>, TethysUIComponent {
+        extends OceanusEventProvider<TethysUIEvent>, TethysUIComponent {
     /**
      * set password.
      * @param pPassword the password.

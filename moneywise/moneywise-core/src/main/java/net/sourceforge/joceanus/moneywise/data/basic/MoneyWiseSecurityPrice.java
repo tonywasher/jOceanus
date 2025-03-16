@@ -23,7 +23,6 @@ import net.sourceforge.joceanus.metis.data.MetisDataResource;
 import net.sourceforge.joceanus.metis.field.MetisFieldItem;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurity.MoneyWiseSecurityList;
-import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrency;
 import net.sourceforge.joceanus.moneywise.exc.MoneyWiseDataException;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.date.OceanusDate;
@@ -82,7 +81,7 @@ public class MoneyWiseSecurityPrice
     /**
      * Invalid currency error.
      */
-    private static final String ERROR_CURRENCY = MoneyWiseBasicResource.MONEYWISEDATA_ERROR_CURRENCY.getValue();
+    public static final String ERROR_CURRENCY = MoneyWiseBasicResource.MONEYWISEDATA_ERROR_CURRENCY.getValue();
 
     /**
      * Copy Constructor.
@@ -396,68 +395,6 @@ public class MoneyWiseSecurityPrice
     }
 
     /**
-     * Validate the price.
-     */
-    @Override
-    public void validate() {
-        final MoneyWiseSecurity mySecurity = getSecurity();
-        final OceanusDate myDate = getDate();
-        final OceanusPrice myPrice = getPrice();
-        final MoneyWiseSecurityPriceBaseList<? extends MoneyWiseSecurityPrice> myList = getList();
-        final MoneyWiseDataSet mySet = getDataSet();
-
-        /* The security must be non-null */
-        if (mySecurity == null) {
-            addError(ERROR_MISSING, MoneyWiseBasicDataType.SECURITY);
-
-            /* The security must not be an option */
-        } else if (mySecurity.getCategoryClass().isOption()) {
-            addError("Options are priced by the underlying stock", MoneyWiseBasicDataType.SECURITY);
-        }
-
-        /* The date must be non-null */
-        if (myDate == null) {
-            addError(ERROR_MISSING, MoneyWiseBasicResource.MONEYWISEDATA_FIELD_DATE);
-
-            /* else date is non-null */
-        } else {
-            /* Date must be unique for this security */
-            final MoneyWiseSecurityPriceDataMap myMap = myList.getDataMap();
-            if (!myMap.validPriceCount(this)) {
-                addError(ERROR_DUPLICATE, MoneyWiseBasicResource.MONEYWISEDATA_FIELD_DATE);
-            }
-
-            /* The date must be in-range */
-            if (mySet.getDateRange().compareToDate(myDate) != 0) {
-                addError(ERROR_RANGE, MoneyWiseBasicResource.MONEYWISEDATA_FIELD_DATE);
-            }
-        }
-
-        /* The Price must be non-zero and greater than zero */
-        if (myPrice == null) {
-            addError(ERROR_MISSING, MoneyWiseBasicResource.MONEYWISEDATA_FIELD_PRICE);
-        } else if (myPrice.isZero()) {
-            addError(ERROR_ZERO, MoneyWiseBasicResource.MONEYWISEDATA_FIELD_PRICE);
-        } else if (!myPrice.isPositive()) {
-            addError(ERROR_NEGATIVE, MoneyWiseBasicResource.MONEYWISEDATA_FIELD_PRICE);
-        } else {
-            /* Ensure that currency is correct */
-            final MoneyWiseCurrency myCurrency = mySecurity == null
-                    ? null
-                    : mySecurity.getAssetCurrency();
-            if ((myCurrency != null)
-                    && !myPrice.getCurrency().equals(myCurrency.getCurrency())) {
-                addError(ERROR_CURRENCY, MoneyWiseBasicResource.MONEYWISEDATA_FIELD_PRICE);
-            }
-        }
-
-        /* Set validation flag */
-        if (!hasErrors()) {
-            setValidEdit();
-        }
-    }
-
-    /**
      * Set the security.
      * @param pValue the security
      */
@@ -562,7 +499,7 @@ public class MoneyWiseSecurityPrice
         }
 
         @Override
-        protected MoneyWiseSecurityPriceDataMap getDataMap() {
+        public MoneyWiseSecurityPriceDataMap getDataMap() {
             return (MoneyWiseSecurityPriceDataMap) super.getDataMap();
         }
 

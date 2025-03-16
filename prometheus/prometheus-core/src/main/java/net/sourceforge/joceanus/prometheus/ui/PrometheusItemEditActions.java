@@ -17,10 +17,10 @@
 package net.sourceforge.joceanus.prometheus.ui;
 
 import net.sourceforge.joceanus.metis.ui.MetisIcon;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
 import net.sourceforge.joceanus.prometheus.views.PrometheusUIEvent;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.TethysEventProvider;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.tethys.api.button.TethysUIButton;
 import net.sourceforge.joceanus.tethys.api.button.TethysUIButtonFactory;
@@ -31,7 +31,7 @@ import net.sourceforge.joceanus.tethys.api.pane.TethysUIBoxPaneManager;
  * Item Edit Action buttons.
  */
 public class PrometheusItemEditActions
-        implements TethysEventProvider<PrometheusUIEvent>, TethysUIComponent {
+        implements OceanusEventProvider<PrometheusUIEvent>, TethysUIComponent {
     /**
      * ItemEditParent interface.
      */

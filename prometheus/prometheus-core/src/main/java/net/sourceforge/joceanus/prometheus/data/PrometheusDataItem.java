@@ -758,9 +758,7 @@ public abstract class PrometheusDataItem
      * Dirty items become valid.
      */
     public void validate() {
-        if (getEditState() == MetisDataEditState.DIRTY) {
-            setEditState(MetisDataEditState.VALID);
-        }
+        getList().getValidator().validate(this);
     }
 
     /**

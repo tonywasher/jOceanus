@@ -21,7 +21,7 @@ import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
 import net.sourceforge.joceanus.prometheus.views.PrometheusUIEvent;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.tethys.api.button.TethysUIButton;
 import net.sourceforge.joceanus.tethys.api.button.TethysUIButtonFactory;
@@ -33,7 +33,7 @@ import net.sourceforge.joceanus.tethys.api.pane.TethysUIPaneFactory;
  * Action buttons.
  */
 public class PrometheusActionButtons
-        implements TethysEventProvider<PrometheusUIEvent>, TethysUIComponent {
+        implements OceanusEventProvider<PrometheusUIEvent>, TethysUIComponent {
     /**
      * Strut width.
      */

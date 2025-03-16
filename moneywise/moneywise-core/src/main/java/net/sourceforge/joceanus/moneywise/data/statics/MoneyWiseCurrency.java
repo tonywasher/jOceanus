@@ -218,32 +218,6 @@ public class MoneyWiseCurrency
     }
 
     @Override
-    public void validate() {
-        final MoneyWiseCurrencyList myList = getList();
-        final MoneyWiseCurrencyDataMap myMap = myList.getDataMap();
-
-        /* Check that reporting is non-null */
-        if (isReporting() == null) {
-            addError(ERROR_MISSING, MoneyWiseStaticResource.CURRENCY_REPORTING);
-
-            /* else check various things for a reporting currency */
-        } else if (Boolean.TRUE.equals(isReporting())) {
-            /* Check that default is enabled */
-            if (!getEnabled()) {
-                addError(ERROR_DISABLED, MoneyWiseStaticResource.CURRENCY_REPORTING);
-            }
-
-            /* Check for multiple reports */
-            if (!myMap.validReportCount()) {
-                addError("Multiple reporting currencies", MoneyWiseStaticResource.CURRENCY_REPORTING);
-            }
-        }
-
-        /* Validate it */
-        super.validate();
-    }
-
-    @Override
     public boolean applyChanges(final PrometheusDataItem pData) {
         /* Can only apply changes for AccountCurrency */
         if (!(pData instanceof MoneyWiseCurrency)) {
@@ -315,7 +289,7 @@ public class MoneyWiseCurrency
         }
 
         @Override
-        protected MoneyWiseCurrencyDataMap getDataMap() {
+        public MoneyWiseCurrencyDataMap getDataMap() {
             return (MoneyWiseCurrencyDataMap) super.getDataMap();
         }
 
@@ -496,7 +470,7 @@ public class MoneyWiseCurrency
     /**
      * The dataMap class.
      */
-    protected static final class MoneyWiseCurrencyDataMap
+    public static final class MoneyWiseCurrencyDataMap
             extends PrometheusStaticDataMap<MoneyWiseCurrency> {
         /**
          * Report fields.

@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.tethys.core.factory;
 
 import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
 import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.oceanus.logger.OceanusLogManager;
 import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
@@ -39,7 +39,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @param <C> the color
  */
 public abstract class TethysUICoreFactory<C>
-        implements TethysUIFactory<C>, TethysEventProvider<TethysUIEvent> {
+        implements TethysUIFactory<C>, OceanusEventProvider<TethysUIEvent> {
     /**
      * Parent Component definition.
      */

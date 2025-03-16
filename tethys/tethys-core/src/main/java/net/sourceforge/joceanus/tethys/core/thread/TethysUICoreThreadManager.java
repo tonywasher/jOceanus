@@ -22,7 +22,7 @@ import java.util.concurrent.Executors;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
 import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
 import net.sourceforge.joceanus.tethys.api.thread.TethysUIThread;
 import net.sourceforge.joceanus.tethys.api.thread.TethysUIThreadCancelException;
@@ -35,7 +35,7 @@ import net.sourceforge.joceanus.tethys.core.factory.TethysUICoreFactory;
  * Thread Manager.
  */
 public abstract class TethysUICoreThreadManager
-        implements TethysEventProvider<TethysUIThreadEvent>, TethysUIThreadManager {
+        implements OceanusEventProvider<TethysUIThreadEvent>, TethysUIThreadManager {
     /**
      * Default Reporting Steps.
      */

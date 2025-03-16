@@ -20,7 +20,7 @@ import net.sourceforge.joceanus.metis.exc.MetisIOException;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
 import net.sourceforge.joceanus.oceanus.logger.OceanusLogManager;
 import net.sourceforge.joceanus.oceanus.logger.OceanusLogger;
 import net.sourceforge.joceanus.tethys.api.control.TethysUIHTMLManager;
@@ -47,7 +47,7 @@ import java.util.Map;
  * @param <F> the filter type
  */
 public class MetisReportManager<F>
-        implements TethysEventProvider<MetisReportEvent> {
+        implements OceanusEventProvider<MetisReportEvent> {
     /**
      * Logger.
      */

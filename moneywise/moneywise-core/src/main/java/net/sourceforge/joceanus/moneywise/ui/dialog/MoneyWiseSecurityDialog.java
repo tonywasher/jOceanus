@@ -16,9 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.moneywise.ui.dialog;
 
-import java.util.Iterator;
-import java.util.Map;
-
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.metis.field.MetisFieldRequired;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
@@ -39,15 +36,15 @@ import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseSecurityType;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseSecurityType.MoneyWiseSecurityTypeList;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
 import net.sourceforge.joceanus.moneywise.ui.MoneyWiseIcon;
-import net.sourceforge.joceanus.moneywise.ui.base.MoneyWiseAssetTable;
 import net.sourceforge.joceanus.moneywise.ui.MoneyWiseUIResource;
+import net.sourceforge.joceanus.moneywise.ui.base.MoneyWiseAssetTable;
 import net.sourceforge.joceanus.moneywise.views.MoneyWiseView;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataResource;
 import net.sourceforge.joceanus.prometheus.ui.fieldset.PrometheusFieldSet;
 import net.sourceforge.joceanus.prometheus.ui.fieldset.PrometheusFieldSetEvent;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
 import net.sourceforge.joceanus.tethys.api.control.TethysUIControl.TethysUIIconMapSet;
 import net.sourceforge.joceanus.tethys.api.factory.TethysUIFactory;
 import net.sourceforge.joceanus.tethys.api.field.TethysUIDataEditField.TethysUICharArrayTextAreaField;
@@ -58,6 +55,9 @@ import net.sourceforge.joceanus.tethys.api.field.TethysUIDataEditField.TethysUIS
 import net.sourceforge.joceanus.tethys.api.field.TethysUIFieldFactory;
 import net.sourceforge.joceanus.tethys.api.menu.TethysUIScrollItem;
 import net.sourceforge.joceanus.tethys.api.menu.TethysUIScrollMenu;
+
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  * Panel to display/edit/create a Security.
@@ -313,7 +313,7 @@ public class MoneyWiseSecurityDialog
         } else if (MoneyWiseBasicResource.CATEGORY_NAME.equals(myField)) {
             /* Update the Security Type */
             mySecurity.setCategory(pUpdate.getValue(MoneyWiseSecurityType.class));
-            mySecurity.autoCorrect(getEditSet());
+            mySecurity.autoCorrect();
         } else if (MoneyWiseBasicResource.ASSET_PARENT.equals(myField)) {
             /* Update the Parent */
             mySecurity.setParent(pUpdate.getValue(MoneyWisePayee.class));
