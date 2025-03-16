@@ -28,14 +28,14 @@ import java.util.Locale;
 import net.sourceforge.joceanus.oceanus.convert.OceanusDataConverter;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
 
 /**
  * Formatter for Date objects.
  * @author Tony Washer
  */
 public class OceanusDateFormatter
-        implements TethysEventProvider<OceanusDateEvent> {
+        implements OceanusEventProvider<OceanusDateEvent> {
     /**
      * Date Byte length.
      */

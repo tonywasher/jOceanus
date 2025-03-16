@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.tethys.api.button;
 
 import java.util.List;
 
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.tethys.api.control.TethysUIControl.TethysUIListButton;
@@ -38,7 +38,7 @@ import net.sourceforge.joceanus.tethys.api.menu.TethysUIScrollMenu;
  * @param <T> the object type
  */
 public interface TethysUIListButtonManager<T extends Comparable<? super T>>
-        extends TethysUIListButton<T>, TethysEventProvider<TethysUIEvent>, TethysUIComponent {
+        extends TethysUIListButton<T>, OceanusEventProvider<TethysUIEvent>, TethysUIComponent {
     /**
      * Obtain menu.
      * @return the menu

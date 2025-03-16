@@ -20,7 +20,7 @@ import java.security.InvalidParameterException;
 
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.metis.field.MetisFieldVersionedItem;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
 
 /**
  * Versioned List implementation.
@@ -28,7 +28,7 @@ import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.TethysEventP
  */
 public class MetisListVersioned<T extends MetisFieldVersionedItem>
         extends MetisListIndexed<T>
-        implements TethysEventProvider<MetisListEvent> {
+        implements OceanusEventProvider<MetisListEvent> {
     /**
      * Prime for hashing.
      */

@@ -20,7 +20,7 @@ import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.event.OceanusEvent;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistration;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.tethys.api.control.TethysUIHTMLManager;
@@ -39,7 +39,7 @@ import java.util.List;
  * Viewer Manager class, responsible for displaying the debug view.
  */
 public class MetisViewerWindow
-        implements TethysEventProvider<TethysUIEvent> {
+        implements OceanusEventProvider<TethysUIEvent> {
     /**
      * The Name of the current page.
      */

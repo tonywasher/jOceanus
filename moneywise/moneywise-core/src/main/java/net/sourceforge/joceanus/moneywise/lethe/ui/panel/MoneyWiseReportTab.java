@@ -46,7 +46,7 @@ import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
 import net.sourceforge.joceanus.oceanus.event.OceanusEvent;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
 import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIEvent;
@@ -61,7 +61,7 @@ import net.sourceforge.joceanus.tethys.api.pane.TethysUIScrollPaneManager;
  * Report panel.
  */
 public class MoneyWiseReportTab
-        implements TethysEventProvider<PrometheusDataEvent>, TethysUIComponent {
+        implements OceanusEventProvider<PrometheusDataEvent>, TethysUIComponent {
     /**
      * Text for DataEntry Title.
      */

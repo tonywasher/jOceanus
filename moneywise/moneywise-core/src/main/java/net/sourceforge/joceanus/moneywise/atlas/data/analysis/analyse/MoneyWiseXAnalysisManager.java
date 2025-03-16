@@ -25,7 +25,7 @@ import net.sourceforge.joceanus.oceanus.date.OceanusDate;
 import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
 import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.prometheus.views.PrometheusDataEvent;
 
@@ -36,7 +36,7 @@ import java.util.Map;
  * Analysis manager.
  */
 public class MoneyWiseXAnalysisManager
-        implements TethysEventProvider<PrometheusDataEvent>,  MetisFieldItem, MetisDataMap<OceanusDateRange, MoneyWiseXAnalysis> {
+        implements OceanusEventProvider<PrometheusDataEvent>,  MetisFieldItem, MetisDataMap<OceanusDateRange, MoneyWiseXAnalysis> {
     /**
      * Local Report fields.
      */

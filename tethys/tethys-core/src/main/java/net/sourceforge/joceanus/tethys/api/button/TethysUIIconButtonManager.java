@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.tethys.api.button;
 
 import java.util.function.Supplier;
 
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.tethys.api.control.TethysUIControl.TethysUIIconMapSet;
@@ -35,7 +35,7 @@ import net.sourceforge.joceanus.tethys.api.control.TethysUIControl.TethysUIIconM
  * @param <T> the object type
  */
 public interface TethysUIIconButtonManager<T>
-        extends TethysEventProvider<TethysUIEvent>, TethysUIComponent {
+        extends OceanusEventProvider<TethysUIEvent>, TethysUIComponent {
     /**
      * Obtain value.
      * @return the value

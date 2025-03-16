@@ -17,11 +17,11 @@
 package net.sourceforge.joceanus.prometheus.ui;
 
 import net.sourceforge.joceanus.metis.ui.MetisIcon;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
 import net.sourceforge.joceanus.prometheus.ui.PrometheusItemEditActions.PrometheusItemEditParent;
 import net.sourceforge.joceanus.prometheus.views.PrometheusUIEvent;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.TethysEventProvider;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIGenericWrapper;
@@ -36,7 +36,7 @@ import net.sourceforge.joceanus.tethys.api.pane.TethysUIBoxPaneManager;
  * @param <G> the goto id type
  */
 public class PrometheusItemActions<G extends Enum<G>>
-        implements TethysEventProvider<PrometheusUIEvent>, TethysUIComponent {
+        implements OceanusEventProvider<PrometheusUIEvent>, TethysUIComponent {
     /**
      * The Border padding.
      */

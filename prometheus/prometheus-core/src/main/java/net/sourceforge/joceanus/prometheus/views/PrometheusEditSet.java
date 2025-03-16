@@ -24,7 +24,7 @@ import net.sourceforge.joceanus.metis.viewer.MetisViewerErrorList;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
 import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.oceanus.logger.OceanusLogManager;
 import net.sourceforge.joceanus.oceanus.logger.OceanusLogger;
@@ -44,7 +44,7 @@ import java.util.Map;
  * Provides control of a set of update-able DataLists.
  */
 public class PrometheusEditSet
-        implements MetisFieldItem, TethysEventProvider<PrometheusDataEvent>, PrometheusDataListSet {
+        implements MetisFieldItem, OceanusEventProvider<PrometheusDataEvent>, PrometheusDataListSet {
     /**
      * Report fields.
      */

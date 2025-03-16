@@ -22,7 +22,7 @@ import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.event.OceanusEvent;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.tethys.api.control.TethysUIHTMLManager;
 import net.sourceforge.joceanus.tethys.api.control.TethysUIHTMLManager.TethysUIStyleSheetId;
@@ -37,7 +37,7 @@ import net.sourceforge.joceanus.tethys.api.pane.TethysUIBorderPaneManager;
  * Help Manager class, responsible for displaying the help.
  */
 public class MetisHelpWindow
-        implements TethysEventProvider<TethysUIEvent> {
+        implements OceanusEventProvider<TethysUIEvent> {
     /**
      * The Height of the window.
      */

@@ -37,7 +37,7 @@ import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
 import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.oceanus.logger.OceanusLogManager;
 import net.sourceforge.joceanus.oceanus.logger.OceanusLogger;
@@ -52,7 +52,7 @@ import java.util.Iterator;
  * Analysis Edit View.
  */
 public class MoneyWiseAnalysisView
-        implements MetisFieldItem, TethysEventProvider<PrometheusDataEvent> {
+        implements MetisFieldItem, OceanusEventProvider<PrometheusDataEvent> {
     /**
      * Report fields.
      */

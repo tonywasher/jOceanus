@@ -19,10 +19,10 @@ package net.sourceforge.joceanus.tethys.core.menu;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.sourceforge.joceanus.oceanus.event.OceanusEvent.TethysEventListener;
+import net.sourceforge.joceanus.oceanus.event.OceanusEvent.OceanusEventListener;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIConstant;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.tethys.api.menu.TethysUIToolBarManager;
@@ -98,7 +98,7 @@ public abstract class TethysUICoreToolBarManager
     @Override
     public void newIcon(final TethysUIToolBarId pId,
                         final String pText,
-                        final TethysEventListener<TethysUIEvent> pListener) {
+                        final OceanusEventListener<TethysUIEvent> pListener) {
         /* Create the new element with Icon and text */
         final TethysUIToolElement myElement = newIcon(pId);
         myElement.setText(pText);
@@ -121,7 +121,7 @@ public abstract class TethysUICoreToolBarManager
      * ToolElement.
      */
     public abstract static class TethysUICoreToolElement
-            implements TethysUIToolElement, TethysEventProvider<TethysUIEvent> {
+            implements TethysUIToolElement, OceanusEventProvider<TethysUIEvent> {
         /**
          * The Manager.
          */

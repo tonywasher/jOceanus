@@ -20,7 +20,7 @@ import java.util.Iterator;
 
 import net.sourceforge.joceanus.oceanus.date.OceanusDate;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIEvent;
 
@@ -33,7 +33,7 @@ import net.sourceforge.joceanus.tethys.api.base.TethysUIEvent;
  * </ul>
  */
 public interface TethysUIAreaChart
-        extends TethysEventProvider<TethysUIEvent>, TethysUIComponent {
+        extends OceanusEventProvider<TethysUIEvent>, TethysUIComponent {
     /**
      * Update AreaChart with data.
      * @param pData the data

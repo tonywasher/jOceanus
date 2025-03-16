@@ -24,7 +24,7 @@ import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.event.OceanusEvent;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
 import net.sourceforge.joceanus.oceanus.logger.OceanusLogManager;
 import net.sourceforge.joceanus.oceanus.logger.OceanusLogger;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIComponent;
@@ -50,7 +50,7 @@ import java.util.List;
  * Panel for editing preference Sets.
  */
 public class MetisPreferenceView
-        implements TethysEventProvider<MetisPreferenceEvent>, TethysUIComponent {
+        implements OceanusEventProvider<MetisPreferenceEvent>, TethysUIComponent {
     /**
      * Text for OK.
      */

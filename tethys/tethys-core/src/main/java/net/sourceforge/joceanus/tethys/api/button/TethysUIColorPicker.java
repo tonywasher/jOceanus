@@ -16,7 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.tethys.api.button;
 
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIEvent;
 
@@ -31,7 +31,7 @@ import net.sourceforge.joceanus.tethys.api.base.TethysUIEvent;
  * </ul>
  */
 public interface TethysUIColorPicker<C>
-        extends TethysUIComponent, TethysEventProvider<TethysUIEvent> {
+        extends TethysUIComponent, OceanusEventProvider<TethysUIEvent> {
     /**
      * Set the value.
      * @param pValue the value

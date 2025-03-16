@@ -31,7 +31,7 @@ import net.sourceforge.joceanus.metis.toolkit.MetisToolkit;
 import net.sourceforge.joceanus.oceanus.date.OceanusDate;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
 import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 
 import java.util.EnumMap;
@@ -42,7 +42,7 @@ import java.util.Map;
  * Loan MarketCache.
  */
 public class CoeusMarketCache
-        implements TethysEventProvider<CoeusDataEvent>, MetisFieldItem {
+        implements OceanusEventProvider<CoeusDataEvent>, MetisFieldItem {
     /**
      * Report fields.
      */

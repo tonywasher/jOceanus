@@ -33,7 +33,7 @@ import net.sourceforge.joceanus.oceanus.decimal.OceanusUnits;
 import net.sourceforge.joceanus.oceanus.event.OceanusEvent;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.tethys.api.control.TethysUIControl.TethysUIIconMapSet;
 import net.sourceforge.joceanus.tethys.api.field.TethysUIFieldAttribute;
@@ -84,7 +84,7 @@ import net.sourceforge.joceanus.tethys.javafx.table.TethysUIFXTableColumn.Tethys
  */
 public abstract class TethysUIFXTableCell<T, C, R>
         extends TableCell<R, T>
-        implements TethysEventProvider<TethysUIEvent>, TethysUITableCell<T, C, R> {
+        implements OceanusEventProvider<TethysUIEvent>, TethysUITableCell<T, C, R> {
     /**
      * The dummy style.
      */

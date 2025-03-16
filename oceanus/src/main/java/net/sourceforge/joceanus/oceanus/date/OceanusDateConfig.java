@@ -22,13 +22,13 @@ import java.util.function.Predicate;
 
 import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
 
 /**
  * Date Configuration.
  */
 public class OceanusDateConfig
-        implements TethysEventProvider<OceanusDateEvent> {
+        implements OceanusEventProvider<OceanusDateEvent> {
     /**
      * The Event Manager.
      */

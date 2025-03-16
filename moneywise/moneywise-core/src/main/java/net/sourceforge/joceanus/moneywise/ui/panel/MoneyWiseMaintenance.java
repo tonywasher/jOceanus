@@ -32,7 +32,7 @@ import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.event.OceanusEvent;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
 import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.tethys.api.pane.TethysUITabPaneManager;
@@ -43,7 +43,7 @@ import net.sourceforge.joceanus.tethys.api.pane.TethysUITabPaneManager.TethysUIT
  * @author Tony Washer
  */
 public class MoneyWiseMaintenance
-        implements TethysEventProvider<PrometheusDataEvent>, TethysUIComponent {
+        implements OceanusEventProvider<PrometheusDataEvent>, TethysUIComponent {
     /**
      * Preferences tab title.
      */

@@ -34,7 +34,7 @@ import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusRate;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusRatio;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusUnits;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.tethys.api.control.TethysUIControl.TethysUIIconMapSet;
 import net.sourceforge.joceanus.tethys.api.field.TethysUIFieldType;
@@ -47,7 +47,7 @@ import net.sourceforge.joceanus.tethys.api.menu.TethysUIScrollMenu;
  * @param <R> the row type
  */
 public interface TethysUITableColumn<T, C, R>
-        extends TethysEventProvider<TethysUIEvent> {
+        extends OceanusEventProvider<TethysUIEvent> {
     /**
      * Obtain the table manager.
      * @return the table manager

@@ -25,7 +25,7 @@ import net.sourceforge.joceanus.metis.viewer.MetisViewerStandardEntry;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
 import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataSet;
@@ -44,7 +44,7 @@ import java.util.Map;
  * Provides top-level control of data.
  */
 public abstract class PrometheusDataControl
-        implements TethysEventProvider<PrometheusDataEvent> {
+        implements OceanusEventProvider<PrometheusDataEvent> {
     /**
      * The Event Manager.
      */

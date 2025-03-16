@@ -16,7 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.tethys.api.menu;
 
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIIcon;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIEvent;
 
@@ -25,7 +25,7 @@ import net.sourceforge.joceanus.tethys.api.base.TethysUIEvent;
  * @param <T> the value type
  */
 public interface TethysUIScrollMenu<T>
-        extends TethysEventProvider<TethysUIEvent> {
+        extends OceanusEventProvider<TethysUIEvent> {
     /**
      * Obtain the selected value.
      * @return the selected value

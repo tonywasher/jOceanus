@@ -22,7 +22,7 @@ import net.sourceforge.joceanus.metis.field.MetisFieldItem;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
 import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 
 import java.util.ArrayList;
@@ -38,7 +38,7 @@ import java.util.Map;
  * @param <T> the item type
  */
 public class MetisListIndexed<T extends MetisDataIndexedItem>
-        implements MetisDataList<T>, MetisFieldItem, TethysEventProvider<MetisListEvent> {
+        implements MetisDataList<T>, MetisFieldItem, OceanusEventProvider<MetisListEvent> {
     /**
      * Report fields.
      */

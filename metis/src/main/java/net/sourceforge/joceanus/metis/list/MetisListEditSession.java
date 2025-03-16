@@ -28,13 +28,13 @@ import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.event.OceanusEvent;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
 
 /**
  * Metis VersionedList Edit Session.
  */
 public class MetisListEditSession
-        implements MetisFieldItem, TethysEventProvider<MetisListEvent> {
+        implements MetisFieldItem, OceanusEventProvider<MetisListEvent> {
     /**
      * Report fields.
      */

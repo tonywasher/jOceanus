@@ -30,7 +30,7 @@ import net.sourceforge.joceanus.metis.ui.MetisIcon;
 import net.sourceforge.joceanus.oceanus.date.OceanusDate;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.tethys.api.button.TethysUIButton;
@@ -49,7 +49,7 @@ import net.sourceforge.joceanus.tethys.api.pane.TethysUIPaneFactory;
  * Filter Select.
  */
 public final class CoeusStatementSelect
-        implements TethysEventProvider<CoeusDataEvent>, TethysUIComponent {
+        implements OceanusEventProvider<CoeusDataEvent>, TethysUIComponent {
     /**
      * Text for Market Label.
      */

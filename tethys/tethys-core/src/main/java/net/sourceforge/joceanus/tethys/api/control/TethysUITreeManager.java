@@ -16,7 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.tethys.api.control;
 
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIIcon;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIIconId;
@@ -27,7 +27,7 @@ import net.sourceforge.joceanus.tethys.api.base.TethysUIEvent;
  * @param <T> the item type
  */
 public interface TethysUITreeManager<T>
-        extends TethysEventProvider<TethysUIEvent>, TethysUIComponent {
+        extends OceanusEventProvider<TethysUIEvent>, TethysUIComponent {
     /**
      * Obtain the selected item.
      * @return the item.

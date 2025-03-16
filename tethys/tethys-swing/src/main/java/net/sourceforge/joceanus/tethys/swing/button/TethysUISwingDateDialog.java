@@ -20,7 +20,7 @@ import net.sourceforge.joceanus.oceanus.date.OceanusDate;
 import net.sourceforge.joceanus.oceanus.date.OceanusDateConfig;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.tethys.core.base.TethysUIResource;
 import net.sourceforge.joceanus.tethys.swing.base.TethysUISwingArrowIcon;
@@ -62,7 +62,7 @@ import java.util.Locale;
  * Swing Date Dialog.
  */
 public final class TethysUISwingDateDialog
-        implements TethysEventProvider<TethysUIEvent> {
+        implements OceanusEventProvider<TethysUIEvent> {
     /**
      * Null Date selection text.
      */

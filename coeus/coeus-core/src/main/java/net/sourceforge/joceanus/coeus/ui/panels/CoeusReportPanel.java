@@ -16,6 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.coeus.ui.panels;
 
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
 import org.w3c.dom.Document;
 
 import net.sourceforge.joceanus.coeus.exc.CoeusDataException;
@@ -42,7 +43,6 @@ import net.sourceforge.joceanus.oceanus.date.OceanusDate;
 import net.sourceforge.joceanus.oceanus.event.OceanusEvent;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.TethysEventProvider;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.tethys.api.control.TethysUIHTMLManager;
@@ -54,7 +54,7 @@ import net.sourceforge.joceanus.tethys.api.pane.TethysUIScrollPaneManager;
  * Report Panel.
  */
 public class CoeusReportPanel
-        implements TethysEventProvider<CoeusDataEvent>, TethysUIComponent {
+        implements OceanusEventProvider<CoeusDataEvent>, TethysUIComponent {
     /**
      * The Event Manager.
      */

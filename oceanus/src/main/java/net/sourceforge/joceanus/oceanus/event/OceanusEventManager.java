@@ -19,7 +19,7 @@ package net.sourceforge.joceanus.oceanus.event;
 import java.util.ListIterator;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
 
 /**
  * EventManager implementation. This provides means for classes to fire events to registered
@@ -27,7 +27,7 @@ import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.TethysEventP
  * @param <E> The event id type
  */
 public class OceanusEventManager<E extends Enum<E>>
-        implements TethysEventProvider<E> {
+        implements OceanusEventProvider<E> {
     /**
      * The Next managerId.
      */

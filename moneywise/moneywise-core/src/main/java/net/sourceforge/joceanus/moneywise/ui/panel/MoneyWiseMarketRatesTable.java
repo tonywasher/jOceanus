@@ -33,6 +33,7 @@ import net.sourceforge.joceanus.moneywise.views.MoneyWiseSpotExchangeRate.MoneyW
 import net.sourceforge.joceanus.moneywise.views.MoneyWiseView;
 import net.sourceforge.joceanus.moneywise.views.MoneyWiseViewResource;
 import net.sourceforge.joceanus.moneywise.views.MoneyWiseYQLDownloader;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataResource;
 import net.sourceforge.joceanus.prometheus.ui.PrometheusActionButtons;
 import net.sourceforge.joceanus.prometheus.views.PrometheusDataEvent;
@@ -44,7 +45,6 @@ import net.sourceforge.joceanus.oceanus.date.OceanusDate;
 import net.sourceforge.joceanus.oceanus.event.OceanusEvent;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.TethysEventProvider;
 import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.tethys.api.button.TethysUIButton;
@@ -281,7 +281,7 @@ public class MoneyWiseMarketRatesTable
      * SpotRates Panel.
      */
     public static class MoneyWiseSpotRatesPanel
-            implements TethysUIComponent, TethysEventProvider<PrometheusDataEvent> {
+            implements TethysUIComponent, OceanusEventProvider<PrometheusDataEvent> {
         /**
          * Text for DataEntry Title.
          */

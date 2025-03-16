@@ -19,7 +19,7 @@ package net.sourceforge.joceanus.tethys.api.chart;
 import java.util.Iterator;
 
 import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIEvent;
 
@@ -27,7 +27,7 @@ import net.sourceforge.joceanus.tethys.api.base.TethysUIEvent;
  * Pie Chart.
  */
 public interface TethysUIPieChart
-        extends TethysEventProvider<TethysUIEvent>, TethysUIComponent {
+        extends OceanusEventProvider<TethysUIEvent>, TethysUIComponent {
     /**
      * Update PieChart with data.
      * @param pData the data

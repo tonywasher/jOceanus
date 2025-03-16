@@ -35,7 +35,7 @@ import net.sourceforge.joceanus.metis.preference.MetisPreferenceType;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIAlignment;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIConstant;
@@ -65,7 +65,7 @@ import net.sourceforge.joceanus.tethys.api.pane.TethysUIPaneFactory;
  * Panel for editing a preference Set.
  */
 public class MetisPreferenceSetView
-        implements TethysEventProvider<MetisPreferenceEvent>, TethysUIComponent {
+        implements OceanusEventProvider<MetisPreferenceEvent>, TethysUIComponent {
     /**
      * Colon String.
      */
