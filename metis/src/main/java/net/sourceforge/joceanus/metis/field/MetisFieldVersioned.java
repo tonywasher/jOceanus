@@ -103,6 +103,7 @@ public class MetisFieldVersioned<T extends MetisFieldVersionedItem>
         final MetisFieldVersionValues myValues = myObject.getValues();
         myValues.setUncheckedValue(this, pValue);
     }
+
     @Override
     public boolean equals(final Object pThat) {
         /* Handle trivial cases */
