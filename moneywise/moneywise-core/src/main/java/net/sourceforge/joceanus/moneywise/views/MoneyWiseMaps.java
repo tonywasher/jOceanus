@@ -19,7 +19,13 @@ package net.sourceforge.joceanus.moneywise.views;
 import net.sourceforge.joceanus.metis.viewer.MetisViewerEntry;
 import net.sourceforge.joceanus.metis.viewer.MetisViewerManager;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicResource;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePayee;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePortfolio;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurity;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurityHolding;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransCategory;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseAccountInfoClass;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataResource;
@@ -64,6 +70,7 @@ public class MoneyWiseMaps {
      * @param pDataSet the dataSet
      */
     public void adjustForDataSet(final PrometheusDataSet pDataSet) {
+        theMaps.resetMaps();
         theMaps.adjustForDataSet(pDataSet);
     }
 
@@ -72,6 +79,7 @@ public class MoneyWiseMaps {
      * @param pEditSet the editSet
      */
     public void adjustForEditSet(final PrometheusEditSet pEditSet) {
+        theMaps.resetMaps();
         theMaps.adjustForEditSet(pEditSet);
     }
 
@@ -101,14 +109,24 @@ public class MoneyWiseMaps {
         theMaps.declareFieldIdMap(MoneyWiseBasicDataType.CASHCATEGORY, PrometheusDataResource.DATAITEM_FIELD_NAME);
         theMaps.declareFieldIdMap(MoneyWiseBasicDataType.LOANCATEGORY, PrometheusDataResource.DATAITEM_FIELD_NAME);
         theMaps.declareFieldIdMap(MoneyWiseBasicDataType.TRANSCATEGORY, PrometheusDataResource.DATAITEM_FIELD_NAME);
+        theMaps.declareFieldIdMap(MoneyWiseBasicDataType.TRANSCATEGORY, MoneyWiseStaticDataType.TRANSTYPE,
+                t -> ((MoneyWiseTransCategory) t).getCategoryType().getCategoryClass().isSingular());
 
         /* Build asset maps */
         theMaps.declareFieldIdMap(MoneyWiseBasicDataType.PAYEE, PrometheusDataResource.DATAITEM_FIELD_NAME);
+        theMaps.declareFieldIdMap(MoneyWiseBasicDataType.PAYEE, MoneyWiseBasicResource.CATEGORY_NAME,
+                t -> ((MoneyWisePayee) t).getCategoryClass().isSingular());
         theMaps.declareFieldIdMap(MoneyWiseBasicDataType.DEPOSIT, PrometheusDataResource.DATAITEM_FIELD_NAME, MoneyWiseBasicDataType.PAYEE);
         theMaps.declareFieldIdMap(MoneyWiseBasicDataType.CASH, PrometheusDataResource.DATAITEM_FIELD_NAME, MoneyWiseBasicDataType.PAYEE);
         theMaps.declareFieldIdMap(MoneyWiseBasicDataType.LOAN, PrometheusDataResource.DATAITEM_FIELD_NAME,MoneyWiseBasicDataType.PAYEE);
         theMaps.declareFieldIdMap(MoneyWiseBasicDataType.PORTFOLIO, PrometheusDataResource.DATAITEM_FIELD_NAME, MoneyWiseBasicDataType.PAYEE);
+        theMaps.declareFieldIdMap(MoneyWiseBasicDataType.PORTFOLIO, MoneyWiseBasicResource.CATEGORY_NAME,
+                t -> ((MoneyWisePortfolio) t).getCategoryClass().isSingular());
         theMaps.declareFieldIdMap(MoneyWiseBasicDataType.SECURITY, PrometheusDataResource.DATAITEM_FIELD_NAME);
+        theMaps.declareFieldIdMap(MoneyWiseBasicDataType.SECURITY, MoneyWiseBasicResource.CATEGORY_NAME,
+                t -> ((MoneyWiseSecurity) t).getCategoryClass().isSingular());
+        theMaps.declareFieldIdMap(MoneyWiseBasicDataType.SECURITY, MoneyWiseAccountInfoClass.SYMBOL,
+                t -> ((MoneyWiseSecurity) t).getCategoryClass().needsSymbol());
     }
 
     /**

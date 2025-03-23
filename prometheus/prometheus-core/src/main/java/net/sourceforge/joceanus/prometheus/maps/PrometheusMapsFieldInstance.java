@@ -125,7 +125,9 @@ public class PrometheusMapsFieldInstance
      */
     void addItemToMap(final PrometheusDataItem pItem) {
         if (theFilter.apply(pItem)) {
-            final Object myValue = pItem.getValues().getValue(theFieldId);
+            final MetisFieldSetDef myFieldSet = pItem.getDataFieldSet();
+            final MetisFieldDef myField = myFieldSet.getField(theFieldId);
+            final Object myValue = myField.getFieldValue(pItem);
             if (myValue != null) {
                 addItemToMap(myValue, pItem);
             }
@@ -139,7 +141,9 @@ public class PrometheusMapsFieldInstance
      */
     boolean isKeyDuplicate(final PrometheusDataItem pItem) {
         if (theFilter.apply(pItem)) {
-            final Object myValue = pItem.getValues().getValue(theFieldId);
+            final MetisFieldSetDef myFieldSet = pItem.getDataFieldSet();
+            final MetisFieldDef myField = myFieldSet.getField(theFieldId);
+            final Object myValue = myField.getFieldValue(pItem);
             return isKeyDuplicate(myValue);
         }
         return false;

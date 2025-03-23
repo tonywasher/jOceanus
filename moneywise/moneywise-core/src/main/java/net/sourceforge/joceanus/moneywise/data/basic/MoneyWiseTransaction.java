@@ -87,6 +87,7 @@ public class MoneyWiseTransaction
         FIELD_DEFS.declareDateField(MoneyWiseBasicResource.MONEYWISEDATA_FIELD_DATE);
         FIELD_DEFS.declareDerivedVersionedField(MoneyWiseBasicResource.MONEYWISEDATA_FIELD_TAXYEAR);
         FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAINFOSET_NAME, MoneyWiseTransaction::getInfoSet);
+        FIELD_DEFS.buildFieldMap(MoneyWiseTransInfoClass.class, MoneyWiseTransaction::getFieldValue);
     }
 
     /**
@@ -251,6 +252,15 @@ public class MoneyWiseTransaction
     @Override
     public MoneyWiseTransInfoSet getInfoSet() {
         return theInfoSet;
+    }
+
+    /**
+     * Obtain fieldValue for infoSet.
+     * @param pFieldId the fieldId
+     * @return the value
+     */
+    private Object getFieldValue(final MetisDataFieldId pFieldId) {
+        return theInfoSet != null ? theInfoSet.getFieldValue(pFieldId) : null;
     }
 
     /**

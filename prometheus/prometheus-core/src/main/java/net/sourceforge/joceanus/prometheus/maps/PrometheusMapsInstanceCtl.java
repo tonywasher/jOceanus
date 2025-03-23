@@ -168,6 +168,19 @@ public class PrometheusMapsInstanceCtl
     }
 
     /**
+     * Is the key available?
+     * @param pListKey the listKey
+     * @param pFieldId the fieldId
+     * @param pKey the key
+     * @return true/false
+     */
+    boolean isKeyAvailable(final PrometheusListKey pListKey,
+                           final MetisDataFieldId pFieldId,
+                           final Object pKey) {
+        return theInstanceMap.isKeyAvailable(pListKey, pFieldId, pKey);
+    }
+
+    /**
      * Obtain the item for the key.
      * @param pListKey the listKey
      * @param pFieldId the fieldId

@@ -138,6 +138,14 @@ public class PrometheusMapsCtl
     }
 
     /**
+     * Reset the maps.
+     */
+    public void resetMaps() {
+        theTouch.resetMap();
+        theInstance.resetMaps();
+    }
+
+    /**
      * Adjust for DataSet.
      * @param pDataSet the dataSet
      */

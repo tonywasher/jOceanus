@@ -99,6 +99,15 @@ public abstract class PrometheusMapsBaseInstance
     }
 
     /**
+     * Is the key available?
+     * @param pKey the key
+     * @return true/false
+     */
+    boolean isKeyAvailable(final Object pKey) {
+        return theMap.get(pKey) == null;
+    }
+
+    /**
      * Obtain the item for the key.
      * @param pKey the key
      * @return the item
