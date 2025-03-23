@@ -51,6 +51,11 @@ public class MoneyWiseView
     private final MoneyWiseTaxFactory theTaxFactory;
 
     /**
+     * The Maps.
+     */
+    private final MoneyWiseMaps theMaps;
+
+    /**
      * The DataSet.
      */
     private MoneyWiseDataSet theData;
@@ -88,6 +93,9 @@ public class MoneyWiseView
 
         /* Create an empty data set */
         setData(getNewData());
+
+        /* Create the maps */
+        theMaps = new MoneyWiseMaps(this);
     }
 
     /**
@@ -171,6 +179,10 @@ public class MoneyWiseView
         /* Record the data */
         theData = (MoneyWiseDataSet) pData;
         super.setData(pData);
+
+        if (theMaps != null) {
+            theMaps.adjustForDataSet(pData);
+        }
     }
 
     @Override

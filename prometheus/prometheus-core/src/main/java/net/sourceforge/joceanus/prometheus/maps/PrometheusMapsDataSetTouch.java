@@ -22,7 +22,7 @@ import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
 import net.sourceforge.joceanus.prometheus.data.PrometheusListKey;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -51,7 +51,7 @@ public class PrometheusMapsDataSetTouch
      * Constructor.
      */
     PrometheusMapsDataSetTouch() {
-        theListMap = new HashMap<>();
+        theListMap = new LinkedHashMap<>();
     }
 
     @Override
@@ -80,10 +80,16 @@ public class PrometheusMapsDataSetTouch
     void recordTouch(final PrometheusDataItem pTouchedItem,
                      final PrometheusDataItem pTouchingItem) {
         /* Access correct map and record the touch */
-        final PrometheusListKey myKey = pTouchedItem.getItemType();
-        final PrometheusMapsListTouch myMap = theListMap.computeIfAbsent(myKey,
+        PrometheusListKey myKey = pTouchedItem.getItemType();
+        PrometheusMapsListTouch myMap = theListMap.computeIfAbsent(myKey,
                 PrometheusMapsListTouch::new);
-        myMap.recordTouch(pTouchedItem, pTouchingItem);
+        myMap.recordTouchedBy(pTouchedItem, pTouchingItem);
+
+        /* Access correct map and record the touch */
+        myKey = pTouchingItem.getItemType();
+        myMap = theListMap.computeIfAbsent(myKey,
+                PrometheusMapsListTouch::new);
+        myMap.recordTouches(pTouchedItem, pTouchingItem);
     }
 
     /**

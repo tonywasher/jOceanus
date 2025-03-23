@@ -30,6 +30,7 @@ import net.sourceforge.joceanus.prometheus.data.PrometheusListKey;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
 
 import java.util.Iterator;
+import java.util.List;
 import java.util.function.Function;
 
 /**
@@ -61,12 +62,19 @@ public class PrometheusMapsCtl
     private PrometheusMapsInstanceCtl theInstance;
 
     /**
-     * Constructor.
+     * The deconstruct lambda.
      */
-    public PrometheusMapsCtl() {
+    private Function<Object, List<PrometheusDataItem>> theDeconstruct;
+
+    /**
+     * Constructor.
+     * @param pDeconstruct the deconstruct processor
+     */
+    public PrometheusMapsCtl(final Function<Object, List<PrometheusDataItem>> pDeconstruct) {
         /* Create maps */
         theTouch = new PrometheusMapsTouchCtl();
         theInstance = new PrometheusMapsInstanceCtl();
+        theDeconstruct = pDeconstruct;
     }
 
     @Override
@@ -201,8 +209,17 @@ public class PrometheusMapsCtl
 
             /* If this is a link */
             if (MetisDataType.LINK.equals(myField.getDataType())) {
-                final PrometheusDataItem myTouched = myField.getFieldValue(pItem, PrometheusDataItem.class);
-                theTouch.recordTouch(myTouched, pItem);
+                final Object myTouched = myField.getFieldValue(pItem);
+                if (myTouched != null) {
+                    if (myTouched instanceof PrometheusDataItem) {
+                        theTouch.recordTouch((PrometheusDataItem) myTouched, pItem);
+                    } else {
+                        final List<PrometheusDataItem> myList = theDeconstruct.apply(myTouched);
+                        for (PrometheusDataItem myItem : myList) {
+                            theTouch.recordTouch(myItem, pItem);
+                        }
+                    }
+                }
             }
         }
     }

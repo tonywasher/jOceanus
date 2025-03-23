@@ -82,7 +82,7 @@ public abstract class PrometheusMapsBaseInstance
     void addItemToMap(final Object pKey,
                       final PrometheusDataItem pItem) {
         final PrometheusMapsInstanceElement myCurr = theMap.get(pKey);
-        if (pKey != null) {
+        if (myCurr != null) {
             theMap.put(pKey, new PrometheusMapsInstanceElementList(myCurr, pItem));
         } else {
             theMap.put(pKey, new PrometheusMapsInstanceElementItem(pItem));

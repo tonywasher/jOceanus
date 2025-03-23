@@ -23,7 +23,7 @@ import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataResource;
 import net.sourceforge.joceanus.prometheus.data.PrometheusListKey;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -61,7 +61,7 @@ public class PrometheusMapsListTouch
      */
     PrometheusMapsListTouch(final PrometheusListKey pKey) {
         theListKey = pKey;
-        theTouchMap = new HashMap<>();
+        theTouchMap = new LinkedHashMap<>();
     }
 
     @Override
@@ -91,20 +91,29 @@ public class PrometheusMapsListTouch
     }
 
     /**
-     * Record touch.
+     * Record touchedBy.
      * @param pTouchedItem the item that is touched
      * @param pTouchingItem the item that touches
      */
-    void recordTouch(final PrometheusDataItem pTouchedItem,
-                     final PrometheusDataItem pTouchingItem) {
+    void recordTouchedBy(final PrometheusDataItem pTouchedItem,
+                         final PrometheusDataItem pTouchingItem) {
         /* Access correct touchedBy map */
-        PrometheusMapsItemTouch myMap = theTouchMap.computeIfAbsent(pTouchedItem.getIndexedId(),
+        final PrometheusMapsItemTouch myMap = theTouchMap.computeIfAbsent(pTouchedItem.getIndexedId(),
                 i -> new PrometheusMapsItemTouch(pTouchedItem));
         myMap.touchedByItem(pTouchingItem);
+    }
 
+
+    /**
+     * Record touches.
+     * @param pTouchedItem the item that is touched
+     * @param pTouchingItem the item that touches
+     */
+    void recordTouches(final PrometheusDataItem pTouchedItem,
+                       final PrometheusDataItem pTouchingItem) {
         /* Access correct touches map */
-        myMap = theTouchMap.computeIfAbsent(pTouchingItem.getIndexedId(),
-                i -> new PrometheusMapsItemTouch(pTouchedItem));
+        final PrometheusMapsItemTouch myMap = theTouchMap.computeIfAbsent(pTouchingItem.getIndexedId(),
+                i -> new PrometheusMapsItemTouch(pTouchingItem));
         myMap.touchesItem(pTouchedItem);
     }
 
