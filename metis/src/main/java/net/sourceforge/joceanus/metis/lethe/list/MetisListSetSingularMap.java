@@ -14,13 +14,15 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.metis.list;
+package net.sourceforge.joceanus.metis.lethe.list;
 
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
+import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataSingularItem;
+import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataSingularValue;
 import net.sourceforge.joceanus.metis.field.MetisFieldItem.MetisFieldDef;
 import net.sourceforge.joceanus.metis.field.MetisFieldItem.MetisFieldSetDef;
 import net.sourceforge.joceanus.metis.field.MetisFieldItem.MetisFieldVersionedDef;
@@ -30,14 +32,9 @@ import net.sourceforge.joceanus.oceanus.event.OceanusEvent;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
 
 /**
- * Unique Map.
+ * Singular Map.
  */
-public class MetisListSetUniqueMap {
-    /**
-     * Standard integer ONE.
-     */
-    static final Integer ONE = 1;
-
+public class MetisListSetSingularMap {
     /**
      * The underlying listSet.
      */
@@ -51,15 +48,15 @@ public class MetisListSetUniqueMap {
     /**
      * The map of uniqueMaps for this list.
      */
-    private final Map<MetisListKey, MetisListUniqueMap> theListMap;
+    private final Map<MetisListKey, MetisListSingularMap> theListMap;
 
     /**
      * Constructor.
      * @param pListSet the owning listSet
-     * @param pSession is this a uniqueMap for a session?
+     * @param pSession is this a nameMap for a session?
      */
-    public MetisListSetUniqueMap(final MetisListSetVersioned pListSet,
-                                 final boolean pSession) {
+    public MetisListSetSingularMap(final MetisListSetVersioned pListSet,
+                                   final boolean pSession) {
         /* Store parameters */
         theListSet = pListSet;
         isSession = pSession;
@@ -76,7 +73,7 @@ public class MetisListSetUniqueMap {
     }
 
     /**
-     * Obtain the item for a field value.
+     * Obtain the item for a singular value.
      * @param pValue the value of the item
      * @param pFieldId the fieldId
      * @param pKey the type of the item
@@ -85,11 +82,11 @@ public class MetisListSetUniqueMap {
     public MetisFieldVersionedItem getItemForValue(final Object pValue,
                                                    final MetisDataFieldId pFieldId,
                                                    final MetisListKey pKey) {
-        /* Obtain the uniqueMap for this list */
-        final MetisListUniqueMap myUniqueMap = theListMap.get(pKey);
+        /* Obtain the singularMap for this list */
+        final MetisListSingularMap mySingularMap = theListMap.get(pKey);
 
         /* Return the item */
-        return myUniqueMap == null ? null : myUniqueMap.getItemForValue(pValue, pFieldId);
+        return mySingularMap == null ? null : mySingularMap.getItemForValue(pValue, pFieldId);
     }
 
     /**
@@ -102,12 +99,12 @@ public class MetisListSetUniqueMap {
     public boolean isValidValue(final MetisFieldVersionedItem pItem,
                                 final MetisDataFieldId pFieldId,
                                 final MetisListKey pKey) {
-        /* Obtain the uniqueMap for this list */
-        final MetisListUniqueMap myUniqueMap = theListMap.get(pKey);
+        /* Obtain the singularMap for this list */
+        final MetisListSingularMap mySingularMap = theListMap.get(pKey);
 
         /* Determine whether the value is valid */
-        return myUniqueMap == null
-                || myUniqueMap.isValidValue(pItem, pFieldId);
+        return mySingularMap == null
+                || mySingularMap.isValidValue(pItem, pFieldId);
     }
 
     /**
@@ -129,52 +126,12 @@ public class MetisListSetUniqueMap {
             return true;
         }
 
-        /* Obtain the uniqueMap for this list */
-        final MetisListUniqueMap myUniqueMap = theListMap.get(pKey);
+        /* Obtain the singularMap for this list */
+        final MetisListSingularMap mySingularMap = theListMap.get(pKey);
 
         /* Determine whether the value is available */
-        return myUniqueMap == null
-                || myUniqueMap.getItemForValue(pValue, pFieldId) == null;
-    }
-
-    /**
-     * Obtain a new unique Value for the list and field.
-     * @param pKey the list key
-     * @param pFieldId the fieldId
-     * @return a new unused name
-     */
-    public Object getUniqueValue(final MetisListKey pKey,
-                                 final MetisDataFieldId pFieldId) {
-        /* Obtain the uniqueMap for this list */
-        final MetisListUniqueMap myUniqueMap = theListMap.get(pKey);
-
-        /* Build the base name */
-        final Object myBase = getBaseValue(pKey, pFieldId);
-
-        /* Determine whether the name is available */
-        return myUniqueMap == null
-               ? myBase
-               : myUniqueMap.getUniqueValue(myBase, pFieldId);
-    }
-
-    /**
-     * Obtain the base value for field.
-     * @param pKey the list key
-     * @param pFieldId the fieldId
-     * @return the uniqueMap
-     */
-    static Object getBaseValue(final MetisListKey pKey,
-                               final MetisDataFieldId pFieldId) {
-        final MetisFieldSetDef myFieldSet = MetisFieldSet.lookUpFieldSet(pKey.getClazz());
-        final MetisFieldDef myField = myFieldSet.getField(pFieldId);
-        switch (myField.getDataType()) {
-            case STRING:
-                return "New" + pFieldId.getId();
-            case INTEGER:
-                return ONE;
-            default:
-                throw new IllegalArgumentException();
-        }
+        return mySingularMap == null
+                || mySingularMap.getItemForValue(pValue, pFieldId) == null;
     }
 
     /**
@@ -188,8 +145,8 @@ public class MetisListSetUniqueMap {
         while (myIterator.hasNext()) {
             final MetisListKey myKey = myIterator.next();
 
-            /* If the list has unique fields */
-            if (!myKey.getUniqueFields().isEmpty()) {
+            /* If the list has singular fields */
+            if (!myKey.getSingularFields().isEmpty()) {
                 /* Access the list */
                 final MetisListVersioned<MetisFieldVersionedItem> myList = theListSet.getList(myKey);
 
@@ -212,8 +169,8 @@ public class MetisListSetUniqueMap {
         while (myIterator.hasNext()) {
             final MetisListKey myKey = myIterator.next();
 
-            /* If the list has unique fields */
-            if (!myKey.getUniqueFields().isEmpty()) {
+            /* If the list has singular fields */
+            if (!myKey.getSingularFields().isEmpty()) {
                 /* Obtain the associated change */
                 final MetisListChange<MetisFieldVersionedItem> myChange = myChanges.getListChange(myKey);
 
@@ -268,13 +225,13 @@ public class MetisListSetUniqueMap {
      */
     public void processNewItem(final MetisListKey pKey,
                                final MetisFieldVersionedItem pItem) {
-        /* Obtain the uniqueMap for this item */
-        final MetisListUniqueMap myUniqueMap = theListMap.computeIfAbsent(pKey, x -> new MetisListUniqueMap(pKey, isSession));
+        /* Obtain the singularMap for this item */
+        final MetisListSingularMap mySingularMap = theListMap.computeIfAbsent(pKey, x -> new MetisListSingularMap(pKey, isSession));
 
         /* Loop through the unique values */
         for (MetisDataFieldId myFieldId : pKey.getUniqueFields()) {
-            /* Store unique values for item */
-            myUniqueMap.setFieldValueForItem(pItem, myFieldId);
+            /* Store singular values for item */
+            mySingularMap.setFieldValueForItem(pItem, myFieldId);
         }
     }
 
@@ -298,13 +255,13 @@ public class MetisListSetUniqueMap {
      */
     private void processChangedItem(final MetisListKey pKey,
                                     final MetisFieldVersionedItem pItem) {
-        /* Obtain the uniqueMap for this item */
-        final MetisListUniqueMap myUniqueMap = theListMap.computeIfAbsent(pKey, x -> new MetisListUniqueMap(pKey, false));
+        /* Obtain the singularMap for this item */
+        final MetisListSingularMap mySingularMap = theListMap.computeIfAbsent(pKey, x -> new MetisListSingularMap(pKey, false));
 
         /* Loop through the unique values */
         for (MetisDataFieldId myFieldId : pKey.getUniqueFields()) {
             /* Change value for item */
-            myUniqueMap.changeFieldValueForItem(pItem, myFieldId);
+            mySingularMap.changeFieldValueForItem(pItem, myFieldId);
         }
     }
 
@@ -328,44 +285,44 @@ public class MetisListSetUniqueMap {
      */
     private void processDeletedItem(final MetisListKey pKey,
                                     final MetisFieldVersionedItem pItem) {
-        /* Obtain the uniqueMap for this item */
-        final MetisListUniqueMap myUniqueMap = theListMap.get(pKey);
+        /* Obtain the singularMap for this item */
+        final MetisListSingularMap mySingularMap = theListMap.get(pKey);
 
         /* Clear value for item */
-        if (myUniqueMap != null) {
+        if (mySingularMap != null) {
             /* Loop through the unique values */
             for (MetisDataFieldId myFieldId : pKey.getUniqueFields()) {
-                myUniqueMap.clearFieldValueForItem(pItem, myFieldId);
+                mySingularMap.clearFieldValueForItem(pItem, myFieldId);
             }
         }
     }
 
     /**
-     * ListUniqueMap for List.
+     * ListSingularMap for List.
      */
-    static class MetisListUniqueMap {
+    static class MetisListSingularMap {
         /**
          * The list key.
          */
         private final MetisListKey theListKey;
 
         /**
-         * Is this a session uniqueMap?
+         * Is this a session singularMap?
          */
         private final boolean isSession;
 
         /**
-         * The map of uniqueMaps for this list.
+         * The map of singularMaps for this list.
          */
-        private final Map<MetisDataFieldId, MetisFieldUniqueMap<?>> theFieldMap;
+        private final Map<MetisDataFieldId, MetisFieldSingularMap> theFieldMap;
 
         /**
          * Constructor.
          * @param pKey the listKey
-         * @param pSession is this a uniqueMap for a session?
+         * @param pSession is this a singularMap for a session?
          */
-        MetisListUniqueMap(final MetisListKey pKey,
-                           final boolean pSession) {
+        MetisListSingularMap(final MetisListKey pKey,
+                             final boolean pSession) {
             /* Store parameters */
             theListKey = pKey;
             isSession = pSession;
@@ -383,7 +340,7 @@ public class MetisListSetUniqueMap {
         MetisFieldVersionedItem getItemForValue(final Object pValue,
                                                 final MetisDataFieldId pFieldId) {
             /* Access the relevant fieldMap */
-            final MetisFieldUniqueMap<?> myFieldMap = theFieldMap.get(pFieldId);
+            final MetisFieldSingularMap myFieldMap = theFieldMap.get(pFieldId);
 
             /* LookUp Item */
             return myFieldMap == null ? null : myFieldMap.getItemForValue(pValue);
@@ -398,7 +355,7 @@ public class MetisListSetUniqueMap {
         boolean isValidValue(final MetisFieldVersionedItem pItem,
                              final MetisDataFieldId pFieldId) {
             /* Access the relevant fieldMap */
-            final MetisFieldUniqueMap<?> myFieldMap = theFieldMap.get(pFieldId);
+            final MetisFieldSingularMap myFieldMap = theFieldMap.get(pFieldId);
 
             /* Check fieldValue */
             return myFieldMap == null || myFieldMap.isValidValue(pItem);
@@ -413,7 +370,7 @@ public class MetisListSetUniqueMap {
         void setFieldValueForItem(final MetisFieldVersionedItem pItem,
                                   final MetisDataFieldId pFieldId) {
             /* Access the relevant fieldMap */
-            final MetisFieldUniqueMap<?> myFieldMap = theFieldMap.computeIfAbsent(pFieldId, this::createUniqueMap);
+            final MetisFieldSingularMap myFieldMap = theFieldMap.computeIfAbsent(pFieldId, this::createSingularMap);
 
             /* Set fieldValue */
             myFieldMap.setValueForItem(pItem);
@@ -428,7 +385,7 @@ public class MetisListSetUniqueMap {
         void changeFieldValueForItem(final MetisFieldVersionedItem pItem,
                                      final MetisDataFieldId pFieldId) {
             /* Access the relevant fieldMap */
-            final MetisFieldUniqueMap<?> myFieldMap = theFieldMap.computeIfAbsent(pFieldId, this::createUniqueMap);
+            final MetisFieldSingularMap myFieldMap = theFieldMap.computeIfAbsent(pFieldId, this::createSingularMap);
 
             /* change fieldValue */
             myFieldMap.changeValueForItem(pItem);
@@ -442,7 +399,7 @@ public class MetisListSetUniqueMap {
         void clearFieldValueForItem(final MetisFieldVersionedItem pItem,
                                     final MetisDataFieldId pFieldId) {
             /* Access the relevant fieldMap */
-            final MetisFieldUniqueMap<?> myFieldMap = theFieldMap.get(pFieldId);
+            final MetisFieldSingularMap myFieldMap = theFieldMap.get(pFieldId);
 
             /* clear fieldValue */
             if (myFieldMap != null) {
@@ -451,91 +408,57 @@ public class MetisListSetUniqueMap {
         }
 
         /**
-         * Obtain unique value.
-         * @param pBase the base value
-         * @param pFieldId the fieldId
-         * @return The new value
-         */
-        Object getUniqueValue(final Object pBase,
-                              final MetisDataFieldId pFieldId) {
-            /* Access the relevant fieldMap */
-            final MetisFieldUniqueMap<?> myFieldMap = theFieldMap.get(pFieldId);
-
-            /* return unique value */
-            return myFieldMap == null ? pBase : myFieldMap.getUniqueValue();
-        }
-
-        /**
-         * Create the relevant Unique Map for field.
+         * Create the singular Map for field.
          * @param pFieldId the fieldId
          * @return the uniqueMap
          */
-        private MetisFieldUniqueMap<?> createUniqueMap(final MetisDataFieldId pFieldId) {
+        private MetisFieldSingularMap createSingularMap(final MetisDataFieldId pFieldId) {
             final MetisFieldSetDef myFieldSet = MetisFieldSet.lookUpFieldSet(theListKey.getClazz());
             final MetisFieldDef myField = myFieldSet.getField(pFieldId);
-            switch (myField.getDataType()) {
-                case STRING:
-                    return new MetisFieldUniqueStringMap(myField, isSession);
-                case INTEGER:
-                    return new MetisFieldUniqueIntegerMap(myField, isSession);
-                default:
-                    throw new IllegalArgumentException();
-            }
+            return new MetisFieldSingularMap(myField, isSession);
         }
     }
 
     /**
      * UniqueMap for List/Field.
-     * @param <T> the object type
      */
-    abstract static class MetisFieldUniqueMap<T> {
+    static class MetisFieldSingularMap {
+        /**
+         * Standard integer ONE.
+         */
+        private static final Integer ONE = 1;
+
         /**
          * The field.
          */
         private final MetisFieldDef theField;
 
         /**
-         * The object Class.
-         */
-        private final Class<T> theClazz;
-
-        /**
          * The unique map for this list.
          */
-        private final Map<T, MetisFieldVersionedItem> theValueMap;
+        private final Map<Object, MetisFieldVersionedItem> theValueMap;
 
         /**
          * The reverse map for this list.
          */
-        private final Map<Integer, T> theReverseMap;
+        private final Map<Integer, Object> theReverseMap;
 
         /**
          * The count map for this list.
          */
-        private final Map<T, Integer> theCountMap;
+        private final Map<Object, Integer> theCountMap;
 
         /**
          * Constructor.
          * @param pField the field
-         * @param pClazz the class of the field
          * @param pSession is this a session map?
          */
-        MetisFieldUniqueMap(final MetisFieldDef pField,
-                            final Class<T> pClazz,
-                            final boolean pSession) {
+        MetisFieldSingularMap(final MetisFieldDef pField,
+                              final boolean pSession) {
             theField = pField;
-            theClazz = pClazz;
             theValueMap = new HashMap<>();
             theReverseMap = new HashMap<>();
             theCountMap = pSession ? new HashMap<>() : null;
-        }
-
-        /**
-         * Obtain the fieldId.
-         * @return the fieldId.
-         */
-        MetisDataFieldId getFieldId() {
-            return theField.getFieldId();
         }
 
         /**
@@ -544,10 +467,7 @@ public class MetisListSetUniqueMap {
          * @return the item (if found)
          */
         MetisFieldVersionedItem getItemForValue(final Object pValue) {
-            if (theClazz.isInstance(pValue)) {
-                throw new IllegalArgumentException();
-            }
-            return theValueMap.get(theClazz.cast(pValue));
+            return theValueMap.get(pValue);
         }
 
         /**
@@ -562,11 +482,12 @@ public class MetisListSetUniqueMap {
             }
 
             /* Access value of item */
-            final T myValue = theField.getFieldValue(pItem, theClazz);
+            final MetisDataSingularItem myItem = theField.getFieldValue(pItem, MetisDataSingularItem.class);
+            final MetisDataSingularValue myValue = myItem.getSingularValue();
 
             /* Check count */
             final Integer myResult = theCountMap.get(myValue);
-            return ONE.equals(myResult);
+            return myValue.isSingular() ? ONE.equals(myResult) : myResult == null;
         }
 
         /**
@@ -578,23 +499,27 @@ public class MetisListSetUniqueMap {
             final Integer myId = MetisListSetVersioned.buildItemId(pItem);
 
             /* Access value of item */
-            final T myValue = theField.getFieldValue(pItem, theClazz);
+            final MetisDataSingularItem myItem = theField.getFieldValue(pItem, MetisDataSingularItem.class);
+            final MetisDataSingularValue myValue = myItem.getSingularValue();
 
-            /* Sanity checks */
-            if (theCountMap == null && theValueMap.get(myValue) != null) {
-                throw new IllegalArgumentException();
-            }
-            if (theReverseMap.get(myId) != null) {
-                throw new IllegalArgumentException();
-            }
+            /* Only proceed if the value is singular */
+            if (myValue.isSingular()) {
+                /* Sanity checks */
+                if (theCountMap == null && theValueMap.get(myValue) != null) {
+                    throw new IllegalArgumentException();
+                }
+                if (theReverseMap.get(myId) != null) {
+                    throw new IllegalArgumentException();
+                }
 
-            /* Store the links */
-            theValueMap.put(myValue, pItem);
-            theReverseMap.put(myId, myValue);
+                /* Store the links */
+                theValueMap.put(myValue, pItem);
+                theReverseMap.put(myId, myValue);
 
-            /* Increment count if we are loading */
-            if (theCountMap != null) {
-                incrementCount(myValue);
+                /* Increment count if we are loading */
+                if (theCountMap != null) {
+                    incrementCount(myValue);
+                }
             }
         }
 
@@ -602,12 +527,12 @@ public class MetisListSetUniqueMap {
          * Adjust count for value.
          * @param pValue the value
          */
-        private void incrementCount(final T pValue) {
+        private void incrementCount(final Object pValue) {
             /* Adjust count */
             final Integer myCount = theCountMap.get(pValue);
             theCountMap.put(pValue, myCount == null
-                                   ? ONE
-                                   : myCount + 1);
+                                    ? ONE
+                                    : myCount + 1);
         }
 
         /**
@@ -619,26 +544,29 @@ public class MetisListSetUniqueMap {
             final Integer myId = MetisListSetVersioned.buildItemId(pItem);
 
             /* Access value of item */
-            final T myValue = theField.getFieldValue(pItem, theClazz);
+            final MetisDataSingularItem myItem = theField.getFieldValue(pItem, MetisDataSingularItem.class);
+            final MetisDataSingularValue myValue = myItem.getSingularValue();
 
             /* Lookup current value */
-            final T myCurrentValue = theReverseMap.get(myId);
-            if (myCurrentValue == null) {
-                throw new IllegalArgumentException();
-            }
+            final Object myCurrentValue = theReverseMap.get(myId);
 
             /* If the value has changed */
             if (!myCurrentValue.equals(myValue)) {
                 /* Only remove link if it still points to this id */
                 final MetisFieldVersionedItem myCurrent = theValueMap.get(myCurrentValue);
-                final Integer myCurrentId = MetisListSetVersioned.buildItemId(myCurrent);
-                if (myCurrentId.equals(myId)) {
+                final Integer myCurrentId = myCurrent == null ? null : MetisListSetVersioned.buildItemId(myCurrent);
+                if (myId.equals(myCurrentId)) {
                     theValueMap.remove(myCurrentValue);
                 }
 
-                /* Store the links */
-                theValueMap.put(myValue, pItem);
-                theReverseMap.put(myId, myValue);
+                /* If the new value is Singular */
+                if (myValue.isSingular()) {
+                    /* Store the links */
+                    theValueMap.put(myValue, pItem);
+                    theReverseMap.put(myId, myValue);
+                } else {
+                    theReverseMap.remove(myId);
+                }
             }
         }
 
@@ -651,7 +579,8 @@ public class MetisListSetUniqueMap {
             final Integer myId = MetisListSetVersioned.buildItemId(pItem);
 
             /* Access value of item */
-            final T myValue = theField.getFieldValue(pItem, theClazz);
+            final MetisDataSingularItem myItem = theField.getFieldValue(pItem, MetisDataSingularItem.class);
+            final MetisDataSingularValue myValue = myItem.getSingularValue();
 
             /* Look for existing value */
             final MetisFieldVersionedItem myCurrent = theValueMap.get(myValue);
@@ -668,78 +597,6 @@ public class MetisListSetUniqueMap {
 
             /* Remove the reverse reference */
             theReverseMap.remove(myId);
-        }
-
-        /**
-         * Obtain unique value.
-         * @return The new value
-         */
-        abstract T getUniqueValue();
-    }
-
-    /**
-     * UniqueMap for List/StringField.
-     */
-    static class MetisFieldUniqueStringMap
-        extends MetisFieldUniqueMap<String> {
-        /**
-         * Constructor.
-         * @param pField the field
-         * @param pSession is this a session map?
-         */
-        MetisFieldUniqueStringMap(final MetisFieldDef pField,
-                                  final boolean pSession) {
-            super(pField, String.class, pSession);
-        }
-
-        @Override
-        String getUniqueValue() {
-            /* Set up base constraints */
-            int iNextId = 1;
-
-            /* Loop until we found a free value */
-            final String myBase = "New" + getFieldId().getId();
-            String myValue = myBase;
-            for (;;) {
-                /* try out the value */
-                if (super.getItemForValue(myValue) == null) {
-                    return myValue;
-                }
-
-                /* Build next value */
-                myValue = myBase.concat(Integer.toString(iNextId++));
-            }
-        }
-    }
-
-    /**
-     * UniqueMap for List/IntegerField.
-     */
-    static class MetisFieldUniqueIntegerMap
-            extends MetisFieldUniqueMap<Integer> {
-        /**
-         * Constructor.
-         * @param pField the field
-         * @param pSession is this a session map?
-         */
-        MetisFieldUniqueIntegerMap(final MetisFieldDef pField,
-                                   final boolean pSession) {
-            super(pField, Integer.class, pSession);
-        }
-
-        @Override
-        Integer getUniqueValue() {
-            /* Loop until we found a free value */
-            Integer myValue = ONE;
-            for (;;) {
-                /* try out the value */
-                if (super.getItemForValue(myValue) == null) {
-                    return myValue;
-                }
-
-                /* Build next value */
-                myValue++;
-            }
         }
     }
 }

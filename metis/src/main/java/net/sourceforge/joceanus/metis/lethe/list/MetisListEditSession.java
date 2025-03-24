@@ -14,21 +14,23 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.metis.list;
-
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+package net.sourceforge.joceanus.metis.lethe.list;
 
 import net.sourceforge.joceanus.metis.field.MetisFieldItem;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.metis.field.MetisFieldVersionValues;
 import net.sourceforge.joceanus.metis.field.MetisFieldVersionedItem;
+import net.sourceforge.joceanus.metis.list.MetisListIndexed;
+import net.sourceforge.joceanus.metis.list.MetisListResource;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.event.OceanusEvent;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Metis VersionedList Edit Session.
@@ -790,7 +792,7 @@ public class MetisListEditSession
             final MetisListVersioned<MetisFieldVersionedItem> myList = myIterator.next();
 
             /* Fire a refresh event */
-            myList.fireEvent(myChange);
+            //myList.fireEvent(myChange);
         }
     }
 
@@ -809,7 +811,7 @@ public class MetisListEditSession
             final MetisListVersioned<MetisFieldVersionedItem> myList = theListSet.getList(myChange.getItemType());
 
             /* Fire the event */
-            myList.fireEvent(myChange);
+            //myList.fireEvent(myChange);
         }
     }
 }

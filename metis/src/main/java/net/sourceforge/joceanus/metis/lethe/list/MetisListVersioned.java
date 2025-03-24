@@ -14,13 +14,17 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.metis.list;
-
-import java.security.InvalidParameterException;
+package net.sourceforge.joceanus.metis.lethe.list;
 
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.metis.field.MetisFieldVersionedItem;
+import net.sourceforge.joceanus.metis.list.MetisListIndexed;
+import net.sourceforge.joceanus.metis.list.MetisListResource;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
+
+import java.security.InvalidParameterException;
 
 /**
  * Versioned List implementation.
@@ -66,6 +70,11 @@ public class MetisListVersioned<T extends MetisFieldVersionedItem>
     private final MetisListKey theItemType;
 
     /**
+     * The Event Manager.
+     */
+    private OceanusEventManager<MetisListEvent> theEventManager;
+
+    /**
      * The version of the list.
      */
     private int theVersion;
@@ -108,6 +117,25 @@ public class MetisListVersioned<T extends MetisFieldVersionedItem>
     @Override
     public MetisFieldSetDef getDataFieldSet() {
         return FIELD_DEFS;
+    }
+
+    /**
+     * Access the event manager.
+     * @return the event manager.
+     */
+    private OceanusEventManager<MetisListEvent> getEventManager() {
+        /* Access the event manager and create it if it does not exist */
+        synchronized (this) {
+            if (theEventManager == null) {
+                theEventManager = new OceanusEventManager<>();
+            }
+        }
+        return theEventManager;
+    }
+
+    @Override
+    public OceanusEventRegistrar<MetisListEvent> getEventRegistrar() {
+        return getEventManager().getEventRegistrar();
     }
 
     /**

@@ -14,12 +14,15 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.metis.list;
+package net.sourceforge.joceanus.metis.lethe.list;
 
 import net.sourceforge.joceanus.metis.field.MetisFieldItem;
 import net.sourceforge.joceanus.metis.field.MetisFieldPairedItem;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.metis.field.MetisFieldVersionedItem;
+import net.sourceforge.joceanus.metis.list.MetisListIndexed;
+import net.sourceforge.joceanus.metis.list.MetisListResource;
+import net.sourceforge.joceanus.metis.list.MetisListReverseIterator;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;

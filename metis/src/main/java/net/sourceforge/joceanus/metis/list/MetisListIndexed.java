@@ -20,9 +20,6 @@ import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataIndexedItem;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataList;
 import net.sourceforge.joceanus.metis.field.MetisFieldItem;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
 import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 
 import java.util.ArrayList;
@@ -38,7 +35,7 @@ import java.util.Map;
  * @param <T> the item type
  */
 public class MetisListIndexed<T extends MetisDataIndexedItem>
-        implements MetisDataList<T>, MetisFieldItem, OceanusEventProvider<MetisListEvent> {
+        implements MetisDataList<T>, MetisFieldItem {
     /**
      * Report fields.
      */
@@ -78,11 +75,6 @@ public class MetisListIndexed<T extends MetisDataIndexedItem>
     private Integer theNextId = ID_FIRST;
 
     /**
-     * The Event Manager.
-     */
-    private OceanusEventManager<MetisListEvent> theEventManager;
-
-    /**
      * The comparator.
      */
     private Comparator<T> theComparator;
@@ -100,20 +92,20 @@ public class MetisListIndexed<T extends MetisDataIndexedItem>
      * Access the event manager.
      * @return the event manager.
      */
-    private OceanusEventManager<MetisListEvent> getEventManager() {
-        /* Access the event manager and create it if it does not exist */
-        synchronized (this) {
-            if (theEventManager == null) {
-                theEventManager = new OceanusEventManager<>();
-            }
-        }
-        return theEventManager;
-    }
+    //private OceanusEventManager<MetisListEvent> getEventManager() {
+    //    /* Access the event manager and create it if it does not exist */
+    //    synchronized (this) {
+    //        if (theEventManager == null) {
+    //            theEventManager = new OceanusEventManager<>();
+    //        }
+    //    }
+    //    return theEventManager;
+    //}
 
-    @Override
-    public OceanusEventRegistrar<MetisListEvent> getEventRegistrar() {
-        return getEventManager().getEventRegistrar();
-    }
+    //@Override
+    //public OceanusEventRegistrar<MetisListEvent> getEventRegistrar() {
+    //    return getEventManager().getEventRegistrar();
+    //}
 
     @Override
     public MetisFieldSetDef getDataFieldSet() {
@@ -426,11 +418,11 @@ public class MetisListIndexed<T extends MetisDataIndexedItem>
      * Fire event.
      * @param pEvent the event
      */
-    protected void fireEvent(final MetisListChange<T> pEvent) {
-        /* If the change is non-empty */
-        if (MetisListEvent.REFRESH.equals(pEvent.getEventType())
-            || !pEvent.isEmpty()) {
-            getEventManager().fireEvent(pEvent.getEventType(), pEvent);
-        }
-    }
+    //public void fireEvent(final MetisListChange<T> pEvent) {
+    //    /* If the change is non-empty */
+    //    if (MetisListEvent.REFRESH.equals(pEvent.getEventType())
+    //        || !pEvent.isEmpty()) {
+    //        getEventManager().fireEvent(pEvent.getEventType(), pEvent);
+    //    }
+    //}
 }

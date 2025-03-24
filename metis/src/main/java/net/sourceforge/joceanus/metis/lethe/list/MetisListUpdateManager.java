@@ -14,16 +14,16 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.metis.list;
-
-import java.util.Comparator;
-import java.util.Iterator;
+package net.sourceforge.joceanus.metis.lethe.list;
 
 import net.sourceforge.joceanus.metis.data.MetisDataState;
 import net.sourceforge.joceanus.metis.field.MetisFieldVersionValues;
 import net.sourceforge.joceanus.metis.field.MetisFieldVersionedItem;
 import net.sourceforge.joceanus.oceanus.event.OceanusEvent;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
+
+import java.util.Comparator;
+import java.util.Iterator;
 
 /**
  * List Update Generator.
@@ -137,8 +137,8 @@ public final class MetisListUpdateManager {
 
         /* Loop through the lists */
         final Iterator<MetisListKey> myIterator = MetisUpdatePhase.DELETE.equals(pPhase)
-                                                                                         ? pUpdateSet.reverseKeyIterator()
-                                                                                         : pUpdateSet.keyIterator();
+                    ? pUpdateSet.reverseKeyIterator()
+                    : pUpdateSet.keyIterator();
         while (myIterator.hasNext()) {
             final MetisListKey myKey = myIterator.next();
 

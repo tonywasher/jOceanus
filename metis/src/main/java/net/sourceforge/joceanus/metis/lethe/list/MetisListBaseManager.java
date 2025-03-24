@@ -14,14 +14,15 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.metis.list;
-
-import java.util.Iterator;
-import java.util.Map;
+package net.sourceforge.joceanus.metis.lethe.list;
 
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataIndexedItem;
 import net.sourceforge.joceanus.metis.field.MetisFieldVersionValues;
 import net.sourceforge.joceanus.metis.field.MetisFieldVersionedItem;
+import net.sourceforge.joceanus.metis.list.MetisListIndexed;
+
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  * List Base Methods.
@@ -271,7 +272,7 @@ public final class MetisListBaseManager {
 
         /* Fire the event */
         final MetisListChange<T> myChange = new MetisListChange<>(null, MetisListEvent.REFRESH);
-        pTarget.fireEvent(myChange);
+        //pTarget.fireEvent(myChange);
     }
 
     /**
