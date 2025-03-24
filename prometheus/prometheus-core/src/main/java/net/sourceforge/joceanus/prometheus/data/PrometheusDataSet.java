@@ -939,6 +939,14 @@ public abstract class PrometheusDataSet
     }
 
     /**
+     * Obtain listKey iterator.
+     * @return the iterator
+     */
+    public Iterator<PrometheusListKey> keyIterator() {
+        return theListMap.keySet().iterator();
+    }
+
+    /**
      * Cryptography Data Enum Types.
      */
     public enum PrometheusCryptographyDataType
@@ -1015,6 +1023,8 @@ public abstract class PrometheusDataSet
                     return PrometheusControlData.class;
                 case CONTROLKEY:
                     return PrometheusControlKey.class;
+                case CONTROLKEYSET:
+                    return PrometheusControlKeySet.class;
                 case DATAKEYSET:
                     return PrometheusDataKeySet.class;
                 default:

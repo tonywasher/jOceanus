@@ -30,16 +30,17 @@ module net.sourceforge.joceanus.prometheus.core {
     requires net.sourceforge.joceanus.prometheus.sheet.api;
 
     /* Exports */
-    exports net.sourceforge.joceanus.prometheus.toolkit;
     exports net.sourceforge.joceanus.prometheus.data;
     exports net.sourceforge.joceanus.prometheus.database;
+    exports net.sourceforge.joceanus.prometheus.maps;
     exports net.sourceforge.joceanus.prometheus.preference;
     exports net.sourceforge.joceanus.prometheus.security;
     exports net.sourceforge.joceanus.prometheus.sheets;
-    exports net.sourceforge.joceanus.prometheus.views;
     exports net.sourceforge.joceanus.prometheus.threads;
+    exports net.sourceforge.joceanus.prometheus.toolkit;
     exports net.sourceforge.joceanus.prometheus.ui;
     exports net.sourceforge.joceanus.prometheus.ui.fieldset;
     exports net.sourceforge.joceanus.prometheus.ui.panel;
     exports net.sourceforge.joceanus.prometheus.validate;
+    exports net.sourceforge.joceanus.prometheus.views;
 }

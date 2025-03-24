@@ -74,6 +74,7 @@ public class MoneyWisePayee
      */
     static {
         FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAINFOSET_NAME, MoneyWisePayee::getInfoSet);
+        FIELD_DEFS.buildFieldMap(MoneyWiseAccountInfoClass.class, MoneyWisePayee::getFieldValue);
     }
 
     /**
@@ -170,13 +171,22 @@ public class MoneyWisePayee
     }
 
     @Override
+    public Long getExternalId() {
+        return MoneyWiseAssetType.createExternalId(MoneyWiseAssetType.PAYEE, getIndexedId());
+    }
+
+    @Override
     public MoneyWisePayeeInfoSet getInfoSet() {
         return theInfoSet;
     }
 
-    @Override
-    public Long getExternalId() {
-        return MoneyWiseAssetType.createExternalId(MoneyWiseAssetType.PAYEE, getIndexedId());
+    /**
+     * Obtain fieldValue for infoSet.
+     * @param pFieldId the fieldId
+     * @return the value
+     */
+    private Object getFieldValue(final MetisDataFieldId pFieldId) {
+        return theInfoSet != null ? theInfoSet.getFieldValue(pFieldId) : null;
     }
 
     /**

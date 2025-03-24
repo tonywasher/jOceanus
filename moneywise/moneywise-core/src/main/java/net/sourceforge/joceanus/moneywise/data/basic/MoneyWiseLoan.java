@@ -74,6 +74,7 @@ public class MoneyWiseLoan
      */
     static {
         FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAINFOSET_NAME, MoneyWiseLoan::getInfoSet);
+        FIELD_DEFS.buildFieldMap(MoneyWiseAccountInfoClass.class, MoneyWiseLoan::getFieldValue);
     }
 
     /**
@@ -183,6 +184,15 @@ public class MoneyWiseLoan
     @Override
     public MoneyWiseLoanInfoSet getInfoSet() {
         return theInfoSet;
+    }
+
+    /**
+     * Obtain fieldValue for infoSet.
+     * @param pFieldId the fieldId
+     * @return the value
+     */
+    private Object getFieldValue(final MetisDataFieldId pFieldId) {
+        return theInfoSet != null ? theInfoSet.getFieldValue(pFieldId) : null;
     }
 
     /**
