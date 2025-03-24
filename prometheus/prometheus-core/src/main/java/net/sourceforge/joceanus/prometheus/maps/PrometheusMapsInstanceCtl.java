@@ -149,6 +149,20 @@ public class PrometheusMapsInstanceCtl
     }
 
     /**
+     * Declare dateId map.
+     * @param pListKey the listKey
+     * @param pOwnerId the ownerId
+     * @param pDateId the dateId
+     * @param pAllowNull do we allow null value?
+     */
+    void declareDateIdMap(final PrometheusListKey pListKey,
+                          final MetisDataFieldId pOwnerId,
+                          final MetisDataFieldId pDateId,
+                          final boolean pAllowNull) {
+        theInstanceMap.declareDateIdMap(pListKey, pOwnerId, pDateId, pAllowNull);
+    }
+
+    /**
      * add item to map.
      * @param pItem the item
      */

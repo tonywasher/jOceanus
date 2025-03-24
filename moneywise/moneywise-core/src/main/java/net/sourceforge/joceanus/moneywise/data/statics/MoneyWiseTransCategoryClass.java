@@ -441,8 +441,8 @@ public enum MoneyWiseTransCategoryClass
         switch (this) {
             case SHAREDIVIDEND:
             case UNITTRUSTDIVIDEND:
-            case TAXFREEDIVIDEND:
             case FOREIGNDIVIDEND:
+            case TAXFREEDIVIDEND:
             case TAXEDINTEREST:
             case GROSSINTEREST:
             case TAXFREEINTEREST:
@@ -458,6 +458,7 @@ public enum MoneyWiseTransCategoryClass
             case RESIDENTIALGAIN:
             case CAPITALGAIN:
             case TAXFREEGAIN:
+            case VIRTUALINCOME:
             case EMPLOYEENATINS:
             case EMPLOYERNATINS:
             case OPENINGBALANCE:
@@ -517,36 +518,7 @@ public enum MoneyWiseTransCategoryClass
      * otherwise.
      */
     public boolean isSingular() {
-        switch (this) {
-            case SHAREDIVIDEND:
-            case UNITTRUSTDIVIDEND:
-            case FOREIGNDIVIDEND:
-            case TAXFREEDIVIDEND:
-            case TAXEDINTEREST:
-            case GROSSINTEREST:
-            case TAXFREEINTEREST:
-            case PEER2PEERINTEREST:
-            case TAXEDLOYALTYBONUS:
-            case GROSSLOYALTYBONUS:
-            case TAXFREELOYALTYBONUS:
-            case MARKETGROWTH:
-            case CURRENCYFLUCTUATION:
-            case INCOMETAX:
-            case EMPLOYEENATINS:
-            case EMPLOYERNATINS:
-            case VIRTUALINCOME:
-            case WITHHELD:
-            case RESIDENTIALGAIN:
-            case CAPITALGAIN:
-            case TAXFREEGAIN:
-            case TAXRELIEF:
-            case CHARGEABLEGAIN:
-            case OPENINGBALANCE:
-            case TOTALS:
-                return true;
-            default:
-                return false;
-        }
+        return INCOMETAX.equals(this) || isHiddenType();
     }
 
     /**

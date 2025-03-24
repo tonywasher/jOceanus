@@ -60,7 +60,7 @@ public class MoneyWiseMaps {
 
         /* Create the top level viewer entry for this view */
         final MetisViewerManager myViewer = pView.getViewerManager();
-        final MetisViewerEntry mySection = pView.getViewerEntry(PrometheusViewerEntryId.MAINTENANCE);
+        final MetisViewerEntry mySection = pView.getViewerEntry(PrometheusViewerEntryId.ANALYSIS);
         final MetisViewerEntry myEntry = myViewer.newEntry(mySection, "NewMaps");
         myEntry.setObject(theMaps);
     }
@@ -127,6 +127,14 @@ public class MoneyWiseMaps {
                 t -> ((MoneyWiseSecurity) t).getCategoryClass().isSingular());
         theMaps.declareFieldIdMap(MoneyWiseBasicDataType.SECURITY, MoneyWiseAccountInfoClass.SYMBOL,
                 t -> ((MoneyWiseSecurity) t).getCategoryClass().needsSymbol());
+
+        /* Build date maps */
+        theMaps.declareDateIdMap(MoneyWiseBasicDataType.EXCHANGERATE, MoneyWiseBasicResource.XCHGRATE_TO,
+                MoneyWiseBasicResource.MONEYWISEDATA_FIELD_DATE);
+        theMaps.declareDateIdMap(MoneyWiseBasicDataType.SECURITYPRICE, MoneyWiseBasicDataType.SECURITY,
+                MoneyWiseBasicResource.MONEYWISEDATA_FIELD_DATE);
+        theMaps.declareDateIdMap(MoneyWiseBasicDataType.DEPOSITRATE, MoneyWiseBasicDataType.DEPOSIT,
+                MoneyWiseBasicResource.DEPOSITRATE_ENDDATE, true);
     }
 
     /**

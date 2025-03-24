@@ -138,6 +138,32 @@ public class PrometheusMapsCtl
     }
 
     /**
+     * Declare dateId map.
+     * @param pListKey the listKey
+     * @param pOwnerId the ownerId
+     * @param pDateId the dateId
+     */
+    public void declareDateIdMap(final PrometheusListKey pListKey,
+                                 final MetisDataFieldId pOwnerId,
+                                 final MetisDataFieldId pDateId) {
+        theInstance.declareDateIdMap(pListKey, pOwnerId, pDateId,false);
+    }
+
+    /**
+     * Declare dateId map.
+     * @param pListKey the listKey
+     * @param pOwnerId the ownerId
+     * @param pDateId the dateId
+     * @param pAllowNull do we allow null value?
+     */
+    public void declareDateIdMap(final PrometheusListKey pListKey,
+                                 final MetisDataFieldId pOwnerId,
+                                 final MetisDataFieldId pDateId,
+                                 final boolean pAllowNull) {
+        theInstance.declareDateIdMap(pListKey, pOwnerId, pDateId, pAllowNull);
+    }
+
+    /**
      * Reset the maps.
      */
     public void resetMaps() {

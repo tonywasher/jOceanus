@@ -60,6 +60,11 @@ public class PrometheusMapsFieldInstance
     private final Function<PrometheusDataItem, Boolean> theFilter;
 
     /**
+     * Do we allow null value?
+     */
+    private final boolean allowNull;
+
+    /**
      * Constructor.
      * @param pKey the listKey
      * @param pFieldId the fieldId
@@ -73,14 +78,40 @@ public class PrometheusMapsFieldInstance
      * Constructor.
      * @param pKey the listKey
      * @param pFieldId the fieldId
+     */
+    PrometheusMapsFieldInstance(final PrometheusListKey pKey,
+                                final MetisDataFieldId pFieldId,
+                                final boolean pAllowNull) {
+        this(pKey, pFieldId, i -> true, pAllowNull);
+    }
+
+    /**
+     * Constructor.
+     * @param pKey the listKey
+     * @param pFieldId the fieldId
      * @param pFilter the filter
      */
     PrometheusMapsFieldInstance(final PrometheusListKey pKey,
                                 final MetisDataFieldId pFieldId,
                                 final Function<PrometheusDataItem, Boolean> pFilter) {
+        this(pKey, pFieldId, pFilter, false);
+    }
+
+    /**
+     * Constructor.
+     * @param pKey the listKey
+     * @param pFieldId the fieldId
+     * @param pFilter the filter
+     * @param pAllowNull do we allow null value?
+     */
+    PrometheusMapsFieldInstance(final PrometheusListKey pKey,
+                                final MetisDataFieldId pFieldId,
+                                final Function<PrometheusDataItem, Boolean> pFilter,
+                                final boolean pAllowNull) {
         theListKey = pKey;
         theFieldId = pFieldId;
         theFilter = pFilter;
+        allowNull = pAllowNull;
     }
 
     /**
@@ -88,9 +119,10 @@ public class PrometheusMapsFieldInstance
      * @param pSource the source fieldMap
      */
     PrometheusMapsFieldInstance(final PrometheusMapsFieldInstance pSource) {
-        theListKey = pSource.theListKey;
-        theFieldId = pSource.theFieldId;
+        theListKey = pSource.getListKey();
+        theFieldId = pSource.getFieldId();
         theFilter = pSource.theFilter;
+        allowNull = pSource.allowNull;
     }
 
     @Override
@@ -128,7 +160,7 @@ public class PrometheusMapsFieldInstance
             final MetisFieldSetDef myFieldSet = pItem.getDataFieldSet();
             final MetisFieldDef myField = myFieldSet.getField(theFieldId);
             final Object myValue = myField.getFieldValue(pItem);
-            if (myValue != null) {
+            if (allowNull || myValue != null) {
                 addItemToMap(myValue, pItem);
             }
         }

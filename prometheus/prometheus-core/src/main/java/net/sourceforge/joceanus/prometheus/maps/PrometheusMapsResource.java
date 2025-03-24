@@ -46,6 +46,11 @@ public enum PrometheusMapsResource
     /**
      * Map.
      */
+    MAPS_DATEMAP("DateMap"),
+
+    /**
+     * Map.
+     */
     MAPS_TOUCHMAP("TouchMap"),
 
     /**

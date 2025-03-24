@@ -19,6 +19,7 @@ package net.sourceforge.joceanus.prometheus.maps;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.metis.field.MetisFieldItem;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
 import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataResource;
@@ -44,7 +45,8 @@ public class PrometheusMapsListInstance
      */
     static {
         FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAITEM_TYPE, PrometheusMapsListInstance::getListKey);
-        FIELD_DEFS.declareLocalField(PrometheusMapsResource.MAPS_INSTANCEMAP, PrometheusMapsListInstance::getMap);
+        FIELD_DEFS.declareLocalField(PrometheusMapsResource.MAPS_INSTANCEMAP, PrometheusMapsListInstance::getFieldMap);
+        FIELD_DEFS.declareLocalField(PrometheusMapsResource.MAPS_DATEMAP, PrometheusMapsListInstance::getDateMap);
     }
 
     /**
@@ -53,9 +55,14 @@ public class PrometheusMapsListInstance
     private final PrometheusListKey theListKey;
 
     /**
-     * The item.
+     * The field maps.
      */
-    private final Map<MetisDataFieldId, PrometheusMapsFieldInstance> theMap;
+    private final Map<MetisDataFieldId, PrometheusMapsFieldInstance> theFieldMap;
+
+    /**
+     * The date maps.
+     */
+    private PrometheusMapsDateInstance theDateMap;
 
     /**
      * Constructor.
@@ -63,7 +70,7 @@ public class PrometheusMapsListInstance
      */
     PrometheusMapsListInstance(final PrometheusListKey pKey) {
         theListKey = pKey;
-        theMap = new LinkedHashMap<>();
+        theFieldMap = new LinkedHashMap<>();
     }
 
     /**
@@ -77,7 +84,7 @@ public class PrometheusMapsListInstance
         this(pSource.getListKey());
 
         /* Recreate underlying maps */
-        for (PrometheusMapsFieldInstance myMap : pSource.getMap().values()) {
+        for (PrometheusMapsFieldInstance myMap : pSource.getFieldMap().values()) {
             /* Access details */
             final MetisDataFieldId myFieldId = myMap.getFieldId();
             final PrometheusListKey myListKey = myMap.getListKey();
@@ -85,15 +92,20 @@ public class PrometheusMapsListInstance
             /* If the map is not shared */
             if (theListKey.equals(myListKey)) {
                 /* Create a new FieldMap */
-                theMap.put(myFieldId, new PrometheusMapsFieldInstance(myMap));
+                theFieldMap.put(myFieldId, new PrometheusMapsFieldInstance(myMap));
 
                 /* else this is a shared map */
             } else {
                 /* Obtain the relevant list map and field map */
                 final PrometheusMapsListInstance mySharedList = pDataSet.getList(myListKey);
-                final PrometheusMapsFieldInstance mySharedField = mySharedList.getMap().get(myFieldId);
-                theMap.put(myFieldId, mySharedField);
+                final PrometheusMapsFieldInstance mySharedField = mySharedList.getFieldMap().get(myFieldId);
+                theFieldMap.put(myFieldId, mySharedField);
             }
+        }
+
+        /* Recreate dateMap if required */
+        if (theDateMap != null) {
+            theDateMap = new PrometheusMapsDateInstance(theDateMap);
         }
     }
 
@@ -116,11 +128,19 @@ public class PrometheusMapsListInstance
     }
 
     /**
-     * Obtain the map.
+     * Obtain the field map.
      * @return the map
      */
-    private Map<MetisDataFieldId, PrometheusMapsFieldInstance> getMap() {
-        return theMap;
+    private Map<MetisDataFieldId, PrometheusMapsFieldInstance> getFieldMap() {
+        return theFieldMap;
+    }
+
+    /**
+     * Obtain the date map.
+     * @return the map
+     */
+    private PrometheusMapsDateInstance getDateMap() {
+        return theDateMap;
     }
 
     /**
@@ -128,7 +148,7 @@ public class PrometheusMapsListInstance
      * @param pFieldId the fieldId
      */
     void declareFieldIdMap(final MetisDataFieldId pFieldId) {
-        theMap.put(pFieldId, new PrometheusMapsFieldInstance(theListKey, pFieldId));
+        theFieldMap.put(pFieldId, new PrometheusMapsFieldInstance(theListKey, pFieldId));
     }
 
     /**
@@ -138,7 +158,7 @@ public class PrometheusMapsListInstance
      */
     void declareFieldIdMap(final MetisDataFieldId pFieldId,
                            final Function<PrometheusDataItem, Boolean> pFilter) {
-        theMap.put(pFieldId, new PrometheusMapsFieldInstance(theListKey, pFieldId, pFilter));
+        theFieldMap.put(pFieldId, new PrometheusMapsFieldInstance(theListKey, pFieldId, pFilter));
     }
 
     /**
@@ -148,17 +168,34 @@ public class PrometheusMapsListInstance
      */
     void declareFieldIdMap(final MetisDataFieldId pFieldId,
                            final PrometheusMapsListInstance pMap) {
-        theMap.put(pFieldId, pMap.getMap().get(pFieldId));
+        theFieldMap.put(pFieldId, pMap.getFieldMap().get(pFieldId));
     }
 
     /**
-     * add item to map.
+     * Declare dateId map.
+     * @param pOwnerId the ownerId
+     * @param pDateId the dateId
+     * @param pAllowNull do we allow null value?
+     */
+    void declareDateIdMap(final MetisDataFieldId pOwnerId,
+                          final MetisDataFieldId pDateId,
+                          final boolean pAllowNull) {
+        theDateMap = new PrometheusMapsDateInstance(theListKey, pOwnerId, pDateId, pAllowNull);
+    }
+
+    /**
+     * add item to maps.
      * @param pItem the item
      */
     void addItemToMaps(final PrometheusDataItem pItem) {
-        /* Loop through the maps */
-        for (PrometheusMapsFieldInstance myMap: theMap.values()) {
+        /* Loop through the field maps */
+        for (PrometheusMapsFieldInstance myMap: theFieldMap.values()) {
             myMap.addItemToMap(pItem);
+        }
+
+        /* If the date map exists */
+        if (theDateMap != null) {
+            theDateMap.addItemToMap(pItem);
         }
     }
 
@@ -170,7 +207,7 @@ public class PrometheusMapsListInstance
      */
     boolean isKeyDuplicate(final MetisDataFieldId pFieldId,
                            final PrometheusDataItem pItem) {
-        final PrometheusMapsFieldInstance myMap = theMap.get(pFieldId);
+        final PrometheusMapsFieldInstance myMap = theFieldMap.get(pFieldId);
         return myMap != null && myMap.isKeyDuplicate(pItem);
     }
 
@@ -182,7 +219,7 @@ public class PrometheusMapsListInstance
      */
     boolean isKeyAvailable(final MetisDataFieldId pFieldId,
                            final Object pKey) {
-        final PrometheusMapsFieldInstance myMap = theMap.get(pFieldId);
+        final PrometheusMapsFieldInstance myMap = theFieldMap.get(pFieldId);
         return myMap == null || myMap.isKeyAvailable(pKey);
     }
 
@@ -194,7 +231,7 @@ public class PrometheusMapsListInstance
      */
     PrometheusDataItem getItemForKey(final MetisDataFieldId pFieldId,
                                      final Object pKey) {
-        final PrometheusMapsFieldInstance myMap = theMap.get(pFieldId);
+        final PrometheusMapsFieldInstance myMap = theFieldMap.get(pFieldId);
         return myMap == null ? null : myMap.findItemInMap(pKey);
     }
 
@@ -202,9 +239,34 @@ public class PrometheusMapsListInstance
      * Reset Maps.
      */
     void resetMaps() {
-        /* Reset each map */
-        for (PrometheusMapsFieldInstance myMap : theMap.values()) {
+        /* Reset each field map */
+        for (PrometheusMapsFieldInstance myMap : theFieldMap.values()) {
             myMap.resetMap();
         }
+
+        /* Reset the date map */
+        if (theDateMap != null) {
+            theDateMap.resetMap();
+        }
+    }
+
+    /**
+     * Is the date available?
+     * @param pOwner the owner
+     * @param pDate the date
+     * @return true/false
+     */
+    boolean isDateAvailable(final PrometheusDataItem pOwner,
+                            final OceanusDate pDate) {
+         return theDateMap != null && theDateMap.isDateAvailable(pOwner, pDate);
+    }
+
+    /**
+     * Is the date duplicate?
+     * @param pItem the item
+     * @return true/false
+     */
+    boolean isDateDuplicate(final PrometheusDataItem pItem) {
+        return theDateMap != null && theDateMap.isDateDuplicate(pItem);
     }
 }
