@@ -53,15 +53,15 @@ public final class MetisListUpdateManager {
         int myNewVersion = 0;
 
         /* Loop through the lists */
-        final Iterator<MetisListKey> myIterator = pBase.keyIterator();
+        final Iterator<MetisLetheListKey> myIterator = pBase.keyIterator();
         while (myIterator.hasNext()) {
-            final MetisListKey myKey = myIterator.next();
+            final MetisLetheListKey myKey = myIterator.next();
 
             /* Obtain the source list */
-            final MetisListVersioned<MetisFieldVersionedItem> myBase = pBase.getList(myKey);
+            final MetisLetheListVersioned<MetisFieldVersionedItem> myBase = pBase.getList(myKey);
 
             /* Create the new list */
-            final MetisListVersioned<MetisFieldVersionedItem> myUpdate = new MetisListVersioned<>(myUpdates, myBase);
+            final MetisLetheListVersioned<MetisFieldVersionedItem> myUpdate = new MetisLetheListVersioned<>(myUpdates, myBase);
 
             /* configure the update list */
             configureUpdateList(myUpdate);
@@ -74,10 +74,10 @@ public final class MetisListUpdateManager {
         }
 
         /* Register event handlers */
-        final OceanusEventRegistrar<MetisListEvent> myRegistrar = pBase.getEventRegistrar();
-        myRegistrar.addEventListener(MetisListEvent.REFRESH, e -> deriveUpdates(myUpdates));
-        myRegistrar.addEventListener(MetisListEvent.UPDATE, e -> handleChangesInBaseSet(myUpdates, e));
-        myRegistrar.addEventListener(MetisListEvent.VERSION, e -> handleChangesInBaseSet(myUpdates, e));
+        final OceanusEventRegistrar<MetisLetheListEvent> myRegistrar = pBase.getEventRegistrar();
+        myRegistrar.addEventListener(MetisLetheListEvent.REFRESH, e -> deriveUpdates(myUpdates));
+        myRegistrar.addEventListener(MetisLetheListEvent.UPDATE, e -> handleChangesInBaseSet(myUpdates, e));
+        myRegistrar.addEventListener(MetisLetheListEvent.VERSION, e -> handleChangesInBaseSet(myUpdates, e));
 
         /* Return the updateSet */
         myUpdates.setVersion(myNewVersion);
@@ -136,14 +136,14 @@ public final class MetisListUpdateManager {
         int myNumItems = pNumItems;
 
         /* Loop through the lists */
-        final Iterator<MetisListKey> myIterator = MetisUpdatePhase.DELETE.equals(pPhase)
+        final Iterator<MetisLetheListKey> myIterator = MetisUpdatePhase.DELETE.equals(pPhase)
                     ? pUpdateSet.reverseKeyIterator()
                     : pUpdateSet.keyIterator();
         while (myIterator.hasNext()) {
-            final MetisListKey myKey = myIterator.next();
+            final MetisLetheListKey myKey = myIterator.next();
 
             /* If the list is non-empty */
-            final MetisListVersioned<MetisFieldVersionedItem> myList = pUpdateSet.getList(myKey);
+            final MetisLetheListVersioned<MetisFieldVersionedItem> myList = pUpdateSet.getList(myKey);
             if (!myList.isEmpty()) {
                 /* Commit the items */
                 myNumItems = commitUpdateBatch(myList, pUpdateSet.getBaseListSet(), pPhase, pNumItems);
@@ -168,12 +168,12 @@ public final class MetisListUpdateManager {
      * @param pNumItems the number of items to commit
      * @return the number of commit items remaining
      */
-    private static <T extends MetisFieldVersionedItem> int commitUpdateBatch(final MetisListVersioned<T> pUpdates,
+    private static <T extends MetisFieldVersionedItem> int commitUpdateBatch(final MetisLetheListVersioned<T> pUpdates,
                                                                              final MetisListSetVersioned pBaseSet,
                                                                              final MetisUpdatePhase pPhase,
                                                                              final int pNumItems) {
         /* Access the base list */
-        final MetisListVersioned<T> myBaseList = pUpdates.getBaseList();
+        final MetisLetheListVersioned<T> myBaseList = pUpdates.getBaseList();
 
         /* Access the item count */
         int myNumItems = pNumItems;
@@ -228,9 +228,9 @@ public final class MetisListUpdateManager {
      * @param <T> the itemType for the list
      * @param pUpdates the updates list
      */
-    private static <T extends MetisFieldVersionedItem> void configureUpdateList(final MetisListVersioned<T> pUpdates) {
+    private static <T extends MetisFieldVersionedItem> void configureUpdateList(final MetisLetheListVersioned<T> pUpdates) {
         /* Access the base list */
-        final MetisListVersioned<T> myBaseList = pUpdates.getBaseList();
+        final MetisLetheListVersioned<T> myBaseList = pUpdates.getBaseList();
 
         /* Copy the comparator from the base list */
         pUpdates.setComparator(new UpdateComparator<>(myBaseList.getComparator()));
@@ -245,7 +245,7 @@ public final class MetisListUpdateManager {
      * @param pEvent the event
      */
     private static void handleChangesInBaseSet(final MetisListSetVersioned pUpdates,
-                                               final OceanusEvent<MetisListEvent> pEvent) {
+                                               final OceanusEvent<MetisLetheListEvent> pEvent) {
         /* Access the change details */
         final MetisListSetChange myChanges = pEvent.getDetails(MetisListSetChange.class);
 
@@ -253,13 +253,13 @@ public final class MetisListUpdateManager {
         int myNewVersion = 0;
 
         /* Loop through the lists */
-        final Iterator<MetisListKey> myIterator = pUpdates.keyIterator();
+        final Iterator<MetisLetheListKey> myIterator = pUpdates.keyIterator();
         while (myIterator.hasNext()) {
-            final MetisListKey myKey = myIterator.next();
+            final MetisLetheListKey myKey = myIterator.next();
 
             /* Obtain the update list and associated change */
-            final MetisListVersioned<MetisFieldVersionedItem> myUpdates = pUpdates.getList(myKey);
-            final MetisListChange<MetisFieldVersionedItem> myChange = myChanges.getListChange(myKey);
+            final MetisLetheListVersioned<MetisFieldVersionedItem> myUpdates = pUpdates.getList(myKey);
+            final MetisLetheListChange<MetisFieldVersionedItem> myChange = myChanges.getListChange(myKey);
 
             /* If there are changes */
             if (myChange != null) {
@@ -283,8 +283,8 @@ public final class MetisListUpdateManager {
      * @param pUpdates the updates list
      * @param pChange the change event
      */
-    private static <T extends MetisFieldVersionedItem> void doHandleChangesInBase(final MetisListVersioned<T> pUpdates,
-                                                                                  final MetisListChange<T> pChange) {
+    private static <T extends MetisFieldVersionedItem> void doHandleChangesInBase(final MetisLetheListVersioned<T> pUpdates,
+                                                                                  final MetisLetheListChange<T> pChange) {
         /* Process added entries */
         boolean doSort = doHandleAddedItems(pUpdates, pChange.addedIterator());
 
@@ -314,7 +314,7 @@ public final class MetisListUpdateManager {
      * @param pItems the added items
      * @return were items added?
      */
-    private static <T extends MetisFieldVersionedItem> boolean doHandleAddedItems(final MetisListVersioned<T> pUpdates,
+    private static <T extends MetisFieldVersionedItem> boolean doHandleAddedItems(final MetisLetheListVersioned<T> pUpdates,
                                                                                   final Iterator<T> pItems) {
         /* Process added entries */
         boolean added = false;
@@ -335,7 +335,7 @@ public final class MetisListUpdateManager {
      * @param pItems the changed items
      * @return were items changed?
      */
-    private static <T extends MetisFieldVersionedItem> boolean doHandleChangedItems(final MetisListVersioned<T> pUpdates,
+    private static <T extends MetisFieldVersionedItem> boolean doHandleChangedItems(final MetisLetheListVersioned<T> pUpdates,
                                                                                     final Iterator<T> pItems) {
         /* Process changed entries */
         boolean changed = false;
@@ -365,7 +365,7 @@ public final class MetisListUpdateManager {
      * @param pUpdates the updates list
      * @param pItems the deleted items
      */
-    private static <T extends MetisFieldVersionedItem> void doHandleDeletedItems(final MetisListVersioned<T> pUpdates,
+    private static <T extends MetisFieldVersionedItem> void doHandleDeletedItems(final MetisLetheListVersioned<T> pUpdates,
                                                                                  final Iterator<T> pItems) {
         /* Process deleted entries (can only happen from a rewind of DelNew) */
         while (pItems.hasNext()) {
@@ -384,12 +384,12 @@ public final class MetisListUpdateManager {
         int myNewVersion = 0;
 
         /* Loop through the lists */
-        final Iterator<MetisListKey> myIterator = pUpdates.keyIterator();
+        final Iterator<MetisLetheListKey> myIterator = pUpdates.keyIterator();
         while (myIterator.hasNext()) {
-            final MetisListKey myKey = myIterator.next();
+            final MetisLetheListKey myKey = myIterator.next();
 
             /* Obtain the update and base lists */
-            final MetisListVersioned<MetisFieldVersionedItem> myUpdates = pUpdates.getList(myKey);
+            final MetisLetheListVersioned<MetisFieldVersionedItem> myUpdates = pUpdates.getList(myKey);
 
             /* handle changes in the base list */
             doDeriveUpdates(myUpdates);
@@ -409,12 +409,12 @@ public final class MetisListUpdateManager {
      * @param <T> the itemType for the list
      * @param pList the update list
      */
-    private static <T extends MetisFieldVersionedItem> void doDeriveUpdates(final MetisListVersioned<T> pList) {
+    private static <T extends MetisFieldVersionedItem> void doDeriveUpdates(final MetisLetheListVersioned<T> pList) {
         /* Clear the list */
         pList.clear();
 
         /* Access the base list */
-        final MetisListVersioned<T> myBaseList = pList.getBaseList();
+        final MetisLetheListVersioned<T> myBaseList = pList.getBaseList();
 
         /* Loop through the base list */
         final Iterator<T> myIterator = myBaseList.iterator();
@@ -444,7 +444,7 @@ public final class MetisListUpdateManager {
      * @param pCurr the current update
      * @param pBase the base update
      */
-    private static <T extends MetisFieldVersionedItem> void processChangedUpdate(final MetisListVersioned<T> pUpdates,
+    private static <T extends MetisFieldVersionedItem> void processChangedUpdate(final MetisLetheListVersioned<T> pUpdates,
                                                                                  final T pCurr,
                                                                                  final T pBase) {
         /* Obtain the valueSet history */
@@ -468,7 +468,7 @@ public final class MetisListUpdateManager {
      * @param pList the update list
      * @param pBase the base update item
      */
-    private static <T extends MetisFieldVersionedItem> void processUpdate(final MetisListVersioned<T> pList,
+    private static <T extends MetisFieldVersionedItem> void processUpdate(final MetisLetheListVersioned<T> pList,
                                                                           final T pBase) {
         /* Switch on the state */
         switch (pBase.getState()) {
@@ -495,7 +495,7 @@ public final class MetisListUpdateManager {
      * @param pList the update list
      * @param pItem the item
      */
-    private static <T extends MetisFieldVersionedItem> void handleNewUpdate(final MetisListVersioned<T> pList,
+    private static <T extends MetisFieldVersionedItem> void handleNewUpdate(final MetisLetheListVersioned<T> pList,
                                                                             final T pItem) {
         final T myItem = MetisListDiffManager.newDiffAddedItem(pList, pItem);
         pList.add(myItem);
@@ -507,7 +507,7 @@ public final class MetisListUpdateManager {
      * @param pList the update list
      * @param pItem the item
      */
-    private static <T extends MetisFieldVersionedItem> void handleChangedUpdate(final MetisListVersioned<T> pList,
+    private static <T extends MetisFieldVersionedItem> void handleChangedUpdate(final MetisLetheListVersioned<T> pList,
                                                                                 final T pItem) {
         final T myItem = newUpdateChangedItem(pList, pItem);
         pList.add(myItem);
@@ -519,7 +519,7 @@ public final class MetisListUpdateManager {
      * @param pList the update list
      * @param pItem the item
      */
-    private static <T extends MetisFieldVersionedItem> void handleDeletedUpdate(final MetisListVersioned<T> pList,
+    private static <T extends MetisFieldVersionedItem> void handleDeletedUpdate(final MetisLetheListVersioned<T> pList,
                                                                                 final T pItem) {
         final T myItem = MetisListDiffManager.newDiffDeletedItem(pList, pItem);
         pList.add(myItem);
@@ -531,7 +531,7 @@ public final class MetisListUpdateManager {
      * @param pList the update list
      * @param pItem the item
      */
-    private static <T extends MetisFieldVersionedItem> void handleDelNewUpdate(final MetisListVersioned<T> pList,
+    private static <T extends MetisFieldVersionedItem> void handleDelNewUpdate(final MetisLetheListVersioned<T> pList,
                                                                                final T pItem) {
         final T myItem = newUpdateDelNewItem(pList, pItem);
         pList.add(myItem);
@@ -544,7 +544,7 @@ public final class MetisListUpdateManager {
      * @param pCurr the current item
      * @return the new item
      */
-    private static <T extends MetisFieldVersionedItem> T newUpdateChangedItem(final MetisListVersioned<T> pList,
+    private static <T extends MetisFieldVersionedItem> T newUpdateChangedItem(final MetisLetheListVersioned<T> pList,
                                                                               final T pCurr) {
         /* Obtain a new item */
         final T myNew = pList.newListItem(pCurr.getIndexedId());
@@ -572,7 +572,7 @@ public final class MetisListUpdateManager {
      * @param pBase the base item
      * @return the new item
      */
-    private static <T extends MetisFieldVersionedItem> T newUpdateDelNewItem(final MetisListVersioned<T> pList,
+    private static <T extends MetisFieldVersionedItem> T newUpdateDelNewItem(final MetisLetheListVersioned<T> pList,
                                                                              final T pBase) {
         /* Obtain a new item */
         final T myNew = pList.newListItem(pBase.getIndexedId());

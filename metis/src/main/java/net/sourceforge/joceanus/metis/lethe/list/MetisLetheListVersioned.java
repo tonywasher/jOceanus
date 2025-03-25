@@ -30,9 +30,9 @@ import java.security.InvalidParameterException;
  * Versioned List implementation.
  * @param <T> the item type
  */
-public class MetisListVersioned<T extends MetisFieldVersionedItem>
+public class MetisLetheListVersioned<T extends MetisFieldVersionedItem>
         extends MetisListIndexed<T>
-        implements OceanusEventProvider<MetisListEvent> {
+        implements OceanusEventProvider<MetisLetheListEvent> {
     /**
      * Prime for hashing.
      */
@@ -42,16 +42,16 @@ public class MetisListVersioned<T extends MetisFieldVersionedItem>
      * Report fields.
      */
     @SuppressWarnings("rawtypes")
-    private static final MetisFieldSet<MetisListVersioned> FIELD_DEFS = MetisFieldSet.newFieldSet(MetisListVersioned.class);
+    private static final MetisFieldSet<MetisLetheListVersioned> FIELD_DEFS = MetisFieldSet.newFieldSet(MetisLetheListVersioned.class);
 
     /*
      * FieldIds.
      */
     static {
-        FIELD_DEFS.declareLocalField(MetisListResource.FIELD_ITEMTYPE, MetisListVersioned::getItemType);
-        FIELD_DEFS.declareLocalField(MetisListResource.FIELD_VERSION, MetisListVersioned::getVersion);
-        FIELD_DEFS.declareLocalField(MetisListResource.FIELD_BASE, MetisListVersioned::getBaseList);
-        FIELD_DEFS.declareLocalField(MetisListResource.FIELD_LISTSET, MetisListVersioned::getListSet);
+        FIELD_DEFS.declareLocalField(MetisListResource.FIELD_ITEMTYPE, MetisLetheListVersioned::getItemType);
+        FIELD_DEFS.declareLocalField(MetisListResource.FIELD_VERSION, MetisLetheListVersioned::getVersion);
+        FIELD_DEFS.declareLocalField(MetisListResource.FIELD_BASE, MetisLetheListVersioned::getBaseList);
+        FIELD_DEFS.declareLocalField(MetisListResource.FIELD_LISTSET, MetisLetheListVersioned::getListSet);
     }
 
     /**
@@ -62,17 +62,17 @@ public class MetisListVersioned<T extends MetisFieldVersionedItem>
     /**
      * The Underlying list (if any).
      */
-    private final MetisListVersioned<T> theBaseList;
+    private final MetisLetheListVersioned<T> theBaseList;
 
     /**
      * The itemType.
      */
-    private final MetisListKey theItemType;
+    private final MetisLetheListKey theItemType;
 
     /**
      * The Event Manager.
      */
-    private OceanusEventManager<MetisListEvent> theEventManager;
+    private OceanusEventManager<MetisLetheListEvent> theEventManager;
 
     /**
      * The version of the list.
@@ -84,8 +84,8 @@ public class MetisListVersioned<T extends MetisFieldVersionedItem>
      * @param pListSet the listSet
      * @param pItemType the itemType
      */
-    protected MetisListVersioned(final MetisListSetVersioned pListSet,
-                                 final MetisListKey pItemType) {
+    protected MetisLetheListVersioned(final MetisListSetVersioned pListSet,
+                                      final MetisLetheListKey pItemType) {
         this(pListSet, null, pItemType);
     }
 
@@ -94,8 +94,8 @@ public class MetisListVersioned<T extends MetisFieldVersionedItem>
      * @param pListSet the listSet
      * @param pBaseList the baseList
      */
-    protected MetisListVersioned(final MetisListSetVersioned pListSet,
-                                 final MetisListVersioned<T> pBaseList) {
+    protected MetisLetheListVersioned(final MetisListSetVersioned pListSet,
+                                      final MetisLetheListVersioned<T> pBaseList) {
         this(pListSet, pBaseList, pBaseList.getItemType());
     }
 
@@ -105,9 +105,9 @@ public class MetisListVersioned<T extends MetisFieldVersionedItem>
      * @param pBaseList the baseList
      * @param pItemType the itemType
      */
-    protected MetisListVersioned(final MetisListSetVersioned pListSet,
-                                 final MetisListVersioned<T> pBaseList,
-                                 final MetisListKey pItemType) {
+    protected MetisLetheListVersioned(final MetisListSetVersioned pListSet,
+                                      final MetisLetheListVersioned<T> pBaseList,
+                                      final MetisLetheListKey pItemType) {
         /* Store parameters */
         theListSet = pListSet;
         theBaseList = pBaseList;
@@ -123,7 +123,7 @@ public class MetisListVersioned<T extends MetisFieldVersionedItem>
      * Access the event manager.
      * @return the event manager.
      */
-    private OceanusEventManager<MetisListEvent> getEventManager() {
+    private OceanusEventManager<MetisLetheListEvent> getEventManager() {
         /* Access the event manager and create it if it does not exist */
         synchronized (this) {
             if (theEventManager == null) {
@@ -134,7 +134,7 @@ public class MetisListVersioned<T extends MetisFieldVersionedItem>
     }
 
     @Override
-    public OceanusEventRegistrar<MetisListEvent> getEventRegistrar() {
+    public OceanusEventRegistrar<MetisLetheListEvent> getEventRegistrar() {
         return getEventManager().getEventRegistrar();
     }
 
@@ -158,7 +158,7 @@ public class MetisListVersioned<T extends MetisFieldVersionedItem>
      * Obtain the baseList.
      * @return the baseList
      */
-    public MetisListVersioned<T> getBaseList() {
+    public MetisLetheListVersioned<T> getBaseList() {
         return theBaseList;
     }
 
@@ -166,7 +166,7 @@ public class MetisListVersioned<T extends MetisFieldVersionedItem>
      * Obtain the itemType.
      * @return the itemType
      */
-    public MetisListKey getItemType() {
+    public MetisLetheListKey getItemType() {
         return theItemType;
     }
 
@@ -184,14 +184,14 @@ public class MetisListVersioned<T extends MetisFieldVersionedItem>
      * @return the correctly cast list list
      */
     @SuppressWarnings("unchecked")
-    protected MetisListVersioned<T> castList(final MetisListVersioned<?> pSource) {
+    protected MetisLetheListVersioned<T> castList(final MetisLetheListVersioned<?> pSource) {
         /* Class must be the same */
         if (!theItemType.equals(pSource.getItemType())) {
             throw new InvalidParameterException("Inconsistent class");
         }
 
         /* Access as correctly cast list */
-        return (MetisListVersioned<T>) pSource;
+        return (MetisLetheListVersioned<T>) pSource;
     }
 
     @Override
@@ -205,12 +205,12 @@ public class MetisListVersioned<T extends MetisFieldVersionedItem>
         }
 
         /* Make sure that the object is the same class */
-        if (!(pThat instanceof MetisListVersioned)) {
+        if (!(pThat instanceof MetisLetheListVersioned)) {
             return false;
         }
 
         /* Cast as list */
-        final MetisListVersioned<?> myThat = (MetisListVersioned<?>) pThat;
+        final MetisLetheListVersioned<?> myThat = (MetisLetheListVersioned<?>) pThat;
 
         /* Check local fields */
         if (theVersion != myThat.getVersion()

@@ -19,9 +19,9 @@ package net.sourceforge.joceanus.prometheus.maps;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.metis.field.MetisFieldItem;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
+import net.sourceforge.joceanus.metis.list.MetisListKey;
 import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
-import net.sourceforge.joceanus.prometheus.data.PrometheusListKey;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -48,7 +48,7 @@ public class PrometheusMapsDataSetInstance
     /**
      * The item.
      */
-    private final Map<PrometheusListKey, PrometheusMapsListInstance> theMap;
+    private final Map<MetisListKey, PrometheusMapsListInstance> theMap;
 
     /**
      * Constructor.
@@ -85,7 +85,7 @@ public class PrometheusMapsDataSetInstance
      * Obtain the map.
      * @return the map
      */
-    private Map<PrometheusListKey, PrometheusMapsListInstance> getMap() {
+    private Map<MetisListKey, PrometheusMapsListInstance> getMap() {
         return theMap;
     }
 
@@ -94,7 +94,7 @@ public class PrometheusMapsDataSetInstance
      * @param pKey the listKey
      * @return the map
      */
-    PrometheusMapsListInstance getList(final PrometheusListKey pKey) {
+    PrometheusMapsListInstance getList(final MetisListKey pKey) {
         return theMap.get(pKey);
     }
 
@@ -103,7 +103,7 @@ public class PrometheusMapsDataSetInstance
      * @param pListKey the listKey
      * @param pFieldId the fieldId
      */
-    void declareFieldIdMap(final PrometheusListKey pListKey,
+    void declareFieldIdMap(final MetisListKey pListKey,
                            final MetisDataFieldId pFieldId) {
         final PrometheusMapsListInstance myMap = theMap.computeIfAbsent(pListKey, PrometheusMapsListInstance::new);
         myMap.declareFieldIdMap(pFieldId);
@@ -115,7 +115,7 @@ public class PrometheusMapsDataSetInstance
      * @param pFieldId the fieldId
      * @param pFilter the filter
      */
-    void declareFieldIdMap(final PrometheusListKey pListKey,
+    void declareFieldIdMap(final MetisListKey pListKey,
                            final MetisDataFieldId pFieldId,
                            final Function<PrometheusDataItem, Boolean> pFilter) {
         final PrometheusMapsListInstance myMap = theMap.computeIfAbsent(pListKey, PrometheusMapsListInstance::new);
@@ -128,9 +128,9 @@ public class PrometheusMapsDataSetInstance
      * @param pFieldId the fieldId
      * @param pSharedKey the shared listKey
      */
-    void declareFieldIdMap(final PrometheusListKey pListKey,
+    void declareFieldIdMap(final MetisListKey pListKey,
                            final MetisDataFieldId pFieldId,
-                           final PrometheusListKey pSharedKey) {
+                           final MetisListKey pSharedKey) {
         final PrometheusMapsListInstance myMap = theMap.computeIfAbsent(pListKey, PrometheusMapsListInstance::new);
         final PrometheusMapsListInstance mySharedMap = theMap.get(pSharedKey);
         myMap.declareFieldIdMap(pFieldId, mySharedMap);
@@ -143,7 +143,7 @@ public class PrometheusMapsDataSetInstance
      * @param pDateId the dateId
      * @param pAllowNull do we allow null value?
      */
-    void declareDateIdMap(final PrometheusListKey pListKey,
+    void declareDateIdMap(final MetisListKey pListKey,
                           final MetisDataFieldId pOwnerId,
                           final MetisDataFieldId pDateId,
                           final boolean pAllowNull) {
@@ -181,7 +181,7 @@ public class PrometheusMapsDataSetInstance
      * @param pKey the key
      * @return true/false
      */
-    boolean isKeyAvailable(final PrometheusListKey pListKey,
+    boolean isKeyAvailable(final MetisListKey pListKey,
                            final MetisDataFieldId pFieldId,
                            final Object pKey) {
         final PrometheusMapsListInstance myMap = theMap.get(pListKey);
@@ -195,7 +195,7 @@ public class PrometheusMapsDataSetInstance
      * @param pKey the key
      * @return the item
      */
-    PrometheusDataItem getItemForKey(final PrometheusListKey pListKey,
+    PrometheusDataItem getItemForKey(final MetisListKey pListKey,
                                      final MetisDataFieldId pFieldId,
                                      final Object pKey) {
         final PrometheusMapsListInstance myMap = theMap.get(pListKey);

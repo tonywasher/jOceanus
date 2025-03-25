@@ -20,6 +20,7 @@ import net.sourceforge.joceanus.metis.data.MetisDataDifference;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataNamedItem;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
+import net.sourceforge.joceanus.metis.list.MetisListKey;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.prometheus.exc.PrometheusDataException;
@@ -585,7 +586,7 @@ public abstract class PrometheusStaticDataItem
          */
         protected PrometheusStaticList(final Class<T> pBaseClass,
                                        final PrometheusDataSet pData,
-                                       final PrometheusListKey pItemType,
+                                       final MetisListKey pItemType,
                                        final PrometheusListStyle pStyle) {
             super(pBaseClass, pData, pItemType, pStyle);
         }

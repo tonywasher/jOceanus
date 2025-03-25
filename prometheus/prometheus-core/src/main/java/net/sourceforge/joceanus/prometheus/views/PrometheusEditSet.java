@@ -19,6 +19,7 @@ package net.sourceforge.joceanus.prometheus.views;
 import net.sourceforge.joceanus.metis.data.MetisDataEditState;
 import net.sourceforge.joceanus.metis.field.MetisFieldItem;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
+import net.sourceforge.joceanus.metis.list.MetisListKey;
 import net.sourceforge.joceanus.metis.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.metis.viewer.MetisViewerErrorList;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
@@ -34,7 +35,6 @@ import net.sourceforge.joceanus.prometheus.data.PrometheusDataList;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataList.PrometheusDataListSet;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataResource;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataSet;
-import net.sourceforge.joceanus.prometheus.data.PrometheusListKey;
 
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -77,7 +77,7 @@ public class PrometheusEditSet
     /**
      * The entry map.
      */
-    private final Map<PrometheusListKey, PrometheusEditEntry<?>> theMap;
+    private final Map<MetisListKey, PrometheusEditEntry<?>> theMap;
 
     /**
      * The DataControl.
@@ -190,7 +190,7 @@ public class PrometheusEditSet
      * @param pDataType the data type
      * @return the list class entry
      */
-    public <T extends PrometheusDataItem> PrometheusEditEntry<T> registerType(final PrometheusListKey pDataType) {
+    public <T extends PrometheusDataItem> PrometheusEditEntry<T> registerType(final MetisListKey pDataType) {
         /* Locate any existing entry */
         @SuppressWarnings("unchecked")
         PrometheusEditEntry<T> myEntry = (PrometheusEditEntry<T>) theMap.get(pDataType);
@@ -217,7 +217,7 @@ public class PrometheusEditSet
      * @return the list
      */
     @Override
-    public <L extends PrometheusDataList<?>> L getDataList(final PrometheusListKey pDataType,
+    public <L extends PrometheusDataList<?>> L getDataList(final MetisListKey pDataType,
                                                            final Class<L> pClass) {
         /* Locate an existing entry */
         final PrometheusEditEntry<?> myEntry = theMap.get(pDataType);
@@ -229,7 +229,7 @@ public class PrometheusEditSet
     }
 
     @Override
-    public boolean hasDataType(final PrometheusListKey pDataType) {
+    public boolean hasDataType(final MetisListKey pDataType) {
         return theMap.containsKey(pDataType);
     }
 
@@ -239,7 +239,7 @@ public class PrometheusEditSet
      * @param pDataType the data type
      * @param pList the list
      */
-    public <T extends PrometheusDataItem> void setEditEntryList(final PrometheusListKey pDataType,
+    public <T extends PrometheusDataItem> void setEditEntryList(final MetisListKey pDataType,
                                                                 final PrometheusDataList<T> pList) {
         @SuppressWarnings("unchecked")
         final PrometheusEditEntry<T> myEntry = (PrometheusEditEntry<T>) theMap.get(pDataType);
@@ -250,7 +250,7 @@ public class PrometheusEditSet
      * Obtain an iterator over the listKeys.
      * @return the iterator
      */
-    public Iterator<PrometheusListKey> keyIterator() {
+    public Iterator<MetisListKey> keyIterator() {
         return theMap.keySet().iterator();
     }
 

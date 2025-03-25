@@ -16,6 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.moneywise.views;
 
+import net.sourceforge.joceanus.metis.list.MetisListKey;
 import net.sourceforge.joceanus.metis.viewer.MetisViewerEntry;
 import net.sourceforge.joceanus.metis.viewer.MetisViewerManager;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
@@ -30,7 +31,6 @@ import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataResource;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataSet;
-import net.sourceforge.joceanus.prometheus.data.PrometheusListKey;
 import net.sourceforge.joceanus.prometheus.maps.PrometheusMapsCtl;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
 import net.sourceforge.joceanus.prometheus.views.PrometheusViewerEntryId;
@@ -141,7 +141,7 @@ public class MoneyWiseMaps {
      * Build the static map.
      * @param pKey the key
      */
-    private void buildStaticMaps(final PrometheusListKey pKey) {
+    private void buildStaticMaps(final MetisListKey pKey) {
         theMaps.declareFieldIdMap(pKey, PrometheusDataResource.DATAITEM_FIELD_NAME);
         theMaps.declareFieldIdMap(pKey, PrometheusDataResource.STATICDATA_SORT);
     }

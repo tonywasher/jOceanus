@@ -16,12 +16,10 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.moneywise.ui.base;
 
-import java.util.Iterator;
-import java.util.Map;
-
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
-import net.sourceforge.joceanus.metis.ui.MetisErrorPanel;
+import net.sourceforge.joceanus.metis.list.MetisListKey;
 import net.sourceforge.joceanus.metis.ui.MetisAction;
+import net.sourceforge.joceanus.metis.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.metis.ui.MetisIcon;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseAssetBase;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
@@ -37,11 +35,10 @@ import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
 import net.sourceforge.joceanus.moneywise.ui.MoneyWiseIcon;
 import net.sourceforge.joceanus.moneywise.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.moneywise.views.MoneyWiseView;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataResource;
-import net.sourceforge.joceanus.prometheus.data.PrometheusListKey;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
-import net.sourceforge.joceanus.oceanus.date.OceanusDate;
 import net.sourceforge.joceanus.tethys.api.button.TethysUIButton;
 import net.sourceforge.joceanus.tethys.api.control.TethysUICheckBox;
 import net.sourceforge.joceanus.tethys.api.control.TethysUIControl.TethysUIIconMapSet;
@@ -50,6 +47,9 @@ import net.sourceforge.joceanus.tethys.api.menu.TethysUIScrollMenu;
 import net.sourceforge.joceanus.tethys.api.pane.TethysUIBoxPaneManager;
 import net.sourceforge.joceanus.tethys.api.table.TethysUITableColumn;
 import net.sourceforge.joceanus.tethys.api.table.TethysUITableManager;
+
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  * MoneyWise Asset Table.
@@ -92,7 +92,7 @@ public abstract class MoneyWiseAssetTable<T extends MoneyWiseAssetBase>
     protected MoneyWiseAssetTable(final MoneyWiseView pView,
                                   final PrometheusEditSet pEditSet,
                                   final MetisErrorPanel pError,
-                                  final PrometheusListKey pDataType) {
+                                  final MetisListKey pDataType) {
         /* Store parameters */
         super(pView, pEditSet, pError, pDataType);
 

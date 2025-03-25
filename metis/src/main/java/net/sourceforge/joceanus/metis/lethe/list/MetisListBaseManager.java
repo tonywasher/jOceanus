@@ -58,7 +58,7 @@ public final class MetisListBaseManager {
         }
 
         /* Create a new ListSet event */
-        final MetisListSetChange myChanges = new MetisListSetChange(MetisListEvent.REFRESH);
+        final MetisListSetChange myChanges = new MetisListSetChange(MetisLetheListEvent.REFRESH);
 
         /* Fire the event */
         pListSet.fireEvent(myChanges);
@@ -113,14 +113,14 @@ public final class MetisListBaseManager {
         final MetisListSetChange myChanges = new MetisListSetChange(pVersion);
 
         /* Loop through the lists */
-        final Iterator<MetisListVersioned<MetisFieldVersionedItem>> myIterator = pListSet.listIterator();
+        final Iterator<MetisLetheListVersioned<MetisFieldVersionedItem>> myIterator = pListSet.listIterator();
         while (myIterator.hasNext()) {
-            final MetisListVersioned<MetisFieldVersionedItem> myList = myIterator.next();
+            final MetisLetheListVersioned<MetisFieldVersionedItem> myList = myIterator.next();
 
             /* If the list needs reWinding */
             if (myList.getVersion() > pVersion) {
                 /* ReWind it and register the changes */
-                final MetisListChange<MetisFieldVersionedItem> myChange = doReWindToVersion(myList, pListSet, pVersion);
+                final MetisLetheListChange<MetisFieldVersionedItem> myChange = doReWindToVersion(myList, pListSet, pVersion);
                 myChanges.registerChangedList(myChange);
             }
         }
@@ -140,11 +140,11 @@ public final class MetisListBaseManager {
      * @param pVersion the version to reWind to
      * @return the change for the list
      */
-    private static <T extends MetisFieldVersionedItem> MetisListChange<T> doReWindToVersion(final MetisListVersioned<T> pList,
-                                                                                            final MetisListSetVersioned pListSet,
-                                                                                            final int pVersion) {
+    private static <T extends MetisFieldVersionedItem> MetisLetheListChange<T> doReWindToVersion(final MetisLetheListVersioned<T> pList,
+                                                                                                 final MetisListSetVersioned pListSet,
+                                                                                                 final int pVersion) {
         /* Create a new Change Detail */
-        final MetisListChange<T> myChange = new MetisListChange<>(pList.getItemType(), MetisListEvent.VERSION);
+        final MetisLetheListChange<T> myChange = new MetisLetheListChange<>(pList.getItemType(), MetisLetheListEvent.VERSION);
 
         /* Note maximum version */
         int myMaxVersion = 0;
@@ -214,19 +214,19 @@ public final class MetisListBaseManager {
         }
 
         /* Create a new ListSet event */
-        final MetisListSetChange myChanges = new MetisListSetChange(MetisListEvent.REFRESH);
+        final MetisListSetChange myChanges = new MetisListSetChange(MetisLetheListEvent.REFRESH);
 
         /* Clone paired items to target */
         pTarget.clonePairedItems(pSource);
 
         /* Loop through the lists */
-        final Iterator<MetisListKey> myIterator = pTarget.keyIterator();
+        final Iterator<MetisLetheListKey> myIterator = pTarget.keyIterator();
         while (myIterator.hasNext()) {
-            final MetisListKey myKey = myIterator.next();
+            final MetisLetheListKey myKey = myIterator.next();
 
             /* Obtain the lists */
-            final MetisListVersioned<MetisFieldVersionedItem> mySource = pSource.getList(myKey);
-            final MetisListVersioned<MetisFieldVersionedItem> myTarget = pTarget.getList(myKey);
+            final MetisLetheListVersioned<MetisFieldVersionedItem> mySource = pSource.getList(myKey);
+            final MetisLetheListVersioned<MetisFieldVersionedItem> myTarget = pTarget.getList(myKey);
 
             /* Reset the content */
             doResetContent(myTarget, mySource.iterator());
@@ -271,7 +271,7 @@ public final class MetisListBaseManager {
         doResetContent(pTarget, pSource);
 
         /* Fire the event */
-        final MetisListChange<T> myChange = new MetisListChange<>(null, MetisListEvent.REFRESH);
+        final MetisLetheListChange<T> myChange = new MetisLetheListChange<>(null, MetisLetheListEvent.REFRESH);
         //pTarget.fireEvent(myChange);
     }
 
@@ -294,22 +294,22 @@ public final class MetisListBaseManager {
         }
 
         /* Create a new ListSet event */
-        final MetisListSetChange myChanges = new MetisListSetChange(MetisListEvent.UPDATE);
+        final MetisListSetChange myChanges = new MetisListSetChange(MetisLetheListEvent.UPDATE);
 
         /* Determine the new Version */
         int myNewVersion = 0;
 
         /* Loop through the lists */
-        final Iterator<MetisListKey> myIterator = pTarget.keyIterator();
+        final Iterator<MetisLetheListKey> myIterator = pTarget.keyIterator();
         while (myIterator.hasNext()) {
-            final MetisListKey myKey = myIterator.next();
+            final MetisLetheListKey myKey = myIterator.next();
 
             /* Obtain the source list */
-            final MetisListVersioned<MetisFieldVersionedItem> myBase = pBase.getList(myKey);
-            final MetisListVersioned<MetisFieldVersionedItem> myTarget = pTarget.getList(myKey);
+            final MetisLetheListVersioned<MetisFieldVersionedItem> myBase = pBase.getList(myKey);
+            final MetisLetheListVersioned<MetisFieldVersionedItem> myTarget = pTarget.getList(myKey);
 
             /* reBase the list */
-            final MetisListChange<MetisFieldVersionedItem> myChange = doReBaseList(myTarget, myBase);
+            final MetisLetheListChange<MetisFieldVersionedItem> myChange = doReBaseList(myTarget, myBase);
             if (!myChanges.isEmpty()) {
                 myChanges.registerChangedList(myChange);
             }
@@ -334,10 +334,10 @@ public final class MetisListBaseManager {
      * @param pBase the base list
      * @return the change for the list
      */
-    private static <T extends MetisFieldVersionedItem> MetisListChange<T> doReBaseList(final MetisListVersioned<T> pTarget,
-                                                                                       final MetisListVersioned<T> pBase) {
+    private static <T extends MetisFieldVersionedItem> MetisLetheListChange<T> doReBaseList(final MetisLetheListVersioned<T> pTarget,
+                                                                                            final MetisLetheListVersioned<T> pBase) {
         /* Create a new Change Detail */
-        final MetisListChange<T> myChange = new MetisListChange<>(pTarget.getItemType(), MetisListEvent.UPDATE);
+        final MetisLetheListChange<T> myChange = new MetisLetheListChange<>(pTarget.getItemType(), MetisLetheListEvent.UPDATE);
 
         /* Access a copy of the idMap of the base list */
         final Map<Integer, T> myOld = pBase.copyIdMap();

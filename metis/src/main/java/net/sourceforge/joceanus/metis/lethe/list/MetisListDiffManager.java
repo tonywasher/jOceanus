@@ -55,16 +55,16 @@ public final class MetisListDiffManager {
         int myNewVersion = 0;
 
         /* Loop through the lists */
-        final Iterator<MetisListKey> myIterator = obtainAllItemTypes(pNew, pOld);
+        final Iterator<MetisLetheListKey> myIterator = obtainAllItemTypes(pNew, pOld);
         while (myIterator.hasNext()) {
-            final MetisListKey myKey = myIterator.next();
+            final MetisLetheListKey myKey = myIterator.next();
 
             /* Obtain the source list */
-            final MetisListVersioned<MetisFieldVersionedItem> myOld = pOld.getList(myKey);
-            final MetisListVersioned<MetisFieldVersionedItem> myNew = pNew.getList(myKey);
+            final MetisLetheListVersioned<MetisFieldVersionedItem> myOld = pOld.getList(myKey);
+            final MetisLetheListVersioned<MetisFieldVersionedItem> myNew = pNew.getList(myKey);
 
             /* Create the new list */
-            final MetisListVersioned<MetisFieldVersionedItem> myDifference = new MetisListVersioned<>(myDifferences, myKey);
+            final MetisLetheListVersioned<MetisFieldVersionedItem> myDifference = new MetisLetheListVersioned<>(myDifferences, myKey);
 
             /* If we only have an old list */
             if (myNew == null) {
@@ -104,15 +104,15 @@ public final class MetisListDiffManager {
      * @param pOldListSet the old listSet
      * @return the iterator
      */
-    private static Iterator<MetisListKey> obtainAllItemTypes(final MetisListSetVersioned pNewListSet,
-                                                             final MetisListSetVersioned pOldListSet) {
+    private static Iterator<MetisLetheListKey> obtainAllItemTypes(final MetisListSetVersioned pNewListSet,
+                                                                  final MetisListSetVersioned pOldListSet) {
         /* Create the new List */
-        final List<MetisListKey> myList = new ArrayList<>();
+        final List<MetisLetheListKey> myList = new ArrayList<>();
 
         /* Loop through the item types in the first set */
-        Iterator<MetisListKey> myIterator = pNewListSet.keyIterator();
+        Iterator<MetisLetheListKey> myIterator = pNewListSet.keyIterator();
         while (myIterator.hasNext()) {
-            final MetisListKey myKey = myIterator.next();
+            final MetisLetheListKey myKey = myIterator.next();
 
             /* Add to the list */
             myList.add(myKey);
@@ -121,7 +121,7 @@ public final class MetisListDiffManager {
         /* Loop through the item types in the second set */
         myIterator = pOldListSet.keyIterator();
         while (myIterator.hasNext()) {
-            final MetisListKey myKey = myIterator.next();
+            final MetisLetheListKey myKey = myIterator.next();
 
             /* Add to the list if it does not already exist */
             if (!myList.contains(myKey)) {
@@ -140,9 +140,9 @@ public final class MetisListDiffManager {
      * @param pNew the new list
      * @param pOld the old list
      */
-    private static <T extends MetisFieldVersionedItem> void generateDifferences(final MetisListVersioned<T> pList,
-                                                                                final MetisListVersioned<T> pNew,
-                                                                                final MetisListVersioned<T> pOld) {
+    private static <T extends MetisFieldVersionedItem> void generateDifferences(final MetisLetheListVersioned<T> pList,
+                                                                                final MetisLetheListVersioned<T> pNew,
+                                                                                final MetisLetheListVersioned<T> pOld) {
         /* Access a copy of the idMap of the old list */
         final Map<Integer, T> myOld = pOld.copyIdMap();
 
@@ -193,8 +193,8 @@ public final class MetisListDiffManager {
      * @param pList the list to populate
      * @param pNew the new list
      */
-    private static <T extends MetisFieldVersionedItem> void generateNewDifferences(final MetisListVersioned<T> pList,
-                                                                                   final MetisListVersioned<T> pNew) {
+    private static <T extends MetisFieldVersionedItem> void generateNewDifferences(final MetisLetheListVersioned<T> pList,
+                                                                                   final MetisLetheListVersioned<T> pNew) {
         /* Set the sort comparator */
         pList.setComparator(pNew.getComparator());
 
@@ -214,8 +214,8 @@ public final class MetisListDiffManager {
      * @param pList the list to populate
      * @param pOld the old list
      */
-    private static <T extends MetisFieldVersionedItem> void generateOldDifferences(final MetisListVersioned<T> pList,
-                                                                                   final MetisListVersioned<T> pOld) {
+    private static <T extends MetisFieldVersionedItem> void generateOldDifferences(final MetisLetheListVersioned<T> pList,
+                                                                                   final MetisLetheListVersioned<T> pOld) {
         /* Set the sort comparator */
         pList.setComparator(pOld.getComparator());
 
@@ -236,7 +236,7 @@ public final class MetisListDiffManager {
      * @param pBase the base item
      * @return the new item
      */
-    protected static <T extends MetisFieldVersionedItem> T newDiffDeletedItem(final MetisListVersioned<T> pList,
+    protected static <T extends MetisFieldVersionedItem> T newDiffDeletedItem(final MetisLetheListVersioned<T> pList,
                                                                               final T pBase) {
         /* Obtain a new item */
         final T myNew = pList.newListItem(pBase.getIndexedId());
@@ -266,7 +266,7 @@ public final class MetisListDiffManager {
      * @param pBase the base item
      * @return the new item
      */
-    protected static <T extends MetisFieldVersionedItem> T newDiffChangedItem(final MetisListVersioned<T> pList,
+    protected static <T extends MetisFieldVersionedItem> T newDiffChangedItem(final MetisLetheListVersioned<T> pList,
                                                                               final T pCurr,
                                                                               final T pBase) {
         /* Obtain a new item */
@@ -295,7 +295,7 @@ public final class MetisListDiffManager {
      * @param pCurr the current item
      * @return the new item
      */
-    protected static <T extends MetisFieldVersionedItem> T newDiffAddedItem(final MetisListVersioned<T> pList,
+    protected static <T extends MetisFieldVersionedItem> T newDiffAddedItem(final MetisLetheListVersioned<T> pList,
                                                                             final T pCurr) {
         /* Obtain a new item */
         final T myNew = pList.newListItem(pCurr.getIndexedId());

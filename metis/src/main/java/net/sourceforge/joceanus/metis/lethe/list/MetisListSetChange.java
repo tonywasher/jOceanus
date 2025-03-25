@@ -29,7 +29,7 @@ public class MetisListSetChange {
     /**
      * The event type.
      */
-    private final MetisListEvent theEventType;
+    private final MetisLetheListEvent theEventType;
 
     /**
      * The version.
@@ -39,13 +39,13 @@ public class MetisListSetChange {
     /**
      * The items that are being added.
      */
-    private final Map<MetisListKey, MetisListChange<MetisFieldVersionedItem>> theChanges;
+    private final Map<MetisLetheListKey, MetisLetheListChange<MetisFieldVersionedItem>> theChanges;
 
     /**
      * Constructor.
      * @param pEventType the event type
      */
-    MetisListSetChange(final MetisListEvent pEventType) {
+    MetisListSetChange(final MetisLetheListEvent pEventType) {
         this(pEventType, 0);
     }
 
@@ -54,7 +54,7 @@ public class MetisListSetChange {
      * @param pVersion the version
      */
     MetisListSetChange(final int pVersion) {
-        this(MetisListEvent.VERSION, pVersion);
+        this(MetisLetheListEvent.VERSION, pVersion);
     }
 
     /**
@@ -62,7 +62,7 @@ public class MetisListSetChange {
      * @param pEventType the event type
      * @param pVersion the version
      */
-    private MetisListSetChange(final MetisListEvent pEventType,
+    private MetisListSetChange(final MetisLetheListEvent pEventType,
                                final int pVersion) {
         theEventType = pEventType;
         theVersion = pVersion;
@@ -73,7 +73,7 @@ public class MetisListSetChange {
      * Obtain the event type.
      * @return the event type
      */
-    public MetisListEvent getEventType() {
+    public MetisLetheListEvent getEventType() {
         return theEventType;
     }
 
@@ -100,15 +100,15 @@ public class MetisListSetChange {
      * @return the change (or null)
      */
     @SuppressWarnings("unchecked")
-    public <T extends MetisFieldVersionedItem> MetisListChange<T> getListChange(final MetisListKey pItemType) {
-        return (MetisListChange<T>) theChanges.get(pItemType);
+    public <T extends MetisFieldVersionedItem> MetisLetheListChange<T> getListChange(final MetisLetheListKey pItemType) {
+        return (MetisLetheListChange<T>) theChanges.get(pItemType);
     }
 
     /**
      * Register changed list.
      * @param pChange the changes to the list
      */
-    protected void registerChangedList(final MetisListChange<MetisFieldVersionedItem> pChange) {
+    protected void registerChangedList(final MetisLetheListChange<MetisFieldVersionedItem> pChange) {
         theChanges.put(pChange.getItemType(), pChange);
     }
 
@@ -116,7 +116,7 @@ public class MetisListSetChange {
      * Obtain the change iterator.
      * @return the iterator
      */
-    public Iterator<MetisListChange<MetisFieldVersionedItem>> changeIterator() {
+    public Iterator<MetisLetheListChange<MetisFieldVersionedItem>> changeIterator() {
         return theChanges.values().iterator();
     }
 }

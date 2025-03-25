@@ -88,25 +88,6 @@ public class MetisListIndexed<T extends MetisDataIndexedItem>
         theIdMap = new HashMap<>();
     }
 
-    /**
-     * Access the event manager.
-     * @return the event manager.
-     */
-    //private OceanusEventManager<MetisListEvent> getEventManager() {
-    //    /* Access the event manager and create it if it does not exist */
-    //    synchronized (this) {
-    //        if (theEventManager == null) {
-    //            theEventManager = new OceanusEventManager<>();
-    //        }
-    //    }
-    //    return theEventManager;
-    //}
-
-    //@Override
-    //public OceanusEventRegistrar<MetisListEvent> getEventRegistrar() {
-    //    return getEventManager().getEventRegistrar();
-    //}
-
     @Override
     public MetisFieldSetDef getDataFieldSet() {
         return FIELD_DEFS;
@@ -413,16 +394,4 @@ public class MetisListIndexed<T extends MetisDataIndexedItem>
     public int hashCode() {
         return theList.hashCode();
     }
-
-    /**
-     * Fire event.
-     * @param pEvent the event
-     */
-    //public void fireEvent(final MetisListChange<T> pEvent) {
-    //    /* If the change is non-empty */
-    //    if (MetisListEvent.REFRESH.equals(pEvent.getEventType())
-    //        || !pEvent.isEmpty()) {
-    //        getEventManager().fireEvent(pEvent.getEventType(), pEvent);
-    //    }
-    //}
 }

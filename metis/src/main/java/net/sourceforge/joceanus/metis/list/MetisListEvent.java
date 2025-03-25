@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.metis.lethe.list;
+package net.sourceforge.joceanus.metis.list;
 
 /**
  * The Event Types.

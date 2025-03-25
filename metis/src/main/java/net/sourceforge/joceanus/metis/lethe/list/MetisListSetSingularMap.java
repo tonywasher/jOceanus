@@ -48,7 +48,7 @@ public class MetisListSetSingularMap {
     /**
      * The map of uniqueMaps for this list.
      */
-    private final Map<MetisListKey, MetisListSingularMap> theListMap;
+    private final Map<MetisLetheListKey, MetisListSingularMap> theListMap;
 
     /**
      * Constructor.
@@ -65,10 +65,10 @@ public class MetisListSetSingularMap {
         theListMap = new HashMap<>();
 
         /* Attach listeners */
-        final OceanusEventRegistrar<MetisListEvent> myRegistrar = theListSet.getEventRegistrar();
-        myRegistrar.addEventListener(MetisListEvent.REFRESH, e -> processRefreshEvent());
+        final OceanusEventRegistrar<MetisLetheListEvent> myRegistrar = theListSet.getEventRegistrar();
+        myRegistrar.addEventListener(MetisLetheListEvent.REFRESH, e -> processRefreshEvent());
         if (pSession) {
-            myRegistrar.addEventListener(MetisListEvent.VERSION, this::processVersionEvent);
+            myRegistrar.addEventListener(MetisLetheListEvent.VERSION, this::processVersionEvent);
         }
     }
 
@@ -81,7 +81,7 @@ public class MetisListSetSingularMap {
      */
     public MetisFieldVersionedItem getItemForValue(final Object pValue,
                                                    final MetisDataFieldId pFieldId,
-                                                   final MetisListKey pKey) {
+                                                   final MetisLetheListKey pKey) {
         /* Obtain the singularMap for this list */
         final MetisListSingularMap mySingularMap = theListMap.get(pKey);
 
@@ -98,7 +98,7 @@ public class MetisListSetSingularMap {
      */
     public boolean isValidValue(final MetisFieldVersionedItem pItem,
                                 final MetisDataFieldId pFieldId,
-                                final MetisListKey pKey) {
+                                final MetisLetheListKey pKey) {
         /* Obtain the singularMap for this list */
         final MetisListSingularMap mySingularMap = theListMap.get(pKey);
 
@@ -118,7 +118,7 @@ public class MetisListSetSingularMap {
     public boolean isAvailableValue(final MetisFieldVersionedItem pItem,
                                     final Object pValue,
                                     final MetisDataFieldId pFieldId,
-                                    final MetisListKey pKey) {
+                                    final MetisLetheListKey pKey) {
         /* Handle trivial case of current value */
         final MetisFieldVersionedDef myField = pItem.getVersionedField(pFieldId);
         final Object myValue = myField.getFieldValue(pItem);
@@ -141,14 +141,14 @@ public class MetisListSetSingularMap {
         /* Reset the map */
         theListMap.clear();
 
-        final Iterator<MetisListKey> myIterator = theListSet.keyIterator();
+        final Iterator<MetisLetheListKey> myIterator = theListSet.keyIterator();
         while (myIterator.hasNext()) {
-            final MetisListKey myKey = myIterator.next();
+            final MetisLetheListKey myKey = myIterator.next();
 
             /* If the list has singular fields */
             if (!myKey.getSingularFields().isEmpty()) {
                 /* Access the list */
-                final MetisListVersioned<MetisFieldVersionedItem> myList = theListSet.getList(myKey);
+                final MetisLetheListVersioned<MetisFieldVersionedItem> myList = theListSet.getList(myKey);
 
                 /* Process each item in the list */
                 processNewItems(myKey, myList.iterator());
@@ -160,19 +160,19 @@ public class MetisListSetSingularMap {
      * Process a version event.
      * @param pEvent the event
      */
-    private void processVersionEvent(final OceanusEvent<MetisListEvent> pEvent) {
+    private void processVersionEvent(final OceanusEvent<MetisLetheListEvent> pEvent) {
         /* Access the change details */
         final MetisListSetChange myChanges = pEvent.getDetails(MetisListSetChange.class);
 
         /* Loop through the lists */
-        final Iterator<MetisListKey> myIterator = theListSet.keyIterator();
+        final Iterator<MetisLetheListKey> myIterator = theListSet.keyIterator();
         while (myIterator.hasNext()) {
-            final MetisListKey myKey = myIterator.next();
+            final MetisLetheListKey myKey = myIterator.next();
 
             /* If the list has singular fields */
             if (!myKey.getSingularFields().isEmpty()) {
                 /* Obtain the associated change */
-                final MetisListChange<MetisFieldVersionedItem> myChange = myChanges.getListChange(myKey);
+                final MetisLetheListChange<MetisFieldVersionedItem> myChange = myChanges.getListChange(myKey);
 
                 /* If there are changes */
                 if (myChange != null) {
@@ -188,8 +188,8 @@ public class MetisListSetSingularMap {
      * @param pKey the list key
      * @param pChange the change event
      */
-    private void processVersionChanges(final MetisListKey pKey,
-                                       final MetisListChange<MetisFieldVersionedItem> pChange) {
+    private void processVersionChanges(final MetisLetheListKey pKey,
+                                       final MetisLetheListChange<MetisFieldVersionedItem> pChange) {
         /* Process deleted items */
         processDeletedItems(pKey, pChange.hiddenIterator());
         processDeletedItems(pKey, pChange.deletedIterator());
@@ -207,7 +207,7 @@ public class MetisListSetSingularMap {
      * @param pKey the list key
      * @param pIterator the iterator
      */
-    private void processNewItems(final MetisListKey pKey,
+    private void processNewItems(final MetisLetheListKey pKey,
                                  final Iterator<MetisFieldVersionedItem> pIterator) {
         /* Process each item in the list */
         while (pIterator.hasNext()) {
@@ -223,7 +223,7 @@ public class MetisListSetSingularMap {
      * @param pKey the list key
      * @param pItem the item
      */
-    public void processNewItem(final MetisListKey pKey,
+    public void processNewItem(final MetisLetheListKey pKey,
                                final MetisFieldVersionedItem pItem) {
         /* Obtain the singularMap for this item */
         final MetisListSingularMap mySingularMap = theListMap.computeIfAbsent(pKey, x -> new MetisListSingularMap(pKey, isSession));
@@ -240,7 +240,7 @@ public class MetisListSetSingularMap {
      * @param pKey the list key
      * @param pIterator the iterator
      */
-    private void processChangedItems(final MetisListKey pKey,
+    private void processChangedItems(final MetisLetheListKey pKey,
                                      final Iterator<MetisFieldVersionedItem> pIterator) {
         /* Process each item in the list */
         while (pIterator.hasNext()) {
@@ -253,7 +253,7 @@ public class MetisListSetSingularMap {
      * @param pKey the list key
      * @param pItem the item
      */
-    private void processChangedItem(final MetisListKey pKey,
+    private void processChangedItem(final MetisLetheListKey pKey,
                                     final MetisFieldVersionedItem pItem) {
         /* Obtain the singularMap for this item */
         final MetisListSingularMap mySingularMap = theListMap.computeIfAbsent(pKey, x -> new MetisListSingularMap(pKey, false));
@@ -270,7 +270,7 @@ public class MetisListSetSingularMap {
      * @param pKey the list key
      * @param pIterator the iterator
      */
-    private void processDeletedItems(final MetisListKey pKey,
+    private void processDeletedItems(final MetisLetheListKey pKey,
                                      final Iterator<MetisFieldVersionedItem> pIterator) {
         /* Process each item in the list */
         while (pIterator.hasNext()) {
@@ -283,7 +283,7 @@ public class MetisListSetSingularMap {
      * @param pKey the list key
      * @param pItem the item
      */
-    private void processDeletedItem(final MetisListKey pKey,
+    private void processDeletedItem(final MetisLetheListKey pKey,
                                     final MetisFieldVersionedItem pItem) {
         /* Obtain the singularMap for this item */
         final MetisListSingularMap mySingularMap = theListMap.get(pKey);
@@ -304,7 +304,7 @@ public class MetisListSetSingularMap {
         /**
          * The list key.
          */
-        private final MetisListKey theListKey;
+        private final MetisLetheListKey theListKey;
 
         /**
          * Is this a session singularMap?
@@ -321,7 +321,7 @@ public class MetisListSetSingularMap {
          * @param pKey the listKey
          * @param pSession is this a singularMap for a session?
          */
-        MetisListSingularMap(final MetisListKey pKey,
+        MetisListSingularMap(final MetisLetheListKey pKey,
                              final boolean pSession) {
             /* Store parameters */
             theListKey = pKey;

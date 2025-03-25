@@ -16,14 +16,14 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.prometheus.views;
 
-import java.util.Iterator;
-import java.util.List;
-
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataList;
+import net.sourceforge.joceanus.metis.list.MetisListKey;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataList;
-import net.sourceforge.joceanus.prometheus.data.PrometheusListKey;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
+
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Update entry items.
@@ -34,7 +34,7 @@ public final class PrometheusEditEntry<T extends PrometheusDataItem>
     /**
      * The data type.
      */
-    private final PrometheusListKey theDataType;
+    private final MetisListKey theDataType;
 
     /**
      * The DataList.
@@ -45,7 +45,7 @@ public final class PrometheusEditEntry<T extends PrometheusDataItem>
      * Constructor.
      * @param pDataType the dataType
      */
-    PrometheusEditEntry(final PrometheusListKey pDataType) {
+    PrometheusEditEntry(final MetisListKey pDataType) {
         /* Store details */
         theDataType = pDataType;
         theDataList = null;
@@ -84,7 +84,7 @@ public final class PrometheusEditEntry<T extends PrometheusDataItem>
      * @param pDataType the dataType to compare
      * @return true/false
      */
-    public boolean isDataType(final PrometheusListKey pDataType) {
+    public boolean isDataType(final MetisListKey pDataType) {
         return theDataType.equals(pDataType);
     }
 

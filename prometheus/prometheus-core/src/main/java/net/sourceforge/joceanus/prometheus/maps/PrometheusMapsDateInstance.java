@@ -19,11 +19,11 @@ package net.sourceforge.joceanus.prometheus.maps;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.metis.field.MetisFieldItem;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
+import net.sourceforge.joceanus.metis.list.MetisListKey;
 import net.sourceforge.joceanus.oceanus.date.OceanusDate;
 import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataResource;
-import net.sourceforge.joceanus.prometheus.data.PrometheusListKey;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -51,7 +51,7 @@ public class PrometheusMapsDateInstance
     /**
      * listKey.
      */
-    private final PrometheusListKey theListKey;
+    private final MetisListKey theListKey;
 
     /**
      * The owner fieldId.
@@ -80,7 +80,7 @@ public class PrometheusMapsDateInstance
      * @param pDateId the date fieldId
      * @param pAllowNull do we allow null value?
      */
-    PrometheusMapsDateInstance(final PrometheusListKey pListKey,
+    PrometheusMapsDateInstance(final MetisListKey pListKey,
                                final MetisDataFieldId pOwnerId,
                                final MetisDataFieldId pDateId,
                                final boolean pAllowNull) {
@@ -117,7 +117,7 @@ public class PrometheusMapsDateInstance
      * Obtain the listKey.
      * @return the listKey
      */
-    PrometheusListKey getListKey() {
+    MetisListKey getListKey() {
         return theListKey;
     }
 

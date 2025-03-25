@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Prometheus: Application Framework
+ * Metis: Java Data Framework
  * Copyright 2012,2025 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
@@ -14,30 +14,30 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.prometheus.data;
+package net.sourceforge.joceanus.metis.list;
 
-import net.sourceforge.joceanus.metis.list.MetisListKey;
+import net.sourceforge.joceanus.metis.field.MetisFieldItem.MetisFieldItemType;
 
 /**
- * Item Validator interface.
- * @param <T> the item type
+ * ListKey.
  */
-public interface PrometheusDataValidator<T extends PrometheusDataItem> {
+public interface MetisListKey
+        extends MetisFieldItemType {
     /**
-     * Validate the item.
-     * @param pItem the item
+     * Obtain the item key.
+     * @return the item key
      */
-    void validate(PrometheusDataItem pItem);
+    Integer getItemKey();
 
     /**
-     * Validator factory.
+     * Obtain the list name.
+     * @return the list name
      */
-    interface PrometheusDataValidatorFactory {
-        /**
-         * Obtain validator for listItem type.
-         * @param pItemType the itemType
-         * @return the validator
-         */
-        PrometheusDataValidator<?> newValidator(MetisListKey pItemType);
-    }
+    String getListName();
+
+    /**
+     * Obtain the item name.
+     * @return the item name
+     */
+    String getItemName();
 }

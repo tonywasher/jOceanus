@@ -26,6 +26,7 @@ import net.sourceforge.joceanus.gordianknot.api.zip.GordianZipReadFile;
 import net.sourceforge.joceanus.gordianknot.api.zip.GordianZipWriteFile;
 import net.sourceforge.joceanus.metis.data.MetisDataDifference;
 import net.sourceforge.joceanus.metis.field.MetisFieldItem.MetisFieldSetDef;
+import net.sourceforge.joceanus.metis.list.MetisListKey;
 import net.sourceforge.joceanus.metis.toolkit.MetisToolkit;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
@@ -513,7 +514,7 @@ public class PrometheusDataValuesFormatter {
                                   final PrometheusDataList<?> pList) throws OceanusException {
         /* Access the parent element */
         final Element myElement = pDocument.getDocumentElement();
-        final PrometheusListKey myItemType = pList.getItemType();
+        final MetisListKey myItemType = pList.getItemType();
 
         /* Check that the document name and dataType are correct */
         if (!MetisDataDifference.isEqual(myElement.getNodeName(), pList.listName())

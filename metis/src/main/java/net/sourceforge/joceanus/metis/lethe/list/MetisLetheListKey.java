@@ -16,17 +16,17 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.metis.lethe.list;
 
-import java.util.Collections;
-import java.util.List;
-
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.metis.field.MetisFieldItem.MetisFieldItemType;
 import net.sourceforge.joceanus.metis.field.MetisFieldVersionedItem;
 
+import java.util.Collections;
+import java.util.List;
+
 /**
  * List Item Type.
  */
-public interface MetisListKey
+public interface MetisLetheListKey
         extends MetisFieldItemType {
     /**
      * Obtain the item id.
@@ -52,7 +52,7 @@ public interface MetisListKey
      * Obtain the nameSpace listKey (if any).
      * @return the listKey for the nameSpace or null
      */
-    default MetisListKey getNameSpace() {
+    default MetisLetheListKey getNameSpace() {
         return null;
     }
 

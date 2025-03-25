@@ -14,14 +14,14 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.metis.lethe.list;
+package net.sourceforge.joceanus.metis.list;
+
+import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataIndexedItem;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-
-import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataIndexedItem;
 
 /**
  * Metis VersionedList Event.
@@ -117,10 +117,10 @@ public class MetisListChange<T extends MetisDataIndexedItem> {
      */
     public boolean isEmpty() {
         return !haveAdded()
-               && !haveRestored()
-               && !haveChanged()
-               && !haveHidden()
-               && !haveDeleted();
+                && !haveRestored()
+                && !haveChanged()
+                && !haveHidden()
+                && !haveDeleted();
     }
 
     /**
@@ -169,8 +169,8 @@ public class MetisListChange<T extends MetisDataIndexedItem> {
      */
     public Iterator<T> addedIterator() {
         return theAdded != null
-                                ? theAdded.iterator()
-                                : Collections.emptyIterator();
+                ? theAdded.iterator()
+                : Collections.emptyIterator();
     }
 
     /**
@@ -179,8 +179,8 @@ public class MetisListChange<T extends MetisDataIndexedItem> {
      */
     public Iterator<T> restoredIterator() {
         return theRestored != null
-                                   ? theRestored.iterator()
-                                   : Collections.emptyIterator();
+                ? theRestored.iterator()
+                : Collections.emptyIterator();
     }
 
     /**
@@ -189,8 +189,8 @@ public class MetisListChange<T extends MetisDataIndexedItem> {
      */
     public Iterator<T> changedIterator() {
         return theChanged != null
-                                  ? theChanged.iterator()
-                                  : Collections.emptyIterator();
+                ? theChanged.iterator()
+                : Collections.emptyIterator();
     }
 
     /**
@@ -199,8 +199,8 @@ public class MetisListChange<T extends MetisDataIndexedItem> {
      */
     public Iterator<T> hiddenIterator() {
         return theHidden != null
-                                 ? theHidden.iterator()
-                                 : Collections.emptyIterator();
+                ? theHidden.iterator()
+                : Collections.emptyIterator();
     }
 
     /**
@@ -209,8 +209,8 @@ public class MetisListChange<T extends MetisDataIndexedItem> {
      */
     public Iterator<T> deletedIterator() {
         return theDeleted != null
-                                  ? theDeleted.iterator()
-                                  : Collections.emptyIterator();
+                ? theDeleted.iterator()
+                : Collections.emptyIterator();
     }
 
     /**

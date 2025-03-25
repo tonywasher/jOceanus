@@ -17,6 +17,7 @@
 package net.sourceforge.joceanus.prometheus.data;
 
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
+import net.sourceforge.joceanus.metis.list.MetisListKey;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.date.OceanusDate;
 import net.sourceforge.joceanus.oceanus.date.OceanusDateFormatter;
@@ -846,7 +847,7 @@ public abstract class PrometheusDataInfoItem
          */
         protected PrometheusDataInfoList(final Class<T> pBaseClass,
                                          final PrometheusDataSet pData,
-                                         final PrometheusListKey pItemType,
+                                         final MetisListKey pItemType,
                                          final PrometheusListStyle pStyle) {
             super(pBaseClass, pData, pItemType, pStyle);
         }

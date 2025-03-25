@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Prometheus: Application Framework
+ * Metis: Java Data Framework
  * Copyright 2012,2025 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
@@ -14,31 +14,43 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.prometheus.data;
-
-
-import net.sourceforge.joceanus.metis.field.MetisFieldItem.MetisFieldItemType;
+package net.sourceforge.joceanus.metis.lethe.list;
 
 /**
- * ListKey.
+ * The Event Types.
  */
-public interface PrometheusListKey
-    extends MetisFieldItemType {
+public enum MetisLetheListEvent {
     /**
-     * Obtain the item key.
-     * @return the item key
+     * Update.
      */
-    Integer getItemKey();
+    UPDATE,
 
     /**
-     * Obtain the list name.
-     * @return the list name
+     * Version.
      */
-    String getListName();
+    VERSION,
 
     /**
-     * Obtain the item name.
-     * @return the item name
+     * Refresh.
      */
-    String getItemName();
+    REFRESH,
+
+    /**
+     * Error.
+     */
+    ERROR;
+
+    /**
+     * Does the event have content?
+     * @return true/false
+     */
+    public boolean hasContent() {
+        switch (this) {
+            case VERSION:
+            case UPDATE:
+                return true;
+            default:
+                return false;
+        }
+    }
 }

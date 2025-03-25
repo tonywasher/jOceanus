@@ -25,6 +25,7 @@ import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.metis.field.MetisFieldState;
 import net.sourceforge.joceanus.metis.field.MetisFieldVersionValues;
 import net.sourceforge.joceanus.metis.field.MetisFieldVersionedItem;
+import net.sourceforge.joceanus.metis.list.MetisListKey;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.convert.OceanusDataConverter;
 import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
@@ -334,7 +335,7 @@ public abstract class PrometheusDataItem
     }
 
     @Override
-    public PrometheusListKey getItemType() {
+    public MetisListKey getItemType() {
         return theList.getItemType();
     }
 
@@ -418,7 +419,7 @@ public abstract class PrometheusDataItem
      * Clear the item touches.
      * @param pItemType the item type
      */
-    public void clearTouches(final PrometheusListKey pItemType) {
+    public void clearTouches(final MetisListKey pItemType) {
         theTouchStatus.resetTouches(pItemType);
     }
 

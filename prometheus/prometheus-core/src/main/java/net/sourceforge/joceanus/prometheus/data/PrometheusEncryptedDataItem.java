@@ -16,16 +16,17 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.prometheus.data;
 
-import java.util.Iterator;
-
 import net.sourceforge.joceanus.metis.data.MetisDataDifference;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.metis.field.MetisFieldVersionedSet;
+import net.sourceforge.joceanus.metis.list.MetisListKey;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataKeySet.PrometheusDataKeySetList;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataSet.PrometheusCryptographyDataType;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.tethys.api.thread.TethysUIThreadStatusReport;
+
+import java.util.Iterator;
 
 /**
  * Encrypted Data Item and List.
@@ -347,7 +348,7 @@ public abstract class PrometheusEncryptedDataItem
          */
         protected PrometheusEncryptedList(final Class<T> pBaseClass,
                                           final PrometheusDataSet pData,
-                                          final PrometheusListKey pItemType) {
+                                          final MetisListKey pItemType) {
             this(pBaseClass, pData, pItemType, PrometheusListStyle.CORE);
         }
 
@@ -360,7 +361,7 @@ public abstract class PrometheusEncryptedDataItem
          */
         protected PrometheusEncryptedList(final Class<T> pBaseClass,
                                           final PrometheusDataSet pData,
-                                          final PrometheusListKey pItemType,
+                                          final MetisListKey pItemType,
                                           final PrometheusListStyle pStyle) {
             super(pBaseClass, pData, pItemType, pStyle);
         }

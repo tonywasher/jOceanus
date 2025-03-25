@@ -40,7 +40,7 @@ import java.util.Map.Entry;
  * Versioned ListSet.
  */
 public class MetisListSetVersioned
-        implements MetisFieldItem, OceanusEventProvider<MetisListEvent> {
+        implements MetisFieldItem, OceanusEventProvider<MetisLetheListEvent> {
     /**
      * The number of bits for the itemType.
      */
@@ -75,12 +75,12 @@ public class MetisListSetVersioned
     /**
      * The listKey Map.
      */
-    private final Map<Integer, MetisListKey> theKeyMap;
+    private final Map<Integer, MetisLetheListKey> theKeyMap;
 
     /**
      * The versionedList Map.
      */
-    private final Map<MetisListKey, MetisListVersioned<MetisFieldVersionedItem>> theListMap;
+    private final Map<MetisLetheListKey, MetisLetheListVersioned<MetisFieldVersionedItem>> theListMap;
 
     /**
      * The pairedItem Map.
@@ -95,7 +95,7 @@ public class MetisListSetVersioned
     /**
      * The Event Manager.
      */
-    private final OceanusEventManager<MetisListEvent> theEventManager;
+    private final OceanusEventManager<MetisLetheListEvent> theEventManager;
 
     /**
      * The Underlying list (if any).
@@ -143,7 +143,7 @@ public class MetisListSetVersioned
     }
 
     @Override
-    public OceanusEventRegistrar<MetisListEvent> getEventRegistrar() {
+    public OceanusEventRegistrar<MetisLetheListEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -209,7 +209,7 @@ public class MetisListSetVersioned
      * Obtain the key iterator.
      * @return the iterator
      */
-    public Iterator<MetisListKey> keyIterator() {
+    public Iterator<MetisLetheListKey> keyIterator() {
         return theListMap.keySet().iterator();
     }
 
@@ -217,8 +217,8 @@ public class MetisListSetVersioned
      * Obtain the reverse key iterator.
      * @return the iterator
      */
-    public Iterator<MetisListKey> reverseKeyIterator() {
-        final List<MetisListKey> myList = new ArrayList<>(theListMap.keySet());
+    public Iterator<MetisLetheListKey> reverseKeyIterator() {
+        final List<MetisLetheListKey> myList = new ArrayList<>(theListMap.keySet());
         return new MetisListReverseIterator<>(myList.listIterator(myList.size()));
     }
 
@@ -226,7 +226,7 @@ public class MetisListSetVersioned
      * Obtain the List iterator.
      * @return the iterator
      */
-    public Iterator<MetisListVersioned<MetisFieldVersionedItem>> listIterator() {
+    public Iterator<MetisLetheListVersioned<MetisFieldVersionedItem>> listIterator() {
         return theListMap.values().iterator();
     }
 
@@ -237,8 +237,8 @@ public class MetisListSetVersioned
      * @return the list (or null)
      */
     @SuppressWarnings("unchecked")
-    public <T extends MetisFieldVersionedItem> MetisListVersioned<T> getList(final MetisListKey pListKey) {
-        return (MetisListVersioned<T>) theListMap.get(pListKey);
+    public <T extends MetisFieldVersionedItem> MetisLetheListVersioned<T> getList(final MetisLetheListKey pListKey) {
+        return (MetisLetheListVersioned<T>) theListMap.get(pListKey);
     }
 
     /**
@@ -248,7 +248,7 @@ public class MetisListSetVersioned
      * @return the list (or null)
      */
     @SuppressWarnings("unchecked")
-    public <T extends MetisFieldTableItem> MetisListIndexed<T> getIndexedList(final MetisListKey pListKey) {
+    public <T extends MetisFieldTableItem> MetisListIndexed<T> getIndexedList(final MetisLetheListKey pListKey) {
         return (MetisListIndexed<T>) theListMap.get(pListKey);
     }
 
@@ -259,7 +259,7 @@ public class MetisListSetVersioned
      * @return the list
      */
     @SuppressWarnings("unchecked")
-    public <T extends MetisFieldVersionedItem> MetisListVersioned<T> declareList(final MetisListKey pItemType) {
+    public <T extends MetisFieldVersionedItem> MetisLetheListVersioned<T> declareList(final MetisLetheListKey pItemType) {
         /* Check uniqueness and validity */
         final int myItemType = pItemType.getItemId();
         if (theKeyMap.containsKey(myItemType)) {
@@ -271,9 +271,9 @@ public class MetisListSetVersioned
         }
 
         /* Create the list and declare it */
-        final MetisListVersioned<MetisFieldVersionedItem> myList = new MetisListVersioned<>(this, pItemType);
+        final MetisLetheListVersioned<MetisFieldVersionedItem> myList = new MetisLetheListVersioned<>(this, pItemType);
         declareList(pItemType, myList);
-        return (MetisListVersioned<T>) myList;
+        return (MetisLetheListVersioned<T>) myList;
     }
 
     /**
@@ -281,8 +281,8 @@ public class MetisListSetVersioned
      * @param pItemType the itemType for the list
      * @param pList the list
      */
-    protected void declareList(final MetisListKey pItemType,
-                               final MetisListVersioned<MetisFieldVersionedItem> pList) {
+    protected void declareList(final MetisLetheListKey pItemType,
+                               final MetisLetheListVersioned<MetisFieldVersionedItem> pList) {
         /* Add to the maps */
         theKeyMap.put(pItemType.getItemId(), pItemType);
         theListMap.put(pItemType, pList);
@@ -297,7 +297,7 @@ public class MetisListSetVersioned
      */
     public boolean isEmpty() {
         /* Loop through the lists */
-        for (MetisListVersioned<MetisFieldVersionedItem> myList : theListMap.values()) {
+        for (MetisLetheListVersioned<MetisFieldVersionedItem> myList : theListMap.values()) {
             if (!myList.isEmpty()) {
                 return false;
             }
@@ -408,8 +408,8 @@ public class MetisListSetVersioned
         final int myIndexedId = getIndexedIdFromId(pId);
 
         /* Determine the list */
-        final MetisListKey myKey = theKeyMap.get(myItemType);
-        final MetisListVersioned<MetisFieldVersionedItem> myList = theListMap.get(myKey);
+        final MetisLetheListKey myKey = theKeyMap.get(myItemType);
+        final MetisLetheListVersioned<MetisFieldVersionedItem> myList = theListMap.get(myKey);
 
         /* Access the item */
         final MetisFieldVersionedItem myItem = myList == null
@@ -430,7 +430,7 @@ public class MetisListSetVersioned
      */
     protected Integer getIdForItem(final MetisFieldVersionedItem pItem) {
         /* Access the two parts of the id */
-        final MetisListKey myKey = (MetisListKey) pItem.getItemType();
+        final MetisLetheListKey myKey = (MetisLetheListKey) pItem.getItemType();
         final int myItemType = myKey.getItemId();
         final int myItemId = pItem.getIndexedId();
 
@@ -461,7 +461,7 @@ public class MetisListSetVersioned
      * @return the itemId
      */
     static Integer buildItemId(final MetisFieldVersionedItem pItem) {
-        final MetisListKey myKey = (MetisListKey) pItem.getItemType();
+        final MetisLetheListKey myKey = (MetisLetheListKey) pItem.getItemType();
         return buildItemId(myKey.getItemId(), pItem.getIndexedId());
     }
 

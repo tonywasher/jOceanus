@@ -18,10 +18,10 @@ package net.sourceforge.joceanus.prometheus.maps;
 
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
+import net.sourceforge.joceanus.metis.list.MetisListKey;
 import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataResource;
-import net.sourceforge.joceanus.prometheus.data.PrometheusListKey;
 
 import java.util.function.Function;
 
@@ -47,7 +47,7 @@ public class PrometheusMapsFieldInstance
     /**
      * listKey.
      */
-    private final PrometheusListKey theListKey;
+    private final MetisListKey theListKey;
 
     /**
      * The fieldId.
@@ -69,7 +69,7 @@ public class PrometheusMapsFieldInstance
      * @param pKey the listKey
      * @param pFieldId the fieldId
      */
-    PrometheusMapsFieldInstance(final PrometheusListKey pKey,
+    PrometheusMapsFieldInstance(final MetisListKey pKey,
                                 final MetisDataFieldId pFieldId) {
         this(pKey, pFieldId, i -> true);
     }
@@ -79,7 +79,7 @@ public class PrometheusMapsFieldInstance
      * @param pKey the listKey
      * @param pFieldId the fieldId
      */
-    PrometheusMapsFieldInstance(final PrometheusListKey pKey,
+    PrometheusMapsFieldInstance(final MetisListKey pKey,
                                 final MetisDataFieldId pFieldId,
                                 final boolean pAllowNull) {
         this(pKey, pFieldId, i -> true, pAllowNull);
@@ -91,7 +91,7 @@ public class PrometheusMapsFieldInstance
      * @param pFieldId the fieldId
      * @param pFilter the filter
      */
-    PrometheusMapsFieldInstance(final PrometheusListKey pKey,
+    PrometheusMapsFieldInstance(final MetisListKey pKey,
                                 final MetisDataFieldId pFieldId,
                                 final Function<PrometheusDataItem, Boolean> pFilter) {
         this(pKey, pFieldId, pFilter, false);
@@ -104,7 +104,7 @@ public class PrometheusMapsFieldInstance
      * @param pFilter the filter
      * @param pAllowNull do we allow null value?
      */
-    PrometheusMapsFieldInstance(final PrometheusListKey pKey,
+    PrometheusMapsFieldInstance(final MetisListKey pKey,
                                 final MetisDataFieldId pFieldId,
                                 final Function<PrometheusDataItem, Boolean> pFilter,
                                 final boolean pAllowNull) {
@@ -139,7 +139,7 @@ public class PrometheusMapsFieldInstance
      * Obtain the listKey.
      * @return the listKey
      */
-    PrometheusListKey getListKey() {
+    MetisListKey getListKey() {
         return theListKey;
     }
 
