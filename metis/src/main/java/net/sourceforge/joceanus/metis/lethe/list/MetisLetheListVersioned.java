@@ -57,7 +57,7 @@ public class MetisLetheListVersioned<T extends MetisFieldVersionedItem>
     /**
      * The listSet.
      */
-    private final MetisListSetVersioned theListSet;
+    private final MetisLetheListSetVersioned theListSet;
 
     /**
      * The Underlying list (if any).
@@ -84,7 +84,7 @@ public class MetisLetheListVersioned<T extends MetisFieldVersionedItem>
      * @param pListSet the listSet
      * @param pItemType the itemType
      */
-    protected MetisLetheListVersioned(final MetisListSetVersioned pListSet,
+    protected MetisLetheListVersioned(final MetisLetheListSetVersioned pListSet,
                                       final MetisLetheListKey pItemType) {
         this(pListSet, null, pItemType);
     }
@@ -94,7 +94,7 @@ public class MetisLetheListVersioned<T extends MetisFieldVersionedItem>
      * @param pListSet the listSet
      * @param pBaseList the baseList
      */
-    protected MetisLetheListVersioned(final MetisListSetVersioned pListSet,
+    protected MetisLetheListVersioned(final MetisLetheListSetVersioned pListSet,
                                       final MetisLetheListVersioned<T> pBaseList) {
         this(pListSet, pBaseList, pBaseList.getItemType());
     }
@@ -105,7 +105,7 @@ public class MetisLetheListVersioned<T extends MetisFieldVersionedItem>
      * @param pBaseList the baseList
      * @param pItemType the itemType
      */
-    protected MetisLetheListVersioned(final MetisListSetVersioned pListSet,
+    protected MetisLetheListVersioned(final MetisLetheListSetVersioned pListSet,
                                       final MetisLetheListVersioned<T> pBaseList,
                                       final MetisLetheListKey pItemType) {
         /* Store parameters */
@@ -150,7 +150,7 @@ public class MetisLetheListVersioned<T extends MetisFieldVersionedItem>
      * Obtain the listSet.
      * @return the listSet
      */
-    private MetisListSetVersioned getListSet() {
+    private MetisLetheListSetVersioned getListSet() {
         return theListSet;
     }
 

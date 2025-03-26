@@ -387,6 +387,18 @@ public abstract class MetisFieldVersionedItem
     }
 
     /**
+     * Rewind item to the required version.
+     * @param pVersion the version to rewind to
+     */
+    public void rewindToVersion(final int pVersion) {
+        /* Loop while version is too high */
+        while (getValues().getVersion() > pVersion) {
+            /* Pop history */
+            getValuesHistory().popTheHistory();
+        }
+    }
+
+    /**
      * Determines whether a particular field has changed.
      * @param pField the field
      * @return the difference

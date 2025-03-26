@@ -146,7 +146,7 @@ public class PrometheusMapsCtl
     public void declareDateIdMap(final MetisListKey pListKey,
                                  final MetisDataFieldId pOwnerId,
                                  final MetisDataFieldId pDateId) {
-        theInstance.declareDateIdMap(pListKey, pOwnerId, pDateId,false);
+        theInstance.declareDateIdMap(pListKey, pOwnerId, pDateId, false);
     }
 
     /**

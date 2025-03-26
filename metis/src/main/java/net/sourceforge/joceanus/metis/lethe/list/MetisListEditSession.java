@@ -60,7 +60,7 @@ public class MetisListEditSession
     /**
      * The ListSet.
      */
-    private final MetisListSetVersioned theListSet;
+    private final MetisLetheListSetVersioned theListSet;
 
     /**
      * The active session lists.
@@ -86,7 +86,7 @@ public class MetisListEditSession
      * Constructor.
      * @param pListSet the listSet
      */
-    public MetisListEditSession(final MetisListSetVersioned pListSet) {
+    public MetisListEditSession(final MetisLetheListSetVersioned pListSet) {
         /* Only allowed for Edit ListSets */
         if (!MetisListSetType.EDIT.equals(pListSet.getListSetType())) {
             throw new IllegalArgumentException();
@@ -122,7 +122,7 @@ public class MetisListEditSession
      * Obtain the listSet.
      * @return the listSet
      */
-    private MetisListSetVersioned getListSet() {
+    private MetisLetheListSetVersioned getListSet() {
         return theListSet;
     }
 
@@ -130,7 +130,7 @@ public class MetisListEditSession
      * Obtain the baseListSet.
      * @return the baseSet
      */
-    private MetisListSetVersioned getBaseListSet() {
+    private MetisLetheListSetVersioned getBaseListSet() {
         return theListSet.getBaseListSet();
     }
 
@@ -391,7 +391,7 @@ public class MetisListEditSession
         /* If we are currently editing */
         if (activeVersion()) {
             /* Create new Change Details */
-            final MetisListSetChange myChanges = new MetisListSetChange(theNewVersion);
+            final MetisLetheListSetChange myChanges = new MetisLetheListSetChange(theNewVersion);
 
             /* Loop through the lists */
             final Iterator<MetisLetheListKey> myIterator = theVersionLists.iterator();
@@ -488,8 +488,8 @@ public class MetisListEditSession
             theNewVersion = theListSet.getBaseListSet().getVersion() + 1;
 
             /* Create new Change Details */
-            final MetisListSetChange myChanges = new MetisListSetChange(MetisLetheListEvent.UPDATE);
-            final MetisListSetChange myBaseChanges = new MetisListSetChange(theNewVersion);
+            final MetisLetheListSetChange myChanges = new MetisLetheListSetChange(MetisLetheListEvent.UPDATE);
+            final MetisLetheListSetChange myBaseChanges = new MetisLetheListSetChange(theNewVersion);
 
             /* Loop through the lists */
             final Iterator<MetisLetheListKey> myIterator = theSessionLists.iterator();
@@ -624,7 +624,7 @@ public class MetisListEditSession
      * @param pItem the item
      */
     private static <T extends MetisFieldVersionedItem> void handleCommitOfDelNewItem(final MetisLetheListVersioned<T> pList,
-                                                                                     final MetisListSetVersioned pEditSet,
+                                                                                     final MetisLetheListSetVersioned pEditSet,
                                                                                      final MetisLetheListChange<T> pChange,
                                                                                      final T pItem) {
         /* Remove from the list and add to changes */
@@ -802,7 +802,7 @@ public class MetisListEditSession
      */
     private void handleStandardEvent(final OceanusEvent<MetisLetheListEvent> pEvent) {
         /* Access the event */
-        final MetisListSetChange myChanges = pEvent.getDetails(MetisListSetChange.class);
+        final MetisLetheListSetChange myChanges = pEvent.getDetails(MetisLetheListSetChange.class);
 
         /* Loop through the changes */
         final Iterator<MetisLetheListChange<MetisFieldVersionedItem>> myIterator = myChanges.changeIterator();

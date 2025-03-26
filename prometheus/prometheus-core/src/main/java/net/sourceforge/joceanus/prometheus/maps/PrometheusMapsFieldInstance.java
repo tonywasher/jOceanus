@@ -78,6 +78,7 @@ public class PrometheusMapsFieldInstance
      * Constructor.
      * @param pKey the listKey
      * @param pFieldId the fieldId
+     * @param pAllowNull do we allow null value?
      */
     PrometheusMapsFieldInstance(final MetisListKey pKey,
                                 final MetisDataFieldId pFieldId,

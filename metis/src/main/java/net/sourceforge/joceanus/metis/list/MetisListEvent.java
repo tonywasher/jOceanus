@@ -21,6 +21,11 @@ package net.sourceforge.joceanus.metis.list;
  */
 public enum MetisListEvent {
     /**
+     * Increment.
+     */
+    INCREMENT,
+
+    /**
      * Update.
      */
     UPDATE,
@@ -46,6 +51,7 @@ public enum MetisListEvent {
      */
     public boolean hasContent() {
         switch (this) {
+            case INCREMENT:
             case VERSION:
             case UPDATE:
                 return true;

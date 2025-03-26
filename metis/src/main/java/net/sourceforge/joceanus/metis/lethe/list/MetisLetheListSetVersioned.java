@@ -39,7 +39,7 @@ import java.util.Map.Entry;
 /**
  * Versioned ListSet.
  */
-public class MetisListSetVersioned
+public class MetisLetheListSetVersioned
         implements MetisFieldItem, OceanusEventProvider<MetisLetheListEvent> {
     /**
      * The number of bits for the itemType.
@@ -49,23 +49,23 @@ public class MetisListSetVersioned
     /**
      * Report fields.
      */
-    private static final MetisFieldSet<MetisListSetVersioned> FIELD_DEFS = MetisFieldSet.newFieldSet(MetisListSetVersioned.class);
+    private static final MetisFieldSet<MetisLetheListSetVersioned> FIELD_DEFS = MetisFieldSet.newFieldSet(MetisLetheListSetVersioned.class);
 
     /*
      * Field Id.
      */
     static {
-        FIELD_DEFS.declareLocalField(MetisListResource.FIELD_TYPE, MetisListSetVersioned::getListSetType);
-        FIELD_DEFS.declareLocalField(MetisListResource.FIELD_VERSION, MetisListSetVersioned::getVersion);
-        FIELD_DEFS.declareLocalField(MetisListResource.FIELD_BASE, MetisListSetVersioned::getBaseListSet);
-        FIELD_DEFS.declareLocalField(MetisListResource.FIELD_PAIREDITEMS, MetisListSetVersioned::getPairedItems);
-        FIELD_DEFS.declareLocalField(MetisListResource.FIELD_PAIREDREFERENCES, MetisListSetVersioned::getPairedReferences);
+        FIELD_DEFS.declareLocalField(MetisListResource.FIELD_TYPE, MetisLetheListSetVersioned::getListSetType);
+        FIELD_DEFS.declareLocalField(MetisListResource.FIELD_VERSION, MetisLetheListSetVersioned::getVersion);
+        FIELD_DEFS.declareLocalField(MetisListResource.FIELD_BASE, MetisLetheListSetVersioned::getBaseListSet);
+        FIELD_DEFS.declareLocalField(MetisListResource.FIELD_PAIREDITEMS, MetisLetheListSetVersioned::getPairedItems);
+        FIELD_DEFS.declareLocalField(MetisListResource.FIELD_PAIREDREFERENCES, MetisLetheListSetVersioned::getPairedReferences);
     }
 
     /**
      * The Local fields.
      */
-    private final MetisFieldSet<MetisListSetVersioned> theFields;
+    private final MetisFieldSet<MetisLetheListSetVersioned> theFields;
 
     /**
      * The listSetType.
@@ -100,7 +100,7 @@ public class MetisListSetVersioned
     /**
      * The Underlying list (if any).
      */
-    private final MetisListSetVersioned theBaseListSet;
+    private final MetisLetheListSetVersioned theBaseListSet;
 
     /**
      * The version of the listSet.
@@ -111,7 +111,7 @@ public class MetisListSetVersioned
      * Constructor.
      * @param pListSetType the type
      */
-    protected MetisListSetVersioned(final MetisListSetType pListSetType) {
+    protected MetisLetheListSetVersioned(final MetisListSetType pListSetType) {
         this(pListSetType, null);
     }
 
@@ -120,8 +120,8 @@ public class MetisListSetVersioned
      * @param pListSetType the type
      * @param pBaseListSet the baseListSet (if any)
      */
-    protected MetisListSetVersioned(final MetisListSetType pListSetType,
-                                    final MetisListSetVersioned pBaseListSet) {
+    protected MetisLetheListSetVersioned(final MetisListSetType pListSetType,
+                                         final MetisLetheListSetVersioned pBaseListSet) {
         /* Store parameters */
         theType = pListSetType;
         theBaseListSet = pBaseListSet;
@@ -169,7 +169,7 @@ public class MetisListSetVersioned
      * Obtain the baseListSet.
      * @return the baseListSet
      */
-    public MetisListSetVersioned getBaseListSet() {
+    public MetisLetheListSetVersioned getBaseListSet() {
         return theBaseListSet;
     }
 
@@ -311,7 +311,7 @@ public class MetisListSetVersioned
      * Fire event.
      * @param pEvent the event
      */
-    protected void fireEvent(final MetisListSetChange pEvent) {
+    protected void fireEvent(final MetisLetheListSetChange pEvent) {
         /* If the change is non-empty */
         if (!pEvent.getEventType().hasContent()
             || !pEvent.isEmpty()) {
@@ -504,7 +504,7 @@ public class MetisListSetVersioned
      * Clone pairedItems.
      * @param pSource the source items
      */
-    protected void clonePairedItems(final MetisListSetVersioned pSource) {
+    protected void clonePairedItems(final MetisLetheListSetVersioned pSource) {
         /* Reset the existing detail */
         resetPairedItems();
 
@@ -517,7 +517,7 @@ public class MetisListSetVersioned
      * reBase pairedItems.
      * @param pSource the source items
      */
-    protected void rebasePairedItems(final MetisListSetVersioned pSource) {
+    protected void rebasePairedItems(final MetisLetheListSetVersioned pSource) {
         /* Iterate through the paired map entries */
         final Iterator<Entry<Long, MetisFieldPairedItem>> myIterator = pSource.thePairedMap.entrySet().iterator();
         while (myIterator.hasNext()) {

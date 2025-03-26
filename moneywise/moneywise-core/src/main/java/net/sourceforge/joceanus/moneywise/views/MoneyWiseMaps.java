@@ -118,7 +118,7 @@ public class MoneyWiseMaps {
                 t -> ((MoneyWisePayee) t).getCategoryClass().isSingular());
         theMaps.declareFieldIdMap(MoneyWiseBasicDataType.DEPOSIT, PrometheusDataResource.DATAITEM_FIELD_NAME, MoneyWiseBasicDataType.PAYEE);
         theMaps.declareFieldIdMap(MoneyWiseBasicDataType.CASH, PrometheusDataResource.DATAITEM_FIELD_NAME, MoneyWiseBasicDataType.PAYEE);
-        theMaps.declareFieldIdMap(MoneyWiseBasicDataType.LOAN, PrometheusDataResource.DATAITEM_FIELD_NAME,MoneyWiseBasicDataType.PAYEE);
+        theMaps.declareFieldIdMap(MoneyWiseBasicDataType.LOAN, PrometheusDataResource.DATAITEM_FIELD_NAME, MoneyWiseBasicDataType.PAYEE);
         theMaps.declareFieldIdMap(MoneyWiseBasicDataType.PORTFOLIO, PrometheusDataResource.DATAITEM_FIELD_NAME, MoneyWiseBasicDataType.PAYEE);
         theMaps.declareFieldIdMap(MoneyWiseBasicDataType.PORTFOLIO, MoneyWiseBasicResource.CATEGORY_NAME,
                 t -> ((MoneyWisePortfolio) t).getCategoryClass().isSingular());
@@ -149,6 +149,7 @@ public class MoneyWiseMaps {
     /**
      * Deconstruct linkedPair.
      * @param pPair the linked pair
+     * @return the deconstructed items
      */
     private static List<PrometheusDataItem> deconstructPair(final Object pPair) {
         final List<PrometheusDataItem> myList = new ArrayList<>();

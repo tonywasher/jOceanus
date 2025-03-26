@@ -169,11 +169,19 @@ public class MetisFieldVersionHistory
     }
 
     /**
-     * Is there any history.
+     * Is there any history?
      * @return whether there are entries in the history list
      */
     public boolean hasHistory() {
         return !theStack.isEmpty();
+    }
+
+    /**
+     * Obtain the last values.
+     * @return the last values (or null)
+     */
+    public MetisFieldVersionValues getLastValues() {
+        return theStack.peek();
     }
 
     /**

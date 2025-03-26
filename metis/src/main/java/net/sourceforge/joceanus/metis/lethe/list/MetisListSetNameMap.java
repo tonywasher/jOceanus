@@ -40,7 +40,7 @@ public class MetisListSetNameMap {
     /**
      * The underlying listSet.
      */
-    private final MetisListSetVersioned theListSet;
+    private final MetisLetheListSetVersioned theListSet;
 
     /**
      * Is this a session nameMap?
@@ -57,7 +57,7 @@ public class MetisListSetNameMap {
      * @param pListSet the owning listSet
      * @param pSession is this a nameMap for a session?
      */
-    public MetisListSetNameMap(final MetisListSetVersioned pListSet,
+    public MetisListSetNameMap(final MetisLetheListSetVersioned pListSet,
                                final boolean pSession) {
         /* Store parameters */
         theListSet = pListSet;
@@ -197,7 +197,7 @@ public class MetisListSetNameMap {
      */
     private void processVersionEvent(final OceanusEvent<MetisLetheListEvent> pEvent) {
         /* Access the change details */
-        final MetisListSetChange myChanges = pEvent.getDetails(MetisListSetChange.class);
+        final MetisLetheListSetChange myChanges = pEvent.getDetails(MetisLetheListSetChange.class);
 
         /* Loop through the lists */
         final Iterator<MetisLetheListKey> myIterator = theListSet.keyIterator();
@@ -395,7 +395,7 @@ public class MetisListSetNameMap {
          */
         void setNameForItem(final MetisFieldVersionedItem pItem) {
             /* Obtain the id for this item */
-            final Integer myId = MetisListSetVersioned.buildItemId(pItem);
+            final Integer myId = MetisLetheListSetVersioned.buildItemId(pItem);
 
             /* Access name of item */
             final MetisDataNamedItem myItem = (MetisDataNamedItem) pItem;
@@ -437,7 +437,7 @@ public class MetisListSetNameMap {
          */
         void changeNameForItem(final MetisFieldVersionedItem pItem) {
             /* Obtain the id for this item */
-            final Integer myId = MetisListSetVersioned.buildItemId(pItem);
+            final Integer myId = MetisLetheListSetVersioned.buildItemId(pItem);
 
             /* Access name of item */
             final MetisDataNamedItem myItem = (MetisDataNamedItem) pItem;
@@ -453,7 +453,7 @@ public class MetisListSetNameMap {
             if (!myCurrentName.equals(myName)) {
                 /* Only remove name link if it still points to this id */
                 final MetisFieldVersionedItem myCurrent = theNameMap.get(myCurrentName);
-                final Integer myCurrentId = MetisListSetVersioned.buildItemId(myCurrent);
+                final Integer myCurrentId = MetisLetheListSetVersioned.buildItemId(myCurrent);
                 if (myCurrentId.equals(myId)) {
                     theNameMap.remove(myCurrentName);
                 }
@@ -470,7 +470,7 @@ public class MetisListSetNameMap {
          */
         void clearNameForItem(final MetisFieldVersionedItem pItem) {
             /* Obtain the id for this item */
-            final Integer myId = MetisListSetVersioned.buildItemId(pItem);
+            final Integer myId = MetisLetheListSetVersioned.buildItemId(pItem);
 
             /* Access name of item */
             final MetisDataNamedItem myItem = (MetisDataNamedItem) pItem;
@@ -480,7 +480,7 @@ public class MetisListSetNameMap {
             final MetisFieldVersionedItem myCurrent = theNameMap.get(myName);
             if (myCurrent != null) {
                 /* Sanity check */
-                final Integer myCurrentId = MetisListSetVersioned.buildItemId(pItem);
+                final Integer myCurrentId = MetisLetheListSetVersioned.buildItemId(pItem);
                 if (!myCurrentId.equals(myId)) {
                     throw new IllegalArgumentException(myName);
                 }

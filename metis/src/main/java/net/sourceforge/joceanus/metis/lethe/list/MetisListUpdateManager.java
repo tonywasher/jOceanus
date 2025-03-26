@@ -40,14 +40,14 @@ public final class MetisListUpdateManager {
      * @param pBase the base listSet
      * @return the updateSet
      */
-    public static MetisListSetVersioned deriveUpdateListSet(final MetisListSetVersioned pBase) {
+    public static MetisLetheListSetVersioned deriveUpdateListSet(final MetisLetheListSetVersioned pBase) {
         /* Only allowed for Base ListSets */
         if (!MetisListSetType.BASE.equals(pBase.getListSetType())) {
             throw new IllegalArgumentException();
         }
 
         /* Create a new updateSet */
-        final MetisListSetVersioned myUpdates = new MetisListSetVersioned(MetisListSetType.UPDATE, pBase);
+        final MetisLetheListSetVersioned myUpdates = new MetisLetheListSetVersioned(MetisListSetType.UPDATE, pBase);
 
         /* Determine the new Version */
         int myNewVersion = 0;
@@ -89,7 +89,7 @@ public final class MetisListUpdateManager {
      * @param pUpdates the updates listSet
      * @param pNumItems the number of items to commit
      */
-    public static void commitUpdateBatch(final MetisListSetVersioned pUpdates,
+    public static void commitUpdateBatch(final MetisLetheListSetVersioned pUpdates,
                                          final int pNumItems) {
         /* Only allowed for Base ListSets */
         if (!MetisListSetType.UPDATE.equals(pUpdates.getListSetType())) {
@@ -129,7 +129,7 @@ public final class MetisListUpdateManager {
      * @param pNumItems the number of items to commit
      * @return the number of commit items remaining
      */
-    private static int commitUpdateBatch(final MetisListSetVersioned pUpdateSet,
+    private static int commitUpdateBatch(final MetisLetheListSetVersioned pUpdateSet,
                                          final MetisUpdatePhase pPhase,
                                          final int pNumItems) {
         /* Access the number of items */
@@ -169,7 +169,7 @@ public final class MetisListUpdateManager {
      * @return the number of commit items remaining
      */
     private static <T extends MetisFieldVersionedItem> int commitUpdateBatch(final MetisLetheListVersioned<T> pUpdates,
-                                                                             final MetisListSetVersioned pBaseSet,
+                                                                             final MetisLetheListSetVersioned pBaseSet,
                                                                              final MetisUpdatePhase pPhase,
                                                                              final int pNumItems) {
         /* Access the base list */
@@ -244,10 +244,10 @@ public final class MetisListUpdateManager {
      * @param pUpdates the updates listSet
      * @param pEvent the event
      */
-    private static void handleChangesInBaseSet(final MetisListSetVersioned pUpdates,
+    private static void handleChangesInBaseSet(final MetisLetheListSetVersioned pUpdates,
                                                final OceanusEvent<MetisLetheListEvent> pEvent) {
         /* Access the change details */
-        final MetisListSetChange myChanges = pEvent.getDetails(MetisListSetChange.class);
+        final MetisLetheListSetChange myChanges = pEvent.getDetails(MetisLetheListSetChange.class);
 
         /* Determine the new Version */
         int myNewVersion = 0;
@@ -379,7 +379,7 @@ public final class MetisListUpdateManager {
      * Derive update items as a result of refresh/reBase in the base listSet.
      * @param pUpdates the updates listSet
      */
-    private static void deriveUpdates(final MetisListSetVersioned pUpdates) {
+    private static void deriveUpdates(final MetisLetheListSetVersioned pUpdates) {
         /* Determine the new Version */
         int myNewVersion = 0;
 

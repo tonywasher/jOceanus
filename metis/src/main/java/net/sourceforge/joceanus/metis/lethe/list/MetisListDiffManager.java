@@ -40,8 +40,8 @@ public final class MetisListDiffManager {
      * @param pOld the old listSet to compare to
      * @return the difference set
      */
-    public static MetisListSetVersioned deriveDifferences(final MetisListSetVersioned pNew,
-                                                          final MetisListSetVersioned pOld) {
+    public static MetisLetheListSetVersioned deriveDifferences(final MetisLetheListSetVersioned pNew,
+                                                               final MetisLetheListSetVersioned pOld) {
         /* Only allowed for Base ListSets */
         if (!MetisListSetType.BASE.equals(pNew.getListSetType())
             || !MetisListSetType.BASE.equals(pOld.getListSetType())) {
@@ -49,7 +49,7 @@ public final class MetisListDiffManager {
         }
 
         /* Create a new difference set */
-        final MetisListSetVersioned myDifferences = new MetisListSetVersioned(MetisListSetType.DIFF);
+        final MetisLetheListSetVersioned myDifferences = new MetisLetheListSetVersioned(MetisListSetType.DIFF);
 
         /* Determine the new Version */
         int myNewVersion = 0;
@@ -104,8 +104,8 @@ public final class MetisListDiffManager {
      * @param pOldListSet the old listSet
      * @return the iterator
      */
-    private static Iterator<MetisLetheListKey> obtainAllItemTypes(final MetisListSetVersioned pNewListSet,
-                                                                  final MetisListSetVersioned pOldListSet) {
+    private static Iterator<MetisLetheListKey> obtainAllItemTypes(final MetisLetheListSetVersioned pNewListSet,
+                                                                  final MetisLetheListSetVersioned pOldListSet) {
         /* Create the new List */
         final List<MetisLetheListKey> myList = new ArrayList<>();
 

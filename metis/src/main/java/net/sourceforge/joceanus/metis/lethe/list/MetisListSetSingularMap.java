@@ -38,7 +38,7 @@ public class MetisListSetSingularMap {
     /**
      * The underlying listSet.
      */
-    private final MetisListSetVersioned theListSet;
+    private final MetisLetheListSetVersioned theListSet;
 
     /**
      * Is this a session uniqueMap?
@@ -55,7 +55,7 @@ public class MetisListSetSingularMap {
      * @param pListSet the owning listSet
      * @param pSession is this a nameMap for a session?
      */
-    public MetisListSetSingularMap(final MetisListSetVersioned pListSet,
+    public MetisListSetSingularMap(final MetisLetheListSetVersioned pListSet,
                                    final boolean pSession) {
         /* Store parameters */
         theListSet = pListSet;
@@ -162,7 +162,7 @@ public class MetisListSetSingularMap {
      */
     private void processVersionEvent(final OceanusEvent<MetisLetheListEvent> pEvent) {
         /* Access the change details */
-        final MetisListSetChange myChanges = pEvent.getDetails(MetisListSetChange.class);
+        final MetisLetheListSetChange myChanges = pEvent.getDetails(MetisLetheListSetChange.class);
 
         /* Loop through the lists */
         final Iterator<MetisLetheListKey> myIterator = theListSet.keyIterator();
@@ -496,7 +496,7 @@ public class MetisListSetSingularMap {
          */
         void setValueForItem(final MetisFieldVersionedItem pItem) {
             /* Obtain the id for this item */
-            final Integer myId = MetisListSetVersioned.buildItemId(pItem);
+            final Integer myId = MetisLetheListSetVersioned.buildItemId(pItem);
 
             /* Access value of item */
             final MetisDataSingularItem myItem = theField.getFieldValue(pItem, MetisDataSingularItem.class);
@@ -541,7 +541,7 @@ public class MetisListSetSingularMap {
          */
         void changeValueForItem(final MetisFieldVersionedItem pItem) {
             /* Obtain the id for this item */
-            final Integer myId = MetisListSetVersioned.buildItemId(pItem);
+            final Integer myId = MetisLetheListSetVersioned.buildItemId(pItem);
 
             /* Access value of item */
             final MetisDataSingularItem myItem = theField.getFieldValue(pItem, MetisDataSingularItem.class);
@@ -554,7 +554,7 @@ public class MetisListSetSingularMap {
             if (!myCurrentValue.equals(myValue)) {
                 /* Only remove link if it still points to this id */
                 final MetisFieldVersionedItem myCurrent = theValueMap.get(myCurrentValue);
-                final Integer myCurrentId = myCurrent == null ? null : MetisListSetVersioned.buildItemId(myCurrent);
+                final Integer myCurrentId = myCurrent == null ? null : MetisLetheListSetVersioned.buildItemId(myCurrent);
                 if (myId.equals(myCurrentId)) {
                     theValueMap.remove(myCurrentValue);
                 }
@@ -576,7 +576,7 @@ public class MetisListSetSingularMap {
          */
         void clearValueForItem(final MetisFieldVersionedItem pItem) {
             /* Obtain the id for this item */
-            final Integer myId = MetisListSetVersioned.buildItemId(pItem);
+            final Integer myId = MetisLetheListSetVersioned.buildItemId(pItem);
 
             /* Access value of item */
             final MetisDataSingularItem myItem = theField.getFieldValue(pItem, MetisDataSingularItem.class);
@@ -586,7 +586,7 @@ public class MetisListSetSingularMap {
             final MetisFieldVersionedItem myCurrent = theValueMap.get(myValue);
             if (myCurrent != null) {
                 /* Sanity check */
-                final Integer myCurrentId = MetisListSetVersioned.buildItemId(pItem);
+                final Integer myCurrentId = MetisLetheListSetVersioned.buildItemId(pItem);
                 if (!myCurrentId.equals(myId)) {
                     throw new IllegalArgumentException();
                 }

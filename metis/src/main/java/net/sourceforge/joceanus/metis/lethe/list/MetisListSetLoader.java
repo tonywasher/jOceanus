@@ -25,7 +25,7 @@ public class MetisListSetLoader {
     /**
      * The underlying listSet.
      */
-    private final MetisListSetVersioned theListSet;
+    private final MetisLetheListSetVersioned theListSet;
 
     /**
      * The formatter.
@@ -52,7 +52,7 @@ public class MetisListSetLoader {
      * @param pListSet the target listSet
      * @param pFormatter the formatter
      */
-    MetisListSetLoader(final MetisListSetVersioned pListSet,
+    MetisListSetLoader(final MetisLetheListSetVersioned pListSet,
                        final OceanusDataFormatter pFormatter) {
         /* Store the listSet */
         theListSet = pListSet;

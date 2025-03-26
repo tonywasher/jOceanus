@@ -49,19 +49,9 @@ public class MetisListChange<T extends MetisDataIndexedItem> {
     private List<T> theAdded;
 
     /**
-     * The items that are being restored.
-     */
-    private List<T> theRestored;
-
-    /**
      * The items that are being changed.
      */
     private List<T> theChanged;
-
-    /**
-     * The items that are being hidden.
-     */
-    private List<T> theHidden;
 
     /**
      * The items that are being deleted.
@@ -117,10 +107,8 @@ public class MetisListChange<T extends MetisDataIndexedItem> {
      */
     public boolean isEmpty() {
         return !haveAdded()
-                && !haveRestored()
-                && !haveChanged()
-                && !haveHidden()
-                && !haveDeleted();
+                 && !haveChanged()
+                 && !haveDeleted();
     }
 
     /**
@@ -132,27 +120,11 @@ public class MetisListChange<T extends MetisDataIndexedItem> {
     }
 
     /**
-     * Have we got any restored items?
-     * @return true/false
-     */
-    public boolean haveRestored() {
-        return theRestored != null;
-    }
-
-    /**
      * Have we got any changed items?
      * @return true/false
      */
     public boolean haveChanged() {
         return theChanged != null;
-    }
-
-    /**
-     * Have we got any hidden items?
-     * @return true/false
-     */
-    public boolean haveHidden() {
-        return theHidden != null;
     }
 
     /**
@@ -174,32 +146,12 @@ public class MetisListChange<T extends MetisDataIndexedItem> {
     }
 
     /**
-     * Obtain the iterator for restored items.
-     * @return the iterator
-     */
-    public Iterator<T> restoredIterator() {
-        return theRestored != null
-                ? theRestored.iterator()
-                : Collections.emptyIterator();
-    }
-
-    /**
      * Obtain the iterator for changed items.
      * @return the iterator
      */
     public Iterator<T> changedIterator() {
         return theChanged != null
                 ? theChanged.iterator()
-                : Collections.emptyIterator();
-    }
-
-    /**
-     * Obtain the iterator for changed items.
-     * @return the iterator
-     */
-    public Iterator<T> hiddenIterator() {
-        return theHidden != null
-                ? theHidden.iterator()
                 : Collections.emptyIterator();
     }
 
@@ -225,17 +177,6 @@ public class MetisListChange<T extends MetisDataIndexedItem> {
     }
 
     /**
-     * Register restored item.
-     * @param pItem the item that was restored
-     */
-    protected void registerRestored(final T pItem) {
-        if (theRestored == null) {
-            theRestored = new ArrayList<>();
-        }
-        theRestored.add(pItem);
-    }
-
-    /**
      * Register changed item.
      * @param pItem the item that was changed
      */
@@ -244,17 +185,6 @@ public class MetisListChange<T extends MetisDataIndexedItem> {
             theChanged = new ArrayList<>();
         }
         theChanged.add(pItem);
-    }
-
-    /**
-     * Register hidden item.
-     * @param pItem the item that was hidden
-     */
-    protected void registerHidden(final T pItem) {
-        if (theHidden == null) {
-            theHidden = new ArrayList<>();
-        }
-        theHidden.add(pItem);
     }
 
     /**

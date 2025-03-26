@@ -43,14 +43,14 @@ public final class MetisListEditManager {
      * @param pBaseSet the base listSet
      * @return the updateSet
      */
-    public static MetisListSetVersioned deriveEditListSet(final MetisListSetVersioned pBaseSet) {
+    public static MetisLetheListSetVersioned deriveEditListSet(final MetisLetheListSetVersioned pBaseSet) {
         /* Only allowed for Base ListSets */
         if (!MetisListSetType.BASE.equals(pBaseSet.getListSetType())) {
             throw new IllegalArgumentException();
         }
 
         /* Create a new editSet */
-        final MetisListSetVersioned myEditSet = new MetisListSetVersioned(MetisListSetType.EDIT, pBaseSet);
+        final MetisLetheListSetVersioned myEditSet = new MetisLetheListSetVersioned(MetisListSetType.EDIT, pBaseSet);
 
         /* Loop through the lists */
         final Iterator<MetisLetheListKey> myIterator = pBaseSet.keyIterator();
@@ -83,7 +83,7 @@ public final class MetisListEditManager {
      * Derive edit items as a result of refresh in the base listSet.
      * @param pEditSet the edit listSet
      */
-    private static void deriveEdits(final MetisListSetVersioned pEditSet) {
+    private static void deriveEdits(final MetisLetheListSetVersioned pEditSet) {
         /* Reset the Paired Items */
         pEditSet.resetPairedItems();
 
@@ -103,7 +103,7 @@ public final class MetisListEditManager {
         pEditSet.setVersion(0);
 
         /* fire event */
-        final MetisListSetChange myChanges = new MetisListSetChange(MetisLetheListEvent.REFRESH);
+        final MetisLetheListSetChange myChanges = new MetisLetheListSetChange(MetisLetheListEvent.REFRESH);
         pEditSet.fireEvent(myChanges);
     }
 
@@ -114,7 +114,7 @@ public final class MetisListEditManager {
      * @param pEditSet the edit listSet
      */
     private static <T extends MetisFieldVersionedItem> void deriveEdits(final MetisLetheListVersioned<T> pList,
-                                                                        final MetisListSetVersioned pEditSet) {
+                                                                        final MetisLetheListSetVersioned pEditSet) {
         /* Clear the list */
         pList.clear();
 
@@ -143,13 +143,13 @@ public final class MetisListEditManager {
      * @param pEditSet the edit listSet
      * @param pEvent the event
      */
-    private static void handleReWindOfBase(final MetisListSetVersioned pEditSet,
+    private static void handleReWindOfBase(final MetisLetheListSetVersioned pEditSet,
                                            final OceanusEvent<MetisLetheListEvent> pEvent) {
         /* Access the change details */
-        final MetisListSetChange myChanges = pEvent.getDetails(MetisListSetChange.class);
+        final MetisLetheListSetChange myChanges = pEvent.getDetails(MetisLetheListSetChange.class);
 
         /* Create a new ListSet event */
-        final MetisListSetChange myNewChanges = new MetisListSetChange(0);
+        final MetisLetheListSetChange myNewChanges = new MetisLetheListSetChange(0);
 
         /* Loop through the lists */
         final Iterator<MetisLetheListKey> myIterator = pEditSet.keyIterator();
@@ -185,7 +185,7 @@ public final class MetisListEditManager {
      * @return the editList change
      */
     private static <T extends MetisFieldVersionedItem> MetisLetheListChange<T> doHandleReWindOfBase(final MetisLetheListVersioned<T> pList,
-                                                                                                    final MetisListSetVersioned pEditSet,
+                                                                                                    final MetisLetheListSetVersioned pEditSet,
                                                                                                     final MetisLetheListChange<T> pChange) {
         /* Create a new change */
         final MetisLetheListChange<T> myChange = new MetisLetheListChange<>(pList.getItemType(), MetisLetheListEvent.VERSION);
@@ -213,7 +213,7 @@ public final class MetisListEditManager {
      * @param pIterator the iterator
      */
     private static <T extends MetisFieldVersionedItem> void handleBaseChangedItems(final MetisLetheListVersioned<T> pList,
-                                                                                   final MetisListSetVersioned pEditSet,
+                                                                                   final MetisLetheListSetVersioned pEditSet,
                                                                                    final MetisLetheListChange<T> pChange,
                                                                                    final Iterator<T> pIterator) {
         /* Loop through the changed items */
@@ -262,7 +262,7 @@ public final class MetisListEditManager {
      * @param pIterator the iterator
      */
     private static <T extends MetisFieldVersionedItem> void handleBaseDeletedItems(final MetisLetheListVersioned<T> pList,
-                                                                                   final MetisListSetVersioned pEditSet,
+                                                                                   final MetisLetheListSetVersioned pEditSet,
                                                                                    final MetisLetheListChange<T> pChange,
                                                                                    final Iterator<T> pIterator) {
         /* Loop through the deleted items */
@@ -295,7 +295,7 @@ public final class MetisListEditManager {
      */
     private static <T extends MetisFieldVersionedItem> T newItemFromBase(final MetisLetheListVersioned<T> pList,
                                                                          final T pBase,
-                                                                         final MetisListSetVersioned pEditSet) {
+                                                                         final MetisLetheListSetVersioned pEditSet) {
         /* Obtain a new item */
         final T myNew = pList.newListItem(pBase.getIndexedId());
 
@@ -321,7 +321,7 @@ public final class MetisListEditManager {
      * @param pEditSet the edit listSet
      */
     protected static <T extends MetisFieldVersionedItem> void ensureLinks(final T pItem,
-                                                                          final MetisListSetVersioned pEditSet) {
+                                                                          final MetisLetheListSetVersioned pEditSet) {
         /* If the item has links */
         final MetisFieldSetDef myFields = pItem.getDataFieldSet();
         if (myFields.hasLinks() || myFields.hasPairedLinks()) {
@@ -360,7 +360,7 @@ public final class MetisListEditManager {
      */
     private static <T extends MetisFieldVersionedItem> void ensureLink(final T pItem,
                                                                        final MetisFieldVersionedDef pField,
-                                                                       final MetisListSetVersioned pEditSet) {
+                                                                       final MetisLetheListSetVersioned pEditSet) {
         /* Access the current link */
         MetisFieldVersionedItem myLink = pField.getFieldValue(pItem, MetisFieldVersionedItem.class);
         if (myLink != null) {
@@ -379,7 +379,7 @@ public final class MetisListEditManager {
      */
     private static <T extends MetisFieldVersionedItem> void ensurePairedLink(final T pItem,
                                                                              final MetisFieldVersionedDef pField,
-                                                                             final MetisListSetVersioned pEditSet) {
+                                                                             final MetisLetheListSetVersioned pEditSet) {
         /* Access the current link */
         Object myLink = pField.getFieldValue(pItem);
 

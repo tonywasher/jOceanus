@@ -78,5 +78,5 @@ public interface MetisLetheListKey
      * @param pListSet the listSet
      * @return the new item
      */
-    <T extends MetisFieldVersionedItem> T newItem(MetisListSetVersioned pListSet);
+    <T extends MetisFieldVersionedItem> T newItem(MetisLetheListSetVersioned pListSet);
 }

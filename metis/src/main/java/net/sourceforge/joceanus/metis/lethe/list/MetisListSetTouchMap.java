@@ -39,7 +39,7 @@ public class MetisListSetTouchMap {
     /**
      * The underlying listSet.
      */
-    private final MetisListSetVersioned theListSet;
+    private final MetisLetheListSetVersioned theListSet;
 
     /**
      * The map of touchMaps for this list.
@@ -50,7 +50,7 @@ public class MetisListSetTouchMap {
      * Constructor.
      * @param pListSet the owning listSet
      */
-    public MetisListSetTouchMap(final MetisListSetVersioned pListSet) {
+    public MetisListSetTouchMap(final MetisLetheListSetVersioned pListSet) {
         /* Store parameters */
         theListSet = pListSet;
         theListMap = new HashMap<>();
@@ -68,11 +68,11 @@ public class MetisListSetTouchMap {
      */
     public boolean isReferenced(final MetisFieldVersionedItem pItem) {
         /* Obtain the id for this item */
-        final Integer myId = MetisListSetVersioned.buildItemId(pItem);
+        final Integer myId = MetisLetheListSetVersioned.buildItemId(pItem);
 
         /* Locate the Items TouchMap */
-        final Integer myItemType = MetisListSetVersioned.getItemTypeFromId(myId);
-        final Integer myIndexedId = MetisListSetVersioned.getIndexedIdFromId(myId);
+        final Integer myItemType = MetisLetheListSetVersioned.getItemTypeFromId(myId);
+        final Integer myIndexedId = MetisLetheListSetVersioned.getIndexedIdFromId(myId);
 
         /* Pass call on to correct ListTouchMap */
         final MetisListTouchMap myListMap = theListMap.get(myItemType);
@@ -108,7 +108,7 @@ public class MetisListSetTouchMap {
      */
     private void processVersionEvent(final OceanusEvent<MetisLetheListEvent> pEvent) {
         /* Access the change details */
-        final MetisListSetChange myChanges = pEvent.getDetails(MetisListSetChange.class);
+        final MetisLetheListSetChange myChanges = pEvent.getDetails(MetisLetheListSetChange.class);
 
         /* Loop through the lists */
         final Iterator<MetisLetheListKey> myIterator = theListSet.keyIterator();
@@ -166,7 +166,7 @@ public class MetisListSetTouchMap {
      */
     private void processNewItem(final MetisFieldVersionedItem pItem) {
         /* Obtain the id for this item */
-        final Integer myId = MetisListSetVersioned.buildItemId(pItem);
+        final Integer myId = MetisLetheListSetVersioned.buildItemId(pItem);
 
         /* Access list of touched items */
         final List<Integer> myTouches = obtainTouchedItems(pItem);
@@ -196,7 +196,7 @@ public class MetisListSetTouchMap {
      */
     private void processChangedItem(final MetisFieldVersionedItem pItem) {
         /* Obtain the id for this item */
-        final Integer myId = MetisListSetVersioned.buildItemId(pItem);
+        final Integer myId = MetisLetheListSetVersioned.buildItemId(pItem);
 
         /* Access lists of touched items */
         final List<Integer> myCurrentTouches = obtainTouchedItems(pItem);
@@ -236,7 +236,7 @@ public class MetisListSetTouchMap {
      */
     private void processDeletedItem(final MetisFieldVersionedItem pItem) {
         /* Obtain the id for this item */
-        final Integer myId = MetisListSetVersioned.buildItemId(pItem);
+        final Integer myId = MetisLetheListSetVersioned.buildItemId(pItem);
 
         /* Access list of touched items */
         final List<Integer> myTouches = obtainTouchedItems(pItem);
@@ -257,8 +257,8 @@ public class MetisListSetTouchMap {
     private void setTouchForItem(final Integer pItemId,
                                  final Integer pTouchId) {
         /* Locate the Items TouchMap */
-        final Integer myItemType = MetisListSetVersioned.getItemTypeFromId(pItemId);
-        final Integer myIndexedId = MetisListSetVersioned.getIndexedIdFromId(pItemId);
+        final Integer myItemType = MetisLetheListSetVersioned.getItemTypeFromId(pItemId);
+        final Integer myIndexedId = MetisLetheListSetVersioned.getIndexedIdFromId(pItemId);
 
         /* Pass call on to correct ListTouchMap */
         final MetisListTouchMap myListMap = theListMap.computeIfAbsent(myItemType, x -> new MetisListTouchMap());
@@ -273,8 +273,8 @@ public class MetisListSetTouchMap {
     private void clearTouchForItem(final Integer pItemId,
                                    final Integer pTouchId) {
         /* Locate the Items TouchMap */
-        final Integer myItemType = MetisListSetVersioned.getItemTypeFromId(pItemId);
-        final Integer myIndexedId = MetisListSetVersioned.getIndexedIdFromId(pItemId);
+        final Integer myItemType = MetisLetheListSetVersioned.getItemTypeFromId(pItemId);
+        final Integer myIndexedId = MetisLetheListSetVersioned.getIndexedIdFromId(pItemId);
 
         /* Pass call on to correct ListTouchMap */
         final MetisListTouchMap myListMap = theListMap.get(myItemType);
@@ -291,8 +291,8 @@ public class MetisListSetTouchMap {
     private void setTouchedItem(final Integer pItemId,
                                 final Integer pTouchedId) {
         /* Locate the Items TouchMap */
-        final Integer myItemType = MetisListSetVersioned.getItemTypeFromId(pItemId);
-        final Integer myIndexedId = MetisListSetVersioned.getIndexedIdFromId(pItemId);
+        final Integer myItemType = MetisLetheListSetVersioned.getItemTypeFromId(pItemId);
+        final Integer myIndexedId = MetisLetheListSetVersioned.getIndexedIdFromId(pItemId);
 
         /* Pass call on to correct ListTouchMap */
         final MetisListTouchMap myListMap = theListMap.computeIfAbsent(myItemType, x -> new MetisListTouchMap());
@@ -307,8 +307,8 @@ public class MetisListSetTouchMap {
     private void clearTouchedItem(final Integer pItemId,
                                   final Integer pTouchedId) {
         /* Locate the Items TouchMap */
-        final Integer myItemType = MetisListSetVersioned.getItemTypeFromId(pItemId);
-        final Integer myIndexedId = MetisListSetVersioned.getIndexedIdFromId(pItemId);
+        final Integer myItemType = MetisLetheListSetVersioned.getItemTypeFromId(pItemId);
+        final Integer myIndexedId = MetisLetheListSetVersioned.getIndexedIdFromId(pItemId);
 
         /* Pass call on to correct ListTouchMap */
         final MetisListTouchMap myListMap = theListMap.get(myItemType);
@@ -324,8 +324,8 @@ public class MetisListSetTouchMap {
      */
     private List<Integer> getTouches(final Integer pItemId) {
         /* Locate the Items TouchMap */
-        final Integer myItemType = MetisListSetVersioned.getItemTypeFromId(pItemId);
-        final Integer myIndexedId = MetisListSetVersioned.getIndexedIdFromId(pItemId);
+        final Integer myItemType = MetisLetheListSetVersioned.getItemTypeFromId(pItemId);
+        final Integer myIndexedId = MetisLetheListSetVersioned.getIndexedIdFromId(pItemId);
 
         /* Pass call on to correct ListTouchMap */
         final MetisListTouchMap myListMap = theListMap.get(myItemType);
@@ -377,7 +377,7 @@ public class MetisListSetTouchMap {
 
                 /* Handle singleton link */
                 if (myLink instanceof MetisFieldVersionedItem) {
-                    addUniqueItemToList(myItems, MetisListSetVersioned.buildItemId((MetisFieldVersionedItem) myLink));
+                    addUniqueItemToList(myItems, MetisLetheListSetVersioned.buildItemId((MetisFieldVersionedItem) myLink));
 
                     /* handle Paired link */
                 } else if (myLink instanceof MetisFieldPairedItem) {

@@ -38,15 +38,15 @@ public final class MetisListBaseManager {
      * Create a new base listSet.
      * @return the new ListSet
      */
-    public static MetisListSetVersioned newListSet() {
-        return new MetisListSetVersioned(MetisListSetType.BASE);
+    public static MetisLetheListSetVersioned newListSet() {
+        return new MetisLetheListSetVersioned(MetisListSetType.BASE);
     }
 
     /**
      * Refresh the listSet and dependents.
      * @param pListSet the listSet
      */
-    public static void refresh(final MetisListSetVersioned pListSet) {
+    public static void refresh(final MetisLetheListSetVersioned pListSet) {
         /* Only allowed for Edit ListSets */
         if (!MetisListSetType.BASE.equals(pListSet.getListSetType())) {
             throw new IllegalArgumentException();
@@ -58,7 +58,7 @@ public final class MetisListBaseManager {
         }
 
         /* Create a new ListSet event */
-        final MetisListSetChange myChanges = new MetisListSetChange(MetisLetheListEvent.REFRESH);
+        final MetisLetheListSetChange myChanges = new MetisLetheListSetChange(MetisLetheListEvent.REFRESH);
 
         /* Fire the event */
         pListSet.fireEvent(myChanges);
@@ -68,7 +68,7 @@ public final class MetisListBaseManager {
      * Reset the listSet to version zero.
      * @param pListSet the listSet
      */
-    public static void reset(final MetisListSetVersioned pListSet) {
+    public static void reset(final MetisLetheListSetVersioned pListSet) {
         /* If we have changes */
         if (pListSet.getVersion() != 0) {
             /* ReWind to initial version */
@@ -80,7 +80,7 @@ public final class MetisListBaseManager {
      * Undo the last change to the listSet.
      * @param pListSet the listSet
      */
-    public static void undoLastChange(final MetisListSetVersioned pListSet) {
+    public static void undoLastChange(final MetisLetheListSetVersioned pListSet) {
         /* If we have changes */
         final int myVersion = pListSet.getVersion();
         if (myVersion > 0) {
@@ -94,7 +94,7 @@ public final class MetisListBaseManager {
      * @param pListSet the listSet
      * @param pVersion the version to reWind to
      */
-    private static void reWindToVersion(final MetisListSetVersioned pListSet,
+    private static void reWindToVersion(final MetisLetheListSetVersioned pListSet,
                                         final int pVersion) {
         /* Only allowed for Base/Edit ListSets */
         final MetisListSetType myType = pListSet.getListSetType();
@@ -110,7 +110,7 @@ public final class MetisListBaseManager {
         }
 
         /* Create a new ListSet event */
-        final MetisListSetChange myChanges = new MetisListSetChange(pVersion);
+        final MetisLetheListSetChange myChanges = new MetisLetheListSetChange(pVersion);
 
         /* Loop through the lists */
         final Iterator<MetisLetheListVersioned<MetisFieldVersionedItem>> myIterator = pListSet.listIterator();
@@ -141,7 +141,7 @@ public final class MetisListBaseManager {
      * @return the change for the list
      */
     private static <T extends MetisFieldVersionedItem> MetisLetheListChange<T> doReWindToVersion(final MetisLetheListVersioned<T> pList,
-                                                                                                 final MetisListSetVersioned pListSet,
+                                                                                                 final MetisLetheListSetVersioned pListSet,
                                                                                                  final int pVersion) {
         /* Create a new Change Detail */
         final MetisLetheListChange<T> myChange = new MetisLetheListChange<>(pList.getItemType(), MetisLetheListEvent.VERSION);
@@ -206,15 +206,15 @@ public final class MetisListBaseManager {
      * @param pTarget the target listSet
      * @param pSource the source content to reset to
      */
-    public static void resetContent(final MetisListSetVersioned pTarget,
-                                    final MetisListSetVersioned pSource) {
+    public static void resetContent(final MetisLetheListSetVersioned pTarget,
+                                    final MetisLetheListSetVersioned pSource) {
         /* Only allowed for Base ListSets */
         if (!MetisListSetType.BASE.equals(pTarget.getListSetType())) {
             throw new IllegalArgumentException();
         }
 
         /* Create a new ListSet event */
-        final MetisListSetChange myChanges = new MetisListSetChange(MetisLetheListEvent.REFRESH);
+        final MetisLetheListSetChange myChanges = new MetisLetheListSetChange(MetisLetheListEvent.REFRESH);
 
         /* Clone paired items to target */
         pTarget.clonePairedItems(pSource);
@@ -280,8 +280,8 @@ public final class MetisListBaseManager {
      * @param pTarget the target listSet
      * @param pBase the base listSet
      */
-    public static void reBaseListSet(final MetisListSetVersioned pTarget,
-                                     final MetisListSetVersioned pBase) {
+    public static void reBaseListSet(final MetisLetheListSetVersioned pTarget,
+                                     final MetisLetheListSetVersioned pBase) {
         /* Only allowed for Base ListSets */
         if (!MetisListSetType.BASE.equals(pTarget.getListSetType())) {
             throw new IllegalArgumentException();
@@ -294,7 +294,7 @@ public final class MetisListBaseManager {
         }
 
         /* Create a new ListSet event */
-        final MetisListSetChange myChanges = new MetisListSetChange(MetisLetheListEvent.UPDATE);
+        final MetisLetheListSetChange myChanges = new MetisLetheListSetChange(MetisLetheListEvent.UPDATE);
 
         /* Determine the new Version */
         int myNewVersion = 0;

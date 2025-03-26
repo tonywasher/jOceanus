@@ -29,7 +29,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * Instance maps for dates
+ * Instance maps for dates.
  */
 public class PrometheusMapsDateInstance
         implements MetisFieldItem {
