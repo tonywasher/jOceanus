@@ -16,10 +16,10 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.prometheus.ui;
 
-import java.util.ResourceBundle;
-
 import net.sourceforge.joceanus.oceanus.resource.OceanusBundleId;
 import net.sourceforge.joceanus.oceanus.resource.OceanusBundleLoader;
+
+import java.util.ResourceBundle;
 
 /**
  * Resource IDs for jPrometheus UI Fields.
@@ -216,7 +216,7 @@ public enum PrometheusUIResource implements OceanusBundleId {
 
     @Override
     public String getNameSpace() {
-        return "jPrometheus.ui";
+        return "Prometheus.ui";
     }
 
     @Override

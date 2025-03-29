@@ -134,7 +134,7 @@ public enum PrometheusDBResource implements OceanusBundleId {
 
     @Override
     public String getNameSpace() {
-        return "jPrometheus";
+        return "Prometheus";
     }
 
     @Override

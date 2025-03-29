@@ -16,16 +16,16 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.moneywise.lethe.reports;
 
-import java.util.EnumMap;
-import java.util.Map;
-import java.util.ResourceBundle;
-
 import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisDataResource;
 import net.sourceforge.joceanus.oceanus.resource.OceanusBundleId;
 import net.sourceforge.joceanus.oceanus.resource.OceanusBundleLoader;
 
+import java.util.EnumMap;
+import java.util.Map;
+import java.util.ResourceBundle;
+
 /**
- * Resource IDs for jMoneyWise Report Fields.
+ * Resource IDs for MoneyWise Report Fields.
  */
 public enum MoneyWiseReportResource implements OceanusBundleId {
     /**
@@ -174,7 +174,7 @@ public enum MoneyWiseReportResource implements OceanusBundleId {
 
     @Override
     public String getNameSpace() {
-        return "jMoneyWise.report";
+        return "MoneyWise.report";
     }
 
     @Override

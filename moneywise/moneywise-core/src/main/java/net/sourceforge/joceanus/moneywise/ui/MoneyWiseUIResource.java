@@ -16,16 +16,16 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.moneywise.ui;
 
-import java.util.EnumMap;
-import java.util.Map;
-import java.util.ResourceBundle;
-
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.oceanus.resource.OceanusBundleId;
 import net.sourceforge.joceanus.oceanus.resource.OceanusBundleLoader;
 
+import java.util.EnumMap;
+import java.util.Map;
+import java.util.ResourceBundle;
+
 /**
- * Resource IDs for jMoneyWise UI Fields.
+ * Resource IDs for MoneyWise UI Fields.
  */
 public enum MoneyWiseUIResource
         implements OceanusBundleId, MetisDataFieldId {
@@ -495,7 +495,7 @@ public enum MoneyWiseUIResource
 
     @Override
     public String getNameSpace() {
-        return "jMoneyWise.ui";
+        return "MoneyWise.ui";
     }
 
     @Override

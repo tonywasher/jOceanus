@@ -26,7 +26,7 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 /**
- * Resource IDs for jMoneyWise Data Fields.
+ * Resource IDs for MoneyWise Data Fields.
  */
 public enum MoneyWiseBasicResource
         implements OceanusBundleId, MetisDataFieldId {
@@ -875,7 +875,7 @@ public enum MoneyWiseBasicResource
 
     @Override
     public String getNameSpace() {
-        return "jMoneyWise.data";
+        return "MoneyWise.data";
     }
 
     @Override

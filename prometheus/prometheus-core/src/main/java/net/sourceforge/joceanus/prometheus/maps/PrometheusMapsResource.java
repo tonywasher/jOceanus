@@ -99,7 +99,7 @@ public enum PrometheusMapsResource
 
     @Override
     public String getNameSpace() {
-        return "jPrometheus.maps";
+        return "Prometheus.maps";
     }
 
     @Override

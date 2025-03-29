@@ -16,15 +16,15 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.moneywise.lethe.data.analysis.values;
 
-import java.util.EnumMap;
-import java.util.Map;
-import java.util.ResourceBundle;
-
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicResource;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseStaticResource;
 import net.sourceforge.joceanus.oceanus.resource.OceanusBundleId;
 import net.sourceforge.joceanus.oceanus.resource.OceanusBundleLoader;
+
+import java.util.EnumMap;
+import java.util.Map;
+import java.util.ResourceBundle;
 
 /**
  * Resource IDs for MoneyWise Analysis Fields.
@@ -296,7 +296,7 @@ public enum MoneyWiseAnalysisValuesResource
 
     @Override
     public String getNameSpace() {
-        return "jMoneyWise.analysis";
+        return "MoneyWise.analysis";
     }
 
     @Override
