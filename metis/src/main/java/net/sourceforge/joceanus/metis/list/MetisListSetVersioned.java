@@ -44,7 +44,9 @@ public class MetisListSetVersioned
      * Field Id.
      */
     static {
+        FIELD_DEFS.declareLocalField(MetisListResource.FIELD_TYPE, MetisListSetVersioned::getStyle);
         FIELD_DEFS.declareLocalField(MetisListResource.FIELD_VERSION, MetisListSetVersioned::getVersion);
+        FIELD_DEFS.declareLocalField(MetisListResource.FIELD_BASE, MetisListSetVersioned::getBase);
     }
 
     /**
@@ -53,9 +55,19 @@ public class MetisListSetVersioned
     private final MetisFieldSet<MetisListSetVersioned> theFields;
 
     /**
+     * The listSetType.
+     */
+    private final MetisListStyle theStyle;
+
+    /**
+     * The base listSet.
+     */
+    private final MetisListSetVersioned theBase;
+
+    /**
      * The versionedList Map.
      */
-    private final Map<MetisListKey, MetisListVersioned<MetisFieldVersionedItem>> theListMap;
+    private final Map<MetisListKey, MetisListVersioned<? extends MetisFieldVersionedItem>> theListMap;
 
     /**
      * The Event Manager.
@@ -69,8 +81,30 @@ public class MetisListSetVersioned
 
     /**
      * Constructor.
-      */
+     */
     public MetisListSetVersioned() {
+        this(MetisListStyle.BASE);
+    }
+
+    /**
+     * Constructor.
+     * @param pStyle the listSet Style
+     */
+    public MetisListSetVersioned(final MetisListStyle pStyle) {
+        this(pStyle, null);
+    }
+
+    /**
+     * Constructor.
+     * @param pStyle the listSet style
+     * @param pBase the base listSet
+     */
+    public MetisListSetVersioned(final MetisListStyle pStyle,
+                                 final MetisListSetVersioned pBase) {
+        /* Store parameters */
+        theStyle = pStyle;
+        theBase = pBase;
+
         /* Create the new fieldSet */
         theFields = MetisFieldSet.newFieldSet(this);
 
@@ -99,6 +133,22 @@ public class MetisListSetVersioned
     @Override
     public String toString() {
         return getDataFieldSet().getName();
+    }
+
+    /**
+     * Obtain the style.
+     * @return the style
+     */
+    public MetisListStyle getStyle() {
+        return theStyle;
+    }
+
+    /**
+     * Obtain the base listSet.
+     * @return the base listSet
+     */
+    public MetisListSetVersioned getBase() {
+        return theBase;
     }
 
     /**
@@ -138,7 +188,7 @@ public class MetisListSetVersioned
      * Obtain the List iterator.
      * @return the iterator
      */
-    public Iterator<MetisListVersioned<MetisFieldVersionedItem>> listIterator() {
+    public Iterator<MetisListVersioned<? extends MetisFieldVersionedItem>> listIterator() {
         return theListMap.values().iterator();
     }
 
@@ -147,8 +197,8 @@ public class MetisListSetVersioned
      * @param pItemType the itemType for the list
      * @param pList the list
      */
-    public void declareList(final MetisListKey pItemType,
-                            final MetisListVersioned<MetisFieldVersionedItem> pList) {
+    protected void declareList(final MetisListKey pItemType,
+                               final MetisListVersioned<? extends MetisFieldVersionedItem> pList) {
         /* Add to the maps */
         theListMap.put(pItemType, pList);
 
@@ -174,7 +224,7 @@ public class MetisListSetVersioned
      */
     public boolean isEmpty() {
         /* Loop through the lists */
-        for (MetisListVersioned<MetisFieldVersionedItem> myList : theListMap.values()) {
+        for (MetisListVersioned<?> myList : theListMap.values()) {
             if (!myList.isEmpty()) {
                 return false;
             }
@@ -185,6 +235,102 @@ public class MetisListSetVersioned
     }
 
     /**
+     * derive differences.
+     * @param pListSet the listSet to compare against
+     * @return the differences
+     */
+    public MetisListSetVersioned deriveDifferences(final MetisListSetVersioned pListSet) {
+        /* Create the listSet */
+        final MetisListSetVersioned myDiffSet = new MetisListSetVersioned(MetisListStyle.DIFFER);
+
+        /* Loop through all the lists */
+        for (MetisListKey myKey : theListMap.keySet()) {
+            /* Rebase the list */
+            final MetisListVersioned<?> myList = getList(myKey, MetisListVersioned.class);
+            final MetisListVersioned<?> myBase = pListSet.getList(myKey, MetisListVersioned.class);
+            myList.deriveDifferences(myDiffSet, myBase);
+        }
+
+        /* Update version if needed */
+        if (!myDiffSet.isEmpty()) {
+            myDiffSet.setVersion(1);
+        }
+
+        /* Return the listSet */
+        return myDiffSet;
+    }
+
+    /**
+     * derive updates.
+     * @return the updates
+     */
+    public MetisListSetVersioned deriveUpdates() {
+        /* Create the listSete */
+        final MetisListSetVersioned myUpdateSet = new MetisListSetVersioned(MetisListStyle.UPDATE);
+
+        /* Loop through all the lists */
+        for (MetisListKey myKey : theListMap.keySet()) {
+            /* Rebase the list */
+            final MetisListVersioned<?> myList = getList(myKey, MetisListVersioned.class);
+            myList.deriveUpdates(myUpdateSet);
+        }
+
+        /* Update version if needed */
+        if (!myUpdateSet.isEmpty()) {
+            myUpdateSet.setVersion(1);
+        }
+
+        /* Return the listSet */
+        return myUpdateSet;
+    }
+
+    /**
+     * Condense history.
+     * @param pNewVersion the new maximum version
+     */
+    public void condenseHistory(final int pNewVersion) {
+        /* Loop through all the lists */
+        for (MetisListVersioned<?> myList : theListMap.values()) {
+            /* condense history for the list */
+            myList.condenseHistory(pNewVersion);
+        }
+
+        /* Record the new version */
+        setVersion(pNewVersion);
+    }
+
+    /**
+     * Re-base the listSet against a database image. This method is used to re-synchronise between two
+     * sources. Items that are in this listSet, but not in the base listSet will be viewed as inserted.
+     * Items that are in the base listSet but not in this listSet will be viewed as deleted. Items
+     * that are in both listSets but differ will be viewed as changed.
+     * @param pBase the base listSet
+     */
+    public void reBase(final MetisListSetVersioned pBase) {
+        /* Note whether we have any changes */
+        boolean bChanges = false;
+
+        /* Loop through all the lists */
+        for (MetisListKey myKey : theListMap.keySet()) {
+            /* Rebase the list */
+            final MetisListVersioned<?> myList = getList(myKey, MetisListVersioned.class);
+            final MetisListVersioned<?> myBase = pBase.getList(myKey, MetisListVersioned.class);
+            bChanges |= myList.reBase(myBase);
+        }
+
+        /* If we have changes, set Version to 1 */
+        if (bChanges) {
+            setVersion(1);
+
+            /* else reset all list versions to zero */
+        } else {
+            for (MetisListVersioned<?> myList : theListMap.values()) {
+                myList.setVersion(0);
+            }
+        }
+    }
+
+    /**
      * deriveChanges on version increment.
      */
     public void deriveChangesOnIncrement() {
@@ -192,7 +338,7 @@ public class MetisListSetVersioned
         final MetisListSetChange myEvent = new MetisListSetChange(theVersion);
 
         /* Loop through all the lists */
-        for (MetisListVersioned<MetisFieldVersionedItem> myList : theListMap.values()) {
+        for (MetisListVersioned<?> myList : theListMap.values()) {
             final MetisListChange<?> myChange = myList.deriveChangesOnIncrement();
             if (myChange != null) {
                 myEvent.registerChangedList(myChange);
@@ -209,19 +355,22 @@ public class MetisListSetVersioned
      */
     public void rewindToVersion(final int pVersion) {
         /* Loop through all the lists */
-        for (MetisListVersioned<MetisFieldVersionedItem> myList : theListMap.values()) {
+        for (MetisListVersioned<?> myList : theListMap.values()) {
             myList.rewindToVersion(pVersion);
         }
 
         /* Adjust version */
         setVersion(pVersion);
+
+        /* report the change */
+        fireEvent(new MetisListSetChange(MetisListEvent.REWIND));
     }
 
     /**
      * Fire event.
      * @param pEvent the event
      */
-    protected void fireEvent(final MetisListSetChange pEvent) {
+    private void fireEvent(final MetisListSetChange pEvent) {
         /* If the change is non-empty */
         if (!pEvent.getEventType().hasContent()
                 || !pEvent.isEmpty()) {

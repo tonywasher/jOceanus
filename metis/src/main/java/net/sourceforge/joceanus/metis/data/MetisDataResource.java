@@ -180,7 +180,7 @@ public enum MetisDataResource
 
     @Override
     public String getNameSpace() {
-        return "jMetis.data";
+        return "Metis.data";
     }
 
     @Override

@@ -16,10 +16,10 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.metis.ui;
 
-import java.util.ResourceBundle;
-
 import net.sourceforge.joceanus.oceanus.resource.OceanusBundleId;
 import net.sourceforge.joceanus.oceanus.resource.OceanusBundleLoader;
+
+import java.util.ResourceBundle;
 
 /**
  * Resource IDs for jMetis UI Fields.
@@ -126,7 +126,7 @@ public enum MetisUIResource implements OceanusBundleId {
 
     @Override
     public String getNameSpace() {
-        return "jMetis.ui";
+        return "Metis.ui";
     }
 
     @Override

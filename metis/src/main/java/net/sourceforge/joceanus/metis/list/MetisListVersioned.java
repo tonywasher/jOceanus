@@ -30,7 +30,7 @@ import java.util.Map;
  * Versioned List.
  * @param <T> the item type
  */
-public class MetisListVersioned<T extends MetisFieldVersionedItem>
+public abstract class MetisListVersioned<T extends MetisFieldVersionedItem>
         extends MetisListIndexed<T>
         implements OceanusEventProvider<MetisListEvent> {
     /**
@@ -44,6 +44,7 @@ public class MetisListVersioned<T extends MetisFieldVersionedItem>
      */
     static {
         FIELD_DEFS.declareLocalField(MetisListResource.FIELD_ITEMTYPE, MetisListVersioned::getItemType);
+        FIELD_DEFS.declareLocalField(MetisListResource.FIELD_LISTSET, MetisListVersioned::getListSet);
         FIELD_DEFS.declareLocalField(MetisListResource.FIELD_VERSION, MetisListVersioned::getVersion);
     }
 
@@ -51,6 +52,11 @@ public class MetisListVersioned<T extends MetisFieldVersionedItem>
      * The itemType.
      */
     private final MetisListKey theItemType;
+
+    /**
+     * The listSet.
+     */
+    private final MetisListSetVersioned theListSet;
 
     /**
      * The Event Manager.
@@ -64,9 +70,12 @@ public class MetisListVersioned<T extends MetisFieldVersionedItem>
 
     /**
      * Constructor.
+     * @param pListSet the listSet
      * @param pItemType the itemType
      */
-    public MetisListVersioned(final MetisListKey pItemType) {
+    public MetisListVersioned(final MetisListSetVersioned pListSet,
+                              final MetisListKey pItemType) {
+        theListSet = pListSet;
         theItemType = pItemType;
     }
 
@@ -95,6 +104,30 @@ public class MetisListVersioned<T extends MetisFieldVersionedItem>
     }
 
     /**
+     * Obtain the itemType.
+     * @return the itemType
+     */
+    public MetisListKey getItemType() {
+        return theItemType;
+    }
+
+    /**
+     * Obtain the listSet.
+     * @return the listSet
+     */
+    public MetisListSetVersioned getListSet() {
+        return theListSet;
+    }
+
+    /**
+     * Obtain the listStyle.
+     * @return the listStyle
+     */
+    public MetisListStyle getStyle() {
+        return theListSet.getStyle();
+    }
+
+    /**
      * Set version.
      * @param pVersion the version
      */
@@ -111,11 +144,32 @@ public class MetisListVersioned<T extends MetisFieldVersionedItem>
     }
 
     /**
-     * Obtain the itemType.
-     * @return the itemType
+     * Condense history.
+     * @param pNewVersion the new maximum version
      */
-    public MetisListKey getItemType() {
-        return theItemType;
+    public void condenseHistory(final int pNewVersion) {
+        /* Loop through the elements */
+        final Iterator<T> myIterator = iterator();
+        while (myIterator.hasNext()) {
+            final T myCurr = myIterator.next();
+
+            /* If the item has been changed */
+            if (myCurr.getValues().getVersion() >= pNewVersion) {
+                /* If the item is deleted but was newly created */
+                if (myCurr.isDeleted()
+                        && myCurr.getOriginalValues().getVersion() >= pNewVersion) {
+                    /* Remove from list */
+                    myIterator.remove();
+                    continue;
+                }
+
+                /* Condense the history */
+                myCurr.condenseHistory(pNewVersion);
+            }
+        }
+
+        /* Adjust list value */
+        setVersion(pNewVersion);
     }
 
     /**
@@ -164,21 +218,18 @@ public class MetisListVersioned<T extends MetisFieldVersionedItem>
         while (myIterator.hasNext()) {
             final T myCurr = myIterator.next();
 
-            /* If the version is before required version */
-            if (myCurr.getValues().getVersion() <= pVersion) {
-                /* Ignore */
-                continue;
-            }
+            /* If the item has been changed */
+            if (myCurr.getValues().getVersion() > pVersion) {
+                /* If the item was created after the required version */
+                if (myCurr.getOriginalValues().getVersion() > pVersion) {
+                    /* Remove from list */
+                    myIterator.remove();
+                    continue;
+                }
 
-            /* If the item was created after the required version */
-            if (myCurr.getOriginalValues().getVersion() > pVersion) {
-                /* Remove from list */
-                myIterator.remove();
-                continue;
+                /* Adjust values */
+                myCurr.rewindToVersion(pVersion);
             }
-
-            /* Adjust values */
-            myCurr.rewindToVersion(pVersion);
         }
 
         /* Adjust version */
@@ -189,13 +240,13 @@ public class MetisListVersioned<T extends MetisFieldVersionedItem>
      * Re-base the list against a database image. This method is used to re-synchronise between two
      * sources. Items that are in this list, but not in the base list will be viewed as inserted.
      * Items that are in the base list but not in this list will be viewed as deleted. Items
-     * that are in both list but differ will be viewed as changed
+     * that are in both lists but differ will be viewed as changed.
      * @param pBase The base list to re-base on
      * @return are there any changes
      */
-    boolean reBase(final MetisListVersioned<T> pBase) {
+    boolean reBase(final MetisListVersioned<? extends MetisFieldVersionedItem> pBase) {
         /* Access an Id Map of the old list */
-        final Map<Integer, T> myBase = pBase.copyIdMap();
+        final Map<Integer, ? extends MetisFieldVersionedItem> myBase = pBase.copyIdMap();
         boolean bChanges = false;
 
         /* Loop through this list */
@@ -231,18 +282,134 @@ public class MetisListVersioned<T extends MetisFieldVersionedItem>
         }
 
         /* Loop through the remaining items in the base list */
-        for (T myCurr : myBase.values()) {
-            /* Access the item and remove it Obtain the new item */
-            pBase.remove(myCurr);
-            myCurr.pushHistory();
-            myCurr.getValues().setDeletion(true);
-            add(myCurr);
+        for (MetisFieldVersionedItem myCurr : myBase.values()) {
+            /* Create a new deleted item and add to the list */
+            final T myItem = newItem(myCurr);
+            myItem.pushHistory();
+            myItem.getValues().setDeletion(true);
             bChanges = true;
         }
+
+        /* set Version to 1 */
+        setVersion(1);
 
         /* Return flag */
         return bChanges;
     }
+
+    /**
+     * Derive updates.
+     * @param pListSet the update listSet
+     */
+    protected void deriveUpdates(final MetisListSetVersioned pListSet) {
+        /* Obtain an empty list of the correct style */
+        final MetisListVersioned<T> myList = newList(pListSet);
+
+        /* Loop through the list */
+        final Iterator<? extends MetisFieldVersionedItem> myIterator = iterator();
+        while (myIterator.hasNext()) {
+            /* Access the item and its state */
+            final MetisFieldVersionedItem myCurr = myIterator.next();
+
+            /* If the item has been changed */
+            if (myCurr.getValues().getVersion() > 0) {
+                /* Create a copy of the item */
+                final MetisFieldVersionedItem myItem = myList.newItem(myCurr);
+
+                /* If the item is NEW or DELNEW */
+                if (myCurr.getOriginalValues().getVersion() > 0) {
+                    myItem.getValues().setVersion(1);
+
+                    /* else if item is DELETED */
+                } else if (myCurr.isDeleted()) {
+                    myItem.getValuesHistory().pushHistory(1);
+
+                    /* else item is CHANGED */
+                } else {
+                    myItem.getValuesHistory().setHistory(myCurr.getOriginalValues());
+                }
+            }
+        }
+
+        /* Add list to listSet if non-empty */
+        if (!myList.isEmpty()) {
+            myList.setVersion(1);
+            pListSet.declareList(theItemType, myList);
+        }
+    }
+
+    /**
+     * Construct a difference extract between two Lists. The difference extract will only have
+     * items that differ between the two lists. Items that are in the new list, but not in the old
+     * list will be viewed as inserted. Items that are in the old list but not in the new list will
+     * be viewed as deleted. Items that are in both lists but differ will be viewed as changed
+     * @param pListSet the difference listSet
+     * @param pOld The old list to compare to
+     */
+    public void deriveDifferences(final MetisListSetVersioned pListSet,
+                                  final MetisListVersioned<? extends MetisFieldVersionedItem> pOld) {
+        /* Obtain an empty list of the correct style */
+        final MetisListVersioned<T> myList = newList(pListSet);
+
+        /* Access an Id Map of the old list */
+        final Map<Integer, ? extends MetisFieldVersionedItem> myOld = pOld.copyIdMap();
+
+        /* Loop through the new list */
+        final Iterator<T> myIterator = iterator();
+        while (myIterator.hasNext()) {
+            /* Locate the item in the old list */
+            final T myCurr = myIterator.next();
+            MetisFieldVersionedItem myItem = myOld.get(myCurr.getIndexedId());
+
+            /* If the item does not exist in the old list */
+            if (myItem == null) {
+                /* Insert a new item */
+                myItem = myList.newItem(myCurr);
+                myItem.getValues().setVersion(1);
+
+                /* else the item exists in the old list */
+            } else {
+                /* If the item has changed */
+                if (!myCurr.equals(myItem)) {
+                    /* Copy the item */
+                    final MetisFieldVersionedItem myNew = myList.newItem(myCurr);
+
+                    /* Ensure that we record the correct history */
+                    myNew.setHistory(myItem.getValues());
+                }
+
+                /* Remove the item from the map */
+                myOld.remove(myItem.getIndexedId());
+            }
+        }
+
+        /* Loop through the remaining items in the old list */
+        for (MetisFieldVersionedItem myCurr : myOld.values()) {
+            /* Insert a new item */
+            final MetisFieldVersionedItem myItem = myList.newItem(myCurr);
+            myItem.setDeleted(true);
+        }
+
+        /* Add list to listSet if non-empty */
+        if (!myList.isEmpty()) {
+            myList.setVersion(1);
+            pListSet.declareList(theItemType, myList);
+        }
+    }
+
+    /**
+     * NewItem creator.
+     * @param pItem the item to base new item on
+     * @return the new item
+     */
+    public abstract T newItem(MetisFieldVersionedItem pItem);
+
+    /**
+     * NewList creator.
+     * @param pListSet the list set
+     * @return the new list
+     */
+    public abstract MetisListVersioned<T> newList(MetisListSetVersioned pListSet);
 
     /**
      * Fire event.

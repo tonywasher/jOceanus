@@ -54,7 +54,7 @@ public class MetisListSetChange {
      * @param pVersion the version
      */
     MetisListSetChange(final int pVersion) {
-        this(MetisListEvent.VERSION, pVersion);
+        this(MetisListEvent.INCREMENT, pVersion);
     }
 
     /**

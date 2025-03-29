@@ -214,7 +214,7 @@ public enum MetisPreferenceResource implements OceanusBundleId {
 
     @Override
     public String getNameSpace() {
-        return "jMetis.preference";
+        return "Metis.preference";
     }
 
     @Override
