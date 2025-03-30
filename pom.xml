@@ -79,9 +79,9 @@
     <JSONVersion>20250107</JSONVersion>
     <ApacheMavenVersion>3.9.9</ApacheMavenVersion>
     <MySQLVersion>9.2.0</MySQLVersion>
-    <MariaDBVersion>3.5.2</MariaDBVersion>
+    <MariaDBVersion>3.5.3</MariaDBVersion>
     <PostGreSQLVersion>42.7.5</PostGreSQLVersion>
-    <MSSQLVersion>12.8.1.jre11</MSSQLVersion>
+    <MSSQLVersion>12.10.0.jre11</MSSQLVersion>
     <H2Version>2.3.232</H2Version>
     <ApachePOIVersion>5.4.0</ApachePOIVersion>
     <JSoupVersion>1.19.1</JSoupVersion>
@@ -91,7 +91,7 @@
     <JavaFXVersion>17.0.14</JavaFXVersion>
     <JavaLanguageVersion>17</JavaLanguageVersion>
     <CheckStyleVersion>10.21.4</CheckStyleVersion>
-    <PMDVersion>7.11.0</PMDVersion>
+    <PMDVersion>7.12.0</PMDVersion>
     <CleanPluginVersion>3.4.1</CleanPluginVersion>
     <ResourcesPluginVersion>3.3.1</ResourcesPluginVersion>
     <InstallPluginVersion>3.1.4</InstallPluginVersion>
@@ -111,7 +111,7 @@
     <JavaNCSSPluginVersion>2.1</JavaNCSSPluginVersion>
     <SourcePluginVersion>3.3.1</SourcePluginVersion>
     <ChangelogPluginVersion>2.3</ChangelogPluginVersion>
-    <SonarQubePluginVersion>5.0.0.4389</SonarQubePluginVersion>
+    <SonarQubePluginVersion>5.1.0.4751</SonarQubePluginVersion>
     <CheckStylePluginVersion>3.6.0</CheckStylePluginVersion>
     <PMDPluginVersion>3.26.0</PMDPluginVersion>
     <JacocoPluginVersion>0.8.12</JacocoPluginVersion>

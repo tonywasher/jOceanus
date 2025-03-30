@@ -43,9 +43,9 @@ allprojects {
         jUnitVersion = "5.12.1"
         jsonVersion = "20250107"
         mySQLVersion = "9.2.0"
-        MariaDBVersion = "3.5.2"
+        MariaDBVersion = "3.5.3"
         postGreSQLVersion = "42.7.5"
-        mssqlVersion = "12.8.1.jre11"
+        mssqlVersion = "12.10.0.jre11"
         h2Version = "2.3.232"
         apachePOIVersion = "5.4.0"
         jsoupVersion = "1.19.1"
@@ -63,7 +63,7 @@ allprojects {
         checkStyleConfig = "$rootDir/src/main/checkstyle/checks.xml"
 
         /* pmd config */
-        pmdVersion = "7.11.0"
+        pmdVersion = "7.12.0"
 
         /* jacoco config */
         jacocoVersion = "0.8.12"

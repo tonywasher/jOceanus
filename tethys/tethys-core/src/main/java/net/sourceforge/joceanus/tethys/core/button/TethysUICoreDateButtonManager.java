@@ -16,20 +16,21 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.tethys.core.button;
 
-import java.util.function.Consumer;
-
 import net.sourceforge.joceanus.oceanus.date.OceanusDate;
 import net.sourceforge.joceanus.oceanus.date.OceanusDateConfig;
 import net.sourceforge.joceanus.oceanus.date.OceanusDateFormatter;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIArrowIconId;
-import net.sourceforge.joceanus.tethys.api.base.TethysUINode;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIEvent;
+import net.sourceforge.joceanus.tethys.api.base.TethysUINode;
 import net.sourceforge.joceanus.tethys.api.button.TethysUIButton;
 import net.sourceforge.joceanus.tethys.api.button.TethysUIDateButtonManager;
 import net.sourceforge.joceanus.tethys.core.base.TethysUICoreComponent;
 import net.sourceforge.joceanus.tethys.core.factory.TethysUICoreFactory;
+
+import java.util.Objects;
+import java.util.function.Consumer;
 
 /**
  * DateButton Manager.
@@ -242,8 +243,6 @@ public abstract class TethysUICoreDateButtonManager
      * @return true/false
      */
     private boolean valueChanged(final OceanusDate pNew) {
-        return theValue == null
-                ? pNew != null
-                : !theValue.equals(pNew);
+        return !Objects.equals(theValue, pNew);
     }
 }
