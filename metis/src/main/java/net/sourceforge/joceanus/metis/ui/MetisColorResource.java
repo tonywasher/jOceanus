@@ -122,7 +122,7 @@ public enum MetisColorResource implements OceanusBundleId {
 
     @Override
     public String getNameSpace() {
-        return "jMetis.field";
+        return "Metis.field";
     }
 
     @Override

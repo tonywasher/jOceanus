@@ -211,7 +211,7 @@ public enum MetisViewerResource
 
     @Override
     public String getNameSpace() {
-        return "jMetis.viewer";
+        return "Metis.viewer";
     }
 
     @Override

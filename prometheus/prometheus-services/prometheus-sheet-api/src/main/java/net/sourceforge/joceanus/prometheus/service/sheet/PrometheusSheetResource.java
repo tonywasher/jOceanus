@@ -79,7 +79,7 @@ public enum PrometheusSheetResource
 
     @Override
     public String getNameSpace() {
-        return "jPrometheus.sheet";
+        return "Prometheus.sheet";
     }
 
     @Override

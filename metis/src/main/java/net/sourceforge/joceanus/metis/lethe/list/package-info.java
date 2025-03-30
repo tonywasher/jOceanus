@@ -1,4 +1,4 @@
-/*******************************************************************************
+/* *****************************************************************************
  * Metis: Java Data Framework
  * Copyright 2012,2025 Tony Washer
  *
@@ -14,48 +14,8 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.metis.list;
 
 /**
- * The Event Types.
+ * Java Indexed List.
  */
-public enum MetisListEvent {
-    /**
-     * Increment.
-     */
-    INCREMENT,
-
-    /**
-     * Rewind.
-     */
-    REWIND,
-
-    /**
-     * Version.
-     */
-    VERSION,
-
-    /**
-     * Refresh.
-     */
-    REFRESH,
-
-    /**
-     * Error.
-     */
-    ERROR;
-
-    /**
-     * Does the event have content?
-     * @return true/false
-     */
-    public boolean hasContent() {
-        switch (this) {
-            case INCREMENT:
-            case VERSION:
-                return true;
-            default:
-                return false;
-        }
-    }
-}
+package net.sourceforge.joceanus.metis.lethe.list;

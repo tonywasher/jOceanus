@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.metis.list;
+package net.sourceforge.joceanus.metis.lethe.list;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -30,7 +30,7 @@ public class MetisListItemValues {
     /**
      * The item key.
      */
-    private final MetisListKey theKey;
+    private final MetisLetheListKey theKey;
 
     /**
      * Field Values.
@@ -41,7 +41,7 @@ public class MetisListItemValues {
      * Constructor.
      * @param pKey the itemKey
      */
-    public MetisListItemValues(final MetisListKey pKey) {
+    public MetisListItemValues(final MetisLetheListKey pKey) {
         theKey = pKey;
         theValues = new HashMap<>();
     }
@@ -50,7 +50,7 @@ public class MetisListItemValues {
      * Obtain ListKey.
      * @return the listKey
      */
-    public final MetisListKey getListKey() {
+    public final MetisLetheListKey getListKey() {
         return theKey;
     }
 

@@ -14,34 +14,43 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.metis.list;
+package net.sourceforge.joceanus.metis.lethe.list;
 
 /**
- * ListSet type.
+ * The Event Types.
  */
-public enum MetisListSetType {
-    /**
-     * Base.
-     */
-    BASE,
-
+public enum MetisLetheListEvent {
     /**
      * Update.
      */
     UPDATE,
 
     /**
-     * Difference.
+     * Version.
      */
-    DIFF,
+    VERSION,
 
     /**
-     * Edit.
+     * Refresh.
      */
-    EDIT,
+    REFRESH,
 
     /**
-     * View.
+     * Error.
      */
-    VIEW;
+    ERROR;
+
+    /**
+     * Does the event have content?
+     * @return true/false
+     */
+    public boolean hasContent() {
+        switch (this) {
+            case VERSION:
+            case UPDATE:
+                return true;
+            default:
+                return false;
+        }
+    }
 }

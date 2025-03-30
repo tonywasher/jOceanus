@@ -16,15 +16,15 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.moneywise.ui.base;
 
+import net.sourceforge.joceanus.metis.list.MetisListKey;
+import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
+import net.sourceforge.joceanus.prometheus.data.PrometheusDataList;
+import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
+
 import java.util.ArrayDeque;
 import java.util.Arrays;
 import java.util.Deque;
 import java.util.Iterator;
-
-import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
-import net.sourceforge.joceanus.prometheus.data.PrometheusDataList;
-import net.sourceforge.joceanus.prometheus.data.PrometheusListKey;
-import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
 
 /**
  * NameSpace iterator.
@@ -39,7 +39,7 @@ public class MoneyWiseNameSpaceIterator
     /**
      * The keySet.
      */
-    private final Deque<PrometheusListKey> theKeys;
+    private final Deque<MetisListKey> theKeys;
 
     /**
      * The current iterator.
@@ -52,7 +52,7 @@ public class MoneyWiseNameSpaceIterator
      * @param pKeys the listKeys.
      */
     public MoneyWiseNameSpaceIterator(final PrometheusEditSet pEditSet,
-                                      final PrometheusListKey... pKeys) {
+                                      final MetisListKey... pKeys) {
         /* Store the editSet */
         theEditSet = pEditSet;
 
@@ -79,7 +79,7 @@ public class MoneyWiseNameSpaceIterator
             }
 
             /* Pop the next item */
-            final PrometheusListKey myKey = theKeys.pop();
+            final MetisListKey myKey = theKeys.pop();
 
             /* Create iterator for next key */
             @SuppressWarnings("unchecked")

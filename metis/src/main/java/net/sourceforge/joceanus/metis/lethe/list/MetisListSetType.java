@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Prometheus: Application Framework
+ * Metis: Java Data Framework
  * Copyright 2012,2025 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
@@ -14,31 +14,34 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.prometheus.data;
-
-
-import net.sourceforge.joceanus.metis.field.MetisFieldItem.MetisFieldItemType;
+package net.sourceforge.joceanus.metis.lethe.list;
 
 /**
- * ListKey.
+ * ListSet type.
  */
-public interface PrometheusListKey
-    extends MetisFieldItemType {
+public enum MetisListSetType {
     /**
-     * Obtain the item key.
-     * @return the item key
+     * Base.
      */
-    Integer getItemKey();
+    BASE,
 
     /**
-     * Obtain the list name.
-     * @return the list name
+     * Update.
      */
-    String getListName();
+    UPDATE,
 
     /**
-     * Obtain the item name.
-     * @return the item name
+     * Difference.
      */
-    String getItemName();
+    DIFF,
+
+    /**
+     * Edit.
+     */
+    EDIT,
+
+    /**
+     * View.
+     */
+    VIEW;
 }

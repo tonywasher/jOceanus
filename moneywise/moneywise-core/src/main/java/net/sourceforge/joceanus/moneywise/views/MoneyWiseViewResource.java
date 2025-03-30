@@ -16,15 +16,15 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.moneywise.views;
 
-import java.util.ResourceBundle;
-
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisDataResource;
 import net.sourceforge.joceanus.oceanus.resource.OceanusBundleId;
 import net.sourceforge.joceanus.oceanus.resource.OceanusBundleLoader;
 
+import java.util.ResourceBundle;
+
 /**
- * Resource IDs for jMoneyWise View Fields.
+ * Resource IDs for MoneyWise View Fields.
  */
 public enum MoneyWiseViewResource
         implements OceanusBundleId, MetisDataFieldId {
@@ -139,7 +139,7 @@ public enum MoneyWiseViewResource
 
     @Override
     public String getNameSpace() {
-        return "jMoneyWise.view";
+        return "MoneyWise.view";
     }
 
     @Override

@@ -20,13 +20,13 @@ import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.metis.data.MetisDataType;
 import net.sourceforge.joceanus.metis.field.MetisFieldItem;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
+import net.sourceforge.joceanus.metis.list.MetisListKey;
 import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataInfoClass;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataInfoItem;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataList;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataSet;
-import net.sourceforge.joceanus.prometheus.data.PrometheusListKey;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
 
 import java.util.Iterator;
@@ -108,7 +108,7 @@ public class PrometheusMapsCtl
      * @param pListKey the listKey
      * @param pFieldId the fieldId
      */
-    public void declareFieldIdMap(final PrometheusListKey pListKey,
+    public void declareFieldIdMap(final MetisListKey pListKey,
                                   final MetisDataFieldId pFieldId) {
         theInstance.declareFieldIdMap(pListKey, pFieldId);
     }
@@ -119,7 +119,7 @@ public class PrometheusMapsCtl
      * @param pFieldId the fieldId
      * @param pFilter the filter
      */
-    public void declareFieldIdMap(final PrometheusListKey pListKey,
+    public void declareFieldIdMap(final MetisListKey pListKey,
                                   final MetisDataFieldId pFieldId,
                                   final Function<PrometheusDataItem, Boolean> pFilter) {
         theInstance.declareFieldIdMap(pListKey, pFieldId, pFilter);
@@ -131,9 +131,9 @@ public class PrometheusMapsCtl
      * @param pFieldId the fieldId
      * @param pSharedKey the shared listKey
      */
-    public void declareFieldIdMap(final PrometheusListKey pListKey,
+    public void declareFieldIdMap(final MetisListKey pListKey,
                                   final MetisDataFieldId pFieldId,
-                                  final PrometheusListKey pSharedKey) {
+                                  final MetisListKey pSharedKey) {
         theInstance.declareFieldIdMap(pListKey, pFieldId, pSharedKey);
     }
 
@@ -143,10 +143,10 @@ public class PrometheusMapsCtl
      * @param pOwnerId the ownerId
      * @param pDateId the dateId
      */
-    public void declareDateIdMap(final PrometheusListKey pListKey,
+    public void declareDateIdMap(final MetisListKey pListKey,
                                  final MetisDataFieldId pOwnerId,
                                  final MetisDataFieldId pDateId) {
-        theInstance.declareDateIdMap(pListKey, pOwnerId, pDateId,false);
+        theInstance.declareDateIdMap(pListKey, pOwnerId, pDateId, false);
     }
 
     /**
@@ -156,7 +156,7 @@ public class PrometheusMapsCtl
      * @param pDateId the dateId
      * @param pAllowNull do we allow null value?
      */
-    public void declareDateIdMap(final PrometheusListKey pListKey,
+    public void declareDateIdMap(final MetisListKey pListKey,
                                  final MetisDataFieldId pOwnerId,
                                  final MetisDataFieldId pDateId,
                                  final boolean pAllowNull) {
@@ -176,9 +176,9 @@ public class PrometheusMapsCtl
      * @param pDataSet the dataSet
      */
     public void adjustForDataSet(final PrometheusDataSet pDataSet) {
-        final Iterator<PrometheusListKey> myIterator = pDataSet.keyIterator();
+        final Iterator<MetisListKey> myIterator = pDataSet.keyIterator();
         while (myIterator.hasNext()) {
-            final PrometheusListKey myKey = myIterator.next();
+            final MetisListKey myKey = myIterator.next();
             final PrometheusDataList<?> myList = pDataSet.getDataList(myKey, PrometheusDataList.class);
 
             adjustForDataList(myList);
@@ -191,9 +191,9 @@ public class PrometheusMapsCtl
      */
     public void adjustForEditSet(final PrometheusEditSet pEditSet) {
         final PrometheusDataSet myDataSet = pEditSet.getDataSet();
-        final Iterator<PrometheusListKey> myIterator = myDataSet.keyIterator();
+        final Iterator<MetisListKey> myIterator = myDataSet.keyIterator();
         while (myIterator.hasNext()) {
-            final PrometheusListKey myKey = myIterator.next();
+            final MetisListKey myKey = myIterator.next();
             final PrometheusDataList<?> myList = pEditSet.getDataList(myKey, PrometheusDataList.class);
 
             adjustForDataList(myList);

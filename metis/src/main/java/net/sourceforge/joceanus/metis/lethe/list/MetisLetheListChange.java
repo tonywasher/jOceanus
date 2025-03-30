@@ -14,29 +14,29 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.metis.list;
-
-import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataIndexedItem;
+package net.sourceforge.joceanus.metis.lethe.list;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataIndexedItem;
+
 /**
  * Metis VersionedList Event.
  * @param <T> the item type
  */
-public class MetisListChange<T extends MetisDataIndexedItem> {
+public class MetisLetheListChange<T extends MetisDataIndexedItem> {
     /**
      * The item type.
      */
-    private final MetisListKey theItemType;
+    private final MetisLetheListKey theItemType;
 
     /**
      * The event type.
      */
-    private final MetisListEvent theEventType;
+    private final MetisLetheListEvent theEventType;
 
     /**
      * The version.
@@ -49,9 +49,19 @@ public class MetisListChange<T extends MetisDataIndexedItem> {
     private List<T> theAdded;
 
     /**
+     * The items that are being restored.
+     */
+    private List<T> theRestored;
+
+    /**
      * The items that are being changed.
      */
     private List<T> theChanged;
+
+    /**
+     * The items that are being hidden.
+     */
+    private List<T> theHidden;
 
     /**
      * The items that are being deleted.
@@ -63,8 +73,8 @@ public class MetisListChange<T extends MetisDataIndexedItem> {
      * @param pItemType the item type
      * @param pEventType the event type
      */
-    protected MetisListChange(final MetisListKey pItemType,
-                              final MetisListEvent pEventType) {
+    protected MetisLetheListChange(final MetisLetheListKey pItemType,
+                                   final MetisLetheListEvent pEventType) {
         theItemType = pItemType;
         theEventType = pEventType;
     }
@@ -73,7 +83,7 @@ public class MetisListChange<T extends MetisDataIndexedItem> {
      * Obtain the item type.
      * @return the item type
      */
-    public MetisListKey getItemType() {
+    public MetisLetheListKey getItemType() {
         return theItemType;
     }
 
@@ -81,7 +91,7 @@ public class MetisListChange<T extends MetisDataIndexedItem> {
      * Obtain the event type.
      * @return the event type
      */
-    public MetisListEvent getEventType() {
+    public MetisLetheListEvent getEventType() {
         return theEventType;
     }
 
@@ -107,8 +117,10 @@ public class MetisListChange<T extends MetisDataIndexedItem> {
      */
     public boolean isEmpty() {
         return !haveAdded()
-                 && !haveChanged()
-                 && !haveDeleted();
+               && !haveRestored()
+               && !haveChanged()
+               && !haveHidden()
+               && !haveDeleted();
     }
 
     /**
@@ -120,11 +132,27 @@ public class MetisListChange<T extends MetisDataIndexedItem> {
     }
 
     /**
+     * Have we got any restored items?
+     * @return true/false
+     */
+    public boolean haveRestored() {
+        return theRestored != null;
+    }
+
+    /**
      * Have we got any changed items?
      * @return true/false
      */
     public boolean haveChanged() {
         return theChanged != null;
+    }
+
+    /**
+     * Have we got any hidden items?
+     * @return true/false
+     */
+    public boolean haveHidden() {
+        return theHidden != null;
     }
 
     /**
@@ -141,8 +169,18 @@ public class MetisListChange<T extends MetisDataIndexedItem> {
      */
     public Iterator<T> addedIterator() {
         return theAdded != null
-                ? theAdded.iterator()
-                : Collections.emptyIterator();
+                                ? theAdded.iterator()
+                                : Collections.emptyIterator();
+    }
+
+    /**
+     * Obtain the iterator for restored items.
+     * @return the iterator
+     */
+    public Iterator<T> restoredIterator() {
+        return theRestored != null
+                                   ? theRestored.iterator()
+                                   : Collections.emptyIterator();
     }
 
     /**
@@ -151,8 +189,18 @@ public class MetisListChange<T extends MetisDataIndexedItem> {
      */
     public Iterator<T> changedIterator() {
         return theChanged != null
-                ? theChanged.iterator()
-                : Collections.emptyIterator();
+                                  ? theChanged.iterator()
+                                  : Collections.emptyIterator();
+    }
+
+    /**
+     * Obtain the iterator for changed items.
+     * @return the iterator
+     */
+    public Iterator<T> hiddenIterator() {
+        return theHidden != null
+                                 ? theHidden.iterator()
+                                 : Collections.emptyIterator();
     }
 
     /**
@@ -161,8 +209,8 @@ public class MetisListChange<T extends MetisDataIndexedItem> {
      */
     public Iterator<T> deletedIterator() {
         return theDeleted != null
-                ? theDeleted.iterator()
-                : Collections.emptyIterator();
+                                  ? theDeleted.iterator()
+                                  : Collections.emptyIterator();
     }
 
     /**
@@ -177,6 +225,17 @@ public class MetisListChange<T extends MetisDataIndexedItem> {
     }
 
     /**
+     * Register restored item.
+     * @param pItem the item that was restored
+     */
+    protected void registerRestored(final T pItem) {
+        if (theRestored == null) {
+            theRestored = new ArrayList<>();
+        }
+        theRestored.add(pItem);
+    }
+
+    /**
      * Register changed item.
      * @param pItem the item that was changed
      */
@@ -185,6 +244,17 @@ public class MetisListChange<T extends MetisDataIndexedItem> {
             theChanged = new ArrayList<>();
         }
         theChanged.add(pItem);
+    }
+
+    /**
+     * Register hidden item.
+     * @param pItem the item that was hidden
+     */
+    protected void registerHidden(final T pItem) {
+        if (theHidden == null) {
+            theHidden = new ArrayList<>();
+        }
+        theHidden.add(pItem);
     }
 
     /**

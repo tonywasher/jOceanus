@@ -16,10 +16,10 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.moneywise.threads;
 
-import java.util.ResourceBundle;
-
 import net.sourceforge.joceanus.oceanus.resource.OceanusBundleId;
 import net.sourceforge.joceanus.oceanus.resource.OceanusBundleLoader;
+
+import java.util.ResourceBundle;
 
 /**
  * Resource IDs for MoneyWise Threads.
@@ -67,7 +67,7 @@ public enum MoneyWiseThreadResource
 
     @Override
     public String getNameSpace() {
-        return "jMoneyWise.thread";
+        return "MoneyWise.thread";
     }
 
     @Override

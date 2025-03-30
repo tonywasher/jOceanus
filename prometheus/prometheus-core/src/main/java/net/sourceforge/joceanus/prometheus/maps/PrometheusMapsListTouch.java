@@ -18,10 +18,10 @@ package net.sourceforge.joceanus.prometheus.maps;
 
 import net.sourceforge.joceanus.metis.field.MetisFieldItem;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
+import net.sourceforge.joceanus.metis.list.MetisListKey;
 import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataResource;
-import net.sourceforge.joceanus.prometheus.data.PrometheusListKey;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -48,7 +48,7 @@ public class PrometheusMapsListTouch
     /**
      * listKey.
      */
-    private final PrometheusListKey theListKey;
+    private final MetisListKey theListKey;
 
     /**
      * The map of itemId to touch map.
@@ -59,7 +59,7 @@ public class PrometheusMapsListTouch
      * Constructor.
      * @param pKey the listKey
      */
-    PrometheusMapsListTouch(final PrometheusListKey pKey) {
+    PrometheusMapsListTouch(final MetisListKey pKey) {
         theListKey = pKey;
         theTouchMap = new LinkedHashMap<>();
     }
@@ -78,7 +78,7 @@ public class PrometheusMapsListTouch
      * Obtain the listKey.
      * @return the listKey
      */
-    private PrometheusListKey getListKey() {
+    private MetisListKey getListKey() {
         return theListKey;
     }
 

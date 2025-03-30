@@ -18,9 +18,9 @@ package net.sourceforge.joceanus.prometheus.maps;
 
 import net.sourceforge.joceanus.metis.field.MetisFieldItem;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
+import net.sourceforge.joceanus.metis.list.MetisListKey;
 import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
-import net.sourceforge.joceanus.prometheus.data.PrometheusListKey;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -45,7 +45,7 @@ public class PrometheusMapsDataSetTouch
     /**
      * The map of listKey to listMap.
      */
-    private final Map<PrometheusListKey, PrometheusMapsListTouch> theListMap;
+    private final Map<MetisListKey, PrometheusMapsListTouch> theListMap;
 
     /**
      * Constructor.
@@ -68,7 +68,7 @@ public class PrometheusMapsDataSetTouch
      * Obtain the list map.
      * @return the map
      */
-    private Map<PrometheusListKey, PrometheusMapsListTouch> getTouchMap() {
+    private Map<MetisListKey, PrometheusMapsListTouch> getTouchMap() {
         return theListMap;
     }
 
@@ -80,7 +80,7 @@ public class PrometheusMapsDataSetTouch
     void recordTouch(final PrometheusDataItem pTouchedItem,
                      final PrometheusDataItem pTouchingItem) {
         /* Access correct map and record the touch */
-        PrometheusListKey myKey = pTouchedItem.getItemType();
+        MetisListKey myKey = pTouchedItem.getItemType();
         PrometheusMapsListTouch myMap = theListMap.computeIfAbsent(myKey,
                 PrometheusMapsListTouch::new);
         myMap.recordTouchedBy(pTouchedItem, pTouchingItem);

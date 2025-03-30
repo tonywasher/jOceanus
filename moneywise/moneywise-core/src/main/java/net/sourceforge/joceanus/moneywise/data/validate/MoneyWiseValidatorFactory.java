@@ -16,12 +16,12 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.moneywise.data.validate;
 
+import net.sourceforge.joceanus.metis.list.MetisListKey;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataSet.PrometheusCryptographyDataType;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataValidator;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataValidator.PrometheusDataValidatorFactory;
-import net.sourceforge.joceanus.prometheus.data.PrometheusListKey;
 import net.sourceforge.joceanus.prometheus.validate.PrometheusValidateBasic;
 import net.sourceforge.joceanus.prometheus.validate.PrometheusValidateInfo;
 import net.sourceforge.joceanus.prometheus.validate.PrometheusValidateStatic;
@@ -52,7 +52,7 @@ public class MoneyWiseValidatorFactory
     }
 
     @Override
-    public PrometheusDataValidator<?> newValidator(final PrometheusListKey pItemType) {
+    public PrometheusDataValidator<?> newValidator(final MetisListKey pItemType) {
         if (pItemType instanceof PrometheusCryptographyDataType) {
             return new PrometheusValidateBasic();
         } else if (MoneyWiseStaticDataType.CURRENCY.equals(pItemType)) {

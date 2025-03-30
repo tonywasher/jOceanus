@@ -19,11 +19,11 @@ package net.sourceforge.joceanus.prometheus.maps;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.metis.field.MetisFieldItem;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
+import net.sourceforge.joceanus.metis.list.MetisListKey;
 import net.sourceforge.joceanus.oceanus.date.OceanusDate;
 import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataResource;
-import net.sourceforge.joceanus.prometheus.data.PrometheusListKey;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -52,7 +52,7 @@ public class PrometheusMapsListInstance
     /**
      * listKey.
      */
-    private final PrometheusListKey theListKey;
+    private final MetisListKey theListKey;
 
     /**
      * The field maps.
@@ -68,7 +68,7 @@ public class PrometheusMapsListInstance
      * Constructor.
      * @param pKey the listKey
      */
-    PrometheusMapsListInstance(final PrometheusListKey pKey) {
+    PrometheusMapsListInstance(final MetisListKey pKey) {
         theListKey = pKey;
         theFieldMap = new LinkedHashMap<>();
     }
@@ -87,7 +87,7 @@ public class PrometheusMapsListInstance
         for (PrometheusMapsFieldInstance myMap : pSource.getFieldMap().values()) {
             /* Access details */
             final MetisDataFieldId myFieldId = myMap.getFieldId();
-            final PrometheusListKey myListKey = myMap.getListKey();
+            final MetisListKey myListKey = myMap.getListKey();
 
             /* If the map is not shared */
             if (theListKey.equals(myListKey)) {
@@ -123,7 +123,7 @@ public class PrometheusMapsListInstance
      * Obtain the listKey.
      * @return the listKey
      */
-    PrometheusListKey getListKey() {
+    MetisListKey getListKey() {
         return theListKey;
     }
 

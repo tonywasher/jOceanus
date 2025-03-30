@@ -18,6 +18,7 @@ package net.sourceforge.joceanus.moneywise.ui.base;
 
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataNamedItem;
+import net.sourceforge.joceanus.metis.list.MetisListKey;
 import net.sourceforge.joceanus.metis.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.metis.viewer.MetisViewerEntry;
 import net.sourceforge.joceanus.moneywise.exc.MoneyWiseDataException;
@@ -31,7 +32,6 @@ import net.sourceforge.joceanus.oceanus.logger.OceanusLogger;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataInfoClass;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataValues.PrometheusInfoSetItem;
-import net.sourceforge.joceanus.prometheus.data.PrometheusListKey;
 import net.sourceforge.joceanus.prometheus.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditEntry;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
@@ -123,7 +123,7 @@ public abstract class MoneyWiseBaseTable<T extends PrometheusDataItem>
     /**
      * The ItemType.
      */
-    private final PrometheusListKey theItemType;
+    private final MetisListKey theItemType;
 
     /**
      * The Event Manager.
@@ -175,7 +175,7 @@ public abstract class MoneyWiseBaseTable<T extends PrometheusDataItem>
     protected MoneyWiseBaseTable(final MoneyWiseView pView,
                                  final PrometheusEditSet pEditSet,
                                  final MetisErrorPanel pError,
-                                 final PrometheusListKey pDataType) {
+                                 final MetisListKey pDataType) {
         /* Store parameters */
         theView = pView;
         theError = pError;
@@ -256,7 +256,7 @@ public abstract class MoneyWiseBaseTable<T extends PrometheusDataItem>
      * Obtain the item type.
      * @return the item type
      */
-    public PrometheusListKey getItemType() {
+    public MetisListKey getItemType() {
         return theItemType;
     }
 

@@ -16,21 +16,18 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.moneywise.ui.base;
 
-import java.util.List;
-import java.util.Objects;
-
+import net.sourceforge.joceanus.metis.data.MetisDataDifference;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataNamedItem;
-import net.sourceforge.joceanus.metis.ui.MetisErrorPanel;
-import net.sourceforge.joceanus.metis.data.MetisDataDifference;
+import net.sourceforge.joceanus.metis.list.MetisListKey;
 import net.sourceforge.joceanus.metis.ui.MetisAction;
+import net.sourceforge.joceanus.metis.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.metis.ui.MetisIcon;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicResource;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseCategoryBase;
 import net.sourceforge.joceanus.moneywise.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.moneywise.views.MoneyWiseView;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataResource;
-import net.sourceforge.joceanus.prometheus.data.PrometheusListKey;
 import net.sourceforge.joceanus.prometheus.data.PrometheusStaticDataItem;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIEvent;
@@ -44,6 +41,9 @@ import net.sourceforge.joceanus.tethys.api.menu.TethysUIScrollItem;
 import net.sourceforge.joceanus.tethys.api.menu.TethysUIScrollMenu;
 import net.sourceforge.joceanus.tethys.api.pane.TethysUIBoxPaneManager;
 import net.sourceforge.joceanus.tethys.api.table.TethysUITableManager;
+
+import java.util.List;
+import java.util.Objects;
 
 /**
  * MoneyWise Category Table.
@@ -89,7 +89,7 @@ public abstract class MoneyWiseCategoryTable<T extends MoneyWiseCategoryBase, S 
                                      final PrometheusEditSet pEditSet,
                                      final MetisErrorPanel pError,
                                      final Class<T> pClazz,
-                                     final PrometheusListKey pDataType) {
+                                     final MetisListKey pDataType) {
         /* Store parameters */
         super(pView, pEditSet, pError, pDataType);
 

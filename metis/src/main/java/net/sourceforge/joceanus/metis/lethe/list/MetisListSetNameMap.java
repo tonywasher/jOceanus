@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.metis.list;
+package net.sourceforge.joceanus.metis.lethe.list;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -40,7 +40,7 @@ public class MetisListSetNameMap {
     /**
      * The underlying listSet.
      */
-    private final MetisListSetVersioned theListSet;
+    private final MetisLetheListSetVersioned theListSet;
 
     /**
      * Is this a session nameMap?
@@ -50,14 +50,14 @@ public class MetisListSetNameMap {
     /**
      * The map of nameMaps for this list.
      */
-    private final Map<MetisListKey, MetisListNameMap> theListMap;
+    private final Map<MetisLetheListKey, MetisListNameMap> theListMap;
 
     /**
      * Constructor.
      * @param pListSet the owning listSet
      * @param pSession is this a nameMap for a session?
      */
-    public MetisListSetNameMap(final MetisListSetVersioned pListSet,
+    public MetisListSetNameMap(final MetisLetheListSetVersioned pListSet,
                                final boolean pSession) {
         /* Store parameters */
         theListSet = pListSet;
@@ -67,10 +67,10 @@ public class MetisListSetNameMap {
         theListMap = new HashMap<>();
 
         /* Attach listeners */
-        final OceanusEventRegistrar<MetisListEvent> myRegistrar = theListSet.getEventRegistrar();
-        myRegistrar.addEventListener(MetisListEvent.REFRESH, e -> processRefreshEvent());
+        final OceanusEventRegistrar<MetisLetheListEvent> myRegistrar = theListSet.getEventRegistrar();
+        myRegistrar.addEventListener(MetisLetheListEvent.REFRESH, e -> processRefreshEvent());
         if (pSession) {
-            myRegistrar.addEventListener(MetisListEvent.VERSION, this::processVersionEvent);
+            myRegistrar.addEventListener(MetisLetheListEvent.VERSION, this::processVersionEvent);
         }
     }
 
@@ -81,9 +81,9 @@ public class MetisListSetNameMap {
      * @return the item (if found)
      */
     public MetisFieldVersionedItem getItemForName(final String pName,
-                                                  final MetisListKey pKey) {
+                                                  final MetisLetheListKey pKey) {
         /* Obtain the nameSpace for this list */
-        final MetisListKey myNameSpace = pKey.getNameSpace();
+        final MetisLetheListKey myNameSpace = pKey.getNameSpace();
         final MetisListNameMap myNameMap = theListMap.get(myNameSpace);
 
         /* Return the item */
@@ -97,9 +97,9 @@ public class MetisListSetNameMap {
      * @return true/false
      */
     public boolean isValidName(final MetisFieldVersionedItem pItem,
-                               final MetisListKey pKey) {
+                               final MetisLetheListKey pKey) {
         /* Obtain the nameSpace for this list */
-        final MetisListKey myNameSpace = pKey.getNameSpace();
+        final MetisLetheListKey myNameSpace = pKey.getNameSpace();
         final MetisListNameMap myNameMap = theListMap.get(myNameSpace);
 
         /* Determine whether the name is valid */
@@ -116,7 +116,7 @@ public class MetisListSetNameMap {
      */
     public boolean isAvailableName(final MetisFieldVersionedItem pItem,
                                    final String pName,
-                                   final MetisListKey pKey) {
+                                   final MetisLetheListKey pKey) {
         /* Handle trivial case of current name */
         final MetisDataNamedItem myItem = (MetisDataNamedItem) pItem;
         final String myName = myItem.getName();
@@ -125,7 +125,7 @@ public class MetisListSetNameMap {
         }
 
         /* Obtain the nameSpace for this item */
-        final MetisListKey myNameSpace = pKey.getNameSpace();
+        final MetisLetheListKey myNameSpace = pKey.getNameSpace();
         final MetisListNameMap myNameMap = theListMap.get(myNameSpace);
 
         /* Determine whether the name is available */
@@ -155,9 +155,9 @@ public class MetisListSetNameMap {
      * @param pKey the list key
      * @return a new unused name
      */
-    public String getUniqueName(final MetisListKey pKey) {
+    public String getUniqueName(final MetisLetheListKey pKey) {
         /* Obtain the nameSpace for this item */
-        final MetisListKey myNameSpace = pKey.getNameSpace();
+        final MetisLetheListKey myNameSpace = pKey.getNameSpace();
         final MetisListNameMap myNameMap = theListMap.get(myNameSpace);
 
         /* Build the base name */
@@ -176,14 +176,14 @@ public class MetisListSetNameMap {
         /* Reset the map */
         theListMap.clear();
 
-        final Iterator<MetisListKey> myIterator = theListSet.keyIterator();
+        final Iterator<MetisLetheListKey> myIterator = theListSet.keyIterator();
         while (myIterator.hasNext()) {
-            final MetisListKey myKey = myIterator.next();
+            final MetisLetheListKey myKey = myIterator.next();
 
             /* If the list has names */
             if (myKey.getNameSpace() != null) {
                 /* Access the list */
-                final MetisListVersioned<MetisFieldVersionedItem> myList = theListSet.getList(myKey);
+                final MetisLetheListVersioned<MetisFieldVersionedItem> myList = theListSet.getList(myKey);
 
                 /* Process each item in the list */
                 processNewItems(myKey, myList.iterator());
@@ -195,19 +195,19 @@ public class MetisListSetNameMap {
      * Process a version event.
      * @param pEvent the event
      */
-    private void processVersionEvent(final OceanusEvent<MetisListEvent> pEvent) {
+    private void processVersionEvent(final OceanusEvent<MetisLetheListEvent> pEvent) {
         /* Access the change details */
-        final MetisListSetChange myChanges = pEvent.getDetails(MetisListSetChange.class);
+        final MetisLetheListSetChange myChanges = pEvent.getDetails(MetisLetheListSetChange.class);
 
         /* Loop through the lists */
-        final Iterator<MetisListKey> myIterator = theListSet.keyIterator();
+        final Iterator<MetisLetheListKey> myIterator = theListSet.keyIterator();
         while (myIterator.hasNext()) {
-            final MetisListKey myKey = myIterator.next();
+            final MetisLetheListKey myKey = myIterator.next();
 
             /* If the list has names */
             if (myKey.getNameSpace() != null) {
                 /* Obtain the associated change */
-                final MetisListChange<MetisFieldVersionedItem> myChange = myChanges.getListChange(myKey);
+                final MetisLetheListChange<MetisFieldVersionedItem> myChange = myChanges.getListChange(myKey);
 
                 /* If there are changes */
                 if (myChange != null) {
@@ -223,8 +223,8 @@ public class MetisListSetNameMap {
      * @param pKey the list key
      * @param pChange the change event
      */
-    private void processVersionChanges(final MetisListKey pKey,
-                                       final MetisListChange<MetisFieldVersionedItem> pChange) {
+    private void processVersionChanges(final MetisLetheListKey pKey,
+                                       final MetisLetheListChange<MetisFieldVersionedItem> pChange) {
         /* Process deleted items */
         processDeletedItems(pKey, pChange.hiddenIterator());
         processDeletedItems(pKey, pChange.deletedIterator());
@@ -242,7 +242,7 @@ public class MetisListSetNameMap {
      * @param pKey the list key
      * @param pIterator the iterator
      */
-    private void processNewItems(final MetisListKey pKey,
+    private void processNewItems(final MetisLetheListKey pKey,
                                  final Iterator<MetisFieldVersionedItem> pIterator) {
         /* Process each item in the list */
         while (pIterator.hasNext()) {
@@ -258,10 +258,10 @@ public class MetisListSetNameMap {
      * @param pKey the list key
      * @param pItem the item
      */
-    public void processNewItem(final MetisListKey pKey,
+    public void processNewItem(final MetisLetheListKey pKey,
                                final MetisFieldVersionedItem pItem) {
         /* Obtain the nameSpace for this item */
-        final MetisListKey myNameSpace = pKey.getNameSpace();
+        final MetisLetheListKey myNameSpace = pKey.getNameSpace();
         final MetisListNameMap myNameMap = theListMap.computeIfAbsent(myNameSpace, x -> new MetisListNameMap(isSession));
 
         /* Store name for item */
@@ -273,7 +273,7 @@ public class MetisListSetNameMap {
      * @param pKey the list key
      * @param pIterator the iterator
      */
-    private void processChangedItems(final MetisListKey pKey,
+    private void processChangedItems(final MetisLetheListKey pKey,
                                      final Iterator<MetisFieldVersionedItem> pIterator) {
         /* Process each item in the list */
         while (pIterator.hasNext()) {
@@ -286,10 +286,10 @@ public class MetisListSetNameMap {
      * @param pKey the list key
      * @param pItem the item
      */
-    private void processChangedItem(final MetisListKey pKey,
+    private void processChangedItem(final MetisLetheListKey pKey,
                                     final MetisFieldVersionedItem pItem) {
         /* Obtain the nameSpace for this item */
-        final MetisListKey myNameSpace = pKey.getNameSpace();
+        final MetisLetheListKey myNameSpace = pKey.getNameSpace();
         final MetisListNameMap myNameMap = theListMap.computeIfAbsent(myNameSpace, x -> new MetisListNameMap(false));
 
         /* Change name for item */
@@ -301,7 +301,7 @@ public class MetisListSetNameMap {
      * @param pKey the list key
      * @param pIterator the iterator
      */
-    private void processDeletedItems(final MetisListKey pKey,
+    private void processDeletedItems(final MetisLetheListKey pKey,
                                      final Iterator<MetisFieldVersionedItem> pIterator) {
         /* Process each item in the list */
         while (pIterator.hasNext()) {
@@ -314,10 +314,10 @@ public class MetisListSetNameMap {
      * @param pKey the list key
      * @param pItem the item
      */
-    private void processDeletedItem(final MetisListKey pKey,
+    private void processDeletedItem(final MetisLetheListKey pKey,
                                     final MetisFieldVersionedItem pItem) {
         /* Obtain the nameSpace for this item */
-        final MetisListKey myNameSpace = pKey.getNameSpace();
+        final MetisLetheListKey myNameSpace = pKey.getNameSpace();
         final MetisListNameMap myNameMap = theListMap.get(myNameSpace);
 
         /* Clear name for item */
@@ -395,7 +395,7 @@ public class MetisListSetNameMap {
          */
         void setNameForItem(final MetisFieldVersionedItem pItem) {
             /* Obtain the id for this item */
-            final Integer myId = MetisListSetVersioned.buildItemId(pItem);
+            final Integer myId = MetisLetheListSetVersioned.buildItemId(pItem);
 
             /* Access name of item */
             final MetisDataNamedItem myItem = (MetisDataNamedItem) pItem;
@@ -437,7 +437,7 @@ public class MetisListSetNameMap {
          */
         void changeNameForItem(final MetisFieldVersionedItem pItem) {
             /* Obtain the id for this item */
-            final Integer myId = MetisListSetVersioned.buildItemId(pItem);
+            final Integer myId = MetisLetheListSetVersioned.buildItemId(pItem);
 
             /* Access name of item */
             final MetisDataNamedItem myItem = (MetisDataNamedItem) pItem;
@@ -453,7 +453,7 @@ public class MetisListSetNameMap {
             if (!myCurrentName.equals(myName)) {
                 /* Only remove name link if it still points to this id */
                 final MetisFieldVersionedItem myCurrent = theNameMap.get(myCurrentName);
-                final Integer myCurrentId = MetisListSetVersioned.buildItemId(myCurrent);
+                final Integer myCurrentId = MetisLetheListSetVersioned.buildItemId(myCurrent);
                 if (myCurrentId.equals(myId)) {
                     theNameMap.remove(myCurrentName);
                 }
@@ -470,7 +470,7 @@ public class MetisListSetNameMap {
          */
         void clearNameForItem(final MetisFieldVersionedItem pItem) {
             /* Obtain the id for this item */
-            final Integer myId = MetisListSetVersioned.buildItemId(pItem);
+            final Integer myId = MetisLetheListSetVersioned.buildItemId(pItem);
 
             /* Access name of item */
             final MetisDataNamedItem myItem = (MetisDataNamedItem) pItem;
@@ -480,7 +480,7 @@ public class MetisListSetNameMap {
             final MetisFieldVersionedItem myCurrent = theNameMap.get(myName);
             if (myCurrent != null) {
                 /* Sanity check */
-                final Integer myCurrentId = MetisListSetVersioned.buildItemId(pItem);
+                final Integer myCurrentId = MetisLetheListSetVersioned.buildItemId(pItem);
                 if (!myCurrentId.equals(myId)) {
                     throw new IllegalArgumentException(myName);
                 }

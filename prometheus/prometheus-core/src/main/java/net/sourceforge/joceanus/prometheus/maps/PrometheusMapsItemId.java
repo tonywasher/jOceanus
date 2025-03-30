@@ -19,10 +19,10 @@ package net.sourceforge.joceanus.prometheus.maps;
 import net.sourceforge.joceanus.metis.data.MetisDataResource;
 import net.sourceforge.joceanus.metis.field.MetisFieldItem;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
+import net.sourceforge.joceanus.metis.list.MetisListKey;
 import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataResource;
-import net.sourceforge.joceanus.prometheus.data.PrometheusListKey;
 
 import java.util.Objects;
 
@@ -48,7 +48,7 @@ public class PrometheusMapsItemId
     /**
      * The listKey.
      */
-    private final PrometheusListKey theListKey;
+    private final MetisListKey theListKey;
 
     /**
      * The itemId.
@@ -78,7 +78,7 @@ public class PrometheusMapsItemId
      * Obtain the listKey.
      * @return the listKey
      */
-    private PrometheusListKey getListKey() {
+    private MetisListKey getListKey() {
         return theListKey;
     }
 

@@ -26,7 +26,7 @@ import net.sourceforge.joceanus.coeus.ui.CoeusFilter;
 import net.sourceforge.joceanus.coeus.ui.CoeusFilter.CoeusSnapShotFilter;
 import net.sourceforge.joceanus.coeus.ui.CoeusMarketCache;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
-import net.sourceforge.joceanus.metis.list.MetisListBaseManager;
+import net.sourceforge.joceanus.metis.lethe.list.MetisListBaseManager;
 import net.sourceforge.joceanus.metis.list.MetisListIndexed;
 import net.sourceforge.joceanus.metis.toolkit.MetisToolkit;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;

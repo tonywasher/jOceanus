@@ -23,6 +23,7 @@ import net.sourceforge.joceanus.metis.data.MetisDataState;
 import net.sourceforge.joceanus.metis.field.MetisFieldItem;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.metis.list.MetisListIndexed;
+import net.sourceforge.joceanus.metis.list.MetisListKey;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataInfoItem.PrometheusDataInfoList;
@@ -51,7 +52,7 @@ public abstract class PrometheusDataList<T extends PrometheusDataItem>
          * @param pClass the list class
          * @return the list
          */
-        <L extends PrometheusDataList<?>> L getDataList(PrometheusListKey pDataType,
+        <L extends PrometheusDataList<?>> L getDataList(MetisListKey pDataType,
                                                         Class<L> pClass);
 
         /**
@@ -59,7 +60,7 @@ public abstract class PrometheusDataList<T extends PrometheusDataItem>
          * @param pDataType the dataType
          * @return true/false
          */
-        boolean hasDataType(PrometheusListKey pDataType);
+        boolean hasDataType(MetisListKey pDataType);
     }
 
     /**
@@ -111,7 +112,7 @@ public abstract class PrometheusDataList<T extends PrometheusDataItem>
     /**
      * The item type.
      */
-    private final PrometheusListKey theItemType;
+    private final MetisListKey theItemType;
 
     /**
      * The base list (for extracts).
@@ -147,7 +148,7 @@ public abstract class PrometheusDataList<T extends PrometheusDataItem>
      */
     protected PrometheusDataList(final Class<T> pBaseClass,
                                  final PrometheusDataSet pDataSet,
-                                 final PrometheusListKey pItemType,
+                                 final MetisListKey pItemType,
                                  final PrometheusListStyle pStyle) {
         theBaseClazz = pBaseClass;
         theStyle = pStyle;
@@ -254,7 +255,7 @@ public abstract class PrometheusDataList<T extends PrometheusDataItem>
      * Get the type of the list.
      * @return the item type
      */
-    public PrometheusListKey getItemType() {
+    public MetisListKey getItemType() {
         return theItemType;
     }
 

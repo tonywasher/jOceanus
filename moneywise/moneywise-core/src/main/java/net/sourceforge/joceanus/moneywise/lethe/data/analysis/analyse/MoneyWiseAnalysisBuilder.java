@@ -16,6 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.moneywise.lethe.data.analysis.analyse;
 
+import net.sourceforge.joceanus.metis.list.MetisListKey;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataSet;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransaction.MoneyWiseTransactionList;
@@ -24,7 +25,6 @@ import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataList;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataSet.PrometheusCryptographyDataType;
-import net.sourceforge.joceanus.prometheus.data.PrometheusListKey;
 import net.sourceforge.joceanus.prometheus.views.PrometheusDataControl;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditEntry;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
@@ -89,9 +89,9 @@ public class MoneyWiseAnalysisBuilder {
      */
     private void updateDataSetMaps(final MoneyWiseDataSet pData) {
         /* Loop through the list types */
-        final Iterator<Entry<PrometheusListKey, PrometheusDataList<?>>> myIterator = pData.entryIterator();
+        final Iterator<Entry<MetisListKey, PrometheusDataList<?>>> myIterator = pData.entryIterator();
         while (myIterator.hasNext()) {
-            final Entry<PrometheusListKey, PrometheusDataList<?>> myEntry = myIterator.next();
+            final Entry<MetisListKey, PrometheusDataList<?>> myEntry = myIterator.next();
 
             /* Update the maps (ignoring cryptography tables) */
             if (!(myEntry.getKey() instanceof PrometheusCryptographyDataType)) {

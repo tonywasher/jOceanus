@@ -16,16 +16,16 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.moneywise.data.statics;
 
-import java.util.EnumMap;
-import java.util.Map;
-import java.util.ResourceBundle;
-
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.oceanus.resource.OceanusBundleId;
 import net.sourceforge.joceanus.oceanus.resource.OceanusBundleLoader;
 
+import java.util.EnumMap;
+import java.util.Map;
+import java.util.ResourceBundle;
+
 /**
- * Resource IDs for jMoneyWise DataType Fields.
+ * Resource IDs for MoneyWise DataType Fields.
  */
 public enum MoneyWiseStaticResource
         implements OceanusBundleId, MetisDataFieldId {
@@ -1109,7 +1109,7 @@ public enum MoneyWiseStaticResource
 
     @Override
     public String getNameSpace() {
-        return "jMoneyWise.static";
+        return "MoneyWise.static";
     }
 
     @Override

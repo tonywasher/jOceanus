@@ -17,6 +17,7 @@
 package net.sourceforge.joceanus.prometheus.ui.panel;
 
 import net.sourceforge.joceanus.metis.field.MetisFieldVersionValues;
+import net.sourceforge.joceanus.metis.list.MetisListKey;
 import net.sourceforge.joceanus.metis.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
@@ -25,7 +26,6 @@ import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEvent
 import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataList;
-import net.sourceforge.joceanus.prometheus.data.PrometheusListKey;
 import net.sourceforge.joceanus.prometheus.data.PrometheusTableItem;
 import net.sourceforge.joceanus.prometheus.exc.PrometheusDataException;
 import net.sourceforge.joceanus.prometheus.ui.PrometheusGoToEvent;
@@ -429,7 +429,7 @@ public abstract class PrometheusDataItemPanel<T extends PrometheusTableItem & Co
      * @param pClass the list class
      * @return the list
      */
-    public <L extends PrometheusDataList<X>, X extends PrometheusDataItem> L getDataList(final PrometheusListKey pDataType,
+    public <L extends PrometheusDataList<X>, X extends PrometheusDataItem> L getDataList(final MetisListKey pDataType,
                                                                                          final Class<L> pClass) {
         /* Look up the base list */
         return theEditSet.getDataList(pDataType, pClass);

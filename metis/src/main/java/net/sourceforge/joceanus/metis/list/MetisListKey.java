@@ -16,23 +16,18 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.metis.list;
 
-import java.util.Collections;
-import java.util.List;
-
-import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.metis.field.MetisFieldItem.MetisFieldItemType;
-import net.sourceforge.joceanus.metis.field.MetisFieldVersionedItem;
 
 /**
- * List Item Type.
+ * ListKey.
  */
 public interface MetisListKey
         extends MetisFieldItemType {
     /**
-     * Obtain the item id.
-     * @return the item id
+     * Obtain the item key.
+     * @return the item key
      */
-    Integer getItemId();
+    Integer getItemKey();
 
     /**
      * Obtain the list name.
@@ -41,42 +36,8 @@ public interface MetisListKey
     String getListName();
 
     /**
-     * Do the list items reference another list?
-     * @return true/false
+     * Obtain the item name.
+     * @return the item name
      */
-    default boolean hasReferences() {
-        return false;
-    }
-
-    /**
-     * Obtain the nameSpace listKey (if any).
-     * @return the listKey for the nameSpace or null
-     */
-    default MetisListKey getNameSpace() {
-        return null;
-    }
-
-    /**
-     * Obtain the list of Unique fieldIds (if any).
-     * @return the list of fieldIds
-     */
-    default List<MetisDataFieldId> getUniqueFields() {
-        return Collections.emptyList();
-    }
-
-    /**
-     * Obtain the list of Singular fieldIds (if any).
-     * @return the list of fieldIds
-     */
-    default List<MetisDataFieldId> getSingularFields() {
-        return Collections.emptyList();
-    }
-
-    /**
-     * Create a new item for the list.
-     * @param <T> the item type
-     * @param pListSet the listSet
-     * @return the new item
-     */
-    <T extends MetisFieldVersionedItem> T newItem(MetisListSetVersioned pListSet);
+    String getItemName();
 }

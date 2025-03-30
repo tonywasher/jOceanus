@@ -16,14 +16,14 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.prometheus.views;
 
+import net.sourceforge.joceanus.metis.viewer.MetisViewerResource;
+import net.sourceforge.joceanus.oceanus.resource.OceanusBundleId;
+import net.sourceforge.joceanus.oceanus.resource.OceanusBundleLoader;
+import net.sourceforge.joceanus.prometheus.data.PrometheusDataSet;
+
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.ResourceBundle;
-
-import net.sourceforge.joceanus.metis.viewer.MetisViewerResource;
-import net.sourceforge.joceanus.prometheus.data.PrometheusDataSet;
-import net.sourceforge.joceanus.oceanus.resource.OceanusBundleId;
-import net.sourceforge.joceanus.oceanus.resource.OceanusBundleLoader;
 
 /**
  * Resource IDs for jPrometheus View Fields.
@@ -95,7 +95,7 @@ public enum PrometheusViewResource implements OceanusBundleId {
 
     @Override
     public String getNameSpace() {
-        return "jPrometheus.views";
+        return "Prometheus.views";
     }
 
     @Override

@@ -16,16 +16,16 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.moneywise.tax;
 
-import java.util.EnumMap;
-import java.util.Map;
-import java.util.ResourceBundle;
-
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.oceanus.resource.OceanusBundleId;
 import net.sourceforge.joceanus.oceanus.resource.OceanusBundleLoader;
 
+import java.util.EnumMap;
+import java.util.Map;
+import java.util.ResourceBundle;
+
 /**
- * Resource IDs for jMoneyWise Tax Fields.
+ * Resource IDs for MoneyWise Tax Fields.
  */
 public enum MoneyWiseTaxResource
         implements OceanusBundleId, MetisDataFieldId {
@@ -330,7 +330,7 @@ public enum MoneyWiseTaxResource
 
     @Override
     public String getNameSpace() {
-        return "jMoneyWise.tax";
+        return "MoneyWise.tax";
     }
 
     @Override

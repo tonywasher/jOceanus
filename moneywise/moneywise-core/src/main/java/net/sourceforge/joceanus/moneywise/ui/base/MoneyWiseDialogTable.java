@@ -17,11 +17,11 @@
 package net.sourceforge.joceanus.moneywise.ui.base;
 
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
+import net.sourceforge.joceanus.metis.list.MetisListKey;
 import net.sourceforge.joceanus.metis.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.metis.ui.MetisIcon;
 import net.sourceforge.joceanus.moneywise.views.MoneyWiseView;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
-import net.sourceforge.joceanus.prometheus.data.PrometheusListKey;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.tethys.api.button.TethysUIButton;
@@ -57,7 +57,7 @@ public abstract class MoneyWiseDialogTable<T extends PrometheusDataItem>
     protected MoneyWiseDialogTable(final MoneyWiseView pView,
                                    final PrometheusEditSet pEditSet,
                                    final MetisErrorPanel pError,
-                                   final PrometheusListKey pDataType) {
+                                   final MetisListKey pDataType) {
         /* Store parameters */
         super(pView, pEditSet, pError, pDataType);
 

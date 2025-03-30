@@ -18,6 +18,7 @@ package net.sourceforge.joceanus.prometheus.data;
 
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataMap;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataObjectFormat;
+import net.sourceforge.joceanus.metis.list.MetisListKey;
 import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataTouch.PrometheusTouchCounter;
 
@@ -29,11 +30,11 @@ import java.util.Map;
  * Class to record reference to a DataItem via another data item.
  */
 public class PrometheusDataTouch
-        implements MetisDataObjectFormat, MetisDataMap<PrometheusListKey, PrometheusTouchCounter> {
+        implements MetisDataObjectFormat, MetisDataMap<MetisListKey, PrometheusTouchCounter> {
     /**
      * Map of touches.
      */
-    private final Map<PrometheusListKey, PrometheusTouchCounter> theTouchMap;
+    private final Map<MetisListKey, PrometheusTouchCounter> theTouchMap;
 
     /**
      * Constructor.
@@ -44,7 +45,7 @@ public class PrometheusDataTouch
     }
 
     @Override
-    public Map<PrometheusListKey, PrometheusTouchCounter> getUnderlyingMap() {
+    public Map<MetisListKey, PrometheusTouchCounter> getUnderlyingMap() {
         return theTouchMap;
     }
 
@@ -74,7 +75,7 @@ public class PrometheusDataTouch
      * Reset touches for a dataType.
      * @param pItemType the ItemType
      */
-    public void resetTouches(final PrometheusListKey pItemType) {
+    public void resetTouches(final MetisListKey pItemType) {
         theTouchMap.remove(pItemType);
     }
 
@@ -82,7 +83,7 @@ public class PrometheusDataTouch
      * Touch an item.
      * @param pItemType the item type
      */
-    public void touchItem(final PrometheusListKey pItemType) {
+    public void touchItem(final MetisListKey pItemType) {
         /* Access the record for the item type */
         final PrometheusTouchCounter myCounter = getCounter(pItemType);
 
@@ -102,7 +103,7 @@ public class PrometheusDataTouch
      * @param pItemType the item type
      * @return true/false
      */
-    public boolean touchedBy(final PrometheusListKey pItemType) {
+    public boolean touchedBy(final MetisListKey pItemType) {
         /* Access the record for the item type */
         final PrometheusTouchCounter myCounter = getCounter(pItemType);
 
@@ -123,7 +124,7 @@ public class PrometheusDataTouch
      * @param pItemType the item type
      * @return the counter (or null)
      */
-    public PrometheusTouchCounter getCounter(final PrometheusListKey pItemType) {
+    public PrometheusTouchCounter getCounter(final MetisListKey pItemType) {
         return theTouchMap.get(pItemType);
     }
 
@@ -143,7 +144,7 @@ public class PrometheusDataTouch
         /**
          * The item type.
          */
-        private final PrometheusListKey theItemType;
+        private final MetisListKey theItemType;
 
         /**
          * The number of touches.
@@ -154,7 +155,7 @@ public class PrometheusDataTouch
          * Constructor.
          * @param pItemType the item type
          */
-        private PrometheusTouchCounter(final PrometheusListKey pItemType) {
+        private PrometheusTouchCounter(final MetisListKey pItemType) {
             theItemType = pItemType;
             theTouches = 1;
         }
@@ -168,7 +169,7 @@ public class PrometheusDataTouch
          * Obtain the item type.
          * @return the item type
          */
-        public PrometheusListKey getItemType() {
+        public MetisListKey getItemType() {
             return theItemType;
         }
 

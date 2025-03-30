@@ -17,45 +17,26 @@
 package net.sourceforge.joceanus.metis.list;
 
 /**
- * The Event Types.
+ * List Style.
  */
-public enum MetisListEvent {
+public enum MetisListStyle {
     /**
-     * Increment.
+     * Base list.
      */
-    INCREMENT,
+    BASE,
 
     /**
-     * Rewind.
+     * Partial extract of the data for the purposes of editing.
      */
-    REWIND,
+    EDIT,
 
     /**
-     * Version.
+     * List of changes to be applied to database.
      */
-    VERSION,
+    UPDATE,
 
     /**
-     * Refresh.
+     * List of differences.
      */
-    REFRESH,
-
-    /**
-     * Error.
-     */
-    ERROR;
-
-    /**
-     * Does the event have content?
-     * @return true/false
-     */
-    public boolean hasContent() {
-        switch (this) {
-            case INCREMENT:
-            case VERSION:
-                return true;
-            default:
-                return false;
-        }
-    }
+    DIFFER;
 }

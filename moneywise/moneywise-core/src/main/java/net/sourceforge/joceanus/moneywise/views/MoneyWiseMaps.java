@@ -16,6 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.moneywise.views;
 
+import net.sourceforge.joceanus.metis.list.MetisListKey;
 import net.sourceforge.joceanus.metis.viewer.MetisViewerEntry;
 import net.sourceforge.joceanus.metis.viewer.MetisViewerManager;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
@@ -30,7 +31,6 @@ import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataResource;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataSet;
-import net.sourceforge.joceanus.prometheus.data.PrometheusListKey;
 import net.sourceforge.joceanus.prometheus.maps.PrometheusMapsCtl;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
 import net.sourceforge.joceanus.prometheus.views.PrometheusViewerEntryId;
@@ -118,7 +118,7 @@ public class MoneyWiseMaps {
                 t -> ((MoneyWisePayee) t).getCategoryClass().isSingular());
         theMaps.declareFieldIdMap(MoneyWiseBasicDataType.DEPOSIT, PrometheusDataResource.DATAITEM_FIELD_NAME, MoneyWiseBasicDataType.PAYEE);
         theMaps.declareFieldIdMap(MoneyWiseBasicDataType.CASH, PrometheusDataResource.DATAITEM_FIELD_NAME, MoneyWiseBasicDataType.PAYEE);
-        theMaps.declareFieldIdMap(MoneyWiseBasicDataType.LOAN, PrometheusDataResource.DATAITEM_FIELD_NAME,MoneyWiseBasicDataType.PAYEE);
+        theMaps.declareFieldIdMap(MoneyWiseBasicDataType.LOAN, PrometheusDataResource.DATAITEM_FIELD_NAME, MoneyWiseBasicDataType.PAYEE);
         theMaps.declareFieldIdMap(MoneyWiseBasicDataType.PORTFOLIO, PrometheusDataResource.DATAITEM_FIELD_NAME, MoneyWiseBasicDataType.PAYEE);
         theMaps.declareFieldIdMap(MoneyWiseBasicDataType.PORTFOLIO, MoneyWiseBasicResource.CATEGORY_NAME,
                 t -> ((MoneyWisePortfolio) t).getCategoryClass().isSingular());
@@ -141,7 +141,7 @@ public class MoneyWiseMaps {
      * Build the static map.
      * @param pKey the key
      */
-    private void buildStaticMaps(final PrometheusListKey pKey) {
+    private void buildStaticMaps(final MetisListKey pKey) {
         theMaps.declareFieldIdMap(pKey, PrometheusDataResource.DATAITEM_FIELD_NAME);
         theMaps.declareFieldIdMap(pKey, PrometheusDataResource.STATICDATA_SORT);
     }
@@ -149,6 +149,7 @@ public class MoneyWiseMaps {
     /**
      * Deconstruct linkedPair.
      * @param pPair the linked pair
+     * @return the deconstructed items
      */
     private static List<PrometheusDataItem> deconstructPair(final Object pPair) {
         final List<PrometheusDataItem> myList = new ArrayList<>();

@@ -16,10 +16,10 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.prometheus.threads;
 
-import java.util.ResourceBundle;
-
 import net.sourceforge.joceanus.oceanus.resource.OceanusBundleId;
 import net.sourceforge.joceanus.oceanus.resource.OceanusBundleLoader;
+
+import java.util.ResourceBundle;
 
 /**
  * Resource IDs for Prometheus Threads.
@@ -122,7 +122,7 @@ public enum PrometheusThreadResource
 
     @Override
     public String getNameSpace() {
-        return "jPrometheus.thread";
+        return "Prometheus.thread";
     }
 
     @Override

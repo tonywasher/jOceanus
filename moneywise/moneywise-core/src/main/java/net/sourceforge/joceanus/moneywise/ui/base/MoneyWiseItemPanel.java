@@ -18,6 +18,7 @@ package net.sourceforge.joceanus.moneywise.ui.base;
 
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.metis.field.MetisFieldVersionValues;
+import net.sourceforge.joceanus.metis.list.MetisListKey;
 import net.sourceforge.joceanus.moneywise.atlas.views.MoneyWiseXAnalysisFilter;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseAssetBase;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseCategoryBase;
@@ -29,7 +30,6 @@ import net.sourceforge.joceanus.moneywise.ui.MoneyWiseGoToId;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataInfoClass;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataValues.PrometheusInfoSetItem;
-import net.sourceforge.joceanus.prometheus.data.PrometheusListKey;
 import net.sourceforge.joceanus.prometheus.data.PrometheusStaticDataItem;
 import net.sourceforge.joceanus.prometheus.ui.PrometheusGoToEvent;
 import net.sourceforge.joceanus.prometheus.ui.panel.PrometheusDataItemPanel;
@@ -219,12 +219,12 @@ public abstract class MoneyWiseItemPanel<T extends PrometheusDataItem>
         processGoToFilters(pMenu);
 
         /* Create a simple map for top-level categories */
-        final Map<PrometheusListKey, TethysUIScrollSubMenu<TethysUIGenericWrapper>> myMap = new HashMap<>();
+        final Map<MetisListKey, TethysUIScrollSubMenu<TethysUIGenericWrapper>> myMap = new HashMap<>();
 
         /* Loop through the items */
         for (PrometheusDataItem myItem : theGoToItemList) {
             /* Determine DataType and obtain parent menu */
-            final PrometheusListKey myType = myItem.getItemType();
+            final MetisListKey myType = myItem.getItemType();
             final TethysUIScrollSubMenu<TethysUIGenericWrapper> myMenu = myMap.computeIfAbsent(myType, t -> pMenu.addSubMenu(myType.getItemName()));
 
             /* set default values */

@@ -20,9 +20,9 @@ import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.metis.data.MetisDataResource;
 import net.sourceforge.joceanus.metis.field.MetisFieldItem;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
+import net.sourceforge.joceanus.metis.list.MetisListKey;
 import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
-import net.sourceforge.joceanus.prometheus.data.PrometheusListKey;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -119,7 +119,7 @@ public class PrometheusMapsInstanceCtl
      * @param pListKey the listKey
      * @param pFieldId the fieldId
      */
-    void declareFieldIdMap(final PrometheusListKey pListKey,
+    void declareFieldIdMap(final MetisListKey pListKey,
                            final MetisDataFieldId pFieldId) {
         theInstanceMap.declareFieldIdMap(pListKey, pFieldId);
     }
@@ -130,7 +130,7 @@ public class PrometheusMapsInstanceCtl
      * @param pFieldId the fieldId
      * @param pFilter the filter
      */
-    void declareFieldIdMap(final PrometheusListKey pListKey,
+    void declareFieldIdMap(final MetisListKey pListKey,
                            final MetisDataFieldId pFieldId,
                            final Function<PrometheusDataItem, Boolean> pFilter) {
         theInstanceMap.declareFieldIdMap(pListKey, pFieldId, pFilter);
@@ -142,9 +142,9 @@ public class PrometheusMapsInstanceCtl
      * @param pFieldId the fieldId
      * @param pSharedKey the shared listKey
      */
-    void declareFieldIdMap(final PrometheusListKey pListKey,
+    void declareFieldIdMap(final MetisListKey pListKey,
                            final MetisDataFieldId pFieldId,
-                           final PrometheusListKey pSharedKey) {
+                           final MetisListKey pSharedKey) {
         theInstanceMap.declareFieldIdMap(pListKey, pFieldId, pSharedKey);
     }
 
@@ -155,7 +155,7 @@ public class PrometheusMapsInstanceCtl
      * @param pDateId the dateId
      * @param pAllowNull do we allow null value?
      */
-    void declareDateIdMap(final PrometheusListKey pListKey,
+    void declareDateIdMap(final MetisListKey pListKey,
                           final MetisDataFieldId pOwnerId,
                           final MetisDataFieldId pDateId,
                           final boolean pAllowNull) {
@@ -188,7 +188,7 @@ public class PrometheusMapsInstanceCtl
      * @param pKey the key
      * @return true/false
      */
-    boolean isKeyAvailable(final PrometheusListKey pListKey,
+    boolean isKeyAvailable(final MetisListKey pListKey,
                            final MetisDataFieldId pFieldId,
                            final Object pKey) {
         return theInstanceMap.isKeyAvailable(pListKey, pFieldId, pKey);
@@ -201,7 +201,7 @@ public class PrometheusMapsInstanceCtl
      * @param pKey the key
      * @return the item
      */
-    PrometheusDataItem getItemForKey(final PrometheusListKey pListKey,
+    PrometheusDataItem getItemForKey(final MetisListKey pListKey,
                                      final MetisDataFieldId pFieldId,
                                      final Object pKey) {
         return theInstanceMap.getItemForKey(pListKey, pFieldId, pKey);
