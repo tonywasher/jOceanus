@@ -16,15 +16,15 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.tethys.swing.menu;
 
-import javax.swing.JButton;
-import javax.swing.JToolBar;
-import javax.swing.SwingConstants;
-
 import net.sourceforge.joceanus.tethys.core.factory.TethysUICoreFactory;
 import net.sourceforge.joceanus.tethys.core.menu.TethysUICoreToolBarManager;
 import net.sourceforge.joceanus.tethys.swing.base.TethysUISwingIcon;
 import net.sourceforge.joceanus.tethys.swing.base.TethysUISwingNode;
 import net.sourceforge.joceanus.tethys.swing.base.TethysUISwingUtils;
+
+import javax.swing.JButton;
+import javax.swing.JToolBar;
+import javax.swing.SwingConstants;
 
 /**
  * JavaFX ToolBar Manager.
@@ -150,7 +150,7 @@ public class TethysUISwingToolBarManager
          * @param pIcon the icon
          */
         private void setIcon(final TethysUIToolBarId pIcon) {
-            theButton.setIcon(TethysUISwingIcon.getIcon(TethysUISwingUtils.getIconAtSize(pIcon, getManager().getIconWidth())));
+            theButton.setIcon(TethysUISwingIcon.getIcon(TethysUISwingUtils.getIconAtSize(pIcon, getManager().getIconSize())));
         }
 
         @Override

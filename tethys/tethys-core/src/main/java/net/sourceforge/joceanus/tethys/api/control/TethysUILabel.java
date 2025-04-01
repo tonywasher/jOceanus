@@ -17,7 +17,10 @@
 package net.sourceforge.joceanus.tethys.api.control;
 
 import net.sourceforge.joceanus.tethys.api.base.TethysUIAlignment;
+import net.sourceforge.joceanus.tethys.api.base.TethysUIArrowIconId;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIComponent;
+import net.sourceforge.joceanus.tethys.api.base.TethysUIIcon;
+import net.sourceforge.joceanus.tethys.api.base.TethysUIIconId;
 import net.sourceforge.joceanus.tethys.api.menu.TethysUIScrollMenu;
 
 /**
@@ -53,4 +56,54 @@ public interface TethysUILabel
      * @param pMenu the context menu.
      */
     void setContextMenu(TethysUIScrollMenu<?> pMenu);
+
+    /**
+     * Set Icon only.
+     */
+    void setIconOnly();
+
+    /**
+     * Set Text And Icon.
+     */
+    void setTextAndIcon();
+
+    /**
+     * Set Icon and Text.
+     */
+    void setIconAndText();
+
+    /**
+     * Set Text Only.
+     */
+    void setTextOnly();
+
+    /**
+     * Set icon for label.
+     * @param pId the icon Id
+     */
+    void setIcon(TethysUIIconId pId);
+
+    /**
+     * Set icon for label.
+     * @param pIcon the icon
+     */
+    void setIcon(TethysUIArrowIconId pIcon);
+
+    /**
+     * Set icon for label.
+     * @param pIcon the icon
+     */
+    void setIcon(TethysUIIcon pIcon);
+
+    /**
+     * Obtain icon size.
+     * @return the size
+     */
+    int getIconSize();
+
+    /**
+     * Set the icon size.
+     * @param pSize the size to set
+     */
+    void setIconSize(int pSize);
 }

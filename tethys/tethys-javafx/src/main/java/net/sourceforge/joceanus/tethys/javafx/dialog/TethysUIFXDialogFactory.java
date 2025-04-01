@@ -72,6 +72,11 @@ public class TethysUIFXDialogFactory
     }
 
     @Override
+    public TethysUIFXBusySpinner newBusySpinner() {
+        return new TethysUIFXBusySpinner(theFactory, theStage);
+    }
+
+    @Override
     public TethysUIPasswordDialog newPasswordDialog(final String pTitle,
                                                     final boolean pNeedConfirm) {
         return TethysUIFXPasswordDialog.createTheDialog(theFactory, theStage, pTitle, pNeedConfirm);

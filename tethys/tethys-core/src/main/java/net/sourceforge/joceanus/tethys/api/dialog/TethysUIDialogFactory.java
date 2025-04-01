@@ -58,4 +58,10 @@ public interface TethysUIDialogFactory {
      * @return the new child dialog
      */
     TethysUIChildDialog newChildDialog();
+
+    /**
+     * Obtain a new busy Spinner.
+     * @return the new busy Spinner
+     */
+    TethysUIBusySpinner newBusySpinner();
 }

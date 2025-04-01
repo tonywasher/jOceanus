@@ -17,15 +17,22 @@
 package net.sourceforge.joceanus.tethys.javafx.control;
 
 import javafx.geometry.Pos;
+import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.paint.Color;
 
 import net.sourceforge.joceanus.tethys.api.base.TethysUIAlignment;
+import net.sourceforge.joceanus.tethys.api.base.TethysUIArrowIconId;
+import net.sourceforge.joceanus.tethys.api.base.TethysUIIcon;
+import net.sourceforge.joceanus.tethys.api.base.TethysUIIconId;
 import net.sourceforge.joceanus.tethys.api.menu.TethysUIScrollMenu;
 import net.sourceforge.joceanus.tethys.core.factory.TethysUICoreFactory;
 import net.sourceforge.joceanus.tethys.core.control.TethysUICoreLabel;
+import net.sourceforge.joceanus.tethys.javafx.base.TethysUIFXArrowIcon;
+import net.sourceforge.joceanus.tethys.javafx.base.TethysUIFXIcon;
 import net.sourceforge.joceanus.tethys.javafx.base.TethysUIFXNode;
+import net.sourceforge.joceanus.tethys.javafx.base.TethysUIFXUtils;
 import net.sourceforge.joceanus.tethys.javafx.menu.TethysUIFXScrollMenu;
 
 /**
@@ -63,11 +70,27 @@ public final class TethysUIFXLabel
         theLabel = new Label();
         theNode = new TethysUIFXNode(theLabel);
         setAlignment(TethysUIAlignment.WEST);
+        setTextOnly();
     }
 
     @Override
     public void setText(final String pText) {
         theLabel.setText(pText);
+    }
+
+    @Override
+    public void setIcon(final TethysUIArrowIconId pIcon) {
+        setIcon(TethysUIFXArrowIcon.getIconForId(pIcon));
+    }
+
+    @Override
+    public void setIcon(final TethysUIIconId pId) {
+        setIcon(TethysUIFXUtils.getIconAtSize(pId, getIconSize()));
+    }
+
+    @Override
+    public void setIcon(final TethysUIIcon pIcon) {
+        theLabel.setGraphic(TethysUIFXIcon.getIcon(pIcon));
     }
 
     @Override
@@ -148,6 +171,36 @@ public final class TethysUIFXLabel
             default:
                 return Pos.BOTTOM_RIGHT;
         }
+    }
+
+    @Override
+    public void setIconOnly() {
+        theLabel.setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
+        theLabel.setAlignment(Pos.CENTER);
+        theLabel.setMaxWidth(Double.MAX_VALUE);
+    }
+
+    @Override
+    public void setTextAndIcon() {
+        theLabel.setContentDisplay(ContentDisplay.RIGHT);
+        theLabel.setAlignment(Pos.CENTER);
+        theLabel.setMaxWidth(Double.MAX_VALUE);
+        theLabel.setMaxHeight(Double.MAX_VALUE);
+    }
+
+    @Override
+    public void setIconAndText() {
+        theLabel.setContentDisplay(ContentDisplay.LEFT);
+        theLabel.setAlignment(Pos.CENTER);
+        theLabel.setMaxWidth(Double.MAX_VALUE);
+        theLabel.setMaxHeight(Double.MAX_VALUE);
+    }
+
+    @Override
+    public void setTextOnly() {
+        theLabel.setContentDisplay(ContentDisplay.TEXT_ONLY);
+        theLabel.setAlignment(Pos.CENTER);
+        theLabel.setMaxWidth(Double.MAX_VALUE);
     }
 
     @Override

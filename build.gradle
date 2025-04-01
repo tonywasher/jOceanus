@@ -56,10 +56,10 @@ allprojects {
         javaFXPluginVersion = "0.1.0"
 
         /* Annotation versions */
-        jetBrainsAnnotationsVersion = "26.0.1"
+        jetBrainsAnnotationsVersion = "26.0.2"
 
         /* checkStyle config */
-        checkStyleVersion = "10.21.4"
+        checkStyleVersion = "10.22.0"
         checkStyleConfig = "$rootDir/src/main/checkstyle/checks.xml"
 
         /* pmd config */

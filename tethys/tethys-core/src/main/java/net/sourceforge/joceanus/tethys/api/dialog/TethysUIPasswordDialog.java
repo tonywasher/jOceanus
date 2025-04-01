@@ -46,6 +46,7 @@ public interface TethysUIPasswordDialog {
 
     /**
      * report a bad password.
+     * @param pError the error details
      */
-    void reportBadPassword();
+    void reportBadPassword(String pError);
 }

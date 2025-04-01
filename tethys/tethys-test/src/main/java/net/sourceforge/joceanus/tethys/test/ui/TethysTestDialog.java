@@ -16,8 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.tethys.test.ui;
 
-import java.io.File;
-
 import net.sourceforge.joceanus.tethys.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.tethys.api.button.TethysUIButton;
@@ -26,6 +24,7 @@ import net.sourceforge.joceanus.tethys.api.control.TethysUIControlFactory;
 import net.sourceforge.joceanus.tethys.api.control.TethysUILabel;
 import net.sourceforge.joceanus.tethys.api.dialog.TethysUIAboutBox;
 import net.sourceforge.joceanus.tethys.api.dialog.TethysUIAlert;
+import net.sourceforge.joceanus.tethys.api.dialog.TethysUIBusySpinner;
 import net.sourceforge.joceanus.tethys.api.dialog.TethysUIChildDialog;
 import net.sourceforge.joceanus.tethys.api.dialog.TethysUIDialogFactory;
 import net.sourceforge.joceanus.tethys.api.dialog.TethysUIDirectorySelector;
@@ -36,6 +35,8 @@ import net.sourceforge.joceanus.tethys.api.pane.TethysUIBorderPaneManager;
 import net.sourceforge.joceanus.tethys.api.pane.TethysUIBoxPaneManager;
 import net.sourceforge.joceanus.tethys.api.pane.TethysUIPaneFactory;
 
+import java.io.File;
+
 /**
  * Test Dialog options.
  */
@@ -44,6 +45,16 @@ public class TethysTestDialog {
      * The Panel.
      */
     private final TethysUIBoxPaneManager thePane;
+
+    /**
+     * The Panel.
+     */
+    private TethysUIBusySpinner theSpinner;
+
+    /**
+     * The Panel.
+     */
+    private boolean isBusy;
 
     /**
      * Constructor.
@@ -60,8 +71,25 @@ public class TethysTestDialog {
         /* Create the Alert button */
         final TethysUILabel myResult = myControls.newLabel();
 
-        /* Create the Error button */
+        /* Create the Busy button */
         TethysUIButton myButton = myButtons.newButton();
+        myButton.setText("Busy");
+        myButton.getEventRegistrar().addEventListener(TethysUIEvent.PRESSED, e -> {
+            if (theSpinner == null) {
+                theSpinner = myDialogs.newBusySpinner();
+            }
+            if (isBusy) {
+                theSpinner.closeDialog();
+                isBusy = false;
+            } else {
+                theSpinner.showDialog();
+                isBusy = true;
+            }
+        });
+        thePane.addNode(myButton);
+
+        /* Create the Error button */
+        myButton = myButtons.newButton();
         myButton.setText("Error");
         myButton.getEventRegistrar().addEventListener(TethysUIEvent.PRESSED, e -> {
             final TethysUIAlert myAlert = myDialogs.newAlert();

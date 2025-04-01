@@ -16,6 +16,17 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.tethys.swing.base;
 
+import net.sourceforge.joceanus.oceanus.convert.OceanusDataConverter;
+import net.sourceforge.joceanus.oceanus.logger.OceanusLogManager;
+import net.sourceforge.joceanus.oceanus.logger.OceanusLogger;
+import net.sourceforge.joceanus.tethys.api.base.TethysUIIconId;
+
+import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import javax.swing.SwingConstants;
+import javax.swing.border.Border;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -29,18 +40,6 @@ import java.awt.Image;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.io.IOException;
-
-import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import javax.swing.SwingConstants;
-import javax.swing.border.Border;
-
-import net.sourceforge.joceanus.oceanus.convert.OceanusDataConverter;
-import net.sourceforge.joceanus.oceanus.logger.OceanusLogManager;
-import net.sourceforge.joceanus.oceanus.logger.OceanusLogger;
-import net.sourceforge.joceanus.tethys.api.base.TethysUIIconId;
 
 /**
  * Simple UI Utilities for Swing.
@@ -473,19 +472,19 @@ public final class TethysUISwingUtils {
     /**
      * Obtain the reSized icon.
      * @param pId the icon Id
-     * @param pWidth the new width for the icon
+     * @param pSize the new size for the icon
      * @return the icon
      */
     public static TethysUISwingIcon getIconAtSize(final TethysUIIconId pId,
-                                                  final int pWidth) {
+                                                  final int pSize) {
         final TethysUISwingIcon mySource = getIcon(pId);
         if (mySource == null) {
             return null;
         }
         final Image myImage = mySource.getImage();
-        final Image myNewImage = myImage.getScaledInstance(pWidth,
-                                                           pWidth,
-                                                           Image.SCALE_SMOOTH);
+        final Image myNewImage = myImage.getScaledInstance(pSize,
+                                                           pSize,
+                                                           Image.SCALE_DEFAULT);
         final ImageIcon myIcon = new ImageIcon(myNewImage);
         return new TethysUISwingIcon(myIcon);
     }

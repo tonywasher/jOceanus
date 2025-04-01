@@ -31,9 +31,9 @@ public abstract class TethysUICoreButton
         extends TethysUICoreComponent
         implements TethysUIButton {
     /**
-     * Default icon width.
+     * Default icon size.
      */
-    protected static final int DEFAULT_ICONWIDTH = TethysUIConstant.DEFAULT_ICONWIDTH;
+    protected static final int DEFAULT_ICONSIZE = TethysUIConstant.DEFAULT_ICONSIZE;
 
     /**
      * Event Manager.
@@ -46,9 +46,9 @@ public abstract class TethysUICoreButton
     private final Integer theId;
 
     /**
-     * The icon Width.
+     * The icon Size.
      */
-    private int theWidth;
+    private int theSize;
 
     /**
      * Constructor.
@@ -57,7 +57,7 @@ public abstract class TethysUICoreButton
     protected TethysUICoreButton(final TethysUICoreFactory<?> pFactory) {
         theId = pFactory.getNextId();
         theEventManager = new OceanusEventManager<>();
-        theWidth = DEFAULT_ICONWIDTH;
+        theSize = DEFAULT_ICONSIZE;
     }
 
     @Override
@@ -71,14 +71,13 @@ public abstract class TethysUICoreButton
     }
 
     @Override
-    public int getIconWidth() {
-        return theWidth;
+    public int getIconSize() {
+        return theSize;
     }
 
     @Override
-    public void setIconWidth(final int pWidth) {
-        /* Store the width */
-        theWidth = pWidth;
+    public void setIconSize(final int pSize) {
+         theSize = pSize;
     }
 
     /**

@@ -16,13 +16,13 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.tethys.api.control;
 
-import java.util.Iterator;
-import java.util.function.Consumer;
-import java.util.function.Supplier;
-
 import net.sourceforge.joceanus.oceanus.date.OceanusDateConfig;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIIconId;
 import net.sourceforge.joceanus.tethys.api.menu.TethysUIScrollMenu;
+
+import java.util.Iterator;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 /**
  * General interfaces.
@@ -45,10 +45,10 @@ public interface TethysUIControl {
      */
     interface TethysUIIconMapSet<T> {
         /**
-         * Obtain the iconWidth.
-         * @return the iconWidth
+         * Obtain the iconSize.
+         * @return the iconSize
          */
-        int getWidth();
+        int getSize();
 
         /**
          * Clear the mapSet.

@@ -16,21 +16,21 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.tethys.core.button;
 
-import java.util.Objects;
-import java.util.function.Consumer;
-
 import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIArrowIconId;
+import net.sourceforge.joceanus.tethys.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIIconId;
 import net.sourceforge.joceanus.tethys.api.base.TethysUINode;
-import net.sourceforge.joceanus.tethys.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.tethys.api.button.TethysUIButton;
 import net.sourceforge.joceanus.tethys.api.button.TethysUIScrollButtonManager;
 import net.sourceforge.joceanus.tethys.api.menu.TethysUIScrollItem;
 import net.sourceforge.joceanus.tethys.api.menu.TethysUIScrollMenu;
 import net.sourceforge.joceanus.tethys.core.base.TethysUICoreComponent;
 import net.sourceforge.joceanus.tethys.core.factory.TethysUICoreFactory;
+
+import java.util.Objects;
+import java.util.function.Consumer;
 
 /**
  * ScrollButton Manager.
@@ -219,10 +219,10 @@ public abstract class TethysUICoreScrollButtonManager<T>
     /**
      * Set Icon.
      * @param pId the IconId
-     * @param pWidth the icon width
+     * @param pSize the icon size
      */
     protected abstract void setIcon(TethysUIIconId pId,
-                                    int pWidth);
+                                    int pSize);
 
     @Override
     public void setEnabled(final boolean pEnabled) {

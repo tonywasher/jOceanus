@@ -16,23 +16,23 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.tethys.core.button;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.function.Supplier;
-
 import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIConstant;
+import net.sourceforge.joceanus.tethys.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIIcon;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIIconId;
 import net.sourceforge.joceanus.tethys.api.base.TethysUINode;
-import net.sourceforge.joceanus.tethys.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.tethys.api.button.TethysUIButton;
 import net.sourceforge.joceanus.tethys.api.button.TethysUIIconButtonManager;
 import net.sourceforge.joceanus.tethys.api.control.TethysUIControl.TethysUIIconMapSet;
 import net.sourceforge.joceanus.tethys.core.base.TethysUICoreComponent;
 import net.sourceforge.joceanus.tethys.core.factory.TethysUICoreFactory;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.function.Supplier;
 
 /**
  * IconButton Manager.
@@ -74,9 +74,9 @@ public abstract class TethysUICoreIconButtonManager<T>
     private final Class<T> theClazz;
 
     /**
-     * The icon Width.
+     * The icon Size.
      */
-    private int theWidth;
+    private int theSize;
 
     /**
      * The value.
@@ -145,12 +145,12 @@ public abstract class TethysUICoreIconButtonManager<T>
     }
 
     /**
-     * Check the icon width.
-     * @param pWidth the iconWidth
+     * Check the icon size.
+     * @param pSize the iconSize
      */
-    private void checkWidth(final int pWidth) {
-        if (theWidth != pWidth) {
-            theWidth = pWidth;
+    private void checkSize(final int pSize) {
+        if (theSize != pSize) {
+            theSize = pSize;
             theIconMap.clear();
         }
     }
@@ -194,7 +194,7 @@ public abstract class TethysUICoreIconButtonManager<T>
         /* Access MapSet and check iconWidth */
         final TethysUIIconMapSet<T> myMapSet = theMapSet.get();
         if (myMapSet != null) {
-            checkWidth(myMapSet.getWidth());
+            checkSize(myMapSet.getSize());
         }
 
         /* Access Icon and ToolTip */
@@ -222,7 +222,7 @@ public abstract class TethysUICoreIconButtonManager<T>
         }
 
         /* Look up icon */
-        return theIconMap.computeIfAbsent(pIconId, i -> theFactory.resolveIcon(i, theWidth));
+        return theIconMap.computeIfAbsent(pIconId, i -> theFactory.resolveIcon(i, theSize));
     }
 
     @Override
@@ -269,9 +269,9 @@ public abstract class TethysUICoreIconButtonManager<T>
     public static class TethysUICoreIconMapSet<T>
             implements TethysUIIconMapSet<T> {
         /**
-         * The icon Width.
+         * The icon Size.
          */
-        private final int theWidth;
+        private final int theSize;
 
         /**
          * Value Map.
@@ -292,16 +292,16 @@ public abstract class TethysUICoreIconButtonManager<T>
          * Constructor.
          */
         public TethysUICoreIconMapSet() {
-            this(TethysUIConstant.DEFAULT_ICONWIDTH);
+            this(TethysUIConstant.DEFAULT_ICONSIZE);
         }
 
         /**
          * Constructor.
-         * @param pWidth the icon width
+         * @param pSize the icon Size
          */
-        public TethysUICoreIconMapSet(final int pWidth) {
+        public TethysUICoreIconMapSet(final int pSize) {
             /* Store parameters */
-            theWidth = pWidth;
+            theSize = pSize;
 
             /* Allocate the maps */
             theValueMap = new HashMap<>();
@@ -310,8 +310,8 @@ public abstract class TethysUICoreIconButtonManager<T>
         }
 
         @Override
-        public int getWidth() {
-            return theWidth;
+        public int getSize() {
+            return theSize;
         }
 
         @Override

@@ -16,6 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.prometheus.security;
 
+import net.sourceforge.joceanus.tethys.api.dialog.TethysUIBusySpinner;
+import net.sourceforge.joceanus.tethys.api.dialog.TethysUIDialogFactory;
 import net.sourceforge.joceanus.tethys.api.dialog.TethysUIPasswordDialog;
 import net.sourceforge.joceanus.tethys.api.factory.TethysUIFactory;
 
@@ -35,6 +37,11 @@ public class PrometheusSecurityDefaultDialog
     private TethysUIPasswordDialog theDialog;
 
     /**
+     * Busy Spinner.
+     */
+    private TethysUIBusySpinner theBusy;
+
+    /**
      * Constructor.
      * @param pFactory the factory
      */
@@ -46,12 +53,24 @@ public class PrometheusSecurityDefaultDialog
     public void createTheDialog(final String pTitle,
                                 final boolean pNeedConfirm) {
         /* Create the dialog */
-        theDialog = theFactory.dialogFactory().newPasswordDialog(pTitle, pNeedConfirm);
+        final TethysUIDialogFactory myDialogs = theFactory.dialogFactory();
+        theDialog = myDialogs.newPasswordDialog(pTitle, pNeedConfirm);
+        theBusy = myDialogs.newBusySpinner();
     }
 
     @Override
     public boolean showTheDialog() {
+        theBusy.closeDialog();
         return theDialog.showDialog();
+    }
+
+    @Override
+    public void showTheSpinner(final boolean pShow) {
+        if (pShow) {
+            theBusy.showDialog();
+        } else {
+            theBusy.closeDialog();
+        }
     }
 
     @Override
@@ -60,12 +79,13 @@ public class PrometheusSecurityDefaultDialog
     }
 
     @Override
-    public void reportBadPassword() {
-        theDialog.reportBadPassword();
+    public void reportBadPassword(final String pError) {
+        theDialog.reportBadPassword(pError);
     }
 
     @Override
     public void releaseDialog() {
+        theBusy.closeDialog();
         theDialog.release();
         theDialog = null;
     }

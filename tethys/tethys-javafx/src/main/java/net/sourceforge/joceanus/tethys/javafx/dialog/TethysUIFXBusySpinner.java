@@ -21,25 +21,15 @@ import javafx.scene.layout.Region;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import net.sourceforge.joceanus.tethys.core.dialog.TethysUICoreAboutBox;
+import net.sourceforge.joceanus.tethys.core.dialog.TethysUICoreBusySpinner;
 import net.sourceforge.joceanus.tethys.core.factory.TethysUICoreFactory;
 import net.sourceforge.joceanus.tethys.javafx.base.TethysUIFXNode;
 
 /**
  * javaFX About Box.
  */
-public class TethysUIFXAboutBox
-        extends TethysUICoreAboutBox {
-    /**
-     * approximate width.
-     */
-    private static final int APPROX_WIDTH = 200;
-
-    /**
-     * approximate height.
-     */
-    private static final int APPROX_HEIGHT = 100;
-
+public class TethysUIFXBusySpinner
+        extends TethysUICoreBusySpinner {
     /**
      * The Scene register.
      */
@@ -65,8 +55,8 @@ public class TethysUIFXAboutBox
      * @param pFactory the GUI factory
      * @param pStage the stage
      */
-    TethysUIFXAboutBox(final TethysUICoreFactory<?> pFactory,
-                       final Stage pStage) {
+    TethysUIFXBusySpinner(final TethysUICoreFactory<?> pFactory,
+                          final Stage pStage) {
         /* Initialise underlying class */
         super(pFactory);
         if (pStage == null) {
@@ -92,8 +82,8 @@ public class TethysUIFXAboutBox
         }
 
         /* Centre on parent */
-        final double myX = (theStage.getWidth() - APPROX_WIDTH) / 2;
-        final double myY = (theStage.getHeight() - APPROX_HEIGHT) / 2;
+        final double myX = (theStage.getWidth() - SPINNER_SIZE) / 2;
+        final double myY = (theStage.getHeight() - SPINNER_SIZE) / 2;
         theDialog.setX(theStage.getX() + myX);
         theDialog.setY(theStage.getY() + myY);
 
@@ -108,7 +98,7 @@ public class TethysUIFXAboutBox
         /* Create the dialog */
         theDialog = new Stage(StageStyle.UNDECORATED);
         theDialog.initOwner(theStage);
-        theDialog.initModality(Modality.WINDOW_MODAL);
+        theDialog.initModality(Modality.NONE);
 
         /* Define style of Box */
         thePanel.getStyleClass().add("-jtethys-about");
@@ -130,7 +120,9 @@ public class TethysUIFXAboutBox
     }
 
     @Override
-    protected void closeDialog() {
-        theDialog.close();
+    public void closeDialog() {
+        if (theDialog != null) {
+            theDialog.close();
+        }
     }
 }

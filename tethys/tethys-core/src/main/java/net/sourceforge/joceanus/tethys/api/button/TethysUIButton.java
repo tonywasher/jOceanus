@@ -34,16 +34,16 @@ import net.sourceforge.joceanus.tethys.api.base.TethysUIEvent;
 public interface TethysUIButton
         extends OceanusEventProvider<TethysUIEvent>, TethysUIComponent {
     /**
-     * Obtain width.
-     * @return the width
+     * Obtain icon size.
+     * @return the size
      */
-    int getIconWidth();
+    int getIconSize();
 
     /**
-     * Set the width.
-     * @param pWidth the width to set
+     * Set the icon size.
+     * @param pSize the size to set
      */
-    void setIconWidth(int pWidth);
+    void setIconSize(int pSize);
 
     /**
      * Set text for button.
@@ -89,6 +89,11 @@ public interface TethysUIButton
      * Set Text And Icon.
      */
     void setTextAndIcon();
+
+    /**
+     * Set Icon and Text.
+     */
+    void setIconAndText();
 
     /**
      * Set Text Only.

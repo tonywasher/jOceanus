@@ -189,7 +189,7 @@ public class MetisViewerControl
                                                                              final K pId) {
         pButton.setIconOnly();
         pButton.setIcon(pId);
-        pButton.setIconWidth(ICON_SIZE);
+        pButton.setIconSize(ICON_SIZE);
         pButton.setNullMargins();
     }
 

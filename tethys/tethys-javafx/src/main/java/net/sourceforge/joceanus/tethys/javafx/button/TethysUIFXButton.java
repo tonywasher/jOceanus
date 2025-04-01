@@ -91,7 +91,7 @@ public class TethysUIFXButton
 
     @Override
     public void setIcon(final TethysUIIconId pId) {
-        setIcon(TethysUIFXUtils.getIconAtSize(pId, getIconWidth()));
+        setIcon(TethysUIFXUtils.getIconAtSize(pId, getIconSize()));
     }
 
     @Override
@@ -122,6 +122,14 @@ public class TethysUIFXButton
     @Override
     public void setTextAndIcon() {
         theButton.setContentDisplay(ContentDisplay.RIGHT);
+        theButton.setAlignment(Pos.CENTER);
+        theButton.setMaxWidth(Double.MAX_VALUE);
+        theButton.setMaxHeight(Double.MAX_VALUE);
+    }
+
+    @Override
+    public void setIconAndText() {
+        theButton.setContentDisplay(ContentDisplay.LEFT);
         theButton.setAlignment(Pos.CENTER);
         theButton.setMaxWidth(Double.MAX_VALUE);
         theButton.setMaxHeight(Double.MAX_VALUE);

@@ -90,7 +90,7 @@
     <JavaVersion>17</JavaVersion>
     <JavaFXVersion>17.0.14</JavaFXVersion>
     <JavaLanguageVersion>17</JavaLanguageVersion>
-    <CheckStyleVersion>10.21.4</CheckStyleVersion>
+    <CheckStyleVersion>10.22.0</CheckStyleVersion>
     <PMDVersion>7.12.0</PMDVersion>
     <CleanPluginVersion>3.4.1</CleanPluginVersion>
     <ResourcesPluginVersion>3.3.1</ResourcesPluginVersion>
@@ -116,7 +116,7 @@
     <PMDPluginVersion>3.26.0</PMDPluginVersion>
     <JacocoPluginVersion>0.8.12</JacocoPluginVersion>
     <GPGPluginVersion>3.2.7</GPGPluginVersion>
-    <JetBrainsAnnotationsVersion>26.0.1</JetBrainsAnnotationsVersion>
+    <JetBrainsAnnotationsVersion>26.0.2</JetBrainsAnnotationsVersion>
     <VersionsPluginVersion>2.18.0</VersionsPluginVersion>
     <sonar.organization>tonywasher</sonar.organization>
     <sonar.projectKey>jOceanus</sonar.projectKey>

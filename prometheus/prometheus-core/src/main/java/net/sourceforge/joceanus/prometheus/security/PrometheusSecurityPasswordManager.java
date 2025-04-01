@@ -44,6 +44,11 @@ import java.util.Arrays;
  */
 public class PrometheusSecurityPasswordManager {
     /**
+     * Text for Bad Password Error.
+     */
+    private static final String NLS_ERRORPASS = PrometheusSecurityResource.SECURITY_BAD_PASSWORD.getValue();
+
+    /**
      * Security factory.
      */
     private final GordianFactory theFactory;
@@ -433,7 +438,15 @@ public class PrometheusSecurityPasswordManager {
                 /* Access the password */
                 myPassword = theDialog.getPassword();
 
+                /* Validate the password */
+                final String myError = PrometheusPassCheck.validatePassword(myPassword);
+                if (myError != null) {
+                    theDialog.reportBadPassword(myError);
+                    continue;
+                }
+
                 /* Process the password */
+                theDialog.showTheSpinner(true);
                 myResult = pProcessor.processPassword(myPassword);
 
                 /* No exception so we are good to go */
@@ -441,7 +454,7 @@ public class PrometheusSecurityPasswordManager {
                 break;
 
             } catch (GordianBadCredentialsException e) {
-                theDialog.reportBadPassword();
+                theDialog.reportBadPassword(NLS_ERRORPASS);
                 if (myPassword != null) {
                     Arrays.fill(myPassword, (char) 0);
                 }
@@ -460,7 +473,7 @@ public class PrometheusSecurityPasswordManager {
         /* If we did not get a password */
         if (!isPasswordOk) {
             /* Throw an exception */
-            throw new PrometheusDataException("Invalid Password");
+            throw new PrometheusDataException(NLS_ERRORPASS);
         }
 
         /* Return the result */
@@ -601,6 +614,116 @@ public class PrometheusSecurityPasswordManager {
 
         } catch (GordianException e) {
             throw new PrometheusSecurityException(e);
+        }
+    }
+
+    /**
+     * Password Check enum.
+     */
+    private enum PrometheusPassCheck {
+        /**
+         * Numeric.
+         */
+        NUMERIC(1),
+
+        /**
+         * Lowercase.
+         */
+        LOWERCASE(2),
+
+        /**
+         * Numeric.
+         */
+        UPPERCASE(4),
+
+        /**
+         * Special.
+         */
+        SPECIAL(8);
+
+        /**
+         * Text for Bad Length Error.
+         */
+        private static final String NLS_BADLENGTH = PrometheusSecurityResource.SECURITY_BAD_PASSLEN.getValue();
+
+        /**
+         * Text for Invalid characters Error.
+         */
+        private static final String NLS_BADCHAR = PrometheusSecurityResource.SECURITY_INVALID_CHARS.getValue();
+
+        /**
+         * Special characters.
+         */
+        private static final String SPECIAL_CHARS = "%$^!@-_+~#&*";
+
+        /**
+         * Minimum password length.
+         */
+        private static final int MINPASSLEN = 8;
+
+        /**
+         * The flag.
+         */
+        private final int theFlag;
+
+        /**
+         * Constructor.
+         * @param pFlag the flag
+         */
+        PrometheusPassCheck(final int pFlag) {
+            theFlag = pFlag;
+        }
+
+        /**
+         * Obtain the flag.
+         * @return the flag
+         */
+        private int getFlag() {
+            return theFlag;
+        }
+
+        /**
+         * Check password.
+         * @param pPassword the password
+         * @return the error message (or null)
+         */
+        static String validatePassword(final char[] pPassword) {
+            /* Password must be at least 8 characters in length */
+            if (pPassword.length < MINPASSLEN) {
+                return NLS_BADLENGTH;
+            }
+
+            /* Loop through the password ensuring that it has at least one of each type */
+            int myResult = 0;
+            for (char c : pPassword) {
+                if (Character.isDigit(c)) {
+                    myResult |= NUMERIC.getFlag();
+                } else if (Character.isLowerCase(c)) {
+                    myResult |= LOWERCASE.getFlag();
+                } else if (Character.isUpperCase(c)) {
+                    myResult |= UPPERCASE.getFlag();
+                } else if (SPECIAL_CHARS.indexOf(c) != -1) {
+                    myResult |= SPECIAL.getFlag();
+                }
+            }
+
+            /* If we do not have at least one of each */
+            if (myResult != getExpectedResult()) {
+                return NLS_BADCHAR;
+            }
+            return null;
+        }
+
+        /**
+         * Obtain expected result.
+         * @return the expected result
+         */
+        private static int getExpectedResult() {
+            int myResult = 0;
+            for (PrometheusPassCheck myCheck : values()) {
+                myResult |= myCheck.getFlag();
+            }
+            return myResult;
         }
     }
 }

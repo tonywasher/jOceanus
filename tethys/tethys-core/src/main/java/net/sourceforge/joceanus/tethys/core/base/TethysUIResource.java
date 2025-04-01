@@ -111,24 +111,9 @@ public enum TethysUIResource implements OceanusBundleId {
     PASS_TITLE_ERROR("pass.title.error"),
 
     /**
-     * Error Bad Password.
-     */
-    PASS_ERROR_BADPASS("pass.error.badPassword"),
-
-    /**
      * Error Confirm.
      */
     PASS_ERROR_CONFIRM("pass.error.confirm"),
-
-    /**
-     * Error length 1.
-     */
-    PASS_ERROR_LENGTH1("pass.error.length1"),
-
-    /**
-     * Error length 2.
-     */
-    PASS_ERROR_LENGTH2("pass.error.length2"),
 
     /**
      * CurrentDay.

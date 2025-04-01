@@ -158,7 +158,7 @@ public class TethysUIFXToolBarManager
          * @param pIcon the icon
          */
         private void setIcon(final TethysUIToolBarId pIcon) {
-            theButton.setGraphic(TethysUIFXIcon.getIcon(TethysUIFXUtils.getIconAtSize(pIcon, getManager().getIconWidth())));
+            theButton.setGraphic(TethysUIFXIcon.getIcon(TethysUIFXUtils.getIconAtSize(pIcon, getManager().getIconSize())));
         }
 
         @Override
