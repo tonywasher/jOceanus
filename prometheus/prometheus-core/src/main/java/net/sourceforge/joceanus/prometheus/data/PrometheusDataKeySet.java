@@ -17,7 +17,6 @@
 package net.sourceforge.joceanus.prometheus.data;
 
 import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
-import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySet;
 import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySetFactory;
 import net.sourceforge.joceanus.gordianknot.util.GordianUtilities;
@@ -67,17 +66,8 @@ public class PrometheusDataKeySet
         FIELD_DEFS.declareLinkField(PrometheusCryptographyDataType.CONTROLKEYSET);
         FIELD_DEFS.declareByteArrayField(PrometheusDataResource.KEYSET_KEYSETDEF, WRAPLEN);
         FIELD_DEFS.declareDerivedVersionedField(PrometheusDataResource.KEYSET_KEYSET);
+        FIELD_DEFS.declareDerivedVersionedField(PrometheusDataResource.KEYSET_ENCRYPTOR);
     }
-
-    /**
-     * The Security Factory.
-     */
-    private GordianFactory theSecurityFactory;
-
-    /**
-     * The Encryptor.
-     */
-    private PrometheusEncryptor theEncryptor;
 
     /**
      * Copy Constructor.
@@ -91,10 +81,9 @@ public class PrometheusDataKeySet
 
         /* Switch on the LinkStyle */
         if (Objects.requireNonNull(getStyle()) == PrometheusListStyle.CLONE) {
-            theSecurityFactory = pSource.theSecurityFactory;
             final GordianKeySet myKeySet = pSource.getKeySet();
-            theEncryptor = new PrometheusEncryptor(getDataSet().getDataFormatter(), myKeySet);
             setValueKeySet(myKeySet);
+            setValueEncryptor(pSource.getEncryptor());
         }
     }
 
@@ -129,7 +118,6 @@ public class PrometheusDataKeySet
 
         /* Access the controlKey */
         final PrometheusControlKeySet myControlKeySet = getControlKeySet();
-        theSecurityFactory = myControlKeySet.getControlKey().getFactoryLock().getFactory();
 
         /* Store the WrappedKeySetDef */
         myValue = pValues.getValue(PrometheusDataResource.KEYSET_KEYSETDEF);
@@ -141,14 +129,14 @@ public class PrometheusDataKeySet
         myValue = pValues.getValue(PrometheusDataResource.KEYSET_KEYSET);
         if (myValue instanceof GordianKeySet) {
             final GordianKeySet myKeySet = (GordianKeySet) myValue;
-            theEncryptor = new PrometheusEncryptor(myFormatter, myKeySet);
             setValueKeySet(myKeySet);
+            setValueEncryptor(new PrometheusEncryptor(myFormatter, myKeySet));
         } else if (getSecuredKeySetDef() != null) {
             /* Protect against exceptions */
             try {
                 final GordianKeySet myKeySet = myControlKeySet.getKeySet().deriveKeySet(getSecuredKeySetDef());
-                theEncryptor = new PrometheusEncryptor(myFormatter, myKeySet);
                 setValueKeySet(myKeySet);
+                setValueEncryptor(new PrometheusEncryptor(myFormatter, myKeySet));
             } catch (GordianException e) {
                 throw new PrometheusSecurityException(e);
             }
@@ -178,14 +166,11 @@ public class PrometheusDataKeySet
             final PrometheusDataSet myData = getDataSet();
             final OceanusDataFormatter myFormatter = myData.getDataFormatter();
 
-            /* Record the security factory */
-            theSecurityFactory = pControlKeySet.getControlKey().getFactoryLock().getFactory();
-
             /* Create the KeySet */
-            final GordianKeySetFactory myKeySets = theSecurityFactory.getKeySetFactory();
+            final GordianKeySetFactory myKeySets = pControlKeySet.getSecurityFactory().getKeySetFactory();
             final GordianKeySet myKeySet = myKeySets.generateKeySet(getDataSet().getKeySetSpec());
-            theEncryptor = new PrometheusEncryptor(myFormatter, myKeySet);
             setValueKeySet(myKeySet);
+            setValueEncryptor(new PrometheusEncryptor(myFormatter, myKeySet));
 
             /* Set the wrappedKeySetDef */
             setValueSecuredKeySetDef(pControlKeySet.getKeySet().secureKeySet(myKeySet));
@@ -201,22 +186,6 @@ public class PrometheusDataKeySet
     @Override
     public MetisFieldSetDef getDataFieldSet() {
         return FIELD_DEFS;
-    }
-
-    /**
-     * Get the Field Generator.
-     * @return the generator
-     */
-    public PrometheusEncryptor getEncryptor() {
-        return theEncryptor;
-    }
-
-    /**
-     * Obtain the security factory.
-     * @return the security factory
-     */
-    GordianFactory getSecurityFactory() {
-        return theSecurityFactory;
     }
 
     /**
@@ -263,6 +232,14 @@ public class PrometheusDataKeySet
     }
 
     /**
+     * Get the Encryptor.
+     * @return the encryptor
+     */
+    public PrometheusEncryptor getEncryptor() {
+        return getValues().getValue(PrometheusDataResource.KEYSET_ENCRYPTOR, PrometheusEncryptor.class);
+    }
+
+    /**
      * Set the ControlKeySet Id.
      * @param pId the controlKeySet id
      * @throws OceanusException on error
@@ -294,6 +271,14 @@ public class PrometheusDataKeySet
      */
     private void setValueKeySet(final GordianKeySet pValue) {
         getValues().setUncheckedValue(PrometheusDataResource.KEYSET_KEYSET, pValue);
+    }
+
+    /**
+     * Set the encryptor.
+     * @param pValue the encryptor
+     */
+    private void setValueEncryptor(final PrometheusEncryptor pValue) {
+        getValues().setUncheckedValue(PrometheusDataResource.KEYSET_ENCRYPTOR, pValue);
     }
 
     @Override

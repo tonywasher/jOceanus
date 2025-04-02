@@ -248,6 +248,15 @@ public final class PrometheusControlKey
     }
 
     /**
+     * Get the securityFactory.
+     * @return the securityFactory
+     */
+    public GordianFactory getSecurityFactory() {
+        final GordianFactoryLock myLock = getFactoryLock();
+        return myLock == null ? null : myLock.getFactory();
+    }
+
+    /**
      * Get the CreationDate.
      * @return the creationDate
      */
@@ -351,7 +360,7 @@ public final class PrometheusControlKey
         final PrometheusSecurityPasswordManager myPasswordMgr = myData.getPasswordMgr();
 
         /* Obtain a new factoryLock */
-        final GordianFactoryLock myLock = myPasswordMgr.newFactoryLock(getFactoryLock().getFactory(), pSource);
+        final GordianFactoryLock myLock = myPasswordMgr.newFactoryLock(getSecurityFactory(), pSource);
 
         /* Store the current detail into history */
         pushHistory();

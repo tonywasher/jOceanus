@@ -77,7 +77,6 @@ public abstract class PrometheusDataList<T extends PrometheusDataItem>
         FIELD_DEFS.declareLocalField(PrometheusDataResource.DATALIST_STYLE, PrometheusDataList::getStyle);
         FIELD_DEFS.declareLocalField(PrometheusDataResource.DATASET_NAME, PrometheusDataList::getDataSet);
         FIELD_DEFS.declareLocalField(PrometheusDataResource.DATALIST_MAPS, PrometheusDataList::getDataMap);
-        FIELD_DEFS.declareLocalField(PrometheusDataResource.DATASET_GENERATION, PrometheusDataList::getGeneration);
         FIELD_DEFS.declareLocalField(PrometheusDataResource.DATASET_VERSION, PrometheusDataList::getVersion);
         FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAITEM_EDITSTATE, PrometheusDataList::getEditState);
         FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAITEM_TYPE, PrometheusDataList::getItemType);
@@ -125,11 +124,6 @@ public abstract class PrometheusDataList<T extends PrometheusDataItem>
     private PrometheusDataMapItem theDataMap;
 
     /**
-     * The generation.
-     */
-    private int theGeneration;
-
-    /**
      * The version.
      */
     private int theVersion;
@@ -154,7 +148,6 @@ public abstract class PrometheusDataList<T extends PrometheusDataItem>
         theStyle = pStyle;
         theItemType = pItemType;
         theDataSet = pDataSet;
-        theGeneration = pDataSet.getGeneration();
 
         /* Create the list */
         theList = new MetisListIndexed<>();
@@ -168,7 +161,6 @@ public abstract class PrometheusDataList<T extends PrometheusDataItem>
     protected PrometheusDataList(final PrometheusDataList<T> pSource) {
         this(pSource.getBaseClass(), pSource.getDataSet(), pSource.getItemType(), PrometheusListStyle.COPY);
         theBase = pSource;
-        theGeneration = pSource.getGeneration();
     }
 
     @Override
@@ -289,22 +281,6 @@ public abstract class PrometheusDataList<T extends PrometheusDataItem>
      */
     public MetisDataEditState getEditState() {
         return theEdit;
-    }
-
-    /**
-     * Get the Generation of the list.
-     * @return the Generation
-     */
-    public int getGeneration() {
-        return theGeneration;
-    }
-
-    /**
-     * Set the Generation of the list.
-     * @param pGeneration the generation
-     */
-    protected void setGeneration(final int pGeneration) {
-        theGeneration = pGeneration;
     }
 
     /**

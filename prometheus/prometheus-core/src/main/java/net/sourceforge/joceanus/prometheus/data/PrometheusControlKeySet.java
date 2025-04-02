@@ -76,11 +76,6 @@ public class PrometheusControlKeySet
     }
 
     /**
-     * The Security Factory.
-     */
-    private GordianFactory theSecurityFactory;
-
-    /**
      * The DataKeySetCache.
      */
     private DataKeySetCache theKeySetCache = new DataKeySetCache();
@@ -97,7 +92,6 @@ public class PrometheusControlKeySet
 
         /* Switch on the LinkStyle */
         if (Objects.requireNonNull(getStyle()) == PrometheusListStyle.CLONE) {
-            theSecurityFactory = pSource.theSecurityFactory;
             final GordianKeySet myKeySet = pSource.getKeySet();
             setValueKeySet(myKeySet);
         }
@@ -133,7 +127,6 @@ public class PrometheusControlKeySet
 
         /* Access the controlKey */
         final PrometheusControlKey myControl = getControlKey();
-        theSecurityFactory = myControl.getFactoryLock().getFactory();
 
         /* Store the WrappedKeySetDef */
         myValue = pValues.getValue(PrometheusDataResource.KEYSET_KEYSETDEF);
@@ -148,7 +141,7 @@ public class PrometheusControlKeySet
         } else if (getSecuredKeySetDef() != null) {
             /* Protect against exceptions */
             try {
-                final GordianKeySet myKeySet = theSecurityFactory.getEmbeddedKeySet().deriveKeySet(getSecuredKeySetDef());
+                final GordianKeySet myKeySet = getSecurityFactory().getEmbeddedKeySet().deriveKeySet(getSecuredKeySetDef());
                 setValueKeySet(myKeySet);
             } catch (GordianException e) {
                 throw new PrometheusSecurityException(e);
@@ -178,16 +171,14 @@ public class PrometheusControlKeySet
             /* Access the Security manager */
             final PrometheusDataSet myData = getDataSet();
 
-            /* Record the security factory */
-            theSecurityFactory = pControlKey.getFactoryLock().getFactory();
-
             /* Create the KeySet */
-            final GordianKeySetFactory myKeySets = theSecurityFactory.getKeySetFactory();
+            final GordianFactory myFactory = getSecurityFactory();
+            final GordianKeySetFactory myKeySets = myFactory.getKeySetFactory();
             final GordianKeySet myKeySet = myKeySets.generateKeySet(getDataSet().getKeySetSpec());
             setValueKeySet(myKeySet);
 
             /* Set the wrappedKeySetDef */
-            setValueSecuredKeySetDef(theSecurityFactory.getEmbeddedKeySet().secureKeySet(myKeySet));
+            setValueSecuredKeySetDef(myFactory.getEmbeddedKeySet().secureKeySet(myKeySet));
 
             /* Allocate the DataKeySets */
             allocateDataKeySets(myData);
@@ -210,7 +201,8 @@ public class PrometheusControlKeySet
      * @return the security factory
      */
     GordianFactory getSecurityFactory() {
-        return theSecurityFactory;
+        final PrometheusControlKey myControl = getControlKey();
+        return myControl == null ? null : myControl.getSecurityFactory();
     }
 
     /**

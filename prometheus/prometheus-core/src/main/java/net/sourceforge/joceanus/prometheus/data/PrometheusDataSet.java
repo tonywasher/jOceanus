@@ -68,8 +68,8 @@ public abstract class PrometheusDataSet
      * Declare Fields.
      */
     static {
-        FIELD_DEFS.declareLocalField(PrometheusDataResource.DATASET_GENERATION, PrometheusDataSet::getGeneration);
         FIELD_DEFS.declareLocalField(PrometheusDataResource.DATASET_VERSION, PrometheusDataSet::getVersion);
+        FIELD_DEFS.declareLocalFieldsForEnum(PrometheusCryptographyDataType.class, PrometheusDataSet::getFieldListValue);
     }
 
     /**
@@ -121,11 +121,6 @@ public abstract class PrometheusDataSet
      * Number of encrypted lists.
      */
     private int theNumEncrypted;
-
-    /**
-     * Generation of dataSet.
-     */
-    private int theGeneration;
 
     /**
      * Version of dataSet.
@@ -195,6 +190,9 @@ public abstract class PrometheusDataSet
 
         /* Copy formatter */
         theFormatter = pSource.getDataFormatter();
+
+        /* Copy validator factory */
+        theValidatorFactory = pSource.theValidatorFactory;
     }
 
     @Override
@@ -268,14 +266,6 @@ public abstract class PrometheusDataSet
      */
     public PrometheusControlDataList getControlData() {
         return getDataList(PrometheusCryptographyDataType.CONTROLDATA, PrometheusControlDataList.class);
-    }
-
-    /**
-     * Get Generation.
-     * @return the generation
-     */
-    public int getGeneration() {
-        return theGeneration;
     }
 
     /**
@@ -580,24 +570,6 @@ public abstract class PrometheusDataSet
     }
 
     /**
-     * Set Generation.
-     * @param pGeneration the generation
-     */
-    public void setGeneration(final int pGeneration) {
-        /* Record the generation */
-        theGeneration = pGeneration;
-
-        /* Loop through the List values */
-        final Iterator<PrometheusDataList<?>> myIterator = iterator();
-        while (myIterator.hasNext()) {
-            final PrometheusDataList<?> myList = myIterator.next();
-
-            /* Set the Generation */
-            myList.setGeneration(pGeneration);
-        }
-    }
-
-    /**
      * Set Version.
      * @param pVersion the version
      */
@@ -653,9 +625,6 @@ public abstract class PrometheusDataSet
 
         /* Check version and generation */
         if (myThat.getVersion() != theVersion) {
-            return false;
-        }
-        if (myThat.getGeneration() != theGeneration) {
             return false;
         }
 

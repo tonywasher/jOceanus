@@ -131,12 +131,6 @@ public abstract class PrometheusDataControl
      * @param pData the new DataSet
      */
     public void setData(final PrometheusDataSet pData) {
-        /* If we already have data */
-        if (theData != null) {
-            /* Bump the generation */
-            pData.setGeneration(theData.getGeneration() + 1);
-        }
-
         /* Store the data */
         theData = pData;
 
@@ -275,7 +269,6 @@ public abstract class PrometheusDataControl
         theViewerMap.put(PrometheusViewerEntryId.VIEW, myViewer.getStandardEntry(MetisViewerStandardEntry.VIEW));
 
         /* Create Data entries */
-
         final MetisViewerEntry myData = getViewerEntry(PrometheusViewerEntryId.DATA);
         theViewerMap.put(PrometheusViewerEntryId.DATASET, myViewer.newEntry(myData, PrometheusViewerEntryId.DATASET.toString()));
         theViewerMap.put(PrometheusViewerEntryId.ANALYSIS, myViewer.newEntry(myData, PrometheusViewerEntryId.ANALYSIS.toString()));

@@ -36,16 +36,6 @@ public enum PrometheusDataResource
     DATASET_NAME("DataSet.Name"),
 
     /**
-     * DataSet Generation.
-     */
-    DATASET_GENERATION("DataSet.Generation"),
-
-    /**
-     * DataSet Granularity.
-     */
-    DATASET_GRANULARITY("DataSet.Granularity"),
-
-    /**
      * DataSet Version.
      */
     DATASET_VERSION("DataSet.Version"),
@@ -444,6 +434,11 @@ public enum PrometheusDataResource
      * KeySet KeySetDefinition.
      */
     KEYSET_KEYSETDEF("KeySet.KeySetDef"),
+
+    /**
+     * DataSet Encryptor.
+     */
+    KEYSET_ENCRYPTOR("KeySet.Encryptor"),
 
     /**
      * ControlData Name.
