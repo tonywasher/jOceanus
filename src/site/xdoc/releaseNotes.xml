@@ -55,6 +55,7 @@
         <dt>1.6.3-b2</dt> <dd>Remove old lethe code and promote atlas code</dd>
         <dt>1.6.3-b3</dt> <dd>Integrate Xofs into GordianKnot</dd>
         <dt>1.6.3-b4</dt> <dd>Preparation work for new events</dd>
+        <dt>1.6.3-b5</dt> <dd>Initial analysis of new events</dd>
       </dl>
     </section>
   </body>

@@ -38,7 +38,7 @@ public class MoneyWiseNullPasswordDialog
 
     @Override
     public char[] getPassword() {
-        return "DummyPassword".toCharArray();
+        return "DummyPassword1_".toCharArray();
     }
 
     @Override

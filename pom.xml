@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>net.sourceforge.joceanus</groupId>
   <artifactId>joceanus</artifactId>
-  <version>1.6.3-SNAPSHOT</version>
+  <version>1.6.3-b5</version>
   <packaging>pom</packaging>
   <name>Java Oceanus package</name>
   <description>Parent project for jOceanus</description>
@@ -60,10 +60,10 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <scmMain>main</scmMain>
     <currentBranch>1.6.3</currentBranch>
-    <currentTag>SNAPSHOT</currentTag>
+    <currentTag>b5</currentTag>
     <baseBranch>${currentBranch}</baseBranch>
     <baseTag>b4</baseTag>
-    <currentRef>${snapshotRef}</currentRef>
+    <currentRef>${tagRef}</currentRef>
     <snapshotRef>${scmMain}</snapshotRef>
     <tagRef>${currentBranch}-${currentTag}</tagRef>
     <baseRef>${baseBranch}-${baseTag}</baseRef>

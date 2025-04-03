@@ -17,6 +17,7 @@
 package net.sourceforge.joceanus.moneywise.test.data;
 
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataSet;
+import net.sourceforge.joceanus.moneywise.data.validate.MoneyWiseValidatorFactory;
 import net.sourceforge.joceanus.moneywise.lethe.data.analysis.analyse.MoneyWiseAnalysisTransAnalyser;
 import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysis;
 import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisCashCategoryBucket;
@@ -70,6 +71,7 @@ public class MoneyWiseDataTest {
         final TethysUIHelperFactory myFactory = new TethysUIHelperFactory();
         final PrometheusToolkit myToolkit = new PrometheusToolkit(myFactory);
         final MoneyWiseView myView = new MoneyWiseView(myToolkit, new MoneyWiseUKTaxYearCache());
+        myView.setValidatorFactory(new MoneyWiseValidatorFactory(true));
 
         /* Create tests */
         Stream<DynamicNode> myStream = MoneyWiseDataTestRunner.createTests(myView);

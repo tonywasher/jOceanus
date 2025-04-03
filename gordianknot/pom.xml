@@ -19,7 +19,7 @@
   <parent>
     <groupId>net.sourceforge.joceanus</groupId>
     <artifactId>joceanus</artifactId>
-    <version>1.6.3-SNAPSHOT</version>
+    <version>1.6.3-b5</version>
   </parent>
   <artifactId>gordianknot</artifactId>
   <name>GordianKnot Security Framework</name>

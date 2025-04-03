@@ -46,12 +46,12 @@ class PasswordManagerTest {
      * The List of passwords.
      */
     static final char[][] PASSWORDS = {
-            "Password1".toCharArray(),
-            "Password2".toCharArray(),
-            "Password3".toCharArray(),
-            "Password4".toCharArray(),
-            "Password5".toCharArray(),
-            "Password6".toCharArray()
+            "Password1_".toCharArray(),
+            "Password2_".toCharArray(),
+            "Password3_".toCharArray(),
+            "Password4_".toCharArray(),
+            "Password5_".toCharArray(),
+            "Password6_".toCharArray()
     };
 
     /**

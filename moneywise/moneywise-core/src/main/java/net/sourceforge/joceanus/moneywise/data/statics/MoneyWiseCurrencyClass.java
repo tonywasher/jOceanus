@@ -850,7 +850,12 @@ public enum MoneyWiseCurrencyClass
     /**
      * Zimbabwe Dollar.
      */
-    ZWG(165, 164);
+    ZWG(165, 164),
+
+    /**
+     * Carribean Guilder.
+     */
+    XCG(166, 165);
 
     /**
      * Class Id.
