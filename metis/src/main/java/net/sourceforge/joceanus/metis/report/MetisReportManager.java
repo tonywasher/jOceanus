@@ -24,7 +24,6 @@ import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEvent
 import net.sourceforge.joceanus.oceanus.logger.OceanusLogManager;
 import net.sourceforge.joceanus.oceanus.logger.OceanusLogger;
 import net.sourceforge.joceanus.tethys.api.control.TethysUIHTMLManager;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -393,7 +392,7 @@ public class MetisReportManager<F>
     /**
      * Simple element class for hidden elements.
      */
-    private static final class HiddenElement {
+    private final class HiddenElement {
         /**
          * The element that is hidden.
          */
@@ -425,6 +424,7 @@ public class MetisReportManager<F>
          */
         private void hide() {
             /* Remove the child from the parent */
+            theBuilder.setPrefix(thePrevious, false);
             theParent.removeChild(theElement);
         }
 
@@ -433,6 +433,7 @@ public class MetisReportManager<F>
          */
         private void restore() {
             /* Determine next sibling */
+            theBuilder.setPrefix(thePrevious, true);
             final Node myNextSibling = thePrevious.getNextSibling();
 
             /* Restore the element */

@@ -16,34 +16,34 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.moneywise.ui.dialog;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
-import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
-import net.sourceforge.joceanus.metis.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.metis.data.MetisDataDifference;
+import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.metis.ui.MetisAction;
+import net.sourceforge.joceanus.metis.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.metis.ui.MetisIcon;
-import net.sourceforge.joceanus.moneywise.exc.MoneyWiseDataException;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicResource;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDeposit;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDepositRate;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDepositRate.MoneyWiseDepositRateList;
+import net.sourceforge.joceanus.moneywise.exc.MoneyWiseDataException;
 import net.sourceforge.joceanus.moneywise.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.moneywise.ui.base.MoneyWiseDialogTable;
 import net.sourceforge.joceanus.moneywise.views.MoneyWiseView;
-import net.sourceforge.joceanus.prometheus.data.PrometheusDataResource;
-import net.sourceforge.joceanus.prometheus.ui.fieldset.PrometheusFieldSetTableTab.PrometheusFieldSetTable;
-import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.date.OceanusDate;
 import net.sourceforge.joceanus.oceanus.date.OceanusDateConfig;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusRate;
+import net.sourceforge.joceanus.prometheus.data.PrometheusDataResource;
+import net.sourceforge.joceanus.prometheus.ui.fieldset.PrometheusFieldSetTableTab.PrometheusFieldSetTable;
+import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
 import net.sourceforge.joceanus.tethys.api.control.TethysUIControl.TethysUIIconMapSet;
 import net.sourceforge.joceanus.tethys.api.table.TethysUITableColumn;
 import net.sourceforge.joceanus.tethys.api.table.TethysUITableManager;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Deposit Rate Table.
@@ -187,7 +187,7 @@ public class MoneyWiseDepositRateTable
                     ? myIterator.next()
                     : null;
 
-            /* Assume that we can use todays date */
+            /* Assume that we can use today's date */
             OceanusDate myDate = new OceanusDate();
             if (myLatest != null) {
                 /* Obtain the date that is one after the latest date used */

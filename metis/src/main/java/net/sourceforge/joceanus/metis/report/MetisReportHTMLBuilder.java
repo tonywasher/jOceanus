@@ -23,6 +23,7 @@ import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.w3c.dom.Text;
 
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
@@ -218,6 +219,16 @@ public class MetisReportHTMLBuilder {
     protected static final String REF_DELAY = "delay";
 
     /**
+     * The open accordion prefix.
+     */
+    protected static final String PFX_OPEN = "⯆ ";
+
+    /**
+     * The collapsed accordion prefix.
+     */
+    private static final String PFX_COLLAPSED = "⯈ ";
+
+    /**
      * The document builder.
      */
     private final DocumentBuilder theBuilder;
@@ -387,6 +398,9 @@ public class MetisReportHTMLBuilder {
         final String myId = REF_ID
                             + pLink;
 
+        /* Create the header */
+        final Text myHeader = theDocument.createTextNode(PFX_OPEN);
+
         /* Create the cell */
         final Element myCell = pControl.createNewCell(false);
         final Element myLink = theDocument.createElement(ELEMENT_LINK);
@@ -397,6 +411,7 @@ public class MetisReportHTMLBuilder {
         myLink.setAttribute(ATTR_HREF, REF_TAB
                                        + pLink);
         myLink.setTextContent(pName);
+        myCell.appendChild(myHeader);
         myCell.appendChild(myLink);
     }
 
@@ -423,6 +438,9 @@ public class MetisReportHTMLBuilder {
         final String myId = REF_ID
                             + pLink;
 
+        /* Create the header */
+        final Text myHeader = theDocument.createTextNode(PFX_COLLAPSED);
+
         /* Create the cell */
         final Element myCell = pControl.createNewCell(false);
         final Element myLink = theDocument.createElement(ELEMENT_LINK);
@@ -433,6 +451,7 @@ public class MetisReportHTMLBuilder {
         myLink.setAttribute(ATTR_HREF, REF_DELAY
                                        + pLink);
         myLink.setTextContent(pName);
+        myCell.appendChild(myHeader);
         myCell.appendChild(myLink);
     }
 
@@ -676,6 +695,9 @@ public class MetisReportHTMLBuilder {
         } else {
             myTop.insertBefore(myRow, myNextRow);
         }
+
+        /* Adjust prefix of owning link */
+        setPrefix(myLink, true);
     }
 
     /**
@@ -721,6 +743,17 @@ public class MetisReportHTMLBuilder {
         return (myParent instanceof Element)
                                              ? (Element) myParent
                                              : null;
+    }
+
+    /**
+     * Set prefix for owning link.
+     * @param pOwner the owning link
+     * @param pOpen is the link open true/false
+     */
+    void setPrefix(final Node pOwner,
+                   final boolean pOpen) {
+        /* Adjust prefix of owning link */
+        pOwner.getFirstChild().getFirstChild().setTextContent(pOpen ? PFX_OPEN : PFX_COLLAPSED);
     }
 
     /**

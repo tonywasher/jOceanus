@@ -14,30 +14,42 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.tethys.api.base;
+package net.sourceforge.joceanus.tethys.core.base;
+
+import net.sourceforge.joceanus.tethys.api.base.TethysUIIconId;
+
+import java.io.InputStream;
 
 /**
- * Tethys Constants.
+ * Scroll Icon IDs.
  */
-public final class TethysUIConstant {
+public enum TethysUICoreIcon
+        implements TethysUIIconId {
     /**
-     * Private constructor.
+     * CheckMark.
      */
-    private TethysUIConstant() {
+    DYNAMICSPINNER("DynamicSpinner.gif");
+
+    /**
+     * Source name.
+     */
+    private final String theSource;
+
+    /**
+     * Constructor.
+     * @param pSourceName the source name
+     */
+    TethysUICoreIcon(final String pSourceName) {
+        theSource = pSourceName;
     }
 
-    /**
-     * List separator.
-     */
-    public static final String LIST_SEP = ",";
+    @Override
+    public String getSourceName() {
+        return theSource;
+    }
 
-    /**
-     * The colon indicator.
-     */
-    public static final String STR_COLON = ":";
-
-    /**
-     * Default icon size.
-     */
-    public static final int DEFAULT_ICONSIZE = 16;
+    @Override
+    public InputStream getInputStream() {
+        return TethysUICoreIcon.class.getResourceAsStream(theSource);
+    }
 }

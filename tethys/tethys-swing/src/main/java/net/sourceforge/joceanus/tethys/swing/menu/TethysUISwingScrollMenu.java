@@ -16,6 +16,30 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.tethys.swing.menu;
 
+import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
+import net.sourceforge.joceanus.tethys.api.base.TethysUIArrowIconId;
+import net.sourceforge.joceanus.tethys.api.base.TethysUIConstant;
+import net.sourceforge.joceanus.tethys.api.base.TethysUIEvent;
+import net.sourceforge.joceanus.tethys.api.base.TethysUIIcon;
+import net.sourceforge.joceanus.tethys.api.menu.TethysUIScrollIcon;
+import net.sourceforge.joceanus.tethys.api.menu.TethysUIScrollItem;
+import net.sourceforge.joceanus.tethys.api.menu.TethysUIScrollMenu;
+import net.sourceforge.joceanus.tethys.api.menu.TethysUIScrollSubMenu;
+import net.sourceforge.joceanus.tethys.api.menu.TethysUIScrollToggle;
+import net.sourceforge.joceanus.tethys.core.menu.TethysUICoreScrollMenu;
+import net.sourceforge.joceanus.tethys.swing.base.TethysUISwingArrowIcon;
+import net.sourceforge.joceanus.tethys.swing.base.TethysUISwingIcon;
+import net.sourceforge.joceanus.tethys.swing.base.TethysUISwingUtils;
+
+import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -35,31 +59,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
-
-import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.SwingConstants;
-import javax.swing.SwingUtilities;
-
-import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
-import net.sourceforge.joceanus.tethys.api.base.TethysUIArrowIconId;
-import net.sourceforge.joceanus.tethys.api.base.TethysUIConstant;
-import net.sourceforge.joceanus.tethys.api.base.TethysUIIcon;
-import net.sourceforge.joceanus.tethys.api.base.TethysUIEvent;
-import net.sourceforge.joceanus.tethys.api.menu.TethysUIScrollIcon;
-import net.sourceforge.joceanus.tethys.api.menu.TethysUIScrollItem;
-import net.sourceforge.joceanus.tethys.api.menu.TethysUIScrollMenu;
-import net.sourceforge.joceanus.tethys.api.menu.TethysUIScrollSubMenu;
-import net.sourceforge.joceanus.tethys.api.menu.TethysUIScrollToggle;
-import net.sourceforge.joceanus.tethys.core.menu.TethysUICoreScrollMenu;
-import net.sourceforge.joceanus.tethys.swing.base.TethysUISwingArrowIcon;
-import net.sourceforge.joceanus.tethys.swing.base.TethysUISwingIcon;
-import net.sourceforge.joceanus.tethys.swing.base.TethysUISwingUtils;
 
 /**
  * Scroll-able version of ContextMenu.
@@ -1093,7 +1092,7 @@ public class TethysUISwingScrollMenu<T>
             /* Create a Label for the graphic */
             theIcon = new JLabel();
             theIcon.setIcon(TethysUISwingIcon.getIcon(pGraphic));
-            final Dimension myDim = new Dimension(TethysUIConstant.DEFAULT_ICONWIDTH, DEFAULT_ROWHEIGHT);
+            final Dimension myDim = new Dimension(TethysUIConstant.DEFAULT_ICONSIZE, DEFAULT_ROWHEIGHT);
             theIcon.setMinimumSize(myDim);
             theIcon.setPreferredSize(myDim);
             theIcon.setMaximumSize(myDim);
@@ -1297,7 +1296,7 @@ public class TethysUISwingScrollMenu<T>
         public void setSelected(final boolean pSelected) {
             isSelected = pSelected;
             setIcon(isSelected
-                    ? TethysUISwingUtils.getIconAtSize(TethysUIScrollIcon.CHECKMARK, TethysUIConstant.DEFAULT_ICONWIDTH)
+                    ? TethysUISwingUtils.getIconAtSize(TethysUIScrollIcon.CHECKMARK, TethysUIConstant.DEFAULT_ICONSIZE)
                     : null);
         }
 

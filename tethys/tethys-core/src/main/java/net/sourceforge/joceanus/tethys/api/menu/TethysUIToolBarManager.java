@@ -35,16 +35,16 @@ public interface TethysUIToolBarManager
     }
 
     /**
-     * Obtain width.
-     * @return the width
+     * Obtain icon size.
+     * @return the size
      */
-    int getIconWidth();
+    int getIconSize();
 
     /**
-     * Set the width.
-     * @param pWidth the width to set
+     * Set the icon size.
+     * @param pSize the size to set
      */
-    void setIconWidth(int pWidth);
+    void setIconSize(int pSize);
 
     /**
      * Set visible state for element.

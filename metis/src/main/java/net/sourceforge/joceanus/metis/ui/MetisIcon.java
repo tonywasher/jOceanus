@@ -16,14 +16,14 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.metis.ui;
 
-import java.io.InputStream;
-
 import net.sourceforge.joceanus.tethys.api.base.TethysUIConstant;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIIconId;
 import net.sourceforge.joceanus.tethys.api.button.TethysUIButton;
 import net.sourceforge.joceanus.tethys.api.button.TethysUIScrollButtonManager;
 import net.sourceforge.joceanus.tethys.api.control.TethysUIControl.TethysUIIconMapSet;
 import net.sourceforge.joceanus.tethys.api.factory.TethysUIFactory;
+
+import java.io.InputStream;
 
 /**
  * Metis Icon IDs.
@@ -184,7 +184,7 @@ public enum MetisIcon
      */
     public static void configureButton(final TethysUIButton pButton) {
         pButton.setIconOnly();
-        pButton.setIconWidth(ICON_SIZE);
+        pButton.setIconSize(ICON_SIZE);
         pButton.setNullMargins();
     }
 
@@ -193,7 +193,7 @@ public enum MetisIcon
      * @param pButton the button manager
      */
     public static void configureNewScrollButton(final TethysUIScrollButtonManager<?> pButton) {
-        pButton.setSimpleDetails(NEW, TethysUIConstant.DEFAULT_ICONWIDTH, TIP_NEW);
+        pButton.setSimpleDetails(NEW, TethysUIConstant.DEFAULT_ICONSIZE, TIP_NEW);
     }
 
     /**

@@ -31,11 +31,6 @@ import java.util.Iterator;
 public class PrometheusEncryptedValues
         extends MetisFieldVersionValues {
     /**
-     * The Encryptor.
-     */
-    private PrometheusEncryptor theEncryptor;
-
-    /**
      * Constructor.
      * @param pItem the associated item
      */
@@ -54,18 +49,6 @@ public class PrometheusEncryptedValues
     @Override
     protected PrometheusEncryptedDataItem getItem() {
         return (PrometheusEncryptedDataItem) super.getItem();
-    }
-
-    @Override
-    public void copyFrom(final MetisFieldVersionValues pPrevious) {
-        /* Perform main copy */
-        super.copyFrom(pPrevious);
-
-        /* Copy the keySet */
-        if (pPrevious instanceof PrometheusEncryptedValues) {
-            final PrometheusEncryptedValues myPrevious = (PrometheusEncryptedValues) pPrevious;
-            theEncryptor = myPrevious.theEncryptor;
-        }
     }
 
     @Override
@@ -145,58 +128,16 @@ public class PrometheusEncryptedValues
         /* If this is an encrypted field */
         Object myValue = pValue;
         if (pField instanceof PrometheusEncryptedField
-                && theEncryptor != null
+                //&& theEncryptor != null
                 && myValue != null) {
             /* Encrypt the value */
-            myValue = theEncryptor.encryptValue(pValue, pField);
+            final PrometheusEncryptedDataItem myItem = getItem();
+            final PrometheusEncryptor myEncryptor = myItem.getEncryptor();
+            myValue = myEncryptor.encryptValue(pValue, pField);
         }
 
         /* Store the value */
         setUncheckedValue(pField, myValue);
-    }
-
-    /**
-     * Set the encryptor.
-     * @param pEncryptor the encryptor
-     * @throws OceanusException on error
-     */
-    void setTheEncryptor(final PrometheusEncryptor pEncryptor) throws OceanusException {
-        /* Record the encryptor */
-        theEncryptor = pEncryptor;
-    }
-
-    /**
-     * Set the encryptor.
-     * @param pEncryptor the encryptor
-     * @throws OceanusException on error
-     */
-    void setEncryptor(final PrometheusEncryptor pEncryptor) throws OceanusException {
-        /* Record the encryptor */
-        theEncryptor = pEncryptor;
-
-        /* Loop through the fields */
-        final MetisFieldSetDef myFieldSet = getFields();
-        final Iterator<MetisFieldDef> myIterator = myFieldSet.fieldIterator();
-        while (myIterator.hasNext()) {
-            final MetisFieldDef myField = myIterator.next();
-
-            /* Ignore non-encrypted fields */
-            if (!(myField instanceof PrometheusEncryptedField)) {
-                continue;
-            }
-
-            /* Access the value */
-            final Object myValue = getValue(myField);
-
-            /* If this is a byte array */
-            if (myValue instanceof byte[]) {
-                /* Decrypt the value */
-                setUncheckedValue(myField, theEncryptor.decryptValue((byte[]) myValue, myField));
-            } else if (myValue != null) {
-                /* Encrypt the value */
-                setUncheckedValue(myField, theEncryptor.encryptValue(myValue, myField));
-            }
-        }
     }
 
     /**
@@ -205,6 +146,8 @@ public class PrometheusEncryptedValues
      */
     public void updateSecurity() throws OceanusException {
         /* Loop through the fields */
+        final PrometheusEncryptedDataItem myItem = getItem();
+        final PrometheusEncryptor myEncryptor = myItem.getEncryptor();
         final MetisFieldSetDef myFieldSet = getFields();
         final Iterator<MetisFieldDef> myIterator = myFieldSet.fieldIterator();
         while (myIterator.hasNext()) {
@@ -219,7 +162,7 @@ public class PrometheusEncryptedValues
             final Object myValue = getValue(myField);
 
             /* Encrypt the value */
-            setUncheckedValue(myField, theEncryptor.encryptValue(myValue, myField));
+            setUncheckedValue(myField, myEncryptor.encryptValue(myValue, myField));
         }
     }
 
@@ -230,6 +173,8 @@ public class PrometheusEncryptedValues
      */
     public void adoptSecurity(final PrometheusEncryptedValues pBaseValues) throws OceanusException {
         /* Loop through the fields */
+        final PrometheusEncryptedDataItem myItem = getItem();
+        final PrometheusEncryptor myEncryptor = myItem.getEncryptor();
         final MetisFieldSetDef myFieldSet = getFields();
         final Iterator<MetisFieldDef> myIterator = myFieldSet.fieldIterator();
         while (myIterator.hasNext()) {
@@ -253,7 +198,7 @@ public class PrometheusEncryptedValues
             }
 
             /* Adopt encryption */
-            theEncryptor.adoptEncryption(myValue, (PrometheusEncryptedPair) myBaseObj);
+            myEncryptor.adoptEncryption(myValue, (PrometheusEncryptedPair) myBaseObj);
         }
     }
 }

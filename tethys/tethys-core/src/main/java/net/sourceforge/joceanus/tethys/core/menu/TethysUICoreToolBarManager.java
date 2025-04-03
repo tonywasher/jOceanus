@@ -16,9 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.tethys.core.menu;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import net.sourceforge.joceanus.oceanus.event.OceanusEvent.OceanusEventListener;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
@@ -28,6 +25,9 @@ import net.sourceforge.joceanus.tethys.api.base.TethysUIEvent;
 import net.sourceforge.joceanus.tethys.api.menu.TethysUIToolBarManager;
 import net.sourceforge.joceanus.tethys.core.base.TethysUICoreComponent;
 import net.sourceforge.joceanus.tethys.core.factory.TethysUICoreFactory;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * ToolBar Manager.
@@ -46,9 +46,9 @@ public abstract class TethysUICoreToolBarManager
     private final Map<TethysUIToolBarId, TethysUICoreToolElement> theElementMap;
 
     /**
-     * The icon Width.
+     * The icon Size.
      */
-    private int theWidth;
+    private int theSize;
 
     /**
      * Constructor.
@@ -58,7 +58,7 @@ public abstract class TethysUICoreToolBarManager
         /* Create the map */
         theElementMap = new HashMap<>();
         theId = pFactory.getNextId();
-        theWidth = TethysUIConstant.DEFAULT_ICONWIDTH;
+        theSize = TethysUIConstant.DEFAULT_ICONSIZE;
     }
 
     @Override
@@ -67,14 +67,13 @@ public abstract class TethysUICoreToolBarManager
     }
 
     @Override
-    public int getIconWidth() {
-        return theWidth;
+    public int getIconSize() {
+        return theSize;
     }
 
     @Override
-    public void setIconWidth(final int pWidth) {
-        /* Store the width */
-        theWidth = pWidth;
+    public void setIconSize(final int pSize) {
+        theSize = pSize;
     }
 
     @Override

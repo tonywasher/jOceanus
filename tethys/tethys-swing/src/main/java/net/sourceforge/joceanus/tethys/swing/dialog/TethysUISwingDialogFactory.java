@@ -16,13 +16,13 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.tethys.swing.dialog;
 
-import javax.swing.JFrame;
-
 import net.sourceforge.joceanus.tethys.api.dialog.TethysUIAlert;
 import net.sourceforge.joceanus.tethys.api.dialog.TethysUIChildDialog;
 import net.sourceforge.joceanus.tethys.api.dialog.TethysUIDialogFactory;
 import net.sourceforge.joceanus.tethys.api.dialog.TethysUIPasswordDialog;
 import net.sourceforge.joceanus.tethys.core.factory.TethysUICoreFactory;
+
+import javax.swing.JFrame;
 
 /**
  * swing Dialog factory.
@@ -69,6 +69,11 @@ public class TethysUISwingDialogFactory
     @Override
     public TethysUISwingAboutBox newAboutBox() {
         return new TethysUISwingAboutBox(theFactory, theFrame);
+    }
+
+    @Override
+    public TethysUISwingBusySpinner newBusySpinner() {
+        return new TethysUISwingBusySpinner(theFactory, theFrame);
     }
 
     @Override

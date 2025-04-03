@@ -14,30 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.tethys.api.base;
+package net.sourceforge.joceanus.tethys.api.dialog;
+
+import net.sourceforge.joceanus.tethys.api.base.TethysUIComponent;
 
 /**
- * Tethys Constants.
+ * About Box.
  */
-public final class TethysUIConstant {
+public interface TethysUIBusySpinner
+        extends TethysUIComponent {
     /**
-     * Private constructor.
+     * Show dialog.
      */
-    private TethysUIConstant() {
-    }
+    void showDialog();
 
     /**
-     * List separator.
+     * Close dialog.
      */
-    public static final String LIST_SEP = ",";
-
-    /**
-     * The colon indicator.
-     */
-    public static final String STR_COLON = ":";
-
-    /**
-     * Default icon size.
-     */
-    public static final int DEFAULT_ICONSIZE = 16;
+    void closeDialog();
 }

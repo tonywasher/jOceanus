@@ -42,6 +42,10 @@ public class MoneyWiseNullPasswordDialog
     }
 
     @Override
-    public void reportBadPassword() {
+    public void reportBadPassword(final String pError) {
+    }
+
+    @Override
+    public void showTheSpinner(final boolean pShow) {
     }
 }

@@ -16,8 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.tethys.core.dialog;
 
-import java.util.Arrays;
-
 import net.sourceforge.joceanus.tethys.api.base.TethysUIAlignment;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.tethys.api.button.TethysUIButton;
@@ -31,6 +29,8 @@ import net.sourceforge.joceanus.tethys.api.pane.TethysUIGridPaneManager;
 import net.sourceforge.joceanus.tethys.api.pane.TethysUIPaneFactory;
 import net.sourceforge.joceanus.tethys.core.base.TethysUIResource;
 import net.sourceforge.joceanus.tethys.core.factory.TethysUICoreFactory;
+
+import java.util.Arrays;
 
 /**
  * Dialog to request a password. Will also ask for password confirmation if required.
@@ -88,24 +88,9 @@ public abstract class TethysUICorePasswordDialog
     private static final String NLS_ERROR = TethysUIResource.PASS_TITLE_ERROR.getValue();
 
     /**
-     * Text for Bad Password Error.
-     */
-    private static final String NLS_ERRORPASS = TethysUIResource.PASS_ERROR_BADPASS.getValue();
-
-    /**
      * Text for Error Panel.
      */
     private static final String NLS_CONFIRMERROR = TethysUIResource.PASS_ERROR_CONFIRM.getValue();
-
-    /**
-     * Text for Error Panel.
-     */
-    private static final String NLS_LENGTHERR1 = TethysUIResource.PASS_ERROR_LENGTH1.getValue();
-
-    /**
-     * Text for Error Panel.
-     */
-    private static final String NLS_LENGTHERR2 = TethysUIResource.PASS_ERROR_LENGTH2.getValue();
 
     /**
      * The GUI factory.
@@ -329,17 +314,6 @@ public abstract class TethysUICorePasswordDialog
             /* Access the confirm password */
             theConfirm = theConfirmField.getPassword();
 
-            /* If the password is less than the minimum length */
-            if (thePassword.length < MIN_PASSWORD_LEN) {
-                /* Set error and return */
-                setError(NLS_LENGTHERR1
-                        + " "
-                        + MIN_PASSWORD_LEN
-                        + " "
-                        + NLS_LENGTHERR2);
-                return;
-            }
-
             /* If the confirm password does not match */
             if (!Arrays.equals(thePassword, theConfirm)) {
                 /* Set error and return */
@@ -356,8 +330,8 @@ public abstract class TethysUICorePasswordDialog
     }
 
     @Override
-    public void reportBadPassword() {
-        setError(NLS_ERRORPASS);
+    public void reportBadPassword(final String pError) {
+        setError(pError);
     }
 
     /**

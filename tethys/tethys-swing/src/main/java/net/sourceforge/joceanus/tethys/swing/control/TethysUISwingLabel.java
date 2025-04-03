@@ -16,19 +16,24 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.tethys.swing.control;
 
-import java.awt.Color;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import net.sourceforge.joceanus.tethys.api.base.TethysUIAlignment;
+import net.sourceforge.joceanus.tethys.api.base.TethysUIArrowIconId;
+import net.sourceforge.joceanus.tethys.api.base.TethysUIIcon;
+import net.sourceforge.joceanus.tethys.api.base.TethysUIIconId;
+import net.sourceforge.joceanus.tethys.api.menu.TethysUIScrollMenu;
+import net.sourceforge.joceanus.tethys.core.control.TethysUICoreLabel;
+import net.sourceforge.joceanus.tethys.core.factory.TethysUICoreFactory;
+import net.sourceforge.joceanus.tethys.swing.base.TethysUISwingArrowIcon;
+import net.sourceforge.joceanus.tethys.swing.base.TethysUISwingIcon;
+import net.sourceforge.joceanus.tethys.swing.base.TethysUISwingNode;
+import net.sourceforge.joceanus.tethys.swing.base.TethysUISwingUtils;
+import net.sourceforge.joceanus.tethys.swing.menu.TethysUISwingScrollMenu;
 
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
-
-import net.sourceforge.joceanus.tethys.api.base.TethysUIAlignment;
-import net.sourceforge.joceanus.tethys.api.menu.TethysUIScrollMenu;
-import net.sourceforge.joceanus.tethys.core.factory.TethysUICoreFactory;
-import net.sourceforge.joceanus.tethys.core.control.TethysUICoreLabel;
-import net.sourceforge.joceanus.tethys.swing.base.TethysUISwingNode;
-import net.sourceforge.joceanus.tethys.swing.menu.TethysUISwingScrollMenu;
+import java.awt.Color;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 /**
  * Tethys Swing Label.
@@ -64,11 +69,27 @@ public final class TethysUISwingLabel
         theLabel = new JLabel();
         setAlignment(TethysUIAlignment.WEST);
         theNode = new TethysUISwingNode(theLabel);
+        setTextOnly();
     }
 
     @Override
     public void setText(final String pText) {
         theLabel.setText(pText);
+    }
+
+    @Override
+    public void setIcon(final TethysUIArrowIconId pIcon) {
+        setIcon(TethysUISwingArrowIcon.getIconForId(pIcon));
+    }
+
+    @Override
+    public void setIcon(final TethysUIIconId pId) {
+        setIcon(TethysUISwingUtils.getIconAtSize(pId, getIconSize()));
+    }
+
+    @Override
+    public void setIcon(final TethysUIIcon pIcon) {
+        theLabel.setIcon(TethysUISwingIcon.getIcon(pIcon));
     }
 
     @Override
@@ -167,6 +188,32 @@ public final class TethysUISwingLabel
             default:
                 return SwingConstants.BOTTOM;
         }
+    }
+
+    @Override
+    public void setIconOnly() {
+        theLabel.setHorizontalAlignment(SwingConstants.CENTER);
+    }
+
+    @Override
+    public void setTextAndIcon() {
+        theLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        theLabel.setVerticalAlignment(SwingConstants.CENTER);
+        theLabel.setHorizontalTextPosition(SwingConstants.LEFT);
+    }
+
+    @Override
+    public void setIconAndText() {
+        theLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        theLabel.setVerticalAlignment(SwingConstants.CENTER);
+        theLabel.setHorizontalTextPosition(SwingConstants.RIGHT);
+    }
+
+    @Override
+    public void setTextOnly() {
+        theLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        theLabel.setVerticalAlignment(SwingConstants.CENTER);
+        theLabel.setHorizontalTextPosition(SwingConstants.CENTER);
     }
 
     @Override

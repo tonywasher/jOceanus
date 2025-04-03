@@ -16,10 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.tethys.javafx.menu;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.collections.ObservableList;
@@ -45,12 +41,11 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.Duration;
-
 import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
 import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIConstant;
-import net.sourceforge.joceanus.tethys.api.base.TethysUIIcon;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIEvent;
+import net.sourceforge.joceanus.tethys.api.base.TethysUIIcon;
 import net.sourceforge.joceanus.tethys.api.menu.TethysUIScrollIcon;
 import net.sourceforge.joceanus.tethys.api.menu.TethysUIScrollItem;
 import net.sourceforge.joceanus.tethys.api.menu.TethysUIScrollMenu;
@@ -60,6 +55,10 @@ import net.sourceforge.joceanus.tethys.core.menu.TethysUICoreScrollMenu;
 import net.sourceforge.joceanus.tethys.javafx.base.TethysUIFXArrowIcon;
 import net.sourceforge.joceanus.tethys.javafx.base.TethysUIFXIcon;
 import net.sourceforge.joceanus.tethys.javafx.base.TethysUIFXUtils;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Scroll-able version of ContextMenu.
@@ -1023,7 +1022,7 @@ public class TethysUIFXScrollMenu<T>
             /* Create a Label for the graphic */
             theIcon = new Label();
             theIcon.setGraphic(TethysUIFXIcon.getIcon(pGraphic));
-            theIcon.setMinWidth(TethysUIConstant.DEFAULT_ICONWIDTH);
+            theIcon.setMinWidth(TethysUIConstant.DEFAULT_ICONSIZE);
 
             /* Add the children */
             theBorderPane.setLeft(theIcon);
@@ -1181,7 +1180,7 @@ public class TethysUIFXScrollMenu<T>
         public void setSelected(final boolean pSelected) {
             isSelected = pSelected;
             setIcon(isSelected
-                    ? TethysUIFXUtils.getIconAtSize(TethysUIScrollIcon.CHECKMARK, TethysUIConstant.DEFAULT_ICONWIDTH)
+                    ? TethysUIFXUtils.getIconAtSize(TethysUIScrollIcon.CHECKMARK, TethysUIConstant.DEFAULT_ICONSIZE)
                     : null);
         }
 

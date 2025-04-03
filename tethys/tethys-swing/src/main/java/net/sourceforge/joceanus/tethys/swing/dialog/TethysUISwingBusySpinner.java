@@ -16,7 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.tethys.swing.dialog;
 
-import net.sourceforge.joceanus.tethys.core.dialog.TethysUICoreAboutBox;
+import net.sourceforge.joceanus.tethys.core.dialog.TethysUICoreBusySpinner;
 import net.sourceforge.joceanus.tethys.core.factory.TethysUICoreFactory;
 import net.sourceforge.joceanus.tethys.swing.base.TethysUISwingNode;
 
@@ -27,10 +27,10 @@ import java.awt.Color;
 import java.awt.Dialog.ModalityType;
 
 /**
- * Swing About Box.
+ * Swing Busy Spinner.
  */
-public class TethysUISwingAboutBox
-        extends TethysUICoreAboutBox {
+public class TethysUISwingBusySpinner
+        extends TethysUICoreBusySpinner {
     /**
      * The Frame.
      */
@@ -46,8 +46,8 @@ public class TethysUISwingAboutBox
      * @param pFactory the GUI factory
      * @param pFrame the frame
      */
-    TethysUISwingAboutBox(final TethysUICoreFactory<?> pFactory,
-                          final JFrame pFrame) {
+    TethysUISwingBusySpinner(final TethysUICoreFactory<?> pFactory,
+                             final JFrame pFrame) {
         /* Initialise underlying class */
         super(pFactory);
         if (pFrame == null) {
@@ -91,7 +91,7 @@ public class TethysUISwingAboutBox
         /* Create the dialog */
         theDialog = new JDialog(theFrame);
         theDialog.setUndecorated(true);
-        theDialog.setModalityType(ModalityType.APPLICATION_MODAL);
+        theDialog.setModalityType(ModalityType.MODELESS);
 
         /* Create simple border */
         getNode().getNode().setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
@@ -103,7 +103,9 @@ public class TethysUISwingAboutBox
     }
 
     @Override
-    protected void closeDialog() {
-        theDialog.setVisible(false);
+    public void closeDialog() {
+        if (theDialog != null) {
+            theDialog.setVisible(false);
+        }
     }
 }

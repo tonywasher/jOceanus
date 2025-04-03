@@ -16,36 +16,36 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.moneywise.ui.dialog;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
-import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
-import net.sourceforge.joceanus.metis.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.metis.data.MetisDataDifference;
+import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.metis.ui.MetisAction;
+import net.sourceforge.joceanus.metis.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.metis.ui.MetisIcon;
-import net.sourceforge.joceanus.moneywise.exc.MoneyWiseDataException;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicResource;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataSet;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurity;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurityPrice;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurityPrice.MoneyWiseSecurityPriceList;
+import net.sourceforge.joceanus.moneywise.exc.MoneyWiseDataException;
 import net.sourceforge.joceanus.moneywise.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.moneywise.ui.base.MoneyWiseDialogTable;
 import net.sourceforge.joceanus.moneywise.views.MoneyWiseView;
-import net.sourceforge.joceanus.prometheus.data.PrometheusDataResource;
-import net.sourceforge.joceanus.prometheus.ui.fieldset.PrometheusFieldSetTableTab.PrometheusFieldSetTable;
-import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.date.OceanusDate;
 import net.sourceforge.joceanus.oceanus.date.OceanusDateConfig;
 import net.sourceforge.joceanus.oceanus.date.OceanusDateRange;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
+import net.sourceforge.joceanus.prometheus.data.PrometheusDataResource;
+import net.sourceforge.joceanus.prometheus.ui.fieldset.PrometheusFieldSetTableTab.PrometheusFieldSetTable;
+import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
 import net.sourceforge.joceanus.tethys.api.control.TethysUIControl.TethysUIIconMapSet;
 import net.sourceforge.joceanus.tethys.api.table.TethysUITableColumn;
 import net.sourceforge.joceanus.tethys.api.table.TethysUITableManager;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Security Price Table.
@@ -170,7 +170,7 @@ public class MoneyWiseSecurityPriceTable
         /* Access iterator */
         final Iterator<MoneyWiseSecurityPrice> myIterator = getTable().viewIterator();
 
-        /* Assume that we can use todays date */
+        /* Assume that we can use today's date */
         OceanusDate myDate = new OceanusDate();
 
         /* Access the last price */

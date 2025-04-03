@@ -22,7 +22,7 @@ import net.sourceforge.joceanus.oceanus.resource.OceanusBundleLoader;
 import java.util.ResourceBundle;
 
 /**
- * Resource IDs for jPrometheus UI Fields.
+ * Resource IDs for Prometheus UI Fields.
  */
 public enum PrometheusUIResource implements OceanusBundleId {
     /**

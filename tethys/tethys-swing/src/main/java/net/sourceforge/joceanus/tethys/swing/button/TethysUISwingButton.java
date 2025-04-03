@@ -16,11 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.tethys.swing.button;
 
-import java.awt.Insets;
-
-import javax.swing.JButton;
-import javax.swing.SwingConstants;
-
 import net.sourceforge.joceanus.tethys.api.base.TethysUIArrowIconId;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIIcon;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIIconId;
@@ -30,6 +25,10 @@ import net.sourceforge.joceanus.tethys.swing.base.TethysUISwingArrowIcon;
 import net.sourceforge.joceanus.tethys.swing.base.TethysUISwingIcon;
 import net.sourceforge.joceanus.tethys.swing.base.TethysUISwingNode;
 import net.sourceforge.joceanus.tethys.swing.base.TethysUISwingUtils;
+
+import javax.swing.JButton;
+import javax.swing.SwingConstants;
+import java.awt.Insets;
 
 /**
  * Tethys Swing Button.
@@ -88,7 +87,7 @@ public class TethysUISwingButton
 
     @Override
     public void setIcon(final TethysUIIconId pId) {
-        setIcon(TethysUISwingUtils.getIconAtSize(pId, getIconWidth()));
+        setIcon(TethysUISwingUtils.getIconAtSize(pId, getIconSize()));
     }
 
     @Override
@@ -116,6 +115,13 @@ public class TethysUISwingButton
         theButton.setHorizontalAlignment(SwingConstants.CENTER);
         theButton.setVerticalAlignment(SwingConstants.CENTER);
         theButton.setHorizontalTextPosition(SwingConstants.LEFT);
+    }
+
+    @Override
+    public void setIconAndText() {
+        theButton.setHorizontalAlignment(SwingConstants.CENTER);
+        theButton.setVerticalAlignment(SwingConstants.CENTER);
+        theButton.setHorizontalTextPosition(SwingConstants.RIGHT);
     }
 
     @Override

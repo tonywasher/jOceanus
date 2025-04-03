@@ -16,8 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.tethys.javafx.base;
 
-import java.util.List;
-
 import javafx.geometry.Bounds;
 import javafx.geometry.Dimension2D;
 import javafx.geometry.Insets;
@@ -39,6 +37,8 @@ import javafx.stage.Screen;
 import javafx.stage.Window;
 import net.sourceforge.joceanus.oceanus.convert.OceanusDataConverter;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIIconId;
+
+import java.util.List;
 
 /**
  * Simple UI Utilities for javaFX.
@@ -470,13 +470,13 @@ public final class TethysUIFXUtils {
     /**
      * Obtain the reSized icon.
      * @param pId the icon Id
-     * @param pWidth the new width for the icon
+     * @param pSize the new size for the icon
      * @return the icon
      */
     public static TethysUIFXIcon getIconAtSize(final TethysUIIconId pId,
-                                               final int pWidth) {
+                                               final int pSize) {
         final ImageView myNewImage = getIcon(pId).getImageView();
-        myNewImage.setFitWidth(pWidth);
+        myNewImage.setFitWidth(pSize);
         myNewImage.setPreserveRatio(true);
         myNewImage.setSmooth(true);
         myNewImage.setCache(true);

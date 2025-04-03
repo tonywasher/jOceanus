@@ -79,9 +79,9 @@
     <JSONVersion>20250107</JSONVersion>
     <ApacheMavenVersion>3.9.9</ApacheMavenVersion>
     <MySQLVersion>9.2.0</MySQLVersion>
-    <MariaDBVersion>3.5.2</MariaDBVersion>
+    <MariaDBVersion>3.5.3</MariaDBVersion>
     <PostGreSQLVersion>42.7.5</PostGreSQLVersion>
-    <MSSQLVersion>12.8.1.jre11</MSSQLVersion>
+    <MSSQLVersion>12.10.0.jre11</MSSQLVersion>
     <H2Version>2.3.232</H2Version>
     <ApachePOIVersion>5.4.0</ApachePOIVersion>
     <JSoupVersion>1.19.1</JSoupVersion>
@@ -90,8 +90,8 @@
     <JavaVersion>17</JavaVersion>
     <JavaFXVersion>17.0.14</JavaFXVersion>
     <JavaLanguageVersion>17</JavaLanguageVersion>
-    <CheckStyleVersion>10.21.4</CheckStyleVersion>
-    <PMDVersion>7.11.0</PMDVersion>
+    <CheckStyleVersion>10.23.0</CheckStyleVersion>
+    <PMDVersion>7.12.0</PMDVersion>
     <CleanPluginVersion>3.4.1</CleanPluginVersion>
     <ResourcesPluginVersion>3.3.1</ResourcesPluginVersion>
     <InstallPluginVersion>3.1.4</InstallPluginVersion>
@@ -101,7 +101,7 @@
     <CompilerPluginVersion>3.14.0</CompilerPluginVersion>
     <ShadePluginVersion>3.6.0</ShadePluginVersion>
     <DependencyPluginVersion>3.8.1</DependencyPluginVersion>
-    <SurefirePluginVersion>3.5.2</SurefirePluginVersion>
+    <SurefirePluginVersion>3.5.3</SurefirePluginVersion>
     <BuildNumberPluginVersion>3.2.1</BuildNumberPluginVersion>
     <BuildHelperPluginVersion>3.6.0</BuildHelperPluginVersion>
     <JarPluginVersion>3.4.2</JarPluginVersion>
@@ -111,12 +111,12 @@
     <JavaNCSSPluginVersion>2.1</JavaNCSSPluginVersion>
     <SourcePluginVersion>3.3.1</SourcePluginVersion>
     <ChangelogPluginVersion>2.3</ChangelogPluginVersion>
-    <SonarQubePluginVersion>5.0.0.4389</SonarQubePluginVersion>
+    <SonarQubePluginVersion>5.1.0.4751</SonarQubePluginVersion>
     <CheckStylePluginVersion>3.6.0</CheckStylePluginVersion>
     <PMDPluginVersion>3.26.0</PMDPluginVersion>
     <JacocoPluginVersion>0.8.12</JacocoPluginVersion>
     <GPGPluginVersion>3.2.7</GPGPluginVersion>
-    <JetBrainsAnnotationsVersion>26.0.1</JetBrainsAnnotationsVersion>
+    <JetBrainsAnnotationsVersion>26.0.2</JetBrainsAnnotationsVersion>
     <VersionsPluginVersion>2.18.0</VersionsPluginVersion>
     <sonar.organization>tonywasher</sonar.organization>
     <sonar.projectKey>jOceanus</sonar.projectKey>

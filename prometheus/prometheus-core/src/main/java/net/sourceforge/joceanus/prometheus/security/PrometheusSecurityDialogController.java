@@ -35,6 +35,12 @@ public interface PrometheusSecurityDialogController {
     boolean showTheDialog();
 
     /**
+     * Show the spinner.
+     * @param pShow show spinner true/false
+     */
+    void showTheSpinner(boolean pShow);
+
+    /**
      * Release dialog.
      */
     void releaseDialog();
@@ -47,6 +53,7 @@ public interface PrometheusSecurityDialogController {
 
     /**
      * report bad password.
+     * @param pError the error
      */
-    void reportBadPassword();
+    void reportBadPassword(String pError);
 }

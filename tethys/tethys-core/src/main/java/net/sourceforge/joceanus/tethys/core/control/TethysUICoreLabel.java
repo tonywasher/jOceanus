@@ -16,6 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.tethys.core.control;
 
+import net.sourceforge.joceanus.tethys.api.base.TethysUIConstant;
 import net.sourceforge.joceanus.tethys.api.control.TethysUILabel;
 import net.sourceforge.joceanus.tethys.core.base.TethysUICoreComponent;
 import net.sourceforge.joceanus.tethys.core.factory.TethysUICoreFactory;
@@ -32,9 +33,19 @@ public abstract class TethysUICoreLabel
     public static final String STR_COLON = ":";
 
     /**
+     * Default icon size.
+     */
+    protected static final int DEFAULT_ICONSIZE = TethysUIConstant.DEFAULT_ICONSIZE;
+
+    /**
      * The id.
      */
     private final Integer theId;
+
+    /**
+     * The icon Size.
+     */
+    private int theSize;
 
     /**
      * Constructor.
@@ -42,10 +53,21 @@ public abstract class TethysUICoreLabel
      */
     protected TethysUICoreLabel(final TethysUICoreFactory<?> pFactory) {
         theId = pFactory.getNextId();
+        theSize = DEFAULT_ICONSIZE;
     }
 
     @Override
     public Integer getId() {
         return theId;
+    }
+
+    @Override
+    public int getIconSize() {
+        return theSize;
+    }
+
+    @Override
+    public void setIconSize(final int pSize) {
+        theSize = pSize;
     }
 }

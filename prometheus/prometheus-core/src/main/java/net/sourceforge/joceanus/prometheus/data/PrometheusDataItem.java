@@ -360,14 +360,6 @@ public abstract class PrometheusDataItem
         return theTouchStatus;
     }
 
-    /**
-     * Get the Generation.
-     * @return the Generation
-     */
-    public int getGeneration() {
-        return theList.getGeneration();
-    }
-
     @Override
     public boolean isEditable() {
         return !isDeleted();

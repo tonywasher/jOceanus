@@ -18,6 +18,7 @@ package net.sourceforge.joceanus.moneywise.test.data.storage;
 
 import net.sourceforge.joceanus.metis.field.MetisFieldItem.MetisFieldDef;
 import net.sourceforge.joceanus.metis.field.MetisFieldItem.MetisFieldSetDef;
+import net.sourceforge.joceanus.metis.list.MetisListKey;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseCashCategory;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataSet;
@@ -44,7 +45,6 @@ import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataList;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataList.PrometheusListStyle;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataResource;
-import net.sourceforge.joceanus.prometheus.data.PrometheusListKey;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditEntry;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
 import org.junit.jupiter.api.Assertions;
@@ -296,7 +296,7 @@ public class MoneyWiseDataTestEditSet {
      */
     void validateReferencedItemInEditSet(final PrometheusDataItem pItem,
                                          final PrometheusEditSet pEditSet) {
-        final PrometheusListKey myKey = pItem.getItemType();
+        final MetisListKey myKey = pItem.getItemType();
         final PrometheusListStyle myStyle = pEditSet.hasDataType(myKey) ? PrometheusListStyle.EDIT : PrometheusListStyle.CORE;
         Assertions.assertEquals(myStyle, pItem.getList().getStyle(), "Referenced item is incorrect style");
     }

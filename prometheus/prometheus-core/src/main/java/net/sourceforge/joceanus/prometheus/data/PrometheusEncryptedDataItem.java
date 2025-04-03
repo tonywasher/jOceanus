@@ -22,6 +22,7 @@ import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.metis.field.MetisFieldVersionedSet;
 import net.sourceforge.joceanus.metis.list.MetisListKey;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataKeySet.PrometheusDataKeySetList;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataSet.PrometheusCryptographyDataType;
 import net.sourceforge.joceanus.tethys.api.thread.TethysUIThreadStatusReport;
@@ -35,6 +36,11 @@ import java.util.Iterator;
 public abstract class PrometheusEncryptedDataItem
         extends PrometheusDataItem {
     /**
+     * Null Encryptor.
+     */
+    private static final PrometheusEncryptor NULL_ENCRYPTOR = new PrometheusEncryptor(new OceanusDataFormatter(), null);
+
+    /**
      * Report fields.
      */
     private static final MetisFieldVersionedSet<PrometheusEncryptedDataItem> FIELD_DEFS = MetisFieldVersionedSet.newVersionedFieldSet(PrometheusEncryptedDataItem.class);
@@ -47,11 +53,6 @@ public abstract class PrometheusEncryptedDataItem
     }
 
     /**
-     * Encryptor field.
-     */
-    private PrometheusEncryptor theEncryptor;
-
-    /**
      * Standard Constructor. This creates a null encryption generator. This will be overridden when
      * a DataKeySet is assigned to the item.
      * @param pList the list that this item is associated with
@@ -60,7 +61,6 @@ public abstract class PrometheusEncryptedDataItem
     protected PrometheusEncryptedDataItem(final PrometheusEncryptedList<?> pList,
                                           final Integer pId) {
         super(pList, pId);
-        theEncryptor = new PrometheusEncryptor(pList.getDataSet().getDataFormatter(), null);
     }
 
     /**
@@ -71,7 +71,6 @@ public abstract class PrometheusEncryptedDataItem
     protected PrometheusEncryptedDataItem(final PrometheusEncryptedList<?> pList,
                                           final PrometheusEncryptedDataItem pSource) {
         super(pList, pSource);
-        theEncryptor = pSource.theEncryptor;
     }
 
     /**
@@ -89,8 +88,6 @@ public abstract class PrometheusEncryptedDataItem
         final Integer myId = pValues.getValue(PrometheusCryptographyDataType.DATAKEYSET, Integer.class);
         if (myId != null) {
             setDataKeySet(myId);
-        } else {
-            theEncryptor = new PrometheusEncryptor(pList.getDataSet().getDataFormatter(), null);
         }
     }
 
@@ -134,9 +131,6 @@ public abstract class PrometheusEncryptedDataItem
      */
     private void setValueDataKeySet(final PrometheusDataKeySet pSet) {
         getValues().setUncheckedValue(PrometheusCryptographyDataType.DATAKEYSET, pSet);
-        if (pSet != null) {
-            theEncryptor = pSet.getEncryptor();
-        }
     }
 
     /**
@@ -145,6 +139,15 @@ public abstract class PrometheusEncryptedDataItem
      */
     private void setValueDataKeySet(final Integer pId) {
         getValues().setUncheckedValue(PrometheusCryptographyDataType.DATAKEYSET, pId);
+    }
+
+    /**
+     * Get the Encryptor.
+     * @return the encryptor
+     */
+    public PrometheusEncryptor getEncryptor() {
+        final PrometheusDataKeySet myKeySet = getDataKeySet();
+        return myKeySet == null ? NULL_ENCRYPTOR : myKeySet.getEncryptor();
     }
 
     @Override
@@ -179,7 +182,6 @@ public abstract class PrometheusEncryptedDataItem
         /* Resolve the ControlKey */
         final PrometheusDataSet myData = getDataSet();
         resolveDataLink(PrometheusCryptographyDataType.DATAKEYSET, myData.getDataKeySets());
-        theEncryptor = getDataKeySet().getEncryptor();
     }
 
     /**
@@ -202,7 +204,7 @@ public abstract class PrometheusEncryptedDataItem
 
         /* Create the new encrypted value */
         final PrometheusEncryptedPair myCurr = (PrometheusEncryptedPair) myCurrent;
-        final PrometheusEncryptedPair myField = theEncryptor.encryptValue(myCurr, pValue);
+        final PrometheusEncryptedPair myField = getEncryptor().encryptValue(myCurr, pValue);
 
         /* Store the new value */
         myValueSet.setUncheckedValue(myFieldDef, myField);
@@ -218,7 +220,7 @@ public abstract class PrometheusEncryptedDataItem
                                            final byte[] pEncrypted) throws OceanusException {
         /* Create the new encrypted value */
         final MetisFieldDef myFieldDef = getDataFieldSet().getField(pFieldId);
-        final PrometheusEncryptedPair myField = theEncryptor.decryptValue(pEncrypted, myFieldDef);
+        final PrometheusEncryptedPair myField = getEncryptor().decryptValue(pEncrypted, myFieldDef);
 
         /* Store the new value */
         getValues().setValue(myFieldDef, myField);
@@ -236,7 +238,7 @@ public abstract class PrometheusEncryptedDataItem
                                            final Class<?> pClazz) throws OceanusException {
         /* Create the new encrypted value */
         final MetisFieldDef myFieldDef = getDataFieldSet().getField(pFieldId);
-        final PrometheusEncryptedPair myField = theEncryptor.decryptValue(pEncrypted, pClazz);
+        final PrometheusEncryptedPair myField = getEncryptor().decryptValue(pEncrypted, pClazz);
 
         /* Store the new value */
         getValues().setUncheckedValue(myFieldDef, myField);
@@ -288,7 +290,6 @@ public abstract class PrometheusEncryptedDataItem
         final PrometheusEncryptedValues myBaseValues = pBase.getValues();
 
         /* Try to adopt the underlying */
-        getValues().setTheEncryptor(pBase.theEncryptor);
         getValues().adoptSecurity(myBaseValues);
     }
 
@@ -302,7 +303,6 @@ public abstract class PrometheusEncryptedDataItem
         setValueDataKeySet(pKeySet);
 
         /* Initialise security */
-        getValues().setTheEncryptor(theEncryptor);
         getValues().adoptSecurity(null);
     }
 
