@@ -46,102 +46,102 @@ public class MoneyWiseDataTestAccounts {
     /**
      * Payee ids.
      */
-    final static String idPY_Barclays = "Barclays";
-    final static String idPY_Lloyds = "Lloyds";
-    final static String idPY_TSB = "TSB";
-    final static String idPY_Halifax = "Halifax";
-    final static String idPY_Nationwide = "Nationwide";
-    final static String idPY_Starling = "Starling";
-    final static String idPY_InteractiveInvestor = "InteractiveInvestor";
-    final static String idPY_AJBell = "AJBell";
-    final static String idPY_StandardLife = "StandardLife";
-    final static String idPY_FundingCircle = "FundingCircle";
-    final static String idPY_IBM = "IBM";
-    final static String idPY_Petrol = "Petrol";
-    final static String idPY_Parking = "Parking";
-    final static String idPY_ASDA = "ASDA";
-    final static String idPY_Potters = "PottersHeron";
-    final static String idPY_Government = "Government";
-    final static String idPY_HMRC = "InlandRevenue";
-    final static String idPY_Market = "Market";
-    final static String idPY_CashExpense = "CashExpense";
-    final static String idPY_Damage = "Damage";
-    final static String idPY_Parents = "Parents";
-    final static String idPY_AssetHolder = "AssetHolder";
+    static final String idPY_Barclays = "Barclays";
+    static final String idPY_Lloyds = "Lloyds";
+    static final String idPY_TSB = "TSB";
+    static final String idPY_Halifax = "Halifax";
+    static final String idPY_Nationwide = "Nationwide";
+    static final String idPY_Starling = "Starling";
+    static final String idPY_InteractiveInvestor = "InteractiveInvestor";
+    static final String idPY_AJBell = "AJBell";
+    static final String idPY_StandardLife = "StandardLife";
+    static final String idPY_FundingCircle = "FundingCircle";
+    static final String idPY_IBM = "IBM";
+    static final String idPY_Petrol = "Petrol";
+    static final String idPY_Parking = "Parking";
+    static final String idPY_ASDA = "ASDA";
+    static final String idPY_Potters = "PottersHeron";
+    static final String idPY_Government = "Government";
+    static final String idPY_HMRC = "InlandRevenue";
+    static final String idPY_Market = "Market";
+    static final String idPY_CashExpense = "CashExpense";
+    static final String idPY_Damage = "Damage";
+    static final String idPY_Parents = "Parents";
+    static final String idPY_AssetHolder = "AssetHolder";
 
     /**
      * Deposit ids.
      */
-    final static String idDP_BarclaysCurrent = "BarclaysCurrent";
-    final static String idDP_NatWideFlexDirect = "NatWideFlexDirect";
-    final static String idDP_NatWideLoyalty = "NatWideLoyalty";
-    final static String idDP_NatWideISA = "NatWideISA";
-    final static String idDP_StarlingSterling = "StarlingSterling";
-    final static String idDP_StarlingEuro = "StarlingEuro";
-    final static String idDP_StarlingEuroISA = "StarlingEuroISA";
-    final static String idDP_StarlingDollar = "StarlingDollar";
-    final static String idDP_FundingCircleLoans = "FundingCircleLoans";
+    static final String idDP_BarclaysCurrent = "BarclaysCurrent";
+    static final String idDP_NatWideFlexDirect = "NatWideFlexDirect";
+    static final String idDP_NatWideLoyalty = "NatWideLoyalty";
+    static final String idDP_NatWideISA = "NatWideISA";
+    static final String idDP_StarlingSterling = "StarlingSterling";
+    static final String idDP_StarlingEuro = "StarlingEuro";
+    static final String idDP_StarlingEuroISA = "StarlingEuroISA";
+    static final String idDP_StarlingDollar = "StarlingDollar";
+    static final String idDP_FundingCircleLoans = "FundingCircleLoans";
 
     /**
      * Cash ids.
      */
-    final static String idCS_Cash = "Cash";
-    final static String idCS_EurosCash = "EurosCash";
-    final static String idCS_CashWallet = "CashWallet";
-    final static String idCS_EurosWallet = "EurosWallet";
+    static final String idCS_Cash = "Cash";
+    static final String idCS_EurosCash = "EurosCash";
+    static final String idCS_CashWallet = "CashWallet";
+    static final String idCS_EurosWallet = "EurosWallet";
 
     /**
      * Loan ids.
      */
-    final static String idLN_Barclaycard = "Barclaycard";
-    final static String idLN_DamageLoan = "DamageLoan";
-    final static String idLN_BarclaysMortgage = "BarclaysMortgage";
-    final static String idLN_DeferredTax = "DeferredTax";
+    static final String idLN_Barclaycard = "Barclaycard";
+    static final String idLN_DamageLoan = "DamageLoan";
+    static final String idLN_BarclaysMortgage = "BarclaysMortgage";
+    static final String idLN_DeferredTax = "DeferredTax";
 
     /**
      * Portfolio ids.
      */
-    final static String idPF_AJBellStock = "AJBellStock";
-    final static String idPF_InteractiveInvestorStock = "InteractiveInvestorStock";
-    final static String idPF_InteractiveInvestorISA = "InteractiveInvestorISA";
-    final static String idPF_InteractiveInvestorSIPP = "InteractiveInvestorSIPP";
-    final static String idPF_Assets = "Assets";
-    final static String idPF_Residence = "Residence";
-    final static String idPF_Pensions = "Pensions";
+    static final String idPF_AJBellStock = "AJBellStock";
+    static final String idPF_InteractiveInvestorStock = "InteractiveInvestorStock";
+    static final String idPF_InteractiveInvestorISA = "InteractiveInvestorISA";
+    static final String idPF_InteractiveInvestorSIPP = "InteractiveInvestorSIPP";
+    static final String idPF_Assets = "Assets";
+    static final String idPF_Residence = "Residence";
+    static final String idPF_Pensions = "Pensions";
 
     /**
      * Security ids.
      */
-    final static String idSC_BarclaysShares = "BarclaysShares";
-    final static String idSC_LloydsShares = "LloydsShares";
-    final static String idSC_HalifaxShares = "HalifaxShares";
-    final static String idSC_TSBShares = "TSBShares";
-    final static String idSC_StarlingShares = "StarlingShares";
-    final static String idSC_BarclaysSharesUS = "BarclaysSharesUS";
-    final static String idSC_LloydsSharesUS = "LloydsSharesUS";
-    final static String idSC_HalifaxSharesUS = "HalifaxSharesUS";
-    final static String idSC_TSBSharesUS = "TSBSharesUS";
-    final static String idSC_StarlingSharesUS = "StarlingSharesUS";
-    final static String idSC_FordEscort = "FordEscort";
-    final static String idSC_Mazda6 = "Mazda6";
-    final static String idSC_12MainSt = "12MainSt";
-    final static String idSC_56HighSt= "56HighSt";
-    final static String idSC_41KiteSt = "41KiteSt";
-    final static String idSC_IBMPension = "IBMPension";
-    final static String idSC_IBMAvc = "IBMAvc";
-    final static String idSC_StdLifePolicy = "StdLifePolicy";
-    final static String idSC_StdLifeBond = "StdLifeBond";
-    final static String idSC_StatePension = "StatePension";
+    static final String idSC_BarclaysShares = "BarclaysShares";
+    static final String idSC_LloydsShares = "LloydsShares";
+    static final String idSC_HalifaxShares = "HalifaxShares";
+    static final String idSC_TSBShares = "TSBShares";
+    static final String idSC_StarlingShares = "StarlingShares";
+    static final String idSC_BarclaysSharesUS = "BarclaysSharesUS";
+    static final String idSC_LloydsSharesUS = "LloydsSharesUS";
+    static final String idSC_HalifaxSharesUS = "HalifaxSharesUS";
+    static final String idSC_TSBSharesUS = "TSBSharesUS";
+    static final String idSC_StarlingSharesUS = "StarlingSharesUS";
+    static final String idSC_FordEscort = "FordEscort";
+    static final String idSC_Mazda6 = "Mazda6";
+    static final String idSC_12MainSt = "12MainSt";
+    static final String idSC_56HighSt= "56HighSt";
+    static final String idSC_41KiteSt = "41KiteSt";
+    static final String idSC_IBMPension = "IBMPension";
+    static final String idSC_IBMAvc = "IBMAvc";
+    static final String idSC_StdLifePolicy = "StdLifePolicy";
+    static final String idSC_StdLifeBond = "StdLifeBond";
+    static final String idSC_StatePension = "StatePension";
 
     /**
      * Security holding ids.
      */
-    final static String idSH_BarclaysShares = idPF_InteractiveInvestorStock + ":" + idSC_BarclaysShares;
-    final static String idSH_LloydsShares = idPF_InteractiveInvestorStock + ":" + idSC_LloydsShares;
-    final static String idSH_LloydsSharesISA = idPF_InteractiveInvestorISA + ":" + idSC_LloydsShares;
-    final static String idSH_HalifaxShares = idPF_InteractiveInvestorStock + ":" + idSC_HalifaxShares;
-    final static String idSH_TSBShares = idPF_InteractiveInvestorStock + ":" + idSC_TSBShares;
-    final static String idSH_StarlingShares = idPF_InteractiveInvestorStock + ":" + idSC_StarlingShares;
+    static final String idSH_BarclaysShares = idPF_InteractiveInvestorStock + ":" + idSC_BarclaysShares;
+    static final String idSH_LloydsShares = idPF_InteractiveInvestorStock + ":" + idSC_LloydsShares;
+    static final String idSH_LloydsSharesISA = idPF_InteractiveInvestorISA + ":" + idSC_LloydsShares;
+    static final String idSH_HalifaxShares = idPF_InteractiveInvestorStock + ":" + idSC_HalifaxShares;
+    static final String idSH_TSBShares = idPF_InteractiveInvestorStock + ":" + idSC_TSBShares;
+    static final String idSH_StarlingShares = idPF_InteractiveInvestorStock + ":" + idSC_StarlingShares;
 
     /**
      * The dataSet.

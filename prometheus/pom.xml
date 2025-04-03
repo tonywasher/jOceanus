@@ -3,7 +3,7 @@
   <parent>
     <groupId>net.sourceforge.joceanus</groupId>
     <artifactId>joceanus</artifactId>
-    <version>1.6.3-b5</version>
+    <version>1.6.3-SNAPSHOT</version>
   </parent>
   <artifactId>prometheus</artifactId>
   <name>Prometheus Application Framework</name>

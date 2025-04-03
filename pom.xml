@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>net.sourceforge.joceanus</groupId>
   <artifactId>joceanus</artifactId>
-  <version>1.6.3-b5</version>
+  <version>1.6.3-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>Java Oceanus package</name>
   <description>Parent project for jOceanus</description>
@@ -60,10 +60,10 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <scmMain>main</scmMain>
     <currentBranch>1.6.3</currentBranch>
-    <currentTag>b5</currentTag>
+    <currentTag>SNAPSHOT</currentTag>
     <baseBranch>${currentBranch}</baseBranch>
-    <baseTag>b4</baseTag>
-    <currentRef>${tagRef}</currentRef>
+    <baseTag>b5</baseTag>
+    <currentRef>${snapshotRef}</currentRef>
     <snapshotRef>${scmMain}</snapshotRef>
     <tagRef>${currentBranch}-${currentTag}</tagRef>
     <baseRef>${baseBranch}-${baseTag}</baseRef>
@@ -121,7 +121,7 @@
     <sonar.organization>tonywasher</sonar.organization>
     <sonar.projectKey>jOceanus</sonar.projectKey>
     <sonar.host.url>https://sonarcloud.io</sonar.host.url>
-    <sonar.exclusions>*/embedded/**,*/patch/**</sonar.exclusions>
+    <sonar.exclusions>**/embedded/**,**/patch/**,**/test/**</sonar.exclusions>
   </properties>
   <build>
     <resources>
