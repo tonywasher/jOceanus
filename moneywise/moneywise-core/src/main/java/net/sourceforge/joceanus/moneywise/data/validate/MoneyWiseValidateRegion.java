@@ -92,7 +92,7 @@ public class MoneyWiseValidateRegion
     }
 
     /**
-     * Obtain unique name for new tag.
+     * Obtain unique name for new region.
      * @param pList the region list
      * @return The new name
      */

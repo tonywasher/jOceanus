@@ -32,7 +32,6 @@ import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurityHolding.Mo
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransAsset;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransCategory;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransCategory.MoneyWiseTransCategoryList;
-import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransInfoSet;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransaction;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransaction.MoneyWiseTransactionList;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransCategoryClass;
@@ -152,8 +151,8 @@ public class MoneyWiseValidateTransDefaults {
         }
 
         /* AutoCorrect the InfoSet */
-        final MoneyWiseTransInfoSet myInfoSet = pTrans.getInfoSet();
-        myInfoSet.autoCorrect(theEditSet);
+        final MoneyWiseValidateTransInfoSet myInfoSet = theValidator.getInfoSetValidator();
+        myInfoSet.autoCorrect(pTrans.getInfoSet());
     }
 
     /**

@@ -101,6 +101,14 @@ public class MoneyWiseValidateTransaction
     }
 
     /**
+     * Obtain the transInfoSet validator.
+     * @return the validator
+     */
+    public MoneyWiseValidateTransInfoSet getInfoSetValidator() {
+        return theInfoSet;
+    }
+
+    /**
      * Should we perform new validity checks?
      * @return true/false
      */

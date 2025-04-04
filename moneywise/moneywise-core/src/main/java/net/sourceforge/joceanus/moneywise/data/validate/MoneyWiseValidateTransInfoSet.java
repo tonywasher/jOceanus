@@ -19,7 +19,10 @@ package net.sourceforge.joceanus.moneywise.data.validate;
 import net.sourceforge.joceanus.metis.data.MetisDataDifference;
 import net.sourceforge.joceanus.metis.field.MetisFieldRequired;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseAssetDirection;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataSet;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDeposit;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDeposit.MoneyWiseDepositList;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurityHolding;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTax.MoneyWiseTaxCredit;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransAsset;
@@ -32,14 +35,17 @@ import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrency;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseSecurityClass;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransCategoryClass;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransInfoClass;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusRatio;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusUnits;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataInfoClass;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
 import net.sourceforge.joceanus.prometheus.validate.PrometheusValidateInfoSet;
 
 import java.util.Currency;
+import java.util.Iterator;
 
 /**
  * Validate TransInfoSet.
@@ -573,7 +579,6 @@ public class MoneyWiseValidateTransInfoSet
         }
     }
 
-
     /**
      * Validate the price.
      * @param pInfo the info
@@ -671,5 +676,52 @@ public class MoneyWiseValidateTransInfoSet
             default:
                 return MetisFieldRequired.NOTALLOWED;
         }
+    }
+
+    @Override
+    protected void setDefault(final PrometheusDataInfoClass pClass) throws OceanusException {
+        /* Switch on the class */
+        switch ((MoneyWiseTransInfoClass) pClass) {
+            case ACCOUNTDELTAUNITS:
+            case PARTNERDELTAUNITS:
+                getInfoSet().setValue(pClass, OceanusUnits.getWholeUnits(1));
+                break;
+            case DILUTION:
+                getInfoSet().setValue(pClass, OceanusRatio.ONE);
+                break;
+            case QUALIFYYEARS:
+                getInfoSet().setValue(pClass, 1);
+                break;
+            case TAXCREDIT:
+                getInfoSet().setValue(pClass, OceanusMoney.getWholeUnits(0));
+                break;
+            case RETURNEDCASHACCOUNT:
+                getInfoSet().setValue(pClass, getDefaultReturnedCashAccount());
+                break;
+            default:
+                break;
+        }
+    }
+
+    /**
+     * Obtain default deposit for ReturnedCashAccount.
+     * @return the default returnedCashAccount
+     */
+    private MoneyWiseDeposit getDefaultReturnedCashAccount() {
+        /* loop through the deposits */
+        final MoneyWiseDepositList myDeposits
+                = getEditSet().getDataList(MoneyWiseBasicDataType.DEPOSIT, MoneyWiseDepositList.class);
+        final Iterator<MoneyWiseDeposit> myIterator = myDeposits.iterator();
+        while (myIterator.hasNext()) {
+            final MoneyWiseDeposit myDeposit = myIterator.next();
+
+            /* Use if not deleted or closed */
+            if (!myDeposit.isDeleted() && !myDeposit.isClosed()) {
+                return myDeposit;
+            }
+        }
+
+        /* Return no deposit */
+        return null;
     }
 }

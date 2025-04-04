@@ -17,21 +17,36 @@
 package net.sourceforge.joceanus.moneywise.data.validate;
 
 import net.sourceforge.joceanus.metis.field.MetisFieldRequired;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDepositInfoSet;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseLoanInfoSet;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseRegion;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseRegion.MoneyWiseRegionList;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurity;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurity.MoneyWiseSecurityList;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurityInfo;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurityInfoSet;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseAccountInfoClass;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrency;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseSecurityClass;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataInfoClass;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
 import net.sourceforge.joceanus.prometheus.validate.PrometheusValidateInfoSet;
+
+import java.util.Iterator;
 
 /**
  * Validate SecurityInfoSet.
  */
 public class MoneyWiseValidateSecurityInfoSet
         extends PrometheusValidateInfoSet<MoneyWiseSecurityInfo> {
+    /**
+     * New Symbol name.
+     */
+    private static final String NAME_NEWSYMBOL = "SYMBOL";
+
     @Override
     public MoneyWiseSecurity getOwner() {
         return (MoneyWiseSecurity) super.getOwner();
@@ -142,6 +157,9 @@ public class MoneyWiseValidateSecurityInfoSet
         if (!myStock.getCategoryClass().isShares()) {
             getOwner().addError("Invalid underlying stock", MoneyWiseSecurityInfoSet.getFieldForClass(MoneyWiseAccountInfoClass.UNDERLYINGSTOCK));
         }
+        if (!myStock.getCurrency().equals(getOwner().getCurrency())) {
+            getOwner().addError(MoneyWiseDepositInfoSet.ERROR_CURRENCY, MoneyWiseLoanInfoSet.getFieldForClass(MoneyWiseAccountInfoClass.UNDERLYINGSTOCK));
+        }
     }
 
     /**
@@ -155,5 +173,123 @@ public class MoneyWiseValidateSecurityInfoSet
         } else if (!myPrice.isPositive()) {
             getOwner().addError(PrometheusDataItem.ERROR_NEGATIVE, MoneyWiseSecurityInfoSet.getFieldForClass(MoneyWiseAccountInfoClass.OPTIONPRICE));
         }
+        if (!myPrice.getCurrency().equals(getOwner().getCurrency())) {
+            getOwner().addError(MoneyWiseDepositInfoSet.ERROR_CURRENCY, MoneyWiseLoanInfoSet.getFieldForClass(MoneyWiseAccountInfoClass.OPTIONPRICE));
+        }
+    }
+
+    @Override
+    protected void setDefault(final PrometheusDataInfoClass pClass) throws OceanusException {
+        /* Switch on the class */
+        switch ((MoneyWiseAccountInfoClass) pClass) {
+            case SYMBOL:
+                getInfoSet().setValue(pClass, getUniqueSymbol());
+                break;
+            case REGION:
+                getInfoSet().setValue(pClass, getDefaultRegion());
+                break;
+            case UNDERLYINGSTOCK:
+                getInfoSet().setValue(pClass, getDefaultUnderlyingStock());
+                break;
+            case OPTIONPRICE:
+                getInfoSet().setValue(pClass, getDefaultOptionPrice());
+                break;
+            default:
+                break;
+        }
+    }
+
+    /**
+     * Obtain unique symbol for new tag.
+     * @return The new symbol
+     */
+    private String getUniqueSymbol() {
+        /* Access the security list */
+        final MoneyWiseSecurityList mySecurities = getOwner().getList();
+
+        /* Set up base constraints */
+        final String myBase = NAME_NEWSYMBOL;
+        int iNextId = 1;
+
+        /* Loop until we found a symbol */
+        String mySymbol = myBase;
+        for (;;) {
+            /* try out the symbol */
+            if (mySecurities.findItemBySymbol(mySymbol) == null) {
+                return mySymbol;
+            }
+
+            /* Build next symbol */
+            mySymbol = myBase.concat(Integer.toString(iNextId++));
+        }
+    }
+
+    /**
+     * Obtain default region for security.
+     * @return the default region
+     */
+    private MoneyWiseRegion getDefaultRegion() {
+        /* Access the region list */
+        final MoneyWiseRegionList myRegions
+                = getEditSet().getDataList(MoneyWiseBasicDataType.REGION, MoneyWiseRegionList.class);
+
+        /* loop through the regions */
+        final Iterator<MoneyWiseRegion> myIterator = myRegions.iterator();
+        while (myIterator.hasNext()) {
+            final MoneyWiseRegion myRegion = myIterator.next();
+
+            /* Return first non-deleted region */
+            if (!myRegion.isDeleted()) {
+                return myRegion;
+            }
+        }
+
+        /* Return no region */
+        return null;
+    }
+
+    /**
+     * Obtain default underlying stock.
+     * @return the default underlying stock
+     */
+    private MoneyWiseSecurity getDefaultUnderlyingStock() {
+        /* Access the security list */
+        final MoneyWiseSecurityList mySecurities = getOwner().getList();
+
+        /* loop through the securities */
+        final Iterator<MoneyWiseSecurity> myIterator = mySecurities.iterator();
+        while (myIterator.hasNext()) {
+            final MoneyWiseSecurity mySecurity = myIterator.next();
+
+            /* Ignore deleted securities */
+            if (mySecurity.isDeleted()) {
+                continue;
+            }
+
+            /* Ignore securities that are the wrong class */
+            if (mySecurity.getCategoryClass().isShares()) {
+                return mySecurity;
+            }
+        }
+
+        /* Return no security */
+        return null;
+    }
+
+    /**
+     * Obtain default option price.
+     * @return the default underlying stock
+     */
+    private OceanusPrice getDefaultOptionPrice() {
+        /* Obtain the underlying stock */
+        final MoneyWiseSecurity myUnderlying = getOwner().getUnderlyingStock();
+
+        /* If there is no underlying stock, then there is no price */
+        if (myUnderlying == null) {
+            return null;
+        }
+
+        final MoneyWiseCurrency myCurrency = myUnderlying.getAssetCurrency();
+        return OceanusPrice.getWholeUnits(1, myCurrency.getCurrency());
     }
 }
