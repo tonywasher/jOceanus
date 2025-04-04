@@ -18,12 +18,10 @@ package net.sourceforge.joceanus.moneywise.data.basic;
 
 import net.sourceforge.joceanus.metis.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
-import net.sourceforge.joceanus.metis.field.MetisFieldRequired;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDepositInfo.MoneyWiseDepositInfoList;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseAccountInfoClass;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseAccountInfoType.MoneyWiseAccountInfoTypeList;
-import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseDepositCategoryClass;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataInfoClass;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataInfoSet;
@@ -160,62 +158,6 @@ public class MoneyWiseDepositInfoSet
         /* Loop through the items */
         for (MoneyWiseDepositInfo myInfo : this) {
             myInfo.resolveEditSetLinks(pEditSet);
-        }
-    }
-
-    /**
-     * Determine if a field is required.
-     * @param pField the infoSet field
-     * @return the status
-     */
-    public MetisFieldRequired isFieldRequired(final MetisDataFieldId pField) {
-        final MoneyWiseAccountInfoClass myClass = getClassForField(pField);
-        return myClass == null
-                ? MetisFieldRequired.NOTALLOWED
-                : isClassRequired(myClass);
-    }
-
-    @Override
-    public MetisFieldRequired isClassRequired(final PrometheusDataInfoClass pClass) {
-        /* Access details about the Deposit */
-        final MoneyWiseDeposit myDeposit = getOwner();
-        final MoneyWiseDepositCategory myCategory = myDeposit.getCategory();
-
-        /* If we have no Category, no class is allowed */
-        if (myCategory == null) {
-            return MetisFieldRequired.NOTALLOWED;
-        }
-        final MoneyWiseDepositCategoryClass myClass = myCategory.getCategoryTypeClass();
-
-        /* Switch on class */
-        switch ((MoneyWiseAccountInfoClass) pClass) {
-            /* Allowed set */
-            case NOTES:
-            case SORTCODE:
-            case ACCOUNT:
-            case REFERENCE:
-            case OPENINGBALANCE:
-                return MetisFieldRequired.CANEXIST;
-
-            /* Handle Maturity */
-            case MATURITY:
-                return myClass.hasMaturity()
-                        ? MetisFieldRequired.MUSTEXIST
-                        : MetisFieldRequired.NOTALLOWED;
-
-            /* Not allowed */
-            case AUTOEXPENSE:
-            case AUTOPAYEE:
-            case WEBSITE:
-            case CUSTOMERNO:
-            case USERID:
-            case PASSWORD:
-            case SYMBOL:
-            case REGION:
-            case UNDERLYINGSTOCK:
-            case OPTIONPRICE:
-            default:
-                return MetisFieldRequired.NOTALLOWED;
         }
     }
 }

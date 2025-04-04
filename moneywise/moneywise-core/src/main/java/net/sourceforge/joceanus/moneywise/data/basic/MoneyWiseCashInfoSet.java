@@ -18,18 +18,13 @@ package net.sourceforge.joceanus.moneywise.data.basic;
 
 import net.sourceforge.joceanus.metis.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
-import net.sourceforge.joceanus.metis.field.MetisFieldRequired;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseCashInfo.MoneyWiseCashInfoList;
-import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePayee.MoneyWisePayeeList;
-import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransCategory.MoneyWiseTransCategoryList;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseAccountInfoClass;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseAccountInfoType.MoneyWiseAccountInfoTypeList;
-import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransCategoryClass;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataInfoClass;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataInfoSet;
-import net.sourceforge.joceanus.prometheus.data.PrometheusDataList.PrometheusDataListSet;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
 
 import java.util.Arrays;
@@ -216,133 +211,5 @@ public class MoneyWiseCashInfoSet
         for (MoneyWiseCashInfo myInfo : this) {
             myInfo.resolveEditSetLinks(pEditSet);
         }
-    }
-
-    /**
-     * Determine if a field is required.
-     * @param pField the infoSet field
-     * @return the status
-     */
-    public MetisFieldRequired isFieldRequired(final MetisDataFieldId pField) {
-        final MoneyWiseAccountInfoClass myClass = getClassForField(pField);
-        return myClass == null
-                ? MetisFieldRequired.NOTALLOWED
-                : isClassRequired(myClass);
-    }
-
-    @Override
-    public MetisFieldRequired isClassRequired(final PrometheusDataInfoClass pClass) {
-        /* Access details about the Cash */
-        final MoneyWiseCash myCash = getOwner();
-        final MoneyWiseCashCategory myCategory = myCash.getCategory();
-
-        /* If we have no Category, no class is allowed */
-        if (myCategory == null) {
-            return MetisFieldRequired.NOTALLOWED;
-        }
-
-        /* Switch on class */
-        switch ((MoneyWiseAccountInfoClass) pClass) {
-            /* Allowed set */
-            case NOTES:
-                return MetisFieldRequired.CANEXIST;
-
-            case OPENINGBALANCE:
-                return myCash.isAutoExpense()
-                        ? MetisFieldRequired.NOTALLOWED
-                        : MetisFieldRequired.CANEXIST;
-            case AUTOPAYEE:
-            case AUTOEXPENSE:
-                return myCash.isAutoExpense()
-                        ? MetisFieldRequired.MUSTEXIST
-                        : MetisFieldRequired.NOTALLOWED;
-
-            /* Disallowed Set */
-            case SORTCODE:
-            case ACCOUNT:
-            case REFERENCE:
-            case WEBSITE:
-            case CUSTOMERNO:
-            case USERID:
-            case PASSWORD:
-            case MATURITY:
-            case SYMBOL:
-            case REGION:
-            case UNDERLYINGSTOCK:
-            case OPTIONPRICE:
-            default:
-                return MetisFieldRequired.NOTALLOWED;
-        }
-    }
-
-
-    @Override
-    protected void setDefaultValue(final PrometheusDataListSet pUpdateSet,
-                                   final PrometheusDataInfoClass pClass) throws OceanusException {
-        /* Switch on the class */
-        switch ((MoneyWiseAccountInfoClass) pClass) {
-            case AUTOEXPENSE:
-                setValue(pClass, getDefaultAutoExpense(pUpdateSet));
-                break;
-            case AUTOPAYEE:
-                setValue(pClass, getDefaultAutoPayee(pUpdateSet));
-                break;
-            default:
-                break;
-        }
-    }
-
-    /**
-     * Obtain default expense for autoExpense cash.
-     * @param pUpdateSet the updateSet
-     * @return the default expense
-     */
-    private static MoneyWiseTransCategory getDefaultAutoExpense(final PrometheusDataListSet pUpdateSet) {
-        /* Access the category list */
-        final MoneyWiseTransCategoryList myCategories = pUpdateSet.getDataList(MoneyWiseBasicDataType.TRANSCATEGORY, MoneyWiseTransCategoryList.class);
-
-        /* loop through the categories */
-        final Iterator<MoneyWiseTransCategory> myIterator = myCategories.iterator();
-        while (myIterator.hasNext()) {
-            final MoneyWiseTransCategory myCategory = myIterator.next();
-
-            /* Ignore deleted categories */
-            if (myCategory.isDeleted()) {
-                continue;
-            }
-
-            /* Ignore categories that are the wrong class */
-            final MoneyWiseTransCategoryClass myCatClass = myCategory.getCategoryTypeClass();
-            if (myCatClass.isExpense() && !myCatClass.canParentCategory()) {
-                return myCategory;
-            }
-        }
-
-        /* Return no category */
-        return null;
-    }
-
-    /**
-     * Obtain default payee for autoExpense cash.
-     * @param pUpdateSet the updateSet
-     * @return the default payee
-     */
-    private static MoneyWisePayee getDefaultAutoPayee(final PrometheusDataListSet pUpdateSet) {
-        /* Access the payee list */
-        final MoneyWisePayeeList myPayees = pUpdateSet.getDataList(MoneyWiseBasicDataType.PAYEE, MoneyWisePayeeList.class);
-
-        /* loop through the payees */
-        final Iterator<MoneyWisePayee> myIterator = myPayees.iterator();
-        while (myIterator.hasNext()) {
-            final MoneyWisePayee myPayee = myIterator.next();
-
-            /* Ignore deleted and closed payees */
-            if (!myPayee.isDeleted() && Boolean.TRUE.equals(!myPayee.isClosed())) {
-                return myPayee;
-            }
-        }
-
-        /* Return no payee */
-        return null;
     }
 }

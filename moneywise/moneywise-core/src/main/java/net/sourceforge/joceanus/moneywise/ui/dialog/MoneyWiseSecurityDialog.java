@@ -35,6 +35,7 @@ import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseSecurityClass;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseSecurityType;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseSecurityType.MoneyWiseSecurityTypeList;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
+import net.sourceforge.joceanus.moneywise.data.validate.MoneyWiseValidateSecurity;
 import net.sourceforge.joceanus.moneywise.ui.MoneyWiseIcon;
 import net.sourceforge.joceanus.moneywise.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.moneywise.ui.base.MoneyWiseAssetTable;
@@ -293,7 +294,8 @@ public class MoneyWiseSecurityDialog
         final MoneyWiseSecurityInfoSet myInfoSet = pSecurity.getInfoSet();
 
         /* Check whether the field is available */
-        final MetisFieldRequired isRequired = myInfoSet.isClassRequired(pField);
+        final MoneyWiseValidateSecurity myValidator = (MoneyWiseValidateSecurity) pSecurity.getList().getValidator();
+        final MetisFieldRequired isRequired = myValidator.isClassRequired(pField);
         return !isRequired.equals(MetisFieldRequired.NOTALLOWED);
     }
 

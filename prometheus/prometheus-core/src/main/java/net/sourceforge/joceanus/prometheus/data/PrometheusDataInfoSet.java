@@ -21,12 +21,10 @@ import net.sourceforge.joceanus.metis.data.MetisDataEditState;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.metis.data.MetisDataState;
 import net.sourceforge.joceanus.metis.field.MetisFieldItem;
-import net.sourceforge.joceanus.metis.field.MetisFieldRequired;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataInfoItem.PrometheusDataInfoList;
-import net.sourceforge.joceanus.prometheus.data.PrometheusDataList.PrometheusDataListSet;
 import net.sourceforge.joceanus.prometheus.data.PrometheusStaticDataItem.PrometheusStaticList;
 
 import java.util.HashMap;
@@ -857,55 +855,6 @@ public abstract class PrometheusDataInfoSet<T extends PrometheusDataInfoItem>
     }
 
     /**
-     * autoCorrect values after change.
-     * @param pUpdateSet the update set
-     * @throws OceanusException on error
-     */
-    public void autoCorrect(final PrometheusDataListSet pUpdateSet) throws OceanusException {
-        /* Loop through the classes */
-        for (PrometheusStaticDataClass myClass : theTypeList.getEnumClass().getEnumConstants()) {
-            /* Access value and requirement */
-            final PrometheusDataInfoClass myInfoClass = (PrometheusDataInfoClass) myClass;
-            final MetisFieldRequired myState = isClassRequired(myInfoClass);
-
-            /* Switch on required state */
-            switch (myState) {
-                case MUSTEXIST:
-                    if (getInfo(myInfoClass) == null) {
-                        setDefaultValue(pUpdateSet, myInfoClass);
-                    }
-                    break;
-                case NOTALLOWED:
-                    if (getInfo(myInfoClass) != null) {
-                        setValue(myInfoClass, null);
-                    }
-                    break;
-                case CANEXIST:
-                default:
-                    break;
-            }
-        }
-    }
-
-    /**
-     * Determine if an infoSet class is required.
-     * @param pClass the infoSet class
-     * @return the status
-     */
-    public abstract MetisFieldRequired isClassRequired(PrometheusDataInfoClass pClass);
-
-    /**
-     * set default value after update.
-     * @param pUpdateSet the update set
-     * @param pClass the class
-     * @throws OceanusException on error
-     */
-    protected void setDefaultValue(final PrometheusDataListSet pUpdateSet,
-                                   final PrometheusDataInfoClass pClass) throws OceanusException {
-        /* Overridden as necessary */
-    }
-
-    /**
      * Remove items.
      */
     public void removeItems() {
@@ -994,40 +943,6 @@ public abstract class PrometheusDataInfoSet<T extends PrometheusDataInfoItem>
                 pAction.accept(next());
             }
         }
-    }
-
-    /**
-     * Perform basic class validation.
-     * @param pInfo the info (or null)
-     * @param pClass the infoClass
-     * @return continue checks true/false
-     */
-    protected boolean checkClass(final T pInfo,
-                                 final PrometheusDataInfoClass pClass) {
-        /* Check whether info exists */
-        final boolean isExisting = pInfo != null
-                && !pInfo.isDeleted();
-
-        /* Determine requirements for class */
-        final MetisFieldRequired myState = isClassRequired(pClass);
-
-        /* If the field is missing */
-        if (!isExisting) {
-            /* Handle required field missing */
-            if (myState == MetisFieldRequired.MUSTEXIST) {
-                getOwner().addError(PrometheusDataItem.ERROR_MISSING, getFieldForClass(pClass));
-            }
-            return false;
-        }
-
-        /* If field is not allowed */
-        if (myState == MetisFieldRequired.NOTALLOWED) {
-            getOwner().addError(PrometheusDataItem.ERROR_EXIST, getFieldForClass(pClass));
-            return false;
-        }
-
-        /* Continue checks */
-        return true;
     }
 
     /**

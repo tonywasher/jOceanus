@@ -21,11 +21,9 @@ import net.sourceforge.joceanus.metis.data.MetisDataEditState;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.metis.data.MetisDataResource;
 import net.sourceforge.joceanus.metis.data.MetisDataState;
-import net.sourceforge.joceanus.metis.field.MetisFieldRequired;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.metis.field.MetisFieldVersionedSet;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseAssetBase.MoneyWiseAssetBaseList;
-import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDeposit.MoneyWiseDepositList;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTax.MoneyWiseTaxCredit;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTax.MoneyWiseTaxFactory;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransCategory.MoneyWiseTransCategoryList;
@@ -630,37 +628,6 @@ public class MoneyWiseTransaction
 
         /* Resolve links in infoSet */
         theInfoSet.resolveEditSetLinks(myEditSet);
-    }
-
-    /**
-     * Determine if an infoSet class is required.
-     * @param pClass the infoSet class
-     * @return the status
-     */
-    public MetisFieldRequired isClassRequired(final MoneyWiseTransInfoClass pClass) {
-        /* Check the class */
-        return theInfoSet.isClassRequired(pClass);
-    }
-
-    /**
-     * Obtain default deposit for ReturnedCashAccount.
-     * @return the default returnedCashAccount
-     */
-    protected MoneyWiseDeposit getDefaultReturnedCashAccount() {
-        /* loop through the deposits */
-        final MoneyWiseDepositList myDeposits = getDataSet().getDeposits();
-        final Iterator<MoneyWiseDeposit> myIterator = myDeposits.iterator();
-        while (myIterator.hasNext()) {
-            final MoneyWiseDeposit myDeposit = myIterator.next();
-
-            /* Use if not deleted or closed */
-            if (!myDeposit.isDeleted() && !myDeposit.isClosed()) {
-                return myDeposit;
-            }
-        }
-
-        /* Return no deposit */
-        return null;
     }
 
     /**

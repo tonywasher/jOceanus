@@ -17,6 +17,7 @@
 package net.sourceforge.joceanus.moneywise.data.validate;
 
 import net.sourceforge.joceanus.metis.data.MetisDataDifference;
+import net.sourceforge.joceanus.metis.field.MetisFieldRequired;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseAssetDirection;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseAssetType;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
@@ -817,6 +818,15 @@ public class MoneyWiseValidateTransaction
 
         /* Not allowed */
         return false;
+    }
+
+    /**
+     * Determine if an infoSet class is required.
+     * @param pClass the infoSet class
+     * @return the status
+     */
+    public MetisFieldRequired isClassRequired(final MoneyWiseTransInfoClass pClass) {
+        return theInfoSet.isClassRequired(pClass);
     }
 
     @Override

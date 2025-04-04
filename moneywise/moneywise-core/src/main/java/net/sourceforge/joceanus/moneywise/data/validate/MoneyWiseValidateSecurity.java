@@ -16,6 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.moneywise.data.validate;
 
+import net.sourceforge.joceanus.metis.field.MetisFieldRequired;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseAssetBase;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicResource;
@@ -170,6 +171,15 @@ public class MoneyWiseValidateSecurity
                 || pName.equals(MoneyWiseValidatePortfolio.NAME_CASHACCOUNT)) {
             pSecurity.addError(ERROR_RESERVED, PrometheusDataResource.DATAITEM_FIELD_NAME);
         }
+    }
+
+    /**
+     * Determine if an infoSet class is required.
+     * @param pClass the infoSet class
+     * @return the status
+     */
+    public MetisFieldRequired isClassRequired(final MoneyWiseAccountInfoClass pClass) {
+        return theInfoSet.isClassRequired(pClass);
     }
 
     @Override

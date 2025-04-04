@@ -18,12 +18,10 @@ package net.sourceforge.joceanus.moneywise.data.basic;
 
 import net.sourceforge.joceanus.metis.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
-import net.sourceforge.joceanus.metis.field.MetisFieldRequired;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurityInfo.MoneyWiseSecurityInfoList;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseAccountInfoClass;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseAccountInfoType.MoneyWiseAccountInfoTypeList;
-import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseSecurityClass;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataInfoClass;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataInfoSet;
@@ -208,69 +206,5 @@ public class MoneyWiseSecurityInfoSet
 
         /* Return the security */
         return myValue.getSecurity();
-    }
-
-    /**
-     * Determine if a field is required.
-     * @param pField the infoSet field
-     * @return the status
-     */
-    public MetisFieldRequired isFieldRequired(final MetisDataFieldId pField) {
-        final MoneyWiseAccountInfoClass myClass = getClassForField(pField);
-        return myClass == null
-                ? MetisFieldRequired.NOTALLOWED
-                : isClassRequired(myClass);
-    }
-
-    @Override
-    public MetisFieldRequired isClassRequired(final PrometheusDataInfoClass pClass) {
-        /* Access details about the Security */
-        final MoneyWiseSecurity mySec = getOwner();
-        final MoneyWiseSecurityClass myType = mySec.getCategoryClass();
-
-        /* If we have no Type, no class is allowed */
-        if (myType == null) {
-            return MetisFieldRequired.NOTALLOWED;
-        }
-        /* Switch on class */
-        switch ((MoneyWiseAccountInfoClass) pClass) {
-            /* Allowed set */
-            case NOTES:
-                return MetisFieldRequired.CANEXIST;
-
-            /* Symbol */
-            case SYMBOL:
-                return myType.needsSymbol()
-                        ? MetisFieldRequired.MUSTEXIST
-                        : MetisFieldRequired.NOTALLOWED;
-
-            /* Region */
-            case REGION:
-                return myType.needsRegion()
-                        ? MetisFieldRequired.MUSTEXIST
-                        : MetisFieldRequired.NOTALLOWED;
-
-            /* Options */
-            case UNDERLYINGSTOCK:
-            case OPTIONPRICE:
-                return myType.isOption()
-                        ? MetisFieldRequired.MUSTEXIST
-                        : MetisFieldRequired.NOTALLOWED;
-
-            /* Not Allowed */
-            case SORTCODE:
-            case ACCOUNT:
-            case REFERENCE:
-            case WEBSITE:
-            case CUSTOMERNO:
-            case USERID:
-            case PASSWORD:
-            case MATURITY:
-            case OPENINGBALANCE:
-            case AUTOEXPENSE:
-            case AUTOPAYEE:
-            default:
-                return MetisFieldRequired.NOTALLOWED;
-        }
     }
 }
