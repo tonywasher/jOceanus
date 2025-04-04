@@ -26,7 +26,6 @@ import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseAccountInfoType.
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataInfoClass;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataInfoSet;
-import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
 
 import java.util.Arrays;
@@ -196,59 +195,6 @@ public class MoneyWisePortfolioInfoSet
             case OPTIONPRICE:
             default:
                 return MetisFieldRequired.NOTALLOWED;
-        }
-    }
-
-    /**
-     * Validate the infoSet.
-     */
-    protected void validate() {
-        /* Loop through the classes */
-        for (final MoneyWiseAccountInfoClass myClass : MoneyWiseAccountInfoClass.values()) {
-            /* Access info for class */
-            final MoneyWisePortfolioInfo myInfo = getInfo(myClass);
-
-            /* If basic checks are passed */
-            if (checkClass(myInfo, myClass)) {
-                /* validate the class */
-                validateClass(myInfo, myClass);
-            }
-        }
-    }
-
-    /**
-     * Validate the class.
-     * @param pInfo the info
-     * @param pClass the infoClass
-     */
-    private void validateClass(final MoneyWisePortfolioInfo pInfo,
-                               final MoneyWiseAccountInfoClass pClass) {
-        /* Switch on class */
-        switch (pClass) {
-            case WEBSITE:
-            case CUSTOMERNO:
-            case USERID:
-            case PASSWORD:
-            case SORTCODE:
-            case ACCOUNT:
-            case NOTES:
-            case REFERENCE:
-                validateInfoLength(pInfo);
-                break;
-            default:
-                break;
-        }
-    }
-
-    /**
-     * Validate the info length.
-     * @param pInfo the info
-     */
-    private void validateInfoLength(final MoneyWisePortfolioInfo pInfo) {
-        final char[] myArray = pInfo.getValue(char[].class);
-        final MoneyWiseAccountInfoClass myClass = pInfo.getInfoClass();
-        if (myArray.length > myClass.getMaximumLength()) {
-            getOwner().addError(PrometheusDataItem.ERROR_LENGTH, getFieldForClass(myClass));
         }
     }
 }

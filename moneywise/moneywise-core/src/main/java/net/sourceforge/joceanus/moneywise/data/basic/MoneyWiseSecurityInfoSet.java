@@ -25,10 +25,8 @@ import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseAccountInfoClass
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseAccountInfoType.MoneyWiseAccountInfoTypeList;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseSecurityClass;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataInfoClass;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataInfoSet;
-import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
 
 import java.util.Arrays;
@@ -273,95 +271,6 @@ public class MoneyWiseSecurityInfoSet
             case AUTOPAYEE:
             default:
                 return MetisFieldRequired.NOTALLOWED;
-        }
-    }
-
-    /**
-     * Validate the infoSet.
-     */
-    protected void validate() {
-        /* Loop through the classes */
-        for (final MoneyWiseAccountInfoClass myClass : MoneyWiseAccountInfoClass.values()) {
-            /* Access info for class */
-            final MoneyWiseSecurityInfo myInfo = getInfo(myClass);
-
-            /* If basic checks are passed */
-            if (checkClass(myInfo, myClass)) {
-                /* validate the class */
-                validateClass(myInfo, myClass);
-            }
-        }
-    }
-
-    /**
-     * Validate the class.
-     * @param pInfo the info
-     * @param pClass the infoClass
-     */
-    private void validateClass(final MoneyWiseSecurityInfo pInfo,
-                               final MoneyWiseAccountInfoClass pClass) {
-        /* Switch on class */
-        switch (pClass) {
-            case NOTES:
-                validateNotes(pInfo);
-                break;
-            case SYMBOL:
-                validateSymbol(pInfo);
-                break;
-            case UNDERLYINGSTOCK:
-                validateUnderlyingStock(pInfo);
-                break;
-            case OPTIONPRICE:
-                validateOptionPrice(pInfo);
-                break;
-            default:
-                break;
-        }
-    }
-
-    /**
-     * Validate the Notes info.
-     * @param pInfo the info
-     */
-    private void validateNotes(final MoneyWiseSecurityInfo pInfo) {
-        final char[] myArray = pInfo.getValue(char[].class);
-        if (myArray.length > MoneyWiseAccountInfoClass.NOTES.getMaximumLength()) {
-            getOwner().addError(PrometheusDataItem.ERROR_LENGTH, getFieldForClass(MoneyWiseAccountInfoClass.NOTES));
-        }
-    }
-
-    /**
-     * Validate the Symbol info.
-     * @param pInfo the info
-     */
-    private void validateSymbol(final MoneyWiseSecurityInfo pInfo) {
-        final String mySymbol = pInfo.getValue(String.class);
-        if (mySymbol.length() > MoneyWiseAccountInfoClass.SYMBOL.getMaximumLength()) {
-            getOwner().addError(PrometheusDataItem.ERROR_LENGTH, getFieldForClass(MoneyWiseAccountInfoClass.SYMBOL));
-        }
-    }
-
-    /**
-     * Validate the UnderlyingStock info.
-     * @param pInfo the info
-     */
-    private void validateUnderlyingStock(final MoneyWiseSecurityInfo pInfo) {
-        final MoneyWiseSecurity myStock = pInfo.getValue(MoneyWiseSecurity.class);
-        if (!myStock.getCategoryClass().isShares()) {
-            getOwner().addError("Invalid underlying stock", getFieldForClass(MoneyWiseAccountInfoClass.UNDERLYINGSTOCK));
-        }
-    }
-
-    /**
-     * Validate the OptionPrice info.
-     * @param pInfo the info
-     */
-    private void validateOptionPrice(final MoneyWiseSecurityInfo pInfo) {
-        final OceanusPrice myPrice = pInfo.getValue(OceanusPrice.class);
-        if (myPrice.isZero()) {
-            getOwner().addError(PrometheusDataItem.ERROR_ZERO, getFieldForClass(MoneyWiseAccountInfoClass.OPTIONPRICE));
-        } else if (!myPrice.isPositive()) {
-            getOwner().addError(PrometheusDataItem.ERROR_NEGATIVE, getFieldForClass(MoneyWiseAccountInfoClass.OPTIONPRICE));
         }
     }
 }

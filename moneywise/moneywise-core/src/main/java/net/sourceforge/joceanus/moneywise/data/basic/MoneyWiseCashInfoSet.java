@@ -27,10 +27,8 @@ import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseAccountInfoClass
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseAccountInfoType.MoneyWiseAccountInfoTypeList;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransCategoryClass;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataInfoClass;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataInfoSet;
-import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataList.PrometheusDataListSet;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
 
@@ -277,46 +275,6 @@ public class MoneyWiseCashInfoSet
         }
     }
 
-    /**
-     * Validate the infoSet.
-     */
-    protected void validate() {
-        /* Loop through the classes */
-        for (final MoneyWiseAccountInfoClass myClass : MoneyWiseAccountInfoClass.values()) {
-            /* Access info for class */
-            final MoneyWiseCashInfo myInfo = getInfo(myClass);
-
-            /* If basic checks are passed */
-            if (checkClass(myInfo, myClass)) {
-                /* validate the class */
-                validateClass(myInfo, myClass);
-            }
-        }
-    }
-
-    /**
-     * Validate the class.
-     * @param pInfo the info
-     * @param pClass the infoClass
-     */
-    private void validateClass(final MoneyWiseCashInfo pInfo,
-                               final MoneyWiseAccountInfoClass pClass) {
-        /* Switch on class */
-        switch (pClass) {
-            case OPENINGBALANCE:
-                validateOpeningBalance(pInfo);
-                break;
-            case AUTOEXPENSE:
-                validateAutoExpense(pInfo);
-                break;
-            case NOTES:
-                validateNotes(pInfo);
-                break;
-            default:
-                break;
-        }
-
-    }
 
     @Override
     protected void setDefaultValue(final PrometheusDataListSet pUpdateSet,
@@ -386,39 +344,5 @@ public class MoneyWiseCashInfoSet
 
         /* Return no payee */
         return null;
-    }
-
-    /**
-     * Validate the opening balance.
-     * @param pInfo the info
-     */
-    private void validateOpeningBalance(final MoneyWiseCashInfo pInfo) {
-        final OceanusMoney myBalance = pInfo.getValue(OceanusMoney.class);
-        if (!myBalance.getCurrency().equals(getOwner().getCurrency())) {
-            getOwner().addError(MoneyWiseDepositInfoSet.ERROR_CURRENCY, getFieldForClass(MoneyWiseAccountInfoClass.OPENINGBALANCE));
-        }
-    }
-
-    /**
-     * Validate the autoExpense info.
-     * @param pInfo the info
-     */
-    private void validateAutoExpense(final MoneyWiseCashInfo pInfo) {
-        final MoneyWiseTransCategory myExpense = pInfo.getEventCategory();
-        final MoneyWiseTransCategoryClass myCatClass = myExpense.getCategoryTypeClass();
-        if (!myCatClass.isExpense() || myCatClass.canParentCategory()) {
-            getOwner().addError(ERROR_AUTOEXP, getFieldForClass(MoneyWiseAccountInfoClass.AUTOEXPENSE));
-        }
-    }
-
-    /**
-     * Validate the Notes info.
-     * @param pInfo the info
-     */
-    private void validateNotes(final MoneyWiseCashInfo pInfo) {
-        final char[] myArray = pInfo.getValue(char[].class);
-        if (myArray.length > MoneyWiseAccountInfoClass.NOTES.getMaximumLength()) {
-            getOwner().addError(PrometheusDataItem.ERROR_LENGTH, getFieldForClass(MoneyWiseAccountInfoClass.NOTES));
-        }
     }
 }

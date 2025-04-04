@@ -30,17 +30,14 @@ import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransInfoClass;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransInfoType.MoneyWiseTransInfoTypeList;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusRatio;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusUnits;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataInfoClass;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataInfoSet;
-import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataList.PrometheusDataListSet;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
 
 import java.util.Arrays;
-import java.util.Currency;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -597,73 +594,6 @@ public class MoneyWiseTransInfoSet
     }
 
     /**
-     * Validate the infoSet.
-     */
-    protected void validate() {
-        /* Loop through the classes */
-        for (final MoneyWiseTransInfoClass myClass : MoneyWiseTransInfoClass.values()) {
-            /* Access info for class */
-            final MoneyWiseTransInfo myInfo = myClass.isLinkSet()
-                    ? null
-                    : getInfo(myClass);
-
-            /* If basic checks are passed */
-            if (checkClass(myInfo, myClass)) {
-                /* validate the class */
-                validateClass(myInfo, myClass);
-            }
-        }
-    }
-
-    /**
-     * Validate the class.
-     * @param pInfo the info
-     * @param pClass the infoClass
-     */
-    private void validateClass(final MoneyWiseTransInfo pInfo,
-                               final MoneyWiseTransInfoClass pClass) {
-        /* Switch on class */
-        switch (pClass) {
-            case QUALIFYYEARS:
-                validateQualifyYears(pInfo);
-                break;
-            case TAXCREDIT:
-                validateTaxCredit(pInfo);
-                break;
-            case EMPLOYEENATINS:
-            case EMPLOYERNATINS:
-            case DEEMEDBENEFIT:
-            case WITHHELD:
-                validateOptionalTaxCredit(pInfo);
-                break;
-            case PARTNERAMOUNT:
-                validatePartnerAmount(pInfo);
-                break;
-            case RETURNEDCASHACCOUNT:
-                validateReturnedCashAccount(pInfo);
-                break;
-            case RETURNEDCASH:
-                validateReturnedCash(pInfo);
-                break;
-            case ACCOUNTDELTAUNITS:
-            case PARTNERDELTAUNITS:
-                validateDeltaUnits(pInfo);
-                break;
-            case REFERENCE:
-            case COMMENTS:
-                validateInfoLength(pInfo);
-                break;
-            case PRICE:
-                validatePrice(pInfo);
-                break;
-            case TRANSTAG:
-            case DILUTION:
-            default:
-                break;
-        }
-    }
-
-    /**
      * Determine if AccountDeltaUnits can/mustBe/mustNotBe positive.
      * @param pDir the direction
      * @param pClass the category class
@@ -735,142 +665,6 @@ public class MoneyWiseTransInfoSet
                 break;
             default:
                 break;
-        }
-    }
-
-    /**
-     * Validate the qualifyingYears.
-     * @param pInfo the info
-     */
-    private void validateQualifyYears(final MoneyWiseTransInfo pInfo) {
-        final Integer myYears = pInfo.getValue(Integer.class);
-        if (myYears == 0) {
-            getOwner().addError(PrometheusDataItem.ERROR_ZERO, getFieldForClass(MoneyWiseTransInfoClass.QUALIFYYEARS));
-        } else if (myYears < 0) {
-            getOwner().addError(PrometheusDataItem.ERROR_NEGATIVE, getFieldForClass(MoneyWiseTransInfoClass.QUALIFYYEARS));
-        }
-    }
-
-    /**
-     * Validate the taxCredit.
-     * @param pInfo the info
-     */
-    private void validateTaxCredit(final MoneyWiseTransInfo pInfo) {
-        final OceanusMoney myAmount = pInfo.getValue(OceanusMoney.class);
-        final Currency myCurrency = getOwner().getAccount().getCurrency();
-        if (!myAmount.isPositive()) {
-            getOwner().addError(PrometheusDataItem.ERROR_NEGATIVE, getFieldForClass(MoneyWiseTransInfoClass.TAXCREDIT));
-        } else if (!myAmount.getCurrency().equals(myCurrency)) {
-            getOwner().addError(MoneyWiseTransBase.ERROR_CURRENCY, getFieldForClass(MoneyWiseTransInfoClass.TAXCREDIT));
-        }
-    }
-
-    /**
-     * Validate the optional taxCredits.
-     * @param pInfo the info
-     */
-    private void validateOptionalTaxCredit(final MoneyWiseTransInfo pInfo) {
-        final OceanusMoney myAmount = pInfo.getValue(OceanusMoney.class);
-        final Currency myCurrency = getOwner().getAccount().getCurrency();
-        if (myAmount.isZero()) {
-            getOwner().addError(PrometheusDataItem.ERROR_ZERO, getFieldForClass(pInfo.getInfoClass()));
-        } else if (!myAmount.isPositive()) {
-            getOwner().addError(PrometheusDataItem.ERROR_NEGATIVE, getFieldForClass(pInfo.getInfoClass()));
-        } else if (!myAmount.getCurrency().equals(myCurrency)) {
-            getOwner().addError(MoneyWiseTransBase.ERROR_CURRENCY, getFieldForClass(pInfo.getInfoClass()));
-        }
-    }
-
-    /**
-     * Validate the partnerAmount.
-     * @param pInfo the info
-     */
-    private void validatePartnerAmount(final MoneyWiseTransInfo pInfo) {
-        final MoneyWiseTransAsset myPartner = getOwner().getPartner();
-        final OceanusMoney myAmount = pInfo.getValue(OceanusMoney.class);
-        if (!myAmount.isPositive()) {
-            getOwner().addError(PrometheusDataItem.ERROR_NEGATIVE, getFieldForClass(MoneyWiseTransInfoClass.RETURNEDCASH));
-        } else if (!myAmount.getCurrency().equals(myPartner.getCurrency())) {
-            getOwner().addError(MoneyWiseTransBase.ERROR_CURRENCY, getFieldForClass(MoneyWiseTransInfoClass.RETURNEDCASH));
-        }
-    }
-
-    /**
-     * Validate the returnedCashAccount.
-     * @param pInfo the info
-     */
-    private void validateReturnedCashAccount(final MoneyWiseTransInfo pInfo) {
-        final MoneyWiseTransAsset myThirdParty = pInfo.getTransAsset();
-        final Currency myCurrency = getOwner().getAccount().getCurrency();
-        if (!myCurrency.equals(myThirdParty.getCurrency())) {
-            getOwner().addError(MoneyWiseTransBase.ERROR_CURRENCY, getFieldForClass(MoneyWiseTransInfoClass.RETURNEDCASHACCOUNT));
-        }
-    }
-
-    /**
-     * Validate the returnedCash.
-     * @param pInfo the info
-     */
-    private void validateReturnedCash(final MoneyWiseTransInfo pInfo) {
-        final MoneyWiseTransAsset myThirdParty = getOwner().getReturnedCashAccount();
-        final OceanusMoney myAmount = pInfo.getValue(OceanusMoney.class);
-        if (myAmount.isZero()) {
-            getOwner().addError(PrometheusDataItem.ERROR_ZERO, getFieldForClass(MoneyWiseTransInfoClass.RETURNEDCASH));
-        } else if (!myAmount.isPositive()) {
-            getOwner().addError(PrometheusDataItem.ERROR_NEGATIVE, getFieldForClass(MoneyWiseTransInfoClass.RETURNEDCASH));
-        } else if (!myAmount.getCurrency().equals(myThirdParty.getCurrency())) {
-            getOwner().addError(MoneyWiseTransBase.ERROR_CURRENCY, getFieldForClass(MoneyWiseTransInfoClass.RETURNEDCASH));
-        }
-    }
-
-
-    /**
-     * Validate the price.
-     * @param pInfo the info
-     */
-    private void validatePrice(final MoneyWiseTransInfo pInfo) {
-        final OceanusPrice myPrice = pInfo.getValue(OceanusPrice.class);
-        final Currency myCurrency = getOwner().getAccount().getCurrency();
-        if (myPrice.isZero()) {
-            getOwner().addError(PrometheusDataItem.ERROR_ZERO, getFieldForClass(pInfo.getInfoClass()));
-        } else if (!myPrice.isPositive()) {
-            getOwner().addError(PrometheusDataItem.ERROR_NEGATIVE, getFieldForClass(pInfo.getInfoClass()));
-        } else if (!myPrice.getCurrency().equals(myCurrency)) {
-            getOwner().addError(MoneyWiseTransBase.ERROR_CURRENCY, getFieldForClass(pInfo.getInfoClass()));
-        }
-    }
-
-    /**
-     * Validate the deltaUnits.
-     * @param pInfo the info
-     */
-    private void validateDeltaUnits(final MoneyWiseTransInfo pInfo) {
-        final MoneyWiseTransaction myTrans = getOwner();
-        final MoneyWiseAssetDirection myDir = myTrans.getDirection();
-        final MoneyWiseTransCategoryClass myCatClass = myTrans.getCategoryClass();
-        final MoneyWiseTransInfoClass myInfoClass = pInfo.getInfoClass();
-        final MetisFieldRequired isRequired = myInfoClass == MoneyWiseTransInfoClass.ACCOUNTDELTAUNITS
-                ? isAccountUnitsPositive(myDir, myCatClass)
-                : isPartnerUnitsPositive(myDir, myCatClass);
-        final OceanusUnits myUnits = pInfo.getValue(OceanusUnits.class);
-        if (myUnits.isZero()) {
-            getOwner().addError(PrometheusDataItem.ERROR_ZERO, getFieldForClass(myInfoClass));
-        } else if (myUnits.isPositive() && isRequired.notAllowed()) {
-            getOwner().addError(PrometheusDataItem.ERROR_POSITIVE, getFieldForClass(myInfoClass));
-        } else if (!myUnits.isPositive() && isRequired.mustExist()) {
-            getOwner().addError(PrometheusDataItem.ERROR_NEGATIVE, getFieldForClass(myInfoClass));
-        }
-    }
-
-    /**
-     * Validate the info length.
-     * @param pInfo the info
-     */
-    private void validateInfoLength(final MoneyWiseTransInfo pInfo) {
-        final String myInfo = pInfo.getValue(String.class);
-        final MoneyWiseTransInfoClass myClass = pInfo.getInfoClass();
-        if (myInfo.length() > myClass.getMaximumLength()) {
-            getOwner().addError(PrometheusDataItem.ERROR_LENGTH, getFieldForClass(myClass));
         }
     }
 }
