@@ -206,10 +206,9 @@ public class KeyStoreTest {
      * @param pState the state
      * @param pSpec the keyPairSpec
      * @return the test
-     * @throws GordianException on error
      */
     private static DynamicNode signedKeyPairRequestTest(final KeyPairCertReqState pState,
-                                                        final GordianKeyPairSpec pSpec) throws GordianException {
+                                                        final GordianKeyPairSpec pSpec) {
         /* Create test */
         return DynamicTest.dynamicTest(pSpec.toString(), () -> signedKeyPairRequest(pState, pSpec));
     }
@@ -219,10 +218,9 @@ public class KeyStoreTest {
      * @param pState the state
      * @param pSpec the keyPairSpec
      * @return the test
-     * @throws GordianException on error
      */
     private static DynamicNode encryptedKeyPairRequestTest(final KeyPairCertReqState pState,
-                                                           final GordianKeyPairSpec pSpec) throws GordianException {
+                                                           final GordianKeyPairSpec pSpec) {
         /* Create test */
         final GordianKeyPairUsage myUsage = new GordianKeyPairUsage(GordianKeyPairUse.KEYENCRYPT, GordianKeyPairUse.DATAENCRYPT);
         return DynamicTest.dynamicTest(pSpec.toString(), () -> encryptedKeyPairRequest(pState, pSpec, myUsage));
@@ -233,10 +231,9 @@ public class KeyStoreTest {
      * @param pState the state
      * @param pSpec the keyPairSpec
      * @return the test
-     * @throws GordianException on error
      */
     private static DynamicNode agreedKeyPairRequestTest(final KeyPairCertReqState pState,
-                                                        final GordianKeyPairSpec pSpec) throws GordianException {
+                                                        final GordianKeyPairSpec pSpec) {
         /* Create test */
         final GordianKeyPairUsage myUsage = new GordianKeyPairUsage(GordianKeyPairUse.AGREEMENT);
         return DynamicTest.dynamicTest(pSpec.toString(), () -> encryptedKeyPairRequest(pState, pSpec, myUsage));
@@ -586,9 +583,8 @@ public class KeyStoreTest {
         /**
          * Constructor.
          * @param pManager the keyStore Manager
-         * @throws GordianException on error
           */
-        KeyPairCertReqState(final GordianKeyStoreManager pManager) throws GordianException {
+        KeyPairCertReqState(final GordianKeyStoreManager pManager) {
             /* Store the manager */
             theManager = (GordianCoreKeyStoreManager) pManager;
         }

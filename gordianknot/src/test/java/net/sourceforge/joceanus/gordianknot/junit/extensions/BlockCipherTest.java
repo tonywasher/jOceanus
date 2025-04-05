@@ -116,12 +116,11 @@ class BlockCipherTest {
      * @param pKey the key to test
      * @param pData the data to test
      * @param pExpected the expected results
-     * @throws GordianException on error
      */
     static void testCipher(final BlockCipher pCipher,
                            final String pKey,
                            final String pData,
-                           final String pExpected) throws GordianException {
+                           final String pExpected) {
         /* Create the output buffer */
         final byte[] myOutput = new byte[pCipher.getBlockSize()];
         final byte[] myFinal = new byte[pCipher.getBlockSize()];
@@ -788,14 +787,13 @@ class BlockCipherTest {
      * @param pAEAD the AEAD
      * @param pData the data to test
      * @param pExpected the expected results
-     * @throws GordianException on error
      */
     static void testSIVCipher(final GordianGCMSIVBlockCipher pCipher,
                               final String pKey,
                               final String pNonce,
                               final String pAEAD,
                               final String pData,
-                              final String pExpected) throws GordianException {
+                              final String pExpected) {
         /* protect against exceptions */
         try {
             /* Access the key and the data */

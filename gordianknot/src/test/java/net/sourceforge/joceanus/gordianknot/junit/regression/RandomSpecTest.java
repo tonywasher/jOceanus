@@ -82,9 +82,8 @@ class RandomSpecTest {
      * Create the randomSpec test suite for a factory.
      * @param pFactory the factory
      * @return the test stream
-     * @throws GordianException on error
      */
-    private Stream<DynamicNode> randomSpecTests(final GordianFactory pFactory) throws GordianException {
+    private Stream<DynamicNode> randomSpecTests(final GordianFactory pFactory) {
         /* Add digestSpec test */
         Stream<DynamicNode> myStream = Stream.of(DynamicTest.dynamicTest("digestSpec", () -> checkDigestSpecs(pFactory)));
 

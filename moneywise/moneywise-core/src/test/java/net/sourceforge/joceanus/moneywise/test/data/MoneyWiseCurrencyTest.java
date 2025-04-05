@@ -17,18 +17,16 @@
 package net.sourceforge.joceanus.moneywise.test.data;
 
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrencyClass;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.DynamicNode;
+import org.junit.jupiter.api.DynamicTest;
+import org.junit.jupiter.api.TestFactory;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Currency;
 import java.util.List;
 import java.util.stream.Stream;
-
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.DynamicNode;
-import org.junit.jupiter.api.DynamicTest;
-import org.junit.jupiter.api.TestFactory;
 
 /**
  * CurrencyCode checker.
@@ -47,10 +45,9 @@ final class MoneyWiseCurrencyTest {
     /**
      * Create the analysis test suite.
      * @return the test stream
-     * @throws OceanusException on error
      */
     @TestFactory
-    Stream<DynamicNode> checkCurrencies() throws OceanusException {
+    Stream<DynamicNode> checkCurrencies() {
         return Stream.of(
                 DynamicTest.dynamicTest("checkCurrency", MoneyWiseCurrencyTest::checkCurrency)
         );

@@ -153,10 +153,9 @@ class StreamCipherTest {
     /**
      * Create the streamCipher test suite.
      * @return the test stream
-     * @throws GordianException on error
      */
     @TestFactory
-    Stream<DynamicNode> streamCipherTests() throws GordianException {
+    Stream<DynamicNode> streamCipherTests() {
         /* Create tests */
         return Stream.of(DynamicContainer.dynamicContainer("streamCiphers", Stream.of(
                 DynamicContainer.dynamicContainer("Rabbit", Stream.of(
@@ -188,10 +187,9 @@ class StreamCipherTest {
     /**
      * Create the streamMac test suite.
      * @return the test stream
-     * @throws GordianException on error
      */
     @TestFactory
-    Stream<DynamicNode> streamMacTests() throws GordianException {
+    Stream<DynamicNode> streamMacTests() {
         /* Create tests */
         return Stream.of(DynamicContainer.dynamicContainer("streamMacs", Stream.of(
                 DynamicContainer.dynamicContainer("Zuc128Mac", Stream.of(
@@ -209,10 +207,9 @@ class StreamCipherTest {
      * Test the Cipher against the results.
      * @param pCipher the cipher to test.
      * @param pTestCase the testCase
-     * @throws GordianException on error
      */
     static void testCipher(final StreamCipher pCipher,
-                           final TestCase pTestCase) throws GordianException {
+                           final TestCase pTestCase) {
         /* Access the expected bytes */
         final byte[] myExpected = Hex.decode(pTestCase.theExpected);
 
@@ -245,11 +242,10 @@ class StreamCipherTest {
      * @param pMac the mac to test.
      * @param pOnes use all ones as data?
      * @param pTestCase the testCase
-     * @throws GordianException on error
      */
     static void testMac(final Mac pMac,
                         final boolean pOnes,
-                        final TestCase pTestCase) throws GordianException {
+                        final TestCase pTestCase) {
         /* Access the expected bytes */
         final byte[] myExpected = Hex.decode(pTestCase.theExpected);
 
@@ -277,11 +273,10 @@ class StreamCipherTest {
      * @param pCipher the cipher to test.
      * @param pTestCase the testCase
      * @param pLimit the limit in bits.
-     * @throws GordianException on error
      */
     static void testStreamLimit(final StreamCipher pCipher,
                                 final TestCase pTestCase,
-                                final int pLimit) throws GordianException {
+                                final int pLimit) {
         /* Check the limit is a whole number of integers */
         Assertions.assertTrue((pLimit % Integer.SIZE == 0), "Invalid limit");
         final int myNumBytes = pLimit / Byte.SIZE;
@@ -308,11 +303,10 @@ class StreamCipherTest {
      * @param pMac the mac to test.
      * @param pTestCase the testCase
      * @param pLimit the limit in bits.
-     * @throws GordianException on error
      */
     static void testMacLimit(final Mac pMac,
                              final TestCase pTestCase,
-                             final int pLimit) throws GordianException {
+                             final int pLimit) {
         /* Check the limit is a whole numbet of integers */
         Assertions.assertTrue((pLimit % Integer.SIZE == 0), "Invalid limit");
         final int myNumBytes = pLimit / Byte.SIZE;
@@ -666,9 +660,8 @@ class StreamCipherTest {
 
         /**
          * Test Mac.
-         * @throws GordianException on error
          */
-        void testTheMac() throws GordianException {
+        void testTheMac() {
             final GordianZuc128Mac myMac = new GordianZuc128Mac();
             testMac(myMac, false, TEST1);
             testMac(myMac, true, TEST2);
@@ -700,9 +693,8 @@ class StreamCipherTest {
 
         /**
          * Test Mac.
-         * @throws GordianException on error
          */
-        void testTheMac() throws GordianException {
+        void testTheMac() {
             final GordianZuc256Mac myMac = new GordianZuc256Mac(32);
             testMac(myMac, false, TEST1);
             testMac(myMac, true, TEST2);
@@ -734,9 +726,8 @@ class StreamCipherTest {
 
         /**
          * Test Mac.
-         * @throws GordianException on error
          */
-        void testTheMac() throws GordianException {
+        void testTheMac() {
             final GordianZuc256Mac myMac = new GordianZuc256Mac(64);
             testMac(myMac, false, TEST1);
             testMac(myMac, true, TEST2);
@@ -768,9 +759,8 @@ class StreamCipherTest {
 
         /**
          * Test Mac.
-         * @throws GordianException on error
          */
-        void testTheMac() throws GordianException {
+        void testTheMac() {
             final GordianZuc256Mac myMac = new GordianZuc256Mac(128);
             testMac(myMac, false, TEST1);
             testMac(myMac, true, TEST2);

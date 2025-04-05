@@ -82,7 +82,7 @@ public final class AsymmetricAgreeScripts {
     private static GordianKeyPair JCASIGNER;
 
     /* The resultType count */
-    private final static AtomicInteger RESULTTYPE = new AtomicInteger(0);
+    private static final AtomicInteger RESULTTYPE = new AtomicInteger(0);
 
     /**
      * Private constructor.

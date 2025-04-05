@@ -108,12 +108,11 @@ class ZipFileTest {
      * @param pKeyPair1 the first keyPair
      * @param pKeyPair2 the second keyPair
      * @param pKeyLen the keyLength
-     * @throws GordianException on error
      */
     private Stream<DynamicNode> lockedZipFileTests(final GordianFactory pFactory,
                                                    final GordianKeyPair pKeyPair1,
                                                    final GordianKeyPair pKeyPair2,
-                                                   final GordianLength pKeyLen) throws GordianException {
+                                                   final GordianLength pKeyLen) {
         return Stream.of(
                 DynamicTest.dynamicTest("keySet/password", () -> testZipFile(pFactory,null, pKeyLen)),
                 DynamicTest.dynamicTest("factory/password", () -> testZipFile(pFactory, Boolean.TRUE, pKeyLen)),

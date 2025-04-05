@@ -89,7 +89,7 @@ public class PGPXDecryptVerify {
      * @param pSecret the secret keyRing
      * @return the encrypted data
      */
-    private static PGPPublicKeyEncryptedData accessEncryptedData(final BcPGPSecretKeyRing pSecret) throws PGPException, IOException {
+    private static PGPPublicKeyEncryptedData accessEncryptedData(final BcPGPSecretKeyRing pSecret) throws IOException {
         /*Load the encrypted DataList */
         final InputStream myInput = new FileInputStream(PGPXKeyRingUtil.FILEDIR + "PGPTest.new.asc");
         final BufferedInputStream myBuffered = new BufferedInputStream(myInput);
