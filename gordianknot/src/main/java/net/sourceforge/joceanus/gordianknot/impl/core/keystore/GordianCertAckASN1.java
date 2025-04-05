@@ -91,8 +91,8 @@ public class GordianCertAckASN1
      * @throws GordianException on error
      */
     public static GordianCertAckASN1 getInstance(final Object pObject) throws GordianException {
-        if (pObject instanceof GordianCertAckASN1) {
-            return (GordianCertAckASN1) pObject;
+        if (pObject instanceof GordianCertAckASN1 myASN1) {
+            return myASN1;
         } else if (pObject != null) {
             return new GordianCertAckASN1(ASN1Sequence.getInstance(pObject));
         }

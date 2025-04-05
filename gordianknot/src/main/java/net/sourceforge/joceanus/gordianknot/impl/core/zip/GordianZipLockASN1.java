@@ -173,8 +173,8 @@ public class GordianZipLockASN1
      * @throws GordianException on error
      */
     public static GordianZipLockASN1 getInstance(final Object pObject) throws GordianException {
-        if (pObject instanceof GordianZipLockASN1) {
-            return (GordianZipLockASN1) pObject;
+        if (pObject instanceof GordianZipLockASN1 myASN1) {
+            return myASN1;
         } else if (pObject != null) {
             return new GordianZipLockASN1(ASN1Sequence.getInstance(pObject));
         }
@@ -241,14 +241,9 @@ public class GordianZipLockASN1
             return false;
         }
 
-        /* Make sure that the classes are the same */
-        if (!(pThat instanceof GordianZipLockASN1)) {
-            return false;
-        }
-        final GordianZipLockASN1 myThat = (GordianZipLockASN1) pThat;
-
         /* Check that the fields are equal */
-        return theLockType.equals(myThat.getLockType())
+        return pThat instanceof GordianZipLockASN1 myThat
+                && theLockType.equals(myThat.getLockType())
                 && Objects.equals(thePasswordLock, myThat.getPasswordLockASN1())
                 && Objects.equals(theKeyPairLock, myThat.getKeyPairLockASN1());
     }

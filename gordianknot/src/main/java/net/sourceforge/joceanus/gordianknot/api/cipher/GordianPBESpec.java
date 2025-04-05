@@ -16,9 +16,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.api.cipher;
 
-import java.util.Objects;
-
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestSpec;
+
+import java.util.Objects;
 
 /**
  * PBE Specification.
@@ -147,14 +147,9 @@ public abstract class GordianPBESpec {
                 return false;
             }
 
-            /* Make sure that the classes are the same */
-            if (!(pThat instanceof GordianPBEDigestAndCountSpec)) {
-                return false;
-            }
-            final GordianPBEDigestAndCountSpec myThat = (GordianPBEDigestAndCountSpec) pThat;
-
             /* Check count, digestSpec and PBEType */
-            return theCount == myThat.getIterationCount()
+            return pThat instanceof GordianPBEDigestAndCountSpec myThat
+                    && theCount == myThat.getIterationCount()
                     && theDigestSpec.equals(myThat.getDigestSpec())
                     && getPBEType() == myThat.getPBEType();
         }
@@ -282,14 +277,9 @@ public abstract class GordianPBESpec {
                 return false;
             }
 
-            /* Make sure that the classes are the same */
-            if (!(pThat instanceof GordianPBESCryptSpec)) {
-                return false;
-            }
-            final GordianPBESCryptSpec myThat = (GordianPBESCryptSpec) pThat;
-
             /* Check cost, blockSize and parallel */
-            return theCost == myThat.getCost()
+            return pThat instanceof GordianPBESCryptSpec myThat
+                    && theCost == myThat.getCost()
                     && theBlockSize == myThat.getBlockSize()
                     && theParallel == myThat.getParallel()
                     && getPBEType() == myThat.getPBEType();
@@ -395,14 +385,9 @@ public abstract class GordianPBESpec {
                 return false;
             }
 
-            /* Make sure that the classes are the same */
-            if (!(pThat instanceof GordianPBEArgon2Spec)) {
-                return false;
-            }
-            final GordianPBEArgon2Spec myThat = (GordianPBEArgon2Spec) pThat;
-
             /* Check lanes, memory and iterations */
-            return theLanes == myThat.getLanes()
+            return pThat instanceof GordianPBEArgon2Spec myThat
+                    && theLanes == myThat.getLanes()
                     && theMemory == myThat.getMemory()
                     && theIterations == myThat.getIterationCount()
                     && getPBEType() == myThat.getPBEType();
@@ -410,7 +395,7 @@ public abstract class GordianPBESpec {
 
         @Override
         public int hashCode() {
-            return Objects.hash(theLanes, theMemory, theIterations, getPBEType().hashCode());
+            return Objects.hash(theLanes, theMemory, theIterations, getPBEType());
         }
 
         @Override

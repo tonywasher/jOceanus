@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 /**
  * Base Digest Factory.
@@ -105,14 +106,14 @@ public abstract class GordianCoreDigestFactory
         return listAllPossibleSpecs()
                 .stream()
                 .filter(supportedDigestSpecs())
-                .toList();
+                .collect(Collectors.toCollection(ArrayList::new));
     }
 
     @Override
     public List<GordianDigestType> listAllSupportedTypes() {
         return Arrays.stream(GordianDigestType.values())
                 .filter(supportedDigestTypes())
-                .toList();
+                .collect(Collectors.toCollection(ArrayList::new));
     }
 
     @Override
@@ -135,8 +136,7 @@ public abstract class GordianCoreDigestFactory
                 }
 
                 /* If we have a possible Xof */
-                if (mySubSpec instanceof GordianDigestState) {
-                    final GordianDigestState myState = (GordianDigestState) mySubSpec;
+                if (mySubSpec instanceof GordianDigestState myState) {
                     final GordianDigestSpec mySpec = new GordianDigestSpec(myType, myState, myState.getLength(), Boolean.TRUE);
 
                     /* Add if valid */

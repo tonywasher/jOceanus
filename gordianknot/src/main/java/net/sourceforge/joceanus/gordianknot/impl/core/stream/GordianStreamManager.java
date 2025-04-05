@@ -80,30 +80,26 @@ public final class GordianStreamManager {
         OutputStream myStream = pStream;
         for (;;) {
             /* If this is a Digest Output Stream */
-            if (myStream instanceof GordianDigestOutputStream) {
+            if (myStream instanceof GordianDigestOutputStream myDigest) {
                 /* Process stream */
-                final GordianDigestOutputStream myDigest = (GordianDigestOutputStream) myStream;
                 myStreams.add(0, new GordianStreamDefinition(theKeySet, myDigest));
                 myStream = myDigest.getNextStream();
 
                 /* If this is a MAC Output Stream */
-            } else if (myStream instanceof GordianMacOutputStream) {
+            } else if (myStream instanceof GordianMacOutputStream myMac) {
                 /* Process stream */
-                final GordianMacOutputStream myMac = (GordianMacOutputStream) myStream;
                 myStreams.add(0, new GordianStreamDefinition(theKeySet, myMac));
                 myStream = myMac.getNextStream();
 
                 /* If this is a LZMA Output Stream */
-            } else if (myStream instanceof GordianLZMAOutputStream) {
+            } else if (myStream instanceof GordianLZMAOutputStream myLZMA) {
                 /* Process stream */
-                final GordianLZMAOutputStream myLZMA = (GordianLZMAOutputStream) myStream;
                 myStreams.add(0, new GordianStreamDefinition(GordianStreamType.LZMA));
                 myStream = myLZMA.getNextStream();
 
                 /* If this is a Encryption Output Stream */
-            } else if (myStream instanceof GordianCipherOutputStream) {
+            } else if (myStream instanceof GordianCipherOutputStream<?> myEnc) {
                 /* Process stream */
-                final GordianCipherOutputStream<?> myEnc = (GordianCipherOutputStream<?>) myStream;
                 myStreams.add(0, new GordianStreamDefinition(theKeySet, myEnc));
                 myStream = myEnc.getNextStream();
 
@@ -132,8 +128,8 @@ public final class GordianStreamManager {
         for (GordianStreamDefinition myDef : pStreamDefs) {
             /* Build the stream */
             myCurrent = myDef.buildInputStream(theKeySet, myCurrent, myMacStream);
-            if (myCurrent instanceof GordianMacInputStream) {
-                myMacStream = (GordianMacInputStream) myCurrent;
+            if (myCurrent instanceof GordianMacInputStream myMac) {
+                myMacStream = myMac;
             }
         }
 

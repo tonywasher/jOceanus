@@ -229,28 +229,28 @@ public class GordianCoreKnuthObfuscater
      * @throws GordianException on error
      */
     private static <T extends GordianIdSpec> int deriveEncodedIdFromType(final T pType) throws GordianException {
-        if (pType instanceof GordianDigestSpec) {
-            final int myId = deriveEncodedIdFromDigestSpec((GordianDigestSpec) pType);
+        if (pType instanceof GordianDigestSpec mySpec) {
+            final int myId = deriveEncodedIdFromDigestSpec(mySpec);
             return GordianIdMarker.DIGEST.applyMarker(myId);
         }
-        if (pType instanceof GordianSymCipherSpec) {
-            final int myId = deriveEncodedIdFromSymCipherSpec((GordianSymCipherSpec) pType);
+        if (pType instanceof GordianSymCipherSpec mySpec) {
+            final int myId = deriveEncodedIdFromSymCipherSpec(mySpec);
             return GordianIdMarker.SYMCIPHER.applyMarker(myId);
         }
-        if (pType instanceof GordianStreamCipherSpec) {
-            final int myId = deriveEncodedIdFromStreamCipherSpec((GordianStreamCipherSpec) pType);
+        if (pType instanceof GordianStreamCipherSpec mySpec) {
+            final int myId = deriveEncodedIdFromStreamCipherSpec(mySpec);
             return GordianIdMarker.STREAMCIPHER.applyMarker(myId);
         }
-        if (pType instanceof GordianMacSpec) {
-            final int myId = deriveEncodedIdFromMacSpec((GordianMacSpec) pType);
+        if (pType instanceof GordianMacSpec mySpec) {
+            final int myId = deriveEncodedIdFromMacSpec(mySpec);
             return GordianIdMarker.MACKEY.applyMarker(myId);
         }
-        if (pType instanceof GordianSymKeySpec) {
-            final int myId = deriveEncodedIdFromSymKeySpec((GordianSymKeySpec) pType);
+        if (pType instanceof GordianSymKeySpec mySpec) {
+            final int myId = deriveEncodedIdFromSymKeySpec(mySpec);
             return GordianIdMarker.SYMKEY.applyMarker(myId);
         }
-        if (pType instanceof GordianStreamKeySpec) {
-            final int myId = deriveEncodedIdFromStreamKeySpec((GordianStreamKeySpec) pType);
+        if (pType instanceof GordianStreamKeySpec mySpec) {
+            final int myId = deriveEncodedIdFromStreamKeySpec(mySpec);
             return GordianIdMarker.STREAMKEY.applyMarker(myId);
         }
         throw new GordianDataException("Invalid type: " + pType.getClass().getCanonicalName());

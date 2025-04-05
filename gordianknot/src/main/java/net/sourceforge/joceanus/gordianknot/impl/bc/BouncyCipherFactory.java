@@ -230,8 +230,8 @@ public class BouncyCipherFactory
      */
     private CipherKeyGenerator getBCKeyGenerator(final GordianKeySpec pKeySpec) throws GordianException {
         checkKeySpec(pKeySpec);
-        return pKeySpec instanceof GordianSymKeySpec
-                && GordianSymKeyType.DESEDE.equals(((GordianSymKeySpec) pKeySpec).getSymKeyType())
+        return pKeySpec instanceof GordianSymKeySpec mySpec
+                && GordianSymKeyType.DESEDE.equals(mySpec.getSymKeyType())
                ? new DESedeKeyGenerator()
                : new CipherKeyGenerator();
     }

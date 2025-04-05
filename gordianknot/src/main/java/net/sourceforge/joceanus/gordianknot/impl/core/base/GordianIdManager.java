@@ -32,6 +32,7 @@ import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacSpecBuilder;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacType;
 
 import java.security.SecureRandom;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
@@ -190,7 +191,7 @@ public class GordianIdManager {
         final GordianValidator myValidator = theFactory.getValidator();
         final List<GordianSymKeyType> myTypes = myCiphers.listAllSupportedSymKeyTypes().stream()
                 .filter(myValidator.supportedKeySetSymKeyTypes(pKeyLen))
-                .collect(Collectors.toList());
+                .collect(Collectors.toCollection(ArrayList::new));
 
         /* Allocate the array to return */
         final GordianSymKeyType[] myResult = new GordianSymKeyType[pCount];
@@ -240,7 +241,7 @@ public class GordianIdManager {
         final GordianValidator myValidator = theFactory.getValidator();
         final List<GordianDigestType> myTypes = myDigests.listAllSupportedTypes().stream()
                 .filter(myValidator.supportedLockDigestTypes())
-                .collect(Collectors.toList());
+                .collect(Collectors.toCollection(ArrayList::new));
 
         /* Allocate the array to return */
         final GordianDigestType[] myResult = new GordianDigestType[pCount];
@@ -286,7 +287,7 @@ public class GordianIdManager {
         final GordianValidator myValidator = theFactory.getValidator();
         final List<GordianDigestType> myTypes = myDigests.listAllSupportedTypes().stream()
                 .filter(myValidator.supportedKeyGenDigestTypes())
-                .collect(Collectors.toList());
+                .collect(Collectors.toCollection(ArrayList::new));
 
         /* Allocate the array to return */
         final GordianDigestType[] myResult = new GordianDigestType[pCount];

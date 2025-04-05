@@ -94,8 +94,8 @@ public class BouncyHMac
         theMacSpec = pMacSpec;
         theDigest = pFactory.createDigest(pMacSpec.getDigestSpec()).getDigest();
         theDigestLen = theMacSpec.getMacLength().getByteLength();
-        final int myBlockLen = theDigest instanceof ExtendedDigest
-                ? ((ExtendedDigest) theDigest).getByteLength()
+        final int myBlockLen = theDigest instanceof ExtendedDigest xd
+                ? xd.getByteLength()
                 : GordianLength.LEN_64.getLength();
         theBlockLen = Math.max(myBlockLen, theDigestLen);
         theIPadBuffer = new byte[theBlockLen];
@@ -143,13 +143,13 @@ public class BouncyHMac
         xorPad(theOPadBuffer, theBlockLen, OPAD);
 
         /* Create memoable states if possible */
-        if (theDigest instanceof Memoable) {
-            theOPadState = ((Memoable) theDigest).copy();
+        if (theDigest instanceof Memoable myMemo) {
+            theOPadState = myMemo.copy();
             ((Digest) theOPadState).update(theOPadBuffer, 0, theBlockLen);
         }
         theDigest.update(theIPadBuffer, 0, theBlockLen);
-        if (theDigest instanceof Memoable) {
-            theIPadState = ((Memoable) theDigest).copy();
+        if (theDigest instanceof Memoable myMemo) {
+            theIPadState = myMemo.copy();
         }
     }
 
@@ -169,8 +169,8 @@ public class BouncyHMac
     public int doFinal(final byte[] pBuffer,
                        final int pOffset) {
         /* Finish the digest */
-        if (theDigest instanceof Xof) {
-            ((Xof) theDigest).doFinal(theOPadBuffer, theBlockLen, theDigestLen);
+        if (theDigest instanceof Xof myXof) {
+            myXof.doFinal(theOPadBuffer, theBlockLen, theDigestLen);
         } else {
             theDigest.doFinal(theOPadBuffer, theBlockLen);
         }
@@ -182,8 +182,8 @@ public class BouncyHMac
         } else {
             theDigest.update(theOPadBuffer, 0, theOPadBuffer.length);
         }
-        final int myLen = theDigest instanceof Xof
-                ? ((Xof) theDigest).doFinal(pBuffer, pOffset, theDigestLen)
+        final int myLen = theDigest instanceof Xof myXof
+                ? myXof.doFinal(pBuffer, pOffset, theDigestLen)
                 : theDigest.doFinal(pBuffer, pOffset);
         Arrays.fill(theOPadBuffer, theBlockLen, theOPadBuffer.length, (byte) 0);
 

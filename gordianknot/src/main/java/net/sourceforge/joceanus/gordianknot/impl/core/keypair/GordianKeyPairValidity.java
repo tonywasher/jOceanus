@@ -63,12 +63,12 @@ public final class GordianKeyPairValidity {
     public static void checkValidity(final GordianCoreFactory pFactory,
                                      final GordianKeyPair pKeyPair) throws GordianException {
         final Object myCheck = getValidityCheck(pFactory, pKeyPair);
-        if (myCheck instanceof GordianSignatureSpec) {
-            checkValidity(pFactory, pKeyPair, (GordianSignatureSpec) myCheck);
-        } else if (myCheck instanceof GordianEncryptorSpec) {
-            checkValidity(pFactory, pKeyPair, (GordianEncryptorSpec) myCheck);
-        } else if (myCheck instanceof GordianAgreementSpec) {
-            checkValidity(pFactory, pKeyPair, (GordianAgreementSpec) myCheck);
+        if (myCheck instanceof GordianSignatureSpec mySpec) {
+            checkValidity(pFactory, pKeyPair, mySpec);
+        } else if (myCheck instanceof GordianEncryptorSpec mySpec) {
+            checkValidity(pFactory, pKeyPair, mySpec);
+        } else if (myCheck instanceof GordianAgreementSpec mySpec) {
+            checkValidity(pFactory, pKeyPair, mySpec);
         } else {
             throw new GordianLogicException("Unexpected keyPairType");
         }

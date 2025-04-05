@@ -182,8 +182,7 @@ public abstract class GordianCoreCipher<T extends GordianKeySpec>
      */
     protected int getAEADMacSize() {
         /* SymCipher depends on BlockSize */
-        if (theCipherSpec instanceof GordianSymCipherSpec) {
-            final GordianSymCipherSpec mySymSpec = (GordianSymCipherSpec) theCipherSpec;
+        if (theCipherSpec instanceof GordianSymCipherSpec mySymSpec) {
             final GordianLength myBlkLen = mySymSpec.getBlockLength();
 
             /* Switch on cipher Mode */
@@ -201,8 +200,8 @@ public abstract class GordianCoreCipher<T extends GordianKeySpec>
             }
 
             /* Stream Cipher uses Poly1305 */
-        } else if (theCipherSpec instanceof GordianStreamCipherSpec) {
-            final GordianStreamKeySpec mySpec = ((GordianStreamCipherSpec) theCipherSpec).getKeyType();
+        } else if (theCipherSpec instanceof GordianStreamCipherSpec myCipherSpec) {
+            final GordianStreamKeySpec mySpec = myCipherSpec.getKeyType();
             switch (mySpec.getStreamKeyType()) {
                 case SPARKLE:
                     switch ((GordianSparkleKey) mySpec.getSubKeyType()) {

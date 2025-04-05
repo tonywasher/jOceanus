@@ -16,10 +16,10 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.api.cipher;
 
-import java.util.Objects;
-
 import net.sourceforge.joceanus.gordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
+
+import java.util.Objects;
 
 /**
  * SymKey specification.
@@ -185,22 +185,15 @@ public class GordianSymKeySpec
             return false;
         }
 
-        /* Make sure that the object is a SymKeySpec */
-        if (pThat.getClass() != this.getClass()) {
-            return false;
-        }
-
-        /* Access the target SymKeySpec */
-        final GordianSymKeySpec myThat = (GordianSymKeySpec) pThat;
-
         /* Check subFields */
-        return theSymKeyType == myThat.getSymKeyType()
+        return pThat instanceof GordianSymKeySpec myThat
+                && theSymKeyType == myThat.getSymKeyType()
                 && theBlockLength == myThat.getBlockLength()
                 && theKeyLength == myThat.getKeyLength();
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(theSymKeyType.ordinal(), theBlockLength, theKeyLength);
+        return Objects.hash(theSymKeyType, theBlockLength, theKeyLength);
     }
 }

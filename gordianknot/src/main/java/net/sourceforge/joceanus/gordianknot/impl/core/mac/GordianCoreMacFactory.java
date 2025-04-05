@@ -39,6 +39,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 /**
  * Core Mac Factory.
@@ -127,8 +128,8 @@ public abstract class GordianCoreMacFactory
      */
     protected void checkMacSpec(final GordianKeySpec pMacSpec) throws GordianException {
         /* Check validity of MacSpec */
-        if (!(pMacSpec instanceof GordianMacSpec)
-                || !supportedMacSpecs().test((GordianMacSpec) pMacSpec)) {
+        if (!(pMacSpec instanceof GordianMacSpec mySpec)
+                || !supportedMacSpecs().test(mySpec)) {
             throw new GordianDataException(GordianCoreFactory.getInvalidText(pMacSpec));
         }
     }
@@ -258,7 +259,7 @@ public abstract class GordianCoreMacFactory
         return listAllPossibleSpecs(pKeyLen)
                 .stream()
                 .filter(supportedMacSpecs())
-                .toList();
+                .collect(Collectors.toCollection(ArrayList::new));
     }
 
     /**

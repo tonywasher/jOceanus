@@ -131,16 +131,9 @@ public class GordianNTRUPrimeSpec {
             return false;
         }
 
-        /* Make sure that the object is lmsSpec */
-        if (pThat.getClass() != this.getClass()) {
-            return false;
-        }
-
-        /* Access the target lmsSpec */
-        final GordianNTRUPrimeSpec myThat = (GordianNTRUPrimeSpec) pThat;
-
         /* Check values */
-        return theType == myThat.theType
+        return pThat instanceof GordianNTRUPrimeSpec myThat
+                && theType == myThat.theType
                 && theParams == myThat.theParams;
     }
 

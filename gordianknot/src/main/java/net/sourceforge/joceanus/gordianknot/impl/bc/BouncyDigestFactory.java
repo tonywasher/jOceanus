@@ -98,8 +98,8 @@ public class BouncyDigestFactory
 
         /* Create digest */
         final Digest myBCDigest = getBCDigest(pDigestSpec);
-        return myBCDigest instanceof Xof
-                ? new BouncyDigestXof(pDigestSpec, (Xof) myBCDigest)
+        return myBCDigest instanceof Xof myXof
+                ? new BouncyDigestXof(pDigestSpec, myXof)
                 : new BouncyDigest(pDigestSpec, myBCDigest);
     }
 

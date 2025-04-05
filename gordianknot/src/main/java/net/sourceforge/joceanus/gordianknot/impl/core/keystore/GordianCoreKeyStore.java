@@ -57,6 +57,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 
 /**
  * KeyStore implementation.
@@ -484,8 +485,8 @@ public class GordianCoreKeyStore
      */
     private GordianKeyStoreCertificate getKeyStoreCertificate(final String pAlias) {
         final GordianCoreKeyStoreEntry myEntry = theAliases.get(pAlias);
-        return myEntry instanceof GordianKeyStoreCertificateElement
-                ? ((GordianKeyStoreCertificateElement) myEntry).buildEntry(this)
+        return myEntry instanceof GordianKeyStoreCertificateElement myElement
+                ? myElement.buildEntry(this)
                 : null;
     }
 
@@ -499,8 +500,8 @@ public class GordianCoreKeyStore
     @Override
     public List<GordianCertificate> getCertificateChain(final String pAlias) {
         final GordianCoreKeyStoreEntry myEntry = theAliases.get(pAlias);
-        return myEntry instanceof GordianKeyStorePairElement
-                ? ((GordianKeyStorePairElement) myEntry).buildChain(this)
+        return myEntry instanceof GordianKeyStorePairElement myElement
+                ? myElement.buildChain(this)
                 : null;
     }
 
@@ -513,8 +514,8 @@ public class GordianCoreKeyStore
     private GordianKeyStorePair getKeyStorePair(final String pAlias,
                                                 final char[] pPassword) throws GordianException {
         final GordianCoreKeyStoreEntry myEntry = theAliases.get(pAlias);
-        return myEntry instanceof GordianKeyStorePairElement
-                ? ((GordianKeyStorePairElement) myEntry).buildEntry(this, pPassword)
+        return myEntry instanceof GordianKeyStorePairElement myElement
+                ? myElement.buildEntry(this, pPassword)
                 : null;
     }
 
@@ -557,8 +558,8 @@ public class GordianCoreKeyStore
     private GordianKeyStoreSet getKeyStoreSet(final String pAlias,
                                               final char[] pPassword) throws GordianException {
         final GordianCoreKeyStoreEntry myEntry = theAliases.get(pAlias);
-        return myEntry instanceof GordianKeyStoreSetElement
-                ? ((GordianKeyStoreSetElement) myEntry).buildEntry(this, pPassword)
+        return myEntry instanceof GordianKeyStoreSetElement myElement
+                ? myElement.buildEntry(this, pPassword)
                 : null;
     }
 
@@ -574,8 +575,8 @@ public class GordianCoreKeyStore
         for (Entry<String, GordianCoreKeyStoreEntry> myRecord : theAliases.entrySet()) {
             /* Check for match on certificate entry */
             final GordianKeyStoreEntry myEntry = myRecord.getValue();
-            if (myEntry instanceof GordianKeyStoreCertificateHolder) {
-                final GordianKeyStoreCertificateKey myKey = ((GordianKeyStoreCertificateHolder) myEntry).getCertificateKey();
+            if (myEntry instanceof GordianKeyStoreCertificateHolder myHolder) {
+                final GordianKeyStoreCertificateKey myKey = myHolder.getCertificateKey();
                 final GordianCertificate myCert = getCertificate(myKey);
                 if (pCertificate.equals(myCert)) {
                     return myRecord.getKey();
@@ -670,9 +671,8 @@ public class GordianCoreKeyStore
         final BigInteger mySerial = pIssuer.getSerialNumber().getValue();
         for (Entry<String, GordianCoreKeyStoreEntry> myEntry : theAliases.entrySet()) {
             /* If this is a keyPair(Set) entry */
-            if (myEntry.getValue() instanceof GordianKeyStorePairElement) {
+            if (myEntry.getValue() instanceof GordianKeyStorePairElement myPair) {
                 /* Access details */
-                final GordianKeyStorePairElement myPair = (GordianKeyStorePairElement) myEntry.getValue();
                 final GordianKeyStoreCertificateKey myCertKey =  myPair.getCertificateChain().get(0);
                 final GordianCoreCertificate myCert = (GordianCoreCertificate) getCertificate(myCertKey);
 
@@ -732,25 +732,14 @@ public class GordianCoreKeyStore
         }
 
         /* Ensure object is correct class */
-        if (!(pThat instanceof GordianCoreKeyStore)) {
-            return false;
-        }
-        final GordianCoreKeyStore myThat = (GordianCoreKeyStore) pThat;
-
-        /* Check that the certificate maps are is identical */
-        if (!theSubjectCerts.equals(myThat.getSubjectMapOfMaps())
-            || !theIssuerCerts.equals(myThat.getIssuerMapOfMaps())) {
-            return false;
-        }
-
-        /* Compare alias maps */
-        return theAliases.equals(myThat.getAliasMap());
+        return pThat instanceof GordianCoreKeyStore myThat
+                && theSubjectCerts.equals(myThat.getSubjectMapOfMaps())
+                && theIssuerCerts.equals(myThat.getIssuerMapOfMaps())
+                && theAliases.equals(myThat.getAliasMap());
     }
 
     @Override
     public int hashCode() {
-        return theSubjectCerts.hashCode()
-                + theIssuerCerts.hashCode()
-                + theAliases.hashCode();
+        return Objects.hash(theSubjectCerts, theIssuerCerts, theAliases);
     }
 }

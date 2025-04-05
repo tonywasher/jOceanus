@@ -1395,8 +1395,7 @@ public class GordianKeyPairAlgId {
             try {
                 /* Parse public key */
                 final LMSKeyParameters myParms = (LMSKeyParameters) PublicKeyFactory.createKey(pInfo);
-                if (myParms instanceof HSSPublicKeyParameters) {
-                    final HSSPublicKeyParameters myPublic = (HSSPublicKeyParameters) myParms;
+                if (myParms instanceof HSSPublicKeyParameters myPublic) {
                     final int myDepth = myPublic.getL();
                     final LMSPublicKeyParameters myLMSPublicKey = myPublic.getLMSPublicKey();
                     final GordianLMSKeySpec myKeySpec = determineKeyPairSpec(myLMSPublicKey);

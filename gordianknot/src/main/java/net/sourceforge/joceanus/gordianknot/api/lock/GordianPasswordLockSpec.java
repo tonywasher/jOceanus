@@ -18,6 +18,8 @@ package net.sourceforge.joceanus.gordianknot.api.lock;
 
 import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySetSpec;
 
+import java.util.Objects;
+
 /**
  * PasswordLock Specification.
  */
@@ -149,27 +151,16 @@ public class GordianPasswordLockSpec {
             return false;
         }
 
-        /* Make sure that the object is the same class */
-        if (!(pThat instanceof GordianPasswordLockSpec)) {
-            return false;
-        }
-
-        /* Access the target field */
-        final GordianPasswordLockSpec myThat = (GordianPasswordLockSpec) pThat;
-
-        /* Check Differences */
-        if (theKIterations != myThat.getKIterations()) {
-            return false;
-        }
-
         /* Check keySetSpec */
-        return theKeySetSpec.equals(myThat.getKeySetSpec());
+        return pThat instanceof GordianPasswordLockSpec myThat
+                && theKIterations == myThat.getKIterations()
+                && theKeySetSpec.equals(myThat.getKeySetSpec());
     }
 
 
     @Override
     public int hashCode() {
-        return theKIterations + theKeySetSpec.hashCode();
+        return Objects.hash(theKIterations, theKeySetSpec);
     }
 
     @Override

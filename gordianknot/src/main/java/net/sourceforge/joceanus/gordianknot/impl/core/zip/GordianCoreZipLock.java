@@ -230,12 +230,12 @@ public class GordianCoreZipLock
         }
 
         /* Store the relevant keySet */
-        if (pLock instanceof GordianKeySetLock) {
-            theKeySet = ((GordianKeySetLock) pLock).getKeySet();
-        } else if (pLock instanceof GordianFactoryLock) {
-            theKeySet = ((GordianFactoryLock) pLock).getFactory().getEmbeddedKeySet();
-        } else if (pLock instanceof GordianKeyPairLock) {
-            theKeySet = ((GordianKeyPairLock) pLock).getKeySet();
+        if (pLock instanceof GordianKeySetLock myLock) {
+            theKeySet = myLock.getKeySet();
+        } else if (pLock instanceof GordianFactoryLock myLock) {
+            theKeySet = myLock.getFactory().getEmbeddedKeySet();
+        } else if (pLock instanceof GordianKeyPairLock myLock) {
+            theKeySet = myLock.getKeySet();
         } else {
             throw new GordianDataException("Unsupported lockType");
         }

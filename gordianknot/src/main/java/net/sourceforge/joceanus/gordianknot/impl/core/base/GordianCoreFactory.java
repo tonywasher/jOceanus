@@ -295,10 +295,7 @@ public abstract class GordianCoreFactory
     public void reSeedRandom() {
         /* Access the random */
         final SecureRandom myRandom = theRandom.getRandom();
-        if (myRandom instanceof GordianSeededRandom) {
-            /* Access the seeded random */
-            final GordianSeededRandom mySeeded = (GordianSeededRandom) myRandom;
-
+        if (myRandom instanceof GordianSeededRandom mySeeded) {
             /* Generate and apply the new seed */
             final byte[] mySeed = mySeeded.generateSeed(SEED_SIZE);
             mySeeded.setSeed(mySeed);

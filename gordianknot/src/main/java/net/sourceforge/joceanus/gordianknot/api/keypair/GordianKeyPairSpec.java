@@ -94,10 +94,10 @@ public class GordianKeyPairSpec {
      * @return the modulus.
      */
     public GordianRSAModulus getRSAModulus() {
-        if (!(theSubKeyType instanceof GordianRSAModulus)) {
-            throw new IllegalArgumentException();
+        if (theSubKeyType instanceof GordianRSAModulus myMod) {
+            return myMod;
         }
-        return (GordianRSAModulus) theSubKeyType;
+        throw new IllegalArgumentException();
     }
 
     /**
@@ -105,10 +105,10 @@ public class GordianKeyPairSpec {
      * @return the keyType.
      */
     public GordianDSAKeyType getDSAKeyType() {
-        if (!(theSubKeyType instanceof GordianDSAKeyType)) {
-            throw new IllegalArgumentException();
+        if (theSubKeyType instanceof GordianDSAKeyType myType) {
+            return myType;
         }
-        return (GordianDSAKeyType) theSubKeyType;
+        throw new IllegalArgumentException();
     }
 
     /**
@@ -116,10 +116,10 @@ public class GordianKeyPairSpec {
      * @return the dhGroup.
      */
     public GordianDHGroup getDHGroup() {
-        if (!(theSubKeyType instanceof GordianDHGroup)) {
-            throw new IllegalArgumentException();
+        if (theSubKeyType instanceof GordianDHGroup myGroup) {
+            return myGroup;
         }
-        return (GordianDHGroup) theSubKeyType;
+        throw new IllegalArgumentException();
     }
 
     /**
@@ -127,10 +127,10 @@ public class GordianKeyPairSpec {
      * @return the curve.
      */
     public GordianElliptic getElliptic() {
-        if (!(theSubKeyType instanceof GordianElliptic)) {
-            throw new IllegalArgumentException();
+        if (theSubKeyType instanceof GordianElliptic myElliptic) {
+            return myElliptic;
         }
-        return (GordianElliptic) theSubKeyType;
+        throw new IllegalArgumentException();
     }
 
     /**
@@ -138,10 +138,10 @@ public class GordianKeyPairSpec {
      * @return the curve.
      */
     public GordianEdwardsElliptic getEdwardsElliptic() {
-        if (!(theSubKeyType instanceof GordianEdwardsElliptic)) {
-            throw new IllegalArgumentException();
+        if (theSubKeyType instanceof GordianEdwardsElliptic myElliptic) {
+            return myElliptic;
         }
-        return (GordianEdwardsElliptic) theSubKeyType;
+        throw new IllegalArgumentException();
     }
 
     /**
@@ -149,10 +149,10 @@ public class GordianKeyPairSpec {
      * @return the keySpec.
      */
     public GordianLMSKeySpec getLMSKeySpec() {
-        if (!(theSubKeyType instanceof GordianLMSKeySpec)) {
-            throw new IllegalArgumentException();
+        if (theSubKeyType instanceof GordianLMSKeySpec mySpec) {
+            return mySpec;
         }
-        return (GordianLMSKeySpec) theSubKeyType;
+        throw new IllegalArgumentException();
     }
 
     /**
@@ -160,10 +160,10 @@ public class GordianKeyPairSpec {
      * @return the keySpec.
      */
     public GordianHSSKeySpec getHSSKeySpec() {
-        if (!(theSubKeyType instanceof GordianHSSKeySpec)) {
-            throw new IllegalArgumentException();
+        if (theSubKeyType instanceof GordianHSSKeySpec mySpec) {
+            return mySpec;
         }
-        return (GordianHSSKeySpec) theSubKeyType;
+        throw new IllegalArgumentException();
     }
 
     /**
@@ -171,10 +171,10 @@ public class GordianKeyPairSpec {
      * @return the keySpec.
      */
     public GordianXMSSKeySpec getXMSSKeySpec() {
-        if (!(theSubKeyType instanceof GordianXMSSKeySpec)) {
-            throw new IllegalArgumentException();
+        if (theSubKeyType instanceof GordianXMSSKeySpec mySpec) {
+            return mySpec;
         }
-        return (GordianXMSSKeySpec) theSubKeyType;
+        throw new IllegalArgumentException();
     }
 
     /**
@@ -190,10 +190,10 @@ public class GordianKeyPairSpec {
      * @return the keySpec.
      */
     public GordianSLHDSASpec getSLHDSAKeySpec() {
-        if (!(theSubKeyType instanceof GordianSLHDSASpec)) {
-            throw new IllegalArgumentException();
+        if (theSubKeyType instanceof GordianSLHDSASpec mySpec) {
+            return mySpec;
         }
-        return (GordianSLHDSASpec) theSubKeyType;
+        throw new IllegalArgumentException();
     }
 
     /**
@@ -201,10 +201,10 @@ public class GordianKeyPairSpec {
      * @return the keySpec.
      */
     public GordianCMCESpec getCMCEKeySpec() {
-        if (!(theSubKeyType instanceof GordianCMCESpec)) {
-            throw new IllegalArgumentException();
+        if (theSubKeyType instanceof GordianCMCESpec mySpec) {
+            return mySpec;
         }
-        return (GordianCMCESpec) theSubKeyType;
+        throw new IllegalArgumentException();
     }
 
     /**
@@ -212,10 +212,10 @@ public class GordianKeyPairSpec {
      * @return the keySpec.
      */
     public GordianFRODOSpec getFRODOKeySpec() {
-        if (!(theSubKeyType instanceof GordianFRODOSpec)) {
-            throw new IllegalArgumentException();
+        if (theSubKeyType instanceof GordianFRODOSpec mySpec) {
+            return mySpec;
         }
-        return (GordianFRODOSpec) theSubKeyType;
+        throw new IllegalArgumentException();
     }
 
     /**
@@ -223,10 +223,10 @@ public class GordianKeyPairSpec {
      * @return the keySpec.
      */
     public GordianSABERSpec getSABERKeySpec() {
-        if (!(theSubKeyType instanceof GordianSABERSpec)) {
-            throw new IllegalArgumentException();
+        if (theSubKeyType instanceof GordianSABERSpec mySpec) {
+            return mySpec;
         }
-        return (GordianSABERSpec) theSubKeyType;
+        throw new IllegalArgumentException();
     }
 
     /**
@@ -234,10 +234,10 @@ public class GordianKeyPairSpec {
      * @return the keySpec.
      */
     public GordianMLKEMSpec getMLKEMKeySpec() {
-        if (!(theSubKeyType instanceof GordianMLKEMSpec)) {
-            throw new IllegalArgumentException();
+        if (theSubKeyType instanceof GordianMLKEMSpec mySpec) {
+            return mySpec;
         }
-        return (GordianMLKEMSpec) theSubKeyType;
+        throw new IllegalArgumentException();
     }
 
     /**
@@ -245,10 +245,10 @@ public class GordianKeyPairSpec {
      * @return the keySpec.
      */
     public GordianMLDSASpec getMLDSAKeySpec() {
-        if (!(theSubKeyType instanceof GordianMLDSASpec)) {
-            throw new IllegalArgumentException();
+        if (theSubKeyType instanceof GordianMLDSASpec mySpec) {
+            return mySpec;
         }
-        return (GordianMLDSASpec) theSubKeyType;
+        throw new IllegalArgumentException();
     }
 
     /**
@@ -256,10 +256,10 @@ public class GordianKeyPairSpec {
      * @return the keySpec.
      */
     public GordianHQCSpec getHQCKeySpec() {
-        if (!(theSubKeyType instanceof GordianHQCSpec)) {
-            throw new IllegalArgumentException();
+        if (theSubKeyType instanceof GordianHQCSpec mySpec) {
+            return mySpec;
         }
-        return (GordianHQCSpec) theSubKeyType;
+        throw new IllegalArgumentException();
     }
 
     /**
@@ -267,10 +267,10 @@ public class GordianKeyPairSpec {
      * @return the keySpec.
      */
     public GordianBIKESpec getBIKEKeySpec() {
-        if (!(theSubKeyType instanceof GordianBIKESpec)) {
-            throw new IllegalArgumentException();
+        if (theSubKeyType instanceof GordianBIKESpec mySpec) {
+            return mySpec;
         }
-        return (GordianBIKESpec) theSubKeyType;
+        throw new IllegalArgumentException();
     }
 
     /**
@@ -278,10 +278,10 @@ public class GordianKeyPairSpec {
      * @return the keySpec.
      */
     public GordianNTRUSpec getNTRUKeySpec() {
-        if (!(theSubKeyType instanceof GordianNTRUSpec)) {
-            throw new IllegalArgumentException();
+        if (theSubKeyType instanceof GordianNTRUSpec mySpec) {
+            return mySpec;
         }
-        return (GordianNTRUSpec) theSubKeyType;
+        throw new IllegalArgumentException();
     }
 
     /**
@@ -289,10 +289,10 @@ public class GordianKeyPairSpec {
      * @return the keySpec.
      */
     public GordianNTRUPrimeSpec getNTRUPrimeKeySpec() {
-        if (!(theSubKeyType instanceof GordianNTRUPrimeSpec)) {
-            throw new IllegalArgumentException();
+        if (theSubKeyType instanceof GordianNTRUPrimeSpec mySpec) {
+            return mySpec;
         }
-        return (GordianNTRUPrimeSpec) theSubKeyType;
+        throw new IllegalArgumentException();
     }
 
     /**
@@ -300,10 +300,10 @@ public class GordianKeyPairSpec {
      * @return the keySpec.
      */
     public GordianFALCONSpec getFalconKeySpec() {
-        if (!(theSubKeyType instanceof GordianFALCONSpec)) {
-            throw new IllegalArgumentException();
+        if (theSubKeyType instanceof GordianFALCONSpec mySpec) {
+            return mySpec;
         }
-        return (GordianFALCONSpec) theSubKeyType;
+        throw new IllegalArgumentException();
     }
 
     /**
@@ -311,10 +311,10 @@ public class GordianKeyPairSpec {
      * @return the keySpec.
      */
     public GordianPICNICSpec getPicnicKeySpec() {
-        if (!(theSubKeyType instanceof GordianPICNICSpec)) {
-            throw new IllegalArgumentException();
+        if (theSubKeyType instanceof GordianPICNICSpec mySpec) {
+            return mySpec;
         }
-        return (GordianPICNICSpec) theSubKeyType;
+        throw new IllegalArgumentException();
     }
 
     /**
@@ -322,10 +322,10 @@ public class GordianKeyPairSpec {
      * @return the keySpec.
      */
     public GordianRainbowSpec getRainbowKeySpec() {
-        if (!(theSubKeyType instanceof GordianRainbowSpec)) {
-            throw new IllegalArgumentException();
+        if (theSubKeyType instanceof GordianRainbowSpec mySpec) {
+            return mySpec;
         }
-        return (GordianRainbowSpec) theSubKeyType;
+        throw new IllegalArgumentException();
     }
 
     /**
@@ -334,11 +334,11 @@ public class GordianKeyPairSpec {
      */
     @SuppressWarnings("unchecked")
     public Iterator<GordianKeyPairSpec> keySpecIterator() {
-        if (!(theSubKeyType instanceof List)) {
-            throw new IllegalArgumentException();
+        if (theSubKeyType instanceof List) {
+            return ((List<GordianKeyPairSpec>) theSubKeyType).iterator();
         }
-        return ((List<GordianKeyPairSpec>) theSubKeyType).iterator();
-    }
+        throw new IllegalArgumentException();
+     }
 
     @Override
     public String toString() {
@@ -400,16 +400,9 @@ public class GordianKeyPairSpec {
             return false;
         }
 
-        /* Make sure that the object is a keyPairSpec */
-        if (pThat.getClass() != this.getClass()) {
-            return false;
-        }
-
-        /* Access the target KeySpec */
-        final GordianKeyPairSpec myThat = (GordianKeyPairSpec) pThat;
-
         /* Check KeyPairType and subKeyType */
-        return theKeyPairType == myThat.getKeyPairType()
+        return pThat instanceof GordianKeyPairSpec myThat
+                && theKeyPairType == myThat.getKeyPairType()
                 && Objects.equals(theSubKeyType, myThat.theSubKeyType);
     }
 
@@ -446,8 +439,7 @@ public class GordianKeyPairSpec {
             case DSTU4145:
                 return theSubKeyType instanceof GordianDSTU4145Elliptic;
             case XMSS:
-                return theSubKeyType instanceof GordianXMSSKeySpec
-                        && ((GordianXMSSKeySpec) theSubKeyType).isValid();
+                return theSubKeyType instanceof GordianXMSSKeySpec s && s.isValid();
             case SLHDSA:
                 return theSubKeyType instanceof GordianSLHDSASpec;
             case CMCE:
@@ -477,10 +469,8 @@ public class GordianKeyPairSpec {
             case NEWHOPE:
                 return theSubKeyType == null;
             case LMS:
-                return (theSubKeyType instanceof GordianLMSKeySpec
-                         && ((GordianLMSKeySpec) theSubKeyType).isValid())
-                        || (theSubKeyType instanceof GordianHSSKeySpec
-                            && ((GordianHSSKeySpec) theSubKeyType).isValid());
+                return (theSubKeyType instanceof GordianLMSKeySpec ls && ls.isValid())
+                        || (theSubKeyType instanceof GordianHSSKeySpec hs && hs.isValid());
             case EDDSA:
             case XDH:
                 return theSubKeyType instanceof GordianEdwardsElliptic;

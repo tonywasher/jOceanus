@@ -16,10 +16,10 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.api.random;
 
-import java.util.Objects;
-
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymKeySpec;
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestSpec;
+
+import java.util.Objects;
 
 /**
  * SecureRandom Specification.
@@ -99,8 +99,8 @@ public class GordianRandomSpec {
      * @return the digestSpec.
      */
     public GordianDigestSpec getDigestSpec() {
-        return theSubSpec instanceof GordianDigestSpec
-               ? (GordianDigestSpec) theSubSpec
+        return theSubSpec instanceof GordianDigestSpec mySpec
+               ? mySpec
                : null;
     }
 
@@ -109,8 +109,8 @@ public class GordianRandomSpec {
      * @return the symKeySpec.
      */
     public GordianSymKeySpec getSymKeySpec() {
-        return theSubSpec instanceof GordianSymKeySpec
-               ? (GordianSymKeySpec) theSubSpec
+        return theSubSpec instanceof GordianSymKeySpec mySpec
+               ? mySpec
                : null;
     }
 
@@ -133,13 +133,13 @@ public class GordianRandomSpec {
         switch (theRandomType) {
             case HMAC:
             case HASH:
-                return theSubSpec instanceof GordianDigestSpec
-                        && ((GordianDigestSpec) theSubSpec).isValid()
-                        && ((GordianDigestSpec) theSubSpec).getDigestType().supportsLargeData();
+                return theSubSpec instanceof GordianDigestSpec mySpec
+                        && mySpec.isValid()
+                        && mySpec.getDigestType().supportsLargeData();
             case CTR:
             case X931:
-                return theSubSpec instanceof GordianSymKeySpec
-                        && ((GordianSymKeySpec) theSubSpec).isValid();
+                return theSubSpec instanceof GordianSymKeySpec mySpec
+                        && mySpec.isValid();
             default:
                 return false;
         }
@@ -177,16 +177,9 @@ public class GordianRandomSpec {
             return false;
         }
 
-        /* Make sure that the object is a RandomSpec */
-        if (pThat.getClass() != this.getClass()) {
-            return false;
-        }
-
-        /* Access the targetSpec */
-        final GordianRandomSpec myThat = (GordianRandomSpec) pThat;
-
         /* Check KeyType, prediction and subSpec */
-        return theRandomType == myThat.getRandomType()
+        return pThat instanceof GordianRandomSpec myThat
+                && theRandomType == myThat.getRandomType()
                 && isPredictionResistant == myThat.isPredictionResistant()
                 && Objects.equals(theSubSpec, myThat.getSubSpec());
     }

@@ -184,10 +184,9 @@ public class GordianEncryptorAlgId {
 
         /* Obtain the encryptor */
         final Object myEncryptor = pSpec.getEncryptorType();
-        if (myEncryptor instanceof GordianDigestSpec) {
-            myId = GordianDigestAlgId.appendDigestOID(myId.branch("2"), (GordianDigestSpec) myEncryptor);
-        } else if (myEncryptor instanceof GordianSM2EncryptionSpec) {
-            final GordianSM2EncryptionSpec mySpec = (GordianSM2EncryptionSpec) myEncryptor;
+        if (myEncryptor instanceof GordianDigestSpec mySpec) {
+            myId = GordianDigestAlgId.appendDigestOID(myId.branch("2"), mySpec);
+        } else if (myEncryptor instanceof GordianSM2EncryptionSpec mySpec) {
             myId = myId.branch("4").branch(Integer.toString(mySpec.getEncryptionType().ordinal() + 1));
             myId = GordianDigestAlgId.appendDigestOID(myId, mySpec.getDigestSpec());
         } else {

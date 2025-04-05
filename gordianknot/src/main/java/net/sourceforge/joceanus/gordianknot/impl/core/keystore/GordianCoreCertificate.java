@@ -416,8 +416,9 @@ public class GordianCoreCertificate
      * @return the publicOnly version
      */
     protected GordianKeyPair getPublicOnly(final GordianKeyPair pKeyPair) {
-        return pKeyPair instanceof GordianCompositeKeyPair ? ((GordianCompositeKeyPair) pKeyPair).getPublicOnly()
-                                                           : ((GordianCoreKeyPair) pKeyPair).getPublicOnly();
+        return pKeyPair instanceof GordianCompositeKeyPair myComposite
+                ? myComposite.getPublicOnly()
+                : ((GordianCoreKeyPair) pKeyPair).getPublicOnly();
     }
 
     /**
@@ -460,8 +461,9 @@ public class GordianCoreCertificate
      * @return matches true/false
      */
     boolean checkMatchingPublicKey(final GordianKeyPair pKeyPair) {
-        return pKeyPair instanceof GordianCompositeKeyPair ? ((GordianCompositeKeyPair) pKeyPair).checkMatchingPublicKey(getKeyPair())
-                                                           : ((GordianCoreKeyPair) pKeyPair).checkMatchingPublicKey(getKeyPair());
+        return pKeyPair instanceof GordianCompositeKeyPair myComposite
+                ? myComposite.checkMatchingPublicKey(getKeyPair())
+                : ((GordianCoreKeyPair) pKeyPair).checkMatchingPublicKey(getKeyPair());
     }
 
     /**
@@ -840,13 +842,8 @@ public class GordianCoreCertificate
         }
 
         /* Ensure object is correct class */
-        if (!(pThat instanceof GordianCoreCertificate)) {
-            return false;
-        }
-        final GordianCoreCertificate myThat = (GordianCoreCertificate) pThat;
-
-        /* Compare fields */
-        return Arrays.equals(theEncoded, myThat.theEncoded);
+        return pThat instanceof GordianCoreCertificate myThat
+                && Arrays.equals(theEncoded, myThat.theEncoded);
     }
 
     @Override

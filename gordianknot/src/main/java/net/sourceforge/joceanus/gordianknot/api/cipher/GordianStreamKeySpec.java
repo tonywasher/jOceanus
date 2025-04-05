@@ -397,16 +397,9 @@ public class GordianStreamKeySpec
             return false;
         }
 
-        /* Make sure that the object is a StreamKeySpec */
-        if (pThat.getClass() != this.getClass()) {
-            return false;
-        }
-
-        /* Access the target StreamKeySpec */
-        final GordianStreamKeySpec myThat = (GordianStreamKeySpec) pThat;
-
         /* Check subFields */
-        return theStreamKeyType == myThat.getStreamKeyType()
+        return pThat instanceof GordianStreamKeySpec myThat
+                && theStreamKeyType == myThat.getStreamKeyType()
                 && theKeyLength == myThat.getKeyLength()
                 && theSubKeyType == myThat.getSubKeyType();
     }

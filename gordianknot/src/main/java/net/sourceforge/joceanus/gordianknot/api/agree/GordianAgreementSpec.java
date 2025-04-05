@@ -16,10 +16,10 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.api.agree;
 
-import java.util.Objects;
-
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairType;
+
+import java.util.Objects;
 
 /**
  * KeyPair Agreement Specification.
@@ -207,16 +207,9 @@ public final class GordianAgreementSpec {
             return false;
         }
 
-        /* Make sure that the object is an AgreementSpec */
-        if (pThat.getClass() != this.getClass()) {
-            return false;
-        }
-
-        /* Access the target AgreementSpec */
-        final GordianAgreementSpec myThat = (GordianAgreementSpec) pThat;
-
         /* Match subfields */
-        return Objects.equals(theKeyPairSpec, myThat.getKeyPairSpec())
+        return pThat instanceof GordianAgreementSpec myThat
+                && Objects.equals(theKeyPairSpec, myThat.getKeyPairSpec())
                 && theAgreementType == myThat.getAgreementType()
                 && theKDFType == myThat.getKDFType()
                 && withConfirm == myThat.withConfirm();

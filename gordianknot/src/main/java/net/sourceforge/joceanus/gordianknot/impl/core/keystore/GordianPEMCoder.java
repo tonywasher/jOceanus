@@ -148,22 +148,22 @@ public class GordianPEMCoder {
     private List<GordianPEMObject> encodeKeyStoreEntry(final GordianKeyStoreEntry pEntry,
                                                        final GordianCoreZipLock pLock) throws GordianException {
         /* Handle certificates */
-        if (pEntry instanceof GordianKeyStoreCertificate) {
-             final GordianCertificate myCert = ((GordianKeyStoreCertificate) pEntry).getCertificate();
+        if (pEntry instanceof GordianKeyStoreCertificate myEntry) {
+             final GordianCertificate myCert = myEntry.getCertificate();
              return Collections.singletonList(encodeCertificate(myCert));
         }
 
         /* Handle keyPair */
-        if (pEntry instanceof GordianKeyStorePair) {
-            return encodePrivateKeyPair((GordianKeyStorePair) pEntry, pLock);
+        if (pEntry instanceof GordianKeyStorePair myEntry) {
+            return encodePrivateKeyPair(myEntry, pLock);
         }
 
         /* Handle keySet and key */
-        if (pEntry instanceof GordianKeyStoreSet) {
-            return Collections.singletonList(encodeKeySet((GordianKeyStoreSet) pEntry, pLock));
+        if (pEntry instanceof GordianKeyStoreSet myEntry) {
+            return Collections.singletonList(encodeKeySet(myEntry, pLock));
         }
-        if (pEntry instanceof GordianKeyStoreKey) {
-            return Collections.singletonList(encodeKey((GordianKeyStoreKey<?>) pEntry, pLock));
+        if (pEntry instanceof GordianKeyStoreKey<?> myEntry) {
+            return Collections.singletonList(encodeKey(myEntry, pLock));
         }
 
         /* Unsupported entry */
