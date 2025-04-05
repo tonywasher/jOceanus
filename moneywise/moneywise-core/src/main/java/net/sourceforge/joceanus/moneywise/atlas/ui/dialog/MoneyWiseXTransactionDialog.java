@@ -489,7 +489,8 @@ public class MoneyWiseXTransactionDialog
         }
 
         /* Check whether the field is available */
-        final MetisFieldRequired isRequired = myInfoSet.isClassRequired(pField);
+        final MoneyWiseValidateTransaction myValidator = (MoneyWiseValidateTransaction) pTrans.getList().getValidator();
+        final MetisFieldRequired isRequired = myValidator.isClassRequired(pField);
         return !isRequired.equals(MetisFieldRequired.NOTALLOWED);
     }
 

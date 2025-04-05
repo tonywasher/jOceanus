@@ -18,7 +18,6 @@ package net.sourceforge.joceanus.moneywise.data.basic;
 
 import net.sourceforge.joceanus.metis.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
-import net.sourceforge.joceanus.metis.field.MetisFieldRequired;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePayeeInfo.MoneyWisePayeeInfoList;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseAccountInfoClass;
@@ -26,7 +25,6 @@ import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseAccountInfoType.
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataInfoClass;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataInfoSet;
-import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
 
 import java.util.Arrays;
@@ -156,100 +154,6 @@ public class MoneyWisePayeeInfoSet
         /* Loop through the items */
         for (MoneyWisePayeeInfo myInfo : this) {
             myInfo.resolveEditSetLinks(pEditSet);
-        }
-    }
-
-    /**
-     * Determine if a field is required.
-     * @param pField the infoSet field
-     * @return the status
-     */
-    public MetisFieldRequired isFieldRequired(final MetisDataFieldId pField) {
-        final MoneyWiseAccountInfoClass myClass = getClassForField(pField);
-        return myClass == null
-                ? MetisFieldRequired.NOTALLOWED
-                : isClassRequired(myClass);
-    }
-
-    @Override
-    public MetisFieldRequired isClassRequired(final PrometheusDataInfoClass pClass) {
-        /* Switch on class */
-        switch ((MoneyWiseAccountInfoClass) pClass) {
-            /* Allowed set */
-            case NOTES:
-            case SORTCODE:
-            case ACCOUNT:
-            case REFERENCE:
-            case WEBSITE:
-            case CUSTOMERNO:
-            case USERID:
-            case PASSWORD:
-                return MetisFieldRequired.CANEXIST;
-
-            /* Not allowed */
-            case MATURITY:
-            case OPENINGBALANCE:
-            case AUTOEXPENSE:
-            case AUTOPAYEE:
-            case SYMBOL:
-            case REGION:
-            case UNDERLYINGSTOCK:
-            case OPTIONPRICE:
-            default:
-                return MetisFieldRequired.NOTALLOWED;
-        }
-    }
-
-    /**
-     * Validate the infoSet.
-     */
-    protected void validate() {
-        /* Loop through the classes */
-        for (final MoneyWiseAccountInfoClass myClass : MoneyWiseAccountInfoClass.values()) {
-            /* Access info for class */
-            final MoneyWisePayeeInfo myInfo = getInfo(myClass);
-
-            /* If basic checks are passed */
-            if (checkClass(myInfo, myClass)) {
-                /* validate the class */
-                validateClass(myInfo, myClass);
-            }
-        }
-    }
-
-    /**
-     * Validate the class.
-     * @param pInfo the info
-     * @param pClass the infoClass
-     */
-    private void validateClass(final MoneyWisePayeeInfo pInfo,
-                               final MoneyWiseAccountInfoClass pClass) {
-        /* Switch on class */
-        switch (pClass) {
-            case WEBSITE:
-            case CUSTOMERNO:
-            case USERID:
-            case PASSWORD:
-            case SORTCODE:
-            case ACCOUNT:
-            case NOTES:
-            case REFERENCE:
-                validateInfoLength(pInfo);
-                break;
-            default:
-                break;
-        }
-    }
-
-    /**
-     * Validate the info length.
-     * @param pInfo the info
-     */
-    private void validateInfoLength(final MoneyWisePayeeInfo pInfo) {
-        final char[] myArray = pInfo.getValue(char[].class);
-        final MoneyWiseAccountInfoClass myClass = pInfo.getInfoClass();
-        if (myArray.length > myClass.getMaximumLength()) {
-            getOwner().addError(PrometheusDataItem.ERROR_LENGTH, getFieldForClass(myClass));
         }
     }
 }
