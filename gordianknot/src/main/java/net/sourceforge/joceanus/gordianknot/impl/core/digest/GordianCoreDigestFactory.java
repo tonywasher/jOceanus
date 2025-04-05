@@ -30,7 +30,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 /**
  * Base Digest Factory.
@@ -106,14 +105,14 @@ public abstract class GordianCoreDigestFactory
         return listAllPossibleSpecs()
                 .stream()
                 .filter(supportedDigestSpecs())
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override
     public List<GordianDigestType> listAllSupportedTypes() {
         return Arrays.stream(GordianDigestType.values())
                 .filter(supportedDigestTypes())
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override

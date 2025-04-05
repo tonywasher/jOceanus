@@ -34,7 +34,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 /**
  * GordianKnot base for encryptorFactory.
@@ -211,7 +210,7 @@ public abstract class GordianCoreEncryptorFactory
         return listPossibleEncryptors(pKeyPairSpec.getKeyPairType())
                 .stream()
                 .filter(s -> validEncryptorSpecForKeyPairSpec(pKeyPairSpec, s))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override

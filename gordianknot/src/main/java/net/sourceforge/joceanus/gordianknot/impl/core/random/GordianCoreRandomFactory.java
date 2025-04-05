@@ -61,7 +61,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.function.BiPredicate;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 /**
  * GordianKnot Core RandomFactory.
@@ -289,7 +288,7 @@ public class GordianCoreRandomFactory
 
         /* Remove the specs that are wrong block size and obtain keyTypes */
         mySpecs.removeIf(s -> s.getBlockLength() != GordianLength.LEN_128);
-        final List<GordianSymKeyType> myTypes = mySpecs.stream().map(GordianSymKeySpec::getSymKeyType).collect(Collectors.toList());
+        final List<GordianSymKeyType> myTypes = mySpecs.stream().map(GordianSymKeySpec::getSymKeyType).toList();
 
         /* Determine a random index into the list and obtain the symKeyType */
         int myIndex = theRandom.nextInt(myTypes.size());
@@ -311,7 +310,7 @@ public class GordianCoreRandomFactory
         final List<GordianDigestSpec> mySpecs = myDigests.listAllSupportedSpecs();
         mySpecs.removeIf(s -> !s.getDigestType().supportsLargeData()
                 || s.getDigestLength() != GordianLength.LEN_512);
-        final List<GordianDigestType> myTypes = mySpecs.stream().map(GordianDigestSpec::getDigestType).collect(Collectors.toList());
+        final List<GordianDigestType> myTypes = mySpecs.stream().map(GordianDigestSpec::getDigestType).toList();
 
         /* Determine a random index into the list and obtain the digestType */
         final SecureRandom myRandom = theFactory.getRandomSource().getRandom();
@@ -471,7 +470,7 @@ public class GordianCoreRandomFactory
         return listAllPossibleSpecs()
                 .stream()
                 .filter(supportedRandomSpecs())
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override
@@ -480,7 +479,7 @@ public class GordianCoreRandomFactory
                 .stream()
                 .filter(s -> s.getRandomType().equals(pType))
                 .filter(supportedRandomSpecs())
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override
@@ -492,7 +491,7 @@ public class GordianCoreRandomFactory
                 .filter(s -> s.getRandomType().hasSymKeySpec())
                 .filter(s -> s.getSymKeySpec().getKeyLength() == pKeyLen)
                 .filter(supportedRandomSpecs())
-                .collect(Collectors.toList());
+                .toList();
     }
 
     /**

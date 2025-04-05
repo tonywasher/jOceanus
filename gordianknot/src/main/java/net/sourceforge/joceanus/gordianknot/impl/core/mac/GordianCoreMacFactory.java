@@ -39,7 +39,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 /**
  * Core Mac Factory.
@@ -259,7 +258,7 @@ public abstract class GordianCoreMacFactory
         return listAllPossibleSpecs(pKeyLen)
                 .stream()
                 .filter(supportedMacSpecs())
-                .collect(Collectors.toList());
+                .toList();
     }
 
     /**

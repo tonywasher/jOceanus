@@ -64,7 +64,7 @@ public class GordianIdManager {
         /* Access the list of symKeySpecs and unique symKeyTypes */
         final GordianCipherFactory myCiphers = theFactory.getCipherFactory();
         final List<GordianSymKeySpec> mySpecs = myCiphers.listAllSupportedSymKeySpecs(pKeyLen);
-        final List<GordianSymKeyType> myTypes = mySpecs.stream().map(GordianSymKeySpec::getSymKeyType).collect(Collectors.toList());
+        final List<GordianSymKeyType> myTypes = mySpecs.stream().map(GordianSymKeySpec::getSymKeyType).toList();
 
         /* Determine a random index into the list and obtain the symKeyType */
         final SecureRandom myRandom = theFactory.getRandomSource().getRandom();
@@ -109,13 +109,13 @@ public class GordianIdManager {
      */
     public GordianSymKeySpec selectSymKeySpecFromList(final List<GordianSymKeySpec> pList) {
         /* Select the random Spec */
-        final List<GordianSymKeyType> myTypes = pList.stream().map(GordianSymKeySpec::getSymKeyType).collect(Collectors.toList());
+        final List<GordianSymKeyType> myTypes = pList.stream().map(GordianSymKeySpec::getSymKeyType).toList();
         final SecureRandom myRandom = theFactory.getRandomSource().getRandom();
         int myIndex = myRandom.nextInt(pList.size());
         final GordianSymKeyType myType = myTypes.get(myIndex);
 
         /* Strip out the possible specs */
-        final List<GordianSymKeySpec> mySpecs = pList.stream().filter(mySpec -> mySpec.getSymKeyType() == myType).collect(Collectors.toList());
+        final List<GordianSymKeySpec> mySpecs = pList.stream().filter(mySpec -> mySpec.getSymKeyType() == myType).toList();
         pList.removeIf(mySpec -> mySpec.getSymKeyType() == myType);
 
         /* Return the result */
@@ -137,7 +137,7 @@ public class GordianIdManager {
         if (pLargeData) {
             mySpecs.removeIf(s -> !s.getStreamKeyType().supportsLargeData());
         }
-        final List<GordianStreamKeyType> myTypes = mySpecs.stream().map(GordianStreamKeySpec::getStreamKeyType).collect(Collectors.toList());
+        final List<GordianStreamKeyType> myTypes = mySpecs.stream().map(GordianStreamKeySpec::getStreamKeyType).toList();
 
         /* Determine a random index into the list and obtain the streamKeyType */
         final SecureRandom myRandom = theFactory.getRandomSource().getRandom();
@@ -162,7 +162,7 @@ public class GordianIdManager {
         if (pLargeData) {
             mySpecs.removeIf(s -> !s.getDigestType().supportsLargeData());
         }
-        final List<GordianDigestType> myTypes = mySpecs.stream().map(GordianDigestSpec::getDigestType).collect(Collectors.toList());
+        final List<GordianDigestType> myTypes = mySpecs.stream().map(GordianDigestSpec::getDigestType).toList();
 
         /* Determine a random index into the list and obtain the digestType */
         final SecureRandom myRandom = theFactory.getRandomSource().getRandom();
@@ -220,7 +220,7 @@ public class GordianIdManager {
         final List<GordianDigestType> myTypes = myDigests.listAllSupportedTypes().stream()
                 .filter(myValidator.supportedLockDigestTypes())
                 .filter(myValidator.isExternalHashDigest())
-                .collect(Collectors.toList());
+                .toList();
 
         /* Select from the list and remove the selected item */
         final int myIndex = pRandom.nextInt(myTypes.size());
@@ -315,7 +315,7 @@ public class GordianIdManager {
         final GordianValidator myValidator = theFactory.getValidator();
         final List<GordianDigestType> myTypes = myDigests.listAllSupportedTypes().stream()
                 .filter(myValidator.supportedAgreementDigestTypes())
-                .collect(Collectors.toList());
+                .toList();
 
         /* Select from the list */
         final int myIndex = pRandom.nextInt(myTypes.size());
@@ -343,7 +343,7 @@ public class GordianIdManager {
         mySpecs.remove(GordianMacSpecBuilder.poly1305Mac());
 
         /* Extract the macTypes */
-        final List<GordianMacType> myTypes = mySpecs.stream().map(GordianMacSpec::getMacType).collect(Collectors.toList());
+        final List<GordianMacType> myTypes = mySpecs.stream().map(GordianMacSpec::getMacType).toList();
 
         /* Determine a random index into the list and obtain the macType */
         final SecureRandom myRandom = theFactory.getRandomSource().getRandom();
