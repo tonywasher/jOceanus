@@ -92,8 +92,8 @@ public class GordianPasswordLockSpecASN1
      * @throws GordianException on error
      */
     public static GordianPasswordLockSpecASN1 getInstance(final Object pObject) throws GordianException {
-        if (pObject instanceof GordianPasswordLockSpecASN1) {
-            return (GordianPasswordLockSpecASN1) pObject;
+        if (pObject instanceof GordianPasswordLockSpecASN1 myASN1) {
+            return myASN1;
         } else if (pObject != null) {
             return new GordianPasswordLockSpecASN1(ASN1Sequence.getInstance(pObject));
         }
@@ -139,14 +139,9 @@ public class GordianPasswordLockSpecASN1
             return false;
         }
 
-        /* Make sure that the classes are the same */
-        if (!(pThat instanceof GordianPasswordLockSpecASN1)) {
-            return false;
-        }
-        final GordianPasswordLockSpecASN1 myThat = (GordianPasswordLockSpecASN1) pThat;
-
         /* Check that the fields are equal */
-        return Objects.equals(theLockSpec, myThat.getLockSpec());
+        return pThat instanceof GordianPasswordLockSpecASN1 myThat
+                && Objects.equals(theLockSpec, myThat.getLockSpec());
     }
 
     @Override

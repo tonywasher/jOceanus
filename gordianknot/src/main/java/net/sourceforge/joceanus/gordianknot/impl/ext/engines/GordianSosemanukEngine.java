@@ -294,7 +294,7 @@ public class GordianSosemanukEngine
     @SuppressWarnings("checkstyle:MethodLength")
     public void setKey(final byte[] key) {
         if (key.length < 1 || key.length > 32) {
-            throw new Error("bad key length: " + key.length);
+            throw new IllegalArgumentException("bad key length: " + key.length);
         }
         final byte[] lkey;
         if (key.length == 32) {
@@ -1197,7 +1197,7 @@ public class GordianSosemanukEngine
             myIV = new byte[0];
         }
         if (myIV.length > 16) {
-            throw new Error("bad IV length: " + myIV.length);
+            throw new IllegalArgumentException("bad IV length: " + myIV.length);
         }
         final byte[] piv;
         if (myIV.length == 16) {

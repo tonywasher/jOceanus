@@ -145,9 +145,9 @@ public class GordianDigestSpec
      * @return the State
      */
     public GordianDigestState getDigestState() {
-        return theSubSpec instanceof GordianDigestState
-                ? (GordianDigestState) theSubSpec
-                :  null;
+        return theSubSpec instanceof GordianDigestState myState
+                ? myState
+                : null;
     }
 
     /**
@@ -293,16 +293,9 @@ public class GordianDigestSpec
             return false;
         }
 
-        /* Make sure that the object is a DigestSpec */
-        if (pThat.getClass() != this.getClass()) {
-            return false;
-        }
-
-        /* Access the target DigestSpec */
-        final GordianDigestSpec myThat = (GordianDigestSpec) pThat;
-
         /* Check subFields */
-        return theDigestType == myThat.getDigestType()
+        return pThat instanceof GordianDigestSpec myThat
+                && theDigestType == myThat.getDigestType()
                 && theSubSpec == myThat.getSubSpec()
                 && theLength == myThat.getDigestLength()
                 && isXofMode == myThat.isXofMode();

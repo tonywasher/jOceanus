@@ -16,20 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.core.base;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-
-import org.bouncycastle.asn1.ASN1ObjectIdentifier;
-import org.bouncycastle.asn1.DERNull;
-import org.bouncycastle.asn1.cryptopro.CryptoProObjectIdentifiers;
-import org.bouncycastle.asn1.nist.NISTObjectIdentifiers;
-import org.bouncycastle.asn1.nsri.NSRIObjectIdentifiers;
-import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
-import org.bouncycastle.asn1.rosstandart.RosstandartObjectIdentifiers;
-import org.bouncycastle.asn1.ua.UAObjectIdentifiers;
-import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
-
 import net.sourceforge.joceanus.gordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianCipherFactory;
@@ -46,6 +32,19 @@ import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacSpec;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacSpecBuilder;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacType;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianSipHashSpec;
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.bouncycastle.asn1.DERNull;
+import org.bouncycastle.asn1.cryptopro.CryptoProObjectIdentifiers;
+import org.bouncycastle.asn1.nist.NISTObjectIdentifiers;
+import org.bouncycastle.asn1.nsri.NSRIObjectIdentifiers;
+import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
+import org.bouncycastle.asn1.rosstandart.RosstandartObjectIdentifiers;
+import org.bouncycastle.asn1.ua.UAObjectIdentifiers;
+import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
+
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  * Mappings from EncodedId to KeySpec.
@@ -308,14 +307,14 @@ public class GordianKeyAlgId {
 
         /* Obtain the subSpec */
         final Object mySubSpec = pSpec.getSubSpec();
-        if (mySubSpec instanceof GordianDigestSpec) {
-            myId = GordianDigestAlgId.appendDigestOID(myId, (GordianDigestSpec) mySubSpec);
-        } else if (mySubSpec instanceof GordianSymKeySpec) {
-            myId = appendSymKeyOID(myId, false, (GordianSymKeySpec) mySubSpec);
-        } else if (mySubSpec instanceof GordianLength) {
-            myId = myId.branch(Integer.toString(((GordianLength) mySubSpec).ordinal() + 1));
-        } else if (mySubSpec instanceof GordianSipHashSpec) {
-            myId = myId.branch(Integer.toString(((GordianSipHashSpec) mySubSpec).ordinal() + 1));
+        if (mySubSpec instanceof GordianDigestSpec mySpec) {
+            myId = GordianDigestAlgId.appendDigestOID(myId, mySpec);
+        } else if (mySubSpec instanceof GordianSymKeySpec mySpec) {
+            myId = appendSymKeyOID(myId, false, mySpec);
+        } else if (mySubSpec instanceof GordianLength myLength) {
+            myId = myId.branch(Integer.toString(myLength.ordinal() + 1));
+        } else if (mySubSpec instanceof GordianSipHashSpec mySpec) {
+            myId = myId.branch(Integer.toString(mySpec.ordinal() + 1));
         }
 
         /* Add the spec to the maps */

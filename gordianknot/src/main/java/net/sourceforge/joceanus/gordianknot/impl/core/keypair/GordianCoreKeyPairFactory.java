@@ -60,7 +60,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 /**
  * GordianKnot Core KeyPairFactory.
@@ -226,7 +225,7 @@ public abstract class GordianCoreKeyPairFactory
         return listPossibleKeySpecs()
                 .stream()
                 .filter(supportedKeyPairSpecs())
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override
@@ -235,7 +234,7 @@ public abstract class GordianCoreKeyPairFactory
                 .stream()
                 .filter(s -> pKeyPairType.equals(s.getKeyPairType()))
                 .filter(supportedKeyPairSpecs())
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override

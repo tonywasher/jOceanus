@@ -163,9 +163,9 @@ public class GordianCoreCipherParameters<T extends GordianKeySpec> {
      */
     void processParameters(final GordianCipherParameters pParams) throws GordianException {
         /* If the cipher parameters are PBE */
-        if (pParams instanceof GordianPBECipherParameters) {
+        if (pParams instanceof GordianPBECipherParameters myPBEParams) {
             /* Process separately */
-            processPBEParameters((GordianPBECipherParameters) pParams);
+            processPBEParameters(myPBEParams);
 
             /* else standard parameters */
         } else {
@@ -219,8 +219,7 @@ public class GordianCoreCipherParameters<T extends GordianKeySpec> {
         /* Store details */
         theInitialAEAD = null;
         theInitVector = null;
-        if (myParams instanceof ParametersWithIV) {
-            final ParametersWithIV myIVParams = (ParametersWithIV) myParams;
+        if (myParams instanceof ParametersWithIV myIVParams) {
             theInitVector = myIVParams.getIV();
             myParams = myIVParams.getParameters();
         }
@@ -252,10 +251,8 @@ public class GordianCoreCipherParameters<T extends GordianKeySpec> {
     @SuppressWarnings("unchecked")
     private GordianKey<T> obtainKeyFromParameters(final GordianCipherParameters pParams) {
         /* If we have specified IV */
-        if (pParams instanceof GordianKeyCipherParameters) {
-            /* Access the parameters */
-            final GordianKeyCipherParameters<?> myParams = (GordianKeyCipherParameters<?>) pParams;
-            return (GordianKey<T>) myParams.getKey();
+        if (pParams instanceof GordianKeyCipherParameters<?> myParams) {
+             return (GordianKey<T>) myParams.getKey();
         }
 
         /* No key */
@@ -274,10 +271,7 @@ public class GordianCoreCipherParameters<T extends GordianKeySpec> {
         byte[] myIV = null;
 
         /* If we have specified IV */
-        if (pParams instanceof GordianNonceParameters) {
-            /* Access the parameters */
-            final GordianNonceParameters myParams = (GordianNonceParameters) pParams;
-
+        if (pParams instanceof GordianNonceParameters myParams) {
             /* If we have an explicit Nonce */
             if (!myParams.randomNonce()) {
                 /* access the nonce */
@@ -306,9 +300,7 @@ public class GordianCoreCipherParameters<T extends GordianKeySpec> {
         byte[] myInitial = null;
 
         /* If we have specified IV */
-        if (pParams instanceof GordianAEADCipherParameters) {
-            /* Access the parameters */
-            final GordianAEADCipherParameters<?> myParams = (GordianAEADCipherParameters<?>) pParams;
+        if (pParams instanceof GordianAEADCipherParameters<?> myParams) {
             myInitial = Arrays.clone(myParams.getInitialAEAD());
         }
 

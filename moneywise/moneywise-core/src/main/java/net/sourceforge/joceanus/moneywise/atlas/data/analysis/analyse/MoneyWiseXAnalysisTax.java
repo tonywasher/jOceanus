@@ -617,9 +617,8 @@ public class MoneyWiseXAnalysisTax {
      * Convert infoAmount to reporting currency if necessary.
      * @param pAmount the relevant amount
      * @return the reportingAmount
-     * @throws OceanusException on error
      */
-    private OceanusMoney getReportingAmount(final OceanusMoney pAmount) throws OceanusException {
+    private OceanusMoney getReportingAmount(final OceanusMoney pAmount) {
         /* If the account is foreign */
         if (theAccount.isForeign()) {
             /* Convert the infoAmount to reporting currency */

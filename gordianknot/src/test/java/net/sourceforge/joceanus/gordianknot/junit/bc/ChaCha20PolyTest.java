@@ -113,7 +113,7 @@ public class ChaCha20PolyTest
                         "3ff4def08e4b7a9de576d26586cec64b" +
                         "6116" +
                         "1ae10b594f09e26a7e902ecbd0600691";
-        private final TestCase TEST = new TestCase(KEY, IV, AAD,
+        private static final TestCase TEST = new TestCase(KEY, IV, AAD,
                 PLAIN, EXPECTED
         );
 

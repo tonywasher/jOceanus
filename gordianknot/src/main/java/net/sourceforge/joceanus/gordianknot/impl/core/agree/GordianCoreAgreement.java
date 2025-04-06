@@ -172,32 +172,32 @@ public abstract class GordianCoreAgreement
         }
 
         /* Validate a keySetSpec */
-        if (pResultType instanceof GordianKeySetSpec) {
+        if (pResultType instanceof GordianKeySetSpec mySpec) {
             /* Check Spec */
             final GordianCoreKeySetFactory myKeySetFactory = (GordianCoreKeySetFactory) theFactory.getKeySetFactory();
-            myKeySetFactory.checkKeySetSpec((GordianKeySetSpec) pResultType);
+            myKeySetFactory.checkKeySetSpec(mySpec);
             return;
         }
 
         /* Validate a symCipherSpec */
-        if (pResultType instanceof GordianSymCipherSpec) {
+        if (pResultType instanceof GordianSymCipherSpec mySpec) {
             /* Check Spec */
             final GordianCoreCipherFactory myCipherFactory = (GordianCoreCipherFactory) theFactory.getCipherFactory();
-            myCipherFactory.checkSymCipherSpec((GordianSymCipherSpec) pResultType);
+            myCipherFactory.checkSymCipherSpec(mySpec);
             return;
         }
 
         /* Validate a streamCipherSpec */
-        if (pResultType instanceof GordianStreamCipherSpec) {
+        if (pResultType instanceof GordianStreamCipherSpec mySpec) {
             /* Check Spec */
             final GordianCoreCipherFactory myCipherFactory = (GordianCoreCipherFactory) theFactory.getCipherFactory();
-            myCipherFactory.checkStreamCipherSpec((GordianStreamCipherSpec) pResultType);
+            myCipherFactory.checkStreamCipherSpec(mySpec);
             return;
         }
 
         /* Validate a byte array */
-        if (pResultType instanceof Integer) {
-            if (((Integer) pResultType) <= 0) {
+        if (pResultType instanceof Integer myInt) {
+            if (myInt <= 0) {
                 throw new GordianLogicException("Invalid length for byteArray");
             }
             return;

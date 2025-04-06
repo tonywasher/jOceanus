@@ -37,7 +37,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 /**
  * GordianKnot base for signatureFactory.
@@ -330,7 +329,7 @@ public abstract class GordianCoreSignatureFactory
         return listPossibleSignatures(pKeySpec.getKeyPairType())
                 .stream()
                 .filter(s -> validSignatureSpecForKeyPairSpec(pKeySpec, s))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override

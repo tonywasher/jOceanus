@@ -124,31 +124,28 @@ public class GordianAgreementResult {
     Object processSecret(final byte[] pSecret,
                          final Object pResultType) throws GordianException {
         /* If the resultType is a FactoryType */
-        if (pResultType instanceof GordianFactoryType) {
+        if (pResultType instanceof GordianFactoryType myType) {
             /* derive the factory */
-            return deriveFactory((GordianFactoryType) pResultType, pSecret);
+            return deriveFactory(myType, pSecret);
 
             /* If the resultType is a KeySetSpec */
-        } else if (pResultType instanceof GordianKeySetSpec) {
+        } else if (pResultType instanceof GordianKeySetSpec mySpec) {
             /* Derive the keySet */
-            return deriveKeySet((GordianKeySetSpec) pResultType, pSecret);
+            return deriveKeySet(mySpec, pSecret);
 
             /* If the resultType is a SymCipherSpec */
-        } else if (pResultType instanceof GordianSymCipherSpec) {
+        } else if (pResultType instanceof GordianSymCipherSpec mySpec) {
             /* Derive the key */
-            final GordianSymCipherSpec myCipherSpec = (GordianSymCipherSpec) pResultType;
-            return deriveCipher(myCipherSpec, pSecret);
+            return deriveCipher(mySpec, pSecret);
 
             /* If the resultType is a StreamCipherSpec */
-        } else if (pResultType instanceof GordianStreamCipherSpec) {
+        } else if (pResultType instanceof GordianStreamCipherSpec mySpec) {
             /* Derive the key */
-            final GordianStreamCipherSpec myCipherSpec = (GordianStreamCipherSpec) pResultType;
-            return deriveCipher(myCipherSpec, pSecret);
+            return deriveCipher(mySpec, pSecret);
 
             /* If the resultType is an Integer */
-        } else if (pResultType instanceof Integer) {
+        } else if (pResultType instanceof Integer myLength) {
             /* Derive the key */
-            final Integer myLength = (Integer) pResultType;
             return deriveBytes(pSecret, myLength);
         }
 

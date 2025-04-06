@@ -188,10 +188,9 @@ class RandomTest {
          * Constructor.
          * @param pData the entropy data
          * @param pResistant is the entropy prediction resistant?
-         * @throws GordianException on error
          */
         GordianEntropySourceProvider(final String pData,
-                                     final boolean pResistant) throws GordianException {
+                                     final boolean pResistant) {
             theData = Hex.decode(pData);
             predictionResistant = pResistant;
         }
@@ -303,11 +302,10 @@ class RandomTest {
      * @param pRandom the random generator
      * @param pResistant is the generator prediction resistant?
      * @param pTestCase the testcase
-     * @throws GordianException on error
      */
     private void testRandom(final GordianDRBGenerator pRandom,
                             final boolean pResistant,
-                            final GordianTestCase pTestCase) throws GordianException {
+                            final GordianTestCase pTestCase) {
         /* Access the expected bytes */
         final byte[] myExpected = Hex.decode(pTestCase.theExpected);
         final byte[] myActual = new byte[myExpected.length];
@@ -326,11 +324,10 @@ class RandomTest {
      * @param pDigest the Digest
      * @param pInit the initialisation
      * @param pTestCases the testCases
-     * @throws GordianException on error
      */
     private void testHashDRBG(final GordianDigest pDigest,
                               final GordianDRBGInit pInit,
-                              final GordianTestCase[] pTestCases) throws GordianException {
+                              final GordianTestCase[] pTestCases) {
         /* Access the nonce and personalisation */
         final byte[] myNonce = Hex.decode(pInit.theNonce);
         final String myPers = pInit.thePersonal;
@@ -358,11 +355,10 @@ class RandomTest {
      * @param pMac the HMac.
      * @param pInit the initialisation
      * @param pTestCases the testCases
-     * @throws GordianException on error
      */
     private void testHMacDRBG(final GordianMac pMac,
                               final GordianDRBGInit pInit,
-                              final GordianTestCase[] pTestCases) throws GordianException {
+                              final GordianTestCase[] pTestCases) {
         /* Access the nonce and personalisation */
         final byte[] myNonce = Hex.decode(pInit.theNonce);
         final String myPers = pInit.thePersonal;

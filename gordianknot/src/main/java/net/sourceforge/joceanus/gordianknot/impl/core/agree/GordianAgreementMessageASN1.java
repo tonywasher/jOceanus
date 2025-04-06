@@ -269,8 +269,8 @@ public final class GordianAgreementMessageASN1
      * @throws GordianException on error
      */
     public static GordianAgreementMessageASN1 getInstance(final Object pObject) throws GordianException {
-        if (pObject instanceof GordianAgreementMessageASN1) {
-            return (GordianAgreementMessageASN1) pObject;
+        if (pObject instanceof GordianAgreementMessageASN1 myASN1) {
+            return myASN1;
         } else if (pObject != null) {
             return new GordianAgreementMessageASN1(ASN1Sequence.getInstance(pObject));
         }
@@ -503,14 +503,9 @@ public final class GordianAgreementMessageASN1
             return false;
         }
 
-        /* Make sure that the classes are the same */
-        if (!(pThat instanceof GordianAgreementMessageASN1)) {
-            return false;
-        }
-        final GordianAgreementMessageASN1 myThat = (GordianAgreementMessageASN1) pThat;
-
         /* Check that the fields are equal */
-        return Objects.equals(getMessageType(), myThat.getMessageType())
+        return pThat instanceof GordianAgreementMessageASN1 myThat
+                && Objects.equals(getMessageType(), myThat.getMessageType())
                 && Objects.equals(getClientId(), myThat.getClientId())
                 && Objects.equals(getServerId(), myThat.getServerId())
                 && Objects.equals(getAgreementId(), myThat.getAgreementId())

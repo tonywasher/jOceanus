@@ -201,22 +201,11 @@ public class GordianLMSKeySpec {
             return false;
         }
 
-        /* Make sure that the object is lmsSpec */
-        if (pThat.getClass() != this.getClass()) {
-            return false;
-        }
-
-        /* Access the target lmsSpec */
-        final GordianLMSKeySpec myThat = (GordianLMSKeySpec) pThat;
-
-        /* Check hash and length */
-        if (theHash != myThat.theHash
-            || theLength != myThat.theLength) {
-            return false;
-        }
-
-        /* Check height and width */
-        return theWidth == myThat.theWidth
+        /* Check fields */
+        return pThat instanceof GordianLMSKeySpec myThat
+                && theHash == myThat.theHash
+                && theLength == myThat.theLength
+                && theWidth == myThat.theWidth
                 && theHeight == myThat.theHeight;
     }
 

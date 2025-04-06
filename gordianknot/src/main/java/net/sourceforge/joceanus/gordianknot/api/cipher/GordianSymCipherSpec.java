@@ -16,9 +16,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.api.cipher;
 
-import java.util.Objects;
-
 import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
+
+import java.util.Objects;
 
 /**
  * The SymCipherSpec class.
@@ -165,16 +165,9 @@ public class GordianSymCipherSpec
             return false;
         }
 
-        /* Make sure that the object is a SymCipherSpec */
-        if (pThat.getClass() != this.getClass()) {
-            return false;
-        }
-
-        /* Access the target cipherSpec */
-        final GordianSymCipherSpec myThat = (GordianSymCipherSpec) pThat;
-
         /* Check KeyType, Mode and padding */
-        return getKeyType().equals(myThat.getKeyType())
+        return pThat instanceof GordianSymCipherSpec myThat
+                && getKeyType().equals(myThat.getKeyType())
                 && theMode == myThat.getCipherMode()
                 && thePadding == myThat.getPadding();
     }

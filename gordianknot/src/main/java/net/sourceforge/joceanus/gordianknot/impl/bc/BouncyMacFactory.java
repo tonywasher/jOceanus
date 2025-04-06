@@ -126,8 +126,8 @@ public class BouncyMacFactory
 
         /* Create Mac */
         final Mac myBCMac = getBCMac(pMacSpec);
-        return myBCMac instanceof Xof
-                ? new BouncyMacXof(getFactory(), pMacSpec, (Xof) myBCMac)
+        return myBCMac instanceof Xof myXof
+                ? new BouncyMacXof(getFactory(), pMacSpec, myXof)
                 : new BouncyMac(getFactory(), pMacSpec, myBCMac);
     }
 

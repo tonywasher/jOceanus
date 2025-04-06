@@ -90,14 +90,14 @@ public class GordianCoreZipFactory
 
     @Override
     public GordianZipLock zipLock(final GordianLock<?> pLock) throws GordianException {
-        if (pLock instanceof GordianKeySetLock) {
-            return new GordianCoreZipLock(theFactory, (GordianKeySetLock) pLock);
+        if (pLock instanceof GordianKeySetLock myLock) {
+            return new GordianCoreZipLock(theFactory, myLock);
         }
-        if (pLock instanceof GordianFactoryLock) {
-            return new GordianCoreZipLock(theFactory, (GordianFactoryLock) pLock);
+        if (pLock instanceof GordianFactoryLock myLock) {
+            return new GordianCoreZipLock(theFactory, myLock);
         }
-        if (pLock instanceof GordianKeyPairLock) {
-            return new GordianCoreZipLock(theFactory, (GordianKeyPairLock) pLock);
+        if (pLock instanceof GordianKeyPairLock myLock) {
+            return new GordianCoreZipLock(theFactory, myLock);
         }
         throw new GordianLogicException("Invalid Lock type");
     }

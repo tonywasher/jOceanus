@@ -93,8 +93,8 @@ public class GordianKeyPairLockASN1
      * @throws GordianException on error
      */
     public static GordianKeyPairLockASN1 getInstance(final Object pObject) throws GordianException {
-        if (pObject instanceof GordianKeyPairLockASN1) {
-            return (GordianKeyPairLockASN1) pObject;
+        if (pObject instanceof GordianKeyPairLockASN1 myASN1) {
+            return myASN1;
         } else if (pObject != null) {
             return new GordianKeyPairLockASN1(ASN1Sequence.getInstance(pObject));
         }
@@ -135,14 +135,9 @@ public class GordianKeyPairLockASN1
             return false;
         }
 
-        /* Make sure that the classes are the same */
-        if (!(pThat instanceof GordianKeyPairLockASN1)) {
-            return false;
-        }
-        final GordianKeyPairLockASN1 myThat = (GordianKeyPairLockASN1) pThat;
-
         /* Check that the fields are equal */
-        return Objects.equals(theAgreement, myThat.getAgreement())
+        return pThat instanceof GordianKeyPairLockASN1 myThat
+                && Objects.equals(theAgreement, myThat.getAgreement())
                 && Objects.equals(getPasswordLock(), myThat.getPasswordLock());
     }
 

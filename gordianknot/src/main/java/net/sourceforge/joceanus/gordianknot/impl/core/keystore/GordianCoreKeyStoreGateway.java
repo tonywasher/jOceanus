@@ -232,10 +232,9 @@ public class GordianCoreKeyStoreGateway
         final GordianKeyStoreEntry myEntry = theKeyStore.getEntry(pAlias, myPassword);
 
         /* If it is a keyPair */
-        if (myEntry instanceof GordianKeyStorePair) {
+        if (myEntry instanceof GordianKeyStorePair myKeyPair) {
             /* Create the certificate request */
             final int myReqId = theNextId.getAndIncrement();
-            final GordianKeyStorePair myKeyPair = (GordianKeyStorePair) myEntry;
             final CertReqMsg myCertReq = theBuilder.createCertificateRequest(myKeyPair, myReqId);
 
             /* Store details in requestMap */
@@ -256,8 +255,7 @@ public class GordianCoreKeyStoreGateway
     public void setCertifier(final String pAlias) throws GordianException {
         final char[] myPassword = thePasswordResolver.apply(pAlias);
         final GordianKeyStoreEntry myEntry = theKeyStore.getEntry(pAlias, myPassword);
-        if (myEntry instanceof GordianKeyStorePair) {
-            final GordianKeyStorePair myPair = (GordianKeyStorePair) myEntry;
+        if (myEntry instanceof GordianKeyStorePair myPair) {
             final GordianCertificate myCert = myPair.getCertificateChain().get(0);
             if (myCert.getUsage().hasUse(GordianKeyPairUse.CERTIFICATE)) {
                 theKeyPairCertifier = myPair;

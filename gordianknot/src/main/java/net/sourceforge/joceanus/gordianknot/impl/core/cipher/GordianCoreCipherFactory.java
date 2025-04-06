@@ -219,14 +219,14 @@ public abstract class GordianCoreCipherFactory
         boolean bValid = false;
 
         /* If this is a streamKeySpec */
-        if (pKeySpec instanceof GordianStreamKeySpec) {
+        if (pKeySpec instanceof GordianStreamKeySpec mySpec) {
             /* Check validity of StreamKey */
-            bValid = supportedStreamKeySpecs().test((GordianStreamKeySpec) pKeySpec);
+            bValid = supportedStreamKeySpecs().test(mySpec);
 
             /* If this is a symKeySpec */
-        } else  if (pKeySpec instanceof GordianSymKeySpec) {
+        } else  if (pKeySpec instanceof GordianSymKeySpec mySpec) {
             /* Check validity of SymKey */
-            bValid = supportedSymKeySpecs().test((GordianSymKeySpec) pKeySpec);
+            bValid = supportedSymKeySpecs().test(mySpec);
         }
 
         /* Report error */
@@ -358,8 +358,8 @@ public abstract class GordianCoreCipherFactory
 
         /* Digest if specified must be SHA512 currently */
         final GordianPBESpec myPBESpec = pPBECipherSpec.getPBESpec();
-        if (myPBESpec instanceof GordianPBEDigestAndCountSpec) {
-            final GordianDigestSpec mySpec = ((GordianPBEDigestAndCountSpec) myPBESpec).getDigestSpec();
+        if (myPBESpec instanceof GordianPBEDigestAndCountSpec myCountSpec) {
+            final GordianDigestSpec mySpec = myCountSpec.getDigestSpec();
             return GordianDigestSpecBuilder.sha2(GordianLength.LEN_512).equals(mySpec);
         }
 
@@ -372,7 +372,7 @@ public abstract class GordianCoreCipherFactory
         return listAllSymCipherSpecs(pSpec)
                 .stream()
                 .filter(s -> supportedSymCipherSpecs().test(s))
-                .collect(Collectors.toList());
+                .collect(Collectors.toCollection(ArrayList::new));
     }
 
     @Override
@@ -380,14 +380,14 @@ public abstract class GordianCoreCipherFactory
         return listAllSymKeySpecs(pKeyLen)
                 .stream()
                 .filter(supportedSymKeySpecs())
-                .collect(Collectors.toList());
+                .collect(Collectors.toCollection(ArrayList::new));
     }
 
     @Override
     public List<GordianSymKeyType> listAllSupportedSymKeyTypes() {
         return Arrays.stream(GordianSymKeyType.values())
                 .filter(supportedSymKeyTypes())
-                .collect(Collectors.toList());
+                .collect(Collectors.toCollection(ArrayList::new));
     }
 
     @Override
@@ -414,14 +414,14 @@ public abstract class GordianCoreCipherFactory
         return listAllStreamKeySpecs(pKeyLen)
                 .stream()
                 .filter(supportedStreamKeySpecs())
-                .collect(Collectors.toList());
+                .collect(Collectors.toCollection(ArrayList::new));
     }
 
     @Override
     public List<GordianStreamKeyType> listAllSupportedStreamKeyTypes() {
         return Arrays.stream(GordianStreamKeyType.values())
                 .filter(supportedStreamKeyTypes())
-                .collect(Collectors.toList());
+                .collect(Collectors.toCollection(ArrayList::new));
     }
 
     @Override

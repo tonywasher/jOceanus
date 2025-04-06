@@ -19,6 +19,8 @@ package net.sourceforge.joceanus.gordianknot.api.keyset;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.gordianknot.api.key.GordianKeyLengths;
 
+import java.util.Objects;
+
 /**
  * KeySet Specification.
  */
@@ -135,22 +137,15 @@ public class GordianKeySetSpec {
             return false;
         }
 
-        /* Make sure that the object is a KeySetSpec */
-        if (!(pThat instanceof GordianKeySetSpec)) {
-            return false;
-        }
-
-        /* Access the target keySetSpec */
-        final GordianKeySetSpec myThat = (GordianKeySetSpec) pThat;
-
         /* Check Length and cipherSteps */
-        return theKeyLength == myThat.getKeyLength()
+        return pThat instanceof GordianKeySetSpec myThat
+                && theKeyLength == myThat.getKeyLength()
                 && theCipherSteps == myThat.getCipherSteps();
     }
 
     @Override
     public int hashCode() {
-        return theKeyLength.hashCode() + theCipherSteps;
+        return Objects.hash(theKeyLength, theCipherSteps);
     }
 
     @Override

@@ -100,8 +100,8 @@ public class GordianKeySetSpecASN1
      * @throws GordianException on error
      */
     public static GordianKeySetSpecASN1 getInstance(final Object pObject) throws GordianException {
-        if (pObject instanceof GordianKeySetSpecASN1) {
-            return (GordianKeySetSpecASN1) pObject;
+        if (pObject instanceof GordianKeySetSpecASN1 myASN1) {
+            return myASN1;
         } else if (pObject != null) {
             return new GordianKeySetSpecASN1(ASN1Sequence.getInstance(pObject));
         }
@@ -156,14 +156,9 @@ public class GordianKeySetSpecASN1
             return false;
         }
 
-        /* Make sure that the classes are the same */
-        if (!(pThat instanceof GordianKeySetSpecASN1)) {
-            return false;
-        }
-        final GordianKeySetSpecASN1 myThat = (GordianKeySetSpecASN1) pThat;
-
         /* Check that the fields are equal */
-        return Objects.equals(theSpec, myThat.getSpec());
+        return pThat instanceof GordianKeySetSpecASN1 myThat
+                && Objects.equals(theSpec, myThat.getSpec());
     }
 
     @Override

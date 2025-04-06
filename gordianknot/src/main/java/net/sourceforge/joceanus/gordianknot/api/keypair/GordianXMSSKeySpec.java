@@ -239,16 +239,9 @@ public class GordianXMSSKeySpec {
             return false;
         }
 
-        /* Make sure that the object is an XMSSSpec */
-        if (pThat.getClass() != this.getClass()) {
-            return false;
-        }
-
-        /* Access the target xmssSpec */
-        final GordianXMSSKeySpec myThat = (GordianXMSSKeySpec) pThat;
-
         /* Check KeyType, digestType, height and layers */
-        return theKeyType == myThat.getKeyType()
+        return pThat instanceof GordianXMSSKeySpec myThat
+                && theKeyType == myThat.getKeyType()
                 && theDigestType == myThat.getDigestType()
                 && theHeight == myThat.getHeight()
                 && theLayers == myThat.getLayers();

@@ -29,7 +29,8 @@ import java.util.Objects;
 /**
  * Mac Specification.
  */
-public final class GordianMacSpec implements GordianKeySpec {
+public final class GordianMacSpec
+        implements GordianKeySpec {
     /**
      * The Separator.
      */
@@ -171,8 +172,8 @@ public final class GordianMacSpec implements GordianKeySpec {
      * @return the DigestSpec
      */
     public GordianDigestSpec getDigestSpec() {
-        return theSubSpec instanceof GordianDigestSpec
-               ? (GordianDigestSpec) theSubSpec
+        return theSubSpec instanceof GordianDigestSpec mySpec
+               ? mySpec
                : null;
     }
 
@@ -181,8 +182,8 @@ public final class GordianMacSpec implements GordianKeySpec {
      * @return the State
      */
     private GordianDigestState getDigestState() {
-        return theSubSpec instanceof GordianDigestSpec
-               ? ((GordianDigestSpec) theSubSpec).getDigestState()
+        return theSubSpec instanceof GordianDigestSpec mySpec
+               ? mySpec.getDigestState()
                : null;
     }
 
@@ -191,8 +192,8 @@ public final class GordianMacSpec implements GordianKeySpec {
      * @return the Length
      */
     private GordianLength getDigestLength() {
-        return theSubSpec instanceof GordianDigestSpec
-               ? ((GordianDigestSpec) theSubSpec).getDigestLength()
+        return theSubSpec instanceof GordianDigestSpec mySpec
+               ? mySpec.getDigestLength()
                : null;
     }
 
@@ -201,8 +202,8 @@ public final class GordianMacSpec implements GordianKeySpec {
      * @return the SymKeySpec
      */
     public GordianSymKeySpec getSymKeySpec() {
-        return theSubSpec instanceof GordianSymKeySpec
-               ? (GordianSymKeySpec) theSubSpec
+        return theSubSpec instanceof GordianSymKeySpec mySpec
+               ? mySpec
                : null;
     }
 
@@ -211,8 +212,8 @@ public final class GordianMacSpec implements GordianKeySpec {
      * @return the Type
      */
     private GordianSymKeyType getSymKeyType() {
-        return theSubSpec instanceof GordianSymKeySpec
-               ? ((GordianSymKeySpec) theSubSpec).getSymKeyType()
+        return theSubSpec instanceof GordianSymKeySpec mySpec
+               ? mySpec.getSymKeyType()
                : null;
     }
 
@@ -221,8 +222,8 @@ public final class GordianMacSpec implements GordianKeySpec {
      * @return the BlockLength
      */
     private GordianLength getSymKeyBlockLength() {
-        return theSubSpec instanceof GordianSymKeySpec
-               ? ((GordianSymKeySpec) theSubSpec).getBlockLength()
+        return theSubSpec instanceof GordianSymKeySpec mySpec
+               ? mySpec.getBlockLength()
                : null;
     }
 
@@ -231,8 +232,8 @@ public final class GordianMacSpec implements GordianKeySpec {
      * @return the BlockLength
      */
     private int getSymKeyBlockByteLength() {
-        return theSubSpec instanceof GordianSymKeySpec
-               ? Objects.requireNonNull(((GordianSymKeySpec) theSubSpec).getBlockLength()).getByteLength()
+        return theSubSpec instanceof GordianSymKeySpec mySpec
+               ? Objects.requireNonNull(mySpec.getBlockLength()).getByteLength()
                : 0;
     }
 
@@ -241,8 +242,8 @@ public final class GordianMacSpec implements GordianKeySpec {
      * @return the HalfBlockLength
      */
     private GordianLength getSymKeyHalfBlockLength() {
-        return theSubSpec instanceof GordianSymKeySpec
-               ? ((GordianSymKeySpec) theSubSpec).getHalfBlockLength()
+        return theSubSpec instanceof GordianSymKeySpec mySpec
+               ? mySpec.getHalfBlockLength()
                : null;
     }
 
@@ -251,8 +252,8 @@ public final class GordianMacSpec implements GordianKeySpec {
      * @return the Spec
      */
     public GordianSipHashSpec getSipHashSpec() {
-        return theSubSpec instanceof GordianSipHashSpec
-               ? (GordianSipHashSpec) theSubSpec
+        return theSubSpec instanceof GordianSipHashSpec mySpec
+               ? mySpec
                : null;
     }
 
@@ -594,16 +595,9 @@ public final class GordianMacSpec implements GordianKeySpec {
             return false;
         }
 
-        /* Make sure that the object is a MacSpec */
-        if (pThat.getClass() != this.getClass()) {
-            return false;
-        }
-
-        /* Access the target MacSpec */
-        final GordianMacSpec myThat = (GordianMacSpec) pThat;
-
         /* Check MacType, keyLength and subSpec */
-        return theMacType == myThat.getMacType()
+        return pThat instanceof GordianMacSpec myThat
+                && theMacType == myThat.getMacType()
                 && theKeyLength == myThat.getKeyLength()
                 && Objects.equals(theSubSpec, myThat.getSubSpec());
     }

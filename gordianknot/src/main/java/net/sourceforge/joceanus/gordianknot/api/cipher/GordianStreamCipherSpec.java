@@ -139,16 +139,9 @@ public final class GordianStreamCipherSpec
             return false;
         }
 
-        /* Make sure that the object is a StreamCipherSpec */
-        if (pThat.getClass() != this.getClass()) {
-            return false;
-        }
-
-        /* Access the target StreamKeySpec */
-        final GordianStreamCipherSpec myThat = (GordianStreamCipherSpec) pThat;
-
         /* Check KeyType */
-        return getKeyType().equals(myThat.getKeyType())
+        return pThat instanceof GordianStreamCipherSpec myThat
+                && getKeyType().equals(myThat.getKeyType())
                 && isAEAD == myThat.isAEADMode();
     }
 

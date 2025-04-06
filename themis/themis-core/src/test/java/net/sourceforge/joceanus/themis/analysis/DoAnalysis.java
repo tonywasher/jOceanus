@@ -16,19 +16,18 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.themis.analysis;
 
-import java.io.File;
-import java.util.stream.Stream;
-
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.DynamicNode;
-import org.junit.jupiter.api.DynamicTest;
-import org.junit.jupiter.api.TestFactory;
-
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.dsm.ThemisDSMProject;
 import net.sourceforge.joceanus.themis.dsm.ThemisDSMReport;
 import net.sourceforge.joceanus.themis.statistics.ThemisStatsParser;
 import net.sourceforge.joceanus.themis.statistics.ThemisStatsProject;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.DynamicNode;
+import org.junit.jupiter.api.DynamicTest;
+import org.junit.jupiter.api.TestFactory;
+
+import java.io.File;
+import java.util.stream.Stream;
 
 /**
  * Test Analysis.
@@ -69,9 +68,8 @@ class DoAnalysis {
 
     /**
      * Test source analysis of the current project.
-     * @throws OceanusException on error
      */
-    private static void testProjectSource() throws OceanusException {
+    private static void testProjectSource() {
         /* Analyse source of project */
         final ThemisAnalysisProject myProj = new ThemisAnalysisProject(new File(PATH_BASE));
         Assertions.assertNull(myProj.getError(), "Exception analysing project");
@@ -83,9 +81,8 @@ class DoAnalysis {
 
     /**
      * Test dependency analysis of the current project.
-     * @throws OceanusException on error
      */
-    private static void testProjectDependencies() throws OceanusException {
+    private static void testProjectDependencies() {
         /* Analyse dependencies of project */
         final ThemisDSMProject myProject  = new ThemisDSMProject(new File(PATH_BASE));
         Assertions.assertNotNull(myProject, "Failed to analyse project");

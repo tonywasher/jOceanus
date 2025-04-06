@@ -100,8 +100,8 @@ public class GordianWrappedKeyASN1
      * @throws GordianException on error
      */
     public static GordianWrappedKeyASN1 getInstance(final Object pObject) throws GordianException {
-        if (pObject instanceof GordianWrappedKeyASN1) {
-            return (GordianWrappedKeyASN1) pObject;
+        if (pObject instanceof GordianWrappedKeyASN1 myASN1) {
+            return myASN1;
         } else if (pObject != null) {
             return new GordianWrappedKeyASN1(ASN1Sequence.getInstance(pObject));
         }
@@ -161,14 +161,9 @@ public class GordianWrappedKeyASN1
             return false;
         }
 
-        /* Make sure that the classes are the same */
-        if (!(pThat instanceof GordianWrappedKeyASN1)) {
-            return false;
-        }
-        final GordianWrappedKeyASN1 myThat = (GordianWrappedKeyASN1) pThat;
-
         /* Check that the fields are equal */
-        return Objects.equals(theKeySpec, myThat.getKeySpecId())
+        return pThat instanceof GordianWrappedKeyASN1 myThat
+                && Objects.equals(theKeySpec, myThat.getKeySpecId())
                 && Arrays.equals(getWrappedKey(), myThat.getWrappedKey());
     }
 

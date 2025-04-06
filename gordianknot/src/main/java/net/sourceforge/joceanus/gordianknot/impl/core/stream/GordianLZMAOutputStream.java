@@ -177,7 +177,7 @@ final class GordianLZMAOutputStream
 
                 /* Catch and record any errors */
             } catch (Exception e) {
-                theError = e instanceof IOException ? (IOException) e : new IOException(e);
+                theError = e instanceof IOException i ? i : new IOException(e);
             }
         }
     }

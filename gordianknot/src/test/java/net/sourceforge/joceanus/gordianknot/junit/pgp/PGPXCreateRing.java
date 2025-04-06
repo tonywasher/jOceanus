@@ -431,7 +431,7 @@ public class PGPXCreateRing {
      * @param pType the keyRingType
      */
     public static void writePublic(final PGPSecretKeyRing pSecretRing,
-                                   final PGPXKeyRing pType) throws IOException, PGPException {
+                                   final PGPXKeyRing pType) throws IOException {
         /* Generate the ring from the secret keyRing */
         Iterator<PGPPublicKey> it = pSecretRing.getPublicKeys();
         List<PGPPublicKey> pubKeys = new ArrayList<>();

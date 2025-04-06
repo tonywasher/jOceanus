@@ -25,7 +25,6 @@ import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestType;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 /**
  * Validator classes.
@@ -105,7 +104,7 @@ public class GordianValidator {
     public List<GordianDigestType> listAllExternalDigestTypes() {
         return Arrays.stream(GordianDigestType.values())
                 .filter(supportedExternalDigestTypes())
-                .collect(Collectors.toList());
+                .toList();
     }
 
     /**

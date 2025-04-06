@@ -23,7 +23,6 @@ import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairType;
 
 import java.util.List;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 /**
  * GordianKnot SignatureFactory API.
@@ -52,7 +51,7 @@ public interface GordianSignatureFactory {
         return listPossibleSignatures(pKeyPairType)
                 .stream()
                 .filter(supportedKeyPairSignatures())
-                .collect(Collectors.toList());
+                .toList();
     }
 
     /**

@@ -91,10 +91,10 @@ public final class GordianEncryptorSpec {
      * @return the digestSpec.
      */
     public GordianDigestSpec getDigestSpec() {
-        if (!(theEncryptorType instanceof GordianDigestSpec)) {
-            throw new IllegalArgumentException();
+        if (theEncryptorType instanceof GordianDigestSpec mySpec) {
+            return mySpec;
         }
-        return (GordianDigestSpec) theEncryptorType;
+        throw new IllegalArgumentException();
     }
 
     /**
@@ -102,10 +102,10 @@ public final class GordianEncryptorSpec {
      * @return the encryptionSpec.
      */
     public GordianSM2EncryptionSpec getSM2EncryptionSpec() {
-        if (!(theEncryptorType instanceof GordianSM2EncryptionSpec)) {
-            throw new IllegalArgumentException();
+        if (theEncryptorType instanceof GordianSM2EncryptionSpec mySpec) {
+            return mySpec;
         }
-        return (GordianSM2EncryptionSpec) theEncryptorType;
+        throw new IllegalArgumentException();
     }
 
     /**
@@ -114,10 +114,10 @@ public final class GordianEncryptorSpec {
      */
     @SuppressWarnings("unchecked")
     public Iterator<GordianEncryptorSpec> encryptorSpecIterator() {
-        if (!(theEncryptorType instanceof List)) {
-            throw new IllegalArgumentException();
+        if (theEncryptorType instanceof List) {
+            return ((List<GordianEncryptorSpec>) theEncryptorType).iterator();
         }
-        return ((List<GordianEncryptorSpec>) theEncryptorType).iterator();
+        throw new IllegalArgumentException();
     }
 
     /**
@@ -139,12 +139,12 @@ public final class GordianEncryptorSpec {
         switch (theKeyPairType) {
             case RSA:
             case ELGAMAL:
-                return theEncryptorType instanceof GordianDigestSpec
-                        && ((GordianDigestSpec) theEncryptorType).isValid();
+                return theEncryptorType instanceof GordianDigestSpec s
+                        && s.isValid();
             case SM2:
                 return theEncryptorType == null
-                        || (theEncryptorType instanceof GordianSM2EncryptionSpec
-                            && ((GordianSM2EncryptionSpec) theEncryptorType).isValid());
+                        || (theEncryptorType instanceof GordianSM2EncryptionSpec s
+                            && s.isValid());
             case EC:
             case GOST2012:
                 return theEncryptorType == null;
@@ -242,16 +242,9 @@ public final class GordianEncryptorSpec {
             return false;
         }
 
-        /* Make sure that the object is an EncryptorSpec */
-        if (pThat.getClass() != this.getClass()) {
-            return false;
-        }
-
-        /* Access the target encryptorSpec */
-        final GordianEncryptorSpec myThat = (GordianEncryptorSpec) pThat;
-
         /* Match fields */
-        return theKeyPairType == myThat.getKeyPairType()
+        return pThat instanceof GordianEncryptorSpec myThat
+                && theKeyPairType == myThat.getKeyPairType()
                 && Objects.equals(theEncryptorType, myThat.theEncryptorType);
     }
 

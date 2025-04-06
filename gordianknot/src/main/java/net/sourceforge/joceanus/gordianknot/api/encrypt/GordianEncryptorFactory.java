@@ -23,7 +23,6 @@ import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairType;
 
 import java.util.List;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 /**
  * GordianKnot EncryptorFactory API.
@@ -52,7 +51,7 @@ public interface GordianEncryptorFactory {
         return listPossibleEncryptors(pKeyType)
                 .stream()
                 .filter(supportedEncryptors())
-                .collect(Collectors.toList());
+                .toList();
     }
 
     /**

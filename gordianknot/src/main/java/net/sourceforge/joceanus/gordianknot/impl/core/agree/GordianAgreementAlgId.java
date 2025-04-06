@@ -343,20 +343,20 @@ public class GordianAgreementAlgId {
                     : GordianCoreFactory.JCAFACTORYOID;
             return new AlgorithmIdentifier(myOID, null);
         }
-        if (pResultType instanceof GordianKeySetSpec) {
-            final GordianKeySetSpecASN1 myParms = new GordianKeySetSpecASN1((GordianKeySetSpec) pResultType);
+        if (pResultType instanceof GordianKeySetSpec mySpec) {
+            final GordianKeySetSpecASN1 myParms = new GordianKeySetSpecASN1(mySpec);
             return myParms.getAlgorithmId();
         }
-        if (pResultType instanceof GordianSymCipherSpec) {
+        if (pResultType instanceof GordianSymCipherSpec mySpec) {
             final GordianCoreCipherFactory myCipherFactory = (GordianCoreCipherFactory) theFactory.getCipherFactory();
-            return myCipherFactory.getIdentifierForSpec((GordianSymCipherSpec) pResultType);
+            return myCipherFactory.getIdentifierForSpec(mySpec);
         }
-        if (pResultType instanceof GordianStreamCipherSpec) {
+        if (pResultType instanceof GordianStreamCipherSpec mySpec) {
             final GordianCoreCipherFactory myCipherFactory = (GordianCoreCipherFactory) theFactory.getCipherFactory();
-            return myCipherFactory.getIdentifierForSpec((GordianStreamCipherSpec) pResultType);
+            return myCipherFactory.getIdentifierForSpec(mySpec);
         }
-        if (pResultType instanceof Integer) {
-            return new AlgorithmIdentifier(BYTERESULTOID, new ASN1Integer((Integer) pResultType));
+        if (pResultType instanceof Integer myInt) {
+            return new AlgorithmIdentifier(BYTERESULTOID, new ASN1Integer(myInt));
         }
         if (pResultType == null) {
             return new AlgorithmIdentifier(NULLRESULTOID, null);

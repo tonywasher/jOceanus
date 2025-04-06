@@ -263,16 +263,9 @@ public final class GordianSignatureSpec {
             return false;
         }
 
-        /* Make sure that the object is a SignatureSpec */
-        if (pThat.getClass() != this.getClass()) {
-            return false;
-        }
-
-        /* Access the target SignatureSpec */
-        final GordianSignatureSpec myThat = (GordianSignatureSpec) pThat;
-
         /* Check KeyPairType, signatureType and signatureSpec */
-        return theKeyPairType == myThat.getKeyPairType()
+        return pThat instanceof GordianSignatureSpec myThat
+                && theKeyPairType == myThat.getKeyPairType()
                 && theSignatureType == myThat.getSignatureType()
                 && Objects.equals(theSignatureSpec, myThat.theSignatureSpec);
     }
