@@ -30,6 +30,8 @@ import net.sourceforge.joceanus.prometheus.data.PrometheusDataInfoClass;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
 import net.sourceforge.joceanus.prometheus.validate.PrometheusValidateInfoSet;
 
+import java.util.Currency;
+
 /**
  * Validate LoanInfoSet.
  */
@@ -130,16 +132,15 @@ public class MoneyWiseValidateLoanInfoSet
         /* If the info is Opening balance */
         if (MoneyWiseAccountInfoClass.OPENINGBALANCE.equals(pClass)) {
             /* Access the value */
-            final MoneyWiseLoanInfo myInfo = getInfoSet().getInfo(pClass);
-            if (myInfo != null) {
-                OceanusMoney myOpening = myInfo.getValue(OceanusMoney.class);
-                final MoneyWiseCurrency myCurrency = getInfoSet().getOwner().getAssetCurrency();
+            final MoneyWiseLoan myOwner = getOwner();
+            OceanusMoney myOpening = myOwner.getOpeningBalance();
+            final MoneyWiseCurrency myAssetCurrency = myOwner.getAssetCurrency();
+            final Currency myCurrency = myAssetCurrency.getCurrency();
 
-                /* If we need to change currency */
-                if (!myCurrency.getCurrency().equals(myOpening.getCurrency())) {
-                    myOpening = myOpening.changeCurrency(myCurrency.getCurrency());
-                    getInfoSet().setValue(pClass, myOpening);
-                }
+            /* If we need to change currency */
+            if (!myCurrency.equals(myOpening.getCurrency())) {
+                myOpening = myOpening.changeCurrency(myCurrency);
+                getInfoSet().setValue(pClass, myOpening);
             }
         }
     }

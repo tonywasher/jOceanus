@@ -26,7 +26,6 @@ import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseRegion;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseRegion.MoneyWiseRegionList;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurity;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurity.MoneyWiseSecurityList;
-import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurityInfoSet;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseAccountInfoClass;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseAssetCategory;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrency;
@@ -290,9 +289,6 @@ public class MoneyWiseSecurityDialog
      */
     public static boolean isEditableField(final MoneyWiseSecurity pSecurity,
                                           final MoneyWiseAccountInfoClass pField) {
-        /* Access the infoSet */
-        final MoneyWiseSecurityInfoSet myInfoSet = pSecurity.getInfoSet();
-
         /* Check whether the field is available */
         final MoneyWiseValidateSecurity myValidator = (MoneyWiseValidateSecurity) pSecurity.getList().getValidator();
         final MetisFieldRequired isRequired = myValidator.isClassRequired(pField);

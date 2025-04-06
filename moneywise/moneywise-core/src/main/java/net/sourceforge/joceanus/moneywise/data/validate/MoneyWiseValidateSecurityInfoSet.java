@@ -35,6 +35,7 @@ import net.sourceforge.joceanus.prometheus.data.PrometheusDataInfoClass;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
 import net.sourceforge.joceanus.prometheus.validate.PrometheusValidateInfoSet;
 
+import java.util.Currency;
 import java.util.Iterator;
 
 /**
@@ -291,5 +292,53 @@ public class MoneyWiseValidateSecurityInfoSet
 
         final MoneyWiseCurrency myCurrency = myUnderlying.getAssetCurrency();
         return OceanusPrice.getWholeUnits(1, myCurrency.getCurrency());
+    }
+
+    @Override
+    protected void autoCorrect(final PrometheusDataInfoClass pClass) throws OceanusException {
+        /* Switch on class */
+        switch ((MoneyWiseAccountInfoClass) pClass) {
+            case UNDERLYINGSTOCK:
+                autoCorrectUnderlyingStock();
+                break;
+            case OPTIONPRICE:
+                autoCorrectOptionPrice();
+                break;
+            default:
+                break;
+        }
+    }
+
+    /**
+     * AutoCorrect underlying stock.
+     * @throws OceanusException on error
+     */
+    private void autoCorrectUnderlyingStock() throws OceanusException {
+        /* Obtain the existing value */
+        MoneyWiseSecurity myStock = getOwner().getUnderlyingStock();
+
+        /* If the stock is not the correct currency */
+        if (!myStock.getCurrency().equals(getOwner().getCurrency())) {
+            /* Reset to new default */
+            myStock = getDefaultUnderlyingStock();
+            getInfoSet().setValue(MoneyWiseAccountInfoClass.UNDERLYINGSTOCK, myStock);
+        }
+    }
+
+    /**
+     * AutoCorrect option price.
+     * @throws OceanusException on error
+     */
+    private void autoCorrectOptionPrice() throws OceanusException {
+        /* Obtain the existing value */
+        OceanusPrice myPrice = getOwner().getOptionPrice();
+        final MoneyWiseCurrency myAssetCurrency = getOwner().getAssetCurrency();
+        final Currency myCurrency = myAssetCurrency.getCurrency();
+
+        /* If the price is not the correct currency */
+        if (!myPrice.getCurrency().equals(myCurrency)) {
+            myPrice = myPrice.changeCurrency(myCurrency);
+            getInfoSet().setValue(MoneyWiseAccountInfoClass.OPTIONPRICE, myPrice);
+        }
     }
 }

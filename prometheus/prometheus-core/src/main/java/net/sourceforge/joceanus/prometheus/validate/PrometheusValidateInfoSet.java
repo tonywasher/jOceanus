@@ -185,6 +185,8 @@ public abstract class PrometheusValidateInfoSet<T extends PrometheusDataInfoItem
                 case MUSTEXIST:
                     if (theInfoSet.getInfo(myClass) == null) {
                         setDefault(myClass);
+                    } else {
+                        autoCorrect(myClass);
                     }
                     break;
                 case NOTALLOWED:
@@ -194,7 +196,9 @@ public abstract class PrometheusValidateInfoSet<T extends PrometheusDataInfoItem
                     break;
                 case CANEXIST:
                 default:
-                    autoCorrect(myClass);
+                    if (theInfoSet.getInfo(myClass) != null) {
+                        autoCorrect(myClass);
+                    }
                     break;
             }
         }

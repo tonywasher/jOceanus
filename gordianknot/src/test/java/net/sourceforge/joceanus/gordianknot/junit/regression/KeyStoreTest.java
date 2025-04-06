@@ -151,9 +151,8 @@ public class KeyStoreTest {
      * create keyPairRequests test stream.
      * @param pManager the keyStoreManager
      * @return the test stream
-     * @throws GordianException on error
      */
-    private DynamicNode keyPairRequestTest(final GordianKeyStoreManager pManager) throws GordianException {
+    private DynamicNode keyPairRequestTest(final GordianKeyStoreManager pManager) {
         /* Create state */
         final KeyPairCertReqState myState = new KeyPairCertReqState(pManager);
 
