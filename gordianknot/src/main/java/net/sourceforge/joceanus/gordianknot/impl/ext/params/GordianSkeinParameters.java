@@ -169,8 +169,8 @@ public class GordianSkeinParameters
             final GordianSkeinParameters myParams = new GordianSkeinParameters();
 
             /* Store base details */
-            final Hashtable<Integer, Object> myBaseStore = (Hashtable<Integer, Object>) myBaseParms.getParameters();
-            final Hashtable<Integer, Object> myStore = (Hashtable<Integer, Object>) myParams.getParameters();
+            final Hashtable<Integer, Object> myBaseStore = myBaseParms.getParameters();
+            final Hashtable<Integer, Object> myStore = myParams.getParameters();
             final Enumeration<Integer> keys = myBaseStore.keys();
             while (keys.hasMoreElements()) {
                 final Integer key = keys.nextElement();

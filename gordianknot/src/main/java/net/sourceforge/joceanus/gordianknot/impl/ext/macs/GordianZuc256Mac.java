@@ -16,6 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.ext.macs;
 
+import net.sourceforge.joceanus.gordianknot.impl.ext.engines.GordianZuc128Engine;
 import net.sourceforge.joceanus.gordianknot.impl.ext.engines.GordianZuc256Engine;
 import org.bouncycastle.crypto.CipherParameters;
 import org.bouncycastle.crypto.Mac;
@@ -223,7 +224,7 @@ public class GordianZuc256Mac
         /* Finish the Mac and output it */
         updateMac(theByteIndex * Byte.SIZE);
         for (int i = 0; i < theMac.length; i++) {
-            GordianZuc256Engine.encode32be(theMac[i], out, outOff + i * Integer.BYTES);
+            GordianZuc128Engine.encode32be(theMac[i], out, outOff + i * Integer.BYTES);
         }
 
         /* Reset the Mac */

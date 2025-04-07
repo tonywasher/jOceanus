@@ -221,7 +221,7 @@ public abstract class PrometheusDataSet
      * @param pItemType the itemType
      * @return the validator.
      */
-    PrometheusDataValidator<?> getValidator(final MetisListKey pItemType) {
+    PrometheusDataValidator getValidator(final MetisListKey pItemType) {
         if (theValidatorFactory == null) {
             throw new IllegalStateException("Validator factory not set");
         }

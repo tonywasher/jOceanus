@@ -16,31 +16,30 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.moneywise.threads;
 
+import net.sourceforge.joceanus.metis.preference.MetisPreferenceManager;
+import net.sourceforge.joceanus.metis.toolkit.MetisToolkit;
+import net.sourceforge.joceanus.moneywise.exc.MoneyWiseIOException;
+import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysis;
+import net.sourceforge.joceanus.moneywise.quicken.definitions.MoneyWiseQIFPreference.MoneyWiseQIFPreferenceKey;
+import net.sourceforge.joceanus.moneywise.quicken.definitions.MoneyWiseQIFPreference.MoneyWiseQIFPreferences;
+import net.sourceforge.joceanus.moneywise.quicken.definitions.MoneyWiseQIFType;
+import net.sourceforge.joceanus.moneywise.quicken.file.MoneyWiseQIFFile;
+import net.sourceforge.joceanus.moneywise.quicken.file.MoneyWiseQIFParser;
+import net.sourceforge.joceanus.moneywise.quicken.file.MoneyWiseQIFStreamWriter;
+import net.sourceforge.joceanus.moneywise.quicken.file.MoneyWiseQIFWriter;
+import net.sourceforge.joceanus.moneywise.views.MoneyWiseView;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.oceanus.logger.OceanusLogManager;
+import net.sourceforge.joceanus.oceanus.logger.OceanusLogger;
+import net.sourceforge.joceanus.tethys.api.thread.TethysUIThread;
+import net.sourceforge.joceanus.tethys.api.thread.TethysUIThreadManager;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-
-import net.sourceforge.joceanus.metis.preference.MetisPreferenceManager;
-import net.sourceforge.joceanus.metis.toolkit.MetisToolkit;
-import net.sourceforge.joceanus.moneywise.exc.MoneyWiseIOException;
-import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysis;
-import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataSet;
-import net.sourceforge.joceanus.moneywise.quicken.file.MoneyWiseQIFFile;
-import net.sourceforge.joceanus.moneywise.quicken.file.MoneyWiseQIFParser;
-import net.sourceforge.joceanus.moneywise.quicken.file.MoneyWiseQIFStreamWriter;
-import net.sourceforge.joceanus.moneywise.quicken.file.MoneyWiseQIFWriter;
-import net.sourceforge.joceanus.moneywise.views.MoneyWiseView;
-import net.sourceforge.joceanus.moneywise.quicken.definitions.MoneyWiseQIFPreference.MoneyWiseQIFPreferenceKey;
-import net.sourceforge.joceanus.moneywise.quicken.definitions.MoneyWiseQIFPreference.MoneyWiseQIFPreferences;
-import net.sourceforge.joceanus.moneywise.quicken.definitions.MoneyWiseQIFType;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.logger.OceanusLogManager;
-import net.sourceforge.joceanus.oceanus.logger.OceanusLogger;
-import net.sourceforge.joceanus.tethys.api.thread.TethysUIThread;
-import net.sourceforge.joceanus.tethys.api.thread.TethysUIThreadManager;
 
 /**
  * WorkerThread extension to create a QIF archive.
@@ -83,7 +82,7 @@ public class MoneyWiseThreadWriteQIF
         final MoneyWiseAnalysis myAnalysis = theView.getAnalysisManager().getAnalysis();
 
         /* Create QIF file */
-        final MoneyWiseQIFFile myQFile = MoneyWiseQIFFile.buildQIFFile((MoneyWiseDataSet) theView.getData(), myAnalysis, myPrefs);
+        final MoneyWiseQIFFile myQFile = MoneyWiseQIFFile.buildQIFFile(theView.getData(), myAnalysis, myPrefs);
 
         /* Initialise the status window */
         pManager.initTask("Writing QIF file");

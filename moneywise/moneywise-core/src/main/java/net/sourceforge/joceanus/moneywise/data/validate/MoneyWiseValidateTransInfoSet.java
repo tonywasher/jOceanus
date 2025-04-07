@@ -23,6 +23,8 @@ import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataSet;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDeposit;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDeposit.MoneyWiseDepositList;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePortfolio;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePortfolio.MoneyWisePortfolioList;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurityHolding;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTax.MoneyWiseTaxCredit;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransAsset;
@@ -46,6 +48,7 @@ import net.sourceforge.joceanus.prometheus.validate.PrometheusValidateInfoSet;
 
 import java.util.Currency;
 import java.util.Iterator;
+import java.util.Objects;
 
 /**
  * Validate TransInfoSet.
@@ -683,8 +686,10 @@ public class MoneyWiseValidateTransInfoSet
         /* Switch on the class */
         switch ((MoneyWiseTransInfoClass) pClass) {
             case ACCOUNTDELTAUNITS:
+                getInfoSet().setValue(pClass, getDefaultAccountUnits());
+                break;
             case PARTNERDELTAUNITS:
-                getInfoSet().setValue(pClass, OceanusUnits.getWholeUnits(1));
+                getInfoSet().setValue(pClass, getDefaultPartnerUnits());
                 break;
             case DILUTION:
                 getInfoSet().setValue(pClass, OceanusRatio.ONE);
@@ -693,10 +698,16 @@ public class MoneyWiseValidateTransInfoSet
                 getInfoSet().setValue(pClass, 1);
                 break;
             case TAXCREDIT:
-                getInfoSet().setValue(pClass, OceanusMoney.getWholeUnits(0));
+                getInfoSet().setValue(pClass, getDefaultTaxCredit());
+                break;
+            case PARTNERAMOUNT:
+                getInfoSet().setValue(pClass, getDefaultPartnerAmount());
                 break;
             case RETURNEDCASHACCOUNT:
                 getInfoSet().setValue(pClass, getDefaultReturnedCashAccount());
+                break;
+            case RETURNEDCASH:
+                getInfoSet().setValue(pClass, getDefaultReturnedCash());
                 break;
             default:
                 break;
@@ -704,24 +715,256 @@ public class MoneyWiseValidateTransInfoSet
     }
 
     /**
-     * Obtain default deposit for ReturnedCashAccount.
+     * Obtain default accountUnits.
+     * @return the default deltaUnits
+     */
+    private OceanusUnits getDefaultAccountUnits() {
+        /* Determine whether the units must be +ve or -ve */
+        final MoneyWiseTransaction myTrans = getOwner();
+        final MoneyWiseAssetDirection myDir = myTrans.getDirection();
+        final MoneyWiseTransCategoryClass myCategoryClass = myTrans.getCategoryClass();
+        final MetisFieldRequired isRequired = isAccountUnitsPositive(myDir, myCategoryClass);
+        return isRequired.notAllowed()
+                ? OceanusUnits.getWholeUnits(-1)
+                : OceanusUnits.getWholeUnits(1);
+    }
+
+    /**
+     * Obtain default partnerUnits.
+     * @return the default deltaUnits
+     */
+    private OceanusUnits getDefaultPartnerUnits() {
+        /* Determine whether the units must be +ve or -ve */
+        final MoneyWiseTransaction myTrans = getOwner();
+        final MoneyWiseAssetDirection myDir = myTrans.getDirection();
+        final MoneyWiseTransCategoryClass myCategoryClass = myTrans.getCategoryClass();
+        final MetisFieldRequired isRequired = isPartnerUnitsPositive(myDir, myCategoryClass);
+        return isRequired.notAllowed()
+                ? OceanusUnits.getWholeUnits(-1)
+                : OceanusUnits.getWholeUnits(1);
+    }
+
+    /**
+     * Obtain default taxCredit.
+     * @return the default taxCredit
+     */
+    private OceanusMoney getDefaultTaxCredit() {
+        /* Access the account */
+        final MoneyWiseTransAsset myAsset = getOwner().getAccount();
+        final MoneyWiseCurrency myCurrency = myAsset.getAssetCurrency();
+
+        /* Return zero cash in the appropriate currency */
+        return new OceanusMoney(myCurrency.getCurrency());
+    }
+
+    /**
+     * Obtain default partnerAmount.
+     * @return the default partnerAmount
+     */
+    private OceanusMoney getDefaultPartnerAmount() {
+        /* Access the partner */
+        final MoneyWiseTransAsset myAsset = getOwner().getPartner();
+        final MoneyWiseCurrency myCurrency = myAsset.getAssetCurrency();
+
+        /* Return zero cash in the appropriate currency */
+        return new OceanusMoney(myCurrency.getCurrency());
+    }
+
+    /**
+     * Obtain default account for ReturnedCashAccount.
      * @return the default returnedCashAccount
      */
-    private MoneyWiseDeposit getDefaultReturnedCashAccount() {
+    private MoneyWiseTransAsset getDefaultReturnedCashAccount() {
         /* loop through the deposits */
         final MoneyWiseDepositList myDeposits
                 = getEditSet().getDataList(MoneyWiseBasicDataType.DEPOSIT, MoneyWiseDepositList.class);
-        final Iterator<MoneyWiseDeposit> myIterator = myDeposits.iterator();
-        while (myIterator.hasNext()) {
-            final MoneyWiseDeposit myDeposit = myIterator.next();
+        final Iterator<MoneyWiseDeposit> myDepIterator = myDeposits.iterator();
+        while (myDepIterator.hasNext()) {
+            final MoneyWiseDeposit myDeposit = myDepIterator.next();
 
             /* Use if not deleted or closed */
-            if (!myDeposit.isDeleted() && !myDeposit.isClosed()) {
+            if (!myDeposit.isDeleted() && Boolean.FALSE.equals(myDeposit.isClosed())) {
                 return myDeposit;
             }
         }
 
-        /* Return no deposit */
+        /* loop through the portfolios */
+        final MoneyWisePortfolioList myPortfolios
+                = getEditSet().getDataList(MoneyWiseBasicDataType.PORTFOLIO, MoneyWisePortfolioList.class);
+        final Iterator<MoneyWisePortfolio> myPortIterator = myPortfolios.iterator();
+        while (myPortIterator.hasNext()) {
+            final MoneyWisePortfolio myPortfolio = myPortIterator.next();
+
+            /* Use if not deleted or closed */
+            if (!myPortfolio.isDeleted() && Boolean.FALSE.equals(myPortfolio.isClosed())) {
+                return myPortfolio;
+            }
+        }
+
+        /* Return no account */
         return null;
+    }
+
+    /**
+     * Obtain default returnedCash.
+     * @return the default returnedCash
+     */
+    private OceanusMoney getDefaultReturnedCash() {
+        /* Access the returned cash account */
+        final MoneyWiseTransAsset myAsset = getOwner().getReturnedCashAccount();
+        final MoneyWiseCurrency myCurrency = Objects.requireNonNull(myAsset).getAssetCurrency();
+
+        /* Return zero cash in the appropriate currency */
+        return new OceanusMoney(myCurrency.getCurrency());
+    }
+
+    @Override
+    protected void autoCorrect(final PrometheusDataInfoClass pClass) throws OceanusException {
+        /* Switch on class */
+        final MoneyWiseTransInfoClass myClass = (MoneyWiseTransInfoClass) pClass;
+        switch (myClass) {
+            case ACCOUNTDELTAUNITS:
+                autoCorrectAccountDeltaUnits();
+                break;
+            case PARTNERDELTAUNITS:
+                autoCorrectPartnerDeltaUnits();
+                break;
+            case TAXCREDIT:
+            case EMPLOYERNATINS:
+            case EMPLOYEENATINS:
+            case DEEMEDBENEFIT:
+            case WITHHELD:
+                autoCorrectTaxCredit(myClass);
+                break;
+            case PARTNERAMOUNT:
+                autoCorrectPartnerAmount();
+                break;
+            case RETURNEDCASH:
+                autoCorrectReturnedCash();
+                break;
+            case PRICE:
+                autoCorrectPrice();
+                break;
+            default:
+                break;
+        }
+    }
+
+    /**
+     * AutoCorrect accountDeltaUnits.
+     * @throws OceanusException on error
+     */
+    private void autoCorrectAccountDeltaUnits() throws OceanusException {
+        /* Determine whether the units must be +ve or -ve */
+        final MoneyWiseTransaction myTrans = getOwner();
+        final MoneyWiseAssetDirection myDir = myTrans.getDirection();
+        final MoneyWiseTransCategoryClass myCategoryClass = myTrans.getCategoryClass();
+        final MetisFieldRequired isRequired = isAccountUnitsPositive(myDir, myCategoryClass);
+        OceanusUnits myUnits = Objects.requireNonNull(myTrans.getAccountDeltaUnits());
+
+        /* If the units are negative and must be positive or are positive and must be negative */
+        if ((isRequired.mustExist() && !myUnits.isPositive())
+            || (isRequired.notAllowed() && myUnits.isPositive())) {
+            /* Reverse the sign */
+            myUnits = new OceanusUnits(myUnits);
+            myUnits.negate();
+            getInfoSet().setValue(MoneyWiseTransInfoClass.ACCOUNTDELTAUNITS, myUnits);
+        }
+    }
+
+
+    /**
+     * AutoCorrect partnerDeltaUnits.
+     * @throws OceanusException on error
+     */
+    private void autoCorrectPartnerDeltaUnits() throws OceanusException {
+        /* Determine whether the units must be +ve or -ve */
+        final MoneyWiseTransaction myTrans = getOwner();
+        final MoneyWiseAssetDirection myDir = myTrans.getDirection();
+        final MoneyWiseTransCategoryClass myCategoryClass = myTrans.getCategoryClass();
+        final MetisFieldRequired isRequired = isPartnerUnitsPositive(myDir, myCategoryClass);
+        OceanusUnits myUnits = Objects.requireNonNull(myTrans.getPartnerDeltaUnits());
+
+        /* If the units are negative and must be positive or are positive and must be negative */
+        if ((isRequired.mustExist() && !myUnits.isPositive())
+                || (isRequired.notAllowed() && myUnits.isPositive())) {
+            /* Reverse the sign */
+            myUnits = new OceanusUnits(myUnits);
+            myUnits.negate();
+            getInfoSet().setValue(MoneyWiseTransInfoClass.PARTNERDELTAUNITS, myUnits);
+        }
+    }
+
+    /**
+     * AutoCorrect taxCredit.
+     * @param pClass the InfoClass
+     * @throws OceanusException on error
+     */
+    private void autoCorrectTaxCredit(final MoneyWiseTransInfoClass pClass) throws OceanusException {
+        /* Obtain the existing value */
+        OceanusMoney myValue = getInfoSet().getValue(pClass, OceanusMoney.class);
+        final MoneyWiseCurrency myAssetCurrency = getOwner().getAccount().getAssetCurrency();
+        final Currency myCurrency = myAssetCurrency.getCurrency();
+
+        /* If the value is not the correct currency */
+        if (!myValue.getCurrency().equals(myCurrency)) {
+            myValue = myValue.changeCurrency(myCurrency);
+            getInfoSet().setValue(pClass, myValue);
+        }
+    }
+
+    /**
+     * AutoCorrect partnerAmount.
+     * @throws OceanusException on error
+     */
+    private void autoCorrectPartnerAmount() throws OceanusException {
+        /* Obtain the existing value */
+        final MoneyWiseTransaction myTrans = getOwner();
+        OceanusMoney myValue = Objects.requireNonNull(myTrans.getPartnerAmount());
+        final MoneyWiseCurrency myAssetCurrency = myTrans.getPartner().getAssetCurrency();
+        final Currency myCurrency = myAssetCurrency.getCurrency();
+
+        /* If the value is not the correct currency */
+        if (!myCurrency.equals(myValue.getCurrency())) {
+            myValue = myValue.changeCurrency(myCurrency);
+            getInfoSet().setValue(MoneyWiseTransInfoClass.PARTNERAMOUNT, myValue);
+        }
+    }
+
+    /**
+     * AutoCorrect returnedCash.
+     * @throws OceanusException on error
+     */
+    private void autoCorrectReturnedCash() throws OceanusException {
+        /* Obtain the existing value */
+        final MoneyWiseTransaction myTrans = getOwner();
+        OceanusMoney myValue = Objects.requireNonNull(myTrans.getReturnedCash());
+        final MoneyWiseTransAsset myAsset = Objects.requireNonNull(myTrans.getReturnedCashAccount());
+        final MoneyWiseCurrency myAssetCurrency = myAsset.getAssetCurrency();
+        final Currency myCurrency = myAssetCurrency.getCurrency();
+
+        /* If the value is not the correct currency */
+        if (!myCurrency.equals(myValue.getCurrency())) {
+            myValue = myValue.changeCurrency(myCurrency);
+            getInfoSet().setValue(MoneyWiseTransInfoClass.RETURNEDCASH, myValue);
+        }
+    }
+
+    /**
+     * AutoCorrect price.
+     * @throws OceanusException on error
+     */
+    private void autoCorrectPrice() throws OceanusException {
+        /* Obtain the existing value */
+        final MoneyWiseTransaction myTrans = getOwner();
+        OceanusPrice myPrice = Objects.requireNonNull(myTrans.getPrice());
+        final MoneyWiseCurrency myAssetCurrency = getOwner().getAccount().getAssetCurrency();
+        final Currency myCurrency = myAssetCurrency.getCurrency();
+
+        /* If the value is not the correct currency */
+        if (!myPrice.getCurrency().equals(myCurrency)) {
+            myPrice = myPrice.changeCurrency(myCurrency);
+            getInfoSet().setValue(MoneyWiseTransInfoClass.PRICE, myPrice);
+        }
     }
 }

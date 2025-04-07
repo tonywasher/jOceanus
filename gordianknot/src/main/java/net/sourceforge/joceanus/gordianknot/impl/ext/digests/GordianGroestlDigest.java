@@ -717,7 +717,7 @@ public class GordianGroestlDigest
                 rnd1024Q(tmpY, tmpZ, u64Big(i));
                 rnd1024Q(tmpZ, tmpY, u64Big(i + 1));
             }
-            rnd1024Q(tmpY, tmpOutQ, u64Big(((ROUNDS1024 - 1))));
+            rnd1024Q(tmpY, tmpOutQ, u64Big(ROUNDS1024 - 1));
 
             /* compute P(h+m) */
             rnd1024P(tmpInP, tmpZ, 0);
@@ -804,11 +804,11 @@ public class GordianGroestlDigest
              */
             if (isShort) {
                 /* set initial value */
-                chaining[COLS512 - 1] = u64Big((long) hashbitlen);
+                chaining[COLS512 - 1] = u64Big(hashbitlen);
 
             } else {
                 /* set initial value */
-                chaining[COLS1024 - 1] = u64Big((long) hashbitlen);
+                chaining[COLS1024 - 1] = u64Big(hashbitlen);
             }
 
             /* set other variables */

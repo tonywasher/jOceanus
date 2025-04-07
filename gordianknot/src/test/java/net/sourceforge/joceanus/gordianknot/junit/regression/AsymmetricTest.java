@@ -47,8 +47,8 @@ class AsymmetricTest {
     /**
      * The factories.
      */
-    private static GordianFactory BCFACTORY;
-    private static GordianFactory JCAFACTORY;
+    private static GordianFactory fcBCFACTORY;
+    private static GordianFactory fcJCAFACTORY;
 
     /**
      * Random source.
@@ -64,10 +64,10 @@ class AsymmetricTest {
      * Perform setup operations.
      */
     @BeforeAll
-    public static void setUp() throws GordianException {
+    static void setUp() throws GordianException {
         AsymmetricStore.parseOptions();
         createSecurityFactories();
-        AsymmetricAgreeScripts.createSecuritySigners(BCFACTORY, JCAFACTORY);
+        AsymmetricAgreeScripts.createSecuritySigners(fcBCFACTORY, fcJCAFACTORY);
     }
 
     /**
@@ -76,8 +76,8 @@ class AsymmetricTest {
      */
     private static void createSecurityFactories() throws GordianException {
         /* Create the factories */
-        BCFACTORY = GordianGenerator.createRandomFactory(GordianFactoryType.BC);
-        JCAFACTORY = GordianGenerator.createRandomFactory(GordianFactoryType.JCA);
+        fcBCFACTORY = GordianGenerator.createRandomFactory(GordianFactoryType.BC);
+        fcJCAFACTORY = GordianGenerator.createRandomFactory(GordianFactoryType.JCA);
     }
 
     /**
@@ -87,8 +87,8 @@ class AsymmetricTest {
     @TestFactory
     Stream<DynamicNode> asymmetricTests() {
         /* Create tests */
-        final Stream<DynamicNode> myBC = asymmetricTests(BCFACTORY, JCAFACTORY);
-        final Stream<DynamicNode> myJCA = asymmetricTests(JCAFACTORY, BCFACTORY);
+        final Stream<DynamicNode> myBC = asymmetricTests(fcBCFACTORY, fcJCAFACTORY);
+        final Stream<DynamicNode> myJCA = asymmetricTests(fcJCAFACTORY, fcBCFACTORY);
         return Stream.concat(myBC, myJCA);
     }
 

@@ -123,6 +123,26 @@ public class OceanusPrice
         return myResult;
     }
 
+    @Override
+    public OceanusPrice changeCurrency(final Currency pCurrency) {
+        /* Convert currency with an exchange rate of one */
+        return convertCurrency(pCurrency, OceanusRatio.ONE);
+    }
+
+    @Override
+    public OceanusPrice convertCurrency(final Currency pCurrency,
+                                        final OceanusRatio pRate) {
+        /* If this is the same currency then no conversion */
+        if (getCurrency().equals(pCurrency)) {
+            return new OceanusPrice(this);
+        }
+
+        /* Create the new Price */
+        final OceanusPrice myResult = new OceanusPrice(pCurrency);
+        myResult.calculateProduct(this, pRate);
+        return myResult;
+    }
+
     /**
      * Subtract a monetary price from the value.
      *
@@ -137,5 +157,4 @@ public class OceanusPrice
         /* Subtract the value */
         super.subtractValue(pValue);
     }
-
 }

@@ -309,10 +309,10 @@ public class GordianSnow3GEngine
      * See section 3.4.2 for details.
      */
     int mulAlpha(final byte c) {
-        return (((mulXpow(c, 23, 0xa9)) << 24)
-                | ((mulXpow(c, 245, 0xa9)) << 16)
-                | ((mulXpow(c, 48, 0xa9)) << 8)
-                | ((mulXpow(c, 239, 0xa9))));
+        return ((mulXpow(c, 23, 0xa9) << 24)
+                | (mulXpow(c, 245, 0xa9) << 16)
+                | (mulXpow(c, 48, 0xa9) << 8)
+                | (mulXpow(c, 239, 0xa9)));
     }
 
     /* The function DIV alpha.
@@ -321,10 +321,10 @@ public class GordianSnow3GEngine
      * See section 3.4.3 for details.
      */
     int divAlpha(final byte c) {
-        return (((mulXpow(c, 16, 0xa9)) << 24)
-                | ((mulXpow(c, 39, 0xa9)) << 16)
-                | ((mulXpow(c, 6, 0xa9)) << 8)
-                | ((mulXpow(c, 64, 0xa9))));
+        return ((mulXpow(c, 16, 0xa9) << 24)
+                | (mulXpow(c, 39, 0xa9) << 16)
+                | (mulXpow(c, 6, 0xa9) << 8)
+                | (mulXpow(c, 64, 0xa9)));
     }
 
     /* The 32x32-bit S-Box S1
@@ -333,10 +333,10 @@ public class GordianSnow3GEngine
      * See section 3.3.1.
      */
     int s1(final int w) {
-        final byte srw0 = (byte) SR[((w >> 24) & 0xff)];
-        final byte srw1 = (byte) SR[((w >> 16) & 0xff)];
-        final byte srw2 = (byte) SR[((w >> 8) & 0xff)];
-        final byte srw3 = (byte) SR[((w) & 0xff)];
+        final byte srw0 = SR[((w >> 24) & 0xff)];
+        final byte srw1 = SR[((w >> 16) & 0xff)];
+        final byte srw2 = SR[((w >> 8) & 0xff)];
+        final byte srw3 = SR[((w) & 0xff)];
         final int r0 = ((mulX(srw0, 0x1b))
                 ^ (srw1)
                 ^ (srw2)
@@ -358,7 +358,7 @@ public class GordianSnow3GEngine
                 ^ (mulX(srw3, 0x1b))
         ) & 0xFF;
         return (((r0) << 24) | ((r1) << 16) | ((r2) << 8)
-                | ((r3)));
+                | (r3));
     }
 
     /* The 32x32-bit S-Box S2
@@ -392,7 +392,7 @@ public class GordianSnow3GEngine
                 ^ (mulX(sqw3, 0x69))
         ) & 0xFF;
         return (((r0) << 24) | ((r1) << 16) | ((r2) << 8)
-                | ((r3)));
+                | (r3));
     }
 
     /* Clocking LFSR in initialization mode.

@@ -493,10 +493,7 @@ public abstract class PrometheusDataItem
         rewindToVersion(theList.getVersion());
     }
 
-    /**
-     * Rewind item to the required version.
-     * @param pVersion the version to rewind to
-     */
+    @Override
     public void rewindToVersion(final int pVersion) {
         /* If the item was newly created */
         if (getOriginalValues().getVersion() > pVersion) {

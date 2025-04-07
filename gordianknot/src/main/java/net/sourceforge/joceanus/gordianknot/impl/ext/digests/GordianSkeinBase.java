@@ -663,7 +663,7 @@ public class GordianSkeinBase
             if (theKey != null && theKey.length < 16) {
                 throw new IllegalArgumentException("Skein key must be at least 128 bits.");
             }
-            initParams((Hashtable<Integer, byte[]>) params.getParameters());
+            initParams(params.getParameters());
         }
         createInitialState();
 

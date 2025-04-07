@@ -604,6 +604,7 @@ public abstract class MoneyWiseCategoryBase
         }
 
         @Override
+        @SuppressWarnings("unchecked")
         public MoneyWiseDataValidatorParentDefaults<T> getValidator() {
             return (MoneyWiseDataValidatorParentDefaults<T>) super.getValidator();
         }

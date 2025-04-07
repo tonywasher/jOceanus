@@ -259,7 +259,7 @@ public class GordianRabbitEngine
 
         /* Calculate the g-values */
         for (int i = 0; i < 8; i++) {
-            g[i] = rabbitGFunc((int) (pContext.x[i] + pContext.c[i]));
+            g[i] = rabbitGFunc(pContext.x[i] + pContext.c[i]);
         }
 
         /* Calculate new state values */

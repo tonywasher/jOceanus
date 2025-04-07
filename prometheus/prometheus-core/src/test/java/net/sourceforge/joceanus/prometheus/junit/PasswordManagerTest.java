@@ -40,7 +40,7 @@ class PasswordManagerTest {
     /**
      * The index of the unknown password.
      */
-    static int UNKNOWN = NAMES.length - 1;
+    static final int UNKNOWN = NAMES.length - 1;
 
     /**
      * The List of passwords.
@@ -222,7 +222,7 @@ class PasswordManagerTest {
      * @throws OceanusException on error
      */
     @BeforeAll
-    public static void setUpFactories() throws OceanusException {
+    static void setUpFactories() throws OceanusException {
         /* Create the security manager */
         try {
             final GordianFactory myFactory = GordianGenerator.createFactory(GordianFactoryType.BC);
@@ -347,7 +347,7 @@ class PasswordManagerTest {
      * @throws OceanusException on error
      */
     @BeforeAll
-    public static void setUpKeySets() throws OceanusException {
+    static void setUpKeySets() throws OceanusException {
         /* Create the security manager */
         try {
             final GordianFactory myFactory = GordianGenerator.createFactory(GordianFactoryType.BC);

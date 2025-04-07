@@ -131,7 +131,7 @@ public abstract class PrometheusDataList<T extends PrometheusDataItem>
     /**
      * The validator.
      */
-    private PrometheusDataValidator<T> theValidator;
+    private PrometheusDataValidator theValidator;
 
     /**
      * Construct a new object.
@@ -358,10 +358,9 @@ public abstract class PrometheusDataList<T extends PrometheusDataItem>
      * Obtain the validator.
      * @return the validator
      */
-    @SuppressWarnings("unchecked")
-    public PrometheusDataValidator<T> getValidator() {
+    public PrometheusDataValidator getValidator() {
         if (theValidator == null) {
-            theValidator = (PrometheusDataValidator<T>) getDataSet().getValidator(theItemType);
+            theValidator = getDataSet().getValidator(theItemType);
         }
         return theValidator;
     }

@@ -31,7 +31,7 @@ import net.sourceforge.joceanus.prometheus.data.PrometheusDataValidator;
  * Validator for region.
  */
 public class MoneyWiseValidateXchangeRate
-        implements PrometheusDataValidator<MoneyWiseExchangeRate> {
+        implements PrometheusDataValidator {
 
     @Override
     public void validate(final PrometheusDataItem pRate) {

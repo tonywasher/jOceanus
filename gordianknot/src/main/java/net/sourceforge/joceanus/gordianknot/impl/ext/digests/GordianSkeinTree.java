@@ -531,7 +531,7 @@ public class GordianSkeinTree
             /* Loop through all the elements */
             int myCount = 0;
             int myOffSet = 0;
-            final Enumeration myEnumeration = pInput.elements();
+            final Enumeration<?> myEnumeration = pInput.elements();
             while (myEnumeration.hasMoreElements()) {
                 /* If we need to move to the next node  */
                 if (!lastStage && myCount == myFanOut) {
@@ -788,8 +788,8 @@ public class GordianSkeinTree
          * Returns an enumeration of the components of this vector.
          * @return the enumeration
          */
-        Enumeration elements() {
-            return new Enumeration() {
+        Enumeration<?> elements() {
+            return new Enumeration<>() {
                 private int count;
 
                 public boolean hasMoreElements() {

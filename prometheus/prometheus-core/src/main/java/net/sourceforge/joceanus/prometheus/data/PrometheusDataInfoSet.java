@@ -45,6 +45,7 @@ public abstract class PrometheusDataInfoSet<T extends PrometheusDataInfoItem>
     /**
      * Report fields.
      */
+    @SuppressWarnings("rawtypes")
     private static final MetisFieldSet<PrometheusDataInfoSet> FIELD_DEFS = MetisFieldSet.newFieldSet(PrometheusDataInfoSet.class);
 
     /*

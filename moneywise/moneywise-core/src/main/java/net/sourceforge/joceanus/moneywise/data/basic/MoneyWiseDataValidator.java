@@ -24,10 +24,9 @@ import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
 
 /**
  * Item Validator interface.
- * @param <T> the item type
  */
-public interface MoneyWiseDataValidator<T extends PrometheusDataItem>
-        extends PrometheusDataValidator<T> {
+public interface MoneyWiseDataValidator
+        extends PrometheusDataValidator {
     /**
      * Set the editSet.
      * @param pEditSet the editSet
@@ -39,7 +38,7 @@ public interface MoneyWiseDataValidator<T extends PrometheusDataItem>
      * @param <T> the item type
      */
     interface MoneyWiseDataValidatorDefaults<T extends PrometheusDataItem>
-            extends MoneyWiseDataValidator<T> {
+            extends MoneyWiseDataValidator {
         /**
          * Set defaults.
          * @param pItem the item
@@ -53,7 +52,7 @@ public interface MoneyWiseDataValidator<T extends PrometheusDataItem>
      * @param <T> the item type
      */
     interface MoneyWiseDataValidatorParentDefaults<T extends PrometheusDataItem>
-            extends MoneyWiseDataValidator<T> {
+            extends MoneyWiseDataValidator {
         /**
          * Set defaults.
          * @param pParent the parent
@@ -69,7 +68,7 @@ public interface MoneyWiseDataValidator<T extends PrometheusDataItem>
      * @param <T> the item type
      */
     interface MoneyWiseDataValidatorAutoCorrect<T extends PrometheusDataItem>
-            extends MoneyWiseDataValidator<T> {
+            extends MoneyWiseDataValidator {
         /**
          * autoCorrect values after change.
          * @param pItem the item

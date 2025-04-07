@@ -52,13 +52,13 @@ public class MoneyWiseValidatorFactory
     }
 
     @Override
-    public PrometheusDataValidator<?> newValidator(final MetisListKey pItemType) {
+    public PrometheusDataValidator newValidator(final MetisListKey pItemType) {
         if (pItemType instanceof PrometheusCryptographyDataType) {
             return new PrometheusValidateBasic();
         } else if (MoneyWiseStaticDataType.CURRENCY.equals(pItemType)) {
             return new MoneyWiseValidateCurrency();
         } else if (pItemType instanceof MoneyWiseStaticDataType) {
-            return new PrometheusValidateStatic<>();
+            return new PrometheusValidateStatic();
         } else if (pItemType instanceof MoneyWiseBasicDataType) {
             switch ((MoneyWiseBasicDataType) pItemType) {
                 case TRANSTAG:
@@ -100,7 +100,7 @@ public class MoneyWiseValidatorFactory
                 case LOANINFO:
                 case PORTFOLIOINFO:
                 case TRANSACTIONINFO:
-                    return new PrometheusValidateInfo<>();
+                    return new PrometheusValidateInfo();
                 default:
                     break;
             }
