@@ -21,10 +21,10 @@ import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataValidator;
 
 /**
- * Validator for region.
+ * Basic Validator.
  */
 public class PrometheusValidateBasic
-        implements PrometheusDataValidator<PrometheusDataItem> {
+        implements PrometheusDataValidator {
 
     @Override
     public void validate(final PrometheusDataItem pItem) {

@@ -97,18 +97,12 @@ public class GordianZuc256Engine
         super(pSource);
     }
 
-    /**
-     * Obtain Max iterations.
-     * @return the maximum iterations
-     */
+    @Override
     protected int getMaxIterations() {
         return 625;
     }
 
-    /**
-     * Obtain Algorithm Name.
-     * @return the name
-     */
+    @Override
     public String getAlgorithmName() {
         return "Zuc-256";
     }
@@ -125,12 +119,7 @@ public class GordianZuc256Engine
         return (((a & 0xFF) << 23) | ((b & 0xFF) << 16) | ((c & 0xFF) << 8) | (d & 0xFF));
     }
 
-    /**
-     * Process key and IV into LFSR.
-     * @param pLFSR the LFSR
-     * @param k the key
-     * @param iv the iv
-     */
+    @Override
     protected void setKeyAndIV(final int[] pLFSR,
                                final byte[] k,
                                final byte[] iv) {
@@ -161,18 +150,12 @@ public class GordianZuc256Engine
         pLFSR[15] = makeU31(k[15], (byte) (theD[15] | (k[31] & 0xF)), k[30], k[29]);
     }
 
-    /**
-     * Create a copy of the engine.
-     * @return the copy
-     */
+    @Override
     public GordianZuc256Engine copy() {
         return new GordianZuc256Engine(this);
     }
 
-    /**
-     * Reset from saved engine state.
-     * @param pState teh state to restore
-     */
+    @Override
     public void reset(final Memoable pState) {
         final GordianZuc256Engine e = (GordianZuc256Engine) pState;
         super.reset(pState);

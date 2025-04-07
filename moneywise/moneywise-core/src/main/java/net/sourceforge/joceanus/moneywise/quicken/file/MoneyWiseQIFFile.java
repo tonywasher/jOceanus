@@ -16,13 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.moneywise.quicken.file;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysis;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseCategoryBase;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataSet;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDeposit;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDeposit.MoneyWiseDepositList;
@@ -36,11 +30,18 @@ import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransCategory;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransTag;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransaction;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransaction.MoneyWiseTransactionList;
+import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysis;
 import net.sourceforge.joceanus.moneywise.quicken.definitions.MoneyWiseQIFPreference.MoneyWiseQIFPreferenceKey;
 import net.sourceforge.joceanus.moneywise.quicken.definitions.MoneyWiseQIFPreference.MoneyWiseQIFPreferences;
 import net.sourceforge.joceanus.moneywise.quicken.definitions.MoneyWiseQIFType;
 import net.sourceforge.joceanus.oceanus.date.OceanusDate;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 /**
  * QIF File representation.
@@ -318,16 +319,11 @@ public class MoneyWiseQIFFile {
     public MoneyWiseQIFClass registerClass(final MoneyWiseTransTag pClass) {
         /* Locate an existing class */
         final String myName = pClass.getName();
-        MoneyWiseQIFClass myClass = theClassMap.get(myName);
-        if (myClass == null) {
-            /* Create the new Class */
-            myClass = new MoneyWiseQIFClass(this, pClass);
-            theClassMap.put(myName, myClass);
+        return theClassMap.computeIfAbsent(myName, n -> {
+            final MoneyWiseQIFClass myClass = new MoneyWiseQIFClass(this, pClass);
             theClasses.add(myClass);
-        }
-
-        /* Return the class */
-        return myClass;
+            return myClass;
+        });
     }
 
     /**
@@ -337,12 +333,10 @@ public class MoneyWiseQIFFile {
     public void registerClass(final MoneyWiseQIFClass pClass) {
         /* Locate an existing class */
         final String myName = pClass.getName();
-        final MoneyWiseQIFClass myClass = theClassMap.get(myName);
-        if (myClass == null) {
-            /* Register the new Class */
-            theClassMap.put(myName, pClass);
+        final MoneyWiseQIFClass myClass = theClassMap.computeIfAbsent(myName, n -> {
             theClasses.add(pClass);
-        }
+            return pClass;
+        });
     }
 
     /**
@@ -353,18 +347,11 @@ public class MoneyWiseQIFFile {
     public MoneyWiseQIFEventCategory registerCategory(final MoneyWiseTransCategory pCategory) {
         /* Locate an existing category */
         final String myName = pCategory.getName();
-        MoneyWiseQIFEventCategory myCat = theCategories.get(myName);
-        if (myCat == null) {
-            /* Create the new Category and add to the map */
-            myCat = new MoneyWiseQIFEventCategory(this, pCategory);
-            theCategories.put(myName, myCat);
-
-            /* Register against parent */
+        return theCategories.computeIfAbsent(myName,n -> {
+            final MoneyWiseQIFEventCategory myCat = new MoneyWiseQIFEventCategory(this, pCategory);
             registerCategoryToParent(pCategory.getParentCategory(), myCat);
-        }
-
-        /* Return the category */
-        return myCat;
+            return myCat;
+        });
     }
 
     /**
@@ -376,13 +363,11 @@ public class MoneyWiseQIFFile {
                                           final MoneyWiseQIFEventCategory pCategory) {
         /* Locate an existing parent category */
         final String myName = pParent.getName();
-        MoneyWiseQIFParentCategory myParent = theParentMap.get(myName);
-        if (myParent == null) {
-            /* Create the new Parent Category */
-            myParent = new MoneyWiseQIFParentCategory(this, pParent);
-            theParentMap.put(myName, myParent);
-            theParentCategories.add(myParent);
-        }
+        final MoneyWiseQIFParentCategory myParent = theParentMap.computeIfAbsent(myName, n -> {
+            final MoneyWiseQIFParentCategory myParCat = new MoneyWiseQIFParentCategory(this, pParent);
+            theParentCategories.add(myParCat);
+            return myParCat;
+        });
 
         /* Register the category */
         myParent.registerChild(pCategory);
@@ -398,7 +383,7 @@ public class MoneyWiseQIFFile {
         final MoneyWiseQIFEventCategory myCat = theCategories.get(myName);
         if (myCat == null) {
             /* Locate parent separator */
-            final int myPos = myName.indexOf(MoneyWiseTransCategory.STR_SEP);
+            final int myPos = myName.indexOf(MoneyWiseCategoryBase.STR_SEP);
 
             /* If this is a parent category */
             if (myPos < 0) {
@@ -432,16 +417,11 @@ public class MoneyWiseQIFFile {
     public MoneyWiseQIFAccountEvents registerAccount(final MoneyWiseTransAsset pAccount) {
         /* Locate an existing account */
         final String myName = pAccount.getName();
-        MoneyWiseQIFAccountEvents myAccount = theAccountMap.get(myName);
-        if (myAccount == null) {
-            /* Create the new Account and add to the map and list */
-            myAccount = new MoneyWiseQIFAccountEvents(this, pAccount);
-            theAccountMap.put(myName, myAccount);
+        return theAccountMap.computeIfAbsent(myName, n -> {
+            final MoneyWiseQIFAccountEvents myAccount = new MoneyWiseQIFAccountEvents(this, pAccount);
             theAccounts.add(myAccount);
-        }
-
-        /* Return the account */
-        return myAccount;
+            return myAccount;
+        });
     }
 
     /**
@@ -452,16 +432,11 @@ public class MoneyWiseQIFFile {
     public MoneyWiseQIFAccountEvents registerHoldingAccount(final MoneyWisePortfolio pPortfolio) {
         /* Locate an existing account */
         final String myName = pPortfolio.getName() + HOLDING_SUFFIX;
-        MoneyWiseQIFAccountEvents myAccount = theAccountMap.get(myName);
-        if (myAccount == null) {
-            /* Create the new Account and add to the map and list */
-            myAccount = new MoneyWiseQIFAccountEvents(this, myName);
-            theAccountMap.put(myName, myAccount);
+        return theAccountMap.computeIfAbsent(myName, n -> {
+            final MoneyWiseQIFAccountEvents myAccount = new MoneyWiseQIFAccountEvents(this, myName);
             theAccounts.add(myAccount);
-        }
-
-        /* Return the account */
-        return myAccount;
+            return myAccount;
+        });
     }
 
     /**
@@ -472,16 +447,11 @@ public class MoneyWiseQIFFile {
     public MoneyWiseQIFAccountEvents registerAccount(final MoneyWiseQIFAccount pAccount) {
         /* Locate an existing account */
         final String myName = pAccount.getName();
-        MoneyWiseQIFAccountEvents myAccount = theAccountMap.get(myName);
-        if (myAccount == null) {
-            /* Create the new Account and add to the map/list */
-            myAccount = new MoneyWiseQIFAccountEvents(pAccount);
-            theAccountMap.put(myName, myAccount);
+        return theAccountMap.computeIfAbsent(myName, n -> {
+            final MoneyWiseQIFAccountEvents myAccount = new MoneyWiseQIFAccountEvents(pAccount);
             theAccounts.add(myAccount);
-        }
-
-        /* Return the account */
-        return myAccount;
+            return myAccount;
+        });
     }
 
     /**
@@ -492,16 +462,11 @@ public class MoneyWiseQIFFile {
     public MoneyWiseQIFPayee registerPayee(final MoneyWisePayee pPayee) {
         /* Locate an existing payee */
         final String myName = pPayee.getName();
-        MoneyWiseQIFPayee myPayee = thePayeeMap.get(myName);
-        if (myPayee == null) {
-            /* Create the new Payee and add to the map and list */
-            myPayee = new MoneyWiseQIFPayee(pPayee);
-            thePayeeMap.put(myName, myPayee);
+        return thePayeeMap.computeIfAbsent(myName, n -> {
+            final MoneyWiseQIFPayee myPayee = new MoneyWiseQIFPayee(pPayee);
             thePayees.add(myPayee);
-        }
-
-        /* Return the payee */
-        return myPayee;
+            return myPayee;
+        });
     }
 
     /**
@@ -511,16 +476,11 @@ public class MoneyWiseQIFFile {
      */
     public MoneyWiseQIFPayee registerPayee(final String pPayee) {
         /* Locate an existing payee */
-        MoneyWiseQIFPayee myPayee = thePayeeMap.get(pPayee);
-        if (myPayee == null) {
-            /* Create the new Payee and add to the map and list */
-            myPayee = new MoneyWiseQIFPayee(pPayee);
-            thePayeeMap.put(pPayee, myPayee);
+        return thePayeeMap.computeIfAbsent(pPayee, n -> {
+            final MoneyWiseQIFPayee myPayee = new MoneyWiseQIFPayee(pPayee);
             thePayees.add(myPayee);
-        }
-
-        /* Return the payee */
-        return myPayee;
+            return myPayee;
+        });
     }
 
     /**
@@ -531,14 +491,12 @@ public class MoneyWiseQIFFile {
     public MoneyWiseQIFSecurity registerSecurity(final MoneyWiseSecurity pSecurity) {
         /* Locate an existing security */
         final String myName = pSecurity.getName();
-        MoneyWiseQIFSecurityPrices mySecurity = theSecurityMap.get(myName);
-        if (mySecurity == null) {
-            /* Create the new Security and add to the maps/list */
-            mySecurity = new MoneyWiseQIFSecurityPrices(this, pSecurity);
-            theSecurityMap.put(myName, mySecurity);
-            theSymbolMap.put(pSecurity.getSymbol(), mySecurity.getSecurity());
-            theSecurities.add(mySecurity);
-        }
+        final MoneyWiseQIFSecurityPrices mySecurity = theSecurityMap.computeIfAbsent(myName, n -> {
+            final MoneyWiseQIFSecurityPrices mySec = new MoneyWiseQIFSecurityPrices(this, pSecurity);
+            theSymbolMap.put(pSecurity.getSymbol(), mySec.getSecurity());
+            theSecurities.add(mySec);
+            return mySec;
+        });
 
         /* Return the security */
         return mySecurity.getSecurity();
@@ -551,14 +509,12 @@ public class MoneyWiseQIFFile {
     public void registerSecurity(final MoneyWiseQIFSecurity pSecurity) {
         /* Locate an existing security */
         final String myName = pSecurity.getName();
-        MoneyWiseQIFSecurityPrices mySecurity = theSecurityMap.get(myName);
-        if (mySecurity == null) {
-            /* Create the new Security and add to the map */
-            mySecurity = new MoneyWiseQIFSecurityPrices(this, pSecurity);
-            theSecurityMap.put(myName, mySecurity);
+        theSecurityMap.computeIfAbsent(myName, n -> {
+             final MoneyWiseQIFSecurityPrices mySecurity = new MoneyWiseQIFSecurityPrices(this, pSecurity);
             theSymbolMap.put(pSecurity.getSymbol(), mySecurity.getSecurity());
             theSecurities.add(mySecurity);
-        }
+            return mySecurity;
+        });
     }
 
     /**

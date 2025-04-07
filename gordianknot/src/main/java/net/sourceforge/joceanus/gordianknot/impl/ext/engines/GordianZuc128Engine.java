@@ -434,7 +434,7 @@ public class GordianZuc128Engine implements StreamCipher, Memoable {
                                final byte b,
                                final byte c,
                                final byte d) {
-        return (((a & 0xFF) << 24) | ((b & 0xFF) << 16) | ((c & 0xFF) << 8) | ((d & 0xFF)));
+        return (((a & 0xFF) << 24) | ((b & 0xFF) << 16) | ((c & 0xFF) << 8) | (d & 0xFF));
     }
 
     /**

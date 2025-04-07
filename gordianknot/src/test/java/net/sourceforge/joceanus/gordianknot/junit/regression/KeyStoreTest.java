@@ -86,7 +86,7 @@ import java.util.stream.Stream;
 /**
  * KeyStore Tests.
  */
-public class KeyStoreTest {
+class KeyStoreTest {
     /**
      * Default password.
      */
@@ -118,7 +118,7 @@ public class KeyStoreTest {
      * @throws GordianException on error
      */
     @TestFactory
-    public Stream<DynamicNode> keyStoreTests() throws GordianException {
+    Stream<DynamicNode> keyStoreTests() throws GordianException {
         /* Create tests */
         Stream<DynamicNode> myStream = keyStoreTests(GordianFactoryType.BC);
         return Stream.concat(myStream, keyStoreTests(GordianFactoryType.JCA));

@@ -27,7 +27,7 @@ import net.sourceforge.joceanus.prometheus.validate.PrometheusValidateStatic;
  * Validator for Currency.
  */
 public class MoneyWiseValidateCurrency
-        extends PrometheusValidateStatic<MoneyWiseCurrency> {
+        extends PrometheusValidateStatic {
 
     @Override
     public void validate(final PrometheusDataItem pCurrency) {

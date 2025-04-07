@@ -16,9 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.moneywise.views;
 
-import java.util.Iterator;
-import java.util.ListIterator;
-
 import net.sourceforge.joceanus.metis.data.MetisDataEditState;
 import net.sourceforge.joceanus.metis.data.MetisDataState;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
@@ -30,10 +27,13 @@ import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseExchangeRate;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrency;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrency.MoneyWiseCurrencyList;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
-import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
-import net.sourceforge.joceanus.prometheus.data.PrometheusDataValues;
 import net.sourceforge.joceanus.oceanus.date.OceanusDate;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusRatio;
+import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
+import net.sourceforge.joceanus.prometheus.data.PrometheusDataValues;
+
+import java.util.Iterator;
+import java.util.ListIterator;
 
 /**
  * Extension of ExchangeRate to cater for spot rates.
@@ -226,7 +226,7 @@ public final class MoneyWiseSpotExchangeRate
         public MoneyWiseSpotExchangeList(final MoneyWiseView pView,
                                          final OceanusDate pDate) {
             /* Build initial list */
-            super((MoneyWiseDataSet) pView.getData(), MoneyWiseSpotExchangeRate.class, MoneyWiseBasicDataType.SECURITYPRICE);
+            super(pView.getData(), MoneyWiseSpotExchangeRate.class, MoneyWiseBasicDataType.SECURITYPRICE);
             setStyle(PrometheusListStyle.EDIT);
             ensureMap();
 
@@ -235,7 +235,7 @@ public final class MoneyWiseSpotExchangeRate
             theView = pView;
 
             /* Obtain the portfolio bucket */
-            final MoneyWiseDataSet myData = (MoneyWiseDataSet) theView.getData();
+            final MoneyWiseDataSet myData = theView.getData();
             theCurrency = myData.getReportingCurrency();
             final MoneyWiseCurrencyList myCurrencies = myData.getAccountCurrencies();
 

@@ -159,14 +159,14 @@ public class MoneyWiseQIFEvent
                     case CATEGORY:
                         /* Check for account and category */
                         MoneyWiseQIFAccount myAccount = MoneyWiseQIFXferAccountLine.parseAccount(pFile, myData);
-                        MoneyWiseQIFEventCategory myCategory = MoneyWiseQIFEventCategoryLine.parseCategory(pFile, myData);
+                        MoneyWiseQIFEventCategory myCategory = MoneyWiseQIFCategoryLine.parseCategory(pFile, myData);
                         if (myAccount != null) {
                             /* Look for account classes */
                             final List<MoneyWiseQIFClass> myClasses = MoneyWiseQIFXferAccountLine.parseAccountClasses(pFile, myData);
                             addLine(new MoneyWiseQIFEventAccountLine(myAccount, myClasses));
                         } else {
                             /* Look for category classes */
-                            final List<MoneyWiseQIFClass> myClasses = MoneyWiseQIFEventCategoryLine.parseCategoryClasses(pFile, myData);
+                            final List<MoneyWiseQIFClass> myClasses = MoneyWiseQIFCategoryLine.parseCategoryClasses(pFile, myData);
                             addLine(new MoneyWiseQIFEventCategoryLine(myCategory, myClasses));
                             convertPayee();
                         }
@@ -174,14 +174,14 @@ public class MoneyWiseQIFEvent
                     case SPLITCATEGORY:
                         /* Check for account */
                         myAccount = MoneyWiseQIFXferAccountLine.parseAccount(pFile, myData);
-                        myCategory = MoneyWiseQIFEventCategoryLine.parseCategory(pFile, myData);
+                        myCategory = MoneyWiseQIFCategoryLine.parseCategory(pFile, myData);
                         if (myAccount != null) {
                             /* Look for account classes */
                             final List<MoneyWiseQIFClass> myClasses = MoneyWiseQIFXferAccountLine.parseAccountClasses(pFile, myData);
                             mySplit = new MoneyWiseQIFSplitEvent(pFile, myAccount, myClasses);
                         } else {
                             /* Look for category classes */
-                            final List<MoneyWiseQIFClass> myClasses = MoneyWiseQIFEventCategoryLine.parseCategoryClasses(pFile, myData);
+                            final List<MoneyWiseQIFClass> myClasses = MoneyWiseQIFCategoryLine.parseCategoryClasses(pFile, myData);
                             mySplit = new MoneyWiseQIFSplitEvent(pFile, myCategory, myClasses);
                             convertPayee();
                         }

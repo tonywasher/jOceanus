@@ -385,6 +385,7 @@ public class MoneyWiseTransTag
         }
 
         @Override
+        @SuppressWarnings("unchecked")
         public MoneyWiseDataValidatorDefaults<MoneyWiseTransTag> getValidator() {
             return (MoneyWiseDataValidatorDefaults<MoneyWiseTransTag>) super.getValidator();
         }

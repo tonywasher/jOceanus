@@ -35,6 +35,12 @@ public abstract class GordianKangarooDigest
     private static final int DIGESTLEN = 32;
 
     /**
+     * Private constructor.
+     */
+    private GordianKangarooDigest() {
+    }
+
+    /**
      * KangarooTwelve.
      */
     public static class GordianKangarooTwelve

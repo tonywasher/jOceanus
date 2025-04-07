@@ -738,7 +738,7 @@ public class MoneyWiseTransactionDialog
         /* Record active item */
         final MoneyWiseTransAsset myAccount = pTrans.getAccount();
         final MoneyWiseTransCategory myCategory = pTrans.getCategory();
-        final MoneyWiseDataValidatorTrans myValidator = pTrans.getList().getValidator();
+        final MoneyWiseDataValidatorTrans<?> myValidator = pTrans.getList().getValidator();
         final MoneyWiseTransAsset myCurr = pIsAccount
                 ? myAccount
                 : pTrans.getPartner();
@@ -795,7 +795,7 @@ public class MoneyWiseTransactionDialog
         /* Record active item */
         final MoneyWiseTransAsset myAccount = pTrans.getAccount();
         final MoneyWiseTransCategory myCategory = pTrans.getCategory();
-        final MoneyWiseDataValidatorTrans myValidator = pTrans.getList().getValidator();
+        final MoneyWiseDataValidatorTrans<?> myValidator = pTrans.getList().getValidator();
         final MoneyWiseTransAsset myCurr = pIsAccount
                 ? myAccount
                 : pTrans.getPartner();
@@ -923,7 +923,7 @@ public class MoneyWiseTransactionDialog
 
         /* Access Categories */
         final MoneyWiseTransCategoryList myCategories = getDataList(MoneyWiseBasicDataType.TRANSCATEGORY, MoneyWiseTransCategoryList.class);
-        final MoneyWiseDataValidatorTrans myValidator = pTrans.getList().getValidator();
+        final MoneyWiseDataValidatorTrans<?> myValidator = pTrans.getList().getValidator();
 
         /* Loop through the available category values */
         final Iterator<MoneyWiseTransCategory> myIterator = myCategories.iterator();

@@ -78,8 +78,8 @@ public final class AsymmetricAgreeScripts {
     private static final Integer BYTEARRAY = GordianLength.LEN_128.getLength();
 
     /* The Agreement signers */
-    private static GordianKeyPair BCSIGNER;
-    private static GordianKeyPair JCASIGNER;
+    private static GordianKeyPair sgBCSIGNER;
+    private static GordianKeyPair sgJCASIGNER;
 
     /* The resultType count */
     private static final AtomicInteger RESULTTYPE = new AtomicInteger(0);
@@ -102,14 +102,14 @@ public final class AsymmetricAgreeScripts {
         final GordianKeyPairSpec mySpec = GordianKeyPairSpecBuilder.ed448();
         GordianKeyPairFactory myFactory = pBCFactory.getKeyPairFactory();
         GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(mySpec);
-        BCSIGNER = myGenerator.generateKeyPair();
+        sgBCSIGNER = myGenerator.generateKeyPair();
 
         /* Derive the JCASigner */
-        final X509EncodedKeySpec myPublic = myGenerator.getX509Encoding(BCSIGNER);
-        final PKCS8EncodedKeySpec myPrivate = myGenerator.getPKCS8Encoding(BCSIGNER);
+        final X509EncodedKeySpec myPublic = myGenerator.getX509Encoding(sgBCSIGNER);
+        final PKCS8EncodedKeySpec myPrivate = myGenerator.getPKCS8Encoding(sgBCSIGNER);
         myFactory = pJCAFactory.getKeyPairFactory();
         myGenerator = myFactory.getKeyPairGenerator(mySpec);
-        JCASIGNER = myGenerator.deriveKeyPair(myPublic, myPrivate);
+        sgJCASIGNER = myGenerator.deriveKeyPair(myPublic, myPrivate);
     }
 
     /**
@@ -119,8 +119,8 @@ public final class AsymmetricAgreeScripts {
      */
     private static GordianKeyPair getFactorySigner(final FactoryAgreement pFactory) {
         return pFactory.getOwner().getFactoryType() == GordianFactoryType.BC
-                ? BCSIGNER
-                : JCASIGNER;
+                ? sgBCSIGNER
+                : sgJCASIGNER;
     }
 
     /**
@@ -130,8 +130,8 @@ public final class AsymmetricAgreeScripts {
      */
     private static GordianKeyPair getPartnerSigner(final FactoryAgreement pFactory) {
         return pFactory.getOwner().getFactoryType() == GordianFactoryType.BC
-                ? JCASIGNER
-                : BCSIGNER;
+                ? sgJCASIGNER
+                : sgBCSIGNER;
     }
 
     /**

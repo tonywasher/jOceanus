@@ -33,7 +33,7 @@ import net.sourceforge.joceanus.prometheus.data.PrometheusDataValidator;
  * Validator for SecurityPrice.
  */
 public class MoneyWiseValidateSecurityPrice
-        implements PrometheusDataValidator<MoneyWiseSecurityPrice> {
+        implements PrometheusDataValidator {
 
     @Override
     public void validate(final PrometheusDataItem pPrice) {

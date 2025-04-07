@@ -52,17 +52,17 @@ class RandomSpecTest {
     /**
      * The factories.
      */
-    private static GordianFactory BCFACTORY;
-    private static GordianFactory JCAFACTORY;
+    private static GordianFactory fcBCFACTORY;
+    private static GordianFactory fcJCAFACTORY;
 
     /**
      * Initialise Factories.
      * @throws GordianException on error
      */
     @BeforeAll
-    public static void createSecurityFactories() throws GordianException {
-        BCFACTORY = GordianGenerator.createRandomFactory(GordianFactoryType.BC);
-        JCAFACTORY = GordianGenerator.createRandomFactory(GordianFactoryType.JCA);
+    static void createSecurityFactories() throws GordianException {
+        fcBCFACTORY = GordianGenerator.createRandomFactory(GordianFactoryType.BC);
+        fcJCAFACTORY = GordianGenerator.createRandomFactory(GordianFactoryType.JCA);
     }
 
     /**
@@ -73,8 +73,8 @@ class RandomSpecTest {
     @TestFactory
     Stream<DynamicNode> randomSpecTests() throws GordianException {
         /* Create tests */
-        final Stream<DynamicNode> myBC = randomSpecTests(BCFACTORY);
-        final Stream<DynamicNode> myJCA = randomSpecTests(JCAFACTORY);
+        final Stream<DynamicNode> myBC = randomSpecTests(fcBCFACTORY);
+        final Stream<DynamicNode> myJCA = randomSpecTests(fcJCAFACTORY);
         return Stream.concat(myBC, myJCA);
     }
 

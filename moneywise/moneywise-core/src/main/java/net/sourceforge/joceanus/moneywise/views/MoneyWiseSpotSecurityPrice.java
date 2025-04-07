@@ -16,29 +16,29 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.moneywise.views;
 
-import java.util.Iterator;
-import java.util.ListIterator;
-
 import net.sourceforge.joceanus.metis.data.MetisDataEditState;
 import net.sourceforge.joceanus.metis.data.MetisDataState;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
-import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysis;
-import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisManager;
-import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisPortfolioBucket;
-import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisPortfolioBucket.MoneyWiseAnalysisPortfolioBucketList;
-import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisSecurityBucket;
-import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisSecurityBucket.MoneyWiseAnalysisSecurityBucketList;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicResource;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataSet;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePortfolio;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurity;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurityPrice;
+import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysis;
+import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisManager;
+import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisPortfolioBucket;
+import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisPortfolioBucket.MoneyWiseAnalysisPortfolioBucketList;
+import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisSecurityBucket;
+import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysisSecurityBucket.MoneyWiseAnalysisSecurityBucketList;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataValues;
 import net.sourceforge.joceanus.prometheus.data.PrometheusEncryptedValues;
-import net.sourceforge.joceanus.oceanus.date.OceanusDate;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
+
+import java.util.Iterator;
+import java.util.ListIterator;
 
 /**
  * Extension of SecurityPrice to cater for spot prices.
@@ -266,7 +266,7 @@ public final class MoneyWiseSpotSecurityPrice
                                          final MoneyWisePortfolio pPortfolio,
                                          final OceanusDate pDate) {
             /* Build initial list */
-            super((MoneyWiseDataSet) pView.getData(), MoneyWiseSpotSecurityPrice.class, MoneyWiseBasicDataType.SECURITYPRICE);
+            super(pView.getData(), MoneyWiseSpotSecurityPrice.class, MoneyWiseBasicDataType.SECURITYPRICE);
             setStyle(PrometheusListStyle.EDIT);
             ensureMap();
 
@@ -306,7 +306,7 @@ public final class MoneyWiseSpotSecurityPrice
             }
 
             /* Set the base for this list */
-            final MoneyWiseDataSet myData = (MoneyWiseDataSet) theView.getData();
+            final MoneyWiseDataSet myData = theView.getData();
             final MoneyWiseSecurityPriceList myPrices = myData.getSecurityPrices();
             setBase(myPrices);
 

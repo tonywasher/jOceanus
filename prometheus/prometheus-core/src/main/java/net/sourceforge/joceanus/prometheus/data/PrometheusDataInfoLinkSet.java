@@ -43,7 +43,7 @@ public class PrometheusDataInfoLinkSet<T extends PrometheusDataInfoItem>
     /**
      * Report fields.
      */
-    @SuppressWarnings("")
+    @SuppressWarnings("rawtypes")
     private static final PrometheusEncryptedFieldSet<PrometheusDataInfoLinkSet> FIELD_DEFS = PrometheusEncryptedFieldSet.newEncryptedFieldSet(PrometheusDataInfoLinkSet.class);
 
     /*

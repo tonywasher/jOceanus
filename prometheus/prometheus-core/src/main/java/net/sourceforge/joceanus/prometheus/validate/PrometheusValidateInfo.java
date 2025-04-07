@@ -24,10 +24,9 @@ import net.sourceforge.joceanus.prometheus.data.PrometheusStaticDataItem;
 
 /**
  * Validator for infoItem.
- * @param <T> the InfoItem type
  */
-public class PrometheusValidateInfo<T extends PrometheusDataInfoItem>
-        implements PrometheusDataValidator<T> {
+public class PrometheusValidateInfo
+        implements PrometheusDataValidator {
 
     @Override
     public void validate(final PrometheusDataItem pInfo) {

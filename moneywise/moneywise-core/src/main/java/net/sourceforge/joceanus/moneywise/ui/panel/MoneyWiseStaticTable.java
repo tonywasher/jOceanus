@@ -171,7 +171,7 @@ public class MoneyWiseStaticTable<L extends PrometheusStaticList<T>, T extends P
 
     @Override
     protected void refreshData() throws OceanusException {
-        final MoneyWiseDataSet myData = (MoneyWiseDataSet) getView().getData();
+        final MoneyWiseDataSet myData = getView().getData();
         final PrometheusStaticList<T> myStatic = myData.getDataList(theClass);
         theStatic = theClass.cast(myStatic.deriveList(PrometheusListStyle.EDIT));
         theStatic.mapData();

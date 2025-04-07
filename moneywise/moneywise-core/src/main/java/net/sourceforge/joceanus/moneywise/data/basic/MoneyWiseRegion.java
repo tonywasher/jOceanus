@@ -385,6 +385,7 @@ public class MoneyWiseRegion
         }
 
         @Override
+        @SuppressWarnings("unchecked")
         public MoneyWiseDataValidatorDefaults<MoneyWiseRegion> getValidator() {
             return (MoneyWiseDataValidatorDefaults<MoneyWiseRegion>) super.getValidator();
         }

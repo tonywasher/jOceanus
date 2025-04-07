@@ -839,6 +839,7 @@ public abstract class MoneyWiseAssetBase
         }
 
         @Override
+        @SuppressWarnings("unchecked")
         public MoneyWiseDataValidatorAccount<T> getValidator() {
             return (MoneyWiseDataValidatorAccount<T>) super.getValidator();
         }

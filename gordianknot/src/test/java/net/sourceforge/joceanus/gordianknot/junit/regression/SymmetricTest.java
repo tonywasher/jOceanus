@@ -76,7 +76,7 @@ class SymmetricTest {
      * Perform setup operations.
      */
     @BeforeAll
-    public static void setUp() throws GordianException {
+    static void setUp() throws GordianException {
         parseOptions();
         createSecurityFactories();
     }
@@ -105,16 +105,16 @@ class SymmetricTest {
     /**
      * The factories.
      */
-    private static GordianFactory BCFACTORY;
-    private static GordianFactory JCAFACTORY;
+    private static GordianFactory fcBCFACTORY;
+    private static GordianFactory fcJCAFACTORY;
 
     /**
      * Initialise Factories.
      * @throws GordianException on error
      */
     private static void createSecurityFactories() throws GordianException {
-        BCFACTORY = GordianGenerator.createRandomFactory(GordianFactoryType.BC);
-        JCAFACTORY = GordianGenerator.createRandomFactory(GordianFactoryType.JCA);
+        fcBCFACTORY = GordianGenerator.createRandomFactory(GordianFactoryType.BC);
+        fcJCAFACTORY = GordianGenerator.createRandomFactory(GordianFactoryType.JCA);
     }
 
     /**
@@ -134,8 +134,8 @@ class SymmetricTest {
     @TestFactory
     Stream<DynamicNode> symmetricTests() {
         /* Create tests */
-        final Stream<DynamicNode> myBC = symmetricTests(BCFACTORY, JCAFACTORY);
-        final Stream<DynamicNode> myJCA = symmetricTests(JCAFACTORY, BCFACTORY);
+        final Stream<DynamicNode> myBC = symmetricTests(fcBCFACTORY, fcJCAFACTORY);
+        final Stream<DynamicNode> myJCA = symmetricTests(fcJCAFACTORY, fcBCFACTORY);
         return Stream.concat(myBC, myJCA);
     }
 

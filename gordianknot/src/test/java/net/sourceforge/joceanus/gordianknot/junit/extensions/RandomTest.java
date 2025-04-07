@@ -79,7 +79,7 @@ class RandomTest {
     /**
      * The factories.
      */
-    private static GordianFactory BCFACTORY;
+    private static GordianFactory fcBCFACTORY;
 
     /**
      * TestCase.
@@ -267,8 +267,8 @@ class RandomTest {
      * @throws GordianException on error
      */
     @BeforeAll
-    public static void createSecurityFactories() throws GordianException {
-        BCFACTORY = GordianGenerator.createFactory(GordianFactoryType.BC);
+    static void createSecurityFactories() throws GordianException {
+        fcBCFACTORY = GordianGenerator.createFactory(GordianFactoryType.BC);
     }
 
     /**
@@ -495,7 +495,7 @@ class RandomTest {
         };
 
         /* Create the digest */
-        final GordianDigestFactory myFactory = BCFACTORY.getDigestFactory();
+        final GordianDigestFactory myFactory = fcBCFACTORY.getDigestFactory();
         final GordianDigest myDigest = myFactory.createDigest(GordianDigestSpecBuilder.sha1());
 
         /* Create a standard stream */
@@ -559,7 +559,7 @@ class RandomTest {
         };
 
         /* Create the mac */
-        final GordianMacFactory myFactory = BCFACTORY.getMacFactory();
+        final GordianMacFactory myFactory = fcBCFACTORY.getMacFactory();
         final GordianMac myMac = myFactory.createMac(GordianMacSpecBuilder.hMac(GordianDigestSpecBuilder.sha1()));
 
         /* Create a standard stream */
@@ -701,7 +701,7 @@ class RandomTest {
         };
 
         /* Build the digest */
-        final GordianDigestFactory myFactory = BCFACTORY.getDigestFactory();
+        final GordianDigestFactory myFactory = fcBCFACTORY.getDigestFactory();
         final GordianDigest myDigest = myFactory.createDigest(GordianDigestSpecBuilder.sha2(GordianLength.LEN_512));
 
         /* Create a standard stream */
@@ -822,7 +822,7 @@ class RandomTest {
         };
 
         /* Create the mac */
-        final GordianMacFactory myFactory = BCFACTORY.getMacFactory();
+        final GordianMacFactory myFactory = fcBCFACTORY.getMacFactory();
         final GordianMac myMac = myFactory.createMac(GordianMacSpecBuilder.hMac(GordianDigestSpecBuilder.sha2(GordianLength.LEN_512)));
 
         /* Create a standard stream */
@@ -899,7 +899,7 @@ class RandomTest {
         };
 
         /* Create the cipher */
-        final GordianCipherFactory myFactory = BCFACTORY.getCipherFactory();
+        final GordianCipherFactory myFactory = fcBCFACTORY.getCipherFactory();
         final GordianSymCipherSpec mySpec = GordianSymCipherSpecBuilder.ecb(GordianSymKeySpecBuilder.aes(GordianLength.LEN_128), GordianPadding.NONE);
         final GordianCoreCipher<GordianSymKeySpec> myCipher = (GordianCoreCipher<GordianSymKeySpec>) myFactory.createSymKeyCipher(mySpec);
 
@@ -945,7 +945,7 @@ class RandomTest {
         };
 
         /* Run the tests */
-        final GordianCipherFactory myFactory = BCFACTORY.getCipherFactory();
+        final GordianCipherFactory myFactory = fcBCFACTORY.getCipherFactory();
         final GordianSymCipherSpec mySpec = GordianSymCipherSpecBuilder.ecb(GordianSymKeySpecBuilder.aes(GordianLength.LEN_128), GordianPadding.NONE);
         final GordianCoreCipher<GordianSymKeySpec> myCipher = (GordianCoreCipher<GordianSymKeySpec>) myFactory.createSymKeyCipher(mySpec);
         testX931CipherDRBG(myCipher, "f7d36762b9915f1ed585eb8e91700eb2", myInitF, myTestsF);
@@ -1005,7 +1005,7 @@ class RandomTest {
         };
 
         /* Create the cipher */
-        final GordianCipherFactory myFactory = BCFACTORY.getCipherFactory();
+        final GordianCipherFactory myFactory = fcBCFACTORY.getCipherFactory();
         final GordianSymCipherSpec mySpec = GordianSymCipherSpecBuilder.ecb(GordianSymKeySpecBuilder.aes(GordianLength.LEN_256), GordianPadding.NONE);
         final GordianCoreCipher<GordianSymKeySpec> myCipher = (GordianCoreCipher<GordianSymKeySpec>) myFactory.createSymKeyCipher(mySpec);
 

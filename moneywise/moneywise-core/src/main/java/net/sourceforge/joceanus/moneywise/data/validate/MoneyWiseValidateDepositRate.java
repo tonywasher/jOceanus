@@ -29,7 +29,7 @@ import net.sourceforge.joceanus.prometheus.data.PrometheusDataValidator;
  * Validator for DepositRate.
  */
 public class MoneyWiseValidateDepositRate
-        implements PrometheusDataValidator<MoneyWiseDepositRate> {
+        implements PrometheusDataValidator {
 
     @Override
     public void validate(final PrometheusDataItem pRate) {

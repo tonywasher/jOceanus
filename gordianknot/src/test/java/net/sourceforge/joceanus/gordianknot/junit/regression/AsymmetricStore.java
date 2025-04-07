@@ -81,7 +81,7 @@ class AsymmetricStore {
      * Configure the test according to system properties.
      */
     @BeforeAll
-    public static void parseOptions() {
+    static void parseOptions() {
         /* If this is a full build */
         final String myBuildType = System.getProperty("joceanus.fullBuild");
         if (myBuildType != null) {

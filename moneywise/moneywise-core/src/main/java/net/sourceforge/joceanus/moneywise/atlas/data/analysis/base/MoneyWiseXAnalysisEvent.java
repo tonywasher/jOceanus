@@ -398,11 +398,7 @@ public class MoneyWiseXAnalysisEvent
         }
     }
 
-    /**
-     * Is the event a header?.
-     *
-     * @return true/false
-     */
+    @Override
     public boolean isHeader() {
         return theTransaction != null && theTransaction.isHeader();
     }

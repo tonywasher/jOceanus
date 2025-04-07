@@ -932,6 +932,7 @@ public abstract class MoneyWiseTransBase
         }
 
         @Override
+        @SuppressWarnings("unchecked")
         public MoneyWiseDataValidatorTrans<T> getValidator() {
             return (MoneyWiseDataValidatorTrans<T>) super.getValidator();
         }
