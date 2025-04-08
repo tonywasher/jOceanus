@@ -44,11 +44,11 @@ public class MetisDataFormatter
     @Override
     public String formatObject(final Object pValue) {
         /* Handle maps and lists */
-        if (pValue instanceof MetisDataMap) {
-            return formatValue(pValue, ((MetisDataMap<?, ?>) pValue).size());
+        if (pValue instanceof MetisDataMap<?, ?> myMap) {
+            return formatValue(pValue, myMap.size());
         }
-        if (pValue instanceof MetisDataList) {
-            return formatValue(pValue, ((MetisDataList<?>) pValue).size());
+        if (pValue instanceof MetisDataList<?> myList) {
+            return formatValue(pValue, myList.size());
         }
 
         /* Format other values */
@@ -61,14 +61,14 @@ public class MetisDataFormatter
      * @return the formatted value
      */
     private String formatValue(final Object pValue) {
-        /* Handle ones that we can directly format */
-        if (pValue instanceof MetisDataObjectFormat) {
-            return ((MetisDataObjectFormat) pValue).formatObject(theFormatter);
+        /* Handle delta class */
+        if (pValue instanceof MetisDataDelta myDelta) {
+            return formatObject(myDelta.getObject());
         }
 
-        /* Handle delta class */
-        if (pValue instanceof MetisDataDelta) {
-            return formatObject(((MetisDataDelta) pValue).getObject());
+        /* Handle ones that we can directly format */
+        if (pValue instanceof MetisDataObjectFormat myFormat) {
+            return myFormat.formatObject(theFormatter);
         }
 
         /* Not supported */

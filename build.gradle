@@ -47,7 +47,7 @@ allprojects {
         postGreSQLVersion = "42.7.5"
         mssqlVersion = "12.10.0.jre11"
         h2Version = "2.3.232"
-        apachePOIVersion = "5.4.0"
+        apachePOIVersion = "5.4.1"
         jsoupVersion = "1.19.1"
         jFreeChartVersion = "1.5.5"
 

@@ -142,8 +142,8 @@ public enum MetisDataDifference {
         }
 
         /* Handle differs support */
-        if (pCurr instanceof MetisDataDiffers) {
-            return ((MetisDataDiffers) pCurr).differs(pNew);
+        if (pCurr instanceof MetisDataDiffers myDiffers) {
+            return myDiffers.differs(pNew);
         }
 
         /* Handle Standard cases */
@@ -180,11 +180,11 @@ public enum MetisDataDifference {
         /* Handle arrays */
         if (myClass.isArray()) {
             /* Handle special cases for efficiency */
-            if (pCurr instanceof byte[]) {
-                return Arrays.equals((byte[]) pCurr, (byte[]) pNew);
+            if (pCurr instanceof byte[] ba) {
+                return Arrays.equals(ba, (byte[]) pNew);
             }
-            if (pCurr instanceof char[]) {
-                return Arrays.equals((char[]) pCurr, (char[]) pNew);
+            if (pCurr instanceof char[] ca) {
+                return Arrays.equals(ca, (char[]) pNew);
             }
 
             /* Handle generic arrays */

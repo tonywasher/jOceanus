@@ -127,62 +127,61 @@ public abstract class MoneyWiseTransBase
         try {
             /* Store the AssetPair */
             Object myValue = pValues.getValue(MoneyWiseBasicResource.TRANSACTION_DIRECTION);
-            if (myValue instanceof Boolean) {
-                setValueDirection((Boolean) myValue);
-            } else if (myValue instanceof String) {
-                setValueDirection((String) myValue);
-            } else if (myValue instanceof MoneyWiseAssetDirection) {
-                setValueDirection((MoneyWiseAssetDirection) myValue);
+            if (myValue instanceof Boolean b) {
+                setValueDirection(b);
+            } else if (myValue instanceof String s) {
+                setValueDirection(s);
+            } else if (myValue instanceof MoneyWiseAssetDirection d) {
+                setValueDirection(d);
             }
 
             /* Store the Account */
             myValue = pValues.getValue(MoneyWiseBasicResource.TRANSACTION_ACCOUNT);
-            if (myValue instanceof Long) {
-                setValueAccount((Long) myValue);
-            } else if (myValue instanceof String) {
-                setValueAccount((String) myValue);
-            } else if (myValue instanceof MoneyWiseTransAsset) {
-                setValueAccount((MoneyWiseTransAsset) myValue);
+            if (myValue instanceof Long l) {
+                setValueAccount(l);
+            } else if (myValue instanceof String s) {
+                setValueAccount(s);
+            } else if (myValue instanceof MoneyWiseTransAsset a) {
+                setValueAccount(a);
             }
 
             /* Store the Partner */
             myValue = pValues.getValue(MoneyWiseBasicResource.TRANSACTION_PARTNER);
-            if (myValue instanceof Long) {
-                setValuePartner((Long) myValue);
-            } else if (myValue instanceof String) {
-                setValuePartner((String) myValue);
-            } else if (myValue instanceof MoneyWiseTransAsset) {
-                setValuePartner((MoneyWiseTransAsset) myValue);
+            if (myValue instanceof Long l) {
+                setValuePartner(l);
+            } else if (myValue instanceof String s) {
+                setValuePartner(s);
+            } else if (myValue instanceof MoneyWiseTransAsset a) {
+                setValuePartner(a);
             }
 
             /* Store the Category */
             myValue = pValues.getValue(MoneyWiseBasicDataType.TRANSCATEGORY);
-            if (myValue instanceof Integer) {
-                setValueCategory((Integer) myValue);
-            } else if (myValue instanceof String) {
-                setValueCategory((String) myValue);
-            } else if (myValue instanceof MoneyWiseTransCategory) {
-                setValueCategory((MoneyWiseTransCategory) myValue);
+            if (myValue instanceof Integer i) {
+                setValueCategory(i);
+            } else if (myValue instanceof String s) {
+                setValueCategory(s);
+            } else if (myValue instanceof MoneyWiseTransCategory c) {
+                setValueCategory(c);
             }
 
             /* Store the Amount */
             myValue = pValues.getValue(MoneyWiseBasicResource.TRANSACTION_AMOUNT);
-            if (myValue instanceof OceanusMoney) {
-                setValueAmount((OceanusMoney) myValue);
-            } else if (myValue instanceof byte[]) {
-                setValueAmount((byte[]) myValue);
-            } else if (myValue instanceof String) {
-                final String myString = (String) myValue;
+            if (myValue instanceof OceanusMoney m) {
+                setValueAmount(m);
+            } else if (myValue instanceof byte[] ba) {
+                setValueAmount(ba);
+            } else if (myValue instanceof String myString) {
                 setValueAmount(myString);
                 setValueAmount(myFormatter.parseValue(myString, OceanusMoney.class));
             }
 
             /* Store the reconciled flag */
             myValue = pValues.getValue(MoneyWiseBasicResource.TRANSACTION_RECONCILED);
-            if (myValue instanceof Boolean) {
-                setValueReconciled((Boolean) myValue);
-            } else if (myValue instanceof String) {
-                setValueReconciled(myFormatter.parseValue((String) myValue, Boolean.class));
+            if (myValue instanceof Boolean b) {
+                setValueReconciled(b);
+            } else if (myValue instanceof String s) {
+                setValueReconciled(myFormatter.parseValue(s, Boolean.class));
             }
 
             /* Catch Exceptions */

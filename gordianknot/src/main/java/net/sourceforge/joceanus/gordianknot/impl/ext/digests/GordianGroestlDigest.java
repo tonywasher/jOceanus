@@ -717,7 +717,7 @@ public class GordianGroestlDigest
                 rnd1024Q(tmpY, tmpZ, u64Big(i));
                 rnd1024Q(tmpZ, tmpY, u64Big(i + 1));
             }
-            rnd1024Q(tmpY, tmpOutQ, u64Big(ROUNDS1024 - 1));
+            rnd1024Q(tmpY, tmpOutQ, u64Big((long) ROUNDS1024 - 1));
 
             /* compute P(h+m) */
             rnd1024P(tmpInP, tmpZ, 0);

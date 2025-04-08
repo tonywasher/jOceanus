@@ -122,8 +122,8 @@ public class MetisViewerExceptionWrapper
      * @return the object
      */
     private Object getWrappedObject() {
-        return theWrapped instanceof OceanusException
-                                                      ? ((OceanusException) theWrapped).getObject()
+        return theWrapped instanceof OceanusException myExc
+                                                      ? myExc.getObject()
                                                       : null;
     }
 

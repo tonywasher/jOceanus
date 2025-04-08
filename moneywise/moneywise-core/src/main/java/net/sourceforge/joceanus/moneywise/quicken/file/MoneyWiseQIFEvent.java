@@ -33,6 +33,7 @@ import net.sourceforge.joceanus.oceanus.decimal.OceanusRate;
 import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Class representing a QIF Event record.
@@ -191,14 +192,14 @@ public class MoneyWiseQIFEvent
                         break;
                     case SPLITAMOUNT:
                         myMoney = myDecParser.parseMoneyValue(myData);
-                        mySplit.setSplitAmount(myMoney);
+                        Objects.requireNonNull(mySplit).setSplitAmount(myMoney);
                         break;
                     case SPLITPERCENT:
                         final OceanusRate myRate = myDecParser.parseRateValue(myData);
-                        mySplit.setSplitPercentage(myRate);
+                        Objects.requireNonNull(mySplit).setSplitPercentage(myRate);
                         break;
                     case SPLITCOMMENT:
-                        mySplit.setSplitComment(myData);
+                        Objects.requireNonNull(mySplit).setSplitComment(myData);
                         break;
                     default:
                         break;

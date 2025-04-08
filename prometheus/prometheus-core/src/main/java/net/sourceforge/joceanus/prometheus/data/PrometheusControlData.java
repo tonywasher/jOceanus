@@ -89,17 +89,16 @@ public class PrometheusControlData
 
         /* Store the Version */
         Object myValue = pValues.getValue(PrometheusDataResource.CONTROLDATA_VERSION);
-        if (myValue instanceof Integer) {
-            setValueDataVersion((Integer) myValue);
-        } else if (myValue instanceof String) {
-            setValueDataVersion(Integer.valueOf((String) myValue));
+        if (myValue instanceof Integer i) {
+            setValueDataVersion(i);
+        } else if (myValue instanceof String s) {
+            setValueDataVersion(Integer.valueOf(s));
         }
 
         /* Store the ControlKey */
         myValue = pValues.getValue(PrometheusCryptographyDataType.CONTROLKEY);
-        if (myValue instanceof Integer) {
+        if (myValue instanceof Integer myInt) {
             /* Store value */
-            final Integer myInt = (Integer) myValue;
             setValueControlKey(myInt);
 
             /* Resolve the ControlKey */

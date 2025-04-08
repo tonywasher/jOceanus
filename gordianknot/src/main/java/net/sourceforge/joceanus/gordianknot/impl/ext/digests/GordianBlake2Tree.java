@@ -719,7 +719,7 @@ public class GordianBlake2Tree
          * Returns an enumeration of the components of this vector.
          * @return the enumeration
          */
-        Enumeration<?> elements() {
+        Enumeration<Object> elements() {
             return new Enumeration<>() {
                 private int count;
 

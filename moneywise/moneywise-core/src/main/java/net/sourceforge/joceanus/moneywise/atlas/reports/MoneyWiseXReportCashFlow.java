@@ -125,9 +125,9 @@ public class MoneyWiseXReportCashFlow
     @Override
     public MoneyWiseXAnalysisPayeeFilter processFilter(final Object pSource) {
         /* If this is an PayeeBucket */
-        if (pSource instanceof MoneyWiseXAnalysisPayeeBucket) {
+        if (pSource instanceof MoneyWiseXAnalysisPayeeBucket mySource) {
             /* Create the new filter */
-            return new MoneyWiseXAnalysisPayeeFilter((MoneyWiseXAnalysisPayeeBucket) pSource);
+            return new MoneyWiseXAnalysisPayeeFilter(mySource);
         }
         return null;
     }

@@ -333,7 +333,7 @@ public class MoneyWiseQIFFile {
     public void registerClass(final MoneyWiseQIFClass pClass) {
         /* Locate an existing class */
         final String myName = pClass.getName();
-        final MoneyWiseQIFClass myClass = theClassMap.computeIfAbsent(myName, n -> {
+        theClassMap.computeIfAbsent(myName, n -> {
             theClasses.add(pClass);
             return pClass;
         });
@@ -347,7 +347,7 @@ public class MoneyWiseQIFFile {
     public MoneyWiseQIFEventCategory registerCategory(final MoneyWiseTransCategory pCategory) {
         /* Locate an existing category */
         final String myName = pCategory.getName();
-        return theCategories.computeIfAbsent(myName,n -> {
+        return theCategories.computeIfAbsent(myName, n -> {
             final MoneyWiseQIFEventCategory myCat = new MoneyWiseQIFEventCategory(this, pCategory);
             registerCategoryToParent(pCategory.getParentCategory(), myCat);
             return myCat;

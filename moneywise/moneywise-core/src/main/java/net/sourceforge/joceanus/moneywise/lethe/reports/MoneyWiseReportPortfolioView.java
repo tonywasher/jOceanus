@@ -175,8 +175,7 @@ public class MoneyWiseReportPortfolioView
     public MetisHTMLTable createDelayedTable(final DelayedTable pTable) {
         /* Access the source */
         final Object mySource = pTable.getSource();
-        if (mySource instanceof MoneyWiseAnalysisPortfolioBucket) {
-            final MoneyWiseAnalysisPortfolioBucket mySourceBucket = (MoneyWiseAnalysisPortfolioBucket) mySource;
+        if (mySource instanceof MoneyWiseAnalysisPortfolioBucket mySourceBucket) {
             return createDelayedPortfolio(pTable.getParent(), mySourceBucket);
         }
 
@@ -267,9 +266,9 @@ public class MoneyWiseReportPortfolioView
     @Override
     public MoneyWiseAnalysisSecurityFilter processFilter(final Object pSource) {
         /* If this is a SecurityBucket */
-        if (pSource instanceof MoneyWiseAnalysisSecurityBucket) {
+        if (pSource instanceof MoneyWiseAnalysisSecurityBucket mySource) {
             /* Create the new filter */
-            return new MoneyWiseAnalysisSecurityFilter((MoneyWiseAnalysisSecurityBucket) pSource);
+            return new MoneyWiseAnalysisSecurityFilter(mySource);
         }
         return null;
     }

@@ -16,11 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.metis.ui;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Predicate;
-
 import net.sourceforge.joceanus.metis.preference.MetisPreferenceEvent;
 import net.sourceforge.joceanus.metis.preference.MetisPreferenceResource;
 import net.sourceforge.joceanus.metis.preference.MetisPreferenceSet;
@@ -60,6 +55,11 @@ import net.sourceforge.joceanus.tethys.api.pane.TethysUIBorderPaneManager;
 import net.sourceforge.joceanus.tethys.api.pane.TethysUIFlowPaneManager;
 import net.sourceforge.joceanus.tethys.api.pane.TethysUIGridPaneManager;
 import net.sourceforge.joceanus.tethys.api.pane.TethysUIPaneFactory;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Predicate;
 
 /**
  * Panel for editing a preference Set.
@@ -261,25 +261,24 @@ public class MetisPreferenceSetView
      * @return the element
      */
     protected PreferenceElement allocatePreferenceElement(final MetisPreferenceItem pItem) {
-        if (pItem instanceof MetisEnumPreference) {
-            return new EnumPreferenceElement<>((MetisEnumPreference<?>) pItem);
-        } else if (pItem instanceof MetisIntegerPreference) {
-            return new IntegerPreferenceElement((MetisIntegerPreference) pItem);
-        } else if (pItem instanceof MetisDatePreference) {
-            return new DatePreferenceElement((MetisDatePreference) pItem);
-        } else if (pItem instanceof MetisBooleanPreference) {
-            return new BooleanPreferenceElement((MetisBooleanPreference) pItem);
-        } else if (pItem instanceof MetisStringPreference) {
-            final MetisStringPreference myItem = (MetisStringPreference) pItem;
-            final MetisPreferenceId myId = pItem.getType();
+        if (pItem instanceof MetisEnumPreference<?> myEnum) {
+            return new EnumPreferenceElement<>(myEnum);
+        } else if (pItem instanceof MetisIntegerPreference myInt) {
+            return new IntegerPreferenceElement(myInt);
+        } else if (pItem instanceof MetisDatePreference myDate) {
+            return new DatePreferenceElement(myDate);
+        } else if (pItem instanceof MetisBooleanPreference myBool) {
+            return new BooleanPreferenceElement(myBool);
+        } else if (pItem instanceof MetisStringPreference myString) {
+            final MetisPreferenceId myId = myString.getType();
             if (myId.equals(MetisPreferenceType.DIRECTORY)) {
-                return new DirectoryPreferenceElement(myItem);
+                return new DirectoryPreferenceElement(myString);
             } else if (myId.equals(MetisPreferenceType.FILE)) {
-                return new FilePreferenceElement(myItem);
+                return new FilePreferenceElement(myString);
             } else if (myId.equals(MetisPreferenceType.COLOR)) {
-                return new ColorPreferenceElement(myItem);
+                return new ColorPreferenceElement(myString);
             } else {
-                return new StringPreferenceElement(myItem);
+                return new StringPreferenceElement(myString);
             }
         } else  {
             throw new IllegalArgumentException("Bad Preference Type: " + pItem.getType());

@@ -48,8 +48,8 @@ public class MetisFieldSimpleId
      * @return the fieldId
      */
     public static MetisDataFieldId convertResource(final OceanusBundleId pId) {
-        return pId instanceof MetisDataFieldId
-                                               ? (MetisDataFieldId) pId
+        return pId instanceof MetisDataFieldId myId
+                                               ? myId
                                                : new MetisFieldSimpleId(pId.getValue());
     }
 

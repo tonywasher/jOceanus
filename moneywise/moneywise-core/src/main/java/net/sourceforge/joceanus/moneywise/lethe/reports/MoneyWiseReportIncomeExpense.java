@@ -141,8 +141,7 @@ public class MoneyWiseReportIncomeExpense
     public MetisHTMLTable createDelayedTable(final DelayedTable pTable) {
         /* Access the source */
         final Object mySource = pTable.getSource();
-        if (mySource instanceof MoneyWiseAnalysisTransCategoryBucket) {
-            final MoneyWiseAnalysisTransCategoryBucket mySourceBucket = (MoneyWiseAnalysisTransCategoryBucket) mySource;
+        if (mySource instanceof MoneyWiseAnalysisTransCategoryBucket mySourceBucket) {
             return createDelayedCategory(pTable.getParent(), mySourceBucket);
         }
 
@@ -200,9 +199,9 @@ public class MoneyWiseReportIncomeExpense
     @Override
     public MoneyWiseAnalysisTransCategoryFilter processFilter(final Object pSource) {
         /* If this is an EventCategoryBucket */
-        if (pSource instanceof MoneyWiseAnalysisTransCategoryBucket) {
+        if (pSource instanceof MoneyWiseAnalysisTransCategoryBucket mySource) {
             /* Create the new filter */
-            return new MoneyWiseAnalysisTransCategoryFilter((MoneyWiseAnalysisTransCategoryBucket) pSource);
+            return new MoneyWiseAnalysisTransCategoryFilter(mySource);
         }
         return null;
     }

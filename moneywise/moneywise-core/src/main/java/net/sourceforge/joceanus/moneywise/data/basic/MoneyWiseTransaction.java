@@ -176,11 +176,11 @@ public class MoneyWiseTransaction
         try {
             /* Store the Date */
             final Object myValue = pValues.getValue(MoneyWiseBasicResource.MONEYWISEDATA_FIELD_DATE);
-            if (myValue instanceof OceanusDate) {
-                setValueDate((OceanusDate) myValue);
-            } else if (myValue instanceof String) {
+            if (myValue instanceof OceanusDate d) {
+                setValueDate(d);
+            } else if (myValue instanceof String s) {
                 final OceanusDateFormatter myParser = myFormatter.getDateFormatter();
-                setValueDate(myParser.parseDate((String) myValue));
+                setValueDate(myParser.parseDate(s));
             }
             /* Catch Exceptions */
         } catch (IllegalArgumentException e) {

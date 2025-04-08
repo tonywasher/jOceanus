@@ -136,52 +136,52 @@ public abstract class MoneyWiseAssetBase
         try {
             /* Store the name */
             Object myValue = pValues.getValue(PrometheusDataResource.DATAITEM_FIELD_NAME);
-            if (myValue instanceof String) {
-                setValueName((String) myValue);
-            } else if (myValue instanceof byte[]) {
-                setValueName((byte[]) myValue);
+            if (myValue instanceof String s) {
+                setValueName(s);
+            } else if (myValue instanceof byte[] ba) {
+                setValueName(ba);
             }
 
             /* Store the Description */
             myValue = pValues.getValue(PrometheusDataResource.DATAITEM_FIELD_DESC);
-            if (myValue instanceof String) {
-                setValueDesc((String) myValue);
-            } else if (myValue instanceof byte[]) {
-                setValueDesc((byte[]) myValue);
+            if (myValue instanceof String s) {
+                setValueDesc(s);
+            } else if (myValue instanceof byte[] ba) {
+                setValueDesc(ba);
             }
 
             /* Store the Category */
             myValue = pValues.getValue(MoneyWiseBasicResource.CATEGORY_NAME);
-            if (myValue instanceof Integer) {
-                setValueCategory((Integer) myValue);
-            } else if (myValue instanceof String) {
-                setValueCategory((String) myValue);
+            if (myValue instanceof Integer i) {
+                setValueCategory(i);
+            } else if (myValue instanceof String s) {
+                setValueCategory(s);
             }
 
             /* Store the Parent */
             myValue = pValues.getValue(MoneyWiseBasicResource.ASSET_PARENT);
-            if (myValue instanceof Integer) {
-                setValueParent((Integer) myValue);
-            } else if (myValue instanceof String) {
-                setValueParent((String) myValue);
+            if (myValue instanceof Integer i) {
+                setValueParent(i);
+            } else if (myValue instanceof String s) {
+                setValueParent(s);
             }
 
             /* Store the Currency */
             myValue = pValues.getValue(MoneyWiseStaticDataType.CURRENCY);
-            if (myValue instanceof Integer) {
-                setValueCurrency((Integer) myValue);
-            } else if (myValue instanceof String) {
-                setValueCurrency((String) myValue);
-            } else if (myValue instanceof MoneyWiseCurrency) {
-                setValueCurrency((MoneyWiseCurrency) myValue);
+            if (myValue instanceof Integer i) {
+                setValueCurrency(i);
+            } else if (myValue instanceof String s) {
+                setValueCurrency(s);
+            } else if (myValue instanceof MoneyWiseCurrency c) {
+                setValueCurrency(c);
             }
 
             /* Store the closed flag */
             myValue = pValues.getValue(MoneyWiseBasicResource.ASSET_CLOSED);
-            if (myValue instanceof Boolean) {
-                setValueClosed((Boolean) myValue);
-            } else if (myValue instanceof String) {
-                setValueClosed(myFormatter.parseValue((String) myValue, Boolean.class));
+            if (myValue instanceof Boolean b) {
+                setValueClosed(b);
+            } else if (myValue instanceof String s) {
+                setValueClosed(myFormatter.parseValue(s, Boolean.class));
             }
 
             /* Catch Exceptions */
@@ -632,11 +632,8 @@ public abstract class MoneyWiseAssetBase
     @Override
     public void touchItem(final PrometheusDataItem pSource) {
         /* If we are being touched by a transaction */
-        if (pSource instanceof MoneyWiseTransaction) {
-            /* Access as transaction */
-            final MoneyWiseTransaction myTrans = (MoneyWiseTransaction) pSource;
-
-            /* Record the transaction */
+        if (pSource instanceof MoneyWiseTransaction myTrans) {
+           /* Record the transaction */
             if (theEarliest == null) {
                 theEarliest = myTrans;
             }
@@ -656,10 +653,7 @@ public abstract class MoneyWiseAssetBase
         }
 
         /* If we are being touched by an asset */
-        if (pSource instanceof MoneyWiseAssetBase) {
-            /* Access as assetBase */
-            final MoneyWiseAssetBase myAsset = (MoneyWiseAssetBase) pSource;
-
+        if (pSource instanceof MoneyWiseAssetBase myAsset) {
             /* Mark as relevant if child is open */
             if (!myAsset.isClosed()) {
                 setRelevant();

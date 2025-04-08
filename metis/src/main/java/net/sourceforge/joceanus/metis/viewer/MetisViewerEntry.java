@@ -16,16 +16,16 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.metis.viewer;
 
+import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataList;
+import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataMap;
+import net.sourceforge.joceanus.metis.field.MetisFieldItem;
+import net.sourceforge.joceanus.metis.field.MetisFieldItem.MetisFieldDef;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
-import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataList;
-import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataMap;
-import net.sourceforge.joceanus.metis.field.MetisFieldItem;
-import net.sourceforge.joceanus.metis.field.MetisFieldItem.MetisFieldDef;
 
 /**
  * Data Viewer Entry.
@@ -246,8 +246,8 @@ public class MetisViewerEntry {
         setTheObject(pObject);
 
         /* Create child elements if required */
-        if (pObject instanceof MetisFieldItem) {
-            createChildElements((MetisFieldItem) pObject);
+        if (pObject instanceof MetisFieldItem myItem) {
+            createChildElements(myItem);
         }
 
         /* Notify regarding the data change */

@@ -880,8 +880,8 @@ public class MoneyWiseLoan
          */
         public MoneyWiseLoan findItemByName(final String pName) {
             final MoneyWiseAssetBase myAsset = theUnderlyingMap.findAssetByName(pName);
-            return myAsset instanceof MoneyWiseLoan
-                    ? (MoneyWiseLoan) myAsset
+            return myAsset instanceof MoneyWiseLoan myLoan
+                    ? myLoan
                     : null;
         }
 

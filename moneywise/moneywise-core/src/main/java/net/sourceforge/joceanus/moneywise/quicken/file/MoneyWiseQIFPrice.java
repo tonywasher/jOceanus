@@ -103,8 +103,8 @@ public class MoneyWiseQIFPrice
         /* Strip leading and trailing quotes */
         for (int i = 0; i < myParts.length; i++) {
             final String myStr = myParts[i];
-            if ((myStr.startsWith(QIF_QUOTE))
-                    && (myStr.endsWith(QIF_QUOTE))) {
+            if (myStr.startsWith(QIF_QUOTE)
+                    && myStr.endsWith(QIF_QUOTE)) {
                 myParts[i] = myStr.substring(1, myStr.length() - 1);
             }
         }

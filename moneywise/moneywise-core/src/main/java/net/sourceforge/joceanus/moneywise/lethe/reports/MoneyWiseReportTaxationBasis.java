@@ -152,8 +152,7 @@ public class MoneyWiseReportTaxationBasis
     public MetisHTMLTable createDelayedTable(final DelayedTable pTable) {
         /* Access the source */
         final Object mySource = pTable.getSource();
-        if (mySource instanceof MoneyWiseAnalysisTaxBasisBucket) {
-            final MoneyWiseAnalysisTaxBasisBucket mySourceBucket = (MoneyWiseAnalysisTaxBasisBucket) mySource;
+        if (mySource instanceof MoneyWiseAnalysisTaxBasisBucket mySourceBucket) {
             return createDelayedAccounts(pTable.getParent(), mySourceBucket);
         }
 
@@ -200,9 +199,9 @@ public class MoneyWiseReportTaxationBasis
 
     @Override
     public MoneyWiseAnalysisFilter<?, MoneyWiseAnalysisTaxBasisAttr> processFilter(final Object pSource) {
-        if (pSource instanceof MoneyWiseAnalysisTaxBasisBucket) {
+        if (pSource instanceof MoneyWiseAnalysisTaxBasisBucket mySource) {
             /* Create the new filter */
-            return new MoneyWiseAnalysisTaxBasisFilter((MoneyWiseAnalysisTaxBasisBucket) pSource);
+            return new MoneyWiseAnalysisTaxBasisFilter(mySource);
         }
         return null;
     }

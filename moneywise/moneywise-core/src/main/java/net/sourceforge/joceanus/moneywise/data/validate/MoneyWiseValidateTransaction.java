@@ -49,6 +49,7 @@ import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
 
 import java.util.Currency;
+import java.util.Objects;
 
 /**
  * Validator for transaction.
@@ -258,14 +259,14 @@ public class MoneyWiseValidateTransaction
     @Override
     public boolean isValidAccount(final MoneyWiseTransAsset pAccount) {
         /* Validate securityHolding */
-        if (pAccount instanceof MoneyWiseSecurityHolding
-                && !checkSecurityHolding((MoneyWiseSecurityHolding) pAccount)) {
+        if (pAccount instanceof MoneyWiseSecurityHolding myHolding
+                && !checkSecurityHolding(myHolding)) {
             return false;
         }
 
         /* Reject pensions portfolio */
-        if (pAccount instanceof MoneyWisePortfolio
-                && ((MoneyWisePortfolio) pAccount).getCategoryClass().holdsPensions()) {
+        if (pAccount instanceof MoneyWisePortfolio myPortfolio
+                && myPortfolio.getCategoryClass().holdsPensions()) {
             return false;
         }
 
@@ -279,7 +280,7 @@ public class MoneyWiseValidateTransaction
                                    final MoneyWiseTransCategory pCategory) {
         /* Access details */
         final MoneyWiseAssetType myType = pAccount.getAssetType();
-        final MoneyWiseTransCategoryClass myCatClass = pCategory.getCategoryTypeClass();
+        final MoneyWiseTransCategoryClass myCatClass = Objects.requireNonNull(pCategory.getCategoryTypeClass());
 
         /* Immediately reject hidden categories */
         if (myCatClass.isHiddenType()) {
@@ -297,10 +298,10 @@ public class MoneyWiseValidateTransaction
 
             case PENSIONCONTRIB:
                 /* Pension contribution must be to a Pension holding or to a SIPP */
-                return (pAccount instanceof MoneyWiseSecurityHolding
-                        && ((MoneyWiseSecurityHolding) pAccount).getSecurity().getCategoryClass().isPension())
-                        || (pAccount instanceof MoneyWisePortfolio
-                        && ((MoneyWisePortfolio) pAccount).isPortfolioClass(MoneyWisePortfolioClass.SIPP));
+                return (pAccount instanceof MoneyWiseSecurityHolding myHolding
+                        && myHolding.getSecurity().getCategoryClass().isPension())
+                        || (pAccount instanceof MoneyWisePortfolio myPortfolio
+                        && myPortfolio.isPortfolioClass(MoneyWisePortfolioClass.SIPP));
 
             case GIFTEDINCOME:
             case INHERITED:
@@ -319,8 +320,8 @@ public class MoneyWiseValidateTransaction
             case BADDEBTCAPITAL:
             case BADDEBTINTEREST:
                 /* Account must be peer2Peer */
-                return pAccount instanceof MoneyWiseDeposit
-                        && ((MoneyWiseDeposit) pAccount).isDepositClass(MoneyWiseDepositCategoryClass.PEER2PEER);
+                return pAccount instanceof MoneyWiseDeposit myDeposit
+                        && myDeposit.isDepositClass(MoneyWiseDepositCategoryClass.PEER2PEER);
 
             case CASHBACK:
                 return checkCashBack(pAccount);
@@ -332,8 +333,8 @@ public class MoneyWiseValidateTransaction
             case RENTALEXPENSE:
             case ROOMRENTALINCOME:
                 /* Account must be property */
-                return pAccount instanceof MoneyWiseSecurityHolding
-                        && ((MoneyWiseSecurityHolding) pAccount).getSecurity().isSecurityClass(MoneyWiseSecurityClass.PROPERTY);
+                return pAccount instanceof MoneyWiseSecurityHolding myHolding
+                        && myHolding.getSecurity().isSecurityClass(MoneyWiseSecurityClass.PROPERTY);
 
             case UNITSADJUST:
             case SECURITYREPLACE:
@@ -450,7 +451,7 @@ public class MoneyWiseValidateTransaction
         /* Access details */
         final boolean isRecursive = MetisDataDifference.isEqual(pAccount, pPartner);
         final MoneyWiseAssetType myPartnerType = pPartner.getAssetType();
-        final MoneyWiseTransCategoryClass myCatClass = pCategory.getCategoryTypeClass();
+        final MoneyWiseTransCategoryClass myCatClass = Objects.requireNonNull(pCategory.getCategoryTypeClass());
 
         /* Immediately reject hidden partners */
         if (pPartner.isHidden()) {
@@ -458,14 +459,14 @@ public class MoneyWiseValidateTransaction
         }
 
         /* Validate securityHolding */
-        if (pPartner instanceof MoneyWiseSecurityHolding
-                && !checkSecurityHolding((MoneyWiseSecurityHolding) pPartner)) {
+        if (pPartner instanceof MoneyWiseSecurityHolding myHolding
+                && !checkSecurityHolding(myHolding)) {
             return false;
         }
 
         /* Reject pensions portfolio */
-        if (pPartner instanceof MoneyWisePortfolio
-                && ((MoneyWisePortfolio) pPartner).getCategoryClass().holdsPensions()) {
+        if (pPartner instanceof MoneyWisePortfolio myPortfolio
+                && myPortfolio.getCategoryClass().holdsPensions()) {
             return false;
         }
 
@@ -498,13 +499,13 @@ public class MoneyWiseValidateTransaction
             case TAXEDINCOME:
             case GROSSINCOME:
                 /* Taxed Income must have a Payee that can provide income */
-                return pPartner instanceof MoneyWisePayee
-                        && ((MoneyWisePayee) pPartner).getCategoryClass().canProvideTaxedIncome();
+                return pPartner instanceof MoneyWisePayee myPayee
+                        && myPayee.getCategoryClass().canProvideTaxedIncome();
 
             case PENSIONCONTRIB:
                 /* Pension Contribution must be a payee that can parent */
-                return pPartner instanceof MoneyWisePayee
-                        && ((MoneyWisePayee) pPartner).getCategoryClass().canContribPension();
+                return pPartner instanceof MoneyWisePayee myPayee
+                        && myPayee.getCategoryClass().canContribPension();
 
             case OTHERINCOME:
             case RECOVEREDEXPENSES:
@@ -513,14 +514,14 @@ public class MoneyWiseValidateTransaction
 
             case LOCALTAXES:
                 /* LocalTaxes must have a Government Payee partner */
-                return pPartner instanceof MoneyWisePayee
-                        && ((MoneyWisePayee) pPartner).isPayeeClass(MoneyWisePayeeClass.GOVERNMENT);
+                return pPartner instanceof MoneyWisePayee myPayee
+                        && myPayee.isPayeeClass(MoneyWisePayeeClass.GOVERNMENT);
 
             case GIFTEDINCOME:
             case INHERITED:
                 /* Gifted/Inherited Income must have an Individual Payee partner */
-                return pPartner instanceof MoneyWisePayee
-                        && ((MoneyWisePayee) pPartner).isPayeeClass(MoneyWisePayeeClass.INDIVIDUAL);
+                return pPartner instanceof MoneyWisePayee myPayee
+                        && myPayee.isPayeeClass(MoneyWisePayeeClass.INDIVIDUAL);
 
             case RENTALINCOME:
             case RENTALEXPENSE:
@@ -575,8 +576,8 @@ public class MoneyWiseValidateTransaction
 
             case INCOMETAX:
             case TAXRELIEF:
-                return pPartner instanceof MoneyWisePayee
-                        && ((MoneyWisePayee) pPartner).isPayeeClass(MoneyWisePayeeClass.TAXMAN);
+                return pPartner instanceof MoneyWisePayee myPayee
+                        && myPayee.isPayeeClass(MoneyWisePayeeClass.TAXMAN);
 
             case PORTFOLIOXFER:
                 return checkPortfolioXfer(pAccount, pPartner);
@@ -664,10 +665,9 @@ public class MoneyWiseValidateTransaction
     private static boolean checkStockRights(final MoneyWiseTransAsset pAccount,
                                             final MoneyWiseTransAsset pPartner) {
         /* If this is security -> portfolio */
-        if (pAccount instanceof MoneyWiseSecurityHolding
+        if (pAccount instanceof MoneyWiseSecurityHolding myHolding
                 && pPartner instanceof MoneyWisePortfolio) {
             /* Must be same portfolios */
-            final MoneyWiseSecurityHolding myHolding = (MoneyWiseSecurityHolding) pAccount;
             return MetisDataDifference.isEqual(myHolding.getPortfolio(), pPartner);
         }
 
@@ -682,13 +682,13 @@ public class MoneyWiseValidateTransaction
      */
     private static boolean checkCashBack(final MoneyWiseTransAsset pAccount) {
         /* If this is deposit then check whether it can support cashBack */
-        if (pAccount instanceof MoneyWiseDeposit) {
-            return ((MoneyWiseDeposit) pAccount).getCategoryClass().canCashBack();
+        if (pAccount instanceof MoneyWiseDeposit myDeposit) {
+            return myDeposit.getCategoryClass().canCashBack();
         }
 
         /* If this is loan then check whether it can support cashBack */
-        if (pAccount instanceof MoneyWiseLoan) {
-            return ((MoneyWiseLoan) pAccount).getCategoryClass().canCashBack();
+        if (pAccount instanceof MoneyWiseLoan myLoan) {
+            return myLoan.getCategoryClass().canCashBack();
         }
 
         /* not allowed */
@@ -702,9 +702,9 @@ public class MoneyWiseValidateTransaction
      */
     private boolean checkLoyaltyBonus(final MoneyWiseTransAsset pAccount) {
         /* If this is deposit then check whether it can support loyaltyBonus */
-        if (pAccount instanceof MoneyWiseDeposit) {
+        if (pAccount instanceof MoneyWiseDeposit myDeposit) {
             return newValidation
-                    || ((MoneyWiseDeposit) pAccount).getCategoryClass().canLoyaltyBonus();
+                    || myDeposit.getCategoryClass().canLoyaltyBonus();
         }
 
         /* must be portfolio */
@@ -721,9 +721,8 @@ public class MoneyWiseValidateTransaction
                                              final MoneyWiseTransAsset pPartner) {
         /* If this is portfolio -> security holding */
         if (pAccount instanceof MoneyWisePortfolio
-                && pPartner instanceof MoneyWiseSecurityHolding) {
+                && pPartner instanceof MoneyWiseSecurityHolding myHolding) {
             /* Must be same portfolios */
-            final MoneyWiseSecurityHolding myHolding = (MoneyWiseSecurityHolding) pPartner;
             return MetisDataDifference.isEqual(myHolding.getPortfolio(), pAccount);
         }
 
@@ -745,20 +744,18 @@ public class MoneyWiseValidateTransaction
         }
 
         /* If this is security -> portfolio */
-        if (pAccount instanceof MoneyWiseSecurityHolding
+        if (pAccount instanceof MoneyWiseSecurityHolding myHolding
                 && pPartner instanceof MoneyWisePortfolio) {
             /* Must be same portfolios */
-            final MoneyWiseSecurityHolding myHolding = (MoneyWiseSecurityHolding) pAccount;
             if (!MetisDataDifference.isEqual(myHolding.getPortfolio(), pPartner)) {
                 return false;
             }
         }
 
         /* If this is security <- portfolio */
-        if (pPartner instanceof MoneyWiseSecurityHolding
+        if (pPartner instanceof MoneyWiseSecurityHolding myHolding
                 && pAccount instanceof MoneyWisePortfolio) {
             /* Must be same portfolios */
-            final MoneyWiseSecurityHolding myHolding = (MoneyWiseSecurityHolding) pPartner;
             if (!MetisDataDifference.isEqual(myHolding.getPortfolio(), pAccount)) {
                 return false;
             }
@@ -810,9 +807,8 @@ public class MoneyWiseValidateTransaction
         }
 
         /* If account is security holding */
-        if (pAccount instanceof MoneyWiseSecurityHolding) {
+        if (pAccount instanceof MoneyWiseSecurityHolding myHolding) {
             /* Must be different portfolios */
-            final MoneyWiseSecurityHolding myHolding = (MoneyWiseSecurityHolding) pAccount;
             return !MetisDataDifference.isEqual(myHolding.getPortfolio(), pPartner);
         }
 

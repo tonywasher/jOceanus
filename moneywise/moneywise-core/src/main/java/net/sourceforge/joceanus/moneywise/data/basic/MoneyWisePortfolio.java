@@ -1090,8 +1090,8 @@ public class MoneyWisePortfolio
          */
         public MoneyWisePortfolio findItemByName(final String pName) {
             final MoneyWiseAssetBase myAsset = theUnderlyingMap.findAssetByName(pName);
-            return myAsset instanceof MoneyWisePortfolio
-                    ? (MoneyWisePortfolio) myAsset
+            return myAsset instanceof MoneyWisePortfolio myPortfolio
+                    ? myPortfolio
                     : null;
         }
 

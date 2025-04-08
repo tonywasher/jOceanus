@@ -112,11 +112,11 @@ public class MoneyWiseCurrency
 
         /* Store the Default */
         final Object myValue = pValues.getValue(MoneyWiseStaticResource.CURRENCY_REPORTING);
-        if (myValue instanceof Boolean) {
-            setValueReporting((Boolean) myValue);
-        } else if (myValue instanceof String) {
+        if (myValue instanceof Boolean b) {
+            setValueReporting(b);
+        } else if (myValue instanceof String s) {
             final OceanusDataFormatter myFormatter = getDataSet().getDataFormatter();
-            setValueReporting(myFormatter.parseValue((String) myValue, Boolean.class));
+            setValueReporting(myFormatter.parseValue(s, Boolean.class));
         } else {
             setValueReporting(Boolean.FALSE);
         }

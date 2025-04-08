@@ -16,11 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.moneywise.atlas.reports;
 
-import java.util.EnumMap;
-import java.util.Map;
-
-import org.w3c.dom.Document;
-
 import net.sourceforge.joceanus.metis.report.MetisReportBase;
 import net.sourceforge.joceanus.metis.report.MetisReportManager;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysis;
@@ -28,6 +23,10 @@ import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseX
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysisSecurityBucket;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.values.MoneyWiseXAnalysisValuesResource;
 import net.sourceforge.joceanus.moneywise.atlas.views.MoneyWiseXAnalysisFilter;
+import org.w3c.dom.Document;
+
+import java.util.EnumMap;
+import java.util.Map;
 
 /**
  * Report Classes.
@@ -132,8 +131,8 @@ public class MoneyWiseXReportBuilder {
         }
 
         /* If the report requires the security */
-        if (myReport instanceof MoneyWiseXReportCapitalGains) {
-            ((MoneyWiseXReportCapitalGains) myReport).setSecurity(pSecurity);
+        if (myReport instanceof MoneyWiseXReportCapitalGains myCapGains) {
+            myCapGains.setSecurity(pSecurity);
         }
 
         /* Set up the report */

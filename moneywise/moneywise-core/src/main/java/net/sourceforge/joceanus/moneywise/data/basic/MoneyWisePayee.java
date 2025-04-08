@@ -988,8 +988,8 @@ public class MoneyWisePayee
          */
         public MoneyWisePayee findItemByName(final String pName) {
             final MoneyWiseAssetBase myAsset = theUnderlyingMap.findAssetByName(pName);
-            return myAsset instanceof MoneyWisePayee
-                    ? (MoneyWisePayee) myAsset
+            return myAsset instanceof MoneyWisePayee myPayee
+                    ? myPayee
                     : null;
         }
 

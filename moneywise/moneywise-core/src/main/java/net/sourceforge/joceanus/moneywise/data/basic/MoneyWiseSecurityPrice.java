@@ -121,29 +121,28 @@ public class MoneyWiseSecurityPrice
         try {
             /* Store the Date */
             Object myValue = pValues.getValue(MoneyWiseBasicResource.MONEYWISEDATA_FIELD_DATE);
-            if (myValue instanceof OceanusDate) {
-                setValueDate((OceanusDate) myValue);
-            } else if (myValue instanceof String) {
+            if (myValue instanceof OceanusDate d) {
+                setValueDate(d);
+            } else if (myValue instanceof String s) {
                 final OceanusDateFormatter myParser = myFormatter.getDateFormatter();
-                setValueDate(myParser.parseDate((String) myValue));
+                setValueDate(myParser.parseDate(s));
             }
 
             /* Store the Security */
             myValue = pValues.getValue(MoneyWiseBasicDataType.SECURITY);
-            if (myValue instanceof Integer) {
-                setValueSecurity((Integer) myValue);
-            } else if (myValue instanceof String) {
-                setValueSecurity((String) myValue);
+            if (myValue instanceof Integer i) {
+                setValueSecurity(i);
+            } else if (myValue instanceof String s) {
+                setValueSecurity(s);
             }
 
             /* Store the Price */
             myValue = pValues.getValue(MoneyWiseBasicResource.MONEYWISEDATA_FIELD_PRICE);
-            if (myValue instanceof OceanusPrice) {
-                setValuePrice((OceanusPrice) myValue);
-            } else if (myValue instanceof byte[]) {
-                setValuePrice((byte[]) myValue);
-            } else if (myValue instanceof String) {
-                final String myString = (String) myValue;
+            if (myValue instanceof OceanusPrice p) {
+                setValuePrice(p);
+            } else if (myValue instanceof byte[] ba) {
+                setValuePrice(ba);
+            } else if (myValue instanceof String myString) {
                 setValuePrice(myString);
                 setValuePrice(myFormatter.parseValue(myString, OceanusPrice.class));
             }

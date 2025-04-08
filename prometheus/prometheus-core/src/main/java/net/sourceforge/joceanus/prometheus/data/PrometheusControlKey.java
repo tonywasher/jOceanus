@@ -109,14 +109,14 @@ public final class PrometheusControlKey
         try {
             /* Store FactoryLock */
             Object myValue = pValues.getValue(PrometheusDataResource.CONTROLKEY_LOCKBYTES);
-            if (myValue instanceof byte[]) {
-                setValueFactoryLockBytes((byte[]) myValue);
+            if (myValue instanceof byte[] ba) {
+                setValueFactoryLockBytes(ba);
             }
 
             /* Store/Resolve Hash */
             myValue = pValues.getValue(PrometheusDataResource.CONTROLKEY_LOCK);
-            if (myValue instanceof GordianFactoryLock) {
-                setValueFactoryLock((GordianFactoryLock) myValue);
+            if (myValue instanceof GordianFactoryLock l) {
+                setValueFactoryLock(l);
             } else if (getLockBytes() != null) {
                 /* Access the Security manager */
                 final PrometheusDataSet myData = getDataSet();

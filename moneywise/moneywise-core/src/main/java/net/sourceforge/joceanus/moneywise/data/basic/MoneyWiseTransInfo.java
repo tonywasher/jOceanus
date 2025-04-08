@@ -160,14 +160,14 @@ public class MoneyWiseTransInfo
     @Override
     public String getLinkName() {
         final PrometheusDataItem myItem = getLink();
-        if (myItem instanceof MoneyWiseDeposit) {
-            return ((MoneyWiseDeposit) myItem).getName();
+        if (myItem instanceof MoneyWiseDeposit myDeposit) {
+            return myDeposit.getName();
         }
-        if (myItem instanceof MoneyWisePortfolio) {
-            return ((MoneyWisePortfolio) myItem).getName();
+        if (myItem instanceof MoneyWisePortfolio myPortfolio) {
+            return myPortfolio.getName();
         }
-        if (myItem instanceof MoneyWiseTransTag) {
-            return ((MoneyWiseTransTag) myItem).getName();
+        if (myItem instanceof MoneyWiseTransTag myTag) {
+            return myTag.getName();
         }
         return null;
     }

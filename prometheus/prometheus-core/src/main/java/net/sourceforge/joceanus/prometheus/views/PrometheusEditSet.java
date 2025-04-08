@@ -193,7 +193,7 @@ public class PrometheusEditSet
     public <T extends PrometheusDataItem> PrometheusEditEntry<T> registerType(final MetisListKey pDataType) {
         /* Locate any existing entry */
         @SuppressWarnings("unchecked")
-        PrometheusEditEntry<T> myEntry = (PrometheusEditEntry<T>) theMap.computeIfAbsent(pDataType, t -> {
+        final PrometheusEditEntry<T> myEntry = (PrometheusEditEntry<T>) theMap.computeIfAbsent(pDataType, t -> {
             /* Not found , so add it */
             final PrometheusEditEntry<T> myNewEntry = new PrometheusEditEntry<>(t);
             theLocalFields.declareLocalField(myNewEntry.getName(), n -> myNewEntry);

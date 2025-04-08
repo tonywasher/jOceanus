@@ -38,6 +38,7 @@ import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Transaction Category class.
@@ -534,7 +535,7 @@ public final class MoneyWiseTransCategory
             final MoneyWiseTransCategory myItem = (MoneyWiseTransCategory) pItem;
 
             /* If the class is singular */
-            final MoneyWiseTransCategoryClass myClass = myItem.getCategoryTypeClass();
+            final MoneyWiseTransCategoryClass myClass = Objects.requireNonNull(myItem.getCategoryTypeClass());
             if (myClass.isSingular()) {
                 /* Adjust category count */
                 final Integer myId = myClass.getClassId();

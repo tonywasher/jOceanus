@@ -133,20 +133,20 @@ public class MetisViewerFormatter {
                                                                   : pObject;
 
         /* If we are FieldItem */
-        if (myObject instanceof MetisFieldItem) {
-            formatHTMLEosFieldItem((MetisFieldItem) myObject);
+        if (myObject instanceof MetisFieldItem myField) {
+            formatHTMLEosFieldItem(myField);
 
             /* If we are Stack Trace */
-        } else if (myObject instanceof StackTraceElement[]) {
-            formatHTMLStackTrace((StackTraceElement[]) myObject);
+        } else if (myObject instanceof StackTraceElement[] myStack) {
+            formatHTMLStackTrace(myStack);
 
             /* If we are TethysProfile */
-        } else if (myObject instanceof OceanusProfile) {
-            formatHTMLEosFieldItem(new MetisViewerProfileWrapper((OceanusProfile) myObject));
+        } else if (myObject instanceof OceanusProfile myProfile) {
+            formatHTMLEosFieldItem(new MetisViewerProfileWrapper(myProfile));
 
             /* If we are Throwable */
-        } else if (myObject instanceof Throwable) {
-            formatHTMLEosFieldItem(new MetisViewerExceptionWrapper((Throwable) myObject));
+        } else if (myObject instanceof Throwable myThrow) {
+            formatHTMLEosFieldItem(new MetisViewerExceptionWrapper(myThrow));
 
             /* else handle unsupported list item */
         } else {
@@ -162,24 +162,24 @@ public class MetisViewerFormatter {
     private void formatHTMLCollection(final Object pObject,
                                       final int pStart) {
         /* handle DataDifference */
-        Object myObject = pObject instanceof MetisDataDelta
-                                                            ? ((MetisDataDelta) pObject).getObject()
+        Object myObject = pObject instanceof MetisDataDelta myDelta
+                                                            ? myDelta.getObject()
                                                             : pObject;
 
         /* handle embedded objects */
-        if (myObject instanceof MetisDataList) {
-            myObject = ((MetisDataList<?>) myObject).getUnderlyingList();
-        } else if (myObject instanceof MetisDataMap) {
-            myObject = ((MetisDataMap<?, ?>) myObject).getUnderlyingMap();
+        if (myObject instanceof MetisDataList<?> myList) {
+            myObject = myList.getUnderlyingList();
+        } else if (myObject instanceof MetisDataMap<?, ?> myMap) {
+            myObject = myMap.getUnderlyingMap();
         }
 
         /* If we are List */
-        if (myObject instanceof List) {
-            formatHTMLListSection((List<?>) myObject, pStart);
+        if (myObject instanceof List<?> myList) {
+            formatHTMLListSection(myList, pStart);
 
             /* If we are Map */
-        } else if (myObject instanceof Map) {
-            formatHTMLMapSection((Map<?, ?>) myObject, pStart);
+        } else if (myObject instanceof Map<?, ?> myMap) {
+            formatHTMLMapSection(myMap, pStart);
         }
     }
 
@@ -191,18 +191,18 @@ public class MetisViewerFormatter {
     private void formatHTMLItem(final Object pObject,
                                 final int pIndex) {
         /* handle DataDifference */
-        Object myObject = pObject instanceof MetisDataDelta
-                                                            ? ((MetisDataDelta) pObject).getObject()
+        Object myObject = pObject instanceof MetisDataDelta myDelta
+                                                            ? myDelta.getObject()
                                                             : pObject;
 
         /* handle embedded objects */
-        if (myObject instanceof MetisDataList) {
-            myObject = ((MetisDataList<?>) myObject).getUnderlyingList();
+        if (myObject instanceof MetisDataList<?> myList) {
+            myObject = myList.getUnderlyingList();
         }
 
         /* If we are List */
-        if (myObject instanceof List) {
-            formatHTMLListItem((List<?>) myObject, pIndex);
+        if (myObject instanceof List<?> myList) {
+            formatHTMLListItem(myList, pIndex);
         }
     }
 
@@ -263,40 +263,40 @@ public class MetisViewerFormatter {
         Object myValue = pValue;
 
         /* Skip empty lists */
-        if (myValue instanceof MetisDataList) {
-            myValue = ((MetisDataList<?>) myValue).getUnderlyingList();
+        if (myValue instanceof MetisDataList<?> myList) {
+            myValue = myList.getUnderlyingList();
         }
-        if (myValue instanceof List) {
-            return ((List<?>) myValue).isEmpty();
+        if (myValue instanceof List<?> myList) {
+            return myList.isEmpty();
         }
 
         /* Skip empty maps */
-        if (myValue instanceof MetisDataMap) {
-            myValue = ((MetisDataMap<?, ?>) myValue).getUnderlyingMap();
+        if (myValue instanceof MetisDataMap<?, ?> myMap) {
+            myValue = myMap.getUnderlyingMap();
         }
-        if (myValue instanceof Map) {
-            return ((Map<?, ?>) myValue).isEmpty();
+        if (myValue instanceof Map<?, ?> myMap) {
+            return myMap.isEmpty();
         }
 
         /* Skip empty history/errors */
-        if (myValue instanceof MetisFieldVersionHistory) {
-            return !((MetisFieldVersionHistory) myValue).hasHistory();
+        if (myValue instanceof MetisFieldVersionHistory myHistory) {
+            return !myHistory.hasHistory();
         }
-        if (myValue instanceof MetisFieldValidation) {
-            return !((MetisFieldValidation) myValue).hasErrors();
+        if (myValue instanceof MetisFieldValidation myValid) {
+            return !myValid.hasErrors();
         }
 
         /* Skip zero decimals */
-        if (myValue instanceof OceanusDecimal) {
-            return ((OceanusDecimal) myValue).isZero();
+        if (myValue instanceof OceanusDecimal myDecimal) {
+            return myDecimal.isZero();
         }
-        if (myValue instanceof Number) {
-            return ((Number) myValue).longValue() == 0;
+        if (myValue instanceof Number myNumber) {
+            return myNumber.longValue() == 0;
         }
 
         /* Skip false */
-        if (myValue instanceof Boolean) {
-            return !(Boolean) myValue;
+        if (myValue instanceof Boolean myBool) {
+            return !myBool;
         }
 
         /* Skip value if required */

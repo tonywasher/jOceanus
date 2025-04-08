@@ -77,6 +77,7 @@ import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
 import java.util.Currency;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Class to analyse transactions.
@@ -1040,7 +1041,7 @@ public class MoneyWiseAnalysisTransAnalyser
         final OceanusPrice myPrice = thePriceMap.getPriceForDate(myDebit, theHelper.getDate());
 
         /* Assume that the allowed cost is the full value */
-        OceanusUnits myUnits = myValues.getUnitsValue(MoneyWiseAnalysisSecurityAttr.UNITS);
+        OceanusUnits myUnits = Objects.requireNonNull(myValues.getUnitsValue(MoneyWiseAnalysisSecurityAttr.UNITS));
         OceanusMoney myAllowedCost = new OceanusMoney(myAmount);
         final OceanusMoney myCost = myValues.getMoneyValue(MoneyWiseAnalysisSecurityAttr.RESIDUALCOST);
         OceanusRatio myCostDilution = null;

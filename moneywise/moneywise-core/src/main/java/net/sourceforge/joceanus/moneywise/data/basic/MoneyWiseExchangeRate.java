@@ -125,35 +125,34 @@ public class MoneyWiseExchangeRate
         try {
             /* Store the Date */
             Object myValue = pValues.getValue(MoneyWiseBasicResource.MONEYWISEDATA_FIELD_DATE);
-            if (myValue instanceof OceanusDate) {
-                setValueDate((OceanusDate) myValue);
-            } else if (myValue instanceof String) {
+            if (myValue instanceof OceanusDate d) {
+                setValueDate(d);
+            } else if (myValue instanceof String s) {
                 final OceanusDateFormatter myParser = myFormatter.getDateFormatter();
-                setValueDate(myParser.parseDate((String) myValue));
+                setValueDate(myParser.parseDate(s));
             }
 
             /* Store the From currency */
             myValue = pValues.getValue(MoneyWiseBasicResource.XCHGRATE_FROM);
-            if (myValue instanceof Integer) {
-                setValueFromCurrency((Integer) myValue);
-            } else if (myValue instanceof String) {
-                setValueFromCurrency((String) myValue);
+            if (myValue instanceof Integer i) {
+                setValueFromCurrency(i);
+            } else if (myValue instanceof String s) {
+                setValueFromCurrency(s);
             }
 
             /* Store the To currency */
             myValue = pValues.getValue(MoneyWiseBasicResource.XCHGRATE_TO);
-            if (myValue instanceof Integer) {
-                setValueToCurrency((Integer) myValue);
-            } else if (myValue instanceof String) {
-                setValueToCurrency((String) myValue);
+            if (myValue instanceof Integer i) {
+                setValueToCurrency(i);
+            } else if (myValue instanceof String s) {
+                setValueToCurrency(s);
             }
 
             /* Store the Rate */
             myValue = pValues.getValue(MoneyWiseBasicResource.XCHGRATE_RATE);
-            if (myValue instanceof OceanusRatio) {
-                setValueExchangeRate((OceanusRatio) myValue);
-            } else if (myValue instanceof String) {
-                final String myString = (String) myValue;
+            if (myValue instanceof OceanusRatio r) {
+                setValueExchangeRate(r);
+            } else if (myValue instanceof String myString) {
                 setValueExchangeRate(myString);
                 setValueExchangeRate(myFormatter.parseValue(myString, OceanusRatio.class));
             }

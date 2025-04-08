@@ -16,12 +16,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.moneywise.data.basic;
 
-import java.util.Iterator;
-
 import net.sourceforge.joceanus.metis.data.MetisDataDifference;
 import net.sourceforge.joceanus.metis.data.MetisDataResource;
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
-import net.sourceforge.joceanus.moneywise.exc.MoneyWiseDataException;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseCash.MoneyWiseCashList;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePayee.MoneyWisePayeeList;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransCategory.MoneyWiseTransCategoryList;
@@ -29,6 +26,8 @@ import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseAccountInfoClass
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseAccountInfoType;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseAccountInfoType.MoneyWiseAccountInfoTypeList;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
+import net.sourceforge.joceanus.moneywise.exc.MoneyWiseDataException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataInfoClass;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataInfoItem;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
@@ -36,7 +35,8 @@ import net.sourceforge.joceanus.prometheus.data.PrometheusDataResource;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataValues;
 import net.sourceforge.joceanus.prometheus.data.PrometheusStaticDataItem;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
+
+import java.util.Iterator;
 
 /**
  * Representation of an information extension of a cash account.
@@ -161,11 +161,11 @@ public class MoneyWiseCashInfo
     @Override
     public String getLinkName() {
         final PrometheusDataItem myItem = getLink();
-        if (myItem instanceof MoneyWisePayee) {
-            return ((MoneyWisePayee) myItem).getName();
+        if (myItem instanceof MoneyWisePayee myPayee) {
+            return myPayee.getName();
         }
-        if (myItem instanceof MoneyWiseTransCategory) {
-            return ((MoneyWiseTransCategory) myItem).getName();
+        if (myItem instanceof MoneyWiseTransCategory myCat) {
+            return myCat.getName();
         }
         return null;
     }

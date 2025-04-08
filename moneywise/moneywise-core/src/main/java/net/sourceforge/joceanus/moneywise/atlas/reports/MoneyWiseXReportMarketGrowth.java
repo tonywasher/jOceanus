@@ -188,8 +188,7 @@ public class MoneyWiseXReportMarketGrowth
     public MetisHTMLTable createDelayedTable(final DelayedTable pTable) {
         /* Access the source */
         final Object mySource = pTable.getSource();
-        if (mySource instanceof MoneyWiseXAnalysisPortfolioBucket) {
-            final MoneyWiseXAnalysisPortfolioBucket mySourceBucket = (MoneyWiseXAnalysisPortfolioBucket) mySource;
+        if (mySource instanceof MoneyWiseXAnalysisPortfolioBucket mySourceBucket) {
             return createDelayedPortfolio(pTable.getParent(), mySourceBucket);
         }
 
@@ -309,9 +308,9 @@ public class MoneyWiseXReportMarketGrowth
     @Override
     public MoneyWiseXAnalysisSecurityFilter processFilter(final Object pSource) {
         /* If this is a SecurityBucket */
-        if (pSource instanceof MoneyWiseXAnalysisSecurityBucket) {
+        if (pSource instanceof MoneyWiseXAnalysisSecurityBucket mySource) {
             /* Create the new filter */
-            return new MoneyWiseXAnalysisSecurityFilter((MoneyWiseXAnalysisSecurityBucket) pSource);
+            return new MoneyWiseXAnalysisSecurityFilter(mySource);
         }
         return null;
     }

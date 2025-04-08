@@ -398,10 +398,10 @@ public class OceanusDecimalFormatter {
      */
     public String formatDecimal(final OceanusDecimal pDecimal) {
         /* Split out special cases */
-        if (pDecimal instanceof OceanusMoney) {
-            return formatMoney((OceanusMoney) pDecimal);
-        } else if (pDecimal instanceof OceanusRate) {
-            return formatRate((OceanusRate) pDecimal);
+        if (pDecimal instanceof OceanusMoney myMoney) {
+            return formatMoney(myMoney);
+        } else if (pDecimal instanceof OceanusRate myRate) {
+            return formatRate(myRate);
         }
 
         /* return the formatted value */

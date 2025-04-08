@@ -478,8 +478,8 @@ public abstract class MetisFieldVersionedItem
      */
     public MetisFieldVersionedDef getVersionedField(final MetisDataFieldId pId) {
         final MetisFieldDef myField = getDataFieldSet().getField(pId);
-        return myField instanceof MetisFieldVersionedDef
-                                                         ? (MetisFieldVersionedDef) myField
+        return myField instanceof MetisFieldVersionedDef myVersioned
+                                                         ? myVersioned
                                                          : null;
     }
 }

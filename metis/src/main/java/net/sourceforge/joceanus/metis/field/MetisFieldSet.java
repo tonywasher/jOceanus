@@ -16,6 +16,12 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.metis.field;
 
+import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
+import net.sourceforge.joceanus.metis.field.MetisFieldItem.MetisFieldDef;
+import net.sourceforge.joceanus.metis.field.MetisFieldItem.MetisFieldItemType;
+import net.sourceforge.joceanus.metis.field.MetisFieldItem.MetisFieldSetDef;
+import net.sourceforge.joceanus.metis.field.MetisFieldItem.MetisFieldVersionedDef;
+
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.HashMap;
@@ -27,12 +33,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
-
-import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
-import net.sourceforge.joceanus.metis.field.MetisFieldItem.MetisFieldDef;
-import net.sourceforge.joceanus.metis.field.MetisFieldItem.MetisFieldItemType;
-import net.sourceforge.joceanus.metis.field.MetisFieldItem.MetisFieldSetDef;
-import net.sourceforge.joceanus.metis.field.MetisFieldItem.MetisFieldVersionedDef;
 
 /**
  * Metis Data FieldSet.
@@ -359,7 +359,9 @@ public class MetisFieldSet<T extends MetisFieldItem>
         final Map<E, MetisFieldDef> myMap = new EnumMap<>(pClazz);
         for (E myValue : pClazz.getEnumConstants()) {
             /* Create an id and callback for the value */
-            final MetisDataFieldId myId = myValue instanceof MetisDataFieldId ? (MetisDataFieldId) myValue : new MetisFieldSimpleId(myValue.toString());
+            final MetisDataFieldId myId = myValue instanceof MetisDataFieldId myFieldId
+                    ? myFieldId
+                    : new MetisFieldSimpleId(myValue.toString());
             final MetisField<T> myField = declareDataField(myId, t -> pValue.apply(t, myValue));
 
             /* Store into the map */

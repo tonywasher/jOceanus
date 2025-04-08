@@ -201,8 +201,8 @@ public class OceanusDataFormatter {
         final Class<?> myClass = pValue.getClass();
 
         /* Handle Native classes */
-        if (pValue instanceof String) {
-            return (String) pValue;
+        if (pValue instanceof String s) {
+            return s;
         }
         if (pValue instanceof Boolean) {
             return Boolean.TRUE.equals(pValue)
@@ -229,45 +229,43 @@ public class OceanusDataFormatter {
         }
 
         /* Handle Class */
-        if (pValue instanceof Class) {
-            return ((Class<?>) pValue).getCanonicalName();
+        if (pValue instanceof Class<?> myClazz) {
+            return myClazz.getCanonicalName();
         }
 
         /* Handle Native array classes */
-        if (pValue instanceof byte[]) {
-            return OceanusDataConverter.bytesToHexString((byte[]) pValue);
+        if (pValue instanceof byte[] ba) {
+            return OceanusDataConverter.bytesToHexString(ba);
         }
-        if (pValue instanceof char[]) {
-            return new String((char[]) pValue);
+        if (pValue instanceof char[] ca) {
+            return new String(ca);
         }
 
         /* Handle date classes */
-        if (pValue instanceof Calendar) {
-            return theDateFormatter.formatCalendarDay((Calendar) pValue);
+        if (pValue instanceof Calendar myCal) {
+            return theDateFormatter.formatCalendarDay(myCal);
         }
-        if (pValue instanceof Date) {
-            return theDateFormatter.formatJavaDate((Date) pValue);
+        if (pValue instanceof Date myDate) {
+            return theDateFormatter.formatJavaDate(myDate);
         }
-        if (pValue instanceof LocalDate) {
-            return theDateFormatter.formatLocalDate((LocalDate) pValue);
+        if (pValue instanceof LocalDate myDate) {
+            return theDateFormatter.formatLocalDate(myDate);
         }
-        if (pValue instanceof OceanusDate) {
-            return theDateFormatter.formatDate((OceanusDate) pValue);
+        if (pValue instanceof OceanusDate myDate) {
+            return theDateFormatter.formatDate(myDate);
         }
-        if (pValue instanceof OceanusDateRange) {
-            return theDateFormatter.formatDateRange((OceanusDateRange) pValue);
+        if (pValue instanceof OceanusDateRange myRange) {
+            return theDateFormatter.formatDateRange(myRange);
         }
 
         /* Handle decimal classes */
-        if (pValue instanceof OceanusDecimal) {
-            return theDecimalFormatter.formatDecimal((OceanusDecimal) pValue);
+        if (pValue instanceof OceanusDecimal myDecimal) {
+            return theDecimalFormatter.formatDecimal(myDecimal);
         }
 
-
         /* Handle TethysProfile */
-        if (pValue instanceof OceanusProfile) {
+        if (pValue instanceof OceanusProfile myProfile) {
             /* Format the profile */
-            final OceanusProfile myProfile = (OceanusProfile) pValue;
             return myProfile.getName()
                     + ": "
                     + (myProfile.isRunning()
@@ -428,10 +426,10 @@ public class OceanusDataFormatter {
         myBuilder.append(myClass.getCanonicalName());
 
         /* Handle list/map instances */
-        if (pValue instanceof List) {
-            formatSize(myBuilder, ((List<?>) pValue).size());
-        } else if (pValue instanceof Map) {
-            formatSize(myBuilder, ((Map<?, ?>) pValue).size());
+        if (pValue instanceof List<?> myList) {
+            formatSize(myBuilder, myList.size());
+        } else if (pValue instanceof Map<?, ?> myMap) {
+            formatSize(myBuilder, myMap.size());
         }
 
         /* Return the value */

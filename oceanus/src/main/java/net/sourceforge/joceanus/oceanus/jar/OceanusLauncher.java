@@ -273,8 +273,8 @@ public final class OceanusLauncher {
         }
 
         /* Try to make file executable */
-        if (!OS_WINDOWS) {
-            pTarget.setExecutable(true);
+        if (!OS_WINDOWS && !pTarget.setExecutable(true)) {
+            throw new OceanusDataException("Failed to set executable indication");
         }
     }
 

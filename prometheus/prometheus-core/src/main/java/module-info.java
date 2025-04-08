@@ -21,6 +21,7 @@ module net.sourceforge.joceanus.prometheus.core {
     /* Java Libraries */
     requires java.prefs;
     requires java.sql;
+    requires java.xml;
 
     /* Oceanus */
     requires net.sourceforge.joceanus.oceanus;
@@ -28,6 +29,7 @@ module net.sourceforge.joceanus.prometheus.core {
     requires net.sourceforge.joceanus.gordianknot;
     requires net.sourceforge.joceanus.metis;
     requires net.sourceforge.joceanus.prometheus.sheet.api;
+    requires org.bouncycastle.provider;
 
     /* Exports */
     exports net.sourceforge.joceanus.prometheus.data;

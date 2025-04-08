@@ -59,8 +59,8 @@ public class MoneyWiseValidatorFactory
             return new MoneyWiseValidateCurrency();
         } else if (pItemType instanceof MoneyWiseStaticDataType) {
             return new PrometheusValidateStatic();
-        } else if (pItemType instanceof MoneyWiseBasicDataType) {
-            switch ((MoneyWiseBasicDataType) pItemType) {
+        } else if (pItemType instanceof MoneyWiseBasicDataType myType) {
+            switch (myType) {
                 case TRANSTAG:
                     return new MoneyWiseValidateTransTag();
                 case REGION:

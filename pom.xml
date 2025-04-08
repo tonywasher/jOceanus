@@ -83,7 +83,7 @@
     <PostGreSQLVersion>42.7.5</PostGreSQLVersion>
     <MSSQLVersion>12.10.0.jre11</MSSQLVersion>
     <H2Version>2.3.232</H2Version>
-    <ApachePOIVersion>5.4.0</ApachePOIVersion>
+    <ApachePOIVersion>5.4.1</ApachePOIVersion>
     <JSoupVersion>1.19.1</JSoupVersion>
     <JFreeChartVersion>1.5.5</JFreeChartVersion>
     <ZipSDKVersion>9.20</ZipSDKVersion>

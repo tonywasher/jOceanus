@@ -346,9 +346,9 @@ public class MetisViewerBuilder {
         final String myText = formatValue(pData);
 
         /* If the Object is a data delta */
-        if (pData instanceof MetisDataDelta) {
+        if (pData instanceof MetisDataDelta myDelta) {
             /* Access the difference */
-            final MetisDataDifference myDiff = ((MetisDataDelta) pData).getDifference();
+            final MetisDataDifference myDiff = myDelta.getDifference();
 
             /* If there is a difference */
             if (!myDiff.isIdentical()) {

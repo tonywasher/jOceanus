@@ -73,16 +73,4 @@ public class JcaDigestFactory
             throw new GordianCryptoException("Failed to create Digest", e);
         }
     }
-
-
-    @Override
-    public boolean validDigestSpec(final GordianDigestSpec pDigestSpec) {
-        /* Perform standard checks */
-        if (!super.validDigestSpec(pDigestSpec)) {
-            return false;
-        }
-
-        /* OK */
-        return true;
-    }
 }

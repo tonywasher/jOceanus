@@ -91,18 +91,18 @@ public class MoneyWiseTransTag
         try {
             /* Store the Name */
             Object myValue = pValues.getValue(PrometheusDataResource.DATAITEM_FIELD_NAME);
-            if (myValue instanceof String) {
-                setValueName((String) myValue);
-            } else if (myValue instanceof byte[]) {
-                setValueName((byte[]) myValue);
+            if (myValue instanceof String s) {
+                setValueName(s);
+            } else if (myValue instanceof byte[] ba) {
+                setValueName(ba);
             }
 
             /* Store the Description */
             myValue = pValues.getValue(PrometheusDataResource.DATAITEM_FIELD_DESC);
-            if (myValue instanceof String) {
-                setValueDesc((String) myValue);
-            } else if (myValue instanceof byte[]) {
-                setValueDesc((byte[]) myValue);
+            if (myValue instanceof String s) {
+                setValueDesc(s);
+            } else if (myValue instanceof byte[] ba) {
+                setValueDesc(ba);
             }
 
             /* Catch Exceptions */

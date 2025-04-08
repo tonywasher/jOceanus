@@ -16,11 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.moneywise.quicken.file;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
-import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysis;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseCash;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataSet;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDeposit;
@@ -36,9 +31,15 @@ import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransaction;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWisePayeeClass;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransCategoryClass;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransInfoClass;
+import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysis;
 import net.sourceforge.joceanus.moneywise.quicken.definitions.MoneyWiseQIFType;
 import net.sourceforge.joceanus.oceanus.date.OceanusDate;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * Builder class for QIF File.
@@ -300,55 +301,54 @@ public class MoneyWiseQIFBuilder {
     protected void processTransfer(final MoneyWiseTransAsset pDebit,
                                    final MoneyWiseTransAsset pCredit,
                                    final MoneyWiseTransaction pTrans) {
-        /* Access details */
-        final MoneyWiseTransCategory myCat = pTrans.getCategory();
-
         /* If this is a cash AutoExpense */
-        if ((pCredit instanceof MoneyWiseCash)
-                && ((MoneyWiseCash) pCredit).isAutoExpense()) {
+        if (pCredit instanceof MoneyWiseCash myCash
+                && myCash.isAutoExpense()) {
             /* Process as standard expense */
-            processCashExpense((MoneyWiseCash) pCredit, pDebit, pTrans);
+            processCashExpense(myCash, pDebit, pTrans);
 
             /* If this is a cash AutoReceipt */
-        } else if ((pDebit instanceof MoneyWiseCash)
-                && ((MoneyWiseCash) pDebit).isAutoExpense()) {
+        } else if (pDebit instanceof MoneyWiseCash myCash
+                && myCash.isAutoExpense()) {
             /* Process as standard expense */
-            processCashReceipt((MoneyWiseCash) pDebit, pCredit, pTrans);
+            processCashReceipt(myCash, pCredit, pTrans);
 
             /* If this is a transfer from a security */
-        } else if (pDebit instanceof MoneyWiseSecurityHolding) {
+        } else if (pDebit instanceof MoneyWiseSecurityHolding myDebitHolding) {
             /* Handle transfer between securities */
-            if (pCredit instanceof MoneyWiseSecurityHolding) {
+            if (pCredit instanceof MoneyWiseSecurityHolding myCreditHolding) {
                 /* process as transfer between securities */
-
-                thePortBuilder.processTransferBetweenSecurities((MoneyWiseSecurityHolding) pDebit, (MoneyWiseSecurityHolding) pCredit, pTrans);
+                thePortBuilder.processTransferBetweenSecurities(myDebitHolding, myCreditHolding, pTrans);
             } else {
                 /* process as transfer from security */
-                thePortBuilder.processTransferFromSecurity((MoneyWiseSecurityHolding) pDebit, pCredit, pTrans);
+                thePortBuilder.processTransferFromSecurity(myDebitHolding, pCredit, pTrans);
             }
             /* If this is a transfer to a security */
-        } else if (pCredit instanceof MoneyWiseSecurityHolding) {
+        } else if (pCredit instanceof MoneyWiseSecurityHolding myCreditHolding) {
             /* process as transfer to security */
-            thePortBuilder.processTransferToSecurity((MoneyWiseSecurityHolding) pCredit, pDebit, pTrans);
+            thePortBuilder.processTransferToSecurity(myCreditHolding, pDebit, pTrans);
 
             /* If this is a transfer from a portfolio */
-        } else if (pDebit instanceof MoneyWisePortfolio) {
+        } else if (pDebit instanceof MoneyWisePortfolio myDebitPortfolio) {
             /* Handle transfer between securities */
-            if (pCredit instanceof MoneyWisePortfolio) {
+            if (pCredit instanceof MoneyWisePortfolio myCreditPortfolio) {
                 /* process as transfer between portfolios */
-                thePortBuilder.processTransferBetweenPortfolios((MoneyWisePortfolio) pDebit, (MoneyWisePortfolio) pCredit, pTrans);
+                thePortBuilder.processTransferBetweenPortfolios(myDebitPortfolio, myCreditPortfolio, pTrans);
             } else {
                 /* process as transfer from portfolio */
-                thePortBuilder.processTransferFromPortfolio((MoneyWisePortfolio) pDebit, pCredit, pTrans);
+                thePortBuilder.processTransferFromPortfolio(myDebitPortfolio, pCredit, pTrans);
             }
             /* If this is a transfer to a portfolio */
-        } else if (pCredit instanceof MoneyWisePortfolio) {
+        } else if (pCredit instanceof MoneyWisePortfolio myCreditPortfolio) {
             /* process as transfer to portfolio */
-            thePortBuilder.processTransferToPortfolio((MoneyWisePortfolio) pCredit, pDebit, pTrans);
+            thePortBuilder.processTransferToPortfolio(myCreditPortfolio, pDebit, pTrans);
 
         } else {
+            /* Access details */
+            final MoneyWiseTransCategoryClass myCat = Objects.requireNonNull(pTrans.getCategoryClass());
+
             /* Switch on category class */
-            switch (myCat.getCategoryTypeClass()) {
+            switch (myCat) {
                 case CASHBACK:
                     /* Process as cashBack payment */
                     processCashBack(pDebit, pCredit, pTrans);
@@ -392,10 +392,7 @@ public class MoneyWiseQIFBuilder {
         if (pTrans.getDeemedBenefit() != null) {
             return true;
         }
-        if (pTrans.getWithheld() != null) {
-            return true;
-        }
-        return false;
+        return pTrans.getWithheld() != null;
     }
 
     /**

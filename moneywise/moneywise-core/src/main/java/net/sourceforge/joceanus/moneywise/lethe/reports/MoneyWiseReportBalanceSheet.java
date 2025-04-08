@@ -469,17 +469,13 @@ public class MoneyWiseReportBalanceSheet
     public MetisHTMLTable createDelayedTable(final DelayedTable pTable) {
         /* Access the source */
         final Object mySource = pTable.getSource();
-        if (mySource instanceof MoneyWiseAnalysisDepositCategoryBucket) {
-            final MoneyWiseAnalysisDepositCategoryBucket mySourceBucket = (MoneyWiseAnalysisDepositCategoryBucket) mySource;
+        if (mySource instanceof MoneyWiseAnalysisDepositCategoryBucket mySourceBucket) {
             return createDelayedDeposit(pTable.getParent(), mySourceBucket);
-        } else if (mySource instanceof MoneyWiseAnalysisCashCategoryBucket) {
-            final MoneyWiseAnalysisCashCategoryBucket mySourceBucket = (MoneyWiseAnalysisCashCategoryBucket) mySource;
+        } else if (mySource instanceof MoneyWiseAnalysisCashCategoryBucket mySourceBucket) {
             return createDelayedCash(pTable.getParent(), mySourceBucket);
-        } else if (mySource instanceof MoneyWiseAnalysisLoanCategoryBucket) {
-            final MoneyWiseAnalysisLoanCategoryBucket mySourceBucket = (MoneyWiseAnalysisLoanCategoryBucket) mySource;
+        } else if (mySource instanceof MoneyWiseAnalysisLoanCategoryBucket mySourceBucket) {
             return createDelayedLoan(pTable.getParent(), mySourceBucket);
-        } else if (mySource instanceof MoneyWiseAnalysisPortfolioBucket) {
-            final MoneyWiseAnalysisPortfolioBucket mySourceBucket = (MoneyWiseAnalysisPortfolioBucket) mySource;
+        } else if (mySource instanceof MoneyWiseAnalysisPortfolioBucket mySourceBucket) {
             return createDelayedPortfolio(pTable.getParent(), mySourceBucket);
         }
 
@@ -769,29 +765,29 @@ public class MoneyWiseReportBalanceSheet
     @Override
     public MoneyWiseAnalysisFilter<?, ?> processFilter(final Object pSource) {
         /* If this is a DepositBucket */
-        if (pSource instanceof MoneyWiseAnalysisDepositBucket) {
+        if (pSource instanceof MoneyWiseAnalysisDepositBucket mySource) {
             /* Create the new filter */
-            return new MoneyWiseAnalysisDepositFilter((MoneyWiseAnalysisDepositBucket) pSource);
+            return new MoneyWiseAnalysisDepositFilter(mySource);
         }
         /* If this is a CashBucket */
-        if (pSource instanceof MoneyWiseAnalysisCashBucket) {
+        if (pSource instanceof MoneyWiseAnalysisCashBucket mySource) {
             /* Create the new filter */
-            return new MoneyWiseAnalysisCashFilter((MoneyWiseAnalysisCashBucket) pSource);
+            return new MoneyWiseAnalysisCashFilter(mySource);
         }
         /* If this is a LoanBucket */
-        if (pSource instanceof MoneyWiseAnalysisLoanBucket) {
+        if (pSource instanceof MoneyWiseAnalysisLoanBucket mySource) {
             /* Create the new filter */
-            return new MoneyWiseAnalysisLoanFilter((MoneyWiseAnalysisLoanBucket) pSource);
+            return new MoneyWiseAnalysisLoanFilter(mySource);
         }
         /* If this is a SecurityBucket */
-        if (pSource instanceof MoneyWiseAnalysisSecurityBucket) {
+        if (pSource instanceof MoneyWiseAnalysisSecurityBucket mySource) {
             /* Create the new filter */
-            return new MoneyWiseAnalysisSecurityFilter((MoneyWiseAnalysisSecurityBucket) pSource);
+            return new MoneyWiseAnalysisSecurityFilter(mySource);
         }
         /* If this is a PortfolioBucket */
-        if (pSource instanceof MoneyWiseAnalysisPortfolioBucket) {
+        if (pSource instanceof MoneyWiseAnalysisPortfolioBucket mySource) {
             /* Create the new filter */
-            return new MoneyWiseAnalysisPortfolioCashFilter((MoneyWiseAnalysisPortfolioBucket) pSource);
+            return new MoneyWiseAnalysisPortfolioCashFilter(mySource);
         }
         return null;
     }

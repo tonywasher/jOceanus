@@ -855,8 +855,8 @@ public class MoneyWiseCash
          */
         public MoneyWiseCash findItemByName(final String pName) {
             final MoneyWiseAssetBase myAsset = theUnderlyingMap.findAssetByName(pName);
-            return myAsset instanceof MoneyWiseCash
-                    ? (MoneyWiseCash) myAsset
+            return myAsset instanceof MoneyWiseCash myCash
+                    ? myCash
                     : null;
         }
 

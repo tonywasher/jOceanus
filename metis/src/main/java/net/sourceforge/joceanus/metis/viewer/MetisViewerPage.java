@@ -16,15 +16,15 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.metis.viewer;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import net.sourceforge.joceanus.metis.data.MetisDataDelta;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataList;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataMap;
 import net.sourceforge.joceanus.metis.field.MetisFieldItem;
 import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Data Viewer Page.
@@ -339,23 +339,23 @@ public class MetisViewerPage {
      */
     private int determineSize() {
         /* handle DataDifference */
-        Object myObject = theObject instanceof MetisDataDelta
-                                                              ? ((MetisDataDelta) theObject).getObject()
+        Object myObject = theObject instanceof MetisDataDelta myDelta
+                                                              ? myDelta.getObject()
                                                               : theObject;
 
         /* handle embedded objects */
-        if (myObject instanceof MetisDataList) {
-            myObject = ((MetisDataList<?>) myObject).getUnderlyingList();
+        if (myObject instanceof MetisDataList<?> myList) {
+            myObject = myList.getUnderlyingList();
         }
-        if (myObject instanceof MetisDataMap) {
-            myObject = ((MetisDataMap<?, ?>) myObject).getUnderlyingMap();
+        if (myObject instanceof MetisDataMap<?, ?> myMap) {
+            myObject = myMap.getUnderlyingMap();
         }
 
         /* Handle multi-page objects */
-        if (myObject instanceof List) {
-            return ((List<?>) myObject).size();
-        } else if (myObject instanceof Map) {
-            return ((Map<?, ?>) myObject).size();
+        if (myObject instanceof List<?> myList) {
+            return myList.size();
+        } else if (myObject instanceof Map<?, ?> myMap) {
+            return myMap.size();
         }
         return -1;
     }
@@ -401,8 +401,8 @@ public class MetisViewerPage {
      */
     private static boolean isCollection(final Object pObject) {
         /* handle DataDifference */
-        final Object myObject = pObject instanceof MetisDataDelta
-                                                                  ? ((MetisDataDelta) pObject).getObject()
+        final Object myObject = pObject instanceof MetisDataDelta myDelta
+                                                                  ? myDelta.getObject()
                                                                   : pObject;
 
         /* Handle extended Lists/Maps */
@@ -423,18 +423,18 @@ public class MetisViewerPage {
      */
     private static boolean isNonEmptyList(final Object pObject) {
         /* handle DataDifference */
-        Object myObject = pObject instanceof MetisDataDelta
-                                                            ? ((MetisDataDelta) pObject).getObject()
+        Object myObject = pObject instanceof MetisDataDelta myDelta
+                                                            ? myDelta.getObject()
                                                             : pObject;
 
         /* handle embedded objects */
-        if (myObject instanceof MetisDataList) {
-            myObject = ((MetisDataList<?>) myObject).getUnderlyingList();
+        if (myObject instanceof MetisDataList<?> myList) {
+            myObject = myList.getUnderlyingList();
         }
 
         /* Handle non-empty lists */
-        return myObject instanceof List
-               && !((List<?>) myObject).isEmpty();
+        return myObject instanceof List<?> myList
+               && !myList.isEmpty();
     }
 
     /**
@@ -449,8 +449,8 @@ public class MetisViewerPage {
         }
 
         /* handle DataDifference */
-        final Object myObject = pObject instanceof MetisDataDelta
-                                                                  ? ((MetisDataDelta) pObject).getObject()
+        final Object myObject = pObject instanceof MetisDataDelta myDelta
+                                                                  ? myDelta.getObject()
                                                                   : pObject;
 
         /* Handle structured object */

@@ -205,8 +205,8 @@ public class MoneyWiseValidateTransInfoSet
                         ? MetisFieldRequired.MUSTEXIST
                         : MetisFieldRequired.NOTALLOWED;
             case TRANSFER:
-                return myAccount instanceof MoneyWiseSecurityHolding
-                        && ((MoneyWiseSecurityHolding) myAccount).getSecurity().isSecurityClass(MoneyWiseSecurityClass.LIFEBOND)
+                return myAccount instanceof MoneyWiseSecurityHolding myHolding
+                        && myHolding.getSecurity().isSecurityClass(MoneyWiseSecurityClass.LIFEBOND)
                         ? MetisFieldRequired.MUSTEXIST
                         : MetisFieldRequired.NOTALLOWED;
             default:
@@ -390,8 +390,8 @@ public class MoneyWiseValidateTransInfoSet
         final MoneyWiseTransAsset myAccount = myTrans.getAccount();
 
         return pCategory == MoneyWiseTransCategoryClass.TRANSFER
-                && myAccount instanceof MoneyWiseSecurityHolding
-                && ((MoneyWiseSecurityHolding) myAccount).getSecurity().isSecurityClass(MoneyWiseSecurityClass.LIFEBOND)
+                && myAccount instanceof MoneyWiseSecurityHolding myHolding
+                && myHolding.getSecurity().isSecurityClass(MoneyWiseSecurityClass.LIFEBOND)
                 ? MetisFieldRequired.MUSTEXIST
                 : MetisFieldRequired.NOTALLOWED;
     }

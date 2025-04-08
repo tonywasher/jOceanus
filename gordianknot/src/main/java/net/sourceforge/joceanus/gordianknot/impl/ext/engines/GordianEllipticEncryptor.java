@@ -443,8 +443,8 @@ public class GordianEllipticEncryptor {
             }
         }
 
-        /* Check validity, disabling short circuit logic */
-        if (myStart == -1 | myBuf[myStart] != 1) {
+        /* Check validity */
+        if (myStart == -1 || myBuf[myStart] != 1) {
             throw new InvalidCipherTextException("Invalid data");
         }
 

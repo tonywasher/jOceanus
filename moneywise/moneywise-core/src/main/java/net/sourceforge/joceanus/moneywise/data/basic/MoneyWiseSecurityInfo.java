@@ -158,11 +158,11 @@ public class MoneyWiseSecurityInfo
     @Override
     public String getLinkName() {
         final PrometheusDataItem myItem = getLink();
-        if (myItem instanceof MoneyWiseRegion) {
-            return ((MoneyWiseRegion) myItem).getName();
+        if (myItem instanceof MoneyWiseRegion myRegion) {
+            return myRegion.getName();
         }
-        if (myItem instanceof MoneyWiseSecurity) {
-            return ((MoneyWiseSecurity) myItem).getName();
+        if (myItem instanceof MoneyWiseSecurity mySecurity) {
+            return mySecurity.getName();
         }
         return null;
     }

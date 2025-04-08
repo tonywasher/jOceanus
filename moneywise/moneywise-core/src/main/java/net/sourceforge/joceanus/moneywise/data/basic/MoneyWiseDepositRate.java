@@ -119,43 +119,41 @@ public class MoneyWiseDepositRate
         try {
             /* Store the Account */
             Object myValue = pValues.getValue(MoneyWiseBasicDataType.DEPOSIT);
-            if (myValue instanceof Integer) {
-                setValueDeposit((Integer) myValue);
-            } else if (myValue instanceof String) {
-                setValueDeposit((String) myValue);
+            if (myValue instanceof Integer i) {
+                setValueDeposit(i);
+            } else if (myValue instanceof String s) {
+                setValueDeposit(s);
             }
 
             /* Store the Rate */
             myValue = pValues.getValue(MoneyWiseBasicResource.MONEYWISEDATA_FIELD_RATE);
-            if (myValue instanceof OceanusRate) {
-                setValueRate((OceanusRate) myValue);
-            } else if (myValue instanceof byte[]) {
-                setValueRate((byte[]) myValue);
-            } else if (myValue instanceof String) {
-                final String myString = (String) myValue;
+            if (myValue instanceof OceanusRate r) {
+                setValueRate(r);
+            } else if (myValue instanceof byte[] ba) {
+                setValueRate(ba);
+            } else if (myValue instanceof String myString) {
                 setValueRate(myString);
                 setValueRate(myFormatter.parseValue(myString, OceanusRate.class));
             }
 
             /* Store the Bonus */
             myValue = pValues.getValue(MoneyWiseBasicResource.DEPOSITRATE_BONUS);
-            if (myValue instanceof OceanusRate) {
-                setValueBonus((OceanusRate) myValue);
-            } else if (myValue instanceof byte[]) {
-                setValueBonus((byte[]) myValue);
-            } else if (myValue instanceof String) {
-                final String myString = (String) myValue;
+            if (myValue instanceof OceanusRate r) {
+                setValueBonus(r);
+            } else if (myValue instanceof byte[] ba) {
+                setValueBonus(ba);
+            } else if (myValue instanceof String myString) {
                 setValueBonus(myString);
                 setValueBonus(myFormatter.parseValue(myString, OceanusRate.class));
             }
 
             /* Store the EndDate */
             myValue = pValues.getValue(MoneyWiseBasicResource.DEPOSITRATE_ENDDATE);
-            if (myValue instanceof OceanusDate) {
-                setValueEndDate((OceanusDate) myValue);
-            } else if (myValue instanceof String) {
+            if (myValue instanceof OceanusDate d) {
+                setValueEndDate(d);
+            } else if (myValue instanceof String s) {
                 final OceanusDateFormatter myParser = myFormatter.getDateFormatter();
-                setValueEndDate(myParser.parseDate((String) myValue));
+                setValueEndDate(myParser.parseDate(s));
             }
 
             /* Catch Exceptions */

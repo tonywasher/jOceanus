@@ -788,7 +788,7 @@ public class GordianSkeinTree
          * Returns an enumeration of the components of this vector.
          * @return the enumeration
          */
-        Enumeration<?> elements() {
+        Enumeration<Object> elements() {
             return new Enumeration<>() {
                 private int count;
 

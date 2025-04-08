@@ -154,42 +154,42 @@ public abstract class PrometheusStaticDataItem
 
             /* Store the Name */
             Object myValue = pValues.getValue(PrometheusDataResource.DATAITEM_FIELD_NAME);
-            if (myValue instanceof String) {
-                setValueName((String) myValue);
-            } else if (myValue instanceof byte[]) {
-                setValueName((byte[]) myValue);
+            if (myValue instanceof String s) {
+                setValueName(s);
+            } else if (myValue instanceof byte[] ba) {
+                setValueName(ba);
             }
 
             /* Store the Description */
             myValue = pValues.getValue(PrometheusDataResource.DATAITEM_FIELD_DESC);
-            if (myValue instanceof String) {
-                setValueDesc((String) myValue);
-            } else if (myValue instanceof byte[]) {
-                setValueDesc((byte[]) myValue);
+            if (myValue instanceof String s) {
+                setValueDesc(s);
+            } else if (myValue instanceof byte[] ba) {
+                setValueDesc(ba);
             }
 
             /* Store the class */
             myValue = pValues.getValue(PrometheusDataResource.STATICDATA_CLASS);
-            if (myValue instanceof String) {
-                parseEnumValue((String) myValue);
+            if (myValue instanceof String s) {
+                parseEnumValue(s);
             } else {
                 parseEnumValue(getIndexedId());
             }
 
             /* Store the Order */
             myValue = pValues.getValue(PrometheusDataResource.STATICDATA_SORT);
-            if (myValue instanceof Integer) {
-                setValueOrder((Integer) myValue);
-            } else if (myValue instanceof String) {
-                setValueOrder(myFormatter.parseValue((String) myValue, Integer.class));
+            if (myValue instanceof Integer i) {
+                setValueOrder(i);
+            } else if (myValue instanceof String s) {
+                setValueOrder(myFormatter.parseValue(s, Integer.class));
             }
 
             /* Store the Enabled flag */
             myValue = pValues.getValue(PrometheusDataResource.STATICDATA_ENABLED);
-            if (myValue instanceof Boolean) {
-                setValueEnabled((Boolean) myValue);
-            } else if (myValue instanceof String) {
-                setValueEnabled(myFormatter.parseValue((String) myValue, Boolean.class));
+            if (myValue instanceof Boolean b) {
+                setValueEnabled(b);
+            } else if (myValue instanceof String s) {
+                setValueEnabled(myFormatter.parseValue(s, Boolean.class));
             } else {
                 setValueEnabled(Boolean.TRUE);
             }

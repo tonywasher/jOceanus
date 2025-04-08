@@ -511,11 +511,8 @@ public class MetisReportHTMLBuilder {
         Object myValue = pValue;
         String myClass = CLASS_DATAVALUE;
 
-        /* If this is an instance of JDecimal */
-        if (myValue instanceof OceanusDecimal) {
-            /* Access as decimal */
-            final OceanusDecimal myDec = (OceanusDecimal) myValue;
-
+        /* If this is an instance of Decimal */
+        if (myValue instanceof OceanusDecimal myDec) {
             /* Ignore value if zero */
             if (myDec.isZero()) {
                 myValue = null;
@@ -740,8 +737,8 @@ public class MetisReportHTMLBuilder {
                                        + pTitle);
 
         /* Cast result to element */
-        return (myParent instanceof Element)
-                                             ? (Element) myParent
+        return myParent instanceof Element myElement
+                                             ? myElement
                                              : null;
     }
 

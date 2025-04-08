@@ -177,21 +177,21 @@ public class MoneyWiseValidateTransDefaults {
                 /* Build default transaction */
                 return buildDefaultTransaction();
             }
-            if (pKey instanceof MoneyWisePayee) {
+            if (pKey instanceof MoneyWisePayee myPayee) {
                 /* Build default payee transaction */
-                return buildDefaultTransactionForPayee((MoneyWisePayee) pKey);
+                return buildDefaultTransactionForPayee(myPayee);
             }
-            if (pKey instanceof MoneyWiseSecurityHolding) {
+            if (pKey instanceof MoneyWiseSecurityHolding myHolding) {
                 /* Build default holding transaction */
-                return buildDefaultTransactionForHolding((MoneyWiseSecurityHolding) pKey);
+                return buildDefaultTransactionForHolding(myHolding);
             }
-            if (pKey instanceof MoneyWiseTransAsset) {
+            if (pKey instanceof MoneyWiseTransAsset myAsset) {
                 /* Build default account transaction */
-                return buildDefaultTransactionForAccount((MoneyWiseTransAsset) pKey);
+                return buildDefaultTransactionForAccount(myAsset);
             }
-            if (pKey instanceof MoneyWiseTransCategory) {
+            if (pKey instanceof MoneyWiseTransCategory myCategory) {
                 /* Build default category transaction */
-                return buildDefaultTransactionForCategory((MoneyWiseTransCategory) pKey);
+                return buildDefaultTransactionForCategory(myCategory);
             }
         } catch (OceanusException e) {
             LOGGER.error("Unable to build transaction", e);
