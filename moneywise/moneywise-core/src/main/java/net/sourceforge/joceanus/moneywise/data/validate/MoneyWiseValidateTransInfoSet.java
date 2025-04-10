@@ -406,6 +406,9 @@ public class MoneyWiseValidateTransInfoSet
         final MoneyWiseDataSet myData = myTrans.getDataSet();
         final MoneyWiseTransAsset myAccount = myTrans.getAccount();
 
+        if (newValidation) {
+            return MetisFieldRequired.CANEXIST;
+        }
         return pCategory.isDividend()
                 && !myAccount.getAssetCurrency().equals(myData.getReportingCurrency())
                 ? MetisFieldRequired.MUSTEXIST

@@ -57,13 +57,13 @@ public class MoneyWiseDataTestCash
 
     @Override
     public void setUpAccounts() throws OceanusException {
-        createPayees(MoneyWiseDataTestAccounts.idPY_ASDA);
-        createDeposits(MoneyWiseDataTestAccounts.idDP_BarclaysCurrent,
-                MoneyWiseDataTestAccounts.idDP_StarlingEuro);
-        createCash(MoneyWiseDataTestAccounts.idCS_Cash,
-                MoneyWiseDataTestAccounts.idCS_EurosCash,
-                MoneyWiseDataTestAccounts.idCS_CashWallet,
-                MoneyWiseDataTestAccounts.idCS_EurosWallet);
+        createPayees(MoneyWiseDataTestAccounts.IDPY_ASDA);
+        createDeposits(MoneyWiseDataTestAccounts.IDDP_BARCLAYS_CURRENT,
+                MoneyWiseDataTestAccounts.IDDP_STARLING_EURO);
+        createCash(MoneyWiseDataTestAccounts.IDCS_CASH,
+                MoneyWiseDataTestAccounts.IDCS_EUROS_CASH,
+                MoneyWiseDataTestAccounts.IDCS_CASH_WALLET,
+                MoneyWiseDataTestAccounts.IDCS_EUROS_WALLET);
     }
 
     @Override
@@ -81,90 +81,90 @@ public class MoneyWiseDataTestCash
     @Override
     public void defineTransactions() throws OceanusException {
         /* A simple payment from one account to autoCash */
-        theTransBuilder.date("01-Jun-1987").category(MoneyWiseDataTestCategories.idTC_Transfer)
-                .account(MoneyWiseDataTestAccounts.idDP_BarclaysCurrent).amount("50")
-                .to().partner(MoneyWiseDataTestAccounts.idCS_Cash)
+        theTransBuilder.date("01-Jun-1987").category(MoneyWiseDataTestCategories.IDTC_TRANSFER)
+                .account(MoneyWiseDataTestAccounts.IDDP_BARCLAYS_CURRENT).amount("50")
+                .to().partner(MoneyWiseDataTestAccounts.IDCS_CASH)
                 .build();
 
         /* A simple refund to one account from autoCash */
-        theTransBuilder.date("02-Jun-1987").category(MoneyWiseDataTestCategories.idTC_Transfer)
-                .account(MoneyWiseDataTestAccounts.idCS_Cash).amount("20")
-                .to().partner(MoneyWiseDataTestAccounts.idDP_BarclaysCurrent)
+        theTransBuilder.date("02-Jun-1987").category(MoneyWiseDataTestCategories.IDTC_TRANSFER)
+                .account(MoneyWiseDataTestAccounts.IDCS_CASH).amount("20")
+                .to().partner(MoneyWiseDataTestAccounts.IDDP_BARCLAYS_CURRENT)
                 .build();
 
         /* A simple payment from autoCash */
-        theTransBuilder.date("03-Jun-1987").category(MoneyWiseDataTestCategories.idTC_ShopFood)
-                .account(MoneyWiseDataTestAccounts.idCS_Cash).amount("12")
-                .to().partner(MoneyWiseDataTestAccounts.idPY_ASDA)
+        theTransBuilder.date("03-Jun-1987").category(MoneyWiseDataTestCategories.IDTC_SHOP_FOOD)
+                .account(MoneyWiseDataTestAccounts.IDCS_CASH).amount("12")
+                .to().partner(MoneyWiseDataTestAccounts.IDPY_ASDA)
                 .build();
 
         /* A simple refund to autoCash */
-        theTransBuilder.date("04-Jun-1987").category(MoneyWiseDataTestCategories.idTC_ShopFood)
-                .account(MoneyWiseDataTestAccounts.idCS_Cash).amount("6")
-                .from().partner(MoneyWiseDataTestAccounts.idPY_ASDA)
+        theTransBuilder.date("04-Jun-1987").category(MoneyWiseDataTestCategories.IDTC_SHOP_FOOD)
+                .account(MoneyWiseDataTestAccounts.IDCS_CASH).amount("6")
+                .from().partner(MoneyWiseDataTestAccounts.IDPY_ASDA)
                 .build();
 
         /* A simple transfer from one account to cash */
-        theTransBuilder.date("05-Jun-1987").category(MoneyWiseDataTestCategories.idTC_Transfer)
-                .account(MoneyWiseDataTestAccounts.idDP_BarclaysCurrent).amount("22")
-                .to().partner(MoneyWiseDataTestAccounts.idCS_CashWallet)
+        theTransBuilder.date("05-Jun-1987").category(MoneyWiseDataTestCategories.IDTC_TRANSFER)
+                .account(MoneyWiseDataTestAccounts.IDDP_BARCLAYS_CURRENT).amount("22")
+                .to().partner(MoneyWiseDataTestAccounts.IDCS_CASH_WALLET)
                 .build();
 
         /* A simple refund to one account from cash */
-        theTransBuilder.date("06-Jun-1987").category(MoneyWiseDataTestCategories.idTC_Transfer)
-                .account(MoneyWiseDataTestAccounts.idCS_CashWallet).amount("7")
-                .to().partner(MoneyWiseDataTestAccounts.idDP_BarclaysCurrent)
+        theTransBuilder.date("06-Jun-1987").category(MoneyWiseDataTestCategories.IDTC_TRANSFER)
+                .account(MoneyWiseDataTestAccounts.IDCS_CASH_WALLET).amount("7")
+                .to().partner(MoneyWiseDataTestAccounts.IDDP_BARCLAYS_CURRENT)
                 .build();
 
         /* A simple payment from one account to autoCash in foreign currency */
-        theTransBuilder.date("07-Jun-1987").category(MoneyWiseDataTestCategories.idTC_Transfer)
-                .account(MoneyWiseDataTestAccounts.idDP_StarlingEuro).amount("65")
-                .to().partner(MoneyWiseDataTestAccounts.idCS_EurosCash)
+        theTransBuilder.date("07-Jun-1987").category(MoneyWiseDataTestCategories.IDTC_TRANSFER)
+                .account(MoneyWiseDataTestAccounts.IDDP_STARLING_EURO).amount("65")
+                .to().partner(MoneyWiseDataTestAccounts.IDCS_EUROS_CASH)
                 .build();
 
         /* A simple refund to one account from autoCash in foreign currency */
-        theTransBuilder.date("08-Jun-1987").category(MoneyWiseDataTestCategories.idTC_Transfer)
-                .account(MoneyWiseDataTestAccounts.idCS_EurosCash).amount("14")
-                .to().partner(MoneyWiseDataTestAccounts.idDP_StarlingEuro)
+        theTransBuilder.date("08-Jun-1987").category(MoneyWiseDataTestCategories.IDTC_TRANSFER)
+                .account(MoneyWiseDataTestAccounts.IDCS_EUROS_CASH).amount("14")
+                .to().partner(MoneyWiseDataTestAccounts.IDDP_STARLING_EURO)
                 .build();
 
         /* A simple payment from autoCash in foreign currency */
-        theTransBuilder.date("09-Jun-1987").category(MoneyWiseDataTestCategories.idTC_ShopFood)
-                .account(MoneyWiseDataTestAccounts.idCS_EurosCash).amount("17")
-                .to().partner(MoneyWiseDataTestAccounts.idPY_ASDA)
+        theTransBuilder.date("09-Jun-1987").category(MoneyWiseDataTestCategories.IDTC_SHOP_FOOD)
+                .account(MoneyWiseDataTestAccounts.IDCS_EUROS_CASH).amount("17")
+                .to().partner(MoneyWiseDataTestAccounts.IDPY_ASDA)
                 .build();
 
         /* A simple refund to autoCash in foreign currency */
-        theTransBuilder.date("10-Jun-1987").category(MoneyWiseDataTestCategories.idTC_ShopFood)
-                .account(MoneyWiseDataTestAccounts.idCS_EurosCash).amount("8")
-                .from().partner(MoneyWiseDataTestAccounts.idPY_ASDA)
+        theTransBuilder.date("10-Jun-1987").category(MoneyWiseDataTestCategories.IDTC_SHOP_FOOD)
+                .account(MoneyWiseDataTestAccounts.IDCS_EUROS_CASH).amount("8")
+                .from().partner(MoneyWiseDataTestAccounts.IDPY_ASDA)
                 .build();
 
         /* A simple transfer from one account to cash in foreign currency */
-        theTransBuilder.date("11-Jun-1987").category(MoneyWiseDataTestCategories.idTC_Transfer)
-                .account(MoneyWiseDataTestAccounts.idDP_StarlingEuro).amount("13")
-                .to().partner(MoneyWiseDataTestAccounts.idCS_EurosWallet)
+        theTransBuilder.date("11-Jun-1987").category(MoneyWiseDataTestCategories.IDTC_TRANSFER)
+                .account(MoneyWiseDataTestAccounts.IDDP_STARLING_EURO).amount("13")
+                .to().partner(MoneyWiseDataTestAccounts.IDCS_EUROS_WALLET)
                 .build();
 
         /* A simple refund to one account from cash in foreign currency */
-        theTransBuilder.date("12-Jun-1987").category(MoneyWiseDataTestCategories.idTC_Transfer)
-                .account(MoneyWiseDataTestAccounts.idCS_EurosWallet).amount("8.5")
-                .to().partner(MoneyWiseDataTestAccounts.idDP_StarlingEuro)
+        theTransBuilder.date("12-Jun-1987").category(MoneyWiseDataTestCategories.IDTC_TRANSFER)
+                .account(MoneyWiseDataTestAccounts.IDCS_EUROS_WALLET).amount("8.5")
+                .to().partner(MoneyWiseDataTestAccounts.IDDP_STARLING_EURO)
                 .build();
     }
 
     @Override
     public void checkAnalysis() {
-        checkAccountValue(MoneyWiseDataTestAccounts.idDP_BarclaysCurrent, "9955");
-        checkAccountValue(MoneyWiseDataTestAccounts.idDP_StarlingEuro, "4697.28");
-        checkAccountValue(MoneyWiseDataTestAccounts.idCS_CashWallet, "25");
-        checkAccountValue(MoneyWiseDataTestAccounts.idCS_EurosWallet, "4.28");
-        checkPayeeValue(MoneyWiseDataTestAccounts.idPY_Market, "247.46", "0");
-        checkPayeeValue(MoneyWiseDataTestAccounts.idPY_ASDA, "0", "14.1");
-        checkPayeeValue(MoneyWiseDataTestAccounts.idPY_CashExpense, "0", "61.8");
-        checkCategoryValue(MoneyWiseDataTestCategories.idTC_MktCurrAdjust, "247.46", "0");
-        checkCategoryValue(MoneyWiseDataTestCategories.idTC_ShopFood, "0", "14.1");
-        checkCategoryValue(MoneyWiseDataTestCategories.idTC_ExpCash, "0", "61.8");
+        checkAccountValue(MoneyWiseDataTestAccounts.IDDP_BARCLAYS_CURRENT, "9955");
+        checkAccountValue(MoneyWiseDataTestAccounts.IDDP_STARLING_EURO, "4697.28");
+        checkAccountValue(MoneyWiseDataTestAccounts.IDCS_CASH_WALLET, "25");
+        checkAccountValue(MoneyWiseDataTestAccounts.IDCS_EUROS_WALLET, "4.28");
+        checkPayeeValue(MoneyWiseDataTestAccounts.IDPY_MARKET, "247.46", "0");
+        checkPayeeValue(MoneyWiseDataTestAccounts.IDPY_ASDA, "0", "14.1");
+        checkPayeeValue(MoneyWiseDataTestAccounts.IDPY_CASH_EXPENSE, "0", "61.8");
+        checkCategoryValue(MoneyWiseDataTestCategories.IDTC_MKT_CURR_ADJUST, "247.46", "0");
+        checkCategoryValue(MoneyWiseDataTestCategories.IDTC_SHOP_FOOD, "0", "14.1");
+        checkCategoryValue(MoneyWiseDataTestCategories.IDTC_EXP_CASH, "0", "61.8");
         checkTaxBasisValue(MoneyWiseTaxClass.MARKET, "247.46");
         checkTaxBasisValue(MoneyWiseTaxClass.EXPENSE, "-75.9");
     }

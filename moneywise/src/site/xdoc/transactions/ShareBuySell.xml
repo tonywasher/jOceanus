@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <document>
   <properties>
-    <title>Simple Share Transactions</title>
+    <title>Buy/Sell Share Transactions</title>
     <author email="tony.washer@yahoo.co.uk">Tony Washer</author>
   </properties>
   <body>
-    <section name="Simple Share Transactions">
+    <section name="Buy/Sell Share Transactions">
       <p>Shares can be bought and sold and have their number of units adjusted.</p>
       <subsection name="Definitions">
         <p>We start with the following accounts and transaction categories</p>
@@ -62,6 +62,18 @@
               <td>Shares</td>
               <td>GBP</td>
             </tr>
+            <tr>
+              <td>HalifaxShares</td>
+              <td>Halifax</td>
+              <td>Shares</td>
+              <td>GBP</td>
+            </tr>
+            <tr>
+              <td>HalifaxSharesUS</td>
+              <td>Halifax</td>
+              <td>Shares</td>
+              <td>USD</td>
+            </tr>
           </table>
         </details>
         <details name="accounts">
@@ -87,6 +99,10 @@
               <td>InteractiveInvestor</td>
               <td>Institution</td>
             </tr>
+            <tr>
+              <td>Halifax</td>
+              <td>Institution</td>
+            </tr>
           </table>
         </details>
         <details name="accounts">
@@ -108,6 +124,10 @@
               <td>Market:Growth</td>
               <td>MarketGrowth</td>
             </tr>
+            <tr>
+              <td>Market:CurrencyAdjust</td>
+              <td>CurrencyFluctuation</td>
+            </tr>
           </table>
         </details>
       </subsection>
@@ -124,6 +144,7 @@
               <th class="defHdr">Direction</th>
               <th class="defHdr">Partner</th>
               <th class="defHdr">AccountDeltaUnits</th>
+              <th class="defHdr">PartnerDeltaUnits</th>
               <th class="defHdr">Price</th>
             </tr>
             <tr>
@@ -139,9 +160,40 @@
               <td>Parents</td>
               <td class="dataValue">3,000.0000</td>
               <td/>
+              <td/>
+            </tr>
+            <tr>
+              <td>02-Jun-1990</td>
+              <td>BarclaysCurrent</td>
+              <td>Transfer</td>
+              <td class="dataValue">£1,000.00</td>
+              <td>To</td>
+              <td>
+                InteractiveInvestorStock:
+                <br/>
+                HalifaxShares
+              </td>
+              <td/>
+              <td class="dataValue">250.0000</td>
+              <td/>
             </tr>
             <tr>
               <td>03-Jun-1990</td>
+              <td>BarclaysCurrent</td>
+              <td>Transfer</td>
+              <td class="dataValue">£1,200.00</td>
+              <td>To</td>
+              <td>
+                InteractiveInvestorStock:
+                <br/>
+                HalifaxSharesUS
+              </td>
+              <td/>
+              <td class="dataValue">500.0000</td>
+              <td/>
+            </tr>
+            <tr>
+              <td>04-Jun-1990</td>
               <td>
                 InteractiveInvestorStock:
                 <br/>
@@ -156,10 +208,60 @@
                 BarclaysShares
               </td>
               <td class="dataValue">300.0000</td>
+              <td/>
               <td class="dataValue">£4.5000</td>
             </tr>
             <tr>
+              <td>05-Jun-1990</td>
+              <td>
+                InteractiveInvestorStock:
+                <br/>
+                HalifaxShares
+              </td>
+              <td>Security:AdjustUnits</td>
+              <td class="dataValue"/>
+              <td>To</td>
+              <td>
+                InteractiveInvestorStock:
+                <br/>
+                HalifaxShares
+              </td>
+              <td class="negValue">-6.0000</td>
+              <td/>
+              <td/>
+            </tr>
+            <tr>
+              <td>06-Jun-1990</td>
+              <td>
+                InteractiveInvestorStock:
+                <br/>
+                HalifaxShares
+              </td>
+              <td>Security:RightsIssue</td>
+              <td class="dataValue">£785.87</td>
+              <td>To</td>
+              <td>BarclaysCurrent</td>
+              <td/>
+              <td/>
+              <td/>
+            </tr>
+            <tr>
               <td>07-Jun-1990</td>
+              <td>
+                InteractiveInvestorStock:
+                <br/>
+                HalifaxShares
+              </td>
+              <td>Security:RightsIssue</td>
+              <td class="dataValue">£112.89</td>
+              <td>From</td>
+              <td>BarclaysCurrent</td>
+              <td class="dataValue">55.0000</td>
+              <td/>
+              <td/>
+            </tr>
+            <tr>
+              <td>08-Jun-1990</td>
               <td>
                 InteractiveInvestorStock:
                 <br/>
@@ -171,9 +273,10 @@
               <td>BarclaysCurrent</td>
               <td/>
               <td/>
+              <td/>
             </tr>
             <tr>
-              <td>08-Jun-1990</td>
+              <td>09-Jun-1990</td>
               <td>
                 InteractiveInvestorStock:
                 <br/>
@@ -185,6 +288,54 @@
               <td>BarclaysCurrent</td>
               <td class="negValue">-600.0000</td>
               <td/>
+              <td/>
+            </tr>
+            <tr>
+              <td>10-Jun-1990</td>
+              <td>
+                InteractiveInvestorStock:
+                <br/>
+                HalifaxSharesUS
+              </td>
+              <td>Transfer</td>
+              <td class="dataValue">$300.00</td>
+              <td>To</td>
+              <td>BarclaysCurrent</td>
+              <td class="negValue">-100.0000</td>
+              <td/>
+              <td/>
+            </tr>
+            <tr>
+              <td>11-Jun-1990</td>
+              <td>
+                InteractiveInvestorStock:
+                <br/>
+                HalifaxShares
+              </td>
+              <td>Security:Closure</td>
+              <td class="dataValue">£673.56</td>
+              <td>To</td>
+              <td>BarclaysCurrent</td>
+              <td/>
+              <td/>
+              <td/>
+            </tr>
+          </table>
+        </details>
+        <details name="data">
+          <summary class="mainDtl">ExchangeRates</summary>
+          <table class="defTable">
+            <tr>
+              <th class="defHdr">Date</th>
+              <th class="defHdr">USD</th>
+            </tr>
+            <tr>
+              <td>06-Apr-1980</td>
+              <td class="dataValue">0.800000</td>
+            </tr>
+            <tr>
+              <td>01-Jan-2025</td>
+              <td class="dataValue">0.850000</td>
             </tr>
           </table>
         </details>
@@ -195,16 +346,19 @@
               <th class="defHdr">Date</th>
               <th class="defHdr">BarclaysShares</th>
               <th class="defHdr">HalifaxShares</th>
+              <th class="defHdr">HalifaxSharesUS</th>
             </tr>
             <tr>
               <td>06-Apr-1980</td>
               <td class="dataValue">£2.0000</td>
               <td class="dataValue">£4.0000</td>
+              <td class="dataValue">$3.0000</td>
             </tr>
             <tr>
               <td>06-Apr-1995</td>
               <td class="dataValue">£5.5000</td>
               <td class="dataValue">£4.5000</td>
+              <td class="dataValue">$5.0000</td>
             </tr>
           </table>
         </details>
@@ -215,53 +369,143 @@
           <summary class="mainDtl">AssetAnalysis</summary>
           <table class="defTable">
             <tr>
-              <th class="defHdr">Date</th>
-              <th class="defHdr">BarclaysCurrent</th>
-              <th class="defHdr">
+              <th class="defHdr" rowspan="2">Date</th>
+              <th class="defHdr" rowspan="2">BarclaysCurrent</th>
+              <th class="defHdr" rowspan="2">
                 InteractiveInvestorStock:
                 <br/>
                 BarclaysShares
               </th>
+              <th class="defHdr" rowspan="2">
+                InteractiveInvestorStock:
+                <br/>
+                HalifaxShares
+              </th>
+              <th class="defHdr" colspan="2">
+                InteractiveInvestorStock:
+                <br/>
+                HalifaxSharesUS
+              </th>
+            </tr>
+            <tr>
+              <th class="defHdr">GBP</th>
+              <th class="defHdr">GBP</th>
             </tr>
             <tr>
               <td>06-Apr-1980</td>
               <td class="dataValue">£10,000.00</td>
               <td/>
               <td/>
+              <td/>
+              <td/>
             </tr>
             <tr>
               <td>01-Jun-1990</td>
               <td class="dataValue">£10,000.00</td>
-              <td/>
               <td class="dataValue">£6,000.00</td>
+              <td/>
+              <td/>
+              <td/>
+            </tr>
+            <tr>
+              <td>02-Jun-1990</td>
+              <td class="dataValue">£9,000.00</td>
+              <td class="dataValue">£6,000.00</td>
+              <td class="dataValue">£1,000.00</td>
+              <td/>
+              <td/>
             </tr>
             <tr>
               <td>03-Jun-1990</td>
-              <td class="dataValue">£10,000.00</td>
-              <td/>
+              <td class="dataValue">£7,800.00</td>
+              <td class="dataValue">£6,000.00</td>
+              <td class="dataValue">£1,000.00</td>
+              <td class="dataValue">$1,500.00</td>
+              <td class="dataValue">£1,200.00</td>
+            </tr>
+            <tr>
+              <td>04-Jun-1990</td>
+              <td class="dataValue">£7,800.00</td>
               <td class="dataValue">£14,850.00</td>
+              <td class="dataValue">£1,000.00</td>
+              <td class="dataValue">$1,500.00</td>
+              <td class="dataValue">£1,200.00</td>
+            </tr>
+            <tr>
+              <td>05-Jun-1990</td>
+              <td class="dataValue">£7,800.00</td>
+              <td class="dataValue">£14,850.00</td>
+              <td class="dataValue">£976.00</td>
+              <td class="dataValue">$1,500.00</td>
+              <td class="dataValue">£1,200.00</td>
+            </tr>
+            <tr>
+              <td>06-Jun-1990</td>
+              <td class="dataValue">£8,585.87</td>
+              <td class="dataValue">£14,850.00</td>
+              <td class="dataValue">£976.00</td>
+              <td class="dataValue">$1,500.00</td>
+              <td class="dataValue">£1,200.00</td>
             </tr>
             <tr>
               <td>07-Jun-1990</td>
-              <td class="dataValue">£10,245.93</td>
-              <td/>
+              <td class="dataValue">£8,472.98</td>
               <td class="dataValue">£14,850.00</td>
+              <td class="dataValue">£1,196.00</td>
+              <td class="dataValue">$1,500.00</td>
+              <td class="dataValue">£1,200.00</td>
             </tr>
             <tr>
               <td>08-Jun-1990</td>
-              <td class="dataValue">£11,030.38</td>
-              <td/>
+              <td class="dataValue">£8,718.91</td>
+              <td class="dataValue">£14,850.00</td>
+              <td class="dataValue">£1,196.00</td>
+              <td class="dataValue">$1,500.00</td>
+              <td class="dataValue">£1,200.00</td>
+            </tr>
+            <tr>
+              <td>09-Jun-1990</td>
+              <td class="dataValue">£9,503.36</td>
               <td class="dataValue">£12,150.00</td>
+              <td class="dataValue">£1,196.00</td>
+              <td class="dataValue">$1,500.00</td>
+              <td class="dataValue">£1,200.00</td>
+            </tr>
+            <tr>
+              <td>10-Jun-1990</td>
+              <td class="dataValue">£9,853.36</td>
+              <td class="dataValue">£12,150.00</td>
+              <td class="dataValue">£1,196.00</td>
+              <td class="dataValue">$1,200.00</td>
+              <td class="dataValue">£960.00</td>
+            </tr>
+            <tr>
+              <td>11-Jun-1990</td>
+              <td class="dataValue">£10,526.92</td>
+              <td class="dataValue">£12,150.00</td>
+              <td class="dataValue"/>
+              <td class="dataValue">$1,200.00</td>
+              <td class="dataValue">£960.00</td>
             </tr>
             <tr>
               <td>06-Apr-1995</td>
-              <td class="dataValue">£11,030.38</td>
-              <td/>
+              <td class="dataValue">£10,526.92</td>
               <td class="dataValue">£14,850.00</td>
+              <td class="dataValue"/>
+              <td class="dataValue">$2,000.00</td>
+              <td class="dataValue">£1,600.00</td>
+            </tr>
+            <tr>
+              <td>01-Jan-2025</td>
+              <td class="dataValue">£10,526.92</td>
+              <td class="dataValue">£14,850.00</td>
+              <td class="dataValue"/>
+              <td class="dataValue">$2,000.00</td>
+              <td class="dataValue">£1,700.00</td>
             </tr>
             <tr>
               <td>Profit</td>
-              <th class="dataValue" colspan="2">£15,880.38</th>
+              <th class="dataValue" colspan="5">£17,076.92</th>
             </tr>
           </table>
         </details>
@@ -293,7 +537,7 @@
                 <td class="dataValue"/>
               </tr>
               <tr>
-                <td>03-Jun-1990</td>
+                <td>04-Jun-1990</td>
                 <td class="dataValue">3,300.0000</td>
                 <td class="dataValue">£4.5000</td>
                 <td class="dataValue">£14,850.00</td>
@@ -304,7 +548,7 @@
                 <td class="dataValue"/>
               </tr>
               <tr>
-                <td>07-Jun-1990</td>
+                <td>08-Jun-1990</td>
                 <td class="dataValue">3,300.0000</td>
                 <td class="dataValue">£4.5000</td>
                 <td class="dataValue">£14,850.00</td>
@@ -315,7 +559,7 @@
                 <td class="dataValue"/>
               </tr>
               <tr>
-                <td>08-Jun-1990</td>
+                <td>09-Jun-1990</td>
                 <td class="dataValue">2,700.0000</td>
                 <td class="dataValue">£4.5000</td>
                 <td class="dataValue">£12,150.00</td>
@@ -338,6 +582,148 @@
               </tr>
             </table>
           </details>
+          <details name="holdings">
+            <summary class="subDtl">InteractiveInvestorStock:HalifaxShares</summary>
+            <table class="defTable">
+              <tr>
+                <th class="defHdr">Date</th>
+                <th class="defHdr">Units</th>
+                <th class="defHdr">Price</th>
+                <th class="defHdr">Valuation</th>
+                <th class="defHdr">ResidualCost</th>
+                <th class="defHdr">RealisedGains</th>
+                <th class="defHdr">UnRealisedGains</th>
+                <th class="defHdr">Profit</th>
+                <th class="defHdr">Funded</th>
+              </tr>
+              <tr>
+                <td>02-Jun-1990</td>
+                <td class="dataValue">250.0000</td>
+                <td class="dataValue">£4.0000</td>
+                <td class="dataValue">£1,000.00</td>
+                <td class="dataValue">£1,000.00</td>
+                <td class="dataValue"/>
+                <td class="dataValue"/>
+                <td/>
+                <td class="dataValue"/>
+              </tr>
+              <tr>
+                <td>05-Jun-1990</td>
+                <td class="dataValue">244.0000</td>
+                <td class="dataValue">£4.0000</td>
+                <td class="dataValue">£976.00</td>
+                <td class="dataValue">£1,000.00</td>
+                <td class="dataValue"/>
+                <td class="negValue">-£24.00</td>
+                <td/>
+                <td class="dataValue"/>
+              </tr>
+              <tr>
+                <td>06-Jun-1990</td>
+                <td class="dataValue">244.0000</td>
+                <td class="dataValue">£4.0000</td>
+                <td class="dataValue">£976.00</td>
+                <td class="dataValue">£214.13</td>
+                <td class="dataValue"/>
+                <td class="dataValue">£761.87</td>
+                <td/>
+                <td class="dataValue"/>
+              </tr>
+              <tr>
+                <td>07-Jun-1990</td>
+                <td class="dataValue">299.0000</td>
+                <td class="dataValue">£4.0000</td>
+                <td class="dataValue">£1,196.00</td>
+                <td class="dataValue">£327.02</td>
+                <td class="dataValue"/>
+                <td class="dataValue">£868.98</td>
+                <td/>
+                <td class="dataValue"/>
+              </tr>
+              <tr>
+                <td>11-Jun-1990</td>
+                <td class="dataValue"/>
+                <td class="dataValue">£4.0000</td>
+                <td class="dataValue"/>
+                <td class="dataValue"/>
+                <td class="dataValue">£346.54</td>
+                <td class="dataValue"/>
+                <td/>
+                <td class="dataValue"/>
+              </tr>
+              <tr>
+                <td>06-Apr-1995</td>
+                <td class="dataValue"/>
+                <td class="dataValue">£4.5000</td>
+                <td class="dataValue"/>
+                <td class="dataValue"/>
+                <td class="dataValue">£346.54</td>
+                <td class="dataValue"/>
+                <td/>
+                <td class="dataValue"/>
+              </tr>
+            </table>
+          </details>
+          <details name="holdings">
+            <summary class="subDtl">InteractiveInvestorStock:HalifaxSharesUS</summary>
+            <table class="defTable">
+              <tr>
+                <th class="defHdr">Date</th>
+                <th class="defHdr">Units</th>
+                <th class="defHdr">Price</th>
+                <th class="defHdr">Valuation</th>
+                <th class="defHdr">ResidualCost</th>
+                <th class="defHdr">RealisedGains</th>
+                <th class="defHdr">UnRealisedGains</th>
+                <th class="defHdr">Profit</th>
+                <th class="defHdr">Funded</th>
+              </tr>
+              <tr>
+                <td>03-Jun-1990</td>
+                <td class="dataValue">500.0000</td>
+                <td class="dataValue">$3.0000</td>
+                <td class="dataValue">£1,200.00</td>
+                <td class="dataValue">£1,200.00</td>
+                <td class="dataValue"/>
+                <td class="dataValue"/>
+                <td/>
+                <td class="dataValue"/>
+              </tr>
+              <tr>
+                <td>10-Jun-1990</td>
+                <td class="dataValue">400.0000</td>
+                <td class="dataValue">$3.0000</td>
+                <td class="dataValue">£960.00</td>
+                <td class="dataValue">£960.00</td>
+                <td class="dataValue"/>
+                <td class="dataValue"/>
+                <td/>
+                <td class="dataValue"/>
+              </tr>
+              <tr>
+                <td>06-Apr-1995</td>
+                <td class="dataValue">400.0000</td>
+                <td class="dataValue">$5.0000</td>
+                <td class="dataValue">£1,600.00</td>
+                <td class="dataValue">£960.00</td>
+                <td class="dataValue"/>
+                <td class="dataValue">£640.00</td>
+                <td/>
+                <td class="dataValue"/>
+              </tr>
+              <tr>
+                <td>01-Jan-2025</td>
+                <td class="dataValue">400.0000</td>
+                <td class="dataValue">$5.0000</td>
+                <td class="dataValue">£1,700.00</td>
+                <td class="dataValue">£960.00</td>
+                <td class="dataValue"/>
+                <td class="dataValue">£640.00</td>
+                <td/>
+                <td class="dataValue"/>
+              </tr>
+            </table>
+          </details>
         </details>
         <details name="analysis">
           <summary class="mainDtl">PayeeAnalysis</summary>
@@ -353,28 +739,68 @@
               <td class="dataValue"/>
             </tr>
             <tr>
+              <td>02-Jun-1990</td>
+              <td class="dataValue">£6,000.00</td>
+              <td class="dataValue"/>
+            </tr>
+            <tr>
               <td>03-Jun-1990</td>
+              <td class="dataValue">£6,000.00</td>
+              <td class="dataValue"/>
+            </tr>
+            <tr>
+              <td>04-Jun-1990</td>
               <td class="dataValue">£6,000.00</td>
               <td class="dataValue">£8,850.00</td>
             </tr>
             <tr>
+              <td>05-Jun-1990</td>
+              <td class="dataValue">£6,000.00</td>
+              <td class="dataValue">£8,826.00</td>
+            </tr>
+            <tr>
+              <td>06-Jun-1990</td>
+              <td class="dataValue">£6,000.00</td>
+              <td class="dataValue">£9,611.87</td>
+            </tr>
+            <tr>
               <td>07-Jun-1990</td>
               <td class="dataValue">£6,000.00</td>
-              <td class="dataValue">£9,095.93</td>
+              <td class="dataValue">£9,718.98</td>
             </tr>
             <tr>
               <td>08-Jun-1990</td>
               <td class="dataValue">£6,000.00</td>
-              <td class="dataValue">£7,180.38</td>
+              <td class="dataValue">£9,964.91</td>
+            </tr>
+            <tr>
+              <td>09-Jun-1990</td>
+              <td class="dataValue">£6,000.00</td>
+              <td class="dataValue">£8,049.36</td>
+            </tr>
+            <tr>
+              <td>10-Jun-1990</td>
+              <td class="dataValue">£6,000.00</td>
+              <td class="dataValue">£8,159.36</td>
+            </tr>
+            <tr>
+              <td>11-Jun-1990</td>
+              <td class="dataValue">£6,000.00</td>
+              <td class="dataValue">£7,636.92</td>
             </tr>
             <tr>
               <td>06-Apr-1995</td>
               <td class="dataValue">£6,000.00</td>
-              <td class="dataValue">£9,880.38</td>
+              <td class="dataValue">£10,976.92</td>
+            </tr>
+            <tr>
+              <td>01-Jan-2025</td>
+              <td class="dataValue">£6,000.00</td>
+              <td class="dataValue">£11,076.92</td>
             </tr>
             <tr>
               <td>Profit</td>
-              <th class="dataValue" colspan="2">£15,880.38</th>
+              <th class="dataValue" colspan="2">£17,076.92</th>
             </tr>
           </table>
         </details>
@@ -398,40 +824,106 @@
                 <br/>
                 Growth
               </th>
+              <th class="defHdr">
+                Market:
+                <br/>
+                CurrencyAdjust
+              </th>
             </tr>
             <tr>
               <td>01-Jun-1990</td>
               <td class="dataValue">£6,000.00</td>
               <td/>
               <td class="dataValue"/>
+              <td/>
+            </tr>
+            <tr>
+              <td>02-Jun-1990</td>
+              <td class="dataValue">£6,000.00</td>
+              <td/>
+              <td class="dataValue"/>
+              <td/>
             </tr>
             <tr>
               <td>03-Jun-1990</td>
               <td class="dataValue">£6,000.00</td>
               <td/>
+              <td class="dataValue"/>
+              <td/>
+            </tr>
+            <tr>
+              <td>04-Jun-1990</td>
+              <td class="dataValue">£6,000.00</td>
+              <td/>
               <td class="dataValue">£8,850.00</td>
+              <td/>
+            </tr>
+            <tr>
+              <td>05-Jun-1990</td>
+              <td class="dataValue">£6,000.00</td>
+              <td/>
+              <td class="dataValue">£8,826.00</td>
+              <td/>
+            </tr>
+            <tr>
+              <td>06-Jun-1990</td>
+              <td class="dataValue">£6,000.00</td>
+              <td/>
+              <td class="dataValue">£9,611.87</td>
+              <td/>
             </tr>
             <tr>
               <td>07-Jun-1990</td>
               <td class="dataValue">£6,000.00</td>
               <td/>
-              <td class="dataValue">£9,095.93</td>
+              <td class="dataValue">£9,718.98</td>
+              <td/>
             </tr>
             <tr>
               <td>08-Jun-1990</td>
               <td class="dataValue">£6,000.00</td>
+              <td/>
+              <td class="dataValue">£9,964.91</td>
+              <td/>
+            </tr>
+            <tr>
+              <td>09-Jun-1990</td>
+              <td class="dataValue">£6,000.00</td>
               <td class="negValue">-£261.74</td>
+              <td class="dataValue">£8,311.10</td>
+              <td/>
+            </tr>
+            <tr>
+              <td>10-Jun-1990</td>
+              <td class="dataValue">£6,000.00</td>
+              <td class="negValue">-£261.74</td>
+              <td class="dataValue">£8,311.10</td>
+              <td class="dataValue">£110.00</td>
+            </tr>
+            <tr>
+              <td>11-Jun-1990</td>
+              <td class="dataValue">£6,000.00</td>
+              <td class="dataValue">£84.80</td>
               <td class="dataValue">£7,442.12</td>
+              <td class="dataValue">£110.00</td>
             </tr>
             <tr>
               <td>06-Apr-1995</td>
               <td class="dataValue">£6,000.00</td>
-              <td class="negValue">-£261.74</td>
-              <td class="dataValue">£10,142.12</td>
+              <td class="dataValue">£84.80</td>
+              <td class="dataValue">£10,782.12</td>
+              <td class="dataValue">£110.00</td>
+            </tr>
+            <tr>
+              <td>01-Jan-2025</td>
+              <td class="dataValue">£6,000.00</td>
+              <td class="dataValue">£84.80</td>
+              <td class="dataValue">£10,782.12</td>
+              <td class="dataValue">£210.00</td>
             </tr>
             <tr>
               <td>Profit</td>
-              <th class="dataValue" colspan="3">£15,880.38</th>
+              <th class="dataValue" colspan="4">£17,076.92</th>
             </tr>
           </table>
         </details>
@@ -451,32 +943,80 @@
               <td class="dataValue"/>
             </tr>
             <tr>
+              <td>02-Jun-1990</td>
+              <td/>
+              <td class="dataValue">£6,000.00</td>
+              <td class="dataValue"/>
+            </tr>
+            <tr>
               <td>03-Jun-1990</td>
+              <td/>
+              <td class="dataValue">£6,000.00</td>
+              <td class="dataValue"/>
+            </tr>
+            <tr>
+              <td>04-Jun-1990</td>
               <td/>
               <td class="dataValue">£6,000.00</td>
               <td class="dataValue">£8,850.00</td>
             </tr>
             <tr>
+              <td>05-Jun-1990</td>
+              <td/>
+              <td class="dataValue">£6,000.00</td>
+              <td class="dataValue">£8,826.00</td>
+            </tr>
+            <tr>
+              <td>06-Jun-1990</td>
+              <td/>
+              <td class="dataValue">£6,000.00</td>
+              <td class="dataValue">£9,611.87</td>
+            </tr>
+            <tr>
               <td>07-Jun-1990</td>
               <td/>
               <td class="dataValue">£6,000.00</td>
-              <td class="dataValue">£9,095.93</td>
+              <td class="dataValue">£9,718.98</td>
             </tr>
             <tr>
               <td>08-Jun-1990</td>
+              <td/>
+              <td class="dataValue">£6,000.00</td>
+              <td class="dataValue">£9,964.91</td>
+            </tr>
+            <tr>
+              <td>09-Jun-1990</td>
               <td class="negValue">-£261.74</td>
               <td class="dataValue">£6,000.00</td>
-              <td class="dataValue">£7,442.12</td>
+              <td class="dataValue">£8,311.10</td>
+            </tr>
+            <tr>
+              <td>10-Jun-1990</td>
+              <td class="negValue">-£261.74</td>
+              <td class="dataValue">£6,000.00</td>
+              <td class="dataValue">£8,421.10</td>
+            </tr>
+            <tr>
+              <td>11-Jun-1990</td>
+              <td class="dataValue">£84.80</td>
+              <td class="dataValue">£6,000.00</td>
+              <td class="dataValue">£7,552.12</td>
             </tr>
             <tr>
               <td>06-Apr-1995</td>
-              <td class="negValue">-£261.74</td>
+              <td class="dataValue">£84.80</td>
               <td class="dataValue">£6,000.00</td>
-              <td class="dataValue">£10,142.12</td>
+              <td class="dataValue">£10,892.12</td>
+            </tr>
+            <tr>
+              <td>01-Jan-2025</td>
+              <td class="dataValue">£84.80</td>
+              <td class="dataValue">£6,000.00</td>
+              <td class="dataValue">£10,992.12</td>
             </tr>
             <tr>
               <td>Profit</td>
-              <th class="dataValue" colspan="3">£15,880.38</th>
+              <th class="dataValue" colspan="3">£17,076.92</th>
             </tr>
           </table>
         </details>

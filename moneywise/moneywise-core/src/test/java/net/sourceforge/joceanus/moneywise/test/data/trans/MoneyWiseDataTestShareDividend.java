@@ -22,9 +22,9 @@ import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransInfoClass;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 /**
- * Test Basic Share transactions.
+ * Test Dividend Share transactions.
  */
-public class MoneyWiseDataTestShareBuySell
+public class MoneyWiseDataTestShareDividend
         extends MoneyWiseDataTestCase {
     /**
      * TransactionBuilder.
@@ -34,7 +34,7 @@ public class MoneyWiseDataTestShareBuySell
     /**
      * Constructor.
      */
-    public MoneyWiseDataTestShareBuySell(final MoneyWiseDataTestAccounts pBuilder) {
+    public MoneyWiseDataTestShareDividend(final MoneyWiseDataTestAccounts pBuilder) {
         /* Store parameters */
         super(pBuilder);
         theTransBuilder = getTransBuilder();
@@ -42,12 +42,12 @@ public class MoneyWiseDataTestShareBuySell
 
     @Override
     public String getName() {
-        return "ShareBuySell";
+        return "ShareDividend";
     }
 
     @Override
     public String getTitle() {
-        return "Buy/Sell Share Transactions";
+        return "Share Dividend Transactions";
     }
 
     @Override
@@ -58,10 +58,10 @@ public class MoneyWiseDataTestShareBuySell
     @Override
     public void setUpAccounts() throws OceanusException {
         createPayees(MoneyWiseDataTestAccounts.IDPY_PARENTS);
-        createDeposits(MoneyWiseDataTestAccounts.IDDP_BARCLAYS_CURRENT);
+        createDeposits(MoneyWiseDataTestAccounts.IDDP_BARCLAYS_CURRENT,
+                MoneyWiseDataTestAccounts.IDDP_STARLING_DOLLAR);
         createPortfolios(MoneyWiseDataTestAccounts.IDPF_INTERACTIVE_INVESTOR_STOCK);
         createSecurities(MoneyWiseDataTestAccounts.IDSC_BARCLAYS_SHARES,
-                MoneyWiseDataTestAccounts.IDSC_HALIFAX_SHARES,
                 MoneyWiseDataTestAccounts.IDSC_HALIFAX_SHARES_US);
     }
 
@@ -74,10 +74,8 @@ public class MoneyWiseDataTestShareBuySell
     @Override
     public void definePrices() throws OceanusException {
         createSecPrice(MoneyWiseDataTestAccounts.IDSC_BARCLAYS_SHARES, "06-Apr-1980", "2");
-        createSecPrice(MoneyWiseDataTestAccounts.IDSC_HALIFAX_SHARES, "06-Apr-1980", "4");
         createSecPrice(MoneyWiseDataTestAccounts.IDSC_HALIFAX_SHARES_US, "06-Apr-1980", "3");
         createSecPrice(MoneyWiseDataTestAccounts.IDSC_BARCLAYS_SHARES, "06-Apr-1995", "5.50");
-        createSecPrice(MoneyWiseDataTestAccounts.IDSC_HALIFAX_SHARES, "06-Apr-1995", "4.50");
         createSecPrice(MoneyWiseDataTestAccounts.IDSC_HALIFAX_SHARES_US, "06-Apr-1995", "5");
     }
 
@@ -85,8 +83,6 @@ public class MoneyWiseDataTestShareBuySell
     public boolean useInfoClass(final MoneyWiseTransInfoClass pInfoClass) {
         switch (pInfoClass) {
             case ACCOUNTDELTAUNITS:
-            case PARTNERDELTAUNITS:
-            case PRICE:
             case PARTNERAMOUNT:
                 return true;
             default:
@@ -96,73 +92,43 @@ public class MoneyWiseDataTestShareBuySell
 
     @Override
     public void defineTransactions() throws OceanusException {
-        /* A simple inheritance of shares */
-        theTransBuilder.date("01-Jun-1990").category(MoneyWiseDataTestCategories.IDTC_INHERITANCE)
+        /* Build local share holding */
+        theTransBuilder.date("01-Jul-1990").category(MoneyWiseDataTestCategories.IDTC_INHERITANCE)
                 .account(MoneyWiseDataTestAccounts.IDSH_BARCLAYS_SHARES).amount("6000")
                 .from().partner(MoneyWiseDataTestAccounts.IDPY_PARENTS).accountUnits("3000")
                 .build();
 
-        /* A simple buying of shares from a deposit account */
-        theTransBuilder.date("02-Jun-1990").category(MoneyWiseDataTestCategories.IDTC_TRANSFER)
-                .account(MoneyWiseDataTestAccounts.IDDP_BARCLAYS_CURRENT).amount("1000")
-                .to().partner(MoneyWiseDataTestAccounts.IDSH_HALIFAX_SHARES).partnerUnits("250")
+        /* Build foreign shareholding */
+        theTransBuilder.date("02-Jul-1990").category(MoneyWiseDataTestCategories.IDTC_INHERITANCE)
+                .account(MoneyWiseDataTestAccounts.IDSH_HALIFAX_SHARES_US).amount("6000")
+                .from().partner(MoneyWiseDataTestAccounts.IDPY_PARENTS)
+                .accountUnits("2000")
                 .build();
 
-        /* A simple buying of foreign shares from a deposit account */
-        theTransBuilder.date("03-Jun-1990").category(MoneyWiseDataTestCategories.IDTC_TRANSFER)
-                .account(MoneyWiseDataTestAccounts.IDDP_BARCLAYS_CURRENT).amount("1200")
-                .to().partner(MoneyWiseDataTestAccounts.IDSH_HALIFAX_SHARES_US)
-                .partnerUnits("500").partnerAmount("1500")
+        /* A simple dividend to deposit */
+        theTransBuilder.date("03-Jul-1990").category(MoneyWiseDataTestCategories.IDTC_DIVIDEND)
+                .account(MoneyWiseDataTestAccounts.IDSH_BARCLAYS_SHARES).amount("1200")
+                .to().partner(MoneyWiseDataTestAccounts.IDDP_BARCLAYS_CURRENT).taxCredit("200")
                 .build();
 
-        /* A simple stock split */
-        theTransBuilder.date("04-Jun-1990").category(MoneyWiseDataTestCategories.IDTC_SEC_STOCK_SPLIT)
-                .account(MoneyWiseDataTestAccounts.IDSH_BARCLAYS_SHARES)
+        /* A simple foreign dividend to deposit */
+        theTransBuilder.date("04-Jul-1990").category(MoneyWiseDataTestCategories.IDTC_DIVIDEND)
+                .account(MoneyWiseDataTestAccounts.IDSH_HALIFAX_SHARES_US).amount("200.00")
+                .to().partner(MoneyWiseDataTestAccounts.IDDP_BARCLAYS_CURRENT)
+                .partnerAmount("180.00").taxCredit("60.00")
+                .build();
+
+        /* A simple foreign dividend to deposit */
+        //theTransBuilder.date("05-Jul-1990").category(MoneyWiseDataTestCategories.IDTC_DIVIDEND)
+        //        .account(MoneyWiseDataTestAccounts.IDSH_HALIFAX_SHARES_US).amount("200.00")
+        //        .to().partner(MoneyWiseDataTestAccounts.IDDP_STARLING_DOLLAR).taxCredit("60.00")
+        //        .build();
+
+        /* A simple reinvested dividend */
+        theTransBuilder.date("06-Jul-1990").category(MoneyWiseDataTestCategories.IDTC_DIVIDEND)
+                .account(MoneyWiseDataTestAccounts.IDSH_BARCLAYS_SHARES).amount("150.00")
                 .to().partner(MoneyWiseDataTestAccounts.IDSH_BARCLAYS_SHARES)
-                .accountUnits("300").price("4.5")
-                .build();
-
-        /* A simple adjustment of units */
-        theTransBuilder.date("05-Jun-1990").category(MoneyWiseDataTestCategories.IDTC_SEC_ADJUST)
-                .account(MoneyWiseDataTestAccounts.IDSH_HALIFAX_SHARES)
-                .to().partner(MoneyWiseDataTestAccounts.IDSH_HALIFAX_SHARES).accountUnits("-6")
-                .build();
-
-        /* A simple rights issue waived */
-        theTransBuilder.date("06-Jun-1990").category(MoneyWiseDataTestCategories.IDTC_SEC_RIGHTS_ISSUE)
-                .account(MoneyWiseDataTestAccounts.IDSH_HALIFAX_SHARES).amount("785.87")
-                .to().partner(MoneyWiseDataTestAccounts.IDDP_BARCLAYS_CURRENT)
-                .build();
-
-        /* A simple rights issue taken */
-        theTransBuilder.date("07-Jun-1990").category(MoneyWiseDataTestCategories.IDTC_SEC_RIGHTS_ISSUE)
-                .account(MoneyWiseDataTestAccounts.IDSH_HALIFAX_SHARES).amount("112.89")
-                .from().partner(MoneyWiseDataTestAccounts.IDDP_BARCLAYS_CURRENT).accountUnits("55")
-                .build();
-
-        /* A simple return of capital */
-        theTransBuilder.date("08-Jun-1990").category(MoneyWiseDataTestCategories.IDTC_TRANSFER)
-                .account(MoneyWiseDataTestAccounts.IDSH_BARCLAYS_SHARES).amount("245.93")
-                .to().partner(MoneyWiseDataTestAccounts.IDDP_BARCLAYS_CURRENT)
-                .build();
-
-        /* A partial sale */
-        theTransBuilder.date("09-Jun-1990").category(MoneyWiseDataTestCategories.IDTC_TRANSFER)
-                .account(MoneyWiseDataTestAccounts.IDSH_BARCLAYS_SHARES).amount("784.45")
-                .to().partner(MoneyWiseDataTestAccounts.IDDP_BARCLAYS_CURRENT).accountUnits("-600")
-                .build();
-
-        /* A partial sale */
-        theTransBuilder.date("10-Jun-1990").category(MoneyWiseDataTestCategories.IDTC_TRANSFER)
-                .account(MoneyWiseDataTestAccounts.IDSH_HALIFAX_SHARES_US).amount("300.00")
-                .to().partner(MoneyWiseDataTestAccounts.IDDP_BARCLAYS_CURRENT)
-                .accountUnits("-100").partnerAmount("350.00")
-                .build();
-
-        /* A full sale */
-        theTransBuilder.date("11-Jun-1990").category(MoneyWiseDataTestCategories.IDTC_SEC_CLOSE)
-                .account(MoneyWiseDataTestAccounts.IDSH_HALIFAX_SHARES).amount("673.56")
-                .to().partner(MoneyWiseDataTestAccounts.IDDP_BARCLAYS_CURRENT)
+                .accountUnits("20").taxCredit("30.00")
                 .build();
     }
 

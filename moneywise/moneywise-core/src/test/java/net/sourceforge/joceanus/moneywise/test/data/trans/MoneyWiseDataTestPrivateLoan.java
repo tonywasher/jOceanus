@@ -56,9 +56,9 @@ public class MoneyWiseDataTestPrivateLoan
 
     @Override
     public void setUpAccounts() throws OceanusException {
-        createPayees(MoneyWiseDataTestAccounts.idPY_Damage);
-        createDeposits(MoneyWiseDataTestAccounts.idDP_BarclaysCurrent);
-        createLoans(MoneyWiseDataTestAccounts.idLN_DamageLoan);
+        createPayees(MoneyWiseDataTestAccounts.IDPY_DAMAGE);
+        createDeposits(MoneyWiseDataTestAccounts.IDDP_BARCLAYS_CURRENT);
+        createLoans(MoneyWiseDataTestAccounts.IDLN_DAMAGE_LOAN);
     }
 
     /**
@@ -68,43 +68,43 @@ public class MoneyWiseDataTestPrivateLoan
     @Override
     public void defineTransactions() throws OceanusException {
         /* Create the loan */
-        theTransBuilder.date("01-Mar-1986").category(MoneyWiseDataTestCategories.idTC_Transfer)
-                .account(MoneyWiseDataTestAccounts.idDP_BarclaysCurrent).amount("1000.00")
-                .to().partner(MoneyWiseDataTestAccounts.idLN_DamageLoan)
+        theTransBuilder.date("01-Mar-1986").category(MoneyWiseDataTestCategories.IDTC_TRANSFER)
+                .account(MoneyWiseDataTestAccounts.IDDP_BARCLAYS_CURRENT).amount("1000.00")
+                .to().partner(MoneyWiseDataTestAccounts.IDLN_DAMAGE_LOAN)
                 .build();
 
         /* Interest Charge on loan */
-        theTransBuilder.date("02-Mar-1986").category(MoneyWiseDataTestCategories.idTC_LoanInterest)
-                .account(MoneyWiseDataTestAccounts.idLN_DamageLoan).amount("10.00")
-                .to().partner(MoneyWiseDataTestAccounts.idLN_DamageLoan)
+        theTransBuilder.date("02-Mar-1986").category(MoneyWiseDataTestCategories.IDTC_LOAN_INTEREST)
+                .account(MoneyWiseDataTestAccounts.IDLN_DAMAGE_LOAN).amount("10.00")
+                .to().partner(MoneyWiseDataTestAccounts.IDLN_DAMAGE_LOAN)
                 .build();
 
         /* Refund of Interest Charge on loan */
-        theTransBuilder.date("02-Mar-1986").category(MoneyWiseDataTestCategories.idTC_LoanInterest)
-                .account(MoneyWiseDataTestAccounts.idLN_DamageLoan).amount("1.00")
-                .from().partner(MoneyWiseDataTestAccounts.idLN_DamageLoan)
+        theTransBuilder.date("02-Mar-1986").category(MoneyWiseDataTestCategories.IDTC_LOAN_INTEREST)
+                .account(MoneyWiseDataTestAccounts.IDLN_DAMAGE_LOAN).amount("1.00")
+                .from().partner(MoneyWiseDataTestAccounts.IDLN_DAMAGE_LOAN)
                 .build();
 
         /* WriteOff some of loan */
-        theTransBuilder.date("03-Mar-1986").category(MoneyWiseDataTestCategories.idTC_LoanWriteDown)
-                .account(MoneyWiseDataTestAccounts.idLN_DamageLoan).amount("489")
-                .from().partner(MoneyWiseDataTestAccounts.idLN_DamageLoan)
+        theTransBuilder.date("03-Mar-1986").category(MoneyWiseDataTestCategories.IDTC_LOAN_WRITE_DOWN)
+                .account(MoneyWiseDataTestAccounts.IDLN_DAMAGE_LOAN).amount("489")
+                .from().partner(MoneyWiseDataTestAccounts.IDLN_DAMAGE_LOAN)
                 .build();
 
         /* Refund of WriteOff some of loan */
-        theTransBuilder.date("04-Mar-1986").category(MoneyWiseDataTestCategories.idTC_LoanWriteDown)
-                .account(MoneyWiseDataTestAccounts.idLN_DamageLoan).amount("23")
-                .to().partner(MoneyWiseDataTestAccounts.idLN_DamageLoan)
+        theTransBuilder.date("04-Mar-1986").category(MoneyWiseDataTestCategories.IDTC_LOAN_WRITE_DOWN)
+                .account(MoneyWiseDataTestAccounts.IDLN_DAMAGE_LOAN).amount("23")
+                .to().partner(MoneyWiseDataTestAccounts.IDLN_DAMAGE_LOAN)
                 .build();
     }
 
     @Override
     public void checkAnalysis() {
-        checkAccountValue(MoneyWiseDataTestAccounts.idDP_BarclaysCurrent, "9000.00");
-        checkAccountValue(MoneyWiseDataTestAccounts.idLN_DamageLoan, "543.00");
-        checkPayeeValue(MoneyWiseDataTestAccounts.idPY_Damage, "9.00", "466.00");
-        checkCategoryValue(MoneyWiseDataTestCategories.idTC_LoanInterest, "9.00", "0");
-        checkCategoryValue(MoneyWiseDataTestCategories.idTC_LoanWriteDown, "0", "466.00");
+        checkAccountValue(MoneyWiseDataTestAccounts.IDDP_BARCLAYS_CURRENT, "9000.00");
+        checkAccountValue(MoneyWiseDataTestAccounts.IDLN_DAMAGE_LOAN, "543.00");
+        checkPayeeValue(MoneyWiseDataTestAccounts.IDPY_DAMAGE, "9.00", "466.00");
+        checkCategoryValue(MoneyWiseDataTestCategories.IDTC_LOAN_INTEREST, "9.00", "0");
+        checkCategoryValue(MoneyWiseDataTestCategories.IDTC_LOAN_WRITE_DOWN, "0", "466.00");
         checkTaxBasisValue(MoneyWiseTaxClass.EXPENSE, "-466.00");
         checkTaxBasisValue(MoneyWiseTaxClass.TAXFREE, "9.00");
     }

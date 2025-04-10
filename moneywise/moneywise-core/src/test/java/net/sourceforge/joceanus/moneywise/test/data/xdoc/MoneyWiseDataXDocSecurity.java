@@ -234,7 +234,7 @@ public class MoneyWiseDataXDocSecurity {
             final MoneyWiseXAnalysisSecurityBucket myBucket = mySecIterator.next();
             if (myBucket.isForeignCurrency()) {
                 theReport.newHeader();
-                theReport.setCellValue(myBucket.getPortfolio().getAssetCurrency().getName());
+                theReport.setCellValue(myBucket.getSecurity().getAssetCurrency().getName());
                 theReport.newHeader();
                 theReport.setCellValue(myCurrency.getName());
             }
@@ -336,6 +336,9 @@ public class MoneyWiseDataXDocSecurity {
      * @param pHolding the security holding bucket
      */
     private void createHoldingHistory(final MoneyWiseXAnalysisSecurityBucket pHolding) {
+        /* Access security holding */
+        final MoneyWiseSecurityHolding myHolding = pHolding.getSecurityHolding();
+
         /* Create the table */
         if (firstHolding) {
             theReport.newOpenSubDetail(MoneyWiseDataXDocBuilder.GRP_HOLDINGS, pHolding.getDecoratedName());
@@ -354,7 +357,7 @@ public class MoneyWiseDataXDocSecurity {
         /* Add any required attributes to header */
         for (MoneyWiseXAnalysisSecurityAttr myAttr : MoneyWiseXAnalysisSecurityAttr.values()) {
             /* If we are using this attribute */
-            if (theTest.useSecurityAttr(myAttr)) {
+            if (theTest.useSecurityAttr(myAttr, myHolding)) {
                 /* Add the header */
                 theReport.newHeader();
                 theReport.setCellValue(myAttr.toString());
@@ -393,7 +396,7 @@ public class MoneyWiseDataXDocSecurity {
             /* Add any required attribute values */
             for (MoneyWiseXAnalysisSecurityAttr myAttr : MoneyWiseXAnalysisSecurityAttr.values()) {
                 /* If we are using this attribute */
-                if (theTest.useSecurityAttr(myAttr)) {
+                if (theTest.useSecurityAttr(myAttr, myHolding)) {
                     /* Add the header */
                     theReport.newCell();
                     final OceanusDecimal myValue = myValues.getDecimalValue(myAttr);

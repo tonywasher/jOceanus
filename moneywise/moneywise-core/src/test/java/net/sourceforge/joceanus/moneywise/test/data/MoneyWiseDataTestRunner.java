@@ -30,6 +30,7 @@ import net.sourceforge.joceanus.moneywise.test.data.trans.MoneyWiseDataTestMortg
 import net.sourceforge.joceanus.moneywise.test.data.trans.MoneyWiseDataTestPayeeIncome;
 import net.sourceforge.joceanus.moneywise.test.data.trans.MoneyWiseDataTestPrivateLoan;
 import net.sourceforge.joceanus.moneywise.test.data.trans.MoneyWiseDataTestShareBuySell;
+import net.sourceforge.joceanus.moneywise.test.data.trans.MoneyWiseDataTestShareDividend;
 import net.sourceforge.joceanus.moneywise.test.data.trans.MoneyWiseDataTestTransfers;
 import net.sourceforge.joceanus.moneywise.test.data.xdoc.MoneyWiseDataXDocBuilder;
 import net.sourceforge.joceanus.moneywise.views.MoneyWiseView;
@@ -142,6 +143,7 @@ public class MoneyWiseDataTestRunner {
         myList.add(new MoneyWiseDataTestMortgage(theAccountBuilder));
         myList.add(new MoneyWiseDataTestPrivateLoan(theAccountBuilder));
         myList.add(new MoneyWiseDataTestShareBuySell(theAccountBuilder));
+        myList.add(new MoneyWiseDataTestShareDividend(theAccountBuilder));
         return myList;
     }
 

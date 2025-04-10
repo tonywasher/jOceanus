@@ -57,9 +57,9 @@ public class MoneyWiseDataTestMortgage
 
     @Override
     public void setUpAccounts() throws OceanusException {
-        createPayees(MoneyWiseDataTestAccounts.idPY_Barclays);
-        createDeposits(MoneyWiseDataTestAccounts.idDP_BarclaysCurrent);
-        createLoans(MoneyWiseDataTestAccounts.idLN_BarclaysMortgage);
+        createPayees(MoneyWiseDataTestAccounts.IDPY_BARCLAYS);
+        createDeposits(MoneyWiseDataTestAccounts.IDDP_BARCLAYS_CURRENT);
+        createLoans(MoneyWiseDataTestAccounts.IDLN_BARCLAYS_MORTGAGE);
     }
 
     @Override
@@ -74,32 +74,32 @@ public class MoneyWiseDataTestMortgage
     @Override
     public void defineTransactions() throws OceanusException {
         /* Create the mortgage */
-        theTransBuilder.date("01-Feb-1986").category(MoneyWiseDataTestCategories.idTC_Transfer)
-                .account(MoneyWiseDataTestAccounts.idLN_BarclaysMortgage).amount("50000.00")
-                .to().partner(MoneyWiseDataTestAccounts.idDP_BarclaysCurrent)
+        theTransBuilder.date("01-Feb-1986").category(MoneyWiseDataTestCategories.IDTC_TRANSFER)
+                .account(MoneyWiseDataTestAccounts.IDLN_BARCLAYS_MORTGAGE).amount("50000.00")
+                .to().partner(MoneyWiseDataTestAccounts.IDDP_BARCLAYS_CURRENT)
                 .build();
 
         /* Payment on mortgage */
-        theTransBuilder.date("02-Feb-1986").category(MoneyWiseDataTestCategories.idTC_Transfer)
-                .account(MoneyWiseDataTestAccounts.idDP_BarclaysCurrent).amount("1000.00")
-                .to().partner(MoneyWiseDataTestAccounts.idLN_BarclaysMortgage)
+        theTransBuilder.date("02-Feb-1986").category(MoneyWiseDataTestCategories.IDTC_TRANSFER)
+                .account(MoneyWiseDataTestAccounts.IDDP_BARCLAYS_CURRENT).amount("1000.00")
+                .to().partner(MoneyWiseDataTestAccounts.IDLN_BARCLAYS_MORTGAGE)
                 .build();
 
         /* Interest Payment on Mortgage */
-        theTransBuilder.date("03-Feb-1986").category(MoneyWiseDataTestCategories.idTC_MortgageInterest)
-                .account(MoneyWiseDataTestAccounts.idLN_BarclaysMortgage).amount("1876.49")
-                .from().partner(MoneyWiseDataTestAccounts.idLN_BarclaysMortgage).taxCredit("523.87")
+        theTransBuilder.date("03-Feb-1986").category(MoneyWiseDataTestCategories.IDTC_MORTGAGE_INTEREST)
+                .account(MoneyWiseDataTestAccounts.IDLN_BARCLAYS_MORTGAGE).amount("1876.49")
+                .from().partner(MoneyWiseDataTestAccounts.IDLN_BARCLAYS_MORTGAGE).taxCredit("523.87")
                 .build();
     }
 
     @Override
     public void checkAnalysis() {
-        checkAccountValue(MoneyWiseDataTestAccounts.idDP_BarclaysCurrent, "59000.00");
-        checkAccountValue(MoneyWiseDataTestAccounts.idLN_BarclaysMortgage, "-50876.49");
-        checkPayeeValue(MoneyWiseDataTestAccounts.idPY_Barclays, "0", "2400.36");
-        checkPayeeValue(MoneyWiseDataTestAccounts.idPY_HMRC, "523.87", "0");
-        checkCategoryValue(MoneyWiseDataTestCategories.idTC_MortgageInterest, "0", "2400.36");
-        checkCategoryValue(MoneyWiseDataTestCategories.idTC_TaxRelief, "523.87", "0");
+        checkAccountValue(MoneyWiseDataTestAccounts.IDDP_BARCLAYS_CURRENT, "59000.00");
+        checkAccountValue(MoneyWiseDataTestAccounts.IDLN_BARCLAYS_MORTGAGE, "-50876.49");
+        checkPayeeValue(MoneyWiseDataTestAccounts.IDPY_BARCLAYS, "0", "2400.36");
+        checkPayeeValue(MoneyWiseDataTestAccounts.IDPY_HMRC, "523.87", "0");
+        checkCategoryValue(MoneyWiseDataTestCategories.IDTC_MORTGAGE_INTEREST, "0", "2400.36");
+        checkCategoryValue(MoneyWiseDataTestCategories.IDTC_TAX_RELIEF, "523.87", "0");
         checkTaxBasisValue(MoneyWiseTaxClass.EXPENSE, "-2400.36");
         checkTaxBasisValue(MoneyWiseTaxClass.VIRTUAL, "523.87");
     }

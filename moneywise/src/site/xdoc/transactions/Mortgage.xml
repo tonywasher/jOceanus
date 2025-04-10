@@ -10,7 +10,7 @@
       <subsection name="Definitions">
         <p>We start with the following accounts and transaction categories</p>
         <details name="accounts" open="true">
-          <summary>Deposit Accounts</summary>
+          <summary class="mainDtl">Deposit Accounts</summary>
           <table class="defTable">
             <tr>
               <th class="defHdr">Name</th>
@@ -29,7 +29,7 @@
           </table>
         </details>
         <details name="accounts">
-          <summary>Loan Accounts</summary>
+          <summary class="mainDtl">Loan Accounts</summary>
           <table class="defTable">
             <tr>
               <th class="defHdr">Name</th>
@@ -44,11 +44,11 @@
           </table>
         </details>
         <details name="accounts">
-          <summary>Payee Accounts</summary>
+          <summary class="mainDtl">Payee Accounts</summary>
           <table class="defTable">
             <tr>
               <th class="defHdr">Name</th>
-              <th class="defHdr">Type</th>
+              <th class="defHdr">Category</th>
             </tr>
             <tr>
               <td>Barclays</td>
@@ -61,7 +61,7 @@
           </table>
         </details>
         <details name="accounts">
-          <summary>TransactionCategories</summary>
+          <summary class="mainDtl">TransactionCategories</summary>
           <table class="defTable">
             <tr>
               <th class="defHdr">Name</th>
@@ -81,7 +81,7 @@
       <subsection name="Transactions">
         <p>We have the following events</p>
         <details name="data" open="true">
-          <summary>Transactions</summary>
+          <summary class="mainDtl">Transactions</summary>
           <table class="defTable">
             <tr>
               <th class="defHdr">Date</th>
@@ -125,7 +125,7 @@
       <subsection name="Analysis">
         <p>The analysis of these transactions is as follows</p>
         <details name="analysis" open="true">
-          <summary>AssetAnalysis</summary>
+          <summary class="mainDtl">AssetAnalysis</summary>
           <table class="defTable">
             <tr>
               <th class="defHdr">Date</th>
@@ -159,7 +159,7 @@
           </table>
         </details>
         <details name="analysis">
-          <summary>PayeeAnalysis</summary>
+          <summary class="mainDtl">PayeeAnalysis</summary>
           <table class="defTable">
             <tr>
               <th class="defHdr">Date</th>
@@ -178,7 +178,7 @@
           </table>
         </details>
         <details name="analysis">
-          <summary>TransactionCategoryAnalysis</summary>
+          <summary class="mainDtl">TransactionCategoryAnalysis</summary>
           <table class="defTable">
             <tr>
               <th class="defHdr">Date</th>
@@ -205,7 +205,7 @@
           </table>
         </details>
         <details name="analysis">
-          <summary>TaxAnalysis</summary>
+          <summary class="mainDtl">TaxAnalysis</summary>
           <table class="defTable">
             <tr>
               <th class="defHdr">Date</th>

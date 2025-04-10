@@ -152,9 +152,11 @@ public class MoneyWiseXAnalysisXferOut {
         final OceanusMoney myCost = myValues.getMoneyValue(MoneyWiseXAnalysisSecurityAttr.RESIDUALCOST);
 
         /* Determine the delta units */
-        final OceanusUnits myDeltaUnits = theTransaction.getCategoryClass().isSecurityClosure()
-                ? myUnits
-                : theTransaction.getDebitUnitsDelta();
+        OceanusUnits myDeltaUnits = theTransaction.getDebitUnitsDelta();
+        if (theTransaction.getCategoryClass().isSecurityClosure()) {
+            myDeltaUnits = new OceanusUnits(myUnits);
+            myDeltaUnits.negate();
+        }
         final boolean isCapitalDistribution = myDeltaUnits == null;
 
         /* If this is not a capital distribution */
