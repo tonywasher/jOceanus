@@ -73,8 +73,8 @@ public abstract class MetisListVersioned<T extends MetisFieldVersionedItem>
      * @param pListSet the listSet
      * @param pItemType the itemType
      */
-    public MetisListVersioned(final MetisListSetVersioned pListSet,
-                              final MetisListKey pItemType) {
+    protected MetisListVersioned(final MetisListSetVersioned pListSet,
+                                 final MetisListKey pItemType) {
         theListSet = pListSet;
         theItemType = pItemType;
     }

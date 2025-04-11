@@ -516,9 +516,7 @@ public class MoneyWiseArchiveLoader {
 
             /* If this is a security holding definition */
             final Object myValue = myEntry.getValue();
-            if (myValue instanceof MoneyWiseSecurityHoldingDef) {
-                final MoneyWiseSecurityHoldingDef myDef = (MoneyWiseSecurityHoldingDef) myValue;
-
+            if (myValue instanceof MoneyWiseSecurityHoldingDef myDef) {
                 /* Access security holding */
                 final MoneyWisePortfolio myPortfolio = myPortfolios.findItemByName(myDef.getPortfolio());
                 final MoneyWiseSecurityHolding myHolding = myMap.declareHolding(myPortfolio, myDef.getSecurity());
@@ -540,10 +538,9 @@ public class MoneyWiseArchiveLoader {
                                         final Object pSource,
                                         final Object pTarget) throws OceanusException {
         /* Target must be portfolio */
-        if (!(pTarget instanceof MoneyWisePortfolio)) {
+        if (!(pTarget instanceof MoneyWisePortfolio myPortfolio)) {
             throw new MoneyWiseDataException(pTarget, "Inconsistent portfolios");
         }
-        final MoneyWisePortfolio myPortfolio = (MoneyWisePortfolio) pTarget;
 
         final MoneyWiseSecurityHoldingMap myMap = pData.getPortfolios().getSecurityHoldingsMap();
 
@@ -554,9 +551,7 @@ public class MoneyWiseArchiveLoader {
 
             /* If this is a security holding definition */
             final Object myValue = myEntry.getValue();
-            if (myValue instanceof MoneyWiseSecurityHolding) {
-                MoneyWiseSecurityHolding myHolding = (MoneyWiseSecurityHolding) myValue;
-
+            if (myValue instanceof MoneyWiseSecurityHolding myHolding) {
                 /* If this holding needs updating */
                 if (pSource.equals(myHolding) || pSource.equals(myHolding.getPortfolio())) {
                     /* Change the holding */

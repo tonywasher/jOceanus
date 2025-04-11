@@ -479,11 +479,9 @@ public abstract class MoneyWiseBaseTable<T extends PrometheusDataItem>
         }
 
         /* If the field is a dataInfoClass as part of an infoSetItem */
-        if (pField instanceof PrometheusDataInfoClass
-                && pItem instanceof PrometheusInfoSetItem) {
+        if (pField instanceof PrometheusDataInfoClass myClass
+                && pItem instanceof PrometheusInfoSetItem myItem) {
             /* Check with the infoSet whether the field has changed */
-            final PrometheusInfoSetItem myItem = (PrometheusInfoSetItem) pItem;
-            final PrometheusDataInfoClass myClass = (PrometheusDataInfoClass) pField;
             return myItem.getInfoSet().fieldChanged(myClass).isDifferent();
         }
 

@@ -241,10 +241,7 @@ public class MoneyWiseXCashAnalysisSelect
     @Override
     public void setFilter(final MoneyWiseXAnalysisFilter<?, ?> pFilter) {
         /* If this is the correct filter type */
-        if (pFilter instanceof MoneyWiseXAnalysisCashFilter) {
-            /* Access filter */
-            final MoneyWiseXAnalysisCashFilter myFilter = (MoneyWiseXAnalysisCashFilter) pFilter;
-
+        if (pFilter instanceof MoneyWiseXAnalysisCashFilter myFilter) {
             /* Obtain the filter bucket */
             MoneyWiseXAnalysisCashBucket myCash = myFilter.getBucket();
 

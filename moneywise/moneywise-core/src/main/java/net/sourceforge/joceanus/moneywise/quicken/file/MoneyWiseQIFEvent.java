@@ -389,9 +389,8 @@ public class MoneyWiseQIFEvent
     private void convertPayee() {
         /* Look for a payee line */
         final MoneyWiseQIFLine<MoneyWiseQEventLineType> myLine = getLine(MoneyWiseQEventLineType.PAYEE);
-        if (myLine instanceof MoneyWiseQIFEventPayeeDescLine) {
+        if (myLine instanceof MoneyWiseQIFEventPayeeDescLine myDesc) {
             /* Access payee */
-            final MoneyWiseQIFEventPayeeDescLine myDesc = (MoneyWiseQIFEventPayeeDescLine) myLine;
             final String myName = myDesc.getValue();
 
             /* Register the payee */

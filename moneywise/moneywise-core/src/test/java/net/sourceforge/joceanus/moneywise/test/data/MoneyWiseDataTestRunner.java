@@ -203,7 +203,7 @@ public class MoneyWiseDataTestRunner {
      * @throws OceanusException on error
      */
     public Stream<DynamicNode> createStorageTests() throws OceanusException {
-        Stream<DynamicNode> myStream = Stream.of(DynamicTest.dynamicTest("initData", () -> prepareFullData()));
+        Stream<DynamicNode> myStream = Stream.of(DynamicTest.dynamicTest("initData", this::prepareFullData));
         myStream = Stream.concat(myStream, MoneyWiseDataTest.storageTests(theDataSet, theView));
         myStream = Stream.concat(myStream, Stream.of(DynamicTest.dynamicTest("editSet",
                 () -> MoneyWiseDataTest.checkEditSet(theDataSet, theView))));

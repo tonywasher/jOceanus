@@ -128,8 +128,8 @@ public class MetisViewerFormatter {
      */
     private void formatHTMLObject(final Object pObject) {
         /* handle DataDifference */
-        final Object myObject = pObject instanceof MetisDataDelta
-                                                                  ? ((MetisDataDelta) pObject).getObject()
+        final Object myObject = pObject instanceof MetisDataDelta myDelta
+                                                                  ? myDelta.getObject()
                                                                   : pObject;
 
         /* If we are FieldItem */

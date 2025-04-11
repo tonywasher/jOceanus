@@ -534,23 +534,23 @@ public class MoneyWiseAccountPanel
      */
     public void selectAccount(final MoneyWiseAssetBase pAccount) {
         /* Determine which panel to show */
-        if (pAccount instanceof MoneyWiseDeposit) {
-            theDepositTable.selectDeposit((MoneyWiseDeposit) pAccount);
+        if (pAccount instanceof MoneyWiseDeposit myDeposit) {
+            theDepositTable.selectDeposit(myDeposit);
             showPanel(PanelName.DEPOSITS);
-        } else if (pAccount instanceof MoneyWiseCash) {
-            theCashTable.selectCash((MoneyWiseCash) pAccount);
+        } else if (pAccount instanceof MoneyWiseCash myCash) {
+            theCashTable.selectCash(myCash);
             showPanel(PanelName.CASH);
-        } else if (pAccount instanceof MoneyWiseLoan) {
-            theLoanTable.selectLoan((MoneyWiseLoan) pAccount);
+        } else if (pAccount instanceof MoneyWiseLoan myLoan) {
+            theLoanTable.selectLoan(myLoan);
             showPanel(PanelName.LOANS);
-        } else if (pAccount instanceof MoneyWisePortfolio) {
-            thePortfolioTable.selectPortfolio((MoneyWisePortfolio) pAccount);
+        } else if (pAccount instanceof MoneyWisePortfolio myPortfolio) {
+            thePortfolioTable.selectPortfolio(myPortfolio);
             showPanel(PanelName.PORTFOLIOS);
-        } else if (pAccount instanceof MoneyWiseSecurity) {
-            theSecurityTable.selectSecurity((MoneyWiseSecurity) pAccount);
+        } else if (pAccount instanceof MoneyWiseSecurity mySecurity) {
+            theSecurityTable.selectSecurity(mySecurity);
             showPanel(PanelName.SECURITIES);
-        } else if (pAccount instanceof MoneyWisePayee) {
-            thePayeeTable.selectPayee((MoneyWisePayee) pAccount);
+        } else if (pAccount instanceof MoneyWisePayee myPayee) {
+            thePayeeTable.selectPayee(myPayee);
             showPanel(PanelName.PAYEES);
         }
     }

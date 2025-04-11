@@ -91,10 +91,10 @@ public final class MoneyWiseTransCategory
 
         /* Store the Category Type */
         final Object myValue = pValues.getValue(MoneyWiseStaticDataType.TRANSTYPE);
-        if (myValue instanceof Integer) {
-            setValueType((Integer) myValue);
-        } else if (myValue instanceof String) {
-            setValueType((String) myValue);
+        if (myValue instanceof Integer i) {
+            setValueType(i);
+        } else if (myValue instanceof String s) {
+            setValueType(s);
         }
     }
 

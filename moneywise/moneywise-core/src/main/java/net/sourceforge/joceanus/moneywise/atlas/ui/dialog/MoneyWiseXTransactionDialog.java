@@ -625,13 +625,12 @@ public class MoneyWiseXTransactionDialog
      * @param pAsset the asset
      */
     private void buildAssetGoTo(final MoneyWiseTransAsset pAsset) {
-        if (pAsset instanceof MoneyWiseSecurityHolding) {
+        if (pAsset instanceof MoneyWiseSecurityHolding myHolding) {
             /* Build menu Items for Portfolio and Security */
-            final MoneyWiseSecurityHolding myHolding = (MoneyWiseSecurityHolding) pAsset;
             declareGoToItem(myHolding.getPortfolio());
             declareGoToItem(myHolding.getSecurity());
-        } else if (pAsset instanceof MoneyWiseAssetBase) {
-            declareGoToItem((MoneyWiseAssetBase) pAsset);
+        } else if (pAsset instanceof MoneyWiseAssetBase myAsset) {
+            declareGoToItem(myAsset);
         }
     }
 
@@ -642,9 +641,8 @@ public class MoneyWiseXTransactionDialog
      */
     public static MoneyWiseTransAsset resolveAsset(final MoneyWiseTransAsset pAsset) {
         /* If this is a security holding */
-        if (pAsset instanceof MoneyWiseSecurityHolding) {
+        if (pAsset instanceof MoneyWiseSecurityHolding myHolding) {
             /* declare holding via map */
-            final MoneyWiseSecurityHolding myHolding = (MoneyWiseSecurityHolding) pAsset;
             final MoneyWisePortfolio myPortfolio = myHolding.getPortfolio();
             final MoneyWiseSecurity mySecurity = myHolding.getSecurity();
             final MoneyWiseDataSet myData = myPortfolio.getDataSet();

@@ -598,8 +598,8 @@ public class MoneyWiseSecurityPrice
          */
         @Override
         public MoneyWiseSecurityPrice addCopyItem(final PrometheusDataItem pPrice) {
-            if (pPrice instanceof MoneyWiseSecurityPrice) {
-                final MoneyWiseSecurityPrice myPrice = new MoneyWiseSecurityPrice(this, (MoneyWiseSecurityPrice) pPrice);
+            if (pPrice instanceof MoneyWiseSecurityPrice p) {
+                final MoneyWiseSecurityPrice myPrice = new MoneyWiseSecurityPrice(this, p);
                 add(myPrice);
                 return myPrice;
             } else {

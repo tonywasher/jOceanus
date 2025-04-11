@@ -194,10 +194,7 @@ public class MoneyWiseXPayeeAnalysisSelect
     @Override
     public void setFilter(final MoneyWiseXAnalysisFilter<?, ?> pFilter) {
         /* If this is the correct filter type */
-        if (pFilter instanceof MoneyWiseXAnalysisPayeeFilter) {
-            /* Access filter */
-            final MoneyWiseXAnalysisPayeeFilter myFilter = (MoneyWiseXAnalysisPayeeFilter) pFilter;
-
+        if (pFilter instanceof MoneyWiseXAnalysisPayeeFilter myFilter) {
             /* Obtain the filter bucket */
             MoneyWiseXAnalysisPayeeBucket myPayee = myFilter.getBucket();
 

@@ -497,17 +497,17 @@ public class MoneyWiseCategoryPanel
      */
     public void selectCategory(final Object pCategory) {
         /* Determine which panel to show */
-        if (pCategory instanceof MoneyWiseDepositCategory) {
-            theDepositTable.selectCategory((MoneyWiseDepositCategory) pCategory);
+        if (pCategory instanceof MoneyWiseDepositCategory myCategory) {
+            theDepositTable.selectCategory(myCategory);
             showPanel(PanelName.DEPOSITS);
-        } else if (pCategory instanceof MoneyWiseCashCategory) {
-            theCashTable.selectCategory((MoneyWiseCashCategory) pCategory);
+        } else if (pCategory instanceof MoneyWiseCashCategory myCategory) {
+            theCashTable.selectCategory(myCategory);
             showPanel(PanelName.CASH);
-        } else if (pCategory instanceof MoneyWiseLoanCategory) {
-            theLoanTable.selectCategory((MoneyWiseLoanCategory) pCategory);
+        } else if (pCategory instanceof MoneyWiseLoanCategory myCategory) {
+            theLoanTable.selectCategory(myCategory);
             showPanel(PanelName.LOANS);
-        } else if (pCategory instanceof MoneyWiseTransCategory) {
-            theEventTable.selectCategory((MoneyWiseTransCategory) pCategory);
+        } else if (pCategory instanceof MoneyWiseTransCategory myCategory) {
+            theEventTable.selectCategory(myCategory);
             showPanel(PanelName.EVENTS);
         }
     }
@@ -518,8 +518,8 @@ public class MoneyWiseCategoryPanel
      */
     public void selectTag(final Object pTag) {
         /* Determine which panel to show */
-        if (pTag instanceof MoneyWiseTransTag) {
-            theTagTable.selectTag((MoneyWiseTransTag) pTag);
+        if (pTag instanceof MoneyWiseTransTag myTag) {
+            theTagTable.selectTag(myTag);
             showPanel(PanelName.EVENTTAGS);
         }
     }
@@ -530,8 +530,8 @@ public class MoneyWiseCategoryPanel
      */
     public void selectRegion(final Object pRegion) {
         /* Determine which panel to show */
-        if (pRegion instanceof MoneyWiseRegion) {
-            theRegionTable.selectRegion((MoneyWiseRegion) pRegion);
+        if (pRegion instanceof MoneyWiseRegion myRegion) {
+            theRegionTable.selectRegion(myRegion);
             showPanel(PanelName.REGIONS);
         }
     }

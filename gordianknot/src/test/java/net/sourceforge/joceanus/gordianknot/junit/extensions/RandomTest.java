@@ -448,13 +448,13 @@ class RandomTest {
     }
 
     /* The SHA1 Constants */
-    private static final String sha1Entropy = "000102030405060708090A0B0C0D0E0F101112131415161718191A1B1C1D1E1F202122232425262728292A2B2C2D2E2F30313233343536"
+    private static final String SHA1_ENTROPY = "000102030405060708090A0B0C0D0E0F101112131415161718191A1B1C1D1E1F202122232425262728292A2B2C2D2E2F30313233343536"
             + "808182838485868788898A8B8C8D8E8F909192939495969798999A9B9C9D9E9FA0A1A2A3A4A5A6A7A8A9AAABACADAEAFB0B1B2B3B4B5B6"
             + "C0C1C2C3C4C5C6C7C8C9CACBCCCDCECFD0D1D2D3D4D5D6D7D8D9DADBDCDDDEDFE0E1E2E3E4E5E6E7E8E9EAEBECEDEEEFF0F1F2F3F4F5F6";
-    private static final String sha1Nonce = "2021222324";
-    private static final String sha1Personal = "404142434445464748494A4B4C4D4E4F505152535455565758595A5B5C5D5E5F606162636465666768696A6B6C6D6E6F70717273747576";
-    private static final String sha1Add1 = "606162636465666768696A6B6C6D6E6F707172737475767778797A7B7C7D7E7F808182838485868788898A8B8C8D8E8F90919293949596";
-    private static final String sha1Add2 = "A0A1A2A3A4A5A6A7A8A9AAABACADAEAFB0B1B2B3B4B5B6B7B8B9BABBBCBDBEBFC0C1C2C3C4C5C6C7C8C9CACBCCCDCECFD0D1D2D3D4D5D6";
+    private static final String SHA1_NONCE = "2021222324";
+    private static final String SHA1_PERSONAL = "404142434445464748494A4B4C4D4E4F505152535455565758595A5B5C5D5E5F606162636465666768696A6B6C6D6E6F70717273747576";
+    private static final String SHA1_ADD1 = "606162636465666768696A6B6C6D6E6F707172737475767778797A7B7C7D7E7F808182838485868788898A8B8C8D8E8F90919293949596";
+    private static final String SHA1_ADD2 = "A0A1A2A3A4A5A6A7A8A9AAABACADAEAFB0B1B2B3B4B5B6B7B8B9BABBBCBDBEBFC0C1C2C3C4C5C6C7C8C9CACBCCCDCECFD0D1D2D3D4D5D6";
 
     /**
      * Create Sha1 Hash DRBG Test.
@@ -463,10 +463,10 @@ class RandomTest {
      */
     private DynamicNode testSHA1HashDRBG() throws GordianException {
         /* The SHA1 Init */
-        final GordianDRBGInit myInitF =  new GordianDRBGInit(false, sha1Nonce, sha1Entropy);
-        final GordianDRBGInit myInitFP =  new GordianDRBGInit(false, sha1Nonce, sha1Entropy, sha1Personal);
-        final GordianDRBGInit myInitT =  new GordianDRBGInit(true, sha1Nonce, sha1Entropy);
-        final GordianDRBGInit myInitTP =  new GordianDRBGInit(true, sha1Nonce, sha1Entropy, sha1Personal);
+        final GordianDRBGInit myInitF =  new GordianDRBGInit(false, SHA1_NONCE, SHA1_ENTROPY);
+        final GordianDRBGInit myInitFP =  new GordianDRBGInit(false, SHA1_NONCE, SHA1_ENTROPY, SHA1_PERSONAL);
+        final GordianDRBGInit myInitT =  new GordianDRBGInit(true, SHA1_NONCE, SHA1_ENTROPY);
+        final GordianDRBGInit myInitTP =  new GordianDRBGInit(true, SHA1_NONCE, SHA1_ENTROPY, SHA1_PERSONAL);
 
         /* The Expected results */
         GordianTestCase[]  myTestsF = new GordianTestCase[] {
@@ -478,8 +478,8 @@ class RandomTest {
                 new GordianTestCase("29D9098F987E7005314A0F51B3DD2B8122F4AED706735DE6AD5DDBF223177C1E5F3AEBC52FAB90B9")
         };
         GordianTestCase[]  myTestsFA = new GordianTestCase[] {
-                new GordianTestCase(sha1Add1,"E76B4EDD5C865BC8AFD809A59B69B429AC7F4352A579BCF3F75E56249A3491F87C3CA6848B0FAB25"),
-                new GordianTestCase(sha1Add2,"6577B6B4F87A93240B199FE51A3B335313683103DECE171E3256FB7E803586CA4E45DD242EB01F70")
+                new GordianTestCase(SHA1_ADD1,"E76B4EDD5C865BC8AFD809A59B69B429AC7F4352A579BCF3F75E56249A3491F87C3CA6848B0FAB25"),
+                new GordianTestCase(SHA1_ADD2,"6577B6B4F87A93240B199FE51A3B335313683103DECE171E3256FB7E803586CA4E45DD242EB01F70")
         };
         GordianTestCase[]  myTestsT = new GordianTestCase[] {
                 new GordianTestCase("56EF4913373994D5539F4D7D17AFE7448CDF5E72416CC6A71A340059FA0D5AE526B23250C46C0944"),
@@ -490,8 +490,8 @@ class RandomTest {
                 new GordianTestCase("73C2C67C696D686D0C4DBCEB5C2AF7DDF6F020B6874FAE4390F102117ECAAFF54418529A367005A0")
         };
         GordianTestCase[]  myTestsTA = new GordianTestCase[] {
-                new GordianTestCase(sha1Add1,"183C242A1430E46C4ED70B4DBE1BF9AB0AB8721CDCA2A2D1820AD6F6C956858543B2AA191D8D1287"),
-                new GordianTestCase(sha1Add2,"F196F9BD021C745CBD5AC7BFCE48EAAF0D0E7C091FBF436940E63A198EE770D9A4F0718669AF2BC9")
+                new GordianTestCase(SHA1_ADD1,"183C242A1430E46C4ED70B4DBE1BF9AB0AB8721CDCA2A2D1820AD6F6C956858543B2AA191D8D1287"),
+                new GordianTestCase(SHA1_ADD2,"F196F9BD021C745CBD5AC7BFCE48EAAF0D0E7C091FBF436940E63A198EE770D9A4F0718669AF2BC9")
         };
 
         /* Create the digest */
@@ -527,10 +527,10 @@ class RandomTest {
      */
     private DynamicNode testSHA1HMacDRBG() throws GordianException {
         /* The SHA1 Init */
-        final GordianDRBGInit myInitF =  new GordianDRBGInit(false, sha1Nonce, sha1Entropy);
-        final GordianDRBGInit myInitFP =  new GordianDRBGInit(false, sha1Nonce, sha1Entropy, sha1Personal);
-        final GordianDRBGInit myInitT =  new GordianDRBGInit(true, sha1Nonce, sha1Entropy);
-        final GordianDRBGInit myInitTP =  new GordianDRBGInit(true, sha1Nonce, sha1Entropy, sha1Personal);
+        final GordianDRBGInit myInitF =  new GordianDRBGInit(false, SHA1_NONCE, SHA1_ENTROPY);
+        final GordianDRBGInit myInitFP =  new GordianDRBGInit(false, SHA1_NONCE, SHA1_ENTROPY, SHA1_PERSONAL);
+        final GordianDRBGInit myInitT =  new GordianDRBGInit(true, SHA1_NONCE, SHA1_ENTROPY);
+        final GordianDRBGInit myInitTP =  new GordianDRBGInit(true, SHA1_NONCE, SHA1_ENTROPY, SHA1_PERSONAL);
 
         /* The Expected results */
         GordianTestCase[]  myTestsF = new GordianTestCase[] {
@@ -542,8 +542,8 @@ class RandomTest {
                 new GordianTestCase("B5DADA380E2872DF935BCA55B882C8C9376902AB639765472B71ACEBE2EA8B1B6B49629CB67317E0")
         };
         GordianTestCase[]  myTestsFA = new GordianTestCase[] {
-                new GordianTestCase(sha1Add1,"C7AAAC583C6EF6300714C2CC5D06C148CFFB40449AD0BB26FAC0497B5C57E161E36681BCC930CE80"),
-                new GordianTestCase(sha1Add2,"6EBD2B7B5E0A2AD7A24B1BF9A1DBA47D43271719B9C37B7FE81BA94045A14A7CB514B446666EA5A7")
+                new GordianTestCase(SHA1_ADD1,"C7AAAC583C6EF6300714C2CC5D06C148CFFB40449AD0BB26FAC0497B5C57E161E36681BCC930CE80"),
+                new GordianTestCase(SHA1_ADD2,"6EBD2B7B5E0A2AD7A24B1BF9A1DBA47D43271719B9C37B7FE81BA94045A14A7CB514B446666EA5A7")
         };
         GordianTestCase[]  myTestsT = new GordianTestCase[] {
                 new GordianTestCase("FEC4597F06A3A8CC8529D59557B9E661053809C0BC0EFC282ABD87605CC90CBA9B8633DCB1DAE02E"),
@@ -554,8 +554,8 @@ class RandomTest {
                 new GordianTestCase("CAF57DCFEA393B9236BF691FA456FEA7FDF1DF8361482CA54D5FA723F4C88B4FA504BF03277FA783")
         };
         GordianTestCase[]  myTestsTA = new GordianTestCase[] {
-                new GordianTestCase(sha1Add1,"A1BA8FA58BB5013F43F7B6ED52B4539FA16DC77957AEE815B9C07004C7E992EB8C7E591964AFEEA2"),
-                new GordianTestCase(sha1Add2,"84264A73A818C95C2F424B37D3CC990B046FB50C2DC64A164211889A010F2471A0912FFEA1BF0195")
+                new GordianTestCase(SHA1_ADD1,"A1BA8FA58BB5013F43F7B6ED52B4539FA16DC77957AEE815B9C07004C7E992EB8C7E591964AFEEA2"),
+                new GordianTestCase(SHA1_ADD2,"84264A73A818C95C2F424B37D3CC990B046FB50C2DC64A164211889A010F2471A0912FFEA1BF0195")
         };
 
         /* Create the mac */
@@ -585,7 +585,7 @@ class RandomTest {
     }
 
     /* The SHA512 Constants */
-    private static final String sha512Entropy = "000102030405060708090A0B0C0D0E" +
+    private static final String SHA512_ENTROPY = "000102030405060708090A0B0C0D0E" +
             "0F101112131415161718191A1B1C1D1E1F20212223242526" +
             "2728292A2B2C2D2E2F303132333435363738393A3B3C3D3E" +
             "3F404142434445464748494A4B4C4D4E4F50515253545556" +
@@ -600,18 +600,18 @@ class RandomTest {
             "E7E8E9EAEBECEDEEEFF0F1F2F3F4F5F6F7F8F9FAFBFCFDFE" +
             "FF000102030405060708090A0B0C0D0E0F10111213141516" +
             "1718191A1B1C1D1E1F202122232425262728292A2B2C2D2E";
-    private static final String sha512Nonce = "202122232425262728292A2B2C2D2E2F";
-    private static final String sha512Personal = "404142434445464748494A4B4C4D4E" +
+    private static final String SHA512_NONCE = "202122232425262728292A2B2C2D2E2F";
+    private static final String SHA512_PERSONAL = "404142434445464748494A4B4C4D4E" +
             "4F505152535455565758595A5B5C5D5E5F60616263646566" +
             "6768696A6B6C6D6E6F707172737475767778797A7B7C7D7E" +
             "7F808182838485868788898A8B8C8D8E8F90919293949596" +
             "9798999A9B9C9D9E9FA0A1A2A3A4A5A6A7A8A9AAABACADAE";
-    private static final String sha512Add1 = "606162636465666768696A6B6C6D6E" +
+    private static final String SHA512_ADD1 = "606162636465666768696A6B6C6D6E" +
             "6F707172737475767778797A7B7C7D7E7F80818283848586" +
             "8788898A8B8C8D8E8F909192939495969798999A9B9C9D9E" +
             "9FA0A1A2A3A4A5A6A7A8A9AAABACADAEAFB0B1B2B3B4B5B6" +
             "B7B8B9BABBBCBDBEBFC0C1C2C3C4C5C6C7C8C9CACBCCCDCE";
-    private static final String sha512Add2 = "A0A1A2A3A4A5A6A7A8A9AAABACADAE" +
+    private static final String SHA512_ADD2 = "A0A1A2A3A4A5A6A7A8A9AAABACADAE" +
             "AFB0B1B2B3B4B5B6B7B8B9BABBBCBDBEBFC0C1C2C3C4C5C6" +
             "C7C8C9CACBCCCDCECFD0D1D2D3D4D5D6D7D8D9DADBDCDDDE" +
             "DFE0E1E2E3E4E5E6E7E8E9EAEBECEDEEEFF0F1F2F3F4F5F6" +
@@ -624,19 +624,19 @@ class RandomTest {
      */
     private DynamicNode testSHA512HashDRBG() throws GordianException {
         /* The SHA512 Init */
-        final GordianDRBGInit myInitFP =  new GordianDRBGInit(false, sha512Nonce, sha512Entropy, sha512Personal);
-        final GordianDRBGInit myInitT =  new GordianDRBGInit(true, sha512Nonce, sha512Entropy);
-        final GordianDRBGInit myInitTP =  new GordianDRBGInit(true, sha512Nonce, sha512Entropy, sha512Personal);
+        final GordianDRBGInit myInitFP =  new GordianDRBGInit(false, SHA512_NONCE, SHA512_ENTROPY, SHA512_PERSONAL);
+        final GordianDRBGInit myInitT =  new GordianDRBGInit(true, SHA512_NONCE, SHA512_ENTROPY);
+        final GordianDRBGInit myInitTP =  new GordianDRBGInit(true, SHA512_NONCE, SHA512_ENTROPY, SHA512_PERSONAL);
 
         /* The Expected results */
         GordianTestCase[]  myTestsFPA = new GordianTestCase[] {
-                new GordianTestCase(sha512Add1, "DA126CF95C6BF97E" +
+                new GordianTestCase(SHA512_ADD1, "DA126CF95C6BF97E" +
                         "2F731F2137A907ACC70FD7AC9EBACD1C6E31C74029B052E3" +
                         "AABC48F3B00993F2B2381F7650A55322A968C86E05DE88E6" +
                         "367F6EF89A601DB4342E9086C7AC13B5E56C32E9E668040B" +
                         "73847893C5BFD38A1CF44F348B4EEE4CD68ADB7E7B8C837F" +
                         "19BC4F902761F7CFF24AB1D704FD11C4E929D8553753B55D"),
-                new GordianTestCase(sha512Add2,"400B977CE8A2BB6A" +
+                new GordianTestCase(SHA512_ADD2,"400B977CE8A2BB6A" +
                         "84C6FD1CF901459685ABF5408CFF4588CEDF52E2D2DC300A" +
                         "A9B4FAED8CD0161C2172B1FD269253195883D6EBF21020F2" +
                         "C20E5F2C81AE60C8595B834A229B1F5B726C1125717E6207" +
@@ -672,13 +672,13 @@ class RandomTest {
                         "9008DD392112AEC202F2E481CB9D83F987FEA69CD1B368BB")
         };
         GordianTestCase[]  myTestsTA = new GordianTestCase[] {
-                new GordianTestCase(sha512Add1,"0455DD4AD7DBACB2" +
+                new GordianTestCase(SHA512_ADD1,"0455DD4AD7DBACB2" +
                         "410BE58DF7248D765A4547ABAEE1743B0BCAD37EBD06DA7C" +
                         "F7CE5E2216E525327E9E2005EBEF2CE53BD733B18128627D" +
                         "3FD6153089373AF2606A1584646A0EA488BFEF45228699A0" +
                         "89CEA8AEC44502D86D9591F3552C688B7F7B45FCB0C3C2B9" +
                         "43C1CD8A6FC63DF4D81C3DA543C9CF2843855EA84E4F959C"),
-                new GordianTestCase(sha512Add2,"C047D46D7F614E4E" +
+                new GordianTestCase(SHA512_ADD2,"C047D46D7F614E4E" +
                         "4A7952C79A451F8F7ACA379967E2977C401C626A2ED70D74" +
                         "A63660579A354115BC8C8C8CC3AEA3050686A0CFCDB6FA9C" +
                         "F78D4C2165BAF851C6F9B1CD16A2E14C15C6DAAC56C16E75" +
@@ -686,13 +686,13 @@ class RandomTest {
                         "4C8AB9A9691DF7B84D88B639A9A3106DEABEB63748B99C09")
         };
         GordianTestCase[]  myTestsTPA = new GordianTestCase[] {
-                new GordianTestCase(sha512Add1,"7596A76372308BD5" +
+                new GordianTestCase(SHA512_ADD1,"7596A76372308BD5" +
                         "A5613439934678B35521A94D81ABFE63A21ACF61ABB88B61" +
                         "E86A12C37F308F2BBBE32BE4B38D03AE808386494D70EF52" +
                         "E9E1365DD18B7784CAB826F31D47579E4D57F69D8BF3152B" +
                         "95741946CEBE58571DF58ED39980D9AF44E69F01E8989759" +
                         "8E40171101A0E3302838E0AD9E849C01988993CF9F6E5263"),
-                new GordianTestCase(sha512Add2,"DBE5EE36FCD85301" +
+                new GordianTestCase(SHA512_ADD2,"DBE5EE36FCD85301" +
                         "303E1C3617C1AC5E23C08885D0BEFAAD0C85A0D89F85B9F1" +
                         "6ECE3D88A24EB96504F2F13EFA7049621782F5DE2C416A0D" +
                         "294CCFE53545C4E309C48E1E285A2B829A574B72B3C2FBE1" +
@@ -731,9 +731,9 @@ class RandomTest {
      */
     private DynamicNode testSHA512HMacDRBG() throws GordianException {
         /* The SHA512 Init */
-        final GordianDRBGInit myInitFP =  new GordianDRBGInit(false, sha512Nonce, sha512Entropy, sha512Personal);
-        final GordianDRBGInit myInitT =  new GordianDRBGInit(true, sha512Nonce, sha512Entropy);
-        final GordianDRBGInit myInitTP =  new GordianDRBGInit(true, sha512Nonce, sha512Entropy, sha512Personal);
+        final GordianDRBGInit myInitFP =  new GordianDRBGInit(false, SHA512_NONCE, SHA512_ENTROPY, SHA512_PERSONAL);
+        final GordianDRBGInit myInitT =  new GordianDRBGInit(true, SHA512_NONCE, SHA512_ENTROPY);
+        final GordianDRBGInit myInitTP =  new GordianDRBGInit(true, SHA512_NONCE, SHA512_ENTROPY, SHA512_PERSONAL);
 
         /* The Expected results */
         GordianTestCase[]  myTestsFP = new GordianTestCase[] {
@@ -751,13 +751,13 @@ class RandomTest {
                         "212CEC325466F3AC7C48A56166DD0B119C8673A1A9D54F67")
         };
         GordianTestCase[]  myTestsFPA = new GordianTestCase[] {
-                new GordianTestCase(sha512Add1, "7AE31A2DEC31075F" +
+                new GordianTestCase(SHA512_ADD1, "7AE31A2DEC31075F" +
                         "E5972660C16D22ECC0D415C5693001BE5A468B590BC1AE2C" +
                         "43F647F8D681AEEA0D87B79B0B4E5D089CA2C9D327534234" +
                         "0254E6B04690D77A71A294DA9568479EEF8BB2A2110F18B6" +
                         "22F60F35235DE0E8F9D7E98105D84AA24AF0757AF005DFD5" +
                         "2FA51DE3F44FCE0C5F3A27FCE8B0F6E4A3F7C7B53CE34A3D"),
-                new GordianTestCase(sha512Add2,"D83A8084630F286D" +
+                new GordianTestCase(SHA512_ADD2,"D83A8084630F286D" +
                         "A4DB49B9F6F608C8993F7F1397EA0D6F4A72CF3EF2733A11" +
                         "AB823C29F2EBDEC3EDE962F93D920A1DB59C84E1E879C29F" +
                         "5F9995FC3A6A3AF9B587CA7C13EA197D423E81E1D6469942" +
@@ -793,13 +793,13 @@ class RandomTest {
                         "79F82C1EBCD1585FB260B9C0C42625FBCEE68CAD773CD5B1")
         };
         GordianTestCase[]  myTestsTA = new GordianTestCase[] {
-                new GordianTestCase(sha512Add1,"72691D2103FB567C" +
+                new GordianTestCase(SHA512_ADD1,"72691D2103FB567C" +
                         "CD30370715B36666F63430087B1C688281CA0974DB456BDB" +
                         "A7EB5C48CFF62EA05F9508F3B530CE995A272B11EC079C13" +
                         "923EEF8E011A93C19B58CC6716BC7CB8BD886CAA60C14D85" +
                         "C023348BD77738C475D6C7E1D9BFF4B12C43D8CC73F838DC" +
                         "4F8BD476CF8328EEB71B3D873D6B7B859C9B21065638FF95"),
-                new GordianTestCase(sha512Add2,"8570DA3D47E1E160" +
+                new GordianTestCase(SHA512_ADD2,"8570DA3D47E1E160" +
                         "5CF3E44B8D328B995EFC64107B6292D1B1036B5F88CE3160" +
                         "2F12BEB71D801C0942E7C0864B3DB67A9356DB203490D881" +
                         "24FE86BCE38AC2269B4FDA6ABAA884039DF80A0336A24D79" +
@@ -807,13 +807,13 @@ class RandomTest {
                         "65FCD1D3BE640178ED9093B91B36E1D68135F2785BFF505C")
         };
         GordianTestCase[]  myTestsTPA = new GordianTestCase[] {
-                new GordianTestCase(sha512Add1,"B8E827652175E6E0" +
+                new GordianTestCase(SHA512_ADD1,"B8E827652175E6E0" +
                         "6E513C7BE94B5810C14ED94AD903647940CAEB7EE014C848" +
                         "8DCBBE6D4D6616D06656A3DC707CDAC4F02EE6D8408C065F" +
                         "CB068C0760DA47C5D60E5D70D09DC3929B6979615D117F7B" +
                         "EDCC661A98514B3A1F55B2CBABDCA59F11823E4838065F1F" +
                         "8431CBF28A577738234AF3F188C7190CC19739E72E9BBFFF"),
-                new GordianTestCase(sha512Add2,"7ED41B9CFDC8C256" +
+                new GordianTestCase(SHA512_ADD2,"7ED41B9CFDC8C256" +
                         "83BBB4C553CC2DC61F690E62ABC9F038A16B8C519690CABE" +
                         "BD1B5C196C57CF759BB9871BE0C163A57315EA96F615136D" +
                         "064572F09F26D659D24211F9610FFCDFFDA8CE23FFA96735" +
@@ -848,16 +848,16 @@ class RandomTest {
     }
 
     /* The AES 128 Constants */
-    private static final String aes128Entropy = "0001020304050607"+
-            "08090A0B0C0D0E0F101112131415161718191A1B1C1D1E1F"+
-            "8081828384858687"+
-            "88898A8B8C8D8E8F909192939495969798999A9B9C9D9E9F"+
-            "C0C1C2C3C4C5C6C7"+
+    private static final String AES128_ENTROPY = "0001020304050607"+
+            "08090A0B0C0D0E0F101112131415161718191A1B1C1D1E1F" +
+            "8081828384858687" +
+            "88898A8B8C8D8E8F909192939495969798999A9B9C9D9E9F" +
+            "C0C1C2C3C4C5C6C7" +
             "C8C9CACBCCCDCECFD0D1D2D3D4D5D6D7D8D9DADBDCDDDEDF";
-    private static final String aes128Nonce = "2021222324252627";
-    private static final String aes128Personal = "404142434445464748494A4B4C4D4E4F505152535455565758595A5B5C5D5E5F";
-    private static final String aes128Add1 = "606162636465666768696A6B6C6D6E6F707172737475767778797A7B7C7D7E7F";
-    private static final String aes128Add2 = "A0A1A2A3A4A5A6A7A8A9AAABACADAEAFB0B1B2B3B4B5B6B7B8B9BABBBCBDBEBF";
+    private static final String AES128_NONCE = "2021222324252627";
+    private static final String AES128_PERSONAL = "404142434445464748494A4B4C4D4E4F505152535455565758595A5B5C5D5E5F";
+    private static final String AES128_ADD1 = "606162636465666768696A6B6C6D6E6F707172737475767778797A7B7C7D7E7F";
+    private static final String AES128_ADD2 = "A0A1A2A3A4A5A6A7A8A9AAABACADAEAFB0B1B2B3B4B5B6B7B8B9BABBBCBDBEBF";
 
     /**
      * Create aes128 Ctr DRBG test.
@@ -867,10 +867,10 @@ class RandomTest {
     @SuppressWarnings("unchecked")
     private DynamicNode testAES128CtrDRBG() throws GordianException {
         /* The AES128 Init */
-        final GordianDRBGInit myInitF =  new GordianDRBGInit(false, aes128Nonce, aes128Entropy);
-        final GordianDRBGInit myInitFP =  new GordianDRBGInit(false, aes128Nonce, aes128Entropy, aes128Personal);
-        final GordianDRBGInit myInitT =  new GordianDRBGInit(true, aes128Nonce, aes128Entropy);
-        final GordianDRBGInit myInitTP =  new GordianDRBGInit(true, aes128Nonce, aes128Entropy, aes128Personal);
+        final GordianDRBGInit myInitF =  new GordianDRBGInit(false, AES128_NONCE, AES128_ENTROPY);
+        final GordianDRBGInit myInitFP =  new GordianDRBGInit(false, AES128_NONCE, AES128_ENTROPY, AES128_PERSONAL);
+        final GordianDRBGInit myInitT =  new GordianDRBGInit(true, AES128_NONCE, AES128_ENTROPY);
+        final GordianDRBGInit myInitTP =  new GordianDRBGInit(true, AES128_NONCE, AES128_ENTROPY, AES128_PERSONAL);
 
         /* The Expected results */
         GordianTestCase[]  myTestsF = new GordianTestCase[] {
@@ -882,8 +882,8 @@ class RandomTest {
                 new GordianTestCase("9888F1D38BB1CCE31B363AA1BD9B39616876C30DEE1FF0B7BD8C4C441715C833")
         };
         GordianTestCase[]  myTestsFA = new GordianTestCase[] {
-                new GordianTestCase(aes128Add1,"E8C74A4B7BFFB53BEB80E78CA86BB6DF70E2032AEB473E0DD54D2339CEFCE9D0"),
-                new GordianTestCase(aes128Add2,"26B3F823B4DBAFC23B141375E10B3AEB7A0B5DEF1C7D760B6F827D01ECD17AC7")
+                new GordianTestCase(AES128_ADD1,"E8C74A4B7BFFB53BEB80E78CA86BB6DF70E2032AEB473E0DD54D2339CEFCE9D0"),
+                new GordianTestCase(AES128_ADD2,"26B3F823B4DBAFC23B141375E10B3AEB7A0B5DEF1C7D760B6F827D01ECD17AC7")
         };
         GordianTestCase[]  myTestsT = new GordianTestCase[] {
                 new GordianTestCase("BFF4B85D68C84529F24F69F9ACF1756E29BA648DDEB825C225FA32BA490EF4A9"),
@@ -894,8 +894,8 @@ class RandomTest {
                 new GordianTestCase("78F4C840134F40DC001BFAD3A90B5EF4DEBDBFAC3CFDF0CD69A89DC4FD34713F")
         };
         GordianTestCase[]  myTestsTA = new GordianTestCase[] {
-                new GordianTestCase(aes128Add1,"4573AC8BBB33D7CC4DBEF3EEDF6EAE748B536C3A1082CEE4948CDB51C83A7F9C"),
-                new GordianTestCase(aes128Add2,"99C628CDD87BD8C2F1FE443AA7F761DA16886436326323354DA6311FFF5BC678")
+                new GordianTestCase(AES128_ADD1,"4573AC8BBB33D7CC4DBEF3EEDF6EAE748B536C3A1082CEE4948CDB51C83A7F9C"),
+                new GordianTestCase(AES128_ADD2,"99C628CDD87BD8C2F1FE443AA7F761DA16886436326323354DA6311FFF5BC678")
         };
 
         /* Create the cipher */
@@ -959,16 +959,16 @@ class RandomTest {
     }
 
     /* The AES 256 Constants */
-    private static final String aes256Entropy = "000102030405060708090A0B0C0D0E0F1011121314151617" +
+    private static final String AES256_ENTROPY = "000102030405060708090A0B0C0D0E0F1011121314151617" +
             "18191A1B1C1D1E1F202122232425262728292A2B2C2D2E2F" +
             "808182838485868788898A8B8C8D8E8F9091929394959697" +
             "98999A9B9C9D9E9FA0A1A2A3A4A5A6A7A8A9AAABACADAEAF" +
             "C0C1C2C3C4C5C6C7C8C9CACBCCCDCECFD0D1D2D3D4D5D6D7" +
             "D8D9DADBDCDDDEDFE0E1E2E3E4E5E6E7E8E9EAEBECEDEEEF";
-    private static final String aes256Nonce = "202122232425262728292A2B2C2D2E2F";
-    private static final String aes256Personal = "404142434445464748494A4B4C4D4E4F505152535455565758595A5B5C5D5E5F606162636465666768696A6B6C6D6E6F";
-    private static final String aes256Add1 = "606162636465666768696A6B6C6D6E6F707172737475767778797A7B7C7D7E7F808182838485868788898A8B8C8D8E8F";
-    private static final String aes256Add2 = "A0A1A2A3A4A5A6A7A8A9AAABACADAEAFB0B1B2B3B4B5B6B7B8B9BABBBCBDBEBFC0C1C2C3C4C5C6C7C8C9CACBCCCDCECF";
+    private static final String AES256_NONCE = "202122232425262728292A2B2C2D2E2F";
+    private static final String AES256_PERSONAL = "404142434445464748494A4B4C4D4E4F505152535455565758595A5B5C5D5E5F606162636465666768696A6B6C6D6E6F";
+    private static final String AES256_ADD1 = "606162636465666768696A6B6C6D6E6F707172737475767778797A7B7C7D7E7F808182838485868788898A8B8C8D8E8F";
+    private static final String AES256_ADD2 = "A0A1A2A3A4A5A6A7A8A9AAABACADAEAFB0B1B2B3B4B5B6B7B8B9BABBBCBDBEBFC0C1C2C3C4C5C6C7C8C9CACBCCCDCECF";
 
     /**
      * Create aes128 Ctr DRBG test.
@@ -978,30 +978,30 @@ class RandomTest {
     @SuppressWarnings("unchecked")
     private DynamicNode testAES256CtrDRBG() throws GordianException {
         /* The AES256 Init */
-        final GordianDRBGInit myInitFP =  new GordianDRBGInit(false, aes256Nonce, aes256Entropy, aes256Personal);
-        final GordianDRBGInit myInitT =  new GordianDRBGInit(true, aes256Nonce, aes256Entropy);
-        final GordianDRBGInit myInitTP =  new GordianDRBGInit(true, aes256Nonce, aes256Entropy, aes256Personal);
+        final GordianDRBGInit myInitFP =  new GordianDRBGInit(false, AES256_NONCE, AES256_ENTROPY, AES256_PERSONAL);
+        final GordianDRBGInit myInitT =  new GordianDRBGInit(true, AES256_NONCE, AES256_ENTROPY);
+        final GordianDRBGInit myInitTP =  new GordianDRBGInit(true, AES256_NONCE, AES256_ENTROPY, AES256_PERSONAL);
 
         /* The Expected results */
         GordianTestCase[]  myTestsFPA = new GordianTestCase[] {
-                new GordianTestCase(aes256Add1,"47111E146562E9AA2FB2A1B095D37A8165AF8FC7CA611D632BE7D4C145C83900"),
-                new GordianTestCase(aes256Add2,"98A28E3B1BA363C9DAF0F6887A1CF52B833D3354D77A7C10837DD63DD2E645F8")
+                new GordianTestCase(AES256_ADD1,"47111E146562E9AA2FB2A1B095D37A8165AF8FC7CA611D632BE7D4C145C83900"),
+                new GordianTestCase(AES256_ADD2,"98A28E3B1BA363C9DAF0F6887A1CF52B833D3354D77A7C10837DD63DD2E645F8")
         };
         GordianTestCase[]  myTestsTP = new GordianTestCase[] {
                 new GordianTestCase("1A2E3FEE9056E98D375525FDC2B63B95B47CE51FCF594D804BD5A17F2E01139B"),
                 new GordianTestCase("601F95384F0D85946301D1EACE8F645A825CE38F1E2565B0C0C439448E9CA8AC")
         };
         GordianTestCase[]  myTestsTA = new GordianTestCase[] {
-                new GordianTestCase(aes256Add1,"71BB3F9C9CEAF4E6C92A83EB4C7225010EE150AC75E23F5F77AD5073EF24D88A"),
-                new GordianTestCase(aes256Add2,"386DEBBBF091BBF0502957B0329938FB836B82E594A2F5FDD5EB28D4E35528F4")
+                new GordianTestCase(AES256_ADD1,"71BB3F9C9CEAF4E6C92A83EB4C7225010EE150AC75E23F5F77AD5073EF24D88A"),
+                new GordianTestCase(AES256_ADD2,"386DEBBBF091BBF0502957B0329938FB836B82E594A2F5FDD5EB28D4E35528F4")
         };
         GordianTestCase[]  myTestsTPA = new GordianTestCase[] {
-                new GordianTestCase(aes256Add1,"EAE6BCE781807E524D26605EA198077932D01EEB445B9AC6C5D99C101D29F46E"),
-                new GordianTestCase(aes256Add2,"738E99C95AF59519AAD37FF3D5180986ADEBAB6E95836725097E50A8D1D0BD28")
+                new GordianTestCase(AES256_ADD1,"EAE6BCE781807E524D26605EA198077932D01EEB445B9AC6C5D99C101D29F46E"),
+                new GordianTestCase(AES256_ADD2,"738E99C95AF59519AAD37FF3D5180986ADEBAB6E95836725097E50A8D1D0BD28")
         };
         GordianTestCase[]  myTestsTPA2 = new GordianTestCase[] {
-                new GordianTestCase(aes256Add1,"eae6bce781807e524d26605ea198077932d01eeb445b9ac6c5d99c101d29f46e30b27377"),
-                new GordianTestCase(aes256Add2,"ec51b55b49904c3ff9e13939f1cf27398993e1b3acb2b0be0be8761261428f0aa8ba2657")
+                new GordianTestCase(AES256_ADD1,"eae6bce781807e524d26605ea198077932d01eeb445b9ac6c5d99c101d29f46e30b27377"),
+                new GordianTestCase(AES256_ADD2,"ec51b55b49904c3ff9e13939f1cf27398993e1b3acb2b0be0be8761261428f0aa8ba2657")
         };
 
         /* Create the cipher */

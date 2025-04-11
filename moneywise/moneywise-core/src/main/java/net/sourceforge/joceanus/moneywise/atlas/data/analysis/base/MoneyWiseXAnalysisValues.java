@@ -321,8 +321,8 @@ public abstract class MoneyWiseXAnalysisValues<T extends MoneyWiseXAnalysisValue
         final StringBuilder myBuilder = new StringBuilder();
         for (Map.Entry<E, Object> myEntry : theMap.entrySet()) {
             final Object myValue = myEntry.getValue();
-            if (!(myValue instanceof OceanusDecimal) || ((OceanusDecimal) myValue).isNonZero()) {
-                if (myBuilder.length() > 0) {
+            if (!(myValue instanceof OceanusDecimal myDec) || myDec.isNonZero()) {
+                if (!myBuilder.isEmpty()) {
                     myBuilder.append(", ");
                 }
                 myBuilder.append(myEntry.getKey());

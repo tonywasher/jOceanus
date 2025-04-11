@@ -236,10 +236,7 @@ public class MoneyWiseXLoanAnalysisSelect
     @Override
     public void setFilter(final MoneyWiseXAnalysisFilter<?, ?> pFilter) {
         /* If this is the correct filter type */
-        if (pFilter instanceof MoneyWiseXAnalysisLoanFilter) {
-            /* Access filter */
-            final MoneyWiseXAnalysisLoanFilter myFilter = (MoneyWiseXAnalysisLoanFilter) pFilter;
-
+        if (pFilter instanceof MoneyWiseXAnalysisLoanFilter myFilter) {
             /* Obtain the filter bucket */
             MoneyWiseXAnalysisLoanBucket myLoan = myFilter.getBucket();
 

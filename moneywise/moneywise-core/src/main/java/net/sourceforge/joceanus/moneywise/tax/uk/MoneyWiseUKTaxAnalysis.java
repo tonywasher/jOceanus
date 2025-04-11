@@ -272,9 +272,8 @@ public class MoneyWiseUKTaxAnalysis
             theTaxDue.addAmount(myBucket.getTaxDue());
 
             /* If this is a sliced tax bucket */
-            if (myBucket instanceof MoneyWiseUKSlicedTaxDueBucket) {
+            if (myBucket instanceof MoneyWiseUKSlicedTaxDueBucket mySliced) {
                 /* Apply Tax Relief */
-                final MoneyWiseUKSlicedTaxDueBucket mySliced = (MoneyWiseUKSlicedTaxDueBucket) myBucket;
                 theTaxDue.subtractAmount(mySliced.getTaxRelief());
             }
         }

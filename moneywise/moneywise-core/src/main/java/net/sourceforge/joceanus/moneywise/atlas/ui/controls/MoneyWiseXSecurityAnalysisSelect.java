@@ -232,10 +232,7 @@ public class MoneyWiseXSecurityAnalysisSelect
     @Override
     public void setFilter(final MoneyWiseXAnalysisFilter<?, ?> pFilter) {
         /* If this is the correct filter type */
-        if (pFilter instanceof MoneyWiseXAnalysisSecurityFilter) {
-            /* Access filter */
-            final MoneyWiseXAnalysisSecurityFilter myFilter = (MoneyWiseXAnalysisSecurityFilter) pFilter;
-
+        if (pFilter instanceof MoneyWiseXAnalysisSecurityFilter myFilter) {
             /* Obtain the filter buckets */
             MoneyWiseXAnalysisSecurityBucket mySecurity = myFilter.getBucket();
 

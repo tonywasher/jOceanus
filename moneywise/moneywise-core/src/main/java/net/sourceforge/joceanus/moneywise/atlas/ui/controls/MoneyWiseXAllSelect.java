@@ -88,10 +88,7 @@ public class MoneyWiseXAllSelect
     @Override
     public void setFilter(final MoneyWiseXAnalysisFilter<?, ?> pFilter) {
         /* If this is the correct filter type */
-        if (pFilter instanceof MoneyWiseXAnalysisAllFilter) {
-            /* Access filter */
-            final MoneyWiseXAnalysisAllFilter myFilter = (MoneyWiseXAnalysisAllFilter) pFilter;
-
+        if (pFilter instanceof MoneyWiseXAnalysisAllFilter myFilter) {
             /* Set the dateRange */
             theFilter.setDateRange(myFilter.getDateRange());
         }
