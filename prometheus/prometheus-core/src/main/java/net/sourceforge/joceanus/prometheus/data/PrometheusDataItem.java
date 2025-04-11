@@ -582,13 +582,13 @@ public abstract class PrometheusDataItem
         Object myValue = myValues.getValue(pFieldId);
 
         /* Convert dataItem reference to Id */
-        if (myValue instanceof PrometheusDataItem) {
-            myValue = ((PrometheusDataItem) myValue).getIndexedId();
+        if (myValue instanceof PrometheusDataItem myItem) {
+            myValue = myItem.getIndexedId();
         }
 
         /* Lookup Id reference */
-        if (myValue instanceof Integer) {
-            final PrometheusDataItem myItem = pList.findItemById((Integer) myValue);
+        if (myValue instanceof Integer i) {
+            final PrometheusDataItem myItem = pList.findItemById(i);
             if (myItem == null) {
                 addError(ERROR_UNKNOWN, pFieldId);
                 throw new PrometheusDataException(this, ERROR_RESOLUTION);
@@ -596,8 +596,8 @@ public abstract class PrometheusDataItem
             myValues.setValue(pFieldId, myItem);
 
             /* Lookup Name reference */
-        } else if (myValue instanceof String) {
-            final PrometheusDataItem myItem = pList.findItemByName((String) myValue);
+        } else if (myValue instanceof String s) {
+            final PrometheusDataItem myItem = pList.findItemByName(s);
             if (myItem == null) {
                 addError(ERROR_UNKNOWN, pFieldId);
                 throw new PrometheusDataException(this, ERROR_RESOLUTION);
@@ -645,8 +645,8 @@ public abstract class PrometheusDataItem
             final MetisFieldDef myField = myIterator.next();
 
             /* Skip if not used in equality */
-            if (!(myField instanceof MetisFieldVersionedDef)
-                || !((MetisFieldVersionedDef) myField).isEquality()) {
+            if (!(myField instanceof MetisFieldVersionedDef myVersioned)
+                || !myVersioned.isEquality()) {
                 continue;
             }
 

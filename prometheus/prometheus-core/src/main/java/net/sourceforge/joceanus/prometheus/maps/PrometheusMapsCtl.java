@@ -223,8 +223,8 @@ public class PrometheusMapsCtl
         theInstance.addItemToMaps(pItem);
 
         /* If the item is an InfoItem */
-        if (pItem instanceof PrometheusDataInfoItem) {
-            adjustForDataInfoItemTouches((PrometheusDataInfoItem) pItem);
+        if (pItem instanceof PrometheusDataInfoItem myItem) {
+            adjustForDataInfoItemTouches(myItem);
         } else {
             adjustForStandardItemTouches(pItem);
         }
@@ -245,8 +245,8 @@ public class PrometheusMapsCtl
             if (MetisDataType.LINK.equals(myField.getDataType())) {
                 final Object myTouched = myField.getFieldValue(pItem);
                 if (myTouched != null) {
-                    if (myTouched instanceof PrometheusDataItem) {
-                        theTouch.recordTouch((PrometheusDataItem) myTouched, pItem);
+                    if (myTouched instanceof PrometheusDataItem myItem) {
+                        theTouch.recordTouch(myItem, pItem);
                     } else {
                         final List<PrometheusDataItem> myList = theDeconstruct.apply(myTouched);
                         for (PrometheusDataItem myItem : myList) {

@@ -151,22 +151,22 @@ public abstract class PrometheusDataInfoItem
 
         /* Store the InfoType */
         Object myValue = pValues.getValue(PrometheusDataResource.DATAINFO_TYPE);
-        if (myValue instanceof Integer) {
-            setValueInfoType((Integer) myValue);
-        } else if (myValue instanceof String) {
-            setValueInfoType((String) myValue);
-        } else if (myValue instanceof PrometheusStaticDataItem) {
-            setValueInfoType((PrometheusStaticDataItem) myValue);
+        if (myValue instanceof Integer i) {
+            setValueInfoType(i);
+        } else if (myValue instanceof String s) {
+            setValueInfoType(s);
+        } else if (myValue instanceof PrometheusStaticDataItem myStatic) {
+            setValueInfoType(myStatic);
         }
 
         /* Store the Owner */
         myValue = pValues.getValue(PrometheusDataResource.DATAINFO_OWNER);
-        if (myValue instanceof Integer) {
-            setValueOwner((Integer) myValue);
-        } else if (myValue instanceof String) {
-            setValueOwner((String) myValue);
-        } else if (myValue instanceof PrometheusDataItem) {
-            setValueOwner((PrometheusDataItem) myValue);
+        if (myValue instanceof Integer i) {
+            setValueOwner(i);
+        } else if (myValue instanceof String s) {
+            setValueOwner(s);
+        } else if (myValue instanceof PrometheusDataItem myItem) {
+            setValueOwner(myItem);
         }
     }
 
@@ -532,17 +532,17 @@ public abstract class PrometheusDataInfoItem
                                  final Object pValue) throws OceanusException {
         try {
             /* Handle various forms */
-            if (pValue instanceof Date) {
-                setValueValue(new OceanusDate((Date) pValue));
+            if (pValue instanceof Date d) {
+                setValueValue(new OceanusDate(d));
                 return true;
             } else if (pValue instanceof OceanusDate) {
                 setValueValue(pValue);
                 return true;
-            } else if (pValue instanceof byte[]) {
-                setValueBytes((byte[]) pValue, OceanusDate.class);
+            } else if (pValue instanceof byte[] ba) {
+                setValueBytes(ba, OceanusDate.class);
                 return true;
-            } else if (pValue instanceof String) {
-                setValueValue(pFormatter.parseDate((String) pValue));
+            } else if (pValue instanceof String s) {
+                setValueValue(pFormatter.parseDate(s));
                 return true;
             }
         } catch (IllegalArgumentException e) {
@@ -565,11 +565,11 @@ public abstract class PrometheusDataInfoItem
             if (pValue instanceof Integer) {
                 setValueValue(pValue);
                 return true;
-            } else if (pValue instanceof byte[]) {
-                setValueBytes((byte[]) pValue, Integer.class);
+            } else if (pValue instanceof byte[] ba) {
+                setValueBytes(ba, Integer.class);
                 return true;
-            } else if (pValue instanceof String) {
-                setValueValue(pFormatter.parseValue((String) pValue, Integer.class));
+            } else if (pValue instanceof String s) {
+                setValueValue(pFormatter.parseValue(s, Integer.class));
                 return true;
             }
         } catch (IllegalArgumentException e) {
@@ -587,19 +587,18 @@ public abstract class PrometheusDataInfoItem
     private boolean setLinkValue(final Object pValue) throws OceanusException {
         try {
             /* Handle various forms */
-            if (pValue instanceof Integer) {
+            if (pValue instanceof Integer i) {
                 setValueValue(pValue);
-                setValueLink((Integer) pValue);
+                setValueLink(i);
                 return true;
-            } else if (pValue instanceof byte[]) {
-                setValueBytes((byte[]) pValue, Integer.class);
+            } else if (pValue instanceof byte[] ba) {
+                setValueBytes(ba, Integer.class);
                 setValueLink(getValue(Integer.class));
                 return true;
-            } else if (pValue instanceof String) {
-                setValueLink((String) pValue);
+            } else if (pValue instanceof String s) {
+                setValueLink(s);
                 return true;
-            } else if (pValue instanceof PrometheusDataItem) {
-                final PrometheusDataItem myItem = (PrometheusDataItem) pValue;
+            } else if (pValue instanceof PrometheusDataItem myItem) {
                 setValueValue(myItem.getIndexedId());
                 setValueLink(myItem);
                 return true;
@@ -619,19 +618,18 @@ public abstract class PrometheusDataInfoItem
     private boolean setLinkPairValue(final Object pValue) throws OceanusException {
         try {
             /* Handle various forms */
-            if (pValue instanceof Long) {
+            if (pValue instanceof Long l) {
                 setValueValue(pValue);
-                setValueLink((Long) pValue);
+                setValueLink(l);
                 return true;
-            } else if (pValue instanceof byte[]) {
-                setValueBytes((byte[]) pValue, Long.class);
+            } else if (pValue instanceof byte[] ba) {
+                setValueBytes(ba, Long.class);
                 setValueLink(getValue(Long.class));
                 return true;
-            } else if (pValue instanceof String) {
-                setValueLink((String) pValue);
+            } else if (pValue instanceof String s) {
+                setValueLink(s);
                 return true;
-            } else if (pValue instanceof PrometheusDataItem) {
-                final PrometheusDataItem myItem = (PrometheusDataItem) pValue;
+            } else if (pValue instanceof PrometheusDataItem myItem) {
                 setValueValue(myItem.getIndexedId());
                 setValueLink(myItem);
                 return true;
@@ -653,8 +651,8 @@ public abstract class PrometheusDataInfoItem
         if (pValue instanceof String) {
             setValueValue(pValue);
             return true;
-        } else if (pValue instanceof byte[]) {
-            setValueBytes((byte[]) pValue, String.class);
+        } else if (pValue instanceof byte[] ba) {
+            setValueBytes(ba, String.class);
             return true;
         }
         return false;
@@ -671,11 +669,11 @@ public abstract class PrometheusDataInfoItem
         if (pValue instanceof char[]) {
             setValueValue(pValue);
             return true;
-        } else if (pValue instanceof byte[]) {
-            setValueBytes((byte[]) pValue, char[].class);
+        } else if (pValue instanceof byte[] ba) {
+            setValueBytes(ba, char[].class);
             return true;
-        } else if (pValue instanceof String) {
-            setValueValue(((String) pValue).toCharArray());
+        } else if (pValue instanceof String s) {
+            setValueValue(s.toCharArray());
             return true;
         }
         return false;
@@ -694,11 +692,11 @@ public abstract class PrometheusDataInfoItem
         if (pValue instanceof OceanusMoney) {
             setValueValue(pValue);
             return true;
-        } else if (pValue instanceof byte[]) {
-            setValueBytes((byte[]) pValue, OceanusMoney.class);
+        } else if (pValue instanceof byte[] ba) {
+            setValueBytes(ba, OceanusMoney.class);
             return true;
-        } else if (pValue instanceof String) {
-            setValueValue(pParser.parseMoneyValue((String) pValue));
+        } else if (pValue instanceof String s) {
+            setValueValue(pParser.parseMoneyValue(s));
             return true;
         }
         return false;
@@ -717,11 +715,11 @@ public abstract class PrometheusDataInfoItem
         if (pValue instanceof OceanusRate) {
             setValueValue(pValue);
             return true;
-        } else if (pValue instanceof byte[]) {
-            setValueBytes((byte[]) pValue, OceanusRate.class);
+        } else if (pValue instanceof byte[] ba) {
+            setValueBytes(ba, OceanusRate.class);
             return true;
-        } else if (pValue instanceof String) {
-            setValueValue(pParser.parseRateValue((String) pValue));
+        } else if (pValue instanceof String s) {
+            setValueValue(pParser.parseRateValue(s));
             return true;
         }
         return false;
@@ -740,11 +738,11 @@ public abstract class PrometheusDataInfoItem
         if (pValue instanceof OceanusRatio) {
             setValueValue(pValue);
             return true;
-        } else if (pValue instanceof byte[]) {
-            setValueBytes((byte[]) pValue, OceanusRatio.class);
+        } else if (pValue instanceof byte[] ba) {
+            setValueBytes(ba, OceanusRatio.class);
             return true;
-        } else if (pValue instanceof String) {
-            setValueValue(pParser.parseRatioValue((String) pValue));
+        } else if (pValue instanceof String s) {
+            setValueValue(pParser.parseRatioValue(s));
             return true;
         }
         return false;
@@ -763,11 +761,11 @@ public abstract class PrometheusDataInfoItem
         if (pValue instanceof OceanusUnits) {
             setValueValue(pValue);
             return true;
-        } else if (pValue instanceof byte[]) {
-            setValueBytes((byte[]) pValue, OceanusUnits.class);
+        } else if (pValue instanceof byte[] ba) {
+            setValueBytes(ba, OceanusUnits.class);
             return true;
-        } else if (pValue instanceof String) {
-            setValueValue(pParser.parseUnitsValue((String) pValue));
+        } else if (pValue instanceof String s) {
+            setValueValue(pParser.parseUnitsValue(s));
             return true;
         }
         return false;
@@ -786,11 +784,11 @@ public abstract class PrometheusDataInfoItem
         if (pValue instanceof OceanusPrice) {
             setValueValue(pValue);
             return true;
-        } else if (pValue instanceof byte[]) {
-            setValueBytes((byte[]) pValue, OceanusPrice.class);
+        } else if (pValue instanceof byte[] ba) {
+            setValueBytes(ba, OceanusPrice.class);
             return true;
-        } else if (pValue instanceof String) {
-            setValueValue(pParser.parsePriceValue((String) pValue));
+        } else if (pValue instanceof String s) {
+            setValueValue(pParser.parsePriceValue(s));
             return true;
         }
         return false;

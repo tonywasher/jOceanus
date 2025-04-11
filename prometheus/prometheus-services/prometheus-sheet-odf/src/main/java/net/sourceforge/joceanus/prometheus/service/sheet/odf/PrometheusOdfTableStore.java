@@ -16,19 +16,18 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.prometheus.service.sheet.odf;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.w3c.dom.Element;
-
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetCellAddress;
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetCellPosition;
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetCellRange;
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetException;
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetSheet;
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetView;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import org.w3c.dom.Element;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Table storage.
@@ -146,8 +145,8 @@ class PrometheusOdfTableStore {
     PrometheusOdfSheet getSheet(final String pName) throws OceanusException {
         /* Obtain the existing sheet */
         Object myCore = theSheets.get(pName);
-        if (myCore instanceof Element) {
-            myCore = new PrometheusOdfSheetCore(this, theNumTables++, (Element) myCore);
+        if (myCore instanceof Element myElement) {
+            myCore = new PrometheusOdfSheetCore(this, theNumTables++, myElement);
         }
         return myCore == null
                ? null

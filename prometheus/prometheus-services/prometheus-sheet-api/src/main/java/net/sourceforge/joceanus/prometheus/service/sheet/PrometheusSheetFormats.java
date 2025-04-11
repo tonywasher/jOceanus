@@ -360,17 +360,17 @@ public final class PrometheusSheetFormats {
             || pValue instanceof Long) {
             return getIntegerFormat();
         }
-        if (pValue instanceof OceanusMoney) {
-            return getAccountingFormat((OceanusMoney) pValue);
+        if (pValue instanceof OceanusMoney m) {
+            return getAccountingFormat(m);
         }
-        if (pValue instanceof OceanusRate) {
-            return getRateFormat((OceanusRate) pValue);
+        if (pValue instanceof OceanusRate r) {
+            return getRateFormat(r);
         }
-        if (pValue instanceof OceanusUnits) {
-            return getExtendedFormat((OceanusUnits) pValue);
+        if (pValue instanceof OceanusUnits u) {
+            return getExtendedFormat(u);
         }
-        if (pValue instanceof OceanusDecimal) {
-            return getStandardFormat((OceanusDecimal) pValue);
+        if (pValue instanceof OceanusDecimal d) {
+            return getStandardFormat(d);
         }
         return null;
     }
@@ -381,8 +381,8 @@ public final class PrometheusSheetFormats {
      * @return the format string
      */
     public static String getAlternateFormatString(final Object pValue) {
-        if (pValue instanceof OceanusMoney) {
-            return getCurrencyFormat((OceanusMoney) pValue);
+        if (pValue instanceof OceanusMoney m) {
+            return getCurrencyFormat(m);
         }
         return null;
     }
@@ -427,13 +427,13 @@ public final class PrometheusSheetFormats {
             || pValue instanceof Long) {
             return getStyleName(Integer.class.getSimpleName());
         }
-        if (pValue instanceof OceanusPrice) {
-            final String myCurr = ((OceanusPrice) pValue).getCurrency().getCurrencyCode();
+        if (pValue instanceof OceanusPrice p) {
+            final String myCurr = p.getCurrency().getCurrencyCode();
             return getStyleName(OceanusPrice.class.getSimpleName()
                                 + myCurr);
         }
-        if (pValue instanceof OceanusMoney) {
-            final String myCurr = ((OceanusMoney) pValue).getCurrency().getCurrencyCode();
+        if (pValue instanceof OceanusMoney m) {
+            final String myCurr = m.getCurrency().getCurrencyCode();
             return getStyleName(OceanusMoney.class.getSimpleName()
                                 + myCurr);
         }
@@ -458,14 +458,14 @@ public final class PrometheusSheetFormats {
         if (pValue instanceof String) {
             return getStyleName(PrometheusSheetCellStyleType.HEADER.toString());
         }
-        if (pValue instanceof OceanusPrice) {
-            final String myCurr = ((OceanusPrice) pValue).getCurrency().getCurrencyCode();
+        if (pValue instanceof OceanusPrice p) {
+            final String myCurr = p.getCurrency().getCurrencyCode();
             return getStyleName(OceanusPrice.class.getSimpleName()
                                 + FORMAT_CURR
                                 + myCurr);
         }
-        if (pValue instanceof OceanusMoney) {
-            final String myCurr = ((OceanusMoney) pValue).getCurrency().getCurrencyCode();
+        if (pValue instanceof OceanusMoney m) {
+            final String myCurr = m.getCurrency().getCurrencyCode();
             return getStyleName(OceanusMoney.class.getSimpleName()
                                 + FORMAT_CURR
                                 + myCurr);

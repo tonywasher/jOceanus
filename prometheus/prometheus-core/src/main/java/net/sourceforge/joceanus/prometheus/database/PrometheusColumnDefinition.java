@@ -501,7 +501,7 @@ public abstract class PrometheusColumnDefinition {
                 }
 
                 /* If this is a reference column */
-                if (myDef instanceof PrometheusReferenceColumn) {
+                if (myDef instanceof PrometheusReferenceColumn myColumn) {
                     /* Increment offset */
                     myOffset++;
 
@@ -510,7 +510,7 @@ public abstract class PrometheusColumnDefinition {
 
                     /* Add the order string for the underlying table. */
                     /* Note that forced to implement in one line to avoid Sonar false positive. */
-                    pBuilder.append(((PrometheusReferenceColumn) myDef).theDefinition.getOrderString(myNewChar, myOffset));
+                    pBuilder.append(myColumn.theDefinition.getOrderString(myNewChar, myOffset));
 
                     /* else standard column */
                 } else {

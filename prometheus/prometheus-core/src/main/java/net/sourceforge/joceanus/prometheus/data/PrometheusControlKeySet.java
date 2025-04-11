@@ -113,16 +113,15 @@ public class PrometheusControlKeySet
 
         /* Store the ControlKey */
         Object myValue = pValues.getValue(PrometheusCryptographyDataType.CONTROLKEY);
-        if (myValue instanceof Integer) {
+        if (myValue instanceof Integer i) {
             /* Store the integer */
-            final Integer myInt = (Integer) myValue;
-            setValueControlKey(myInt);
+            setValueControlKey(i);
 
             /* Resolve the ControlKey */
             resolveDataLink(PrometheusCryptographyDataType.CONTROLKEY, myData.getControlKeys());
-        } else if (myValue instanceof PrometheusControlKey) {
+        } else if (myValue instanceof PrometheusControlKey k) {
             /* Store the controlKey */
-            setValueControlKey((PrometheusControlKey) myValue);
+            setValueControlKey(k);
         }
 
         /* Access the controlKey */
@@ -130,14 +129,14 @@ public class PrometheusControlKeySet
 
         /* Store the WrappedKeySetDef */
         myValue = pValues.getValue(PrometheusDataResource.KEYSET_KEYSETDEF);
-        if (myValue instanceof byte[]) {
-            setValueSecuredKeySetDef((byte[]) myValue);
+        if (myValue instanceof byte[] ba) {
+            setValueSecuredKeySetDef(ba);
         }
 
         /* Store/Resolve the keySet */
         myValue = pValues.getValue(PrometheusDataResource.KEYSET_KEYSET);
-        if (myValue instanceof GordianKeySet) {
-            setValueKeySet((GordianKeySet) myValue);
+        if (myValue instanceof GordianKeySet ks) {
+            setValueKeySet(ks);
         } else if (getSecuredKeySetDef() != null) {
             /* Protect against exceptions */
             try {

@@ -114,8 +114,8 @@ public abstract class PrometheusMapsBaseInstance
      */
     PrometheusDataItem getItemForKey(final Object pKey) {
         final PrometheusMapsInstanceElement myElement = theMap.get(pKey);
-        if (myElement instanceof PrometheusMapsInstanceElementItem) {
-            return ((PrometheusMapsInstanceElementItem) myElement).getItem();
+        if (myElement instanceof PrometheusMapsInstanceElementItem myItem) {
+            return myItem.getItem();
         }
         if (myElement instanceof PrometheusMapsInstanceElementList) {
             return myElement.getList().get(0);

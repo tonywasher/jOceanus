@@ -1263,9 +1263,8 @@ public class PrometheusTableDefinition {
             /* If we are using prefixes */
             if (sortOnReference || pChar > 'a') {
                 /* If this is a reference column */
-                if (myDef instanceof PrometheusReferenceColumn) {
+                if (myDef instanceof PrometheusReferenceColumn myCol) {
                     /* Handle Reference column */
-                    final PrometheusReferenceColumn myCol = (PrometheusReferenceColumn) myDef;
                     myCol.buildOrderString(myBuilder, pOffset + 1);
                 } else {
                     /* Handle standard column with prefix */
