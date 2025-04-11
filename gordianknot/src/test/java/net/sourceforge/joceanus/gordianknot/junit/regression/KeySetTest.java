@@ -81,12 +81,12 @@ class KeySetTest {
     /**
      * Run full profiles.
      */
-    private static final boolean fullProfiles;
+    private static final boolean FULL_PROFILES;
 
     /**
      * Run full profiles.
      */
-    private static final int profileRepeat;
+    private static final int PROFILE_REPEAT;
 
     /**
      * Configure the test according to system properties.
@@ -96,14 +96,14 @@ class KeySetTest {
         final String myBuildType = System.getProperty("joceanus.fullBuild");
         if (myBuildType != null) {
             /* Test everything */
-            fullProfiles=false;
-            profileRepeat=5;
+            FULL_PROFILES =false;
+            PROFILE_REPEAT =5;
 
             /* else allow further configuration */
         } else {
             /* Access system properties */
-            fullProfiles = System.getProperty("fullProfiles") != null;
-            profileRepeat = fullProfiles
+            FULL_PROFILES = System.getProperty("fullProfiles") != null;
+            PROFILE_REPEAT = FULL_PROFILES
                             ? 1000
                             : 5;
         }
@@ -334,7 +334,7 @@ class KeySetTest {
         myStream = Stream.concat(myStream, keySetTests(myFactory, GordianLength.LEN_192, true));
         myStream = Stream.concat(myStream, keySetTests(myFactory, GordianLength.LEN_128, false));
         myStream = Stream.concat(myStream, keySetTests(myFactory, GordianLength.LEN_128, true));
-        myStream = Stream.concat(myStream, Stream.of(DynamicTest.dynamicTest("random", () -> testRandomFactory())));
+        myStream = Stream.concat(myStream, Stream.of(DynamicTest.dynamicTest("random", this::testRandomFactory)));
 
         /* Return the stream */
         return Stream.of(DynamicContainer.dynamicContainer(pFactoryType.toString(), myStream));
@@ -814,14 +814,14 @@ class KeySetTest {
 
         /* Loop through encrypt/decrypt */
         final long myStart = System.nanoTime();
-        for (int i = 0; i < profileRepeat; i++) {
+        for (int i = 0; i < PROFILE_REPEAT; i++) {
             final byte[] myEncrypt = myKeySet.encryptBytes(myData);
             final byte[] myResult = myKeySet.decryptBytes(myEncrypt);
             Assertions.assertArrayEquals(myData, myResult, "Failed to decrypt data");
         }
         long myElapsed = System.nanoTime() - myStart;
-        myElapsed /= (long) SymmetricTest.MILLINANOS * profileRepeat;
-        if (fullProfiles) {
+        myElapsed /= (long) SymmetricTest.MILLINANOS * PROFILE_REPEAT;
+        if (FULL_PROFILES) {
             System.out.println("Elapsed: " + myElapsed);
         }
     }

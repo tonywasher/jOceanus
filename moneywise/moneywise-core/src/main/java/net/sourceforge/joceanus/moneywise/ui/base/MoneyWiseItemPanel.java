@@ -113,11 +113,9 @@ public abstract class MoneyWiseItemPanel<T extends PrometheusDataItem>
     private boolean isFieldChanged(final T pItem,
                                    final MetisDataFieldId pField) {
         /* If the field is a dataInfoClass as part of an infoSetItem */
-        if (pField instanceof PrometheusDataInfoClass
-                && pItem instanceof PrometheusInfoSetItem) {
+        if (pField instanceof PrometheusDataInfoClass myClass
+                && pItem instanceof PrometheusInfoSetItem myItem) {
             /* Check with the infoSet whether the field has changed */
-            final PrometheusInfoSetItem myItem = (PrometheusInfoSetItem) pItem;
-            final PrometheusDataInfoClass myClass = (PrometheusDataInfoClass) pField;
             return myItem.getInfoSet().fieldChanged(myClass).isDifferent();
         }
 
@@ -232,24 +230,19 @@ public abstract class MoneyWiseItemPanel<T extends PrometheusDataItem>
             String myName = null;
 
             /* Handle differing items */
-            if (myItem instanceof PrometheusStaticDataItem) {
-                final PrometheusStaticDataItem myStatic = (PrometheusStaticDataItem) myItem;
+            if (myItem instanceof PrometheusStaticDataItem myStatic) {
                 myId = MoneyWiseGoToId.STATIC;
                 myName = myStatic.getName();
-            } else if (myItem instanceof MoneyWiseAssetBase) {
-                final MoneyWiseAssetBase myAccount = (MoneyWiseAssetBase) myItem;
+            } else if (myItem instanceof MoneyWiseAssetBase myAccount) {
                 myId = MoneyWiseGoToId.ACCOUNT;
                 myName = myAccount.getName();
-            } else if (myItem instanceof MoneyWiseCategoryBase) {
-                final MoneyWiseCategoryBase myCategory = (MoneyWiseCategoryBase) myItem;
+            } else if (myItem instanceof MoneyWiseCategoryBase myCategory) {
                 myId = MoneyWiseGoToId.CATEGORY;
                 myName = myCategory.getName();
-            } else if (myItem instanceof MoneyWiseRegion) {
-                final MoneyWiseRegion myRegion = (MoneyWiseRegion) myItem;
+            } else if (myItem instanceof MoneyWiseRegion myRegion) {
                 myId = MoneyWiseGoToId.REGION;
                 myName = myRegion.getName();
-            } else if (myItem instanceof MoneyWiseTransTag) {
-                final MoneyWiseTransTag myTag = (MoneyWiseTransTag) myItem;
+            } else if (myItem instanceof MoneyWiseTransTag myTag) {
                 myId = MoneyWiseGoToId.TAG;
                 myName = myTag.getName();
             }

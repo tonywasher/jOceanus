@@ -111,26 +111,22 @@ public class MoneyWiseQIFAccount
         theName = pAccount.getName();
 
         /* Handle deposit */
-        if (pAccount instanceof MoneyWiseDeposit) {
-            final MoneyWiseDeposit myDeposit = (MoneyWiseDeposit) pAccount;
+        if (pAccount instanceof MoneyWiseDeposit myDeposit) {
             theClass = myDeposit.getCategoryClass();
             theDesc = myDeposit.getDesc();
 
             /* Handle cash */
-        } else if (pAccount instanceof MoneyWiseCash) {
-            final MoneyWiseCash myCash = (MoneyWiseCash) pAccount;
+        } else if (pAccount instanceof MoneyWiseCash myCash) {
             theClass = myCash.getCategoryClass();
             theDesc = myCash.getDesc();
 
             /* Handle loan */
-        } else if (pAccount instanceof MoneyWiseLoan) {
-            final MoneyWiseLoan myLoan = (MoneyWiseLoan) pAccount;
+        } else if (pAccount instanceof MoneyWiseLoan myLoan) {
             theClass = myLoan.getCategoryClass();
             theDesc = myLoan.getDesc();
 
             /* Handle portfolio */
-        } else if (pAccount instanceof MoneyWisePortfolio) {
-            final MoneyWisePortfolio myPortfolio = (MoneyWisePortfolio) pAccount;
+        } else if (pAccount instanceof MoneyWisePortfolio myPortfolio) {
             theClass = MoneyWiseBasicDataType.PORTFOLIO;
             theDesc = myPortfolio.getDesc();
         } else {

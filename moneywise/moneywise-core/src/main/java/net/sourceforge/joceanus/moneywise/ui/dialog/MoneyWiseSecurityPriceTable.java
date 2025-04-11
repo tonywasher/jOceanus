@@ -238,9 +238,7 @@ public class MoneyWiseSecurityPriceTable
 
         /* Set filter constraint */
         final OceanusDate myCurrent = pRow.getDate();
-        pConfig.setAllowed((d) -> {
-            return myCurrent.equals(d) || !myDates.contains(d);
-        });
+        pConfig.setAllowed(d -> myCurrent.equals(d) || !myDates.contains(d));
 
         /* Set range constraint */
         final MoneyWiseDataSet myDataSet = pRow.getDataSet();

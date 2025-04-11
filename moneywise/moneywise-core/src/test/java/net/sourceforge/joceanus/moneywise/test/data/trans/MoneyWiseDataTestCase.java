@@ -31,8 +31,10 @@ import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseCash;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDeposit;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseLoan;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePortfolio;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurityHolding;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransCategory;
 import net.sourceforge.joceanus.moneywise.data.builder.MoneyWiseTransactionBuilder;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrency;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrencyClass;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTaxClass;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransInfoClass;
@@ -164,19 +166,22 @@ public abstract class MoneyWiseDataTestCase {
     /**
      * Use infoClass.
      * @param pAttr the security attribute
+     * @param pHolding the holding
      * @return true/false
      */
-    public boolean useSecurityAttr(final MoneyWiseXAnalysisSecurityAttr pAttr) {
+    public boolean useSecurityAttr(final MoneyWiseXAnalysisSecurityAttr pAttr,
+                                   final MoneyWiseSecurityHolding pHolding) {
         switch (pAttr) {
-            case FUNDED:
             case UNITS:
             case PRICE:
             case VALUATION:
             case RESIDUALCOST:
             case REALISEDGAINS:
             case UNREALISEDGAINS:
-            case PROFIT:
-                return true;
+                 return true;
+            case VALUE:
+                final MoneyWiseCurrency myReporting = getAnalysis().getData().getReportingCurrency();
+                return myReporting.equals(pHolding.getSecurity().getAssetCurrency());
             default:
                 return false;
         }

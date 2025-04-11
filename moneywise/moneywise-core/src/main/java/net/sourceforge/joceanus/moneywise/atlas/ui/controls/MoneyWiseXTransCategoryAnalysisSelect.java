@@ -199,10 +199,7 @@ public class MoneyWiseXTransCategoryAnalysisSelect
     @Override
     public void setFilter(final MoneyWiseXAnalysisFilter<?, ?> pFilter) {
         /* If this is the correct filter type */
-        if (pFilter instanceof MoneyWiseXAnalysisTransCategoryFilter) {
-            /* Access filter */
-            final MoneyWiseXAnalysisTransCategoryFilter myFilter = (MoneyWiseXAnalysisTransCategoryFilter) pFilter;
-
+        if (pFilter instanceof MoneyWiseXAnalysisTransCategoryFilter myFilter) {
             /* Obtain the filter bucket */
             MoneyWiseXAnalysisTransCategoryBucket myCategory = myFilter.getBucket();
 

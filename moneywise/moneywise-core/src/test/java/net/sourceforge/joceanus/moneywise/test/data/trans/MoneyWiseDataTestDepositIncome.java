@@ -58,9 +58,9 @@ public class MoneyWiseDataTestDepositIncome
 
     @Override
     public void setUpAccounts() throws OceanusException {
-        createDeposits(MoneyWiseDataTestAccounts.idDP_BarclaysCurrent,
-                MoneyWiseDataTestAccounts.idDP_NatWideISA,
-                MoneyWiseDataTestAccounts.idDP_StarlingEuro);
+        createDeposits(MoneyWiseDataTestAccounts.IDDP_BARCLAYS_CURRENT,
+                MoneyWiseDataTestAccounts.IDDP_NAT_WIDE_ISA,
+                MoneyWiseDataTestAccounts.IDDP_STARLING_EURO);
     }
 
     @Override
@@ -85,111 +85,111 @@ public class MoneyWiseDataTestDepositIncome
     @Override
     public void defineTransactions() throws OceanusException {
         /* A simple interest with tax and withheld */
-        theTransBuilder.date("01-Sept-1986").category(MoneyWiseDataTestCategories.idTC_Interest)
-                .account(MoneyWiseDataTestAccounts.idDP_BarclaysCurrent).amount("13")
-                .to().partner(MoneyWiseDataTestAccounts.idDP_BarclaysCurrent).taxCredit("2.81").withheld("0.77")
+        theTransBuilder.date("01-Sept-1986").category(MoneyWiseDataTestCategories.IDTC_INTEREST)
+                .account(MoneyWiseDataTestAccounts.IDDP_BARCLAYS_CURRENT).amount("13")
+                .to().partner(MoneyWiseDataTestAccounts.IDDP_BARCLAYS_CURRENT).taxCredit("2.81").withheld("0.77")
                 .build();
 
         /* A refund of interest with tax and withheld */
-        theTransBuilder.date("02-Sept-1986").category(MoneyWiseDataTestCategories.idTC_Interest)
-                .account(MoneyWiseDataTestAccounts.idDP_BarclaysCurrent).amount("3.22")
-                .from().partner(MoneyWiseDataTestAccounts.idDP_BarclaysCurrent).taxCredit("0.76").withheld("0.03")
+        theTransBuilder.date("02-Sept-1986").category(MoneyWiseDataTestCategories.IDTC_INTEREST)
+                .account(MoneyWiseDataTestAccounts.IDDP_BARCLAYS_CURRENT).amount("3.22")
+                .from().partner(MoneyWiseDataTestAccounts.IDDP_BARCLAYS_CURRENT).taxCredit("0.76").withheld("0.03")
                 .build();
 
         /* A simple loyalty bonus with tax */
-        theTransBuilder.date("03-Sept-1986").category(MoneyWiseDataTestCategories.idTC_LoyaltyBonus)
-                .account(MoneyWiseDataTestAccounts.idDP_BarclaysCurrent).amount("9.80")
-                .to().partner(MoneyWiseDataTestAccounts.idDP_BarclaysCurrent).taxCredit("2.30")
+        theTransBuilder.date("03-Sept-1986").category(MoneyWiseDataTestCategories.IDTC_LOYALTY_BONUS)
+                .account(MoneyWiseDataTestAccounts.IDDP_BARCLAYS_CURRENT).amount("9.80")
+                .to().partner(MoneyWiseDataTestAccounts.IDDP_BARCLAYS_CURRENT).taxCredit("2.30")
                 .build();
 
         /* A refund of loyaltyBonus with tax */
-        theTransBuilder.date("04-Sept-1986").category(MoneyWiseDataTestCategories.idTC_LoyaltyBonus)
-                .account(MoneyWiseDataTestAccounts.idDP_BarclaysCurrent).amount("0.76")
-                .from().partner(MoneyWiseDataTestAccounts.idDP_BarclaysCurrent).taxCredit("0.34")
+        theTransBuilder.date("04-Sept-1986").category(MoneyWiseDataTestCategories.IDTC_LOYALTY_BONUS)
+                .account(MoneyWiseDataTestAccounts.IDDP_BARCLAYS_CURRENT).amount("0.76")
+                .from().partner(MoneyWiseDataTestAccounts.IDDP_BARCLAYS_CURRENT).taxCredit("0.34")
                 .build();
 
         /* A simple cashback */
-        theTransBuilder.date("05-Sept-1986").category(MoneyWiseDataTestCategories.idTC_CashBack)
-                .account(MoneyWiseDataTestAccounts.idDP_BarclaysCurrent).amount("1")
-                .to().partner(MoneyWiseDataTestAccounts.idDP_BarclaysCurrent)
+        theTransBuilder.date("05-Sept-1986").category(MoneyWiseDataTestCategories.IDTC_CASH_BACK)
+                .account(MoneyWiseDataTestAccounts.IDDP_BARCLAYS_CURRENT).amount("1")
+                .to().partner(MoneyWiseDataTestAccounts.IDDP_BARCLAYS_CURRENT)
                 .build();
 
         /* A refund of cashback */
-        theTransBuilder.date("06-Sept-1986").category(MoneyWiseDataTestCategories.idTC_CashBack)
-                .account(MoneyWiseDataTestAccounts.idDP_BarclaysCurrent).amount("0.10")
-                .from().partner(MoneyWiseDataTestAccounts.idDP_BarclaysCurrent)
+        theTransBuilder.date("06-Sept-1986").category(MoneyWiseDataTestCategories.IDTC_CASH_BACK)
+                .account(MoneyWiseDataTestAccounts.IDDP_BARCLAYS_CURRENT).amount("0.10")
+                .from().partner(MoneyWiseDataTestAccounts.IDDP_BARCLAYS_CURRENT)
                 .build();
 
         /* A taxFree interest */
-        theTransBuilder.date("07-Sept-1986").category(MoneyWiseDataTestCategories.idTC_Interest)
-                .account(MoneyWiseDataTestAccounts.idDP_NatWideISA).amount("56")
-                .to().partner(MoneyWiseDataTestAccounts.idDP_NatWideISA)
+        theTransBuilder.date("07-Sept-1986").category(MoneyWiseDataTestCategories.IDTC_INTEREST)
+                .account(MoneyWiseDataTestAccounts.IDDP_NAT_WIDE_ISA).amount("56")
+                .to().partner(MoneyWiseDataTestAccounts.IDDP_NAT_WIDE_ISA)
                 .build();
 
         /* A refund of taxFree interest */
-        theTransBuilder.date("08-Sept-1986").category(MoneyWiseDataTestCategories.idTC_Interest)
-                .account(MoneyWiseDataTestAccounts.idDP_NatWideISA).amount("8.70")
-                .from().partner(MoneyWiseDataTestAccounts.idDP_NatWideISA)
+        theTransBuilder.date("08-Sept-1986").category(MoneyWiseDataTestCategories.IDTC_INTEREST)
+                .account(MoneyWiseDataTestAccounts.IDDP_NAT_WIDE_ISA).amount("8.70")
+                .from().partner(MoneyWiseDataTestAccounts.IDDP_NAT_WIDE_ISA)
                 .build();
 
         /* A taxFree loyaltyBonus */
-        theTransBuilder.date("09-Sept-1986").category(MoneyWiseDataTestCategories.idTC_LoyaltyBonus)
-                .account(MoneyWiseDataTestAccounts.idDP_NatWideISA).amount("14.56")
-                .to().partner(MoneyWiseDataTestAccounts.idDP_NatWideISA)
+        theTransBuilder.date("09-Sept-1986").category(MoneyWiseDataTestCategories.IDTC_LOYALTY_BONUS)
+                .account(MoneyWiseDataTestAccounts.IDDP_NAT_WIDE_ISA).amount("14.56")
+                .to().partner(MoneyWiseDataTestAccounts.IDDP_NAT_WIDE_ISA)
                 .build();
 
         /* A refund of taxFree loyaltyBonus */
-        theTransBuilder.date("10-Sept-1986").category(MoneyWiseDataTestCategories.idTC_LoyaltyBonus)
-                .account(MoneyWiseDataTestAccounts.idDP_NatWideISA).amount("7.98")
-                .from().partner(MoneyWiseDataTestAccounts.idDP_NatWideISA)
+        theTransBuilder.date("10-Sept-1986").category(MoneyWiseDataTestCategories.IDTC_LOYALTY_BONUS)
+                .account(MoneyWiseDataTestAccounts.IDDP_NAT_WIDE_ISA).amount("7.98")
+                .from().partner(MoneyWiseDataTestAccounts.IDDP_NAT_WIDE_ISA)
                 .build();
 
         /* A simple foreign interest with tax and withheld */
-        theTransBuilder.date("11-Sept-1986").category(MoneyWiseDataTestCategories.idTC_Interest)
-                .account(MoneyWiseDataTestAccounts.idDP_StarlingEuro).amount("47")
-                .to().partner(MoneyWiseDataTestAccounts.idDP_StarlingEuro).taxCredit("11.76").withheld("0.93")
+        theTransBuilder.date("11-Sept-1986").category(MoneyWiseDataTestCategories.IDTC_INTEREST)
+                .account(MoneyWiseDataTestAccounts.IDDP_STARLING_EURO).amount("47")
+                .to().partner(MoneyWiseDataTestAccounts.IDDP_STARLING_EURO).taxCredit("11.76").withheld("0.93")
                 .build();
 
         /* A refund of foreign interest with tax and withheld */
-        theTransBuilder.date("12-Sept-1986").category(MoneyWiseDataTestCategories.idTC_Interest)
-                .account(MoneyWiseDataTestAccounts.idDP_StarlingEuro).amount("5.21")
-                .from().partner(MoneyWiseDataTestAccounts.idDP_StarlingEuro).taxCredit("1.65").withheld("0.12")
+        theTransBuilder.date("12-Sept-1986").category(MoneyWiseDataTestCategories.IDTC_INTEREST)
+                .account(MoneyWiseDataTestAccounts.IDDP_STARLING_EURO).amount("5.21")
+                .from().partner(MoneyWiseDataTestAccounts.IDDP_STARLING_EURO).taxCredit("1.65").withheld("0.12")
                 .build();
 
         /* A gross interest */
-        theTransBuilder.date("01-Sept-2020").category(MoneyWiseDataTestCategories.idTC_Interest)
-                .account(MoneyWiseDataTestAccounts.idDP_BarclaysCurrent).amount("7.34")
-                .to().partner(MoneyWiseDataTestAccounts.idDP_BarclaysCurrent)
+        theTransBuilder.date("01-Sept-2020").category(MoneyWiseDataTestCategories.IDTC_INTEREST)
+                .account(MoneyWiseDataTestAccounts.IDDP_BARCLAYS_CURRENT).amount("7.34")
+                .to().partner(MoneyWiseDataTestAccounts.IDDP_BARCLAYS_CURRENT)
                 .build();
 
         /* A refund of gross interest */
-        theTransBuilder.date("02-Sept-2020").category(MoneyWiseDataTestCategories.idTC_Interest)
-                .account(MoneyWiseDataTestAccounts.idDP_BarclaysCurrent).amount("2.98")
-                .from().partner(MoneyWiseDataTestAccounts.idDP_BarclaysCurrent)
+        theTransBuilder.date("02-Sept-2020").category(MoneyWiseDataTestCategories.IDTC_INTEREST)
+                .account(MoneyWiseDataTestAccounts.IDDP_BARCLAYS_CURRENT).amount("2.98")
+                .from().partner(MoneyWiseDataTestAccounts.IDDP_BARCLAYS_CURRENT)
                 .build();
 
         /* A gross loyalty bonus */
-        theTransBuilder.date("03-Sept-2020").category(MoneyWiseDataTestCategories.idTC_LoyaltyBonus)
-                .account(MoneyWiseDataTestAccounts.idDP_BarclaysCurrent).amount("8.45")
-                .to().partner(MoneyWiseDataTestAccounts.idDP_BarclaysCurrent)
+        theTransBuilder.date("03-Sept-2020").category(MoneyWiseDataTestCategories.IDTC_LOYALTY_BONUS)
+                .account(MoneyWiseDataTestAccounts.IDDP_BARCLAYS_CURRENT).amount("8.45")
+                .to().partner(MoneyWiseDataTestAccounts.IDDP_BARCLAYS_CURRENT)
                 .build();
 
         /* A refund of gross loyalty bonus */
-        theTransBuilder.date("04-Sept-2020").category(MoneyWiseDataTestCategories.idTC_LoyaltyBonus)
-                .account(MoneyWiseDataTestAccounts.idDP_BarclaysCurrent).amount("1.45")
-                .from().partner(MoneyWiseDataTestAccounts.idDP_BarclaysCurrent)
+        theTransBuilder.date("04-Sept-2020").category(MoneyWiseDataTestCategories.IDTC_LOYALTY_BONUS)
+                .account(MoneyWiseDataTestAccounts.IDDP_BARCLAYS_CURRENT).amount("1.45")
+                .from().partner(MoneyWiseDataTestAccounts.IDDP_BARCLAYS_CURRENT)
                 .build();
 
         /* A foreign interest */
-        theTransBuilder.date("01-Oct-2020").category(MoneyWiseDataTestCategories.idTC_Interest)
-                .account(MoneyWiseDataTestAccounts.idDP_StarlingEuro).amount("8.62")
-                .to().partner(MoneyWiseDataTestAccounts.idDP_StarlingEuro)
+        theTransBuilder.date("01-Oct-2020").category(MoneyWiseDataTestCategories.IDTC_INTEREST)
+                .account(MoneyWiseDataTestAccounts.IDDP_STARLING_EURO).amount("8.62")
+                .to().partner(MoneyWiseDataTestAccounts.IDDP_STARLING_EURO)
                 .build();
 
         /* A refund of foreign gross interest */
-        theTransBuilder.date("02-Oct-2020").category(MoneyWiseDataTestCategories.idTC_Interest)
-                .account(MoneyWiseDataTestAccounts.idDP_StarlingEuro).amount("1.31")
-                .from().partner(MoneyWiseDataTestAccounts.idDP_StarlingEuro)
+        theTransBuilder.date("02-Oct-2020").category(MoneyWiseDataTestCategories.IDTC_INTEREST)
+                .account(MoneyWiseDataTestAccounts.IDDP_STARLING_EURO).amount("1.31")
+                .from().partner(MoneyWiseDataTestAccounts.IDDP_STARLING_EURO)
                 .build();
     }
 
@@ -199,24 +199,24 @@ public class MoneyWiseDataTestDepositIncome
 
     @Override
     public void checkAnalysis() {
-        checkAccountValue(MoneyWiseDataTestAccounts.idDP_BarclaysCurrent, "10031.08");
-        checkAccountValue(MoneyWiseDataTestAccounts.idDP_NatWideISA, "10053.88");
-        checkAccountValue(MoneyWiseDataTestAccounts.idDP_StarlingEuro, "4796.65");
-        checkPayeeValue(MoneyWiseDataTestAccounts.idPY_Barclays, "35.83", "0.74");
-        checkPayeeValue(MoneyWiseDataTestAccounts.idPY_Nationwide, "53.88", "0");
-        checkPayeeValue(MoneyWiseDataTestAccounts.idPY_Starling, "54.01", "0.73");
-        checkPayeeValue(MoneyWiseDataTestAccounts.idPY_HMRC, "0", "13.10");
-        checkPayeeValue(MoneyWiseDataTestAccounts.idPY_Market, "252.46", "0");
-        checkCategoryValue(MoneyWiseDataTestCategories.idTC_TaxedInterest, "60.00", "0");
-        checkCategoryValue(MoneyWiseDataTestCategories.idTC_GrossInterest, "10.94", "0");
-        checkCategoryValue(MoneyWiseDataTestCategories.idTC_TaxFreeInt, "47.3", "0");
-        checkCategoryValue(MoneyWiseDataTestCategories.idTC_CashBack, "0.90", "0");
-        checkCategoryValue(MoneyWiseDataTestCategories.idTC_TaxIncome, "0", "13.10");
-        checkCategoryValue(MoneyWiseDataTestCategories.idTC_ExpVirtual, "0", "1.47");
-        checkCategoryValue(MoneyWiseDataTestCategories.idTC_TaxedLoyaltyBonus, "11.00", "0");
-        checkCategoryValue(MoneyWiseDataTestCategories.idTC_GrossLoyaltyBonus, "7.00", "0");
-        checkCategoryValue(MoneyWiseDataTestCategories.idTC_TaxFreeLoyaltyBonus, "6.58", "0");
-        checkCategoryValue(MoneyWiseDataTestCategories.idTC_MktCurrAdjust, "252.46", "0");
+        checkAccountValue(MoneyWiseDataTestAccounts.IDDP_BARCLAYS_CURRENT, "10031.08");
+        checkAccountValue(MoneyWiseDataTestAccounts.IDDP_NAT_WIDE_ISA, "10053.88");
+        checkAccountValue(MoneyWiseDataTestAccounts.IDDP_STARLING_EURO, "4796.65");
+        checkPayeeValue(MoneyWiseDataTestAccounts.IDPY_BARCLAYS, "35.83", "0.74");
+        checkPayeeValue(MoneyWiseDataTestAccounts.IDPY_NATIONWIDE, "53.88", "0");
+        checkPayeeValue(MoneyWiseDataTestAccounts.IDPY_STARLING, "54.01", "0.73");
+        checkPayeeValue(MoneyWiseDataTestAccounts.IDPY_HMRC, "0", "13.10");
+        checkPayeeValue(MoneyWiseDataTestAccounts.IDPY_MARKET, "252.46", "0");
+        checkCategoryValue(MoneyWiseDataTestCategories.IDTC_TAXED_INTEREST, "60.00", "0");
+        checkCategoryValue(MoneyWiseDataTestCategories.IDTC_GROSS_INTEREST, "10.94", "0");
+        checkCategoryValue(MoneyWiseDataTestCategories.IDTC_TAX_FREE_INT, "47.3", "0");
+        checkCategoryValue(MoneyWiseDataTestCategories.IDTC_CASH_BACK, "0.90", "0");
+        checkCategoryValue(MoneyWiseDataTestCategories.IDTC_TAX_INCOME, "0", "13.10");
+        checkCategoryValue(MoneyWiseDataTestCategories.IDTC_EXP_VIRTUAL, "0", "1.47");
+        checkCategoryValue(MoneyWiseDataTestCategories.IDTC_TAXED_LOYALTY_BONUS, "11.00", "0");
+        checkCategoryValue(MoneyWiseDataTestCategories.IDTC_GROSS_LOYALTY_BONUS, "7.00", "0");
+        checkCategoryValue(MoneyWiseDataTestCategories.IDTC_TAX_FREE_LOYALTY_BONUS, "6.58", "0");
+        checkCategoryValue(MoneyWiseDataTestCategories.IDTC_MKT_CURR_ADJUST, "252.46", "0");
         checkTaxBasisValue(MoneyWiseTaxClass.TAXEDINTEREST, "71.00");
         checkTaxBasisValue(MoneyWiseTaxClass.UNTAXEDINTEREST, "17.94");
         checkTaxBasisValue(MoneyWiseTaxClass.TAXPAID, "-13.10");

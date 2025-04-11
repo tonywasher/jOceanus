@@ -229,10 +229,7 @@ public class MoneyWiseXTaxBasisAnalysisSelect
     @Override
     public void setFilter(final MoneyWiseXAnalysisFilter<?, ?> pFilter) {
         /* If this is the correct filter type */
-        if (pFilter instanceof MoneyWiseXAnalysisTaxBasisFilter) {
-            /* Access filter */
-            final MoneyWiseXAnalysisTaxBasisFilter myFilter = (MoneyWiseXAnalysisTaxBasisFilter) pFilter;
-
+        if (pFilter instanceof MoneyWiseXAnalysisTaxBasisFilter myFilter) {
             /* Obtain the filter bucket */
             MoneyWiseXAnalysisTaxBasisBucket myTaxBasis = myFilter.getBucket();
 
@@ -429,8 +426,8 @@ public class MoneyWiseXTaxBasisAnalysisSelect
          */
         private void setTheTaxBasis(final MoneyWiseXAnalysisTaxBasisBucket pTaxBasis) {
             /* Adjust the selected taxBasis */
-            if (pTaxBasis instanceof MoneyWiseXAnalysisTaxBasisAccountBucket) {
-                theAccount = (MoneyWiseXAnalysisTaxBasisAccountBucket) pTaxBasis;
+            if (pTaxBasis instanceof MoneyWiseXAnalysisTaxBasisAccountBucket myBucket) {
+                theAccount = myBucket;
                 theBasis = theAccount.getParent();
                 theFilter = new MoneyWiseXAnalysisTaxBasisFilter(theAccount);
                 theFilter.setDateRange(theDateRange);

@@ -153,8 +153,7 @@ public class MoneyWiseMaps {
      */
     private static List<PrometheusDataItem> deconstructPair(final Object pPair) {
         final List<PrometheusDataItem> myList = new ArrayList<>();
-        if (pPair instanceof MoneyWiseSecurityHolding) {
-            final MoneyWiseSecurityHolding myHolding = (MoneyWiseSecurityHolding) pPair;
+        if (pPair instanceof MoneyWiseSecurityHolding myHolding) {
             myList.add(myHolding.getPortfolio());
             myList.add(myHolding.getSecurity());
         }

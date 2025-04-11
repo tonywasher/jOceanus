@@ -195,10 +195,7 @@ public class MoneyWiseXTransTagSelect
     @Override
     public void setFilter(final MoneyWiseXAnalysisFilter<?, ?> pFilter) {
         /* If this is the correct filter type */
-        if (pFilter instanceof MoneyWiseXAnalysisTagFilter) {
-            /* Access filter */
-            final MoneyWiseXAnalysisTagFilter myFilter = (MoneyWiseXAnalysisTagFilter) pFilter;
-
+        if (pFilter instanceof MoneyWiseXAnalysisTagFilter myFilter) {
             /* Obtain the tag */
             MoneyWiseXAnalysisTransTagBucket myTag = myFilter.getBucket();
 

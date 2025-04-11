@@ -60,10 +60,10 @@ public class MoneyWiseDataTestTransfers
 
     @Override
     public void setUpAccounts() throws OceanusException {
-        createDeposits(MoneyWiseDataTestAccounts.idDP_BarclaysCurrent,
-                       MoneyWiseDataTestAccounts.idDP_NatWideFlexDirect,
-                       MoneyWiseDataTestAccounts.idDP_StarlingEuro,
-                       MoneyWiseDataTestAccounts.idDP_StarlingDollar);
+        createDeposits(MoneyWiseDataTestAccounts.IDDP_BARCLAYS_CURRENT,
+                       MoneyWiseDataTestAccounts.IDDP_NAT_WIDE_FLEX_DIRECT,
+                       MoneyWiseDataTestAccounts.IDDP_STARLING_EURO,
+                       MoneyWiseDataTestAccounts.IDDP_STARLING_DOLLAR);
     }
 
     @Override
@@ -82,27 +82,27 @@ public class MoneyWiseDataTestTransfers
     @Override
     public void defineTransactions() throws OceanusException {
         /* A simple transfer from one account to another */
-        theTransBuilder.date("01-Jun-1985").category(MoneyWiseDataTestCategories.idTC_Transfer)
-                .account(MoneyWiseDataTestAccounts.idDP_BarclaysCurrent).amount("2000")
-                .to().partner(MoneyWiseDataTestAccounts.idDP_NatWideFlexDirect)
+        theTransBuilder.date("01-Jun-1985").category(MoneyWiseDataTestCategories.IDTC_TRANSFER)
+                .account(MoneyWiseDataTestAccounts.IDDP_BARCLAYS_CURRENT).amount("2000")
+                .to().partner(MoneyWiseDataTestAccounts.IDDP_NAT_WIDE_FLEX_DIRECT)
                 .build();
 
         /* A simple transfer from standard currency to non-standard currency */
-        theTransBuilder.date("02-Jun-1985").category(MoneyWiseDataTestCategories.idTC_Transfer)
-                .account(MoneyWiseDataTestAccounts.idDP_BarclaysCurrent).amount("2000")
-                .to().partner(MoneyWiseDataTestAccounts.idDP_StarlingEuro).partnerAmount("2100")
+        theTransBuilder.date("02-Jun-1985").category(MoneyWiseDataTestCategories.IDTC_TRANSFER)
+                .account(MoneyWiseDataTestAccounts.IDDP_BARCLAYS_CURRENT).amount("2000")
+                .to().partner(MoneyWiseDataTestAccounts.IDDP_STARLING_EURO).partnerAmount("2100")
                 .build();
 
         /* A simple transfer from non-standard currency to standard currency */
-        theTransBuilder.date("03-Jun-1985").category(MoneyWiseDataTestCategories.idTC_Transfer)
-                .account(MoneyWiseDataTestAccounts.idDP_StarlingEuro).amount("1000")
-                .to().partner(MoneyWiseDataTestAccounts.idDP_BarclaysCurrent).partnerAmount("950")
+        theTransBuilder.date("03-Jun-1985").category(MoneyWiseDataTestCategories.IDTC_TRANSFER)
+                .account(MoneyWiseDataTestAccounts.IDDP_STARLING_EURO).amount("1000")
+                .to().partner(MoneyWiseDataTestAccounts.IDDP_BARCLAYS_CURRENT).partnerAmount("950")
                 .build();
 
         /* A simple transfer from non-standard currency to non-standard currency */
-        theTransBuilder.date("04-Jun-1985").category(MoneyWiseDataTestCategories.idTC_Transfer)
-                .account(MoneyWiseDataTestAccounts.idDP_StarlingEuro).amount("500")
-                .to().partner(MoneyWiseDataTestAccounts.idDP_StarlingDollar).partnerAmount("550")
+        theTransBuilder.date("04-Jun-1985").category(MoneyWiseDataTestCategories.IDTC_TRANSFER)
+                .account(MoneyWiseDataTestAccounts.IDDP_STARLING_EURO).amount("500")
+                .to().partner(MoneyWiseDataTestAccounts.IDDP_STARLING_DOLLAR).partnerAmount("550")
                 .build();
     }
 
@@ -110,29 +110,29 @@ public class MoneyWiseDataTestTransfers
     public void checkErrors() {
         /* Check for failure on a transfer with same account as debit/credit */
         Assertions.assertThrows(MoneyWiseDataException.class,
-                () -> theTransBuilder.date("05-Jun-1985").category(MoneyWiseDataTestCategories.idTC_Transfer)
-                        .account(MoneyWiseDataTestAccounts.idDP_BarclaysCurrent).amount("500")
-                        .to().partner(MoneyWiseDataTestAccounts.idDP_BarclaysCurrent).partnerAmount("550")
+                () -> theTransBuilder.date("05-Jun-1985").category(MoneyWiseDataTestCategories.IDTC_TRANSFER)
+                        .account(MoneyWiseDataTestAccounts.IDDP_BARCLAYS_CURRENT).amount("500")
+                        .to().partner(MoneyWiseDataTestAccounts.IDDP_BARCLAYS_CURRENT).partnerAmount("550")
                         .build(),
                 "Failed to reject identical Debit/Credit for transfer");
 
         /* Check for failure on a transfer from standard currency to non-standard currency with no partnerAmount */
         Assertions.assertThrows(MoneyWiseDataException.class,
-                () -> theTransBuilder.date("06-Jun-1985").category(MoneyWiseDataTestCategories.idTC_Transfer)
-                        .account(MoneyWiseDataTestAccounts.idDP_BarclaysCurrent).amount("2000")
-                        .to().partner(MoneyWiseDataTestAccounts.idDP_StarlingEuro)
+                () -> theTransBuilder.date("06-Jun-1985").category(MoneyWiseDataTestCategories.IDTC_TRANSFER)
+                        .account(MoneyWiseDataTestAccounts.IDDP_BARCLAYS_CURRENT).amount("2000")
+                        .to().partner(MoneyWiseDataTestAccounts.IDDP_STARLING_EURO)
                         .build(),
                 "Failed to reject missing partnerAmount when transferring between accounts with differing currencies");
     }
 
     @Override
     public void checkAnalysis() {
-        checkAccountValue(MoneyWiseDataTestAccounts.idDP_BarclaysCurrent, "6950");
-        checkAccountValue(MoneyWiseDataTestAccounts.idDP_NatWideFlexDirect, "12000");
-        checkAccountValue(MoneyWiseDataTestAccounts.idDP_StarlingEuro, "5320");
-        checkAccountValue(MoneyWiseDataTestAccounts.idDP_StarlingDollar, "4717.5");
-        checkPayeeValue(MoneyWiseDataTestAccounts.idPY_Market, "607.5", "120");
-        checkCategoryValue(MoneyWiseDataTestCategories.idTC_MktCurrAdjust, "607.5", "120");
+        checkAccountValue(MoneyWiseDataTestAccounts.IDDP_BARCLAYS_CURRENT, "6950");
+        checkAccountValue(MoneyWiseDataTestAccounts.IDDP_NAT_WIDE_FLEX_DIRECT, "12000");
+        checkAccountValue(MoneyWiseDataTestAccounts.IDDP_STARLING_EURO, "5320");
+        checkAccountValue(MoneyWiseDataTestAccounts.IDDP_STARLING_DOLLAR, "4717.5");
+        checkPayeeValue(MoneyWiseDataTestAccounts.IDPY_MARKET, "607.5", "120");
+        checkCategoryValue(MoneyWiseDataTestCategories.IDTC_MKT_CURR_ADJUST, "607.5", "120");
         checkTaxBasisValue(MoneyWiseTaxClass.MARKET, "487.5");
     }
 }

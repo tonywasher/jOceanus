@@ -541,14 +541,14 @@ public abstract class MoneyWiseTransBase
     public MoneyWisePortfolio getPortfolio() {
         /* Access account portfolio if it is a security holding */
         MoneyWiseTransAsset myAsset = getAccount();
-        if (myAsset instanceof MoneyWiseSecurityHolding) {
-            return ((MoneyWiseSecurityHolding) myAsset).getPortfolio();
+        if (myAsset instanceof MoneyWiseSecurityHolding myHolding) {
+            return myHolding.getPortfolio();
         }
 
         /* Access partner portfolio if it is a security holding */
         myAsset = getPartner();
-        if (myAsset instanceof MoneyWiseSecurityHolding) {
-            return ((MoneyWiseSecurityHolding) myAsset).getPortfolio();
+        if (myAsset instanceof MoneyWiseSecurityHolding myHolding) {
+            return myHolding.getPortfolio();
         }
 
         /* No portfolio */
@@ -780,15 +780,15 @@ public abstract class MoneyWiseTransBase
                                                         final Object pValue) throws OceanusException {
         /* If we are being passed a TransactionAsset, convert to Id */
         Object myValue = pValue;
-        if (myValue instanceof MoneyWiseTransAsset) {
-            myValue = ((MoneyWiseTransAsset) myValue).getExternalId();
+        if (myValue instanceof MoneyWiseTransAsset myAsset) {
+            myValue = myAsset.getExternalId();
         }
 
         /* Access the values */
-        if (myValue instanceof String) {
-            return resolveTransAsset(pData, (String) myValue);
-        } else if (myValue instanceof Long) {
-            return resolveTransAsset(pData, (Long) myValue);
+        if (myValue instanceof String s) {
+            return resolveTransAsset(pData, s);
+        } else if (myValue instanceof Long l) {
+            return resolveTransAsset(pData, l);
         }
         return null;
     }

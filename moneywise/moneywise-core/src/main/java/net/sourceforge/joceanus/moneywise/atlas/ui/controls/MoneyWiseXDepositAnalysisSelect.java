@@ -236,10 +236,7 @@ public class MoneyWiseXDepositAnalysisSelect
     @Override
     public void setFilter(final MoneyWiseXAnalysisFilter<?, ?> pFilter) {
         /* If this is the correct filter type */
-        if (pFilter instanceof MoneyWiseXAnalysisDepositFilter) {
-            /* Access filter */
-            final MoneyWiseXAnalysisDepositFilter myFilter = (MoneyWiseXAnalysisDepositFilter) pFilter;
-
+        if (pFilter instanceof MoneyWiseXAnalysisDepositFilter myFilter) {
             /* Obtain the filter bucket */
             MoneyWiseXAnalysisDepositBucket myDeposit = myFilter.getBucket();
 

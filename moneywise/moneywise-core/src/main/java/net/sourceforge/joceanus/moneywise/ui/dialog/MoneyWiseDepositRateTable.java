@@ -253,9 +253,7 @@ public class MoneyWiseDepositRateTable
 
         /* Set filter constraint */
         final OceanusDate myCurrent = pRow.getEndDate();
-        pConfig.setAllowed((d) -> {
-            return d.equals(myCurrent) || !myDates.contains(d);
-        });
+        pConfig.setAllowed(d -> d.equals(myCurrent) || !myDates.contains(d));
 
         /* Set null constraint */
         final boolean hasNull = myDates.contains(null);

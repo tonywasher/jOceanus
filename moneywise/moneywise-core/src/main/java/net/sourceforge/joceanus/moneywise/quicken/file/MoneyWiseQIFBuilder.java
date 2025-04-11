@@ -169,14 +169,14 @@ public class MoneyWiseQIFBuilder {
         final boolean bFrom = pTrans.getDirection().isFrom();
 
         /* If this deals with a payee */
-        if (myPartner instanceof MoneyWisePayee) {
+        if (myPartner instanceof MoneyWisePayee myPayee) {
             /* If this is expense */
             if (bFrom) {
                 /* Process Debit Payee */
-                processDebitPayee((MoneyWisePayee) myPartner, myAccount, pTrans);
+                processDebitPayee(myPayee, myAccount, pTrans);
             } else {
                 /* Process Credit Payee */
-                processCreditPayee((MoneyWisePayee) myPartner, myAccount, pTrans);
+                processCreditPayee(myPayee, myAccount, pTrans);
             }
 
         } else if (bFrom) {
@@ -230,20 +230,20 @@ public class MoneyWiseQIFBuilder {
                                      final MoneyWiseTransAsset pCredit,
                                      final MoneyWiseTransaction pTrans) {
         /* If this is a cash recovery */
-        if ((pCredit instanceof MoneyWiseCash)
-                && ((MoneyWiseCash) pCredit).isAutoExpense()) {
+        if (pCredit instanceof MoneyWiseCash myCash
+                && myCash.isAutoExpense()) {
             /* process as cash recovery */
-            processCashRecovery(pPayee, (MoneyWiseCash) pCredit, pTrans);
+            processCashRecovery(pPayee, myCash, pTrans);
 
             /* If this is an income to a security */
-        } else if (pCredit instanceof MoneyWiseSecurityHolding) {
+        } else if (pCredit instanceof MoneyWiseSecurityHolding myHolding) {
             /* process as income to security */
-            thePortBuilder.processIncomeToSecurity(pPayee, (MoneyWiseSecurityHolding) pCredit, pTrans);
+            thePortBuilder.processIncomeToSecurity(pPayee, myHolding, pTrans);
 
             /* If this is an income to a portfolio */
-        } else if (pCredit instanceof MoneyWisePortfolio) {
+        } else if (pCredit instanceof MoneyWisePortfolio myPortfolio) {
             /* process as income to portfolio */
-            thePortBuilder.processIncomeToPortfolio(pPayee, (MoneyWisePortfolio) pCredit, pTrans);
+            thePortBuilder.processIncomeToPortfolio(pPayee, myPortfolio, pTrans);
 
             /* else if we have additional detail */
         } else if (hasXtraDetail(pTrans)) {
@@ -266,20 +266,20 @@ public class MoneyWiseQIFBuilder {
                                       final MoneyWiseTransAsset pDebit,
                                       final MoneyWiseTransaction pTrans) {
         /* If this is a cash payment */
-        if ((pDebit instanceof MoneyWiseCash)
-                && ((MoneyWiseCash) pDebit).isAutoExpense()) {
+        if (pDebit instanceof MoneyWiseCash myCash
+                && myCash.isAutoExpense()) {
             /* process as cash payment */
-            processCashPayment(pPayee, (MoneyWiseCash) pDebit, pTrans);
+            processCashPayment(pPayee, myCash, pTrans);
 
             /* If this is an expense from a security */
-        } else if (pDebit instanceof MoneyWiseSecurityHolding) {
+        } else if (pDebit instanceof MoneyWiseSecurityHolding myHolding) {
             /* process as expense from security */
-            thePortBuilder.processExpenseFromSecurity(pPayee, (MoneyWiseSecurityHolding) pDebit, pTrans);
+            thePortBuilder.processExpenseFromSecurity(pPayee, myHolding, pTrans);
 
             /* If this is an expense from a portfolio */
-        } else if (pDebit instanceof MoneyWisePortfolio) {
+        } else if (pDebit instanceof MoneyWisePortfolio myPortfolio) {
             /* process as expense from portfolio */
-            thePortBuilder.processExpenseFromPortfolio(pPayee, (MoneyWisePortfolio) pDebit, pTrans);
+            thePortBuilder.processExpenseFromPortfolio(pPayee, myPortfolio, pTrans);
 
             /* else if we have additional detail */
         } else if (hasXtraDetail(pTrans)) {

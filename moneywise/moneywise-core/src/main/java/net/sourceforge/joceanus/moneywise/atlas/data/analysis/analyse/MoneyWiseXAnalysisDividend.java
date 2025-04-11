@@ -22,6 +22,7 @@ import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseX
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.values.MoneyWiseXAnalysisSecurityAttr;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.values.MoneyWiseXAnalysisSecurityValues;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseAssetBase;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePayee;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurity;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurityHolding;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransAsset;
@@ -77,17 +78,14 @@ public class MoneyWiseXAnalysisDividend {
 
         /* The main security that we are interested in is the debit account */
         final MoneyWiseTransaction myTransaction = pTrans.getTransaction();
-        final MoneyWiseSecurityHolding myHolding = (MoneyWiseSecurityHolding) pTrans.getDebitAccount();
+        final MoneyWiseSecurityHolding myHolding = (MoneyWiseSecurityHolding) myTransaction.getAccount();
         final MoneyWiseSecurity mySecurity = myHolding.getSecurity();
         final MoneyWiseTransAsset myCredit = pTrans.getCreditAccount();
         final OceanusMoney myTaxCredit = myTransaction.getTaxCredit();
         final OceanusUnits myDeltaUnits = pTrans.getCreditUnitsDelta();
 
         /* True debit account is the parent */
-        final MoneyWiseAssetBase myDebit = mySecurity.getParent();
-
-        /* Adjust the debit payee bucket */
-        theTransAnalyser.processDebitAsset(myDebit);
+        final MoneyWisePayee myDebit = mySecurity.getParent();
 
         /* Access the Asset Account Bucket */
         final MoneyWiseXAnalysisSecurityBucket myAsset = thePortfolios.getBucket(myHolding);
@@ -99,6 +97,9 @@ public class MoneyWiseXAnalysisDividend {
         final OceanusMoney myAmount = isForeign
                 ? theTransAnalyser.adjustForeignAssetDebit(myValues.getRatioValue(MoneyWiseXAnalysisSecurityAttr.EXCHANGERATE))
                 : pTrans.getDebitAmount();
+
+        /* Adjust the debit payee bucket */
+        theTransAnalyser.processDebitPayee(myDebit);
 
         /* If this is a re-investment */
         if (isReInvest) {
@@ -126,9 +127,9 @@ public class MoneyWiseXAnalysisDividend {
             final OceanusMoney myAdjust = new OceanusMoney(myAmount);
 
             /* Any tax credit is viewed as a realised dividend from the account */
-            if (myTaxCredit != null) {
-                myAdjust.addAmount(myTaxCredit);
-            }
+            //if (myTaxCredit != null) {
+            //    myAdjust.addAmount(myTaxCredit);
+            //}
 
             /* The Dividend is viewed as a dividend from the account */
             myAsset.adjustDividend(myAdjust);

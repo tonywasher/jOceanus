@@ -220,8 +220,8 @@ public class MetisListIndexed<T extends MetisDataIndexedItem>
 
     @Override
     public boolean remove(final Object pItem) {
-        if (pItem instanceof MetisDataIndexedItem) {
-            final Integer myId = ((MetisDataIndexedItem) pItem).getIndexedId();
+        if (pItem instanceof MetisDataIndexedItem myIndexed) {
+            final Integer myId = myIndexed.getIndexedId();
             final T myItem = theIdMap.get(myId);
             if (pItem.equals(myItem)) {
                 /* Remove from the list */

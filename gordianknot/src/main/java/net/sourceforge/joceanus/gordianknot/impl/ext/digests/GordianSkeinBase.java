@@ -11,7 +11,9 @@ import org.bouncycastle.util.Memoable;
 import org.bouncycastle.util.Pack;
 
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.Map;
 import java.util.Vector;
 
 /**
@@ -165,7 +167,7 @@ public class GordianSkeinBase
      * Precalculated UBI(CFG) states for common state/output combinations without key or other
      * pre-message params.
      */
-    private static final Hashtable<Integer, long[]> INITIAL_STATES = new Hashtable<>();
+    private static final Map<Integer, long[]> INITIAL_STATES = new HashMap<>();
 
     static {
         // From Appendix C of the Skein 1.3 NIST submission

@@ -20,6 +20,8 @@ import net.sourceforge.joceanus.moneywise.atlas.data.analysis.base.MoneyWiseXAna
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseAssetBase;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseAssetDirection;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePayee;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePortfolio;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurityHolding;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransAsset;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransCategory;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransaction;
@@ -287,11 +289,26 @@ public class MoneyWiseXAnalysisTransaction {
         switch (getCategoryClass()) {
             case INTEREST:
             case LOYALTYBONUS:
-            case DIVIDEND:
                 /* Obtain detailed category */
                 theCategory = ((MoneyWiseAssetBase) theDebit).getDetailedCategory(theCategory, theTrans.getTaxYear());
 
                 /* The interest bearing account should be replaced by its parent */
+                theChild = theDebit.equals(theCredit)
+                        ? null
+                        : theTrans.getAccount();
+                if (isTo) {
+                    theDebit = theDebit.getParent();
+                } else {
+                    theCredit = theCredit.getParent();
+                }
+                isTo = !isTo;
+                break;
+            case DIVIDEND:
+                /* Obtain detailed category */
+                final MoneyWisePortfolio myPortfolio = ((MoneyWiseSecurityHolding) theDebit).getPortfolio();
+                theCategory = myPortfolio.getDetailedCategory(theCategory, theTrans.getTaxYear());
+
+                /* The dividend generating account should be replaced by its parent */
                 theChild = theDebit.equals(theCredit)
                         ? null
                         : theTrans.getAccount();

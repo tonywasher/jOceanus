@@ -1091,8 +1091,7 @@ public class MoneyWiseTransaction
             while (myIterator.hasNext()) {
                 final PrometheusEditEntry<?> myEntry = myIterator.next();
                 final PrometheusDataList<?> myList = myEntry.getDataList();
-                if (myList instanceof MoneyWiseAssetBaseList) {
-                    final MoneyWiseAssetBaseList<?> myAssetList = (MoneyWiseAssetBaseList<?>) myList;
+                if (myList instanceof MoneyWiseAssetBaseList<?> myAssetList) {
                     myAssetList.resolveLateEditSetLinks();
                 }
             }

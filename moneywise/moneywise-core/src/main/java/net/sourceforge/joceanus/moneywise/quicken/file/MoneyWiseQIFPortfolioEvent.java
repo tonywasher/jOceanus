@@ -352,9 +352,8 @@ public class MoneyWiseQIFPortfolioEvent
     private void convertPayee() {
         /* Look for a payee line */
         final MoneyWiseQIFLine<MoneyWiseQPortfolioLineType> myLine = getLine(MoneyWiseQPortfolioLineType.PAYEE);
-        if (myLine instanceof MoneyWiseQIFPortfolioPayeeDescLine) {
+        if (myLine instanceof MoneyWiseQIFPortfolioPayeeDescLine myDesc) {
             /* Access payee */
-            final MoneyWiseQIFPortfolioPayeeDescLine myDesc = (MoneyWiseQIFPortfolioPayeeDescLine) myLine;
             final String myName = myDesc.getValue();
 
             /* Register the payee */
@@ -369,9 +368,8 @@ public class MoneyWiseQIFPortfolioEvent
     private void convertSplit() {
         /* Look for an action line */
         final MoneyWiseQIFLine<MoneyWiseQPortfolioLineType> myLine = getLine(MoneyWiseQPortfolioLineType.QUANTITY);
-        if (myLine instanceof MoneyWiseQIFPortfolioQuantityLine) {
+        if (myLine instanceof MoneyWiseQIFPortfolioQuantityLine myQuantity) {
             /* Extract action */
-            final MoneyWiseQIFPortfolioQuantityLine myQuantity = (MoneyWiseQIFPortfolioQuantityLine) myLine;
             final OceanusUnits myUnits = myQuantity.getUnits();
 
             /* Convert to ratio line */

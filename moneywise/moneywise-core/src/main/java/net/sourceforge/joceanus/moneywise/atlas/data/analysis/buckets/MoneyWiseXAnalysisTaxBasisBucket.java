@@ -46,6 +46,7 @@ import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
 import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.prometheus.views.PrometheusEditSet;
 
+import java.util.Comparator;
 import java.util.Currency;
 import java.util.Iterator;
 import java.util.List;
@@ -660,7 +661,7 @@ public class MoneyWiseXAnalysisTaxBasisBucket
             theCharges = pGains;
             theTotals = allocateTotalsBucket();
             theList = new MetisListIndexed<>();
-            theList.setComparator((l, r) -> l.getTaxBasis().compareTo(r.getTaxBasis()));
+            theList.setComparator(Comparator.comparing(MoneyWiseXAnalysisTaxBasisBucket::getTaxBasis));
         }
 
         /**
@@ -819,9 +820,9 @@ public class MoneyWiseXAnalysisTaxBasisBucket
             }
 
             /* If we are matching a TaxBasisAccount Bucket */
-            if (pTaxBasis instanceof MoneyWiseXAnalysisTaxBasisAccountBucket) {
+            if (pTaxBasis instanceof MoneyWiseXAnalysisTaxBasisAccountBucket myBucket) {
                 /* Look up the asset bucket */
-                final MoneyWiseTransAsset myAsset = ((MoneyWiseXAnalysisTaxBasisAccountBucket) pTaxBasis).getAccount();
+                final MoneyWiseTransAsset myAsset = myBucket.getAccount();
                 MoneyWiseXAnalysisTaxBasisAccountBucket myAccountBucket = myBasis.findAccountBucket(myAsset);
 
                 /* If there is no such bucket in the analysis */
