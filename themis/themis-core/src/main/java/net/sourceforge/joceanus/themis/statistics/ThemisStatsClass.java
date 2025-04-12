@@ -16,14 +16,14 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.themis.statistics;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
 import net.sourceforge.joceanus.themis.analysis.ThemisAnalysisEnum;
 import net.sourceforge.joceanus.themis.analysis.ThemisAnalysisFile.ThemisAnalysisObject;
 import net.sourceforge.joceanus.themis.analysis.ThemisAnalysisIf.ThemisIteratorChain;
 import net.sourceforge.joceanus.themis.analysis.ThemisAnalysisInterface;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Class statistics.
@@ -63,8 +63,8 @@ public class ThemisStatsClass
         theMethods = new ArrayList<>();
 
         /* Determine class type */
-        if (pClass instanceof ThemisAnalysisInterface) {
-            theType = ((ThemisAnalysisInterface) pClass).isAnnotation()
+        if (pClass instanceof ThemisAnalysisInterface myInterface) {
+            theType = myInterface.isAnnotation()
                     ? ThemisStatsClassType.ANNOTATION
                     : ThemisStatsClassType.INTERFACE;
         } else if (pClass instanceof ThemisAnalysisEnum) {

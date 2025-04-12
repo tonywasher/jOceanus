@@ -70,8 +70,8 @@ public class ThemisAnalysisReference {
      */
     void resolveGeneric(final ThemisAnalysisParser pParser) throws OceanusException  {
         /* Resolve any generic base instance */
-        if (theGeneric instanceof ThemisAnalysisGenericBase) {
-            theGeneric = new ThemisAnalysisGenericRef(pParser, (ThemisAnalysisGenericBase) theGeneric);
+        if (theGeneric instanceof ThemisAnalysisGenericBase myBase) {
+            theGeneric = new ThemisAnalysisGenericRef(pParser, myBase);
         }
     }
 

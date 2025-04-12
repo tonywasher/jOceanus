@@ -16,11 +16,11 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.themis.analysis;
 
-import java.util.ArrayDeque;
-import java.util.Deque;
-
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.analysis.ThemisAnalysisContainer.ThemisAnalysisAdoptable;
+
+import java.util.ArrayDeque;
+import java.util.Deque;
 
 /**
  * Builder utilities.
@@ -132,8 +132,8 @@ public final class ThemisAnalysisBuilder {
             /* Skip already processed items */
             if (myElement instanceof ThemisAnalysisProcessed) {
                 /* Adopt the element if required */
-                if (myElement instanceof ThemisAnalysisAdoptable) {
-                    ((ThemisAnalysisAdoptable) myElement).setParent(pOwner);
+                if (myElement instanceof ThemisAnalysisAdoptable myAdoptable) {
+                    myAdoptable.setParent(pOwner);
                 }
 
                 /* Add to body */
