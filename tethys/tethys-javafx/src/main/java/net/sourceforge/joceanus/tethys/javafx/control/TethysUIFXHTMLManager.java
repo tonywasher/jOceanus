@@ -264,11 +264,11 @@ public class TethysUIFXHTMLManager
      * @return the Double
      */
     private static Double getJSDouble(final Object pObject) {
-        if (pObject instanceof Double) {
-            return (Double) pObject;
+        if (pObject instanceof Double d) {
+            return d;
         }
-        if (pObject instanceof Integer) {
-            return ((Integer) pObject).doubleValue();
+        if (pObject instanceof Integer i) {
+            return i.doubleValue();
         }
         throw new IllegalArgumentException();
     }
@@ -280,11 +280,11 @@ public class TethysUIFXHTMLManager
      * @return the Integer
      */
     private static Integer getJSInteger(final Object pObject) {
-        if (pObject instanceof Integer) {
-            return (Integer) pObject;
+        if (pObject instanceof Integer i) {
+            return i;
         }
-        if (pObject instanceof Double) {
-            return ((Double) pObject).intValue();
+        if (pObject instanceof Double d) {
+            return d.intValue();
         }
         throw new IllegalArgumentException();
     }

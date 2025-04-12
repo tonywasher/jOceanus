@@ -16,11 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.tethys.javafx.field;
 
-import java.util.Currency;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.IntSupplier;
-import java.util.function.Supplier;
 import javafx.css.PseudoClass;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -35,7 +30,6 @@ import javafx.scene.control.TextInputControl;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
-
 import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimal;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
@@ -64,6 +58,12 @@ import net.sourceforge.joceanus.tethys.javafx.base.TethysUIFXArrowIcon;
 import net.sourceforge.joceanus.tethys.javafx.base.TethysUIFXNode;
 import net.sourceforge.joceanus.tethys.javafx.base.TethysUIFXUtils;
 import net.sourceforge.joceanus.tethys.javafx.menu.TethysUIFXScrollMenu;
+
+import java.util.Currency;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.IntSupplier;
+import java.util.function.Supplier;
 
 /**
  * Generic class for displaying and editing a data field.
@@ -411,8 +411,8 @@ public abstract class TethysUIFXDataTextField<T>
                     ? Pos.CENTER_RIGHT
                     : Pos.CENTER_LEFT;
             myLabel.setAlignment(myAlignment);
-            if (theTextField instanceof TextField) {
-                ((TextField) theTextField).setAlignment(myAlignment);
+            if (theTextField instanceof TextField myField) {
+                myField.setAlignment(myAlignment);
             }
             theTextField.setEditable(true);
 

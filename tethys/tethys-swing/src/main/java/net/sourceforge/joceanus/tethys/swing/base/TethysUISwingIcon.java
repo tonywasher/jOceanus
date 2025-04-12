@@ -16,11 +16,11 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.tethys.swing.base;
 
-import java.awt.Image;
+import net.sourceforge.joceanus.tethys.api.base.TethysUIIcon;
+
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
-
-import net.sourceforge.joceanus.tethys.api.base.TethysUIIcon;
+import java.awt.Image;
 
 /**
  * Swing Icon.
@@ -53,8 +53,8 @@ public class TethysUISwingIcon
      * @return the image
      */
     Image getImage() {
-        return theIcon instanceof ImageIcon
-                ? ((ImageIcon) theIcon).getImage()
+        return theIcon instanceof ImageIcon myIcon
+                ? myIcon.getImage()
                 : null;
     }
 

@@ -16,8 +16,10 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.tethys.swing.chart;
 
-import java.text.FieldPosition;
-
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
+import net.sourceforge.joceanus.tethys.core.chart.TethysUICoreBarChart;
+import net.sourceforge.joceanus.tethys.core.factory.TethysUICoreFactory;
+import net.sourceforge.joceanus.tethys.swing.base.TethysUISwingNode;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartMouseEvent;
 import org.jfree.chart.ChartMouseListener;
@@ -33,10 +35,7 @@ import org.jfree.chart.renderer.category.CategoryItemRenderer;
 import org.jfree.chart.util.HexNumberFormat;
 import org.jfree.data.category.DefaultCategoryDataset;
 
-import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
-import net.sourceforge.joceanus.tethys.core.chart.TethysUICoreBarChart;
-import net.sourceforge.joceanus.tethys.core.factory.TethysUICoreFactory;
-import net.sourceforge.joceanus.tethys.swing.base.TethysUISwingNode;
+import java.text.FieldPosition;
 
 /**
  * Swing BarChart.
@@ -105,8 +104,7 @@ public class TethysUISwingBarChart
             @Override
             public void chartMouseClicked(final ChartMouseEvent e) {
                 final ChartEntity entity = e.getEntity();
-                if (entity instanceof CategoryItemEntity) {
-                    final CategoryItemEntity section = (CategoryItemEntity) entity;
+                if (entity instanceof CategoryItemEntity section) {
                     selectSection(section.getRowKey() + ":" + section.getColumnKey());
                 }
             }

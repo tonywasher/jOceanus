@@ -16,13 +16,11 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.tethys.swing.chart;
 
-import java.awt.Graphics2D;
-import java.awt.geom.Rectangle2D;
-import java.text.FieldPosition;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.List;
-
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
+import net.sourceforge.joceanus.tethys.core.chart.TethysUICoreAreaChart;
+import net.sourceforge.joceanus.tethys.core.factory.TethysUICoreFactory;
+import net.sourceforge.joceanus.tethys.swing.base.TethysUISwingNode;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartMouseEvent;
 import org.jfree.chart.ChartMouseListener;
@@ -41,11 +39,13 @@ import org.jfree.chart.util.HexNumberFormat;
 import org.jfree.data.time.Day;
 import org.jfree.data.time.TimeTableXYDataset;
 
-import net.sourceforge.joceanus.oceanus.date.OceanusDate;
-import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
-import net.sourceforge.joceanus.tethys.core.chart.TethysUICoreAreaChart;
-import net.sourceforge.joceanus.tethys.core.factory.TethysUICoreFactory;
-import net.sourceforge.joceanus.tethys.swing.base.TethysUISwingNode;
+import java.awt.Graphics2D;
+import java.awt.geom.Rectangle2D;
+import java.io.Serial;
+import java.text.FieldPosition;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Swing areaChart.
@@ -116,8 +116,7 @@ public class TethysUISwingAreaChart
             @Override
             public void chartMouseClicked(final ChartMouseEvent e) {
                 final ChartEntity entity = e.getEntity();
-                if (entity instanceof XYItemEntity) {
-                    final XYItemEntity section = (XYItemEntity) entity;
+                if (entity instanceof XYItemEntity section) {
                     selectSeries((String) theDataSet.getSeriesKey(section.getSeriesIndex()));
                 }
             }
@@ -193,6 +192,7 @@ public class TethysUISwingAreaChart
      * Money Format class.
      */
     private final class MoneyFormat extends HexNumberFormat {
+        @Serial
         private static final long serialVersionUID = 1200795726700321267L;
 
         @Override
@@ -208,6 +208,7 @@ public class TethysUISwingAreaChart
      * Extended DateAxis.
      */
     private static final class TethysDateAxis extends DateAxis {
+        @Serial
         private static final long serialVersionUID = 1976939393800292546L;
 
         @SuppressWarnings("unchecked")
@@ -218,8 +219,7 @@ public class TethysUISwingAreaChart
             final List<Tick> ticks = super.refreshTicksHorizontal(g2, dataArea, edge);
             final List<Tick> ret = new ArrayList<>();
             for (Tick tick : ticks) {
-                if (tick instanceof DateTick) {
-                    final DateTick dateTick = (DateTick) tick;
+                if (tick instanceof DateTick dateTick) {
                     ret.add(new DateTick(dateTick.getDate(), dateTick.getText(), dateTick.getTextAnchor(),
                             dateTick.getRotationAnchor(), LABEL_RADIANS));
                 } else {

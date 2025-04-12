@@ -16,36 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.tethys.swing.field;
 
-import java.awt.BorderLayout;
-import java.awt.CardLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Insets;
-import java.awt.Rectangle;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.util.Currency;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.IntSupplier;
-import java.util.function.Supplier;
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.KeyStroke;
-import javax.swing.SwingConstants;
-import javax.swing.SwingUtilities;
-import javax.swing.border.Border;
-import javax.swing.text.JTextComponent;
-
 import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimal;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
@@ -77,6 +47,36 @@ import net.sourceforge.joceanus.tethys.swing.base.TethysUISwingDataFieldAdjust.T
 import net.sourceforge.joceanus.tethys.swing.base.TethysUISwingDataFieldAdjust.TethysUISwingFontSet;
 import net.sourceforge.joceanus.tethys.swing.base.TethysUISwingNode;
 import net.sourceforge.joceanus.tethys.swing.menu.TethysUISwingScrollMenu;
+
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.KeyStroke;
+import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
+import javax.swing.border.Border;
+import javax.swing.text.JTextComponent;
+import java.awt.BorderLayout;
+import java.awt.CardLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Insets;
+import java.awt.Rectangle;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.util.Currency;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.IntSupplier;
+import java.util.function.Supplier;
 
 /**
  * Generic class for displaying and editing a data field.
@@ -179,12 +179,12 @@ public abstract class TethysUISwingDataTextField<T>
         theCard.setLayout(theLayout);
 
         /* If we have a text area */
-        if (theEditControl instanceof JTextArea) {
+        if (theEditControl instanceof JTextArea myArea) {
             /* Wrap the edit control in a ScrollPane and add as sole card */
             final JScrollPane myScroll = new JScrollPane();
             myScroll.setViewportView(theEditNode);
             theCard.add(theEditNode, NAME_EDIT);
-            ((JTextArea) theEditControl).setEditable(false);
+            myArea.setEditable(false);
 
             /* Else for non-TextArea */
         } else {
@@ -360,9 +360,9 @@ public abstract class TethysUISwingDataTextField<T>
         /* If we are changing */
         if (pEditable != isEditable) {
             /* If we are JTextArea */
-            if (theEditControl instanceof JTextArea) {
+            if (theEditControl instanceof JTextArea myArea) {
                 /* Set editable */
-                ((JTextArea) theEditControl).setEditable(pEditable);
+                myArea.setEditable(pEditable);
 
             } else {
                 /* Set correct component */
@@ -488,8 +488,8 @@ public abstract class TethysUISwingDataTextField<T>
                     ? SwingConstants.RIGHT
                     : SwingConstants.LEFT;
             myLabel.setHorizontalAlignment(myAlignment);
-            if (theTextField instanceof JTextField) {
-                ((JTextField) theTextField).setHorizontalAlignment(myAlignment);
+            if (theTextField instanceof JTextField myField) {
+                myField.setHorizontalAlignment(myAlignment);
             }
             theTextField.setEditable(true);
 
@@ -546,7 +546,7 @@ public abstract class TethysUISwingDataTextField<T>
         void processValue() {
             /* Convert zero-length string to null */
             String myText = theTextField.getText();
-            if (myText.length() == 0) {
+            if (myText.isEmpty()) {
                 myText = null;
             }
 
