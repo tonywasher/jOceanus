@@ -131,11 +131,8 @@ class ZipFileTest {
     private void testZipFile(final GordianFactory pFactory,
                              final Object pKeyPair,
                              final GordianLength pKeyLen) throws GordianException {
-        /* Obtain the home directory */
-        final String myHome = System.getProperty("user.home");
-
         /* Run the tests */
-        final File myDirectory = new File(myHome, "tester");
+        final File myDirectory = new File("src/test/testData");
         final byte[] myZipFile = createZipFile(pFactory, myDirectory, pKeyPair, pKeyLen);
         extractZipFile(pFactory, myZipFile, pKeyPair, myDirectory);
     }
