@@ -128,6 +128,14 @@ public class ThemisAnalysisMaven {
      * Obtain the list of modules.
      * @return the list
      */
+    public ThemisAnalysisMavenId getMavenId() {
+        return theId;
+    }
+
+    /**
+     * Obtain the list of modules.
+     * @return the list
+     */
     public List<String> getModules() {
         return theModules;
     }

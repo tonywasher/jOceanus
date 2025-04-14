@@ -23,7 +23,7 @@
   <properties>
     <moduleName>${packageName}.swing</moduleName>
     <packageMain>${packageName}.ui.swing.Coeus4Swing</packageMain>
-    <packageSplash>net/sourceforge/joceanus/jcoeus/ui/icons/swing/CoeusSplash.png</packageSplash>
+    <packageSplash>net/sourceforge/joceanus/coeus/ui/icons/swing/CoeusSplash.png</packageSplash>
   </properties>
   <build>
     <plugins>

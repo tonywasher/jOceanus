@@ -27,12 +27,13 @@ import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.stream.Stream;
 
 /**
  * Test Analysis.
  */
-class DoAnalysis {
+class TestAnalysis {
     /**
      * The project.
      */
@@ -41,7 +42,7 @@ class DoAnalysis {
     /**
      * The path base.
      */
-    private static final String PATH_BASE = System.getProperty("user.home") + "/git/" + PROJECT + "/";
+    private static final String PATH_BASE = "../../";
 
     /**
      * The path xtra.
@@ -61,8 +62,8 @@ class DoAnalysis {
     @TestFactory
     Stream<DynamicNode> analyseSource() throws OceanusException {
         return Stream.of(
-                    DynamicTest.dynamicTest("analyseSource", DoAnalysis::testProjectSource),
-                    DynamicTest.dynamicTest("analyseDependencies", DoAnalysis::testProjectDependencies)
+                    DynamicTest.dynamicTest("analyseSource", TestAnalysis::testProjectSource),
+                    DynamicTest.dynamicTest("analyseDependencies", TestAnalysis::testProjectDependencies)
                 );
     }
 
@@ -71,6 +72,12 @@ class DoAnalysis {
      */
     private static void testProjectSource() {
         /* Analyse source of project */
+        File myLocation = new File(PATH_BASE);
+        try {
+            myLocation = new File(myLocation.getCanonicalPath());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         final ThemisAnalysisProject myProj = new ThemisAnalysisProject(new File(PATH_BASE));
         Assertions.assertNull(myProj.getError(), "Exception analysing project");
 

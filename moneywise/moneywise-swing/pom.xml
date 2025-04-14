@@ -23,7 +23,7 @@
   <properties>
     <packageMain>${packageName}.ui.swing.MoneyWise4Swing</packageMain>
     <moduleName>${packageName}.swing</moduleName>
-    <packageSplash>net/sourceforge/joceanus/jmoneywise/ui/icons/swing/MoneyWiseSplash.png</packageSplash>
+    <packageSplash>net/sourceforge/joceanus/moneywise/ui/icons/swing/MoneyWiseSplash.png</packageSplash>
   </properties>
   <build>
     <plugins>
