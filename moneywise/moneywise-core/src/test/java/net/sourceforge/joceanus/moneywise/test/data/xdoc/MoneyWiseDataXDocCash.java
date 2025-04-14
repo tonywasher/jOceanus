@@ -103,7 +103,7 @@ public class MoneyWiseDataXDocCash {
         theReport.addRowToTable();
 
         /* Create the detail */
-        Iterator<MoneyWiseXAnalysisCashBucket> myCashIterator = myCash.iterator();
+        final Iterator<MoneyWiseXAnalysisCashBucket> myCashIterator = myCash.iterator();
         while (myCashIterator.hasNext()) {
             final MoneyWiseXAnalysisCashBucket myBucket = myCashIterator.next();
             final MoneyWiseCash myAccount = myBucket.getAccount();
@@ -156,7 +156,7 @@ public class MoneyWiseDataXDocCash {
         /* Create the initial headers */
         int myNumCells = 0;
         final MoneyWiseXAnalysisCashBucketList myCash = theAnalysis.getCash();
-        Iterator<MoneyWiseXAnalysisCashBucket> myCashIterator = myCash.iterator();
+        final Iterator<MoneyWiseXAnalysisCashBucket> myCashIterator = myCash.iterator();
         while (myCashIterator.hasNext()) {
             final MoneyWiseXAnalysisCashBucket myBucket = myCashIterator.next();
 
@@ -193,7 +193,7 @@ public class MoneyWiseDataXDocCash {
     boolean updateCashAssetRow(final MoneyWiseXAnalysisEvent pEvent) {
         /* Loop through the cash */
         final MoneyWiseXAnalysisCashBucketList myCash = theAnalysis.getCash();
-        Iterator<MoneyWiseXAnalysisCashBucket> myCashIterator = myCash.iterator();
+        final Iterator<MoneyWiseXAnalysisCashBucket> myCashIterator = myCash.iterator();
         while (myCashIterator.hasNext()) {
             final MoneyWiseXAnalysisCashBucket myBucket = myCashIterator.next();
             final MoneyWiseCash myAccount = myBucket.getAccount();
@@ -234,7 +234,7 @@ public class MoneyWiseDataXDocCash {
         /* Create the initial headers */
         final MoneyWiseCurrency myCurrency = theAnalysis.getCurrency();
         final MoneyWiseXAnalysisCashBucketList myCash = theAnalysis.getCash();
-        Iterator<MoneyWiseXAnalysisCashBucket> myCashIterator = myCash.iterator();
+        final Iterator<MoneyWiseXAnalysisCashBucket> myCashIterator = myCash.iterator();
         while (myCashIterator.hasNext()) {
             final MoneyWiseXAnalysisCashBucket myBucket = myCashIterator.next();
             if (myBucket.isForeignCurrency()) {
@@ -253,7 +253,7 @@ public class MoneyWiseDataXDocCash {
     boolean haveForeignAssets() {
         /* Check for foreign cash */
         final MoneyWiseXAnalysisCashCategoryBucketList myCash = theAnalysis.getCashCategories();
-        Iterator<MoneyWiseXAnalysisCashCategoryBucket> myCashIterator = myCash.iterator();
+        final Iterator<MoneyWiseXAnalysisCashCategoryBucket> myCashIterator = myCash.iterator();
         while (myCashIterator.hasNext()) {
             final MoneyWiseXAnalysisCashCategoryBucket myBucket = myCashIterator.next();
             if (myBucket.hasForeignCurrency()) {

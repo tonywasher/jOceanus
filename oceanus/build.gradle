@@ -1,10 +1,4 @@
 /* Dependencies */
-dependencies {
-    testImplementation "org.junit.jupiter:junit-jupiter-api:$jUnitVersion"
-    testImplementation "org.junit.jupiter:junit-jupiter-engine:$jUnitVersion"
-}
-
-/* Dependencies */
 description = 'Oceanus Core Utilities'
 
 /* Register the project */
@@ -23,4 +17,7 @@ jar {
         attributes(manifestAttrs)
     }
 }
+
+checkstyleTest
+        .exclude('**/junit/**/*.java')
 

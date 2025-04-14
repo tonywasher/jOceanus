@@ -33,6 +33,7 @@ public class MoneyWiseDataTestCash
 
     /**
      * Constructor.
+     * @param pBuilder the builder
      */
     public MoneyWiseDataTestCash(final MoneyWiseDataTestAccounts pBuilder) {
         /* Store parameters */

@@ -222,7 +222,7 @@ public class MoneyWiseDataXDocAssets {
     }
 
     /**
-     * Obtain value delta
+     * Obtain value delta.
      * @return the value delta
      */
     private OceanusMoney getValueDelta() {

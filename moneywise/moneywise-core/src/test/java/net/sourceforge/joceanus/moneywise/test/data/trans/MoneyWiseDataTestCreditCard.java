@@ -32,6 +32,7 @@ public class MoneyWiseDataTestCreditCard
 
     /**
      * Constructor.
+     * @param pBuilder the builder
      */
     public MoneyWiseDataTestCreditCard(final MoneyWiseDataTestAccounts pBuilder) {
         /* Store parameters */

@@ -52,6 +52,6 @@ public enum CoeusMarketType {
      * @return true/false
      */
     public boolean useAnnualDate() {
-        return this != CoeusMarketType.SNAPSHOT;
+        return this != SNAPSHOT;
     }
 }

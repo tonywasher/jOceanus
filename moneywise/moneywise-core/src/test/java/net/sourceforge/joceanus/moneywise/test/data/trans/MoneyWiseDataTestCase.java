@@ -43,11 +43,11 @@ import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
 import org.junit.jupiter.api.Assertions;
 
 /**
- * MoneyWise data testCase
+ * MoneyWise data testCase.
  */
 public abstract class MoneyWiseDataTestCase {
     /**
-     *  The accountBuilder
+     *  The accountBuilder.
      */
     private final MoneyWiseDataTestAccounts theBuilder;
 
@@ -63,6 +63,7 @@ public abstract class MoneyWiseDataTestCase {
 
     /**
      * Constructor.
+     * @param pBuilder the builder
      */
     MoneyWiseDataTestCase(final MoneyWiseDataTestAccounts pBuilder) {
         /* Store parameters */
@@ -192,7 +193,7 @@ public abstract class MoneyWiseDataTestCase {
      * @param pPayees the payees to create
      * @throws OceanusException on error
      */
-    void createPayees(final String ...pPayees) throws OceanusException {
+    void createPayees(final String... pPayees) throws OceanusException {
         theBuilder.createPayees(pPayees);
     }
 
@@ -201,7 +202,7 @@ public abstract class MoneyWiseDataTestCase {
      * @param pDeposits the deposits to create
      * @throws OceanusException on error
      */
-    void createDeposits(final String ...pDeposits) throws OceanusException {
+    void createDeposits(final String... pDeposits) throws OceanusException {
         theBuilder.createDeposits(pDeposits);
     }
 
@@ -210,7 +211,7 @@ public abstract class MoneyWiseDataTestCase {
      * @param pCash the cash to create
      * @throws OceanusException on error
      */
-    void createCash(final String ...pCash) throws OceanusException {
+    void createCash(final String... pCash) throws OceanusException {
         theBuilder.createCash(pCash);
     }
 
@@ -219,7 +220,7 @@ public abstract class MoneyWiseDataTestCase {
      * @param pLoans the loans to create
      * @throws OceanusException on error
      */
-    void createLoans(final String ...pLoans) throws OceanusException {
+    void createLoans(final String... pLoans) throws OceanusException {
         theBuilder.createLoans(pLoans);
     }
 
@@ -228,7 +229,7 @@ public abstract class MoneyWiseDataTestCase {
      * @param pPortfolios the portfolios to create
      * @throws OceanusException on error
      */
-    void createPortfolios(final String ...pPortfolios) throws OceanusException {
+    void createPortfolios(final String... pPortfolios) throws OceanusException {
         theBuilder.createPortfolios(pPortfolios);
     }
 
@@ -237,7 +238,7 @@ public abstract class MoneyWiseDataTestCase {
      * @param pSecurities the securities to create
      * @throws OceanusException on error
      */
-    void createSecurities(final String ...pSecurities) throws OceanusException {
+    void createSecurities(final String... pSecurities) throws OceanusException {
         theBuilder.createSecurities(pSecurities);
     }
 

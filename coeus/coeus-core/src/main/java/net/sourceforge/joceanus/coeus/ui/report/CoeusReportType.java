@@ -59,9 +59,9 @@ public enum CoeusReportType {
      * @return the marketType
      */
     public CoeusMarketType getMarketType() {
-        return this == CoeusReportType.ANNUAL
-                                              ? CoeusMarketType.ANNUAL
-                                              : CoeusMarketType.SNAPSHOT;
+        return this == ANNUAL
+                    ? CoeusMarketType.ANNUAL
+                    : CoeusMarketType.SNAPSHOT;
     }
 
     /**

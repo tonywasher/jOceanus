@@ -38,23 +38,23 @@ public class MoneyWiseNullThreadStatusReport
     }
 
     @Override
-    public void initTask(String pTask) throws OceanusException {
+    public void initTask(final String pTask) throws OceanusException {
     }
 
     @Override
-    public void setNumStages(int pNumStages) throws OceanusException {
+    public void setNumStages(final int pNumStages) throws OceanusException {
     }
 
     @Override
-    public void setNewStage(String pStage) throws OceanusException {
+    public void setNewStage(final String pStage) throws OceanusException {
     }
 
     @Override
-    public void setNumSteps(int pNumSteps) throws OceanusException {
+    public void setNumSteps(final int pNumSteps) throws OceanusException {
     }
 
     @Override
-    public void setStepsDone(int pSteps) throws OceanusException {
+    public void setStepsDone(final int pSteps) throws OceanusException {
     }
 
     @Override
@@ -62,7 +62,7 @@ public class MoneyWiseNullThreadStatusReport
     }
 
     @Override
-    public void setNextStep(String pStep) throws OceanusException {
+    public void setNextStep(final String pStep) throws OceanusException {
     }
 
     @Override

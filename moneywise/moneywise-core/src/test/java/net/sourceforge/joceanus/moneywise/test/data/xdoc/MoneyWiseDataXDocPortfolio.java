@@ -116,7 +116,7 @@ public class MoneyWiseDataXDocPortfolio {
         theReport.addRowToTable();
 
         /* Create the detail */
-        Iterator<MoneyWiseXAnalysisPortfolioBucket> myPortIterator = myPortfolios.iterator();
+        final Iterator<MoneyWiseXAnalysisPortfolioBucket> myPortIterator = myPortfolios.iterator();
         while (myPortIterator.hasNext()) {
             final MoneyWiseXAnalysisPortfolioBucket myBucket = myPortIterator.next();
             final MoneyWisePortfolio myPortfolio = myBucket.getPortfolio();
@@ -163,7 +163,7 @@ public class MoneyWiseDataXDocPortfolio {
         /* Create the initial headers */
         int myNumCells = 0;
         final MoneyWiseXAnalysisPortfolioBucketList myPortfolios = theAnalysis.getPortfolios();
-        Iterator<MoneyWiseXAnalysisPortfolioBucket> myPortIterator = myPortfolios.iterator();
+        final Iterator<MoneyWiseXAnalysisPortfolioBucket> myPortIterator = myPortfolios.iterator();
         while (myPortIterator.hasNext()) {
             final MoneyWiseXAnalysisPortfolioBucket myBucket = myPortIterator.next();
 
@@ -205,7 +205,7 @@ public class MoneyWiseDataXDocPortfolio {
         /* Create the initial headers */
         final MoneyWiseCurrency myCurrency = theAnalysis.getCurrency();
         final MoneyWiseXAnalysisPortfolioBucketList myPortfolios = theAnalysis.getPortfolios();
-        Iterator<MoneyWiseXAnalysisPortfolioBucket> myPortIterator = myPortfolios.iterator();
+        final Iterator<MoneyWiseXAnalysisPortfolioBucket> myPortIterator = myPortfolios.iterator();
         while (myPortIterator.hasNext()) {
             final MoneyWiseXAnalysisPortfolioBucket myBucket = myPortIterator.next();
 
@@ -235,7 +235,7 @@ public class MoneyWiseDataXDocPortfolio {
         /* Loop through the portfolios */
         boolean nonEmpty = false;
         final MoneyWiseXAnalysisPortfolioBucketList myPortfolios = theAnalysis.getPortfolios();
-        Iterator<MoneyWiseXAnalysisPortfolioBucket> myPortIterator = myPortfolios.iterator();
+        final Iterator<MoneyWiseXAnalysisPortfolioBucket> myPortIterator = myPortfolios.iterator();
         while (myPortIterator.hasNext()) {
             final MoneyWiseXAnalysisPortfolioBucket myBucket = myPortIterator.next();
             final MoneyWisePortfolio myPortfolio = myBucket.getPortfolio();
@@ -283,7 +283,7 @@ public class MoneyWiseDataXDocPortfolio {
     boolean haveForeignAssets() {
         /* Check for foreign portfolios */
         final MoneyWiseXAnalysisPortfolioBucketList myPortfolios = theAnalysis.getPortfolios();
-        Iterator<MoneyWiseXAnalysisPortfolioBucket> myPortIterator = myPortfolios.iterator();
+        final Iterator<MoneyWiseXAnalysisPortfolioBucket> myPortIterator = myPortfolios.iterator();
         while (myPortIterator.hasNext()) {
             final MoneyWiseXAnalysisPortfolioBucket myBucket = myPortIterator.next();
             if (myBucket.hasForeignCurrency()) {

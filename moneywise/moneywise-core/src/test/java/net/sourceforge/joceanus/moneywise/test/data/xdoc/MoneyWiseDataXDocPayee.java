@@ -90,7 +90,7 @@ public class MoneyWiseDataXDocPayee {
 
         /* Create the detail */
         final MoneyWiseXAnalysisPayeeBucketList myBuckets = theAnalysis.getPayees();
-        Iterator<MoneyWiseXAnalysisPayeeBucket> myPayeeIterator = myBuckets.iterator();
+        final Iterator<MoneyWiseXAnalysisPayeeBucket> myPayeeIterator = myBuckets.iterator();
         while (myPayeeIterator.hasNext()) {
             final MoneyWiseXAnalysisPayeeBucket myBucket = myPayeeIterator.next();
             final MoneyWisePayee myPayee = myBucket.getPayee();

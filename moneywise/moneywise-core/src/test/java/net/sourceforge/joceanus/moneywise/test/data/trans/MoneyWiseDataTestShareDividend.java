@@ -33,6 +33,7 @@ public class MoneyWiseDataTestShareDividend
 
     /**
      * Constructor.
+     * @param pBuilder the builder
      */
     public MoneyWiseDataTestShareDividend(final MoneyWiseDataTestAccounts pBuilder) {
         /* Store parameters */

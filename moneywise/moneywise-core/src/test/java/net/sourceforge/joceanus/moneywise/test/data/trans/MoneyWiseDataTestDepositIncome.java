@@ -34,6 +34,7 @@ public class MoneyWiseDataTestDepositIncome
 
     /**
      * Constructor.
+     * @param pBuilder the builder
      */
     public MoneyWiseDataTestDepositIncome(final MoneyWiseDataTestAccounts pBuilder) {
         /* Store parameters */

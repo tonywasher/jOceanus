@@ -77,7 +77,7 @@ public class MoneyWiseDataXDocTransCat {
 
         /* Create the detail */
         final MoneyWiseXAnalysisTransCategoryBucketList myBuckets = theAnalysis.getTransCategories();
-        Iterator<MoneyWiseXAnalysisTransCategoryBucket> myTransIterator = myBuckets.iterator();
+        final Iterator<MoneyWiseXAnalysisTransCategoryBucket> myTransIterator = myBuckets.iterator();
         while (myTransIterator.hasNext()) {
             final MoneyWiseXAnalysisTransCategoryBucket myBucket = myTransIterator.next();
 
@@ -120,7 +120,7 @@ public class MoneyWiseDataXDocTransCat {
 
             /* Ignore parents */
             final MoneyWiseTransCategory myParent = myBucket.getTransactionCategory().getParentCategory();
-            if (myParent.isCategoryClass(MoneyWiseTransCategoryClass.TOTALS)){
+            if (myParent.isCategoryClass(MoneyWiseTransCategoryClass.TOTALS)) {
                 continue;
             }
 
@@ -160,7 +160,7 @@ public class MoneyWiseDataXDocTransCat {
 
                 /* Ignore parents */
                 final MoneyWiseTransCategory myParent = myCategory.getParentCategory();
-                if (myParent.isCategoryClass(MoneyWiseTransCategoryClass.TOTALS)){
+                if (myParent.isCategoryClass(MoneyWiseTransCategoryClass.TOTALS)) {
                     continue;
                 }
 

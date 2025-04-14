@@ -109,7 +109,7 @@ public class MoneyWiseDataTestEditSet {
         pView.getNewProfile("combinedEditSet");
 
         /* Build and validate editSet */
-        PrometheusEditSet myEditSet = new PrometheusEditSet(pView);
+        final PrometheusEditSet myEditSet = new PrometheusEditSet(pView);
         myEditSet.setDataSet(theDataSet);
         populateStaticsEditSet(myEditSet);
         populateCategoryEditSet(myEditSet);

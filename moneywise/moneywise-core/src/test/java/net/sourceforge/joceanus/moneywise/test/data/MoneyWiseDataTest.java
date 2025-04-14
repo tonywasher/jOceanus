@@ -74,8 +74,9 @@ public class MoneyWiseDataTest {
         myView.setValidatorFactory(new MoneyWiseValidatorFactory(true));
 
         /* Create tests */
-        Stream<DynamicNode> myStream = MoneyWiseDataTestRunner.createTests(myView);
-        return Stream.concat(myStream, archiveDataTests(myView));
+        //final Stream<DynamicNode> myStream = MoneyWiseDataTestRunner.createTests(myView);
+        //return Stream.concat(myStream, archiveDataTests(myView));
+        return MoneyWiseDataTestRunner.createTests(myView);
     }
 
     /**

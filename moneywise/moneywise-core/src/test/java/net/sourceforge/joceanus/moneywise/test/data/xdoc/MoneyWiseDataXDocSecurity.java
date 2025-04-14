@@ -144,7 +144,7 @@ public class MoneyWiseDataXDocSecurity {
             final MoneyWiseXAnalysisPortfolioBucket myPortfolio = myPortIterator.next();
 
             /* Loop through the holdings */
-            Iterator<MoneyWiseXAnalysisSecurityBucket> mySecIterator = myPortfolio.getSecurities().iterator();
+            final Iterator<MoneyWiseXAnalysisSecurityBucket> mySecIterator = myPortfolio.getSecurities().iterator();
             while (mySecIterator.hasNext()) {
                 final MoneyWiseXAnalysisSecurityBucket myBucket = mySecIterator.next();
                 final MoneyWiseSecurity mySecurity = myBucket.getSecurity();
@@ -193,7 +193,7 @@ public class MoneyWiseDataXDocSecurity {
         /* Create the initial headers */
         int myNumCells = 0;
         final MoneyWiseXAnalysisSecurityBucketList mySecurities = pPortfolio.getSecurities();
-        Iterator<MoneyWiseXAnalysisSecurityBucket> mySecIterator = mySecurities.iterator();
+        final Iterator<MoneyWiseXAnalysisSecurityBucket> mySecIterator = mySecurities.iterator();
         while (mySecIterator.hasNext()) {
             final MoneyWiseXAnalysisSecurityBucket myBucket = mySecIterator.next();
 
@@ -229,7 +229,7 @@ public class MoneyWiseDataXDocSecurity {
         /* Create the initial headers */
         final MoneyWiseCurrency myCurrency = theAnalysis.getCurrency();
         final MoneyWiseXAnalysisSecurityBucketList mySecurities = pPortfolio.getSecurities();
-        Iterator<MoneyWiseXAnalysisSecurityBucket> mySecIterator = mySecurities.iterator();
+        final Iterator<MoneyWiseXAnalysisSecurityBucket> mySecIterator = mySecurities.iterator();
         while (mySecIterator.hasNext()) {
             final MoneyWiseXAnalysisSecurityBucket myBucket = mySecIterator.next();
             if (myBucket.isForeignCurrency()) {
@@ -251,7 +251,7 @@ public class MoneyWiseDataXDocSecurity {
                                   final MoneyWiseXAnalysisEvent pEvent) {
         /* Loop through the securities */
         final MoneyWiseXAnalysisSecurityBucketList mySecurities = pPortfolio.getSecurities();
-        Iterator<MoneyWiseXAnalysisSecurityBucket> mySecIterator = mySecurities.iterator();
+        final Iterator<MoneyWiseXAnalysisSecurityBucket> mySecIterator = mySecurities.iterator();
         while (mySecIterator.hasNext()) {
             final MoneyWiseXAnalysisSecurityBucket myBucket = mySecIterator.next();
             final MoneyWiseSecurityHolding myHolding = myBucket.getSecurityHolding();
@@ -293,7 +293,7 @@ public class MoneyWiseDataXDocSecurity {
     boolean haveForeignAssets(final MoneyWiseXAnalysisPortfolioBucket pPortfolio) {
         /* Check for foreign holdings */
         final MoneyWiseXAnalysisSecurityBucketList mySecurities = pPortfolio.getSecurities();
-        Iterator<MoneyWiseXAnalysisSecurityBucket> mySecIterator = mySecurities.iterator();
+        final Iterator<MoneyWiseXAnalysisSecurityBucket> mySecIterator = mySecurities.iterator();
         while (mySecIterator.hasNext()) {
             final MoneyWiseXAnalysisSecurityBucket myBucket = mySecIterator.next();
             if (myBucket.getSecurity().isForeign()) {

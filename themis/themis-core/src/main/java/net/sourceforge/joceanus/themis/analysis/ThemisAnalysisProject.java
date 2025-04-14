@@ -143,6 +143,7 @@ public class ThemisAnalysisProject
     /**
      * Parse the maven top-level project file.
      * @param pPom the project file
+     * @return the mavenId of the project
      */
     private ThemisAnalysisMavenId parseProjectFile(final File pPom) {
         /* If the pom file does not exist, just return */
