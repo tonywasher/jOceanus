@@ -144,8 +144,8 @@ public class PrometheusDataValues {
             final MetisDataFieldId myFieldId = myField.getFieldId();
 
             /* Ignore field if it is irrelevant */
-            if (!(myField instanceof MetisFieldVersionedDef)
-                    || !((MetisFieldVersionedDef) myField).isEquality()) {
+            if (!(myField instanceof MetisFieldVersionedDef myVersioned)
+                    || !myVersioned.isEquality()) {
                 continue;
             }
 
@@ -157,9 +157,9 @@ public class PrometheusDataValues {
         }
 
         /* If the item is an infoSet item */
-        if (pItem instanceof PrometheusInfoSetItem) {
+        if (pItem instanceof PrometheusInfoSetItem myInfoItem) {
             /* Access InfoSet */
-            final PrometheusDataInfoSet<?> myInfoSet = ((PrometheusInfoSetItem) pItem).getInfoSet();
+            final PrometheusDataInfoSet<?> myInfoSet = myInfoItem.getInfoSet();
 
             /* If the InfoSet is non-empty */
             if (myInfoSet.isEmpty()) {
@@ -175,10 +175,7 @@ public class PrometheusDataValues {
                     final Object myCurr = myInfoIterator.next();
 
                     /* If this is a DataInfo item */
-                    if (myCurr instanceof PrometheusDataInfoItem) {
-                        /* Access as DataArguments */
-                        final PrometheusDataInfoItem myItem = (PrometheusDataInfoItem) myCurr;
-
+                    if (myCurr instanceof PrometheusDataInfoItem myItem) {
                         /* Add item to the list */
                         final PrometheusInfoItem myInfo = new PrometheusInfoItem(myItem);
                         theInfoItems.add(myInfo);
@@ -192,9 +189,9 @@ public class PrometheusDataValues {
         }
 
         /* If the item is a grouped item */
-        if (pItem instanceof PrometheusGroupedItem) {
+        if (pItem instanceof PrometheusGroupedItem myGrouped) {
             /* Access child iterator */
-            final Iterator<? extends PrometheusDataItem> myChildIterator = ((PrometheusGroupedItem) pItem).childIterator();
+            final Iterator<? extends PrometheusDataItem> myChildIterator = myGrouped.childIterator();
 
             /* If there are no children */
             if (myChildIterator == null) {
@@ -289,8 +286,8 @@ public class PrometheusDataValues {
             final MetisFieldDef myField = myIterator.next();
 
             /* If the field is an equality valueSet item */
-            if (myField instanceof MetisFieldVersionedDef
-                    && ((MetisFieldVersionedDef) myField).isEquality()) {
+            if (myField instanceof MetisFieldVersionedDef myVersioned
+                    && myVersioned.isEquality()) {
                 /* Access element */
                 final Element myChild = getChild(pElement, myField.getFieldId().getId());
                 if (myChild != null) {
@@ -309,10 +306,7 @@ public class PrometheusDataValues {
             /* Loop through the child values */
             for (Node myCurr = myInfoSet.getFirstChild(); myCurr != null; myCurr = myCurr.getNextSibling()) {
                 /* If the child is an element */
-                if (myCurr instanceof Element) {
-                    /* Access as element */
-                    final Element myChild = (Element) myCurr;
-
+                if (myCurr instanceof Element myChild) {
                     /* Add item to the list */
                     final PrometheusInfoItem myInfo = new PrometheusInfoItem(myChild);
                     theInfoItems.add(myInfo);
@@ -333,10 +327,8 @@ public class PrometheusDataValues {
             /* Loop through the child values */
             for (Node myCurr = myChildren.getFirstChild(); myCurr != null; myCurr = myCurr.getNextSibling()) {
                 /* If the child is the correct element */
-                if ((myCurr instanceof Element) && TAG_CHILD.equals(myCurr.getNodeName())) {
-                    /* Access as element */
-                    final Element myChild = (Element) myCurr;
-
+                if (myCurr instanceof Element myChild
+                        && TAG_CHILD.equals(myCurr.getNodeName())) {
                     /* Add item to the list */
                     final PrometheusDataValues myValues = new PrometheusDataValues(myChild, pFields, theItemType);
                     theChildren.add(myValues);
@@ -482,9 +474,10 @@ public class PrometheusDataValues {
         /* Loop through the child values */
         for (Node myCurr = pParent.getFirstChild(); myCurr != null; myCurr = myCurr.getNextSibling()) {
             /* If the child is the correct element */
-            if ((myCurr instanceof Element) && pName.equals(myCurr.getNodeName())) {
+            if (myCurr instanceof Element myElement
+                    && pName.equals(myCurr.getNodeName())) {
                 /* Return the element */
-                return (Element) myCurr;
+                return myElement;
             }
         }
 

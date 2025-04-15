@@ -185,92 +185,92 @@ public class ThemisStatsParser {
         /* Loop through the contents */
         for (ThemisAnalysisElement myElement : pContainer.getContents()) {
             /* If this is an annotation */
-            if (myElement instanceof ThemisAnalysisAnnotation) {
-                processAnnotation(pOwner, (ThemisAnalysisAnnotation) myElement, true);
+            if (myElement instanceof ThemisAnalysisAnnotation myAnnotation) {
+                processAnnotation(pOwner, myAnnotation, true);
 
                 /* If this is an anonymous class */
-            } else if (myElement instanceof ThemisAnalysisAnonClass) {
-                processAnonClass(pOwner, (ThemisAnalysisAnonClass) myElement);
+            } else if (myElement instanceof ThemisAnalysisAnonClass myAnon) {
+                processAnonClass(pOwner, myAnon);
 
                 /* If this is a blank */
-            } else if (myElement instanceof ThemisAnalysisBlank) {
-                processBlank(pOwner, (ThemisAnalysisBlank) myElement);
+            } else if (myElement instanceof ThemisAnalysisBlank myBlank) {
+                processBlank(pOwner, myBlank);
 
                 /* If this is a block */
-            } else if (myElement instanceof ThemisAnalysisBlock) {
-                processBlock(pOwner, (ThemisAnalysisBlock) myElement);
+            } else if (myElement instanceof ThemisAnalysisBlock myBlock) {
+                processBlock(pOwner, myBlock);
 
                 /* If this is a case */
-            } else if (myElement instanceof ThemisAnalysisCase) {
-                processCase(pOwner, (ThemisAnalysisCase) myElement);
+            } else if (myElement instanceof ThemisAnalysisCase myCase) {
+                processCase(pOwner, myCase);
 
                 /* If this is a class */
-            } else if (myElement instanceof ThemisAnalysisClass) {
-                processClass(pOwner, (ThemisAnalysisClass) myElement);
+            } else if (myElement instanceof ThemisAnalysisClass myClass) {
+                processClass(pOwner, myClass);
 
                 /* If this is a comment */
-            } else if (myElement instanceof ThemisAnalysisComment) {
-                processComment(pOwner, (ThemisAnalysisComment) myElement, true);
+            } else if (myElement instanceof ThemisAnalysisComment myComment) {
+                processComment(pOwner, myComment, true);
 
             /* If this is a doWhile */
-            } else if (myElement instanceof ThemisAnalysisDoWhile) {
-                processDoWhile(pOwner, (ThemisAnalysisDoWhile) myElement);
+            } else if (myElement instanceof ThemisAnalysisDoWhile myDoWhile) {
+                processDoWhile(pOwner, myDoWhile);
 
                 /* If this is an embedded */
-            } else if (myElement instanceof ThemisAnalysisEmbedded) {
-                processEmbedded(pOwner, (ThemisAnalysisEmbedded) myElement);
+            } else if (myElement instanceof ThemisAnalysisEmbedded myEmbedded) {
+                processEmbedded(pOwner, myEmbedded);
 
                  /* If this is an enum */
-            } else if (myElement instanceof ThemisAnalysisEnum) {
-                processEnum(pOwner, (ThemisAnalysisEnum) myElement);
+            } else if (myElement instanceof ThemisAnalysisEnum myEnum) {
+                processEnum(pOwner, myEnum);
 
                 /* If this is a field */
-            } else if (myElement instanceof ThemisAnalysisField) {
-                processField(pOwner, (ThemisAnalysisField) myElement);
+            } else if (myElement instanceof ThemisAnalysisField myField) {
+                processField(pOwner, myField);
 
                 /* If this is a for */
-            } else if (myElement instanceof ThemisAnalysisFor) {
-                processFor(pOwner, (ThemisAnalysisFor) myElement);
+            } else if (myElement instanceof ThemisAnalysisFor myFor) {
+                processFor(pOwner, myFor);
 
                 /* If this is an if */
-            } else if (myElement instanceof ThemisAnalysisIf) {
-                processIf(pOwner, (ThemisAnalysisIf) myElement);
+            } else if (myElement instanceof ThemisAnalysisIf myIf) {
+                processIf(pOwner, myIf);
 
                 /* If this is an imports */
-            } else if (myElement instanceof ThemisAnalysisImports) {
-                processImports(pOwner, (ThemisAnalysisImports) myElement);
+            } else if (myElement instanceof ThemisAnalysisImports myImports) {
+                processImports(pOwner, myImports);
 
                 /* If this is an interface */
-            } else if (myElement instanceof ThemisAnalysisInterface) {
-                processInterface(pOwner, (ThemisAnalysisInterface) myElement);
+            } else if (myElement instanceof ThemisAnalysisInterface myInterface) {
+                processInterface(pOwner, myInterface);
 
                 /* If this is a lambda */
-            } else if (myElement instanceof ThemisAnalysisLambda) {
-                processLambda(pOwner, (ThemisAnalysisLambda) myElement);
+            } else if (myElement instanceof ThemisAnalysisLambda myLambda) {
+                processLambda(pOwner, myLambda);
 
                 /* If this is a method */
-            } else if (myElement instanceof ThemisAnalysisMethod) {
-                processMethod(pOwner, (ThemisAnalysisMethod) myElement);
+            } else if (myElement instanceof ThemisAnalysisMethod myMethod) {
+                processMethod(pOwner, myMethod);
 
                 /* If this is a package */
             } else if (myElement instanceof ThemisAnalysisPackage) {
                 processPackage(pOwner);
 
                 /* If this is a statement */
-            } else if (myElement instanceof ThemisAnalysisStatement) {
-                processStatement(pOwner, (ThemisAnalysisStatement) myElement);
+            } else if (myElement instanceof ThemisAnalysisStatement myStatement) {
+                processStatement(pOwner, myStatement);
 
                 /* If this is a switch */
-            } else if (myElement instanceof ThemisAnalysisSwitch) {
-                processSwitch(pOwner, (ThemisAnalysisSwitch) myElement);
+            } else if (myElement instanceof ThemisAnalysisSwitch mySwitch) {
+                processSwitch(pOwner, mySwitch);
 
                 /* If this is a try */
-            } else if (myElement instanceof ThemisAnalysisTry) {
-                processTry(pOwner, (ThemisAnalysisTry) myElement);
+            } else if (myElement instanceof ThemisAnalysisTry myTry) {
+                processTry(pOwner, myTry);
 
                 /* If this is a while */
-            } else if (myElement instanceof ThemisAnalysisWhile) {
-                processWhile(pOwner, (ThemisAnalysisWhile) myElement);
+            } else if (myElement instanceof ThemisAnalysisWhile myWhile) {
+                processWhile(pOwner, myWhile);
             }
 
             /* Adjust the cached items */
@@ -740,13 +740,13 @@ public class ThemisStatsParser {
      */
     private void adjustCachedItems(final ThemisAnalysisElement pElement) {
         /* Adjust for Annotation */
-        if (pElement instanceof ThemisAnalysisAnnotation) {
-            theCachedAnnotation = (ThemisAnalysisAnnotation) pElement;
+        if (pElement instanceof ThemisAnalysisAnnotation myAnnotation) {
+            theCachedAnnotation = myAnnotation;
 
         /* Adjust for documentation comment */
-        } else if (pElement instanceof ThemisAnalysisComment
-                    && ((ThemisAnalysisComment) pElement).isJavaDoc()) {
-            theCachedDocComment = (ThemisAnalysisComment) pElement;
+        } else if (pElement instanceof ThemisAnalysisComment myComment
+                    && myComment.isJavaDoc()) {
+            theCachedDocComment = myComment;
             theCachedAnnotation = null;
 
             /* else reset cache */

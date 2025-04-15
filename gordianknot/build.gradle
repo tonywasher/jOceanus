@@ -3,8 +3,6 @@ dependencies {
     implementation "org.bouncycastle:bcprov-jdk18on:$bouncyCastleVersion"
     implementation "org.bouncycastle:bcutil-jdk18on:$bouncyCastleVersion"
     implementation "org.bouncycastle:bcpg-jdk18on:$bouncyCastleVersion"
-    testImplementation "org.junit.jupiter:junit-jupiter-api:$jUnitVersion"
-    testImplementation "org.junit.jupiter:junit-jupiter-engine:$jUnitVersion"
 }
 
 /* Description */
@@ -36,4 +34,3 @@ checkstyleMain
     .exclude('**/patch/**/*.java')
 checkstyleTest
     .exclude('**/junit/**/*.java')
-

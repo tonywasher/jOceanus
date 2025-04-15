@@ -135,7 +135,7 @@ public final class TethysUIFXUtils {
                                 final Node pNode) {
         /* Access the Node */
         final Pane myPane;
-        if (!(pNode instanceof Pane)) {
+        if (!(pNode instanceof Pane p)) {
             /* Create an HBox for the content */
             final HBox myBox = new HBox();
             myBox.getChildren().add(pNode);
@@ -144,7 +144,7 @@ public final class TethysUIFXUtils {
             /* Set the HBox to fill the pane */
             HBox.setHgrow(pNode, Priority.ALWAYS);
         } else {
-            myPane = (Pane) pNode;
+            myPane = p;
         }
 
         /* Return the pane if we have no title or padding */

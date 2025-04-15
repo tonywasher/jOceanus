@@ -16,25 +16,24 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.themis.analysis;
 
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.themis.exc.ThemisDataException;
+import net.sourceforge.joceanus.themis.exc.ThemisIOException;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.xml.sax.SAXException;
+
+import javax.xml.XMLConstants;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import javax.xml.XMLConstants;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.xml.sax.SAXException;
-
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.themis.exc.ThemisDataException;
-import net.sourceforge.joceanus.themis.exc.ThemisIOException;
 
 /**
  * Maven pom.xml parser.
@@ -129,6 +128,14 @@ public class ThemisAnalysisMaven {
      * Obtain the list of modules.
      * @return the list
      */
+    public ThemisAnalysisMavenId getMavenId() {
+        return theId;
+    }
+
+    /**
+     * Obtain the list of modules.
+     * @return the list
+     */
     public List<String> getModules() {
         return theModules;
     }
@@ -215,9 +222,9 @@ public class ThemisAnalysisMaven {
              myChild != null;
              myChild = myChild.getNextSibling()) {
             /* Return result if we have a match */
-            if (myChild instanceof Element
+            if (myChild instanceof Element myElement
                     && pValue.equals(myChild.getNodeName())) {
-                return (Element) myChild;
+                return myElement;
             }
         }
 
@@ -264,9 +271,9 @@ public class ThemisAnalysisMaven {
              myChild != null;
              myChild = myChild.getNextSibling()) {
             /* Return result if we have a match */
-            if (myChild instanceof Element
+            if (myChild instanceof Element myElement
                     && EL_DEPENDENCY.equals(myChild.getNodeName())) {
-                theDependencies.add(new ThemisAnalysisMavenId((Element) myChild, pParent));
+                theDependencies.add(new ThemisAnalysisMavenId(myElement, pParent));
             }
         }
     }

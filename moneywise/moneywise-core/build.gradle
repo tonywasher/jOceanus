@@ -6,8 +6,6 @@ dependencies {
     implementation project(':gordianknot')
     implementation project(':tethys-core')
     implementation project(':oceanus')
-    testImplementation "org.junit.jupiter:junit-jupiter-api:$jUnitVersion"
-    testImplementation "org.junit.jupiter:junit-jupiter-engine:$jUnitVersion"
 }
 
 /* Description */
@@ -29,3 +27,6 @@ jar {
         attributes(manifestAttrs)
     }
 }
+
+checkstyleTest
+        .exclude('**/test/**/*.java')

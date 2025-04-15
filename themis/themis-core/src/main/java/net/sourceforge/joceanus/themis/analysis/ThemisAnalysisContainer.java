@@ -16,14 +16,14 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.themis.analysis;
 
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.themis.analysis.ThemisAnalysisFile.ThemisAnalysisObject;
+import net.sourceforge.joceanus.themis.exc.ThemisDataException;
+
 import java.util.ArrayDeque;
 import java.util.Collections;
 import java.util.Deque;
 import java.util.Iterator;
-
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.themis.exc.ThemisDataException;
-import net.sourceforge.joceanus.themis.analysis.ThemisAnalysisFile.ThemisAnalysisObject;
 
 /**
  * Interface for containers that require postProcessing.
@@ -70,11 +70,11 @@ public interface ThemisAnalysisContainer
         /* Loop */
         ThemisAnalysisContainer myContainer = this;
         for (;;) {
-            if (myContainer instanceof ThemisAnalysisObject) {
-                return ((ThemisAnalysisObject) myContainer).getFullName() + ThemisAnalysisChar.PERIOD + pChildName;
+            if (myContainer instanceof ThemisAnalysisObject myObject) {
+                return myObject.getFullName() + ThemisAnalysisChar.PERIOD + pChildName;
             }
-            if (myContainer instanceof ThemisAnalysisFile) {
-                return ((ThemisAnalysisFile) myContainer).getPackageName() + ThemisAnalysisChar.PERIOD + pChildName;
+            if (myContainer instanceof ThemisAnalysisFile myFile) {
+                return myFile.getPackageName() + ThemisAnalysisChar.PERIOD + pChildName;
             }
             myContainer = myContainer.getParent();
         }
@@ -99,23 +99,20 @@ public interface ThemisAnalysisContainer
             final ThemisAnalysisElement myElement = myParser.popNextLine();
 
             /* If the element is an embedded block */
-            if (myElement instanceof ThemisAnalysisEmbedded) {
+            if (myElement instanceof ThemisAnalysisEmbedded myEmbedded) {
                 /* Access and process the block */
-                final ThemisAnalysisEmbedded myEmbedded = (ThemisAnalysisEmbedded) myElement;
                 final ThemisAnalysisElement myResult = myParser.processEmbedded(myEmbedded);
                 myContents.add(myResult);
 
                 /* If the element is a methodBody */
-            } else if (myElement instanceof ThemisAnalysisMethodBody) {
+            } else if (myElement instanceof ThemisAnalysisMethodBody myMethod) {
                 /* Access and process the block */
-                final ThemisAnalysisMethodBody myMethod = (ThemisAnalysisMethodBody) myElement;
                 final ThemisAnalysisElement myResult = myParser.processMethodBody(myMethod);
                 myContents.add(myResult);
 
                 /* If the element is a container */
-            } else if (myElement instanceof ThemisAnalysisContainer) {
+            } else if (myElement instanceof ThemisAnalysisContainer myContainer) {
                 /* Access and process the container */
-                final ThemisAnalysisContainer myContainer = (ThemisAnalysisContainer) myElement;
                 myContainer.postProcessLines();
                 myContents.add(myContainer);
 
@@ -124,8 +121,7 @@ public interface ThemisAnalysisContainer
                 myContents.add(myElement);
 
                 /* process lines */
-            } else if (myElement instanceof ThemisAnalysisLine) {
-                final ThemisAnalysisLine myLine = (ThemisAnalysisLine) myElement;
+            } else if (myElement instanceof ThemisAnalysisLine myLine) {
                 final ThemisAnalysisElement myResult = myParser.processFieldsAndMethods(myLine);
 
                 /* If we have a field/method */

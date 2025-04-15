@@ -16,15 +16,15 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.themis.analysis;
 
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.themis.exc.ThemisIOException;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.themis.exc.ThemisIOException;
 
 /**
  * Project.
@@ -68,7 +68,6 @@ public class ThemisAnalysisProject
     public ThemisAnalysisProject(final File pLocation) {
         /* Store the name and location */
         theLocation = pLocation;
-        theName = pLocation.getName();
 
         /* Create the list */
         theModules = new ArrayList<>();
@@ -77,7 +76,8 @@ public class ThemisAnalysisProject
         theDataMap = new ThemisAnalysisDataMap();
 
         /* Initiate search for modules */
-        parseProjectFile(new File(theLocation, ThemisAnalysisMaven.POM));
+        final ThemisAnalysisMavenId myId = parseProjectFile(new File(theLocation, ThemisAnalysisMaven.POM));
+        theName = myId == null ? null : myId.getArtifactId();
 
         /* InitialPass */
         if (theError == null) {
@@ -143,11 +143,12 @@ public class ThemisAnalysisProject
     /**
      * Parse the maven top-level project file.
      * @param pPom the project file
+     * @return the mavenId of the project
      */
-    private void parseProjectFile(final File pPom) {
+    private ThemisAnalysisMavenId parseProjectFile(final File pPom) {
         /* If the pom file does not exist, just return */
         if (!pPom.exists()) {
-            return;
+            return null;
         }
 
         /* Protect against exceptions */
@@ -164,7 +165,7 @@ public class ThemisAnalysisProject
         } catch (OceanusException e) {
             /* Save Exception */
             theError = new ThemisIOException(CONSOLIDATION_ERROR, e);
-            return;
+            return null;
         }
 
         /* Protect against exceptions */
@@ -186,11 +187,14 @@ public class ThemisAnalysisProject
                 }
             }
 
+            return myPom.getMavenId();
+
             /* Catch exceptions */
         } catch (IOException
                 | OceanusException e) {
             /* Save Exception */
             theError = new ThemisIOException("Failed to parse Project file", e);
+            return null;
         }
     }
 

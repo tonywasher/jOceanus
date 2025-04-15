@@ -29,7 +29,6 @@ module net.sourceforge.joceanus.prometheus.core {
     requires net.sourceforge.joceanus.gordianknot;
     requires net.sourceforge.joceanus.metis;
     requires net.sourceforge.joceanus.prometheus.sheet.api;
-    requires org.bouncycastle.provider;
 
     /* Exports */
     exports net.sourceforge.joceanus.prometheus.data;

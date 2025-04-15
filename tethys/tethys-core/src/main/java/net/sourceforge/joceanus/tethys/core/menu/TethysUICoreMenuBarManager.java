@@ -16,11 +16,11 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.tethys.core.menu;
 
+import net.sourceforge.joceanus.tethys.api.menu.TethysUIMenuBarManager;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
-
-import net.sourceforge.joceanus.tethys.api.menu.TethysUIMenuBarManager;
 
 /**
  * MenuBar Manager.
@@ -61,8 +61,8 @@ public abstract class TethysUICoreMenuBarManager
     @Override
     public TethysUIMenuSubMenu lookUpSubMenu(final TethysUIMenuId pId) {
         final TethysUICoreMenuElement myElement = theElementMap.get(pId);
-        return myElement instanceof TethysUIMenuSubMenu
-                ? (TethysUIMenuSubMenu) myElement
+        return myElement instanceof TethysUIMenuSubMenu myMenu
+                ? myMenu
                 : null;
     }
 

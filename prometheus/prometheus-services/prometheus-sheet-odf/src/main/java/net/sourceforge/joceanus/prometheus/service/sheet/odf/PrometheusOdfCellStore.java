@@ -16,19 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.prometheus.service.sheet.odf;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Objects;
-
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-
-import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetCell;
-import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetCellAddress;
-import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetCellPosition;
-import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetException;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.date.OceanusDate;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimal;
@@ -37,6 +24,18 @@ import net.sourceforge.joceanus.oceanus.decimal.OceanusPrice;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusRate;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusRatio;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusUnits;
+import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetCell;
+import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetCellAddress;
+import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetCellPosition;
+import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetException;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Objects;
 
 /**
  * Hold cells as a list of values.
@@ -314,8 +313,8 @@ class PrometheusOdfCellStore {
                    : myElement.getBooleanValue();
         }
         final Object myValue = getValueAtIndex(pIndex);
-        return myValue instanceof Boolean
-               ? (Boolean) myValue
+        return myValue instanceof Boolean b
+               ? b
                : null;
     }
 
@@ -332,8 +331,8 @@ class PrometheusOdfCellStore {
                    : myElement.getDateValue();
         }
         final Object myValue = getValueAtIndex(pIndex);
-        return myValue instanceof OceanusDate
-               ? (OceanusDate) myValue
+        return myValue instanceof OceanusDate d
+               ? d
                : null;
     }
 
@@ -351,8 +350,8 @@ class PrometheusOdfCellStore {
                    : myElement.getIntegerValue();
         }
         final Object myValue = getValueAtIndex(pIndex);
-        return myValue instanceof Integer
-               ? (Integer) myValue
+        return myValue instanceof Integer i
+               ? i
                : null;
     }
 
@@ -370,8 +369,8 @@ class PrometheusOdfCellStore {
                    : myElement.getLongValue();
         }
         final Object myValue = getValueAtIndex(pIndex);
-        return myValue instanceof Long
-               ? (Long) myValue
+        return myValue instanceof Long l
+               ? l
                : null;
     }
 
@@ -389,8 +388,8 @@ class PrometheusOdfCellStore {
                    : myElement.getRateValue();
         }
         final Object myValue = getValueAtIndex(pIndex);
-        return myValue instanceof OceanusRate
-               ? (OceanusRate) myValue
+        return myValue instanceof OceanusRate r
+               ? r
                : null;
     }
 
@@ -408,8 +407,8 @@ class PrometheusOdfCellStore {
                    : myElement.getUnitsValue();
         }
         final Object myValue = getValueAtIndex(pIndex);
-        return myValue instanceof OceanusUnits
-               ? (OceanusUnits) myValue
+        return myValue instanceof OceanusUnits u
+               ? u
                : null;
     }
 
@@ -427,8 +426,8 @@ class PrometheusOdfCellStore {
                    : myElement.getRatioValue();
         }
         final Object myValue = getValueAtIndex(pIndex);
-        return myValue instanceof OceanusRatio
-               ? (OceanusRatio) myValue
+        return myValue instanceof OceanusRatio r
+               ? r
                : null;
     }
 
@@ -446,8 +445,8 @@ class PrometheusOdfCellStore {
                    : myElement.getMoneyValue();
         }
         final Object myValue = getValueAtIndex(pIndex);
-        return myValue instanceof OceanusMoney
-               ? (OceanusMoney) myValue
+        return myValue instanceof OceanusMoney m
+               ? m
                : null;
     }
 
@@ -465,8 +464,8 @@ class PrometheusOdfCellStore {
                    : myElement.getPriceValue();
         }
         final Object myValue = getValueAtIndex(pIndex);
-        return myValue instanceof OceanusPrice
-               ? (OceanusPrice) myValue
+        return myValue instanceof OceanusPrice p
+               ? p
                : null;
     }
 
@@ -486,8 +485,8 @@ class PrometheusOdfCellStore {
         if (myValue == null) {
             return null;
         } else {
-            return myValue instanceof String
-                   ? (String) myValue
+            return myValue instanceof String s
+                   ? s
                    : theOasisRow.formatValue(myValue);
         }
     }
@@ -673,18 +672,18 @@ class PrometheusOdfCellStore {
                                final int pIndex,
                                final Object pValue) {
         /* Handle different value types */
-        if (pValue instanceof Boolean) {
-            populateBoolean(pElement, (Boolean) pValue);
-        } else if (pValue instanceof Number) {
-            populateNumber(pElement, (Number) pValue);
-        } else if (pValue instanceof OceanusDate) {
-            populateDate(pElement, (OceanusDate) pValue);
-        } else if (pValue instanceof String) {
-            populateString(pElement, pIndex, (String) pValue);
-        } else if (pValue instanceof OceanusMoney) {
-            populateMonetary(pElement, pIndex, (OceanusMoney) pValue);
-        } else if (pValue instanceof OceanusDecimal) {
-            populateDecimal(pElement, (OceanusDecimal) pValue);
+        if (pValue instanceof Boolean b) {
+            populateBoolean(pElement, b);
+        } else if (pValue instanceof Number n) {
+            populateNumber(pElement, n);
+        } else if (pValue instanceof OceanusDate d) {
+            populateDate(pElement, d);
+        } else if (pValue instanceof String s) {
+            populateString(pElement, pIndex, s);
+        } else if (pValue instanceof OceanusMoney m) {
+            populateMonetary(pElement, pIndex, m);
+        } else if (pValue instanceof OceanusDecimal d) {
+            populateDecimal(pElement, d);
         }
     }
 

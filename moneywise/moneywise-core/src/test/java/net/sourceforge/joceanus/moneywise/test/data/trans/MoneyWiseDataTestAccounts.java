@@ -53,7 +53,7 @@ public class MoneyWiseDataTestAccounts {
     static final String IDPY_NATIONWIDE = "Nationwide";
     static final String IDPY_STARLING = "Starling";
     static final String IDPY_INTERACTIVE_INVESTOR = "InteractiveInvestor";
-    static final String IDPY_AJBell = "AJBell";
+    static final String IDPY_AJ_BELL = "AJBell";
     static final String IDPY_STANDARD_LIFE = "StandardLife";
     static final String IDPY_FUNDING_CIRCLE = "FundingCircle";
     static final String IDPY_IBM = "IBM";
@@ -270,12 +270,12 @@ public class MoneyWiseDataTestAccounts {
      * @param pPayees the payees to create
      * @throws OceanusException on error
      */
-    void createPayees(final String ...pPayees) throws OceanusException {
+    void createPayees(final String... pPayees) throws OceanusException {
         for (final String myPayee : pPayees) {
             /* Check for already created */
             final MoneyWiseBasicDataType myExisting = theNameMap.get(myPayee);
             if (myExisting != null) {
-                if (MoneyWiseBasicDataType.PAYEE.equals(myExisting)){
+                if (MoneyWiseBasicDataType.PAYEE.equals(myExisting)) {
                     continue;
                 }
                 throw new MoneyWiseLogicException("Payee name already exists");
@@ -291,7 +291,7 @@ public class MoneyWiseDataTestAccounts {
                 case IDPY_TSB:
                 case IDPY_INTERACTIVE_INVESTOR:
                 case IDPY_FUNDING_CIRCLE:
-                case IDPY_AJBell:
+                case IDPY_AJ_BELL:
                 case IDPY_STANDARD_LIFE:
                 case IDPY_ASSET_HOLDER:
                     thePayeeBuilder.name(myPayee).type(MoneyWisePayeeClass.INSTITUTION).build();
@@ -333,12 +333,12 @@ public class MoneyWiseDataTestAccounts {
      * @param pDeposits the deposits to create
      * @throws OceanusException on error
      */
-    void createDeposits(final String ...pDeposits) throws OceanusException {
+    void createDeposits(final String... pDeposits) throws OceanusException {
         for (final String myDeposit : pDeposits) {
             /* Check for already created */
             final MoneyWiseBasicDataType myExisting = theNameMap.get(myDeposit);
             if (myExisting != null) {
-                if (MoneyWiseBasicDataType.DEPOSIT.equals(myExisting)){
+                if (MoneyWiseBasicDataType.DEPOSIT.equals(myExisting)) {
                     continue;
                 }
                 throw new MoneyWiseLogicException("Deposit name already exists");
@@ -408,12 +408,12 @@ public class MoneyWiseDataTestAccounts {
      * @param pCash the cash to create
      * @throws OceanusException on error
      */
-    void createCash(final String ...pCash) throws OceanusException {
+    void createCash(final String... pCash) throws OceanusException {
         for (final String myCash : pCash) {
             /* Check for already created */
             final MoneyWiseBasicDataType myExisting = theNameMap.get(myCash);
             if (myExisting != null) {
-                if (MoneyWiseBasicDataType.CASH.equals(myExisting)){
+                if (MoneyWiseBasicDataType.CASH.equals(myExisting)) {
                     continue;
                 }
                 throw new MoneyWiseLogicException("Cash name already exists");
@@ -452,12 +452,12 @@ public class MoneyWiseDataTestAccounts {
      * @param pLoans the loans to create
      * @throws OceanusException on error
      */
-    void createLoans(final String ...pLoans) throws OceanusException {
+    void createLoans(final String... pLoans) throws OceanusException {
         for (final String myLoan : pLoans) {
             /* Check for already created */
             final MoneyWiseBasicDataType myExisting = theNameMap.get(myLoan);
             if (myExisting != null) {
-                if (MoneyWiseBasicDataType.LOAN.equals(myExisting)){
+                if (MoneyWiseBasicDataType.LOAN.equals(myExisting)) {
                     continue;
                 }
                 throw new MoneyWiseLogicException("Loan name already exists");
@@ -495,12 +495,12 @@ public class MoneyWiseDataTestAccounts {
      * @param pPortfolios the portfolios to create
      * @throws OceanusException on error
      */
-    void createPortfolios(final String ...pPortfolios) throws OceanusException {
+    void createPortfolios(final String... pPortfolios) throws OceanusException {
         for (final String myPortfolio : pPortfolios) {
             /* Check for already created */
             final MoneyWiseBasicDataType myExisting = theNameMap.get(myPortfolio);
             if (myExisting != null) {
-                if (MoneyWiseBasicDataType.PORTFOLIO.equals(myExisting)){
+                if (MoneyWiseBasicDataType.PORTFOLIO.equals(myExisting)) {
                     continue;
                 }
                 throw new MoneyWiseLogicException("Portfolio name already exists");
@@ -521,8 +521,8 @@ public class MoneyWiseDataTestAccounts {
                     thePortfolioBuilder.name(myPortfolio).parent(IDPY_INTERACTIVE_INVESTOR).type(MoneyWisePortfolioClass.SIPP).build();
                     break;
                 case IDPF_AJ_BELL_STOCK:
-                    createPayees(IDPY_AJBell);
-                    thePortfolioBuilder.name(myPortfolio).parent(IDPY_AJBell).type(MoneyWisePortfolioClass.STANDARD).build();
+                    createPayees(IDPY_AJ_BELL);
+                    thePortfolioBuilder.name(myPortfolio).parent(IDPY_AJ_BELL).type(MoneyWisePortfolioClass.STANDARD).build();
                     break;
                 case IDPF_ASSETS:
                     thePortfolioBuilder.name(myPortfolio).parent(IDPY_ASSET_HOLDER).type(MoneyWisePortfolioClass.STANDARD).build();
@@ -547,12 +547,12 @@ public class MoneyWiseDataTestAccounts {
      * @param pSecurities the securities to create
      * @throws OceanusException on error
      */
-    void createSecurities(final String ...pSecurities) throws OceanusException {
+    void createSecurities(final String... pSecurities) throws OceanusException {
         for (final String mySecurity : pSecurities) {
             /* Check for already created */
             final MoneyWiseBasicDataType myExisting = theNameMap.get(mySecurity);
             if (myExisting != null) {
-                if (MoneyWiseBasicDataType.SECURITY.equals(myExisting)){
+                if (MoneyWiseBasicDataType.SECURITY.equals(myExisting)) {
                     continue;
                 }
                 throw new MoneyWiseLogicException("Security name already exists");

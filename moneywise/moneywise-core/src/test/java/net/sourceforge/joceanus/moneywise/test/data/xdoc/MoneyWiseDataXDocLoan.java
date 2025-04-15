@@ -109,7 +109,7 @@ public class MoneyWiseDataXDocLoan {
         theReport.addRowToTable();
 
         /* Create the detail */
-        Iterator<MoneyWiseXAnalysisLoanBucket> myLoanIterator = myLoans.iterator();
+        final Iterator<MoneyWiseXAnalysisLoanBucket> myLoanIterator = myLoans.iterator();
         while (myLoanIterator.hasNext()) {
             final MoneyWiseXAnalysisLoanBucket myBucket = myLoanIterator.next();
             final MoneyWiseLoan myLoan = myBucket.getAccount();
@@ -160,7 +160,7 @@ public class MoneyWiseDataXDocLoan {
         /* Create the initial headers */
         int myNumCells = 0;
         final MoneyWiseXAnalysisLoanBucketList myLoans = theAnalysis.getLoans();
-        Iterator<MoneyWiseXAnalysisLoanBucket> myLoanIterator = myLoans.iterator();
+        final Iterator<MoneyWiseXAnalysisLoanBucket> myLoanIterator = myLoans.iterator();
         while (myLoanIterator.hasNext()) {
             final MoneyWiseXAnalysisLoanBucket myBucket = myLoanIterator.next();
 
@@ -195,7 +195,7 @@ public class MoneyWiseDataXDocLoan {
         /* Create the initial headers */
         final MoneyWiseCurrency myCurrency = theAnalysis.getCurrency();
         final MoneyWiseXAnalysisLoanBucketList myLoans = theAnalysis.getLoans();
-        Iterator<MoneyWiseXAnalysisLoanBucket> myLoanIterator = myLoans.iterator();
+        final Iterator<MoneyWiseXAnalysisLoanBucket> myLoanIterator = myLoans.iterator();
         while (myLoanIterator.hasNext()) {
             final MoneyWiseXAnalysisLoanBucket myBucket = myLoanIterator.next();
             if (myBucket.isForeignCurrency()) {
@@ -215,7 +215,7 @@ public class MoneyWiseDataXDocLoan {
     boolean updateLoanAssetRow(final MoneyWiseXAnalysisEvent pEvent) {
         /* Loop through the loans */
         final MoneyWiseXAnalysisLoanBucketList myLoans = theAnalysis.getLoans();
-        Iterator<MoneyWiseXAnalysisLoanBucket> myLoanIterator = myLoans.iterator();
+        final Iterator<MoneyWiseXAnalysisLoanBucket> myLoanIterator = myLoans.iterator();
         while (myLoanIterator.hasNext()) {
             final MoneyWiseXAnalysisLoanBucket myBucket = myLoanIterator.next();
             final MoneyWiseLoan myLoan = myBucket.getAccount();
@@ -256,7 +256,7 @@ public class MoneyWiseDataXDocLoan {
     boolean haveForeignAssets() {
         /* Check for foreign loans */
         final MoneyWiseXAnalysisLoanCategoryBucketList myLoans = theAnalysis.getLoanCategories();
-        Iterator<MoneyWiseXAnalysisLoanCategoryBucket> myLoanIterator = myLoans.iterator();
+        final Iterator<MoneyWiseXAnalysisLoanCategoryBucket> myLoanIterator = myLoans.iterator();
         while (myLoanIterator.hasNext()) {
             final MoneyWiseXAnalysisLoanCategoryBucket myBucket = myLoanIterator.next();
             if (myBucket.hasForeignCurrency()) {

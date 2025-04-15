@@ -16,12 +16,12 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.themis.analysis;
 
-import java.util.EnumMap;
-import java.util.Map;
-
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.analysis.ThemisAnalysisGeneric.ThemisAnalysisGenericBase;
 import net.sourceforge.joceanus.themis.analysis.ThemisAnalysisGeneric.ThemisAnalysisGenericVarList;
+
+import java.util.EnumMap;
+import java.util.Map;
 
 /**
  * Properties for an element.
@@ -115,9 +115,9 @@ public final class ThemisAnalysisProperties {
      */
     void resolveGeneric(final ThemisAnalysisParser pParser) throws OceanusException {
         /* Resolve any generic base instance */
-        if (theGenericVars instanceof ThemisAnalysisGenericBase) {
+        if (theGenericVars instanceof ThemisAnalysisGenericBase myBase) {
             /* Resolve the variables */
-            final ThemisAnalysisGeneric myVars = new ThemisAnalysisGenericVarList(pParser, (ThemisAnalysisGenericBase) theGenericVars);
+            final ThemisAnalysisGeneric myVars = new ThemisAnalysisGenericVarList(pParser, myBase);
 
             /* Only record the parsed variables if the parser is nonTemporary */
             if (!pParser.isTemporary()) {

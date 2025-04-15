@@ -90,8 +90,7 @@ public class TethysUISwingPieChart
             @Override
             public void chartMouseClicked(final ChartMouseEvent e) {
                 final ChartEntity entity = e.getEntity();
-                if (entity instanceof PieSectionEntity) {
-                    final PieSectionEntity section = (PieSectionEntity) entity;
+                if (entity instanceof PieSectionEntity section) {
                     selectSection((String) section.getSectionKey());
                 }
             }

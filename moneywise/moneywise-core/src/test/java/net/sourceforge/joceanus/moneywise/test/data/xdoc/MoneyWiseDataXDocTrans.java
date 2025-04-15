@@ -111,7 +111,7 @@ public class MoneyWiseDataXDocTrans {
                 final MoneyWiseTransAsset myPartner = myEvent.getPartner();
                 if (myPartner instanceof MoneyWiseSecurityHolding) {
                     theReport.setSplitCellValue(myPartner.getName());
-                } else if (myPartner != null){
+                } else if (myPartner != null) {
                     theReport.setCellValue(myPartner.getName());
                 }
 

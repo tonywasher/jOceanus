@@ -201,7 +201,7 @@ public class MoneyWiseDataTestCategories {
      */
     static final String IDRG_UK = "UK";
     static final String IDRG_US = "US";
-    static final String IDRG_Europe = "Europe";
+    static final String IDRG_EUROPE = "Europe";
     static final String IDRG_AMERICAS = "Americas";
     static final String IDRG_ASIA = "Asia";
     static final String IDRG_GLOBAL = "Global";
@@ -527,7 +527,7 @@ public class MoneyWiseDataTestCategories {
     private void buildRegions() throws OceanusException {
         theRegionBuilder.name(IDRG_UK).build();
         theRegionBuilder.name(IDRG_US).build();
-        theRegionBuilder.name(IDRG_Europe).build();
+        theRegionBuilder.name(IDRG_EUROPE).build();
         theRegionBuilder.name(IDRG_AMERICAS).build();
         theRegionBuilder.name(IDRG_ASIA).build();
         theRegionBuilder.name(IDRG_GLOBAL).build();

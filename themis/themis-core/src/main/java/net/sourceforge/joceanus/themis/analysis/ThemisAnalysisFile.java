@@ -16,6 +16,12 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.themis.analysis;
 
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.themis.analysis.ThemisAnalysisDataMap.ThemisAnalysisDataType;
+import net.sourceforge.joceanus.themis.analysis.ThemisAnalysisDataMap.ThemisAnalysisIntermediate;
+import net.sourceforge.joceanus.themis.exc.ThemisDataException;
+import net.sourceforge.joceanus.themis.exc.ThemisIOException;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -26,12 +32,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.List;
-
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.themis.exc.ThemisDataException;
-import net.sourceforge.joceanus.themis.exc.ThemisIOException;
-import net.sourceforge.joceanus.themis.analysis.ThemisAnalysisDataMap.ThemisAnalysisDataType;
-import net.sourceforge.joceanus.themis.analysis.ThemisAnalysisDataMap.ThemisAnalysisIntermediate;
 
 /**
  * Analysis representation of a java file.
@@ -349,9 +349,8 @@ public class ThemisAnalysisFile
         /* Loop through the lines */
         for (ThemisAnalysisElement myElement : theContents) {
             /* If the element is a container */
-            if (myElement instanceof ThemisAnalysisContainer) {
+            if (myElement instanceof ThemisAnalysisContainer myContainer) {
                 /* Access and process the container */
-                final ThemisAnalysisContainer myContainer = (ThemisAnalysisContainer) myElement;
                 myContainer.postProcessLines();
             }
         }

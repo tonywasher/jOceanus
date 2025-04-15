@@ -56,8 +56,8 @@ public class TethysUIFXIcon
      * @return the icon
      */
     public Image getImage() {
-        return theIcon instanceof ImageView
-                ? ((ImageView) theIcon).getImage()
+        return theIcon instanceof ImageView myView
+                ? myView.getImage()
                 : null;
     }
 
@@ -67,8 +67,8 @@ public class TethysUIFXIcon
      * @return the icon
      */
     ImageView getImageView() {
-        return theIcon instanceof ImageView
-                ? (ImageView) theIcon
+        return theIcon instanceof ImageView myView
+                ? myView
                 : null;
     }
 

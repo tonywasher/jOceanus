@@ -1,0 +1,35 @@
+name: Maven CI/CD
+
+on:
+  label:
+    types:
+      - created
+  push:
+    branches:
+      - main
+
+jobs:
+  build_and_test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: maven
+      - name: Build project with Maven
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: mvn -B package site site:staging sonar:sonar --file pom.xml
+      - name: Package HTML site
+        uses: actions/upload-artifact@v4
+        with:
+          name: Site
+          path: staging
+      - name: Package distribution directory
+        uses: actions/upload-artifact@v4
+        with:
+          name: Distribution
+          path: ../dist

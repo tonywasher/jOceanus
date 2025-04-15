@@ -1,0 +1,8 @@
+Astraeus Project
+
+  Astraeus is a subComponent of the jOceanus project, providing build post-processing support.
+It is named after the titan Astraeus who was the god of dusk.
+
+  At present it's only purpose is to run a post-Build script as a TestCase to create Windows batch files/Unix shell
+scripts as required to correctly run each application (i.e. correct module-path and splash screen). In future any
+jlink/jpackage modules will also be created here.

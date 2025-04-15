@@ -16,11 +16,11 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.themis.analysis;
 
-import java.util.Deque;
-import java.util.Iterator;
-
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.exc.ThemisDataException;
+
+import java.util.Deque;
+import java.util.Iterator;
 
 /**
  * Statements.
@@ -163,8 +163,8 @@ public class ThemisAnalysisStatement
      */
     public ThemisAnalysisElement getEmbedded() {
         final ThemisAnalysisElement myLast = theLines.peekLastLine();
-        return myLast instanceof ThemisAnalysisEmbedded
-                ? ((ThemisAnalysisEmbedded) myLast).getContents().peekFirst()
+        return myLast instanceof ThemisAnalysisEmbedded myEmbedded
+                ? myEmbedded.getContents().peekFirst()
                 : null;
     }
 

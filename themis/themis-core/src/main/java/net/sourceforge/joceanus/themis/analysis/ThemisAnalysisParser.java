@@ -16,19 +16,19 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.themis.analysis;
 
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.themis.analysis.ThemisAnalysisDataMap.ThemisAnalysisDataType;
+import net.sourceforge.joceanus.themis.analysis.ThemisAnalysisEmbedded.ThemisAnalysisEmbedType;
+import net.sourceforge.joceanus.themis.analysis.ThemisAnalysisGeneric.ThemisAnalysisGenericBase;
+import net.sourceforge.joceanus.themis.analysis.ThemisAnalysisScanner.ThemisAnalysisSource;
+import net.sourceforge.joceanus.themis.exc.ThemisDataException;
+
 import java.util.ArrayList;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.themis.exc.ThemisDataException;
-import net.sourceforge.joceanus.themis.analysis.ThemisAnalysisDataMap.ThemisAnalysisDataType;
-import net.sourceforge.joceanus.themis.analysis.ThemisAnalysisEmbedded.ThemisAnalysisEmbedType;
-import net.sourceforge.joceanus.themis.analysis.ThemisAnalysisGeneric.ThemisAnalysisGenericBase;
-import net.sourceforge.joceanus.themis.analysis.ThemisAnalysisScanner.ThemisAnalysisSource;
 
 /**
  * Parser.
@@ -240,9 +240,9 @@ public class ThemisAnalysisParser
         final Object myType = KEYWORDS.get(myToken);
 
         /* If we have a keyWord */
-        if (myType instanceof ThemisAnalysisKeyWord) {
+        if (myType instanceof ThemisAnalysisKeyWord myKeyWord) {
             /* If this is a class */
-            switch ((ThemisAnalysisKeyWord) myType) {
+            switch (myKeyWord) {
                 case CLASS:
                     /* Create the class */
                     pLine.stripStartSequence(myToken);
@@ -285,9 +285,9 @@ public class ThemisAnalysisParser
         final Object myType = KEYWORDS.get(myToken);
 
         /* If we have a keyWord */
-        if (myType instanceof ThemisAnalysisKeyWord) {
+        if (myType instanceof ThemisAnalysisKeyWord myKeyWord) {
             /* Switch on the type */
-            switch ((ThemisAnalysisKeyWord) myType) {
+            switch (myKeyWord) {
                 /* If this is a while */
                 case WHILE:
                     /* Create the while */
@@ -411,9 +411,8 @@ public class ThemisAnalysisParser
         final Object myType = KEYWORDS.get(myToken);
 
         /* If we have a keyWord */
-        if (myType instanceof ThemisAnalysisKeyWord) {
+        if (myType instanceof ThemisAnalysisKeyWord myKeyWord) {
             /* If this is a case/default */
-            final ThemisAnalysisKeyWord myKeyWord = (ThemisAnalysisKeyWord) myType;
             switch (myKeyWord) {
                 case CASE:
                     pLine.stripStartSequence(myToken);
@@ -579,9 +578,8 @@ public class ThemisAnalysisParser
         final Object myType = KEYWORDS.get(myToken);
 
         /* If we have a keyWord */
-        if (myType instanceof ThemisAnalysisKeyWord) {
+        if (myType instanceof ThemisAnalysisKeyWord myKeyWord) {
             /* Switch on the type */
-            final ThemisAnalysisKeyWord myKeyWord = (ThemisAnalysisKeyWord) myType;
             switch (myKeyWord) {
                 case RETURN:
                 case THROW:

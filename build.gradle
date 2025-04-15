@@ -18,7 +18,7 @@ allprojects {
     apply plugin: 'java-library'
     apply plugin: 'maven-publish'
     apply plugin: 'checkstyle'
-    apply plugin: 'pmd'
+    //apply plugin: 'pmd'
     apply plugin: 'jacoco'
     apply plugin: 'signing'
 
@@ -111,13 +111,25 @@ subprojects {
     }
 
     /* Support jUnit 5 */
-    test {
-        useJUnitPlatform()
+    testing {
+        suites {
+            test {
+                useJUnitJupiter()
+
+                targets {
+                    all {
+                        testTask.configure {
+                            maxHeapSize = '4g'
+                        }
+                    }
+                }
+            }
+        }
     }
 
     /* Add annotations */
     dependencies {
-	compileOnly "org.jetbrains:annotations:$jetBrainsAnnotationsVersion"
+	    compileOnly "org.jetbrains:annotations:$jetBrainsAnnotationsVersion"
     } 
 
     /* Java options */
@@ -125,10 +137,10 @@ subprojects {
         options.compilerArgs += ["-Xlint:unchecked"]
     }
 
-    signing {
-        useGpgCmd()
-        sign configurations.archives
-    }
+    //signing {
+    //    useGpgCmd()
+    //    sign configurations.archives
+    //}
 
     /* Maven publishing */
     publishing {
@@ -141,25 +153,25 @@ subprojects {
 
     /* CheckStyle config */ 
     checkstyle {
-        toolVersion "$checkStyleVersion"
-        configFile file("$checkStyleConfig")
+        toolVersion = "$checkStyleVersion"
+        configFile = file("$checkStyleConfig")
         ignoreFailures = true
     }
 
     /* PMD config */ 
-    pmd {
-        toolVersion = "$pmdVersion"
-        ruleSets = []
-        ruleSetConfig = rootProject.ext.pmdRuleSet
-        ignoreFailures = true
-    }
+    //pmd {
+    //    toolVersion = "$pmdVersion"
+    //    ruleSets = []
+    //    ruleSetConfig = rootProject.ext.pmdRuleSet
+    //    ignoreFailures = true
+    //}
 
     /* Jacoco */
     test {
-        finalizedBy jacocoTestReport 
+        finalizedBy jacocoTestReport
     }
     jacocoTestReport {
-        dependsOn test 
+        dependsOn test
     }
     jacoco {
         toolVersion = "$jacocoVersion"
@@ -196,7 +208,7 @@ assemble.dependsOn distribute
 
 /* Make sure distribution directory is cleared on clean */
 clean.doFirst {
-    delete "${appDir}/"
+    delete = "${appDir}/"
 }
 
 /* Disable jar building for root project */

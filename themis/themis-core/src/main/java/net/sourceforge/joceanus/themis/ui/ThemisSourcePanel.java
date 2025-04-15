@@ -16,10 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.themis.ui;
 
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.concurrent.atomic.AtomicInteger;
-
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.tethys.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.tethys.api.control.TethysUIHTMLManager;
@@ -55,6 +51,10 @@ import net.sourceforge.joceanus.themis.analysis.ThemisAnalysisStatement;
 import net.sourceforge.joceanus.themis.analysis.ThemisAnalysisSwitch;
 import net.sourceforge.joceanus.themis.analysis.ThemisAnalysisTry;
 import net.sourceforge.joceanus.themis.analysis.ThemisAnalysisWhile;
+
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Source Panel.
@@ -212,17 +212,17 @@ public class ThemisSourcePanel {
      * @return the list of children
      */
     private static Iterator<ThemisAnalysisElement> childIterator(final ThemisAnalysisElement pElement) {
-        if (pElement instanceof ThemisAnalysisProject) {
-            return projectIterator((ThemisAnalysisProject) pElement);
+        if (pElement instanceof ThemisAnalysisProject myProject) {
+            return projectIterator(myProject);
         }
-        if (pElement instanceof ThemisAnalysisModule) {
-            return moduleIterator((ThemisAnalysisModule) pElement);
+        if (pElement instanceof ThemisAnalysisModule myModule) {
+            return moduleIterator(myModule);
         }
-        if (pElement instanceof ThemisAnalysisPackage) {
-            return packageIterator((ThemisAnalysisPackage) pElement);
+        if (pElement instanceof ThemisAnalysisPackage myPackage) {
+            return packageIterator(myPackage);
         }
-        if (pElement instanceof ThemisAnalysisFile) {
-            return allowedIterator((ThemisAnalysisFile) pElement, FILE_CHILDREN);
+        if (pElement instanceof ThemisAnalysisFile myFile) {
+            return allowedIterator(myFile, FILE_CHILDREN);
         }
         if (pElement instanceof ThemisAnalysisClass
             || pElement instanceof ThemisAnalysisAnonClass
@@ -240,11 +240,11 @@ public class ThemisSourcePanel {
             || pElement instanceof ThemisAnalysisDoWhile) {
             return allowedIterator((ThemisAnalysisContainer) pElement, CODE_CHILDREN);
         }
-        if (pElement instanceof ThemisAnalysisTry) {
-            return tryIterator((ThemisAnalysisTry) pElement);
+        if (pElement instanceof ThemisAnalysisTry myTry) {
+            return tryIterator(myTry);
         }
-        if (pElement instanceof ThemisAnalysisIf) {
-            return ifIterator((ThemisAnalysisIf) pElement);
+        if (pElement instanceof ThemisAnalysisIf myIf) {
+            return ifIterator(myIf);
         }
         if (pElement instanceof ThemisAnalysisSwitch) {
             return allowedIterator((ThemisAnalysisContainer) pElement, SWITCH_CHILDREN);
@@ -257,11 +257,11 @@ public class ThemisSourcePanel {
                 || pElement instanceof ThemisAnalysisFinally) {
             return allowedIterator((ThemisAnalysisContainer) pElement, CODE_CHILDREN);
         }
-        if (pElement instanceof ThemisAnalysisField) {
-            return fieldIterator((ThemisAnalysisField) pElement);
+        if (pElement instanceof ThemisAnalysisField myField) {
+            return fieldIterator(myField);
         }
-        if (pElement instanceof ThemisAnalysisStatement) {
-            return statementIterator((ThemisAnalysisStatement) pElement);
+        if (pElement instanceof ThemisAnalysisStatement myStatement) {
+            return statementIterator(myStatement);
         }
         return Collections.emptyIterator();
     }

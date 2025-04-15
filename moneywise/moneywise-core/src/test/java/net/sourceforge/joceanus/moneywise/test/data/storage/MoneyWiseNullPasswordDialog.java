@@ -24,7 +24,8 @@ import net.sourceforge.joceanus.prometheus.security.PrometheusSecurityDialogCont
 public class MoneyWiseNullPasswordDialog
         implements PrometheusSecurityDialogController {
     @Override
-    public void createTheDialog(String pTitle, boolean pNeedConfirm) {
+    public void createTheDialog(final String pTitle,
+                                final boolean pNeedConfirm) {
     }
 
     @Override

@@ -293,9 +293,9 @@ public class ThemisAnalysisDataMap {
             final ThemisAnalysisDataType myType = myEntry.getValue();
 
             /* If this is an intermediate */
-            if (myType instanceof ThemisAnalysisIntermediate) {
+            if (myType instanceof ThemisAnalysisIntermediate myIntermediate) {
                 /* Look up actual value */
-                final ThemisAnalysisDataType myActual = lookUpActualDataType((ThemisAnalysisIntermediate) myType);
+                final ThemisAnalysisDataType myActual = lookUpActualDataType(myIntermediate);
                 if (myActual != null) {
                     myEntry.setValue(myActual);
                 }
@@ -308,9 +308,9 @@ public class ThemisAnalysisDataMap {
             final ThemisAnalysisDataType myType = myRef.getDataType();
 
             /* If this is an intermediate */
-            if (myType instanceof ThemisAnalysisIntermediate) {
+            if (myType instanceof ThemisAnalysisIntermediate myIntermediate) {
                 /* Look up actual value */
-                final ThemisAnalysisDataType myActual = lookUpActualDataType((ThemisAnalysisIntermediate) myType);
+                final ThemisAnalysisDataType myActual = lookUpActualDataType(myIntermediate);
                 if (myActual != null) {
                     myRef.updateDataType(myActual);
                 }
@@ -325,16 +325,14 @@ public class ThemisAnalysisDataMap {
      */
     ThemisAnalysisObject lookUpActualDataType(final ThemisAnalysisIntermediate pIntermediate) {
         /* If this is an import */
-        if (pIntermediate instanceof ThemisAnalysisImport) {
+        if (pIntermediate instanceof ThemisAnalysisImport myImport) {
             /* Replace it with actual object if known */
-            final ThemisAnalysisImport myImport = (ThemisAnalysisImport) pIntermediate;
             return theClassMap.get(myImport.getFullName());
         }
 
         /* If this is a file */
-        if (pIntermediate instanceof ThemisAnalysisFile) {
+        if (pIntermediate instanceof ThemisAnalysisFile myFile) {
             /* Replace it with actual object if known */
-            final ThemisAnalysisFile myFile = (ThemisAnalysisFile) pIntermediate;
             final String myFullName = myFile.getPackageName() + ThemisAnalysisChar.PERIOD + myFile.getName();
             return theClassMap.get(myFullName);
         }
@@ -424,8 +422,7 @@ public class ThemisAnalysisDataMap {
         for (ThemisAnalysisReference myRef : pClass.getAncestors()) {
             /* Process the ancestor */
             final ThemisAnalysisDataType myDataType = myRef.getDataType();
-            if (myDataType instanceof ThemisAnalysisObject) {
-                final ThemisAnalysisObject myObject = (ThemisAnalysisObject) myDataType;
+            if (myDataType instanceof ThemisAnalysisObject myObject) {
                 processAncestor(myObject);
                 processAncestors(myObject);
             }
@@ -458,9 +455,9 @@ public class ThemisAnalysisDataMap {
             final ThemisAnalysisDataType myType = myEntry.getValue();
 
             /* If this is an unknown value */
-            if (myType instanceof ThemisAnalysisDataTypeUnknown) {
+            if (myType instanceof ThemisAnalysisDataTypeUnknown myUnknown) {
                 /* Process the unknown reference */
-                processUnknown(myEntry, (ThemisAnalysisDataTypeUnknown) myType);
+                processUnknown(myEntry, myUnknown);
             }
         }
     }
@@ -477,9 +474,9 @@ public class ThemisAnalysisDataMap {
         if (HIDDENTYPES.containsKey(myName)) {
             /* Look up the parent */
             final ThemisAnalysisDataType myParent = theLocalTypes.get(HIDDENTYPES.get(myName));
-            if (myParent instanceof ThemisAnalysisImport) {
+            if (myParent instanceof ThemisAnalysisImport myImport) {
                 /* Register a fake import and return */
-                final String myFullName = ((ThemisAnalysisImport) myParent).getFullName() + ThemisAnalysisChar.PERIOD + myName;
+                final String myFullName = myImport.getFullName() + ThemisAnalysisChar.PERIOD + myName;
                 final ThemisAnalysisImport myChild = new ThemisAnalysisImport(myFullName);
                 pEntry.setValue(myChild);
                 return;

@@ -2,6 +2,7 @@
 rootProject.name = 'joceanus'
 
 /* include the relevent sub-modules */
+include(':astraeus')
 include(':moneywise-core')
 include(':prometheus-sheet-odf')
 include(':prometheus-core')
@@ -23,6 +24,7 @@ include(':tethys-swing')
 include(':oceanus')
 
 /* Define the sub-projects */
+project(":astraeus").projectDir = file('astraeus')
 project(":moneywise-core").projectDir = file('moneywise/moneywise-core')
 project(":prometheus-sheet-odf").projectDir = file('prometheus/prometheus-services/prometheus-sheet-odf')
 project(":prometheus-core").projectDir = file('prometheus/prometheus-core')

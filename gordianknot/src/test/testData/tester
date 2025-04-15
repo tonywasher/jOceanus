@@ -1,0 +1,1366 @@
+<html>
+ <head>
+  <style>/* Define standard font for body and table contents */ body { font-family: Verdana, sans-serif; font-size: 1em; color: black; } /* Define standard alignment for headers */ h1 { text-align: center; } h2 { text-align: center; } /* Define tables */ table { width: 90%; align: center; border-spacing: 1px; border-collapse: collapse; border-top: solid; border-bottom: solid; } .subtable { width: 99%; } /* Define table headers as bold */ th { font-weight: bold; border: 1px solid white; } td { border: 1px solid white; } /* Define background colour for title row */ .totalRow { background-color: #e3e4fa; border-top: solid; } /* Define background colour for category row */ .summRow { background-color: #e3e4fa; } /* Define background colour for alternate category row */ .altSummRow { background-color: #f5f5f5; } /* Define background colour for subCategory row */ .dtlSummRow { background-color: #e3e4fa; } /* Define background colour for alternate subCategory row */ .altDtlSummRow { background-color: #f5f5f5; } /* Define background colour for detail row */ .detailRow { background-color: #e3e4fa; } /* Define background colour for alternate detail row */ .altDetailRow { background-color: #f5f5f5; } /* Define alignment for link values */ .linkValue { text-align: left; font-style: italic; color: #0000ff; } .accordianValue { text-align: left; color: #0000ff; } /* Define colour and alignment for data values */ .dataValue { text-align: right; color: #0000ff; } /* Define colour and alignment for data values */ .negValue { text-align: right; color: #b22222; } /* Define colour and alignment for title values */ .titleValue { text-align: center; color: #000000; } /* Set link definition */ a { font-weight: bold; text-decoration: none; } div { font-weight: bold; } </style>
+ </head>
+ <body>
+  <h1>CapitalGains Report<br>21-Jan-2018</h1>
+  <h2>Shareview:BowaterShares</h2>
+  <table align="center">
+   <thead>
+    <tr class="totalRow">
+     <th class="titleValue">Date</th>
+     <th class="titleValue">Transaction</th>
+     <th class="titleValue">Comment</th>
+    </tr>
+   </thead>
+   <tbody>
+    <tr class="summRow">
+     <td class="dataValue">01-Apr-1986</td>
+     <td class="dataValue">Income:Inheritance £3,500.00 Shareview:BowaterShares&lt;-Parents</td>
+     <td class="dataValue">Initial Gift of Shares</td>
+    </tr>
+    <tr>
+     <td colspan="2">
+      <table align="center" class="subtable">
+       <tbody>
+        <tr class="dtlSummRow">
+         <td class="dataValue">Invested</td>
+         <td class="dataValue">1,000.0000@£3.5000</td>
+         <td class="dataValue">£3,500.00</td>
+        </tr>
+        <tr class="altDtlSummRow">
+         <td class="dataValue">Units</td>
+         <td class="dataValue">0.0000+1,000.0000</td>
+         <td class="dataValue">1,000.0000</td>
+        </tr>
+        <tr class="dtlSummRow">
+         <td class="dataValue">ResidualCost</td>
+         <td class="dataValue">£0.00+£3,500.00</td>
+         <td class="dataValue">£3,500.00</td>
+        </tr>
+       </tbody>
+      </table></td>
+    </tr>
+    <tr class="altSummRow">
+     <td class="dataValue">14-Jan-1991</td>
+     <td class="dataValue">Security:RightsIssue £222.42 Shareview:BowaterShares-&gt;BarclaysCurrent</td>
+     <td class="dataValue">Rights Issue waived</td>
+    </tr>
+    <tr>
+     <td colspan="2">
+      <table align="center" class="subtable">
+       <tbody>
+        <tr class="dtlSummRow">
+         <td class="dataValue">ReturnedCash</td>
+         <td class="dataValue" colspan="2">£222.42</td>
+        </tr>
+        <tr class="altDtlSummRow">
+         <td class="dataValue">CashType</td>
+         <td class="dataValue" colspan="2">SmallCash</td>
+        </tr>
+        <tr class="dtlSummRow">
+         <td class="dataValue">AllowedCost</td>
+         <td class="dataValue" colspan="2">£222.42</td>
+        </tr>
+        <tr class="altDtlSummRow">
+         <td class="dataValue">ResidualCost</td>
+         <td class="dataValue">£3,500.00-£222.42</td>
+         <td class="dataValue">£3,277.58</td>
+        </tr>
+       </tbody>
+      </table></td>
+    </tr>
+    <tr class="summRow">
+     <td class="dataValue">21-Apr-1992</td>
+     <td class="dataValue">Security:RightsIssue £2,014.65 Shareview:BowaterShares&lt;-BarclaysCurrent</td>
+     <td class="dataValue">Rights Issue take up</td>
+    </tr>
+    <tr>
+     <td colspan="2">
+      <table align="center" class="subtable">
+       <tbody>
+        <tr class="dtlSummRow">
+         <td class="dataValue">Invested</td>
+         <td class="dataValue" colspan="2">£2,014.65</td>
+        </tr>
+        <tr class="altDtlSummRow">
+         <td class="dataValue">Units</td>
+         <td class="dataValue">1,000.0000+333.0000</td>
+         <td class="dataValue">1,333.0000</td>
+        </tr>
+        <tr class="dtlSummRow">
+         <td class="dataValue">ResidualCost</td>
+         <td class="dataValue">£3,277.58+£2,014.65</td>
+         <td class="dataValue">£5,292.23</td>
+        </tr>
+       </tbody>
+      </table></td>
+    </tr>
+    <tr class="altSummRow">
+     <td class="dataValue">09-Nov-1992</td>
+     <td class="dataValue">Security:StockSplit Shareview:BowaterShares-&gt;Shareview:BowaterShares</td>
+     <td class="dataValue">2 for 1 Stock Split</td>
+    </tr>
+    <tr>
+     <td colspan="2">
+      <table align="center" class="subtable">
+       <tbody>
+        <tr class="dtlSummRow">
+         <td class="dataValue">Units</td>
+         <td class="dataValue">1,333.0000+1,333.0000</td>
+         <td class="dataValue">2,666.0000</td>
+        </tr>
+       </tbody>
+      </table></td>
+    </tr>
+    <tr class="summRow">
+     <td class="dataValue">26-Apr-1993</td>
+     <td class="dataValue">Transfer £1,189.92 BarclaysCurrent-&gt;Shareview:BowaterShares</td>
+     <td class="dataValue">Rights Issue partial payment</td>
+    </tr>
+    <tr>
+     <td colspan="2">
+      <table align="center" class="subtable">
+       <tbody>
+        <tr class="dtlSummRow">
+         <td class="dataValue">Invested</td>
+         <td class="dataValue" colspan="2">£1,189.92</td>
+        </tr>
+        <tr class="altDtlSummRow">
+         <td class="dataValue">ResidualCost</td>
+         <td class="dataValue">£5,292.23+£1,189.92</td>
+         <td class="dataValue">£6,482.15</td>
+        </tr>
+       </tbody>
+      </table></td>
+    </tr>
+    <tr class="altSummRow">
+     <td class="dataValue">27-Apr-1993</td>
+     <td class="dataValue">Security:RightsIssue £586.08 Shareview:BowaterShares&lt;-Deposit</td>
+     <td class="dataValue">Rights issue take up - final payment</td>
+    </tr>
+    <tr>
+     <td colspan="2">
+      <table align="center" class="subtable">
+       <tbody>
+        <tr class="dtlSummRow">
+         <td class="dataValue">Invested</td>
+         <td class="dataValue" colspan="2">£586.08</td>
+        </tr>
+        <tr class="altDtlSummRow">
+         <td class="dataValue">Units</td>
+         <td class="dataValue">2,666.0000+444.0000</td>
+         <td class="dataValue">3,110.0000</td>
+        </tr>
+        <tr class="dtlSummRow">
+         <td class="dataValue">ResidualCost</td>
+         <td class="dataValue">£6,482.15+£586.08</td>
+         <td class="dataValue">£7,068.23</td>
+        </tr>
+       </tbody>
+      </table></td>
+    </tr>
+    <tr class="summRow">
+     <td class="dataValue">01-Jun-1995</td>
+     <td class="dataValue">Security:Replace Shareview:BowaterShares-&gt;Shareview:RexamShares</td>
+     <td class="dataValue">Rename of Company from Bowater to Rexam</td>
+    </tr>
+    <tr>
+     <td colspan="2">
+      <table align="center" class="subtable">
+       <tbody>
+        <tr class="dtlSummRow">
+         <td class="dataValue">XferredCost</td>
+         <td class="dataValue" colspan="2">£7,068.23</td>
+        </tr>
+       </tbody>
+      </table></td>
+    </tr>
+   </tbody>
+  </table>
+  <h2>Shareview:RexamShares</h2>
+  <table align="center">
+   <thead>
+    <tr class="totalRow">
+     <th class="titleValue">Date</th>
+     <th class="titleValue">Transaction</th>
+    </tr>
+   </thead>
+   <tbody>
+    <tr class="summRow">
+     <td class="dataValue">01-Jun-1995</td>
+     <td class="dataValue">Security:Replace Shareview:BowaterShares-&gt;Shareview:RexamShares</td>
+     <td class="dataValue">Rename of Company from Bowater to Rexam</td>
+    </tr>
+    <tr>
+     <td colspan="2">
+      <table align="center" class="subtable">
+       <tbody>
+        <tr class="dtlSummRow">
+         <td class="dataValue">Units</td>
+         <td class="dataValue">0.0000+3,110.0000</td>
+         <td class="dataValue">3,110.0000</td>
+        </tr>
+        <tr class="altDtlSummRow">
+         <td class="dataValue">XferredValue</td>
+         <td class="dataValue">3,110.0000@£4.7100</td>
+         <td class="dataValue">£14,648.10</td>
+        </tr>
+        <tr class="dtlSummRow">
+         <td class="dataValue">XferredCost</td>
+         <td class="dataValue" colspan="2">£7,068.23</td>
+        </tr>
+        <tr class="altDtlSummRow">
+         <td class="dataValue">ResidualCost</td>
+         <td class="dataValue" colspan="2">£7,068.23</td>
+        </tr>
+       </tbody>
+      </table></td>
+    </tr>
+    <tr class="altSummRow">
+     <td class="dataValue">20-Oct-1998</td>
+     <td class="dataValue">Security:DeMerger Shareview:RexamShares-&gt;Shareview:RexamBShares</td>
+     <td class="dataValue">BShare Dividend - 7 for 9 DeMerger</td>
+    </tr>
+    <tr>
+     <td colspan="2">
+      <table align="center" class="subtable">
+       <tbody>
+        <tr class="dtlSummRow">
+         <td class="dataValue">Units</td>
+         <td class="dataValue">3,110.0000-692.0000</td>
+         <td class="dataValue">2,418.0000</td>
+        </tr>
+        <tr class="altDtlSummRow">
+         <td class="dataValue">CostDilution</td>
+         <td class="dataValue">2,418.0000/3,110.0000</td>
+         <td class="dataValue">0.777777</td>
+        </tr>
+        <tr class="dtlSummRow">
+         <td class="dataValue">ResidualCost</td>
+         <td class="dataValue">£7,068.23*0.777777</td>
+         <td class="dataValue">£5,497.51</td>
+        </tr>
+        <tr class="altDtlSummRow">
+         <td class="dataValue">XferredCost</td>
+         <td class="dataValue">£7,068.23-£5,497.51</td>
+         <td class="dataValue">£1,570.72</td>
+        </tr>
+       </tbody>
+      </table></td>
+    </tr>
+    <tr class="summRow">
+     <td class="dataValue">20-Oct-1998</td>
+     <td class="dataValue">Transfer £1.88 Shareview:RexamShares-&gt;NatWideInvestDirect</td>
+     <td class="dataValue">BShare Dividend - Capital Return for partial shares</td>
+    </tr>
+    <tr>
+     <td colspan="2">
+      <table align="center" class="subtable">
+       <tbody>
+        <tr class="dtlSummRow">
+         <td class="dataValue">ReturnedCash</td>
+         <td class="dataValue" colspan="2">£1.88</td>
+        </tr>
+        <tr class="altDtlSummRow">
+         <td class="dataValue">CashType</td>
+         <td class="dataValue" colspan="2">SmallCash</td>
+        </tr>
+        <tr class="dtlSummRow">
+         <td class="dataValue">AllowedCost</td>
+         <td class="dataValue" colspan="2">£1.88</td>
+        </tr>
+        <tr class="altDtlSummRow">
+         <td class="dataValue">ResidualCost</td>
+         <td class="dataValue">£5,497.51-£1.88</td>
+         <td class="dataValue">£5,495.63</td>
+        </tr>
+       </tbody>
+      </table></td>
+    </tr>
+    <tr class="altSummRow">
+     <td class="dataValue">14-Mar-2002</td>
+     <td class="dataValue">Income:Inheritance £8,721.00 Shareview:RexamShares&lt;-Parents</td>
+     <td class="dataValue">Further Gift of Shares</td>
+    </tr>
+    <tr>
+     <td colspan="2">
+      <table align="center" class="subtable">
+       <tbody>
+        <tr class="dtlSummRow">
+         <td class="dataValue">Invested</td>
+         <td class="dataValue">2,000.0000@£4.5900</td>
+         <td class="dataValue">£8,721.00</td>
+        </tr>
+        <tr class="altDtlSummRow">
+         <td class="dataValue">Units</td>
+         <td class="dataValue">2,418.0000+2,000.0000</td>
+         <td class="dataValue">4,418.0000</td>
+        </tr>
+        <tr class="dtlSummRow">
+         <td class="dataValue">ResidualCost</td>
+         <td class="dataValue">£5,495.63+£8,721.00</td>
+         <td class="dataValue">£14,216.63</td>
+        </tr>
+       </tbody>
+      </table></td>
+    </tr>
+    <tr class="summRow">
+     <td class="dataValue">24-Nov-2003</td>
+     <td class="dataValue">Security:RightsIssue £2,047.65 Shareview:RexamShares&lt;-NatWideFlexAccount</td>
+     <td class="dataValue">Rights issue taken up</td>
+    </tr>
+    <tr>
+     <td colspan="2">
+      <table align="center" class="subtable">
+       <tbody>
+        <tr class="dtlSummRow">
+         <td class="dataValue">Invested</td>
+         <td class="dataValue" colspan="2">£2,047.65</td>
+        </tr>
+        <tr class="altDtlSummRow">
+         <td class="dataValue">Units</td>
+         <td class="dataValue">4,418.0000+803.0000</td>
+         <td class="dataValue">5,221.0000</td>
+        </tr>
+        <tr class="dtlSummRow">
+         <td class="dataValue">ResidualCost</td>
+         <td class="dataValue">£14,216.63+£2,047.65</td>
+         <td class="dataValue">£16,264.28</td>
+        </tr>
+       </tbody>
+      </table></td>
+    </tr>
+    <tr class="altSummRow">
+     <td class="dataValue">04-Jan-2009</td>
+     <td class="dataValue">Income:Inheritance £15,512.25 Shareview:RexamShares&lt;-Parents</td>
+     <td class="dataValue">Further Gift of Shares</td>
+    </tr>
+    <tr>
+     <td colspan="2">
+      <table align="center" class="subtable">
+       <tbody>
+        <tr class="dtlSummRow">
+         <td class="dataValue">Invested</td>
+         <td class="dataValue">4,300.0000@£3.6075</td>
+         <td class="dataValue">£15,512.25</td>
+        </tr>
+        <tr class="altDtlSummRow">
+         <td class="dataValue">Units</td>
+         <td class="dataValue">5,221.0000+4,300.0000</td>
+         <td class="dataValue">9,521.0000</td>
+        </tr>
+        <tr class="dtlSummRow">
+         <td class="dataValue">ResidualCost</td>
+         <td class="dataValue">£16,264.28+£15,512.25</td>
+         <td class="dataValue">£31,776.53</td>
+        </tr>
+       </tbody>
+      </table></td>
+    </tr>
+    <tr class="summRow">
+     <td class="dataValue">02-Sep-2009</td>
+     <td class="dataValue">Security:RightsIssue £3,548.34 Shareview:RexamShares-&gt;NatWideFlexAccount</td>
+     <td class="dataValue">Rights issue waived</td>
+    </tr>
+    <tr>
+     <td colspan="2">
+      <table align="center" class="subtable">
+       <tbody>
+        <tr class="dtlSummRow">
+         <td class="dataValue">ReturnedCash</td>
+         <td class="dataValue" colspan="2">£3,548.34</td>
+        </tr>
+        <tr class="altDtlSummRow">
+         <td class="dataValue">CashType</td>
+         <td class="dataValue" colspan="2">LargeCash</td>
+        </tr>
+        <tr class="dtlSummRow">
+         <td class="dataValue">Valuation</td>
+         <td class="dataValue">9,521.0000@£2.5925</td>
+         <td class="dataValue">£24,683.19</td>
+        </tr>
+        <tr class="altDtlSummRow">
+         <td class="dataValue">Consideration</td>
+         <td class="dataValue">£3,548.34+£24,683.19</td>
+         <td class="dataValue">£28,231.53</td>
+        </tr>
+        <tr class="dtlSummRow">
+         <td class="dataValue">CostDilution</td>
+         <td class="dataValue">£24,683.19/£28,231.53</td>
+         <td class="dataValue">0.874313</td>
+        </tr>
+        <tr class="altDtlSummRow">
+         <td class="dataValue">ResidualCost</td>
+         <td class="dataValue">£31,776.53*0.874313</td>
+         <td class="dataValue">£27,782.63</td>
+        </tr>
+        <tr class="dtlSummRow">
+         <td class="dataValue">AllowedCost</td>
+         <td class="dataValue">£31,776.53-£27,782.63</td>
+         <td class="dataValue">£3,993.90</td>
+        </tr>
+        <tr class="altDtlSummRow">
+         <td class="dataValue">CapitalGain</td>
+         <td class="dataValue">£3,548.34-£3,993.90</td>
+         <td class="negValue">-£445.56</td>
+        </tr>
+        <tr class="dtlSummRow">
+         <td class="dataValue">RealisedGains</td>
+         <td class="negValue" colspan="2">-£445.56</td>
+        </tr>
+       </tbody>
+      </table></td>
+    </tr>
+    <tr class="altSummRow">
+     <td class="dataValue">04-Feb-2013</td>
+     <td class="dataValue">Security:DeMerger Shareview:RexamShares-&gt;Shareview:RexamBShares</td>
+     <td class="dataValue">BShare Dividend - 9 for 10 DeMerger</td>
+    </tr>
+    <tr>
+     <td colspan="2">
+      <table align="center" class="subtable">
+       <tbody>
+        <tr class="dtlSummRow">
+         <td class="dataValue">Units</td>
+         <td class="dataValue">9,521.0000-953.0000</td>
+         <td class="dataValue">8,568.0000</td>
+        </tr>
+        <tr class="altDtlSummRow">
+         <td class="dataValue">CostDilution</td>
+         <td class="dataValue">8,568.0000/9,521.0000</td>
+         <td class="dataValue">0.900000</td>
+        </tr>
+        <tr class="dtlSummRow">
+         <td class="dataValue">ResidualCost</td>
+         <td class="dataValue">£27,782.63*0.900000</td>
+         <td class="dataValue">£25,004.37</td>
+        </tr>
+        <tr class="altDtlSummRow">
+         <td class="dataValue">XferredCost</td>
+         <td class="dataValue">£27,782.63-£25,004.37</td>
+         <td class="dataValue">£2,778.26</td>
+        </tr>
+       </tbody>
+      </table></td>
+    </tr>
+    <tr class="summRow">
+     <td class="dataValue">04-Feb-2013</td>
+     <td class="dataValue">Transfer £4.18 Shareview:RexamShares-&gt;NatWideFlexAccount</td>
+     <td class="dataValue">BShare Dividend - Capital Return for partial shares</td>
+    </tr>
+    <tr>
+     <td colspan="2">
+      <table align="center" class="subtable">
+       <tbody>
+        <tr class="dtlSummRow">
+         <td class="dataValue">ReturnedCash</td>
+         <td class="dataValue" colspan="2">£4.18</td>
+        </tr>
+        <tr class="altDtlSummRow">
+         <td class="dataValue">CashType</td>
+         <td class="dataValue" colspan="2">SmallCash</td>
+        </tr>
+        <tr class="dtlSummRow">
+         <td class="dataValue">AllowedCost</td>
+         <td class="dataValue" colspan="2">£4.18</td>
+        </tr>
+        <tr class="altDtlSummRow">
+         <td class="dataValue">ResidualCost</td>
+         <td class="dataValue">£25,004.37-£4.18</td>
+         <td class="dataValue">£25,000.19</td>
+        </tr>
+       </tbody>
+      </table></td>
+    </tr>
+    <tr class="altSummRow">
+     <td class="dataValue">19-Jun-2014</td>
+     <td class="dataValue">Security:DeMerger Shareview:RexamShares-&gt;Shareview:RexamBShares</td>
+     <td class="dataValue">BShare Dividend - 8 for 9 DeMerger</td>
+    </tr>
+    <tr>
+     <td colspan="2">
+      <table align="center" class="subtable">
+       <tbody>
+        <tr class="dtlSummRow">
+         <td class="dataValue">Units</td>
+         <td class="dataValue">8,568.0000-952.0000</td>
+         <td class="dataValue">7,616.0000</td>
+        </tr>
+        <tr class="altDtlSummRow">
+         <td class="dataValue">CostDilution</td>
+         <td class="dataValue">7,616.0000/8,568.0000</td>
+         <td class="dataValue">0.888889</td>
+        </tr>
+        <tr class="dtlSummRow">
+         <td class="dataValue">ResidualCost</td>
+         <td class="dataValue">£25,000.19*0.888889</td>
+         <td class="dataValue">£22,222.39</td>
+        </tr>
+        <tr class="altDtlSummRow">
+         <td class="dataValue">XferredCost</td>
+         <td class="dataValue">£25,000.19-£22,222.39</td>
+         <td class="dataValue">£2,777.80</td>
+        </tr>
+       </tbody>
+      </table></td>
+    </tr>
+    <tr class="summRow">
+     <td class="dataValue">01-Jul-2016</td>
+     <td class="dataValue">Security:TakeOver Shareview:RexamShares-&gt;Shareview:BallShares</td>
+     <td class="dataValue">Takeover of Rexam by Ball Corporation using Cash and Shares</td>
+    </tr>
+    <tr>
+     <td colspan="2">
+      <table align="center" class="subtable">
+       <tbody>
+        <tr class="dtlSummRow">
+         <td class="dataValue">ReturnedCash</td>
+         <td class="dataValue" colspan="2"><b>£30,997.12</b></td>
+        </tr>
+        <tr class="altDtlSummRow">
+         <td class="dataValue">CashType</td>
+         <td class="dataValue" colspan="2">LargeCash</td>
+        </tr>
+        <tr class="dtlSummRow">
+         <td class="dataValue">XferredValue</td>
+         <td class="dataValue" colspan="2"><b>£18,279.02</b></td>
+        </tr>
+        <tr class="altDtlSummRow">
+         <td class="dataValue">Consideration</td>
+         <td class="dataValue">£30,997.12+£18,279.02</td>
+         <td class="dataValue">£49,276.14</td>
+        </tr>
+        <tr class="dtlSummRow">
+         <td class="dataValue">CostDilution</td>
+         <td class="dataValue">£30,997.12/£49,276.14</td>
+         <td class="dataValue">0.629049</td>
+        </tr>
+        <tr class="altDtlSummRow">
+         <td class="dataValue">AllowedCost</td>
+         <td class="dataValue">£22,222.39*0.629049</td>
+         <td class="dataValue"><b>£13,978.97</b></td>
+        </tr>
+        <tr class="dtlSummRow">
+         <td class="dataValue">XferredCost</td>
+         <td class="dataValue">£22,222.39-£13,978.97</td>
+         <td class="dataValue">£8,243.42</td>
+        </tr>
+        <tr class="altDtlSummRow">
+         <td class="dataValue">CapitalGain</td>
+         <td class="dataValue">£30,997.12-£13,978.97</td>
+         <td class="dataValue"><b>£17,018.15</b></td>
+        </tr>
+        <tr class="dtlSummRow">
+         <td class="dataValue">RealisedGains</td>
+         <td class="dataValue" colspan="2">£16,572.59</td>
+        </tr>
+       </tbody>
+      </table></td>
+    </tr>
+   </tbody>
+  </table>
+  <h2>Shareview:BallShares</h2>
+  <table align="center">
+   <thead>
+    <tr class="totalRow">
+     <th class="titleValue">Date</th>
+     <th class="titleValue">Transaction</th>
+    </tr>
+   </thead>
+   <tbody>
+    <tr class="summRow">
+     <td class="dataValue">01-Jul-2016</td>
+     <td class="dataValue">Security:TakeOver Shareview:RexamShares-&gt;Shareview:BallShares</td>
+     <td class="dataValue">Takeover of Rexam by Ball Corporation - Shares Portion</td>
+    </tr>
+    <tr>
+     <td colspan="2">
+      <table align="center" class="subtable">
+       <tbody>
+        <tr class="dtlSummRow">
+         <td class="dataValue">Units</td>
+         <td class="dataValue">0.0000+347.8989</td>
+         <td class="dataValue">347.8989</td>
+        </tr>
+        <tr class="altDtlSummRow">
+         <td class="dataValue">XferredValue</td>
+         <td class="dataValue">347.8989@$70.8675/0.741400</td>
+         <td class="dataValue"><b>£18,279.02</b></td>
+        </tr>
+        <tr class="dtlSummRow">
+         <td class="dataValue">XferredCost</td>
+         <td class="dataValue" colspan="2">£8,243.42</td>
+        </tr>
+        <tr class="altDtlSummRow">
+         <td class="dataValue">ResidualCost</td>
+         <td class="dataValue" colspan="2">£8,243.42</td>
+        </tr>
+       </tbody>
+      </table></td>
+    </tr>
+    <tr class="altSummRow">
+     <td class="dataValue">02-Jul-2016</td>
+     <td class="dataValue">Transfer $63.69 Shareview:BallShares-&gt;NatWideFlexDirect</td>
+     <td class="dataValue">Share Takeover - Capital Return for partial shares</td>
+    </tr>
+    <tr>
+     <td colspan="2">
+      <table align="center" class="subtable">
+       <tbody>
+        <tr class="dtlSummRow">
+         <td class="dataValue">ReturnedCash</td>
+         <td class="dataValue" colspan="2"><b>£47.22</b></td>
+        </tr>
+        <tr class="altDtlSummRow">
+         <td class="dataValue">Units</td>
+         <td class="dataValue">347.8989-0.8989</td>
+         <td class="dataValue">347.0000</td>
+        </tr>
+        <tr class="dtlSummRow">
+         <td class="dataValue">CostDilution</td>
+         <td class="dataValue">347.0000/347.8989</td>
+         <td class="dataValue">0.997416</td>
+        </tr>
+        <tr class="altDtlSummRow">
+         <td class="dataValue">ResidualCost</td>
+         <td class="dataValue">£8,243.42*0.997416</td>
+         <td class="dataValue">£8,222.12</td>
+        </tr>
+        <tr class="dtlSummRow">
+         <td class="dataValue">AllowedCost</td>
+         <td class="dataValue">£8,243.42-£8,222.12</td>
+         <td class="dataValue"><b>£21.30</b></td>
+        </tr>
+        <tr class="altDtlSummRow">
+         <td class="dataValue">CapitalGain</td>
+         <td class="dataValue">£47.22-£21.30</td>
+         <td class="dataValue"><b>£25.92</b></td>
+        </tr>
+        <tr class="dtlSummRow">
+         <td class="dataValue">RealisedGains</td>
+         <td class="dataValue" colspan="2">£25.92</td>
+        </tr>
+       </tbody>
+      </table></td>
+    </tr>
+   </tbody>
+  </table>
+ </body>
+</html><html>
+ <head>
+  <style>/* Define standard font for body and table contents */ body { font-family: Verdana, sans-serif; font-size: 1em; color: black; } /* Define standard alignment for headers */ h1 { text-align: center; } h2 { text-align: center; } /* Define tables */ table { width: 90%; align: center; border-spacing: 1px; border-collapse: collapse; border-top: solid; border-bottom: solid; } .subtable { width: 99%; } /* Define table headers as bold */ th { font-weight: bold; border: 1px solid white; } td { border: 1px solid white; } /* Define background colour for title row */ .totalRow { background-color: #e3e4fa; border-top: solid; } /* Define background colour for category row */ .summRow { background-color: #e3e4fa; } /* Define background colour for alternate category row */ .altSummRow { background-color: #f5f5f5; } /* Define background colour for subCategory row */ .dtlSummRow { background-color: #e3e4fa; } /* Define background colour for alternate subCategory row */ .altDtlSummRow { background-color: #f5f5f5; } /* Define background colour for detail row */ .detailRow { background-color: #e3e4fa; } /* Define background colour for alternate detail row */ .altDetailRow { background-color: #f5f5f5; } /* Define alignment for link values */ .linkValue { text-align: left; font-style: italic; color: #0000ff; } .accordianValue { text-align: left; color: #0000ff; } /* Define colour and alignment for data values */ .dataValue { text-align: right; color: #0000ff; } /* Define colour and alignment for data values */ .negValue { text-align: right; color: #b22222; } /* Define colour and alignment for title values */ .titleValue { text-align: center; color: #000000; } /* Set link definition */ a { font-weight: bold; text-decoration: none; } div { font-weight: bold; } </style>
+ </head>
+ <body>
+  <h1>CapitalGains Report<br>21-Jan-2018</h1>
+  <h2>Shareview:BowaterShares</h2>
+  <table align="center">
+   <thead>
+    <tr class="totalRow">
+     <th class="titleValue">Date</th>
+     <th class="titleValue">Transaction</th>
+    </tr>
+   </thead>
+   <tbody>
+    <tr class="summRow">
+     <td class="dataValue">01-Apr-1986</td>
+     <td class="dataValue">Income:Inheritance £3,500.00 Shareview:BowaterShares&lt;-Parents</td>
+    </tr>
+    <tr>
+     <td colspan="2">
+      <table align="center" class="subtable">
+       <tbody>
+        <tr class="dtlSummRow">
+         <td class="dataValue">Invested</td>
+         <td class="dataValue">1,000.0000@£3.5000</td>
+         <td class="dataValue">£3,500.00</td>
+        </tr>
+        <tr class="altDtlSummRow">
+         <td class="dataValue">Units</td>
+         <td class="dataValue">0.0000+1,000.0000</td>
+         <td class="dataValue">1,000.0000</td>
+        </tr>
+        <tr class="dtlSummRow">
+         <td class="dataValue">ResidualCost</td>
+         <td class="dataValue">£0.00+£3,500.00</td>
+         <td class="dataValue">£3,500.00</td>
+        </tr>
+       </tbody>
+      </table></td>
+    </tr>
+    <tr class="altSummRow">
+     <td class="dataValue">14-Jan-1991</td>
+     <td class="dataValue">Security:RightsIssue £222.42 Shareview:BowaterShares-&gt;BarclaysCurrent</td>
+    </tr>
+    <tr>
+     <td colspan="2">
+      <table align="center" class="subtable">
+       <tbody>
+        <tr class="dtlSummRow">
+         <td class="dataValue">ReturnedCash</td>
+         <td class="dataValue" colspan="2">£222.42</td>
+        </tr>
+        <tr class="altDtlSummRow">
+         <td class="dataValue">CashType</td>
+         <td class="dataValue" colspan="2">SmallCash</td>
+        </tr>
+        <tr class="dtlSummRow">
+         <td class="dataValue">AllowedCost</td>
+         <td class="dataValue" colspan="2">£222.42</td>
+        </tr>
+        <tr class="altDtlSummRow">
+         <td class="dataValue">ResidualCost</td>
+         <td class="dataValue">£3,500.00-£222.42</td>
+         <td class="dataValue">£3,277.58</td>
+        </tr>
+       </tbody>
+      </table></td>
+    </tr>
+    <tr class="summRow">
+     <td class="dataValue">21-Apr-1992</td>
+     <td class="dataValue">Security:RightsIssue £2,014.65 Shareview:BowaterShares&lt;-BarclaysCurrent</td>
+    </tr>
+    <tr>
+     <td colspan="2">
+      <table align="center" class="subtable">
+       <tbody>
+        <tr class="dtlSummRow">
+         <td class="dataValue">Invested</td>
+         <td class="dataValue" colspan="2">£2,014.65</td>
+        </tr>
+        <tr class="altDtlSummRow">
+         <td class="dataValue">Units</td>
+         <td class="dataValue">1,000.0000+333.0000</td>
+         <td class="dataValue">1,333.0000</td>
+        </tr>
+        <tr class="dtlSummRow">
+         <td class="dataValue">ResidualCost</td>
+         <td class="dataValue">£3,277.58+£2,014.65</td>
+         <td class="dataValue">£5,292.23</td>
+        </tr>
+       </tbody>
+      </table></td>
+    </tr>
+    <tr class="altSummRow">
+     <td class="dataValue">09-Nov-1992</td>
+     <td class="dataValue">Security:StockSplit Shareview:BowaterShares-&gt;Shareview:BowaterShares</td>
+    </tr>
+    <tr>
+     <td colspan="2">
+      <table align="center" class="subtable">
+       <tbody>
+        <tr class="dtlSummRow">
+         <td class="dataValue">Units</td>
+         <td class="dataValue">1,333.0000+1,333.0000</td>
+         <td class="dataValue">2,666.0000</td>
+        </tr>
+       </tbody>
+      </table></td>
+    </tr>
+    <tr class="summRow">
+     <td class="dataValue">26-Apr-1993</td>
+     <td class="dataValue">Transfer £1,189.92 BarclaysCurrent-&gt;Shareview:BowaterShares</td>
+    </tr>
+    <tr>
+     <td colspan="2">
+      <table align="center" class="subtable">
+       <tbody>
+        <tr class="dtlSummRow">
+         <td class="dataValue">Invested</td>
+         <td class="dataValue" colspan="2">£1,189.92</td>
+        </tr>
+        <tr class="altDtlSummRow">
+         <td class="dataValue">ResidualCost</td>
+         <td class="dataValue">£5,292.23+£1,189.92</td>
+         <td class="dataValue">£6,482.15</td>
+        </tr>
+       </tbody>
+      </table></td>
+    </tr>
+    <tr class="altSummRow">
+     <td class="dataValue">27-Apr-1993</td>
+     <td class="dataValue">Security:RightsIssue £586.08 Shareview:BowaterShares&lt;-Deposit</td>
+    </tr>
+    <tr>
+     <td colspan="2">
+      <table align="center" class="subtable">
+       <tbody>
+        <tr class="dtlSummRow">
+         <td class="dataValue">Invested</td>
+         <td class="dataValue" colspan="2">£586.08</td>
+        </tr>
+        <tr class="altDtlSummRow">
+         <td class="dataValue">Units</td>
+         <td class="dataValue">2,666.0000+444.0000</td>
+         <td class="dataValue">3,110.0000</td>
+        </tr>
+        <tr class="dtlSummRow">
+         <td class="dataValue">ResidualCost</td>
+         <td class="dataValue">£6,482.15+£586.08</td>
+         <td class="dataValue">£7,068.23</td>
+        </tr>
+       </tbody>
+      </table></td>
+    </tr>
+    <tr class="summRow">
+     <td class="dataValue">01-Jun-1995</td>
+     <td class="dataValue">Security:Replace Shareview:BowaterShares-&gt;Shareview:RexamShares</td>
+    </tr>
+    <tr>
+     <td colspan="2">
+      <table align="center" class="subtable">
+       <tbody>
+        <tr class="dtlSummRow">
+         <td class="dataValue">XferredCost</td>
+         <td class="dataValue" colspan="2">£7,068.23</td>
+        </tr>
+       </tbody>
+      </table></td>
+    </tr>
+   </tbody>
+  </table>
+ </body>
+</html><html>
+ <head>
+  <style>/* Define standard font for body and table contents */ body { font-family: Verdana, sans-serif; font-size: 1em; color: black; } /* Define standard alignment for headers */ h1 { text-align: center; } h2 { text-align: center; } /* Define tables */ table { width: 90%; align: center; border-spacing: 1px; border-collapse: collapse; border-top: solid; border-bottom: solid; } .subtable { width: 99%; } /* Define table headers as bold */ th { font-weight: bold; border: 1px solid white; } td { border: 1px solid white; } /* Define background colour for title row */ .totalRow { background-color: #e3e4fa; border-top: solid; } /* Define background colour for category row */ .summRow { background-color: #e3e4fa; } /* Define background colour for alternate category row */ .altSummRow { background-color: #f5f5f5; } /* Define background colour for subCategory row */ .dtlSummRow { background-color: #e3e4fa; } /* Define background colour for alternate subCategory row */ .altDtlSummRow { background-color: #f5f5f5; } /* Define background colour for detail row */ .detailRow { background-color: #e3e4fa; } /* Define background colour for alternate detail row */ .altDetailRow { background-color: #f5f5f5; } /* Define alignment for link values */ .linkValue { text-align: left; font-style: italic; color: #0000ff; } .accordianValue { text-align: left; color: #0000ff; } /* Define colour and alignment for data values */ .dataValue { text-align: right; color: #0000ff; } /* Define colour and alignment for data values */ .negValue { text-align: right; color: #b22222; } /* Define colour and alignment for title values */ .titleValue { text-align: center; color: #000000; } /* Set link definition */ a { font-weight: bold; text-decoration: none; } div { font-weight: bold; } </style>
+ </head>
+ <body>
+  <h1>CapitalGains Report<br>21-Jan-2018</h1>
+  <h2>Shareview:RexamShares</h2>
+  <table align="center">
+   <thead>
+    <tr class="totalRow">
+     <th class="titleValue">Date</th>
+     <th class="titleValue">Transaction</th>
+    </tr>
+   </thead>
+   <tbody>
+    <tr class="summRow">
+     <td class="dataValue">01-Jun-1995</td>
+     <td class="dataValue">Security:Replace Shareview:BowaterShares-&gt;Shareview:RexamShares</td>
+    </tr>
+    <tr>
+     <td colspan="2">
+      <table align="center" class="subtable">
+       <tbody>
+        <tr class="dtlSummRow">
+         <td class="dataValue">Units</td>
+         <td class="dataValue">0.0000+3,110.0000</td>
+         <td class="dataValue">3,110.0000</td>
+        </tr>
+        <tr class="altDtlSummRow">
+         <td class="dataValue">XferredValue</td>
+         <td class="dataValue">3,110.0000@£4.7100</td>
+         <td class="dataValue">£14,648.10</td>
+        </tr>
+        <tr class="dtlSummRow">
+         <td class="dataValue">XferredCost</td>
+         <td class="dataValue" colspan="2">£7,068.23</td>
+        </tr>
+        <tr class="altDtlSummRow">
+         <td class="dataValue">ResidualCost</td>
+         <td class="dataValue" colspan="2">£7,068.23</td>
+        </tr>
+       </tbody>
+      </table></td>
+    </tr>
+    <tr class="altSummRow">
+     <td class="dataValue">20-Oct-1998</td>
+     <td class="dataValue">Security:DeMerger Shareview:RexamShares-&gt;Shareview:RexamBShares</td>
+    </tr>
+    <tr>
+     <td colspan="2">
+      <table align="center" class="subtable">
+       <tbody>
+        <tr class="dtlSummRow">
+         <td class="dataValue">Units</td>
+         <td class="dataValue">3,110.0000-692.0000</td>
+         <td class="dataValue">2,418.0000</td>
+        </tr>
+        <tr class="altDtlSummRow">
+         <td class="dataValue">CostDilution</td>
+         <td class="dataValue">2,418.0000/3,110.0000</td>
+         <td class="dataValue">0.777777</td>
+        </tr>
+        <tr class="dtlSummRow">
+         <td class="dataValue">ResidualCost</td>
+         <td class="dataValue">£7,068.23*0.777777</td>
+         <td class="dataValue">£5,497.51</td>
+        </tr>
+        <tr class="altDtlSummRow">
+         <td class="dataValue">XferredCost</td>
+         <td class="dataValue">£7,068.23-£5,497.51</td>
+         <td class="dataValue">£1,570.72</td>
+        </tr>
+       </tbody>
+      </table></td>
+    </tr>
+    <tr class="summRow">
+     <td class="dataValue">20-Oct-1998</td>
+     <td class="dataValue">Transfer £1.88 Shareview:RexamShares-&gt;NatWideInvestDirect</td>
+    </tr>
+    <tr>
+     <td colspan="2">
+      <table align="center" class="subtable">
+       <tbody>
+        <tr class="dtlSummRow">
+         <td class="dataValue">ReturnedCash</td>
+         <td class="dataValue" colspan="2">£1.88</td>
+        </tr>
+        <tr class="altDtlSummRow">
+         <td class="dataValue">CashType</td>
+         <td class="dataValue" colspan="2">SmallCash</td>
+        </tr>
+        <tr class="dtlSummRow">
+         <td class="dataValue">AllowedCost</td>
+         <td class="dataValue" colspan="2">£1.88</td>
+        </tr>
+        <tr class="altDtlSummRow">
+         <td class="dataValue">ResidualCost</td>
+         <td class="dataValue">£5,497.51-£1.88</td>
+         <td class="dataValue">£5,495.63</td>
+        </tr>
+       </tbody>
+      </table></td>
+    </tr>
+    <tr class="altSummRow">
+     <td class="dataValue">14-Mar-2002</td>
+     <td class="dataValue">Income:Inheritance £8,721.00 Shareview:RexamShares&lt;-Parents</td>
+    </tr>
+    <tr>
+     <td colspan="2">
+      <table align="center" class="subtable">
+       <tbody>
+        <tr class="dtlSummRow">
+         <td class="dataValue">Invested</td>
+         <td class="dataValue">2,000.0000@£4.5900</td>
+         <td class="dataValue">£8,721.00</td>
+        </tr>
+        <tr class="altDtlSummRow">
+         <td class="dataValue">Units</td>
+         <td class="dataValue">2,418.0000+2,000.0000</td>
+         <td class="dataValue">4,418.0000</td>
+        </tr>
+        <tr class="dtlSummRow">
+         <td class="dataValue">ResidualCost</td>
+         <td class="dataValue">£5,495.63+£8,721.00</td>
+         <td class="dataValue">£14,216.63</td>
+        </tr>
+       </tbody>
+      </table></td>
+    </tr>
+    <tr class="summRow">
+     <td class="dataValue">24-Nov-2003</td>
+     <td class="dataValue">Security:RightsIssue £2,047.65 Shareview:RexamShares&lt;-NatWideFlexAccount</td>
+    </tr>
+    <tr>
+     <td colspan="2">
+      <table align="center" class="subtable">
+       <tbody>
+        <tr class="dtlSummRow">
+         <td class="dataValue">Invested</td>
+         <td class="dataValue" colspan="2">£2,047.65</td>
+        </tr>
+        <tr class="altDtlSummRow">
+         <td class="dataValue">Units</td>
+         <td class="dataValue">4,418.0000+803.0000</td>
+         <td class="dataValue">5,221.0000</td>
+        </tr>
+        <tr class="dtlSummRow">
+         <td class="dataValue">ResidualCost</td>
+         <td class="dataValue">£14,216.63+£2,047.65</td>
+         <td class="dataValue">£16,264.28</td>
+        </tr>
+       </tbody>
+      </table></td>
+    </tr>
+    <tr class="altSummRow">
+     <td class="dataValue">04-Jan-2009</td>
+     <td class="dataValue">Income:Inheritance £15,512.25 Shareview:RexamShares&lt;-Parents</td>
+    </tr>
+    <tr>
+     <td colspan="2">
+      <table align="center" class="subtable">
+       <tbody>
+        <tr class="dtlSummRow">
+         <td class="dataValue">Invested</td>
+         <td class="dataValue">4,300.0000@£3.6075</td>
+         <td class="dataValue">£15,512.25</td>
+        </tr>
+        <tr class="altDtlSummRow">
+         <td class="dataValue">Units</td>
+         <td class="dataValue">5,221.0000+4,300.0000</td>
+         <td class="dataValue">9,521.0000</td>
+        </tr>
+        <tr class="dtlSummRow">
+         <td class="dataValue">ResidualCost</td>
+         <td class="dataValue">£16,264.28+£15,512.25</td>
+         <td class="dataValue">£31,776.53</td>
+        </tr>
+       </tbody>
+      </table></td>
+    </tr>
+    <tr class="summRow">
+     <td class="dataValue">02-Sep-2009</td>
+     <td class="dataValue">Security:RightsIssue £3,548.34 Shareview:RexamShares-&gt;NatWideFlexAccount</td>
+    </tr>
+    <tr>
+     <td colspan="2">
+      <table align="center" class="subtable">
+       <tbody>
+        <tr class="dtlSummRow">
+         <td class="dataValue">ReturnedCash</td>
+         <td class="dataValue" colspan="2">£3,548.34</td>
+        </tr>
+        <tr class="altDtlSummRow">
+         <td class="dataValue">CashType</td>
+         <td class="dataValue" colspan="2">LargeCash</td>
+        </tr>
+        <tr class="dtlSummRow">
+         <td class="dataValue">Valuation</td>
+         <td class="dataValue">9,521.0000@£2.5925</td>
+         <td class="dataValue">£24,683.19</td>
+        </tr>
+        <tr class="altDtlSummRow">
+         <td class="dataValue">Consideration</td>
+         <td class="dataValue">£3,548.34+£24,683.19</td>
+         <td class="dataValue">£28,231.53</td>
+        </tr>
+        <tr class="dtlSummRow">
+         <td class="dataValue">CostDilution</td>
+         <td class="dataValue">£24,683.19/£28,231.53</td>
+         <td class="dataValue">0.874313</td>
+        </tr>
+        <tr class="altDtlSummRow">
+         <td class="dataValue">ResidualCost</td>
+         <td class="dataValue">£31,776.53*0.874313</td>
+         <td class="dataValue">£27,782.63</td>
+        </tr>
+        <tr class="dtlSummRow">
+         <td class="dataValue">AllowedCost</td>
+         <td class="dataValue">£31,776.53-£27,782.63</td>
+         <td class="dataValue">£3,993.90</td>
+        </tr>
+        <tr class="altDtlSummRow">
+         <td class="dataValue">CapitalGain</td>
+         <td class="dataValue">£3,548.34-£3,993.90</td>
+         <td class="negValue">-£445.56</td>
+        </tr>
+        <tr class="dtlSummRow">
+         <td class="dataValue">RealisedGains</td>
+         <td class="negValue" colspan="2">-£445.56</td>
+        </tr>
+       </tbody>
+      </table></td>
+    </tr>
+    <tr class="altSummRow">
+     <td class="dataValue">04-Feb-2013</td>
+     <td class="dataValue">Security:DeMerger Shareview:RexamShares-&gt;Shareview:RexamBShares</td>
+    </tr>
+    <tr>
+     <td colspan="2">
+      <table align="center" class="subtable">
+       <tbody>
+        <tr class="dtlSummRow">
+         <td class="dataValue">Units</td>
+         <td class="dataValue">9,521.0000-953.0000</td>
+         <td class="dataValue">8,568.0000</td>
+        </tr>
+        <tr class="altDtlSummRow">
+         <td class="dataValue">CostDilution</td>
+         <td class="dataValue">8,568.0000/9,521.0000</td>
+         <td class="dataValue">0.900000</td>
+        </tr>
+        <tr class="dtlSummRow">
+         <td class="dataValue">ResidualCost</td>
+         <td class="dataValue">£27,782.63*0.900000</td>
+         <td class="dataValue">£25,004.37</td>
+        </tr>
+        <tr class="altDtlSummRow">
+         <td class="dataValue">XferredCost</td>
+         <td class="dataValue">£27,782.63-£25,004.37</td>
+         <td class="dataValue">£2,778.26</td>
+        </tr>
+       </tbody>
+      </table></td>
+    </tr>
+    <tr class="summRow">
+     <td class="dataValue">04-Feb-2013</td>
+     <td class="dataValue">Transfer £4.18 Shareview:RexamShares-&gt;NatWideFlexAccount</td>
+    </tr>
+    <tr>
+     <td colspan="2">
+      <table align="center" class="subtable">
+       <tbody>
+        <tr class="dtlSummRow">
+         <td class="dataValue">ReturnedCash</td>
+         <td class="dataValue" colspan="2">£4.18</td>
+        </tr>
+        <tr class="altDtlSummRow">
+         <td class="dataValue">CashType</td>
+         <td class="dataValue" colspan="2">SmallCash</td>
+        </tr>
+        <tr class="dtlSummRow">
+         <td class="dataValue">AllowedCost</td>
+         <td class="dataValue" colspan="2">£4.18</td>
+        </tr>
+        <tr class="altDtlSummRow">
+         <td class="dataValue">ResidualCost</td>
+         <td class="dataValue">£25,004.37-£4.18</td>
+         <td class="dataValue">£25,000.19</td>
+        </tr>
+       </tbody>
+      </table></td>
+    </tr>
+    <tr class="altSummRow">
+     <td class="dataValue">19-Jun-2014</td>
+     <td class="dataValue">Security:DeMerger Shareview:RexamShares-&gt;Shareview:RexamBShares</td>
+    </tr>
+    <tr>
+     <td colspan="2">
+      <table align="center" class="subtable">
+       <tbody>
+        <tr class="dtlSummRow">
+         <td class="dataValue">Units</td>
+         <td class="dataValue">8,568.0000-952.0000</td>
+         <td class="dataValue">7,616.0000</td>
+        </tr>
+        <tr class="altDtlSummRow">
+         <td class="dataValue">CostDilution</td>
+         <td class="dataValue">7,616.0000/8,568.0000</td>
+         <td class="dataValue">0.888889</td>
+        </tr>
+        <tr class="dtlSummRow">
+         <td class="dataValue">ResidualCost</td>
+         <td class="dataValue">£25,000.19*0.888889</td>
+         <td class="dataValue">£22,222.39</td>
+        </tr>
+        <tr class="altDtlSummRow">
+         <td class="dataValue">XferredCost</td>
+         <td class="dataValue">£25,000.19-£22,222.39</td>
+         <td class="dataValue">£2,777.80</td>
+        </tr>
+       </tbody>
+      </table></td>
+    </tr>
+    <tr class="summRow">
+     <td class="dataValue">01-Jul-2016</td>
+     <td class="dataValue">Security:TakeOver Shareview:RexamShares-&gt;Shareview:BallShares</td>
+    </tr>
+    <tr>
+     <td colspan="2">
+      <table align="center" class="subtable">
+       <tbody>
+        <tr class="dtlSummRow">
+         <td class="dataValue">ReturnedCash</td>
+         <td class="dataValue" colspan="2">£30,997.12</td>
+        </tr>
+        <tr class="altDtlSummRow">
+         <td class="dataValue">CashType</td>
+         <td class="dataValue" colspan="2">LargeCash</td>
+        </tr>
+        <tr class="dtlSummRow">
+         <td class="dataValue">XferredValue</td>
+         <td class="dataValue" colspan="2">£18,279.02</td>
+        </tr>
+        <tr class="altDtlSummRow">
+         <td class="dataValue">Consideration</td>
+         <td class="dataValue">£30,997.12+£18,279.02</td>
+         <td class="dataValue">£49,276.14</td>
+        </tr>
+        <tr class="dtlSummRow">
+         <td class="dataValue">CostDilution</td>
+         <td class="dataValue">£30,997.12/£49,276.14</td>
+         <td class="dataValue">0.629049</td>
+        </tr>
+        <tr class="altDtlSummRow">
+         <td class="dataValue">AllowedCost</td>
+         <td class="dataValue">£22,222.39*0.629049</td>
+         <td class="dataValue">£13,978.97</td>
+        </tr>
+        <tr class="dtlSummRow">
+         <td class="dataValue">XferredCost</td>
+         <td class="dataValue">£22,222.39-£13,978.97</td>
+         <td class="dataValue">£8,243.42</td>
+        </tr>
+        <tr class="altDtlSummRow">
+         <td class="dataValue">CapitalGain</td>
+         <td class="dataValue">£30,997.12-£13,978.97</td>
+         <td class="dataValue">£17,018.15</td>
+        </tr>
+        <tr class="dtlSummRow">
+         <td class="dataValue">RealisedGains</td>
+         <td class="dataValue" colspan="2">£16,572.59</td>
+        </tr>
+       </tbody>
+      </table></td>
+    </tr>
+   </tbody>
+  </table>
+ </body>
+</html><html>
+ <head>
+  <style>/* Define standard font for body and table contents */ body { font-family: Verdana, sans-serif; font-size: 1em; color: black; } /* Define standard alignment for headers */ h1 { text-align: center; } h2 { text-align: center; } /* Define tables */ table { width: 90%; align: center; border-spacing: 1px; border-collapse: collapse; border-top: solid; border-bottom: solid; } .subtable { width: 99%; } /* Define table headers as bold */ th { font-weight: bold; border: 1px solid white; } td { border: 1px solid white; } /* Define background colour for title row */ .totalRow { background-color: #e3e4fa; border-top: solid; } /* Define background colour for category row */ .summRow { background-color: #e3e4fa; } /* Define background colour for alternate category row */ .altSummRow { background-color: #f5f5f5; } /* Define background colour for subCategory row */ .dtlSummRow { background-color: #e3e4fa; } /* Define background colour for alternate subCategory row */ .altDtlSummRow { background-color: #f5f5f5; } /* Define background colour for detail row */ .detailRow { background-color: #e3e4fa; } /* Define background colour for alternate detail row */ .altDetailRow { background-color: #f5f5f5; } /* Define alignment for link values */ .linkValue { text-align: left; font-style: italic; color: #0000ff; } .accordianValue { text-align: left; color: #0000ff; } /* Define colour and alignment for data values */ .dataValue { text-align: right; color: #0000ff; } /* Define colour and alignment for data values */ .negValue { text-align: right; color: #b22222; } /* Define colour and alignment for title values */ .titleValue { text-align: center; color: #000000; } /* Set link definition */ a { font-weight: bold; text-decoration: none; } div { font-weight: bold; } </style>
+ </head>
+ <body>
+  <h1>CapitalGains Report<br>21-Jan-2018</h1>
+  <h2>Shareview:BallShares</h2>
+  <table align="center">
+   <thead>
+    <tr class="totalRow">
+     <th class="titleValue">Date</th>
+     <th class="titleValue">Transaction</th>
+    </tr>
+   </thead>
+   <tbody>
+    <tr class="summRow">
+     <td class="dataValue">01-Jul-2016</td>
+     <td class="dataValue">Security:TakeOver Shareview:RexamShares-&gt;Shareview:BallShares</td>
+    </tr>
+    <tr>
+     <td colspan="2">
+      <table align="center" class="subtable">
+       <tbody>
+        <tr class="dtlSummRow">
+         <td class="dataValue">Units</td>
+         <td class="dataValue">0.0000+347.8989</td>
+         <td class="dataValue">347.8989</td>
+        </tr>
+        <tr class="altDtlSummRow">
+         <td class="dataValue">XferredValue</td>
+         <td class="dataValue">347.8989@$70.8675/0.741400</td>
+         <td class="dataValue">£18,279.02</td>
+        </tr>
+        <tr class="dtlSummRow">
+         <td class="dataValue">XferredCost</td>
+         <td class="dataValue" colspan="2">£8,243.42</td>
+        </tr>
+        <tr class="altDtlSummRow">
+         <td class="dataValue">ResidualCost</td>
+         <td class="dataValue" colspan="2">£8,243.42</td>
+        </tr>
+       </tbody>
+      </table></td>
+    </tr>
+    <tr class="altSummRow">
+     <td class="dataValue">02-Jul-2016</td>
+     <td class="dataValue">Transfer $63.69 Shareview:BallShares-&gt;NatWideFlexDirect</td>
+    </tr>
+    <tr>
+     <td colspan="2">
+      <table align="center" class="subtable">
+       <tbody>
+        <tr class="dtlSummRow">
+         <td class="dataValue">ReturnedCash</td>
+         <td class="dataValue" colspan="2">£47.22</td>
+        </tr>
+        <tr class="altDtlSummRow">
+         <td class="dataValue">Units</td>
+         <td class="dataValue">347.8989-0.8989</td>
+         <td class="dataValue">347.0000</td>
+        </tr>
+        <tr class="dtlSummRow">
+         <td class="dataValue">CostDilution</td>
+         <td class="dataValue">347.0000/347.8989</td>
+         <td class="dataValue">0.997416</td>
+        </tr>
+        <tr class="altDtlSummRow">
+         <td class="dataValue">ResidualCost</td>
+         <td class="dataValue">£8,243.42*0.997416</td>
+         <td class="dataValue">£8,222.12</td>
+        </tr>
+        <tr class="dtlSummRow">
+         <td class="dataValue">AllowedCost</td>
+         <td class="dataValue">£8,243.42-£8,222.12</td>
+         <td class="dataValue">£21.30</td>
+        </tr>
+        <tr class="altDtlSummRow">
+         <td class="dataValue">CapitalGain</td>
+         <td class="dataValue">£47.22-£21.30</td>
+         <td class="dataValue">£25.92</td>
+        </tr>
+        <tr class="dtlSummRow">
+         <td class="dataValue">RealisedGains</td>
+         <td class="dataValue" colspan="2">£25.92</td>
+        </tr>
+       </tbody>
+      </table></td>
+    </tr>
+    <tr class="summRow">
+     <td class="dataValue">17-Jul-2016</td>
+     <td class="dataValue">Security:PortfolioXfer Shareview:BallShares-&gt;ComputerShare</td>
+    </tr>
+    <tr>
+     <td colspan="2">
+      <table align="center" class="subtable">
+       <tbody>
+        <tr class="dtlSummRow">
+         <td class="dataValue">XferredCost</td>
+         <td class="dataValue" colspan="2">£8,222.12</td>
+        </tr>
+       </tbody>
+      </table></td>
+    </tr>
+   </tbody>
+  </table>
+ </body>
+</html><html>
+ <head>
+  <style>/* Define standard font for body and table contents */ body { font-family: Verdana, sans-serif; font-size: 1em; color: black; } /* Define standard alignment for headers */ h1 { text-align: center; } h2 { text-align: center; } /* Define tables */ table { width: 90%; align: center; border-spacing: 1px; border-collapse: collapse; border-top: solid; border-bottom: solid; } .subtable { width: 99%; } /* Define table headers as bold */ th { font-weight: bold; border: 1px solid white; } td { border: 1px solid white; } /* Define background colour for title row */ .totalRow { background-color: #e3e4fa; border-top: solid; } /* Define background colour for category row */ .summRow { background-color: #e3e4fa; } /* Define background colour for alternate category row */ .altSummRow { background-color: #f5f5f5; } /* Define background colour for subCategory row */ .dtlSummRow { background-color: #e3e4fa; } /* Define background colour for alternate subCategory row */ .altDtlSummRow { background-color: #f5f5f5; } /* Define background colour for detail row */ .detailRow { background-color: #e3e4fa; } /* Define background colour for alternate detail row */ .altDetailRow { background-color: #f5f5f5; } /* Define alignment for link values */ .linkValue { text-align: left; font-style: italic; color: #0000ff; } .accordianValue { text-align: left; color: #0000ff; } /* Define colour and alignment for data values */ .dataValue { text-align: right; color: #0000ff; } /* Define colour and alignment for data values */ .negValue { text-align: right; color: #b22222; } /* Define colour and alignment for title values */ .titleValue { text-align: center; color: #000000; } /* Set link definition */ a { font-weight: bold; text-decoration: none; } div { font-weight: bold; } </style>
+ </head>
+ <body>
+  <h1>CapitalGains Report<br>24-Sep-2017</h1>
+  <h2>ComputerShare:BallShares</h2>
+  <table align="center">
+   <thead>
+    <tr class="totalRow">
+     <th class="titleValue">Date</th>
+     <th class="titleValue">Transaction</th>
+    </tr>
+   </thead>
+   <tbody>
+    <tr class="summRow">
+     <td class="dataValue">15-Jul-2016</td>
+     <td class="dataValue">Security:PortfolioXfer Shareview:BallShares-&gt;ComputerShare</td>
+    </tr>
+    <tr>
+     <td colspan="2">
+      <table align="center" class="subtable">
+       <tbody>
+        <tr class="dtlSummRow">
+         <td class="dataValue">XferredCost</td>
+         <td class="dataValue" colspan="2">£8,161.97</td>
+        </tr>
+        <tr class="altDtlSummRow">
+         <td class="dataValue">Units</td>
+         <td class="dataValue">0.0000+347.0000</td>
+         <td class="dataValue">347.0000</td>
+        </tr>
+        <tr class="dtlSummRow">
+         <td class="dataValue">ResidualCost</td>
+         <td class="dataValue">£0.00+£8,161.97</td>
+         <td class="dataValue">£8,161.97</td>
+        </tr>
+       </tbody>
+      </table></td>
+    </tr>
+    <tr class="altSummRow">
+     <td class="dataValue">23-May-2017</td>
+     <td class="dataValue">Security:StockSplit ComputerShare:BallShares-&gt;ComputerShare:BallShares</td>
+    </tr>
+    <tr>
+     <td colspan="2">
+      <table align="center" class="subtable">
+       <tbody>
+        <tr class="dtlSummRow">
+         <td class="dataValue">Units</td>
+         <td class="dataValue">347.0000+347.0000</td>
+         <td class="dataValue">694.0000</td>
+        </tr>
+       </tbody>
+      </table></td>
+    </tr>
+   </tbody>
+  </table>
+ </body>
+</html>

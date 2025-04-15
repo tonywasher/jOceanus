@@ -109,7 +109,7 @@ public class MoneyWiseDataXDocDeposit {
         theReport.addRowToTable();
 
         /* Create the detail */
-        Iterator<MoneyWiseXAnalysisDepositBucket> myDepositIterator = myDeposits.iterator();
+        final Iterator<MoneyWiseXAnalysisDepositBucket> myDepositIterator = myDeposits.iterator();
         while (myDepositIterator.hasNext()) {
             final MoneyWiseXAnalysisDepositBucket myBucket = myDepositIterator.next();
             final MoneyWiseDeposit myDeposit = myBucket.getAccount();
@@ -156,7 +156,7 @@ public class MoneyWiseDataXDocDeposit {
         /* Create the initial headers */
         int myNumCells = 0;
         final MoneyWiseXAnalysisDepositBucketList myDeposits = theAnalysis.getDeposits();
-        Iterator<MoneyWiseXAnalysisDepositBucket> myDepositIterator = myDeposits.iterator();
+        final Iterator<MoneyWiseXAnalysisDepositBucket> myDepositIterator = myDeposits.iterator();
         while (myDepositIterator.hasNext()) {
             final MoneyWiseXAnalysisDepositBucket myBucket = myDepositIterator.next();
 
@@ -191,7 +191,7 @@ public class MoneyWiseDataXDocDeposit {
         /* Create the initial headers */
         final MoneyWiseCurrency myCurrency = theAnalysis.getCurrency();
         final MoneyWiseXAnalysisDepositBucketList myDeposits = theAnalysis.getDeposits();
-        Iterator<MoneyWiseXAnalysisDepositBucket> myDepositIterator = myDeposits.iterator();
+        final Iterator<MoneyWiseXAnalysisDepositBucket> myDepositIterator = myDeposits.iterator();
         while (myDepositIterator.hasNext()) {
             final MoneyWiseXAnalysisDepositBucket myBucket = myDepositIterator.next();
             if (myBucket.isForeignCurrency()) {
@@ -211,7 +211,7 @@ public class MoneyWiseDataXDocDeposit {
     boolean updateDepositAssetRow(final MoneyWiseXAnalysisEvent pEvent) {
         /* Loop through the deposits */
         final MoneyWiseXAnalysisDepositBucketList myDeposits = theAnalysis.getDeposits();
-        Iterator<MoneyWiseXAnalysisDepositBucket> myDepositIterator = myDeposits.iterator();
+        final Iterator<MoneyWiseXAnalysisDepositBucket> myDepositIterator = myDeposits.iterator();
         while (myDepositIterator.hasNext()) {
             final MoneyWiseXAnalysisDepositBucket myBucket = myDepositIterator.next();
             final MoneyWiseDeposit myDeposit = myBucket.getAccount();
@@ -252,7 +252,7 @@ public class MoneyWiseDataXDocDeposit {
     boolean haveForeignAssets() {
         /* Check for foreign deposits */
         final MoneyWiseXAnalysisDepositCategoryBucketList myDeposits = theAnalysis.getDepositCategories();
-        Iterator<MoneyWiseXAnalysisDepositCategoryBucket> myDepositIterator = myDeposits.iterator();
+        final Iterator<MoneyWiseXAnalysisDepositCategoryBucket> myDepositIterator = myDeposits.iterator();
         while (myDepositIterator.hasNext()) {
             final MoneyWiseXAnalysisDepositCategoryBucket myBucket = myDepositIterator.next();
             if (myBucket.hasForeignCurrency()) {

@@ -199,6 +199,7 @@ public class MoneyWiseDataTestRunner {
 
     /**
      * Run the storage tests.
+     * @return the test stream
      *
      * @throws OceanusException on error
      */

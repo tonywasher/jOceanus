@@ -1,5 +1,5 @@
 /* *****************************************************************************
- * Oceanus: Java Utilities
+ * Astraeus: Post-Processing
  * Copyright 2012,2025 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,6 +15,6 @@
  * limitations under the License.
  ******************************************************************************/
 /**
- * JavaFX Jar utilities.
+ * Post-processing Exceptions.
  */
-package net.sourceforge.joceanus.oceanus.jar;
+package net.sourceforge.joceanus.astraeus.exc;

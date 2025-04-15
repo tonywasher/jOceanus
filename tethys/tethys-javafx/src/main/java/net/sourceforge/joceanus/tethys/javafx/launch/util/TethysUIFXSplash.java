@@ -129,8 +129,8 @@ public class TethysUIFXSplash {
         } else if (pEvent.getType() == StateChangeNotification.Type.BEFORE_INIT) {
             /* Pass on info to application if possible */
             final Application myApp = pEvent.getApplication();
-            if (myApp instanceof TethysUIFXSetState) {
-                ((TethysUIFXSetState) myApp).setProgramState(theState);
+            if (myApp instanceof TethysUIFXSetState myState) {
+                myState.setProgramState(theState);
             }
         }
     }

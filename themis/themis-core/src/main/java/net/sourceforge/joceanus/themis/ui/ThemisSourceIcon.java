@@ -16,8 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.themis.ui;
 
-import java.io.InputStream;
-
 import net.sourceforge.joceanus.tethys.api.base.TethysUIIconId;
 import net.sourceforge.joceanus.themis.analysis.ThemisAnalysisAnnotation;
 import net.sourceforge.joceanus.themis.analysis.ThemisAnalysisAnonClass;
@@ -46,6 +44,8 @@ import net.sourceforge.joceanus.themis.analysis.ThemisAnalysisStatement;
 import net.sourceforge.joceanus.themis.analysis.ThemisAnalysisSwitch;
 import net.sourceforge.joceanus.themis.analysis.ThemisAnalysisTry;
 import net.sourceforge.joceanus.themis.analysis.ThemisAnalysisWhile;
+
+import java.io.InputStream;
 
 /**
  * Source Icon Ids.
@@ -450,8 +450,8 @@ public enum ThemisSourceIcon
         }
 
         /* Handle interface */
-        if (pElement instanceof ThemisAnalysisInterface) {
-            return ((ThemisAnalysisInterface) pElement).isAnnotation() ? ANNOTATIONDEF : INTERFACE;
+        if (pElement instanceof ThemisAnalysisInterface myInterface) {
+            return myInterface.isAnnotation() ? ANNOTATIONDEF : INTERFACE;
         }
 
         /* Handle class */
@@ -476,8 +476,8 @@ public enum ThemisSourceIcon
      */
     private static TethysUIIconId getPinkElementIcon(final ThemisAnalysisElement pElement) {
         /* Handle comment */
-        if (pElement instanceof ThemisAnalysisComment) {
-            return ((ThemisAnalysisComment) pElement).isJavaDoc() ? JAVADOC : COMMENT;
+        if (pElement instanceof ThemisAnalysisComment myComment) {
+            return myComment.isJavaDoc() ? JAVADOC : COMMENT;
         }
 
         /* Handle annotation */

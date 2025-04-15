@@ -32,6 +32,7 @@ public class MoneyWiseDataTestPrivateLoan
 
     /**
      * Constructor.
+     * @param pBuilder the builder
      */
     public MoneyWiseDataTestPrivateLoan(final MoneyWiseDataTestAccounts pBuilder) {
         /* Store parameters */

@@ -26,7 +26,6 @@ module net.sourceforge.joceanus.oceanus {
     exports net.sourceforge.joceanus.oceanus.decimal;
     exports net.sourceforge.joceanus.oceanus.event;
     exports net.sourceforge.joceanus.oceanus.format;
-    exports net.sourceforge.joceanus.oceanus.jar;
     exports net.sourceforge.joceanus.oceanus.logger;
     exports net.sourceforge.joceanus.oceanus.profile;
     exports net.sourceforge.joceanus.oceanus.resource;

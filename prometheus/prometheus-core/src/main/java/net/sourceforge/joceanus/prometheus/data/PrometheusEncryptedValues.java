@@ -57,8 +57,8 @@ public class PrometheusEncryptedValues
         final Object myValue = super.getValue(pField);
 
         /* If this is an encrypted value */
-        return myValue instanceof PrometheusEncryptedPair
-                ? ((PrometheusEncryptedPair) myValue).getValue()
+        return myValue instanceof PrometheusEncryptedPair myPair
+                ? myPair.getValue()
                 : myValue;
     }
 
@@ -83,8 +83,8 @@ public class PrometheusEncryptedValues
         final Object myValue = super.getValue(pField);
 
         /* If this is an encrypted value */
-        return myValue instanceof PrometheusEncryptedPair
-                ? ((PrometheusEncryptedPair) myValue).getBytes()
+        return myValue instanceof PrometheusEncryptedPair myPair
+                ? myPair.getBytes()
                 : null;
     }
 
@@ -109,8 +109,8 @@ public class PrometheusEncryptedValues
         final Object myValue = super.getValue(pField);
 
         /* If this is an encrypted value */
-        return myValue instanceof PrometheusEncryptedPair
-                ? (PrometheusEncryptedPair) myValue
+        return myValue instanceof PrometheusEncryptedPair myPair
+                ? myPair
                 : null;
     }
 

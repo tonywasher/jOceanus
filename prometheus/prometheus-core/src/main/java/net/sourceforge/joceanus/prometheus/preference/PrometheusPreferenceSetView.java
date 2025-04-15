@@ -45,8 +45,8 @@ public class PrometheusPreferenceSetView
 
     @Override
     protected PreferenceElement allocatePreferenceElement(final MetisPreferenceItem pItem) {
-        if (pItem instanceof PrometheusCharArrayPreference) {
-            return new CharArrayPreferenceElement((PrometheusCharArrayPreference) pItem);
+        if (pItem instanceof PrometheusCharArrayPreference ca) {
+            return new CharArrayPreferenceElement(ca);
         } else if (pItem instanceof PrometheusByteArrayPreference) {
             return null;
         } else {

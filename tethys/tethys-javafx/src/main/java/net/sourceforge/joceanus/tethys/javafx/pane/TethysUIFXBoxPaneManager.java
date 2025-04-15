@@ -16,8 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.tethys.javafx.pane;
 
-import java.util.Iterator;
-
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.layout.HBox;
@@ -25,12 +23,13 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
-
 import net.sourceforge.joceanus.tethys.api.base.TethysUIComponent;
 import net.sourceforge.joceanus.tethys.core.base.TethysUICoreComponent;
 import net.sourceforge.joceanus.tethys.core.factory.TethysUICoreFactory;
 import net.sourceforge.joceanus.tethys.core.pane.TethysUICoreBoxPaneManager;
 import net.sourceforge.joceanus.tethys.javafx.base.TethysUIFXNode;
+
+import java.util.Iterator;
 
 /**
  * FX Box Pane Manager.
@@ -136,10 +135,10 @@ public class TethysUIFXBoxPaneManager
     @Override
     public void setGap(final Integer pGap) {
         super.setGap(pGap);
-        if (theBoxPane instanceof HBox) {
-            ((HBox) theBoxPane).setSpacing(getGap());
-        } else if (theBoxPane instanceof VBox) {
-            ((VBox) theBoxPane).setSpacing(getGap());
+        if (theBoxPane instanceof HBox myBox) {
+            myBox.setSpacing(getGap());
+        } else if (theBoxPane instanceof VBox myBox) {
+            myBox.setSpacing(getGap());
         }
     }
 

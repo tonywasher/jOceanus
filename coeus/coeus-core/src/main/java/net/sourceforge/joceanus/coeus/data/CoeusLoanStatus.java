@@ -16,10 +16,10 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.coeus.data;
 
-import java.time.Month;
-
 import net.sourceforge.joceanus.oceanus.date.OceanusDate;
 import net.sourceforge.joceanus.oceanus.date.OceanusFiscalYear;
+
+import java.time.Month;
 
 /**
  * Loan Status.
@@ -82,7 +82,7 @@ public enum CoeusLoanStatus {
      * @return true/false
      */
     public boolean isBadDebt() {
-        return this == CoeusLoanStatus.BADDEBT;
+        return this == BADDEBT;
     }
 
     /**

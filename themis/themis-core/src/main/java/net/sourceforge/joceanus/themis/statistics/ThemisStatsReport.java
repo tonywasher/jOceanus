@@ -139,8 +139,8 @@ public final class ThemisStatsReport {
         if (pIdentity instanceof ThemisStatsFile) {
             return "File";
         }
-        if (pIdentity instanceof ThemisStatsClass) {
-            return ((ThemisStatsClass) pIdentity).getClassType().toString();
+        if (pIdentity instanceof ThemisStatsClass myClass) {
+            return myClass.getClassType().toString();
         }
         if (pIdentity instanceof ThemisStatsMethod) {
             return "Method";
@@ -154,23 +154,23 @@ public final class ThemisStatsReport {
      * @return the name
      */
     private static String getIdName(final ThemisStatsBase pIdentity) {
-        if (pIdentity instanceof ThemisStatsProject) {
-            return ((ThemisStatsProject) pIdentity).getProject().getName();
+        if (pIdentity instanceof ThemisStatsProject myProject) {
+            return myProject.getProject().getName();
         }
-        if (pIdentity instanceof ThemisStatsModule) {
-            return ((ThemisStatsModule) pIdentity).getModule().getName();
+        if (pIdentity instanceof ThemisStatsModule myModule) {
+            return myModule.getModule().getName();
         }
-        if (pIdentity instanceof ThemisStatsPackage) {
-            return ((ThemisStatsPackage) pIdentity).getPackage().getPackage();
+        if (pIdentity instanceof ThemisStatsPackage myPackage) {
+            return myPackage.getPackage().getPackage();
         }
-        if (pIdentity instanceof ThemisStatsFile) {
-            return ((ThemisStatsFile) pIdentity).getFile().getName();
+        if (pIdentity instanceof ThemisStatsFile myFile) {
+            return myFile.getFile().getName();
         }
-        if (pIdentity instanceof ThemisStatsClass) {
-            return ((ThemisStatsClass) pIdentity).getObject().getFullName();
+        if (pIdentity instanceof ThemisStatsClass myClass) {
+            return myClass.getObject().getFullName();
         }
-        if (pIdentity instanceof ThemisStatsMethod) {
-            return ((ThemisStatsMethod) pIdentity).getMethod().toString();
+        if (pIdentity instanceof ThemisStatsMethod myMethod) {
+            return myMethod.getMethod().toString();
         }
         return "Unknown";
     }

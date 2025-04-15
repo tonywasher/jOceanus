@@ -344,16 +344,13 @@ public class PrometheusDataValuesFormatter {
             final Object myObject = myIterator.next();
 
             /* Ignore if not a DataItem */
-            if (!(myObject instanceof PrometheusDataItem)) {
+            if (!(myObject instanceof PrometheusDataItem myItem)) {
                 continue;
             }
 
-            /* Access as DataItem */
-            final PrometheusDataItem myItem = (PrometheusDataItem) myObject;
-
             /* Skip over child items */
-            if (myItem instanceof PrometheusGroupedItem
-                    && ((PrometheusGroupedItem) myItem).isChild()) {
+            if (myItem instanceof PrometheusGroupedItem myGrouped
+                    && myGrouped.isChild()) {
                 continue;
             }
 

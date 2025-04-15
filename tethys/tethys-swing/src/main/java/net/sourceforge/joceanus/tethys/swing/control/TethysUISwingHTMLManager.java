@@ -213,9 +213,9 @@ public class TethysUISwingHTMLManager
             if (!e.getEventType().equals(HyperlinkEvent.EventType.ACTIVATED)) {
                 return;
             }
-            /* If this is a Frame hyper link event */
-            if (e instanceof HTMLFrameHyperlinkEvent) {
-                handleFrameHyperLinkEvent((HTMLFrameHyperlinkEvent) e);
+            /* If this is a Frame hyperLink event */
+            if (e instanceof HTMLFrameHyperlinkEvent myEvent) {
+                handleFrameHyperLinkEvent(myEvent);
 
                 /* else look for a URL */
             } else {

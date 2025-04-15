@@ -1,5 +1,5 @@
 /* *****************************************************************************
- * Oceanus: Java Utilities
+ * Astraeus: Post-Processing
  * Copyright 2012,2025 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,12 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.oceanus.jar;
+package net.sourceforge.joceanus.astraeus.jar;
 
-import net.sourceforge.joceanus.oceanus.exc.OceanusDataException;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.logger.OceanusLogManager;
-import net.sourceforge.joceanus.oceanus.logger.OceanusLogger;
+import net.sourceforge.joceanus.astraeus.exc.AstraeusException;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -38,12 +35,7 @@ import java.util.zip.ZipInputStream;
 /**
  * Launcher utilities.
  */
-public final class OceanusLauncher {
-    /**
-     * Create Logger.
-     */
-    private static final OceanusLogger LOGGER = OceanusLogManager.getLogger(OceanusLauncher.class);
-
+public final class AstraeusLauncher {
     /**
      * Are we windows?
      */
@@ -62,33 +54,15 @@ public final class OceanusLauncher {
     /**
      * Private constructor.
      */
-    private OceanusLauncher() {
-    }
-
-    /**
-     * Main entry point.
-     *
-     * @param pArgs the program arguments
-     */
-    public static void main(final String[] pArgs) {
-        /* Protect against exceptions */
-        try {
-            /* Access the Backup location */
-            final String myBackup = "dist";
-            OceanusLauncher.processJarFiles(new File(myBackup + "/bin"));
-
-            /* Handle exceptions */
-        } catch (OceanusException e) {
-            LOGGER.fatal("Failed to create launch scripts", e);
-        }
+    private AstraeusLauncher() {
     }
 
     /**
      * Create launchers for jars in directory.
      * @param pDirectory the directory.
-     * @throws OceanusException on error
+     * @throws AstraeusException on error
      */
-    public static void processJarFiles(final File pDirectory) throws OceanusException {
+    public static void processJarFiles(final File pDirectory) throws AstraeusException {
         /* Loop through the jar files in the directory */
         for (File myJar: Objects.requireNonNull(pDirectory.listFiles(f -> f.getName().endsWith(".jar")))) {
             /* Process jar file */
@@ -101,10 +75,10 @@ public final class OceanusLauncher {
      * Write launcher.
      * @param pJar the Jar file.
      * @param pAttrs the attributes
-     * @throws OceanusException on error
+     * @throws AstraeusException on error
      */
     private static void writeLauncher(final File pJar,
-                                      final Attributes pAttrs) throws OceanusException {
+                                      final Attributes pAttrs) throws AstraeusException {
         /* Access details */
         final String myPreLoader = pAttrs.getValue("JavaFX-Preloader-Class");
         final String myMainClass = pAttrs.getValue("Main-Class");
@@ -178,9 +152,9 @@ public final class OceanusLauncher {
      * Load Manifest.
      * @param pJar the Jar file.
      * @return the manifest
-     * @throws OceanusException on error
+     * @throws AstraeusException on error
      */
-    private static Manifest loadManifest(final File pJar) throws OceanusException {
+    private static Manifest loadManifest(final File pJar) throws AstraeusException {
         try (FileInputStream myInStream = new FileInputStream(pJar);
              BufferedInputStream myInBuffer = new BufferedInputStream(myInStream);
              ZipInputStream myZipStream = new ZipInputStream(myInBuffer)) {
@@ -191,7 +165,7 @@ public final class OceanusLauncher {
 
                 /* If this is EOF we did not find the manifest */
                 if (myEntry == null) {
-                    throw new OceanusDataException("Manifest not found");
+                    throw new AstraeusException("Manifest not found");
                 }
 
                 /* Process manifest file if found */
@@ -202,7 +176,7 @@ public final class OceanusLauncher {
 
             /* Handle exceptions */
         } catch (IOException e) {
-            throw new OceanusDataException("Exception accessing Zip file", e);
+            throw new AstraeusException("Exception accessing Zip file", e);
         }
     }
 
@@ -210,10 +184,10 @@ public final class OceanusLauncher {
      * Extract splash file.
      * @param pJar the Jar file.
      * @param pSplash the path to the splash file
-     * @throws OceanusException on error
+     * @throws AstraeusException on error
      */
     private static void extractSplash(final File pJar,
-                                      final String pSplash) throws OceanusException {
+                                      final String pSplash) throws AstraeusException {
         try (FileInputStream myInStream = new FileInputStream(pJar);
              BufferedInputStream myInBuffer = new BufferedInputStream(myInStream);
              ZipInputStream myZipStream = new ZipInputStream(myInBuffer)) {
@@ -224,7 +198,7 @@ public final class OceanusLauncher {
 
                 /* If this is EOF we did not find the manifest */
                 if (myEntry == null) {
-                    throw new OceanusDataException("Splash not found");
+                    throw new AstraeusException("Splash not found");
                 }
 
                 /* Process manifest file if found */
@@ -249,7 +223,7 @@ public final class OceanusLauncher {
 
             /* Handle exceptions */
         } catch (IOException e) {
-            throw new OceanusDataException("Exception copying Splash file", e);
+            throw new AstraeusException("Exception copying Splash file", e);
         }
     }
 
@@ -257,10 +231,10 @@ public final class OceanusLauncher {
      * Write batchFile.
      * @param pTarget the target batchFile.
      * @param pText the contents of the batch file
-     * @throws OceanusException on error
+     * @throws AstraeusException on error
      */
     private static void writeBatchFile(final File pTarget,
-                                       final String pText) throws OceanusException {
+                                       final String pText) throws AstraeusException {
         try (FileOutputStream myOutput = new FileOutputStream(pTarget);
              BufferedOutputStream myBuffer = new BufferedOutputStream(myOutput);
              OutputStreamWriter myWriter = new OutputStreamWriter(myBuffer, StandardCharsets.ISO_8859_1)) {
@@ -269,12 +243,12 @@ public final class OceanusLauncher {
 
             /* Handle exceptions */
         } catch (IOException e) {
-            throw new OceanusDataException("Exception writing batch file", e);
+            throw new AstraeusException("Exception writing batch file", e);
         }
 
         /* Try to make file executable */
         if (!OS_WINDOWS && !pTarget.setExecutable(true)) {
-            throw new OceanusDataException("Failed to set executable indication");
+            throw new AstraeusException("Failed to set executable indication");
         }
     }
 
