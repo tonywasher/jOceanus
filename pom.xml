@@ -27,6 +27,7 @@
     </developer>
   </developers>
   <modules>
+    <module>astraeus</module>
     <module>moneywise</module>
     <module>themis</module>
     <module>coeus</module>

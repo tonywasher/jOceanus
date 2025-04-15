@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Tethys: Java Utilities
+ * Astraeus: Post-Processsing
  * Copyright 2012,2025 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,17 +16,9 @@
  ******************************************************************************/
 
 /**
- * Oceanus Core.
+ * Astraeus Post-processing.
  */
-module net.sourceforge.joceanus.oceanus {
+module net.sourceforge.joceanus.astraeus {
     /* Exports */
-    exports net.sourceforge.joceanus.oceanus.base;
-    exports net.sourceforge.joceanus.oceanus.convert;
-    exports net.sourceforge.joceanus.oceanus.date;
-    exports net.sourceforge.joceanus.oceanus.decimal;
-    exports net.sourceforge.joceanus.oceanus.event;
-    exports net.sourceforge.joceanus.oceanus.format;
-    exports net.sourceforge.joceanus.oceanus.logger;
-    exports net.sourceforge.joceanus.oceanus.profile;
-    exports net.sourceforge.joceanus.oceanus.resource;
+    exports net.sourceforge.joceanus.astraeus.jar;
 }

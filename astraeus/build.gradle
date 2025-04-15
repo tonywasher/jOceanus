@@ -1,0 +1,28 @@
+/* Dependencies */
+dependencies {
+    testImplementation project(':moneywise-swing')
+    testImplementation project(':moneywise-javafx')
+    testImplementation project(':coeus-swing')
+    testImplementation project(':coeus-javafx')
+    testImplementation project(':themis-javafx')
+}
+
+/* Description */
+description = 'Oceanus post-processing'
+
+/* Register the project */
+registerProject(project)
+
+/* Test jar details */
+tasks.register('testsJar', Jar) {
+    archiveClassifier = 'tests'
+    from(sourceSets.test.output)
+}
+publishing.publications.maven.artifact(testsJar)
+
+/* Specific Manifest details */
+jar {
+    manifest {
+        attributes(manifestAttrs)
+    }
+}
