@@ -17,9 +17,9 @@
 package net.sourceforge.joceanus.oceanus.decimal;
 
 import java.nio.charset.StandardCharsets;
-import java.text.DecimalFormatSymbols;
 import java.util.Arrays;
 import java.util.Currency;
+import java.util.Locale;
 
 /**
  * Represents a Money object.
@@ -50,7 +50,7 @@ public class OceanusMoney
      * Constructor for money of value zero in the default currency.
      */
     public OceanusMoney() {
-        this(DecimalFormatSymbols.getInstance().getCurrency());
+        this(Currency.getInstance(Locale.UK));
     }
 
     /**
