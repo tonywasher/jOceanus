@@ -16,9 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.moneywise.data.builder;
 
-import java.util.Currency;
-import java.util.Locale;
-
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataSet;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseAccountInfoClass;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseAccountInfoType;
@@ -54,6 +51,9 @@ import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransInfoClass;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransInfoType;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransInfoType.MoneyWiseTransInfoTypeList;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
+
+import java.util.Currency;
 
 /**
  * Static Builder.
@@ -78,7 +78,7 @@ public class MoneyWiseStaticBuilder {
      * @return the builder
      */
     public MoneyWiseStaticBuilder buildBasic() throws OceanusException {
-        return buildBasic(Currency.getInstance(Locale.getDefault()));
+        return buildBasic(OceanusMoney.getDefaultCurrency());
     }
 
     /**

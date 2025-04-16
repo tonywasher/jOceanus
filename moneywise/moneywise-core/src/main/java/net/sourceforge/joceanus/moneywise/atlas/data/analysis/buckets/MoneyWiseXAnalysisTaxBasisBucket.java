@@ -50,7 +50,6 @@ import java.util.Comparator;
 import java.util.Currency;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
 
 /**
  * The TaxBasis Bucket class.
@@ -902,7 +901,7 @@ public class MoneyWiseXAnalysisTaxBasisBucket
             if (myItem == null) {
                 final MoneyWiseCurrency myAssetCurrency = theAnalysis.getCurrency();
                 final Currency myCurrency = myAssetCurrency == null
-                        ? Currency.getInstance(Locale.getDefault())
+                        ? OceanusMoney.getDefaultCurrency()
                         : myAssetCurrency.getCurrency();
                 return new OceanusMoney(myCurrency);
             }
