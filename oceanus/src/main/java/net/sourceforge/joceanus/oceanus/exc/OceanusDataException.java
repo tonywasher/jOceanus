@@ -18,6 +18,8 @@ package net.sourceforge.joceanus.oceanus.exc;
 
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
+import java.io.Serial;
+
 /**
  * Data Exception.
  */
@@ -26,6 +28,7 @@ public class OceanusDataException
     /**
      * SerialId.
      */
+    @Serial
     private static final long serialVersionUID = 2151352291553530453L;
 
     /**

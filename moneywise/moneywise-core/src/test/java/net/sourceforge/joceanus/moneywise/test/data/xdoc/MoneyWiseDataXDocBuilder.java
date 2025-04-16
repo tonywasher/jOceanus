@@ -28,6 +28,11 @@ import java.io.PrintWriter;
  */
 public class MoneyWiseDataXDocBuilder {
     /**
+     * The output directory.
+     */
+    public static final String OUTPUT_DIR = "target/html";
+
+    /**
      * Analysis Group.
      */
     static final String GRP_ANALYSIS = "analysis";
@@ -123,8 +128,7 @@ public class MoneyWiseDataXDocBuilder {
         myTax.createTaxAnalysis();
 
         /* Output the file */
-        final String myHome = System.getProperty("user.home") + "/html";
-        final File myFile = new File(myHome, pTest.getName() + ".xml");
+        final File myFile = new File(OUTPUT_DIR, pTest.getName() + ".xml");
         try (PrintWriter out = new PrintWriter(myFile)) {
             out.println(myReport.formatXML());
         } catch (Exception e) {

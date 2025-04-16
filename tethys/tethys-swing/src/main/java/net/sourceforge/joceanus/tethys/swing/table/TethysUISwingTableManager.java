@@ -16,23 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.tethys.swing.table;
 
-import java.awt.Dimension;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
-import java.util.function.Predicate;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.JViewport;
-import javax.swing.ListSelectionModel;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.table.AbstractTableModel;
-import javax.swing.table.TableColumnModel;
-
 import net.sourceforge.joceanus.tethys.core.factory.TethysUICoreFactory;
 import net.sourceforge.joceanus.tethys.core.table.TethysUICoreTableManager;
 import net.sourceforge.joceanus.tethys.swing.base.TethysUISwingNode;
@@ -52,6 +35,24 @@ import net.sourceforge.joceanus.tethys.swing.table.TethysUISwingTableColumn.Teth
 import net.sourceforge.joceanus.tethys.swing.table.TethysUISwingTableColumn.TethysUISwingTableStringColumn;
 import net.sourceforge.joceanus.tethys.swing.table.TethysUISwingTableColumn.TethysUISwingTableUnitsColumn;
 import net.sourceforge.joceanus.tethys.swing.table.TethysUISwingTableSorter.TethysUISwingTableSorterModel;
+
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JViewport;
+import javax.swing.ListSelectionModel;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.table.AbstractTableModel;
+import javax.swing.table.TableColumnModel;
+import java.awt.Dimension;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.io.Serial;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.List;
+import java.util.function.Predicate;
 
 /**
  * JavaSwing Table manager.
@@ -476,6 +477,7 @@ public class TethysUISwingTableManager<C, R>
         /**
          * Serial Id.
          */
+        @Serial
         private static final long serialVersionUID = 9100612548589774432L;
 
         @Override

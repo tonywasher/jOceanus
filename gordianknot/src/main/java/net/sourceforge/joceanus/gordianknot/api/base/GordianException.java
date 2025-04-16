@@ -16,6 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.api.base;
 
+import java.io.Serial;
+
 /**
  * Exception extension class.
  */
@@ -24,6 +26,7 @@ public abstract class GordianException
     /**
      * Required serialisation field.
      */
+    @Serial
     private static final long serialVersionUID = -8980967515725110116L;
 
     /**

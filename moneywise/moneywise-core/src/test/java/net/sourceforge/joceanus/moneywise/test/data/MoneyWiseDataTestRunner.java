@@ -19,6 +19,7 @@ package net.sourceforge.joceanus.moneywise.test.data;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.analyse.MoneyWiseXAnalysisBuilder;
 import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseXAnalysis;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataSet;
+import net.sourceforge.joceanus.moneywise.exc.MoneyWiseIOException;
 import net.sourceforge.joceanus.moneywise.test.data.storage.MoneyWiseDataTestSecurity;
 import net.sourceforge.joceanus.moneywise.test.data.trans.MoneyWiseDataTestAccounts;
 import net.sourceforge.joceanus.moneywise.test.data.trans.MoneyWiseDataTestCase;
@@ -40,6 +41,10 @@ import org.junit.jupiter.api.DynamicContainer;
 import org.junit.jupiter.api.DynamicNode;
 import org.junit.jupiter.api.DynamicTest;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
@@ -204,6 +209,7 @@ public class MoneyWiseDataTestRunner {
      * @throws OceanusException on error
      */
     public Stream<DynamicNode> createStorageTests() throws OceanusException {
+        createOutputDirectory();
         Stream<DynamicNode> myStream = Stream.of(DynamicTest.dynamicTest("initData", this::prepareFullData));
         myStream = Stream.concat(myStream, MoneyWiseDataTest.storageTests(theDataSet, theView));
         myStream = Stream.concat(myStream, Stream.of(DynamicTest.dynamicTest("editSet",
@@ -233,5 +239,20 @@ public class MoneyWiseDataTestRunner {
 
         /* Initialise the security */
         new MoneyWiseDataTestSecurity(theDataSet).initSecurity(theView);
+    }
+
+    /**
+     * Ensure output directory.
+     * @throws OceanusException on error
+     */
+    private static void createOutputDirectory() throws OceanusException {
+        try {
+            final Path myDir = Paths.get(MoneyWiseDataXDocBuilder.OUTPUT_DIR);
+            if (!myDir.toFile().exists()) {
+                Files.createDirectory(myDir);
+            }
+        } catch (IOException e) {
+            throw new MoneyWiseIOException("Failed to create directory", e);
+        }
     }
 }

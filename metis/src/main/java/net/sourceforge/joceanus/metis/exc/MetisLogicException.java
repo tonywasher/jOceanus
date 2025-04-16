@@ -18,6 +18,8 @@ package net.sourceforge.joceanus.metis.exc;
 
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
+import java.io.Serial;
+
 /**
  * Metis Logic Exception.
  */
@@ -26,6 +28,7 @@ public class MetisLogicException
     /**
      * SerialId.
      */
+    @Serial
     private static final long serialVersionUID = 864554925186516604L;
 
     /**

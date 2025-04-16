@@ -16,20 +16,21 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.tethys.swing.control;
 
-import java.awt.Component;
+import net.sourceforge.joceanus.tethys.api.base.TethysUIEvent;
+import net.sourceforge.joceanus.tethys.api.base.TethysUIIconId;
+import net.sourceforge.joceanus.tethys.core.control.TethysUICoreTreeManager;
+import net.sourceforge.joceanus.tethys.core.factory.TethysUICoreFactory;
+import net.sourceforge.joceanus.tethys.swing.base.TethysUISwingIcon;
+import net.sourceforge.joceanus.tethys.swing.base.TethysUISwingNode;
+
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
-
-import net.sourceforge.joceanus.tethys.api.base.TethysUIIconId;
-import net.sourceforge.joceanus.tethys.api.base.TethysUIEvent;
-import net.sourceforge.joceanus.tethys.core.factory.TethysUICoreFactory;
-import net.sourceforge.joceanus.tethys.core.control.TethysUICoreTreeManager;
-import net.sourceforge.joceanus.tethys.swing.base.TethysUISwingIcon;
-import net.sourceforge.joceanus.tethys.swing.base.TethysUISwingNode;
+import java.awt.Component;
+import java.io.Serial;
 
 /**
  * Swing Tree Manager.
@@ -354,6 +355,7 @@ public class TethysUISwingTreeManager<T>
         /**
          * Serial Id.
          */
+        @Serial
         private static final long serialVersionUID = -5408260987317489068L;
 
         /**

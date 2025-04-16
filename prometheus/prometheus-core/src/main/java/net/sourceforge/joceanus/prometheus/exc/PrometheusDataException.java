@@ -18,6 +18,8 @@ package net.sourceforge.joceanus.prometheus.exc;
 
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
+import java.io.Serial;
+
 /**
  * Prometheus Data Exception.
  */
@@ -26,6 +28,7 @@ public class PrometheusDataException
     /**
      * SerialId.
      */
+    @Serial
     private static final long serialVersionUID = 477418185621087538L;
 
     /**

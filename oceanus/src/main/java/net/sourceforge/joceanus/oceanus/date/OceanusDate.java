@@ -16,6 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.oceanus.date;
 
+import net.sourceforge.joceanus.oceanus.base.OceanusLocale;
+
 import java.time.DayOfWeek;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -118,10 +120,10 @@ public class OceanusDate
     private int theId;
 
     /**
-     * Construct a new Date and initialise with todays date.
+     * Construct a new Date and initialise with today's date.
      */
     public OceanusDate() {
-        this(Locale.getDefault());
+        this(OceanusLocale.getDefaultLocale());
     }
 
     /**
@@ -137,7 +139,7 @@ public class OceanusDate
      * @param pDate the java date to initialise from
      */
     public OceanusDate(final LocalDate pDate) {
-        this(pDate, Locale.getDefault());
+        this(pDate, OceanusLocale.getDefaultLocale());
     }
 
     /**
@@ -155,7 +157,7 @@ public class OceanusDate
      * @param pDate the java calendar to initialise from
      */
     public OceanusDate(final Date pDate) {
-        this(pDate, Locale.getDefault());
+        this(pDate, OceanusLocale.getDefaultLocale());
     }
 
     /**
@@ -199,7 +201,7 @@ public class OceanusDate
     public OceanusDate(final int pYear,
                        final int pMonth,
                        final int pDay) {
-        this(pYear, pMonth, pDay, Locale.getDefault());
+        this(pYear, pMonth, pDay, OceanusLocale.getDefaultLocale());
     }
 
     /**
@@ -247,7 +249,7 @@ public class OceanusDate
      * @param pValue the formatted string
      */
     public OceanusDate(final String pValue) {
-        this(pValue, Locale.getDefault());
+        this(pValue, OceanusLocale.getDefaultLocale());
     }
 
     /**

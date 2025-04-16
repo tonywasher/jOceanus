@@ -16,6 +16,12 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.oceanus.date;
 
+import net.sourceforge.joceanus.oceanus.base.OceanusLocale;
+import net.sourceforge.joceanus.oceanus.convert.OceanusDataConverter;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
+import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -24,11 +30,6 @@ import java.time.format.DateTimeParseException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
-
-import net.sourceforge.joceanus.oceanus.convert.OceanusDataConverter;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventManager;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar;
-import net.sourceforge.joceanus.oceanus.event.OceanusEventRegistrar.OceanusEventProvider;
 
 /**
  * Formatter for Date objects.
@@ -96,7 +97,7 @@ public class OceanusDateFormatter
      */
     public OceanusDateFormatter() {
         /* Use default locale */
-        this(Locale.getDefault());
+        this(OceanusLocale.getDefaultLocale());
     }
 
     /**

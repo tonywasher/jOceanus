@@ -18,6 +18,8 @@ package net.sourceforge.joceanus.prometheus.exc;
 
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
+import java.io.Serial;
+
 /**
  * Prometheus Security Exception.
  */
@@ -26,6 +28,7 @@ public class PrometheusSecurityException
     /**
      * SerialId.
      */
+    @Serial
     private static final long serialVersionUID = -4922173072593980760L;
     /**
      * Create a new Prometheus Exception object based on a string and an underlying exception.

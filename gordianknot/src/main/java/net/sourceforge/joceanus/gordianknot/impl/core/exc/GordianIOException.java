@@ -18,6 +18,8 @@ package net.sourceforge.joceanus.gordianknot.impl.core.exc;
 
 import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 
+import java.io.Serial;
+
 /**
  * Cryptography Exception.
  */
@@ -26,6 +28,7 @@ public class GordianIOException
     /**
      * SerialId.
      */
+    @Serial
     private static final long serialVersionUID = -3757499807817742930L;
 
     /**

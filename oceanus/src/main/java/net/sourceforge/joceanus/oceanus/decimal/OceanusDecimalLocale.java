@@ -16,6 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.oceanus.decimal;
 
+import net.sourceforge.joceanus.oceanus.base.OceanusLocale;
+
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
@@ -98,7 +100,7 @@ public class OceanusDecimalLocale {
      */
     protected OceanusDecimalLocale() {
         /* Use default locale */
-        this(Locale.getDefault());
+        this(OceanusLocale.getDefaultLocale());
     }
 
     /**

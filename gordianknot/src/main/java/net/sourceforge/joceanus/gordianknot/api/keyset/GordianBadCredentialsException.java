@@ -16,6 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.api.keyset;
 
+import java.io.Serial;
+
 /**
  * Exception indicating that an incorrect password was given.
  */
@@ -24,6 +26,7 @@ public class GordianBadCredentialsException
     /**
      * Serial id.
      */
+    @Serial
     private static final long serialVersionUID = 2737035909654646703L;
 
     /**

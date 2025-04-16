@@ -53,6 +53,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.Serial;
 import java.time.DayOfWeek;
 import java.time.format.TextStyle;
 import java.util.Calendar;
@@ -337,6 +338,7 @@ public final class TethysUISwingDateDialog
         /**
          * SerialId.
          */
+        @Serial
         private static final long serialVersionUID = 5464442251457102478L;
 
         @Override

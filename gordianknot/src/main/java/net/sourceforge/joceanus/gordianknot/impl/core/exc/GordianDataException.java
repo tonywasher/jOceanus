@@ -19,6 +19,8 @@ package net.sourceforge.joceanus.gordianknot.impl.core.exc;
 
 import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 
+import java.io.Serial;
+
 /**
  * Data Exception.
  */
@@ -27,6 +29,7 @@ public class GordianDataException
     /**
      * SerialId.
      */
+    @Serial
     private static final long serialVersionUID = 7691011512207759691L;
 
     /**

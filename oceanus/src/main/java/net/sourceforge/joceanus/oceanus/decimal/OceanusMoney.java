@@ -384,7 +384,7 @@ public class OceanusMoney
     }
 
     /**
-     * Determine default currency.
+     * Obtain default currency.
      * @return the default currency
      */
     public static Currency getDefaultCurrency() {

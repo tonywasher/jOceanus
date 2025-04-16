@@ -35,6 +35,7 @@ import org.jfree.chart.renderer.category.CategoryItemRenderer;
 import org.jfree.chart.util.HexNumberFormat;
 import org.jfree.data.category.DefaultCategoryDataset;
 
+import java.io.Serial;
 import java.text.FieldPosition;
 
 /**
@@ -179,6 +180,7 @@ public class TethysUISwingBarChart
      * Money Format class.
      */
     private final class MoneyFormat extends HexNumberFormat {
+        @Serial
         private static final long serialVersionUID = -1151614975043008941L;
 
         @Override

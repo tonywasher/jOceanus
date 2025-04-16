@@ -18,6 +18,8 @@ package net.sourceforge.joceanus.tethys.core.base;
 
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
+import java.io.Serial;
+
 /**
  * Data Exception.
  */
@@ -26,6 +28,7 @@ public class TethysUIDataException
     /**
      * SerialId.
      */
+    @Serial
     private static final long serialVersionUID = 4031981620731173721L;
 
     /**

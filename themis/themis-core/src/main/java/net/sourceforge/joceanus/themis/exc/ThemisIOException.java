@@ -18,6 +18,8 @@ package net.sourceforge.joceanus.themis.exc;
 
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
+import java.io.Serial;
+
 /**
  * Themis IO Exception.
  */
@@ -26,6 +28,7 @@ public class ThemisIOException
     /**
      * SerialId.
      */
+    @Serial
     private static final long serialVersionUID = 2852365971732230169L;
 
     /**

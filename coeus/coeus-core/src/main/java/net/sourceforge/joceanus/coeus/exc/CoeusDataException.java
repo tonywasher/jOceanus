@@ -18,6 +18,8 @@ package net.sourceforge.joceanus.coeus.exc;
 
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
+import java.io.Serial;
+
 /**
  * Coeus Exception class.
  */
@@ -26,6 +28,7 @@ public class CoeusDataException
     /**
      * Serial Id.
      */
+    @Serial
     private static final long serialVersionUID = -8749477124141720097L;
 
     /**

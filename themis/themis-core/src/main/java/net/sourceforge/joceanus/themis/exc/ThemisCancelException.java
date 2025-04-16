@@ -18,6 +18,8 @@ package net.sourceforge.joceanus.themis.exc;
 
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
+import java.io.Serial;
+
 /**
  * Themis Cancel Exception.
  */
@@ -26,6 +28,7 @@ public class ThemisCancelException
     /**
      * SerialId.
      */
+    @Serial
     private static final long serialVersionUID = 8610621822129819107L;
 
     /**

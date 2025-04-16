@@ -18,6 +18,8 @@ package net.sourceforge.joceanus.moneywise.exc;
 
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
+import java.io.Serial;
+
 /**
  * MoneyWise Cancel Exception.
  */
@@ -26,6 +28,7 @@ public class MoneyWiseCancelException
     /**
      * SerialId.
      */
+    @Serial
     private static final long serialVersionUID = 7209820774558300955L;
 
     /**

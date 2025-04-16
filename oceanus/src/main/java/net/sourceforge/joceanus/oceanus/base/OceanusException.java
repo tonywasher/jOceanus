@@ -16,6 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.oceanus.base;
 
+import java.io.Serial;
+
 /**
  * Exception extension class. Provides capability of attaching ExceptionClass and Causing object to
  * exception.
@@ -26,6 +28,7 @@ public abstract class OceanusException
     /**
      * Required serialisation field.
      */
+    @Serial
     private static final long serialVersionUID = 3100519617218144798L;
 
     /**

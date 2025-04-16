@@ -48,6 +48,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -334,6 +335,7 @@ class ZipFileTest {
         /**
          * SerialId.
          */
+        @Serial
         private static final long serialVersionUID = 5856242835104016341L;
 
         /**

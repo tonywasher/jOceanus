@@ -17,6 +17,7 @@
 package net.sourceforge.joceanus.oceanus.format;
 
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.oceanus.base.OceanusLocale;
 import net.sourceforge.joceanus.oceanus.convert.OceanusDataConverter;
 import net.sourceforge.joceanus.oceanus.date.OceanusDate;
 import net.sourceforge.joceanus.oceanus.date.OceanusDateFormatter;
@@ -86,7 +87,7 @@ public class OceanusDataFormatter {
      * Constructor.
      */
     public OceanusDataFormatter() {
-        this(Locale.getDefault());
+        this(OceanusLocale.getDefaultLocale());
     }
 
     /**

@@ -16,17 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.tethys.swing.table;
 
-import java.awt.Component;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.util.List;
-import java.util.function.Supplier;
-import javax.swing.AbstractCellEditor;
-import javax.swing.JComponent;
-import javax.swing.JTable;
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.TableCellEditor;
-
 import net.sourceforge.joceanus.oceanus.date.OceanusDate;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusDecimal;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
@@ -74,6 +63,18 @@ import net.sourceforge.joceanus.tethys.swing.table.TethysUISwingTableColumn.Teth
 import net.sourceforge.joceanus.tethys.swing.table.TethysUISwingTableColumn.TethysUISwingTableStringColumn;
 import net.sourceforge.joceanus.tethys.swing.table.TethysUISwingTableColumn.TethysUISwingTableUnitsColumn;
 import net.sourceforge.joceanus.tethys.swing.table.TethysUISwingTableColumn.TethysUISwingTableValidatedColumn;
+
+import javax.swing.AbstractCellEditor;
+import javax.swing.JComponent;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.TableCellEditor;
+import java.awt.Component;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.io.Serial;
+import java.util.List;
+import java.util.function.Supplier;
 
 /**
  * Table Cell.
@@ -324,6 +325,7 @@ public abstract class TethysUISwingTableCell<T, C, R>
         /**
          * Serial Id.
          */
+        @Serial
         private static final long serialVersionUID = -3591698125380052152L;
 
         /**
@@ -428,6 +430,7 @@ public abstract class TethysUISwingTableCell<T, C, R>
         /**
          * Serial Id.
          */
+        @Serial
         private static final long serialVersionUID = -5226192429038913966L;
 
         @Override
