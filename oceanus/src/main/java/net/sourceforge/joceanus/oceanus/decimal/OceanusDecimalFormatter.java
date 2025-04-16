@@ -62,7 +62,7 @@ public class OceanusDecimalFormatter {
     /**
      * The locale.
      */
-    protected static final OceanusDecimalLocale LOCALE_DEFAULT = new OceanusDecimalLocale();
+    static final OceanusDecimalLocale LOCALE_DEFAULT = new OceanusDecimalLocale();
 
     /**
      * The locale.

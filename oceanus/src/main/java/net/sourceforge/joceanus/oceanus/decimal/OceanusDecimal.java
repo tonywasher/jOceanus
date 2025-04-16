@@ -16,12 +16,13 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.oceanus.decimal;
 
+import net.sourceforge.joceanus.oceanus.convert.OceanusDataConverter;
+
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.util.Arrays;
-
-import net.sourceforge.joceanus.oceanus.convert.OceanusDataConverter;
+import java.util.Objects;
 
 /**
  * Provides classes to represent decimal numbers with fixed numbers of decimal digits
@@ -217,8 +218,8 @@ public class OceanusDecimal
      */
     private static void validateScale(final int pScale) {
         /* Throw exception on invalid decimals */
-        if ((pScale < 0)
-            || (pScale > MAX_DECIMALS)) {
+        if (pScale < 0
+            || pScale > MAX_DECIMALS) {
             throw new IllegalArgumentException("Decimals must be in the range 0 to "
                                                + MAX_DECIMALS);
         }
@@ -288,7 +289,7 @@ public class OceanusDecimal
         if (theValue == 0) {
             return 0;
         }
-        return (theValue < 0)
+        return theValue < 0
                               ? -1
                               : 1;
     }
@@ -996,14 +997,13 @@ public class OceanusDecimal
         final OceanusDecimal myThat = (OceanusDecimal) pThat;
 
         /* Check value and scale */
-        return (theValue == myThat.theValue)
-               && (theScale == myThat.theScale);
+        return theValue == myThat.theValue
+               && theScale == myThat.theScale;
     }
 
     @Override
     public int hashCode() {
-        return (int) (theValue ^ (theValue >>> INT_SHIFT))
-               + theScale;
+        return Objects.hash(theValue, theScale);
     }
 
     @Override

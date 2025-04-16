@@ -23,6 +23,7 @@ import net.sourceforge.joceanus.metis.field.MetisFieldVersionValues;
 import net.sourceforge.joceanus.metis.field.MetisFieldVersionedSet;
 import net.sourceforge.joceanus.moneywise.exc.MoneyWiseDataException;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
 import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataItem;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataSet;
@@ -30,9 +31,7 @@ import net.sourceforge.joceanus.prometheus.data.PrometheusDataValues;
 import net.sourceforge.joceanus.prometheus.data.PrometheusStaticDataClass;
 import net.sourceforge.joceanus.prometheus.data.PrometheusStaticDataItem;
 
-import java.text.DecimalFormatSymbols;
 import java.util.Currency;
-import java.util.Locale;
 
 /**
  * AssetCurrency data type.
@@ -377,10 +376,8 @@ public class MoneyWiseCurrency
          * Initialise the reporting currency.
          */
         public void initialiseReporting() {
-            /* Determine the locale currency */
-            final Locale myLocale = Locale.getDefault();
-            final DecimalFormatSymbols mySymbols = DecimalFormatSymbols.getInstance(myLocale);
-            final Currency myCurrency = mySymbols.getCurrency();
+            /* Determine the default currency */
+            final Currency myCurrency = OceanusMoney.getDefaultCurrency();
 
             /* Find the currency in the list */
             MoneyWiseCurrency myCurr = findCurrency(myCurrency);

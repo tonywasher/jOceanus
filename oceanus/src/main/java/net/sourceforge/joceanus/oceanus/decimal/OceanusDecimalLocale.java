@@ -106,16 +106,20 @@ public class OceanusDecimalLocale {
      * @param pLocale the locale
      */
     protected OceanusDecimalLocale(final Locale pLocale) {
-        /* Store the locale */
-        theLocale = pLocale;
+        /* Default to UK locale if the locale only has a pseudo-currency */
+        DecimalFormatSymbols mySymbols = DecimalFormatSymbols.getInstance(pLocale);
+        Currency myCurrency = mySymbols.getCurrency();
+        theLocale = myCurrency.getDefaultFractionDigits() == -1
+                ? Locale.UK
+                : pLocale;
 
         /* Create currency maps */
         theCurrencyMap = new HashMap<>();
         theSymbolMap = new HashMap<>();
 
         /* Access decimal formats */
-        final DecimalFormatSymbols mySymbols = DecimalFormatSymbols.getInstance(theLocale);
-        final DecimalFormat myFormat = (DecimalFormat) NumberFormat.getInstance(pLocale);
+        mySymbols = DecimalFormatSymbols.getInstance(theLocale);
+        final DecimalFormat myFormat = (DecimalFormat) NumberFormat.getInstance(theLocale);
         theGroupingSize = myFormat.getGroupingSize();
 
         /* Access various interesting formats */

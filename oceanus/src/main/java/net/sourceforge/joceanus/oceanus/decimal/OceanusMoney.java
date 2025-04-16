@@ -17,9 +17,11 @@
 package net.sourceforge.joceanus.oceanus.decimal;
 
 import java.nio.charset.StandardCharsets;
+import java.text.DecimalFormatSymbols;
 import java.util.Arrays;
 import java.util.Currency;
 import java.util.Locale;
+import java.util.Objects;
 
 /**
  * Represents a Money object.
@@ -32,14 +34,19 @@ public class OceanusMoney
     public static final int BYTE_LEN = Long.BYTES + 4;
 
     /**
-     * Invalid Currency error text.
-     */
-    protected static final String ERROR_DIFFER = "Cannot add together two different currencies";
-
-    /**
      * Currency code length.
      */
     private static final int CURRCODE_LEN = 2;
+
+    /**
+     * Invalid Currency error text.
+     */
+    static final String ERROR_DIFFER = "Cannot add together two different currencies";
+
+    /**
+     * Default currency.
+     */
+    static final Currency DEFAULT_CURRENCY = determineDefaultCurrency();
 
     /**
      * Currency for money.
@@ -50,7 +57,7 @@ public class OceanusMoney
      * Constructor for money of value zero in the default currency.
      */
     public OceanusMoney() {
-        this(Currency.getInstance(Locale.UK));
+        this(DEFAULT_CURRENCY);
     }
 
     /**
@@ -64,7 +71,7 @@ public class OceanusMoney
     }
 
     /**
-     * Construct a new Money by copying another money.
+     * Construct a new OceanusMoney by copying another money.
      *
      * @param pMoney the Money to copy
      */
@@ -106,7 +113,7 @@ public class OceanusMoney
     }
 
     /**
-     * Construct a new Money by combining units and price.
+     * Construct a new OceanusMoney by combining units and price.
      *
      * @param pUnits the number of units
      * @param pPrice the price of each unit
@@ -118,7 +125,7 @@ public class OceanusMoney
     }
 
     /**
-     * Construct a new Money by combining money and rate.
+     * Construct a new OceanusMoney by combining money and rate.
      *
      * @param pMoney the Money to apply rate to
      * @param pRate  the Rate to apply
@@ -362,6 +369,28 @@ public class OceanusMoney
         return new OceanusMoney(this, myRatio);
     }
 
+    /**
+     * Determine default currency.
+     * @return the default currency
+     */
+    private static Currency determineDefaultCurrency() {
+        /* Obtain the default currency */
+        final Currency myCurrency = DecimalFormatSymbols.getInstance().getCurrency();
+
+        /* If the default is a pseudo-currency then default to GBP */
+        return myCurrency.getDefaultFractionDigits() < 0
+            ? Currency.getInstance(Locale.UK)
+            : myCurrency;
+    }
+
+    /**
+     * Determine default currency.
+     * @return the default currency
+     */
+    public static Currency getDefaultCurrency() {
+        return DEFAULT_CURRENCY;
+    }
+
     @Override
     public boolean equals(final Object pThat) {
         /* Handle trivial cases */
@@ -391,8 +420,7 @@ public class OceanusMoney
 
     @Override
     public int hashCode() {
-        return theCurrency.hashCode()
-                ^ super.hashCode();
+        return Objects.hash(theCurrency, super.hashCode());
     }
 
     @Override

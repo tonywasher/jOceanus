@@ -43,7 +43,6 @@ import net.sourceforge.joceanus.oceanus.decimal.OceanusRate;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusRatio;
 import net.sourceforge.joceanus.oceanus.format.OceanusDataFormatter;
 
-import java.text.DecimalFormatSymbols;
 import java.util.Currency;
 import java.util.Iterator;
 import java.util.List;
@@ -57,7 +56,7 @@ public abstract class MoneyWiseXAnalysisAccountBucket<T extends MoneyWiseAssetBa
     /**
      * Default currency.
      */
-    protected static final Currency DEFAULT_CURRENCY = DecimalFormatSymbols.getInstance().getCurrency();
+    protected static final Currency DEFAULT_CURRENCY = OceanusMoney.getDefaultCurrency();
 
     /**
      * Report fields.

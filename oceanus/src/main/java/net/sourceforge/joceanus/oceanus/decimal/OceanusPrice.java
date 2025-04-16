@@ -17,7 +17,6 @@
 package net.sourceforge.joceanus.oceanus.decimal;
 
 import java.util.Currency;
-import java.util.Locale;
 
 /**
  * Represents a Price object.
@@ -27,13 +26,13 @@ public class OceanusPrice
     /**
      * Additional number of decimals for Price.
      */
-    protected static final int XTRA_DECIMALS = 2;
+    static final int XTRA_DECIMALS = 2;
 
     /**
      * Constructor for price of value zero in the default currency.
      */
     public OceanusPrice() {
-        this(Currency.getInstance(Locale.UK));
+        this(DEFAULT_CURRENCY);
     }
 
     /**
