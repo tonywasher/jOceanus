@@ -178,9 +178,8 @@ public class CoeusReportBalanceSheet
     @Override
     public CoeusFilter processFilter(final Object pSource) {
         /* If this is a TotalSet */
-        if (pSource instanceof CoeusTotalSet) {
+        if (pSource instanceof CoeusTotalSet myTotalSet) {
             /* Create the new filter */
-            final CoeusTotalSet myTotalSet = (CoeusTotalSet) pSource;
             final CoeusSnapShotFilter myFilter = new CoeusSnapShotFilter(theMarket);
             myFilter.setTotalSet(myTotalSet);
             return myFilter;

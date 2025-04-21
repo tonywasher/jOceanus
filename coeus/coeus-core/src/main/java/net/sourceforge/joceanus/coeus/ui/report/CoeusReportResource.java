@@ -113,7 +113,7 @@ public enum CoeusReportResource
      * @param pValue the Value
      * @return the resource key
      */
-    protected static OceanusBundleId getKeyForReportType(final CoeusReportType pValue) {
+    static OceanusBundleId getKeyForReportType(final CoeusReportType pValue) {
         return OceanusBundleLoader.getKeyForEnum(REPORT_MAP, pValue);
     }
 }

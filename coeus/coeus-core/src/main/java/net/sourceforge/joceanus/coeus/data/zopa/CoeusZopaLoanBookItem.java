@@ -211,7 +211,7 @@ public class CoeusZopaLoanBookItem
         myIterator.next();
 
         /* Determine whether the loan is safeGuarded */
-        isSafeGuarded = Boolean.valueOf(myIterator.next());
+        isSafeGuarded = Boolean.parseBoolean(myIterator.next());
 
         /* Skip Comment and loan start/end dates/Default Price */
         myIterator.next();
@@ -221,9 +221,9 @@ public class CoeusZopaLoanBookItem
 
         /* Skip the default date */
         final String myDate = myIterator.next();
-        theBadDebtDate = myDate.length() > 0
-                                             ? pParser.parseDate(myDate)
-                                             : null;
+        theBadDebtDate = myDate.isEmpty()
+                ? null
+                : pParser.parseDate(myDate);
 
         /* Skip Monthly rePayment/Type of Asset and Purpose */
         myIterator.next();
@@ -412,7 +412,7 @@ public class CoeusZopaLoanBookItem
      */
     private static CoeusLoanRisk determineRisk(final String pRisk) throws OceanusException {
         /* If the risk is empty, return unclassified */
-        if (pRisk.length() == 0) {
+        if (pRisk.isEmpty()) {
             return CoeusLoanRisk.UNCLASSIFIED;
         }
 

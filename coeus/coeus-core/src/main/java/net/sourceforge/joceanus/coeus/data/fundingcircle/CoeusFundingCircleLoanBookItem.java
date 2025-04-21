@@ -41,11 +41,6 @@ public class CoeusFundingCircleLoanBookItem
     private static final String BID_SEP = " - ";
 
     /**
-     * Builder buffer length.
-     */
-    private static final int BUFFER_LEN = 100;
-
-    /**
      * Report fields.
      */
     private static final MetisFieldSet<CoeusFundingCircleLoanBookItem> FIELD_DEFS = MetisFieldSet.newFieldSet(CoeusFundingCircleLoanBookItem.class);
@@ -262,7 +257,7 @@ public class CoeusFundingCircleLoanBookItem
      */
     private static CoeusLoanRisk determineRisk(final String pRisk) throws OceanusException {
         /* If the risk is empty, return unclassified */
-        if (pRisk.length() == 0
+        if (pRisk.isEmpty()
             || "-".equals(pRisk)) {
             return CoeusLoanRisk.UNCLASSIFIED;
         }
@@ -340,9 +335,7 @@ public class CoeusFundingCircleLoanBookItem
 
     @Override
     public String toString() {
-        final StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
-        myBuilder.append(theLoanId).append(' ').append(theStatus).append(' ').append(theBalance);
-        return myBuilder.toString();
+        return theLoanId + ' ' + theStatus + ' ' + theBalance;
     }
 
     @Override

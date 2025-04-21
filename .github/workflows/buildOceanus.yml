@@ -1,9 +1,6 @@
 name: Maven CI/CD
 
 on:
-  label:
-    types:
-      - created
   push:
     branches:
       - main
@@ -27,9 +24,9 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: Site
-          path: staging
+          path: target/staging
       - name: Package distribution directory
         uses: actions/upload-artifact@v4
         with:
           name: Distribution
-          path: ../dist
+          path: dist

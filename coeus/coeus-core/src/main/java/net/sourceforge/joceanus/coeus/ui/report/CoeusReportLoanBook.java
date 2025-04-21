@@ -262,9 +262,8 @@ public class CoeusReportLoanBook
     @Override
     public CoeusFilter processFilter(final Object pSource) {
         /* If this is a Loan */
-        if (pSource instanceof CoeusLoan) {
+        if (pSource instanceof CoeusLoan myLoan) {
             /* Create the new filter */
-            final CoeusLoan myLoan = (CoeusLoan) pSource;
             final CoeusSnapShotFilter myFilter = new CoeusSnapShotFilter(theMarket);
             myFilter.setLoan(myLoan);
             myFilter.setTotalSet(CoeusTotalSet.LOANBOOK);

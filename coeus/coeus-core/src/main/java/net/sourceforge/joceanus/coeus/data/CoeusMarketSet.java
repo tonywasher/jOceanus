@@ -62,9 +62,7 @@ public class CoeusMarketSet
      */
     public void analyseMarkets() throws OceanusException {
         /* Loop through the markets performing analysis */
-        final Iterator<CoeusMarket> myIterator = theMarketMap.values().iterator();
-        while (myIterator.hasNext()) {
-            final CoeusMarket myMarket = myIterator.next();
+        for (CoeusMarket myMarket : theMarketMap.values()) {
             myMarket.analyseMarket();
         }
     }

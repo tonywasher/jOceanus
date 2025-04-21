@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import net.sourceforge.joceanus.coeus.exc.CoeusDataException;
 import net.sourceforge.joceanus.coeus.data.CoeusLoan;
 import net.sourceforge.joceanus.coeus.data.CoeusLoanStatus;
 import net.sourceforge.joceanus.coeus.data.CoeusResource;
@@ -226,7 +225,7 @@ public class CoeusZopaLoan
     }
 
     @Override
-    protected void checkLoan() throws CoeusDataException {
+    protected void checkLoan() {
         /* Obtain the book balance and adjust for missing payments */
         final OceanusDecimal myBookBalance = new OceanusDecimal(theBookItem.getBalance());
 

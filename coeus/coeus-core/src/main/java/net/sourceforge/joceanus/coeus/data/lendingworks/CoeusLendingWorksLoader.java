@@ -31,6 +31,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoField;
 import java.time.temporal.TemporalAccessor;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -120,7 +121,7 @@ public class CoeusLendingWorksLoader {
         }
 
         /* Sort and return the list */
-        myList.sort((p, q) -> p.getDate() - q.getDate());
+        myList.sort(Comparator.comparingInt(StatementRecord::getDate));
         return myList;
     }
 

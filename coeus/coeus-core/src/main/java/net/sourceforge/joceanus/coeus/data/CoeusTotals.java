@@ -611,7 +611,7 @@ public abstract class CoeusTotals
             myBuilder.insert(0, getDate().toString());
             myBuilder.insert(0, CoeusTransaction.CHAR_BLANK);
         }
-        myBuilder.insert(0, CoeusTransactionType.TOTALS.toString());
+        myBuilder.insert(0, CoeusTransactionType.TOTALS);
 
         /* Return the formatted string */
         return myBuilder.toString();
