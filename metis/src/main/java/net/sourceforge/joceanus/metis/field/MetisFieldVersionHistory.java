@@ -158,7 +158,8 @@ public class MetisFieldVersionHistory
      */
     public boolean maybePopHistory() {
         /* If there is no change */
-        if (theCurr.differs(theStack.peek()).isIdentical()) {
+        if (!theStack.isEmpty()
+                && theCurr.differs(theStack.peek()).isIdentical()) {
             /* Just pop the history */
             popTheHistory();
             return false;

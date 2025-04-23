@@ -379,12 +379,9 @@ public class MetisListIndexed<T extends MetisDataIndexedItem>
         }
 
         /* Make sure that the object is the same class */
-        if (!(pThat instanceof MetisListIndexed)) {
+        if (!(pThat instanceof MetisListIndexed<?> myThat)) {
             return false;
         }
-
-        /* Cast as list */
-        final MetisListIndexed<?> myThat = (MetisListIndexed<?>) pThat;
 
         /* Check list */
         return theList.equals(myThat.theList);

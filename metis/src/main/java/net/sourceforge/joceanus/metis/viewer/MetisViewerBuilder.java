@@ -141,11 +141,6 @@ public class MetisViewerBuilder {
     private final OceanusDataFormatter theFormatter;
 
     /**
-     * The document builder.
-     */
-    private final DocumentBuilder theBuilder;
-
-    /**
      * Transformer.
      */
     private final Transformer theXformer;
@@ -201,7 +196,9 @@ public class MetisViewerBuilder {
             myDocFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
             myDocFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
             myDocFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
-            theBuilder = myDocFactory.newDocumentBuilder();
+
+            /* Create the document builder */
+            final DocumentBuilder myBuilder = myDocFactory.newDocumentBuilder();
 
             /* Create the transformer */
             final TransformerFactory myXformFactory = TransformerFactory.newInstance();
@@ -211,7 +208,7 @@ public class MetisViewerBuilder {
             theXformer = myXformFactory.newTransformer();
 
             /* Create the document */
-            theDocument = theBuilder.newDocument();
+            theDocument = myBuilder.newDocument();
 
             /* Create the standard structure */
             final Element myHtml = theDocument.createElement(ELEMENT_HTML);

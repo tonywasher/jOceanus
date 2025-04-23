@@ -16,6 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.metis.field;
 
+import java.util.Objects;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
@@ -194,12 +195,9 @@ public class MetisField<T extends MetisFieldItem>
         }
 
         /* Check class */
-        if (!(pThat instanceof MetisField)) {
+        if (!(pThat instanceof MetisField<?> myThat)) {
             return false;
         }
-
-        /* Access as MetisDataNewField */
-        final MetisField<?> myThat = (MetisField<?>) pThat;
 
         /* Must belong to the same anchor */
         if (!theAnchor.equals(myThat.getAnchor())) {
@@ -212,8 +210,7 @@ public class MetisField<T extends MetisFieldItem>
 
     @Override
     public int hashCode() {
-        return theAnchor.hashCode() * MetisFieldSet.HASH_PRIME
-               + theId.hashCode();
+        return Objects.hash(theAnchor, theId);
     }
 
     @Override

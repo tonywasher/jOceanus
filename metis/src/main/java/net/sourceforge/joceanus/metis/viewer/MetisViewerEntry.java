@@ -313,12 +313,9 @@ public class MetisViewerEntry {
         }
 
         /* Check class */
-        if (!(pThat instanceof MetisViewerEntry)) {
+        if (!(pThat instanceof MetisViewerEntry myThat)) {
             return false;
         }
-
-        /* Access as MetisViewerEntry */
-        final MetisViewerEntry myThat = (MetisViewerEntry) pThat;
 
         /* Must have same id */
         return theId == myThat.theId;

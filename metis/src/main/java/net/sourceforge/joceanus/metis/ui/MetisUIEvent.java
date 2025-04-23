@@ -28,5 +28,5 @@ public enum MetisUIEvent {
     /**
      * New Item.
      */
-    NEWITEM;
+    NEWITEM
 }

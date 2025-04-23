@@ -53,5 +53,5 @@ public enum MetisDataState {
     /**
      * Recovered deleted object.
      */
-    RECOVERED;
+    RECOVERED
 }

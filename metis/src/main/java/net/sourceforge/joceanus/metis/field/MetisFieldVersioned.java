@@ -16,6 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.metis.field;
 
+import java.util.Objects;
+
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.metis.data.MetisDataType;
 import net.sourceforge.joceanus.metis.field.MetisFieldItem.MetisFieldVersionedDef;
@@ -115,12 +117,9 @@ public class MetisFieldVersioned<T extends MetisFieldVersionedItem>
         }
 
         /* Check class */
-        if (!(pThat instanceof MetisFieldVersioned)) {
+        if (!(pThat instanceof MetisFieldVersioned<?> myThat)) {
             return false;
         }
-
-        /* Access as MetisFieldVersioned */
-        final MetisFieldVersioned<?> myThat = (MetisFieldVersioned<?>) pThat;
 
         /* Check index and equality */
         return theIndex.equals(myThat.getIndex())
@@ -130,8 +129,6 @@ public class MetisFieldVersioned<T extends MetisFieldVersionedItem>
 
     @Override
     public int hashCode() {
-        return theIndex.hashCode()
-                + (MetisFieldSet.HASH_PRIME * super.hashCode())
-                + (isEquality ? 1 : 0);
+        return Objects.hash(theIndex, super.hashCode(), isEquality);
     }
 }

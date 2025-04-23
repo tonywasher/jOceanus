@@ -148,7 +148,7 @@ public class MetisFieldValidation
         }
 
         /* If we have errors */
-        if (myErrors.length() > 0) {
+        if (!myErrors.isEmpty()) {
             /* Complete the format and return it */
             endErrors(myErrors);
             return myErrors.toString();
@@ -213,7 +213,7 @@ public class MetisFieldValidation
         }
 
         /* If we have errors */
-        if (myErrors.length() > 0) {
+        if (!myErrors.isEmpty()) {
             /* Complete the format and return it */
             endErrors(myErrors);
             return myErrors.toString();
@@ -231,7 +231,7 @@ public class MetisFieldValidation
     private static void addErrorText(final StringBuilder pBuilder,
                                      final String pError) {
         /* Add relevant prefix */
-        pBuilder.append((pBuilder.length() == 0)
+        pBuilder.append((pBuilder.isEmpty())
                                                  ? "<html>"
                                                  : "<br>");
 
