@@ -211,7 +211,7 @@ public class OceanusDecimalFormatter {
 
         /* Format the string */
         final StringBuilder myString = new StringBuilder(INITIAL_BUFLEN);
-        myString.append(Long.toString(myValue));
+        myString.append(myValue);
 
         /* Add leading zeroes */
         int myLen = myString.length();
@@ -264,7 +264,7 @@ public class OceanusDecimalFormatter {
 
         /* Format the string */
         final StringBuilder myString = new StringBuilder(INITIAL_BUFLEN);
-        myString.append(Long.toString(myValue));
+        myString.append(myValue);
 
         /* Loop while we need to add grouping */
         int myLen = myString.length();
@@ -450,10 +450,8 @@ public class OceanusDecimalFormatter {
         final StringBuilder myWork = new StringBuilder(Character.toString(CHAR_MINUS));
 
         /* If we have decimals */
-        for (int i = 0; i < myScale; i++) {
-            /* Add a blank in place of the decimal digit */
-            myWork.append(CHAR_BLANK);
-        }
+        /* Add a blank in place of the decimal digit */
+        myWork.append(String.valueOf(CHAR_BLANK).repeat(Math.max(0, myScale)));
 
         /* If we are short of the width */
         int myLen = myWork.length();

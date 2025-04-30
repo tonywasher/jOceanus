@@ -261,13 +261,7 @@ public class OceanusProfile {
          * @return true/false
          */
         private boolean isRunning() {
-            switch (this) {
-                case RUNNING:
-                    return true;
-                case STOPPED:
-                default:
-                    return false;
-            }
+            return this == RUNNING;
         }
     }
 }

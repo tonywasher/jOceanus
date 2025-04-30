@@ -38,5 +38,5 @@ enum OceanusLogLevel {
     /**
      * Fatal.
      */
-    FATAL;
+    FATAL
 }

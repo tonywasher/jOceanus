@@ -79,20 +79,20 @@
     <JUnitVersion>5.12.1</JUnitVersion>
     <JSONVersion>20250107</JSONVersion>
     <ApacheMavenVersion>3.9.9</ApacheMavenVersion>
-    <MySQLVersion>9.2.0</MySQLVersion>
+    <MySQLVersion>9.3.0</MySQLVersion>
     <MariaDBVersion>3.5.3</MariaDBVersion>
     <PostGreSQLVersion>42.7.5</PostGreSQLVersion>
     <MSSQLVersion>12.10.0.jre11</MSSQLVersion>
     <H2Version>2.3.232</H2Version>
     <ApachePOIVersion>5.4.1</ApachePOIVersion>
-    <JSoupVersion>1.19.1</JSoupVersion>
+    <JSoupVersion>1.20.1</JSoupVersion>
     <JFreeChartVersion>1.5.5</JFreeChartVersion>
     <ZipSDKVersion>9.20</ZipSDKVersion>
     <JavaVersion>17</JavaVersion>
     <JavaFXVersion>17.0.14</JavaFXVersion>
     <JavaLanguageVersion>17</JavaLanguageVersion>
-    <CheckStyleVersion>10.23.0</CheckStyleVersion>
-    <PMDVersion>7.12.0</PMDVersion>
+    <CheckStyleVersion>10.23.1</CheckStyleVersion>
+    <PMDVersion>7.13.0</PMDVersion>
     <CleanPluginVersion>3.4.1</CleanPluginVersion>
     <ResourcesPluginVersion>3.3.1</ResourcesPluginVersion>
     <InstallPluginVersion>3.1.4</InstallPluginVersion>

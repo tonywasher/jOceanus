@@ -42,12 +42,10 @@ public final class OceanusResourceLoader {
      * @return the error message
      */
     public static String getErrorNoResource(final Enum<?> pId) {
-        final StringBuilder myBuilder = new StringBuilder();
-        myBuilder.append("Missing Resource: ");
-        myBuilder.append(pId.getClass().getName());
-        myBuilder.append(':');
-        myBuilder.append(pId.name());
-        return myBuilder.toString();
+        return "Missing Resource: "
+                + pId.getClass().getName()
+                + ':'
+                + pId.name();
     }
 
     /**
