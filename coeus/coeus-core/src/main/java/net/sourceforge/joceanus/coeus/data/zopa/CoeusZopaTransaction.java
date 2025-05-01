@@ -451,7 +451,7 @@ public final class CoeusZopaTransaction
      * Is this transaction upFront interest?
      * @return true/false
      */
-    protected boolean isUpFront() {
+    boolean isUpFront() {
         return isUpFront;
     }
 

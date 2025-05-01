@@ -297,7 +297,6 @@ public class MetisFieldVersionValues {
 
         /* Access the object as a ValueSet */
         final MetisFieldVersionValues mySet = (MetisFieldVersionValues) pThat;
-        final Object[] myObj = mySet.theValues;
 
         /* Check for deletion flag and # of values */
         if (isDeletion != mySet.isDeletion
@@ -317,7 +316,7 @@ public class MetisFieldVersionValues {
 
             /* Not equal if the value is different */
             final int iIndex = myVersioned.getIndex();
-            if (MetisDataDifference.difference(theValues[iIndex], myObj[iIndex]).isDifferent()) {
+            if (MetisDataDifference.difference(theValues[iIndex], mySet.theValues[iIndex]).isDifferent()) {
                 return false;
             }
         }
@@ -366,9 +365,6 @@ public class MetisFieldVersionValues {
     public MetisDataDifference differs(final MetisFieldVersionValues pOriginal) {
         boolean isSecureDiff = false;
 
-        /* Access the test values */
-        final Object[] myObj = pOriginal.theValues;
-
         /* Check for deletion flag and # of values */
         if (isDeletion != pOriginal.isDeletion
             || theNumValues != pOriginal.theNumValues) {
@@ -387,7 +383,7 @@ public class MetisFieldVersionValues {
 
             /* Check the field */
             final int iIndex = myVersioned.getIndex();
-            final MetisDataDifference myDiff = MetisDataDifference.difference(theValues[iIndex], myObj[iIndex]);
+            final MetisDataDifference myDiff = MetisDataDifference.difference(theValues[iIndex], pOriginal.theValues[iIndex]);
             if (myDiff == MetisDataDifference.DIFFERENT) {
                 return myDiff;
             }

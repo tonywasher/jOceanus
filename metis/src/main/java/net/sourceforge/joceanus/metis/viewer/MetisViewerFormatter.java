@@ -391,7 +391,7 @@ public class MetisViewerFormatter {
             while (myIterator.hasNext()
                    && (myCount-- > 0)) {
                 /* Access the key and value */
-                final Entry<?, ?> myEntry = Map.Entry.class.cast(myIterator.next());
+                final Entry<?, ?> myEntry = (Entry<?, ?>) myIterator.next();
 
                 /* Format the row */
                 theBuilder.newTableRow();

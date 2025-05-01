@@ -41,7 +41,7 @@ public class CoeusRateSetterRepair {
     /**
      * The Comparator.
      */
-    private static final Comparator<CoeusRateSetterLoan> LOAN_COMPARATOR = (l, r) -> l.getLoanBookItem().getStartDate().compareTo(r.getLoanBookItem().getStartDate());
+    private static final Comparator<CoeusRateSetterLoan> LOAN_COMPARATOR = Comparator.comparing(l -> l.getLoanBookItem().getStartDate());
 
     /**
      * No delay.

@@ -58,7 +58,7 @@ public class OceanusDecimalLocale {
     /**
      * The grouping size.
      */
-    private int theGroupingSize;
+    private final int theGroupingSize;
 
     /**
      * The grouping separator.

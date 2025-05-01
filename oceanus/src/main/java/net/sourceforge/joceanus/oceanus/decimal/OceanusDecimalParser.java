@@ -131,8 +131,8 @@ public class OceanusDecimalParser {
         final StringBuilder myWork = new StringBuilder(pValue.trim());
 
         /* If the value is negative, strip the leading minus sign */
-        final boolean isNegative = (myWork.length() > 0)
-                                   && (myWork.charAt(0) == pLocale.getMinusSign());
+        final boolean isNegative = !myWork.isEmpty()
+                                   && myWork.charAt(0) == pLocale.getMinusSign();
         if (isNegative) {
             myWork.deleteCharAt(0);
         }
@@ -248,7 +248,7 @@ public class OceanusDecimalParser {
         }
 
         /* Handle leading decimal point on value */
-        if (myWork.length() == 0) {
+        if (myWork.isEmpty()) {
             myWork.append(OceanusDecimalFormatter.CHAR_ZERO);
         }
 
@@ -413,8 +413,8 @@ public class OceanusDecimalParser {
         final StringBuilder myWork = new StringBuilder(pValue.trim());
 
         /* If the value is negative, strip the leading minus sign */
-        final boolean isNegative = (myWork.length() > 0)
-                                   && (myWork.charAt(0) == pLocale.getMinusSign());
+        final boolean isNegative = !myWork.isEmpty()
+                                   && myWork.charAt(0) == pLocale.getMinusSign();
         if (isNegative) {
             myWork.deleteCharAt(0);
         }
@@ -502,8 +502,8 @@ public class OceanusDecimalParser {
         final char myMinus = theLocale.getMinusSign();
 
         /* If we have a leading minus sign */
-        if ((myWork.length() > 0)
-            && (myWork.charAt(0) == myMinus)) {
+        if (!myWork.isEmpty()
+            && myWork.charAt(0) == myMinus) {
             /* Ensure there is no whitespace between minus sign and number */
             myWork.deleteCharAt(0);
             trimBuffer(myWork);
@@ -733,8 +733,7 @@ public class OceanusDecimalParser {
         }
 
         /* Parse the value */
-        final long myValue = parseLongValue(pValue, theLocale);
-        return Long.valueOf(myValue);
+        return parseLongValue(pValue, theLocale);
     }
 
     /**
@@ -753,13 +752,13 @@ public class OceanusDecimalParser {
         final long myValue = parseLongValue(pValue, theLocale);
 
         /* Check bounds */
-        if ((myValue > Integer.MAX_VALUE) || (myValue < Integer.MIN_VALUE)) {
+        if (myValue > Integer.MAX_VALUE || myValue < Integer.MIN_VALUE) {
             throw new IllegalArgumentException(ERROR_BOUNDS
                                                + pValue);
         }
 
         /* Return value */
-        return Integer.valueOf((int) myValue);
+        return (int) myValue;
     }
 
     /**
@@ -793,7 +792,7 @@ public class OceanusDecimalParser {
      */
     private static void trimBuffer(final StringBuilder pBuffer) {
         /* Remove leading blanks */
-        while (pBuffer.length() > 0
+        while (!pBuffer.isEmpty()
                && Character.isWhitespace(pBuffer.charAt(0))) {
             pBuffer.deleteCharAt(0);
         }

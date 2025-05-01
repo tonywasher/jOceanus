@@ -641,7 +641,7 @@ public class OceanusDecimal
      * maximum of the two.
      * @param pValue the value to add.
      * @return the resulting Decimal
-     * @see BigDecimal#add
+     * @see BigDecimal#add(BigDecimal)
      */
     public OceanusDecimal add(final OceanusDecimal pValue) {
         /* Create the new decimal */
@@ -693,7 +693,7 @@ public class OceanusDecimal
      * the sum of the two.
      * @param pValue the value to multiply by.
      * @return the resulting Decimal
-     * @see BigDecimal#multiply
+     * @see BigDecimal#multiply(BigDecimal)
      */
     public OceanusDecimal multiply(final OceanusDecimal pValue) {
         /* Create the new decimal at the correct scale */
@@ -722,7 +722,7 @@ public class OceanusDecimal
      * Decimal.
      * @param pValue the value to divide by.
      * @return the resulting Decimal
-     * @see BigDecimal#divide
+     * @see BigDecimal#divide(BigDecimal)
      */
     public OceanusDecimal divide(final OceanusDecimal pValue) {
         /* Create the new decimal at the correct scale */
@@ -749,7 +749,7 @@ public class OceanusDecimal
      * Returns a new Decimal whose value is the integral part of (this / pValue).
      * @param pValue the value to divide by.
      * @return the resulting Decimal
-     * @see BigDecimal#divide
+     * @see BigDecimal#divide(BigDecimal)
      */
     public OceanusDecimal divideToIntegralValue(final OceanusDecimal pValue) {
         /* Create the new decimal at the correct scale */

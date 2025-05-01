@@ -75,7 +75,7 @@ public class CoeusLendingWorksLoan
     }
 
     @Override
-    protected void checkLoan() throws CoeusDataException {
+    protected void checkLoan() {
         /* NoOp */
     }
 

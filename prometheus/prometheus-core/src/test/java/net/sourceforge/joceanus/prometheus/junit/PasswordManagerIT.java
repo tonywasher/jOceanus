@@ -24,7 +24,7 @@ import java.util.Map;
 /**
  * Security Test suite - Test SecurityManager functionality.
  */
-class PasswordManagerTest {
+class PasswordManagerIT {
     /**
      * The List of password names.
      */

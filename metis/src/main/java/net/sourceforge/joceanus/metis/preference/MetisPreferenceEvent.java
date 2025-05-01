@@ -28,5 +28,5 @@ public enum MetisPreferenceEvent {
     /**
      * NewPreferenceSet.
      */
-    NEWSET;
+    NEWSET
 }

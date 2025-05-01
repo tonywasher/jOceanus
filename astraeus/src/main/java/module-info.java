@@ -20,5 +20,6 @@
  */
 module net.sourceforge.joceanus.astraeus {
     /* Exports */
+    exports net.sourceforge.joceanus.astraeus.exc;
     exports net.sourceforge.joceanus.astraeus.jar;
 }

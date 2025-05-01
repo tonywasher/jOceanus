@@ -252,7 +252,7 @@ public enum MetisViewerResource
      * @param pEntry the entry
      * @return the resource key
      */
-    protected static OceanusBundleId getKeyForStdEntry(final MetisViewerStandardEntry pEntry) {
+    static OceanusBundleId getKeyForStdEntry(final MetisViewerStandardEntry pEntry) {
         return OceanusBundleLoader.getKeyForEnum(ENTRY_MAP, pEntry);
     }
 }

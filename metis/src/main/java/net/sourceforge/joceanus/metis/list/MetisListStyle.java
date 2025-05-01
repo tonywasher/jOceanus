@@ -38,5 +38,5 @@ public enum MetisListStyle {
     /**
      * List of differences.
      */
-    DIFFER;
+    DIFFER
 }

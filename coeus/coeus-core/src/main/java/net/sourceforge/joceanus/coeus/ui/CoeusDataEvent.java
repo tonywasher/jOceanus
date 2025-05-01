@@ -48,5 +48,5 @@ public enum CoeusDataEvent {
     /**
      * SaveToFile.
      */
-    SAVETOFILE;
+    SAVETOFILE
 }

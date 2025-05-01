@@ -332,7 +332,7 @@ public abstract class CoeusTransaction
         /* If the value is non-zero */
         if (pValue.isNonZero()) {
             /* If we are not the first value */
-            if (pBuilder.length() > 0) {
+            if (!pBuilder.isEmpty()) {
                 /* Add a comma */
                 pBuilder.append(',');
             }
@@ -340,7 +340,7 @@ public abstract class CoeusTransaction
             /* Add it */
             pBuilder.append(pPrefix);
             pBuilder.append('=');
-            pBuilder.append(pValue.toString());
+            pBuilder.append(pValue);
         }
     }
 }

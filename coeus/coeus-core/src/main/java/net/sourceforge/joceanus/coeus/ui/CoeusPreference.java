@@ -93,7 +93,7 @@ public interface CoeusPreference {
         }
 
         @Override
-        protected void definePreferences() throws OceanusException {
+        protected void definePreferences() {
             defineDirectoryPreference(CoeusPreferenceKey.BASE);
             defineBooleanPreference(CoeusPreferenceKey.CALENDARYEAR);
         }

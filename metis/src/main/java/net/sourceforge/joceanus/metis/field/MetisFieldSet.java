@@ -511,12 +511,9 @@ public class MetisFieldSet<T extends MetisFieldItem>
         }
 
         /* Check class */
-        if (!(pThat instanceof MetisFieldSet)) {
+        if (!(pThat instanceof MetisFieldSet<?> myThat)) {
             return false;
         }
-
-        /* Access as MetisFieldSet */
-        final MetisFieldSet<?> myThat = (MetisFieldSet<?>) pThat;
 
         /* Must have same anchor id */
         return theAnchorId.equals(myThat.getAnchorId());

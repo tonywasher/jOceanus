@@ -228,15 +228,14 @@ public class MetisViewerControl
             isVisible = true;
 
             /* Build the text */
-            final StringBuilder myBuilder = new StringBuilder();
-            myBuilder.append(TEXT_ITEM);
-            myBuilder.append(CHAR_BLANK);
-            myBuilder.append(myPos);
-            myBuilder.append(CHAR_BLANK);
-            myBuilder.append(TEXT_OF);
-            myBuilder.append(CHAR_BLANK);
-            myBuilder.append(mySize);
-            theLabel.setText(myBuilder.toString());
+            final String myText = TEXT_ITEM
+                    + CHAR_BLANK
+                    + myPos
+                    + CHAR_BLANK
+                    + TEXT_OF
+                    + CHAR_BLANK
+                    + mySize;
+            theLabel.setText(myText);
 
             /* Configure the slider */
             theSlider.setMaximum(mySize - 1);

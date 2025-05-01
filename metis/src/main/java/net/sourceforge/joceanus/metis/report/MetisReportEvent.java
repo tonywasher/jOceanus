@@ -23,5 +23,5 @@ public enum MetisReportEvent {
     /**
      * Filter selected.
      */
-    FILTER;
+    FILTER
 }

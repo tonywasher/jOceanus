@@ -38,5 +38,5 @@ public enum MetisAction {
     /**
      * Do.
      */
-    DO;
+    DO
 }

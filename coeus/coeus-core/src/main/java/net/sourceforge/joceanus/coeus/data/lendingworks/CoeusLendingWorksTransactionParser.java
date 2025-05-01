@@ -90,14 +90,6 @@ public class CoeusLendingWorksTransactionParser
         return isAscending ? theTransactions.iterator() : new ReverseIterator<>(theTransactions);
     }
 
-    ///**
-    //* Obtain the transactions.
-    // * @return the transactions
-     ///*/
-    //ListIterator<CoeusLendingWorksTransaction> reverseTransactionIterator() {
-    //    return theTransactions.listIterator(theTransactions.size());
-    //}
-
     @Override
     public void parseFile(final Path pInput) throws OceanusException {
         theLastDate = null;

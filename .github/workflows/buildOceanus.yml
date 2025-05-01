@@ -1,9 +1,6 @@
 name: Maven CI/CD
 
 on:
-  label:
-    types:
-      - created
   push:
     branches:
       - main
@@ -22,14 +19,14 @@ jobs:
       - name: Build project with Maven
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: mvn -B package site site:stage sonar:sonar --file pom.xml
+        run: mvn -B verify site site:stage sonar:sonar --file pom.xml
       - name: Package HTML site
         uses: actions/upload-artifact@v4
         with:
           name: Site
-          path: staging
+          path: target/staging
       - name: Package distribution directory
         uses: actions/upload-artifact@v4
         with:
           name: Distribution
-          path: ../dist
+          path: dist

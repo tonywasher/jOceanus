@@ -223,7 +223,7 @@ public enum MetisDataResource
      * @param pValue the Value
      * @return the resource key
      */
-    protected static OceanusBundleId getKeyForDifference(final MetisDataDifference pValue) {
+    static OceanusBundleId getKeyForDifference(final MetisDataDifference pValue) {
         return OceanusBundleLoader.getKeyForEnum(DIFF_MAP, pValue);
     }
 
@@ -244,7 +244,7 @@ public enum MetisDataResource
      * @param pValue the Value
      * @return the resource key
      */
-    protected static OceanusBundleId getKeyForFieldValue(final MetisDataFieldValue pValue) {
+    static OceanusBundleId getKeyForFieldValue(final MetisDataFieldValue pValue) {
         return OceanusBundleLoader.getKeyForEnum(VALUE_MAP, pValue);
     }
 }

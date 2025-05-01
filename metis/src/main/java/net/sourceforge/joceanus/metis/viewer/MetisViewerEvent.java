@@ -38,5 +38,5 @@ public enum MetisViewerEvent {
     /**
      * Focus.
      */
-    FOCUS;
+    FOCUS
 }

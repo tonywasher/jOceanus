@@ -224,9 +224,8 @@ public class CoeusReportAnnual
     @Override
     public CoeusFilter processFilter(final Object pSource) {
         /* If this is a Loan */
-        if (pSource instanceof CoeusFilterDefinition) {
+        if (pSource instanceof CoeusFilterDefinition myDef) {
             /* Create the new filter */
-            final CoeusFilterDefinition myDef = (CoeusFilterDefinition) pSource;
             final CoeusAnnualFilter myFilter = new CoeusAnnualFilter(theMarket, theMarket.getDateRange().getEnd());
             myFilter.setMonth(myDef.getMonth());
             myFilter.setTotalSet(myDef.getTotalSet());
@@ -289,7 +288,7 @@ public class CoeusReportAnnual
             final StringBuilder myBuilder = new StringBuilder("total");
             myBuilder.append(theTotalSet.toString());
             if (theMonth != null) {
-                myBuilder.append(theMonth.toString());
+                myBuilder.append(theMonth);
             }
             return myBuilder.toString();
         }

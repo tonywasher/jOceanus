@@ -36,6 +36,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * RateSetter LoanBook Parser.
@@ -144,12 +145,13 @@ public class CoeusRateSetterLoanBookParser {
             final Elements myTables = myNewTables.isEmpty() ? myOldTables : myNewTables;
 
             /* select the body of the last of the tables */
-            final Element myBody = myTables.last().select("tbody").first();
-            final Element myFirstCol = myTables.last().select("th").first();
+            final Element myLast = Objects.requireNonNull(myTables.last());
+            final Element myBody = Objects.requireNonNull(myLast.select("tbody").first());
+            final Element myFirstCol = Objects.requireNonNull(myLast.select("th").first());
             final boolean isNewStyle = !"Contract".equals(myFirstCol.text());
 
             /* Determine whether these loans are repaid or active */
-            final boolean isRepaid = !myBody.parent().hasClass("tablesorter");
+            final boolean isRepaid = !Objects.requireNonNull(myBody.parent()).hasClass("tablesorter");
 
             /* Obtain a list of rows */
             final List<Element> myRows = new ArrayList<>();
@@ -195,12 +197,9 @@ public class CoeusRateSetterLoanBookParser {
         /* Loop through the childNodes */
         for (final Node myNode : pElement.childNodes()) {
             /* If this is an element */
-            if (myNode instanceof Element) {
-                /* If it is a required child */
-                final Element myChild = (Element) myNode;
-                if (pName.equals(myNode.nodeName())) {
+            if (myNode instanceof Element myChild
+                  && pName.equals(myNode.nodeName())) {
                     pList.add(myChild);
-                }
             }
         }
     }
@@ -213,17 +212,14 @@ public class CoeusRateSetterLoanBookParser {
     String childElementText(final Element pElement) {
         /* Reset string builder */
         final StringBuilder myBuilder = new StringBuilder();
-        final Element myRow = pElement.select("tr").first();
+        final Element myRow = Objects.requireNonNull(pElement.select("tr").first());
 
         /* Loop through the childNodes */
         for (final Node myNode : myRow.childNodes()) {
             /* If this is an element */
-            if (myNode instanceof Element) {
-                /* If it is a required child */
-                final Element myChild = (Element) myNode;
-                if ("td".equals(myNode.nodeName())) {
+            if (myNode instanceof Element myChild
+                  && "td".equals(myNode.nodeName())) {
                     myBuilder.append(myChild.text());
-                }
             }
         }
 

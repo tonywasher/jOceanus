@@ -33,7 +33,7 @@ public enum MetisViewerStyleSheet
     /**
      * The Source.
      */
-    private String theSource;
+    private final String theSource;
 
     /**
      * Constructor.

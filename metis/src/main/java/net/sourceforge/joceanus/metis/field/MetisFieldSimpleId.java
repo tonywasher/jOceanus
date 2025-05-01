@@ -64,12 +64,9 @@ public class MetisFieldSimpleId
         }
 
         /* Check class */
-        if (!(pThat instanceof MetisFieldSimpleId)) {
+        if (!(pThat instanceof MetisFieldSimpleId myThat)) {
             return false;
         }
-
-        /* Access as MetisFieldSimpleId */
-        final MetisFieldSimpleId myThat = (MetisFieldSimpleId) pThat;
 
         /* Check the Id is the same */
         return theId.equals(myThat.theId);
