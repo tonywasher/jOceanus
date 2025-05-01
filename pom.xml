@@ -309,11 +309,11 @@
           </execution>
         </executions>
       </plugin>
-      <plugin>
+      <!--<plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-gpg-plugin</artifactId>
         <version>${GPGPluginVersion}</version>
-      </plugin>
+      </plugin>-->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-clean-plugin</artifactId>
@@ -437,20 +437,20 @@
             </execution>
           </executions>
         </plugin>
-        <plugin>
+        <!--<plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-gpg-plugin</artifactId>
           <version>${GPGPluginVersion}</version>
           <executions>
             <execution>
               <id>sign-artifacts</id>
-              <phase>verify</phase>
+              <phase>install</phase>
               <goals>
                 <goal>sign</goal>
               </goals>
             </execution>
           </executions>
-        </plugin>
+        </plugin>-->
       </plugins>
     </pluginManagement>
   </build>
