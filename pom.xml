@@ -115,7 +115,6 @@
     <CheckStylePluginVersion>3.6.0</CheckStylePluginVersion>
     <PMDPluginVersion>3.26.0</PMDPluginVersion>
     <JacocoPluginVersion>0.8.13</JacocoPluginVersion>
-    <GPGPluginVersion>3.2.7</GPGPluginVersion>
     <JetBrainsAnnotationsVersion>26.0.2</JetBrainsAnnotationsVersion>
     <VersionsPluginVersion>2.18.0</VersionsPluginVersion>
     <sonar.organization>tonywasher</sonar.organization>
@@ -309,11 +308,6 @@
           </execution>
         </executions>
       </plugin>
-      <!--<plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-gpg-plugin</artifactId>
-        <version>${GPGPluginVersion}</version>
-      </plugin>-->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-clean-plugin</artifactId>
@@ -437,20 +431,6 @@
             </execution>
           </executions>
         </plugin>
-        <!--<plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-gpg-plugin</artifactId>
-          <version>${GPGPluginVersion}</version>
-          <executions>
-            <execution>
-              <id>sign-artifacts</id>
-              <phase>install</phase>
-              <goals>
-                <goal>sign</goal>
-              </goals>
-            </execution>
-          </executions>
-        </plugin>-->
       </plugins>
     </pluginManagement>
   </build>
