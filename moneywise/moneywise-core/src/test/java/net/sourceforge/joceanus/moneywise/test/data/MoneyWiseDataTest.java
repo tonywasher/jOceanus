@@ -59,7 +59,7 @@ import java.util.stream.Stream;
 /**
  * Test security.
  */
-public class MoneyWiseDataIT {
+public class MoneyWiseDataTest {
     /**
      * Create the keySet test suite.
      * @return the test stream

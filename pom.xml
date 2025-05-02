@@ -190,9 +190,6 @@
         <version>${SurefirePluginVersion}</version>
         <configuration>
           <argLine>${jOceanusEnv} ${argLine}</argLine>
-          <excludes>
-            <exclude/>
-          </excludes>
         </configuration>
       </plugin>
       <plugin>

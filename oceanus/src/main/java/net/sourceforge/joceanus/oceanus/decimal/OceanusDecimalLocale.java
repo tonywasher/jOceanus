@@ -110,7 +110,7 @@ public class OceanusDecimalLocale {
     protected OceanusDecimalLocale(final Locale pLocale) {
         /* Default to UK locale if the locale only has a pseudo-currency */
         DecimalFormatSymbols mySymbols = DecimalFormatSymbols.getInstance(pLocale);
-        Currency myCurrency = mySymbols.getCurrency();
+        final Currency myCurrency = mySymbols.getCurrency();
         theLocale = myCurrency.getDefaultFractionDigits() == -1
                 ? Locale.UK
                 : pLocale;
