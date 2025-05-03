@@ -6,6 +6,7 @@ dependencies {
     implementation project(':gordianknot')
     implementation project(':tethys-core')
     implementation project(':oceanus')
+    testImplementation "org.junit.jupiter:junit-jupiter:$jUnitVersion"
 }
 
 /* Description */

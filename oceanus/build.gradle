@@ -1,4 +1,9 @@
 /* Dependencies */
+dependencies {
+    testImplementation "org.junit.jupiter:junit-jupiter:$jUnitVersion"
+}
+
+/* Description */
 description = 'Oceanus Core Utilities'
 
 /* Register the project */
