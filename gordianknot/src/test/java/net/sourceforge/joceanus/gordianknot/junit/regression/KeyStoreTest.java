@@ -169,7 +169,6 @@ class KeyStoreTest {
             signedKeyPairRequestTest(myState, GordianKeyPairSpecBuilder.mldsa(GordianMLDSASpec.MLDSA44)),
             signedKeyPairRequestTest(myState, GordianKeyPairSpecBuilder.falcon(GordianFALCONSpec.FALCON512)),
             signedKeyPairRequestTest(myState, GordianKeyPairSpecBuilder.picnic(GordianPICNICSpec.L1FS)),
-            //signedKeyPairRequestTest(myState, GordianKeyPairSpecBuilder.rainbow(GordianRainbowSpec.CLASSIC3)),
             signedKeyPairRequestTest(myState, GordianKeyPairSpecBuilder.xmss(GordianXMSSDigestType.SHA512, GordianXMSSHeight.H10)),
             signedKeyPairRequestTest(myState, GordianKeyPairSpecBuilder.lms(new GordianLMSKeySpec(GordianLMSHash.SHA256, GordianLMSHeight.H5,
                                                                                            GordianLMSWidth.W1, GordianLength.LEN_256))),

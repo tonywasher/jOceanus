@@ -566,27 +566,6 @@ public abstract class JcaSignature
     }
 
     /**
-     * Rainbow signature.
-     */
-    static class JcaRainbowSignature
-            extends JcaSignature {
-        /**
-         * Constructor.
-         * @param pFactory the factory
-         * @param pSignatureSpec the signatureSpec
-         * @throws GordianException on error
-         */
-        JcaRainbowSignature(final GordianCoreFactory pFactory,
-                            final GordianSignatureSpec pSignatureSpec) throws GordianException {
-            /* Initialise class */
-            super(pFactory, pSignatureSpec);
-
-            /* Create the signature class */
-            setSigner(JcaSignatureFactory.getJavaSignature("RAINBOW", true));
-        }
-    }
-
-    /**
      * XMSS signature.
      */
     static class JcaXMSSSignature

@@ -142,14 +142,6 @@ public final class GordianSignatureSpecBuilder {
     }
 
     /**
-     * Create rainbowSpec.
-     * @return the SignatureSpec
-     */
-    public static GordianSignatureSpec rainbow() {
-        return new GordianSignatureSpec(GordianKeyPairType.RAINBOW, GordianSignatureType.NATIVE);
-    }
-
-    /**
      * Create xmssSpec.
      * @return the SignatureSpec
      */

@@ -388,8 +388,6 @@ public abstract class GordianCoreSignatureFactory
                 return GordianSignatureSpecBuilder.falcon();
             case PICNIC:
                 return GordianSignatureSpecBuilder.picnic();
-            case RAINBOW:
-                return GordianSignatureSpecBuilder.rainbow();
             case XMSS:
                 return GordianSignatureSpecBuilder.xmss();
             case LMS:

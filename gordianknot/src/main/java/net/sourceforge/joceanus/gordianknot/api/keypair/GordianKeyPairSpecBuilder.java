@@ -299,15 +299,6 @@ public final class GordianKeyPairSpecBuilder {
     }
 
     /**
-     * Create RainbowKey.
-     * @param pSpec the Rainbow Spec
-     * @return the KeySpec
-     */
-    public static GordianKeyPairSpec rainbow(final GordianRainbowSpec pSpec) {
-        return new GordianKeyPairSpec(GordianKeyPairType.RAINBOW, pSpec);
-    }
-
-    /**
      * Create CompositeKey.
      * @param pSpecs the list of keySpecs
      * @return the KeySpec

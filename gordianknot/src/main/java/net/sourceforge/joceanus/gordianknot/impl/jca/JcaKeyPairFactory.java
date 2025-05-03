@@ -178,8 +178,6 @@ public class JcaKeyPairFactory
                 return new JcaFALCONKeyPairGenerator(getFactory(), pKeySpec);
             case PICNIC:
                 return new JcaPICNICKeyPairGenerator(getFactory(), pKeySpec);
-            //case RAINBOW:
-            //    return new JcaRainbowKeyPairGenerator(getFactory(), pKeySpec);
             case XMSS:
                 return new JcaXMSSKeyPairGenerator(getFactory(), pKeySpec);
             case LMS:

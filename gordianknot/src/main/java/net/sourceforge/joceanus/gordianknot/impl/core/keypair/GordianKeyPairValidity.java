@@ -186,7 +186,6 @@ public final class GordianKeyPairValidity {
             case MLDSA:
             case FALCON:
             case PICNIC:
-            case RAINBOW:
             case XMSS:
             case LMS:
                 return pFactory.getKeyPairFactory().getSignatureFactory().defaultForKeyPair(mySpec);

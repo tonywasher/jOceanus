@@ -143,11 +143,6 @@ public enum GordianKeyPairType {
     PICNIC,
 
     /**
-     * Rainbow.
-     */
-    RAINBOW,
-
-    /**
      * NewHope.
      */
     NEWHOPE,
@@ -184,7 +179,6 @@ public enum GordianKeyPairType {
             case XMSS:
             case EDDSA:
             case LMS:
-            case RAINBOW:
                 return GordianRequired.NEVER;
             case PICNIC:
                 return GordianRequired.POSSIBLE;
@@ -226,7 +220,6 @@ public enum GordianKeyPairType {
             case SABER:
             case CMCE:
             case FALCON:
-            case RAINBOW:
             case NTRU:
             case NTRUPRIME:
             case HQC:

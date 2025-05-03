@@ -38,7 +38,6 @@ import net.sourceforge.joceanus.gordianknot.api.keypair.GordianNTRUPrimeSpec.Gor
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianNTRUSpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianPICNICSpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianRSAModulus;
-import net.sourceforge.joceanus.gordianknot.api.keypair.GordianRainbowSpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianSABERSpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianSLHDSASpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianSM2Elliptic;
@@ -172,7 +171,6 @@ public class GordianKeyPairAlgId {
         GordianNTRUPrimeEncodedParser.register(this);
         GordianFalconEncodedParser.register(this);
         GordianPicnicEncodedParser.register(this);
-        GordianRainbowEncodedParser.register(this);
         GordianCompositeEncodedParser.register(this);
     }
 
@@ -1095,44 +1093,6 @@ public class GordianKeyPairAlgId {
         static void register(final GordianKeyPairAlgId pIdManager) {
             for (GordianPICNICSpec mySpec : GordianPICNICSpec.values()) {
                 pIdManager.registerParser(mySpec.getIdentifier(), new GordianPicnicEncodedParser(GordianKeyPairSpecBuilder.picnic(mySpec)));
-            }
-        }
-
-        @Override
-        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws GordianException {
-            return theKeySpec;
-        }
-
-        @Override
-        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws GordianException {
-            return theKeySpec;
-        }
-    }
-
-    /**
-     * Rainbow Encoded parser.
-     */
-    private static class GordianRainbowEncodedParser implements GordianEncodedParser {
-        /**
-         * AsymKeySpec.
-         */
-        private final GordianKeyPairSpec theKeySpec;
-
-        /**
-         * Constructor.
-         * @param pKeySpec the keySpec
-         */
-        GordianRainbowEncodedParser(final GordianKeyPairSpec pKeySpec) {
-            theKeySpec = pKeySpec;
-        }
-
-        /**
-         * Registrar.
-         * @param pIdManager the idManager
-         */
-        static void register(final GordianKeyPairAlgId pIdManager) {
-            for (GordianRainbowSpec mySpec : GordianRainbowSpec.values()) {
-                pIdManager.registerParser(mySpec.getIdentifier(), new GordianRainbowEncodedParser(GordianKeyPairSpecBuilder.rainbow(mySpec)));
             }
         }
 

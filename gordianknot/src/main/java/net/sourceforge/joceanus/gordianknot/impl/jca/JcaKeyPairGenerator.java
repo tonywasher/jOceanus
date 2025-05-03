@@ -1002,56 +1002,6 @@ public abstract class JcaKeyPairGenerator
         }
     }
 
-    /**
-     * Jca Rainbow KeyPair generator.
-     */
-    //public static class JcaRainbowKeyPairGenerator
-    //        extends JcaKeyPairGenerator {
-        /**
-         * Rainbow algorithm.
-         */
-    //    private static final String RAINBOW_ALGO = "RAINBOW";
-
-        /**
-         * Generator.
-         */
-    //    private final KeyPairGenerator theGenerator;
-
-        /**
-         * Constructor.
-         * @param pFactory the Security Factory
-         * @param pKeySpec the keySpec
-         * @throws GordianException on error
-         */
-     //   JcaRainbowKeyPairGenerator(final JcaFactory pFactory,
-     //                              final GordianKeyPairSpec pKeySpec) throws GordianException {
-            /* Initialise underlying class */
-     //       super(pFactory, pKeySpec);
-
-            /* Protect against exceptions */
-     //       try {
-                /* Create and initialise the generator */
-     //           theGenerator = JcaKeyPairFactory.getJavaKeyPairGenerator(RAINBOW_ALGO, true);
-     //           final RainbowParameterSpec myParms = pKeySpec.getRainbowKeySpec().getParameterSpec();
-     //           theGenerator.initialize(myParms, getRandom());
-
-                /* Create the factory */
-     //           setKeyFactory(JcaKeyPairFactory.getJavaKeyFactory(RAINBOW_ALGO, true));
-
-     //       } catch (InvalidAlgorithmParameterException e) {
-     //           throw new GordianCryptoException("Failed to create Rainbowgenerator", e);
-     //       }
-     //   }
-
-     //   @Override
-     //   public JcaKeyPair generateKeyPair() {
-            /* Generate and return the keyPair */
-     //       final KeyPair myPair = theGenerator.generateKeyPair();
-     //       final JcaPublicKey myPublic = createPublic(myPair.getPublic());
-     //       final JcaPrivateKey myPrivate = createPrivate(myPair.getPrivate());
-     //       return new JcaKeyPair(myPublic, myPrivate);
-     //   }
-    //}
 
     /**
      * Jca NTRULPrime KeyPair generator.

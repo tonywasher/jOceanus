@@ -318,17 +318,6 @@ public class GordianKeyPairSpec {
     }
 
     /**
-     * Obtain the Rainbow keySpec.
-     * @return the keySpec.
-     */
-    public GordianRainbowSpec getRainbowKeySpec() {
-        if (theSubKeyType instanceof GordianRainbowSpec mySpec) {
-            return mySpec;
-        }
-        throw new IllegalArgumentException();
-    }
-
-    /**
      * Obtain the composite keySpec iterator.
      * @return the keySpec iterator.
      */
@@ -464,8 +453,6 @@ public class GordianKeyPairSpec {
                 return theSubKeyType instanceof GordianFALCONSpec;
             case PICNIC:
                 return theSubKeyType instanceof GordianPICNICSpec;
-            case RAINBOW:
-                return theSubKeyType instanceof GordianRainbowSpec;
             case NEWHOPE:
                 return theSubKeyType == null;
             case LMS:
