@@ -5,6 +5,7 @@ dependencies {
     testImplementation project(':coeus-swing')
     testImplementation project(':coeus-javafx')
     testImplementation project(':themis-javafx')
+    testImplementation "org.junit.jupiter:junit-jupiter:$jUnitVersion"
 }
 
 /* Description */

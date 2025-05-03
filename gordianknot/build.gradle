@@ -3,6 +3,8 @@ dependencies {
     implementation "org.bouncycastle:bcprov-jdk18on:$bouncyCastleVersion"
     implementation "org.bouncycastle:bcutil-jdk18on:$bouncyCastleVersion"
     implementation "org.bouncycastle:bcpg-jdk18on:$bouncyCastleVersion"
+    testImplementation "org.junit.jupiter:junit-jupiter:$jUnitVersion"
+    testImplementation "org.junit.platform:junit-platform-suite:$jUnitPlatformVersion"
 }
 
 /* Description */
@@ -18,6 +20,16 @@ sourceSets {
             srcDir 'src/embedded/java'
             srcDir 'src/patch/java'
         }
+    }
+}
+
+test {
+    maxParallelForks = 4
+    forkEvery = 1
+
+    filter {
+        //include only testSuites
+        includeTestsMatching "*TestSuite"
     }
 }
 

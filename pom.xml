@@ -77,6 +77,7 @@
     <appLibDir>lib/</appLibDir>
     <BouncyCastleVersion>1.80</BouncyCastleVersion>
     <JUnitVersion>5.12.1</JUnitVersion>
+    <JUnitPlatformVersion>1.12.2</JUnitPlatformVersion>
     <JSONVersion>20250107</JSONVersion>
     <ApacheMavenVersion>3.9.9</ApacheMavenVersion>
     <MySQLVersion>9.3.0</MySQLVersion>
@@ -190,6 +191,25 @@
         <version>${SurefirePluginVersion}</version>
         <configuration>
           <argLine>${jOceanusEnv} ${argLine}</argLine>
+          <statelessTestsetReporter implementation="org.apache.maven.plugin.surefire.extensions.junit5.JUnit5Xml30StatelessReporter">
+            <disable>false</disable>
+            <version>3.0.2</version>
+            <usePhrasedFileName>false</usePhrasedFileName>
+            <usePhrasedTestSuiteClassName>true</usePhrasedTestSuiteClassName>
+            <usePhrasedTestCaseClassName>true</usePhrasedTestCaseClassName>
+            <usePhrasedTestCaseMethodName>true</usePhrasedTestCaseMethodName>
+          </statelessTestsetReporter>
+          <consoleOutputReporter implementation="org.apache.maven.plugin.surefire.extensions.junit5.JUnit5ConsoleOutputReporter">
+            <disable>false</disable>
+            <encoding>UTF-8</encoding>
+            <usePhrasedFileName>false</usePhrasedFileName>
+          </consoleOutputReporter>
+          <statelessTestsetInfoReporter implementation="org.apache.maven.plugin.surefire.extensions.junit5.JUnit5StatelessTestsetInfoReporter">
+            <disable>false</disable>
+            <usePhrasedFileName>false</usePhrasedFileName>
+            <usePhrasedClassNameInRunning>true</usePhrasedClassNameInRunning>
+            <usePhrasedClassNameInTestCaseSummary>true</usePhrasedClassNameInTestCaseSummary>
+          </statelessTestsetInfoReporter>
         </configuration>
       </plugin>
       <plugin>

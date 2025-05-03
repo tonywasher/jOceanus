@@ -52,6 +52,12 @@
       <version>${JUnitVersion}</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.junit.platform</groupId>
+      <artifactId>junit-platform-suite</artifactId>
+      <version>${JUnitPlatformVersion}</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
   <properties>
     <scmComponent>gordianknot</scmComponent>
@@ -79,6 +85,17 @@
             </configuration>
           </execution>
         </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <includes>
+            <include>**/*TestSuite</include>
+          </includes>
+          <forkCount>4</forkCount>
+          <reuseForks>false</reuseForks>
+        </configuration>
       </plugin>
     </plugins>
   </build>
