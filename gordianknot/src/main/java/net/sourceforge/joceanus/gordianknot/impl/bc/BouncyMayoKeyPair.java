@@ -267,7 +267,7 @@ public final class BouncyMayoKeyPair {
     public static class BouncyMayoSignature
             extends BouncyDigestSignature {
         /**
-         * The SPHINCSPlus Signer.
+         * The Mayo Signer.
          */
         private final MayoSigner theSigner;
 

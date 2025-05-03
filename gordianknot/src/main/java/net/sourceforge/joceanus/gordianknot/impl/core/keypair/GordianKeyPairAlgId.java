@@ -23,7 +23,7 @@ import net.sourceforge.joceanus.gordianknot.api.keypair.GordianDHGroup;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianDSAElliptic;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianDSAKeyType;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianDSTU4145Elliptic;
-import net.sourceforge.joceanus.gordianknot.api.keypair.GordianFALCONSpec;
+import net.sourceforge.joceanus.gordianknot.api.keypair.GordianFalconSpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianFRODOSpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianGOSTElliptic;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianHQCSpec;
@@ -37,7 +37,7 @@ import net.sourceforge.joceanus.gordianknot.api.keypair.GordianNTRUPrimeSpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianNTRUPrimeSpec.GordianNTRUPrimeParams;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianNTRUPrimeSpec.GordianNTRUPrimeType;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianNTRUSpec;
-import net.sourceforge.joceanus.gordianknot.api.keypair.GordianPICNICSpec;
+import net.sourceforge.joceanus.gordianknot.api.keypair.GordianPicnicSpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianRSAModulus;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianSABERSpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianSLHDSASpec;
@@ -1055,7 +1055,7 @@ public class GordianKeyPairAlgId {
          * @param pIdManager the idManager
          */
         static void register(final GordianKeyPairAlgId pIdManager) {
-            for (GordianFALCONSpec mySpec : GordianFALCONSpec.values()) {
+            for (GordianFalconSpec mySpec : GordianFalconSpec.values()) {
                 pIdManager.registerParser(mySpec.getIdentifier(), new GordianFalconEncodedParser(GordianKeyPairSpecBuilder.falcon(mySpec)));
             }
         }
@@ -1131,7 +1131,7 @@ public class GordianKeyPairAlgId {
          * @param pIdManager the idManager
          */
         static void register(final GordianKeyPairAlgId pIdManager) {
-            for (GordianPICNICSpec mySpec : GordianPICNICSpec.values()) {
+            for (GordianPicnicSpec mySpec : GordianPicnicSpec.values()) {
                 pIdManager.registerParser(mySpec.getIdentifier(), new GordianPicnicEncodedParser(GordianKeyPairSpecBuilder.picnic(mySpec)));
             }
         }

@@ -23,12 +23,12 @@ import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyDSAKeyPair.BouncyDSASi
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyDSTUKeyPair.BouncyDSTUSignature;
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyEdDSAKeyPair.BouncyEdDSASignature;
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyEllipticKeyPair.BouncyECSignature;
-import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyFALCONKeyPair.BouncyFALCONSignature;
+import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyFalconKeyPair.BouncyFalconSignature;
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyGOSTKeyPair.BouncyGOSTSignature;
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyLMSKeyPair.BouncyLMSSignature;
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyMLDSAKeyPair.BouncyMLDSASignature;
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyMayoKeyPair.BouncyMayoSignature;
-import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyPICNICKeyPair.BouncyPICNICSignature;
+import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyPicnicKeyPair.BouncyPicnicSignature;
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyRSAKeyPair.BouncyRSASignature;
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncySLHDSAKeyPair.BouncySLHDSASignature;
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncySM2KeyPair.BouncySM2Signature;
@@ -102,11 +102,11 @@ public class BouncySignatureFactory
             case MLDSA:
                 return new BouncyMLDSASignature(getFactory(), pSignatureSpec);
             case FALCON:
-                return new BouncyFALCONSignature(getFactory(), pSignatureSpec);
+                return new BouncyFalconSignature(getFactory(), pSignatureSpec);
             case MAYO:
                 return new BouncyMayoSignature(getFactory(), pSignatureSpec);
             case PICNIC:
-                return new BouncyPICNICSignature(getFactory(), pSignatureSpec);
+                return new BouncyPicnicSignature(getFactory(), pSignatureSpec);
             case XMSS:
                 return new BouncyXMSSSignature(getFactory(), pSignatureSpec);
             case LMS:

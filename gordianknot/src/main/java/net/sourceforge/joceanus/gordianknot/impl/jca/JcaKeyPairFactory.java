@@ -33,7 +33,7 @@ import net.sourceforge.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaDSAK
 import net.sourceforge.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaECKeyPairGenerator;
 import net.sourceforge.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaEdKeyPairGenerator;
 import net.sourceforge.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaElGamalKeyPairGenerator;
-import net.sourceforge.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaFALCONKeyPairGenerator;
+import net.sourceforge.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaFalconKeyPairGenerator;
 import net.sourceforge.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaFrodoKeyPairGenerator;
 import net.sourceforge.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaHQCKeyPairGenerator;
 import net.sourceforge.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaLMSKeyPairGenerator;
@@ -43,7 +43,7 @@ import net.sourceforge.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaMayo
 import net.sourceforge.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaNTRUKeyPairGenerator;
 import net.sourceforge.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaNTRULPrimeKeyPairGenerator;
 import net.sourceforge.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaNewHopeKeyPairGenerator;
-import net.sourceforge.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaPICNICKeyPairGenerator;
+import net.sourceforge.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaPicnicKeyPairGenerator;
 import net.sourceforge.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaRSAKeyPairGenerator;
 import net.sourceforge.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaSABERKeyPairGenerator;
 import net.sourceforge.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaSLHDSAKeyPairGenerator;
@@ -176,11 +176,11 @@ public class JcaKeyPairFactory
                         ? new JcaNTRULPrimeKeyPairGenerator(getFactory(), pKeySpec)
                         : new JcaSNTRUPrimeKeyPairGenerator(getFactory(), pKeySpec);
             case FALCON:
-                return new JcaFALCONKeyPairGenerator(getFactory(), pKeySpec);
+                return new JcaFalconKeyPairGenerator(getFactory(), pKeySpec);
             case MAYO:
                 return new JcaMayoKeyPairGenerator(getFactory(), pKeySpec);
             case PICNIC:
-                return new JcaPICNICKeyPairGenerator(getFactory(), pKeySpec);
+                return new JcaPicnicKeyPairGenerator(getFactory(), pKeySpec);
             case XMSS:
                 return new JcaXMSSKeyPairGenerator(getFactory(), pKeySpec);
             case LMS:

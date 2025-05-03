@@ -24,7 +24,7 @@ import org.bouncycastle.pqc.jcajce.spec.FalconParameterSpec;
 /**
  * FALCON KeySpec.
  */
-public enum GordianFALCONSpec {
+public enum GordianFalconSpec {
     /**
      * Falcon 512.
      */

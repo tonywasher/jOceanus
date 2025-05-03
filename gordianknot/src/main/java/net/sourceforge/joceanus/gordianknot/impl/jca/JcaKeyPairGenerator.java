@@ -955,7 +955,7 @@ public abstract class JcaKeyPairGenerator
     /**
      * Jca Falcon KeyPair generator.
      */
-    public static class JcaFALCONKeyPairGenerator
+    public static class JcaFalconKeyPairGenerator
             extends JcaKeyPairGenerator {
         /**
          * FALCON algorithm.
@@ -973,7 +973,7 @@ public abstract class JcaKeyPairGenerator
          * @param pKeySpec the keySpec
          * @throws GordianException on error
          */
-        JcaFALCONKeyPairGenerator(final JcaFactory pFactory,
+        JcaFalconKeyPairGenerator(final JcaFactory pFactory,
                                   final GordianKeyPairSpec pKeySpec) throws GordianException {
             /* Initialise underlying class */
             super(pFactory, pKeySpec);
@@ -1159,7 +1159,7 @@ public abstract class JcaKeyPairGenerator
     /**
      * Jca Picnic KeyPair generator.
      */
-    public static class JcaPICNICKeyPairGenerator
+    public static class JcaPicnicKeyPairGenerator
             extends JcaKeyPairGenerator {
         /**
          * Picnic algorithm.
@@ -1177,7 +1177,7 @@ public abstract class JcaKeyPairGenerator
          * @param pKeySpec the keySpec
          * @throws GordianException on error
          */
-        JcaPICNICKeyPairGenerator(final JcaFactory pFactory,
+        JcaPicnicKeyPairGenerator(final JcaFactory pFactory,
                                   final GordianKeyPairSpec pKeySpec) throws GordianException {
             /* Initialise underlying class */
             super(pFactory, pKeySpec);

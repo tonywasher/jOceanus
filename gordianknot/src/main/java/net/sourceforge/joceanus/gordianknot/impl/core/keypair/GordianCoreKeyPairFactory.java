@@ -26,7 +26,7 @@ import net.sourceforge.joceanus.gordianknot.api.keypair.GordianDHGroup;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianDSAElliptic;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianDSAKeyType;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianDSTU4145Elliptic;
-import net.sourceforge.joceanus.gordianknot.api.keypair.GordianFALCONSpec;
+import net.sourceforge.joceanus.gordianknot.api.keypair.GordianFalconSpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianFRODOSpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianGOSTElliptic;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianHQCSpec;
@@ -41,7 +41,7 @@ import net.sourceforge.joceanus.gordianknot.api.keypair.GordianMLKEMSpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianMayoSpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianNTRUPrimeSpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianNTRUSpec;
-import net.sourceforge.joceanus.gordianknot.api.keypair.GordianPICNICSpec;
+import net.sourceforge.joceanus.gordianknot.api.keypair.GordianPicnicSpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianRSAModulus;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianSABERSpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianSLHDSASpec;
@@ -298,9 +298,9 @@ public abstract class GordianCoreKeyPairFactory
         EnumSet.allOf(GordianHQCSpec.class).forEach(t -> mySpecs.add(GordianKeyPairSpecBuilder.hqc(t)));
         EnumSet.allOf(GordianBIKESpec.class).forEach(t -> mySpecs.add(GordianKeyPairSpecBuilder.bike(t)));
         EnumSet.allOf(GordianNTRUSpec.class).forEach(t -> mySpecs.add(GordianKeyPairSpecBuilder.ntru(t)));
-        EnumSet.allOf(GordianFALCONSpec.class).forEach(t -> mySpecs.add(GordianKeyPairSpecBuilder.falcon(t)));
+        EnumSet.allOf(GordianFalconSpec.class).forEach(t -> mySpecs.add(GordianKeyPairSpecBuilder.falcon(t)));
         EnumSet.allOf(GordianMayoSpec.class).forEach(t -> mySpecs.add(GordianKeyPairSpecBuilder.mayo(t)));
-        EnumSet.allOf(GordianPICNICSpec.class).forEach(t -> mySpecs.add(GordianKeyPairSpecBuilder.picnic(t)));
+        EnumSet.allOf(GordianPicnicSpec.class).forEach(t -> mySpecs.add(GordianKeyPairSpecBuilder.picnic(t)));
 
         /* Add NTRUPrime */
         GordianNTRUPrimeSpec.listPossibleKeySpecs().forEach(t -> mySpecs.add(GordianKeyPairSpecBuilder.ntruprime(t)));

@@ -285,7 +285,7 @@ public final class GordianKeyPairSpecBuilder {
      * @param pSpec the FALCON Spec
      * @return the KeySpec
      */
-    public static GordianKeyPairSpec falcon(final GordianFALCONSpec pSpec) {
+    public static GordianKeyPairSpec falcon(final GordianFalconSpec pSpec) {
         return new GordianKeyPairSpec(GordianKeyPairType.FALCON, pSpec);
     }
 
@@ -294,7 +294,7 @@ public final class GordianKeyPairSpecBuilder {
      * @param pSpec the Picnic Spec
      * @return the KeySpec
      */
-    public static GordianKeyPairSpec picnic(final GordianPICNICSpec pSpec) {
+    public static GordianKeyPairSpec picnic(final GordianPicnicSpec pSpec) {
         return new GordianKeyPairSpec(GordianKeyPairType.PICNIC, pSpec);
     }
 

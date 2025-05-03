@@ -48,24 +48,24 @@ import java.util.Arrays;
 /**
  * PICNIC KeyPair classes.
  */
-public final class BouncyPICNICKeyPair {
+public final class BouncyPicnicKeyPair {
     /**
      * Private constructor.
      */
-    private BouncyPICNICKeyPair() {
+    private BouncyPicnicKeyPair() {
     }
 
     /**
      * Bouncy Picnic PublicKey.
      */
-    public static class BouncyPICNICPublicKey
+    public static class BouncyPicnicPublicKey
             extends BouncyPublicKey<PicnicPublicKeyParameters> {
         /**
          * Constructor.
          * @param pKeySpec the keySpec
          * @param pPublicKey the public key
          */
-        BouncyPICNICPublicKey(final GordianKeyPairSpec pKeySpec,
+        BouncyPicnicPublicKey(final GordianKeyPairSpec pKeySpec,
                               final PicnicPublicKeyParameters pPublicKey) {
             super(pKeySpec, pPublicKey);
         }
@@ -95,14 +95,14 @@ public final class BouncyPICNICKeyPair {
     /**
      * Bouncy Picnic PrivateKey.
      */
-    public static class BouncyPICNICPrivateKey
+    public static class BouncyPicnicPrivateKey
             extends BouncyPrivateKey<PicnicPrivateKeyParameters> {
         /**
          * Constructor.
          * @param pKeySpec the keySpec
          * @param pPrivateKey the private key
          */
-        BouncyPICNICPrivateKey(final GordianKeyPairSpec pKeySpec,
+        BouncyPicnicPrivateKey(final GordianKeyPairSpec pKeySpec,
                                final PicnicPrivateKeyParameters pPrivateKey) {
             super(pKeySpec, pPrivateKey);
         }
@@ -133,7 +133,7 @@ public final class BouncyPICNICKeyPair {
     /**
      * BouncyCastle Picnic KeyPair generator.
      */
-    public static class BouncyPICNICKeyPairGenerator
+    public static class BouncyPicnicKeyPairGenerator
             extends BouncyKeyPairGenerator {
         /**
          * Generator.
@@ -145,7 +145,7 @@ public final class BouncyPICNICKeyPair {
          * @param pFactory the Security Factory
          * @param pKeySpec the keySpec
          */
-        BouncyPICNICKeyPairGenerator(final BouncyFactory pFactory,
+        BouncyPicnicKeyPairGenerator(final BouncyFactory pFactory,
                                      final GordianKeyPairSpec pKeySpec) {
             /* Initialise underlying class */
             super(pFactory, pKeySpec);
@@ -163,8 +163,8 @@ public final class BouncyPICNICKeyPair {
         public BouncyKeyPair generateKeyPair() {
             /* Generate and return the keyPair */
             final AsymmetricCipherKeyPair myPair = theGenerator.generateKeyPair();
-            final BouncyPICNICPublicKey myPublic = new BouncyPICNICPublicKey(getKeySpec(), (PicnicPublicKeyParameters) myPair.getPublic());
-            final BouncyPICNICPrivateKey myPrivate = new BouncyPICNICPrivateKey(getKeySpec(), (PicnicPrivateKeyParameters) myPair.getPrivate());
+            final BouncyPicnicPublicKey myPublic = new BouncyPicnicPublicKey(getKeySpec(), (PicnicPublicKeyParameters) myPair.getPublic());
+            final BouncyPicnicPrivateKey myPrivate = new BouncyPicnicPrivateKey(getKeySpec(), (PicnicPrivateKeyParameters) myPair.getPrivate());
             return new BouncyKeyPair(myPublic, myPrivate);
         }
 
@@ -176,7 +176,7 @@ public final class BouncyPICNICKeyPair {
                 BouncyKeyPair.checkKeyPair(pKeyPair, getKeySpec());
 
                 /* build and return the encoding */
-                final BouncyPICNICPrivateKey myPrivateKey = (BouncyPICNICPrivateKey) getPrivateKey(pKeyPair);
+                final BouncyPicnicPrivateKey myPrivateKey = (BouncyPicnicPrivateKey) getPrivateKey(pKeyPair);
                 final PicnicPrivateKeyParameters myParms = myPrivateKey.getPrivateKey();
                 final PrivateKeyInfo myInfo = PrivateKeyInfoFactory.createPrivateKeyInfo(myParms, null);
                 return new PKCS8EncodedKeySpec(myInfo.getEncoded());
@@ -195,10 +195,10 @@ public final class BouncyPICNICKeyPair {
                 checkKeySpec(pPrivateKey);
 
                 /* derive keyPair */
-                final BouncyPICNICPublicKey myPublic = derivePublicKey(pPublicKey);
+                final BouncyPicnicPublicKey myPublic = derivePublicKey(pPublicKey);
                 final PrivateKeyInfo myInfo = PrivateKeyInfo.getInstance(pPrivateKey.getEncoded());
                 final PicnicPrivateKeyParameters myParms = (PicnicPrivateKeyParameters) PrivateKeyFactory.createKey(myInfo);
-                final BouncyPICNICPrivateKey myPrivate = new BouncyPICNICPrivateKey(getKeySpec(), myParms);
+                final BouncyPicnicPrivateKey myPrivate = new BouncyPicnicPrivateKey(getKeySpec(), myParms);
                 final BouncyKeyPair myPair = new BouncyKeyPair(myPublic, myPrivate);
 
                 /* Check that we have a matching pair */
@@ -220,7 +220,7 @@ public final class BouncyPICNICKeyPair {
                 BouncyKeyPair.checkKeyPair(pKeyPair, getKeySpec());
 
                 /* build and return the encoding */
-                final BouncyPICNICPublicKey myPublicKey = (BouncyPICNICPublicKey) getPublicKey(pKeyPair);
+                final BouncyPicnicPublicKey myPublicKey = (BouncyPicnicPublicKey) getPublicKey(pKeyPair);
                 final PicnicPublicKeyParameters myParms = myPublicKey.getPublicKey();
                 final SubjectPublicKeyInfo myInfo = SubjectPublicKeyInfoFactory.createSubjectPublicKeyInfo(myParms);
                 return new X509EncodedKeySpec(myInfo.getEncoded());
@@ -232,7 +232,7 @@ public final class BouncyPICNICKeyPair {
 
         @Override
         public BouncyKeyPair derivePublicOnlyKeyPair(final X509EncodedKeySpec pEncodedKey) throws GordianException {
-            final BouncyPICNICPublicKey myPublic = derivePublicKey(pEncodedKey);
+            final BouncyPicnicPublicKey myPublic = derivePublicKey(pEncodedKey);
             return new BouncyKeyPair(myPublic);
         }
 
@@ -242,7 +242,7 @@ public final class BouncyPICNICKeyPair {
          * @return the public key
          * @throws GordianException on error
          */
-        private BouncyPICNICPublicKey derivePublicKey(final X509EncodedKeySpec pEncodedKey) throws GordianException {
+        private BouncyPicnicPublicKey derivePublicKey(final X509EncodedKeySpec pEncodedKey) throws GordianException {
             /* Protect against exceptions */
             try {
                 /* Check the keySpecs */
@@ -251,7 +251,7 @@ public final class BouncyPICNICKeyPair {
                 /* derive publicKey */
                 final SubjectPublicKeyInfo myInfo = SubjectPublicKeyInfo.getInstance(pEncodedKey.getEncoded());
                 final PicnicPublicKeyParameters myParms = (PicnicPublicKeyParameters) PublicKeyFactory.createKey(myInfo);
-                return new BouncyPICNICPublicKey(getKeySpec(), myParms);
+                return new BouncyPicnicPublicKey(getKeySpec(), myParms);
 
             } catch (IOException e) {
                 throw new GordianCryptoException(ERROR_PARSE, e);
@@ -262,7 +262,7 @@ public final class BouncyPICNICKeyPair {
     /**
      * Picnic signer.
      */
-    public static class BouncyPICNICSignature
+    public static class BouncyPicnicSignature
             extends BouncyDigestSignature {
         /**
          * The Picnic Signer.
@@ -275,7 +275,7 @@ public final class BouncyPICNICKeyPair {
          * @param pSpec the signatureSpec.
          * @throws GordianException on error
          */
-        BouncyPICNICSignature(final BouncyFactory pFactory,
+        BouncyPicnicSignature(final BouncyFactory pFactory,
                               final GordianSignatureSpec pSpec) throws GordianException {
             /* Initialise underlying class */
             super(pFactory, pSpec);
@@ -289,7 +289,7 @@ public final class BouncyPICNICKeyPair {
             super.initForSigning(pKeyPair);
 
             /* Initialise and set the signer */
-            final BouncyPICNICPrivateKey myPrivate = (BouncyPICNICPrivateKey) getKeyPair().getPrivateKey();
+            final BouncyPicnicPrivateKey myPrivate = (BouncyPicnicPrivateKey) getKeyPair().getPrivateKey();
             theSigner.init(true, myPrivate.getPrivateKey());
         }
 
@@ -300,7 +300,7 @@ public final class BouncyPICNICKeyPair {
             super.initForVerify(pKeyPair);
 
             /* Initialise and set the signer */
-            final BouncyPICNICPublicKey myPublic = (BouncyPICNICPublicKey) getKeyPair().getPublicKey();
+            final BouncyPicnicPublicKey myPublic = (BouncyPicnicPublicKey) getKeyPair().getPublicKey();
             theSigner.init(false, myPublic.getPublicKey());
         }
 

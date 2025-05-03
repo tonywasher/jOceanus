@@ -31,7 +31,7 @@ import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyEdDSAKeyPair.BouncyEd2
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyEdDSAKeyPair.BouncyEd448KeyPairGenerator;
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyElGamalKeyPair.BouncyElGamalKeyPairGenerator;
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyEllipticKeyPair.BouncyECKeyPairGenerator;
-import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyFALCONKeyPair.BouncyFALCONKeyPairGenerator;
+import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyFalconKeyPair.BouncyFalconKeyPairGenerator;
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyFrodoKeyPair.BouncyFrodoKeyPairGenerator;
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyGOSTKeyPair.BouncyGOSTKeyPairGenerator;
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyHQCKeyPair.BouncyHQCKeyPairGenerator;
@@ -43,7 +43,7 @@ import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyMayoKeyPair.BouncyMayo
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyNTRUKeyPair.BouncyNTRUKeyPairGenerator;
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyNTRULPrimeKeyPair.BouncyNTRULPrimeKeyPairGenerator;
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyNewHopeKeyPair.BouncyNewHopeKeyPairGenerator;
-import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyPICNICKeyPair.BouncyPICNICKeyPairGenerator;
+import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyPicnicKeyPair.BouncyPicnicKeyPairGenerator;
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyRSAKeyPair.BouncyRSAKeyPairGenerator;
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncySABERKeyPair.BouncySABERKeyPairGenerator;
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncySLHDSAKeyPair.BouncySLHDSAKeyPairGenerator;
@@ -186,11 +186,11 @@ public class BouncyKeyPairFactory
                             ? new BouncyNTRULPrimeKeyPairGenerator(getFactory(), pKeySpec)
                             : new BouncySNTRUPrimeKeyPairGenerator(getFactory(), pKeySpec);
             case FALCON:
-                return new BouncyFALCONKeyPairGenerator(getFactory(), pKeySpec);
+                return new BouncyFalconKeyPairGenerator(getFactory(), pKeySpec);
             case MAYO:
                 return new BouncyMayoKeyPairGenerator(getFactory(), pKeySpec);
             case PICNIC:
-                return new BouncyPICNICKeyPairGenerator(getFactory(), pKeySpec);
+                return new BouncyPicnicKeyPairGenerator(getFactory(), pKeySpec);
             case NEWHOPE:
                 return new BouncyNewHopeKeyPairGenerator(getFactory(), pKeySpec);
             case XMSS:
