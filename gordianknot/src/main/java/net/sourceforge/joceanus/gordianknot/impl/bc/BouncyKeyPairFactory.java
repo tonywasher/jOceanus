@@ -39,6 +39,7 @@ import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyLMSKeyPair.BouncyHSSKe
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyLMSKeyPair.BouncyLMSKeyPairGenerator;
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyMLDSAKeyPair.BouncyMLDSAKeyPairGenerator;
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyMLKEMKeyPair.BouncyMLKEMKeyPairGenerator;
+import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyMayoKeyPair.BouncyMayoKeyPairGenerator;
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyNTRUKeyPair.BouncyNTRUKeyPairGenerator;
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyNTRULPrimeKeyPair.BouncyNTRULPrimeKeyPairGenerator;
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyNewHopeKeyPair.BouncyNewHopeKeyPairGenerator;
@@ -186,6 +187,8 @@ public class BouncyKeyPairFactory
                             : new BouncySNTRUPrimeKeyPairGenerator(getFactory(), pKeySpec);
             case FALCON:
                 return new BouncyFALCONKeyPairGenerator(getFactory(), pKeySpec);
+            case MAYO:
+                return new BouncyMayoKeyPairGenerator(getFactory(), pKeySpec);
             case PICNIC:
                 return new BouncyPICNICKeyPairGenerator(getFactory(), pKeySpec);
             case NEWHOPE:

@@ -307,6 +307,17 @@ public class GordianKeyPairSpec {
     }
 
     /**
+     * Obtain the Mayo keySpec.
+     * @return the keySpec.
+     */
+    public GordianMayoSpec getMayoKeySpec() {
+        if (theSubKeyType instanceof GordianMayoSpec mySpec) {
+            return mySpec;
+        }
+        throw new IllegalArgumentException();
+    }
+
+    /**
      * Obtain the Picnic keySpec.
      * @return the keySpec.
      */
@@ -451,6 +462,8 @@ public class GordianKeyPairSpec {
                 return theSubKeyType instanceof GordianNTRUPrimeSpec;
             case FALCON:
                 return theSubKeyType instanceof GordianFALCONSpec;
+            case MAYO:
+                return theSubKeyType instanceof GordianMayoSpec;
             case PICNIC:
                 return theSubKeyType instanceof GordianPICNICSpec;
             case NEWHOPE:

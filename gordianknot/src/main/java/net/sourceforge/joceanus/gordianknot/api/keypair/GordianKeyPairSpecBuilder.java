@@ -299,6 +299,15 @@ public final class GordianKeyPairSpecBuilder {
     }
 
     /**
+     * Create MayoKey.
+     * @param pSpec the Mayo Spec
+     * @return the KeySpec
+     */
+    public static GordianKeyPairSpec mayo(final GordianMayoSpec pSpec) {
+        return new GordianKeyPairSpec(GordianKeyPairType.MAYO, pSpec);
+    }
+
+    /**
      * Create CompositeKey.
      * @param pSpecs the list of keySpecs
      * @return the KeySpec

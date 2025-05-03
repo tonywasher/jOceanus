@@ -125,6 +125,14 @@ public final class GordianSignatureSpecBuilder {
     }
 
     /**
+     * Create mayoSpec.
+     * @return the SignatureSpec
+     */
+    public static GordianSignatureSpec mayo() {
+        return new GordianSignatureSpec(GordianKeyPairType.MAYO, GordianSignatureType.NATIVE);
+    }
+
+    /**
      * Create picnicSpec.
      * @return the SignatureSpec
      */

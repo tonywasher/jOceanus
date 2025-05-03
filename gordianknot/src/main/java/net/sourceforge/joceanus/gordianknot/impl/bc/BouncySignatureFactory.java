@@ -27,6 +27,7 @@ import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyFALCONKeyPair.BouncyFA
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyGOSTKeyPair.BouncyGOSTSignature;
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyLMSKeyPair.BouncyLMSSignature;
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyMLDSAKeyPair.BouncyMLDSASignature;
+import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyMayoKeyPair.BouncyMayoSignature;
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyPICNICKeyPair.BouncyPICNICSignature;
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyRSAKeyPair.BouncyRSASignature;
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncySLHDSAKeyPair.BouncySLHDSASignature;
@@ -102,6 +103,8 @@ public class BouncySignatureFactory
                 return new BouncyMLDSASignature(getFactory(), pSignatureSpec);
             case FALCON:
                 return new BouncyFALCONSignature(getFactory(), pSignatureSpec);
+            case MAYO:
+                return new BouncyMayoSignature(getFactory(), pSignatureSpec);
             case PICNIC:
                 return new BouncyPICNICSignature(getFactory(), pSignatureSpec);
             case XMSS:

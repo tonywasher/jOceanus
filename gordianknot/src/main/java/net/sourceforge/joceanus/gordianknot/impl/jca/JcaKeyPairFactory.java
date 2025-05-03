@@ -39,6 +39,7 @@ import net.sourceforge.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaHQCK
 import net.sourceforge.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaLMSKeyPairGenerator;
 import net.sourceforge.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaMLDSAKeyPairGenerator;
 import net.sourceforge.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaMLKEMKeyPairGenerator;
+import net.sourceforge.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaMayoKeyPairGenerator;
 import net.sourceforge.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaNTRUKeyPairGenerator;
 import net.sourceforge.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaNTRULPrimeKeyPairGenerator;
 import net.sourceforge.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaNewHopeKeyPairGenerator;
@@ -176,6 +177,8 @@ public class JcaKeyPairFactory
                         : new JcaSNTRUPrimeKeyPairGenerator(getFactory(), pKeySpec);
             case FALCON:
                 return new JcaFALCONKeyPairGenerator(getFactory(), pKeySpec);
+            case MAYO:
+                return new JcaMayoKeyPairGenerator(getFactory(), pKeySpec);
             case PICNIC:
                 return new JcaPICNICKeyPairGenerator(getFactory(), pKeySpec);
             case XMSS:

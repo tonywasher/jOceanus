@@ -32,6 +32,7 @@ import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairSpecBuilde
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianLMSKeySpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianMLDSASpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianMLKEMSpec;
+import net.sourceforge.joceanus.gordianknot.api.keypair.GordianMayoSpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianNTRUPrimeSpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianNTRUPrimeSpec.GordianNTRUPrimeParams;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianNTRUPrimeSpec.GordianNTRUPrimeType;
@@ -170,6 +171,7 @@ public class GordianKeyPairAlgId {
         GordianNTRUEncodedParser.register(this);
         GordianNTRUPrimeEncodedParser.register(this);
         GordianFalconEncodedParser.register(this);
+        GordianMayoEncodedParser.register(this);
         GordianPicnicEncodedParser.register(this);
         GordianCompositeEncodedParser.register(this);
     }
@@ -1055,6 +1057,44 @@ public class GordianKeyPairAlgId {
         static void register(final GordianKeyPairAlgId pIdManager) {
             for (GordianFALCONSpec mySpec : GordianFALCONSpec.values()) {
                 pIdManager.registerParser(mySpec.getIdentifier(), new GordianFalconEncodedParser(GordianKeyPairSpecBuilder.falcon(mySpec)));
+            }
+        }
+
+        @Override
+        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws GordianException {
+            return theKeySpec;
+        }
+
+        @Override
+        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws GordianException {
+            return theKeySpec;
+        }
+    }
+
+    /**
+     * Mayo Encoded parser.
+     */
+    private static class GordianMayoEncodedParser implements GordianEncodedParser {
+        /**
+         * AsymKeySpec.
+         */
+        private final GordianKeyPairSpec theKeySpec;
+
+        /**
+         * Constructor.
+         * @param pKeySpec the keySpec
+         */
+        GordianMayoEncodedParser(final GordianKeyPairSpec pKeySpec) {
+            theKeySpec = pKeySpec;
+        }
+
+        /**
+         * Registrar.
+         * @param pIdManager the idManager
+         */
+        static void register(final GordianKeyPairAlgId pIdManager) {
+            for (GordianMayoSpec mySpec : GordianMayoSpec.values()) {
+                pIdManager.registerParser(mySpec.getIdentifier(), new GordianMayoEncodedParser(GordianKeyPairSpecBuilder.mayo(mySpec)));
             }
         }
 

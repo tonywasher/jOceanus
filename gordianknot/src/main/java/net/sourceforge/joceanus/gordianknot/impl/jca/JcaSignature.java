@@ -514,6 +514,27 @@ public abstract class JcaSignature
     }
 
     /**
+     * Mayo signature.
+     */
+    static class JcaMayoSignature
+            extends JcaSignature {
+        /**
+         * Constructor.
+         * @param pFactory the factory
+         * @param pSignatureSpec the signatureSpec
+         * @throws GordianException on error
+         */
+        JcaMayoSignature(final GordianCoreFactory pFactory,
+                           final GordianSignatureSpec pSignatureSpec) throws GordianException {
+            /* Initialise class */
+            super(pFactory, pSignatureSpec);
+
+            /* Create the signature class */
+            setSigner(JcaSignatureFactory.getJavaSignature("MAYO", true));
+        }
+    }
+
+    /**
      * Picnic signature.
      */
     static class JcaPicnicSignature

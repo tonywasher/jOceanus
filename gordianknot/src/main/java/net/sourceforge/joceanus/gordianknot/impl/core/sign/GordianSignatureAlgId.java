@@ -398,6 +398,8 @@ public class GordianSignatureAlgId {
         /* Add new PQC signatures */
         addToMaps(GordianSignatureSpecBuilder.falcon(),
                 new AlgorithmIdentifier(BCObjectIdentifiers.falcon, DERNull.INSTANCE));
+        addToMaps(GordianSignatureSpecBuilder.mayo(),
+                new AlgorithmIdentifier(BCObjectIdentifiers.mayo, DERNull.INSTANCE));
         addToMaps(GordianSignatureSpecBuilder.picnic(),
                 new AlgorithmIdentifier(BCObjectIdentifiers.picnic, DERNull.INSTANCE));
         addToMaps(GordianSignatureSpecBuilder.picnic(GordianDigestSpecBuilder.sha2(GordianLength.LEN_512)),

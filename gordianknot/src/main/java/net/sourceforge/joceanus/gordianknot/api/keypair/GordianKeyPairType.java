@@ -148,6 +148,11 @@ public enum GordianKeyPairType {
     NEWHOPE,
 
     /**
+     * MAYO.
+     */
+    MAYO,
+
+    /**
      * Composite.
      */
     COMPOSITE;
@@ -159,6 +164,7 @@ public enum GordianKeyPairType {
     public boolean useRandomForSignatures() {
         switch (this) {
             case PICNIC:
+            case MAYO:
             case XMSS:
             case EDDSA:
                 return false;
@@ -176,6 +182,7 @@ public enum GordianKeyPairType {
             case SLHDSA:
             case MLDSA:
             case FALCON:
+            case MAYO:
             case XMSS:
             case EDDSA:
             case LMS:
@@ -226,6 +233,7 @@ public enum GordianKeyPairType {
             case PICNIC:
             case XMSS:
             case LMS:
+            case MAYO:
             default:
                 return false;
         }

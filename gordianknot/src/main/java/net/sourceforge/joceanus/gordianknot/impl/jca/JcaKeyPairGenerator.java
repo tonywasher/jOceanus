@@ -54,6 +54,7 @@ import org.bouncycastle.pqc.jcajce.spec.FrodoParameterSpec;
 import org.bouncycastle.pqc.jcajce.spec.HQCParameterSpec;
 import org.bouncycastle.pqc.jcajce.spec.LMSHSSKeyGenParameterSpec;
 import org.bouncycastle.pqc.jcajce.spec.LMSKeyGenParameterSpec;
+import org.bouncycastle.pqc.jcajce.spec.MayoParameterSpec;
 import org.bouncycastle.pqc.jcajce.spec.NTRULPRimeParameterSpec;
 import org.bouncycastle.pqc.jcajce.spec.NTRUParameterSpec;
 import org.bouncycastle.pqc.jcajce.spec.PicnicParameterSpec;
@@ -1002,6 +1003,56 @@ public abstract class JcaKeyPairGenerator
         }
     }
 
+    /**
+     * Jca Mayo KeyPair generator.
+     */
+    public static class JcaMayoKeyPairGenerator
+            extends JcaKeyPairGenerator {
+        /**
+         * Mayo algorithm.
+         */
+        private static final String MAYO_ALGO = "MAYO";
+
+        /**
+         * Generator.
+         */
+        private final KeyPairGenerator theGenerator;
+
+        /**
+         * Constructor.
+         * @param pFactory the Security Factory
+         * @param pKeySpec the keySpec
+         * @throws GordianException on error
+         */
+        JcaMayoKeyPairGenerator(final JcaFactory pFactory,
+                                final GordianKeyPairSpec pKeySpec) throws GordianException {
+            /* Initialise underlying class */
+            super(pFactory, pKeySpec);
+
+            /* Protect against exceptions */
+            try {
+                /* Create and initialise the generator */
+                theGenerator = JcaKeyPairFactory.getJavaKeyPairGenerator(MAYO_ALGO, true);
+                final MayoParameterSpec myParms = pKeySpec.getMayoKeySpec().getParameterSpec();
+                theGenerator.initialize(myParms, getRandom());
+
+                /* Create the factory */
+                setKeyFactory(JcaKeyPairFactory.getJavaKeyFactory(MAYO_ALGO, true));
+
+            } catch (InvalidAlgorithmParameterException e) {
+                throw new GordianCryptoException("Failed to create MayoGenerator", e);
+            }
+        }
+
+        @Override
+        public JcaKeyPair generateKeyPair() {
+            /* Generate and return the keyPair */
+            final KeyPair myPair = theGenerator.generateKeyPair();
+            final JcaPublicKey myPublic = createPublic(myPair.getPublic());
+            final JcaPrivateKey myPrivate = createPrivate(myPair.getPrivate());
+            return new JcaKeyPair(myPublic, myPrivate);
+        }
+    }
 
     /**
      * Jca NTRULPrime KeyPair generator.

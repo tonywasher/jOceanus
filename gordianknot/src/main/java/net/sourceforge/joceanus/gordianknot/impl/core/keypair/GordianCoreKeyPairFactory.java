@@ -38,6 +38,7 @@ import net.sourceforge.joceanus.gordianknot.api.keypair.GordianLMSKeySpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianLMSKeySpec.GordianHSSKeySpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianMLDSASpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianMLKEMSpec;
+import net.sourceforge.joceanus.gordianknot.api.keypair.GordianMayoSpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianNTRUPrimeSpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianNTRUSpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianPICNICSpec;
@@ -298,6 +299,7 @@ public abstract class GordianCoreKeyPairFactory
         EnumSet.allOf(GordianBIKESpec.class).forEach(t -> mySpecs.add(GordianKeyPairSpecBuilder.bike(t)));
         EnumSet.allOf(GordianNTRUSpec.class).forEach(t -> mySpecs.add(GordianKeyPairSpecBuilder.ntru(t)));
         EnumSet.allOf(GordianFALCONSpec.class).forEach(t -> mySpecs.add(GordianKeyPairSpecBuilder.falcon(t)));
+        EnumSet.allOf(GordianMayoSpec.class).forEach(t -> mySpecs.add(GordianKeyPairSpecBuilder.mayo(t)));
         EnumSet.allOf(GordianPICNICSpec.class).forEach(t -> mySpecs.add(GordianKeyPairSpecBuilder.picnic(t)));
 
         /* Add NTRUPrime */
