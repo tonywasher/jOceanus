@@ -75,7 +75,7 @@
     <appDir>${session.executionRootDirectory}/dist</appDir>
     <appBinDir>bin/</appBinDir>
     <appLibDir>lib/</appLibDir>
-    <BouncyCastleVersion>1.80</BouncyCastleVersion>
+    <BouncyCastleVersion>1.81-SNAPSHOT</BouncyCastleVersion>
     <JUnitVersion>5.12.1</JUnitVersion>
     <JUnitPlatformVersion>1.12.2</JUnitPlatformVersion>
     <JSONVersion>20250517</JSONVersion>

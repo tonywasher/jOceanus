@@ -54,6 +54,7 @@ import org.bouncycastle.crypto.digests.RIPEMD128Digest;
 import org.bouncycastle.crypto.digests.RIPEMD160Digest;
 import org.bouncycastle.crypto.digests.RIPEMD256Digest;
 import org.bouncycastle.crypto.digests.RIPEMD320Digest;
+import org.bouncycastle.crypto.digests.RomulusDigest;
 import org.bouncycastle.crypto.digests.SHA1Digest;
 import org.bouncycastle.crypto.digests.SHA224Digest;
 import org.bouncycastle.crypto.digests.SHA256Digest;
@@ -171,6 +172,8 @@ public class BouncyDigestFactory
                 return new ISAPDigest();
             case PHOTONBEETLE:
                 return new PhotonBeetleDigest();
+            case ROMULUS:
+                return new RomulusDigest();
             case SPARKLE:
                 return getSparkleDigest(pDigestSpec);
             case XOODYAK:

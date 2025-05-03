@@ -20,6 +20,7 @@ import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianStreamKeySpec.GordianChaCha20Key;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianStreamKeySpec.GordianElephantKey;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianStreamKeySpec.GordianISAPKey;
+import net.sourceforge.joceanus.gordianknot.api.cipher.GordianStreamKeySpec.GordianRomulusKey;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianStreamKeySpec.GordianSalsa20Key;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianStreamKeySpec.GordianSkeinXofKey;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianStreamKeySpec.GordianSparkleKey;
@@ -230,6 +231,15 @@ public final class GordianStreamKeySpecBuilder {
      */
     public static GordianStreamKeySpec photonBeetle() {
         return new GordianStreamKeySpec(GordianStreamKeyType.PHOTONBEETLE, GordianLength.LEN_256);
+    }
+
+    /**
+     * Create romulusKeySpec.
+     * @param pSubSpec the subSpec
+     * @return the keySpec
+     */
+    public static GordianStreamKeySpec romulus(final GordianRomulusKey pSubSpec) {
+        return new GordianStreamKeySpec(GordianStreamKeyType.ROMULUS, GordianLength.LEN_256, pSubSpec);
     }
 
     /**

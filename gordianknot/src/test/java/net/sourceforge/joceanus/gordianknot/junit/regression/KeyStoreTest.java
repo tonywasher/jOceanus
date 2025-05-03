@@ -46,7 +46,6 @@ import net.sourceforge.joceanus.gordianknot.api.keypair.GordianNTRUPrimeSpec.Gor
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianNTRUSpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianPICNICSpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianRSAModulus;
-import net.sourceforge.joceanus.gordianknot.api.keypair.GordianRainbowSpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianSABERSpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianSLHDSASpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianSM2Elliptic;
@@ -170,7 +169,7 @@ class KeyStoreTest {
             signedKeyPairRequestTest(myState, GordianKeyPairSpecBuilder.mldsa(GordianMLDSASpec.MLDSA44)),
             signedKeyPairRequestTest(myState, GordianKeyPairSpecBuilder.falcon(GordianFALCONSpec.FALCON512)),
             signedKeyPairRequestTest(myState, GordianKeyPairSpecBuilder.picnic(GordianPICNICSpec.L1FS)),
-            signedKeyPairRequestTest(myState, GordianKeyPairSpecBuilder.rainbow(GordianRainbowSpec.CLASSIC3)),
+            //signedKeyPairRequestTest(myState, GordianKeyPairSpecBuilder.rainbow(GordianRainbowSpec.CLASSIC3)),
             signedKeyPairRequestTest(myState, GordianKeyPairSpecBuilder.xmss(GordianXMSSDigestType.SHA512, GordianXMSSHeight.H10)),
             signedKeyPairRequestTest(myState, GordianKeyPairSpecBuilder.lms(new GordianLMSKeySpec(GordianLMSHash.SHA256, GordianLMSHeight.H5,
                                                                                            GordianLMSWidth.W1, GordianLength.LEN_256))),

@@ -54,6 +54,7 @@ public class JcaValidator
             case ASCON:
             case ISAP:
             case PHOTONBEETLE:
+            case ROMULUS:
             case SPARKLE:
             case XOODYAK:
                 return false;
@@ -79,6 +80,7 @@ public class JcaValidator
             case ELEPHANT:
             case ISAP:
             case PHOTONBEETLE:
+            case ROMULUS:
             case SPARKLE:
             case XOODYAK:
                 return false;

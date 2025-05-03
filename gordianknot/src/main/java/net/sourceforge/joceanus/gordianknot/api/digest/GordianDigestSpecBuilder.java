@@ -351,6 +351,14 @@ public final class GordianDigestSpecBuilder {
     }
 
     /**
+     * Create romulusDigestSpec.
+     * @return the DigestSpec
+     */
+    public static GordianDigestSpec romulus() {
+        return new GordianDigestSpec(GordianDigestType.ROMULUS, GordianLength.LEN_256);
+    }
+
+    /**
      * Create sparkleDigestSpec.
      * @param pLength the digest length
      * @return the DigestSpec
