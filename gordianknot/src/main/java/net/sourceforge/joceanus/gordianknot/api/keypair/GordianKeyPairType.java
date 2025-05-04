@@ -148,9 +148,14 @@ public enum GordianKeyPairType {
     NEWHOPE,
 
     /**
-     * MAYO.
+     * Mayo.
      */
     MAYO,
+
+    /**
+     * Snova.
+     */
+    SNOVA,
 
     /**
      * Composite.
@@ -165,6 +170,7 @@ public enum GordianKeyPairType {
         switch (this) {
             case PICNIC:
             case MAYO:
+            case SNOVA:
             case XMSS:
             case EDDSA:
                 return false;
@@ -183,6 +189,7 @@ public enum GordianKeyPairType {
             case MLDSA:
             case FALCON:
             case MAYO:
+            case SNOVA:
             case XMSS:
             case EDDSA:
             case LMS:

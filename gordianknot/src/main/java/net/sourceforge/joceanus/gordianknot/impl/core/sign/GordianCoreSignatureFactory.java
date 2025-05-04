@@ -388,6 +388,8 @@ public abstract class GordianCoreSignatureFactory
                 return GordianSignatureSpecBuilder.falcon();
             case MAYO:
                 return GordianSignatureSpecBuilder.mayo();
+            case SNOVA:
+                return GordianSignatureSpecBuilder.snova();
             case PICNIC:
                 return GordianSignatureSpecBuilder.picnic();
             case XMSS:

@@ -32,6 +32,7 @@ import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyPicnicKeyPair.BouncyPi
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyRSAKeyPair.BouncyRSASignature;
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncySLHDSAKeyPair.BouncySLHDSASignature;
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncySM2KeyPair.BouncySM2Signature;
+import net.sourceforge.joceanus.gordianknot.impl.bc.BouncySnovaKeyPair.BouncySnovaSignature;
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyXMSSKeyPair.BouncyXMSSSignature;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
@@ -105,6 +106,8 @@ public class BouncySignatureFactory
                 return new BouncyFalconSignature(getFactory(), pSignatureSpec);
             case MAYO:
                 return new BouncyMayoSignature(getFactory(), pSignatureSpec);
+            case SNOVA:
+                return new BouncySnovaSignature(getFactory(), pSignatureSpec);
             case PICNIC:
                 return new BouncyPicnicSignature(getFactory(), pSignatureSpec);
             case XMSS:

@@ -26,8 +26,8 @@ import net.sourceforge.joceanus.gordianknot.api.keypair.GordianDHGroup;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianDSAElliptic;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianDSAKeyType;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianDSTU4145Elliptic;
-import net.sourceforge.joceanus.gordianknot.api.keypair.GordianFalconSpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianFRODOSpec;
+import net.sourceforge.joceanus.gordianknot.api.keypair.GordianFalconSpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianGOSTElliptic;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianHQCSpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairGenerator;
@@ -46,6 +46,7 @@ import net.sourceforge.joceanus.gordianknot.api.keypair.GordianRSAModulus;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianSABERSpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianSLHDSASpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianSM2Elliptic;
+import net.sourceforge.joceanus.gordianknot.api.keypair.GordianSnovaSpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianXMSSKeySpec;
 import net.sourceforge.joceanus.gordianknot.api.keystore.GordianKeyStoreFactory;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignatureFactory;
@@ -300,6 +301,7 @@ public abstract class GordianCoreKeyPairFactory
         EnumSet.allOf(GordianNTRUSpec.class).forEach(t -> mySpecs.add(GordianKeyPairSpecBuilder.ntru(t)));
         EnumSet.allOf(GordianFalconSpec.class).forEach(t -> mySpecs.add(GordianKeyPairSpecBuilder.falcon(t)));
         EnumSet.allOf(GordianMayoSpec.class).forEach(t -> mySpecs.add(GordianKeyPairSpecBuilder.mayo(t)));
+        EnumSet.allOf(GordianSnovaSpec.class).forEach(t -> mySpecs.add(GordianKeyPairSpecBuilder.snova(t)));
         EnumSet.allOf(GordianPicnicSpec.class).forEach(t -> mySpecs.add(GordianKeyPairSpecBuilder.picnic(t)));
 
         /* Add NTRUPrime */

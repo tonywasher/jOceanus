@@ -133,6 +133,14 @@ public final class GordianSignatureSpecBuilder {
     }
 
     /**
+     * Create mayoSpec.
+     * @return the SignatureSpec
+     */
+    public static GordianSignatureSpec snova() {
+        return new GordianSignatureSpec(GordianKeyPairType.SNOVA, GordianSignatureType.NATIVE);
+    }
+
+    /**
      * Create picnicSpec.
      * @return the SignatureSpec
      */

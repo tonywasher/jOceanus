@@ -60,6 +60,7 @@ import org.bouncycastle.pqc.jcajce.spec.NTRUParameterSpec;
 import org.bouncycastle.pqc.jcajce.spec.PicnicParameterSpec;
 import org.bouncycastle.pqc.jcajce.spec.SABERParameterSpec;
 import org.bouncycastle.pqc.jcajce.spec.SNTRUPrimeParameterSpec;
+import org.bouncycastle.pqc.jcajce.spec.SnovaParameterSpec;
 import org.bouncycastle.pqc.jcajce.spec.XMSSMTParameterSpec;
 import org.bouncycastle.pqc.jcajce.spec.XMSSParameterSpec;
 
@@ -1041,6 +1042,57 @@ public abstract class JcaKeyPairGenerator
 
             } catch (InvalidAlgorithmParameterException e) {
                 throw new GordianCryptoException("Failed to create MayoGenerator", e);
+            }
+        }
+
+        @Override
+        public JcaKeyPair generateKeyPair() {
+            /* Generate and return the keyPair */
+            final KeyPair myPair = theGenerator.generateKeyPair();
+            final JcaPublicKey myPublic = createPublic(myPair.getPublic());
+            final JcaPrivateKey myPrivate = createPrivate(myPair.getPrivate());
+            return new JcaKeyPair(myPublic, myPrivate);
+        }
+    }
+
+    /**
+     * Jca Snova KeyPair generator.
+     */
+    public static class JcaSnovaKeyPairGenerator
+            extends JcaKeyPairGenerator {
+        /**
+         * Snova algorithm.
+         */
+        private static final String SNOVA_ALGO = "SNOVA";
+
+        /**
+         * Generator.
+         */
+        private final KeyPairGenerator theGenerator;
+
+        /**
+         * Constructor.
+         * @param pFactory the Security Factory
+         * @param pKeySpec the keySpec
+         * @throws GordianException on error
+         */
+        JcaSnovaKeyPairGenerator(final JcaFactory pFactory,
+                                 final GordianKeyPairSpec pKeySpec) throws GordianException {
+            /* Initialise underlying class */
+            super(pFactory, pKeySpec);
+
+            /* Protect against exceptions */
+            try {
+                /* Create and initialise the generator */
+                theGenerator = JcaKeyPairFactory.getJavaKeyPairGenerator(SNOVA_ALGO, true);
+                final SnovaParameterSpec myParms = pKeySpec.getSnovaKeySpec().getParameterSpec();
+                theGenerator.initialize(myParms, getRandom());
+
+                /* Create the factory */
+                setKeyFactory(JcaKeyPairFactory.getJavaKeyFactory(SNOVA_ALGO, true));
+
+            } catch (InvalidAlgorithmParameterException e) {
+                throw new GordianCryptoException("Failed to create SnovaGenerator", e);
             }
         }
 

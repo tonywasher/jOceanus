@@ -308,6 +308,15 @@ public final class GordianKeyPairSpecBuilder {
     }
 
     /**
+     * Create SnovaKey.
+     * @param pSpec the Snova Spec
+     * @return the KeySpec
+     */
+    public static GordianKeyPairSpec snova(final GordianSnovaSpec pSpec) {
+        return new GordianKeyPairSpec(GordianKeyPairType.SNOVA, pSpec);
+    }
+
+    /**
      * Create CompositeKey.
      * @param pSpecs the list of keySpecs
      * @return the KeySpec

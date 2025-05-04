@@ -318,6 +318,17 @@ public class GordianKeyPairSpec {
     }
 
     /**
+     * Obtain the Snova keySpec.
+     * @return the keySpec.
+     */
+    public GordianSnovaSpec getSnovaKeySpec() {
+        if (theSubKeyType instanceof GordianSnovaSpec mySpec) {
+            return mySpec;
+        }
+        throw new IllegalArgumentException();
+    }
+
+    /**
      * Obtain the Picnic keySpec.
      * @return the keySpec.
      */
@@ -384,7 +395,7 @@ public class GordianKeyPairSpec {
                     theName = myBuilder.toString();
                     break;
                 default:
-                    theName += SEP + theSubKeyType.toString();
+                    theName += SEP + theSubKeyType;
                     break;
             }
         }
@@ -464,6 +475,8 @@ public class GordianKeyPairSpec {
                 return theSubKeyType instanceof GordianFalconSpec;
             case MAYO:
                 return theSubKeyType instanceof GordianMayoSpec;
+            case SNOVA:
+                return theSubKeyType instanceof GordianSnovaSpec;
             case PICNIC:
                 return theSubKeyType instanceof GordianPicnicSpec;
             case NEWHOPE:

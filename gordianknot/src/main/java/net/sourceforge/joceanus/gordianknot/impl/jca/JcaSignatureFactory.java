@@ -37,6 +37,7 @@ import net.sourceforge.joceanus.gordianknot.impl.jca.JcaSignature.JcaMayoSignatu
 import net.sourceforge.joceanus.gordianknot.impl.jca.JcaSignature.JcaPicnicSignature;
 import net.sourceforge.joceanus.gordianknot.impl.jca.JcaSignature.JcaRSASignature;
 import net.sourceforge.joceanus.gordianknot.impl.jca.JcaSignature.JcaSLHDSASignature;
+import net.sourceforge.joceanus.gordianknot.impl.jca.JcaSignature.JcaSnovaSignature;
 import net.sourceforge.joceanus.gordianknot.impl.jca.JcaSignature.JcaXMSSSignature;
 
 import java.security.NoSuchAlgorithmException;
@@ -123,6 +124,8 @@ public class JcaSignatureFactory
                 return new JcaFalconSignature(getFactory(), pSignatureSpec);
             case MAYO:
                 return new JcaMayoSignature(getFactory(), pSignatureSpec);
+            case SNOVA:
+                return new JcaSnovaSignature(getFactory(), pSignatureSpec);
             case PICNIC:
                 return new JcaPicnicSignature(getFactory(), pSignatureSpec);
             case LMS:
@@ -158,6 +161,7 @@ public class JcaSignatureFactory
             case MLDSA:
             case FALCON:
             case MAYO:
+            case SNOVA:
             case PICNIC:
             case EDDSA:
             case LMS:

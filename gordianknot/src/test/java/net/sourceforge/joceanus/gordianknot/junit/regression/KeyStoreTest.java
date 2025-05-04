@@ -40,6 +40,7 @@ import net.sourceforge.joceanus.gordianknot.api.keypair.GordianLMSKeySpec.Gordia
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianLMSKeySpec.GordianLMSWidth;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianMLDSASpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianMLKEMSpec;
+import net.sourceforge.joceanus.gordianknot.api.keypair.GordianMayoSpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianNTRUPrimeSpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianNTRUPrimeSpec.GordianNTRUPrimeParams;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianNTRUPrimeSpec.GordianNTRUPrimeType;
@@ -49,6 +50,7 @@ import net.sourceforge.joceanus.gordianknot.api.keypair.GordianRSAModulus;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianSABERSpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianSLHDSASpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianSM2Elliptic;
+import net.sourceforge.joceanus.gordianknot.api.keypair.GordianSnovaSpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianXMSSKeySpec.GordianXMSSDigestType;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianXMSSKeySpec.GordianXMSSHeight;
 import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySetSpec;
@@ -169,6 +171,8 @@ class KeyStoreTest {
             signedKeyPairRequestTest(myState, GordianKeyPairSpecBuilder.mldsa(GordianMLDSASpec.MLDSA44)),
             signedKeyPairRequestTest(myState, GordianKeyPairSpecBuilder.falcon(GordianFalconSpec.FALCON512)),
             signedKeyPairRequestTest(myState, GordianKeyPairSpecBuilder.picnic(GordianPicnicSpec.L1FS)),
+            signedKeyPairRequestTest(myState, GordianKeyPairSpecBuilder.mayo(GordianMayoSpec.MAYO1)),
+            signedKeyPairRequestTest(myState, GordianKeyPairSpecBuilder.snova(GordianSnovaSpec.SNOVA24A_SSK)),
             signedKeyPairRequestTest(myState, GordianKeyPairSpecBuilder.xmss(GordianXMSSDigestType.SHA512, GordianXMSSHeight.H10)),
             signedKeyPairRequestTest(myState, GordianKeyPairSpecBuilder.lms(new GordianLMSKeySpec(GordianLMSHash.SHA256, GordianLMSHeight.H5,
                                                                                            GordianLMSWidth.W1, GordianLength.LEN_256))),

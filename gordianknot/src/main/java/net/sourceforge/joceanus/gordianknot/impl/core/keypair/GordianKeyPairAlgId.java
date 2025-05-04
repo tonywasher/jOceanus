@@ -23,8 +23,8 @@ import net.sourceforge.joceanus.gordianknot.api.keypair.GordianDHGroup;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianDSAElliptic;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianDSAKeyType;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianDSTU4145Elliptic;
-import net.sourceforge.joceanus.gordianknot.api.keypair.GordianFalconSpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianFRODOSpec;
+import net.sourceforge.joceanus.gordianknot.api.keypair.GordianFalconSpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianGOSTElliptic;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianHQCSpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
@@ -42,6 +42,7 @@ import net.sourceforge.joceanus.gordianknot.api.keypair.GordianRSAModulus;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianSABERSpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianSLHDSASpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianSM2Elliptic;
+import net.sourceforge.joceanus.gordianknot.api.keypair.GordianSnovaSpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianXMSSKeySpec.GordianXMSSDigestType;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianXMSSKeySpec.GordianXMSSHeight;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianXMSSKeySpec.GordianXMSSMTLayers;
@@ -100,6 +101,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Mappings from EncodedId to KeyPairSpec.
@@ -172,6 +174,7 @@ public class GordianKeyPairAlgId {
         GordianNTRUPrimeEncodedParser.register(this);
         GordianFalconEncodedParser.register(this);
         GordianMayoEncodedParser.register(this);
+        GordianSnovaEncodedParser.register(this);
         GordianPicnicEncodedParser.register(this);
         GordianCompositeEncodedParser.register(this);
     }
@@ -1110,6 +1113,44 @@ public class GordianKeyPairAlgId {
     }
 
     /**
+     * Snova Encoded parser.
+     */
+    private static class GordianSnovaEncodedParser implements GordianEncodedParser {
+        /**
+         * AsymKeySpec.
+         */
+        private final GordianKeyPairSpec theKeySpec;
+
+        /**
+         * Constructor.
+         * @param pKeySpec the keySpec
+         */
+        GordianSnovaEncodedParser(final GordianKeyPairSpec pKeySpec) {
+            theKeySpec = pKeySpec;
+        }
+
+        /**
+         * Registrar.
+         * @param pIdManager the idManager
+         */
+        static void register(final GordianKeyPairAlgId pIdManager) {
+            for (GordianSnovaSpec mySpec : GordianSnovaSpec.values()) {
+                pIdManager.registerParser(mySpec.getIdentifier(), new GordianSnovaEncodedParser(GordianKeyPairSpecBuilder.snova(mySpec)));
+            }
+        }
+
+        @Override
+        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws GordianException {
+            return theKeySpec;
+        }
+
+        @Override
+        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws GordianException {
+            return theKeySpec;
+        }
+    }
+
+    /**
      * Picnic Encoded parser.
      */
     private static class GordianPicnicEncodedParser implements GordianEncodedParser {
@@ -1160,12 +1201,12 @@ public class GordianKeyPairAlgId {
         }
 
         @Override
-        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) throws GordianException {
+        public GordianKeyPairSpec determineKeyPairSpec(final SubjectPublicKeyInfo pInfo) {
             return GordianKeyPairSpecBuilder.newHope();
         }
 
         @Override
-        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) throws GordianException {
+        public GordianKeyPairSpec determineKeyPairSpec(final PrivateKeyInfo pInfo) {
             return GordianKeyPairSpecBuilder.newHope();
         }
     }
@@ -1194,7 +1235,7 @@ public class GordianKeyPairAlgId {
 
             /* Protect against exceptions */
             try {
-                final byte[] keyEnc = ASN1OctetString.getInstance(pInfo.parsePublicKey()).getOctets();
+                final byte[] keyEnc = Objects.requireNonNull(ASN1OctetString.getInstance(pInfo.parsePublicKey())).getOctets();
                 final int myOID = Pack.bigEndianToInt(keyEnc, 0);
                 final XMSSParameters myParams = XMSSParameters.lookupByOID(myOID);
                 return GordianKeyPairSpecBuilder.xmss(determineKeyType(myParams.getTreeDigestOID()),
@@ -1289,7 +1330,7 @@ public class GordianKeyPairAlgId {
 
             /* Protect against exceptions */
             try {
-                final byte[] keyEnc = ASN1OctetString.getInstance(pInfo.parsePublicKey()).getOctets();
+                final byte[] keyEnc = Objects.requireNonNull(ASN1OctetString.getInstance(pInfo.parsePublicKey())).getOctets();
                 final int myOID = Pack.bigEndianToInt(keyEnc, 0);
                 final XMSSMTParameters myParams = XMSSMTParameters.lookupByOID(myOID);
                 return GordianKeyPairSpecBuilder.xmssmt(GordianXMSSEncodedParser.determineKeyType(myParams.getTreeDigestOID()),

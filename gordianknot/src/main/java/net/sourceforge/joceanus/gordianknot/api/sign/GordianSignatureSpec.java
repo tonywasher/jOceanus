@@ -176,6 +176,7 @@ public final class GordianSignatureSpec {
             case MLDSA:
             case FALCON:
             case MAYO:
+            case SNOVA:
             case XMSS:
             case LMS:
                 return theSignatureSpec == null;

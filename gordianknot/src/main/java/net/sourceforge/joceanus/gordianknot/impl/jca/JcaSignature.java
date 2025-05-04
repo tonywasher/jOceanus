@@ -535,6 +535,27 @@ public abstract class JcaSignature
     }
 
     /**
+     * Snova signature.
+     */
+    static class JcaSnovaSignature
+            extends JcaSignature {
+        /**
+         * Constructor.
+         * @param pFactory the factory
+         * @param pSignatureSpec the signatureSpec
+         * @throws GordianException on error
+         */
+        JcaSnovaSignature(final GordianCoreFactory pFactory,
+                          final GordianSignatureSpec pSignatureSpec) throws GordianException {
+            /* Initialise class */
+            super(pFactory, pSignatureSpec);
+
+            /* Create the signature class */
+            setSigner(JcaSignatureFactory.getJavaSignature("SNOVA", true));
+        }
+    }
+
+    /**
      * Picnic signature.
      */
     static class JcaPicnicSignature

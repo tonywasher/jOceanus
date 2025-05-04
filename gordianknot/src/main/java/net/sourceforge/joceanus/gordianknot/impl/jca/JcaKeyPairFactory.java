@@ -48,6 +48,7 @@ import net.sourceforge.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaRSAK
 import net.sourceforge.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaSABERKeyPairGenerator;
 import net.sourceforge.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaSLHDSAKeyPairGenerator;
 import net.sourceforge.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaSNTRUPrimeKeyPairGenerator;
+import net.sourceforge.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaSnovaKeyPairGenerator;
 import net.sourceforge.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaXMSSKeyPairGenerator;
 
 import java.security.KeyFactory;
@@ -179,6 +180,8 @@ public class JcaKeyPairFactory
                 return new JcaFalconKeyPairGenerator(getFactory(), pKeySpec);
             case MAYO:
                 return new JcaMayoKeyPairGenerator(getFactory(), pKeySpec);
+            case SNOVA:
+                return new JcaSnovaKeyPairGenerator(getFactory(), pKeySpec);
             case PICNIC:
                 return new JcaPicnicKeyPairGenerator(getFactory(), pKeySpec);
             case XMSS:

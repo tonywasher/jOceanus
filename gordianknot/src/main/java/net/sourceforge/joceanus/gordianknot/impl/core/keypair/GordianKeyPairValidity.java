@@ -186,6 +186,7 @@ public final class GordianKeyPairValidity {
             case MLDSA:
             case FALCON:
             case MAYO:
+            case SNOVA:
             case PICNIC:
             case XMSS:
             case LMS:
