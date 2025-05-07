@@ -19,14 +19,10 @@ package net.sourceforge.joceanus.moneywise.sheets;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicResource;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataSet;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePayee;
-import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePayee.MoneyWisePayeeList;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataResource;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataValues;
 import net.sourceforge.joceanus.prometheus.sheets.PrometheusSheetEncrypted;
-import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetCell;
-import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetRow;
-import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetView;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 /**
  * SheetDataItem extension for Payee.
@@ -112,46 +108,5 @@ public final class MoneyWiseSheetPayee
     protected int getLastColumn() {
         /* Return the last column */
         return COL_CLOSED;
-    }
-
-    /**
-     * Process payee row from archive.
-     * @param pLoader the archive loader
-     * @param pData the DataSet
-     * @param pView the spreadsheet view
-     * @param pRow the spreadsheet row
-     * @throws OceanusException on error
-     */
-    protected static void processPayee(final MoneyWiseArchiveLoader pLoader,
-                                       final MoneyWiseDataSet pData,
-                                       final PrometheusSheetView pView,
-                                       final PrometheusSheetRow pRow) throws OceanusException {
-        /* Access name and type */
-        int iAdjust = -1;
-        final String myName = pView.getRowCellByIndex(pRow, ++iAdjust).getString();
-        final String myType = pView.getRowCellByIndex(pRow, ++iAdjust).getString();
-
-        /* Skip class */
-        ++iAdjust;
-
-        /* Handle closed which may be missing */
-        final PrometheusSheetCell myCell = pView.getRowCellByIndex(pRow, ++iAdjust);
-        Boolean isClosed = Boolean.FALSE;
-        if (myCell != null) {
-            isClosed = myCell.getBoolean();
-        }
-
-        /* Build data values */
-        final PrometheusDataValues myValues = new PrometheusDataValues(MoneyWisePayee.OBJECT_NAME);
-        myValues.addValue(PrometheusDataResource.DATAITEM_FIELD_NAME, myName);
-        myValues.addValue(MoneyWiseBasicResource.CATEGORY_NAME, myType);
-        myValues.addValue(MoneyWiseBasicResource.ASSET_CLOSED, isClosed);
-
-        /* Add the value into the list */
-        final MoneyWisePayeeList myList = pData.getPayees();
-        final MoneyWisePayee myPayee = myList.addValuesItem(myValues);
-
-        /* Declare the payee */
-        pLoader.declareAsset(myPayee);
     }
 }
