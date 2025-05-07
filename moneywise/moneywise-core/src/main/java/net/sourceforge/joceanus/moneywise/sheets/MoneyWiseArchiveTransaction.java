@@ -22,8 +22,6 @@ import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransaction;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransaction.MoneyWiseTransactionList;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransInfoClass;
 import net.sourceforge.joceanus.moneywise.exc.MoneyWiseIOException;
-import net.sourceforge.joceanus.moneywise.sheets.MoneyWiseArchiveLoader.MoneyWiseArchiveYear;
-import net.sourceforge.joceanus.moneywise.sheets.MoneyWiseArchiveLoader.MoneyWiseParentCache;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.date.OceanusDate;
 import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
@@ -63,27 +61,33 @@ public final class MoneyWiseArchiveTransaction {
     private final MoneyWiseDataSet theData;
 
     /**
+     * Store.
+     */
+    private final MoneyWiseArchiveLoader theStore;
+
+    /**
      * Constructor.
      * @param pReport the report
      * @param pWorkBook the workbook
      * @param pData the data set to load into
+     * @param pStore the archive store
      */
     MoneyWiseArchiveTransaction(final TethysUIThreadStatusReport pReport,
                                 final PrometheusSheetWorkBook pWorkBook,
-                                final MoneyWiseDataSet pData) {
+                                final MoneyWiseDataSet pData,
+                                final MoneyWiseArchiveLoader pStore) {
         theReport = pReport;
         theWorkBook = pWorkBook;
         theData = pData;
+        theStore = pStore;
     }
 
     /**
      * Load the ExchangeRates from an archive.
      * @param pStage the stage
-     * @param pLoader the archive loader
-     * @throws OceanusException on error
+      * @throws OceanusException on error
      */
-    void loadArchive(final OceanusProfile pStage,
-                     final MoneyWiseArchiveLoader pLoader) throws OceanusException {
+    void loadArchive(final OceanusProfile pStage) throws OceanusException {
         /* Access the list of transactions */
         pStage.startTask(AREA_TRANS);
         final MoneyWiseTransactionList myList = theData.getTransactions();
@@ -92,7 +96,7 @@ public final class MoneyWiseArchiveTransaction {
         /* Protect against exceptions */
         try {
             /* Obtain the range iterator */
-            final ListIterator<MoneyWiseArchiveYear> myIterator = pLoader.getReverseIterator();
+            final ListIterator<MoneyWiseArchiveYear> myIterator = theStore.reverseIterator();
 
             /* Loop through the individual year ranges */
             while (myIterator.hasPrevious()) {
@@ -117,7 +121,7 @@ public final class MoneyWiseArchiveTransaction {
                     final PrometheusSheetRow myRow = myView.getRowByIndex(i);
 
                     /* Process transaction and break loop if requested */
-                    if (!processTransaction(pLoader, myView, myRow)) {
+                    if (!processTransaction(myView, myRow)) {
                         break;
                     }
 
@@ -126,7 +130,7 @@ public final class MoneyWiseArchiveTransaction {
                 }
 
                 /* If we have finished */
-                if (!pLoader.checkDate(myYear.getDate())) {
+                if (!theStore.checkDate(myYear.getDate())) {
                     /* Break the loop */
                     break;
                 }
@@ -152,17 +156,15 @@ public final class MoneyWiseArchiveTransaction {
 
     /**
      * Process transaction row from archive.
-     * @param pLoader the archive loader
      * @param pView the spreadsheet view
      * @param pRow the spreadsheet row
      * @return continue true/false
      * @throws OceanusException on error
      */
-    private boolean processTransaction(final MoneyWiseArchiveLoader pLoader,
-                                       final PrometheusSheetView pView,
+    private boolean processTransaction(final PrometheusSheetView pView,
                                        final PrometheusSheetRow pRow) throws OceanusException {
         /* Access parent cache */
-        final MoneyWiseParentCache myCache = pLoader.getParentCache();
+        final MoneyWiseArchiveCache myCache = theStore.getParentCache();
         int iAdjust = -1;
 
         /* Access date */
@@ -223,7 +225,7 @@ public final class MoneyWiseArchiveTransaction {
      * @param pAdjust the cell#
      * @throws OceanusException on error
      */
-    private void processTransInfo(final MoneyWiseParentCache pCache,
+    private void processTransInfo(final MoneyWiseArchiveCache pCache,
                                   final PrometheusSheetView pView,
                                   final PrometheusSheetRow pRow,
                                   final MoneyWiseTransaction pTrans,

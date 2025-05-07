@@ -59,27 +59,33 @@ public final class MoneyWiseArchiveSecurityPrice {
     private final MoneyWiseDataSet theData;
 
     /**
+     * Store.
+     */
+    private final MoneyWiseArchiveStore theStore;
+
+    /**
      * Constructor.
      * @param pReport the report
      * @param pWorkBook the workbook
      * @param pData the data set to load into
+     * @param pStore the store
      */
     MoneyWiseArchiveSecurityPrice(final TethysUIThreadStatusReport pReport,
                                   final PrometheusSheetWorkBook pWorkBook,
-                                  final MoneyWiseDataSet pData) {
+                                  final MoneyWiseDataSet pData,
+                                  final MoneyWiseArchiveStore pStore) {
         theReport = pReport;
         theWorkBook = pWorkBook;
         theData = pData;
+        theStore = pStore;
     }
 
     /**
      * Load the SecurityPrices from an archive.
      * @param pStage the stage
-     * @param pLoader the archive loader
      * @throws OceanusException on error
      */
-    void loadArchive(final OceanusProfile pStage,
-                     final MoneyWiseArchiveLoader pLoader) throws OceanusException {
+    void loadArchive(final OceanusProfile pStage) throws OceanusException {
         /* Access the list of prices */
         pStage.startTask(AREA_PRICES);
         final MoneyWiseSecurityPriceList myList = theData.getSecurityPrices();
@@ -121,7 +127,7 @@ public final class MoneyWiseArchiveSecurityPrice {
                 final OceanusDate myDate = myCell.getDate();
 
                 /* If the price is too late */
-                if (!pLoader.checkDate(myDate)) {
+                if (!theStore.checkDate(myDate)) {
                     /* Skip the row */
                     continue;
                 }

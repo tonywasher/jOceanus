@@ -59,8 +59,8 @@ public class MoneyWiseDataTestArchiveFile {
         final PrometheusBackupPreferences myPrefs = myMgr.getPreferenceSet(PrometheusBackupPreferences.class);
 
         /* Access the Password manager and disable prompting */
-        final MoneyWiseArchiveLoader myLoader = new MoneyWiseArchiveLoader();
-        myLoader.loadArchive(theManager, pData, myPrefs);
+        final MoneyWiseArchiveLoader myLoader = new MoneyWiseArchiveLoader(pData);
+        myLoader.loadArchive(theManager, myPrefs);
 
         /* Initialise the security, from the original data */
         final MoneyWiseDataSet myNullData = pView.getNewData();
@@ -83,9 +83,9 @@ public class MoneyWiseDataTestArchiveFile {
         final MoneyWiseDataSet myDataSet = pView.getNewData();
 
         /* Access the Password manager and disable prompting */
-        final MoneyWiseArchiveLoader myLoader = new MoneyWiseArchiveLoader();
+        final MoneyWiseArchiveLoader myLoader = new MoneyWiseArchiveLoader(myDataSet);
         myLoader.setLastEvent(pLastEvent);
-        myLoader.loadArchive(theManager, myDataSet, myPrefs);
+        myLoader.loadArchive(theManager, myPrefs);
 
         /* Initialise the security, from the original data */
         final MoneyWiseDataSet myNullData = pView.getNewData();
@@ -113,9 +113,9 @@ public class MoneyWiseDataTestArchiveFile {
         myDataSet.newValidityChecks();
 
         /* Access the Password manager and disable prompting */
-        final MoneyWiseArchiveLoader myLoader = new MoneyWiseArchiveLoader();
+        final MoneyWiseArchiveLoader myLoader = new MoneyWiseArchiveLoader(myDataSet);
         myLoader.setLastEvent(pLastEvent);
-        myLoader.loadArchive(theManager, myDataSet, myPrefs);
+        myLoader.loadArchive(theManager, myPrefs);
 
         /* Initialise the security, from the original data */
         final MoneyWiseDataSet myNullData = pView.getNewData();

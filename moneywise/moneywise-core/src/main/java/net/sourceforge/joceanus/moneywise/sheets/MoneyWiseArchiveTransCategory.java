@@ -58,27 +58,33 @@ public class MoneyWiseArchiveTransCategory {
     private final MoneyWiseDataSet theData;
 
     /**
+     * Store.
+     */
+    private final MoneyWiseArchiveLoader theStore;
+
+    /**
      * Constructor.
      * @param pReport the report
      * @param pWorkBook the workbook
      * @param pData the data set to load into
+     * @param pStore the archive store
      */
     MoneyWiseArchiveTransCategory(final TethysUIThreadStatusReport pReport,
                                   final PrometheusSheetWorkBook pWorkBook,
-                                  final MoneyWiseDataSet pData) {
+                                  final MoneyWiseDataSet pData,
+                                  final MoneyWiseArchiveLoader pStore) {
         theReport = pReport;
         theWorkBook = pWorkBook;
         theData = pData;
+        theStore = pStore;
     }
 
     /**
      * Load the TransCategories from an archive.
      * @param pStage the stage
-     * @param pLoader the archive loader
      * @throws OceanusException on error
      */
-    void loadArchive(final OceanusProfile pStage,
-                     final MoneyWiseArchiveLoader pLoader) throws OceanusException {
+    void loadArchive(final OceanusProfile pStage) throws OceanusException {
         /* Access the list of categories */
         pStage.startTask(AREA_TRANSCATEGORIES);
         final MoneyWiseTransCategoryList myList = theData.getTransCategories();
@@ -128,7 +134,7 @@ public class MoneyWiseArchiveTransCategory {
                 final MoneyWiseTransCategory myCategory = myList.addValuesItem(myValues);
 
                 /* Declare the category */
-                pLoader.declareCategory(myCategory);
+                theStore.declareCategory(myCategory);
 
                 /* Report the progress */
                 theReport.setNextStep();
