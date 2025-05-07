@@ -32,7 +32,7 @@ import net.sourceforge.joceanus.oceanus.base.OceanusException;
  * SheetDataItem extension for Payee.
  * @author Tony Washer
  */
-public class MoneyWiseSheetPayee
+public final class MoneyWiseSheetPayee
         extends PrometheusSheetEncrypted<MoneyWisePayee> {
     /**
      * NamedArea for Payees.
@@ -63,7 +63,7 @@ public class MoneyWiseSheetPayee
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
-    protected MoneyWiseSheetPayee(final MoneyWiseReader pReader) {
+    MoneyWiseSheetPayee(final MoneyWiseReader pReader) {
         /* Call super constructor */
         super(pReader, AREA_PAYEES);
 
@@ -76,7 +76,7 @@ public class MoneyWiseSheetPayee
      * Constructor for creating a spreadsheet.
      * @param pWriter the spreadsheet writer
      */
-    protected MoneyWiseSheetPayee(final MoneyWiseWriter pWriter) {
+    MoneyWiseSheetPayee(final MoneyWiseWriter pWriter) {
         /* Call super constructor */
         super(pWriter, AREA_PAYEES);
 

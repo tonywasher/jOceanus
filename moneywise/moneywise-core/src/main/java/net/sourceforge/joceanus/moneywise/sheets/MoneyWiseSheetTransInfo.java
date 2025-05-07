@@ -26,7 +26,7 @@ import net.sourceforge.joceanus.oceanus.base.OceanusException;
  * SheetDataInfo extension for TransactionInfo.
  * @author Tony Washer
  */
-public class MoneyWiseSheetTransInfo
+public final class MoneyWiseSheetTransInfo
         extends PrometheusSheetDataInfo<MoneyWiseTransInfo> {
     /**
      * NamedArea for TransactionInfo.
@@ -37,7 +37,7 @@ public class MoneyWiseSheetTransInfo
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
-    protected MoneyWiseSheetTransInfo(final MoneyWiseReader pReader) {
+    MoneyWiseSheetTransInfo(final MoneyWiseReader pReader) {
         /* Call super-constructor */
         super(pReader, AREA_TRANSINFO);
 
@@ -50,7 +50,7 @@ public class MoneyWiseSheetTransInfo
      * Constructor for creating a spreadsheet.
      * @param pWriter the spreadsheet writer
      */
-    protected MoneyWiseSheetTransInfo(final MoneyWiseWriter pWriter) {
+    MoneyWiseSheetTransInfo(final MoneyWiseWriter pWriter) {
         /* Call super-constructor */
         super(pWriter, AREA_TRANSINFO);
 

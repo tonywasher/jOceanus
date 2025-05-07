@@ -37,7 +37,7 @@ import net.sourceforge.joceanus.oceanus.date.OceanusDate;
  * SheetDataItem extension for Deposit.
  * @author Tony Washer
  */
-public class MoneyWiseSheetDeposit
+public final class MoneyWiseSheetDeposit
         extends PrometheusSheetEncrypted<MoneyWiseDeposit> {
     /**
      * NamedArea for Deposits.
@@ -78,7 +78,7 @@ public class MoneyWiseSheetDeposit
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
-    protected MoneyWiseSheetDeposit(final MoneyWiseReader pReader) {
+    MoneyWiseSheetDeposit(final MoneyWiseReader pReader) {
         /* Call super constructor */
         super(pReader, AREA_DEPOSITS);
 
@@ -91,7 +91,7 @@ public class MoneyWiseSheetDeposit
      * Constructor for creating a spreadsheet.
      * @param pWriter the spreadsheet writer
      */
-    protected MoneyWiseSheetDeposit(final MoneyWiseWriter pWriter) {
+    MoneyWiseSheetDeposit(final MoneyWiseWriter pWriter) {
         /* Call super constructor */
         super(pWriter, AREA_DEPOSITS);
 

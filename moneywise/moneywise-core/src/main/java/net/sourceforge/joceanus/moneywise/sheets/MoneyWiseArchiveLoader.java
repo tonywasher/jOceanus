@@ -23,32 +23,16 @@ import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseAssetType;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicResource;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataSet;
-import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDepositRate;
-import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseExchangeRate;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePortfolio;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePortfolio.MoneyWisePortfolioList;
-import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseRegion;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurity;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurityHolding;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurityHolding.MoneyWiseSecurityHoldingMap;
-import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurityPrice;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransAsset;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransCategory;
-import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransTag;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransaction;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransaction.MoneyWiseTransactionList;
-import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseAccountInfoType;
-import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCashCategoryType;
-import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrency;
-import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseDepositCategoryType;
-import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseLoanCategoryType;
-import net.sourceforge.joceanus.moneywise.data.statics.MoneyWisePayeeType;
-import net.sourceforge.joceanus.moneywise.data.statics.MoneyWisePortfolioType;
-import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseSecurityType;
-import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTaxBasis;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransCategoryClass;
-import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransCategoryType;
-import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransInfoType;
 import net.sourceforge.joceanus.moneywise.exc.MoneyWiseDataException;
 import net.sourceforge.joceanus.moneywise.exc.MoneyWiseIOException;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
@@ -74,7 +58,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
@@ -327,58 +310,36 @@ public class MoneyWiseArchiveLoader {
             loadArchive(pReport, myWorkbook, pData);
 
             /* Load Static Tables */
-            myStage.startTask(MoneyWiseDepositCategoryType.LIST_NAME);
-            MoneyWiseSheetDepositCategoryType.loadArchive(pReport, myWorkbook, pData);
-            myStage.startTask(MoneyWiseCashCategoryType.LIST_NAME);
-            MoneyWiseSheetCashCategoryType.loadArchive(pReport, myWorkbook, pData);
-            myStage.startTask(MoneyWiseLoanCategoryType.LIST_NAME);
-            MoneyWiseSheetLoanCategoryType.loadArchive(pReport, myWorkbook, pData);
-            myStage.startTask(MoneyWisePortfolioType.LIST_NAME);
-            MoneyWiseSheetPortfolioType.loadArchive(pReport, myWorkbook, pData);
-            myStage.startTask(MoneyWiseSecurityType.LIST_NAME);
-            MoneyWiseSheetSecurityType.loadArchive(pReport, myWorkbook, pData);
-            myStage.startTask(MoneyWisePayeeType.LIST_NAME);
-            MoneyWiseSheetPayeeType.loadArchive(pReport, myWorkbook, pData);
-            myStage.startTask(MoneyWiseTransCategoryType.LIST_NAME);
-            MoneyWiseSheetTransCategoryType.loadArchive(pReport, myWorkbook, pData);
-            myStage.startTask(MoneyWiseTaxBasis.LIST_NAME);
-            MoneyWiseSheetTaxBasis.loadArchive(pReport, myWorkbook, pData);
-            myStage.startTask(MoneyWiseCurrency.LIST_NAME);
-            MoneyWiseSheetCurrency.loadArchive(pReport, myWorkbook, pData);
-            myStage.startTask(MoneyWiseAccountInfoType.LIST_NAME);
-            MoneyWiseSheetAccountInfoType.loadArchive(pReport, myWorkbook, pData);
-            myStage.startTask(MoneyWiseTransInfoType.LIST_NAME);
-            MoneyWiseSheetTransInfoType.loadArchive(pReport, myWorkbook, pData);
+            new MoneyWiseArchiveDepositCategoryType(pReport, myWorkbook, pData).loadArchive(myStage);
+            new MoneyWiseArchiveCashCategoryType(pReport, myWorkbook, pData).loadArchive(myStage);
+            new MoneyWiseArchiveLoanCategoryType(pReport, myWorkbook, pData).loadArchive(myStage);
+            new MoneyWiseArchivePortfolioType(pReport, myWorkbook, pData).loadArchive(myStage);
+            new MoneyWiseArchiveSecurityType(pReport, myWorkbook, pData).loadArchive(myStage);
+            new MoneyWiseArchivePayeeType(pReport, myWorkbook, pData).loadArchive(myStage);
+            new MoneyWiseArchiveTransCategoryType(pReport, myWorkbook, pData).loadArchive(myStage);
+            new MoneyWiseArchiveTaxBasis(pReport, myWorkbook, pData).loadArchive(myStage);
+            new MoneyWiseArchiveCurrency(pReport, myWorkbook, pData).loadArchive(myStage);
+            new MoneyWiseArchiveAccountInfoType(pReport, myWorkbook, pData).loadArchive(myStage);
+            new MoneyWiseArchiveTransInfoType(pReport, myWorkbook, pData).loadArchive(myStage);
 
-            /* Load Tags */
-            myStage.startTask(MoneyWiseTransTag.LIST_NAME);
-            MoneyWiseSheetTransTag.loadArchive(pReport, myWorkbook, pData);
-
-            /* Load Regions */
-            myStage.startTask(MoneyWiseRegion.LIST_NAME);
-            MoneyWiseSheetRegion.loadArchive(pReport, myWorkbook, pData);
+            /* Load Tags and Regions */
+            new MoneyWiseArchiveTransTag(pReport, myWorkbook, pData).loadArchive(myStage);
+            new MoneyWiseArchiveRegion(pReport, myWorkbook, pData).loadArchive(myStage);
 
             /* Load Categories */
-            myStage.startTask("AccountCategories");
-            MoneyWiseSheetAccountCategory.loadArchive(pReport, myWorkbook, pData);
-            myStage.startTask(MoneyWiseTransCategory.LIST_NAME);
-            MoneyWiseSheetTransCategory.loadArchive(pReport, myWorkbook, pData, this);
+            new MoneyWiseArchiveAccountCategory(pReport, myWorkbook, pData).loadArchive(myStage);
+            new MoneyWiseArchiveTransCategory(pReport, myWorkbook, pData).loadArchive(myStage, this);
 
             /* Load ExchangeRates */
-            myStage.startTask(MoneyWiseExchangeRate.LIST_NAME);
-            MoneyWiseSheetExchangeRate.loadArchive(pReport, myWorkbook, pData, this);
+            new MoneyWiseArchiveExchangeRate(pReport, myWorkbook, pData).loadArchive(myStage, this);
 
             /* Load Accounts */
-            myStage.startTask("Accounts");
-            MoneyWiseSheetAccount.loadArchive(pReport, myWorkbook, pData, this);
-            myStage.startTask(MoneyWiseSecurityPrice.LIST_NAME);
-            MoneyWiseSheetSecurityPrice.loadArchive(pReport, myWorkbook, pData, this);
-            myStage.startTask(MoneyWiseDepositRate.LIST_NAME);
-            MoneyWiseSheetDepositRate.loadArchive(pReport, myWorkbook, pData);
+            new MoneyWiseArchiveAccount(pReport, myWorkbook, pData).loadArchive(myStage, this);
+            new MoneyWiseArchiveSecurityPrice(pReport, myWorkbook, pData).loadArchive(myStage, this);
+            new MoneyWiseArchiveDepositRate(pReport, myWorkbook, pData).loadArchive(myStage);
 
             /* Load Transactions */
-            myStage.startTask(MoneyWiseTransaction.LIST_NAME);
-            MoneyWiseSheetTransaction.loadArchive(pReport, myWorkbook, pData, this);
+            new MoneyWiseArchiveTransaction(pReport, myWorkbook, pData).loadArchive(myStage, this);
 
             /* Close the stream */
             pStream.close();
@@ -491,12 +452,11 @@ public class MoneyWiseArchiveLoader {
                                        final String pPortfolio) throws OceanusException {
         /* Check for name already exists */
         final Object myHolding = theNameMap.get(pAlias);
-        if (!(myHolding instanceof MoneyWiseSecurityHoldingDef)) {
+        if (!(myHolding instanceof MoneyWiseSecurityHoldingDef myAliased)) {
             throw new MoneyWiseDataException(pAlias, "Aliased security not found");
         }
 
         /* Store the asset */
-        final MoneyWiseSecurityHoldingDef myAliased = (MoneyWiseSecurityHoldingDef) myHolding;
         theNameMap.put(pName, new MoneyWiseSecurityHoldingDef(myAliased.getSecurity(), pPortfolio));
     }
 
@@ -510,10 +470,7 @@ public class MoneyWiseArchiveLoader {
         final MoneyWisePortfolioList myPortfolios = pData.getPortfolios();
 
         /* Loop through the name map */
-        final Iterator<Entry<String, Object>> myIterator = theNameMap.entrySet().iterator();
-        while (myIterator.hasNext()) {
-            final Entry<String, Object> myEntry = myIterator.next();
-
+        for (Entry<String, Object> myEntry : theNameMap.entrySet()) {
             /* If this is a security holding definition */
             final Object myValue = myEntry.getValue();
             if (myValue instanceof MoneyWiseSecurityHoldingDef myDef) {
@@ -545,10 +502,7 @@ public class MoneyWiseArchiveLoader {
         final MoneyWiseSecurityHoldingMap myMap = pData.getPortfolios().getSecurityHoldingsMap();
 
         /* Loop through the name map */
-        final Iterator<Entry<String, Object>> myIterator = theNameMap.entrySet().iterator();
-        while (myIterator.hasNext()) {
-            final Entry<String, Object> myEntry = myIterator.next();
-
+        for (Entry<String, Object> myEntry : theNameMap.entrySet()) {
             /* If this is a security holding definition */
             final Object myValue = myEntry.getValue();
             if (myValue instanceof MoneyWiseSecurityHolding myHolding) {
@@ -971,15 +925,8 @@ public class MoneyWiseArchiveLoader {
                     /* Flip parent assets */
                     theParent.flipAssets();
 
-                    /* If we match the partner on debit */
-                    if (myDebit.equals(myParPartner)) {
-                        /* Use debit as account */
-                        isDebitReversed = false;
-
-                    } else {
-                        /* Use credit as account */
-                        isDebitReversed = true;
-                    }
+                    /* Determine if debit is reversed */
+                    isDebitReversed = !myDebit.equals(myParPartner);
                 }
             }
 

@@ -38,7 +38,7 @@ import net.sourceforge.joceanus.prometheus.sheets.PrometheusSheetEncrypted;
  * SheetDataItem extension for Security.
  * @author Tony Washer
  */
-public class MoneyWiseSheetSecurity
+public final class MoneyWiseSheetSecurity
         extends PrometheusSheetEncrypted<MoneyWiseSecurity> {
     /**
      * NamedArea for Securities.
@@ -79,7 +79,7 @@ public class MoneyWiseSheetSecurity
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
-    protected MoneyWiseSheetSecurity(final MoneyWiseReader pReader) {
+    MoneyWiseSheetSecurity(final MoneyWiseReader pReader) {
         /* Call super constructor */
         super(pReader, AREA_SECURITIES);
 
@@ -92,7 +92,7 @@ public class MoneyWiseSheetSecurity
      * Constructor for creating a spreadsheet.
      * @param pWriter the spreadsheet writer
      */
-    protected MoneyWiseSheetSecurity(final MoneyWiseWriter pWriter) {
+    MoneyWiseSheetSecurity(final MoneyWiseWriter pWriter) {
         /* Call super constructor */
         super(pWriter, AREA_SECURITIES);
 

@@ -32,6 +32,7 @@ import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePortfolio.MoneyWis
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWisePortfolioInfo.MoneyWisePortfolioInfoList;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurity.MoneyWiseSecurityList;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurityInfo.MoneyWiseSecurityInfoList;
+import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetRow;
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetView;
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetWorkBook;
@@ -43,43 +44,63 @@ import net.sourceforge.joceanus.tethys.api.thread.TethysUIThreadCancelException;
  * ArchiveLoader extension for Accounts.
  * @author Tony Washer
  */
-public final class MoneyWiseSheetAccount {
+public final class MoneyWiseArchiveAccount {
     /**
      * Sheet Area name.
      */
     private static final String SHEET_AREA = "AccountInfo";
 
     /**
-     * Private constructor.
+     * Report processor.
      */
-    private MoneyWiseSheetAccount() {
-    }
+    private final TethysUIThreadStatusReport theReport;
 
     /**
-     * Load the Accounts from an archive.
+     * Workbook.
+     */
+    private final PrometheusSheetWorkBook theWorkBook;
+
+    /**
+     * DataSet.
+     */
+    private final MoneyWiseDataSet theData;
+
+    /**
+     * Constructor.
      * @param pReport the report
      * @param pWorkBook the workbook
      * @param pData the data set to load into
+     */
+    MoneyWiseArchiveAccount(final TethysUIThreadStatusReport pReport,
+                            final PrometheusSheetWorkBook pWorkBook,
+                            final MoneyWiseDataSet pData) {
+        theReport = pReport;
+        theWorkBook = pWorkBook;
+        theData = pData;
+    }
+
+    /**
+     * Load the AccountCategories from an archive.
+     * @param pStage the stage
      * @param pLoader the archive loader
      * @throws OceanusException on error
      */
-    static void loadArchive(final TethysUIThreadStatusReport pReport,
-                            final PrometheusSheetWorkBook pWorkBook,
-                            final MoneyWiseDataSet pData,
+    void loadArchive(final OceanusProfile pStage,
                             final MoneyWiseArchiveLoader pLoader) throws OceanusException {
         /* Protect against exceptions */
         try {
             /* Find the range of cells */
-            final PrometheusSheetView myView = pWorkBook.getRangeView(SHEET_AREA);
+            pStage.startTask("Accounts");
+            final PrometheusSheetView myView = theWorkBook.getRangeView(SHEET_AREA);
 
             /* Declare the new stage */
-            pReport.setNewStage(SHEET_AREA);
+            theReport.setNewStage(SHEET_AREA);
 
             /* Count the number of accounts */
             final int myTotal = myView.getRowCount();
 
             /* Declare the number of steps (*2) */
-            pReport.setNumSteps(myTotal << 1);
+            theReport.setNumSteps(myTotal << 1);
 
             /* Loop through the rows of the table */
             for (int i = 0; i < myTotal; i++) {
@@ -87,14 +108,14 @@ public final class MoneyWiseSheetAccount {
                 final PrometheusSheetRow myRow = myView.getRowByIndex(i);
 
                 /* Process payee account */
-                processPayee(pLoader, pData, myView, myRow);
+                processPayee(pLoader, myView, myRow);
 
                 /* Report the progress */
-                pReport.setNextStep();
+                theReport.setNextStep();
             }
 
             /* Resolve Payee lists */
-            resolvePayeeLists(pData);
+            resolvePayeeLists();
 
             /* Loop through the rows of the table */
             for (int i = 0; i < myTotal; i++) {
@@ -102,14 +123,14 @@ public final class MoneyWiseSheetAccount {
                 final PrometheusSheetRow myRow = myView.getRowByIndex(i);
 
                 /* Process account */
-                processAccount(pLoader, pData, myView, myRow);
+                processAccount(pLoader, myView, myRow);
 
                 /* Report the progress */
-                pReport.setNextStep();
+                theReport.setNextStep();
             }
 
             /* Resolve Account lists */
-            resolveAccountLists(pLoader, pData);
+            resolveAccountLists(pLoader);
 
             /* Handle exceptions */
         } catch (TethysUIThreadCancelException e) {
@@ -122,15 +143,13 @@ public final class MoneyWiseSheetAccount {
     /**
      * Process account row.
      * @param pLoader the archive loader
-     * @param pData the DataSet
      * @param pView the spreadsheet view
      * @param pRow the spreadsheet row
      * @throws OceanusException on error
      */
-    private static void processPayee(final MoneyWiseArchiveLoader pLoader,
-                                     final MoneyWiseDataSet pData,
-                                     final PrometheusSheetView pView,
-                                     final PrometheusSheetRow pRow) throws OceanusException {
+    private void processPayee(final MoneyWiseArchiveLoader pLoader,
+                              final PrometheusSheetView pView,
+                              final PrometheusSheetRow pRow) throws OceanusException {
         /* Skip name and type column */
         int iAdjust = -1;
         ++iAdjust;
@@ -142,27 +161,25 @@ public final class MoneyWiseSheetAccount {
         /* If this is a Payee */
         if (myClass.equals(MoneyWiseBasicDataType.PAYEE.toString())) {
             /* Process as a payee */
-            MoneyWiseSheetPayee.processPayee(pLoader, pData, pView, pRow);
+            MoneyWiseSheetPayee.processPayee(pLoader, theData, pView, pRow);
 
             /* If this is a cash */
         } else if (myClass.equals(MoneyWiseBasicDataType.CASH.toString())) {
             /* Process as a cash payee */
-            MoneyWiseSheetCash.processCashPayee(pLoader, pData, pView, pRow);
+            MoneyWiseSheetCash.processCashPayee(pLoader, theData, pView, pRow);
         }
     }
 
     /**
      * Process account row.
      * @param pLoader the archive loader
-     * @param pData the DataSet
      * @param pView the spreadsheet view
      * @param pRow the spreadsheet row
      * @throws OceanusException on error
      */
-    private static void processAccount(final MoneyWiseArchiveLoader pLoader,
-                                       final MoneyWiseDataSet pData,
-                                       final PrometheusSheetView pView,
-                                       final PrometheusSheetRow pRow) throws OceanusException {
+    private void processAccount(final MoneyWiseArchiveLoader pLoader,
+                                final PrometheusSheetView pView,
+                                final PrometheusSheetRow pRow) throws OceanusException {
         /* Skip name and type column */
         int iAdjust = -1;
         ++iAdjust;
@@ -174,27 +191,27 @@ public final class MoneyWiseSheetAccount {
         /* If this is a deposit */
         if (myClass.equals(MoneyWiseBasicDataType.DEPOSIT.toString())) {
             /* Process as a deposit */
-            MoneyWiseSheetDeposit.processDeposit(pLoader, pData, pView, pRow);
+            MoneyWiseSheetDeposit.processDeposit(pLoader, theData, pView, pRow);
 
             /* If this is a cash */
         } else if (myClass.equals(MoneyWiseBasicDataType.CASH.toString())) {
             /* Process as a cash */
-            MoneyWiseSheetCash.processCash(pLoader, pData, pView, pRow);
+            MoneyWiseSheetCash.processCash(pLoader, theData, pView, pRow);
 
             /* If this is a loan */
         } else if (myClass.equals(MoneyWiseBasicDataType.LOAN.toString())) {
             /* Process as a loan */
-            MoneyWiseSheetLoan.processLoan(pLoader, pData, pView, pRow);
+            MoneyWiseSheetLoan.processLoan(pLoader, theData, pView, pRow);
 
             /* If this is a security */
         } else if (myClass.equals(MoneyWiseBasicDataType.SECURITY.toString())) {
             /* Process as a security */
-            MoneyWiseSheetSecurity.processSecurity(pLoader, pData, pView, pRow);
+            MoneyWiseSheetSecurity.processSecurity(pLoader, theData, pView, pRow);
 
             /* If this is a portfolio */
         } else if (myClass.equals(MoneyWiseBasicDataType.PORTFOLIO.toString())) {
             /* Process as a portfolio */
-            MoneyWiseSheetPortfolio.processPortfolio(pLoader, pData, pView, pRow);
+            MoneyWiseSheetPortfolio.processPortfolio(pLoader, theData, pView, pRow);
 
             /* else reject if not payee */
         } else if (!myClass.equals(MoneyWiseBasicDataType.PAYEE.toString())) {
@@ -204,13 +221,12 @@ public final class MoneyWiseSheetAccount {
 
     /**
      * Resolve payee account lists.
-     * @param pData the DataSet
      * @throws OceanusException on error
      */
-    private static void resolvePayeeLists(final MoneyWiseDataSet pData) throws OceanusException {
+    private void resolvePayeeLists() throws OceanusException {
         /* PostProcess the Payees */
-        final MoneyWisePayeeList myPayeeList = pData.getPayees();
-        final MoneyWisePayeeInfoList myPayeeInfoList = pData.getPayeeInfo();
+        final MoneyWisePayeeList myPayeeList = theData.getPayees();
+        final MoneyWisePayeeInfoList myPayeeInfoList = theData.getPayeeInfo();
         myPayeeList.postProcessOnLoad();
         myPayeeInfoList.postProcessOnLoad();
     }
@@ -218,42 +234,40 @@ public final class MoneyWiseSheetAccount {
     /**
      * Resolve non-payee account lists.
      * @param pLoader the archive loader
-     * @param pData the DataSet
      * @throws OceanusException on error
      */
-    private static void resolveAccountLists(final MoneyWiseArchiveLoader pLoader,
-                                            final MoneyWiseDataSet pData) throws OceanusException {
+    private void resolveAccountLists(final MoneyWiseArchiveLoader pLoader) throws OceanusException {
         /* PostProcess the securities */
-        final MoneyWiseSecurityList mySecurityList = pData.getSecurities();
-        final MoneyWiseSecurityInfoList mySecInfoList = pData.getSecurityInfo();
+        final MoneyWiseSecurityList mySecurityList = theData.getSecurities();
+        final MoneyWiseSecurityInfoList mySecInfoList = theData.getSecurityInfo();
         mySecurityList.postProcessOnLoad();
         mySecInfoList.postProcessOnLoad();
 
         /* PostProcess the deposits */
-        final MoneyWiseDepositList myDepositList = pData.getDeposits();
-        final MoneyWiseDepositInfoList myDepInfoList = pData.getDepositInfo();
+        final MoneyWiseDepositList myDepositList = theData.getDeposits();
+        final MoneyWiseDepositInfoList myDepInfoList = theData.getDepositInfo();
         myDepositList.postProcessOnLoad();
         myDepInfoList.postProcessOnLoad();
 
         /* PostProcess the cash */
-        final MoneyWiseCashList myCashList = pData.getCash();
-        final MoneyWiseCashInfoList myCashInfoList = pData.getCashInfo();
+        final MoneyWiseCashList myCashList = theData.getCash();
+        final MoneyWiseCashInfoList myCashInfoList = theData.getCashInfo();
         myCashList.postProcessOnLoad();
         myCashInfoList.postProcessOnLoad();
 
         /* PostProcess the loans */
-        final MoneyWiseLoanList myLoanList = pData.getLoans();
-        final MoneyWiseLoanInfoList myLoanInfoList = pData.getLoanInfo();
+        final MoneyWiseLoanList myLoanList = theData.getLoans();
+        final MoneyWiseLoanInfoList myLoanInfoList = theData.getLoanInfo();
         myLoanList.postProcessOnLoad();
         myLoanInfoList.postProcessOnLoad();
 
         /* PostProcess the portfolios */
-        final MoneyWisePortfolioList myPortfolioList = pData.getPortfolios();
-        final MoneyWisePortfolioInfoList myPortInfoList = pData.getPortfolioInfo();
+        final MoneyWisePortfolioList myPortfolioList = theData.getPortfolios();
+        final MoneyWisePortfolioInfoList myPortInfoList = theData.getPortfolioInfo();
         myPortfolioList.postProcessOnLoad();
         myPortInfoList.postProcessOnLoad();
 
         /* Resolve Security Holdings */
-        pLoader.resolveSecurityHoldings(pData);
+        pLoader.resolveSecurityHoldings(theData);
     }
 }

@@ -39,7 +39,7 @@ import net.sourceforge.joceanus.oceanus.base.OceanusException;
  * SheetDataItem extension for Cash.
  * @author Tony Washer
  */
-public class MoneyWiseSheetCash
+public final class MoneyWiseSheetCash
         extends PrometheusSheetEncrypted<MoneyWiseCash> {
     /**
      * NamedArea for Cash.
@@ -75,7 +75,7 @@ public class MoneyWiseSheetCash
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
-    protected MoneyWiseSheetCash(final MoneyWiseReader pReader) {
+    MoneyWiseSheetCash(final MoneyWiseReader pReader) {
         /* Call super constructor */
         super(pReader, AREA_CASH);
 
@@ -88,7 +88,7 @@ public class MoneyWiseSheetCash
      * Constructor for creating a spreadsheet.
      * @param pWriter the spreadsheet writer
      */
-    protected MoneyWiseSheetCash(final MoneyWiseWriter pWriter) {
+    MoneyWiseSheetCash(final MoneyWiseWriter pWriter) {
         /* Call super constructor */
         super(pWriter, AREA_CASH);
 

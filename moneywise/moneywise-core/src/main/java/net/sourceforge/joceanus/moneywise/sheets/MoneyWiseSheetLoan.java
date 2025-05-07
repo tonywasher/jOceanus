@@ -34,7 +34,7 @@ import net.sourceforge.joceanus.oceanus.base.OceanusException;
  * SheetDataItem extension for Loan.
  * @author Tony Washer
  */
-public class MoneyWiseSheetLoan
+public final class MoneyWiseSheetLoan
         extends PrometheusSheetEncrypted<MoneyWiseLoan> {
     /**
      * NamedArea for Loans.
@@ -75,7 +75,7 @@ public class MoneyWiseSheetLoan
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
-    protected MoneyWiseSheetLoan(final MoneyWiseReader pReader) {
+    MoneyWiseSheetLoan(final MoneyWiseReader pReader) {
         /* Call super constructor */
         super(pReader, AREA_LOANS);
 
@@ -88,7 +88,7 @@ public class MoneyWiseSheetLoan
      * Constructor for creating a spreadsheet.
      * @param pWriter the spreadsheet writer
      */
-    protected MoneyWiseSheetLoan(final MoneyWiseWriter pWriter) {
+    MoneyWiseSheetLoan(final MoneyWiseWriter pWriter) {
         /* Call super constructor */
         super(pWriter, AREA_LOANS);
 

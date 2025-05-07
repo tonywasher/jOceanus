@@ -16,8 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.moneywise.sheets;
 
-import net.sourceforge.joceanus.moneywise.exc.MoneyWiseIOException;
-import net.sourceforge.joceanus.moneywise.exc.MoneyWiseLogicException;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseCashCategory;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseCashCategory.MoneyWiseCashCategoryList;
@@ -27,55 +25,78 @@ import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDepositCategory.Mo
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseLoanCategory;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseLoanCategory.MoneyWiseLoanCategoryList;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
+import net.sourceforge.joceanus.moneywise.exc.MoneyWiseIOException;
+import net.sourceforge.joceanus.moneywise.exc.MoneyWiseLogicException;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataResource;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataValues;
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetCell;
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetRow;
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetView;
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetWorkBook;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.tethys.api.thread.TethysUIThreadStatusReport;
 import net.sourceforge.joceanus.tethys.api.thread.TethysUIThreadCancelException;
+import net.sourceforge.joceanus.tethys.api.thread.TethysUIThreadStatusReport;
 
 /**
- * SheetDataItem extension for AccountCategory.
+ * Archive Loader for AccountCategory.
  * @author Tony Washer
  */
-public final class MoneyWiseSheetAccountCategory {
+public final class MoneyWiseArchiveAccountCategory {
     /**
      * NamedArea for Categories.
      */
     static final String AREA_ACTCATEGORIES = "AccountCategoryInfo";
 
     /**
-     * Private constructor.
+     * Report processor.
      */
-    private MoneyWiseSheetAccountCategory() {
+    private final TethysUIThreadStatusReport theReport;
+
+    /**
+     * Workbook.
+     */
+    private final PrometheusSheetWorkBook theWorkBook;
+
+    /**
+     * DataSet.
+     */
+    private final MoneyWiseDataSet theData;
+
+    /**
+     * Constructor.
+     * @param pReport the report
+     * @param pWorkBook the workbook
+     * @param pData the data set to load into
+     */
+    MoneyWiseArchiveAccountCategory(final TethysUIThreadStatusReport pReport,
+                                    final PrometheusSheetWorkBook pWorkBook,
+                                    final MoneyWiseDataSet pData) {
+        theReport = pReport;
+        theWorkBook = pWorkBook;
+        theData = pData;
     }
 
     /**
      * Load the AccountCategories from an archive.
-     * @param pReport the report
-     * @param pWorkBook the workbook
-     * @param pData the data set to load into
+     * @param pStage the stage
      * @throws OceanusException on error
      */
-    static void loadArchive(final TethysUIThreadStatusReport pReport,
-                            final PrometheusSheetWorkBook pWorkBook,
-                            final MoneyWiseDataSet pData) throws OceanusException {
+    void loadArchive(final OceanusProfile pStage) throws OceanusException {
         /* Protect against exceptions */
         try {
             /* Find the range of cells */
-            final PrometheusSheetView myView = pWorkBook.getRangeView(AREA_ACTCATEGORIES);
+            pStage.startTask("AccountCategories");
+            final PrometheusSheetView myView = theWorkBook.getRangeView(AREA_ACTCATEGORIES);
 
             /* Declare the new stage */
-            pReport.setNewStage(AREA_ACTCATEGORIES);
+            theReport.setNewStage(AREA_ACTCATEGORIES);
 
             /* Count the number of Categories */
             final int myTotal = myView.getRowCount();
 
             /* Declare the number of steps */
-            pReport.setNumSteps(myTotal);
+            theReport.setNumSteps(myTotal);
 
             /* Loop through the rows of the table */
             for (int i = 0; i < myTotal; i++) {
@@ -83,14 +104,14 @@ public final class MoneyWiseSheetAccountCategory {
                 final PrometheusSheetRow myRow = myView.getRowByIndex(i);
 
                 /* Process category */
-                processCategory(pData, myView, myRow);
+                processCategory(myView, myRow);
 
                 /* Report the progress */
-                pReport.setNextStep();
+                theReport.setNextStep();
             }
 
             /* Resolve Category lists */
-            resolveCategoryLists(pData);
+            resolveCategoryLists();
 
             /* Handle exceptions */
         } catch (TethysUIThreadCancelException e) {
@@ -102,14 +123,12 @@ public final class MoneyWiseSheetAccountCategory {
 
     /**
      * Process row into alternate form.
-     * @param pData the DataSet
      * @param pView the spreadsheet view
      * @param pRow the spreadsheet row
      * @throws OceanusException on error
      */
-    private static void processCategory(final MoneyWiseDataSet pData,
-                                        final PrometheusSheetView pView,
-                                        final PrometheusSheetRow pRow) throws OceanusException {
+    private void processCategory(final PrometheusSheetView pView,
+                                 final PrometheusSheetRow pRow) throws OceanusException {
         /* Access name */
         int iAdjust = -1;
         final String myName = pView.getRowCellByIndex(pRow, ++iAdjust).getString();
@@ -145,7 +164,7 @@ public final class MoneyWiseSheetAccountCategory {
             myValues.addValue(PrometheusDataResource.DATAITEM_FIELD_NAME, myName);
 
             /* Add the value into the list */
-            final MoneyWiseDepositCategoryList myList = pData.getDepositCategories();
+            final MoneyWiseDepositCategoryList myList = theData.getDepositCategories();
             myList.addValuesItem(myValues);
 
             /* If this is a cash category */
@@ -157,7 +176,7 @@ public final class MoneyWiseSheetAccountCategory {
             myValues.addValue(PrometheusDataResource.DATAITEM_FIELD_NAME, myName);
 
             /* Add the value into the list */
-            final MoneyWiseCashCategoryList myList = pData.getCashCategories();
+            final MoneyWiseCashCategoryList myList = theData.getCashCategories();
             myList.addValuesItem(myValues);
 
             /* If this is a loan category */
@@ -169,7 +188,7 @@ public final class MoneyWiseSheetAccountCategory {
             myValues.addValue(PrometheusDataResource.DATAITEM_FIELD_NAME, myName);
 
             /* Add the value into the list */
-            final MoneyWiseLoanCategoryList myList = pData.getLoanCategories();
+            final MoneyWiseLoanCategoryList myList = theData.getLoanCategories();
             myList.addValuesItem(myValues);
 
         } else {
@@ -179,20 +198,19 @@ public final class MoneyWiseSheetAccountCategory {
 
     /**
      * Resolve category lists.
-     * @param pData the DataSet
      * @throws OceanusException on error
      */
-    private static void resolveCategoryLists(final MoneyWiseDataSet pData) throws OceanusException {
+    private void resolveCategoryLists() throws OceanusException {
         /* Post process the deposit category list */
-        final MoneyWiseDepositCategoryList myDepositList = pData.getDepositCategories();
+        final MoneyWiseDepositCategoryList myDepositList = theData.getDepositCategories();
         myDepositList.postProcessOnLoad();
 
         /* Post process the cash category list */
-        final MoneyWiseCashCategoryList myCashList = pData.getCashCategories();
+        final MoneyWiseCashCategoryList myCashList = theData.getCashCategories();
         myCashList.postProcessOnLoad();
 
         /* Post process the loan category list */
-        final MoneyWiseLoanCategoryList myLoanList = pData.getLoanCategories();
+        final MoneyWiseLoanCategoryList myLoanList = theData.getLoanCategories();
         myLoanList.postProcessOnLoad();
     }
 }

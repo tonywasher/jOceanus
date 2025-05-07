@@ -36,7 +36,7 @@ import net.sourceforge.joceanus.prometheus.sheets.PrometheusSheetEncrypted;
  * SheetDataItem extension for Portfolio.
  * @author Tony Washer
  */
-public class MoneyWiseSheetPortfolio
+public final class MoneyWiseSheetPortfolio
         extends PrometheusSheetEncrypted<MoneyWisePortfolio> {
     /**
      * NamedArea for Portfolios.
@@ -82,7 +82,7 @@ public class MoneyWiseSheetPortfolio
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
-    protected MoneyWiseSheetPortfolio(final MoneyWiseReader pReader) {
+    MoneyWiseSheetPortfolio(final MoneyWiseReader pReader) {
         /* Call super constructor */
         super(pReader, AREA_PORTFOLIOS);
 
@@ -95,7 +95,7 @@ public class MoneyWiseSheetPortfolio
      * Constructor for creating a spreadsheet.
      * @param pWriter the spreadsheet writer
      */
-    protected MoneyWiseSheetPortfolio(final MoneyWiseWriter pWriter) {
+    MoneyWiseSheetPortfolio(final MoneyWiseWriter pWriter) {
         /* Call super constructor */
         super(pWriter, AREA_PORTFOLIOS);
 
