@@ -16,19 +16,12 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.moneywise.archive;
 
-import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
-import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseAssetBase;
-import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicResource;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataSet;
-import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurity;
-import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransAsset;
-import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransCategory;
 import net.sourceforge.joceanus.moneywise.exc.MoneyWiseIOException;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.date.OceanusDate;
 import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
 import net.sourceforge.joceanus.prometheus.data.PrometheusControlData.PrometheusControlDataList;
-import net.sourceforge.joceanus.prometheus.data.PrometheusDataValues;
 import net.sourceforge.joceanus.prometheus.preference.PrometheusBackup.PrometheusBackupPreferenceKey;
 import net.sourceforge.joceanus.prometheus.preference.PrometheusBackup.PrometheusBackupPreferences;
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetCell;
@@ -43,15 +36,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ListIterator;
 
 /**
  * Class to load an archive SpreadSheet.
  */
-public class MoneyWiseArchiveLoader
-        implements MoneyWiseArchiveStore {
+public final class MoneyWiseArchiveLoader {
     /**
      * Number of base archive load areas.
      * 11xStatic,TransactionTags,Regions,2*Category,XchgRate,Rate,Price,Account.
@@ -64,24 +53,14 @@ public class MoneyWiseArchiveLoader
     private static final String AREA_YEARRANGE = "AssetsYears";
 
     /**
-     * The list of years.
-     */
-    private final List<MoneyWiseArchiveYear> theYears;
-
-    /**
      * The Data.
      */
-    private MoneyWiseDataSet theData;
+    private final MoneyWiseDataSet theData;
 
     /**
-     * The ParentCache.
+     * The Cache.
      */
-    private MoneyWiseArchiveCache theParentCache;
-
-    /**
-     * Are we filtering?.
-     */
-    private boolean enableFiltering;
+    private final MoneyWiseArchiveCache theCache;
 
     /**
      * Constructor.
@@ -89,58 +68,14 @@ public class MoneyWiseArchiveLoader
      */
     public MoneyWiseArchiveLoader(final MoneyWiseDataSet pData) {
         theData = pData;
-        theParentCache = new MoneyWiseArchiveCache(this, theData);
-        theYears = new ArrayList<>();
-    }
-
-    /**
-     * Get the iterator.
-     * @return the iterator
-     */
-    protected ListIterator<MoneyWiseArchiveYear> getIterator() {
-        return theYears.listIterator();
-    }
-
-    @Override
-    public ListIterator<MoneyWiseArchiveYear> reverseIterator() {
-        return theYears.listIterator(theYears.size());
-    }
-
-    /**
-     * Get the number of years.
-     * @return the number of years
-     */
-    protected int getNumYears() {
-        return theYears.size();
-    }
-
-    /**
-     * Get the parent cache.
-     * @return the parent cache
-     */
-    protected MoneyWiseArchiveCache getParentCache() {
-        return theParentCache;
-    }
-
-    /**
-     * Add a year to the front of the list.
-     * @param pName the range name
-     */
-    private void addYear(final String pName) {
-        final MoneyWiseArchiveYear myYear = new MoneyWiseArchiveYear(pName);
-        theYears.add(myYear);
-    }
-
-    @Override
-    public boolean checkDate(final OceanusDate pDate) {
-        return theParentCache.checkDate(pDate);
+        theCache = new MoneyWiseArchiveCache(theData);
     }
 
     /**
      * Enable filtering.
      */
     public void enableFiltering() {
-        enableFiltering = true;
+        theCache.enableFiltering();
     }
 
     /**
@@ -148,7 +83,7 @@ public class MoneyWiseArchiveLoader
      * @param pLastEvent the last event date
      */
     public void setLastEvent(final OceanusDate pLastEvent) {
-        theParentCache.setLastEvent(pLastEvent);
+        theCache.setLastEvent(pLastEvent);
     }
 
     /**
@@ -172,12 +107,6 @@ public class MoneyWiseArchiveLoader
             /* Load the data from the stream */
             loadArchiveStream(pReport, myStream, myType);
 
-            /* If we hit the lastEvent limit */
-            if (theParentCache.hitEventLimit()) {
-                /* Note the fact in the data */
-                theData.hitEventLimit();
-            }
-
         } catch (IOException e) {
             /* Report the error */
             throw new MoneyWiseIOException("Failed to load Workbook: " + myArchive.getName(), e);
@@ -199,7 +128,7 @@ public class MoneyWiseArchiveLoader
         for (int myIndex = 0; myIndex < myView.getColumnCount(); myIndex++) {
             /* Access the cell and add year to the list */
             final PrometheusSheetCell myCell = myView.getCellByPosition(myIndex, 0);
-            addYear(myCell.getString());
+            theCache.addYear(myCell.getString());
         }
 
         /* Access the static */
@@ -209,7 +138,7 @@ public class MoneyWiseArchiveLoader
         myStatic.addNewControl(0);
 
         /* Calculate the number of stages */
-        final int myStages = NUM_ARCHIVE_AREAS + getNumYears();
+        final int myStages = NUM_ARCHIVE_AREAS + theCache.getNumYears();
 
         /* Declare the number of stages */
         pReport.setNumStages(myStages);
@@ -222,9 +151,9 @@ public class MoneyWiseArchiveLoader
      * @param pType the workBookType
      * @throws OceanusException on error
      */
-    private void loadArchiveStream(final TethysUIThreadStatusReport pReport,
-                                   final InputStream pStream,
-                                   final PrometheusSheetWorkBookType pType) throws OceanusException {
+    public void loadArchiveStream(final TethysUIThreadStatusReport pReport,
+                                  final InputStream pStream,
+                                  final PrometheusSheetWorkBookType pType) throws OceanusException {
         /* Protect the workbook retrieval */
         try {
             /* Access current profile */
@@ -260,18 +189,24 @@ public class MoneyWiseArchiveLoader
 
             /* Load Categories */
             new MoneyWiseArchiveAccountCategory(pReport, myWorkbook, theData).loadArchive(myStage);
-            new MoneyWiseArchiveTransCategory(pReport, myWorkbook, theData, this).loadArchive(myStage);
+            new MoneyWiseArchiveTransCategory(pReport, myWorkbook, theData, theCache).loadArchive(myStage);
 
             /* Load ExchangeRates */
-            new MoneyWiseArchiveExchangeRate(pReport, myWorkbook, theData, this).loadArchive(myStage);
+            new MoneyWiseArchiveExchangeRate(pReport, myWorkbook, theData, theCache).loadArchive(myStage);
 
             /* Load Accounts */
-            new MoneyWiseArchiveAccount(pReport, myWorkbook, theData, this).loadArchive(myStage);
-            new MoneyWiseArchiveSecurityPrice(pReport, myWorkbook, theData, this).loadArchive(myStage);
+            new MoneyWiseArchiveAccount(pReport, myWorkbook, theData, theCache).loadArchive(myStage);
+            new MoneyWiseArchiveSecurityPrice(pReport, myWorkbook, theData, theCache).loadArchive(myStage);
             new MoneyWiseArchiveDepositRate(pReport, myWorkbook, theData).loadArchive(myStage);
 
             /* Load Transactions */
-            new MoneyWiseArchiveTransaction(pReport, myWorkbook, theData, this).loadArchive(myStage);
+            new MoneyWiseArchiveTransaction(pReport, myWorkbook, theData, theCache).loadArchive(myStage);
+
+            /* If we hit the lastEvent limit */
+            if (theCache.hitEventLimit()) {
+                /* Note the fact in the data */
+                theData.hitEventLimit();
+            }
 
             /* Close the stream */
             pStream.close();
@@ -283,64 +218,5 @@ public class MoneyWiseArchiveLoader
             /* Report the error */
             throw new MoneyWiseIOException("Failed to load Workbook", e);
         }
-    }
-
-    /**
-     * should we filter this transaction?
-     * @param pTrans the transaction
-     * @return true/false
-     */
-    boolean filterTransaction(final PrometheusDataValues pTrans) {
-        return enableFiltering
-                && (filterAsset(pTrans, MoneyWiseBasicResource.TRANSACTION_ACCOUNT)
-                    || filterAsset(pTrans, MoneyWiseBasicResource.TRANSACTION_PARTNER));
-    }
-
-    /**
-     * Should we filter this asset?
-     * @param pTrans the transaction values
-     * @param pAsset the asset
-     * @return true/false
-     */
-    private boolean filterAsset(final PrometheusDataValues pTrans,
-                                final MetisDataFieldId pAsset) {
-        final MoneyWiseTransAsset myAsset = pTrans.getValue(pAsset, MoneyWiseTransAsset.class);
-        switch (myAsset.getAssetType()) {
-            case DEPOSIT:
-            case CASH:
-            case PAYEE:
-            case LOAN:
-                return false;
-            default:
-                return true;
-        }
-    }
-
-    @Override
-    public void declareAsset(final MoneyWiseAssetBase pAsset) throws OceanusException {
-        theParentCache.declareAsset(pAsset);
-    }
-
-    @Override
-    public void declareCategory(final MoneyWiseTransCategory pCategory) throws OceanusException {
-        theParentCache.declareCategory(pCategory);
-    }
-
-    @Override
-    public void declareSecurityHolding(final MoneyWiseSecurity pSecurity,
-                                       final String pPortfolio) throws OceanusException {
-        theParentCache.declareSecurityHolding(pSecurity, pPortfolio);
-    }
-
-    @Override
-    public void declareAliasHolding(final String pName,
-                                    final String pAlias,
-                                    final String pPortfolio) throws OceanusException {
-        theParentCache.declareAliasHolding(pName, pAlias, pPortfolio);
-        }
-
-    @Override
-    public void resolveSecurityHoldings(final MoneyWiseDataSet pData) {
-        theParentCache.resolveSecurityHoldings(pData);
     }
 }

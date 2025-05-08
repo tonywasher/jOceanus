@@ -58,25 +58,25 @@ public final class MoneyWiseArchiveExchangeRate {
     private final MoneyWiseDataSet theData;
 
     /**
-     * Store.
+     * Cache.
      */
-    private final MoneyWiseArchiveStore theStore;
+    private final MoneyWiseArchiveCache theCache;
 
     /**
      * Constructor.
      * @param pReport the report
      * @param pWorkBook the workbook
      * @param pData the data set to load into
-     * @param pStore the archive store
+     * @param pCache the cache
      */
     MoneyWiseArchiveExchangeRate(final TethysUIThreadStatusReport pReport,
                                  final PrometheusSheetWorkBook pWorkBook,
                                  final MoneyWiseDataSet pData,
-                                 final MoneyWiseArchiveStore pStore) {
+                                 final MoneyWiseArchiveCache pCache) {
         theReport = pReport;
         theWorkBook = pWorkBook;
         theData = pData;
-        theStore = pStore;
+        theCache = pCache;
     }
 
     /**
@@ -119,7 +119,7 @@ public final class MoneyWiseArchiveExchangeRate {
                 final OceanusDate myDate = myCell.getDate();
 
                 /* If the rate is too late */
-                if (!theStore.checkDate(myDate)) {
+                if (!theCache.checkDate(myDate)) {
                     /* Skip the row */
                     continue;
                 }

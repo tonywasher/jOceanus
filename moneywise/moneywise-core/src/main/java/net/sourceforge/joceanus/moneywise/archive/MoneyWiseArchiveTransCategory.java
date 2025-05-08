@@ -58,25 +58,25 @@ public class MoneyWiseArchiveTransCategory {
     private final MoneyWiseDataSet theData;
 
     /**
-     * Store.
+     * Cache.
      */
-    private final MoneyWiseArchiveLoader theStore;
+    private final MoneyWiseArchiveCache theCache;
 
     /**
      * Constructor.
      * @param pReport the report
      * @param pWorkBook the workbook
      * @param pData the data set to load into
-     * @param pStore the archive store
+     * @param pCache the cache
      */
     MoneyWiseArchiveTransCategory(final TethysUIThreadStatusReport pReport,
                                   final PrometheusSheetWorkBook pWorkBook,
                                   final MoneyWiseDataSet pData,
-                                  final MoneyWiseArchiveLoader pStore) {
+                                  final MoneyWiseArchiveCache pCache) {
         theReport = pReport;
         theWorkBook = pWorkBook;
         theData = pData;
-        theStore = pStore;
+        theCache = pCache;
     }
 
     /**
@@ -134,7 +134,7 @@ public class MoneyWiseArchiveTransCategory {
                 final MoneyWiseTransCategory myCategory = myList.addValuesItem(myValues);
 
                 /* Declare the category */
-                theStore.declareCategory(myCategory);
+                theCache.declareCategory(myCategory);
 
                 /* Report the progress */
                 theReport.setNextStep();

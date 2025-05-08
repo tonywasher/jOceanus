@@ -61,25 +61,25 @@ public final class MoneyWiseArchiveTransaction {
     private final MoneyWiseDataSet theData;
 
     /**
-     * Store.
+     * Cache.
      */
-    private final MoneyWiseArchiveLoader theStore;
+    private final MoneyWiseArchiveCache theCache;
 
     /**
      * Constructor.
      * @param pReport the report
      * @param pWorkBook the workbook
      * @param pData the data set to load into
-     * @param pStore the archive store
+     * @param pCache the cache
      */
     MoneyWiseArchiveTransaction(final TethysUIThreadStatusReport pReport,
                                 final PrometheusSheetWorkBook pWorkBook,
                                 final MoneyWiseDataSet pData,
-                                final MoneyWiseArchiveLoader pStore) {
+                                final MoneyWiseArchiveCache pCache) {
         theReport = pReport;
         theWorkBook = pWorkBook;
         theData = pData;
-        theStore = pStore;
+        theCache = pCache;
     }
 
     /**
@@ -96,7 +96,7 @@ public final class MoneyWiseArchiveTransaction {
         /* Protect against exceptions */
         try {
             /* Obtain the range iterator */
-            final ListIterator<MoneyWiseArchiveYear> myIterator = theStore.reverseIterator();
+            final ListIterator<MoneyWiseArchiveYear> myIterator = theCache.reverseIterator();
 
             /* Loop through the individual year ranges */
             while (myIterator.hasPrevious()) {
@@ -130,7 +130,7 @@ public final class MoneyWiseArchiveTransaction {
                 }
 
                 /* If we have finished */
-                if (!theStore.checkDate(myYear.getDate())) {
+                if (!theCache.checkDate(myYear.getDate())) {
                     /* Break the loop */
                     break;
                 }
@@ -163,8 +163,7 @@ public final class MoneyWiseArchiveTransaction {
      */
     private boolean processTransaction(final PrometheusSheetView pView,
                                        final PrometheusSheetRow pRow) throws OceanusException {
-        /* Access parent cache */
-        final MoneyWiseArchiveCache myCache = theStore.getParentCache();
+        /* Access cache */
         int iAdjust = -1;
 
         /* Access date */
@@ -196,12 +195,12 @@ public final class MoneyWiseArchiveTransaction {
         }
 
         /* Set defaults */
-        if (!myCache.resolveValues(myDate, myDebit, myCredit, myCategory)) {
+        if (!theCache.resolveValues(myDate, myDebit, myCredit, myCategory)) {
             return false;
         }
 
         /* Build transaction */
-        final MoneyWiseTransaction myTrans = myCache.buildTransaction(myAmount, myReconciled);
+        final MoneyWiseTransaction myTrans = theCache.buildTransaction(myAmount, myReconciled);
         if (myTrans == null) {
             return true;
         }
@@ -209,7 +208,7 @@ public final class MoneyWiseArchiveTransaction {
         /* Process TransactionInfo */
         final int myLast = pRow.getMaxValuedCellIndex();
         if (iAdjust < myLast) {
-            processTransInfo(myCache, pView, pRow, myTrans, iAdjust);
+            processTransInfo(pView, pRow, myTrans, iAdjust);
         }
 
         /* Continue */
@@ -218,15 +217,13 @@ public final class MoneyWiseArchiveTransaction {
 
     /**
      * Process transaction row from archive.
-     * @param pCache the parent cache
      * @param pView the spreadsheet view
      * @param pRow the spreadsheet row
      * @param pTrans the transaction
      * @param pAdjust the cell#
      * @throws OceanusException on error
      */
-    private void processTransInfo(final MoneyWiseArchiveCache pCache,
-                                  final PrometheusSheetView pView,
+    private void processTransInfo(final PrometheusSheetView pView,
                                   final PrometheusSheetRow pRow,
                                   final MoneyWiseTransaction pTrans,
                                   final int pAdjust) throws OceanusException {
@@ -344,7 +341,7 @@ public final class MoneyWiseArchiveTransaction {
         }
 
         /* If the debit was reversed */
-        if (pCache.isDebitReversed()) {
+        if (theCache.isDebitReversed()) {
             /* Flip the Debit and credit values */
             final String myTemp = myDebitUnits;
             myDebitUnits = myCreditUnits;
@@ -354,7 +351,7 @@ public final class MoneyWiseArchiveTransaction {
             }
         } else if (myDebitUnits != null) {
             myDebitUnits = "-" + myDebitUnits;
-        } else if (pCache.isRecursive()) {
+        } else if (theCache.isRecursive()) {
             myDebitUnits = myCreditUnits;
             myCreditUnits = null;
         }

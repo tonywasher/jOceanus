@@ -82,25 +82,25 @@ public final class MoneyWiseArchiveAccount {
     private final MoneyWiseDataSet theData;
 
     /**
-     * Store.
+     * Cache.
      */
-    private final MoneyWiseArchiveLoader theStore;
+    private final MoneyWiseArchiveCache theCache;
 
     /**
      * Constructor.
      * @param pReport the report
      * @param pWorkBook the workbook
      * @param pData the data set to load into
-     * @param pStore the archive store
+     * @param pCache the cache
      */
     MoneyWiseArchiveAccount(final TethysUIThreadStatusReport pReport,
                             final PrometheusSheetWorkBook pWorkBook,
                             final MoneyWiseDataSet pData,
-                            final MoneyWiseArchiveLoader pStore) {
+                            final MoneyWiseArchiveCache pCache) {
         theReport = pReport;
         theWorkBook = pWorkBook;
         theData = pData;
-        theStore = pStore;
+        theCache = pCache;
     }
 
     /**
@@ -285,7 +285,7 @@ public final class MoneyWiseArchiveAccount {
         myPortInfoList.postProcessOnLoad();
 
         /* Resolve Security Holdings */
-        theStore.resolveSecurityHoldings(theData);
+        theCache.resolveSecurityHoldings(theData);
     }
 
     /**
@@ -322,7 +322,7 @@ public final class MoneyWiseArchiveAccount {
         final MoneyWisePayee myPayee = myList.addValuesItem(myValues);
 
         /* Declare the payee */
-        theStore.declareAsset(myPayee);
+        theCache.declareAsset(myPayee);
     }
 
     /**
@@ -453,7 +453,7 @@ public final class MoneyWiseArchiveAccount {
         myInfoList.addInfoItem(null, myCash, MoneyWiseAccountInfoClass.OPENINGBALANCE, myBalance);
 
         /* Declare the cash */
-        theStore.declareAsset(myCash);
+        theCache.declareAsset(myCash);
     }
 
     /**
@@ -530,7 +530,7 @@ public final class MoneyWiseArchiveAccount {
         myInfoList.addInfoItem(null, myDeposit, MoneyWiseAccountInfoClass.OPENINGBALANCE, myBalance);
 
         /* Declare the deposit */
-        theStore.declareAsset(myDeposit);
+        theCache.declareAsset(myDeposit);
     }
 
     /**
@@ -588,7 +588,7 @@ public final class MoneyWiseArchiveAccount {
         final MoneyWiseLoan myLoan = myList.addValuesItem(myValues);
 
         /* Declare the loan */
-        theStore.declareAsset(myLoan);
+        theCache.declareAsset(myLoan);
     }
 
     /**
@@ -657,7 +657,7 @@ public final class MoneyWiseArchiveAccount {
         final MoneyWisePortfolio myPortfolio = myList.addValuesItem(myValues);
 
         /* Declare the portfolio */
-        theStore.declareAsset(myPortfolio);
+        theCache.declareAsset(myPortfolio);
     }
 
     /**
@@ -711,7 +711,7 @@ public final class MoneyWiseArchiveAccount {
         /* If we have an alias */
         if (myAlias != null) {
             /* Declare the security alias */
-            theStore.declareAliasHolding(myName, myAlias, myPortfolio);
+            theCache.declareAliasHolding(myName, myAlias, myPortfolio);
 
             /* return */
             return;
@@ -760,6 +760,6 @@ public final class MoneyWiseArchiveAccount {
         myInfoList.addInfoItem(null, mySecurity, MoneyWiseAccountInfoClass.REGION, myRegion);
 
         /* Declare the security holding */
-        theStore.declareSecurityHolding(mySecurity, myPortfolio);
+        theCache.declareSecurityHolding(mySecurity, myPortfolio);
     }
 }
