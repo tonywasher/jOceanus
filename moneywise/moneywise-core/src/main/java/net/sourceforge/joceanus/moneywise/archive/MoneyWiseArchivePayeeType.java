@@ -14,11 +14,11 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.moneywise.sheets;
+package net.sourceforge.joceanus.moneywise.archive;
 
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataSet;
-import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransInfoType;
-import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransInfoType.MoneyWiseTransInfoTypeList;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWisePayeeType;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWisePayeeType.MoneyWisePayeeTypeList;
 import net.sourceforge.joceanus.moneywise.exc.MoneyWiseIOException;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
@@ -30,14 +30,14 @@ import net.sourceforge.joceanus.tethys.api.thread.TethysUIThreadCancelException;
 import net.sourceforge.joceanus.tethys.api.thread.TethysUIThreadStatusReport;
 
 /**
- * ArchiveLoader for TransactionInfoType.
+ * ArchiveLoader for PayeeType.
  * @author Tony Washer
  */
-public final class MoneyWiseArchiveTransInfoType {
+public final class MoneyWiseArchivePayeeType {
     /**
-     * NamedArea for InfoType.
+     * NamedArea for PayeeTypes.
      */
-    private static final String AREA_TRANSINFOTYPES = MoneyWiseTransInfoType.LIST_NAME;
+    private static final String AREA_PAYEETYPES = MoneyWisePayeeType.LIST_NAME;
 
     /**
      * Report processor.
@@ -60,33 +60,33 @@ public final class MoneyWiseArchiveTransInfoType {
      * @param pWorkBook the workbook
      * @param pData the data set to load into
      */
-    MoneyWiseArchiveTransInfoType(final TethysUIThreadStatusReport pReport,
-                                  final PrometheusSheetWorkBook pWorkBook,
-                                  final MoneyWiseDataSet pData) {
+    MoneyWiseArchivePayeeType(final TethysUIThreadStatusReport pReport,
+                              final PrometheusSheetWorkBook pWorkBook,
+                              final MoneyWiseDataSet pData) {
         theReport = pReport;
         theWorkBook = pWorkBook;
         theData = pData;
     }
 
     /**
-     * Load the TransInfoTypes from an archive.
+     * Load the Payee Types from an archive.
      * @param pStage the stage
      * @throws OceanusException on error
      */
     void loadArchive(final OceanusProfile pStage) throws OceanusException {
-        /* Access the list of InfoTypes */
-        pStage.startTask(AREA_TRANSINFOTYPES);
-        final MoneyWiseTransInfoTypeList myList = theData.getTransInfoTypes();
+        /* Access the list of payee types */
+        pStage.startTask(AREA_PAYEETYPES);
+        final MoneyWisePayeeTypeList myList = theData.getPayeeTypes();
 
         /* Protect against exceptions */
         try {
             /* Find the range of cells */
-            final PrometheusSheetView myView = theWorkBook.getRangeView(AREA_TRANSINFOTYPES);
+            final PrometheusSheetView myView = theWorkBook.getRangeView(AREA_PAYEETYPES);
 
             /* Declare the new stage */
-            theReport.setNewStage(AREA_TRANSINFOTYPES);
+            theReport.setNewStage(AREA_PAYEETYPES);
 
-            /* Count the number of InfoTypes */
+            /* Count the number of PayeeTypes */
             final int myTotal = myView.getRowCount();
 
             /* Declare the number of steps */
@@ -108,11 +108,11 @@ public final class MoneyWiseArchiveTransInfoType {
             /* PostProcess the list */
             myList.postProcessOnLoad();
 
-            /* Handle Exceptions */
+            /* Handle exceptions */
         } catch (TethysUIThreadCancelException e) {
             throw e;
         } catch (OceanusException e) {
-            throw new MoneyWiseIOException("Failed to load " + myList.getItemType().getListName(), e);
+            throw new MoneyWiseIOException("Failed to Load " + myList.getItemType().getListName(), e);
         }
     }
 }

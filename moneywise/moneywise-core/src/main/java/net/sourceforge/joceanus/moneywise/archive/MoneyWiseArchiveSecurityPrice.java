@@ -14,16 +14,17 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.moneywise.sheets;
+package net.sourceforge.joceanus.moneywise.archive;
 
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicDataType;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicResource;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataSet;
-import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransCategory;
-import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransCategory.MoneyWiseTransCategoryList;
-import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurityPrice;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseSecurityPrice.MoneyWiseSecurityPriceList;
 import net.sourceforge.joceanus.moneywise.exc.MoneyWiseIOException;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.oceanus.date.OceanusDate;
 import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
-import net.sourceforge.joceanus.prometheus.data.PrometheusDataResource;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataValues;
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetCell;
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetRow;
@@ -33,14 +34,14 @@ import net.sourceforge.joceanus.tethys.api.thread.TethysUIThreadCancelException;
 import net.sourceforge.joceanus.tethys.api.thread.TethysUIThreadStatusReport;
 
 /**
- * ArchiveLoader for TransactionCategory.
+ * ArchiveLoader for SecurityPrice.
  * @author Tony Washer
  */
-public class MoneyWiseArchiveTransCategory {
+public final class MoneyWiseArchiveSecurityPrice {
     /**
-     * NamedArea for TransactionCategories.
+     * NamedArea for Prices.
      */
-    private static final String AREA_TRANSCATEGORIES = "TransCategoryInfo";
+    private static final String AREA_PRICES = MoneyWiseSecurityPrice.LIST_NAME;
 
     /**
      * Report processor.
@@ -60,19 +61,19 @@ public class MoneyWiseArchiveTransCategory {
     /**
      * Store.
      */
-    private final MoneyWiseArchiveLoader theStore;
+    private final MoneyWiseArchiveStore theStore;
 
     /**
      * Constructor.
      * @param pReport the report
      * @param pWorkBook the workbook
      * @param pData the data set to load into
-     * @param pStore the archive store
+     * @param pStore the store
      */
-    MoneyWiseArchiveTransCategory(final TethysUIThreadStatusReport pReport,
+    MoneyWiseArchiveSecurityPrice(final TethysUIThreadStatusReport pReport,
                                   final PrometheusSheetWorkBook pWorkBook,
                                   final MoneyWiseDataSet pData,
-                                  final MoneyWiseArchiveLoader pStore) {
+                                  final MoneyWiseArchiveStore pStore) {
         theReport = pReport;
         theWorkBook = pWorkBook;
         theData = pData;
@@ -80,67 +81,79 @@ public class MoneyWiseArchiveTransCategory {
     }
 
     /**
-     * Load the TransCategories from an archive.
+     * Load the SecurityPrices from an archive.
      * @param pStage the stage
      * @throws OceanusException on error
      */
     void loadArchive(final OceanusProfile pStage) throws OceanusException {
-        /* Access the list of categories */
-        pStage.startTask(AREA_TRANSCATEGORIES);
-        final MoneyWiseTransCategoryList myList = theData.getTransCategories();
+        /* Access the list of prices */
+        pStage.startTask(AREA_PRICES);
+        final MoneyWiseSecurityPriceList myList = theData.getSecurityPrices();
 
         /* Protect against exceptions */
         try {
             /* Find the range of cells */
-            final PrometheusSheetView myView = theWorkBook.getRangeView(AREA_TRANSCATEGORIES);
+            final PrometheusSheetView myView = theWorkBook.getRangeView(AREA_PRICES);
 
             /* Declare the new stage */
-            theReport.setNewStage(MoneyWiseTransCategory.LIST_NAME);
+            theReport.setNewStage(AREA_PRICES);
 
-            /* Count the number of Categories */
-            final int myTotal = myView.getRowCount();
+            /* Count the number of Prices */
+            final int myRows = myView.getRowCount();
+            final int myCols = myView.getColumnCount();
+            final int myTotal = myRows - 1;
+            final String[] mySecurities = new String[myCols];
 
             /* Declare the number of steps */
             theReport.setNumSteps(myTotal);
 
+            /* Load the securities */
+            final PrometheusSheetRow myActRow = myView.getRowByIndex(0);
+            for (int j = 1; j < myCols; j++) {
+                /* Access account */
+                final PrometheusSheetCell myAct = myView.getRowCellByIndex(myActRow, j);
+                if (myAct != null) {
+                    mySecurities[j] = myAct.getString();
+                }
+            }
+
             /* Loop through the rows of the table */
-            for (int i = 0; i < myTotal; i++) {
+            for (int i = myRows - 1; i > 0; i--) {
                 /* Access the cell by reference */
                 final PrometheusSheetRow myRow = myView.getRowByIndex(i);
-                int iAdjust = -1;
 
-                /* Access name */
-                PrometheusSheetCell myCell = myView.getRowCellByIndex(myRow, ++iAdjust);
-                final String myName = myCell.getString();
+                /* Access date */
+                PrometheusSheetCell myCell = myView.getRowCellByIndex(myRow, 0);
+                final OceanusDate myDate = myCell.getDate();
 
-                /* Access Type */
-                myCell = myView.getRowCellByIndex(myRow, ++iAdjust);
-                final String myType = myCell.getString();
-
-                /* Access Parent */
-                String myParent = null;
-                myCell = myView.getRowCellByIndex(myRow, ++iAdjust);
-                if (myCell != null) {
-                    myParent = myCell.getString();
+                /* If the price is too late */
+                if (!theStore.checkDate(myDate)) {
+                    /* Skip the row */
+                    continue;
                 }
 
-                /* Build data values */
-                final PrometheusDataValues myValues = new PrometheusDataValues(MoneyWiseTransCategory.OBJECT_NAME);
-                myValues.addValue(MoneyWiseStaticDataType.TRANSTYPE, myType);
-                myValues.addValue(PrometheusDataResource.DATAGROUP_PARENT, myParent);
-                myValues.addValue(PrometheusDataResource.DATAITEM_FIELD_NAME, myName);
+                /* Loop through the columns of the table */
+                final int myLast = myRow.getMaxValuedCellIndex();
+                for (int j = 1; j <= myLast; j++) {
+                    /* Handle price which may be missing */
+                    myCell = myView.getRowCellByIndex(myRow, j);
+                    if (myCell != null) {
+                        /* Build data values */
+                        final PrometheusDataValues myValues = new PrometheusDataValues(MoneyWiseSecurityPrice.OBJECT_NAME);
+                        myValues.addValue(MoneyWiseBasicDataType.SECURITY, mySecurities[j]);
+                        myValues.addValue(MoneyWiseBasicResource.MONEYWISEDATA_FIELD_DATE, myDate);
+                        myValues.addValue(MoneyWiseBasicResource.MONEYWISEDATA_FIELD_PRICE, myCell.getString());
 
-                /* Add the value into the list */
-                final MoneyWiseTransCategory myCategory = myList.addValuesItem(myValues);
-
-                /* Declare the category */
-                theStore.declareCategory(myCategory);
+                        /* Add the value into the list */
+                        myList.addValuesItem(myValues);
+                    }
+                }
 
                 /* Report the progress */
                 theReport.setNextStep();
             }
 
-            /* PostProcess on load */
+            /* Post process the prices */
             myList.postProcessOnLoad();
 
             /* Handle exceptions */

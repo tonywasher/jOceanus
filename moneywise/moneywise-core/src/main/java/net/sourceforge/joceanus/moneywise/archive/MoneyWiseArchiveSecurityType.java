@@ -14,11 +14,11 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.moneywise.sheets;
+package net.sourceforge.joceanus.moneywise.archive;
 
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataSet;
-import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseDepositCategoryType;
-import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseDepositCategoryType.MoneyWiseDepositCategoryTypeList;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseSecurityType;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseSecurityType.MoneyWiseSecurityTypeList;
 import net.sourceforge.joceanus.moneywise.exc.MoneyWiseIOException;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
@@ -30,14 +30,15 @@ import net.sourceforge.joceanus.tethys.api.thread.TethysUIThreadCancelException;
 import net.sourceforge.joceanus.tethys.api.thread.TethysUIThreadStatusReport;
 
 /**
- * Archive Loader for DepositCategoryType.
+ * ArchiveLoader for SecurityType.
  * @author Tony Washer
  */
-public final class MoneyWiseArchiveDepositCategoryType {
+public final class MoneyWiseArchiveSecurityType {
     /**
-     * NamedArea for DepositCategoryTypes.
+     * NamedArea for SecurityTypes.
      */
-    private static final String AREA_DEPOSITCATTYPES = MoneyWiseDepositCategoryType.LIST_NAME;
+    private static final String AREA_SECURITYTYPES = MoneyWiseSecurityType.LIST_NAME;
+
 
     /**
      * Report processor.
@@ -60,33 +61,33 @@ public final class MoneyWiseArchiveDepositCategoryType {
      * @param pWorkBook the workbook
      * @param pData the data set to load into
      */
-    MoneyWiseArchiveDepositCategoryType(final TethysUIThreadStatusReport pReport,
-                                        final PrometheusSheetWorkBook pWorkBook,
-                                        final MoneyWiseDataSet pData) {
+    MoneyWiseArchiveSecurityType(final TethysUIThreadStatusReport pReport,
+                                 final PrometheusSheetWorkBook pWorkBook,
+                                 final MoneyWiseDataSet pData) {
         theReport = pReport;
         theWorkBook = pWorkBook;
         theData = pData;
     }
 
     /**
-     * Load the Deposit Types from an archive.
+     * Load the Security Types from an archive.
      * @param pStage the stage
      * @throws OceanusException on error
      */
     void loadArchive(final OceanusProfile pStage) throws OceanusException {
-        /* Access the list of deposit types */
-        pStage.startTask(AREA_DEPOSITCATTYPES);
-        final MoneyWiseDepositCategoryTypeList myList = theData.getDepositCategoryTypes();
+        /* Access the list of security types */
+        pStage.startTask(AREA_SECURITYTYPES);
+        final MoneyWiseSecurityTypeList myList = theData.getSecurityTypes();
 
         /* Protect against exceptions */
         try {
             /* Find the range of cells */
-            final PrometheusSheetView myView = theWorkBook.getRangeView(AREA_DEPOSITCATTYPES);
+            final PrometheusSheetView myView = theWorkBook.getRangeView(AREA_SECURITYTYPES);
 
             /* Declare the new stage */
-            theReport.setNewStage(AREA_DEPOSITCATTYPES);
+            theReport.setNewStage(AREA_SECURITYTYPES);
 
-            /* Count the number of AccountCategoryTypes */
+            /* Count the number of SecurityTypes */
             final int myTotal = myView.getRowCount();
 
             /* Declare the number of steps */

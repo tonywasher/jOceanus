@@ -14,11 +14,11 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.moneywise.sheets;
+package net.sourceforge.joceanus.moneywise.archive;
 
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataSet;
-import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTaxBasis;
-import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTaxBasis.MoneyWiseTaxBasisList;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransCategoryType;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTransCategoryType.MoneyWiseTransCategoryTypeList;
 import net.sourceforge.joceanus.moneywise.exc.MoneyWiseIOException;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
@@ -30,14 +30,14 @@ import net.sourceforge.joceanus.tethys.api.thread.TethysUIThreadCancelException;
 import net.sourceforge.joceanus.tethys.api.thread.TethysUIThreadStatusReport;
 
 /**
- * ArchiveLoader for TaxBasis.
+ * ArchiveLoader for TransactionCategoryType.
  * @author Tony Washer
  */
-public final class MoneyWiseArchiveTaxBasis {
+public final class MoneyWiseArchiveTransCategoryType {
     /**
-     * NamedArea for Tax Bases.
+     * NamedArea for Category Types.
      */
-    private static final String AREA_TAXBASES = MoneyWiseTaxBasis.LIST_NAME;
+    private static final String AREA_CATTYPES = MoneyWiseTransCategoryType.LIST_NAME;
 
     /**
      * Report processor.
@@ -60,33 +60,33 @@ public final class MoneyWiseArchiveTaxBasis {
      * @param pWorkBook the workbook
      * @param pData the data set to load into
      */
-    MoneyWiseArchiveTaxBasis(final TethysUIThreadStatusReport pReport,
-                             final PrometheusSheetWorkBook pWorkBook,
-                             final MoneyWiseDataSet pData) {
+    MoneyWiseArchiveTransCategoryType(final TethysUIThreadStatusReport pReport,
+                                      final PrometheusSheetWorkBook pWorkBook,
+                                      final MoneyWiseDataSet pData) {
         theReport = pReport;
         theWorkBook = pWorkBook;
         theData = pData;
     }
 
     /**
-     * Load the TaxBases from an archive.
+     * Load the TransCategory Types from an archive.
      * @param pStage the stage
      * @throws OceanusException on error
      */
     void loadArchive(final OceanusProfile pStage) throws OceanusException {
-        /* Access the list of tax bases */
-        pStage.startTask(AREA_TAXBASES);
-        final MoneyWiseTaxBasisList myList = theData.getTaxBases();
+        /* Access the list of category types */
+        pStage.startTask(AREA_CATTYPES);
+        final MoneyWiseTransCategoryTypeList myList = theData.getTransCategoryTypes();
 
         /* Protect against exceptions */
         try {
             /* Find the range of cells */
-            final PrometheusSheetView myView = theWorkBook.getRangeView(AREA_TAXBASES);
+            final PrometheusSheetView myView = theWorkBook.getRangeView(AREA_CATTYPES);
 
             /* Declare the new stage */
-            theReport.setNewStage(AREA_TAXBASES);
+            theReport.setNewStage(AREA_CATTYPES);
 
-            /* Count the number of TaxBases */
+            /* Count the number of TransCategoryTypes */
             final int myTotal = myView.getRowCount();
 
             /* Declare the number of steps */

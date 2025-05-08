@@ -14,14 +14,17 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.moneywise.sheets;
+package net.sourceforge.joceanus.moneywise.archive;
 
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataSet;
-import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrency;
-import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrency.MoneyWiseCurrencyList;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransCategory;
+import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransCategory.MoneyWiseTransCategoryList;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseStaticDataType;
 import net.sourceforge.joceanus.moneywise.exc.MoneyWiseIOException;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
+import net.sourceforge.joceanus.prometheus.data.PrometheusDataResource;
+import net.sourceforge.joceanus.prometheus.data.PrometheusDataValues;
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetCell;
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetRow;
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetView;
@@ -30,14 +33,14 @@ import net.sourceforge.joceanus.tethys.api.thread.TethysUIThreadCancelException;
 import net.sourceforge.joceanus.tethys.api.thread.TethysUIThreadStatusReport;
 
 /**
- * ArchiveLoader for AccountCurrency.
+ * ArchiveLoader for TransactionCategory.
  * @author Tony Washer
  */
-public final class MoneyWiseArchiveCurrency {
+public class MoneyWiseArchiveTransCategory {
     /**
-     * NamedArea for AccountCurrencies.
+     * NamedArea for TransactionCategories.
      */
-    private static final String AREA_ACCOUNTCURRENCIES = MoneyWiseCurrency.LIST_NAME;
+    private static final String AREA_TRANSCATEGORIES = "TransCategoryInfo";
 
     /**
      * Report processor.
@@ -55,60 +58,89 @@ public final class MoneyWiseArchiveCurrency {
     private final MoneyWiseDataSet theData;
 
     /**
+     * Store.
+     */
+    private final MoneyWiseArchiveLoader theStore;
+
+    /**
      * Constructor.
      * @param pReport the report
      * @param pWorkBook the workbook
      * @param pData the data set to load into
+     * @param pStore the archive store
      */
-    MoneyWiseArchiveCurrency(final TethysUIThreadStatusReport pReport,
-                             final PrometheusSheetWorkBook pWorkBook,
-                             final MoneyWiseDataSet pData) {
+    MoneyWiseArchiveTransCategory(final TethysUIThreadStatusReport pReport,
+                                  final PrometheusSheetWorkBook pWorkBook,
+                                  final MoneyWiseDataSet pData,
+                                  final MoneyWiseArchiveLoader pStore) {
         theReport = pReport;
         theWorkBook = pWorkBook;
         theData = pData;
+        theStore = pStore;
     }
 
     /**
-     * Load the Deposit Types from an archive.
+     * Load the TransCategories from an archive.
      * @param pStage the stage
      * @throws OceanusException on error
      */
     void loadArchive(final OceanusProfile pStage) throws OceanusException {
-        /* Access the list of account currencies */
-        pStage.startTask(AREA_ACCOUNTCURRENCIES);
-        final MoneyWiseCurrencyList myList = theData.getAccountCurrencies();
+        /* Access the list of categories */
+        pStage.startTask(AREA_TRANSCATEGORIES);
+        final MoneyWiseTransCategoryList myList = theData.getTransCategories();
 
         /* Protect against exceptions */
         try {
             /* Find the range of cells */
-            final PrometheusSheetView myView = theWorkBook.getRangeView(AREA_ACCOUNTCURRENCIES);
+            final PrometheusSheetView myView = theWorkBook.getRangeView(AREA_TRANSCATEGORIES);
 
             /* Declare the new stage */
-            theReport.setNewStage(AREA_ACCOUNTCURRENCIES);
+            theReport.setNewStage(MoneyWiseTransCategory.LIST_NAME);
 
-            /* Count the number of AssetCurrencies */
+            /* Count the number of Categories */
             final int myTotal = myView.getRowCount();
 
             /* Declare the number of steps */
             theReport.setNumSteps(myTotal);
 
-            /* Loop through the rows of the single column range */
+            /* Loop through the rows of the table */
             for (int i = 0; i < myTotal; i++) {
                 /* Access the cell by reference */
                 final PrometheusSheetRow myRow = myView.getRowByIndex(i);
-                final PrometheusSheetCell myCell = myView.getRowCellByIndex(myRow, 0);
+                int iAdjust = -1;
 
-                /* Add the value into the tables */
-                myList.addBasicItem(myCell.getString());
+                /* Access name */
+                PrometheusSheetCell myCell = myView.getRowCellByIndex(myRow, ++iAdjust);
+                final String myName = myCell.getString();
+
+                /* Access Type */
+                myCell = myView.getRowCellByIndex(myRow, ++iAdjust);
+                final String myType = myCell.getString();
+
+                /* Access Parent */
+                String myParent = null;
+                myCell = myView.getRowCellByIndex(myRow, ++iAdjust);
+                if (myCell != null) {
+                    myParent = myCell.getString();
+                }
+
+                /* Build data values */
+                final PrometheusDataValues myValues = new PrometheusDataValues(MoneyWiseTransCategory.OBJECT_NAME);
+                myValues.addValue(MoneyWiseStaticDataType.TRANSTYPE, myType);
+                myValues.addValue(PrometheusDataResource.DATAGROUP_PARENT, myParent);
+                myValues.addValue(PrometheusDataResource.DATAITEM_FIELD_NAME, myName);
+
+                /* Add the value into the list */
+                final MoneyWiseTransCategory myCategory = myList.addValuesItem(myValues);
+
+                /* Declare the category */
+                theStore.declareCategory(myCategory);
 
                 /* Report the progress */
                 theReport.setNextStep();
             }
 
-            /* Initialise the reporting currency */
-            myList.initialiseReporting();
-
-            /* PostProcess the list */
+            /* PostProcess on load */
             myList.postProcessOnLoad();
 
             /* Handle exceptions */

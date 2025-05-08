@@ -14,16 +14,14 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.moneywise.sheets;
+package net.sourceforge.joceanus.moneywise.archive;
 
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataSet;
-import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransTag;
-import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseTransTag.MoneyWiseTransTagList;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseLoanCategoryType;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseLoanCategoryType.MoneyWiseLoanCategoryTypeList;
 import net.sourceforge.joceanus.moneywise.exc.MoneyWiseIOException;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
-import net.sourceforge.joceanus.prometheus.data.PrometheusDataResource;
-import net.sourceforge.joceanus.prometheus.data.PrometheusDataValues;
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetCell;
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetRow;
 import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetView;
@@ -32,14 +30,15 @@ import net.sourceforge.joceanus.tethys.api.thread.TethysUIThreadCancelException;
 import net.sourceforge.joceanus.tethys.api.thread.TethysUIThreadStatusReport;
 
 /**
- * ArchiveLoader for TransactionTag.
+ * ArchiveLoader for LoanCategoryType.
  * @author Tony Washer
  */
-public final class MoneyWiseArchiveTransTag {
+public final class MoneyWiseArchiveLoanCategoryType {
     /**
-     * NamedArea for TransactionTags.
+     * NamedArea for LoanCategoryTypes.
      */
-    private static final String AREA_TRANSTAGS = MoneyWiseTransTag.LIST_NAME;
+    private static final String AREA_LOANCATTYPES = MoneyWiseLoanCategoryType.LIST_NAME;
+
 
     /**
      * Report processor.
@@ -62,60 +61,52 @@ public final class MoneyWiseArchiveTransTag {
      * @param pWorkBook the workbook
      * @param pData the data set to load into
      */
-    MoneyWiseArchiveTransTag(final TethysUIThreadStatusReport pReport,
-                             final PrometheusSheetWorkBook pWorkBook,
-                             final MoneyWiseDataSet pData) {
+    MoneyWiseArchiveLoanCategoryType(final TethysUIThreadStatusReport pReport,
+                                     final PrometheusSheetWorkBook pWorkBook,
+                                     final MoneyWiseDataSet pData) {
         theReport = pReport;
         theWorkBook = pWorkBook;
         theData = pData;
     }
 
     /**
-     * Load the TransTags from an archive.
+     * Load the Loan Types from an archive.
      * @param pStage the stage
      * @throws OceanusException on error
      */
     void loadArchive(final OceanusProfile pStage) throws OceanusException {
-        /* Access the list of tags */
-        pStage.startTask(AREA_TRANSTAGS);
-        final MoneyWiseTransTagList myList = theData.getTransactionTags();
+        /* Access the list of loan types */
+        pStage.startTask(AREA_LOANCATTYPES);
+        final MoneyWiseLoanCategoryTypeList myList = theData.getLoanCategoryTypes();
 
         /* Protect against exceptions */
         try {
             /* Find the range of cells */
-            final PrometheusSheetView myView = theWorkBook.getRangeView(AREA_TRANSTAGS);
+            final PrometheusSheetView myView = theWorkBook.getRangeView(AREA_LOANCATTYPES);
 
             /* Declare the new stage */
-            theReport.setNewStage(MoneyWiseTransTag.LIST_NAME);
+            theReport.setNewStage(AREA_LOANCATTYPES);
 
-            /* Count the number of tags */
+            /* Count the number of LoanCategoryTypes */
             final int myTotal = myView.getRowCount();
 
             /* Declare the number of steps */
             theReport.setNumSteps(myTotal);
 
-            /* Loop through the rows of the table */
+            /* Loop through the rows of the single column range */
             for (int i = 0; i < myTotal; i++) {
                 /* Access the cell by reference */
                 final PrometheusSheetRow myRow = myView.getRowByIndex(i);
-                int iAdjust = -1;
+                final PrometheusSheetCell myCell = myView.getRowCellByIndex(myRow, 0);
 
-                /* Access name */
-                final PrometheusSheetCell myCell = myView.getRowCellByIndex(myRow, ++iAdjust);
-                final String myName = myCell.getString();
-
-                /* Build data values */
-                final PrometheusDataValues myValues = new PrometheusDataValues(MoneyWiseTransTag.OBJECT_NAME);
-                myValues.addValue(PrometheusDataResource.DATAITEM_FIELD_NAME, myName);
-
-                /* Add the value into the list */
-                myList.addValuesItem(myValues);
+                /* Add the value into the tables */
+                myList.addBasicItem(myCell.getString());
 
                 /* Report the progress */
                 theReport.setNextStep();
             }
 
-            /* PostProcess on load */
+            /* PostProcess the list */
             myList.postProcessOnLoad();
 
             /* Handle exceptions */

@@ -14,11 +14,11 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.moneywise.sheets;
+package net.sourceforge.joceanus.moneywise.archive;
 
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataSet;
-import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseLoanCategoryType;
-import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseLoanCategoryType.MoneyWiseLoanCategoryTypeList;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCashCategoryType;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCashCategoryType.MoneyWiseCashCategoryTypeList;
 import net.sourceforge.joceanus.moneywise.exc.MoneyWiseIOException;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
@@ -30,15 +30,14 @@ import net.sourceforge.joceanus.tethys.api.thread.TethysUIThreadCancelException;
 import net.sourceforge.joceanus.tethys.api.thread.TethysUIThreadStatusReport;
 
 /**
- * ArchiveLoader for LoanCategoryType.
+ * Archive Loader for CashCategoryType.
  * @author Tony Washer
  */
-public final class MoneyWiseArchiveLoanCategoryType {
+public final class MoneyWiseArchiveCashCategoryType {
     /**
-     * NamedArea for LoanCategoryTypes.
+     * NamedArea for CashCategoryTypes.
      */
-    private static final String AREA_LOANCATTYPES = MoneyWiseLoanCategoryType.LIST_NAME;
-
+    private static final String AREA_CASHCATTYPES = MoneyWiseCashCategoryType.LIST_NAME;
 
     /**
      * Report processor.
@@ -61,7 +60,7 @@ public final class MoneyWiseArchiveLoanCategoryType {
      * @param pWorkBook the workbook
      * @param pData the data set to load into
      */
-    MoneyWiseArchiveLoanCategoryType(final TethysUIThreadStatusReport pReport,
+    MoneyWiseArchiveCashCategoryType(final TethysUIThreadStatusReport pReport,
                                      final PrometheusSheetWorkBook pWorkBook,
                                      final MoneyWiseDataSet pData) {
         theReport = pReport;
@@ -70,24 +69,24 @@ public final class MoneyWiseArchiveLoanCategoryType {
     }
 
     /**
-     * Load the Loan Types from an archive.
+     * Load the Cash Types from an archive.
      * @param pStage the stage
      * @throws OceanusException on error
      */
     void loadArchive(final OceanusProfile pStage) throws OceanusException {
-        /* Access the list of loan types */
-        pStage.startTask(AREA_LOANCATTYPES);
-        final MoneyWiseLoanCategoryTypeList myList = theData.getLoanCategoryTypes();
+        /* Access the list of cash types */
+        pStage.startTask(AREA_CASHCATTYPES);
+        final MoneyWiseCashCategoryTypeList myList = theData.getCashCategoryTypes();
 
         /* Protect against exceptions */
         try {
             /* Find the range of cells */
-            final PrometheusSheetView myView = theWorkBook.getRangeView(AREA_LOANCATTYPES);
+            final PrometheusSheetView myView = theWorkBook.getRangeView(AREA_CASHCATTYPES);
 
             /* Declare the new stage */
-            theReport.setNewStage(AREA_LOANCATTYPES);
+            theReport.setNewStage(AREA_CASHCATTYPES);
 
-            /* Count the number of LoanCategoryTypes */
+            /* Count the number of AccountCategoryTypes */
             final int myTotal = myView.getRowCount();
 
             /* Declare the number of steps */

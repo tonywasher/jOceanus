@@ -14,11 +14,11 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.moneywise.sheets;
+package net.sourceforge.joceanus.moneywise.archive;
 
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataSet;
-import net.sourceforge.joceanus.moneywise.data.statics.MoneyWisePortfolioType;
-import net.sourceforge.joceanus.moneywise.data.statics.MoneyWisePortfolioType.MoneyWisePortfolioTypeList;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrency;
+import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseCurrency.MoneyWiseCurrencyList;
 import net.sourceforge.joceanus.moneywise.exc.MoneyWiseIOException;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.profile.OceanusProfile;
@@ -30,14 +30,14 @@ import net.sourceforge.joceanus.tethys.api.thread.TethysUIThreadCancelException;
 import net.sourceforge.joceanus.tethys.api.thread.TethysUIThreadStatusReport;
 
 /**
- * ArchiveLoader for PortfolioType.
+ * ArchiveLoader for AccountCurrency.
  * @author Tony Washer
  */
-public final class MoneyWiseArchivePortfolioType {
+public final class MoneyWiseArchiveCurrency {
     /**
-     * NamedArea for PortfolioTypes.
+     * NamedArea for AccountCurrencies.
      */
-    private static final String AREA_PORTFOLIOTYPES = MoneyWisePortfolioType.LIST_NAME;
+    private static final String AREA_ACCOUNTCURRENCIES = MoneyWiseCurrency.LIST_NAME;
 
     /**
      * Report processor.
@@ -60,33 +60,33 @@ public final class MoneyWiseArchivePortfolioType {
      * @param pWorkBook the workbook
      * @param pData the data set to load into
      */
-    MoneyWiseArchivePortfolioType(final TethysUIThreadStatusReport pReport,
-                                  final PrometheusSheetWorkBook pWorkBook,
-                                  final MoneyWiseDataSet pData) {
+    MoneyWiseArchiveCurrency(final TethysUIThreadStatusReport pReport,
+                             final PrometheusSheetWorkBook pWorkBook,
+                             final MoneyWiseDataSet pData) {
         theReport = pReport;
         theWorkBook = pWorkBook;
         theData = pData;
     }
 
     /**
-     * Load the Portfolio Types from an archive.
+     * Load the Deposit Types from an archive.
      * @param pStage the stage
      * @throws OceanusException on error
      */
     void loadArchive(final OceanusProfile pStage) throws OceanusException {
-        /* Access the list of portfolio types */
-        pStage.startTask(AREA_PORTFOLIOTYPES);
-        final MoneyWisePortfolioTypeList myList = theData.getPortfolioTypes();
+        /* Access the list of account currencies */
+        pStage.startTask(AREA_ACCOUNTCURRENCIES);
+        final MoneyWiseCurrencyList myList = theData.getAccountCurrencies();
 
         /* Protect against exceptions */
         try {
             /* Find the range of cells */
-            final PrometheusSheetView myView = theWorkBook.getRangeView(AREA_PORTFOLIOTYPES);
+            final PrometheusSheetView myView = theWorkBook.getRangeView(AREA_ACCOUNTCURRENCIES);
 
             /* Declare the new stage */
-            theReport.setNewStage(AREA_PORTFOLIOTYPES);
+            theReport.setNewStage(AREA_ACCOUNTCURRENCIES);
 
-            /* Count the number of PortfolioTypes */
+            /* Count the number of AssetCurrencies */
             final int myTotal = myView.getRowCount();
 
             /* Declare the number of steps */
@@ -104,6 +104,9 @@ public final class MoneyWiseArchivePortfolioType {
                 /* Report the progress */
                 theReport.setNextStep();
             }
+
+            /* Initialise the reporting currency */
+            myList.initialiseReporting();
 
             /* PostProcess the list */
             myList.postProcessOnLoad();
