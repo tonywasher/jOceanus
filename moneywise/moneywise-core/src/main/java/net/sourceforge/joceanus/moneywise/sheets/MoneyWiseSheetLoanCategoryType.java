@@ -16,25 +16,17 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.moneywise.sheets;
 
-import net.sourceforge.joceanus.moneywise.exc.MoneyWiseIOException;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataSet;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseLoanCategoryType;
-import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseLoanCategoryType.MoneyWiseLoanCategoryTypeList;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataValues;
 import net.sourceforge.joceanus.prometheus.sheets.PrometheusSheetStaticData;
-import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetCell;
-import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetRow;
-import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetView;
-import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetWorkBook;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.tethys.api.thread.TethysUIThreadCancelException;
-import net.sourceforge.joceanus.tethys.api.thread.TethysUIThreadStatusReport;
 
 /**
  * SheetStaticData extension for LoanCategoryType.
  * @author Tony Washer
  */
-public class MoneyWiseSheetLoanCategoryType
+public final class MoneyWiseSheetLoanCategoryType
         extends PrometheusSheetStaticData<MoneyWiseLoanCategoryType> {
     /**
      * NamedArea for LoanCategoryTypes.
@@ -45,7 +37,7 @@ public class MoneyWiseSheetLoanCategoryType
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
-    protected MoneyWiseSheetLoanCategoryType(final MoneyWiseReader pReader) {
+    MoneyWiseSheetLoanCategoryType(final MoneyWiseReader pReader) {
         /* Call super-constructor */
         super(pReader, AREA_LOANCATTYPES);
 
@@ -58,7 +50,7 @@ public class MoneyWiseSheetLoanCategoryType
      * Constructor for creating a spreadsheet.
      * @param pWriter the spreadsheet writer
      */
-    protected MoneyWiseSheetLoanCategoryType(final MoneyWiseWriter pWriter) {
+    MoneyWiseSheetLoanCategoryType(final MoneyWiseWriter pWriter) {
         /* Call super-constructor */
         super(pWriter, AREA_LOANCATTYPES);
 
@@ -68,59 +60,8 @@ public class MoneyWiseSheetLoanCategoryType
     }
 
     @Override
-    protected PrometheusDataValues loadSecureValues() throws OceanusException {
+    public PrometheusDataValues loadSecureValues() throws OceanusException {
         /* Build data values */
         return getRowValues(MoneyWiseLoanCategoryType.OBJECT_NAME);
-    }
-
-    /**
-     * Load the Account Types from an archive.
-     * @param pReport the report
-     * @param pWorkBook the workbook
-     * @param pData the data set to load into
-     * @throws OceanusException on error
-     */
-    protected static void loadArchive(final TethysUIThreadStatusReport pReport,
-                                      final PrometheusSheetWorkBook pWorkBook,
-                                      final MoneyWiseDataSet pData) throws OceanusException {
-        /* Access the list of loan types */
-        final MoneyWiseLoanCategoryTypeList myList = pData.getLoanCategoryTypes();
-
-        /* Protect against exceptions */
-        try {
-            /* Find the range of cells */
-            final PrometheusSheetView myView = pWorkBook.getRangeView(AREA_LOANCATTYPES);
-
-            /* Declare the new stage */
-            pReport.setNewStage(AREA_LOANCATTYPES);
-
-            /* Count the number of LoanCategoryTypes */
-            final int myTotal = myView.getRowCount();
-
-            /* Declare the number of steps */
-            pReport.setNumSteps(myTotal);
-
-            /* Loop through the rows of the single column range */
-            for (int i = 0; i < myTotal; i++) {
-                /* Access the cell by reference */
-                final PrometheusSheetRow myRow = myView.getRowByIndex(i);
-                final PrometheusSheetCell myCell = myView.getRowCellByIndex(myRow, 0);
-
-                /* Add the value into the tables */
-                myList.addBasicItem(myCell.getString());
-
-                /* Report the progress */
-                pReport.setNextStep();
-            }
-
-            /* PostProcess the list */
-            myList.postProcessOnLoad();
-
-            /* Handle exceptions */
-        } catch (TethysUIThreadCancelException e) {
-            throw e;
-        } catch (OceanusException e) {
-            throw new MoneyWiseIOException("Failed to Load " + myList.getItemType().getListName(), e);
-        }
     }
 }

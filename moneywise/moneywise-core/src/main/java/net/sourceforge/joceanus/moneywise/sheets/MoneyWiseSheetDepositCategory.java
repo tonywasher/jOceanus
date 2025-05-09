@@ -28,12 +28,12 @@ import net.sourceforge.joceanus.oceanus.base.OceanusException;
  * SheetDataItem extension for DepositCategory.
  * @author Tony Washer
  */
-public class MoneyWiseSheetDepositCategory
+public final class MoneyWiseSheetDepositCategory
         extends PrometheusSheetEncrypted<MoneyWiseDepositCategory> {
     /**
      * NamedArea for Categories.
      */
-    protected static final String AREA_DEPCATEGORIES = MoneyWiseDepositCategory.LIST_NAME;
+    static final String AREA_DEPCATEGORIES = MoneyWiseDepositCategory.LIST_NAME;
 
     /**
      * Name column.
@@ -59,7 +59,7 @@ public class MoneyWiseSheetDepositCategory
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
-    protected MoneyWiseSheetDepositCategory(final MoneyWiseReader pReader) {
+    MoneyWiseSheetDepositCategory(final MoneyWiseReader pReader) {
         /* Call super constructor */
         super(pReader, AREA_DEPCATEGORIES);
 
@@ -72,7 +72,7 @@ public class MoneyWiseSheetDepositCategory
      * Constructor for creating a spreadsheet.
      * @param pWriter the spreadsheet writer
      */
-    protected MoneyWiseSheetDepositCategory(final MoneyWiseWriter pWriter) {
+    MoneyWiseSheetDepositCategory(final MoneyWiseWriter pWriter) {
         /* Call super constructor */
         super(pWriter, AREA_DEPCATEGORIES);
 
@@ -82,7 +82,7 @@ public class MoneyWiseSheetDepositCategory
     }
 
     @Override
-    protected PrometheusDataValues loadSecureValues() throws OceanusException {
+    public PrometheusDataValues loadSecureValues() throws OceanusException {
         /* Build data values */
         final PrometheusDataValues myValues = getRowValues(MoneyWiseDepositCategory.OBJECT_NAME);
         myValues.addValue(MoneyWiseStaticDataType.DEPOSITTYPE, loadInteger(COL_TYPE));
@@ -95,7 +95,7 @@ public class MoneyWiseSheetDepositCategory
     }
 
     @Override
-    protected void insertSecureItem(final MoneyWiseDepositCategory pItem) throws OceanusException {
+    public void insertSecureItem(final MoneyWiseDepositCategory pItem) throws OceanusException {
         /* Set the fields */
         super.insertSecureItem(pItem);
         writeInteger(COL_TYPE, pItem.getCategoryTypeId());
@@ -105,7 +105,7 @@ public class MoneyWiseSheetDepositCategory
     }
 
     @Override
-    protected int getLastColumn() {
+    public int getLastColumn() {
         /* Return the last column */
         return COL_DESC;
     }

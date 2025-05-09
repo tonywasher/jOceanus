@@ -17,7 +17,7 @@
 package net.sourceforge.joceanus.moneywise.threads;
 
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataSet;
-import net.sourceforge.joceanus.moneywise.sheets.MoneyWiseArchiveLoader;
+import net.sourceforge.joceanus.moneywise.archive.MoneyWiseArchiveLoader;
 import net.sourceforge.joceanus.moneywise.views.MoneyWiseView;
 import net.sourceforge.joceanus.prometheus.toolkit.PrometheusToolkit;
 import net.sourceforge.joceanus.prometheus.database.PrometheusDataStore;
@@ -58,9 +58,9 @@ public class MoneyWiseThreadLoadArchive
         /* Load workbook */
         final PrometheusToolkit myPromToolkit = (PrometheusToolkit) pManager.getThreadData();
         final PrometheusPreferenceManager myMgr = myPromToolkit.getPreferenceManager();
-        final MoneyWiseArchiveLoader myLoader = new MoneyWiseArchiveLoader();
         final MoneyWiseDataSet myData = theView.getNewData();
-        myLoader.loadArchive(pManager, myData, myMgr.getPreferenceSet(PrometheusBackupPreferences.class));
+        final MoneyWiseArchiveLoader myLoader = new MoneyWiseArchiveLoader(myData);
+        myLoader.loadArchive(pManager, myMgr.getPreferenceSet(PrometheusBackupPreferences.class));
 
         /* Initialise the status window */
         pManager.initTask("Analysing Data");

@@ -26,7 +26,7 @@ import net.sourceforge.joceanus.oceanus.base.OceanusException;
  * SheetDataInfo extension for LoanInfo.
  * @author Tony Washer
  */
-public class MoneyWiseSheetLoanInfo
+public final class MoneyWiseSheetLoanInfo
         extends PrometheusSheetDataInfo<MoneyWiseLoanInfo> {
     /**
      * NamedArea for DepositInfo.
@@ -37,7 +37,7 @@ public class MoneyWiseSheetLoanInfo
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
-    protected MoneyWiseSheetLoanInfo(final MoneyWiseReader pReader) {
+    MoneyWiseSheetLoanInfo(final MoneyWiseReader pReader) {
         /* Call super-constructor */
         super(pReader, AREA_LOANINFO);
 
@@ -50,7 +50,7 @@ public class MoneyWiseSheetLoanInfo
      * Constructor for creating a spreadsheet.
      * @param pWriter the spreadsheet writer
      */
-    protected MoneyWiseSheetLoanInfo(final MoneyWiseWriter pWriter) {
+    MoneyWiseSheetLoanInfo(final MoneyWiseWriter pWriter) {
         /* Call super-constructor */
         super(pWriter, AREA_LOANINFO);
 
@@ -60,7 +60,7 @@ public class MoneyWiseSheetLoanInfo
     }
 
     @Override
-    protected PrometheusDataValues loadSecureValues() throws OceanusException {
+    public PrometheusDataValues loadSecureValues() throws OceanusException {
         /* Build data values */
         return getRowValues(MoneyWiseLoanInfo.OBJECT_NAME);
     }

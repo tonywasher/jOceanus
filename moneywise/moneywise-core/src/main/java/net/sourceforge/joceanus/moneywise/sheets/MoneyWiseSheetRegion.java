@@ -16,25 +16,17 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.moneywise.sheets;
 
-import net.sourceforge.joceanus.moneywise.exc.MoneyWiseIOException;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataSet;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseRegion;
-import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseRegion.MoneyWiseRegionList;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataResource;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataValues;
 import net.sourceforge.joceanus.prometheus.sheets.PrometheusSheetEncrypted;
-import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetCell;
-import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetRow;
-import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetView;
-import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetWorkBook;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.tethys.api.thread.TethysUIThreadCancelException;
-import net.sourceforge.joceanus.tethys.api.thread.TethysUIThreadStatusReport;
 
 /**
  * SheetDataItem extension for Region.
  */
-public class MoneyWiseSheetRegion
+public final class MoneyWiseSheetRegion
         extends PrometheusSheetEncrypted<MoneyWiseRegion> {
     /**
      * NamedArea for regions.
@@ -55,7 +47,7 @@ public class MoneyWiseSheetRegion
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
-    protected MoneyWiseSheetRegion(final MoneyWiseReader pReader) {
+    MoneyWiseSheetRegion(final MoneyWiseReader pReader) {
         /* Call super constructor */
         super(pReader, AREA_REGIONS);
 
@@ -68,7 +60,7 @@ public class MoneyWiseSheetRegion
      * Constructor for creating a spreadsheet.
      * @param pWriter the spreadsheet writer
      */
-    protected MoneyWiseSheetRegion(final MoneyWiseWriter pWriter) {
+    MoneyWiseSheetRegion(final MoneyWiseWriter pWriter) {
         /* Call super constructor */
         super(pWriter, AREA_REGIONS);
 
@@ -100,64 +92,5 @@ public class MoneyWiseSheetRegion
     protected int getLastColumn() {
         /* Return the last column */
         return COL_DESC;
-    }
-
-    /**
-     * Load the TransactionTags from an archive.
-     * @param pReport the report
-     * @param pWorkBook the workbook
-     * @param pData the data set to load into
-     * @throws OceanusException on error
-     */
-    protected static void loadArchive(final TethysUIThreadStatusReport pReport,
-                                      final PrometheusSheetWorkBook pWorkBook,
-                                      final MoneyWiseDataSet pData) throws OceanusException {
-        /* Access the list of regions */
-        final MoneyWiseRegionList myList = pData.getRegions();
-
-        /* Protect against exceptions */
-        try {
-            /* Find the range of cells */
-            final PrometheusSheetView myView = pWorkBook.getRangeView(AREA_REGIONS);
-
-            /* Declare the new stage */
-            pReport.setNewStage(MoneyWiseRegion.LIST_NAME);
-
-            /* Count the number of regions */
-            final int myTotal = myView.getRowCount();
-
-            /* Declare the number of steps */
-            pReport.setNumSteps(myTotal);
-
-            /* Loop through the rows of the table */
-            for (int i = 0; i < myTotal; i++) {
-                /* Access the cell by reference */
-                final PrometheusSheetRow myRow = myView.getRowByIndex(i);
-                int iAdjust = -1;
-
-                /* Access name */
-                final PrometheusSheetCell myCell = myView.getRowCellByIndex(myRow, ++iAdjust);
-                final String myName = myCell.getString();
-
-                /* Build data values */
-                final PrometheusDataValues myValues = new PrometheusDataValues(MoneyWiseRegion.OBJECT_NAME);
-                myValues.addValue(PrometheusDataResource.DATAITEM_FIELD_NAME, myName);
-
-                /* Add the value into the list */
-                myList.addValuesItem(myValues);
-
-                /* Report the progress */
-                pReport.setNextStep();
-            }
-
-            /* PostProcess on load */
-            myList.postProcessOnLoad();
-
-            /* Handle exceptions */
-        } catch (TethysUIThreadCancelException e) {
-            throw e;
-        } catch (OceanusException e) {
-            throw new MoneyWiseIOException("Failed to Load " + myList.getItemType().getListName(), e);
-        }
     }
 }

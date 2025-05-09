@@ -21,7 +21,7 @@ import net.sourceforge.joceanus.moneywise.atlas.data.analysis.buckets.MoneyWiseX
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataSet;
 import net.sourceforge.joceanus.moneywise.lethe.data.analysis.analyse.MoneyWiseAnalysisBuilder;
 import net.sourceforge.joceanus.moneywise.lethe.data.analysis.data.MoneyWiseAnalysis;
-import net.sourceforge.joceanus.moneywise.sheets.MoneyWiseArchiveLoader;
+import net.sourceforge.joceanus.moneywise.archive.MoneyWiseArchiveLoader;
 import net.sourceforge.joceanus.moneywise.views.MoneyWiseView;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.oceanus.date.OceanusDate;
@@ -59,8 +59,8 @@ public class MoneyWiseDataTestArchiveFile {
         final PrometheusBackupPreferences myPrefs = myMgr.getPreferenceSet(PrometheusBackupPreferences.class);
 
         /* Access the Password manager and disable prompting */
-        final MoneyWiseArchiveLoader myLoader = new MoneyWiseArchiveLoader();
-        myLoader.loadArchive(theManager, pData, myPrefs);
+        final MoneyWiseArchiveLoader myLoader = new MoneyWiseArchiveLoader(pData);
+        myLoader.loadArchive(theManager, myPrefs);
 
         /* Initialise the security, from the original data */
         final MoneyWiseDataSet myNullData = pView.getNewData();
@@ -83,9 +83,9 @@ public class MoneyWiseDataTestArchiveFile {
         final MoneyWiseDataSet myDataSet = pView.getNewData();
 
         /* Access the Password manager and disable prompting */
-        final MoneyWiseArchiveLoader myLoader = new MoneyWiseArchiveLoader();
+        final MoneyWiseArchiveLoader myLoader = new MoneyWiseArchiveLoader(myDataSet);
         myLoader.setLastEvent(pLastEvent);
-        myLoader.loadArchive(theManager, myDataSet, myPrefs);
+        myLoader.loadArchive(theManager, myPrefs);
 
         /* Initialise the security, from the original data */
         final MoneyWiseDataSet myNullData = pView.getNewData();
@@ -113,9 +113,9 @@ public class MoneyWiseDataTestArchiveFile {
         myDataSet.newValidityChecks();
 
         /* Access the Password manager and disable prompting */
-        final MoneyWiseArchiveLoader myLoader = new MoneyWiseArchiveLoader();
+        final MoneyWiseArchiveLoader myLoader = new MoneyWiseArchiveLoader(myDataSet);
         myLoader.setLastEvent(pLastEvent);
-        myLoader.loadArchive(theManager, myDataSet, myPrefs);
+        myLoader.loadArchive(theManager, myPrefs);
 
         /* Initialise the security, from the original data */
         final MoneyWiseDataSet myNullData = pView.getNewData();

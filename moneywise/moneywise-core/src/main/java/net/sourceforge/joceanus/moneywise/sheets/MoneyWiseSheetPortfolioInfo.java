@@ -37,7 +37,7 @@ public class MoneyWiseSheetPortfolioInfo
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
-    protected MoneyWiseSheetPortfolioInfo(final MoneyWiseReader pReader) {
+    MoneyWiseSheetPortfolioInfo(final MoneyWiseReader pReader) {
         /* Call super-constructor */
         super(pReader, AREA_PORTFOLIOINFO);
 
@@ -50,7 +50,7 @@ public class MoneyWiseSheetPortfolioInfo
      * Constructor for creating a spreadsheet.
      * @param pWriter the spreadsheet writer
      */
-    protected MoneyWiseSheetPortfolioInfo(final MoneyWiseWriter pWriter) {
+    MoneyWiseSheetPortfolioInfo(final MoneyWiseWriter pWriter) {
         /* Call super-constructor */
         super(pWriter, AREA_PORTFOLIOINFO);
 
@@ -60,7 +60,7 @@ public class MoneyWiseSheetPortfolioInfo
     }
 
     @Override
-    protected PrometheusDataValues loadSecureValues() throws OceanusException {
+    public PrometheusDataValues loadSecureValues() throws OceanusException {
         /* Build data values */
         return getRowValues(MoneyWisePortfolioInfo.OBJECT_NAME);
     }

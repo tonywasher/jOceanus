@@ -16,32 +16,23 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.moneywise.sheets;
 
-import net.sourceforge.joceanus.moneywise.exc.MoneyWiseIOException;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseBasicResource;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseDataSet;
 import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseExchangeRate;
-import net.sourceforge.joceanus.moneywise.data.basic.MoneyWiseExchangeRate.MoneyWiseExchangeRateList;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.prometheus.data.PrometheusDataValues;
 import net.sourceforge.joceanus.prometheus.sheets.PrometheusSheetDataItem;
-import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetCell;
-import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetRow;
-import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetView;
-import net.sourceforge.joceanus.prometheus.service.sheet.PrometheusSheetWorkBook;
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.oceanus.date.OceanusDate;
-import net.sourceforge.joceanus.tethys.api.thread.TethysUIThreadStatusReport;
-import net.sourceforge.joceanus.tethys.api.thread.TethysUIThreadCancelException;
 
 /**
  * SheetDataItem extension for ExchangeRate.
  * @author Tony Washer
  */
-public class MoneyWiseSheetExchangeRate
+public final class MoneyWiseSheetExchangeRate
         extends PrometheusSheetDataItem<MoneyWiseExchangeRate> {
     /**
      * NamedArea for Rates.
      */
-    protected static final String AREA_XCHGRATES = MoneyWiseExchangeRate.LIST_NAME;
+    private static final String AREA_XCHGRATES = MoneyWiseExchangeRate.LIST_NAME;
 
     /**
      * Date column.
@@ -67,7 +58,7 @@ public class MoneyWiseSheetExchangeRate
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
-    protected MoneyWiseSheetExchangeRate(final MoneyWiseReader pReader) {
+    MoneyWiseSheetExchangeRate(final MoneyWiseReader pReader) {
         /* Call super constructor */
         super(pReader, AREA_XCHGRATES);
 
@@ -80,7 +71,7 @@ public class MoneyWiseSheetExchangeRate
      * Constructor for creating a spreadsheet.
      * @param pWriter the spreadsheet writer
      */
-    protected MoneyWiseSheetExchangeRate(final MoneyWiseWriter pWriter) {
+    MoneyWiseSheetExchangeRate(final MoneyWiseWriter pWriter) {
         /* Call super constructor */
         super(pWriter, AREA_XCHGRATES);
 
@@ -116,97 +107,5 @@ public class MoneyWiseSheetExchangeRate
     protected int getLastColumn() {
         /* Return the last column */
         return COL_RATE;
-    }
-
-    /**
-     * Load the ExchangeRates from an archive.
-     * @param pReport the report
-     * @param pWorkBook the workbook
-     * @param pLoader the archive loader
-     * @param pData the data set to load into
-     * @throws OceanusException on error
-     */
-    protected static void loadArchive(final TethysUIThreadStatusReport pReport,
-                                      final PrometheusSheetWorkBook pWorkBook,
-                                      final MoneyWiseDataSet pData,
-                                      final MoneyWiseArchiveLoader pLoader) throws OceanusException {
-        /* Access the list of rates */
-        final MoneyWiseExchangeRateList myList = pData.getExchangeRates();
-
-        /* Protect against exceptions */
-        try {
-            /* Find the range of cells */
-            final PrometheusSheetView myView = pWorkBook.getRangeView(AREA_XCHGRATES);
-
-            /* Declare the new stage */
-            pReport.setNewStage(AREA_XCHGRATES);
-
-            /* Count the number of Rates */
-            final int myRows = myView.getRowCount();
-            final int myCols = myView.getColumnCount();
-            final int myTotal = (myRows - 1) * (myCols - 1);
-
-            /* Declare the number of steps */
-            pReport.setNumSteps(myTotal);
-
-            /* Obtain the default currency */
-            final String myDefCurrency = pData.getReportingCurrency().getName();
-
-            /* Loop through the rows of the table */
-            final PrometheusSheetRow myActRow = myView.getRowByIndex(0);
-            for (int i = myRows - 1; i > 0; i--) {
-                /* Access the cell by reference */
-                final PrometheusSheetRow myRow = myView.getRowByIndex(i);
-
-                /* Access date */
-                PrometheusSheetCell myCell = myView.getRowCellByIndex(myRow, 0);
-                final OceanusDate myDate = myCell.getDate();
-
-                /* If the rate is too late */
-                if (!pLoader.checkDate(myDate)) {
-                    /* Skip the row */
-                    continue;
-                }
-
-                /* Loop through the columns of the table */
-                for (int j = 1; j < myCols; j++) {
-                    /* Access account */
-                    myCell = myView.getRowCellByIndex(myActRow, j);
-                    if (myCell == null) {
-                        continue;
-                    }
-                    final String myCurrency = myCell.getString();
-
-                    /* Handle rate which may be missing */
-                    myCell = myView.getRowCellByIndex(myRow, j);
-                    if (myCell != null) {
-                        /* Access the formatted cell */
-                        final String myRate = myCell.getString();
-
-                        /* Build data values */
-                        final PrometheusDataValues myValues = new PrometheusDataValues(MoneyWiseExchangeRate.OBJECT_NAME);
-                        myValues.addValue(MoneyWiseBasicResource.XCHGRATE_FROM, myDefCurrency);
-                        myValues.addValue(MoneyWiseBasicResource.XCHGRATE_TO, myCurrency);
-                        myValues.addValue(MoneyWiseBasicResource.MONEYWISEDATA_FIELD_DATE, myDate);
-                        myValues.addValue(MoneyWiseBasicResource.XCHGRATE_RATE, myRate);
-
-                        /* Add the value into the list */
-                        myList.addValuesItem(myValues);
-                    }
-
-                    /* Report the progress */
-                    pReport.setNextStep();
-                }
-            }
-
-            /* Post process the prices */
-            myList.postProcessOnLoad();
-
-            /* Handle exceptions */
-        } catch (TethysUIThreadCancelException e) {
-            throw e;
-        } catch (OceanusException e) {
-            throw new MoneyWiseIOException("Failed to Load " + myList.getItemType().getListName(), e);
-        }
     }
 }

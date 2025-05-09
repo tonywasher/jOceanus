@@ -38,7 +38,7 @@ import net.sourceforge.joceanus.prometheus.sheets.PrometheusSheetEncrypted;
  * SheetDataItem extension for Security.
  * @author Tony Washer
  */
-public class MoneyWiseSheetSecurity
+public final class MoneyWiseSheetSecurity
         extends PrometheusSheetEncrypted<MoneyWiseSecurity> {
     /**
      * NamedArea for Securities.
@@ -79,7 +79,7 @@ public class MoneyWiseSheetSecurity
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
-    protected MoneyWiseSheetSecurity(final MoneyWiseReader pReader) {
+    MoneyWiseSheetSecurity(final MoneyWiseReader pReader) {
         /* Call super constructor */
         super(pReader, AREA_SECURITIES);
 
@@ -92,7 +92,7 @@ public class MoneyWiseSheetSecurity
      * Constructor for creating a spreadsheet.
      * @param pWriter the spreadsheet writer
      */
-    protected MoneyWiseSheetSecurity(final MoneyWiseWriter pWriter) {
+    MoneyWiseSheetSecurity(final MoneyWiseWriter pWriter) {
         /* Call super constructor */
         super(pWriter, AREA_SECURITIES);
 
@@ -132,112 +132,5 @@ public class MoneyWiseSheetSecurity
     protected int getLastColumn() {
         /* Return the last column */
         return COL_CLOSED;
-    }
-
-    /**
-     * Process security row from archive.
-     * @param pLoader the archive loader
-     * @param pData the DataSet
-     * @param pView the spreadsheet view
-     * @param pRow the spreadsheet row
-     * @throws OceanusException on error
-     */
-    protected static void processSecurity(final MoneyWiseArchiveLoader pLoader,
-                                          final MoneyWiseDataSet pData,
-                                          final PrometheusSheetView pView,
-                                          final PrometheusSheetRow pRow) throws OceanusException {
-        /* Access name and type */
-        int iAdjust = -1;
-        final String myName = pView.getRowCellByIndex(pRow, ++iAdjust).getString();
-        final String myType = pView.getRowCellByIndex(pRow, ++iAdjust).getString();
-
-        /* Look for separator in category */
-        final int iIndex = myType.indexOf(MoneyWiseCategoryBase.STR_SEP);
-        if (iIndex == -1) {
-            throw new MoneyWiseLogicException("Unexpected Security Class " + myType);
-        }
-
-        /* Access subCategory as security type */
-        final String mySecType = myType.substring(iIndex + 1);
-
-        /* Skip class */
-        ++iAdjust;
-
-        /* Handle closed which may be missing */
-        PrometheusSheetCell myCell = pView.getRowCellByIndex(pRow, ++iAdjust);
-        Boolean isClosed = Boolean.FALSE;
-        if (myCell != null) {
-            isClosed = myCell.getBoolean();
-        }
-
-        /* Access the list */
-        final MoneyWiseSecurityList myList = pData.getSecurities();
-
-        /* Access Parent account */
-        final String myParent = pView.getRowCellByIndex(pRow, ++iAdjust).getString();
-
-        /* Access the alias account */
-        myCell = pView.getRowCellByIndex(pRow, ++iAdjust);
-        String myAlias = null;
-        if (myCell != null) {
-            myAlias = myCell.getString();
-        }
-
-        /* Access Portfolio */
-        final String myPortfolio = pView.getRowCellByIndex(pRow, ++iAdjust).getString();
-
-        /* If we have an alias */
-        if (myAlias != null) {
-            /* Declare the security alias */
-            pLoader.declareAliasHolding(myName, myAlias, myPortfolio);
-
-            /* return */
-            return;
-        }
-
-        /* Skip maturity and opening columns */
-        ++iAdjust;
-        ++iAdjust;
-
-        /* Access Symbol which may be missing */
-        myCell = pView.getRowCellByIndex(pRow, ++iAdjust);
-        String mySymbol = null;
-        if (myCell != null) {
-            mySymbol = myCell.getString();
-        }
-
-        /* Handle region which may be missing */
-        myCell = pView.getRowCellByIndex(pRow, ++iAdjust);
-        String myRegion = null;
-        if (myCell != null) {
-            myRegion = myCell.getString();
-        }
-
-        /* Handle currency which may be missing */
-        myCell = pView.getRowCellByIndex(pRow, ++iAdjust);
-        MoneyWiseCurrency myCurrency = pData.getReportingCurrency();
-        if (myCell != null) {
-            final String myCurrName = myCell.getString();
-            myCurrency = pData.getAccountCurrencies().findItemByName(myCurrName);
-        }
-
-        /* Build data values */
-        final PrometheusDataValues myValues = new PrometheusDataValues(MoneyWiseSecurity.OBJECT_NAME);
-        myValues.addValue(PrometheusDataResource.DATAITEM_FIELD_NAME, myName);
-        myValues.addValue(MoneyWiseBasicResource.CATEGORY_NAME, mySecType);
-        myValues.addValue(MoneyWiseStaticDataType.CURRENCY, myCurrency);
-        myValues.addValue(MoneyWiseBasicResource.ASSET_PARENT, myParent);
-        myValues.addValue(MoneyWiseBasicResource.ASSET_CLOSED, isClosed);
-
-        /* Add the value into the list */
-        final MoneyWiseSecurity mySecurity = myList.addValuesItem(myValues);
-
-        /* Add information relating to the security */
-        final MoneyWiseSecurityInfoList myInfoList = pData.getSecurityInfo();
-        myInfoList.addInfoItem(null, mySecurity, MoneyWiseAccountInfoClass.SYMBOL, mySymbol);
-        myInfoList.addInfoItem(null, mySecurity, MoneyWiseAccountInfoClass.REGION, myRegion);
-
-        /* Declare the security holding */
-        pLoader.declareSecurityHolding(mySecurity, myPortfolio);
     }
 }

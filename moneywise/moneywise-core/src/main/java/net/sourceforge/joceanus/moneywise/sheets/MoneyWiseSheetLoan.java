@@ -34,7 +34,7 @@ import net.sourceforge.joceanus.oceanus.base.OceanusException;
  * SheetDataItem extension for Loan.
  * @author Tony Washer
  */
-public class MoneyWiseSheetLoan
+public final class MoneyWiseSheetLoan
         extends PrometheusSheetEncrypted<MoneyWiseLoan> {
     /**
      * NamedArea for Loans.
@@ -75,7 +75,7 @@ public class MoneyWiseSheetLoan
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
-    protected MoneyWiseSheetLoan(final MoneyWiseReader pReader) {
+    MoneyWiseSheetLoan(final MoneyWiseReader pReader) {
         /* Call super constructor */
         super(pReader, AREA_LOANS);
 
@@ -88,7 +88,7 @@ public class MoneyWiseSheetLoan
      * Constructor for creating a spreadsheet.
      * @param pWriter the spreadsheet writer
      */
-    protected MoneyWiseSheetLoan(final MoneyWiseWriter pWriter) {
+    MoneyWiseSheetLoan(final MoneyWiseWriter pWriter) {
         /* Call super constructor */
         super(pWriter, AREA_LOANS);
 
@@ -128,67 +128,5 @@ public class MoneyWiseSheetLoan
     protected int getLastColumn() {
         /* Return the last column */
         return COL_CLOSED;
-    }
-
-    /**
-     * Process loan row from archive.
-     * @param pLoader the archive loader
-     * @param pData the DataSet
-     * @param pView the spreadsheet view
-     * @param pRow the spreadsheet row
-     * @throws OceanusException on error
-     */
-    protected static void processLoan(final MoneyWiseArchiveLoader pLoader,
-                                      final MoneyWiseDataSet pData,
-                                      final PrometheusSheetView pView,
-                                      final PrometheusSheetRow pRow) throws OceanusException {
-        /* Access name and type */
-        int iAdjust = -1;
-        final String myName = pView.getRowCellByIndex(pRow, ++iAdjust).getString();
-        final String myType = pView.getRowCellByIndex(pRow, ++iAdjust).getString();
-
-        /* Skip class */
-        ++iAdjust;
-
-        /* Handle closed which may be missing */
-        PrometheusSheetCell myCell = pView.getRowCellByIndex(pRow, ++iAdjust);
-        Boolean isClosed = Boolean.FALSE;
-        if (myCell != null) {
-            isClosed = myCell.getBoolean();
-        }
-
-        /* Access Parent account */
-        final String myParent = pView.getRowCellByIndex(pRow, ++iAdjust).getString();
-
-        /* Skip alias, portfolio, maturity, openingBalance, symbol and region columns */
-        ++iAdjust;
-        ++iAdjust;
-        ++iAdjust;
-        ++iAdjust;
-        ++iAdjust;
-        ++iAdjust;
-
-        /* Handle currency which may be missing */
-        myCell = pView.getRowCellByIndex(pRow, ++iAdjust);
-        MoneyWiseCurrency myCurrency = pData.getReportingCurrency();
-        if (myCell != null) {
-            final String myCurrName = myCell.getString();
-            myCurrency = pData.getAccountCurrencies().findItemByName(myCurrName);
-        }
-
-        /* Build data values */
-        final PrometheusDataValues myValues = new PrometheusDataValues(MoneyWiseLoan.OBJECT_NAME);
-        myValues.addValue(PrometheusDataResource.DATAITEM_FIELD_NAME, myName);
-        myValues.addValue(MoneyWiseBasicResource.CATEGORY_NAME, myType);
-        myValues.addValue(MoneyWiseStaticDataType.CURRENCY, myCurrency);
-        myValues.addValue(MoneyWiseBasicResource.ASSET_PARENT, myParent);
-        myValues.addValue(MoneyWiseBasicResource.ASSET_CLOSED, isClosed);
-
-        /* Add the value into the list */
-        final MoneyWiseLoanList myList = pData.getLoans();
-        final MoneyWiseLoan myLoan = myList.addValuesItem(myValues);
-
-        /* Declare the loan */
-        pLoader.declareAsset(myLoan);
     }
 }

@@ -28,12 +28,12 @@ import net.sourceforge.joceanus.oceanus.base.OceanusException;
  * SheetDataItem extension for LoanCategory.
  * @author Tony Washer
  */
-public class MoneyWiseSheetLoanCategory
+public final class MoneyWiseSheetLoanCategory
         extends PrometheusSheetEncrypted<MoneyWiseLoanCategory> {
     /**
      * NamedArea for Categories.
      */
-    protected static final String AREA_LOANCATEGORIES = MoneyWiseLoanCategory.LIST_NAME;
+    static final String AREA_LOANCATEGORIES = MoneyWiseLoanCategory.LIST_NAME;
 
     /**
      * Name column.
@@ -59,7 +59,7 @@ public class MoneyWiseSheetLoanCategory
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
-    protected MoneyWiseSheetLoanCategory(final MoneyWiseReader pReader) {
+    MoneyWiseSheetLoanCategory(final MoneyWiseReader pReader) {
         /* Call super constructor */
         super(pReader, AREA_LOANCATEGORIES);
 
@@ -72,7 +72,7 @@ public class MoneyWiseSheetLoanCategory
      * Constructor for creating a spreadsheet.
      * @param pWriter the spreadsheet writer
      */
-    protected MoneyWiseSheetLoanCategory(final MoneyWiseWriter pWriter) {
+    MoneyWiseSheetLoanCategory(final MoneyWiseWriter pWriter) {
         /* Call super constructor */
         super(pWriter, AREA_LOANCATEGORIES);
 
@@ -82,7 +82,7 @@ public class MoneyWiseSheetLoanCategory
     }
 
     @Override
-    protected PrometheusDataValues loadSecureValues() throws OceanusException {
+    public PrometheusDataValues loadSecureValues() throws OceanusException {
         /* Build data values */
         final PrometheusDataValues myValues = getRowValues(MoneyWiseLoanCategory.OBJECT_NAME);
         myValues.addValue(MoneyWiseStaticDataType.LOANTYPE, loadInteger(COL_TYPE));
@@ -95,7 +95,7 @@ public class MoneyWiseSheetLoanCategory
     }
 
     @Override
-    protected void insertSecureItem(final MoneyWiseLoanCategory pItem) throws OceanusException {
+    public void insertSecureItem(final MoneyWiseLoanCategory pItem) throws OceanusException {
         /* Set the fields */
         super.insertSecureItem(pItem);
         writeInteger(COL_TYPE, pItem.getCategoryTypeId());
@@ -105,7 +105,7 @@ public class MoneyWiseSheetLoanCategory
     }
 
     @Override
-    protected int getLastColumn() {
+    public int getLastColumn() {
         /* Return the last column */
         return COL_DESC;
     }
