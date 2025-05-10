@@ -24,6 +24,7 @@ import net.sourceforge.joceanus.gordianknot.api.keypair.GordianEdwardsElliptic;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairType;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianXMSSKeySpec;
+import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignParams;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignatureSpec;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignatureType;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
@@ -151,10 +152,11 @@ public abstract class JcaSignature
     }
 
     @Override
-    public void initForSigning(final GordianKeyPair pKeyPair) throws GordianException {
+    public void initForSigning(final GordianSignParams pParams) throws GordianException {
         /* Initialise detail */
-        JcaKeyPair.checkKeyPair(pKeyPair);
-        super.initForSigning(pKeyPair);
+        super.initForSigning(pParams);
+        final JcaKeyPair myPair = getKeyPair();
+        JcaKeyPair.checkKeyPair(myPair);
 
         /* Initialise for signing */
         try {
@@ -163,9 +165,9 @@ public abstract class JcaSignature
 
             /* Initialise the signing */
             if (useRandom) {
-                getSigner().initSign(getKeyPair().getPrivateKey().getPrivateKey(), getRandom());
+                getSigner().initSign(myPair.getPrivateKey().getPrivateKey(), getRandom());
             } else {
-                getSigner().initSign(getKeyPair().getPrivateKey().getPrivateKey());
+                getSigner().initSign(myPair.getPrivateKey().getPrivateKey());
             }
 
             /* Catch exceptions */
@@ -175,15 +177,16 @@ public abstract class JcaSignature
     }
 
     @Override
-    public void initForVerify(final GordianKeyPair pKeyPair) throws GordianException {
+    public void initForVerify(final GordianSignParams pParams) throws GordianException {
         /* Initialise detail */
-        JcaKeyPair.checkKeyPair(pKeyPair);
-        super.initForVerify(pKeyPair);
+        super.initForVerify(pParams);
+        final JcaKeyPair myPair = getKeyPair();
+        JcaKeyPair.checkKeyPair(myPair);
 
         /* Initialise for signing */
         try {
             /* Initialise for verification */
-            getSigner().initVerify(getKeyPair().getPublicKey().getPublicKey());
+            getSigner().initVerify(myPair.getPublicKey().getPublicKey());
 
             /* Catch exceptions */
         } catch (InvalidKeyException e) {
@@ -371,12 +374,10 @@ public abstract class JcaSignature
             final GordianLength myLength = pSignatureSpec.getDigestSpec().getDigestLength();
 
             /* Build the algorithm */
-            final StringBuilder myBuilder = new StringBuilder();
-            myBuilder.append("GOST3411-2012-")
-                    .append(myLength.getLength())
-                    .append("withECGOST3410-2012-")
-                    .append(myLength.getLength());
-            return myBuilder.toString();
+            return "GOST3411-2012-"
+                    + myLength.getLength()
+                    + "withECGOST3410-2012-"
+                    + myLength.getLength();
         }
     }
 
@@ -394,34 +395,35 @@ public abstract class JcaSignature
          * Constructor.
          * @param pFactory the factory
          * @param pSignatureSpec the signatureSpec
-         * @throws GordianException on error
-         */
+        */
         JcaSLHDSASignature(final GordianCoreFactory pFactory,
-                           final GordianSignatureSpec pSignatureSpec) throws GordianException {
+                           final GordianSignatureSpec pSignatureSpec) {
             /* Initialise class */
             super(pFactory, pSignatureSpec);
         }
 
         @Override
-        public void initForSigning(final GordianKeyPair pKeyPair) throws GordianException {
+        public void initForSigning(final GordianSignParams pParams) throws GordianException {
             /* Determine the required signer */
-            JcaKeyPair.checkKeyPair(pKeyPair);
-            final String mySignName = getAlgorithmForKeyPair(pKeyPair);
+            final GordianKeyPair myPair = pParams.getKeyPair();
+            JcaKeyPair.checkKeyPair(myPair);
+            final String mySignName = getAlgorithmForKeyPair(myPair);
             setSigner(JcaSignatureFactory.getJavaSignature(mySignName, false));
 
             /* pass on call */
-            super.initForSigning(pKeyPair);
+            super.initForSigning(pParams);
         }
 
         @Override
-        public void initForVerify(final GordianKeyPair pKeyPair) throws GordianException {
+        public void initForVerify(final GordianSignParams pParams) throws GordianException {
             /* Determine the required signer */
-            JcaKeyPair.checkKeyPair(pKeyPair);
-            final String mySignName = getAlgorithmForKeyPair(pKeyPair);
+            final GordianKeyPair myPair = pParams.getKeyPair();
+            JcaKeyPair.checkKeyPair(myPair);
+            final String mySignName = getAlgorithmForKeyPair(myPair);
             setSigner(JcaSignatureFactory.getJavaSignature(mySignName, false));
 
             /* pass on call */
-            super.initForVerify(pKeyPair);
+            super.initForVerify(pParams);
         }
 
         /**
@@ -450,34 +452,35 @@ public abstract class JcaSignature
          * Constructor.
          * @param pFactory the factory
          * @param pSignatureSpec the signatureSpec
-         * @throws GordianException on error
          */
         JcaMLDSASignature(final GordianCoreFactory pFactory,
-                          final GordianSignatureSpec pSignatureSpec) throws GordianException {
+                          final GordianSignatureSpec pSignatureSpec) {
             /* Initialise class */
             super(pFactory, pSignatureSpec);
         }
 
         @Override
-        public void initForSigning(final GordianKeyPair pKeyPair) throws GordianException {
+        public void initForSigning(final GordianSignParams pParams) throws GordianException {
             /* Determine the required signer */
-            JcaKeyPair.checkKeyPair(pKeyPair);
-            final String mySignName = getAlgorithmForKeyPair(pKeyPair);
+            final GordianKeyPair myPair = pParams.getKeyPair();
+            JcaKeyPair.checkKeyPair(myPair);
+            final String mySignName = getAlgorithmForKeyPair(myPair);
             setSigner(JcaSignatureFactory.getJavaSignature(mySignName, false));
 
             /* pass on call */
-            super.initForSigning(pKeyPair);
+            super.initForSigning(pParams);
         }
 
         @Override
-        public void initForVerify(final GordianKeyPair pKeyPair) throws GordianException {
+        public void initForVerify(final GordianSignParams pParams) throws GordianException {
             /* Determine the required signer */
-            JcaKeyPair.checkKeyPair(pKeyPair);
-            final String mySignName = getAlgorithmForKeyPair(pKeyPair);
+            final GordianKeyPair myPair = pParams.getKeyPair();
+            JcaKeyPair.checkKeyPair(myPair);
+            final String mySignName = getAlgorithmForKeyPair(myPair);
             setSigner(JcaSignatureFactory.getJavaSignature(mySignName, false));
 
             /* pass on call */
-            super.initForVerify(pKeyPair);
+            super.initForVerify(pParams);
         }
 
         /**
@@ -525,7 +528,7 @@ public abstract class JcaSignature
          * @throws GordianException on error
          */
         JcaMayoSignature(final GordianCoreFactory pFactory,
-                           final GordianSignatureSpec pSignatureSpec) throws GordianException {
+                         final GordianSignatureSpec pSignatureSpec) throws GordianException {
             /* Initialise class */
             super(pFactory, pSignatureSpec);
 
@@ -621,10 +624,9 @@ public abstract class JcaSignature
          * Constructor.
          * @param pFactory the factory
          * @param pSignatureSpec the signatureSpec
-         * @throws GordianException on error
          */
         JcaXMSSSignature(final GordianCoreFactory pFactory,
-                         final GordianSignatureSpec pSignatureSpec) throws GordianException {
+                         final GordianSignatureSpec pSignatureSpec) {
             /* Initialise class */
             super(pFactory, pSignatureSpec);
 
@@ -633,25 +635,27 @@ public abstract class JcaSignature
         }
 
         @Override
-        public void initForSigning(final GordianKeyPair pKeyPair) throws GordianException {
+        public void initForSigning(final GordianSignParams pParams) throws GordianException {
             /* Determine the required signer */
-            JcaKeyPair.checkKeyPair(pKeyPair);
-            final String mySignName = getAlgorithmForKeyPair(pKeyPair);
+            final GordianKeyPair myPair = pParams.getKeyPair();
+            JcaKeyPair.checkKeyPair(myPair);
+            final String mySignName = getAlgorithmForKeyPair(myPair);
             setSigner(JcaSignatureFactory.getJavaSignature(mySignName, true));
 
             /* pass on call */
-            super.initForSigning(pKeyPair);
+            super.initForSigning(pParams);
         }
 
         @Override
-        public void initForVerify(final GordianKeyPair pKeyPair) throws GordianException {
+        public void initForVerify(final GordianSignParams pParams) throws GordianException {
             /* Determine the required signer */
-            JcaKeyPair.checkKeyPair(pKeyPair);
-            final String mySignName = getAlgorithmForKeyPair(pKeyPair);
+            final GordianKeyPair myPair = pParams.getKeyPair();
+            JcaKeyPair.checkKeyPair(myPair);
+            final String mySignName = getAlgorithmForKeyPair(myPair);
             setSigner(JcaSignatureFactory.getJavaSignature(mySignName, true));
 
             /* pass on call */
-            super.initForVerify(pKeyPair);
+            super.initForVerify(pParams);
         }
 
         /**
@@ -690,34 +694,35 @@ public abstract class JcaSignature
          * Constructor.
          * @param pFactory the factory
          * @param pSignatureSpec the signatureSpec
-         * @throws GordianException on error
          */
         JcaEdDSASignature(final GordianCoreFactory pFactory,
-                          final GordianSignatureSpec pSignatureSpec) throws GordianException {
+                          final GordianSignatureSpec pSignatureSpec) {
             /* Initialise class */
             super(pFactory, pSignatureSpec);
         }
 
         @Override
-        public void initForSigning(final GordianKeyPair pKeyPair) throws GordianException {
+        public void initForSigning(final GordianSignParams pParams) throws GordianException {
             /* Determine the required signer */
-            JcaKeyPair.checkKeyPair(pKeyPair);
-            final String mySignName = getAlgorithmForKeyPair(pKeyPair);
+            final GordianKeyPair myPair = pParams.getKeyPair();
+            JcaKeyPair.checkKeyPair(myPair);
+            final String mySignName = getAlgorithmForKeyPair(myPair);
             setSigner(JcaSignatureFactory.getJavaSignature(mySignName, false));
 
             /* pass on call */
-            super.initForSigning(pKeyPair);
+            super.initForSigning(pParams);
         }
 
         @Override
-        public void initForVerify(final GordianKeyPair pKeyPair) throws GordianException {
+        public void initForVerify(final GordianSignParams pParams) throws GordianException {
             /* Determine the required signer */
-            JcaKeyPair.checkKeyPair(pKeyPair);
-            final String mySignName = getAlgorithmForKeyPair(pKeyPair);
+            final GordianKeyPair myPair = pParams.getKeyPair();
+            JcaKeyPair.checkKeyPair(myPair);
+            final String mySignName = getAlgorithmForKeyPair(myPair);
             setSigner(JcaSignatureFactory.getJavaSignature(mySignName, false));
 
             /* pass on call */
-            super.initForVerify(pKeyPair);
+            super.initForVerify(pParams);
         }
 
         /**

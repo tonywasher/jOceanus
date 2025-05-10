@@ -18,7 +18,6 @@ package net.sourceforge.joceanus.gordianknot.api.sign;
 
 import net.sourceforge.joceanus.gordianknot.api.base.GordianConsumer;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
-import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
 
 /**
  * GordianKnot base for signature.
@@ -33,17 +32,17 @@ public interface GordianSignature
 
     /**
      * Initialise for signature.
-     * @param pKeyPair the keyPair
+     * @param pParams the parameters
      * @throws GordianException on error
      */
-    void initForSigning(GordianKeyPair pKeyPair) throws GordianException;
+    void initForSigning(GordianSignParams pParams) throws GordianException;
 
     /**
      * Initialise for verify.
-     * @param pKeyPair the keyPair
+     * @param pParams the parameters
      * @throws GordianException on error
      */
-    void initForVerify(GordianKeyPair pKeyPair) throws GordianException;
+    void initForVerify(GordianSignParams pParams) throws GordianException;
 
     /**
      * Complete the signature operation and return the signature bytes.

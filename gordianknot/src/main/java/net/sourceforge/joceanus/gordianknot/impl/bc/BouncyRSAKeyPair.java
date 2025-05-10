@@ -23,6 +23,7 @@ import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestSpecBuilder;
 import net.sourceforge.joceanus.gordianknot.api.encrypt.GordianEncryptorSpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
+import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignParams;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignatureSpec;
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPrivateKey;
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPublicKey;
@@ -426,13 +427,14 @@ public final class BouncyRSAKeyPair {
         }
 
         @Override
-        public void initForSigning(final GordianKeyPair pKeyPair) throws GordianException {
+        public void initForSigning(final GordianSignParams pParams) throws GordianException {
             /* Initialise detail */
-            BouncyKeyPair.checkKeyPair(pKeyPair);
-            super.initForSigning(pKeyPair);
+            super.initForSigning(pParams);
+            final BouncyKeyPair myPair = getKeyPair();
+            BouncyKeyPair.checkKeyPair(myPair);
 
             /* Initialise and set the signer */
-            final BouncyRSAPrivateKey myPrivate = (BouncyRSAPrivateKey) getKeyPair().getPrivateKey();
+            final BouncyRSAPrivateKey myPrivate = (BouncyRSAPrivateKey) myPair.getPrivateKey();
             final CipherParameters myParms = getSignatureSpec().getSignatureType().isPSS()
                                              ? new ParametersWithRandom(myPrivate.getPrivateKey(), getRandom())
                                              : myPrivate.getPrivateKey();
@@ -440,13 +442,14 @@ public final class BouncyRSAKeyPair {
         }
 
         @Override
-        public void initForVerify(final GordianKeyPair pKeyPair) throws GordianException {
+        public void initForVerify(final GordianSignParams pParams) throws GordianException {
             /* Initialise detail */
-            BouncyKeyPair.checkKeyPair(pKeyPair);
-            super.initForVerify(pKeyPair);
+            super.initForVerify(pParams);
+            final BouncyKeyPair myPair = getKeyPair();
+            BouncyKeyPair.checkKeyPair(myPair);
 
             /* Initialise and set the signer */
-            final BouncyRSAPublicKey myPublic = (BouncyRSAPublicKey) getKeyPair().getPublicKey();
+            final BouncyRSAPublicKey myPublic = (BouncyRSAPublicKey) myPair.getPublicKey();
             getSigner().init(false, myPublic.getPublicKey());
         }
 

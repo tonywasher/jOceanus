@@ -21,6 +21,7 @@ import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianLMSKeySpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianLMSKeySpec.GordianHSSKeySpec;
+import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignParams;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignatureSpec;
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPublicKey;
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyStateAwareKeyPair;
@@ -495,35 +496,37 @@ public final class BouncyLMSKeyPair {
 
 
         @Override
-        public void initForSigning(final GordianKeyPair pKeyPair) throws GordianException {
+        public void initForSigning(final GordianSignParams pParams) throws GordianException {
             /* Initialise detail */
-            BouncyKeyPair.checkKeyPair(pKeyPair);
-            super.initForSigning(pKeyPair);
+            super.initForSigning(pParams);
+            final BouncyKeyPair myPair = getKeyPair();
+            BouncyKeyPair.checkKeyPair(myPair);
 
             /* Initialise and set the signer */
-            isHSS = pKeyPair.getKeyPairSpec().getSubKeyType() instanceof GordianHSSKeySpec;
+            isHSS = myPair.getKeyPairSpec().getSubKeyType() instanceof GordianHSSKeySpec;
             if (isHSS) {
-                final BouncyHSSPrivateKey myPrivate = (BouncyHSSPrivateKey) getKeyPair().getPrivateKey();
+                final BouncyHSSPrivateKey myPrivate = (BouncyHSSPrivateKey) myPair.getPrivateKey();
                 theHSSSigner.init(true, myPrivate.getPrivateKey());
             } else {
-                final BouncyLMSPrivateKey myPrivate = (BouncyLMSPrivateKey) getKeyPair().getPrivateKey();
+                final BouncyLMSPrivateKey myPrivate = (BouncyLMSPrivateKey) myPair.getPrivateKey();
                 theSigner.init(true, myPrivate.getPrivateKey());
             }
         }
 
         @Override
-        public void initForVerify(final GordianKeyPair pKeyPair) throws GordianException {
+        public void initForVerify(final GordianSignParams pParams) throws GordianException {
             /* Initialise detail */
-            BouncyKeyPair.checkKeyPair(pKeyPair);
-            super.initForVerify(pKeyPair);
+            super.initForVerify(pParams);
+            final BouncyKeyPair myPair = getKeyPair();
+            BouncyKeyPair.checkKeyPair(myPair);
 
             /* Initialise and set the signer */
-            isHSS = pKeyPair.getKeyPairSpec().getSubKeyType() instanceof GordianHSSKeySpec;
+            isHSS = myPair.getKeyPairSpec().getSubKeyType() instanceof GordianHSSKeySpec;
             if (isHSS) {
-                final BouncyHSSPublicKey myPublic = (BouncyHSSPublicKey) getKeyPair().getPublicKey();
+                final BouncyHSSPublicKey myPublic = (BouncyHSSPublicKey) myPair.getPublicKey();
                 theHSSSigner.init(false, myPublic.getPublicKey());
             } else {
-                final BouncyLMSPublicKey myPublic = (BouncyLMSPublicKey) getKeyPair().getPublicKey();
+                final BouncyLMSPublicKey myPublic = (BouncyLMSPublicKey) myPair.getPublicKey();
                 theSigner.init(false, myPublic.getPublicKey());
             }
         }

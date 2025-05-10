@@ -19,6 +19,7 @@ package net.sourceforge.joceanus.gordianknot.impl.bc;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
+import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignParams;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignatureSpec;
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPrivateKey;
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPublicKey;
@@ -283,24 +284,26 @@ public final class BouncyPicnicKeyPair {
         }
 
         @Override
-        public void initForSigning(final GordianKeyPair pKeyPair) throws GordianException {
+        public void initForSigning(final GordianSignParams pParams) throws GordianException {
             /* Initialise detail */
-            BouncyKeyPair.checkKeyPair(pKeyPair);
-            super.initForSigning(pKeyPair);
+            super.initForSigning(pParams);
+            final BouncyKeyPair myPair = getKeyPair();
+            BouncyKeyPair.checkKeyPair(myPair);
 
             /* Initialise and set the signer */
-            final BouncyPicnicPrivateKey myPrivate = (BouncyPicnicPrivateKey) getKeyPair().getPrivateKey();
+            final BouncyPicnicPrivateKey myPrivate = (BouncyPicnicPrivateKey) myPair.getPrivateKey();
             theSigner.init(true, myPrivate.getPrivateKey());
         }
 
         @Override
-        public void initForVerify(final GordianKeyPair pKeyPair) throws GordianException {
+        public void initForVerify(final GordianSignParams pParams) throws GordianException {
             /* Initialise detail */
-            BouncyKeyPair.checkKeyPair(pKeyPair);
-            super.initForVerify(pKeyPair);
+            super.initForVerify(pParams);
+            final BouncyKeyPair myPair = getKeyPair();
+            BouncyKeyPair.checkKeyPair(myPair);
 
             /* Initialise and set the signer */
-            final BouncyPicnicPublicKey myPublic = (BouncyPicnicPublicKey) getKeyPair().getPublicKey();
+            final BouncyPicnicPublicKey myPublic = (BouncyPicnicPublicKey) myPair.getPublicKey();
             theSigner.init(false, myPublic.getPublicKey());
         }
 

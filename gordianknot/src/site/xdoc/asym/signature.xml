@@ -40,12 +40,13 @@ final GordianSignature mySigner = mySignatureFactory.createSigner(mySignSpec);
 
 /* Sign message */
 final byte[] message = ....;
-mySigner.initForSigning(mySigningPair);
+final GordianSignParameters myParams = GordianSignParams.keyPair(mySigningPair);
+mySigner.initForSigning(myParams);
 mySigner.update(message);
 final byte[] mySignature = mySigner.sign();
 
 /* Verify signature */
-mySigner.initForVerify(myKeyPair);
+mySigner.initForVerify(myParams);
 mySigner.update(message);
 final boolean verified = mySigner.verify(mySignature);
                 </source>
@@ -75,12 +76,13 @@ final GordianSignature mySigner = mySignatureFactory.createSigner(mySignSpec);
 
 /* Sign message */
 final byte[] message = ....;
-mySigner.initForSigning(mySigningPair);
+final GordianSignParameters myParams = GordianSignParams.keyPair(mySigningPair);
+mySigner.initForSigning(myParams);
 mySigner.update(message);
 final byte[] mySignature = mySigner.sign();
 
 /* Verify signature */
-mySigner.initForVerify(myKeyPair);
+mySigner.initForVerify(myParams);
 mySigner.update(message);
 final boolean verified = mySigner.verify(mySignature);
                     </source>
@@ -101,6 +103,8 @@ final boolean verified = mySigner.verify(mySignature);
                     <tr><td>MLDSA</td><td>Native</td></tr>
                     <tr><td>FALCON</td><td>Native</td></tr>
                     <tr><td>PICNIC</td><td>Native</td></tr>
+                    <tr><td>MAYO</td><td>Native</td></tr>
+                    <tr><td>SNOVA</td><td>Native</td></tr>
                     <tr><td>XMSS</td><td>Native, PreHash</td></tr>
                     <tr><td>LMS</td><td>Native</td></tr>
                 </table>

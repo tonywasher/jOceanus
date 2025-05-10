@@ -24,6 +24,7 @@ import net.sourceforge.joceanus.gordianknot.api.factory.GordianKeyPairFactory;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairGenerator;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
+import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignParams;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignature;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignatureSpec;
 import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianAgreementMessageASN1.GordianMessageType;
@@ -202,7 +203,7 @@ public abstract class GordianCoreSignedAgreement
         final GordianSignature mySigner = mySigns.createSigner(mySpec);
 
         /* Build the signature */
-        mySigner.initForSigning(pServer);
+        mySigner.initForSigning(GordianSignParams.keyPair(pServer));
         mySigner.update(myClientEncoded);
         mySigner.update(getClientIV());
         mySigner.update(myServerKeySpec.getEncoded());
@@ -262,7 +263,7 @@ public abstract class GordianCoreSignedAgreement
         final GordianSignature mySigner = mySigns.createSigner(mySignSpec);
 
         /* Build the signature */
-        mySigner.initForVerify(pServer);
+        mySigner.initForVerify(GordianSignParams.keyPair(pServer));
         mySigner.update(myClientEncoded);
         mySigner.update(getClientIV());
         mySigner.update(myKeySpec.getEncoded());

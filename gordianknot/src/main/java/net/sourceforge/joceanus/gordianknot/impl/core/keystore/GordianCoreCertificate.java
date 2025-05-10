@@ -29,6 +29,7 @@ import net.sourceforge.joceanus.gordianknot.api.keystore.GordianCertificateId;
 import net.sourceforge.joceanus.gordianknot.api.keystore.GordianKeyPairUsage;
 import net.sourceforge.joceanus.gordianknot.api.keystore.GordianKeyPairUse;
 import net.sourceforge.joceanus.gordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStorePair;
+import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignParams;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignature;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignatureSpec;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
@@ -755,7 +756,7 @@ public class GordianCoreCertificate
         try {
             /* Build the signature */
             final GordianSignature mySigner = createSigner();
-            mySigner.initForSigning(pSigner);
+            mySigner.initForSigning(GordianSignParams.keyPair(pSigner));
             final GordianStreamConsumer myConsumer = new GordianStreamConsumer(mySigner);
             final ASN1OutputStream myOut = ASN1OutputStream.create(myConsumer);
             myOut.writeObject(theTbsCertificate);
@@ -797,7 +798,7 @@ public class GordianCoreCertificate
         try {
             /* Build the signature */
             final GordianSignature myValidator = createSigner();
-            myValidator.initForVerify(pSigner);
+            myValidator.initForVerify(GordianSignParams.keyPair(pSigner));
             final GordianStreamConsumer myConsumer = new GordianStreamConsumer(myValidator);
             final ASN1OutputStream myOut = ASN1OutputStream.create(myConsumer);
             myOut.writeObject(theTbsCertificate);

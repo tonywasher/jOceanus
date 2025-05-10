@@ -30,6 +30,7 @@ import net.sourceforge.joceanus.gordianknot.api.encrypt.GordianEncryptorSpec;
 import net.sourceforge.joceanus.gordianknot.api.encrypt.GordianEncryptorSpecBuilder;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
+import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignParams;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignature;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignatureFactory;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignatureSpec;
@@ -92,12 +93,13 @@ public final class GordianKeyPairValidity {
         final GordianSignature mySigner = mySigns.createSigner(pSignSpec);
 
         /* Create signature */
-        mySigner.initForSigning(pKeyPair);
+        final GordianSignParams myParams = GordianSignParams.keyPair(pKeyPair);
+        mySigner.initForSigning(myParams);
         mySigner.update(myData);
         final byte[] mySignature = mySigner.sign();
 
         /* Validate signature */
-        mySigner.initForVerify(pKeyPair);
+        mySigner.initForVerify(myParams);
         mySigner.update(myData);
         if (!mySigner.verify(mySignature)) {
             throw new GordianDataException(ERRORMSG);

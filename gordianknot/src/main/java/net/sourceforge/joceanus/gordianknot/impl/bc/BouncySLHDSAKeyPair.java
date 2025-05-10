@@ -19,6 +19,7 @@ package net.sourceforge.joceanus.gordianknot.impl.bc;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
+import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignParams;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignatureSpec;
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPrivateKey;
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPublicKey;
@@ -300,16 +301,17 @@ public final class BouncySLHDSAKeyPair {
         }
 
         @Override
-        public void initForSigning(final GordianKeyPair pKeyPair) throws GordianException {
+        public void initForSigning(final GordianSignParams pParams) throws GordianException {
             /* Initialise detail */
-            BouncyKeyPair.checkKeyPair(pKeyPair);
-            super.initForSigning(pKeyPair);
+            super.initForSigning(pParams);
+            final BouncyKeyPair myPair = getKeyPair();
+            BouncyKeyPair.checkKeyPair(myPair);
 
             /* Determine whether this is a hashSigner */
-            isHash = pKeyPair.getKeyPairSpec().getSLHDSAKeySpec().isHash();
+            isHash = myPair.getKeyPairSpec().getSLHDSAKeySpec().isHash();
 
             /* Initialise and set the signer */
-            final BouncySLHDSAPrivateKey myPrivate = (BouncySLHDSAPrivateKey) getKeyPair().getPrivateKey();
+            final BouncySLHDSAPrivateKey myPrivate = (BouncySLHDSAPrivateKey) myPair.getPrivateKey();
             final CipherParameters myParms = new ParametersWithRandom(myPrivate.getPrivateKey(), getRandom());
             if (isHash) {
                 theHashSigner.init(true, myParms);
@@ -319,16 +321,17 @@ public final class BouncySLHDSAKeyPair {
         }
 
         @Override
-        public void initForVerify(final GordianKeyPair pKeyPair) throws GordianException {
+        public void initForVerify(final GordianSignParams pParams) throws GordianException {
             /* Initialise detail */
-            BouncyKeyPair.checkKeyPair(pKeyPair);
-            super.initForVerify(pKeyPair);
+            super.initForVerify(pParams);
+            final BouncyKeyPair myPair = getKeyPair();
+            BouncyKeyPair.checkKeyPair(myPair);
 
             /* Determine whether this is a hashSigner */
-            isHash = pKeyPair.getKeyPairSpec().getSLHDSAKeySpec().isHash();
+            isHash = myPair.getKeyPairSpec().getSLHDSAKeySpec().isHash();
 
             /* Initialise and set the signer */
-            final BouncySLHDSAPublicKey myPublic = (BouncySLHDSAPublicKey) getKeyPair().getPublicKey();
+            final BouncySLHDSAPublicKey myPublic = (BouncySLHDSAPublicKey) myPair.getPublicKey();
             if (isHash) {
                 theHashSigner.init(false, myPublic.getPublicKey());
             } else {

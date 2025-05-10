@@ -19,6 +19,7 @@ package net.sourceforge.joceanus.gordianknot.impl.bc;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
+import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignParams;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignatureSpec;
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyEllipticKeyPair.BouncyECPrivateKey;
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyEllipticKeyPair.BouncyECPublicKey;
@@ -95,11 +96,6 @@ public final class BouncyGOSTKeyPair {
     public static class BouncyGOSTKeyPairGenerator
             extends BouncyKeyPairGenerator {
         /**
-         * Curve.
-         */
-        private final String theCurve;
-
-        /**
          * Generator.
          */
         private final ECKeyPairGenerator theGenerator;
@@ -118,10 +114,9 @@ public final class BouncyGOSTKeyPair {
          * Constructor.
          * @param pFactory the Security Factory
          * @param pKeySpec the keySpec
-         * @throws GordianException on error
          */
         BouncyGOSTKeyPairGenerator(final BouncyFactory pFactory,
-                                   final GordianKeyPairSpec pKeySpec) throws GordianException {
+                                   final GordianKeyPairSpec pKeySpec) {
             /* Initialise underlying class */
             super(pFactory, pKeySpec);
 
@@ -129,11 +124,11 @@ public final class BouncyGOSTKeyPair {
             theGenerator = new ECKeyPairGenerator();
 
             /* Determine domain */
-            theCurve = pKeySpec.getElliptic().getCurveName();
-            final GOST3410ParameterSpec mySpec = new GOST3410ParameterSpec(theCurve);
-            final X9ECParameters x9 = ECGOST3410NamedCurves.getByNameX9(theCurve);
+            final String myCurve = pKeySpec.getElliptic().getCurveName();
+            final GOST3410ParameterSpec mySpec = new GOST3410ParameterSpec(myCurve);
+            final X9ECParameters x9 = ECGOST3410NamedCurves.getByNameX9(myCurve);
             theSpec = new ECNamedCurveSpec(
-                    theCurve,
+                    myCurve,
                     x9.getCurve(),
                     x9.getG(),
                     x9.getN(),
@@ -311,7 +306,7 @@ public final class BouncyGOSTKeyPair {
 
         @Override
         public byte[] dsaEncode(final BigInteger r,
-                                final BigInteger s) throws GordianException {
+                                final BigInteger s) {
             /* Access byteArrays */
             final byte[] myFirst = makeUnsigned(s);
             final byte[] mySecond = makeUnsigned(r);
@@ -342,7 +337,7 @@ public final class BouncyGOSTKeyPair {
         }
 
         @Override
-        public BigInteger[] dsaDecode(final byte[] pEncoded) throws GordianException {
+        public BigInteger[] dsaDecode(final byte[] pEncoded) {
             /* Build the value arrays */
             final byte[] myFirst = new byte[pEncoded.length / 2];
             final byte[] mySecond = new byte[pEncoded.length / 2];
@@ -389,25 +384,27 @@ public final class BouncyGOSTKeyPair {
         }
 
         @Override
-        public void initForSigning(final GordianKeyPair pKeyPair) throws GordianException {
+        public void initForSigning(final GordianSignParams pParams) throws GordianException {
             /* Initialise detail */
-            BouncyKeyPair.checkKeyPair(pKeyPair);
-            super.initForSigning(pKeyPair);
+            super.initForSigning(pParams);
+            final BouncyKeyPair myPair = getKeyPair();
+            BouncyKeyPair.checkKeyPair(myPair);
 
             /* Initialise and set the signer */
-            final BouncyECPrivateKey myPrivate = (BouncyECPrivateKey) getKeyPair().getPrivateKey();
+            final BouncyECPrivateKey myPrivate = (BouncyECPrivateKey) myPair.getPrivateKey();
             final ParametersWithRandom myParms = new ParametersWithRandom(myPrivate.getPrivateKey(), getRandom());
             theSigner.init(true, myParms);
         }
 
         @Override
-        public void initForVerify(final GordianKeyPair pKeyPair) throws GordianException {
+        public void initForVerify(final GordianSignParams pParams) throws GordianException {
             /* Initialise detail */
-            BouncyKeyPair.checkKeyPair(pKeyPair);
-            super.initForVerify(pKeyPair);
+            super.initForVerify(pParams);
+            final BouncyKeyPair myPair = getKeyPair();
+            BouncyKeyPair.checkKeyPair(myPair);
 
             /* Initialise and set the signer */
-            final BouncyECPublicKey myPublic = (BouncyECPublicKey) getKeyPair().getPublicKey();
+            final BouncyECPublicKey myPublic = (BouncyECPublicKey) myPair.getPublicKey();
             theSigner.init(false, myPublic.getPublicKey());
         }
 

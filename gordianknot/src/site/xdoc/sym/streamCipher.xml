@@ -65,6 +65,7 @@ final GordianKey&lt;GordianStreamKeySpec&gt; myKey = myGenerator.generateKey();
                         <tr><td>192_192</td><td/><td/><td>Y</td><td/><td/><td/></tr>
                         <tr><td>256_256</td><td/><td/><td/><td>Y</td><td/><td/></tr>
                         <tr><td>Xoodyak</td><td/><td/><td>Y</td><td/><td/><td/><td/></tr>
+                        <tr><td>Romulus</td><td>M, N, T</td><td/><td>Y</td><td/><td/><td/><td/></tr>
                     </table>
                 </subsection>
             </subsection>
