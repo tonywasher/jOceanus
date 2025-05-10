@@ -20,12 +20,15 @@ import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestSpecBuilder;
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestSubSpec.GordianDigestState;
+import net.sourceforge.joceanus.gordianknot.api.keypair.GordianFalconSpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairSpecBuilder;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairType;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianMLDSASpec;
+import net.sourceforge.joceanus.gordianknot.api.keypair.GordianMayoSpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianRSAModulus;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianSLHDSASpec;
+import net.sourceforge.joceanus.gordianknot.api.keypair.GordianSnovaSpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianXMSSKeySpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianXMSSKeySpec.GordianXMSSDigestType;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignatureFactory;
@@ -53,7 +56,6 @@ import org.bouncycastle.asn1.rosstandart.RosstandartObjectIdentifiers;
 import org.bouncycastle.asn1.teletrust.TeleTrusTObjectIdentifiers;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.asn1.x9.X9ObjectIdentifiers;
-import org.bouncycastle.pqc.asn1.PQCObjectIdentifiers;
 
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -389,19 +391,9 @@ public class GordianSignatureAlgId {
      * Add postQuantum signatures.
      */
     private void addPostQuantumSignatures() {
-        addToMaps(GordianSignatureSpecBuilder.lms(),
-                new AlgorithmIdentifier(PKCSObjectIdentifiers.id_alg_hss_lms_hashsig, DERNull.INSTANCE));
-
-        /* Add mldsa signatures */
-        addMLDSASignatures();
-
-        /* Add new PQC signatures */
-        addToMaps(GordianSignatureSpecBuilder.falcon(),
-                new AlgorithmIdentifier(BCObjectIdentifiers.falcon, DERNull.INSTANCE));
-        addToMaps(GordianSignatureSpecBuilder.mayo(),
-                new AlgorithmIdentifier(BCObjectIdentifiers.mayo, DERNull.INSTANCE));
+        /* Add Picnic signatures */
         addToMaps(GordianSignatureSpecBuilder.picnic(),
-                new AlgorithmIdentifier(BCObjectIdentifiers.picnic, DERNull.INSTANCE));
+                new AlgorithmIdentifier(BCObjectIdentifiers.picnic_signature, DERNull.INSTANCE));
         addToMaps(GordianSignatureSpecBuilder.picnic(GordianDigestSpecBuilder.sha2(GordianLength.LEN_512)),
                 new AlgorithmIdentifier(BCObjectIdentifiers.picnic_with_sha512, DERNull.INSTANCE));
         addToMaps(GordianSignatureSpecBuilder.picnic(GordianDigestSpecBuilder.sha3(GordianLength.LEN_512)),
@@ -409,8 +401,16 @@ public class GordianSignatureAlgId {
         addToMaps(GordianSignatureSpecBuilder.picnic(GordianDigestSpecBuilder.shake256()),
                 new AlgorithmIdentifier(BCObjectIdentifiers.picnic_with_shake256, DERNull.INSTANCE));
 
-        /* Add SLHDSA signatures */
+        /* Add LMS signatures */
+        addToMaps(GordianSignatureSpecBuilder.lms(),
+                new AlgorithmIdentifier(PKCSObjectIdentifiers.id_alg_hss_lms_hashsig, DERNull.INSTANCE));
+
+        /* Add signatures that use keyPair id */
+        addMLDSASignatures();
         addSLHDSASignatures();
+        addFalconSignatures();
+        addMayoSignatures();
+        addSnovaSignatures();
 
         /* Add XMSS signatures */
         addXMSSSignatures();
@@ -421,7 +421,7 @@ public class GordianSignatureAlgId {
      */
     private void addMLDSASignatures() {
         for (GordianMLDSASpec mySpec : GordianMLDSASpec.values()) {
-            addToMaps(GordianSignatureSpecBuilder.mldsa(), GordianKeyPairSpecBuilder.mldsa(mySpec),
+            addToMaps(GordianSignatureSpecBuilder.mldsa(), GordianKeyPairSpecBuilder.mldsa(mySpec).getSubKeyType(),
                     new AlgorithmIdentifier(mySpec.getIdentifier(), DERNull.INSTANCE));
         }
     }
@@ -431,7 +431,37 @@ public class GordianSignatureAlgId {
      */
     private void addSLHDSASignatures() {
         for (GordianSLHDSASpec mySpec : GordianSLHDSASpec.values()) {
-            addToMaps(GordianSignatureSpecBuilder.slhdsa(), GordianKeyPairSpecBuilder.slhdsa(mySpec),
+            addToMaps(GordianSignatureSpecBuilder.slhdsa(), GordianKeyPairSpecBuilder.slhdsa(mySpec).getSubKeyType(),
+                    new AlgorithmIdentifier(mySpec.getIdentifier(), DERNull.INSTANCE));
+        }
+    }
+
+    /**
+     * Add Falcon signatures.
+     */
+    private void addFalconSignatures() {
+        for (GordianFalconSpec mySpec : GordianFalconSpec.values()) {
+            addToMaps(GordianSignatureSpecBuilder.falcon(), GordianKeyPairSpecBuilder.falcon(mySpec).getSubKeyType(),
+                    new AlgorithmIdentifier(mySpec.getIdentifier(), DERNull.INSTANCE));
+        }
+    }
+
+    /**
+     * Add Mayo signatures.
+     */
+    private void addMayoSignatures() {
+        for (GordianMayoSpec mySpec : GordianMayoSpec.values()) {
+            addToMaps(GordianSignatureSpecBuilder.mayo(), GordianKeyPairSpecBuilder.mayo(mySpec).getSubKeyType(),
+                    new AlgorithmIdentifier(mySpec.getIdentifier(), DERNull.INSTANCE));
+        }
+    }
+
+    /**
+     * Add Snova signatures.
+     */
+    private void addSnovaSignatures() {
+        for (GordianSnovaSpec mySpec : GordianSnovaSpec.values()) {
+            addToMaps(GordianSignatureSpecBuilder.snova(), GordianKeyPairSpecBuilder.snova(mySpec).getSubKeyType(),
                     new AlgorithmIdentifier(mySpec.getIdentifier(), DERNull.INSTANCE));
         }
     }
@@ -445,15 +475,15 @@ public class GordianSignatureAlgId {
             /* If this is an XMSSMT spec */
             if (mySpec.isMT()) {
                 addToMaps(GordianSignatureSpecBuilder.xmss(), mySpec,
-                        new AlgorithmIdentifier(PQCObjectIdentifiers.xmss_mt_SHA256, DERNull.INSTANCE));
+                        new AlgorithmIdentifier(BCObjectIdentifiers.xmss_mt_SHA256, DERNull.INSTANCE));
                 addToMaps(GordianSignatureSpecBuilder.xmssph(), mySpec,
-                        new AlgorithmIdentifier(PQCObjectIdentifiers.xmss_mt_SHA256ph, DERNull.INSTANCE));
+                        new AlgorithmIdentifier(BCObjectIdentifiers.xmss_mt_SHA256ph, DERNull.INSTANCE));
 
             } else {
                 addToMaps(GordianSignatureSpecBuilder.xmss(), mySpec,
-                        new AlgorithmIdentifier(PQCObjectIdentifiers.xmss_SHA256, DERNull.INSTANCE));
+                        new AlgorithmIdentifier(BCObjectIdentifiers.xmss_SHA256, DERNull.INSTANCE));
                 addToMaps(GordianSignatureSpecBuilder.xmssph(), mySpec,
-                        new AlgorithmIdentifier(PQCObjectIdentifiers.xmss_SHA256ph, DERNull.INSTANCE));
+                        new AlgorithmIdentifier(BCObjectIdentifiers.xmss_SHA256ph, DERNull.INSTANCE));
             }
         }
 
@@ -462,15 +492,15 @@ public class GordianSignatureAlgId {
             /* If this is an XMSSMT spec */
             if (mySpec.isMT()) {
                 addToMaps(GordianSignatureSpecBuilder.xmss(), mySpec,
-                        new AlgorithmIdentifier(PQCObjectIdentifiers.xmss_mt_SHA512, DERNull.INSTANCE));
+                        new AlgorithmIdentifier(BCObjectIdentifiers.xmss_mt_SHA512, DERNull.INSTANCE));
                 addToMaps(GordianSignatureSpecBuilder.xmssph(), mySpec,
-                        new AlgorithmIdentifier(PQCObjectIdentifiers.xmss_mt_SHA512ph, DERNull.INSTANCE));
+                        new AlgorithmIdentifier(BCObjectIdentifiers.xmss_mt_SHA512ph, DERNull.INSTANCE));
 
             } else {
                 addToMaps(GordianSignatureSpecBuilder.xmss(), mySpec,
-                        new AlgorithmIdentifier(PQCObjectIdentifiers.xmss_SHA512, DERNull.INSTANCE));
+                        new AlgorithmIdentifier(BCObjectIdentifiers.xmss_SHA512, DERNull.INSTANCE));
                 addToMaps(GordianSignatureSpecBuilder.xmssph(), mySpec,
-                        new AlgorithmIdentifier(PQCObjectIdentifiers.xmss_SHA512ph, DERNull.INSTANCE));
+                        new AlgorithmIdentifier(BCObjectIdentifiers.xmss_SHA512ph, DERNull.INSTANCE));
             }
         }
 
@@ -479,15 +509,15 @@ public class GordianSignatureAlgId {
             /* If this is an XMSSMT spec */
             if (mySpec.isMT()) {
                 addToMaps(GordianSignatureSpecBuilder.xmss(), mySpec,
-                        new AlgorithmIdentifier(PQCObjectIdentifiers.xmss_mt_SHAKE128, DERNull.INSTANCE));
+                        new AlgorithmIdentifier(BCObjectIdentifiers.xmss_mt_SHAKE128, DERNull.INSTANCE));
                 addToMaps(GordianSignatureSpecBuilder.xmssph(), mySpec,
-                        new AlgorithmIdentifier(PQCObjectIdentifiers.xmss_mt_SHAKE128ph, DERNull.INSTANCE));
+                        new AlgorithmIdentifier(BCObjectIdentifiers.xmss_mt_SHAKE128ph, DERNull.INSTANCE));
 
             } else {
                 addToMaps(GordianSignatureSpecBuilder.xmss(), mySpec,
-                        new AlgorithmIdentifier(PQCObjectIdentifiers.xmss_SHAKE128, DERNull.INSTANCE));
+                        new AlgorithmIdentifier(BCObjectIdentifiers.xmss_SHAKE128, DERNull.INSTANCE));
                 addToMaps(GordianSignatureSpecBuilder.xmssph(), mySpec,
-                        new AlgorithmIdentifier(PQCObjectIdentifiers.xmss_SHAKE128ph, DERNull.INSTANCE));
+                        new AlgorithmIdentifier(BCObjectIdentifiers.xmss_SHAKE128ph, DERNull.INSTANCE));
             }
         }
 
@@ -496,15 +526,15 @@ public class GordianSignatureAlgId {
             /* If this is an XMSSMT spec */
             if (mySpec.isMT()) {
                 addToMaps(GordianSignatureSpecBuilder.xmss(), mySpec,
-                        new AlgorithmIdentifier(PQCObjectIdentifiers.xmss_mt_SHAKE256, DERNull.INSTANCE));
+                        new AlgorithmIdentifier(BCObjectIdentifiers.xmss_mt_SHAKE256, DERNull.INSTANCE));
                 addToMaps(GordianSignatureSpecBuilder.xmssph(), mySpec,
-                        new AlgorithmIdentifier(PQCObjectIdentifiers.xmss_mt_SHAKE256ph, DERNull.INSTANCE));
+                        new AlgorithmIdentifier(BCObjectIdentifiers.xmss_mt_SHAKE256ph, DERNull.INSTANCE));
 
             } else {
                 addToMaps(GordianSignatureSpecBuilder.xmss(), mySpec,
-                        new AlgorithmIdentifier(PQCObjectIdentifiers.xmss_SHAKE256, DERNull.INSTANCE));
+                        new AlgorithmIdentifier(BCObjectIdentifiers.xmss_SHAKE256, DERNull.INSTANCE));
                 addToMaps(GordianSignatureSpecBuilder.xmssph(), mySpec,
-                        new AlgorithmIdentifier(PQCObjectIdentifiers.xmss_SHAKE256ph, DERNull.INSTANCE));
+                        new AlgorithmIdentifier(BCObjectIdentifiers.xmss_SHAKE256ph, DERNull.INSTANCE));
             }
         }
     }

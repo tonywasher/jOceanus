@@ -169,8 +169,7 @@ public enum GordianKeyPairType {
     public boolean useRandomForSignatures() {
         switch (this) {
             case PICNIC:
-            case MAYO:
-            case SNOVA:
+            case LMS:
             case XMSS:
             case EDDSA:
                 return false;
@@ -206,7 +205,17 @@ public enum GordianKeyPairType {
      * @return true/false
      */
     public boolean subTypeForSignatures() {
-        return this == XMSS;
+        switch (this) {
+            case MLDSA:
+            case SLHDSA:
+            case FALCON:
+            case MAYO:
+            case SNOVA:
+            case XMSS:
+                return true;
+            default:
+                return false;
+        }
     }
 
     /**
