@@ -152,6 +152,20 @@ public final class GordianSignatureSpec {
     }
 
     /**
+     * Does this signatureSpec support context?
+     * @return true/false
+     */
+    public boolean supportsContext() {
+        switch (theKeyPairType) {
+            case MLDSA:
+            case SLHDSA:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
      * Check spec validity.
      * @return valid true/false
      */

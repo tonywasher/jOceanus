@@ -128,6 +128,17 @@ public abstract class GordianCoreSignature
         }
     }
 
+    /**
+     * Check that the Context is supported.
+     * @param pContext the context
+     * @throws GordianException on error
+     */
+    private void checkContext(final byte[] pContext) throws GordianException {
+        if (pContext != null && !theSpec.supportsContext()) {
+            throw new GordianDataException("Unsupported context");
+        }
+    }
+
     @Override
     public void initForSigning(final GordianSignParams pParams) throws GordianException {
         /* Store details */
@@ -135,8 +146,9 @@ public abstract class GordianCoreSignature
         theKeyPair = pParams.getKeyPair();
         theContext = pParams.getContext();
 
-        /* Check that the keyPair matches */
+        /* Check that the keyPair matches and that any context is supported */
         checkKeyPair(theKeyPair);
+        checkContext(theContext);
 
         /* Check that we have the private key */
         if (theKeyPair.isPublicOnly()) {

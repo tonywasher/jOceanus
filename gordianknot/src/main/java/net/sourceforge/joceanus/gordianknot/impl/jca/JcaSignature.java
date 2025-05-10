@@ -30,7 +30,9 @@ import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignatureType;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
 import net.sourceforge.joceanus.gordianknot.impl.core.sign.GordianCoreSignature;
+import org.bouncycastle.jcajce.spec.ContextParameterSpec;
 
+import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.Signature;
 import java.security.SignatureException;
@@ -156,6 +158,7 @@ public abstract class JcaSignature
         /* Initialise detail */
         super.initForSigning(pParams);
         final JcaKeyPair myPair = getKeyPair();
+        final byte[] myContext = getContext();
         JcaKeyPair.checkKeyPair(myPair);
 
         /* Initialise for signing */
@@ -170,8 +173,16 @@ public abstract class JcaSignature
                 getSigner().initSign(myPair.getPrivateKey().getPrivateKey());
             }
 
+            /* If we support context */
+            if (getSignatureSpec().supportsContext()) {
+                /* Declare the context to the signer */
+                final ContextParameterSpec mySpec = myContext == null ? null : new ContextParameterSpec(myContext);
+                getSigner().setParameter(mySpec);
+            }
+
             /* Catch exceptions */
-        } catch (InvalidKeyException e) {
+        } catch (InvalidKeyException
+                 | InvalidAlgorithmParameterException e) {
             throw new GordianCryptoException(SIG_ERROR, e);
         }
     }
@@ -181,6 +192,7 @@ public abstract class JcaSignature
         /* Initialise detail */
         super.initForVerify(pParams);
         final JcaKeyPair myPair = getKeyPair();
+        final byte[] myContext = getContext();
         JcaKeyPair.checkKeyPair(myPair);
 
         /* Initialise for signing */
@@ -188,8 +200,16 @@ public abstract class JcaSignature
             /* Initialise for verification */
             getSigner().initVerify(myPair.getPublicKey().getPublicKey());
 
+            /* If we support context */
+            if (getSignatureSpec().supportsContext()) {
+                /* Declare the context to the signer */
+                final ContextParameterSpec mySpec = myContext == null ? null : new ContextParameterSpec(myContext);
+                getSigner().setParameter(mySpec);
+            }
+
             /* Catch exceptions */
-        } catch (InvalidKeyException e) {
+        } catch (InvalidKeyException
+                 | InvalidAlgorithmParameterException e) {
             throw new GordianCryptoException(SIG_ERROR, e);
         }
     }

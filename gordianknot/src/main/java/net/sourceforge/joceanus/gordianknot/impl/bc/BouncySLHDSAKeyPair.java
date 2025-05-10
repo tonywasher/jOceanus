@@ -32,6 +32,7 @@ import org.bouncycastle.crypto.AsymmetricCipherKeyPair;
 import org.bouncycastle.crypto.CipherParameters;
 import org.bouncycastle.crypto.CryptoException;
 import org.bouncycastle.crypto.params.AsymmetricKeyParameter;
+import org.bouncycastle.crypto.params.ParametersWithContext;
 import org.bouncycastle.crypto.params.ParametersWithRandom;
 import org.bouncycastle.pqc.crypto.slhdsa.HashSLHDSASigner;
 import org.bouncycastle.pqc.crypto.slhdsa.SLHDSAKeyGenerationParameters;
@@ -305,6 +306,7 @@ public final class BouncySLHDSAKeyPair {
             /* Initialise detail */
             super.initForSigning(pParams);
             final BouncyKeyPair myPair = getKeyPair();
+            final byte[] myContext = getContext();
             BouncyKeyPair.checkKeyPair(myPair);
 
             /* Determine whether this is a hashSigner */
@@ -312,7 +314,10 @@ public final class BouncySLHDSAKeyPair {
 
             /* Initialise and set the signer */
             final BouncySLHDSAPrivateKey myPrivate = (BouncySLHDSAPrivateKey) myPair.getPrivateKey();
-            final CipherParameters myParms = new ParametersWithRandom(myPrivate.getPrivateKey(), getRandom());
+            CipherParameters myParms = new ParametersWithRandom(myPrivate.getPrivateKey(), getRandom());
+            if (myContext != null) {
+                myParms = new ParametersWithContext(myParms, myContext);
+            }
             if (isHash) {
                 theHashSigner.init(true, myParms);
             } else {
@@ -325,6 +330,7 @@ public final class BouncySLHDSAKeyPair {
             /* Initialise detail */
             super.initForVerify(pParams);
             final BouncyKeyPair myPair = getKeyPair();
+            final byte[] myContext = getContext();
             BouncyKeyPair.checkKeyPair(myPair);
 
             /* Determine whether this is a hashSigner */
@@ -332,10 +338,14 @@ public final class BouncySLHDSAKeyPair {
 
             /* Initialise and set the signer */
             final BouncySLHDSAPublicKey myPublic = (BouncySLHDSAPublicKey) myPair.getPublicKey();
+            CipherParameters myParms = myPublic.getPublicKey();
+            if (myContext != null) {
+                myParms = new ParametersWithContext(myParms, myContext);
+            }
             if (isHash) {
-                theHashSigner.init(false, myPublic.getPublicKey());
+                theHashSigner.init(false, myParms);
             } else {
-                theSigner.init(false, myPublic.getPublicKey());
+                theSigner.init(false, myParms);
             }
         }
 

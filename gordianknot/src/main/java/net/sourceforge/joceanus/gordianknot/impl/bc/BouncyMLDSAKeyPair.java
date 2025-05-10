@@ -33,6 +33,7 @@ import org.bouncycastle.crypto.CipherParameters;
 import org.bouncycastle.crypto.CryptoException;
 import org.bouncycastle.crypto.Signer;
 import org.bouncycastle.crypto.params.AsymmetricKeyParameter;
+import org.bouncycastle.crypto.params.ParametersWithContext;
 import org.bouncycastle.crypto.params.ParametersWithRandom;
 import org.bouncycastle.pqc.crypto.mldsa.HashMLDSASigner;
 import org.bouncycastle.pqc.crypto.mldsa.MLDSAKeyGenerationParameters;
@@ -306,12 +307,16 @@ public final class BouncyMLDSAKeyPair {
             /* Initialise detail */
             super.initForSigning(pParams);
             final BouncyKeyPair myPair = getKeyPair();
+            final byte[] myContext = getContext();
             BouncyKeyPair.checkKeyPair(myPair);
 
             /* Initialise and set the signer */
             theSigner = createSigner(myPair);
             final BouncyMLDSAPrivateKey myPrivate = (BouncyMLDSAPrivateKey) myPair.getPrivateKey();
-            final CipherParameters myParms = new ParametersWithRandom(myPrivate.getPrivateKey(), getRandom());
+            CipherParameters myParms = new ParametersWithRandom(myPrivate.getPrivateKey(), getRandom());
+            if (myContext != null) {
+                myParms = new ParametersWithContext(myParms, myContext);
+            }
             theSigner.init(true, myParms);
         }
 
@@ -320,12 +325,17 @@ public final class BouncyMLDSAKeyPair {
             /* Initialise detail */
             super.initForVerify(pParams);
             final BouncyKeyPair myPair = getKeyPair();
+            final byte[] myContext = getContext();
             BouncyKeyPair.checkKeyPair(myPair);
 
             /* Initialise and set the signer */
             theSigner = createSigner(myPair);
             final BouncyMLDSAPublicKey myPublic = (BouncyMLDSAPublicKey) myPair.getPublicKey();
-            theSigner.init(false, myPublic.getPublicKey());
+            CipherParameters myParms = myPublic.getPublicKey();
+            if (myContext != null) {
+                myParms = new ParametersWithContext(myParms, myContext);
+            }
+            theSigner.init(false, myParms);
         }
 
         @Override
