@@ -18,6 +18,8 @@ package net.sourceforge.joceanus.gordianknot.impl.bc;
 
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementSpec;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
+import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestSpec;
+import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestType;
 import net.sourceforge.joceanus.gordianknot.api.encrypt.GordianEncryptorSpec;
 import net.sourceforge.joceanus.gordianknot.api.encrypt.GordianSM2EncryptionSpec;
 import net.sourceforge.joceanus.gordianknot.api.encrypt.GordianSM2EncryptionSpec.GordianSM2EncryptionType;
@@ -94,14 +96,21 @@ public final class BouncySM2KeyPair {
          * Constructor.
          * @param pFactory the factory
          * @param pSpec the signatureSpec.
+         * @throws GordianException on error
          */
         BouncySM2Signature(final BouncyFactory pFactory,
-                           final GordianSignatureSpec pSpec) {
+                           final GordianSignatureSpec pSpec) throws GordianException {
             /* Initialise underlying class */
             super(pFactory, pSpec);
 
             /* Create the signer */
-            theSigner = new SM2Signer();
+            final GordianDigestSpec mySpec = pSpec.getDigestSpec();
+            if (GordianDigestType.SM3.equals(mySpec.getDigestType())) {
+                theSigner = new SM2Signer();
+            } else {
+                final BouncyDigest myDigest = pFactory.getDigestFactory().createDigest(mySpec);
+                theSigner = new SM2Signer(myDigest.getDigest());
+            }
         }
 
         @Override

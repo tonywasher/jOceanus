@@ -250,6 +250,8 @@ public enum GordianKeyPairType {
             case XMSS:
             case LMS:
             case MAYO:
+            case SNOVA:
+            case NEWHOPE:
             default:
                 return false;
         }

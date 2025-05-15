@@ -179,7 +179,6 @@ public final class GordianSignatureSpec {
             case EC:
             case DSTU4145:
             case GOST2012:
-            case SM2:
                 if (!(theSignatureSpec instanceof GordianDigestSpec)) {
                     return false;
                 }
@@ -196,6 +195,8 @@ public final class GordianSignatureSpec {
                 return theSignatureSpec == null;
             case PICNIC:
                 return theSignatureSpec == null || checkPICNICDigest();
+            case SM2:
+                return checkSM2Digest();
             case COMPOSITE:
                 return theSignatureSpec instanceof List && checkComposite();
             default:
@@ -237,6 +238,24 @@ public final class GordianSignatureSpec {
             case SHAKE:
                 return true;
             default:
+                return false;
+        }
+    }
+
+    /**
+     * Check sm2 spec validity.
+     * @return valid true/false
+     */
+    private boolean checkSM2Digest() {
+        /* Switch on DigestType */
+        final GordianDigestSpec myDigest = getDigestSpec();
+        switch (myDigest.getDigestType()) {
+            case SM3:
+                return true;
+            case SHA2:
+                return GordianLength.LEN_256.equals(myDigest.getDigestLength())
+                        && !myDigest.isSha2Hybrid();
+             default:
                 return false;
         }
     }

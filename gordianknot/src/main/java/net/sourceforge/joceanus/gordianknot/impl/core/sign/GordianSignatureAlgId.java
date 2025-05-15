@@ -363,8 +363,10 @@ public class GordianSignatureAlgId {
      * Add SM2 signatures.
      */
     private void addSM2Signatures() {
-        addToMaps(GordianSignatureSpecBuilder.sm2(),
+        addToMaps(GordianSignatureSpecBuilder.sm2(GordianDigestSpecBuilder.sm3()),
                 new AlgorithmIdentifier(GMObjectIdentifiers.sm2sign_with_sm3, DERNull.INSTANCE));
+        addToMaps(GordianSignatureSpecBuilder.sm2(GordianDigestSpecBuilder.sha2(GordianLength.LEN_256)),
+                new AlgorithmIdentifier(GMObjectIdentifiers.sm2sign_with_sha256, DERNull.INSTANCE));
     }
 
     /**

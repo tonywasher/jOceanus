@@ -69,10 +69,11 @@ public final class GordianSignatureSpecBuilder {
 
     /**
      * Create SM2Spec.
+     * @param pDigestSpec the digestSpec
      * @return the SignatureSpec
      */
-    public static GordianSignatureSpec sm2() {
-        return new GordianSignatureSpec(GordianKeyPairType.SM2, GordianDigestSpecBuilder.sm3());
+    public static GordianSignatureSpec sm2(final GordianDigestSpec pDigestSpec) {
+        return new GordianSignatureSpec(GordianKeyPairType.SM2, pDigestSpec);
     }
 
     /**
