@@ -44,7 +44,7 @@ public interface ThemisXAnalysisParser {
      * @return the parsed statement
      * @throws OceanusException on error
      */
-    ThemisXAnalysisParsedStatement parseStatement(final Statement pStatement) throws OceanusException;
+    ThemisXAnalysisParsedStatement parseStatement(Statement pStatement) throws OceanusException;
 
     /**
      * parse a list of statements.
@@ -73,7 +73,7 @@ public interface ThemisXAnalysisParser {
      * @return the parsed bodyPart
      * @throws OceanusException on error
      */
-    ThemisXAnalysisParsedBody parseBody(final BodyDeclaration<?> pBody) throws OceanusException;
+    ThemisXAnalysisParsedBody parseBody(BodyDeclaration<?> pBody) throws OceanusException;
 
     /**
      * parse a list of members.
@@ -102,7 +102,7 @@ public interface ThemisXAnalysisParser {
      * @return the parsed parameter
      * @throws OceanusException on error
      */
-    ThemisXAnalysisParsedParam parseParameter(final Parameter pParameter) throws OceanusException;
+    ThemisXAnalysisParsedParam parseParameter(Parameter pParameter) throws OceanusException;
 
     /**
      * parse a list of parameters.
@@ -131,7 +131,7 @@ public interface ThemisXAnalysisParser {
      * @return the parsed variable
      * @throws OceanusException on error
      */
-    ThemisXAnalysisParsedVar parseVariable(final VariableDeclarator pVariable) throws OceanusException;
+    ThemisXAnalysisParsedVar parseVariable(VariableDeclarator pVariable) throws OceanusException;
 
     /**
      * parse a list of variables.
@@ -160,7 +160,7 @@ public interface ThemisXAnalysisParser {
      * @return the parsed type
      * @throws OceanusException on error
      */
-    ThemisXAnalysisParsedType parseType(final Type pType) throws OceanusException;
+    ThemisXAnalysisParsedType parseType(Type pType) throws OceanusException;
 
     /**
      * parse a list of types.
@@ -189,7 +189,7 @@ public interface ThemisXAnalysisParser {
      * @return the parsed expression
      * @throws OceanusException on error
      */
-    ThemisXAnalysisParsedExpr parseExpression(final Expression pExpression) throws OceanusException;
+    ThemisXAnalysisParsedExpr parseExpression(Expression pExpression) throws OceanusException;
 
     /**
      * parse a list of expressions.

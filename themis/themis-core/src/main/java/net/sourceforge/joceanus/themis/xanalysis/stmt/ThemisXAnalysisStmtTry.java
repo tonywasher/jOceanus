@@ -126,7 +126,7 @@ public class ThemisXAnalysisStmtTry
     /**
      * Try Catch.
      */
-    public static class ThemisXAnalysisStmtCatch
+    public static final class ThemisXAnalysisStmtCatch
             implements ThemisXAnalysisParsedStatement {
         /**
          * The contents.

@@ -162,17 +162,17 @@ public class ThemisXAnalysisCodeParser
     }
 
     @Override
-    public ThemisXAnalysisParsedParam parseParameter(Parameter pParameter) throws OceanusException {
+    public ThemisXAnalysisParsedParam parseParameter(final Parameter pParameter) throws OceanusException {
         return new ThemisXAnalysisBodyParameter(this, pParameter);
     }
 
     @Override
-    public ThemisXAnalysisParsedVar parseVariable(VariableDeclarator pVariable) throws OceanusException {
+    public ThemisXAnalysisParsedVar parseVariable(final VariableDeclarator pVariable) throws OceanusException {
         return new ThemisXAnalysisBodyVariable(this, pVariable);
     }
 
     @Override
-    public ThemisXAnalysisParsedType parseType(Type pType) throws OceanusException {
+    public ThemisXAnalysisParsedType parseType(final Type pType) throws OceanusException {
         switch (ThemisXAnalysisTypeType.determineTypeType(pType)) {
             case ARRAY:          return new ThemisXAnalysisTypeArray(this, pType.asArrayType());
             case CLASSINTERFACE: return new ThemisXAnalysisTypeClassInterface(this, pType.asClassOrInterfaceType());
@@ -190,7 +190,7 @@ public class ThemisXAnalysisCodeParser
     }
 
     @Override
-    public ThemisXAnalysisParsedExpr parseExpression(Expression pExpr) throws OceanusException {
+    public ThemisXAnalysisParsedExpr parseExpression(final Expression pExpr) throws OceanusException {
         switch (ThemisXAnalysisExprType.determineExprType(pExpr)) {
             case ANNOTATION:      return new ThemisXAnalysisExprAnnotation(this, pExpr.asAnnotationExpr());
             case ARRAYACCESS:     return new ThemisXAnalysisExprArrayAccess(this, pExpr.asArrayAccessExpr());
@@ -220,7 +220,7 @@ public class ThemisXAnalysisCodeParser
             case PATTERN:         return new ThemisXAnalysisExprPattern(this, pExpr.asPatternExpr());
             case RECORDPATTERN:   return new ThemisXAnalysisExprRecordPattern(this, pExpr.asRecordPatternExpr());
             case SINGLEMEMBER:    return new ThemisXAnalysisExprSingleMemberAnnotation(this, pExpr.asSingleMemberAnnotationExpr());
-            case STRING:          return new ThemisXAnalysisExprStringLit(this,pExpr.asStringLiteralExpr());
+            case STRING:          return new ThemisXAnalysisExprStringLit(this, pExpr.asStringLiteralExpr());
             case SUPER:           return new ThemisXAnalysisExprSuper(this, pExpr.asSuperExpr());
             case SWITCH:          return new ThemisXAnalysisExprSwitch(this, pExpr.asSwitchExpr());
             case TEXTBLOCK:       return new ThemisXAnalysisExprTextBlockLit(this, pExpr.asTextBlockLiteralExpr());

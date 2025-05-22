@@ -153,7 +153,7 @@ public class ThemisXAnalysisFile {
             theComment = theContents.getComment().orElse(null);
 
             /* Obtain details about package and imports */
-            Optional<PackageDeclaration> myPackage = theContents.getPackageDeclaration();
+            final Optional<PackageDeclaration> myPackage = theContents.getPackageDeclaration();
             thePackageDef = myPackage.isEmpty() ? null : new ThemisXAnalysisPackageDef(myPackage.get());
             theImports = new ThemisXAnalysisImports(theContents.getImports());
 
@@ -163,7 +163,6 @@ public class ThemisXAnalysisFile {
                 throw new ThemisDataException("More than one class definition in file");
             }
             theType = new ThemisXAnalysisObject(myTypes.get(0));
-            int i = 0;
 
             /* Catch exceptions */
         } catch (IOException e) {
@@ -176,7 +175,7 @@ public class ThemisXAnalysisFile {
     /**
      * The package declaration class.
      */
-    private class ThemisXAnalysisPackageDef {
+    private final class ThemisXAnalysisPackageDef {
         /**
          * The contents.
          */
@@ -209,7 +208,7 @@ public class ThemisXAnalysisFile {
     /**
      * Import declarations.
      */
-    public class ThemisXAnalysisImports {
+    public static class ThemisXAnalysisImports {
         /**
          * The Imports.
          */
@@ -244,7 +243,7 @@ public class ThemisXAnalysisFile {
     /**
      * Import declaration.
      */
-    public class ThemisXAnalysisImport {
+    public static final class ThemisXAnalysisImport {
         /**
          * The contents.
          */

@@ -98,7 +98,7 @@ public class ThemisXAnalysisStmtSwitch
     /**
      * Switch Case.
      */
-    public static class ThemisXAnalysisStmtCase
+    public static final class ThemisXAnalysisStmtCase
             implements ThemisXAnalysisParsedStatement {
         /**
          * The contents.
