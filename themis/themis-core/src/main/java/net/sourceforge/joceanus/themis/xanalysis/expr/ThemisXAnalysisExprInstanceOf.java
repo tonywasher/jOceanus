@@ -14,41 +14,42 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.themis.xanalysis.type;
+package net.sourceforge.joceanus.themis.xanalysis.expr;
 
-import com.github.javaparser.ast.type.Type;
+import com.github.javaparser.ast.expr.InstanceOfExpr;
 import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisParser;
-import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisParser.ThemisXAnalysisParsedType;
+import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisParser.ThemisXAnalysisParsedExpr;
+
 /**
- * Type Declaration.
+ * InstanceOf Expression Declaration.
  */
-public class ThemisXAnalysisType
-        implements ThemisXAnalysisParsedType {
+public class ThemisXAnalysisExprInstanceOf
+        implements ThemisXAnalysisParsedExpr {
     /**
      * The type.
      */
-    private final Type theType;
+    private final InstanceOfExpr theExpression;
 
     /**
      * Constructor.
      * @param pParser the parser
-     * @param pType the type
+     * @param pExpression the expression
      */
-    public ThemisXAnalysisType(final ThemisXAnalysisParser pParser,
-                               final Type pType) {
-        theType = pType;
+    public ThemisXAnalysisExprInstanceOf(final ThemisXAnalysisParser pParser,
+                                         final InstanceOfExpr pExpression) {
+        theExpression = pExpression;
     }
 
     /**
      * Obtain the type.
      * @return the type
      */
-    public Type getType() {
-        return theType;
+    public InstanceOfExpr getExpression() {
+        return theExpression;
     }
 
     @Override
     public String toString() {
-        return theType.toString();
+        return theExpression.toString();
     }
 }

@@ -17,6 +17,7 @@
 package net.sourceforge.joceanus.themis.xanalysis;
 
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisChar;
 
 import java.io.File;
 import java.util.ArrayList;

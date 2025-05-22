@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.themis.xanalysis;
+package net.sourceforge.joceanus.themis.xanalysis.util;
 
 /**
  * Character constants.
@@ -29,17 +29,17 @@ public final class ThemisXAnalysisChar {
     /**
      * The lineFeed character.
      */
-    static final char LF = '\n';
+    public static final char LF = '\n';
 
     /**
      * The carriageReturn character.
      */
-    static final char CR = '\r';
+    public static final char CR = '\r';
 
     /**
      * Case terminator.
      */
-    static final char COLON = ':';
+    public static final char COLON = ':';
 
     /**
      * Statement separator.
@@ -49,7 +49,7 @@ public final class ThemisXAnalysisChar {
     /**
      * Statement terminator.
      */
-    static final char SEMICOLON = ';';
+    public static final char SEMICOLON = ';';
 
     /**
      * Period separator.
@@ -59,22 +59,22 @@ public final class ThemisXAnalysisChar {
     /**
      * The annotation character.
      */
-    static final char ANNOTATION = '@';
+    public static final char ANNOTATION = '@';
 
     /**
      * The null character.
      */
-    static final char NULL = (char) 0;
+    public static final char NULL = (char) 0;
 
     /**
      * The line comment character.
      */
-    static final char COMMENT = '/';
+    public static final char COMMENT = '/';
 
     /**
      * The escape character.
      */
-    static final char ESCAPE = '\\';
+    public static final char ESCAPE = '\\';
 
     /**
      * The equals character.
@@ -84,22 +84,22 @@ public final class ThemisXAnalysisChar {
     /**
      * The single quote character.
      */
-    static final char SINGLEQUOTE = '\'';
+    public static final char SINGLEQUOTE = '\'';
 
     /**
      * The double quote character.
      */
-    static final char DOUBLEQUOTE = '"';
+    public static final char DOUBLEQUOTE = '"';
 
     /**
      * Open body.
      */
-    static final char BRACE_OPEN = '{';
+    public static final char BRACE_OPEN = '{';
 
     /**
      * Close body.
      */
-    static final char BRACE_CLOSE = '}';
+    public static final char BRACE_CLOSE = '}';
 
     /**
      * Open parenthesis.
@@ -114,12 +114,12 @@ public final class ThemisXAnalysisChar {
     /**
      * Open generic.
      */
-    static final char GENERIC_OPEN = '<';
+    public static final char GENERIC_OPEN = '<';
 
     /**
      * Close generic.
      */
-    static final char GENERIC_CLOSE = '>';
+    public static final char GENERIC_CLOSE = '>';
 
     /**
      * Start array.
@@ -139,15 +139,15 @@ public final class ThemisXAnalysisChar {
     /**
      * QuestionMark.
      */
-    static final char QUESTION = '?';
+    public static final char QUESTION = '?';
 
     /**
      * And symbol.
      */
-    static final char AND = '&';
+    public static final char AND = '&';
 
     /**
      * Or symbol.
      */
-    static final char OR = '|';
+    public static final char OR = '|';
 }

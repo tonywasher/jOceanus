@@ -38,7 +38,42 @@ import net.sourceforge.joceanus.themis.xanalysis.body.ThemisXAnalysisBodyMethod;
 import net.sourceforge.joceanus.themis.xanalysis.body.ThemisXAnalysisBodyParameter;
 import net.sourceforge.joceanus.themis.xanalysis.body.ThemisXAnalysisBodyRecord;
 import net.sourceforge.joceanus.themis.xanalysis.body.ThemisXAnalysisBodyVariable;
-import net.sourceforge.joceanus.themis.xanalysis.expr.ThemisXAnalysisExpression;
+import net.sourceforge.joceanus.themis.xanalysis.expr.ThemisXAnalysisExprAnnotation;
+import net.sourceforge.joceanus.themis.xanalysis.expr.ThemisXAnalysisExprArrayAccess;
+import net.sourceforge.joceanus.themis.xanalysis.expr.ThemisXAnalysisExprArrayCreation;
+import net.sourceforge.joceanus.themis.xanalysis.expr.ThemisXAnalysisExprArrayInit;
+import net.sourceforge.joceanus.themis.xanalysis.expr.ThemisXAnalysisExprAssign;
+import net.sourceforge.joceanus.themis.xanalysis.expr.ThemisXAnalysisExprBinary;
+import net.sourceforge.joceanus.themis.xanalysis.expr.ThemisXAnalysisExprBooleanLit;
+import net.sourceforge.joceanus.themis.xanalysis.expr.ThemisXAnalysisExprCast;
+import net.sourceforge.joceanus.themis.xanalysis.expr.ThemisXAnalysisExprCharLit;
+import net.sourceforge.joceanus.themis.xanalysis.expr.ThemisXAnalysisExprClass;
+import net.sourceforge.joceanus.themis.xanalysis.expr.ThemisXAnalysisExprConditional;
+import net.sourceforge.joceanus.themis.xanalysis.expr.ThemisXAnalysisExprDoubleLit;
+import net.sourceforge.joceanus.themis.xanalysis.expr.ThemisXAnalysisExprEnclosed;
+import net.sourceforge.joceanus.themis.xanalysis.expr.ThemisXAnalysisExprFieldAccess;
+import net.sourceforge.joceanus.themis.xanalysis.expr.ThemisXAnalysisExprInstanceOf;
+import net.sourceforge.joceanus.themis.xanalysis.expr.ThemisXAnalysisExprIntegerLit;
+import net.sourceforge.joceanus.themis.xanalysis.expr.ThemisXAnalysisExprLambda;
+import net.sourceforge.joceanus.themis.xanalysis.expr.ThemisXAnalysisExprLongLit;
+import net.sourceforge.joceanus.themis.xanalysis.expr.ThemisXAnalysisExprMarkerAnnotation;
+import net.sourceforge.joceanus.themis.xanalysis.expr.ThemisXAnalysisExprMethodCall;
+import net.sourceforge.joceanus.themis.xanalysis.expr.ThemisXAnalysisExprMethodRef;
+import net.sourceforge.joceanus.themis.xanalysis.expr.ThemisXAnalysisExprName;
+import net.sourceforge.joceanus.themis.xanalysis.expr.ThemisXAnalysisExprNormalAnnotation;
+import net.sourceforge.joceanus.themis.xanalysis.expr.ThemisXAnalysisExprNullLit;
+import net.sourceforge.joceanus.themis.xanalysis.expr.ThemisXAnalysisExprObjectCreate;
+import net.sourceforge.joceanus.themis.xanalysis.expr.ThemisXAnalysisExprPattern;
+import net.sourceforge.joceanus.themis.xanalysis.expr.ThemisXAnalysisExprRecordPattern;
+import net.sourceforge.joceanus.themis.xanalysis.expr.ThemisXAnalysisExprSingleMemberAnnotation;
+import net.sourceforge.joceanus.themis.xanalysis.expr.ThemisXAnalysisExprStringLit;
+import net.sourceforge.joceanus.themis.xanalysis.expr.ThemisXAnalysisExprSuper;
+import net.sourceforge.joceanus.themis.xanalysis.expr.ThemisXAnalysisExprSwitch;
+import net.sourceforge.joceanus.themis.xanalysis.expr.ThemisXAnalysisExprTextBlockLit;
+import net.sourceforge.joceanus.themis.xanalysis.expr.ThemisXAnalysisExprThis;
+import net.sourceforge.joceanus.themis.xanalysis.expr.ThemisXAnalysisExprTypePattern;
+import net.sourceforge.joceanus.themis.xanalysis.expr.ThemisXAnalysisExprUnary;
+import net.sourceforge.joceanus.themis.xanalysis.expr.ThemisXAnalysisExprVarDecl;
 import net.sourceforge.joceanus.themis.xanalysis.stmt.ThemisXAnalysisStmtAssert;
 import net.sourceforge.joceanus.themis.xanalysis.stmt.ThemisXAnalysisStmtBlock;
 import net.sourceforge.joceanus.themis.xanalysis.stmt.ThemisXAnalysisStmtBreak;
@@ -60,10 +95,22 @@ import net.sourceforge.joceanus.themis.xanalysis.stmt.ThemisXAnalysisStmtThrow;
 import net.sourceforge.joceanus.themis.xanalysis.stmt.ThemisXAnalysisStmtTry;
 import net.sourceforge.joceanus.themis.xanalysis.stmt.ThemisXAnalysisStmtWhile;
 import net.sourceforge.joceanus.themis.xanalysis.stmt.ThemisXAnalysisStmtYield;
-import net.sourceforge.joceanus.themis.xanalysis.type.ThemisXAnalysisType;
+import net.sourceforge.joceanus.themis.xanalysis.type.ThemisXAnalysisTypeArray;
+import net.sourceforge.joceanus.themis.xanalysis.type.ThemisXAnalysisTypeClassInterface;
+import net.sourceforge.joceanus.themis.xanalysis.type.ThemisXAnalysisTypeIntersection;
+import net.sourceforge.joceanus.themis.xanalysis.type.ThemisXAnalysisTypeParameter;
+import net.sourceforge.joceanus.themis.xanalysis.type.ThemisXAnalysisTypePrimitive;
+import net.sourceforge.joceanus.themis.xanalysis.type.ThemisXAnalysisTypeReference;
+import net.sourceforge.joceanus.themis.xanalysis.type.ThemisXAnalysisTypeUnion;
+import net.sourceforge.joceanus.themis.xanalysis.type.ThemisXAnalysisTypeUnknown;
+import net.sourceforge.joceanus.themis.xanalysis.type.ThemisXAnalysisTypeVar;
+import net.sourceforge.joceanus.themis.xanalysis.type.ThemisXAnalysisTypeVoid;
+import net.sourceforge.joceanus.themis.xanalysis.type.ThemisXAnalysisTypeWildcard;
 import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisBodyType;
+import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisExprType;
 import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisParser;
 import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisStmtType;
+import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisTypeType;
 
 public class ThemisXAnalysisCodeParser
         implements ThemisXAnalysisParser {
@@ -126,11 +173,61 @@ public class ThemisXAnalysisCodeParser
 
     @Override
     public ThemisXAnalysisParsedType parseType(Type pType) throws OceanusException {
-        return new ThemisXAnalysisType(this, pType);
+        switch (ThemisXAnalysisTypeType.determineTypeType(pType)) {
+            case ARRAY:          return new ThemisXAnalysisTypeArray(this, pType.asArrayType());
+            case CLASSINTERFACE: return new ThemisXAnalysisTypeClassInterface(this, pType.asClassOrInterfaceType());
+            case INTERSECTION:   return new ThemisXAnalysisTypeIntersection(this, pType.asIntersectionType());
+            case PARAMETER:      return new ThemisXAnalysisTypeParameter(this, pType.asTypeParameter());
+            case PRIMITIVE:      return new ThemisXAnalysisTypePrimitive(this, pType.asPrimitiveType());
+            case REFERENCE:      return new ThemisXAnalysisTypeReference(this, pType.asReferenceType());
+            case UNION:          return new ThemisXAnalysisTypeUnion(this, pType.asUnionType());
+            case UNKNOWN:        return new ThemisXAnalysisTypeUnknown(this, pType.asUnknownType());
+            case VAR:            return new ThemisXAnalysisTypeVar(this, pType.asVarType());
+            case VOID:           return new ThemisXAnalysisTypeVoid(this, pType.asVoidType());
+            case WILDCARD:       return new ThemisXAnalysisTypeWildcard(this, pType.asWildcardType());
+            default:             throw new ThemisDataException("Unsupported Type Type");
+        }
     }
 
     @Override
     public ThemisXAnalysisParsedExpr parseExpression(Expression pExpr) throws OceanusException {
-        return new ThemisXAnalysisExpression(this, pExpr);
-    }
+        switch (ThemisXAnalysisExprType.determineExprType(pExpr)) {
+            case ANNOTATION:      return new ThemisXAnalysisExprAnnotation(this, pExpr.asAnnotationExpr());
+            case ARRAYACCESS:     return new ThemisXAnalysisExprArrayAccess(this, pExpr.asArrayAccessExpr());
+            case ARRAYCREATION:   return new ThemisXAnalysisExprArrayCreation(this, pExpr.asArrayCreationExpr());
+            case ARRAYINIT:       return new ThemisXAnalysisExprArrayInit(this, pExpr.asArrayInitializerExpr());
+            case ASSIGN:          return new ThemisXAnalysisExprAssign(this, pExpr.asAssignExpr());
+            case BINARY:          return new ThemisXAnalysisExprBinary(this, pExpr.asBinaryExpr());
+            case BOOLEAN:         return new ThemisXAnalysisExprBooleanLit(this, pExpr.asBooleanLiteralExpr());
+            case CAST:            return new ThemisXAnalysisExprCast(this, pExpr.asCastExpr());
+            case CHAR:            return new ThemisXAnalysisExprCharLit(this, pExpr.asCharLiteralExpr());
+            case CLASS:           return new ThemisXAnalysisExprClass(this, pExpr.asClassExpr());
+            case CONDITIONAL:     return new ThemisXAnalysisExprConditional(this, pExpr.asConditionalExpr());
+            case DOUBLE:          return new ThemisXAnalysisExprDoubleLit(this, pExpr.asDoubleLiteralExpr());
+            case ENCLOSED:        return new ThemisXAnalysisExprEnclosed(this, pExpr.asEnclosedExpr());
+            case FIELDACCESS:     return new ThemisXAnalysisExprFieldAccess(this, pExpr.asFieldAccessExpr());
+            case INSTANCEOF:      return new ThemisXAnalysisExprInstanceOf(this, pExpr.asInstanceOfExpr());
+            case INTEGER:         return new ThemisXAnalysisExprIntegerLit(this, pExpr.asIntegerLiteralExpr());
+            case LAMBDA:          return new ThemisXAnalysisExprLambda(this, pExpr.asLambdaExpr());
+            case LONG:            return new ThemisXAnalysisExprLongLit(this, pExpr.asLongLiteralExpr());
+            case MARKER:          return new ThemisXAnalysisExprMarkerAnnotation(this, pExpr.asMarkerAnnotationExpr());
+            case METHODCALL:      return new ThemisXAnalysisExprMethodCall(this, pExpr.asMethodCallExpr());
+            case METHODREFERENCE: return new ThemisXAnalysisExprMethodRef(this, pExpr.asMethodReferenceExpr());
+            case NAME:            return new ThemisXAnalysisExprName(this, pExpr.asNameExpr());
+            case NORMAL:          return new ThemisXAnalysisExprNormalAnnotation(this, pExpr.asNormalAnnotationExpr());
+            case NULL:            return new ThemisXAnalysisExprNullLit(this, pExpr.asNullLiteralExpr());
+            case OBJECTCREATE:    return new ThemisXAnalysisExprObjectCreate(this, pExpr.asObjectCreationExpr());
+            case PATTERN:         return new ThemisXAnalysisExprPattern(this, pExpr.asPatternExpr());
+            case RECORDPATTERN:   return new ThemisXAnalysisExprRecordPattern(this, pExpr.asRecordPatternExpr());
+            case SINGLEMEMBER:    return new ThemisXAnalysisExprSingleMemberAnnotation(this, pExpr.asSingleMemberAnnotationExpr());
+            case STRING:          return new ThemisXAnalysisExprStringLit(this,pExpr.asStringLiteralExpr());
+            case SUPER:           return new ThemisXAnalysisExprSuper(this, pExpr.asSuperExpr());
+            case SWITCH:          return new ThemisXAnalysisExprSwitch(this, pExpr.asSwitchExpr());
+            case TEXTBLOCK:       return new ThemisXAnalysisExprTextBlockLit(this, pExpr.asTextBlockLiteralExpr());
+            case THIS:            return new ThemisXAnalysisExprThis(this, pExpr.asThisExpr());
+            case TYPEPATTERN:     return new ThemisXAnalysisExprTypePattern(this, pExpr.asTypePatternExpr());
+            case UNARY:           return new ThemisXAnalysisExprUnary(this, pExpr.asUnaryExpr());
+            case VARIABLE:        return new ThemisXAnalysisExprVarDecl(this, pExpr.asVariableDeclarationExpr());
+            default:              throw new ThemisDataException("Unsupported Expression Type");
+        }    }
 }
