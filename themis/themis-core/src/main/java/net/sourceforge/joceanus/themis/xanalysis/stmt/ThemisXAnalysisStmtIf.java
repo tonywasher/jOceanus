@@ -17,36 +17,31 @@
 package net.sourceforge.joceanus.themis.xanalysis.stmt;
 
 import com.github.javaparser.ast.stmt.IfStmt;
-import com.github.javaparser.ast.stmt.Statement;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisParser;
-import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisParser.ThemisXAnalysisParsedExpr;
-import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisParser.ThemisXAnalysisParsedStatement;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisBaseStatement;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisExpressionInstance;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisStatementInstance;
 
 /**
  * If Statement.
  */
 public class ThemisXAnalysisStmtIf
-        implements ThemisXAnalysisParsedStatement {
-    /**
-     * The contents.
-     */
-    private final IfStmt theStatement;
-
+        extends ThemisXAnalysisBaseStatement<IfStmt> {
     /**
      * The condition.
      */
-    private final ThemisXAnalysisParsedExpr theCondition;
+    private final ThemisXAnalysisExpressionInstance theCondition;
 
     /**
      * The then statement.
      */
-    private final ThemisXAnalysisParsedStatement theThen;
+    private final ThemisXAnalysisStatementInstance theThen;
 
     /**
      * The else statement.
      */
-    private final ThemisXAnalysisParsedStatement theElse;
+    private final ThemisXAnalysisStatementInstance theElse;
 
     /**
      * Constructor.
@@ -56,26 +51,17 @@ public class ThemisXAnalysisStmtIf
      */
     public ThemisXAnalysisStmtIf(final ThemisXAnalysisParser pParser,
                                  final IfStmt pStatement) throws OceanusException {
-        theStatement = pStatement;
-        theCondition = pParser.parseExpression(theStatement.getCondition());
-        theThen = pParser.parseStatement(theStatement.getThenStmt());
-        final Statement myElse = theStatement.getElseStmt().orElse(null);
-        theElse = myElse == null ? null : pParser.parseStatement(myElse);
-    }
-
-    /**
-     * Obtain the statement.
-     * @return the statement
-     */
-    public IfStmt getStatement() {
-        return theStatement;
+        super(pStatement);
+        theCondition = pParser.parseExpression(pStatement.getCondition());
+        theThen = pParser.parseStatement(pStatement.getThenStmt());
+        theElse = pParser.parseStatement(pStatement.getElseStmt().orElse(null));
     }
 
     /**
      * Obtain the condition.
      * @return the condition
      */
-    public ThemisXAnalysisParsedExpr getCondition() {
+    public ThemisXAnalysisExpressionInstance getCondition() {
         return theCondition;
     }
 
@@ -83,7 +69,7 @@ public class ThemisXAnalysisStmtIf
      * Obtain the then.
      * @return the then
      */
-    public ThemisXAnalysisParsedStatement getThen() {
+    public ThemisXAnalysisStatementInstance getThen() {
         return theThen;
     }
 
@@ -91,12 +77,7 @@ public class ThemisXAnalysisStmtIf
      * Obtain the else.
      * @return the else
      */
-    public ThemisXAnalysisParsedStatement getElse() {
+    public ThemisXAnalysisStatementInstance getElse() {
         return theElse;
-    }
-
-    @Override
-    public String toString() {
-        return theStatement.toString();
     }
 }

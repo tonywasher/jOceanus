@@ -17,19 +17,14 @@
 package net.sourceforge.joceanus.themis.xanalysis.type;
 
 import com.github.javaparser.ast.type.UnknownType;
-import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisParser;
-import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisParser.ThemisXAnalysisParsedType;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisBaseType;
 
 /**
  * Unknown Type Declaration.
  */
 public class ThemisXAnalysisTypeUnknown
-        implements ThemisXAnalysisParsedType {
-    /**
-     * The type.
-     */
-    private final UnknownType theType;
-
+        extends ThemisXAnalysisBaseType<UnknownType> {
     /**
      * Constructor.
      * @param pParser the parser
@@ -37,19 +32,6 @@ public class ThemisXAnalysisTypeUnknown
      */
     public ThemisXAnalysisTypeUnknown(final ThemisXAnalysisParser pParser,
                                       final UnknownType pType) {
-        theType = pType;
-    }
-
-    /**
-     * Obtain the type.
-     * @return the type
-     */
-    public UnknownType getType() {
-        return theType;
-    }
-
-    @Override
-    public String toString() {
-        return theType.toString();
+        super(pType);
     }
 }

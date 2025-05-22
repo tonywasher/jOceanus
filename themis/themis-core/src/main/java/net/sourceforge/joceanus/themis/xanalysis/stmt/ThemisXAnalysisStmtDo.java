@@ -18,29 +18,25 @@ package net.sourceforge.joceanus.themis.xanalysis.stmt;
 
 import com.github.javaparser.ast.stmt.DoStmt;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisParser;
-import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisParser.ThemisXAnalysisParsedExpr;
-import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisParser.ThemisXAnalysisParsedStatement;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisBaseStatement;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisExpressionInstance;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisStatementInstance;
 
 /**
  * Do Statement.
  */
 public class ThemisXAnalysisStmtDo
-        implements ThemisXAnalysisParsedStatement {
-    /**
-     * The contents.
-     */
-    private final DoStmt theStatement;
-
+        extends ThemisXAnalysisBaseStatement<DoStmt> {
     /**
      * The while expression.
      */
-    private final ThemisXAnalysisParsedExpr theExpression;
+    private final ThemisXAnalysisExpressionInstance theExpression;
 
     /**
      * The body.
      */
-    private final ThemisXAnalysisParsedStatement theBody;
+    private final ThemisXAnalysisStatementInstance theBody;
 
     /**
      * Constructor.
@@ -51,24 +47,16 @@ public class ThemisXAnalysisStmtDo
     public ThemisXAnalysisStmtDo(final ThemisXAnalysisParser pParser,
                                  final DoStmt pStatement) throws OceanusException {
         /* Store details */
-        theStatement = pStatement;
-        theExpression = pParser.parseExpression(theStatement.getCondition());
-        theBody = pParser.parseStatement(theStatement.getBody());
-    }
-
-    /**
-     * Obtain the statement.
-     * @return the statement
-     */
-    public DoStmt getStatement() {
-        return theStatement;
+        super(pStatement);
+        theExpression = pParser.parseExpression(pStatement.getCondition());
+        theBody = pParser.parseStatement(pStatement.getBody());
     }
 
     /**
      * Obtain the expression.
      * @return the expression
      */
-    public ThemisXAnalysisParsedExpr getExpression() {
+    public ThemisXAnalysisExpressionInstance getExpression() {
         return theExpression;
     }
 
@@ -76,12 +64,7 @@ public class ThemisXAnalysisStmtDo
      * Obtain the body.
      * @return the body
      */
-    public ThemisXAnalysisParsedStatement getBody() {
+    public ThemisXAnalysisStatementInstance getBody() {
         return theBody;
-    }
-
-    @Override
-    public String toString() {
-        return theStatement.toString();
     }
 }

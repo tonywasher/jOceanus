@@ -16,6 +16,6 @@
  ******************************************************************************/
 
 /**
- * Code Analysis Body.
+ * Code Analysis Utilities.
  */
-package net.sourceforge.joceanus.themis.xanalysis.body;
+package net.sourceforge.joceanus.themis.xanalysis.base;

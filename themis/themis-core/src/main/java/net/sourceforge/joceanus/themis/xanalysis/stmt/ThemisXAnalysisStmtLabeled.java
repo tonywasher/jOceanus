@@ -18,19 +18,15 @@ package net.sourceforge.joceanus.themis.xanalysis.stmt;
 
 import com.github.javaparser.ast.stmt.LabeledStmt;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisParser;
-import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisParser.ThemisXAnalysisParsedStatement;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisBaseStatement;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisStatementInstance;
 
 /**
  * Labeled Statement.
  */
 public class ThemisXAnalysisStmtLabeled
-        implements ThemisXAnalysisParsedStatement {
-    /**
-     * The contents.
-     */
-    private final LabeledStmt theStatement;
-
+        extends ThemisXAnalysisBaseStatement<LabeledStmt> {
     /**
      * The label.
      */
@@ -39,7 +35,7 @@ public class ThemisXAnalysisStmtLabeled
     /**
      * The contents.
      */
-    private final ThemisXAnalysisParsedStatement theLabeled;
+    private final ThemisXAnalysisStatementInstance theLabeled;
 
     /**
      * Constructor.
@@ -49,17 +45,9 @@ public class ThemisXAnalysisStmtLabeled
      */
     public ThemisXAnalysisStmtLabeled(final ThemisXAnalysisParser pParser,
                                       final LabeledStmt pStatement) throws OceanusException {
-        theStatement = pStatement;
-        theLabel = theStatement.getLabel().asString();
-        theLabeled = pParser.parseStatement(theStatement.getStatement());
-    }
-
-    /**
-     * Obtain the statement.
-     * @return the statement
-     */
-    public LabeledStmt getStatement() {
-        return theStatement;
+        super(pStatement);
+        theLabel = pStatement.getLabel().asString();
+        theLabeled = pParser.parseStatement(pStatement.getStatement());
     }
 
     /**
@@ -74,12 +62,7 @@ public class ThemisXAnalysisStmtLabeled
      * Obtain the labeledStatement.
      * @return the statement
      */
-    public ThemisXAnalysisParsedStatement getLabeled() {
+    public ThemisXAnalysisStatementInstance getLabeled() {
         return theLabeled;
-    }
-
-    @Override
-    public String toString() {
-        return theStatement.toString();
     }
 }

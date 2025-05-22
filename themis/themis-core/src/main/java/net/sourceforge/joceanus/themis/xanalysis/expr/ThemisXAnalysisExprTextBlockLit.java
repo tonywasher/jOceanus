@@ -17,19 +17,13 @@
 package net.sourceforge.joceanus.themis.xanalysis.expr;
 
 import com.github.javaparser.ast.expr.TextBlockLiteralExpr;
-import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisParser;
-import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisParser.ThemisXAnalysisParsedExpr;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
 
 /**
  * TextBlock Literal Expression.
  */
 public class ThemisXAnalysisExprTextBlockLit
-        implements ThemisXAnalysisParsedExpr {
-    /**
-     * The type.
-     */
-    private final TextBlockLiteralExpr theExpression;
-
+        extends ThemisXAnalysisExprLiteral<TextBlockLiteralExpr> {
     /**
      * Constructor.
      * @param pParser the parser
@@ -37,19 +31,6 @@ public class ThemisXAnalysisExprTextBlockLit
      */
     public ThemisXAnalysisExprTextBlockLit(final ThemisXAnalysisParser pParser,
                                            final TextBlockLiteralExpr pExpression) {
-        theExpression = pExpression;
-    }
-
-    /**
-     * Obtain the type.
-     * @return the type
-     */
-    public TextBlockLiteralExpr getExpression() {
-        return theExpression;
-    }
-
-    @Override
-    public String toString() {
-        return theExpression.toString();
+        super(pParser, pExpression);
     }
 }

@@ -14,38 +14,51 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.themis.xanalysis.type;
-
-import com.github.javaparser.ast.type.ReferenceType;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisBaseType;
+package net.sourceforge.joceanus.themis.xanalysis.base;
 
 /**
- * Reference Type Declaration.
+ * Instance definitions.
  */
-public abstract class ThemisXAnalysisTypeReference<T extends ReferenceType>
-        extends ThemisXAnalysisBaseType<T> {
+public final class ThemisXAnalysisInstance {
     /**
-     * The name of the class.
+     * Private constructor.
      */
-    private final String theName;
-
-    /**
-     * Constructor.
-     * @param pParser the parser
-     * @param pType the type
-     */
-    public ThemisXAnalysisTypeReference(final ThemisXAnalysisParser pParser,
-                                        final T pType) {
-        super(pType);
-        theName = pType.asString();
+    private ThemisXAnalysisInstance() {
     }
 
     /**
-     * Obtain the name.
-     * @return the name
+     * The base declaration interface.
      */
-    public String getName() {
-        return theName;
+    public interface ThemisXAnalysisDeclarationInstance {
+    }
+
+    /**
+     * The base type interface.
+     */
+    public interface ThemisXAnalysisTypeInstance {
+    }
+
+    /**
+     * The base parameter interface.
+     */
+    public interface ThemisXAnalysisParamInstance {
+    }
+
+    /**
+     * The base variable interface.
+     */
+    public interface ThemisXAnalysisVarInstance {
+    }
+
+    /**
+     * The base statement interface.
+     */
+    public interface ThemisXAnalysisStatementInstance {
+    }
+
+    /**
+     * The base expression interface.
+     */
+    public interface ThemisXAnalysisExpressionInstance {
     }
 }

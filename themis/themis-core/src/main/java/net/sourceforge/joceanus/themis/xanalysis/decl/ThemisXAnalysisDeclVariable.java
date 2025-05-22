@@ -14,20 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.themis.xanalysis.body;
+package net.sourceforge.joceanus.themis.xanalysis.decl;
 
 import com.github.javaparser.ast.body.VariableDeclarator;
 import com.github.javaparser.ast.expr.Expression;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisParser;
-import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisParser.ThemisXAnalysisParsedExpr;
-import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisParser.ThemisXAnalysisParsedType;
-import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisParser.ThemisXAnalysisParsedVar;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisExpressionInstance;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisTypeInstance;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisVarInstance;
 /**
  * Class Declaration.
  */
-public class ThemisXAnalysisBodyVariable
-        implements ThemisXAnalysisParsedVar {
+public class ThemisXAnalysisDeclVariable
+        implements ThemisXAnalysisVarInstance {
     /**
      * The declaration.
      */
@@ -41,12 +41,12 @@ public class ThemisXAnalysisBodyVariable
     /**
      * The type.
      */
-    private final ThemisXAnalysisParsedType theType;
+    private final ThemisXAnalysisTypeInstance theType;
 
     /**
      * The initializer.
      */
-    private final ThemisXAnalysisParsedExpr theInitializer;
+    private final ThemisXAnalysisExpressionInstance theInitializer;
 
     /**
      * Constructor.
@@ -54,7 +54,7 @@ public class ThemisXAnalysisBodyVariable
      * @param pDeclaration the declaration
      * @throws OceanusException on error
      */
-    public ThemisXAnalysisBodyVariable(final ThemisXAnalysisParser pParser,
+    public ThemisXAnalysisDeclVariable(final ThemisXAnalysisParser pParser,
                                        final VariableDeclarator pDeclaration) throws OceanusException {
         theDeclaration = pDeclaration;
         theName = theDeclaration.getNameAsString();
@@ -83,7 +83,7 @@ public class ThemisXAnalysisBodyVariable
      * Obtain the type.
      * @return the type
      */
-    public ThemisXAnalysisParsedType getType() {
+    public ThemisXAnalysisTypeInstance getType() {
         return theType;
     }
 
@@ -91,7 +91,7 @@ public class ThemisXAnalysisBodyVariable
      * Obtain the initializer.
      * @return the initializer
      */
-    public ThemisXAnalysisParsedExpr getInitializer() {
+    public ThemisXAnalysisExpressionInstance getInitializer() {
         return theInitializer;
     }
 

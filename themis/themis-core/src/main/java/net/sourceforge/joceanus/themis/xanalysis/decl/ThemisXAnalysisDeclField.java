@@ -14,27 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.themis.xanalysis.body;
+package net.sourceforge.joceanus.themis.xanalysis.decl;
 
 import com.github.javaparser.ast.body.FieldDeclaration;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisModifiers;
-import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisParser;
-import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisParser.ThemisXAnalysisParsedBody;
-import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisParser.ThemisXAnalysisParsedVar;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisBaseDeclaration;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisModifiers;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisVarInstance;
 
 import java.util.List;
 
 /**
  * Field Declaration.
  */
-public class ThemisXAnalysisBodyField
-        implements ThemisXAnalysisParsedBody {
-    /**
-     * The declaration.
-     */
-    private final FieldDeclaration theDeclaration;
-
+public class ThemisXAnalysisDeclField
+        extends ThemisXAnalysisBaseDeclaration<FieldDeclaration> {
     /**
      * The modifiers.
      */
@@ -43,7 +38,7 @@ public class ThemisXAnalysisBodyField
     /**
      * The variables.
      */
-    private final List<ThemisXAnalysisParsedVar> theVariables;
+    private final List<ThemisXAnalysisVarInstance> theVariables;
 
     /**
      * Constructor.
@@ -51,19 +46,11 @@ public class ThemisXAnalysisBodyField
      * @param pDeclaration the declaration
      * @throws OceanusException on error
      */
-    public ThemisXAnalysisBodyField(final ThemisXAnalysisParser pParser,
+    public ThemisXAnalysisDeclField(final ThemisXAnalysisParser pParser,
                                     final FieldDeclaration pDeclaration) throws OceanusException {
-        theDeclaration = pDeclaration;
-        theModifiers = new ThemisXAnalysisModifiers(theDeclaration.getModifiers());
-        theVariables = pParser.parseVarList(theDeclaration.getVariables());
-    }
-
-    /**
-     * Obtain the declaration.
-     * @return the declaration
-     */
-    public FieldDeclaration getDeclaration() {
-        return theDeclaration;
+        super(pDeclaration);
+        theModifiers = new ThemisXAnalysisModifiers(pDeclaration.getModifiers());
+        theVariables = pParser.parseVarList(pDeclaration.getVariables());
     }
 
     /**
@@ -78,12 +65,7 @@ public class ThemisXAnalysisBodyField
      * Obtain the variables.
      * @return the variables
      */
-    public List<ThemisXAnalysisParsedVar> getVariables() {
+    public List<ThemisXAnalysisVarInstance> getVariables() {
         return theVariables;
-    }
-
-    @Override
-    public String toString() {
-        return theDeclaration.toString();
     }
 }

@@ -16,26 +16,21 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.themis.xanalysis.type;
 
-import com.github.javaparser.ast.type.ReferenceType;
 import com.github.javaparser.ast.type.WildcardType;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisParser;
-import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisParser.ThemisXAnalysisParsedType;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisTypeInstance;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisBaseType;
 
 /**
  * Wildcard Type Declaration.
  */
 public class ThemisXAnalysisTypeWildcard
-        implements ThemisXAnalysisParsedType {
-    /**
-     * The type.
-     */
-    private final WildcardType theType;
-
+        extends ThemisXAnalysisBaseType<WildcardType> {
     /**
      * The extended type.
      */
-    private final ThemisXAnalysisParsedType theExtended;
+    private final ThemisXAnalysisTypeInstance theExtended;
 
     /**
      * Constructor.
@@ -45,29 +40,15 @@ public class ThemisXAnalysisTypeWildcard
      */
     public ThemisXAnalysisTypeWildcard(final ThemisXAnalysisParser pParser,
                                        final WildcardType pType) throws OceanusException {
-        theType = pType;
-        final ReferenceType myExtended = theType.getExtendedType().orElse(null);
-        theExtended = myExtended == null ? null : pParser.parseType(myExtended);
-    }
-
-    /**
-     * Obtain the type.
-     * @return the type
-     */
-    public WildcardType getType() {
-        return theType;
+        super(pType);
+        theExtended = pParser.parseType(pType.getExtendedType().orElse(null));
     }
 
     /**
      * Obtain the elements.
      * @return the elements
      */
-    public ThemisXAnalysisParsedType getExtended() {
+    public ThemisXAnalysisTypeInstance getExtended() {
         return theExtended;
-    }
-
-    @Override
-    public String toString() {
-        return theType.toString();
     }
 }

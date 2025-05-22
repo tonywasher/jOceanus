@@ -17,19 +17,13 @@
 package net.sourceforge.joceanus.themis.xanalysis.expr;
 
 import com.github.javaparser.ast.expr.LongLiteralExpr;
-import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisParser;
-import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisParser.ThemisXAnalysisParsedExpr;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
 
 /**
  * Long Literal Expression Declaration.
  */
 public class ThemisXAnalysisExprLongLit
-        implements ThemisXAnalysisParsedExpr {
-    /**
-     * The type.
-     */
-    private final LongLiteralExpr theExpression;
-
+        extends ThemisXAnalysisExprLiteral<LongLiteralExpr> {
     /**
      * Constructor.
      * @param pParser the parser
@@ -37,19 +31,6 @@ public class ThemisXAnalysisExprLongLit
      */
     public ThemisXAnalysisExprLongLit(final ThemisXAnalysisParser pParser,
                                       final LongLiteralExpr pExpression) {
-        theExpression = pExpression;
-    }
-
-    /**
-     * Obtain the type.
-     * @return the type
-     */
-    public LongLiteralExpr getExpression() {
-        return theExpression;
-    }
-
-    @Override
-    public String toString() {
-        return theExpression.toString();
+        super(pParser, pExpression);
     }
 }

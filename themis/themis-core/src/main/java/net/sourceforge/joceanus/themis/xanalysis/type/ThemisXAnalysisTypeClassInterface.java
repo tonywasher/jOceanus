@@ -17,24 +17,13 @@
 package net.sourceforge.joceanus.themis.xanalysis.type;
 
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
-import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisParser;
-import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisParser.ThemisXAnalysisParsedType;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
 
 /**
  * Class/Interface Type Declaration.
  */
 public class ThemisXAnalysisTypeClassInterface
-        implements ThemisXAnalysisParsedType {
-    /**
-     * The type.
-     */
-    private final ClassOrInterfaceType theType;
-
-    /**
-     * The name of the class.
-     */
-    private final String theName;
-
+        extends ThemisXAnalysisTypeReference<ClassOrInterfaceType> {
     /**
      * Constructor.
      * @param pParser the parser
@@ -42,28 +31,6 @@ public class ThemisXAnalysisTypeClassInterface
      */
     public ThemisXAnalysisTypeClassInterface(final ThemisXAnalysisParser pParser,
                                              final ClassOrInterfaceType pType) {
-        theType = pType;
-        theName = theType.getNameAsString();
-    }
-
-    /**
-     * Obtain the type.
-     * @return the type
-     */
-    public ClassOrInterfaceType getType() {
-        return theType;
-    }
-
-    /**
-     * Obtain the name.
-     * @return the name
-     */
-    public String getName() {
-        return theName;
-    }
-
-    @Override
-    public String toString() {
-        return theType.toString();
+        super(pParser, pType);
     }
 }

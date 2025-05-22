@@ -17,19 +17,14 @@
 package net.sourceforge.joceanus.themis.xanalysis.expr;
 
 import com.github.javaparser.ast.expr.MethodReferenceExpr;
-import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisParser;
-import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisParser.ThemisXAnalysisParsedExpr;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisBaseExpression;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
 
 /**
- * Expression Declaration.
+ * Method Reference Expression Declaration.
  */
 public class ThemisXAnalysisExprMethodRef
-        implements ThemisXAnalysisParsedExpr {
-    /**
-     * The type.
-     */
-    private final MethodReferenceExpr theExpression;
-
+        extends ThemisXAnalysisBaseExpression<MethodReferenceExpr> {
     /**
      * Constructor.
      * @param pParser the parser
@@ -37,19 +32,6 @@ public class ThemisXAnalysisExprMethodRef
      */
     public ThemisXAnalysisExprMethodRef(final ThemisXAnalysisParser pParser,
                                         final MethodReferenceExpr pExpression) {
-        theExpression = pExpression;
-    }
-
-    /**
-     * Obtain the type.
-     * @return the type
-     */
-    public MethodReferenceExpr getExpression() {
-        return theExpression;
-    }
-
-    @Override
-    public String toString() {
-        return theExpression.toString();
+        super(pExpression);
     }
 }

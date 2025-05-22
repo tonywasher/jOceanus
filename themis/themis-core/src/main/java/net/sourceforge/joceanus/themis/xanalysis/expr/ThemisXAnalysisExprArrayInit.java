@@ -17,19 +17,14 @@
 package net.sourceforge.joceanus.themis.xanalysis.expr;
 
 import com.github.javaparser.ast.expr.ArrayInitializerExpr;
-import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisParser;
-import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisParser.ThemisXAnalysisParsedExpr;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisBaseExpression;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
 
 /**
  * Array init Expression Declaration.
  */
 public class ThemisXAnalysisExprArrayInit
-        implements ThemisXAnalysisParsedExpr {
-    /**
-     * The type.
-     */
-    private final ArrayInitializerExpr theExpression;
-
+        extends ThemisXAnalysisBaseExpression<ArrayInitializerExpr> {
     /**
      * Constructor.
      * @param pParser the parser
@@ -37,19 +32,6 @@ public class ThemisXAnalysisExprArrayInit
      */
     public ThemisXAnalysisExprArrayInit(final ThemisXAnalysisParser pParser,
                                         final ArrayInitializerExpr pExpression) {
-        theExpression = pExpression;
-    }
-
-    /**
-     * Obtain the type.
-     * @return the type
-     */
-    public ArrayInitializerExpr getExpression() {
-        return theExpression;
-    }
-
-    @Override
-    public String toString() {
-        return theExpression.toString();
+        super(pExpression);
     }
 }

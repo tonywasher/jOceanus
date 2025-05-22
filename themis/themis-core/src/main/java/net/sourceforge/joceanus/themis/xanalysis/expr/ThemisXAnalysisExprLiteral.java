@@ -16,21 +16,22 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.themis.xanalysis.expr;
 
-import com.github.javaparser.ast.expr.NullLiteralExpr;
+import com.github.javaparser.ast.expr.LiteralExpr;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisBaseExpression;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
 
 /**
- * Null Literal Expression Declaration.
+ * Literal Expression Declaration.
  */
-public class ThemisXAnalysisExprNullLit
-        extends ThemisXAnalysisExprLiteral<NullLiteralExpr> {
+public abstract class ThemisXAnalysisExprLiteral<T extends LiteralExpr>
+        extends ThemisXAnalysisBaseExpression<T> {
     /**
      * Constructor.
      * @param pParser the parser
      * @param pExpression the expression
      */
-    public ThemisXAnalysisExprNullLit(final ThemisXAnalysisParser pParser,
-                                      final NullLiteralExpr pExpression) {
-        super(pParser, pExpression);
+    public ThemisXAnalysisExprLiteral(final ThemisXAnalysisParser pParser,
+                                      final T pExpression) {
+        super(pExpression);
     }
 }

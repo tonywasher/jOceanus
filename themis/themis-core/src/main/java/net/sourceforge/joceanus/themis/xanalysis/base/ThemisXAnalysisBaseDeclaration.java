@@ -14,38 +14,40 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.themis.xanalysis.type;
+package net.sourceforge.joceanus.themis.xanalysis.base;
 
-import com.github.javaparser.ast.type.ReferenceType;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisBaseType;
+import com.github.javaparser.ast.body.BodyDeclaration;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisDeclarationInstance;
 
 /**
- * Reference Type Declaration.
+ * Declaration Base Class.
+ * @param <T> the BodyDeclaration
  */
-public abstract class ThemisXAnalysisTypeReference<T extends ReferenceType>
-        extends ThemisXAnalysisBaseType<T> {
+public abstract class ThemisXAnalysisBaseDeclaration<T extends BodyDeclaration<T>>
+        implements ThemisXAnalysisDeclarationInstance {
     /**
-     * The name of the class.
+     * The declaration.
      */
-    private final String theName;
+    private final T theDecl;
 
     /**
      * Constructor.
-     * @param pParser the parser
-     * @param pType the type
+     * @param pDecl the declaration
      */
-    public ThemisXAnalysisTypeReference(final ThemisXAnalysisParser pParser,
-                                        final T pType) {
-        super(pType);
-        theName = pType.asString();
+    protected ThemisXAnalysisBaseDeclaration(final T pDecl) {
+        theDecl = pDecl;
     }
 
     /**
-     * Obtain the name.
-     * @return the name
+     * Obtain the declaration.
+     * @return the declaration
      */
-    public String getName() {
-        return theName;
+    public T getDeclaration() {
+        return theDecl;
+    }
+
+    @Override
+    public String toString() {
+        return theDecl.toString();
     }
 }

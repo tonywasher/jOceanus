@@ -18,29 +18,25 @@ package net.sourceforge.joceanus.themis.xanalysis.stmt;
 
 import com.github.javaparser.ast.stmt.SynchronizedStmt;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisParser;
-import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisParser.ThemisXAnalysisParsedExpr;
-import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisParser.ThemisXAnalysisParsedStatement;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisBaseStatement;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisExpressionInstance;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisStatementInstance;
 
 /**
  * Synchronized Statement.
  */
 public class ThemisXAnalysisStmtSynch
-        implements ThemisXAnalysisParsedStatement {
-    /**
-     * The contents.
-     */
-    private final SynchronizedStmt theStatement;
-
+        extends ThemisXAnalysisBaseStatement<SynchronizedStmt> {
     /**
      * The synched.
      */
-    private final ThemisXAnalysisParsedExpr theSynched;
+    private final ThemisXAnalysisExpressionInstance theSynched;
 
     /**
      * The body.
      */
-    private final ThemisXAnalysisParsedStatement theBody;
+    private final ThemisXAnalysisStatementInstance theBody;
 
     /**
      * Constructor.
@@ -50,24 +46,16 @@ public class ThemisXAnalysisStmtSynch
      */
     public ThemisXAnalysisStmtSynch(final ThemisXAnalysisParser pParser,
                                     final SynchronizedStmt pStatement) throws OceanusException {
-        theStatement = pStatement;
-        theBody = pParser.parseStatement(theStatement.getBody());
-        theSynched = pParser.parseExpression(theStatement.getExpression());
-    }
-
-    /**
-     * Obtain the statement.
-     * @return the statement
-     */
-    public SynchronizedStmt getStatement() {
-        return theStatement;
+        super(pStatement);
+        theBody = pParser.parseStatement(pStatement.getBody());
+        theSynched = pParser.parseExpression(pStatement.getExpression());
     }
 
     /**
      * Obtain the synched.
      * @return the synched
      */
-    public ThemisXAnalysisParsedExpr getSynched() {
+    public ThemisXAnalysisExpressionInstance getSynched() {
         return theSynched;
     }
 
@@ -75,12 +63,7 @@ public class ThemisXAnalysisStmtSynch
      * Obtain the body.
      * @return the body
      */
-    public ThemisXAnalysisParsedStatement getBody() {
+    public ThemisXAnalysisStatementInstance getBody() {
         return theBody;
-    }
-
-    @Override
-    public String toString() {
-        return theStatement.toString();
     }
 }

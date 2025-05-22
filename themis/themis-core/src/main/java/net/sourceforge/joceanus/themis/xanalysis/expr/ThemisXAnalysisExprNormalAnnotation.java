@@ -17,39 +17,21 @@
 package net.sourceforge.joceanus.themis.xanalysis.expr;
 
 import com.github.javaparser.ast.expr.NormalAnnotationExpr;
-import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisParser;
-import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisParser.ThemisXAnalysisParsedExpr;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
 
 /**
  * Normal Annotation Expression Declaration.
  */
 public class ThemisXAnalysisExprNormalAnnotation
-        implements ThemisXAnalysisParsedExpr {
-    /**
-     * The type.
-     */
-    private final NormalAnnotationExpr theExpression;
-
+        extends ThemisXAnalysisExprAnnotation<NormalAnnotationExpr> {
     /**
      * Constructor.
-     * @param pParser the parser
+     *
+     * @param pParser     the parser
      * @param pExpression the expression
      */
     public ThemisXAnalysisExprNormalAnnotation(final ThemisXAnalysisParser pParser,
                                                final NormalAnnotationExpr pExpression) {
-        theExpression = pExpression;
-    }
-
-    /**
-     * Obtain the type.
-     * @return the type
-     */
-    public NormalAnnotationExpr getExpression() {
-        return theExpression;
-    }
-
-    @Override
-    public String toString() {
-        return theExpression.toString();
+        super(pParser, pExpression);
     }
 }

@@ -18,8 +18,8 @@ package net.sourceforge.joceanus.themis.xanalysis.type;
 
 import com.github.javaparser.ast.type.TypeParameter;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisParser;
-import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisParser.ThemisXAnalysisParsedType;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisTypeInstance;
 
 import java.util.List;
 
@@ -27,16 +27,11 @@ import java.util.List;
  * TypeParameter Declaration.
  */
 public class ThemisXAnalysisTypeParameter
-        implements ThemisXAnalysisParsedType {
-    /**
-     * The type.
-     */
-    private final TypeParameter theType;
-
+        extends ThemisXAnalysisTypeReference<TypeParameter> {
     /**
      * The bounds.
      */
-    private final List<ThemisXAnalysisParsedType> theBounds;
+    private final List<ThemisXAnalysisTypeInstance> theBounds;
 
     /**
      * Constructor.
@@ -46,20 +41,15 @@ public class ThemisXAnalysisTypeParameter
      */
     public ThemisXAnalysisTypeParameter(final ThemisXAnalysisParser pParser,
                                         final TypeParameter pType) throws OceanusException {
-        theType = pType;
-        theBounds = pParser.parseTypeList(theType.getTypeBound());
+        super(pParser, pType);
+        theBounds = pParser.parseTypeList(pType.getTypeBound());
     }
 
     /**
-     * Obtain the type.
-     * @return the type
+     * Obtain the bounds.
+     * @return the bounds
      */
-    public TypeParameter getType() {
-        return theType;
-    }
-
-    @Override
-    public String toString() {
-        return theType.toString();
+    public List<ThemisXAnalysisTypeInstance> getBounds() {
+        return theBounds;
     }
 }

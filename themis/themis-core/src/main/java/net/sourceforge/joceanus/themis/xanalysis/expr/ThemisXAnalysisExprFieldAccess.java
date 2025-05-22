@@ -17,19 +17,14 @@
 package net.sourceforge.joceanus.themis.xanalysis.expr;
 
 import com.github.javaparser.ast.expr.FieldAccessExpr;
-import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisParser;
-import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisParser.ThemisXAnalysisParsedExpr;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisBaseExpression;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
 
 /**
  * FieldAccess Expression Declaration.
  */
 public class ThemisXAnalysisExprFieldAccess
-        implements ThemisXAnalysisParsedExpr {
-    /**
-     * The type.
-     */
-    private final FieldAccessExpr theExpression;
-
+        extends ThemisXAnalysisBaseExpression<FieldAccessExpr> {
     /**
      * Constructor.
      * @param pParser the parser
@@ -37,19 +32,6 @@ public class ThemisXAnalysisExprFieldAccess
      */
     public ThemisXAnalysisExprFieldAccess(final ThemisXAnalysisParser pParser,
                                           final FieldAccessExpr pExpression) {
-        theExpression = pExpression;
-    }
-
-    /**
-     * Obtain the type.
-     * @return the type
-     */
-    public FieldAccessExpr getExpression() {
-        return theExpression;
-    }
-
-    @Override
-    public String toString() {
-        return theExpression.toString();
+        super(pExpression);
     }
 }

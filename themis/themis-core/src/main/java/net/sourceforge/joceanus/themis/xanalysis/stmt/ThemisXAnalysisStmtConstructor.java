@@ -17,19 +17,14 @@
 package net.sourceforge.joceanus.themis.xanalysis.stmt;
 
 import com.github.javaparser.ast.stmt.ExplicitConstructorInvocationStmt;
-import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisParser;
-import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisParser.ThemisXAnalysisParsedStatement;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisBaseStatement;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
 
 /**
  * Constructor Statement.
  */
 public class ThemisXAnalysisStmtConstructor
-        implements ThemisXAnalysisParsedStatement {
-    /**
-     * The contents.
-     */
-    private final ExplicitConstructorInvocationStmt theStatement;
-
+        extends ThemisXAnalysisBaseStatement<ExplicitConstructorInvocationStmt> {
     /**
      * Constructor.
      * @param pParser the parser
@@ -37,19 +32,6 @@ public class ThemisXAnalysisStmtConstructor
      */
     public ThemisXAnalysisStmtConstructor(final ThemisXAnalysisParser pParser,
                                           final ExplicitConstructorInvocationStmt pStatement) {
-        theStatement = pStatement;
-    }
-
-    /**
-     * Obtain the statement.
-     * @return the statement
-     */
-    public ExplicitConstructorInvocationStmt getStatement() {
-        return theStatement;
-    }
-
-    @Override
-    public String toString() {
-        return theStatement.toString();
+        super(pStatement);
     }
 }

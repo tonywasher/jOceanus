@@ -17,19 +17,14 @@
 package net.sourceforge.joceanus.themis.xanalysis.stmt;
 
 import com.github.javaparser.ast.stmt.ReturnStmt;
-import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisParser;
-import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisParser.ThemisXAnalysisParsedStatement;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisBaseStatement;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
 
 /**
  * Return Statement.
  */
 public class ThemisXAnalysisStmtReturn
-        implements ThemisXAnalysisParsedStatement {
-    /**
-     * The contents.
-     */
-    private final ReturnStmt theStatement;
-
+        extends ThemisXAnalysisBaseStatement<ReturnStmt> {
     /**
      * Constructor.
      * @param pParser the parser
@@ -37,19 +32,6 @@ public class ThemisXAnalysisStmtReturn
      */
     public ThemisXAnalysisStmtReturn(final ThemisXAnalysisParser pParser,
                                      final ReturnStmt pStatement) {
-        theStatement = pStatement;
-    }
-
-    /**
-     * Obtain the statement.
-     * @return the statement
-     */
-    public ReturnStmt getStatement() {
-        return theStatement;
-    }
-
-    @Override
-    public String toString() {
-        return theStatement.toString();
+        super(pStatement);
     }
 }

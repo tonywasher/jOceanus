@@ -16,12 +16,12 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.themis.xanalysis.stmt;
 
-import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.stmt.ForStmt;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisParser;
-import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisParser.ThemisXAnalysisParsedExpr;
-import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisParser.ThemisXAnalysisParsedStatement;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisBaseStatement;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisExpressionInstance;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisStatementInstance;
 
 import java.util.List;
 
@@ -29,31 +29,26 @@ import java.util.List;
  * For Statement.
  */
 public class ThemisXAnalysisStmtFor
-        implements ThemisXAnalysisParsedStatement {
-    /**
-     * The contents.
-     */
-    private final ForStmt theStatement;
-
+        extends ThemisXAnalysisBaseStatement<ForStmt> {
     /**
      * The body.
      */
-    private final ThemisXAnalysisParsedStatement theBody;
+    private final ThemisXAnalysisStatementInstance theBody;
 
     /**
      * The Init.
      */
-    private final List<ThemisXAnalysisParsedExpr> theInit;
+    private final List<ThemisXAnalysisExpressionInstance> theInit;
 
     /**
      * The compare.
      */
-    private final ThemisXAnalysisParsedExpr theCompare;
+    private final ThemisXAnalysisExpressionInstance theCompare;
 
     /**
      * The Updates.
      */
-    private final List<ThemisXAnalysisParsedExpr> theUpdates;
+    private final List<ThemisXAnalysisExpressionInstance> theUpdates;
 
     /**
      * Constructor.
@@ -63,27 +58,18 @@ public class ThemisXAnalysisStmtFor
      */
     public ThemisXAnalysisStmtFor(final ThemisXAnalysisParser pParser,
                                   final ForStmt pStatement) throws OceanusException {
-        theStatement = pStatement;
-        theInit = pParser.parseExprList(theStatement.getInitialization());
-        final Expression myComp = theStatement.getCompare().orElse(null);
-        theCompare = myComp == null ? null : pParser.parseExpression(myComp);
-        theUpdates = pParser.parseExprList(theStatement.getUpdate());
-        theBody = pParser.parseStatement(theStatement.getBody());
-    }
-
-    /**
-     * Obtain the statement.
-     * @return the statement
-     */
-    public ForStmt getStatement() {
-        return theStatement;
+        super(pStatement);
+        theInit = pParser.parseExprList(pStatement.getInitialization());
+        theCompare = pParser.parseExpression(pStatement.getCompare().orElse(null));
+        theUpdates = pParser.parseExprList(pStatement.getUpdate());
+        theBody = pParser.parseStatement(pStatement.getBody());
     }
 
     /**
      * Obtain the init.
      * @return the init
      */
-    public List<ThemisXAnalysisParsedExpr> getInit() {
+    public List<ThemisXAnalysisExpressionInstance> getInit() {
         return theInit;
     }
 
@@ -91,7 +77,7 @@ public class ThemisXAnalysisStmtFor
      * Obtain the compare.
      * @return the compare
      */
-    public ThemisXAnalysisParsedExpr getCompare() {
+    public ThemisXAnalysisExpressionInstance getCompare() {
         return theCompare;
     }
 
@@ -99,7 +85,7 @@ public class ThemisXAnalysisStmtFor
      * Obtain the updates.
      * @return the updates
      */
-    public List<ThemisXAnalysisParsedExpr> getUpdates() {
+    public List<ThemisXAnalysisExpressionInstance> getUpdates() {
         return theUpdates;
     }
 
@@ -107,12 +93,7 @@ public class ThemisXAnalysisStmtFor
      * Obtain the body.
      * @return the body
      */
-    public ThemisXAnalysisParsedStatement getBody() {
+    public ThemisXAnalysisStatementInstance getBody() {
         return theBody;
-    }
-
-    @Override
-    public String toString() {
-        return theStatement.toString();
     }
 }

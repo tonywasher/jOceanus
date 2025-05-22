@@ -18,24 +18,19 @@ package net.sourceforge.joceanus.themis.xanalysis.stmt;
 
 import com.github.javaparser.ast.stmt.LocalRecordDeclarationStmt;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisParser;
-import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisParser.ThemisXAnalysisParsedBody;
-import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisParser.ThemisXAnalysisParsedStatement;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisBaseStatement;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisDeclarationInstance;
 
 /**
  * Record Statement.
  */
 public class ThemisXAnalysisStmtRecord
-        implements ThemisXAnalysisParsedStatement {
-    /**
-     * The contents.
-     */
-    private final LocalRecordDeclarationStmt theStatement;
-
+        extends ThemisXAnalysisBaseStatement<LocalRecordDeclarationStmt> {
     /**
      * The record declaration.
      */
-    private final ThemisXAnalysisParsedBody theRecord;
+    private final ThemisXAnalysisDeclarationInstance theRecord;
 
     /**
      * Constructor.
@@ -45,28 +40,15 @@ public class ThemisXAnalysisStmtRecord
      */
     public ThemisXAnalysisStmtRecord(final ThemisXAnalysisParser pParser,
                                      final LocalRecordDeclarationStmt pStatement) throws OceanusException {
-        theStatement = pStatement;
-        theRecord = pParser.parseBody(theStatement.getRecordDeclaration());
-    }
-
-    /**
-     * Obtain the statement.
-     * @return the statement
-     */
-    public LocalRecordDeclarationStmt getStatement() {
-        return theStatement;
+        super(pStatement);
+        theRecord = pParser.parseDeclarations(pStatement.getRecordDeclaration());
     }
 
     /**
      * Obtain the body.
      * @return the body
      */
-    public ThemisXAnalysisParsedBody getBody() {
+    public ThemisXAnalysisDeclarationInstance getBody() {
         return theRecord;
-    }
-
-    @Override
-    public String toString() {
-        return theStatement.toString();
     }
 }

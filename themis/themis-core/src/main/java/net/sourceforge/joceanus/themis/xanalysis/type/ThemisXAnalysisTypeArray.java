@@ -18,23 +18,18 @@ package net.sourceforge.joceanus.themis.xanalysis.type;
 
 import com.github.javaparser.ast.type.ArrayType;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisParser;
-import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisParser.ThemisXAnalysisParsedType;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisTypeInstance;
 
 /**
  * Array Type Declaration.
  */
 public class ThemisXAnalysisTypeArray
-        implements ThemisXAnalysisParsedType {
-    /**
-     * The type.
-     */
-    private final ArrayType theType;
-
+        extends ThemisXAnalysisTypeReference<ArrayType> {
     /**
      * The underlying type.
      */
-    private final ThemisXAnalysisParsedType theUnderlying;
+    private final ThemisXAnalysisTypeInstance theUnderlying;
 
     /**
      * Constructor.
@@ -44,28 +39,15 @@ public class ThemisXAnalysisTypeArray
      */
     public ThemisXAnalysisTypeArray(final ThemisXAnalysisParser pParser,
                                     final ArrayType pType) throws OceanusException {
-        theType = pType;
-        theUnderlying = pParser.parseType(theType.getComponentType());
-    }
-
-    /**
-     * Obtain the type.
-     * @return the type
-     */
-    public ArrayType getType() {
-        return theType;
+        super(pParser, pType);
+        theUnderlying = pParser.parseType(pType.getComponentType());
     }
 
     /**
      * Obtain the underlying type.
      * @return the type
      */
-    public ThemisXAnalysisParsedType getUnderlying() {
+    public ThemisXAnalysisTypeInstance getUnderlying() {
         return theUnderlying;
-    }
-
-    @Override
-    public String toString() {
-        return theType.toString();
     }
 }

@@ -18,8 +18,9 @@ package net.sourceforge.joceanus.themis.xanalysis.stmt;
 
 import com.github.javaparser.ast.stmt.BlockStmt;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisParser;
-import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisParser.ThemisXAnalysisParsedStatement;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisBaseStatement;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisStatementInstance;
 
 import java.util.List;
 
@@ -27,16 +28,11 @@ import java.util.List;
  * Block Statement.
  */
 public class ThemisXAnalysisStmtBlock
-        implements ThemisXAnalysisParsedStatement {
-    /**
-     * The contents.
-     */
-    private final BlockStmt theStatement;
-
+        extends ThemisXAnalysisBaseStatement<BlockStmt> {
     /**
      * The body.
      */
-    private final List<ThemisXAnalysisParsedStatement> theBody;
+    private final List<ThemisXAnalysisStatementInstance> theBody;
 
     /**
      * Constructor.
@@ -46,28 +42,15 @@ public class ThemisXAnalysisStmtBlock
      */
     public ThemisXAnalysisStmtBlock(final ThemisXAnalysisParser pParser,
                                     final BlockStmt pStatement) throws OceanusException {
-        theStatement = pStatement;
-        theBody = pParser.parseStatementList(theStatement.getStatements());
-    }
-
-    /**
-     * Obtain the statement.
-     * @return the statement
-     */
-    public BlockStmt getStatement() {
-        return theStatement;
+        super(pStatement);
+        theBody = pParser.parseStatementList(pStatement.getStatements());
     }
 
     /**
      * Obtain the body.
      * @return the body
      */
-    public List<ThemisXAnalysisParsedStatement> getBody() {
+    public List<ThemisXAnalysisStatementInstance> getBody() {
         return theBody;
-    }
-
-    @Override
-    public String toString() {
-        return theStatement.toString();
     }
 }

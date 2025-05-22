@@ -18,24 +18,19 @@ package net.sourceforge.joceanus.themis.xanalysis.stmt;
 
 import com.github.javaparser.ast.stmt.LocalClassDeclarationStmt;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisParser;
-import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisParser.ThemisXAnalysisParsedBody;
-import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisParser.ThemisXAnalysisParsedStatement;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisBaseStatement;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisDeclarationInstance;
 
 /**
  * Class Statement.
  */
 public class ThemisXAnalysisStmtClass
-        implements ThemisXAnalysisParsedStatement {
-    /**
-     * The contents.
-     */
-    private final LocalClassDeclarationStmt theStatement;
-
+        extends ThemisXAnalysisBaseStatement<LocalClassDeclarationStmt> {
     /**
      * The class declaration.
      */
-    private final ThemisXAnalysisParsedBody theClass;
+    private final ThemisXAnalysisDeclarationInstance theClass;
 
     /**
      * Constructor.
@@ -45,28 +40,15 @@ public class ThemisXAnalysisStmtClass
      */
     public ThemisXAnalysisStmtClass(final ThemisXAnalysisParser pParser,
                                     final LocalClassDeclarationStmt pStatement) throws OceanusException {
-        theStatement = pStatement;
-        theClass = pParser.parseBody(theStatement.getClassDeclaration());
-    }
-
-    /**
-     * Obtain the statement.
-     * @return the statement
-     */
-    public LocalClassDeclarationStmt getStatement() {
-        return theStatement;
+        super(pStatement);
+        theClass = pParser.parseDeclarations(pStatement.getClassDeclaration());
     }
 
     /**
      * Obtain the class.
      * @return the class
      */
-    public ThemisXAnalysisParsedBody getBody() {
+    public ThemisXAnalysisDeclarationInstance getBody() {
         return theClass;
-    }
-
-    @Override
-    public String toString() {
-        return theStatement.toString();
     }
 }

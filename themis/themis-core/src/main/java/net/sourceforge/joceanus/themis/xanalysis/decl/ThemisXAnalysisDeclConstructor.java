@@ -14,29 +14,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.themis.xanalysis.body;
+package net.sourceforge.joceanus.themis.xanalysis.decl;
 
 import com.github.javaparser.ast.body.ConstructorDeclaration;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisModifiers;
-import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisParser;
-import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisParser.ThemisXAnalysisParsedBody;
-import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisParser.ThemisXAnalysisParsedParam;
-import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisParser.ThemisXAnalysisParsedStatement;
-import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisParser.ThemisXAnalysisParsedType;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisBaseDeclaration;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisModifiers;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisParamInstance;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisStatementInstance;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisTypeInstance;
 
 import java.util.List;
 
 /**
  * Constructor Declaration.
  */
-public class ThemisXAnalysisBodyConstructor
-        implements ThemisXAnalysisParsedBody {
-    /**
-     * The declaration.
-     */
-    private final ConstructorDeclaration theDeclaration;
-
+public class ThemisXAnalysisDeclConstructor
+        extends ThemisXAnalysisBaseDeclaration<ConstructorDeclaration> {
     /**
      * The modifiers.
      */
@@ -45,17 +40,17 @@ public class ThemisXAnalysisBodyConstructor
     /**
      * The parameters.
      */
-    private final List<ThemisXAnalysisParsedParam> theParameters;
+    private final List<ThemisXAnalysisParamInstance> theParameters;
 
     /**
      * The body.
      */
-    private final ThemisXAnalysisParsedStatement theBody;
+    private final ThemisXAnalysisStatementInstance theBody;
 
     /**
      * The thrown exceptions.
      */
-    private final List<ThemisXAnalysisParsedType> theThrown;
+    private final List<ThemisXAnalysisTypeInstance> theThrown;
 
     /**
      * Constructor.
@@ -63,21 +58,13 @@ public class ThemisXAnalysisBodyConstructor
      * @param pDeclaration the declaration
      * @throws OceanusException on error
      */
-    public ThemisXAnalysisBodyConstructor(final ThemisXAnalysisParser pParser,
+    public ThemisXAnalysisDeclConstructor(final ThemisXAnalysisParser pParser,
                                           final ConstructorDeclaration pDeclaration) throws OceanusException {
-        theDeclaration = pDeclaration;
-        theBody = pParser.parseStatement(theDeclaration.getBody());
-        theModifiers = new ThemisXAnalysisModifiers(theDeclaration.getModifiers());
-        theThrown = pParser.parseTypeList(theDeclaration.getThrownExceptions());
-        theParameters = pParser.parseParamList(theDeclaration.getParameters());
-    }
-
-    /**
-     * Obtain the declaration.
-     * @return the declaration
-     */
-    public ConstructorDeclaration getDeclaration() {
-        return theDeclaration;
+        super(pDeclaration);
+        theBody = pParser.parseStatement(pDeclaration.getBody());
+        theModifiers = new ThemisXAnalysisModifiers(pDeclaration.getModifiers());
+        theThrown = pParser.parseTypeList(pDeclaration.getThrownExceptions());
+        theParameters = pParser.parseParamList(pDeclaration.getParameters());
     }
 
     /**
@@ -92,7 +79,7 @@ public class ThemisXAnalysisBodyConstructor
      * Obtain the parameters.
      * @return the parameters
      */
-    public List<ThemisXAnalysisParsedParam> getParameters() {
+    public List<ThemisXAnalysisParamInstance> getParameters() {
         return theParameters;
     }
 
@@ -100,7 +87,7 @@ public class ThemisXAnalysisBodyConstructor
      * Obtain the body.
      * @return the body
      */
-    public ThemisXAnalysisParsedStatement getBody() {
+    public ThemisXAnalysisStatementInstance getBody() {
         return theBody;
     }
 
@@ -108,12 +95,7 @@ public class ThemisXAnalysisBodyConstructor
      * Obtain the thrown exceptions.
      * @return the exceptions
      */
-    public List<ThemisXAnalysisParsedType> getThrown() {
+    public List<ThemisXAnalysisTypeInstance> getThrown() {
         return theThrown;
-    }
-
-    @Override
-    public String toString() {
-        return theDeclaration.toString();
     }
 }

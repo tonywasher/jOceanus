@@ -17,39 +17,23 @@
 package net.sourceforge.joceanus.themis.xanalysis.stmt;
 
 import com.github.javaparser.ast.stmt.EmptyStmt;
-import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisParser;
-import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisParser.ThemisXAnalysisParsedStatement;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisBaseStatement;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
 
 /**
  * Empty Statement.
  */
 public class ThemisXAnalysisStmtEmpty
-        implements ThemisXAnalysisParsedStatement {
-    /**
-     * The contents.
-     */
-    private final EmptyStmt theStatement;
-
+        extends ThemisXAnalysisBaseStatement<EmptyStmt> {
     /**
      * Constructor.
-     * @param pParser the parser
+     *
+     * @param pParser    the parser
      * @param pStatement the statement
      */
     public ThemisXAnalysisStmtEmpty(final ThemisXAnalysisParser pParser,
                                     final EmptyStmt pStatement) {
-        theStatement = pStatement;
-    }
-
-    /**
-     * Obtain the statement.
-     * @return the statement
-     */
-    public EmptyStmt getStatement() {
-        return theStatement;
-    }
-
-    @Override
-    public String toString() {
-        return theStatement.toString();
+        super(pStatement);
     }
 }
+

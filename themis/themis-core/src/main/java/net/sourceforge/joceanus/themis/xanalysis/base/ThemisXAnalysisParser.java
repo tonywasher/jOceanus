@@ -1,0 +1,178 @@
+/*******************************************************************************
+ * Themis: Java Project Framework
+ * Copyright 2012,2025 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ******************************************************************************/
+package net.sourceforge.joceanus.themis.xanalysis.base;
+
+import com.github.javaparser.ast.NodeList;
+import com.github.javaparser.ast.body.BodyDeclaration;
+import com.github.javaparser.ast.body.Parameter;
+import com.github.javaparser.ast.body.VariableDeclarator;
+import com.github.javaparser.ast.expr.Expression;
+import com.github.javaparser.ast.stmt.Statement;
+import com.github.javaparser.ast.type.Type;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisDeclarationInstance;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisExpressionInstance;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisParamInstance;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisStatementInstance;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisTypeInstance;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisVarInstance;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Parser interface.
+ */
+public interface ThemisXAnalysisParser {
+    /**
+     * Parse a declaration.
+     * @param pDecl the declaration
+     * @return the parsed declaration
+     * @throws OceanusException on error
+     */
+    ThemisXAnalysisDeclarationInstance parseDeclarations(BodyDeclaration<?> pDecl) throws OceanusException;
+
+    /**
+     * parse a list of declarations.
+     * @param pDeclList the list of Declarations
+     * @return the list of parsed declarations
+     * @throws OceanusException on error
+     */
+    default List<ThemisXAnalysisDeclarationInstance> parseDeclarationList(final NodeList<? extends BodyDeclaration<?>> pDeclList) throws OceanusException {
+        final List<ThemisXAnalysisDeclarationInstance> myList = new ArrayList<>();
+        for (BodyDeclaration<?> myDecl : pDeclList) {
+            final ThemisXAnalysisDeclarationInstance myParsed = parseDeclarations(myDecl);
+            myList.add(myParsed);
+        }
+        return myList;
+    }
+
+    /**
+     * Parse a parameter.
+     * @param pParameter the parameter
+     * @return the parsed parameter
+     * @throws OceanusException on error
+     */
+    ThemisXAnalysisParamInstance parseParameter(Parameter pParameter) throws OceanusException;
+
+    /**
+     * parse a list of parameters.
+     * @param pParamList the list of Parameters
+     * @return the list of parsed params
+     * @throws OceanusException on error
+     */
+    default List<ThemisXAnalysisParamInstance> parseParamList(final NodeList<Parameter> pParamList) throws OceanusException {
+        final List<ThemisXAnalysisParamInstance> myList = new ArrayList<>();
+        for (Parameter myParam : pParamList) {
+            final ThemisXAnalysisParamInstance myParsed = parseParameter(myParam);
+            myList.add(myParsed);
+        }
+        return myList;
+    }
+
+    /**
+     * Parse a variable.
+     * @param pVariable the variable
+     * @return the parsed variable
+     * @throws OceanusException on error
+     */
+    ThemisXAnalysisVarInstance parseVariable(VariableDeclarator pVariable) throws OceanusException;
+
+    /**
+     * parse a list of variables.
+     * @param pVarList the list of Variables
+     * @return the list of parsed variables
+     * @throws OceanusException on error
+     */
+    default List<ThemisXAnalysisVarInstance> parseVarList(final NodeList<VariableDeclarator> pVarList) throws OceanusException {
+        final List<ThemisXAnalysisVarInstance> myList = new ArrayList<>();
+        for (VariableDeclarator myVar : pVarList) {
+            final ThemisXAnalysisVarInstance myParsed = parseVariable(myVar);
+            myList.add(myParsed);
+        }
+        return myList;
+    }
+
+    /**
+     * Parse a type.
+     * @param pType the type
+     * @return the parsed type
+     * @throws OceanusException on error
+     */
+    ThemisXAnalysisTypeInstance parseType(Type pType) throws OceanusException;
+
+    /**
+     * parse a list of types.
+     * @param pTypeList the list of Types
+     * @return the list of parsed types
+     * @throws OceanusException on error
+     */
+    default List<ThemisXAnalysisTypeInstance> parseTypeList(final NodeList<? extends Type> pTypeList) throws OceanusException {
+        final List<ThemisXAnalysisTypeInstance> myList = new ArrayList<>();
+        for (Type myType : pTypeList) {
+            final ThemisXAnalysisTypeInstance myParsed = parseType(myType);
+            myList.add(myParsed);
+        }
+        return myList;
+    }
+
+    /**
+     * Parse a statement.
+     * @param pStatement the statement
+     * @return the parsed statement
+     * @throws OceanusException on error
+     */
+    ThemisXAnalysisStatementInstance parseStatement(Statement pStatement) throws OceanusException;
+
+    /**
+     * parse a list of statements.
+     * @param pStatementList the list of Statements
+     * @return the list of parsed statements
+     * @throws OceanusException on error
+     */
+    default List<ThemisXAnalysisStatementInstance> parseStatementList(final NodeList<Statement> pStatementList) throws OceanusException {
+        final List<ThemisXAnalysisStatementInstance> myList = new ArrayList<>();
+        for (Statement myStatement : pStatementList) {
+            final ThemisXAnalysisStatementInstance myParsed = parseStatement(myStatement);
+            myList.add(myParsed);
+        }
+        return myList;
+    }
+
+    /**
+     * Parse an expression.
+     * @param pExpression the expression
+     * @return the parsed expression
+     * @throws OceanusException on error
+     */
+    ThemisXAnalysisExpressionInstance parseExpression(Expression pExpression) throws OceanusException;
+
+    /**
+     * parse a list of expressions.
+     * @param pExprList the list of Expressions
+     * @return the list of parsed expressions
+     * @throws OceanusException on error
+     */
+    default List<ThemisXAnalysisExpressionInstance> parseExprList(final NodeList<Expression> pExprList) throws OceanusException {
+        final List<ThemisXAnalysisExpressionInstance> myList = new ArrayList<>();
+        for (Expression myExpr : pExprList) {
+            final ThemisXAnalysisExpressionInstance myParsed = parseExpression(myExpr);
+            myList.add(myParsed);
+        }
+        return myList;
+    }
+}

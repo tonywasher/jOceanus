@@ -17,19 +17,13 @@
 package net.sourceforge.joceanus.themis.xanalysis.expr;
 
 import com.github.javaparser.ast.expr.IntegerLiteralExpr;
-import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisParser;
-import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisParser.ThemisXAnalysisParsedExpr;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
 
 /**
  * Integer Literal Expression Declaration.
  */
 public class ThemisXAnalysisExprIntegerLit
-        implements ThemisXAnalysisParsedExpr {
-    /**
-     * The type.
-     */
-    private final IntegerLiteralExpr theExpression;
-
+        extends ThemisXAnalysisExprLiteral<IntegerLiteralExpr> {
     /**
      * Constructor.
      * @param pParser the parser
@@ -37,19 +31,6 @@ public class ThemisXAnalysisExprIntegerLit
      */
     public ThemisXAnalysisExprIntegerLit(final ThemisXAnalysisParser pParser,
                                          final IntegerLiteralExpr pExpression) {
-        theExpression = pExpression;
-    }
-
-    /**
-     * Obtain the type.
-     * @return the type
-     */
-    public IntegerLiteralExpr getExpression() {
-        return theExpression;
-    }
-
-    @Override
-    public String toString() {
-        return theExpression.toString();
+        super(pParser, pExpression);
     }
 }

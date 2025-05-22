@@ -17,19 +17,14 @@
 package net.sourceforge.joceanus.themis.xanalysis.stmt;
 
 import com.github.javaparser.ast.stmt.AssertStmt;
-import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisParser;
-import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisParser.ThemisXAnalysisParsedStatement;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisBaseStatement;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
 
 /**
  * Assert Statement.
  */
 public class ThemisXAnalysisStmtAssert
-        implements ThemisXAnalysisParsedStatement {
-    /**
-     * The contents.
-     */
-    private final AssertStmt theStatement;
-
+        extends ThemisXAnalysisBaseStatement<AssertStmt> {
     /**
      * Constructor.
      * @param pParser the parser
@@ -37,19 +32,6 @@ public class ThemisXAnalysisStmtAssert
      */
     public ThemisXAnalysisStmtAssert(final ThemisXAnalysisParser pParser,
                                      final AssertStmt pStatement) {
-        theStatement = pStatement;
-    }
-
-    /**
-     * Obtain the statement.
-     * @return the statement
-     */
-    public AssertStmt getStatement() {
-        return theStatement;
-    }
-
-    @Override
-    public String toString() {
-        return theStatement.toString();
+        super(pStatement);
     }
 }

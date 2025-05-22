@@ -14,42 +14,40 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.themis.xanalysis.expr;
+package net.sourceforge.joceanus.themis.xanalysis.base;
 
-import com.github.javaparser.ast.expr.Expression;
-import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisParser;
-import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisParser.ThemisXAnalysisParsedExpr;
+import com.github.javaparser.ast.stmt.Statement;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisStatementInstance;
 
 /**
- * Expression Declaration.
+ * Statement Base Class.
+ * @param <T> the Statement
  */
-public class ThemisXAnalysisExpression
-        implements ThemisXAnalysisParsedExpr {
+public abstract class ThemisXAnalysisBaseStatement<T extends Statement>
+        implements ThemisXAnalysisStatementInstance {
     /**
-     * The type.
+     * The statement.
      */
-    private final Expression theExpression;
+    private final T theStatement;
 
     /**
      * Constructor.
-     * @param pParser the parser
-     * @param pExpression the expression
+     * @param pStatement the statement
      */
-    public ThemisXAnalysisExpression(final ThemisXAnalysisParser pParser,
-                                     final Expression pExpression) {
-        theExpression = pExpression;
+    protected ThemisXAnalysisBaseStatement(final T pStatement) {
+        theStatement = pStatement;
     }
 
     /**
-     * Obtain the type.
-     * @return the type
+     * Obtain the statement.
+     * @return the statement
      */
-    public Expression getExpression() {
-        return theExpression;
+    public T getStatement() {
+        return theStatement;
     }
 
     @Override
     public String toString() {
-        return theExpression.toString();
+        return theStatement.toString();
     }
 }

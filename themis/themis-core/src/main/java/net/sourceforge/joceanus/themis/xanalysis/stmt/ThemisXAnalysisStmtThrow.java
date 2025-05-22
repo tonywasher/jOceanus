@@ -18,24 +18,19 @@ package net.sourceforge.joceanus.themis.xanalysis.stmt;
 
 import com.github.javaparser.ast.stmt.ThrowStmt;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisParser;
-import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisParser.ThemisXAnalysisParsedExpr;
-import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisParser.ThemisXAnalysisParsedStatement;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisBaseStatement;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisExpressionInstance;
 
 /**
  * Throw Statement.
  */
 public class ThemisXAnalysisStmtThrow
-        implements ThemisXAnalysisParsedStatement {
-    /**
-     * The contents.
-     */
-    private final ThrowStmt theStatement;
-
+        extends ThemisXAnalysisBaseStatement<ThrowStmt> {
     /**
      * The thrown.
      */
-    private final ThemisXAnalysisParsedExpr theThrown;
+    private final ThemisXAnalysisExpressionInstance theThrown;
 
     /**
      * Constructor.
@@ -45,28 +40,15 @@ public class ThemisXAnalysisStmtThrow
      */
     public ThemisXAnalysisStmtThrow(final ThemisXAnalysisParser pParser,
                                     final ThrowStmt pStatement) throws OceanusException {
-        theStatement = pStatement;
-        theThrown = pParser.parseExpression(theStatement.getExpression());
-    }
-
-    /**
-     * Obtain the statement.
-     * @return the statement
-     */
-    public ThrowStmt getStatement() {
-        return theStatement;
+        super(pStatement);
+        theThrown = pParser.parseExpression(pStatement.getExpression());
     }
 
     /**
      * Obtain the thrown.
      * @return the thrown
      */
-    public ThemisXAnalysisParsedExpr getThrown() {
+    public ThemisXAnalysisExpressionInstance getThrown() {
         return theThrown;
-    }
-
-    @Override
-    public String toString() {
-        return theStatement.toString();
     }
 }

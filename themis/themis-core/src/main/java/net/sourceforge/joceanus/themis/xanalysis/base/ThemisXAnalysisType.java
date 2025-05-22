@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.themis.xanalysis.util;
+package net.sourceforge.joceanus.themis.xanalysis.base;
 
 import com.github.javaparser.ast.type.Type;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
@@ -25,7 +25,7 @@ import java.util.function.Predicate;
 /**
  * Analysis TypeType.
  */
-public enum ThemisXAnalysisTypeType {
+public enum ThemisXAnalysisType {
     /**
      * Array.
      */
@@ -52,11 +52,6 @@ public enum ThemisXAnalysisTypeType {
     PRIMITIVE(Type::isPrimitiveType),
 
     /**
-     * Reference.
-     */
-    REFERENCE(Type::isReferenceType),
-
-     /**
      * Union.
      */
     UNION(Type::isUnionType),
@@ -90,7 +85,7 @@ public enum ThemisXAnalysisTypeType {
      * Constructor.
      * @param pTester the test method
      */
-    ThemisXAnalysisTypeType(final Predicate<Type> pTester) {
+    ThemisXAnalysisType(final Predicate<Type> pTester) {
         theTester = pTester;
     }
 
@@ -100,9 +95,9 @@ public enum ThemisXAnalysisTypeType {
      * @return the typeType
      * @throws OceanusException on error
      */
-    public static ThemisXAnalysisTypeType determineTypeType(final Type pType) throws OceanusException {
+    public static ThemisXAnalysisType determineTypeType(final Type pType) throws OceanusException {
         /* Loop testing each body type */
-        for (ThemisXAnalysisTypeType myType : values()) {
+        for (ThemisXAnalysisType myType : values()) {
             if (myType.theTester.test(pType)) {
                 return myType;
             }

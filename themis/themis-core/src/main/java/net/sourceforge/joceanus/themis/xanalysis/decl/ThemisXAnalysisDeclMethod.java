@@ -14,31 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.themis.xanalysis.body;
+package net.sourceforge.joceanus.themis.xanalysis.decl;
 
 import com.github.javaparser.ast.body.MethodDeclaration;
-import com.github.javaparser.ast.stmt.Statement;
 import com.github.javaparser.ast.type.Type;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisModifiers;
-import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisParser;
-import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisParser.ThemisXAnalysisParsedBody;
-import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisParser.ThemisXAnalysisParsedParam;
-import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisParser.ThemisXAnalysisParsedStatement;
-import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisParser.ThemisXAnalysisParsedType;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisBaseDeclaration;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisModifiers;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisParamInstance;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisStatementInstance;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisTypeInstance;
 
 import java.util.List;
 
 /**
  * Method Declaration.
  */
-public class ThemisXAnalysisBodyMethod
-        implements ThemisXAnalysisParsedBody {
-    /**
-     * The declaration.
-     */
-    private final MethodDeclaration theDeclaration;
-
+public class ThemisXAnalysisDeclMethod
+        extends ThemisXAnalysisBaseDeclaration<MethodDeclaration> {
     /**
      * The name.
      */
@@ -57,22 +51,22 @@ public class ThemisXAnalysisBodyMethod
     /**
      * The parameters.
      */
-    private final List<ThemisXAnalysisParsedParam> theParameters;
+    private final List<ThemisXAnalysisParamInstance> theParameters;
 
     /**
      * The body.
      */
-    private final ThemisXAnalysisParsedStatement theBody;
+    private final ThemisXAnalysisStatementInstance theBody;
 
     /**
      * The typeParameters.
      */
-    private final List<ThemisXAnalysisParsedType> theTypeParameters;
+    private final List<ThemisXAnalysisTypeInstance> theTypeParameters;
 
     /**
      * The thrown exceptions.
      */
-    private final List<ThemisXAnalysisParsedType> theThrown;
+    private final List<ThemisXAnalysisTypeInstance> theThrown;
 
     /**
      * Constructor.
@@ -80,25 +74,16 @@ public class ThemisXAnalysisBodyMethod
      * @param pDeclaration the declaration
      * @throws OceanusException on error
      */
-    public ThemisXAnalysisBodyMethod(final ThemisXAnalysisParser pParser,
+    public ThemisXAnalysisDeclMethod(final ThemisXAnalysisParser pParser,
                                      final MethodDeclaration pDeclaration) throws OceanusException {
-        theDeclaration = pDeclaration;
-        theName = theDeclaration.getNameAsString();
-        theType = theDeclaration.getType();
-        theModifiers = new ThemisXAnalysisModifiers(theDeclaration.getModifiers());
-        final Statement myBody = theDeclaration.getBody().orElse(null);
-        theBody = myBody == null ? null : pParser.parseStatement(myBody);
-        theTypeParameters = pParser.parseTypeList(theDeclaration.getTypeParameters());
-        theThrown = pParser.parseTypeList(theDeclaration.getThrownExceptions());
-        theParameters = pParser.parseParamList(theDeclaration.getParameters());
-    }
-
-    /**
-     * Obtain the declaration.
-     * @return the declaration
-     */
-    public MethodDeclaration getDeclaration() {
-        return theDeclaration;
+        super(pDeclaration);
+        theName = pDeclaration.getNameAsString();
+        theType = pDeclaration.getType();
+        theModifiers = new ThemisXAnalysisModifiers(pDeclaration.getModifiers());
+        theBody = pParser.parseStatement(pDeclaration.getBody().orElse(null));
+        theTypeParameters = pParser.parseTypeList(pDeclaration.getTypeParameters());
+        theThrown = pParser.parseTypeList(pDeclaration.getThrownExceptions());
+        theParameters = pParser.parseParamList(pDeclaration.getParameters());
     }
 
     /**
@@ -129,7 +114,7 @@ public class ThemisXAnalysisBodyMethod
      * Obtain the parameters.
      * @return the parameters
      */
-    public List<ThemisXAnalysisParsedParam> getParameters() {
+    public List<ThemisXAnalysisParamInstance> getParameters() {
         return theParameters;
     }
 
@@ -137,7 +122,7 @@ public class ThemisXAnalysisBodyMethod
      * Obtain the body.
      * @return the body
      */
-    public ThemisXAnalysisParsedStatement getBody() {
+    public ThemisXAnalysisStatementInstance getBody() {
         return theBody;
     }
 
@@ -145,7 +130,7 @@ public class ThemisXAnalysisBodyMethod
      * Obtain the type parameters.
      * @return the parameters
      */
-    public List<ThemisXAnalysisParsedType> getTypeParameters() {
+    public List<ThemisXAnalysisTypeInstance> getTypeParameters() {
         return theTypeParameters;
     }
 
@@ -153,12 +138,7 @@ public class ThemisXAnalysisBodyMethod
      * Obtain the thrown exceptions.
      * @return the exceptions
      */
-    public List<ThemisXAnalysisParsedType> getThrown() {
+    public List<ThemisXAnalysisTypeInstance> getThrown() {
         return theThrown;
-    }
-
-    @Override
-    public String toString() {
-        return theDeclaration.toString();
     }
 }

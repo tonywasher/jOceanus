@@ -17,19 +17,13 @@
 package net.sourceforge.joceanus.themis.xanalysis.expr;
 
 import com.github.javaparser.ast.expr.SingleMemberAnnotationExpr;
-import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisParser;
-import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisParser.ThemisXAnalysisParsedExpr;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
 
 /**
  * SingleMemberAnnotation Expression Declaration.
  */
 public class ThemisXAnalysisExprSingleMemberAnnotation
-        implements ThemisXAnalysisParsedExpr {
-    /**
-     * The type.
-     */
-    private final SingleMemberAnnotationExpr theExpression;
-
+        extends ThemisXAnalysisExprAnnotation<SingleMemberAnnotationExpr> {
     /**
      * Constructor.
      * @param pParser the parser
@@ -37,19 +31,6 @@ public class ThemisXAnalysisExprSingleMemberAnnotation
      */
     public ThemisXAnalysisExprSingleMemberAnnotation(final ThemisXAnalysisParser pParser,
                                                      final SingleMemberAnnotationExpr pExpression) {
-        theExpression = pExpression;
-    }
-
-    /**
-     * Obtain the type.
-     * @return the type
-     */
-    public SingleMemberAnnotationExpr getExpression() {
-        return theExpression;
-    }
-
-    @Override
-    public String toString() {
-        return theExpression.toString();
+        super(pParser, pExpression);
     }
 }

@@ -17,19 +17,14 @@
 package net.sourceforge.joceanus.themis.xanalysis.expr;
 
 import com.github.javaparser.ast.expr.ObjectCreationExpr;
-import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisParser;
-import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisParser.ThemisXAnalysisParsedExpr;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisBaseExpression;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
 
 /**
  * Object Creation Expression Declaration.
  */
 public class ThemisXAnalysisExprObjectCreate
-        implements ThemisXAnalysisParsedExpr {
-    /**
-     * The type.
-     */
-    private final ObjectCreationExpr theExpression;
-
+        extends ThemisXAnalysisBaseExpression<ObjectCreationExpr> {
     /**
      * Constructor.
      * @param pParser the parser
@@ -37,19 +32,6 @@ public class ThemisXAnalysisExprObjectCreate
      */
     public ThemisXAnalysisExprObjectCreate(final ThemisXAnalysisParser pParser,
                                            final ObjectCreationExpr pExpression) {
-        theExpression = pExpression;
-    }
-
-    /**
-     * Obtain the type.
-     * @return the type
-     */
-    public ObjectCreationExpr getExpression() {
-        return theExpression;
-    }
-
-    @Override
-    public String toString() {
-        return theExpression.toString();
+        super(pExpression);
     }
 }

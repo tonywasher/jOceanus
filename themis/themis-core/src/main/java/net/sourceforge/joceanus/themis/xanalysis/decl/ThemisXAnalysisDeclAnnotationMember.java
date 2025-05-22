@@ -14,42 +14,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.themis.xanalysis.body;
+package net.sourceforge.joceanus.themis.xanalysis.decl;
 
 import com.github.javaparser.ast.body.AnnotationMemberDeclaration;
-import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisParser;
-import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisParser.ThemisXAnalysisParsedBody;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisBaseDeclaration;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
 
 /**
  * Annotation Declaration.
  */
-public class ThemisXAnalysisBodyAnnotationMember
-        implements ThemisXAnalysisParsedBody {
-    /**
-     * The declaration.
-     */
-    private final AnnotationMemberDeclaration theDeclaration;
-
+public class ThemisXAnalysisDeclAnnotationMember
+        extends ThemisXAnalysisBaseDeclaration<AnnotationMemberDeclaration> {
     /**
      * Constructor.
      * @param pParser the parser
      * @param pDeclaration the declaration
      */
-    public ThemisXAnalysisBodyAnnotationMember(final ThemisXAnalysisParser pParser,
+    public ThemisXAnalysisDeclAnnotationMember(final ThemisXAnalysisParser pParser,
                                                final AnnotationMemberDeclaration pDeclaration) {
-        theDeclaration = pDeclaration;
-    }
-
-    /**
-     * Obtain the declaration.
-     * @return the declaration
-     */
-    public AnnotationMemberDeclaration getDeclaration() {
-        return theDeclaration;
-    }
-
-    @Override
-    public String toString() {
-        return theDeclaration.toString();
+        super(pDeclaration);
     }
 }

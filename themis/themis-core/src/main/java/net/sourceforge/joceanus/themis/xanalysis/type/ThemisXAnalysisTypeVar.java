@@ -17,19 +17,14 @@
 package net.sourceforge.joceanus.themis.xanalysis.type;
 
 import com.github.javaparser.ast.type.VarType;
-import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisParser;
-import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisParser.ThemisXAnalysisParsedType;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisBaseType;
 
 /**
  * Var Type Declaration.
  */
 public class ThemisXAnalysisTypeVar
-        implements ThemisXAnalysisParsedType {
-    /**
-     * The type.
-     */
-    private final VarType theType;
-
+        extends ThemisXAnalysisBaseType<VarType> {
     /**
      * Constructor.
      * @param pParser the parser
@@ -37,19 +32,6 @@ public class ThemisXAnalysisTypeVar
      */
     public ThemisXAnalysisTypeVar(final ThemisXAnalysisParser pParser,
                                   final VarType pType) {
-        theType = pType;
-    }
-
-    /**
-     * Obtain the type.
-     * @return the type
-     */
-    public VarType getType() {
-        return theType;
-    }
-
-    @Override
-    public String toString() {
-        return theType.toString();
+        super(pType);
     }
 }

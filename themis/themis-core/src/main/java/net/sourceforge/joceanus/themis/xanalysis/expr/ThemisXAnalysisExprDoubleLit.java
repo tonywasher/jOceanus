@@ -17,19 +17,13 @@
 package net.sourceforge.joceanus.themis.xanalysis.expr;
 
 import com.github.javaparser.ast.expr.DoubleLiteralExpr;
-import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisParser;
-import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisParser.ThemisXAnalysisParsedExpr;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
 
 /**
  * Double Literal Expression Declaration.
  */
 public class ThemisXAnalysisExprDoubleLit
-        implements ThemisXAnalysisParsedExpr {
-    /**
-     * The type.
-     */
-    private final DoubleLiteralExpr theExpression;
-
+        extends ThemisXAnalysisExprLiteral<DoubleLiteralExpr> {
     /**
      * Constructor.
      * @param pParser the parser
@@ -37,19 +31,6 @@ public class ThemisXAnalysisExprDoubleLit
      */
     public ThemisXAnalysisExprDoubleLit(final ThemisXAnalysisParser pParser,
                                         final DoubleLiteralExpr pExpression) {
-        theExpression = pExpression;
-    }
-
-    /**
-     * Obtain the type.
-     * @return the type
-     */
-    public DoubleLiteralExpr getExpression() {
-        return theExpression;
-    }
-
-    @Override
-    public String toString() {
-        return theExpression.toString();
+        super(pParser, pExpression);
     }
 }

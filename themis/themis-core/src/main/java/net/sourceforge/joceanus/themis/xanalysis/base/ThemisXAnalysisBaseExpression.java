@@ -14,23 +14,40 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.themis.xanalysis.expr;
+package net.sourceforge.joceanus.themis.xanalysis.base;
 
-import com.github.javaparser.ast.expr.NullLiteralExpr;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
+import com.github.javaparser.ast.expr.Expression;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisExpressionInstance;
 
 /**
- * Null Literal Expression Declaration.
+ * Expression Base Class.
+ * @param <T> the Expression
  */
-public class ThemisXAnalysisExprNullLit
-        extends ThemisXAnalysisExprLiteral<NullLiteralExpr> {
+public abstract class ThemisXAnalysisBaseExpression<T extends Expression>
+        implements ThemisXAnalysisExpressionInstance {
+    /**
+     * The expression.
+     */
+    private final T theExpression;
+
     /**
      * Constructor.
-     * @param pParser the parser
      * @param pExpression the expression
      */
-    public ThemisXAnalysisExprNullLit(final ThemisXAnalysisParser pParser,
-                                      final NullLiteralExpr pExpression) {
-        super(pParser, pExpression);
+    protected ThemisXAnalysisBaseExpression(final T pExpression) {
+        theExpression = pExpression;
+    }
+
+    /**
+     * Obtain the expression.
+     * @return the expression
+     */
+    public T getExpression() {
+        return theExpression;
+    }
+
+    @Override
+    public String toString() {
+        return theExpression.toString();
     }
 }

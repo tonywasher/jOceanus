@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.themis.xanalysis.util;
+package net.sourceforge.joceanus.themis.xanalysis.base;
 
 import com.github.javaparser.ast.expr.Expression;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
@@ -25,12 +25,7 @@ import java.util.function.Predicate;
 /**
  * Analysis ExpressionType.
  */
-public enum ThemisXAnalysisExprType {
-    /**
-     * Annotation.
-     */
-    ANNOTATION(Expression::isAnnotationExpr),
-
+public enum ThemisXAnalysisExpression {
     /**
      * ArrayAccess.
      */
@@ -220,7 +215,7 @@ public enum ThemisXAnalysisExprType {
      * Constructor.
      * @param pTester the test method
      */
-    ThemisXAnalysisExprType(final Predicate<Expression> pTester) {
+    ThemisXAnalysisExpression(final Predicate<Expression> pTester) {
         theTester = pTester;
     }
 
@@ -230,9 +225,9 @@ public enum ThemisXAnalysisExprType {
      * @return the exprType
      * @throws OceanusException on error
      */
-    public static ThemisXAnalysisExprType determineExprType(final Expression pType) throws OceanusException {
+    public static ThemisXAnalysisExpression determineExprType(final Expression pType) throws OceanusException {
         /* Loop testing each body type */
-        for (ThemisXAnalysisExprType myType : values()) {
+        for (ThemisXAnalysisExpression myType : values()) {
             if (myType.theTester.test(pType)) {
                 return myType;
             }

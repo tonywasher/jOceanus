@@ -14,27 +14,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.themis.xanalysis.body;
+package net.sourceforge.joceanus.themis.xanalysis.decl;
 
 import com.github.javaparser.ast.body.EnumDeclaration;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisModifiers;
-import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisParser;
-import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisParser.ThemisXAnalysisParsedBody;
-import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisParser.ThemisXAnalysisParsedType;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisBaseDeclaration;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisModifiers;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisDeclarationInstance;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisTypeInstance;
 
 import java.util.List;
 
 /**
  * Enum Declaration.
  */
-public class ThemisXAnalysisBodyEnum
-        implements ThemisXAnalysisParsedBody {
-    /**
-     * The declaration.
-     */
-    private final EnumDeclaration theDeclaration;
-
+public class ThemisXAnalysisDeclEnum
+        extends ThemisXAnalysisBaseDeclaration<EnumDeclaration> {
     /**
      * The shortName.
      */
@@ -53,17 +49,17 @@ public class ThemisXAnalysisBodyEnum
     /**
      * The enumConstants.
      */
-    private final List<ThemisXAnalysisParsedBody> theValues;
+    private final List<ThemisXAnalysisDeclarationInstance> theValues;
 
     /**
      * The members.
      */
-    private final List<ThemisXAnalysisParsedBody> theMembers;
+    private final List<ThemisXAnalysisDeclarationInstance> theMembers;
 
     /**
      * The implements.
      */
-    private final List<ThemisXAnalysisParsedType> theImplements;
+    private final List<ThemisXAnalysisTypeInstance> theImplements;
 
     /**
      * Constructor.
@@ -71,24 +67,16 @@ public class ThemisXAnalysisBodyEnum
      * @param pDeclaration the declaration
      * @throws OceanusException on error
      */
-    public ThemisXAnalysisBodyEnum(final ThemisXAnalysisParser pParser,
+    public ThemisXAnalysisDeclEnum(final ThemisXAnalysisParser pParser,
                                    final EnumDeclaration pDeclaration) throws OceanusException {
         /* Store values */
-        theDeclaration = pDeclaration;
-        theShortName = theDeclaration.getNameAsString();
-        theFullName = theDeclaration.getFullyQualifiedName().orElse(null);
-        theModifiers = new ThemisXAnalysisModifiers(theDeclaration.getModifiers());
-        theImplements = pParser.parseTypeList(theDeclaration.getImplementedTypes());
-        theValues = pParser.parseMemberList(theDeclaration.getEntries());
-        theMembers = pParser.parseMemberList(theDeclaration.getMembers());
-    }
-
-    /**
-     * Obtain the declaration.
-     * @return the declaration
-     */
-    public EnumDeclaration getDeclaration() {
-        return theDeclaration;
+        super(pDeclaration);
+        theShortName = pDeclaration.getNameAsString();
+        theFullName = pDeclaration.getFullyQualifiedName().orElse(null);
+        theModifiers = new ThemisXAnalysisModifiers(pDeclaration.getModifiers());
+        theImplements = pParser.parseTypeList(pDeclaration.getImplementedTypes());
+        theValues = pParser.parseDeclarationList(pDeclaration.getEntries());
+        theMembers = pParser.parseDeclarationList(pDeclaration.getMembers());
     }
 
     /**
@@ -119,7 +107,7 @@ public class ThemisXAnalysisBodyEnum
      * Obtain the values.
      * @return the values
      */
-    public List<ThemisXAnalysisParsedBody> getValues() {
+    public List<ThemisXAnalysisDeclarationInstance> getValues() {
         return theValues;
     }
 
@@ -127,7 +115,7 @@ public class ThemisXAnalysisBodyEnum
      * Obtain the members.
      * @return the members
      */
-    public List<ThemisXAnalysisParsedBody> getMembers() {
+    public List<ThemisXAnalysisDeclarationInstance> getMembers() {
         return theMembers;
     }
 
@@ -135,12 +123,7 @@ public class ThemisXAnalysisBodyEnum
      * Obtain the implements types.
      * @return the implements
      */
-    public List<ThemisXAnalysisParsedType> getImplements() {
+    public List<ThemisXAnalysisTypeInstance> getImplements() {
         return theImplements;
-    }
-
-    @Override
-    public String toString() {
-        return theDeclaration.toString();
     }
 }

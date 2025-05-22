@@ -17,19 +17,13 @@
 package net.sourceforge.joceanus.themis.xanalysis.expr;
 
 import com.github.javaparser.ast.expr.BooleanLiteralExpr;
-import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisParser;
-import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisParser.ThemisXAnalysisParsedExpr;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
 
 /**
  * BooleanLiteral Expression Declaration.
  */
 public class ThemisXAnalysisExprBooleanLit
-        implements ThemisXAnalysisParsedExpr {
-    /**
-     * The type.
-     */
-    private final BooleanLiteralExpr theExpression;
-
+        extends ThemisXAnalysisExprLiteral<BooleanLiteralExpr> {
     /**
      * Constructor.
      * @param pParser the parser
@@ -37,19 +31,6 @@ public class ThemisXAnalysisExprBooleanLit
      */
     public ThemisXAnalysisExprBooleanLit(final ThemisXAnalysisParser pParser,
                                          final BooleanLiteralExpr pExpression) {
-        theExpression = pExpression;
-    }
-
-    /**
-     * Obtain the type.
-     * @return the type
-     */
-    public BooleanLiteralExpr getExpression() {
-        return theExpression;
-    }
-
-    @Override
-    public String toString() {
-        return theExpression.toString();
+        super(pParser, pExpression);
     }
 }

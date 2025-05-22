@@ -17,13 +17,13 @@
 package net.sourceforge.joceanus.themis.xanalysis.stmt;
 
 import com.github.javaparser.ast.stmt.CatchClause;
-import com.github.javaparser.ast.stmt.Statement;
 import com.github.javaparser.ast.stmt.TryStmt;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisParser;
-import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisParser.ThemisXAnalysisParsedExpr;
-import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisParser.ThemisXAnalysisParsedParam;
-import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisParser.ThemisXAnalysisParsedStatement;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisBaseStatement;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisExpressionInstance;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisParamInstance;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisStatementInstance;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,21 +32,16 @@ import java.util.List;
  * Try Statement.
  */
 public class ThemisXAnalysisStmtTry
-        implements ThemisXAnalysisParsedStatement {
+        extends ThemisXAnalysisBaseStatement<TryStmt> {
     /**
      * The contents.
      */
-    private final TryStmt theStatement;
-
-    /**
-     * The contents.
-     */
-    private final List<ThemisXAnalysisParsedExpr> theResources;
+    private final List<ThemisXAnalysisExpressionInstance> theResources;
 
     /**
      * The tryBlock.
      */
-    private final ThemisXAnalysisParsedStatement theTry;
+    private final ThemisXAnalysisStatementInstance theTry;
 
     /**
      * The catchClauses.
@@ -56,7 +51,7 @@ public class ThemisXAnalysisStmtTry
     /**
      * The contents.
      */
-    private final ThemisXAnalysisParsedStatement theFinally;
+    private final ThemisXAnalysisStatementInstance theFinally;
 
     /**
      * Constructor.
@@ -66,31 +61,22 @@ public class ThemisXAnalysisStmtTry
      */
     public ThemisXAnalysisStmtTry(final ThemisXAnalysisParser pParser,
                                   final TryStmt pStatement) throws OceanusException {
-        theStatement = pStatement;
-        theResources = pParser.parseExprList(theStatement.getResources());
-        theTry = pParser.parseStatement(theStatement.getTryBlock());
-        final Statement myFinally = theStatement.getFinallyBlock().orElse(null);
-        theFinally = myFinally == null ? null : pParser.parseStatement(myFinally);
+        super(pStatement);
+        theResources = pParser.parseExprList(pStatement.getResources());
+        theTry = pParser.parseStatement(pStatement.getTryBlock());
+        theFinally = pParser.parseStatement(pStatement.getFinallyBlock().orElse(null));
         theCatches = new ArrayList<>();
-        for (CatchClause myClause : theStatement.getCatchClauses()) {
+        for (CatchClause myClause : pStatement.getCatchClauses()) {
             final ThemisXAnalysisStmtCatch myCatch = new ThemisXAnalysisStmtCatch(pParser, myClause);
             theCatches.add(myCatch);
         }
     }
 
     /**
-     * Obtain the statement.
-     * @return the statement
-     */
-    public TryStmt getStatement() {
-        return theStatement;
-    }
-
-    /**
      * Obtain the body.
      * @return the body
      */
-    public List<ThemisXAnalysisParsedExpr> getResources() {
+    public List<ThemisXAnalysisExpressionInstance> getResources() {
         return theResources;
     }
 
@@ -98,7 +84,7 @@ public class ThemisXAnalysisStmtTry
      * Obtain the try.
      * @return the try
      */
-    public ThemisXAnalysisParsedStatement getTry() {
+    public ThemisXAnalysisStatementInstance getTry() {
         return theTry;
     }
 
@@ -114,20 +100,14 @@ public class ThemisXAnalysisStmtTry
      * Obtain the finally.
      * @return the finally
      */
-    public ThemisXAnalysisParsedStatement getFinally() {
+    public ThemisXAnalysisStatementInstance getFinally() {
         return theFinally;
-    }
-
-    @Override
-    public String toString() {
-        return theStatement.toString();
     }
 
     /**
      * Try Catch.
      */
-    public static final class ThemisXAnalysisStmtCatch
-            implements ThemisXAnalysisParsedStatement {
+    public static final class ThemisXAnalysisStmtCatch {
         /**
          * The contents.
          */
@@ -136,12 +116,12 @@ public class ThemisXAnalysisStmtTry
         /**
          * The parameter.
          */
-        private final ThemisXAnalysisParsedParam theParameter;
+        private final ThemisXAnalysisParamInstance theParameter;
 
         /**
          * The body.
          */
-        private final ThemisXAnalysisParsedStatement theBody;
+        private final ThemisXAnalysisStatementInstance theBody;
 
         /**
          * Constructor.
@@ -169,7 +149,7 @@ public class ThemisXAnalysisStmtTry
          * Obtain the parameter.
          * @return the parameter
          */
-        public ThemisXAnalysisParsedParam getParameter() {
+        public ThemisXAnalysisParamInstance getParameter() {
             return theParameter;
         }
 
@@ -177,7 +157,7 @@ public class ThemisXAnalysisStmtTry
          * Obtain the body.
          * @return the body
          */
-        public ThemisXAnalysisParsedStatement getBody() {
+        public ThemisXAnalysisStatementInstance getBody() {
             return theBody;
         }
 

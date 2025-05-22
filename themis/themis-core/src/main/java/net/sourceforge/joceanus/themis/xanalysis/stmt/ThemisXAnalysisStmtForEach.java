@@ -18,35 +18,31 @@ package net.sourceforge.joceanus.themis.xanalysis.stmt;
 
 import com.github.javaparser.ast.stmt.ForEachStmt;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisParser;
-import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisParser.ThemisXAnalysisParsedExpr;
-import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisParser.ThemisXAnalysisParsedStatement;
-import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisParser.ThemisXAnalysisParsedVar;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisBaseStatement;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisExpressionInstance;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisStatementInstance;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisVarInstance;
 
 /**
  * ForEach Statement.
  */
 public class ThemisXAnalysisStmtForEach
-        implements ThemisXAnalysisParsedStatement {
-    /**
-     * The contents.
-     */
-    private final ForEachStmt theStatement;
-
+        extends ThemisXAnalysisBaseStatement<ForEachStmt> {
     /**
      * The body.
      */
-    private final ThemisXAnalysisParsedStatement theBody;
+    private final ThemisXAnalysisStatementInstance theBody;
 
     /**
      * The variable.
      */
-    private final ThemisXAnalysisParsedExpr theVariable;
+    private final ThemisXAnalysisExpressionInstance theVariable;
 
     /**
      * The variable declarator.
      */
-    private final ThemisXAnalysisParsedVar theVariableDeclarator;
+    private final ThemisXAnalysisVarInstance theVariableDeclarator;
 
     /**
      * Constructor.
@@ -56,25 +52,17 @@ public class ThemisXAnalysisStmtForEach
      */
     public ThemisXAnalysisStmtForEach(final ThemisXAnalysisParser pParser,
                                       final ForEachStmt pStatement) throws OceanusException {
-        theStatement = pStatement;
-        theBody = pParser.parseStatement(theStatement.getBody());
-        theVariable = pParser.parseExpression(theStatement.getVariable());
-        theVariableDeclarator = pParser.parseVariable(theStatement.getVariableDeclarator());
-    }
-
-    /**
-     * Obtain the statement.
-     * @return the statement
-     */
-    public ForEachStmt getStatement() {
-        return theStatement;
+        super(pStatement);
+        theBody = pParser.parseStatement(pStatement.getBody());
+        theVariable = pParser.parseExpression(pStatement.getVariable());
+        theVariableDeclarator = pParser.parseVariable(pStatement.getVariableDeclarator());
     }
 
     /**
      * Obtain the variable.
      * @return the variable
      */
-    public ThemisXAnalysisParsedExpr getVariable() {
+    public ThemisXAnalysisExpressionInstance getVariable() {
         return theVariable;
     }
 
@@ -82,7 +70,7 @@ public class ThemisXAnalysisStmtForEach
      * Obtain the variable declarator.
      * @return the declarator
      */
-    public ThemisXAnalysisParsedVar getVariableDeclarator() {
+    public ThemisXAnalysisVarInstance getVariableDeclarator() {
         return theVariableDeclarator;
     }
 
@@ -90,12 +78,7 @@ public class ThemisXAnalysisStmtForEach
      * Obtain the body.
      * @return the body
      */
-    public ThemisXAnalysisParsedStatement getBody() {
+    public ThemisXAnalysisStatementInstance getBody() {
         return theBody;
-    }
-
-    @Override
-    public String toString() {
-        return theStatement.toString();
     }
 }

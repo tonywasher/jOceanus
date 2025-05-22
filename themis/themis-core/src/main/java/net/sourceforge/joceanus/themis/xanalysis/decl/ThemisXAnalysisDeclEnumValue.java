@@ -14,26 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.themis.xanalysis.body;
+package net.sourceforge.joceanus.themis.xanalysis.decl;
 
 import com.github.javaparser.ast.body.EnumConstantDeclaration;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisParser;
-import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisParser.ThemisXAnalysisParsedBody;
-import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisParser.ThemisXAnalysisParsedExpr;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisBaseDeclaration;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisDeclarationInstance;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisExpressionInstance;
 
 import java.util.List;
 
 /**
  * Class Declaration.
  */
-public class ThemisXAnalysisBodyEnumValue
-        implements ThemisXAnalysisParsedBody {
-    /**
-     * The declaration.
-     */
-    private final EnumConstantDeclaration theDeclaration;
-
+public class ThemisXAnalysisDeclEnumValue
+        extends ThemisXAnalysisBaseDeclaration<EnumConstantDeclaration> {
     /**
      * The name.
      */
@@ -42,32 +38,24 @@ public class ThemisXAnalysisBodyEnumValue
     /**
      * The arguments.
      */
-    private final List<ThemisXAnalysisParsedExpr> theArguments;
+    private final List<ThemisXAnalysisExpressionInstance> theArguments;
 
     /**
      * The class body.
      */
-    private final List<ThemisXAnalysisParsedBody> theBody;
+    private final List<ThemisXAnalysisDeclarationInstance> theBody;
 
     /**
      * Constructor.
      * @param pParser the parser
      * @param pDeclaration the declaration
      */
-    public ThemisXAnalysisBodyEnumValue(final ThemisXAnalysisParser pParser,
+    public ThemisXAnalysisDeclEnumValue(final ThemisXAnalysisParser pParser,
                                         final EnumConstantDeclaration pDeclaration) throws OceanusException {
-        theDeclaration = pDeclaration;
-        theName = theDeclaration.getNameAsString();
-        theArguments = pParser.parseExprList(theDeclaration.getArguments());
-        theBody = pParser.parseMemberList(theDeclaration.getClassBody());
-    }
-
-    /**
-     * Obtain the declaration.
-     * @return the declaration
-     */
-    public EnumConstantDeclaration getDeclaration() {
-        return theDeclaration;
+        super(pDeclaration);
+        theName = pDeclaration.getNameAsString();
+        theArguments = pParser.parseExprList(pDeclaration.getArguments());
+        theBody = pParser.parseDeclarationList(pDeclaration.getClassBody());
     }
 
     /**
@@ -82,7 +70,7 @@ public class ThemisXAnalysisBodyEnumValue
      * Obtain the arguments.
      * @return the arguments
      */
-    public List<ThemisXAnalysisParsedExpr> getArguments() {
+    public List<ThemisXAnalysisExpressionInstance> getArguments() {
         return theArguments;
     }
 
@@ -90,12 +78,7 @@ public class ThemisXAnalysisBodyEnumValue
      * Obtain the body.
      * @return the body
      */
-    public List<ThemisXAnalysisParsedBody> getBody() {
+    public List<ThemisXAnalysisDeclarationInstance> getBody() {
         return theBody;
-    }
-
-    @Override
-    public String toString() {
-        return theDeclaration.toString();
     }
 }

@@ -14,20 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.themis.xanalysis.body;
+package net.sourceforge.joceanus.themis.xanalysis.decl;
 
 import com.github.javaparser.ast.body.Parameter;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisModifiers;
-import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisParser;
-import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisParser.ThemisXAnalysisParsedParam;
-import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisParser.ThemisXAnalysisParsedType;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisModifiers;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisParamInstance;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisTypeInstance;
 
 /**
  * Class Declaration.
  */
-public class ThemisXAnalysisBodyParameter
-        implements ThemisXAnalysisParsedParam {
+public class ThemisXAnalysisDeclParameter
+        implements ThemisXAnalysisParamInstance {
     /**
      * The declaration.
      */
@@ -41,7 +41,7 @@ public class ThemisXAnalysisBodyParameter
     /**
      * The type.
      */
-    private final ThemisXAnalysisParsedType theType;
+    private final ThemisXAnalysisTypeInstance theType;
 
     /**
      * The modifiers.
@@ -54,7 +54,7 @@ public class ThemisXAnalysisBodyParameter
      * @param pParameter the parameter
      * @throws OceanusException on error
      */
-    public ThemisXAnalysisBodyParameter(final ThemisXAnalysisParser pParser,
+    public ThemisXAnalysisDeclParameter(final ThemisXAnalysisParser pParser,
                                         final Parameter pParameter) throws OceanusException {
         theParameter = pParameter;
         theModifiers = new ThemisXAnalysisModifiers(theParameter.getModifiers());
@@ -63,10 +63,10 @@ public class ThemisXAnalysisBodyParameter
     }
 
     /**
-     * Obtain the parameter.
-     * @return the parameter
+     * Obtain the declaration.
+     * @return the declaration
      */
-    public Parameter getParameter() {
+    public Parameter getDeclaration() {
         return theParameter;
     }
 
@@ -82,7 +82,7 @@ public class ThemisXAnalysisBodyParameter
      * Obtain the type.
      * @return the type
      */
-    public ThemisXAnalysisParsedType getType() {
+    public ThemisXAnalysisTypeInstance getType() {
         return theType;
     }
 

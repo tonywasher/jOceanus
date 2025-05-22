@@ -14,38 +14,40 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.themis.xanalysis.util;
+package net.sourceforge.joceanus.themis.xanalysis.base;
 
-import com.github.javaparser.ast.Modifier;
-import com.github.javaparser.ast.NodeList;
+import com.github.javaparser.ast.type.Type;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisTypeInstance;
 
 /**
- * Modifiers for an object.
+ * Type Base Class.
+ * @param <T> the Type
  */
-public class ThemisXAnalysisModifiers {
+public abstract class ThemisXAnalysisBaseType<T extends Type>
+        implements ThemisXAnalysisTypeInstance {
     /**
-     * The list of Modifiers.
+     * The type.
      */
-    private final NodeList<Modifier> theModifiers;
+    private final T theType;
 
     /**
      * Constructor.
-     * @param pModifiers the Modifiers
+     * @param pType the type
      */
-    public ThemisXAnalysisModifiers(final NodeList<Modifier> pModifiers) {
-        theModifiers = pModifiers;
+    protected ThemisXAnalysisBaseType(final T pType) {
+        theType = pType;
     }
 
     /**
-     * Has private modifier?
-     * @return true/false
+     * Obtain the type.
+     * @return the type
      */
-    boolean hasPrivate() {
-        return theModifiers.contains(Modifier.privateModifier());
+    public T getType() {
+        return theType;
     }
 
     @Override
     public String toString() {
-        return theModifiers.toString();
+        return theType.toString();
     }
 }

@@ -14,23 +14,38 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.themis.xanalysis.expr;
+package net.sourceforge.joceanus.themis.xanalysis.base;
 
-import com.github.javaparser.ast.expr.NullLiteralExpr;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
+import com.github.javaparser.ast.Modifier;
+import com.github.javaparser.ast.NodeList;
 
 /**
- * Null Literal Expression Declaration.
+ * Modifiers for an object.
  */
-public class ThemisXAnalysisExprNullLit
-        extends ThemisXAnalysisExprLiteral<NullLiteralExpr> {
+public class ThemisXAnalysisModifiers {
+    /**
+     * The list of Modifiers.
+     */
+    private final NodeList<Modifier> theModifiers;
+
     /**
      * Constructor.
-     * @param pParser the parser
-     * @param pExpression the expression
+     * @param pModifiers the Modifiers
      */
-    public ThemisXAnalysisExprNullLit(final ThemisXAnalysisParser pParser,
-                                      final NullLiteralExpr pExpression) {
-        super(pParser, pExpression);
+    public ThemisXAnalysisModifiers(final NodeList<Modifier> pModifiers) {
+        theModifiers = pModifiers;
+    }
+
+    /**
+     * Has private modifier?
+     * @return true/false
+     */
+    boolean hasPrivate() {
+        return theModifiers.contains(Modifier.privateModifier());
+    }
+
+    @Override
+    public String toString() {
+        return theModifiers.toString();
     }
 }

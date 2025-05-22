@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.themis.xanalysis.util;
+package net.sourceforge.joceanus.themis.xanalysis.base;
 
 import com.github.javaparser.ast.stmt.Statement;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
@@ -25,7 +25,7 @@ import java.util.function.Predicate;
 /**
  * Analysis StatementType.
  */
-public enum ThemisXAnalysisStmtType {
+public enum ThemisXAnalysisStatement {
     /**
      * Assert.
      */
@@ -140,7 +140,7 @@ public enum ThemisXAnalysisStmtType {
      * Constructor.
      * @param pTester the test method
      */
-    ThemisXAnalysisStmtType(final Predicate<Statement> pTester) {
+    ThemisXAnalysisStatement(final Predicate<Statement> pTester) {
         theTester = pTester;
     }
 
@@ -150,9 +150,9 @@ public enum ThemisXAnalysisStmtType {
      * @return the StatementType
      * @throws OceanusException on error
      */
-    public static ThemisXAnalysisStmtType determineStatementType(final Statement pStatement) throws OceanusException {
+    public static ThemisXAnalysisStatement determineStatementType(final Statement pStatement) throws OceanusException {
         /* Loop testing each statement type */
-        for (ThemisXAnalysisStmtType myType : values()) {
+        for (ThemisXAnalysisStatement myType : values()) {
             if (myType.theTester.test(pStatement)) {
                 return myType;
             }

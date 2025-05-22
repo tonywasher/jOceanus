@@ -14,28 +14,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.themis.xanalysis.body;
+package net.sourceforge.joceanus.themis.xanalysis.decl;
 
 import com.github.javaparser.ast.body.CompactConstructorDeclaration;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisModifiers;
-import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisParser;
-import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisParser.ThemisXAnalysisParsedBody;
-import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisParser.ThemisXAnalysisParsedStatement;
-import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisParser.ThemisXAnalysisParsedType;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisBaseDeclaration;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisModifiers;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisStatementInstance;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisTypeInstance;
 
 import java.util.List;
 
 /**
  * Compact Constructor Declaration.
  */
-public class ThemisXAnalysisBodyCompact
-        implements ThemisXAnalysisParsedBody {
-    /**
-     * The declaration.
-     */
-    private final CompactConstructorDeclaration theDeclaration;
-
+public class ThemisXAnalysisDeclCompact
+        extends ThemisXAnalysisBaseDeclaration<CompactConstructorDeclaration> {
     /**
      * The name.
      */
@@ -49,12 +44,12 @@ public class ThemisXAnalysisBodyCompact
     /**
      * The body.
      */
-    private final ThemisXAnalysisParsedStatement theBody;
+    private final ThemisXAnalysisStatementInstance theBody;
 
     /**
      * The thrown exceptions.
      */
-    private final List<ThemisXAnalysisParsedType> theThrown;
+    private final List<ThemisXAnalysisTypeInstance> theThrown;
 
     /**
      * Constructor.
@@ -62,21 +57,13 @@ public class ThemisXAnalysisBodyCompact
      * @param pDeclaration the declaration
      * @throws OceanusException on error
      */
-    public ThemisXAnalysisBodyCompact(final ThemisXAnalysisParser pParser,
+    public ThemisXAnalysisDeclCompact(final ThemisXAnalysisParser pParser,
                                       final CompactConstructorDeclaration pDeclaration) throws OceanusException {
-        theDeclaration = pDeclaration;
-        theBody = pParser.parseStatement(theDeclaration.getBody());
-        theModifiers = new ThemisXAnalysisModifiers(theDeclaration.getModifiers());
-        theName = theDeclaration.getNameAsString();
-        theThrown = pParser.parseTypeList(theDeclaration.getThrownExceptions());
-    }
-
-    /**
-     * Obtain the declaration.
-     * @return the declaration
-     */
-    public CompactConstructorDeclaration getDeclaration() {
-        return theDeclaration;
+        super(pDeclaration);
+        theBody = pParser.parseStatement(pDeclaration.getBody());
+        theModifiers = new ThemisXAnalysisModifiers(pDeclaration.getModifiers());
+        theName = pDeclaration.getNameAsString();
+        theThrown = pParser.parseTypeList(pDeclaration.getThrownExceptions());
     }
 
     /**
@@ -99,7 +86,7 @@ public class ThemisXAnalysisBodyCompact
      * Obtain the body.
      * @return the body
      */
-    public ThemisXAnalysisParsedStatement getBody() {
+    public ThemisXAnalysisStatementInstance getBody() {
         return theBody;
     }
 
@@ -107,12 +94,7 @@ public class ThemisXAnalysisBodyCompact
      * Obtain the thrown exceptions.
      * @return the exceptions
      */
-    public List<ThemisXAnalysisParsedType> getThrown() {
+    public List<ThemisXAnalysisTypeInstance> getThrown() {
         return theThrown;
-    }
-
-    @Override
-    public String toString() {
-        return theDeclaration.toString();
     }
 }

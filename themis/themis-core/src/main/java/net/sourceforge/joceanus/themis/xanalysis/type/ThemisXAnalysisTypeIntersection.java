@@ -18,8 +18,9 @@ package net.sourceforge.joceanus.themis.xanalysis.type;
 
 import com.github.javaparser.ast.type.IntersectionType;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisParser;
-import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisParser.ThemisXAnalysisParsedType;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisTypeInstance;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisBaseType;
 
 import java.util.List;
 
@@ -27,16 +28,11 @@ import java.util.List;
  * Intersection Type Declaration.
  */
 public class ThemisXAnalysisTypeIntersection
-        implements ThemisXAnalysisParsedType {
-    /**
-     * The type.
-     */
-    private final IntersectionType theType;
-
+        extends ThemisXAnalysisBaseType<IntersectionType> {
     /**
      * The elements.
      */
-    private final List<ThemisXAnalysisParsedType> theElements;
+    private final List<ThemisXAnalysisTypeInstance> theElements;
 
     /**
      * Constructor.
@@ -46,28 +42,15 @@ public class ThemisXAnalysisTypeIntersection
      */
     public ThemisXAnalysisTypeIntersection(final ThemisXAnalysisParser pParser,
                                            final IntersectionType pType) throws OceanusException {
-        theType = pType;
-        theElements = pParser.parseTypeList(theType.getElements());
-    }
-
-    /**
-     * Obtain the type.
-     * @return the type
-     */
-    public IntersectionType getType() {
-        return theType;
+        super(pType);
+        theElements = pParser.parseTypeList(pType.getElements());
     }
 
     /**
      * Obtain the elements.
      * @return the elements
      */
-    public List<ThemisXAnalysisParsedType> getElements() {
+    public List<ThemisXAnalysisTypeInstance> getElements() {
         return theElements;
-    }
-
-    @Override
-    public String toString() {
-        return theType.toString();
     }
 }

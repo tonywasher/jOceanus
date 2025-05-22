@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.themis.xanalysis.util;
+package net.sourceforge.joceanus.themis.xanalysis.base;
 
 import com.github.javaparser.ast.body.BodyDeclaration;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
@@ -26,7 +26,7 @@ import java.util.function.Predicate;
 /**
  * Analysis BodyType.
  */
-public enum ThemisXAnalysisBodyType {
+public enum ThemisXAnalysisDeclaration {
     /**
      * Annotation.
      */
@@ -96,7 +96,7 @@ public enum ThemisXAnalysisBodyType {
      * Constructor.
      * @param pTester the test method
      */
-    ThemisXAnalysisBodyType(final Predicate<BodyDeclaration<?>> pTester) {
+    ThemisXAnalysisDeclaration(final Predicate<BodyDeclaration<?>> pTester) {
         theTester = pTester;
     }
 
@@ -106,9 +106,9 @@ public enum ThemisXAnalysisBodyType {
      * @return the bodyType
      * @throws OceanusException on error
      */
-    public static ThemisXAnalysisBodyType determineBodyType(final BodyDeclaration<?> pType) throws OceanusException {
+    public static ThemisXAnalysisDeclaration determineDeclType(final BodyDeclaration<?> pType) throws OceanusException {
         /* Loop testing each body type */
-        for (ThemisXAnalysisBodyType myType : values()) {
+        for (ThemisXAnalysisDeclaration myType : values()) {
             if (myType.theTester.test(pType)) {
                 return myType;
             }

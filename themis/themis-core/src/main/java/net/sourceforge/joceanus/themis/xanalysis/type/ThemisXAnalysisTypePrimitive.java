@@ -18,19 +18,14 @@ package net.sourceforge.joceanus.themis.xanalysis.type;
 
 import com.github.javaparser.ast.type.PrimitiveType;
 import com.github.javaparser.ast.type.PrimitiveType.Primitive;
-import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisParser;
-import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisParser.ThemisXAnalysisParsedType;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisBaseType;
 
 /**
  * Primitive Type Declaration.
  */
 public class ThemisXAnalysisTypePrimitive
-        implements ThemisXAnalysisParsedType {
-    /**
-     * The type.
-     */
-    private final PrimitiveType theType;
-
+        extends ThemisXAnalysisBaseType<PrimitiveType> {
     /**
      * The Primitive type.
      */
@@ -43,16 +38,8 @@ public class ThemisXAnalysisTypePrimitive
      */
     public ThemisXAnalysisTypePrimitive(final ThemisXAnalysisParser pParser,
                                         final PrimitiveType pType) {
-        theType = pType;
-        thePrimitive = theType.getType();
-    }
-
-    /**
-     * Obtain the type.
-     * @return the type
-     */
-    public PrimitiveType getType() {
-        return theType;
+        super(pType);
+        thePrimitive = pType.getType();
     }
 
     /**
@@ -61,10 +48,5 @@ public class ThemisXAnalysisTypePrimitive
      */
     public Primitive getPrimitive() {
         return thePrimitive;
-    }
-
-    @Override
-    public String toString() {
-        return theType.toString();
     }
 }

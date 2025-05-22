@@ -17,19 +17,14 @@
 package net.sourceforge.joceanus.themis.xanalysis.type;
 
 import com.github.javaparser.ast.type.VoidType;
-import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisParser;
-import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisParser.ThemisXAnalysisParsedType;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisBaseType;
 
 /**
  * Void Type Declaration.
  */
 public class ThemisXAnalysisTypeVoid
-        implements ThemisXAnalysisParsedType {
-    /**
-     * The type.
-     */
-    private final VoidType theType;
-
+        extends ThemisXAnalysisBaseType<VoidType> {
     /**
      * Constructor.
      * @param pParser the parser
@@ -37,19 +32,6 @@ public class ThemisXAnalysisTypeVoid
      */
     public ThemisXAnalysisTypeVoid(final ThemisXAnalysisParser pParser,
                                    final VoidType pType) {
-        theType = pType;
-    }
-
-    /**
-     * Obtain the type.
-     * @return the type
-     */
-    public VoidType getType() {
-        return theType;
-    }
-
-    @Override
-    public String toString() {
-        return theType.toString();
+        super(pType);
     }
 }

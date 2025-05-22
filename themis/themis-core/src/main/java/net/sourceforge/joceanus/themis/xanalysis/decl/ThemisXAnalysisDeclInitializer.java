@@ -14,24 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.themis.xanalysis.body;
+package net.sourceforge.joceanus.themis.xanalysis.decl;
 
 import com.github.javaparser.ast.body.InitializerDeclaration;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisParser;
-import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisParser.ThemisXAnalysisParsedBody;
-import net.sourceforge.joceanus.themis.xanalysis.util.ThemisXAnalysisParser.ThemisXAnalysisParsedStatement;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisBaseDeclaration;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisStatementInstance;
 
 /**
  * Initializer Declaration.
  */
-public class ThemisXAnalysisBodyInitializer
-        implements ThemisXAnalysisParsedBody {
-    /**
-     * The declaration.
-     */
-    private final InitializerDeclaration theDeclaration;
-
+public class ThemisXAnalysisDeclInitializer
+        extends ThemisXAnalysisBaseDeclaration<InitializerDeclaration> {
     /**
      * Is this initializer static?
      */
@@ -40,7 +35,7 @@ public class ThemisXAnalysisBodyInitializer
     /**
      * The body.
      */
-    private final ThemisXAnalysisParsedStatement theBody;
+    private final ThemisXAnalysisStatementInstance theBody;
 
     /**
      * Constructor.
@@ -48,19 +43,11 @@ public class ThemisXAnalysisBodyInitializer
      * @param pDeclaration the declaration
      * @throws OceanusException on error
      */
-    public ThemisXAnalysisBodyInitializer(final ThemisXAnalysisParser pParser,
+    public ThemisXAnalysisDeclInitializer(final ThemisXAnalysisParser pParser,
                                           final InitializerDeclaration pDeclaration) throws OceanusException {
-        theDeclaration = pDeclaration;
-        isStatic = theDeclaration.isStatic();
-        theBody = pParser.parseStatement(theDeclaration.getBody());
-    }
-
-    /**
-     * Obtain the declaration.
-     * @return the declaration
-     */
-    public InitializerDeclaration getDeclaration() {
-        return theDeclaration;
+        super(pDeclaration);
+        isStatic = pDeclaration.isStatic();
+        theBody = pParser.parseStatement(pDeclaration.getBody());
     }
 
     /**
@@ -75,12 +62,7 @@ public class ThemisXAnalysisBodyInitializer
      * Obtain the body.
      * @return the body
      */
-    public ThemisXAnalysisParsedStatement getBody() {
+    public ThemisXAnalysisStatementInstance getBody() {
         return theBody;
-    }
-
-    @Override
-    public String toString() {
-        return theDeclaration.toString();
     }
 }
