@@ -14,24 +14,38 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
+package net.sourceforge.joceanus.themis.xanalysis.util;
+
+import com.github.javaparser.ast.Modifier;
+import com.github.javaparser.ast.NodeList;
 
 /**
- * Themis code analysis.
+ * Modifiers for an object.
  */
-module net.sourceforge.joceanus.themis.core {
-    /* java */
-    requires java.desktop;
-    requires java.prefs;
+public class ThemisXAnalysisModifiers {
+    /**
+     * The list of Modifiers.
+     */
+    private final NodeList<Modifier> theModifiers;
 
-    /* Oceanus */
-    requires net.sourceforge.joceanus.metis;
-    requires net.sourceforge.joceanus.tethys.core;
-    requires net.sourceforge.joceanus.oceanus;
-    requires com.github.javaparser.core;
+    /**
+     * Constructor.
+     * @param pModifiers the Modifiers
+     */
+    public ThemisXAnalysisModifiers(final NodeList<Modifier> pModifiers) {
+        theModifiers = pModifiers;
+    }
 
-    /* Exports */
-    exports net.sourceforge.joceanus.themis.ui.launch;
+    /**
+     * Has private modifier?
+     * @return true/false
+     */
+    boolean hasPrivate() {
+        return theModifiers.contains(Modifier.privateModifier());
+    }
 
-    /* Allow properties to be read */
-    opens net.sourceforge.joceanus.themis.ui to net.sourceforge.joceanus.metis;
+    @Override
+    public String toString() {
+        return theModifiers.toString();
+    }
 }
