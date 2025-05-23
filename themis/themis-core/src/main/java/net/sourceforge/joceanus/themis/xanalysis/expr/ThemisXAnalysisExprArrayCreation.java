@@ -16,8 +16,13 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.themis.xanalysis.expr;
 
+import com.github.javaparser.ast.ArrayCreationLevel;
+import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.expr.ArrayCreationExpr;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisBaseExpression;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisExpressionInstance;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisTypeInstance;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
 
 /**
@@ -26,12 +31,69 @@ import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
 public class ThemisXAnalysisExprArrayCreation
         extends ThemisXAnalysisBaseExpression<ArrayCreationExpr> {
     /**
+     * The created type.
+     */
+    private final ThemisXAnalysisTypeInstance theCreated;
+
+    /**
+     * The element type.
+     */
+    private final ThemisXAnalysisTypeInstance theType;
+
+    /**
+     * The levels.
+     */
+    private final NodeList<ArrayCreationLevel> theLevels;
+
+    /**
+     * The initializer.
+     */
+    private final ThemisXAnalysisExpressionInstance theInit;
+
+    /**
      * Constructor.
      * @param pParser the parser
      * @param pExpression the expression
+     * @throws OceanusException on error
      */
     public ThemisXAnalysisExprArrayCreation(final ThemisXAnalysisParser pParser,
-                                            final ArrayCreationExpr pExpression) {
+                                            final ArrayCreationExpr pExpression) throws OceanusException {
         super(pExpression);
+        theCreated = pParser.parseType(pExpression.createdType());
+        theType = pParser.parseType(pExpression.getElementType());
+        theLevels = pExpression.getLevels();
+        theInit = pParser.parseExpression(pExpression.getInitializer().orElse(null));
+    }
+
+    /**
+     * Obtain the created type.
+     * @return the type
+     */
+    public ThemisXAnalysisTypeInstance getCreatedType() {
+        return theCreated;
+    }
+
+    /**
+     * Obtain the element type.
+     * @return the type
+     */
+    public ThemisXAnalysisTypeInstance getElementType() {
+        return theType;
+    }
+
+    /**
+     * Obtain the created type.
+     * @return the type
+     */
+    public NodeList<ArrayCreationLevel> getLevels() {
+        return theLevels;
+    }
+
+    /**
+     * Obtain the initializer.
+     * @return the initializer
+     */
+    public ThemisXAnalysisExpressionInstance getInitializer() {
+        return theInit;
     }
 }

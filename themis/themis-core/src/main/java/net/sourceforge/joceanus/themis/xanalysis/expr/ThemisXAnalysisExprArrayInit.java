@@ -17,8 +17,12 @@
 package net.sourceforge.joceanus.themis.xanalysis.expr;
 
 import com.github.javaparser.ast.expr.ArrayInitializerExpr;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisBaseExpression;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisExpressionInstance;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
+
+import java.util.List;
 
 /**
  * Array init Expression Declaration.
@@ -26,12 +30,27 @@ import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
 public class ThemisXAnalysisExprArrayInit
         extends ThemisXAnalysisBaseExpression<ArrayInitializerExpr> {
     /**
+     * The initializer.
+     */
+    private final List<ThemisXAnalysisExpressionInstance> theInit;
+
+    /**
      * Constructor.
      * @param pParser the parser
      * @param pExpression the expression
+     * @throws OceanusException on error
      */
     public ThemisXAnalysisExprArrayInit(final ThemisXAnalysisParser pParser,
-                                        final ArrayInitializerExpr pExpression) {
+                                        final ArrayInitializerExpr pExpression) throws OceanusException {
         super(pExpression);
+        theInit = pParser.parseExprList(pExpression.getValues());
+    }
+
+    /**
+     * Obtain the initializers.
+     * @return the initializers
+     */
+    public List<ThemisXAnalysisExpressionInstance> getInitializers() {
+        return theInit;
     }
 }

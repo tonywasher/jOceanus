@@ -18,7 +18,6 @@ package net.sourceforge.joceanus.themis.xanalysis.expr;
 
 import com.github.javaparser.ast.expr.AnnotationExpr;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisBaseExpression;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
 
 /**
  * Annotation Expression Declaration.
@@ -26,12 +25,24 @@ import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
 public abstract class ThemisXAnalysisExprAnnotation<T extends AnnotationExpr>
         extends ThemisXAnalysisBaseExpression<T> {
     /**
-     * Constructor.
-     * @param pParser the parser
-     * @param pExpression the expression
+     * The name of the annotation.
      */
-    public ThemisXAnalysisExprAnnotation(final ThemisXAnalysisParser pParser,
-                                         final T pExpression) {
+    private final String theName;
+
+    /**
+     * Constructor.
+      * @param pExpression the expression
+     */
+    public ThemisXAnalysisExprAnnotation(final T pExpression) {
         super(pExpression);
+        theName = pExpression.getNameAsString();
+    }
+
+    /**
+     * Obtain the name.
+     * @return the name
+     */
+    public String getName() {
+        return theName;
     }
 }

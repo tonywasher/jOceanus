@@ -147,11 +147,6 @@ public enum ThemisXAnalysisExpression {
     OBJECTCREATE(Expression::isObjectCreationExpr),
 
     /**
-     * Pattern.
-     */
-    PATTERN(Expression::isPatternExpr),
-
-    /**
      * RecordPattern.
      */
     RECORDPATTERN(Expression::isRecordPatternExpr),

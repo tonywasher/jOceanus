@@ -26,6 +26,11 @@ import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
 public class ThemisXAnalysisExprName
         extends ThemisXAnalysisBaseExpression<NameExpr> {
     /**
+     * The name.
+     */
+    private final String theName;
+
+    /**
      * Constructor.
      * @param pParser the parser
      * @param pExpression the expression
@@ -33,5 +38,14 @@ public class ThemisXAnalysisExprName
     public ThemisXAnalysisExprName(final ThemisXAnalysisParser pParser,
                                    final NameExpr pExpression) {
         super(pExpression);
+        theName = pExpression.getNameAsString();
+    }
+
+    /**
+     * Obtain the name.
+     * @return the name
+     */
+    public String getName() {
+        return theName;
     }
 }

@@ -17,7 +17,10 @@
 package net.sourceforge.joceanus.themis.xanalysis.expr;
 
 import com.github.javaparser.ast.expr.CastExpr;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisBaseExpression;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisExpressionInstance;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisTypeInstance;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
 
 /**
@@ -26,12 +29,41 @@ import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
 public class ThemisXAnalysisExprCast
         extends ThemisXAnalysisBaseExpression<CastExpr> {
     /**
+     * The type.
+     */
+    private final ThemisXAnalysisTypeInstance theType;
+
+    /**
+     * The expression.
+     */
+    private final ThemisXAnalysisExpressionInstance theValue;
+
+    /**
      * Constructor.
      * @param pParser the parser
      * @param pExpression the expression
+     * @throws OceanusException on error
      */
     public ThemisXAnalysisExprCast(final ThemisXAnalysisParser pParser,
-                                   final CastExpr pExpression) {
+                                   final CastExpr pExpression) throws OceanusException {
         super(pExpression);
+        theType = pParser.parseType(pExpression.getType());
+        theValue = pParser.parseExpression(pExpression.getExpression());
+    }
+
+    /**
+     * Obtain the Type.
+     * @return the type
+     */
+    public ThemisXAnalysisTypeInstance getType() {
+        return theType;
+    }
+
+    /**
+     * Obtain the value.
+     * @return the value
+     */
+    public ThemisXAnalysisExpressionInstance getValue() {
+        return theValue;
     }
 }

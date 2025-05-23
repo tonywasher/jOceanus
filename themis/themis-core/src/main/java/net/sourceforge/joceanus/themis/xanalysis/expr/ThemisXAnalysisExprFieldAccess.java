@@ -17,8 +17,13 @@
 package net.sourceforge.joceanus.themis.xanalysis.expr;
 
 import com.github.javaparser.ast.expr.FieldAccessExpr;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisBaseExpression;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisExpressionInstance;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisTypeInstance;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
+
+import java.util.List;
 
 /**
  * FieldAccess Expression Declaration.
@@ -26,12 +31,56 @@ import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
 public class ThemisXAnalysisExprFieldAccess
         extends ThemisXAnalysisBaseExpression<FieldAccessExpr> {
     /**
+     * The name.
+     */
+    private final String theName;
+
+    /**
+     * The scope.
+     */
+    private final ThemisXAnalysisExpressionInstance theScope;
+
+    /**
+     * The expression.
+     */
+    private final List<ThemisXAnalysisTypeInstance> theTypes;
+
+
+    /**
      * Constructor.
      * @param pParser the parser
      * @param pExpression the expression
      */
     public ThemisXAnalysisExprFieldAccess(final ThemisXAnalysisParser pParser,
-                                          final FieldAccessExpr pExpression) {
+                                          final FieldAccessExpr pExpression) throws OceanusException {
         super(pExpression);
+        theName = pExpression.getNameAsString();
+        theScope = pParser.parseExpression(pExpression.getScope());
+        theTypes = pParser.parseTypeList(pExpression.getTypeArguments().orElse(null));
+    }
+
+
+    /**
+     * Obtain the Name.
+     * @return the name
+     */
+    public String getName() {
+        return theName;
+    }
+
+    /**
+     * Obtain the scope.
+     * @return the scope
+     */
+    public ThemisXAnalysisExpressionInstance getScope() {
+        return theScope;
+    }
+
+    /**
+     * Obtain the types.
+     * @return the types
+     */
+    public List<ThemisXAnalysisTypeInstance> getTypes() {
+        return theTypes;
     }
 }

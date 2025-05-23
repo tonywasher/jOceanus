@@ -17,21 +17,51 @@
 package net.sourceforge.joceanus.themis.xanalysis.expr;
 
 import com.github.javaparser.ast.expr.TypePatternExpr;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisBaseExpression;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisModifiers;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
 
 /**
  * TypePattern Expression.
  */
 public class ThemisXAnalysisExprTypePattern
-        extends ThemisXAnalysisBaseExpression<TypePatternExpr> {
+        extends ThemisXAnalysisExprPattern<TypePatternExpr> {
+    /**
+     * The name.
+     */
+    private final String theName;
+
+    /**
+     * The modifiers
+     */
+    private final ThemisXAnalysisModifiers theModifiers;
+
     /**
      * Constructor.
      * @param pParser the parser
      * @param pExpression the expression
+     * @throws OceanusException on error
      */
     public ThemisXAnalysisExprTypePattern(final ThemisXAnalysisParser pParser,
-                                          final TypePatternExpr pExpression) {
-        super(pExpression);
+                                          final TypePatternExpr pExpression) throws OceanusException {
+        super(pParser, pExpression);
+        theName = pExpression.getNameAsString();
+        theModifiers = new ThemisXAnalysisModifiers(pExpression.getModifiers());
+    }
+
+    /**
+     * Obtain the Name.
+     * @return the name
+     */
+    public String getName() {
+        return theName;
+    }
+
+    /**
+     * Obtain the Modifiers.
+     * @return the modifiers
+     */
+    public ThemisXAnalysisModifiers getModifiers() {
+        return theModifiers;
     }
 }

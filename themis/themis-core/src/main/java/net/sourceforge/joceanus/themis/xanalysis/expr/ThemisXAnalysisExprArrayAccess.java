@@ -17,7 +17,9 @@
 package net.sourceforge.joceanus.themis.xanalysis.expr;
 
 import com.github.javaparser.ast.expr.ArrayAccessExpr;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisBaseExpression;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisExpressionInstance;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
 
 /**
@@ -26,12 +28,41 @@ import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
 public class ThemisXAnalysisExprArrayAccess
         extends ThemisXAnalysisBaseExpression<ArrayAccessExpr> {
     /**
+     * The name.
+     */
+    private final ThemisXAnalysisExpressionInstance theName;
+
+    /**
+     * The index.
+     */
+    private final ThemisXAnalysisExpressionInstance theIndex;
+
+    /**
      * Constructor.
      * @param pParser the parser
      * @param pExpression the expression
+     * @throws OceanusException on error
      */
     public ThemisXAnalysisExprArrayAccess(final ThemisXAnalysisParser pParser,
-                                          final ArrayAccessExpr pExpression) {
+                                          final ArrayAccessExpr pExpression) throws OceanusException {
         super(pExpression);
+        theName = pParser.parseExpression(pExpression.getName());
+        theIndex = pParser.parseExpression(pExpression.getIndex());
+    }
+
+    /**
+     * Obtain the name.
+     * @return the name
+     */
+    public ThemisXAnalysisExpressionInstance getName() {
+        return theName;
+    }
+
+    /**
+     * Obtain the index.
+     * @return the index
+     */
+    public ThemisXAnalysisExpressionInstance getIndex() {
+        return theIndex;
     }
 }

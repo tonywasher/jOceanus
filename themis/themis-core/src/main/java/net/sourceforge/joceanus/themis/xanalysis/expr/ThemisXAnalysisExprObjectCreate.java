@@ -17,8 +17,13 @@
 package net.sourceforge.joceanus.themis.xanalysis.expr;
 
 import com.github.javaparser.ast.expr.ObjectCreationExpr;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisBaseExpression;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisExpressionInstance;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisTypeInstance;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
+
+import java.util.List;
 
 /**
  * Object Creation Expression Declaration.
@@ -26,12 +31,40 @@ import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
 public class ThemisXAnalysisExprObjectCreate
         extends ThemisXAnalysisBaseExpression<ObjectCreationExpr> {
     /**
+     * The type.
+     */
+    private final ThemisXAnalysisTypeInstance theType;
+
+    /**
+     * The arguments.
+     */
+    private final List<ThemisXAnalysisExpressionInstance> theArgs;
+
+    /**
      * Constructor.
      * @param pParser the parser
      * @param pExpression the expression
+     * @throws OceanusException on error
      */
     public ThemisXAnalysisExprObjectCreate(final ThemisXAnalysisParser pParser,
-                                           final ObjectCreationExpr pExpression) {
+                                           final ObjectCreationExpr pExpression) throws OceanusException {
         super(pExpression);
+        theType = pParser.parseType(pExpression.getType());
+        theArgs = pParser.parseExprList(pExpression.getArguments());
+    }
+    /**
+     * Obtain the Type.
+     * @return the type
+     */
+    public ThemisXAnalysisTypeInstance getType() {
+        return theType;
+    }
+
+    /**
+     * Obtain the arguments.
+     * @return the arguments
+     */
+    public List<ThemisXAnalysisExpressionInstance> getArgs() {
+        return theArgs;
     }
 }

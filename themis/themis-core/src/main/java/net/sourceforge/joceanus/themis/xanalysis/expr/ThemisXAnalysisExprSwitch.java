@@ -33,5 +33,7 @@ public class ThemisXAnalysisExprSwitch
     public ThemisXAnalysisExprSwitch(final ThemisXAnalysisParser pParser,
                                      final SwitchExpr pExpression) {
         super(pExpression);
+        pExpression.getSelector();
+        pExpression.getEntries();
     }
 }

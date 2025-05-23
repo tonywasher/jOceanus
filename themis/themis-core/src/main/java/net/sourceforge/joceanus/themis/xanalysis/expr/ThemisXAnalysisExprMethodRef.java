@@ -17,8 +17,13 @@
 package net.sourceforge.joceanus.themis.xanalysis.expr;
 
 import com.github.javaparser.ast.expr.MethodReferenceExpr;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisBaseExpression;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisExpressionInstance;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisTypeInstance;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
+
+import java.util.List;
 
 /**
  * Method Reference Expression Declaration.
@@ -26,12 +31,55 @@ import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
 public class ThemisXAnalysisExprMethodRef
         extends ThemisXAnalysisBaseExpression<MethodReferenceExpr> {
     /**
+     * The name.
+     */
+    private final String theName;
+
+    /**
+     * The scope.
+     */
+    private final ThemisXAnalysisExpressionInstance theScope;
+
+    /**
+     * The typeArguments.
+     */
+    private final List<ThemisXAnalysisTypeInstance> theTypeArgs;
+
+    /**
      * Constructor.
      * @param pParser the parser
      * @param pExpression the expression
+     * @throws OceanusException on error
      */
     public ThemisXAnalysisExprMethodRef(final ThemisXAnalysisParser pParser,
-                                        final MethodReferenceExpr pExpression) {
+                                        final MethodReferenceExpr pExpression) throws OceanusException {
         super(pExpression);
+        theName = pExpression.getIdentifier();
+        theScope = pParser.parseExpression(pExpression.getScope());
+        theTypeArgs = pParser.parseTypeList(pExpression.getTypeArguments().orElse(null));
+    }
+
+    /**
+     * Obtain the Name.
+     * @return the name
+     */
+    public String getName() {
+        return theName;
+    }
+
+    /**
+     * Obtain the Scope.
+     * @return the scope
+     */
+    public ThemisXAnalysisExpressionInstance getScope() {
+        return theScope;
+    }
+
+    /**
+     * Obtain the TypeArguments.
+     * @return the typeArgs
+     */
+    public List<ThemisXAnalysisTypeInstance> getTypeArgs() {
+        return theTypeArgs;
     }
 }

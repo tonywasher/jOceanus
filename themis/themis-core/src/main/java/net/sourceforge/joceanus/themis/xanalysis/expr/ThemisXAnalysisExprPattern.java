@@ -17,21 +17,38 @@
 package net.sourceforge.joceanus.themis.xanalysis.expr;
 
 import com.github.javaparser.ast.expr.PatternExpr;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisBaseExpression;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisTypeInstance;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
 
 /**
  * Pattern Expression Declaration.
  */
-public class ThemisXAnalysisExprPattern
-        extends ThemisXAnalysisBaseExpression<PatternExpr> {
+public abstract class ThemisXAnalysisExprPattern<T extends PatternExpr>
+        extends ThemisXAnalysisBaseExpression<T> {
+    /**
+     * The type.
+     */
+    private final ThemisXAnalysisTypeInstance theType;
+
     /**
      * Constructor.
      * @param pParser the parser
      * @param pExpression the expression
+     * @throws OceanusException on error
      */
     public ThemisXAnalysisExprPattern(final ThemisXAnalysisParser pParser,
-                                      final PatternExpr pExpression) {
+                                      final T pExpression) throws OceanusException {
         super(pExpression);
+        theType = pParser.parseType(pExpression.getType());
+    }
+
+    /**
+     * Obtain the Type.
+     * @return the type
+     */
+    public ThemisXAnalysisTypeInstance getType() {
+        return theType;
     }
 }

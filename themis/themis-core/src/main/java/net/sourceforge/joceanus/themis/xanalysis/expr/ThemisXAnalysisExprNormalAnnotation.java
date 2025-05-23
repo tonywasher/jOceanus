@@ -16,6 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.themis.xanalysis.expr;
 
+import com.github.javaparser.ast.NodeList;
+import com.github.javaparser.ast.expr.MemberValuePair;
 import com.github.javaparser.ast.expr.NormalAnnotationExpr;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
 
@@ -25,13 +27,27 @@ import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
 public class ThemisXAnalysisExprNormalAnnotation
         extends ThemisXAnalysisExprAnnotation<NormalAnnotationExpr> {
     /**
+     * The value pairs.
+     */
+    private final NodeList<MemberValuePair> thePairs;
+
+    /**
      * Constructor.
      *
-     * @param pParser     the parser
+     * @param pParser the parser
      * @param pExpression the expression
      */
     public ThemisXAnalysisExprNormalAnnotation(final ThemisXAnalysisParser pParser,
                                                final NormalAnnotationExpr pExpression) {
-        super(pParser, pExpression);
+        super(pExpression);
+        thePairs = pExpression.getPairs();
+    }
+
+    /**
+     * Obtain the pairs.
+     * @return the pairs
+     */
+    public NodeList<MemberValuePair> getPairs() {
+        return thePairs;
     }
 }

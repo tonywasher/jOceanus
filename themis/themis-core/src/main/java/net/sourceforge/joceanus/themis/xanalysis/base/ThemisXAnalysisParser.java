@@ -122,6 +122,10 @@ public interface ThemisXAnalysisParser {
      * @throws OceanusException on error
      */
     default List<ThemisXAnalysisTypeInstance> parseTypeList(final NodeList<? extends Type> pTypeList) throws OceanusException {
+        /* Handle null list */
+        if (pTypeList == null) {
+            return null;
+        }
         final List<ThemisXAnalysisTypeInstance> myList = new ArrayList<>();
         for (Type myType : pTypeList) {
             final ThemisXAnalysisTypeInstance myParsed = parseType(myType);
@@ -167,7 +171,7 @@ public interface ThemisXAnalysisParser {
      * @return the list of parsed expressions
      * @throws OceanusException on error
      */
-    default List<ThemisXAnalysisExpressionInstance> parseExprList(final NodeList<Expression> pExprList) throws OceanusException {
+    default List<ThemisXAnalysisExpressionInstance> parseExprList(final NodeList<? extends Expression> pExprList) throws OceanusException {
         final List<ThemisXAnalysisExpressionInstance> myList = new ArrayList<>();
         for (Expression myExpr : pExprList) {
             final ThemisXAnalysisExpressionInstance myParsed = parseExpression(myExpr);

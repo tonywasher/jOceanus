@@ -17,8 +17,13 @@
 package net.sourceforge.joceanus.themis.xanalysis.expr;
 
 import com.github.javaparser.ast.expr.MethodCallExpr;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisBaseExpression;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisExpressionInstance;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisTypeInstance;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
+
+import java.util.List;
 
 /**
  * MethodCall Expression Declaration.
@@ -26,12 +31,69 @@ import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
 public class ThemisXAnalysisExprMethodCall
         extends ThemisXAnalysisBaseExpression<MethodCallExpr> {
     /**
+     * The name.
+     */
+    private final String theName;
+
+    /**
+     * The value.
+     */
+    private final List<ThemisXAnalysisExpressionInstance> theArguments;
+
+    /**
+     * The type.
+     */
+    private final List<ThemisXAnalysisTypeInstance> theTypeParams;
+
+    /**
+     * The pattern.
+     */
+    private final ThemisXAnalysisExpressionInstance theScope;
+
+    /**
      * Constructor.
      * @param pParser the parser
      * @param pExpression the expression
+     * @throws OceanusException on error
      */
     public ThemisXAnalysisExprMethodCall(final ThemisXAnalysisParser pParser,
-                                         final MethodCallExpr pExpression) {
+                                         final MethodCallExpr pExpression) throws OceanusException {
         super(pExpression);
+        theName = pExpression.getNameAsString();
+        theArguments = pParser.parseExprList(pExpression.getArguments());
+        theTypeParams = pParser.parseTypeList(pExpression.getTypeArguments().orElse(null));
+        theScope = pParser.parseExpression(pExpression.getScope().orElse(null));
+    }
+
+    /**
+     * Obtain the name.
+     * @return the name
+     */
+    public String getName() {
+        return theName;
+    }
+
+    /**
+     * Obtain the arguments.
+     * @return the arguments
+     */
+    public List<ThemisXAnalysisExpressionInstance> getArguments() {
+        return theArguments;
+    }
+
+    /**
+     * Obtain the typeParams.
+     * @return the typeParams
+     */
+    public List<ThemisXAnalysisTypeInstance> getTypeParams() {
+        return theTypeParams;
+    }
+
+    /**
+     * Obtain the scope.
+     * @return the scope
+     */
+    public ThemisXAnalysisExpressionInstance getScope() {
+        return theScope;
     }
 }

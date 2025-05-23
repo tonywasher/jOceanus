@@ -17,7 +17,9 @@
 package net.sourceforge.joceanus.themis.xanalysis.expr;
 
 import com.github.javaparser.ast.expr.ConditionalExpr;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisBaseExpression;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisExpressionInstance;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
 
 /**
@@ -26,12 +28,56 @@ import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
 public class ThemisXAnalysisExprConditional
         extends ThemisXAnalysisBaseExpression<ConditionalExpr> {
     /**
+     * The condition.
+     */
+    private final ThemisXAnalysisExpressionInstance theCondition;
+
+    /**
+     * The then.
+     */
+    private final ThemisXAnalysisExpressionInstance theThen;
+
+    /**
+     * The else.
+     */
+    private final ThemisXAnalysisExpressionInstance theElse;
+
+    /**
      * Constructor.
      * @param pParser the parser
      * @param pExpression the expression
+     * @throws OceanusException on error
      */
     public ThemisXAnalysisExprConditional(final ThemisXAnalysisParser pParser,
-                                          final ConditionalExpr pExpression) {
+                                          final ConditionalExpr pExpression) throws OceanusException {
         super(pExpression);
+        theCondition = pParser.parseExpression(pExpression.getCondition());
+        theThen = pParser.parseExpression(pExpression.getThenExpr());
+        theElse = pParser.parseExpression(pExpression.getElseExpr());
+    }
+
+
+    /**
+     * Obtain the condition.
+     * @return the condition
+     */
+    public ThemisXAnalysisExpressionInstance getCondition() {
+        return theCondition;
+    }
+
+    /**
+     * Obtain the then.
+     * @return the then
+     */
+    public ThemisXAnalysisExpressionInstance getThen() {
+        return theThen;
+    }
+
+    /**
+     * Obtain the else.
+     * @return the else
+     */
+    public ThemisXAnalysisExpressionInstance getElse() {
+        return theElse;
     }
 }

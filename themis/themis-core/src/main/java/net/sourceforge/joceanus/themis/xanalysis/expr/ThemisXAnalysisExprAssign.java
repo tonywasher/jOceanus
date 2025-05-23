@@ -17,7 +17,10 @@
 package net.sourceforge.joceanus.themis.xanalysis.expr;
 
 import com.github.javaparser.ast.expr.AssignExpr;
+import com.github.javaparser.ast.expr.AssignExpr.Operator;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisBaseExpression;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisExpressionInstance;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
 
 /**
@@ -26,12 +29,55 @@ import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
 public class ThemisXAnalysisExprAssign
         extends ThemisXAnalysisBaseExpression<AssignExpr> {
     /**
+     * The target.
+     */
+    private final ThemisXAnalysisExpressionInstance theTarget;
+
+    /**
+     * The operator.
+     */
+    private final Operator theOperator;
+
+    /**
+     * The target.
+     */
+    private final ThemisXAnalysisExpressionInstance theValue;
+
+    /**
      * Constructor.
      * @param pParser the parser
      * @param pExpression the expression
+     * @throws OceanusException on error
      */
     public ThemisXAnalysisExprAssign(final ThemisXAnalysisParser pParser,
-                                     final AssignExpr pExpression) {
+                                     final AssignExpr pExpression) throws OceanusException {
         super(pExpression);
+        theTarget = pParser.parseExpression(pExpression.getTarget());
+        theOperator = pExpression.getOperator();
+        theValue = pParser.parseExpression(pExpression.getValue());
+    }
+
+    /**
+     * Obtain the target.
+     * @return the target
+     */
+    public ThemisXAnalysisExpressionInstance getTarget() {
+        return theTarget;
+    }
+
+    /**
+     * Obtain the operator.
+     * @return the operator
+     */
+    public Operator getOperator() {
+        return theOperator;
+    }
+
+    /**
+     * Obtain the value.
+     * @return the value
+     */
+    public ThemisXAnalysisExpressionInstance getValue() {
+        return theValue;
     }
 }

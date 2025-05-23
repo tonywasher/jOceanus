@@ -17,7 +17,10 @@
 package net.sourceforge.joceanus.themis.xanalysis.expr;
 
 import com.github.javaparser.ast.expr.UnaryExpr;
+import com.github.javaparser.ast.expr.UnaryExpr.Operator;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisBaseExpression;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisExpressionInstance;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
 
 /**
@@ -26,12 +29,41 @@ import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
 public class ThemisXAnalysisExprUnary
         extends ThemisXAnalysisBaseExpression<UnaryExpr> {
     /**
+     * The target.
+     */
+    private final ThemisXAnalysisExpressionInstance theTarget;
+
+    /**
+     * The operator.
+     */
+    private final Operator theOperator;
+
+    /**
      * Constructor.
      * @param pParser the parser
      * @param pExpression the expression
+     * @throws OceanusException on error
      */
     public ThemisXAnalysisExprUnary(final ThemisXAnalysisParser pParser,
-                                    final UnaryExpr pExpression) {
+                                    final UnaryExpr pExpression) throws OceanusException {
         super(pExpression);
+        theTarget = pParser.parseExpression(pExpression.getExpression());
+        theOperator = pExpression.getOperator();
+    }
+
+    /**
+     * Obtain the target.
+     * @return the target
+     */
+    public ThemisXAnalysisExpressionInstance getTarget() {
+        return theTarget;
+    }
+
+    /**
+     * Obtain the operator.
+     * @return the operator
+     */
+    public Operator getOperator() {
+        return theOperator;
     }
 }
