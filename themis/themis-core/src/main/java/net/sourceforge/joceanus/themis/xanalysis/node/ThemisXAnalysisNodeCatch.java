@@ -14,52 +14,52 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.themis.xanalysis.expr;
+package net.sourceforge.joceanus.themis.xanalysis.node;
 
-import com.github.javaparser.ast.expr.LambdaExpr;
+import com.github.javaparser.ast.stmt.CatchClause;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisBaseExpression;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisBaseNode;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisNodeInstance;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisStatementInstance;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
 
-import java.util.List;
-
 /**
- * Lambda Expression Declaration.
+ * Switch Case.
  */
-public class ThemisXAnalysisExprLambda
-        extends ThemisXAnalysisBaseExpression<LambdaExpr> {
-    /**
-     * The expression.
-     */
-    private final List<ThemisXAnalysisNodeInstance> theParams;
+public class ThemisXAnalysisNodeCatch
+        extends ThemisXAnalysisBaseNode<CatchClause> {
 
     /**
-     * The expression.
+     * The parameter.
+     */
+    private final ThemisXAnalysisNodeInstance theParameter;
+
+    /**
+     * The body.
      */
     private final ThemisXAnalysisStatementInstance theBody;
 
     /**
      * Constructor.
      * @param pParser the parser
-     * @param pExpression the expression
+     * @param pCatch the catch
      * @throws OceanusException on error
      */
-    public ThemisXAnalysisExprLambda(final ThemisXAnalysisParser pParser,
-                                     final LambdaExpr pExpression) throws OceanusException {
-        super(pExpression);
-        theParams = pParser.parseNodeList(pExpression.getParameters());
-        theBody = pParser.parseStatement(pExpression.getBody());
+    public ThemisXAnalysisNodeCatch(final ThemisXAnalysisParser pParser,
+                                    final CatchClause pCatch) throws OceanusException {
+        super(pCatch);
+        theBody = pParser.parseStatement(pCatch.getBody());
+        theParameter = pParser.parseNode(pCatch.getParameter());
     }
 
     /**
-     * Obtain the value.
-     * @return the value
+     * Obtain the parameter.
+     * @return the parameter
      */
-    public List<ThemisXAnalysisNodeInstance> getParams() {
-        return theParams;
+    public ThemisXAnalysisNodeInstance getParameter() {
+        return theParameter;
     }
+
     /**
      * Obtain the body.
      * @return the body
@@ -67,5 +67,4 @@ public class ThemisXAnalysisExprLambda
     public ThemisXAnalysisStatementInstance getBody() {
         return theBody;
     }
-
 }

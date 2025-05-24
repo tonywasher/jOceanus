@@ -22,6 +22,7 @@ import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
 
 /**
  * Literal Expression Declaration.
+ * @param <T> the expression
  */
 public abstract class ThemisXAnalysisExprLiteral<T extends LiteralExpr>
         extends ThemisXAnalysisBaseExpression<T> {

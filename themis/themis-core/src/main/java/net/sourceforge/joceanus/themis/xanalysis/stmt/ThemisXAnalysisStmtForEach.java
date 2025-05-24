@@ -19,10 +19,10 @@ package net.sourceforge.joceanus.themis.xanalysis.stmt;
 import com.github.javaparser.ast.stmt.ForEachStmt;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisBaseStatement;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisExpressionInstance;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisNodeInstance;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisStatementInstance;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisVarInstance;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
 
 /**
  * ForEach Statement.
@@ -42,7 +42,7 @@ public class ThemisXAnalysisStmtForEach
     /**
      * The variable declarator.
      */
-    private final ThemisXAnalysisVarInstance theVariableDeclarator;
+    private final ThemisXAnalysisNodeInstance theVariableDeclarator;
 
     /**
      * Constructor.
@@ -55,7 +55,7 @@ public class ThemisXAnalysisStmtForEach
         super(pStatement);
         theBody = pParser.parseStatement(pStatement.getBody());
         theVariable = pParser.parseExpression(pStatement.getVariable());
-        theVariableDeclarator = pParser.parseVariable(pStatement.getVariableDeclarator());
+        theVariableDeclarator = pParser.parseNode(pStatement.getVariableDeclarator());
     }
 
     /**
@@ -70,7 +70,7 @@ public class ThemisXAnalysisStmtForEach
      * Obtain the variable declarator.
      * @return the declarator
      */
-    public ThemisXAnalysisVarInstance getVariableDeclarator() {
+    public ThemisXAnalysisNodeInstance getVariableDeclarator() {
         return theVariableDeclarator;
     }
 

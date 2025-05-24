@@ -216,19 +216,19 @@ public enum ThemisXAnalysisExpression {
 
     /**
      * Determine type of expression.
-     * @param pType the expression
+     * @param pExpr the expression
      * @return the exprType
      * @throws OceanusException on error
      */
-    public static ThemisXAnalysisExpression determineExprType(final Expression pType) throws OceanusException {
-        /* Loop testing each body type */
-        for (ThemisXAnalysisExpression myType : values()) {
-            if (myType.theTester.test(pType)) {
-                return myType;
+    public static ThemisXAnalysisExpression determineExpression(final Expression pExpr) throws OceanusException {
+        /* Loop testing each expr type */
+        for (ThemisXAnalysisExpression myExpr : values()) {
+            if (myExpr.theTester.test(pExpr)) {
+                return myExpr;
             }
         }
 
-        /* Unrecognised bodyType */
-        throw new ThemisDataException("Unexpected Expression Type " +  pType.getClass().getCanonicalName());
+        /* Unrecognised exprType */
+        throw new ThemisDataException("Unexpected Expression" +  pExpr.getClass().getCanonicalName());
     }
 }

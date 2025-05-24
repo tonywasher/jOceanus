@@ -16,43 +16,38 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.themis.xanalysis.base;
 
+import com.github.javaparser.ast.Node;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisNodeInstance;
+
 /**
- * Instance definitions.
+ * Node Base Class.
+ * @param <T> the Node
  */
-public final class ThemisXAnalysisInstance {
+public abstract class ThemisXAnalysisBaseNode<T extends Node>
+        implements ThemisXAnalysisNodeInstance {
     /**
-     * Private constructor.
+     * The node.
      */
-    private ThemisXAnalysisInstance() {
+    private final T theNode;
+
+    /**
+     * Constructor.
+     * @param pNode the node
+     */
+    protected ThemisXAnalysisBaseNode(final T pNode) {
+        theNode = pNode;
     }
 
     /**
-     * The base declaration interface.
+     * Obtain the node.
+     * @return the node
      */
-    public interface ThemisXAnalysisDeclarationInstance {
+    public T getNode() {
+        return theNode;
     }
 
-    /**
-     * The base type interface.
-     */
-    public interface ThemisXAnalysisTypeInstance {
-    }
-
-    /**
-     * The base node interface.
-     */
-    public interface ThemisXAnalysisNodeInstance {
-    }
-
-    /**
-     * The base statement interface.
-     */
-    public interface ThemisXAnalysisStatementInstance {
-    }
-
-    /**
-     * The base expression interface.
-     */
-    public interface ThemisXAnalysisExpressionInstance {
+    @Override
+    public String toString() {
+        return theNode.toString();
     }
 }

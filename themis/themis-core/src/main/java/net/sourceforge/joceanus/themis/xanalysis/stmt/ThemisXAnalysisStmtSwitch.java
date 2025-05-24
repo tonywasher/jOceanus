@@ -16,16 +16,13 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.themis.xanalysis.stmt;
 
-import com.github.javaparser.ast.expr.Expression;
-import com.github.javaparser.ast.stmt.SwitchEntry;
 import com.github.javaparser.ast.stmt.SwitchStmt;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisBaseStatement;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisExpressionInstance;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisStatementInstance;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisNodeInstance;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -36,12 +33,12 @@ public class ThemisXAnalysisStmtSwitch
     /**
      * The selector.
      */
-    private final Expression theSelector;
+    private final ThemisXAnalysisExpressionInstance theSelector;
 
     /**
-     * The entries.
+     * The cases.
      */
-    private final List<ThemisXAnalysisStmtCase> theCases;
+    private final List<ThemisXAnalysisNodeInstance> theCases;
 
     /**
      * Constructor.
@@ -53,19 +50,15 @@ public class ThemisXAnalysisStmtSwitch
     public ThemisXAnalysisStmtSwitch(final ThemisXAnalysisParser pParser,
                                      final SwitchStmt pStatement) throws OceanusException {
         super(pStatement);
-        theSelector = pStatement.getSelector();
-        theCases = new ArrayList<>();
-        for (SwitchEntry myEntry : pStatement.getEntries()) {
-            final ThemisXAnalysisStmtCase myCase = new ThemisXAnalysisStmtCase(pParser, myEntry);
-            theCases.add(myCase);
-        }
+        theSelector = pParser.parseExpression(pStatement.getSelector());
+        theCases = pParser.parseNodeList(pStatement.getEntries());
     }
 
     /**
      * Obtain the selector.
      * @return the selector
      */
-    public Expression getSelector() {
+    public ThemisXAnalysisExpressionInstance getSelector() {
         return theSelector;
     }
 
@@ -73,86 +66,7 @@ public class ThemisXAnalysisStmtSwitch
      * Obtain the cases.
      * @return the cases
      */
-    public List<ThemisXAnalysisStmtCase> getCases() {
+    public List<ThemisXAnalysisNodeInstance> getCases() {
         return theCases;
-    }
-
-    /**
-     * Switch Case.
-     */
-    public static final class ThemisXAnalysisStmtCase {
-        /**
-         * The contents.
-         */
-        private final SwitchEntry theEntry;
-
-        /**
-         * The guard.
-         */
-        private final ThemisXAnalysisExpressionInstance theGuard;
-
-        /**
-         * The labels.
-         */
-        private final List<ThemisXAnalysisExpressionInstance> theLabels;
-
-        /**
-         * The body.
-         */
-        private final List<ThemisXAnalysisStatementInstance> theBody;
-
-        /**
-         * Constructor.
-         *
-         * @param pParser the parser
-         * @param pEntry the entry
-         * @throws OceanusException on error
-         */
-        private ThemisXAnalysisStmtCase(final ThemisXAnalysisParser pParser,
-                                        final SwitchEntry pEntry) throws OceanusException {
-            theEntry = pEntry;
-            final Expression myGuard = theEntry.getGuard().orElse(null);
-            theGuard = myGuard == null ? null : pParser.parseExpression(myGuard);
-            theLabels = pParser.parseExprList(theEntry.getLabels());
-            theBody = pParser.parseStatementList(theEntry.getStatements());
-        }
-
-        /**
-         * Obtain the statement.
-         *
-         * @return the statement
-         */
-        public SwitchEntry getStatement() {
-            return theEntry;
-        }
-
-        /**
-         * Obtain the guard.
-         * @return the guard
-         */
-        public ThemisXAnalysisExpressionInstance getGuard() {
-            return theGuard;
-        }
-
-        /**
-         * Obtain the labels.
-         * @return the labels
-         */
-        public List<ThemisXAnalysisExpressionInstance> getLabels() {
-            return theLabels;
-        }
-
-        /**
-         * Obtain the body.
-         * @return the body
-         */
-        public List<ThemisXAnalysisStatementInstance> getBody() {
-            return theBody;
-        }
-
-        @Override
-        public String toString() {
-            return theEntry.toString();
-        }
     }
 }

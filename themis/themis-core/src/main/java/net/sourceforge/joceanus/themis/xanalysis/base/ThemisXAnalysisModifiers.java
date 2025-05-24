@@ -17,7 +17,10 @@
 package net.sourceforge.joceanus.themis.xanalysis.base;
 
 import com.github.javaparser.ast.Modifier;
+import com.github.javaparser.ast.Modifier.Keyword;
 import com.github.javaparser.ast.NodeList;
+
+import java.util.List;
 
 /**
  * Modifiers for an object.
@@ -26,14 +29,14 @@ public class ThemisXAnalysisModifiers {
     /**
      * The list of Modifiers.
      */
-    private final NodeList<Modifier> theModifiers;
+    private final List<Keyword> theModifiers;
 
     /**
      * Constructor.
      * @param pModifiers the Modifiers
      */
     public ThemisXAnalysisModifiers(final NodeList<Modifier> pModifiers) {
-        theModifiers = pModifiers;
+        theModifiers = pModifiers.stream().map(Modifier::getKeyword).toList();
     }
 
     /**
@@ -41,7 +44,7 @@ public class ThemisXAnalysisModifiers {
      * @return true/false
      */
     boolean hasPrivate() {
-        return theModifiers.contains(Modifier.privateModifier());
+        return theModifiers.contains(Modifier.privateModifier().getKeyword());
     }
 
     @Override

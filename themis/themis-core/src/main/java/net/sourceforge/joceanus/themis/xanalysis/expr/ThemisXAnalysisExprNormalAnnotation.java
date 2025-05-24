@@ -16,10 +16,12 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.themis.xanalysis.expr;
 
-import com.github.javaparser.ast.NodeList;
-import com.github.javaparser.ast.expr.MemberValuePair;
 import com.github.javaparser.ast.expr.NormalAnnotationExpr;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisNodeInstance;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
+
+import java.util.List;
 
 /**
  * Normal Annotation Expression Declaration.
@@ -29,25 +31,26 @@ public class ThemisXAnalysisExprNormalAnnotation
     /**
      * The value pairs.
      */
-    private final NodeList<MemberValuePair> thePairs;
+    private final List<ThemisXAnalysisNodeInstance> thePairs;
 
     /**
      * Constructor.
      *
      * @param pParser the parser
      * @param pExpression the expression
+     * @throws OceanusException on error
      */
     public ThemisXAnalysisExprNormalAnnotation(final ThemisXAnalysisParser pParser,
-                                               final NormalAnnotationExpr pExpression) {
+                                               final NormalAnnotationExpr pExpression) throws OceanusException {
         super(pExpression);
-        thePairs = pExpression.getPairs();
+        thePairs = pParser.parseNodeList(pExpression.getPairs());
     }
 
     /**
      * Obtain the pairs.
      * @return the pairs
      */
-    public NodeList<MemberValuePair> getPairs() {
+    public List<ThemisXAnalysisNodeInstance> getPairs() {
         return thePairs;
     }
 }

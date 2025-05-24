@@ -14,25 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.themis.xanalysis.decl;
+package net.sourceforge.joceanus.themis.xanalysis.node;
 
 import com.github.javaparser.ast.body.Parameter;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisBaseNode;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisTypeInstance;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisModifiers;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisParamInstance;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisTypeInstance;
 
 /**
  * Class Declaration.
  */
-public class ThemisXAnalysisDeclParameter
-        implements ThemisXAnalysisParamInstance {
-    /**
-     * The declaration.
-     */
-    private final Parameter theParameter;
-
+public class ThemisXAnalysisNodeParameter
+        extends ThemisXAnalysisBaseNode<Parameter> {
     /**
      * The name.
      */
@@ -54,20 +49,12 @@ public class ThemisXAnalysisDeclParameter
      * @param pParameter the parameter
      * @throws OceanusException on error
      */
-    public ThemisXAnalysisDeclParameter(final ThemisXAnalysisParser pParser,
+    public ThemisXAnalysisNodeParameter(final ThemisXAnalysisParser pParser,
                                         final Parameter pParameter) throws OceanusException {
-        theParameter = pParameter;
-        theModifiers = new ThemisXAnalysisModifiers(theParameter.getModifiers());
-        theName = theParameter.getNameAsString();
-        theType = pParser.parseType(theParameter.getType());
-    }
-
-    /**
-     * Obtain the declaration.
-     * @return the declaration
-     */
-    public Parameter getDeclaration() {
-        return theParameter;
+        super(pParameter);
+        theModifiers = new ThemisXAnalysisModifiers(pParameter.getModifiers());
+        theName = pParameter.getNameAsString();
+        theType = pParser.parseType(pParameter.getType());
     }
 
     /**
@@ -92,10 +79,5 @@ public class ThemisXAnalysisDeclParameter
      */
     public ThemisXAnalysisModifiers getModifiers() {
         return theModifiers;
-    }
-
-    @Override
-    public String toString() {
-        return theParameter.toString();
     }
 }

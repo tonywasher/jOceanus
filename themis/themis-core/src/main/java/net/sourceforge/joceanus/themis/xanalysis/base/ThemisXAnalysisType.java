@@ -95,15 +95,15 @@ public enum ThemisXAnalysisType {
      * @return the typeType
      * @throws OceanusException on error
      */
-    public static ThemisXAnalysisType determineTypeType(final Type pType) throws OceanusException {
-        /* Loop testing each body type */
+    public static ThemisXAnalysisType determineType(final Type pType) throws OceanusException {
+        /* Loop testing each type */
         for (ThemisXAnalysisType myType : values()) {
             if (myType.theTester.test(pType)) {
                 return myType;
             }
         }
 
-        /* Unrecognised bodyType */
-        throw new ThemisDataException("Unexpected Type Type " +  pType.getClass().getCanonicalName());
+        /* Unrecognised Type */
+        throw new ThemisDataException("Unexpected Type " +  pType.getClass().getCanonicalName());
     }
 }

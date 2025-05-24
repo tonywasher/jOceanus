@@ -19,11 +19,11 @@ package net.sourceforge.joceanus.themis.xanalysis.decl;
 import com.github.javaparser.ast.body.ConstructorDeclaration;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisBaseDeclaration;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisModifiers;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisParamInstance;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisNodeInstance;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisStatementInstance;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisTypeInstance;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisModifiers;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
 
 import java.util.List;
 
@@ -40,7 +40,7 @@ public class ThemisXAnalysisDeclConstructor
     /**
      * The parameters.
      */
-    private final List<ThemisXAnalysisParamInstance> theParameters;
+    private final List<ThemisXAnalysisNodeInstance> theParameters;
 
     /**
      * The body.
@@ -64,7 +64,7 @@ public class ThemisXAnalysisDeclConstructor
         theBody = pParser.parseStatement(pDeclaration.getBody());
         theModifiers = new ThemisXAnalysisModifiers(pDeclaration.getModifiers());
         theThrown = pParser.parseTypeList(pDeclaration.getThrownExceptions());
-        theParameters = pParser.parseParamList(pDeclaration.getParameters());
+        theParameters = pParser.parseNodeList(pDeclaration.getParameters());
     }
 
     /**
@@ -79,7 +79,7 @@ public class ThemisXAnalysisDeclConstructor
      * Obtain the parameters.
      * @return the parameters
      */
-    public List<ThemisXAnalysisParamInstance> getParameters() {
+    public List<ThemisXAnalysisNodeInstance> getParameters() {
         return theParameters;
     }
 

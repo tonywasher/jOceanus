@@ -22,6 +22,7 @@ import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisBaseType;
 
 /**
  * Reference Type Declaration.
+ * @param <T> the type
  */
 public abstract class ThemisXAnalysisTypeReference<T extends ReferenceType>
         extends ThemisXAnalysisBaseType<T> {

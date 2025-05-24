@@ -55,7 +55,7 @@ public class ThemisXAnalysisMavenId {
     /**
      * The artifactId.
      */
-    private String theArtifactId;
+    private final String theArtifactId;
 
     /**
      * The version.

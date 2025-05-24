@@ -16,20 +16,18 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.themis.xanalysis.base;
 
+import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.body.BodyDeclaration;
-import com.github.javaparser.ast.body.Parameter;
-import com.github.javaparser.ast.body.VariableDeclarator;
 import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.stmt.Statement;
 import com.github.javaparser.ast.type.Type;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisDeclarationInstance;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisExpressionInstance;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisParamInstance;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisNodeInstance;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisStatementInstance;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisTypeInstance;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisVarInstance;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,7 +42,7 @@ public interface ThemisXAnalysisParser {
      * @return the parsed declaration
      * @throws OceanusException on error
      */
-    ThemisXAnalysisDeclarationInstance parseDeclarations(BodyDeclaration<?> pDecl) throws OceanusException;
+    ThemisXAnalysisDeclarationInstance parseDeclaration(BodyDeclaration<?> pDecl) throws OceanusException;
 
     /**
      * parse a list of declarations.
@@ -55,53 +53,30 @@ public interface ThemisXAnalysisParser {
     default List<ThemisXAnalysisDeclarationInstance> parseDeclarationList(final NodeList<? extends BodyDeclaration<?>> pDeclList) throws OceanusException {
         final List<ThemisXAnalysisDeclarationInstance> myList = new ArrayList<>();
         for (BodyDeclaration<?> myDecl : pDeclList) {
-            final ThemisXAnalysisDeclarationInstance myParsed = parseDeclarations(myDecl);
+            final ThemisXAnalysisDeclarationInstance myParsed = parseDeclaration(myDecl);
             myList.add(myParsed);
         }
         return myList;
     }
 
     /**
-     * Parse a parameter.
-     * @param pParameter the parameter
-     * @return the parsed parameter
+     * Parse a node.
+     * @param pNode the node
+     * @return the parsed node
      * @throws OceanusException on error
      */
-    ThemisXAnalysisParamInstance parseParameter(Parameter pParameter) throws OceanusException;
+    ThemisXAnalysisNodeInstance parseNode(Node pNode) throws OceanusException;
 
     /**
-     * parse a list of parameters.
-     * @param pParamList the list of Parameters
-     * @return the list of parsed params
+     * parse a list of nodes.
+     * @param pNodeList the list of Nodes
+     * @return the list of parsed nodes
      * @throws OceanusException on error
      */
-    default List<ThemisXAnalysisParamInstance> parseParamList(final NodeList<Parameter> pParamList) throws OceanusException {
-        final List<ThemisXAnalysisParamInstance> myList = new ArrayList<>();
-        for (Parameter myParam : pParamList) {
-            final ThemisXAnalysisParamInstance myParsed = parseParameter(myParam);
-            myList.add(myParsed);
-        }
-        return myList;
-    }
-
-    /**
-     * Parse a variable.
-     * @param pVariable the variable
-     * @return the parsed variable
-     * @throws OceanusException on error
-     */
-    ThemisXAnalysisVarInstance parseVariable(VariableDeclarator pVariable) throws OceanusException;
-
-    /**
-     * parse a list of variables.
-     * @param pVarList the list of Variables
-     * @return the list of parsed variables
-     * @throws OceanusException on error
-     */
-    default List<ThemisXAnalysisVarInstance> parseVarList(final NodeList<VariableDeclarator> pVarList) throws OceanusException {
-        final List<ThemisXAnalysisVarInstance> myList = new ArrayList<>();
-        for (VariableDeclarator myVar : pVarList) {
-            final ThemisXAnalysisVarInstance myParsed = parseVariable(myVar);
+    default List<ThemisXAnalysisNodeInstance> parseNodeList(final NodeList<? extends Node> pNodeList) throws OceanusException {
+        final List<ThemisXAnalysisNodeInstance> myList = new ArrayList<>();
+        for (Node myNode : pNodeList) {
+            final ThemisXAnalysisNodeInstance myParsed = parseNode(myNode);
             myList.add(myParsed);
         }
         return myList;

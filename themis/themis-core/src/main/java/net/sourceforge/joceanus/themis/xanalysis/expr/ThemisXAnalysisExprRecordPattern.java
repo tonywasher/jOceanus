@@ -30,12 +30,12 @@ import java.util.List;
 public class ThemisXAnalysisExprRecordPattern
         extends ThemisXAnalysisExprPattern<RecordPatternExpr> {
     /**
-     * The modifiers
+     * The modifiers.
      */
     private final ThemisXAnalysisModifiers theModifiers;
 
     /**
-     * The patterns
+     * The patterns.
      */
     private final List<ThemisXAnalysisExpressionInstance> thePatterns;
 

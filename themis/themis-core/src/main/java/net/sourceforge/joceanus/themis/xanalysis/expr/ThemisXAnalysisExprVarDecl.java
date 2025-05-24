@@ -19,7 +19,7 @@ package net.sourceforge.joceanus.themis.xanalysis.expr;
 import com.github.javaparser.ast.expr.VariableDeclarationExpr;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisBaseExpression;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisVarInstance;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisNodeInstance;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisModifiers;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
 
@@ -31,14 +31,14 @@ import java.util.List;
 public class ThemisXAnalysisExprVarDecl
         extends ThemisXAnalysisBaseExpression<VariableDeclarationExpr> {
     /**
-     * The modifiers
+     * The modifiers.
      */
     private final ThemisXAnalysisModifiers theModifiers;
 
     /**
-     * The modifiers
+     * The variables.
      */
-    private final List<ThemisXAnalysisVarInstance> theVariables;
+    private final List<ThemisXAnalysisNodeInstance> theVariables;
 
     /**
      * Constructor.
@@ -50,7 +50,7 @@ public class ThemisXAnalysisExprVarDecl
                                       final VariableDeclarationExpr pExpression) throws OceanusException {
         super(pExpression);
         theModifiers = new ThemisXAnalysisModifiers(pExpression.getModifiers());
-        theVariables = pParser.parseVarList(pExpression.getVariables());
+        theVariables = pParser.parseNodeList(pExpression.getVariables());
     }
 
     /**
@@ -65,7 +65,7 @@ public class ThemisXAnalysisExprVarDecl
      * Obtain the Variables.
      * @return the variables
      */
-    public List<ThemisXAnalysisVarInstance> getVariables() {
+    public List<ThemisXAnalysisNodeInstance> getVariables() {
         return theVariables;
     }
 }

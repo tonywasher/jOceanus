@@ -150,7 +150,7 @@ public enum ThemisXAnalysisStatement {
      * @return the StatementType
      * @throws OceanusException on error
      */
-    public static ThemisXAnalysisStatement determineStatementType(final Statement pStatement) throws OceanusException {
+    public static ThemisXAnalysisStatement determineStatement(final Statement pStatement) throws OceanusException {
         /* Loop testing each statement type */
         for (ThemisXAnalysisStatement myType : values()) {
             if (myType.theTester.test(pStatement)) {
@@ -159,6 +159,6 @@ public enum ThemisXAnalysisStatement {
         }
 
         /* Unrecognised statementType */
-        throw new ThemisDataException("Unexpected Statement Type " +  pStatement.getClass().getCanonicalName());
+        throw new ThemisDataException("Unexpected Statement " +  pStatement.getClass().getCanonicalName());
     }
 }

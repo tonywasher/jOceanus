@@ -14,41 +14,41 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.themis.xanalysis.stmt;
+package net.sourceforge.joceanus.themis.xanalysis.node;
 
-import com.github.javaparser.ast.stmt.LocalRecordDeclarationStmt;
+import com.github.javaparser.ast.ArrayCreationLevel;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisBaseStatement;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisBaseNode;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisExpressionInstance;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisDeclarationInstance;
 
 /**
- * Record Statement.
+ * Array Creation Level.
  */
-public class ThemisXAnalysisStmtRecord
-        extends ThemisXAnalysisBaseStatement<LocalRecordDeclarationStmt> {
+public class ThemisXAnalysisNodeArrayLevel
+        extends ThemisXAnalysisBaseNode<ArrayCreationLevel> {
     /**
-     * The record declaration.
+     * The Level.
      */
-    private final ThemisXAnalysisDeclarationInstance theRecord;
+    private final ThemisXAnalysisExpressionInstance theLevel;
 
     /**
      * Constructor.
      * @param pParser the parser
-     * @param pStatement the statement
+     * @param pLevel the level
      * @throws OceanusException on error
      */
-    public ThemisXAnalysisStmtRecord(final ThemisXAnalysisParser pParser,
-                                     final LocalRecordDeclarationStmt pStatement) throws OceanusException {
-        super(pStatement);
-        theRecord = pParser.parseDeclaration(pStatement.getRecordDeclaration());
+    public ThemisXAnalysisNodeArrayLevel(final ThemisXAnalysisParser pParser,
+                                         final ArrayCreationLevel pLevel) throws OceanusException {
+        super(pLevel);
+        theLevel = pParser.parseExpression(pLevel.getDimension().orElse(null));
     }
 
     /**
-     * Obtain the body.
-     * @return the body
+     * Obtain the value.
+     * @return the value
      */
-    public ThemisXAnalysisDeclarationInstance getBody() {
-        return theRecord;
+    public ThemisXAnalysisExpressionInstance getValue() {
+        return theLevel;
     }
 }

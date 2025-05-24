@@ -17,8 +17,13 @@
 package net.sourceforge.joceanus.themis.xanalysis.expr;
 
 import com.github.javaparser.ast.expr.SwitchExpr;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisBaseExpression;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisExpressionInstance;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisNodeInstance;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
+
+import java.util.List;
 
 /**
  * Switch Expression Declaration.
@@ -26,14 +31,41 @@ import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
 public class ThemisXAnalysisExprSwitch
         extends ThemisXAnalysisBaseExpression<SwitchExpr> {
     /**
+     * The selector.
+     */
+    private final ThemisXAnalysisExpressionInstance theSelector;
+
+    /**
+     * The cases.
+     */
+    private final List<ThemisXAnalysisNodeInstance> theCases;
+
+    /**
      * Constructor.
      * @param pParser the parser
      * @param pExpression the expression
+     * @throws OceanusException on error
      */
     public ThemisXAnalysisExprSwitch(final ThemisXAnalysisParser pParser,
-                                     final SwitchExpr pExpression) {
+                                     final SwitchExpr pExpression) throws OceanusException {
         super(pExpression);
-        pExpression.getSelector();
-        pExpression.getEntries();
+        theSelector = pParser.parseExpression(pExpression.getSelector());
+        theCases = pParser.parseNodeList(pExpression.getEntries());
+    }
+
+    /**
+     * Obtain the selector.
+     * @return the selector
+     */
+    public ThemisXAnalysisExpressionInstance getSelector() {
+        return theSelector;
+    }
+
+    /**
+     * Obtain the cases.
+     * @return the cases
+     */
+    public List<ThemisXAnalysisNodeInstance> getCases() {
+        return theCases;
     }
 }

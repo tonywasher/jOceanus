@@ -14,25 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.themis.xanalysis.decl;
+package net.sourceforge.joceanus.themis.xanalysis.node;
 
 import com.github.javaparser.ast.body.VariableDeclarator;
-import com.github.javaparser.ast.expr.Expression;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisBaseNode;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisExpressionInstance;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisTypeInstance;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisVarInstance;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
 /**
  * Class Declaration.
  */
-public class ThemisXAnalysisDeclVariable
-        implements ThemisXAnalysisVarInstance {
-    /**
-     * The declaration.
-     */
-    private final VariableDeclarator theDeclaration;
-
+public class ThemisXAnalysisNodeVariable
+        extends ThemisXAnalysisBaseNode<VariableDeclarator> {
     /**
      * The name.
      */
@@ -54,21 +48,12 @@ public class ThemisXAnalysisDeclVariable
      * @param pDeclaration the declaration
      * @throws OceanusException on error
      */
-    public ThemisXAnalysisDeclVariable(final ThemisXAnalysisParser pParser,
+    public ThemisXAnalysisNodeVariable(final ThemisXAnalysisParser pParser,
                                        final VariableDeclarator pDeclaration) throws OceanusException {
-        theDeclaration = pDeclaration;
-        theName = theDeclaration.getNameAsString();
-        theType = pParser.parseType(theDeclaration.getType());
-        final Expression myInit = theDeclaration.getInitializer().orElse(null);
-        theInitializer = myInit == null ? null : pParser.parseExpression(myInit);
-    }
-
-    /**
-     * Obtain the declaration.
-     * @return the declaration
-     */
-    public VariableDeclarator getDeclaration() {
-        return theDeclaration;
+        super(pDeclaration);
+        theName = pDeclaration.getNameAsString();
+        theType = pParser.parseType(pDeclaration.getType());
+        theInitializer = pParser.parseExpression(pDeclaration.getInitializer().orElse(null));
     }
 
     /**
@@ -93,10 +78,5 @@ public class ThemisXAnalysisDeclVariable
      */
     public ThemisXAnalysisExpressionInstance getInitializer() {
         return theInitializer;
-    }
-
-    @Override
-    public String toString() {
-        return theDeclaration.toString();
     }
 }

@@ -24,6 +24,7 @@ import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
 
 /**
  * Pattern Expression Declaration.
+ * @param <T> the expression
  */
 public abstract class ThemisXAnalysisExprPattern<T extends PatternExpr>
         extends ThemisXAnalysisBaseExpression<T> {

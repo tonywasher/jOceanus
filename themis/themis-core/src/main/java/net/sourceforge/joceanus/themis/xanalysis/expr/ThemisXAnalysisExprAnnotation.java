@@ -21,6 +21,7 @@ import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisBaseExpress
 
 /**
  * Annotation Expression Declaration.
+ * @param <T> the expression
  */
 public abstract class ThemisXAnalysisExprAnnotation<T extends AnnotationExpr>
         extends ThemisXAnalysisBaseExpression<T> {

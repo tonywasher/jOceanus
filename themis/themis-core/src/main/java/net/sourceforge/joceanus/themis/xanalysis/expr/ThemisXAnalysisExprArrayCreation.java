@@ -16,14 +16,15 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.themis.xanalysis.expr;
 
-import com.github.javaparser.ast.ArrayCreationLevel;
-import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.expr.ArrayCreationExpr;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisBaseExpression;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisExpressionInstance;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisNodeInstance;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisTypeInstance;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
+
+import java.util.List;
 
 /**
  * Array Creation Expression Declaration.
@@ -43,7 +44,7 @@ public class ThemisXAnalysisExprArrayCreation
     /**
      * The levels.
      */
-    private final NodeList<ArrayCreationLevel> theLevels;
+    private final List<ThemisXAnalysisNodeInstance> theLevels;
 
     /**
      * The initializer.
@@ -61,8 +62,8 @@ public class ThemisXAnalysisExprArrayCreation
         super(pExpression);
         theCreated = pParser.parseType(pExpression.createdType());
         theType = pParser.parseType(pExpression.getElementType());
-        theLevels = pExpression.getLevels();
         theInit = pParser.parseExpression(pExpression.getInitializer().orElse(null));
+        theLevels = pParser.parseNodeList(pExpression.getLevels());
     }
 
     /**
@@ -82,10 +83,10 @@ public class ThemisXAnalysisExprArrayCreation
     }
 
     /**
-     * Obtain the created type.
-     * @return the type
+     * Obtain the levels.
+     * @return the levels
      */
-    public NodeList<ArrayCreationLevel> getLevels() {
+    public List<ThemisXAnalysisNodeInstance> getLevels() {
         return theLevels;
     }
 

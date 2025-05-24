@@ -21,7 +21,7 @@ import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.Th
 
 /**
  * Declaration Base Class.
- * @param <T> the BodyDeclaration
+ * @param <T> the Declaration
  */
 public abstract class ThemisXAnalysisBaseDeclaration<T extends BodyDeclaration<T>>
         implements ThemisXAnalysisDeclarationInstance {

@@ -14,43 +14,44 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.themis.xanalysis.expr;
+package net.sourceforge.joceanus.themis.xanalysis.node;
 
-import com.github.javaparser.ast.expr.TypePatternExpr;
+import com.github.javaparser.ast.expr.MemberValuePair;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisModifiers;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisBaseNode;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisExpressionInstance;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
 
 /**
- * TypePattern Expression.
+ * Member Value Pair.
  */
-public class ThemisXAnalysisExprTypePattern
-        extends ThemisXAnalysisExprPattern<TypePatternExpr> {
+public class ThemisXAnalysisNodeValuePair
+        extends ThemisXAnalysisBaseNode<MemberValuePair>  {
     /**
-     * The name.
+     * The Name.
      */
     private final String theName;
 
     /**
-     * The modifiers.
+     * The Value.
      */
-    private final ThemisXAnalysisModifiers theModifiers;
+    private final ThemisXAnalysisExpressionInstance theValue;
 
     /**
      * Constructor.
      * @param pParser the parser
-     * @param pExpression the expression
+     * @param pPair the valuePair
      * @throws OceanusException on error
      */
-    public ThemisXAnalysisExprTypePattern(final ThemisXAnalysisParser pParser,
-                                          final TypePatternExpr pExpression) throws OceanusException {
-        super(pParser, pExpression);
-        theName = pExpression.getNameAsString();
-        theModifiers = new ThemisXAnalysisModifiers(pExpression.getModifiers());
+    public ThemisXAnalysisNodeValuePair(final ThemisXAnalysisParser pParser,
+                                        final MemberValuePair pPair) throws OceanusException {
+        super(pPair);
+        theName = pPair.getNameAsString();
+        theValue = pParser.parseExpression(pPair.getValue());
     }
 
     /**
-     * Obtain the Name.
+     * Obtain the name.
      * @return the name
      */
     public String getName() {
@@ -58,10 +59,10 @@ public class ThemisXAnalysisExprTypePattern
     }
 
     /**
-     * Obtain the Modifiers.
-     * @return the modifiers
+     * Obtain the value.
+     * @return the value
      */
-    public ThemisXAnalysisModifiers getModifiers() {
-        return theModifiers;
+    public ThemisXAnalysisExpressionInstance getValue() {
+        return theValue;
     }
 }

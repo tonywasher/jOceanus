@@ -16,16 +16,14 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.themis.xanalysis.stmt;
 
-import com.github.javaparser.ast.stmt.CatchClause;
 import com.github.javaparser.ast.stmt.TryStmt;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisBaseStatement;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisExpressionInstance;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisParamInstance;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisNodeInstance;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisStatementInstance;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -46,7 +44,7 @@ public class ThemisXAnalysisStmtTry
     /**
      * The catchClauses.
      */
-    private final List<ThemisXAnalysisStmtCatch> theCatches;
+    private final List<ThemisXAnalysisNodeInstance> theCatches;
 
     /**
      * The contents.
@@ -65,11 +63,7 @@ public class ThemisXAnalysisStmtTry
         theResources = pParser.parseExprList(pStatement.getResources());
         theTry = pParser.parseStatement(pStatement.getTryBlock());
         theFinally = pParser.parseStatement(pStatement.getFinallyBlock().orElse(null));
-        theCatches = new ArrayList<>();
-        for (CatchClause myClause : pStatement.getCatchClauses()) {
-            final ThemisXAnalysisStmtCatch myCatch = new ThemisXAnalysisStmtCatch(pParser, myClause);
-            theCatches.add(myCatch);
-        }
+        theCatches = pParser.parseNodeList(pStatement.getCatchClauses());
     }
 
     /**
@@ -92,7 +86,7 @@ public class ThemisXAnalysisStmtTry
      * Obtain the catches.
      * @return the catches
      */
-    public List<ThemisXAnalysisStmtCatch> getCatches() {
+    public List<ThemisXAnalysisNodeInstance> getCatches() {
         return theCatches;
     }
 
@@ -102,68 +96,5 @@ public class ThemisXAnalysisStmtTry
      */
     public ThemisXAnalysisStatementInstance getFinally() {
         return theFinally;
-    }
-
-    /**
-     * Try Catch.
-     */
-    public static final class ThemisXAnalysisStmtCatch {
-        /**
-         * The contents.
-         */
-        private final CatchClause theClause;
-
-        /**
-         * The parameter.
-         */
-        private final ThemisXAnalysisParamInstance theParameter;
-
-        /**
-         * The body.
-         */
-        private final ThemisXAnalysisStatementInstance theBody;
-
-        /**
-         * Constructor.
-         *
-         * @param pParser the parser
-         * @param pClause the clause
-         * @throws OceanusException on error
-         */
-        private ThemisXAnalysisStmtCatch(final ThemisXAnalysisParser pParser,
-                                         final CatchClause pClause) throws OceanusException {
-            theClause = pClause;
-            theBody = pParser.parseStatement(theClause.getBody());
-            theParameter = pParser.parseParameter(theClause.getParameter());
-        }
-
-        /**
-         * Obtain the clause.
-         * @return the clause
-         */
-        public CatchClause getClause() {
-            return theClause;
-        }
-
-        /**
-         * Obtain the parameter.
-         * @return the parameter
-         */
-        public ThemisXAnalysisParamInstance getParameter() {
-            return theParameter;
-        }
-
-        /**
-         * Obtain the body.
-         * @return the body
-         */
-        public ThemisXAnalysisStatementInstance getBody() {
-            return theBody;
-        }
-
-        @Override
-        public String toString() {
-            return theClause.toString();
-        }
     }
 }

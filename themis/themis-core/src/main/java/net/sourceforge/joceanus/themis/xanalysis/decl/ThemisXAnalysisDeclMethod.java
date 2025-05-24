@@ -20,11 +20,11 @@ import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.type.Type;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisBaseDeclaration;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisModifiers;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisParamInstance;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisNodeInstance;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisStatementInstance;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisTypeInstance;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisModifiers;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
 
 import java.util.List;
 
@@ -51,7 +51,7 @@ public class ThemisXAnalysisDeclMethod
     /**
      * The parameters.
      */
-    private final List<ThemisXAnalysisParamInstance> theParameters;
+    private final List<ThemisXAnalysisNodeInstance> theParameters;
 
     /**
      * The body.
@@ -83,7 +83,7 @@ public class ThemisXAnalysisDeclMethod
         theBody = pParser.parseStatement(pDeclaration.getBody().orElse(null));
         theTypeParameters = pParser.parseTypeList(pDeclaration.getTypeParameters());
         theThrown = pParser.parseTypeList(pDeclaration.getThrownExceptions());
-        theParameters = pParser.parseParamList(pDeclaration.getParameters());
+        theParameters = pParser.parseNodeList(pDeclaration.getParameters());
     }
 
     /**
@@ -114,7 +114,7 @@ public class ThemisXAnalysisDeclMethod
      * Obtain the parameters.
      * @return the parameters
      */
-    public List<ThemisXAnalysisParamInstance> getParameters() {
+    public List<ThemisXAnalysisNodeInstance> getParameters() {
         return theParameters;
     }
 

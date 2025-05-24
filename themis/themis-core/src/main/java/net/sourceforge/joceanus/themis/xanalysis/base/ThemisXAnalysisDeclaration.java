@@ -101,20 +101,20 @@ public enum ThemisXAnalysisDeclaration {
     }
 
     /**
-     * Determine type of body.
-     * @param pType the type
-     * @return the bodyType
+     * Determine type of Declaration.
+     * @param pDecl the declaration
+     * @return the declType
      * @throws OceanusException on error
      */
-    public static ThemisXAnalysisDeclaration determineDeclType(final BodyDeclaration<?> pType) throws OceanusException {
-        /* Loop testing each body type */
-        for (ThemisXAnalysisDeclaration myType : values()) {
-            if (myType.theTester.test(pType)) {
-                return myType;
+    public static ThemisXAnalysisDeclaration determineDeclaration(final BodyDeclaration<?> pDecl) throws OceanusException {
+        /* Loop testing each declaration type */
+        for (ThemisXAnalysisDeclaration myDecl : values()) {
+            if (myDecl.theTester.test(pDecl)) {
+                return myDecl;
             }
         }
 
-        /* Unrecognised bodyType */
-        throw new ThemisDataException("Unexpected Body Type " +  pType.getClass().getCanonicalName());
+        /* Unrecognised declType */
+        throw new ThemisDataException("Unexpected Declaration " +  pDecl.getClass().getCanonicalName());
     }
 }
