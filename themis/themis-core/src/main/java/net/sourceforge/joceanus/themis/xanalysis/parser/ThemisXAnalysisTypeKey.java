@@ -23,6 +23,7 @@ import com.github.javaparser.ast.type.TypeParameter;
 import com.github.javaparser.ast.type.UnionType;
 import com.github.javaparser.ast.type.WildcardType;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisType;
 
 import java.util.ArrayList;
@@ -83,18 +84,20 @@ public final class ThemisXAnalysisTypeKey {
 
     /**
      * Derive id for type.
+     * @param pParser the parser
      * @param pType the type
      * @return the id
      * @throws OceanusException on error
      */
-    static ThemisXAnalysisTypeKey determineKeyForType(final Type pType) throws OceanusException {
+    static ThemisXAnalysisTypeKey determineKeyForType(final ThemisXAnalysisParser pParser,
+                                                      final Type pType) throws OceanusException {
         /* Handle null type */
         if (pType == null) {
             return null;
         }
 
         /* Determine type */
-        final ThemisXAnalysisType myType = ThemisXAnalysisType.determineType(pType);
+        final ThemisXAnalysisType myType = ThemisXAnalysisType.determineType(pParser, pType);
         switch (myType) {
             case UNKNOWN:
             case VOID:
@@ -105,15 +108,15 @@ public final class ThemisXAnalysisTypeKey {
             case CLASSINTERFACE:
                 return new ThemisXAnalysisTypeKey(myType, pType.asClassOrInterfaceType().getNameAsString());
             case ARRAY:
-                return new ThemisXAnalysisTypeKey(myType, determineKeyForType(pType.asArrayType().getComponentType()));
+                return new ThemisXAnalysisTypeKey(myType, determineKeyForType(pParser, pType.asArrayType().getComponentType()));
             case INTERSECTION:
-                return new ThemisXAnalysisTypeKey(myType, new ThemisXAnalysisTypeIntersectionKey(pType.asIntersectionType()));
+                return new ThemisXAnalysisTypeKey(myType, new ThemisXAnalysisTypeIntersectionKey(pParser, pType.asIntersectionType()));
             case PARAMETER:
-                return new ThemisXAnalysisTypeKey(myType, new ThemisXAnalysisTypeParameterKey(pType.asTypeParameter()));
+                return new ThemisXAnalysisTypeKey(myType, new ThemisXAnalysisTypeParameterKey(pParser, pType.asTypeParameter()));
             case UNION:
-                return new ThemisXAnalysisTypeKey(myType, new ThemisXAnalysisTypeUnionKey(pType.asUnionType()));
+                return new ThemisXAnalysisTypeKey(myType, new ThemisXAnalysisTypeUnionKey(pParser, pType.asUnionType()));
             case WILDCARD:
-                return new ThemisXAnalysisTypeKey(myType, new ThemisXAnalysisTypeWildcardKey(pType.asWildcardType()));
+                return new ThemisXAnalysisTypeKey(myType, new ThemisXAnalysisTypeWildcardKey(pParser, pType.asWildcardType()));
             default:
                 throw new IllegalArgumentException();
         }
@@ -130,13 +133,15 @@ public final class ThemisXAnalysisTypeKey {
 
         /**
          * Constructor.
+         * @param pParser the parser
          * @param pType the intersection type.
          * @throws OceanusException on error
          */
-        ThemisXAnalysisTypeIntersectionKey(final IntersectionType pType) throws OceanusException {
+        ThemisXAnalysisTypeIntersectionKey(final ThemisXAnalysisParser pParser,
+                                           final IntersectionType pType) throws OceanusException {
             theIds = new ArrayList<>();
             for (ReferenceType myElement : pType.getElements()) {
-                theIds.add(determineKeyForType(myElement));
+                theIds.add(determineKeyForType(pParser, myElement));
             }
         }
 
@@ -176,14 +181,16 @@ public final class ThemisXAnalysisTypeKey {
 
         /**
          * Constructor.
-         * @param pType the intersection type.
+         * @param pParser the parser
+         * @param pType the type parameter.
          * @throws OceanusException on error
          */
-        ThemisXAnalysisTypeParameterKey(final TypeParameter pType) throws OceanusException {
+        ThemisXAnalysisTypeParameterKey(final ThemisXAnalysisParser pParser,
+                                        final TypeParameter pType) throws OceanusException {
             theName = pType.getNameAsString();
             theIds = new ArrayList<>();
             for (ReferenceType myElement : pType.getTypeBound()) {
-                theIds.add(determineKeyForType(myElement));
+                theIds.add(determineKeyForType(pParser, myElement));
             }
         }
 
@@ -218,13 +225,15 @@ public final class ThemisXAnalysisTypeKey {
 
         /**
          * Constructor.
-         * @param pType the intersection type.
+         * @param pParser the parser
+         * @param pType the union type.
          * @throws OceanusException on error
          */
-        ThemisXAnalysisTypeUnionKey(final UnionType pType) throws OceanusException {
+        ThemisXAnalysisTypeUnionKey(final ThemisXAnalysisParser pParser,
+                                    final UnionType pType) throws OceanusException {
             theIds = new ArrayList<>();
             for (ReferenceType myElement : pType.getElements()) {
-                theIds.add(determineKeyForType(myElement));
+                theIds.add(determineKeyForType(pParser, myElement));
             }
         }
 
@@ -263,12 +272,14 @@ public final class ThemisXAnalysisTypeKey {
 
         /**
          * Constructor.
-         * @param pType the intersection type.
+         * @param pParser the parser
+         * @param pType the wildcard type.
          * @throws OceanusException on error
          */
-        ThemisXAnalysisTypeWildcardKey(final WildcardType pType) throws OceanusException {
-            theExtendedId = determineKeyForType(pType.getExtendedType().orElse(null));
-            theSuperId = determineKeyForType(pType.getSuperType().orElse(null));
+        ThemisXAnalysisTypeWildcardKey(final ThemisXAnalysisParser pParser,
+                                       final WildcardType pType) throws OceanusException {
+            theExtendedId = determineKeyForType(pParser, pType.getExtendedType().orElse(null));
+            theSuperId = determineKeyForType(pParser, pType.getSuperType().orElse(null));
         }
 
         @Override

@@ -18,7 +18,6 @@ package net.sourceforge.joceanus.themis.xanalysis.base;
 
 import com.github.javaparser.ast.type.Type;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.themis.exc.ThemisDataException;
 
 import java.util.function.Predicate;
 
@@ -91,11 +90,13 @@ public enum ThemisXAnalysisType {
 
     /**
      * Determine type of type.
+     * @param pParser the parser
      * @param pType the type
      * @return the typeType
      * @throws OceanusException on error
      */
-    public static ThemisXAnalysisType determineType(final Type pType) throws OceanusException {
+    public static ThemisXAnalysisType determineType(final ThemisXAnalysisParser pParser,
+                                                    final Type pType) throws OceanusException {
         /* Loop testing each type */
         for (ThemisXAnalysisType myType : values()) {
             if (myType.theTester.test(pType)) {
@@ -104,6 +105,6 @@ public enum ThemisXAnalysisType {
         }
 
         /* Unrecognised Type */
-        throw new ThemisDataException("Unexpected Type " +  pType.getClass().getCanonicalName());
+        throw pParser.buildException("Unexpected Type", pType);
     }
 }

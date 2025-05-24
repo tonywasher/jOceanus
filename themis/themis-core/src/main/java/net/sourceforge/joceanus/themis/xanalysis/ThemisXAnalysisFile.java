@@ -16,27 +16,11 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.themis.xanalysis;
 
-import com.github.javaparser.StaticJavaParser;
-import com.github.javaparser.ast.CompilationUnit;
-import com.github.javaparser.ast.ImportDeclaration;
-import com.github.javaparser.ast.NodeList;
-import com.github.javaparser.ast.PackageDeclaration;
-import com.github.javaparser.ast.body.TypeDeclaration;
-import com.github.javaparser.ast.comments.Comment;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.themis.exc.ThemisDataException;
-import net.sourceforge.joceanus.themis.exc.ThemisIOException;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisNodeInstance;
+import net.sourceforge.joceanus.themis.xanalysis.parser.ThemisXAnalysisCodeParser;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 
 /**
  * Analysis representation of a java file.
@@ -65,27 +49,7 @@ public class ThemisXAnalysisFile {
     /**
      * The contents.
      */
-    private CompilationUnit theContents;
-
-    /**
-     * The comments.
-     */
-    private Comment theComment;
-
-    /**
-     * The package definition.
-     */
-    private ThemisXAnalysisPackageDef thePackageDef;
-
-    /**
-     * The imports.
-     */
-    private ThemisXAnalysisImports theImports;
-
-    /**
-     * The types.
-     */
-    private ThemisXAnalysisObject theType;
+    private ThemisXAnalysisNodeInstance theContents;
 
     /**
      * Constructor.
@@ -118,19 +82,11 @@ public class ThemisXAnalysisFile {
     }
 
     /**
-     * Obtain the package declaration.
-     * @return the package declaration
+     * Obtain the contents.
+     * @return the contents
      */
-    ThemisXAnalysisPackageDef getPackageDef() {
-        return thePackageDef;
-    }
-
-    /**
-     * Obtain the imports.
-     * @return the imports
-     */
-    ThemisXAnalysisImports getImports() {
-        return theImports;
+    public ThemisXAnalysisNodeInstance getContents() {
+        return theContents;
     }
 
     @Override
@@ -143,133 +99,8 @@ public class ThemisXAnalysisFile {
      * @throws OceanusException on error
      */
     void processFile() throws OceanusException {
-        /* Protect against exceptions */
-        try (InputStream myStream = new FileInputStream(theLocation);
-             InputStreamReader myInputReader = new InputStreamReader(myStream, StandardCharsets.UTF_8);
-             BufferedReader myReader = new BufferedReader(myInputReader)) {
-
-            /* Parse the contents */
-            theContents = StaticJavaParser.parse(myStream);
-            theComment = theContents.getComment().orElse(null);
-
-            /* Obtain details about package and imports */
-            final Optional<PackageDeclaration> myPackage = theContents.getPackageDeclaration();
-            thePackageDef = myPackage.isEmpty() ? null : new ThemisXAnalysisPackageDef(myPackage.get());
-            theImports = new ThemisXAnalysisImports(theContents.getImports());
-
-            /* Obtain details about classes */
-            final NodeList<TypeDeclaration<?>> myTypes = theContents.getTypes();
-            if (myTypes.size() != 1) {
-                throw new ThemisDataException("More than one class definition in file");
-            }
-            theType = new ThemisXAnalysisObject(myTypes.get(0));
-
-            /* Catch exceptions */
-        } catch (IOException e) {
-            /* Throw an exception */
-            throw new ThemisIOException("Failed to load file "
-                    + theLocation.getAbsolutePath(), e);
-        }
-    }
-
-    /**
-     * The package declaration class.
-     */
-    private final class ThemisXAnalysisPackageDef {
-        /**
-         * The contents.
-         */
-        private final PackageDeclaration theContents;
-
-        /**
-         * Constructor.
-         * @param pDeclaration the optional package declaration.
-         * @throws OceanusException on error
-         */
-        private ThemisXAnalysisPackageDef(final PackageDeclaration pDeclaration) throws OceanusException {
-            /* Store contents */
-            theContents = pDeclaration;
-
-            /* Check that the package matches */
-            if (!thePackage.getPackage().equals(theContents.getNameAsString())) {
-                throw new ThemisDataException("Bad package");
-            }
-        }
-
-        /**
-         * Obtain the contents.
-         * @return the contents
-         */
-        PackageDeclaration getContents() {
-            return theContents;
-        }
-    }
-
-    /**
-     * Import declarations.
-     */
-    public static class ThemisXAnalysisImports {
-        /**
-         * The Imports.
-         */
-        private final List<ThemisXAnalysisImport> theImports;
-
-        /**
-         * Constructor.
-         *
-         * @param pImports the import declarations
-         * @throws OceanusException on error
-         */
-        ThemisXAnalysisImports(final NodeList<ImportDeclaration> pImports) throws OceanusException {
-            /* Create the import list */
-            theImports = new ArrayList<>();
-
-            /* Loop through the imports */
-            for (ImportDeclaration myImportDef : pImports) {
-                final ThemisXAnalysisImport myImport = new ThemisXAnalysisImport(myImportDef);
-                theImports.add(myImport);
-            }
-        }
-
-        /**
-         * Obtain the imports.
-         * @return the imports
-         */
-        List<ThemisXAnalysisImport> getImports() {
-            return theImports;
-        }
-    }
-
-    /**
-     * Import declaration.
-     */
-    public static final class ThemisXAnalysisImport {
-        /**
-         * The contents.
-         */
-        private final ImportDeclaration theContents;
-
-        /**
-         * Constructor.
-         * @param pImport the import declaration
-         * @throws OceanusException on error
-         */
-        private ThemisXAnalysisImport(final ImportDeclaration pImport) throws OceanusException  {
-            /* Store the contents */
-            theContents = pImport;
-
-            /* Reject imports of wildcards */
-            if (pImport.isAsterisk()) {
-                throw new ThemisDataException("Wildcard in import");
-            }
-        }
-
-        /**
-         * Obtain the contents.
-         * @return the contents
-         */
-        ImportDeclaration getContents() {
-            return theContents;
-        }
+        ThemisXAnalysisCodeParser myParser = new ThemisXAnalysisCodeParser(theLocation, thePackage.getPackage());
+        theContents = myParser.parseFile();
+        int i = 0;
     }
 }

@@ -18,7 +18,6 @@ package net.sourceforge.joceanus.themis.xanalysis.base;
 
 import com.github.javaparser.ast.stmt.Statement;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.themis.exc.ThemisDataException;
 
 import java.util.function.Predicate;
 
@@ -146,11 +145,13 @@ public enum ThemisXAnalysisStatement {
 
     /**
      * Determine type of statement.
+     * @param pParser the parser
      * @param pStatement the statement
      * @return the StatementType
      * @throws OceanusException on error
      */
-    public static ThemisXAnalysisStatement determineStatement(final Statement pStatement) throws OceanusException {
+    public static ThemisXAnalysisStatement determineStatement(final ThemisXAnalysisParser pParser,
+                                                              final Statement pStatement) throws OceanusException {
         /* Loop testing each statement type */
         for (ThemisXAnalysisStatement myType : values()) {
             if (myType.theTester.test(pStatement)) {
@@ -159,6 +160,6 @@ public enum ThemisXAnalysisStatement {
         }
 
         /* Unrecognised statementType */
-        throw new ThemisDataException("Unexpected Statement " +  pStatement.getClass().getCanonicalName());
+        throw pParser.buildException("Unexpected Statement", pStatement);
     }
 }

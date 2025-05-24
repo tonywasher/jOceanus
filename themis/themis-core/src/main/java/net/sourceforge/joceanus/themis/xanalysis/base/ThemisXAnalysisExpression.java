@@ -18,7 +18,6 @@ package net.sourceforge.joceanus.themis.xanalysis.base;
 
 import com.github.javaparser.ast.expr.Expression;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.themis.exc.ThemisDataException;
 
 import java.util.function.Predicate;
 
@@ -39,7 +38,7 @@ public enum ThemisXAnalysisExpression {
     /**
      * ArrayInitializer.
      */
-    ARRAYINIT(Expression::isArrayAccessExpr),
+    ARRAYINIT(Expression::isArrayInitializerExpr),
 
     /**
      * Assign.
@@ -216,11 +215,13 @@ public enum ThemisXAnalysisExpression {
 
     /**
      * Determine type of expression.
+     * @param pParser the parser
      * @param pExpr the expression
      * @return the exprType
      * @throws OceanusException on error
      */
-    public static ThemisXAnalysisExpression determineExpression(final Expression pExpr) throws OceanusException {
+    public static ThemisXAnalysisExpression determineExpression(final ThemisXAnalysisParser pParser,
+                                                                final Expression pExpr) throws OceanusException {
         /* Loop testing each expr type */
         for (ThemisXAnalysisExpression myExpr : values()) {
             if (myExpr.theTester.test(pExpr)) {
@@ -229,6 +230,6 @@ public enum ThemisXAnalysisExpression {
         }
 
         /* Unrecognised exprType */
-        throw new ThemisDataException("Unexpected Expression" +  pExpr.getClass().getCanonicalName());
+        throw pParser.buildException("Unexpected Expression", pExpr);
     }
 }

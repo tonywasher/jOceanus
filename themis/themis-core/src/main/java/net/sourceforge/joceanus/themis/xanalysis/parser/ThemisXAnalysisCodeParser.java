@@ -16,8 +16,16 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.themis.xanalysis.parser;
 
+import com.github.javaparser.JavaParser;
+import com.github.javaparser.ParseResult;
+import com.github.javaparser.ParserConfiguration;
+import com.github.javaparser.Position;
+import com.github.javaparser.Problem;
 import com.github.javaparser.ast.ArrayCreationLevel;
+import com.github.javaparser.ast.CompilationUnit;
+import com.github.javaparser.ast.ImportDeclaration;
 import com.github.javaparser.ast.Node;
+import com.github.javaparser.ast.PackageDeclaration;
 import com.github.javaparser.ast.body.BodyDeclaration;
 import com.github.javaparser.ast.body.Parameter;
 import com.github.javaparser.ast.body.VariableDeclarator;
@@ -29,6 +37,8 @@ import com.github.javaparser.ast.stmt.SwitchEntry;
 import com.github.javaparser.ast.type.Type;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.exc.ThemisDataException;
+import net.sourceforge.joceanus.themis.exc.ThemisIOException;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisChar;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisDeclaration;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisExpression;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisDeclarationInstance;
@@ -82,12 +92,16 @@ import net.sourceforge.joceanus.themis.xanalysis.expr.ThemisXAnalysisExprSuper;
 import net.sourceforge.joceanus.themis.xanalysis.expr.ThemisXAnalysisExprSwitch;
 import net.sourceforge.joceanus.themis.xanalysis.expr.ThemisXAnalysisExprTextBlockLit;
 import net.sourceforge.joceanus.themis.xanalysis.expr.ThemisXAnalysisExprThis;
+import net.sourceforge.joceanus.themis.xanalysis.expr.ThemisXAnalysisExprType;
 import net.sourceforge.joceanus.themis.xanalysis.expr.ThemisXAnalysisExprTypePattern;
 import net.sourceforge.joceanus.themis.xanalysis.expr.ThemisXAnalysisExprUnary;
 import net.sourceforge.joceanus.themis.xanalysis.expr.ThemisXAnalysisExprVarDecl;
 import net.sourceforge.joceanus.themis.xanalysis.node.ThemisXAnalysisNodeArrayLevel;
 import net.sourceforge.joceanus.themis.xanalysis.node.ThemisXAnalysisNodeCase;
 import net.sourceforge.joceanus.themis.xanalysis.node.ThemisXAnalysisNodeCatch;
+import net.sourceforge.joceanus.themis.xanalysis.node.ThemisXAnalysisNodeCompilationUnit;
+import net.sourceforge.joceanus.themis.xanalysis.node.ThemisXAnalysisNodeImport;
+import net.sourceforge.joceanus.themis.xanalysis.node.ThemisXAnalysisNodePackage;
 import net.sourceforge.joceanus.themis.xanalysis.node.ThemisXAnalysisNodeParameter;
 import net.sourceforge.joceanus.themis.xanalysis.node.ThemisXAnalysisNodeValuePair;
 import net.sourceforge.joceanus.themis.xanalysis.node.ThemisXAnalysisNodeVariable;
@@ -113,7 +127,13 @@ import net.sourceforge.joceanus.themis.xanalysis.stmt.ThemisXAnalysisStmtTry;
 import net.sourceforge.joceanus.themis.xanalysis.stmt.ThemisXAnalysisStmtWhile;
 import net.sourceforge.joceanus.themis.xanalysis.stmt.ThemisXAnalysisStmtYield;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 
 /**
  * Code Parser.
@@ -147,9 +167,72 @@ public class ThemisXAnalysisCodeParser
         theTypeCache = new ThemisXAnalysisTypeCache(this);
     }
 
+    /**
+     * Process the file.
+     * @throws OceanusException on error
+     */
+    public ThemisXAnalysisNodeInstance parseFile() throws OceanusException {
+        /* Protect against exceptions */
+        try (InputStream myStream = new FileInputStream(theCurrentFile);
+             InputStreamReader myInputReader = new InputStreamReader(myStream, StandardCharsets.UTF_8);
+             BufferedReader myReader = new BufferedReader(myInputReader)) {
+
+            /* Parse the contents */
+            final JavaParser myParser = new JavaParser();
+            myParser.getParserConfiguration().setLanguageLevel(ParserConfiguration.LanguageLevel.JAVA_21);
+            final ParseResult<CompilationUnit> myUnit = myParser.parse(myStream);
+            if (!myUnit.isSuccessful()) {
+                final Problem myProblem = myUnit.getProblem(0);
+                throw new ThemisDataException(myProblem.getVerboseMessage());
+            }
+            return parseNode(myUnit.getResult().orElse(null));
+
+            /* Catch exceptions */
+        } catch (IOException e) {
+            /* Throw an exception */
+            throw new ThemisIOException("Failed to load file "
+                    + theCurrentFile.getAbsolutePath(), e);
+        }
+    }
+
+    @Override
+    public OceanusException buildException(final String pMessage,
+                                           final Node pNode) {
+        /* Determine location of error */
+        final Position myPos = pNode.getBegin().orElse(null);
+        final String myLocation = pNode.getClass().getCanonicalName()
+                + (myPos == null ? "" : ThemisXAnalysisChar.PARENTHESIS_OPEN
+                                          + myPos.line
+                                          + ThemisXAnalysisChar.COLON
+                                          + myPos.column
+                                          + ThemisXAnalysisChar.PARENTHESIS_CLOSE);
+
+        /* Build full error message */
+        final String myMsg = pMessage
+                + ThemisXAnalysisChar.LF
+                + myLocation
+                + ThemisXAnalysisChar.LF
+                + theCurrentFile.getAbsolutePath();
+
+        /* Create exception */
+        return new ThemisDataException(pMessage);
+    }
+
+    /**
+     * Check the package name
+     * @param pPackage the package name
+     * @throws OceanusException on error
+     */
+    public void checkPackage(final PackageDeclaration pPackage) throws OceanusException {
+        /* Check that package matches */
+        if (!thePackage.equals(pPackage.getNameAsString())) {
+            throw buildException("Mismatch on package", pPackage);
+        }
+    }
+
     @Override
     public ThemisXAnalysisDeclarationInstance parseDeclaration(final BodyDeclaration<?> pDecl) throws OceanusException {
-        switch (ThemisXAnalysisDeclaration.determineDeclaration(pDecl)) {
+        switch (ThemisXAnalysisDeclaration.determineDeclaration(this, pDecl)) {
             case ANNOTATION:       return new ThemisXAnalysisDeclAnnotation(this, pDecl.asAnnotationDeclaration());
             case ANNOTATIONMEMBER: return new ThemisXAnalysisDeclAnnotationMember(this, pDecl.asAnnotationMemberDeclaration());
             case CLASS:            return new ThemisXAnalysisDeclClass(this, pDecl.asClassOrInterfaceDeclaration());
@@ -162,20 +245,23 @@ public class ThemisXAnalysisCodeParser
             case INTERFACE:        return new ThemisXAnalysisDeclInterface(this, pDecl.asClassOrInterfaceDeclaration());
             case METHOD:           return new ThemisXAnalysisDeclMethod(this, pDecl.asMethodDeclaration());
             case RECORD:           return new ThemisXAnalysisDeclRecord(this, pDecl.asRecordDeclaration());
-            default:               throw new ThemisDataException("Unsupported Declaration Type");
+            default:               throw buildException("Unsupported Declaration Type", pDecl);
         }
     }
 
     @Override
     public ThemisXAnalysisNodeInstance parseNode(final Node pNode) throws OceanusException {
-        switch (ThemisXAnalysisNode.determineNode(pNode)) {
-            case ARRAYLEVEL: return new ThemisXAnalysisNodeArrayLevel(this, (ArrayCreationLevel) pNode);
-            case CASE:       return new ThemisXAnalysisNodeCase(this, (SwitchEntry) pNode);
-            case CATCH:      return new ThemisXAnalysisNodeCatch(this, (CatchClause) pNode);
-            case PARAMETER:  return new ThemisXAnalysisNodeParameter(this, (Parameter) pNode);
-            case VALUEPAIR:  return new ThemisXAnalysisNodeValuePair(this, (MemberValuePair) pNode);
-            case VARIABLE:   return new ThemisXAnalysisNodeVariable(this, (VariableDeclarator) pNode);
-            default:         throw new ThemisDataException("Unsupported Node Type");
+        switch (ThemisXAnalysisNode.determineNode(this, pNode)) {
+            case ARRAYLEVEL:      return new ThemisXAnalysisNodeArrayLevel(this, (ArrayCreationLevel) pNode);
+            case CASE:            return new ThemisXAnalysisNodeCase(this, (SwitchEntry) pNode);
+            case CATCH:           return new ThemisXAnalysisNodeCatch(this, (CatchClause) pNode);
+            case COMPILATIONUNIT: return new ThemisXAnalysisNodeCompilationUnit(this, (CompilationUnit) pNode);
+            case IMPORT:          return new ThemisXAnalysisNodeImport(this, (ImportDeclaration) pNode);
+            case PACKAGE:         return new ThemisXAnalysisNodePackage(this, (PackageDeclaration) pNode);
+            case PARAMETER:       return new ThemisXAnalysisNodeParameter(this, (Parameter) pNode);
+            case VALUEPAIR:       return new ThemisXAnalysisNodeValuePair(this, (MemberValuePair) pNode);
+            case VARIABLE:        return new ThemisXAnalysisNodeVariable(this, (VariableDeclarator) pNode);
+            default:              throw buildException("Unsupported Node Type", pNode);
         }
     }
 
@@ -198,7 +284,7 @@ public class ThemisXAnalysisCodeParser
         }
 
         /* Allocate correct Statement */
-        switch (ThemisXAnalysisStatement.determineStatement(pStatement)) {
+        switch (ThemisXAnalysisStatement.determineStatement(this, pStatement)) {
             case ASSERT:       return new ThemisXAnalysisStmtAssert(this, pStatement.asAssertStmt());
             case BLOCK:        return new ThemisXAnalysisStmtBlock(this, pStatement.asBlockStmt());
             case BREAK:        return new ThemisXAnalysisStmtBreak(this, pStatement.asBreakStmt());
@@ -220,7 +306,7 @@ public class ThemisXAnalysisCodeParser
             case TRY:          return new ThemisXAnalysisStmtTry(this, pStatement.asTryStmt());
             case WHILE:        return new ThemisXAnalysisStmtWhile(this, pStatement.asWhileStmt());
             case YIELD:        return new ThemisXAnalysisStmtYield(this, pStatement.asYieldStmt());
-            default:           throw new ThemisDataException("Unsupported Statement Type");
+            default:           throw buildException("Unsupported Statement Type", pStatement);
         }
     }
 
@@ -232,7 +318,7 @@ public class ThemisXAnalysisCodeParser
         }
 
         /* Allocate correct Expression */
-        switch (ThemisXAnalysisExpression.determineExpression(pExpr)) {
+        switch (ThemisXAnalysisExpression.determineExpression(this, pExpr)) {
             case ARRAYACCESS:     return new ThemisXAnalysisExprArrayAccess(this, pExpr.asArrayAccessExpr());
             case ARRAYCREATION:   return new ThemisXAnalysisExprArrayCreation(this, pExpr.asArrayCreationExpr());
             case ARRAYINIT:       return new ThemisXAnalysisExprArrayInit(this, pExpr.asArrayInitializerExpr());
@@ -264,10 +350,11 @@ public class ThemisXAnalysisCodeParser
             case SWITCH:          return new ThemisXAnalysisExprSwitch(this, pExpr.asSwitchExpr());
             case TEXTBLOCK:       return new ThemisXAnalysisExprTextBlockLit(this, pExpr.asTextBlockLiteralExpr());
             case THIS:            return new ThemisXAnalysisExprThis(this, pExpr.asThisExpr());
+            case TYPE:            return new ThemisXAnalysisExprType(this, pExpr.asTypeExpr());
             case TYPEPATTERN:     return new ThemisXAnalysisExprTypePattern(this, pExpr.asTypePatternExpr());
             case UNARY:           return new ThemisXAnalysisExprUnary(this, pExpr.asUnaryExpr());
             case VARIABLE:        return new ThemisXAnalysisExprVarDecl(this, pExpr.asVariableDeclarationExpr());
-            default:              throw new ThemisDataException("Unsupported Expression Type");
+            default:              throw buildException("Unsupported Expression Type", pExpr);
         }
     }
 }

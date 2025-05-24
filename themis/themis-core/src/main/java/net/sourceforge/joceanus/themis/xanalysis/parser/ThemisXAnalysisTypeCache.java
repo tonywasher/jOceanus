@@ -18,7 +18,6 @@ package net.sourceforge.joceanus.themis.xanalysis.parser;
 
 import com.github.javaparser.ast.type.Type;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.themis.exc.ThemisDataException;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisTypeInstance;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisType;
@@ -67,12 +66,12 @@ public class ThemisXAnalysisTypeCache {
      */
     ThemisXAnalysisTypeInstance parseType(final Type pType) throws OceanusException {
         /* Determine the key */
-        final ThemisXAnalysisTypeKey myKey = ThemisXAnalysisTypeKey.determineKeyForType(pType);
+        final ThemisXAnalysisTypeKey myKey = ThemisXAnalysisTypeKey.determineKeyForType(theParser, pType);
 
         /* LookUp the type */
         ThemisXAnalysisTypeInstance myParsed = theMap.get(myKey);
         if (myParsed == null) {
-            myParsed = theParser.parseType(pType);
+            myParsed = createParsedType(pType);
             theMap.put(myKey, myParsed);
         }
 
@@ -88,7 +87,7 @@ public class ThemisXAnalysisTypeCache {
      */
     private ThemisXAnalysisTypeInstance createParsedType(final Type pType) throws OceanusException {
         /* Allocate correct Type */
-        switch (ThemisXAnalysisType.determineType(pType)) {
+        switch (ThemisXAnalysisType.determineType(theParser, pType)) {
             case ARRAY:          return new ThemisXAnalysisTypeArray(theParser, pType.asArrayType());
             case CLASSINTERFACE: return new ThemisXAnalysisTypeClassInterface(theParser, pType.asClassOrInterfaceType());
             case INTERSECTION:   return new ThemisXAnalysisTypeIntersection(theParser, pType.asIntersectionType());
@@ -99,7 +98,7 @@ public class ThemisXAnalysisTypeCache {
             case VAR:            return new ThemisXAnalysisTypeVar(theParser, pType.asVarType());
             case VOID:           return new ThemisXAnalysisTypeVoid(theParser, pType.asVoidType());
             case WILDCARD:       return new ThemisXAnalysisTypeWildcard(theParser, pType.asWildcardType());
-            default:             throw new ThemisDataException("Unsupported Type Type");
+            default:             throw theParser.buildException("Unsupported Type", pType);
         }
     }
 }

@@ -19,7 +19,6 @@ package net.sourceforge.joceanus.themis.xanalysis.base;
 import com.github.javaparser.ast.body.BodyDeclaration;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.themis.exc.ThemisDataException;
 
 import java.util.function.Predicate;
 
@@ -102,11 +101,13 @@ public enum ThemisXAnalysisDeclaration {
 
     /**
      * Determine type of Declaration.
+     * @param pParser the parser
      * @param pDecl the declaration
      * @return the declType
      * @throws OceanusException on error
      */
-    public static ThemisXAnalysisDeclaration determineDeclaration(final BodyDeclaration<?> pDecl) throws OceanusException {
+    public static ThemisXAnalysisDeclaration determineDeclaration(final ThemisXAnalysisParser pParser,
+                                                                  final BodyDeclaration<?> pDecl) throws OceanusException {
         /* Loop testing each declaration type */
         for (ThemisXAnalysisDeclaration myDecl : values()) {
             if (myDecl.theTester.test(pDecl)) {
@@ -115,6 +116,6 @@ public enum ThemisXAnalysisDeclaration {
         }
 
         /* Unrecognised declType */
-        throw new ThemisDataException("Unexpected Declaration " +  pDecl.getClass().getCanonicalName());
+        throw pParser.buildException("Unexpected Declaration", pDecl);
     }
 }

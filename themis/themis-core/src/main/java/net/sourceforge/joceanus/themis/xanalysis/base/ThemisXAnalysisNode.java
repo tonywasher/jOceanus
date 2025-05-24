@@ -17,14 +17,16 @@
 package net.sourceforge.joceanus.themis.xanalysis.base;
 
 import com.github.javaparser.ast.ArrayCreationLevel;
+import com.github.javaparser.ast.CompilationUnit;
+import com.github.javaparser.ast.ImportDeclaration;
 import com.github.javaparser.ast.Node;
+import com.github.javaparser.ast.PackageDeclaration;
 import com.github.javaparser.ast.body.Parameter;
 import com.github.javaparser.ast.body.VariableDeclarator;
 import com.github.javaparser.ast.expr.MemberValuePair;
 import com.github.javaparser.ast.stmt.CatchClause;
 import com.github.javaparser.ast.stmt.SwitchEntry;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.themis.exc.ThemisDataException;
 
 import java.util.function.Predicate;
 
@@ -46,6 +48,21 @@ public enum ThemisXAnalysisNode {
      * Catch.
      */
     CATCH(n -> n instanceof CatchClause),
+
+    /**
+     * Compilation Unit.
+     */
+    COMPILATIONUNIT(n -> n instanceof CompilationUnit),
+
+    /**
+     * Import.
+     */
+    IMPORT(n -> n instanceof ImportDeclaration),
+
+    /**
+     * Parameter.
+     */
+    PACKAGE(n -> n instanceof PackageDeclaration),
 
     /**
      * Parameter.
@@ -77,11 +94,13 @@ public enum ThemisXAnalysisNode {
 
     /**
      * Determine type of node.
+     * @param pParser the parser
      * @param pNode the node
      * @return the nodeType
      * @throws OceanusException on error
      */
-    public static ThemisXAnalysisNode determineNode(final Node pNode) throws OceanusException {
+    public static ThemisXAnalysisNode determineNode(final ThemisXAnalysisParser pParser,
+                                                    final Node pNode) throws OceanusException {
         /* Loop testing each node type */
         for (ThemisXAnalysisNode myNode : values()) {
             if (myNode.theTester.test(pNode)) {
@@ -90,6 +109,6 @@ public enum ThemisXAnalysisNode {
         }
 
         /* Unrecognised nodeType */
-        throw new ThemisDataException("Unexpected Node " +  pNode.getClass().getCanonicalName());
+        throw pParser.buildException("Unexpected Node", pNode);
     }
 }

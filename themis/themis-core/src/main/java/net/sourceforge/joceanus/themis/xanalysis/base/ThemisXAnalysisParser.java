@@ -18,6 +18,7 @@ package net.sourceforge.joceanus.themis.xanalysis.base;
 
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.NodeList;
+import com.github.javaparser.ast.PackageDeclaration;
 import com.github.javaparser.ast.body.BodyDeclaration;
 import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.stmt.Statement;
@@ -36,6 +37,22 @@ import java.util.List;
  * Parser interface.
  */
 public interface ThemisXAnalysisParser {
+    /**
+     * Build exception.
+     * @param pMessage the message
+     * @param pNode the failing node
+     * @return the built exception
+     */
+    OceanusException buildException(String pMessage,
+                                    final Node pNode);
+
+    /**
+     * Check the package name
+     * @param pPackage the package name
+     * @throws OceanusException on error
+     */
+    void checkPackage(PackageDeclaration pPackage) throws OceanusException;
+
     /**
      * Parse a declaration.
      * @param pDecl the declaration
