@@ -31,8 +31,8 @@ public class ThemisXAnalysisExprMarkerAnnotation
      * @param pExpression the expression
      * @throws OceanusException on error
      */
-    public ThemisXAnalysisExprMarkerAnnotation(final ThemisXAnalysisParser pParser,
-                                               final MarkerAnnotationExpr pExpression) throws OceanusException {
+    ThemisXAnalysisExprMarkerAnnotation(final ThemisXAnalysisParser pParser,
+                                        final MarkerAnnotationExpr pExpression) throws OceanusException {
         super(pParser, pExpression);
     }
 }

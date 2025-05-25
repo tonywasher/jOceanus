@@ -29,8 +29,8 @@ public class ThemisXAnalysisExprLongLit
      * @param pParser the parser
      * @param pExpression the expression
      */
-    public ThemisXAnalysisExprLongLit(final ThemisXAnalysisParser pParser,
-                                      final LongLiteralExpr pExpression) {
+    ThemisXAnalysisExprLongLit(final ThemisXAnalysisParser pParser,
+                               final LongLiteralExpr pExpression) {
         super(pParser, pExpression);
     }
 }

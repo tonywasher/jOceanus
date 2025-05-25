@@ -19,40 +19,39 @@ package net.sourceforge.joceanus.themis.xanalysis.base;
 /**
  * Instance definitions.
  */
-public final class ThemisXAnalysisInstance {
-    /**
-     * Private constructor.
-     */
-    private ThemisXAnalysisInstance() {
-    }
-
+public interface ThemisXAnalysisInstance {
     /**
      * The base declaration interface.
      */
-    public interface ThemisXAnalysisDeclarationInstance {
+    interface ThemisXAnalysisDeclarationInstance
+            extends ThemisXAnalysisInstance {
     }
 
     /**
      * The base type interface.
      */
-    public interface ThemisXAnalysisTypeInstance {
+    interface ThemisXAnalysisTypeInstance
+            extends ThemisXAnalysisInstance {
     }
 
     /**
      * The base node interface.
      */
-    public interface ThemisXAnalysisNodeInstance {
+    interface ThemisXAnalysisNodeInstance
+            extends ThemisXAnalysisInstance {
     }
 
     /**
      * The base statement interface.
      */
-    public interface ThemisXAnalysisStatementInstance {
+    interface ThemisXAnalysisStatementInstance
+            extends ThemisXAnalysisInstance {
     }
 
     /**
      * The base expression interface.
      */
-    public interface ThemisXAnalysisExpressionInstance {
+    interface ThemisXAnalysisExpressionInstance
+            extends ThemisXAnalysisInstance {
     }
 }

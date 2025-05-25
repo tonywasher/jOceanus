@@ -18,7 +18,6 @@ package net.sourceforge.joceanus.themis.xanalysis.expr;
 
 import com.github.javaparser.ast.expr.SingleMemberAnnotationExpr;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisExpressionInstance;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
 
 /**
@@ -37,8 +36,8 @@ public class ThemisXAnalysisExprSingleMemberAnnotation
      * @param pExpression the expression
      * @throws OceanusException on error
      */
-    public ThemisXAnalysisExprSingleMemberAnnotation(final ThemisXAnalysisParser pParser,
-                                                     final SingleMemberAnnotationExpr pExpression) throws OceanusException {
+    ThemisXAnalysisExprSingleMemberAnnotation(final ThemisXAnalysisParser pParser,
+                                              final SingleMemberAnnotationExpr pExpression) throws OceanusException {
         super(pParser, pExpression);
         theValue = pParser.parseExpression(pExpression.getMemberValue());
     }

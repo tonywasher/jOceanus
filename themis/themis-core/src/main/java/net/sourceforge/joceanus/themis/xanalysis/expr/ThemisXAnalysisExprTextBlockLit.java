@@ -29,8 +29,8 @@ public class ThemisXAnalysisExprTextBlockLit
      * @param pParser the parser
      * @param pExpression the expression
      */
-    public ThemisXAnalysisExprTextBlockLit(final ThemisXAnalysisParser pParser,
-                                           final TextBlockLiteralExpr pExpression) {
+    ThemisXAnalysisExprTextBlockLit(final ThemisXAnalysisParser pParser,
+                                    final TextBlockLiteralExpr pExpression) {
         super(pParser, pExpression);
     }
 }

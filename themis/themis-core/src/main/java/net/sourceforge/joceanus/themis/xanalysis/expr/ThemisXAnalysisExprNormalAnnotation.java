@@ -18,7 +18,6 @@ package net.sourceforge.joceanus.themis.xanalysis.expr;
 
 import com.github.javaparser.ast.expr.NormalAnnotationExpr;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisNodeInstance;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
 
 import java.util.List;
@@ -40,8 +39,8 @@ public class ThemisXAnalysisExprNormalAnnotation
      * @param pExpression the expression
      * @throws OceanusException on error
      */
-    public ThemisXAnalysisExprNormalAnnotation(final ThemisXAnalysisParser pParser,
-                                               final NormalAnnotationExpr pExpression) throws OceanusException {
+    ThemisXAnalysisExprNormalAnnotation(final ThemisXAnalysisParser pParser,
+                                        final NormalAnnotationExpr pExpression) throws OceanusException {
         super(pParser, pExpression);
         thePairs = pParser.parseNodeList(pExpression.getPairs());
     }

@@ -18,9 +18,6 @@ package net.sourceforge.joceanus.themis.xanalysis.node;
 
 import com.github.javaparser.ast.stmt.SwitchEntry;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisBaseNode;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisExpressionInstance;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisStatementInstance;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
 
 import java.util.List;
@@ -30,7 +27,6 @@ import java.util.List;
  */
 public class ThemisXAnalysisNodeCase
         extends ThemisXAnalysisBaseNode<SwitchEntry> {
-
     /**
      * The guard.
      */
@@ -52,8 +48,8 @@ public class ThemisXAnalysisNodeCase
      * @param pCase the case
      * @throws OceanusException on error
      */
-    public ThemisXAnalysisNodeCase(final ThemisXAnalysisParser pParser,
-                                   final SwitchEntry pCase) throws OceanusException {
+    ThemisXAnalysisNodeCase(final ThemisXAnalysisParser pParser,
+                            final SwitchEntry pCase) throws OceanusException {
         super(pCase);
         theGuard = pParser.parseExpression(pCase.getGuard().orElse(null));
         theLabels = pParser.parseExprList(pCase.getLabels());

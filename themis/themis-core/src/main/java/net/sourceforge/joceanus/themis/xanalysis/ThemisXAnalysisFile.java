@@ -99,8 +99,7 @@ public class ThemisXAnalysisFile {
      * @throws OceanusException on error
      */
     void processFile() throws OceanusException {
-        ThemisXAnalysisCodeParser myParser = new ThemisXAnalysisCodeParser(theLocation, thePackage.getPackage());
+        final ThemisXAnalysisCodeParser myParser = new ThemisXAnalysisCodeParser(theLocation, thePackage.getPackage());
         theContents = myParser.parseFile();
-        int i = 0;
     }
 }

@@ -14,11 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.themis.xanalysis.base;
+package net.sourceforge.joceanus.themis.xanalysis.decl;
 
 import com.github.javaparser.ast.body.BodyDeclaration;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisDeclarationInstance;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
 
 import java.util.function.Predicate;
 
@@ -118,4 +120,37 @@ public enum ThemisXAnalysisDeclaration {
         /* Unrecognised declType */
         throw pParser.buildException("Unexpected Declaration", pDecl);
     }
+
+    /**
+     * Parse a declaration.
+     * @param pParser the parser
+     * @param pDecl the declaration
+     * @return the parsed declaration
+     * @throws OceanusException on error
+     */
+    public static ThemisXAnalysisDeclarationInstance parseDeclaration(final ThemisXAnalysisParser pParser,
+                                                                      final BodyDeclaration<?> pDecl) throws OceanusException {
+        /* Handle null Declaration */
+        if (pDecl == null) {
+            return null;
+        }
+
+        /* Create appropriate declaration */
+        switch (ThemisXAnalysisDeclaration.determineDeclaration(pParser, pDecl)) {
+            case ANNOTATION:       return new ThemisXAnalysisDeclAnnotation(pParser, pDecl.asAnnotationDeclaration());
+            case ANNOTATIONMEMBER: return new ThemisXAnalysisDeclAnnotationMember(pParser, pDecl.asAnnotationMemberDeclaration());
+            case CLASS:            return new ThemisXAnalysisDeclClass(pParser, pDecl.asClassOrInterfaceDeclaration());
+            case COMPACT:          return new ThemisXAnalysisDeclCompact(pParser, pDecl.asCompactConstructorDeclaration());
+            case CONSTRUCTOR:      return new ThemisXAnalysisDeclConstructor(pParser, pDecl.asConstructorDeclaration());
+            case ENUM:             return new ThemisXAnalysisDeclEnum(pParser, pDecl.asEnumDeclaration());
+            case ENUMVALUE:        return new ThemisXAnalysisDeclEnumValue(pParser, pDecl.asEnumConstantDeclaration());
+            case FIELD:            return new ThemisXAnalysisDeclField(pParser, pDecl.asFieldDeclaration());
+            case INITIALIZER:      return new ThemisXAnalysisDeclInitializer(pParser, pDecl.asInitializerDeclaration());
+            case INTERFACE:        return new ThemisXAnalysisDeclInterface(pParser, pDecl.asClassOrInterfaceDeclaration());
+            case METHOD:           return new ThemisXAnalysisDeclMethod(pParser, pDecl.asMethodDeclaration());
+            case RECORD:           return new ThemisXAnalysisDeclRecord(pParser, pDecl.asRecordDeclaration());
+            default:               throw pParser.buildException("Unsupported Declaration Type", pDecl);
+        }
+    }
+
 }

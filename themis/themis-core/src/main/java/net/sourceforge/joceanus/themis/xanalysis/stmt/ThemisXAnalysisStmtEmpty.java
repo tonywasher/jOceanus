@@ -17,7 +17,6 @@
 package net.sourceforge.joceanus.themis.xanalysis.stmt;
 
 import com.github.javaparser.ast.stmt.EmptyStmt;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisBaseStatement;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
 
 /**
@@ -31,8 +30,8 @@ public class ThemisXAnalysisStmtEmpty
      * @param pParser    the parser
      * @param pStatement the statement
      */
-    public ThemisXAnalysisStmtEmpty(final ThemisXAnalysisParser pParser,
-                                    final EmptyStmt pStatement) {
+    ThemisXAnalysisStmtEmpty(final ThemisXAnalysisParser pParser,
+                             final EmptyStmt pStatement) {
         super(pStatement);
     }
 }

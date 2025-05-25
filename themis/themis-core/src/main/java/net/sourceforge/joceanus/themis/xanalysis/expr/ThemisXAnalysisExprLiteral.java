@@ -17,7 +17,6 @@
 package net.sourceforge.joceanus.themis.xanalysis.expr;
 
 import com.github.javaparser.ast.expr.LiteralExpr;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisBaseExpression;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
 
 /**
@@ -31,8 +30,8 @@ public abstract class ThemisXAnalysisExprLiteral<T extends LiteralExpr>
      * @param pParser the parser
      * @param pExpression the expression
      */
-    public ThemisXAnalysisExprLiteral(final ThemisXAnalysisParser pParser,
-                                      final T pExpression) {
+    ThemisXAnalysisExprLiteral(final ThemisXAnalysisParser pParser,
+                               final T pExpression) {
         super(pExpression);
     }
 }

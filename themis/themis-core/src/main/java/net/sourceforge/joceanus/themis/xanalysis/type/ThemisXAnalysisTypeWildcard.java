@@ -19,8 +19,6 @@ package net.sourceforge.joceanus.themis.xanalysis.type;
 import com.github.javaparser.ast.type.WildcardType;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisTypeInstance;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisBaseType;
 
 /**
  * Wildcard Type Declaration.
@@ -38,8 +36,8 @@ public class ThemisXAnalysisTypeWildcard
      * @param pType the type
      * @throws OceanusException on error
      */
-    public ThemisXAnalysisTypeWildcard(final ThemisXAnalysisParser pParser,
-                                       final WildcardType pType) throws OceanusException {
+    ThemisXAnalysisTypeWildcard(final ThemisXAnalysisParser pParser,
+                                final WildcardType pType) throws OceanusException {
         super(pType);
         theExtended = pParser.parseType(pType.getExtendedType().orElse(null));
     }

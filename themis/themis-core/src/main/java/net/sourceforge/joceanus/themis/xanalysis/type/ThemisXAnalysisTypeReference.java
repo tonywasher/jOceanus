@@ -18,7 +18,6 @@ package net.sourceforge.joceanus.themis.xanalysis.type;
 
 import com.github.javaparser.ast.type.ReferenceType;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisBaseType;
 
 /**
  * Reference Type Declaration.
@@ -36,8 +35,8 @@ public abstract class ThemisXAnalysisTypeReference<T extends ReferenceType>
      * @param pParser the parser
      * @param pType the type
      */
-    public ThemisXAnalysisTypeReference(final ThemisXAnalysisParser pParser,
-                                        final T pType) {
+    ThemisXAnalysisTypeReference(final ThemisXAnalysisParser pParser,
+                                 final T pType) {
         super(pType);
         theName = pType.asString();
     }

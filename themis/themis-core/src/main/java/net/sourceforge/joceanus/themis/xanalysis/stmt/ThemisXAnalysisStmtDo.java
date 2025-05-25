@@ -18,10 +18,7 @@ package net.sourceforge.joceanus.themis.xanalysis.stmt;
 
 import com.github.javaparser.ast.stmt.DoStmt;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisBaseStatement;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisExpressionInstance;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisStatementInstance;
 
 /**
  * Do Statement.
@@ -44,8 +41,8 @@ public class ThemisXAnalysisStmtDo
      * @param pStatement the statement
      * @throws OceanusException on error
      */
-    public ThemisXAnalysisStmtDo(final ThemisXAnalysisParser pParser,
-                                 final DoStmt pStatement) throws OceanusException {
+    ThemisXAnalysisStmtDo(final ThemisXAnalysisParser pParser,
+                          final DoStmt pStatement) throws OceanusException {
         /* Store details */
         super(pStatement);
         theExpression = pParser.parseExpression(pStatement.getCondition());

@@ -18,9 +18,6 @@ package net.sourceforge.joceanus.themis.xanalysis.expr;
 
 import com.github.javaparser.ast.expr.LambdaExpr;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisBaseExpression;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisNodeInstance;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisStatementInstance;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
 
 import java.util.List;
@@ -46,8 +43,8 @@ public class ThemisXAnalysisExprLambda
      * @param pExpression the expression
      * @throws OceanusException on error
      */
-    public ThemisXAnalysisExprLambda(final ThemisXAnalysisParser pParser,
-                                     final LambdaExpr pExpression) throws OceanusException {
+    ThemisXAnalysisExprLambda(final ThemisXAnalysisParser pParser,
+                              final LambdaExpr pExpression) throws OceanusException {
         super(pExpression);
         theParams = pParser.parseNodeList(pExpression.getParameters());
         theBody = pParser.parseStatement(pExpression.getBody());

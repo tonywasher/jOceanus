@@ -14,40 +14,40 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.themis.xanalysis.base;
+package net.sourceforge.joceanus.themis.xanalysis.type;
 
-import com.github.javaparser.ast.stmt.Statement;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisStatementInstance;
+import com.github.javaparser.ast.type.Type;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisTypeInstance;
 
 /**
- * Statement Base Class.
- * @param <T> the Statement
+ * Type Base Class.
+ * @param <T> the Type
  */
-public abstract class ThemisXAnalysisBaseStatement<T extends Statement>
-        implements ThemisXAnalysisStatementInstance {
+public abstract class ThemisXAnalysisBaseType<T extends Type>
+        implements ThemisXAnalysisTypeInstance {
     /**
-     * The statement.
+     * The type.
      */
-    private final T theStatement;
+    private final T theType;
 
     /**
      * Constructor.
-     * @param pStatement the statement
+     * @param pType the type
      */
-    protected ThemisXAnalysisBaseStatement(final T pStatement) {
-        theStatement = pStatement;
+    protected ThemisXAnalysisBaseType(final T pType) {
+        theType = pType;
     }
 
     /**
-     * Obtain the statement.
-     * @return the statement
+     * Obtain the type.
+     * @return the type
      */
-    public T getStatement() {
-        return theStatement;
+    public T getType() {
+        return theType;
     }
 
     @Override
     public String toString() {
-        return theStatement.toString();
+        return theType.toString();
     }
 }

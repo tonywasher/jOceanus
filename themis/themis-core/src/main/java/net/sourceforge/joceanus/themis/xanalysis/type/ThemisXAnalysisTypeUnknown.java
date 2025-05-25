@@ -18,7 +18,6 @@ package net.sourceforge.joceanus.themis.xanalysis.type;
 
 import com.github.javaparser.ast.type.UnknownType;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisBaseType;
 
 /**
  * Unknown Type Declaration.
@@ -30,8 +29,8 @@ public class ThemisXAnalysisTypeUnknown
      * @param pParser the parser
      * @param pType the type
      */
-    public ThemisXAnalysisTypeUnknown(final ThemisXAnalysisParser pParser,
-                                      final UnknownType pType) {
+    ThemisXAnalysisTypeUnknown(final ThemisXAnalysisParser pParser,
+                               final UnknownType pType) {
         super(pType);
     }
 }

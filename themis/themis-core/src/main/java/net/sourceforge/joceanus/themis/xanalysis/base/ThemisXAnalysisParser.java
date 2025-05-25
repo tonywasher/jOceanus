@@ -44,10 +44,10 @@ public interface ThemisXAnalysisParser {
      * @return the built exception
      */
     OceanusException buildException(String pMessage,
-                                    final Node pNode);
+                                    Node pNode);
 
     /**
-     * Check the package name
+     * Check the package name.
      * @param pPackage the package name
      * @throws OceanusException on error
      */
@@ -86,14 +86,14 @@ public interface ThemisXAnalysisParser {
 
     /**
      * parse a list of nodes.
-     * @param pNodeList the list of Nodes
+     * @param pMiscList the list of Nodes
      * @return the list of parsed nodes
      * @throws OceanusException on error
      */
-    default List<ThemisXAnalysisNodeInstance> parseNodeList(final NodeList<? extends Node> pNodeList) throws OceanusException {
+    default List<ThemisXAnalysisNodeInstance> parseNodeList(final NodeList<? extends Node> pMiscList) throws OceanusException {
         final List<ThemisXAnalysisNodeInstance> myList = new ArrayList<>();
-        for (Node myNode : pNodeList) {
-            final ThemisXAnalysisNodeInstance myParsed = parseNode(myNode);
+        for (Node myMisc : pMiscList) {
+            final ThemisXAnalysisNodeInstance myParsed = parseNode(myMisc);
             myList.add(myParsed);
         }
         return myList;
@@ -140,7 +140,7 @@ public interface ThemisXAnalysisParser {
      * @return the list of parsed statements
      * @throws OceanusException on error
      */
-    default List<ThemisXAnalysisStatementInstance> parseStatementList(final NodeList<Statement> pStatementList) throws OceanusException {
+    default List<ThemisXAnalysisStatementInstance> parseStatementList(final NodeList<? extends Statement> pStatementList) throws OceanusException {
         final List<ThemisXAnalysisStatementInstance> myList = new ArrayList<>();
         for (Statement myStatement : pStatementList) {
             final ThemisXAnalysisStatementInstance myParsed = parseStatement(myStatement);

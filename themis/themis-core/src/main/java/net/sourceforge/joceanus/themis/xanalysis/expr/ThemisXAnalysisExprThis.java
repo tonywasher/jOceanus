@@ -17,7 +17,6 @@
 package net.sourceforge.joceanus.themis.xanalysis.expr;
 
 import com.github.javaparser.ast.expr.ThisExpr;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisBaseExpression;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
 
 /**
@@ -30,8 +29,8 @@ public class ThemisXAnalysisExprThis
      * @param pParser the parser
      * @param pExpression the expression
      */
-    public ThemisXAnalysisExprThis(final ThemisXAnalysisParser pParser,
-                                   final ThisExpr pExpression) {
+    ThemisXAnalysisExprThis(final ThemisXAnalysisParser pParser,
+                            final ThisExpr pExpression) {
         super(pExpression);
     }
 }

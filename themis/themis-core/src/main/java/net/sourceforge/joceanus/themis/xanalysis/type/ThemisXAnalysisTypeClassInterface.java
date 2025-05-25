@@ -29,8 +29,8 @@ public class ThemisXAnalysisTypeClassInterface
      * @param pParser the parser
      * @param pType the type
      */
-    public ThemisXAnalysisTypeClassInterface(final ThemisXAnalysisParser pParser,
-                                             final ClassOrInterfaceType pType) {
+    ThemisXAnalysisTypeClassInterface(final ThemisXAnalysisParser pParser,
+                                      final ClassOrInterfaceType pType) {
         super(pParser, pType);
     }
 }

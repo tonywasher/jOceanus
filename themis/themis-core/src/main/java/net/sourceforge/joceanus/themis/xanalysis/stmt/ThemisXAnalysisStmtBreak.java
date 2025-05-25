@@ -17,7 +17,6 @@
 package net.sourceforge.joceanus.themis.xanalysis.stmt;
 
 import com.github.javaparser.ast.stmt.BreakStmt;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisBaseStatement;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
 
 /**
@@ -30,8 +29,8 @@ public class ThemisXAnalysisStmtBreak
      * @param pParser the parser
      * @param pStatement the statement
      */
-    public ThemisXAnalysisStmtBreak(final ThemisXAnalysisParser pParser,
-                                    final BreakStmt pStatement) {
+    ThemisXAnalysisStmtBreak(final ThemisXAnalysisParser pParser,
+                             final BreakStmt pStatement) {
         super(pStatement);
     }
 }

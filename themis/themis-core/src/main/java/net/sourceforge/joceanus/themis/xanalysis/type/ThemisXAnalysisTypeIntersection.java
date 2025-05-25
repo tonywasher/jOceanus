@@ -19,8 +19,6 @@ package net.sourceforge.joceanus.themis.xanalysis.type;
 import com.github.javaparser.ast.type.IntersectionType;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisTypeInstance;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisBaseType;
 
 import java.util.List;
 
@@ -40,8 +38,8 @@ public class ThemisXAnalysisTypeIntersection
      * @param pType the type
      * @throws OceanusException on error
      */
-    public ThemisXAnalysisTypeIntersection(final ThemisXAnalysisParser pParser,
-                                           final IntersectionType pType) throws OceanusException {
+    ThemisXAnalysisTypeIntersection(final ThemisXAnalysisParser pParser,
+                                    final IntersectionType pType) throws OceanusException {
         super(pType);
         theElements = pParser.parseTypeList(pType.getElements());
     }

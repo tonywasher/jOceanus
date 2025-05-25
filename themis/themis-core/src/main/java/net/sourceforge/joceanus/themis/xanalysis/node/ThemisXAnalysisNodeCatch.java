@@ -18,9 +18,6 @@ package net.sourceforge.joceanus.themis.xanalysis.node;
 
 import com.github.javaparser.ast.stmt.CatchClause;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisBaseNode;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisNodeInstance;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisStatementInstance;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
 
 /**
@@ -45,8 +42,8 @@ public class ThemisXAnalysisNodeCatch
      * @param pCatch the catch
      * @throws OceanusException on error
      */
-    public ThemisXAnalysisNodeCatch(final ThemisXAnalysisParser pParser,
-                                    final CatchClause pCatch) throws OceanusException {
+    ThemisXAnalysisNodeCatch(final ThemisXAnalysisParser pParser,
+                             final CatchClause pCatch) throws OceanusException {
         super(pCatch);
         theBody = pParser.parseStatement(pCatch.getBody());
         theParameter = pParser.parseNode(pCatch.getParameter());

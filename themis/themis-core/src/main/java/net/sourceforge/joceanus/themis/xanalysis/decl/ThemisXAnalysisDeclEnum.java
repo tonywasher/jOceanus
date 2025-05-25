@@ -18,10 +18,6 @@ package net.sourceforge.joceanus.themis.xanalysis.decl;
 
 import com.github.javaparser.ast.body.EnumDeclaration;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisBaseDeclaration;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisDeclarationInstance;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisNodeInstance;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisTypeInstance;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
 
 import java.util.List;
@@ -67,8 +63,8 @@ public class ThemisXAnalysisDeclEnum
      * @param pDeclaration the declaration
      * @throws OceanusException on error
      */
-    public ThemisXAnalysisDeclEnum(final ThemisXAnalysisParser pParser,
-                                   final EnumDeclaration pDeclaration) throws OceanusException {
+    ThemisXAnalysisDeclEnum(final ThemisXAnalysisParser pParser,
+                            final EnumDeclaration pDeclaration) throws OceanusException {
         /* Store values */
         super(pDeclaration);
         theShortName = pParser.parseNode(pDeclaration.getName());

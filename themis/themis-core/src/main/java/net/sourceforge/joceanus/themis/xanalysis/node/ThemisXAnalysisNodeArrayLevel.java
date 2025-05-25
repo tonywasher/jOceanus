@@ -18,8 +18,6 @@ package net.sourceforge.joceanus.themis.xanalysis.node;
 
 import com.github.javaparser.ast.ArrayCreationLevel;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisBaseNode;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisExpressionInstance;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
 
 /**
@@ -38,8 +36,8 @@ public class ThemisXAnalysisNodeArrayLevel
      * @param pLevel the level
      * @throws OceanusException on error
      */
-    public ThemisXAnalysisNodeArrayLevel(final ThemisXAnalysisParser pParser,
-                                         final ArrayCreationLevel pLevel) throws OceanusException {
+    ThemisXAnalysisNodeArrayLevel(final ThemisXAnalysisParser pParser,
+                                  final ArrayCreationLevel pLevel) throws OceanusException {
         super(pLevel);
         theLevel = pParser.parseExpression(pLevel.getDimension().orElse(null));
     }

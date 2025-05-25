@@ -18,8 +18,6 @@ package net.sourceforge.joceanus.themis.xanalysis.expr;
 
 import com.github.javaparser.ast.expr.ConditionalExpr;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisBaseExpression;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisExpressionInstance;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
 
 /**
@@ -48,8 +46,8 @@ public class ThemisXAnalysisExprConditional
      * @param pExpression the expression
      * @throws OceanusException on error
      */
-    public ThemisXAnalysisExprConditional(final ThemisXAnalysisParser pParser,
-                                          final ConditionalExpr pExpression) throws OceanusException {
+    ThemisXAnalysisExprConditional(final ThemisXAnalysisParser pParser,
+                                   final ConditionalExpr pExpression) throws OceanusException {
         super(pExpression);
         theCondition = pParser.parseExpression(pExpression.getCondition());
         theThen = pParser.parseExpression(pExpression.getThenExpr());

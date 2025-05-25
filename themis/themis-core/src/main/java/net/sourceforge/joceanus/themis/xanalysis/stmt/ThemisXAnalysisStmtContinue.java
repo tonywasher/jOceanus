@@ -17,7 +17,6 @@
 package net.sourceforge.joceanus.themis.xanalysis.stmt;
 
 import com.github.javaparser.ast.stmt.ContinueStmt;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisBaseStatement;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
 
 /**
@@ -30,8 +29,8 @@ public class ThemisXAnalysisStmtContinue
      * @param pParser the parser
      * @param pStatement the statement
      */
-    public ThemisXAnalysisStmtContinue(final ThemisXAnalysisParser pParser,
-                                       final ContinueStmt pStatement) {
+    ThemisXAnalysisStmtContinue(final ThemisXAnalysisParser pParser,
+                                final ContinueStmt pStatement) {
         super(pStatement);
     }
 }

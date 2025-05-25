@@ -18,7 +18,6 @@ package net.sourceforge.joceanus.themis.xanalysis.type;
 
 import com.github.javaparser.ast.type.VoidType;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisBaseType;
 
 /**
  * Void Type Declaration.
@@ -30,8 +29,8 @@ public class ThemisXAnalysisTypeVoid
      * @param pParser the parser
      * @param pType the type
      */
-    public ThemisXAnalysisTypeVoid(final ThemisXAnalysisParser pParser,
-                                   final VoidType pType) {
+    ThemisXAnalysisTypeVoid(final ThemisXAnalysisParser pParser,
+                            final VoidType pType) {
         super(pType);
     }
 }

@@ -18,8 +18,6 @@ package net.sourceforge.joceanus.themis.xanalysis.expr;
 
 import com.github.javaparser.ast.expr.ArrayAccessExpr;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisBaseExpression;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisExpressionInstance;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
 
 /**
@@ -43,8 +41,8 @@ public class ThemisXAnalysisExprArrayAccess
      * @param pExpression the expression
      * @throws OceanusException on error
      */
-    public ThemisXAnalysisExprArrayAccess(final ThemisXAnalysisParser pParser,
-                                          final ArrayAccessExpr pExpression) throws OceanusException {
+    ThemisXAnalysisExprArrayAccess(final ThemisXAnalysisParser pParser,
+                                   final ArrayAccessExpr pExpression) throws OceanusException {
         super(pExpression);
         theName = pParser.parseExpression(pExpression.getName());
         theIndex = pParser.parseExpression(pExpression.getIndex());

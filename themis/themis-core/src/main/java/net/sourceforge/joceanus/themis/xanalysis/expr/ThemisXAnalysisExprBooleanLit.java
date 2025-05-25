@@ -29,8 +29,8 @@ public class ThemisXAnalysisExprBooleanLit
      * @param pParser the parser
      * @param pExpression the expression
      */
-    public ThemisXAnalysisExprBooleanLit(final ThemisXAnalysisParser pParser,
-                                         final BooleanLiteralExpr pExpression) {
+    ThemisXAnalysisExprBooleanLit(final ThemisXAnalysisParser pParser,
+                                  final BooleanLiteralExpr pExpression) {
         super(pParser, pExpression);
     }
 }

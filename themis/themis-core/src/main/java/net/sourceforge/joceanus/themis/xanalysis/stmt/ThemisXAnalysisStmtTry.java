@@ -18,10 +18,6 @@ package net.sourceforge.joceanus.themis.xanalysis.stmt;
 
 import com.github.javaparser.ast.stmt.TryStmt;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisBaseStatement;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisExpressionInstance;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisNodeInstance;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisStatementInstance;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
 
 import java.util.List;
@@ -57,8 +53,8 @@ public class ThemisXAnalysisStmtTry
      * @param pStatement the statement
      * @throws OceanusException on error
      */
-    public ThemisXAnalysisStmtTry(final ThemisXAnalysisParser pParser,
-                                  final TryStmt pStatement) throws OceanusException {
+    ThemisXAnalysisStmtTry(final ThemisXAnalysisParser pParser,
+                           final TryStmt pStatement) throws OceanusException {
         super(pStatement);
         theResources = pParser.parseExprList(pStatement.getResources());
         theTry = pParser.parseStatement(pStatement.getTryBlock());

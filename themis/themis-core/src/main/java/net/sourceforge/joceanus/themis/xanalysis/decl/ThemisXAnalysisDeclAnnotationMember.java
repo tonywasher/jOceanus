@@ -17,7 +17,6 @@
 package net.sourceforge.joceanus.themis.xanalysis.decl;
 
 import com.github.javaparser.ast.body.AnnotationMemberDeclaration;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisBaseDeclaration;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
 
 /**
@@ -30,8 +29,8 @@ public class ThemisXAnalysisDeclAnnotationMember
      * @param pParser the parser
      * @param pDeclaration the declaration
      */
-    public ThemisXAnalysisDeclAnnotationMember(final ThemisXAnalysisParser pParser,
-                                               final AnnotationMemberDeclaration pDeclaration) {
+    ThemisXAnalysisDeclAnnotationMember(final ThemisXAnalysisParser pParser,
+                                        final AnnotationMemberDeclaration pDeclaration) {
         super(pDeclaration);
     }
 }

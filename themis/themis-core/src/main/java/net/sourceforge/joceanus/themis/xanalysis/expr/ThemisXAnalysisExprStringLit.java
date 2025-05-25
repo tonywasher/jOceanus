@@ -29,8 +29,8 @@ public class ThemisXAnalysisExprStringLit
      * @param pParser the parser
      * @param pExpression the expression
      */
-    public ThemisXAnalysisExprStringLit(final ThemisXAnalysisParser pParser,
-                                        final StringLiteralExpr pExpression) {
+    ThemisXAnalysisExprStringLit(final ThemisXAnalysisParser pParser,
+                                 final StringLiteralExpr pExpression) {
         super(pParser, pExpression);
     }
 }

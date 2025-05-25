@@ -18,10 +18,7 @@ package net.sourceforge.joceanus.themis.xanalysis.stmt;
 
 import com.github.javaparser.ast.stmt.IfStmt;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisBaseStatement;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisExpressionInstance;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisStatementInstance;
 
 /**
  * If Statement.
@@ -49,8 +46,8 @@ public class ThemisXAnalysisStmtIf
      * @param pStatement the statement
      * @throws OceanusException on error
      */
-    public ThemisXAnalysisStmtIf(final ThemisXAnalysisParser pParser,
-                                 final IfStmt pStatement) throws OceanusException {
+    ThemisXAnalysisStmtIf(final ThemisXAnalysisParser pParser,
+                          final IfStmt pStatement) throws OceanusException {
         super(pStatement);
         theCondition = pParser.parseExpression(pStatement.getCondition());
         theThen = pParser.parseStatement(pStatement.getThenStmt());

@@ -18,10 +18,7 @@ package net.sourceforge.joceanus.themis.xanalysis.stmt;
 
 import com.github.javaparser.ast.stmt.SynchronizedStmt;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisBaseStatement;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisExpressionInstance;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisStatementInstance;
 
 /**
  * Synchronized Statement.
@@ -44,8 +41,8 @@ public class ThemisXAnalysisStmtSynch
      * @param pStatement the statement
      * @throws OceanusException on error
      */
-    public ThemisXAnalysisStmtSynch(final ThemisXAnalysisParser pParser,
-                                    final SynchronizedStmt pStatement) throws OceanusException {
+    ThemisXAnalysisStmtSynch(final ThemisXAnalysisParser pParser,
+                             final SynchronizedStmt pStatement) throws OceanusException {
         super(pStatement);
         theBody = pParser.parseStatement(pStatement.getBody());
         theSynched = pParser.parseExpression(pStatement.getExpression());

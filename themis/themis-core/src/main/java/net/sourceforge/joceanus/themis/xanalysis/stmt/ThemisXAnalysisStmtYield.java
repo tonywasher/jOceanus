@@ -17,7 +17,6 @@
 package net.sourceforge.joceanus.themis.xanalysis.stmt;
 
 import com.github.javaparser.ast.stmt.YieldStmt;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisBaseStatement;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
 
 /**
@@ -30,8 +29,8 @@ public class ThemisXAnalysisStmtYield
      * @param pParser the parser
      * @param pStatement the statement
      */
-    public ThemisXAnalysisStmtYield(final ThemisXAnalysisParser pParser,
-                                    final YieldStmt pStatement) {
+    ThemisXAnalysisStmtYield(final ThemisXAnalysisParser pParser,
+                             final YieldStmt pStatement) {
         super(pStatement);
     }
 }

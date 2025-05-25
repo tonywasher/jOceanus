@@ -29,8 +29,8 @@ public class ThemisXAnalysisExprDoubleLit
      * @param pParser the parser
      * @param pExpression the expression
      */
-    public ThemisXAnalysisExprDoubleLit(final ThemisXAnalysisParser pParser,
-                                        final DoubleLiteralExpr pExpression) {
+    ThemisXAnalysisExprDoubleLit(final ThemisXAnalysisParser pParser,
+                                 final DoubleLiteralExpr pExpression) {
         super(pParser, pExpression);
     }
 }

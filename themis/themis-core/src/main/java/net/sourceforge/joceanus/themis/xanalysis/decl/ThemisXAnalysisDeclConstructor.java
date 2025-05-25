@@ -18,10 +18,6 @@ package net.sourceforge.joceanus.themis.xanalysis.decl;
 
 import com.github.javaparser.ast.body.ConstructorDeclaration;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisBaseDeclaration;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisNodeInstance;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisStatementInstance;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisTypeInstance;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
 
 import java.util.List;
@@ -57,8 +53,8 @@ public class ThemisXAnalysisDeclConstructor
      * @param pDeclaration the declaration
      * @throws OceanusException on error
      */
-    public ThemisXAnalysisDeclConstructor(final ThemisXAnalysisParser pParser,
-                                          final ConstructorDeclaration pDeclaration) throws OceanusException {
+    ThemisXAnalysisDeclConstructor(final ThemisXAnalysisParser pParser,
+                                   final ConstructorDeclaration pDeclaration) throws OceanusException {
         super(pDeclaration);
         theBody = pParser.parseStatement(pDeclaration.getBody());
         theModifiers = pParser.parseNodeList(pDeclaration.getModifiers());

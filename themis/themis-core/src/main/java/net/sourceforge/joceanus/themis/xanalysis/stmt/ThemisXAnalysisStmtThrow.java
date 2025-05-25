@@ -18,9 +18,7 @@ package net.sourceforge.joceanus.themis.xanalysis.stmt;
 
 import com.github.javaparser.ast.stmt.ThrowStmt;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisBaseStatement;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisExpressionInstance;
 
 /**
  * Throw Statement.
@@ -38,8 +36,8 @@ public class ThemisXAnalysisStmtThrow
      * @param pStatement the statement
      * @throws OceanusException on error
      */
-    public ThemisXAnalysisStmtThrow(final ThemisXAnalysisParser pParser,
-                                    final ThrowStmt pStatement) throws OceanusException {
+    ThemisXAnalysisStmtThrow(final ThemisXAnalysisParser pParser,
+                             final ThrowStmt pStatement) throws OceanusException {
         super(pStatement);
         theThrown = pParser.parseExpression(pStatement.getExpression());
     }

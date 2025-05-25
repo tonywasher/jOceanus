@@ -18,7 +18,6 @@ package net.sourceforge.joceanus.themis.xanalysis.node;
 
 import com.github.javaparser.ast.expr.SimpleName;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisBaseNode;
 
 /**
  * Name.
@@ -35,7 +34,7 @@ public class ThemisXAnalysisNodeSimpleName
      * @param pName the name
      * @throws OceanusException on error
      */
-    public ThemisXAnalysisNodeSimpleName(final SimpleName pName) throws OceanusException {
+    ThemisXAnalysisNodeSimpleName(final SimpleName pName) throws OceanusException {
         super(pName);
         theName = pName.getIdentifier();
     }

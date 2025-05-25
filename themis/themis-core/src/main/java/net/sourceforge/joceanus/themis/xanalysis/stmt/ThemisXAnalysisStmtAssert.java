@@ -17,7 +17,6 @@
 package net.sourceforge.joceanus.themis.xanalysis.stmt;
 
 import com.github.javaparser.ast.stmt.AssertStmt;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisBaseStatement;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
 
 /**
@@ -30,8 +29,8 @@ public class ThemisXAnalysisStmtAssert
      * @param pParser the parser
      * @param pStatement the statement
      */
-    public ThemisXAnalysisStmtAssert(final ThemisXAnalysisParser pParser,
-                                     final AssertStmt pStatement) {
+    ThemisXAnalysisStmtAssert(final ThemisXAnalysisParser pParser,
+                              final AssertStmt pStatement) {
         super(pStatement);
     }
 }

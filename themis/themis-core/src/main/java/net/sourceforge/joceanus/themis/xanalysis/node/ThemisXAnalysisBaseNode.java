@@ -14,40 +14,40 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.themis.xanalysis.base;
+package net.sourceforge.joceanus.themis.xanalysis.node;
 
-import com.github.javaparser.ast.body.BodyDeclaration;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisDeclarationInstance;
+import com.github.javaparser.ast.Node;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisNodeInstance;
 
 /**
- * Declaration Base Class.
- * @param <T> the Declaration
+ * Node Base Class.
+ * @param <T> the Node
  */
-public abstract class ThemisXAnalysisBaseDeclaration<T extends BodyDeclaration<T>>
-        implements ThemisXAnalysisDeclarationInstance {
+public abstract class ThemisXAnalysisBaseNode<T extends Node>
+        implements ThemisXAnalysisNodeInstance {
     /**
-     * The declaration.
+     * The node.
      */
-    private final T theDecl;
+    private final T theNode;
 
     /**
      * Constructor.
-     * @param pDecl the declaration
+     * @param pNode the node
      */
-    protected ThemisXAnalysisBaseDeclaration(final T pDecl) {
-        theDecl = pDecl;
+    protected ThemisXAnalysisBaseNode(final T pNode) {
+        theNode = pNode;
     }
 
     /**
-     * Obtain the declaration.
-     * @return the declaration
+     * Obtain the node.
+     * @return the node
      */
-    public T getDeclaration() {
-        return theDecl;
+    public T getNode() {
+        return theNode;
     }
 
     @Override
     public String toString() {
-        return theDecl.toString();
+        return theNode.toString();
     }
 }

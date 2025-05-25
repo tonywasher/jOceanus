@@ -29,8 +29,8 @@ public class ThemisXAnalysisExprNullLit
      * @param pParser the parser
      * @param pExpression the expression
      */
-    public ThemisXAnalysisExprNullLit(final ThemisXAnalysisParser pParser,
-                                      final NullLiteralExpr pExpression) {
+    ThemisXAnalysisExprNullLit(final ThemisXAnalysisParser pParser,
+                               final NullLiteralExpr pExpression) {
         super(pParser, pExpression);
     }
 }
