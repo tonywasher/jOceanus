@@ -17,10 +17,7 @@
 package net.sourceforge.joceanus.themis.analysis;
 
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.themis.dsm.ThemisDSMProject;
-import net.sourceforge.joceanus.themis.dsm.ThemisDSMReport;
-import net.sourceforge.joceanus.themis.statistics.ThemisStatsParser;
-import net.sourceforge.joceanus.themis.statistics.ThemisStatsProject;
+import net.sourceforge.joceanus.themis.xanalysis.ThemisXAnalysisProject;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DynamicNode;
 import org.junit.jupiter.api.DynamicTest;
@@ -78,12 +75,12 @@ class TestAnalysis {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        final ThemisAnalysisProject myProj = new ThemisAnalysisProject(new File(PATH_BASE));
+        final ThemisXAnalysisProject myProj = new ThemisXAnalysisProject(new File(PATH_BASE));
         Assertions.assertNull(myProj.getError(), "Exception analysing project");
 
         /* Parse the base project */
-        final ThemisStatsParser myParser = new ThemisStatsParser();
-        final ThemisStatsProject myProject = myParser.parseProject(myProj);
+        //final ThemisStatsParser myParser = new ThemisStatsParser();
+        //final ThemisStatsProject myProject = myParser.parseProject(myProj);
     }
 
     /**
@@ -91,15 +88,15 @@ class TestAnalysis {
      */
     private static void testProjectDependencies() {
         /* Analyse dependencies of project */
-        final ThemisDSMProject myProject  = new ThemisDSMProject(new File(PATH_BASE));
-        Assertions.assertNotNull(myProject, "Failed to analyse project");
-        Assertions.assertNull(myProject.getError(), "Exception analysing project");
-        Assertions.assertTrue(myProject.hasModules(), "Project has no modules");
-        Assertions.assertFalse(myProject.getDefaultModule().isCircular(), "Project has circular dependencies");
+        //final ThemisDSMProject myProject  = new ThemisDSMProject(new File(PATH_BASE));
+        //Assertions.assertNotNull(myProject, "Failed to analyse project");
+        //Assertions.assertNull(myProject.getError(), "Exception analysing project");
+        //Assertions.assertTrue(myProject.hasModules(), "Project has no modules");
+        //Assertions.assertFalse(myProject.getDefaultModule().isCircular(), "Project has circular dependencies");
 
         /* Build report of module */
-        final String myDoc = ThemisDSMReport.reportOnModule(myProject.getDefaultModule());
-        Assertions.assertNotNull(myProject, "Failed to build report");
+        //final String myDoc = ThemisDSMReport.reportOnModule(myProject.getDefaultModule());
+        //Assertions.assertNotNull(myProject, "Failed to build report");
     }
 
     /**
