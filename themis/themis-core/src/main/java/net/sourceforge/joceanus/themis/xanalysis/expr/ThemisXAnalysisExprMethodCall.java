@@ -20,6 +20,7 @@ import com.github.javaparser.ast.expr.MethodCallExpr;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisBaseExpression;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisExpressionInstance;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisNodeInstance;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisTypeInstance;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
 
@@ -33,7 +34,7 @@ public class ThemisXAnalysisExprMethodCall
     /**
      * The name.
      */
-    private final String theName;
+    private final ThemisXAnalysisNodeInstance theName;
 
     /**
      * The value.
@@ -59,7 +60,7 @@ public class ThemisXAnalysisExprMethodCall
     public ThemisXAnalysisExprMethodCall(final ThemisXAnalysisParser pParser,
                                          final MethodCallExpr pExpression) throws OceanusException {
         super(pExpression);
-        theName = pExpression.getNameAsString();
+        theName = pParser.parseNode(pExpression.getName());
         theArguments = pParser.parseExprList(pExpression.getArguments());
         theTypeParams = pParser.parseTypeList(pExpression.getTypeArguments().orElse(null));
         theScope = pParser.parseExpression(pExpression.getScope().orElse(null));
@@ -69,7 +70,7 @@ public class ThemisXAnalysisExprMethodCall
      * Obtain the name.
      * @return the name
      */
-    public String getName() {
+    public ThemisXAnalysisNodeInstance getName() {
         return theName;
     }
 

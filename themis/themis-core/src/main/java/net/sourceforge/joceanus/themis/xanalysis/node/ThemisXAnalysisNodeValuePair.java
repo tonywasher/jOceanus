@@ -20,6 +20,7 @@ import com.github.javaparser.ast.expr.MemberValuePair;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisBaseNode;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisExpressionInstance;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisNodeInstance;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
 
 /**
@@ -30,7 +31,7 @@ public class ThemisXAnalysisNodeValuePair
     /**
      * The Name.
      */
-    private final String theName;
+    private final ThemisXAnalysisNodeInstance theName;
 
     /**
      * The Value.
@@ -46,7 +47,7 @@ public class ThemisXAnalysisNodeValuePair
     public ThemisXAnalysisNodeValuePair(final ThemisXAnalysisParser pParser,
                                         final MemberValuePair pPair) throws OceanusException {
         super(pPair);
-        theName = pPair.getNameAsString();
+        theName = pParser.parseNode(pPair.getName());
         theValue = pParser.parseExpression(pPair.getValue());
     }
 
@@ -54,7 +55,7 @@ public class ThemisXAnalysisNodeValuePair
      * Obtain the name.
      * @return the name
      */
-    public String getName() {
+    public ThemisXAnalysisNodeInstance getName() {
         return theName;
     }
 

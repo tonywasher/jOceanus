@@ -31,6 +31,8 @@ import com.github.javaparser.ast.body.Parameter;
 import com.github.javaparser.ast.body.VariableDeclarator;
 import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.expr.MemberValuePair;
+import com.github.javaparser.ast.expr.Name;
+import com.github.javaparser.ast.expr.SimpleName;
 import com.github.javaparser.ast.stmt.CatchClause;
 import com.github.javaparser.ast.stmt.Statement;
 import com.github.javaparser.ast.stmt.SwitchEntry;
@@ -101,8 +103,10 @@ import net.sourceforge.joceanus.themis.xanalysis.node.ThemisXAnalysisNodeCase;
 import net.sourceforge.joceanus.themis.xanalysis.node.ThemisXAnalysisNodeCatch;
 import net.sourceforge.joceanus.themis.xanalysis.node.ThemisXAnalysisNodeCompilationUnit;
 import net.sourceforge.joceanus.themis.xanalysis.node.ThemisXAnalysisNodeImport;
+import net.sourceforge.joceanus.themis.xanalysis.node.ThemisXAnalysisNodeName;
 import net.sourceforge.joceanus.themis.xanalysis.node.ThemisXAnalysisNodePackage;
 import net.sourceforge.joceanus.themis.xanalysis.node.ThemisXAnalysisNodeParameter;
+import net.sourceforge.joceanus.themis.xanalysis.node.ThemisXAnalysisNodeSimpleName;
 import net.sourceforge.joceanus.themis.xanalysis.node.ThemisXAnalysisNodeValuePair;
 import net.sourceforge.joceanus.themis.xanalysis.node.ThemisXAnalysisNodeVariable;
 import net.sourceforge.joceanus.themis.xanalysis.stmt.ThemisXAnalysisStmtAssert;
@@ -215,7 +219,7 @@ public class ThemisXAnalysisCodeParser
                 + theCurrentFile.getAbsolutePath();
 
         /* Create exception */
-        return new ThemisDataException(pMessage);
+        return new ThemisDataException(myMsg);
     }
 
     /**
@@ -251,14 +255,21 @@ public class ThemisXAnalysisCodeParser
 
     @Override
     public ThemisXAnalysisNodeInstance parseNode(final Node pNode) throws OceanusException {
+        /* Handle null Node */
+        if (pNode == null) {
+            return null;
+        }
+
         switch (ThemisXAnalysisNode.determineNode(this, pNode)) {
             case ARRAYLEVEL:      return new ThemisXAnalysisNodeArrayLevel(this, (ArrayCreationLevel) pNode);
             case CASE:            return new ThemisXAnalysisNodeCase(this, (SwitchEntry) pNode);
             case CATCH:           return new ThemisXAnalysisNodeCatch(this, (CatchClause) pNode);
             case COMPILATIONUNIT: return new ThemisXAnalysisNodeCompilationUnit(this, (CompilationUnit) pNode);
             case IMPORT:          return new ThemisXAnalysisNodeImport(this, (ImportDeclaration) pNode);
+            case NAME:            return new ThemisXAnalysisNodeName(this, (Name) pNode);
             case PACKAGE:         return new ThemisXAnalysisNodePackage(this, (PackageDeclaration) pNode);
             case PARAMETER:       return new ThemisXAnalysisNodeParameter(this, (Parameter) pNode);
+            case SIMPLENAME:      return new ThemisXAnalysisNodeSimpleName((SimpleName) pNode);
             case VALUEPAIR:       return new ThemisXAnalysisNodeValuePair(this, (MemberValuePair) pNode);
             case VARIABLE:        return new ThemisXAnalysisNodeVariable(this, (VariableDeclarator) pNode);
             default:              throw buildException("Unsupported Node Type", pNode);
@@ -336,7 +347,7 @@ public class ThemisXAnalysisCodeParser
             case INTEGER:         return new ThemisXAnalysisExprIntegerLit(this, pExpr.asIntegerLiteralExpr());
             case LAMBDA:          return new ThemisXAnalysisExprLambda(this, pExpr.asLambdaExpr());
             case LONG:            return new ThemisXAnalysisExprLongLit(this, pExpr.asLongLiteralExpr());
-            case MARKER:          return new ThemisXAnalysisExprMarkerAnnotation(pExpr.asMarkerAnnotationExpr());
+            case MARKER:          return new ThemisXAnalysisExprMarkerAnnotation(this, pExpr.asMarkerAnnotationExpr());
             case METHODCALL:      return new ThemisXAnalysisExprMethodCall(this, pExpr.asMethodCallExpr());
             case METHODREFERENCE: return new ThemisXAnalysisExprMethodRef(this, pExpr.asMethodReferenceExpr());
             case NAME:            return new ThemisXAnalysisExprName(this, pExpr.asNameExpr());

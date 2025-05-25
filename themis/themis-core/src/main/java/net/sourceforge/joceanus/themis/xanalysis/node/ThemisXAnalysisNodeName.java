@@ -16,40 +16,53 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.themis.xanalysis.node;
 
-import com.github.javaparser.ast.PackageDeclaration;
+import com.github.javaparser.ast.expr.Name;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisBaseNode;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisNodeInstance;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
 
 /**
- * Package.
+ * Name.
  */
-public class ThemisXAnalysisNodePackage
-        extends ThemisXAnalysisBaseNode<PackageDeclaration> {
+public class ThemisXAnalysisNodeName
+        extends ThemisXAnalysisBaseNode<Name> {
     /**
-     * The Package.
+     * The Name.
      */
-    private final ThemisXAnalysisNodeInstance thePackage;
+    private final String theName;
+
+    /**
+     * The Qualifier.
+     */
+    private final ThemisXAnalysisNodeInstance theQualifier;
 
     /**
      * Constructor.
      * @param pParser the parser
-     * @param pPackage the package
+     * @param pName the name
      * @throws OceanusException on error
      */
-    public ThemisXAnalysisNodePackage(final ThemisXAnalysisParser pParser,
-                                      final PackageDeclaration pPackage) throws OceanusException {
-        super(pPackage);
-        thePackage = pParser.parseNode(pPackage.getName());
-        pParser.checkPackage(pPackage);
+    public ThemisXAnalysisNodeName(final ThemisXAnalysisParser pParser,
+                                   final Name pName) throws OceanusException {
+        super(pName);
+        theName = pName.getIdentifier();
+        theQualifier = pParser.parseNode(pName.getQualifier().orElse(null));
     }
 
     /**
-     * Obtain the package.
-     * @return the package
+     * Obtain the name.
+     * @return the name
      */
-    public ThemisXAnalysisNodeInstance getPackage() {
-        return thePackage;
+    public String getName() {
+        return theName;
+    }
+
+    /**
+     * Obtain the qualifier.
+     * @return the qualifier
+     */
+    public ThemisXAnalysisNodeInstance getQualifier() {
+        return theQualifier;
     }
 }

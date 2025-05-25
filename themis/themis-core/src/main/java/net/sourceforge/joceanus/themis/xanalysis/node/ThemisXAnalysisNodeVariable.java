@@ -20,6 +20,7 @@ import com.github.javaparser.ast.body.VariableDeclarator;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisBaseNode;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisExpressionInstance;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisNodeInstance;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisTypeInstance;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
 /**
@@ -30,7 +31,7 @@ public class ThemisXAnalysisNodeVariable
     /**
      * The name.
      */
-    private final String theName;
+    private final ThemisXAnalysisNodeInstance theName;
 
     /**
      * The type.
@@ -51,7 +52,7 @@ public class ThemisXAnalysisNodeVariable
     public ThemisXAnalysisNodeVariable(final ThemisXAnalysisParser pParser,
                                        final VariableDeclarator pDeclaration) throws OceanusException {
         super(pDeclaration);
-        theName = pDeclaration.getNameAsString();
+        theName = pParser.parseNode(pDeclaration.getName());
         theType = pParser.parseType(pDeclaration.getType());
         theInitializer = pParser.parseExpression(pDeclaration.getInitializer().orElse(null));
     }
@@ -60,7 +61,7 @@ public class ThemisXAnalysisNodeVariable
      * Obtain the name.
      * @return the name
      */
-    public String getName() {
+    public ThemisXAnalysisNodeInstance getName() {
         return theName;
     }
 

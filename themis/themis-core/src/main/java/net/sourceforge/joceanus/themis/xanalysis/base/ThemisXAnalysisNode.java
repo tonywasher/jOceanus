@@ -24,6 +24,8 @@ import com.github.javaparser.ast.PackageDeclaration;
 import com.github.javaparser.ast.body.Parameter;
 import com.github.javaparser.ast.body.VariableDeclarator;
 import com.github.javaparser.ast.expr.MemberValuePair;
+import com.github.javaparser.ast.expr.Name;
+import com.github.javaparser.ast.expr.SimpleName;
 import com.github.javaparser.ast.stmt.CatchClause;
 import com.github.javaparser.ast.stmt.SwitchEntry;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
@@ -60,6 +62,11 @@ public enum ThemisXAnalysisNode {
     IMPORT(n -> n instanceof ImportDeclaration),
 
     /**
+     * Name.
+     */
+    NAME(n -> n instanceof Name),
+
+    /**
      * Parameter.
      */
     PACKAGE(n -> n instanceof PackageDeclaration),
@@ -68,6 +75,11 @@ public enum ThemisXAnalysisNode {
      * Parameter.
      */
     PARAMETER(n -> n instanceof Parameter),
+
+    /**
+     * SimpleName.
+     */
+    SIMPLENAME(n -> n instanceof SimpleName),
 
     /**
      * ValuePair.

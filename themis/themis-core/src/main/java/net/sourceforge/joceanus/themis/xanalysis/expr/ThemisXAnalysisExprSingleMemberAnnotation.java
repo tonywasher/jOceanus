@@ -39,7 +39,7 @@ public class ThemisXAnalysisExprSingleMemberAnnotation
      */
     public ThemisXAnalysisExprSingleMemberAnnotation(final ThemisXAnalysisParser pParser,
                                                      final SingleMemberAnnotationExpr pExpression) throws OceanusException {
-        super(pExpression);
+        super(pParser, pExpression);
         theValue = pParser.parseExpression(pExpression.getMemberValue());
     }
 

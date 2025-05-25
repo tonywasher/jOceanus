@@ -35,7 +35,7 @@ public class ThemisXAnalysisDeclRecord
     /**
      * The shortName.
      */
-    private final String theShortName;
+    private final ThemisXAnalysisNodeInstance theShortName;
 
     /**
      * The fullName.
@@ -77,7 +77,7 @@ public class ThemisXAnalysisDeclRecord
                                      final RecordDeclaration pDeclaration) throws OceanusException {
         /* Store values */
         super(pDeclaration);
-        theShortName = pDeclaration.getNameAsString();
+        theShortName = pParser.parseNode(pDeclaration.getName());
         theFullName = pDeclaration.getFullyQualifiedName().orElse(null);
         theModifiers = new ThemisXAnalysisModifiers(pDeclaration.getModifiers());
         theImplements = pParser.parseTypeList(pDeclaration.getImplementedTypes());
@@ -90,7 +90,7 @@ public class ThemisXAnalysisDeclRecord
      * Obtain the short name.
      * @return the short name
      */
-    public String getShortName() {
+    public ThemisXAnalysisNodeInstance getShortName() {
         return theShortName;
     }
 

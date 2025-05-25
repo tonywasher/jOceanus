@@ -20,6 +20,7 @@ import com.github.javaparser.ast.expr.FieldAccessExpr;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisBaseExpression;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisExpressionInstance;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisNodeInstance;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisTypeInstance;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
 
@@ -33,7 +34,7 @@ public class ThemisXAnalysisExprFieldAccess
     /**
      * The name.
      */
-    private final String theName;
+    private final ThemisXAnalysisNodeInstance theName;
 
     /**
      * The scope.
@@ -54,7 +55,7 @@ public class ThemisXAnalysisExprFieldAccess
     public ThemisXAnalysisExprFieldAccess(final ThemisXAnalysisParser pParser,
                                           final FieldAccessExpr pExpression) throws OceanusException {
         super(pExpression);
-        theName = pExpression.getNameAsString();
+        theName = pParser.parseNode(pExpression.getName());
         theScope = pParser.parseExpression(pExpression.getScope());
         theTypes = pParser.parseTypeList(pExpression.getTypeArguments().orElse(null));
     }
@@ -64,7 +65,7 @@ public class ThemisXAnalysisExprFieldAccess
      * Obtain the Name.
      * @return the name
      */
-    public String getName() {
+    public ThemisXAnalysisNodeInstance getName() {
         return theName;
     }
 

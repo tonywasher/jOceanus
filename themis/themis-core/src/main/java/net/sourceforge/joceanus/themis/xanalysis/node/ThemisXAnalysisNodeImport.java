@@ -19,6 +19,7 @@ package net.sourceforge.joceanus.themis.xanalysis.node;
 import com.github.javaparser.ast.ImportDeclaration;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisBaseNode;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisNodeInstance;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
 
 /**
@@ -29,7 +30,7 @@ public class ThemisXAnalysisNodeImport
     /**
      * The Import.
      */
-    private final String theImport;
+    private final ThemisXAnalysisNodeInstance theImport;
 
     /**
      * Constructor.
@@ -40,7 +41,7 @@ public class ThemisXAnalysisNodeImport
     public ThemisXAnalysisNodeImport(final ThemisXAnalysisParser pParser,
                                      final ImportDeclaration pImport) throws OceanusException {
         super(pImport);
-        theImport = pImport.getNameAsString();
+        theImport = pParser.parseNode(pImport.getName());
 
         /* Reject imports of wildcards */
         if (pImport.isAsterisk()) {
@@ -52,7 +53,7 @@ public class ThemisXAnalysisNodeImport
      * Obtain the import.
      * @return the import
      */
-    public String getImport() {
+    public ThemisXAnalysisNodeInstance getImport() {
         return theImport;
     }
 }

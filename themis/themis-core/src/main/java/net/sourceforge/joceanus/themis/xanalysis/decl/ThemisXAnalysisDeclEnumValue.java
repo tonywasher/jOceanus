@@ -19,6 +19,7 @@ package net.sourceforge.joceanus.themis.xanalysis.decl;
 import com.github.javaparser.ast.body.EnumConstantDeclaration;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisBaseDeclaration;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisNodeInstance;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisDeclarationInstance;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisExpressionInstance;
@@ -33,7 +34,7 @@ public class ThemisXAnalysisDeclEnumValue
     /**
      * The name.
      */
-    private final String theName;
+    private final ThemisXAnalysisNodeInstance theName;
 
     /**
      * The arguments.
@@ -53,7 +54,7 @@ public class ThemisXAnalysisDeclEnumValue
     public ThemisXAnalysisDeclEnumValue(final ThemisXAnalysisParser pParser,
                                         final EnumConstantDeclaration pDeclaration) throws OceanusException {
         super(pDeclaration);
-        theName = pDeclaration.getNameAsString();
+        theName = pParser.parseNode(pDeclaration.getName());
         theArguments = pParser.parseExprList(pDeclaration.getArguments());
         theBody = pParser.parseDeclarationList(pDeclaration.getClassBody());
     }
@@ -62,7 +63,7 @@ public class ThemisXAnalysisDeclEnumValue
      * Obtain the name.
      * @return the name
      */
-    public String getName() {
+    public ThemisXAnalysisNodeInstance getName() {
         return theName;
     }
 

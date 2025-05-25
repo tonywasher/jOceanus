@@ -17,7 +17,6 @@
 package net.sourceforge.joceanus.themis.xanalysis.decl;
 
 import com.github.javaparser.ast.body.MethodDeclaration;
-import com.github.javaparser.ast.type.Type;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisBaseDeclaration;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisNodeInstance;
@@ -36,12 +35,12 @@ public class ThemisXAnalysisDeclMethod
     /**
      * The name.
      */
-    private final String theName;
+    private final ThemisXAnalysisNodeInstance theName;
 
     /**
      * The type.
      */
-    private final Type theType;
+    private final ThemisXAnalysisTypeInstance theType;
 
     /**
      * The modifiers.
@@ -77,8 +76,8 @@ public class ThemisXAnalysisDeclMethod
     public ThemisXAnalysisDeclMethod(final ThemisXAnalysisParser pParser,
                                      final MethodDeclaration pDeclaration) throws OceanusException {
         super(pDeclaration);
-        theName = pDeclaration.getNameAsString();
-        theType = pDeclaration.getType();
+        theName = pParser.parseNode(pDeclaration.getName());
+        theType = pParser.parseType(pDeclaration.getType());
         theModifiers = new ThemisXAnalysisModifiers(pDeclaration.getModifiers());
         theBody = pParser.parseStatement(pDeclaration.getBody().orElse(null));
         theTypeParameters = pParser.parseTypeList(pDeclaration.getTypeParameters());
@@ -98,7 +97,7 @@ public class ThemisXAnalysisDeclMethod
      * Obtain the name.
      * @return the name
      */
-    public String getName() {
+    public ThemisXAnalysisNodeInstance getName() {
         return theName;
     }
 
@@ -106,7 +105,7 @@ public class ThemisXAnalysisDeclMethod
      * Obtain the type.
      * @return the type
      */
-    public Type getType() {
+    public ThemisXAnalysisTypeInstance getType() {
         return theType;
     }
 

@@ -19,10 +19,11 @@ package net.sourceforge.joceanus.themis.xanalysis.decl;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisBaseDeclaration;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisDeclarationInstance;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisNodeInstance;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisTypeInstance;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisModifiers;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisDeclarationInstance;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisTypeInstance;
 
 import java.util.List;
 
@@ -34,7 +35,7 @@ public class ThemisXAnalysisDeclInterface
     /**
      * The shortName.
      */
-    private final String theShortName;
+    private final ThemisXAnalysisNodeInstance theShortName;
 
     /**
      * The fullName.
@@ -71,7 +72,7 @@ public class ThemisXAnalysisDeclInterface
                                         final ClassOrInterfaceDeclaration pDeclaration) throws OceanusException {
         /* Store values */
         super(pDeclaration);
-        theShortName = pDeclaration.getNameAsString();
+        theShortName = pParser.parseNode(pDeclaration.getName());
         theFullName = pDeclaration.getFullyQualifiedName().orElse(null);
         theModifiers = new ThemisXAnalysisModifiers(pDeclaration.getModifiers());
         theExtends = pParser.parseTypeList(pDeclaration.getExtendedTypes());
@@ -83,7 +84,7 @@ public class ThemisXAnalysisDeclInterface
      * Obtain the short name.
      * @return the short name
      */
-    public String getShortName() {
+    public ThemisXAnalysisNodeInstance getShortName() {
         return theShortName;
     }
 
