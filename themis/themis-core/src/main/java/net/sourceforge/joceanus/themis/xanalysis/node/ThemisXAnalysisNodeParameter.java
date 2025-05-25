@@ -21,8 +21,9 @@ import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisBaseNode;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisNodeInstance;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisTypeInstance;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisModifiers;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
+
+import java.util.List;
 
 /**
  * Class Declaration.
@@ -42,7 +43,7 @@ public class ThemisXAnalysisNodeParameter
     /**
      * The modifiers.
      */
-    private final ThemisXAnalysisModifiers theModifiers;
+    private final List<ThemisXAnalysisNodeInstance> theModifiers;
 
     /**
      * Constructor.
@@ -53,7 +54,7 @@ public class ThemisXAnalysisNodeParameter
     public ThemisXAnalysisNodeParameter(final ThemisXAnalysisParser pParser,
                                         final Parameter pParameter) throws OceanusException {
         super(pParameter);
-        theModifiers = new ThemisXAnalysisModifiers(pParameter.getModifiers());
+        theModifiers = pParser.parseNodeList(pParameter.getModifiers());
         theName = pParser.parseNode(pParameter.getName());
         theType = pParser.parseType(pParameter.getType());
     }
@@ -78,7 +79,7 @@ public class ThemisXAnalysisNodeParameter
      * Obtain the modifiers.
      * @return the modifiers
      */
-    public ThemisXAnalysisModifiers getModifiers() {
+    public List<ThemisXAnalysisNodeInstance> getModifiers() {
         return theModifiers;
     }
 }

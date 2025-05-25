@@ -19,6 +19,7 @@ package net.sourceforge.joceanus.themis.xanalysis.base;
 import com.github.javaparser.ast.ArrayCreationLevel;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.ImportDeclaration;
+import com.github.javaparser.ast.Modifier;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.PackageDeclaration;
 import com.github.javaparser.ast.body.Parameter;
@@ -60,6 +61,11 @@ public enum ThemisXAnalysisNode {
      * Import.
      */
     IMPORT(n -> n instanceof ImportDeclaration),
+
+    /**
+     * Modifier.
+     */
+    MODIFIER(n -> n instanceof Modifier),
 
     /**
      * Name.

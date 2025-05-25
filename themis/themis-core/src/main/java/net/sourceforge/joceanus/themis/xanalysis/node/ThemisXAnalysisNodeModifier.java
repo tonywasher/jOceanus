@@ -14,41 +14,38 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.themis.xanalysis.base;
+package net.sourceforge.joceanus.themis.xanalysis.node;
 
 import com.github.javaparser.ast.Modifier;
 import com.github.javaparser.ast.Modifier.Keyword;
-import com.github.javaparser.ast.NodeList;
-
-import java.util.List;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisBaseNode;
 
 /**
- * Modifiers for an object.
+ * Import.
  */
-public class ThemisXAnalysisModifiers {
+public class ThemisXAnalysisNodeModifier
+        extends ThemisXAnalysisBaseNode<Modifier> {
     /**
-     * The list of Modifiers.
+     * The Keyword.
      */
-    private final List<Keyword> theModifiers;
+    private final Keyword theKeyword;
 
     /**
      * Constructor.
-     * @param pModifiers the Modifiers
+     * @param pModifier the modifier
+     * @throws OceanusException on error
      */
-    public ThemisXAnalysisModifiers(final NodeList<Modifier> pModifiers) {
-        theModifiers = pModifiers.stream().map(Modifier::getKeyword).toList();
+    public ThemisXAnalysisNodeModifier(final Modifier pModifier) {
+        super(pModifier);
+        theKeyword = pModifier.getKeyword();
     }
 
     /**
-     * Has private modifier?
-     * @return true/false
+     * Obtain the keyword.
+     * @return the keyword
      */
-    boolean hasPrivate() {
-        return theModifiers.contains(Modifier.privateModifier().getKeyword());
-    }
-
-    @Override
-    public String toString() {
-        return theModifiers.toString();
+    public Keyword getKeyword() {
+        return theKeyword;
     }
 }

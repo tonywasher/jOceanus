@@ -22,7 +22,6 @@ import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisBaseDeclara
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisDeclarationInstance;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisNodeInstance;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisTypeInstance;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisModifiers;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
 
 import java.util.List;
@@ -45,7 +44,7 @@ public class ThemisXAnalysisDeclInterface
     /**
      * The modifiers.
      */
-    private final ThemisXAnalysisModifiers theModifiers;
+    private final List<ThemisXAnalysisNodeInstance> theModifiers;
 
     /**
      * The members.
@@ -74,7 +73,7 @@ public class ThemisXAnalysisDeclInterface
         super(pDeclaration);
         theShortName = pParser.parseNode(pDeclaration.getName());
         theFullName = pDeclaration.getFullyQualifiedName().orElse(null);
-        theModifiers = new ThemisXAnalysisModifiers(pDeclaration.getModifiers());
+        theModifiers = pParser.parseNodeList(pDeclaration.getModifiers());
         theExtends = pParser.parseTypeList(pDeclaration.getExtendedTypes());
         theTypeParameters = pParser.parseTypeList(pDeclaration.getTypeParameters());
         theMembers = pParser.parseDeclarationList(pDeclaration.getMembers());
@@ -100,7 +99,7 @@ public class ThemisXAnalysisDeclInterface
      * Obtain the modifiers.
      * @return the modifiers
      */
-    public ThemisXAnalysisModifiers getModifiers() {
+    public List<ThemisXAnalysisNodeInstance> getModifiers() {
         return theModifiers;
     }
 

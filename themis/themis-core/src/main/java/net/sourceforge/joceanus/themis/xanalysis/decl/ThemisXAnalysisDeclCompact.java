@@ -22,7 +22,6 @@ import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisBaseDeclara
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisNodeInstance;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisStatementInstance;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisTypeInstance;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisModifiers;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
 
 import java.util.List;
@@ -40,7 +39,7 @@ public class ThemisXAnalysisDeclCompact
     /**
      * The modifiers.
      */
-    private final ThemisXAnalysisModifiers theModifiers;
+    private final List<ThemisXAnalysisNodeInstance> theModifiers;
 
     /**
      * The body.
@@ -62,7 +61,7 @@ public class ThemisXAnalysisDeclCompact
                                       final CompactConstructorDeclaration pDeclaration) throws OceanusException {
         super(pDeclaration);
         theBody = pParser.parseStatement(pDeclaration.getBody());
-        theModifiers = new ThemisXAnalysisModifiers(pDeclaration.getModifiers());
+        theModifiers = pParser.parseNodeList(pDeclaration.getModifiers());
         theName = pParser.parseNode(pDeclaration.getName());
         theThrown = pParser.parseTypeList(pDeclaration.getThrownExceptions());
     }
@@ -79,7 +78,7 @@ public class ThemisXAnalysisDeclCompact
      * Obtain the modifiers.
      * @return the modifiers
      */
-    public ThemisXAnalysisModifiers getModifiers() {
+    public List<ThemisXAnalysisNodeInstance> getModifiers() {
         return theModifiers;
     }
 

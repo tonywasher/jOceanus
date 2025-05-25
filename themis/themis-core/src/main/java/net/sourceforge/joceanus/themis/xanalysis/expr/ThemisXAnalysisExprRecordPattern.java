@@ -19,7 +19,7 @@ package net.sourceforge.joceanus.themis.xanalysis.expr;
 import com.github.javaparser.ast.expr.RecordPatternExpr;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisExpressionInstance;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisModifiers;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisNodeInstance;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
 
 import java.util.List;
@@ -32,7 +32,7 @@ public class ThemisXAnalysisExprRecordPattern
     /**
      * The modifiers.
      */
-    private final ThemisXAnalysisModifiers theModifiers;
+    private final List<ThemisXAnalysisNodeInstance> theModifiers;
 
     /**
      * The patterns.
@@ -48,7 +48,7 @@ public class ThemisXAnalysisExprRecordPattern
     public ThemisXAnalysisExprRecordPattern(final ThemisXAnalysisParser pParser,
                                             final RecordPatternExpr pExpression) throws OceanusException {
         super(pParser, pExpression);
-        theModifiers = new ThemisXAnalysisModifiers(pExpression.getModifiers());
+        theModifiers = pParser.parseNodeList(pExpression.getModifiers());
         thePatterns = pParser.parseExprList(pExpression.getPatternList());
     }
 
@@ -56,7 +56,7 @@ public class ThemisXAnalysisExprRecordPattern
      * Obtain the Modifiers.
      * @return the modifiers
      */
-    public ThemisXAnalysisModifiers getModifiers() {
+    public List<ThemisXAnalysisNodeInstance> getModifiers() {
         return theModifiers;
     }
 

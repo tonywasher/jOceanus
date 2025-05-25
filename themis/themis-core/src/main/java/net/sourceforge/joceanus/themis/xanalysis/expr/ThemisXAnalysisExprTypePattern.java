@@ -19,8 +19,9 @@ package net.sourceforge.joceanus.themis.xanalysis.expr;
 import com.github.javaparser.ast.expr.TypePatternExpr;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisNodeInstance;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisModifiers;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
+
+import java.util.List;
 
 /**
  * TypePattern Expression.
@@ -35,7 +36,7 @@ public class ThemisXAnalysisExprTypePattern
     /**
      * The modifiers.
      */
-    private final ThemisXAnalysisModifiers theModifiers;
+    private final List<ThemisXAnalysisNodeInstance> theModifiers;
 
     /**
      * Constructor.
@@ -47,7 +48,7 @@ public class ThemisXAnalysisExprTypePattern
                                           final TypePatternExpr pExpression) throws OceanusException {
         super(pParser, pExpression);
         theName = pParser.parseNode(pExpression.getName());
-        theModifiers = new ThemisXAnalysisModifiers(pExpression.getModifiers());
+        theModifiers = pParser.parseNodeList(pExpression.getModifiers());
     }
 
     /**
@@ -62,7 +63,7 @@ public class ThemisXAnalysisExprTypePattern
      * Obtain the Modifiers.
      * @return the modifiers
      */
-    public ThemisXAnalysisModifiers getModifiers() {
+    public List<ThemisXAnalysisNodeInstance> getModifiers() {
         return theModifiers;
     }
 }
