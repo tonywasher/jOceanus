@@ -14,13 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.themis.xanalysis;
+package net.sourceforge.joceanus.themis.xanalysis.parser;
 
 /**
  * Well-known java.lang classes.
  */
-public enum ThemisXAnalysisJavaLang
-        implements ThemisXAnalysisDataType {
+public enum ThemisXAnalysisJavaLang {
     /**
      * Object.
      */

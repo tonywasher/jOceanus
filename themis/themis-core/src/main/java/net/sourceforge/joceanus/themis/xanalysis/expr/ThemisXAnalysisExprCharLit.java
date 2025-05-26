@@ -23,7 +23,7 @@ import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
  * Char Literal Expression Declaration.
  */
 public class ThemisXAnalysisExprCharLit
-        extends ThemisXAnalysisExprLiteral<CharLiteralExpr> {
+        extends ThemisXAnalysisBaseExpression<CharLiteralExpr> {
     /**
      * Constructor.
      * @param pParser the parser
@@ -31,6 +31,6 @@ public class ThemisXAnalysisExprCharLit
      */
     ThemisXAnalysisExprCharLit(final ThemisXAnalysisParser pParser,
                                final CharLiteralExpr pExpression) {
-        super(pParser, pExpression);
+        super(pExpression);
     }
 }

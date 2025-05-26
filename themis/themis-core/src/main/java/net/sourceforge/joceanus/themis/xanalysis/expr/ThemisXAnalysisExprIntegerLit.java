@@ -23,7 +23,7 @@ import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
  * Integer Literal Expression Declaration.
  */
 public class ThemisXAnalysisExprIntegerLit
-        extends ThemisXAnalysisExprLiteral<IntegerLiteralExpr> {
+        extends ThemisXAnalysisBaseExpression<IntegerLiteralExpr> {
     /**
      * Constructor.
      * @param pParser the parser
@@ -31,6 +31,6 @@ public class ThemisXAnalysisExprIntegerLit
      */
     ThemisXAnalysisExprIntegerLit(final ThemisXAnalysisParser pParser,
                                   final IntegerLiteralExpr pExpression) {
-        super(pParser, pExpression);
+        super(pExpression);
     }
 }

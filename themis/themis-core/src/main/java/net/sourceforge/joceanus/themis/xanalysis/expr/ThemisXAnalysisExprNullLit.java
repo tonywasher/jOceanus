@@ -23,7 +23,7 @@ import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
  * Null Literal Expression Declaration.
  */
 public class ThemisXAnalysisExprNullLit
-        extends ThemisXAnalysisExprLiteral<NullLiteralExpr> {
+        extends ThemisXAnalysisBaseExpression<NullLiteralExpr> {
     /**
      * Constructor.
      * @param pParser the parser
@@ -31,6 +31,6 @@ public class ThemisXAnalysisExprNullLit
      */
     ThemisXAnalysisExprNullLit(final ThemisXAnalysisParser pParser,
                                final NullLiteralExpr pExpression) {
-        super(pParser, pExpression);
+        super(pExpression);
     }
 }

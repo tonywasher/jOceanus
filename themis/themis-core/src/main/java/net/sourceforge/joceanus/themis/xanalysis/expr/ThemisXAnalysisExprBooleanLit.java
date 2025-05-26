@@ -23,7 +23,7 @@ import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
  * BooleanLiteral Expression Declaration.
  */
 public class ThemisXAnalysisExprBooleanLit
-        extends ThemisXAnalysisExprLiteral<BooleanLiteralExpr> {
+        extends ThemisXAnalysisBaseExpression<BooleanLiteralExpr> {
     /**
      * Constructor.
      * @param pParser the parser
@@ -31,6 +31,6 @@ public class ThemisXAnalysisExprBooleanLit
      */
     ThemisXAnalysisExprBooleanLit(final ThemisXAnalysisParser pParser,
                                   final BooleanLiteralExpr pExpression) {
-        super(pParser, pExpression);
+        super(pExpression);
     }
 }

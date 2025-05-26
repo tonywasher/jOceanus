@@ -14,24 +14,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.themis.xanalysis.expr;
+package net.sourceforge.joceanus.themis.xanalysis.node;
 
-import com.github.javaparser.ast.expr.LiteralExpr;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
+import com.github.javaparser.ast.comments.Comment;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 /**
- * Literal Expression Declaration.
- * @param <T> the expression
+ * Comment.
  */
-public abstract class ThemisXAnalysisExprLiteral<T extends LiteralExpr>
-        extends ThemisXAnalysisBaseExpression<T> {
+public class ThemisXAnalysisNodeComment
+        extends ThemisXAnalysisBaseNode<Comment> {
     /**
      * Constructor.
-     * @param pParser the parser
-     * @param pExpression the expression
+     * @param pComment the comment
+     * @throws OceanusException on error
      */
-    ThemisXAnalysisExprLiteral(final ThemisXAnalysisParser pParser,
-                               final T pExpression) {
-        super(pExpression);
+    ThemisXAnalysisNodeComment(final Comment pComment) throws OceanusException {
+        super(pComment);
+    }
+
+    /**
+     * Is this a javaDoc comment.
+     * @return true/false
+     */
+    public boolean isJavaDoc() {
+        return getNode().isJavadocComment();
     }
 }

@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.themis.xanalysis;
+package net.sourceforge.joceanus.themis.xanalysis.parser;
 
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisChar;
@@ -36,7 +36,7 @@ public class ThemisXAnalysisModule {
     /**
      * The module-info file.
      */
-    private static final String MODULE_INFO = "module-info" + ThemisXAnalysisPackage.SFX_JAVA;
+    private static final String MODULE_INFO = "module-info" + ThemisXAnalysisFile.SFX_JAVA;
 
     /**
      * The module name.
@@ -54,53 +54,14 @@ public class ThemisXAnalysisModule {
     private final List<ThemisXAnalysisPackage> thePackages;
 
     /**
-     * The initial dataMap.
-     */
-    private final ThemisXAnalysisDataMap theDataMap;
-
-    /**
-     * Constructor.
-     * @param pProject the project
-     * @param pLocation the module location
-     * @throws OceanusException on error
-     */
-    ThemisXAnalysisModule(final ThemisXAnalysisProject pProject,
-                          final File pLocation) throws OceanusException {
-        /* Initialise class */
-        this(pLocation, new ThemisXAnalysisDataMap(pProject.getDataMap()));
-    }
-
-    /**
      * Constructor.
      * @param pLocation the module location
      * @throws OceanusException on error
      */
     ThemisXAnalysisModule(final File pLocation) throws OceanusException {
-        /* Initialise class */
-        this(pLocation, new ThemisXAnalysisDataMap());
-
-        /* initialPass */
-        performInitialPass();
-
-        /* consolidationPass */
-        performConsolidationPass();
-
-        /* finalPass */
-        performFinalPass();
-    }
-
-    /**
-     * Constructor.
-     * @param pLocation the module location
-     * @param pDataMap the dataMap
-     * @throws OceanusException on error
-     */
-    private ThemisXAnalysisModule(final File pLocation,
-                                  final ThemisXAnalysisDataMap pDataMap) throws OceanusException {
         /* Store the name and location */
         theLocation = new File(pLocation, PATH_XTRA);
         theName = pLocation.getName();
-        theDataMap = pDataMap;
 
         /* Create the list */
         thePackages = new ArrayList<>();
@@ -139,14 +100,6 @@ public class ThemisXAnalysisModule {
     }
 
     /**
-     * Obtain the dataMap.
-     * @return the map
-     */
-    ThemisXAnalysisDataMap getDataMap() {
-        return theDataMap;
-    }
-
-    /**
      * Check for package.
      * @param pPackage the package name
      * @throws OceanusException on error
@@ -174,7 +127,7 @@ public class ThemisXAnalysisModule {
             }
 
             /* If this is aAccess file name */
-            if (myName.endsWith(ThemisXAnalysisPackage.SFX_JAVA)
+            if (myName.endsWith(ThemisXAnalysisFile.SFX_JAVA)
                     && !MODULE_INFO.equals(myName)) {
                 isPackage = pPackage != null;
             }
@@ -183,7 +136,7 @@ public class ThemisXAnalysisModule {
         /* If this is a package */
         if (isPackage) {
             /* Add the package to the list */
-            thePackages.add(new ThemisXAnalysisPackage(this, pPackage));
+            thePackages.add(new ThemisXAnalysisPackage(theLocation, pPackage));
         }
     }
 
@@ -196,30 +149,6 @@ public class ThemisXAnalysisModule {
         for (ThemisXAnalysisPackage myPackage : thePackages) {
             /* Process the package */
             myPackage.performInitialPass();
-        }
-    }
-
-    /**
-     * consolidationPass.
-     * @throws OceanusException on error
-     */
-    void performConsolidationPass() throws OceanusException {
-        /* Loop through the packages */
-        for (ThemisXAnalysisPackage myPackage : thePackages) {
-            /* Process the package */
-            myPackage.performConsolidationPass();
-        }
-    }
-
-    /**
-     * finalPass.
-     * @throws OceanusException on error
-     */
-    void performFinalPass() throws OceanusException {
-        /* Loop through the packages */
-        for (ThemisXAnalysisPackage myPackage : thePackages) {
-            /* Process the package */
-            myPackage.performFinalPass();
         }
     }
 }

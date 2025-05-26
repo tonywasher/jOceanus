@@ -23,7 +23,7 @@ import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
  * TextBlock Literal Expression.
  */
 public class ThemisXAnalysisExprTextBlockLit
-        extends ThemisXAnalysisExprLiteral<TextBlockLiteralExpr> {
+        extends ThemisXAnalysisBaseExpression<TextBlockLiteralExpr> {
     /**
      * Constructor.
      * @param pParser the parser
@@ -31,6 +31,6 @@ public class ThemisXAnalysisExprTextBlockLit
      */
     ThemisXAnalysisExprTextBlockLit(final ThemisXAnalysisParser pParser,
                                     final TextBlockLiteralExpr pExpression) {
-        super(pParser, pExpression);
+        super(pExpression);
     }
 }

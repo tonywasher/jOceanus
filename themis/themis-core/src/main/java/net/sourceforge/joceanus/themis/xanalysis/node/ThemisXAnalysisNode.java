@@ -24,6 +24,7 @@ import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.PackageDeclaration;
 import com.github.javaparser.ast.body.Parameter;
 import com.github.javaparser.ast.body.VariableDeclarator;
+import com.github.javaparser.ast.comments.Comment;
 import com.github.javaparser.ast.expr.MemberValuePair;
 import com.github.javaparser.ast.expr.Name;
 import com.github.javaparser.ast.expr.SimpleName;
@@ -42,62 +43,67 @@ public enum ThemisXAnalysisNode {
     /**
      * ArrayLevel.
      */
-    ARRAYLEVEL(n -> n instanceof ArrayCreationLevel),
+    ARRAYLEVEL(ArrayCreationLevel.class::isInstance),
 
     /**
      * Case.
      */
-    CASE(n -> n instanceof SwitchEntry),
+    CASE(SwitchEntry.class::isInstance),
 
     /**
      * Catch.
      */
-    CATCH(n -> n instanceof CatchClause),
+    CATCH(CatchClause.class::isInstance),
+
+    /**
+     * Comment.
+     */
+    COMMENT(Comment.class::isInstance),
 
     /**
      * Compilation Unit.
      */
-    COMPILATIONUNIT(n -> n instanceof CompilationUnit),
+    COMPILATIONUNIT(CompilationUnit.class::isInstance),
 
     /**
      * Import.
      */
-    IMPORT(n -> n instanceof ImportDeclaration),
+    IMPORT(ImportDeclaration.class::isInstance),
 
     /**
      * Modifier.
      */
-    MODIFIER(n -> n instanceof Modifier),
+    MODIFIER(Modifier.class::isInstance),
 
     /**
      * Name.
      */
-    NAME(n -> n instanceof Name),
+    NAME(Name.class::isInstance),
 
     /**
      * Parameter.
      */
-    PACKAGE(n -> n instanceof PackageDeclaration),
+    PACKAGE(PackageDeclaration.class::isInstance),
 
     /**
      * Parameter.
      */
-    PARAMETER(n -> n instanceof Parameter),
+    PARAMETER(Parameter.class::isInstance),
 
     /**
      * SimpleName.
      */
-    SIMPLENAME(n -> n instanceof SimpleName),
+    SIMPLENAME(SimpleName.class::isInstance),
 
     /**
      * ValuePair.
      */
-    VALUEPAIR(n -> n instanceof MemberValuePair),
+    VALUEPAIR(MemberValuePair.class::isInstance),
 
     /**
      * Variable.
      */
-    VARIABLE(n -> n instanceof VariableDeclarator);
+    VARIABLE(VariableDeclarator.class::isInstance);
 
     /**
      * The test.
@@ -152,6 +158,7 @@ public enum ThemisXAnalysisNode {
             case CASE:            return new ThemisXAnalysisNodeCase(pParser, (SwitchEntry) pNode);
             case CATCH:           return new ThemisXAnalysisNodeCatch(pParser, (CatchClause) pNode);
             case COMPILATIONUNIT: return new ThemisXAnalysisNodeCompilationUnit(pParser, (CompilationUnit) pNode);
+            case COMMENT:         return new ThemisXAnalysisNodeComment((Comment) pNode);
             case IMPORT:          return new ThemisXAnalysisNodeImport(pParser, (ImportDeclaration) pNode);
             case MODIFIER:        return new ThemisXAnalysisNodeModifier((Modifier) pNode);
             case NAME:            return new ThemisXAnalysisNodeName(pParser, (Name) pNode);

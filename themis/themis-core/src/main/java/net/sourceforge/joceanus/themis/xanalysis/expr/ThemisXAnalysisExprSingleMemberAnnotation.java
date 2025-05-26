@@ -24,7 +24,12 @@ import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
  * SingleMemberAnnotation Expression Declaration.
  */
 public class ThemisXAnalysisExprSingleMemberAnnotation
-        extends ThemisXAnalysisExprAnnotation<SingleMemberAnnotationExpr> {
+        extends ThemisXAnalysisBaseExpression<SingleMemberAnnotationExpr> {
+    /**
+     * The name of the annotation.
+     */
+    private final ThemisXAnalysisNodeInstance theName;
+
     /**
      * The member value.
      */
@@ -38,8 +43,17 @@ public class ThemisXAnalysisExprSingleMemberAnnotation
      */
     ThemisXAnalysisExprSingleMemberAnnotation(final ThemisXAnalysisParser pParser,
                                               final SingleMemberAnnotationExpr pExpression) throws OceanusException {
-        super(pParser, pExpression);
+        super(pExpression);
+        theName = pParser.parseNode(pExpression.getName());
         theValue = pParser.parseExpression(pExpression.getMemberValue());
+    }
+
+    /**
+     * Obtain the name.
+     * @return the name
+     */
+    public ThemisXAnalysisNodeInstance getName() {
+        return theName;
     }
 
     /**

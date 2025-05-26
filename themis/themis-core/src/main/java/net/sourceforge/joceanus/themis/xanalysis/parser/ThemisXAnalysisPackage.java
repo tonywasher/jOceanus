@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.themis.xanalysis;
+package net.sourceforge.joceanus.themis.xanalysis.parser;
 
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisChar;
@@ -29,14 +29,9 @@ import java.util.Objects;
  */
 public class ThemisXAnalysisPackage {
     /**
-     * The java suffix.
-     */
-    public static final String SFX_JAVA = ".java";
-
-    /**
      * The package-info file.
      */
-    private static final String PACKAGE_INFO = "package-info" + SFX_JAVA;
+    private static final String PACKAGE_INFO = "package-info" + ThemisXAnalysisFile.SFX_JAVA;
 
     /**
      * The package name.
@@ -49,23 +44,6 @@ public class ThemisXAnalysisPackage {
     private final List<ThemisXAnalysisFile> theFiles;
 
     /**
-     * The initial dataMap.
-     */
-    private final ThemisXAnalysisDataMap theDataMap;
-
-    /**
-     * Module Constructor.
-     * @param pModule the owning module
-     * @param pPackage the package name.
-     * @throws OceanusException on error
-     */
-    ThemisXAnalysisPackage(final ThemisXAnalysisModule pModule,
-                           final String pPackage) throws OceanusException {
-        /* Initialise class */
-        this(pModule.getLocation(), new ThemisXAnalysisDataMap(pModule.getDataMap()), pPackage);
-    }
-
-    /**
      * Constructor.
      * @param pLocation the base location for the package
      * @param pPackage the package name.
@@ -73,31 +51,8 @@ public class ThemisXAnalysisPackage {
      */
     ThemisXAnalysisPackage(final File pLocation,
                            final String pPackage) throws OceanusException {
-        /* Initialise class */
-        this(pLocation, new ThemisXAnalysisDataMap(), pPackage);
-
-        /* initialPass */
-        performConsolidationPass();
-
-        /* consolidationPass */
-        performConsolidationPass();
-
-        /* finalPass */
-        performFinalPass();
-    }
-
-    /**
-     * Constructor.
-     * @param pLocation the base location for the package
-     * @param pDataMap the dataMap
-     * @param pPackage the package name.
-     */
-    private ThemisXAnalysisPackage(final File pLocation,
-                                   final ThemisXAnalysisDataMap pDataMap,
-                                   final String pPackage) {
-        /* Store package name and dataMap */
+        /* Store package name */
         thePackage = pPackage;
-        theDataMap = pDataMap;
 
         /* Create directory path and record the location */
         final String myPath = pPackage.replace(ThemisXAnalysisChar.PERIOD, File.separatorChar);
@@ -113,14 +68,6 @@ public class ThemisXAnalysisPackage {
      */
     public List<ThemisXAnalysisFile> getFiles() {
         return theFiles;
-    }
-
-    /**
-     * Obtain the dataMap.
-     * @return the map
-     */
-    ThemisXAnalysisDataMap getDataMap() {
-        return theDataMap;
     }
 
     /**
@@ -140,10 +87,10 @@ public class ThemisXAnalysisPackage {
                 final String myName = myFile.getName();
 
                 /* If this is a .java that is not package-info */
-                if (myName.endsWith(SFX_JAVA)
+                if (myName.endsWith(ThemisXAnalysisFile.SFX_JAVA)
                         && !PACKAGE_INFO.equals(myName)) {
                     /* Add the class */
-                    final ThemisXAnalysisFile myClass = new ThemisXAnalysisFile(this, myFile);
+                    final ThemisXAnalysisFile myClass = new ThemisXAnalysisFile(thePackage, myFile);
                     myClasses.add(myClass);
                 }
             }
@@ -166,55 +113,12 @@ public class ThemisXAnalysisPackage {
     }
 
     /**
-     * consolidationPass process files.
-     * @throws OceanusException on error
-     */
-    void performConsolidationPass() throws OceanusException {
-        /* Loop through the classes */
-        for (ThemisXAnalysisFile myFile : theFiles) {
-            /* Process the file */
-            //myFile.consolidationProcessingPass();
-        }
-    }
-
-    /**
-     * finalPass process files.
-     * @throws OceanusException on error
-     */
-    void performFinalPass() throws OceanusException {
-        /* Loop through the classes */
-        for (ThemisXAnalysisFile myFile : theFiles) {
-            /* Process the file */
-            //myFile.finalProcessingPass();
-        }
-    }
-
-    /**
      * Obtain the package.
      * @return the package
      */
     public String getPackage() {
         return thePackage;
     }
-
-    ///**
-    // * Is the line a package?
-    // * @param pLine the line
-    // * @return true/false
-    // * @throws OceanusException on error
-    // */
-    //static boolean isPackage(final ThemisAnalysisLine pLine) throws OceanusException {
-        /* If we are ended by a semi-colon and this is a package line */
-        //if (pLine.endsWithChar(ThemisXAnalysisChar.SEMICOLON)
-                //&& pLine.isStartedBy(ThemisAnalysisKeyWord.PACKAGE.getKeyWord())) {
-            /* Strip the semi-colon and return true */
-            //pLine.stripEndChar(ThemisXAnalysisChar.SEMICOLON);
-            //return true;
-        //}
-
-        /* return false */
-        //return false;
-    //}
 
     @Override
     public String toString() {

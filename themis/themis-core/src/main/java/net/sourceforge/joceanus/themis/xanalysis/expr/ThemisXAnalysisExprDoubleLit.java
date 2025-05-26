@@ -23,7 +23,7 @@ import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
  * Double Literal Expression Declaration.
  */
 public class ThemisXAnalysisExprDoubleLit
-        extends ThemisXAnalysisExprLiteral<DoubleLiteralExpr> {
+        extends ThemisXAnalysisBaseExpression<DoubleLiteralExpr> {
     /**
      * Constructor.
      * @param pParser the parser
@@ -31,6 +31,6 @@ public class ThemisXAnalysisExprDoubleLit
      */
     ThemisXAnalysisExprDoubleLit(final ThemisXAnalysisParser pParser,
                                  final DoubleLiteralExpr pExpression) {
-        super(pParser, pExpression);
+        super(pExpression);
     }
 }

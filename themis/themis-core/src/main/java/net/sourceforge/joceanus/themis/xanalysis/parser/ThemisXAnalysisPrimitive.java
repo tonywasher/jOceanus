@@ -14,13 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.themis.xanalysis;
+package net.sourceforge.joceanus.themis.xanalysis.parser;
 
 /**
  * Primitive.
  */
-public enum ThemisXAnalysisPrimitive
-        implements ThemisXAnalysisDataType {
+public enum ThemisXAnalysisPrimitive {
     /**
      * byte.
      */

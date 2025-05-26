@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.themis.xanalysis;
+package net.sourceforge.joceanus.themis.xanalysis.parser;
 
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.exc.ThemisDataException;
@@ -50,11 +50,6 @@ public class ThemisXAnalysisMaven {
     private static final String DOC_NAME = "project";
 
     /**
-     * Parent element.
-     */
-    private static final String EL_PARENT = "parent";
-
-    /**
      * Modules element.
      */
     private static final String EL_MODULES = "modules";
@@ -65,29 +60,19 @@ public class ThemisXAnalysisMaven {
     private static final String EL_MODULE = "module";
 
     /**
-     * Dependencies element.
+     * ArtifactId element.
      */
-    private static final String EL_DEPENDENCIES = "dependencies";
-
-    /**
-     * Dependency element.
-     */
-    private static final String EL_DEPENDENCY = "dependency";
+    private static final String EL_ARTIFACTID = "artifactId";
 
     /**
      * The Id.
      */
-    private final ThemisXAnalysisMavenId theId;
+    private final String theId;
 
     /**
      * The modules.
      */
     private final List<String> theModules;
-
-    /**
-     * The dependencies.
-     */
-    private final List<ThemisXAnalysisMavenId> theDependencies;
 
     /**
      * Constructor.
@@ -97,7 +82,6 @@ public class ThemisXAnalysisMaven {
     ThemisXAnalysisMaven(final InputStream pInputStream) throws OceanusException {
         /* Create the module list */
         theModules = new ArrayList<>();
-        theDependencies = new ArrayList<>();
 
         /* Protect against exceptions */
         try (BufferedInputStream myInBuffer = new BufferedInputStream(pInputStream)) {
@@ -121,14 +105,14 @@ public class ThemisXAnalysisMaven {
 
     @Override
     public String toString() {
-        return theId.toString();
+        return theId;
     }
 
     /**
      * Obtain the list of modules.
      * @return the list
      */
-    public ThemisXAnalysisMavenId getMavenId() {
+    public String getMavenId() {
         return theId;
     }
 
@@ -146,7 +130,7 @@ public class ThemisXAnalysisMaven {
      * @return the MavenId
      * @throws OceanusException on error
      */
-    public ThemisXAnalysisMavenId parseProjectFile(final Document pDocument) throws OceanusException {
+    public String parseProjectFile(final Document pDocument) throws OceanusException {
         /* Access the document element */
         final Element myDoc = pDocument.getDocumentElement();
 
@@ -155,22 +139,12 @@ public class ThemisXAnalysisMaven {
             throw new ThemisDataException("Invalid document type");
         }
 
-        /* Obtain parent definition if any */
-        final Element myParentEl = getElement(myDoc, EL_PARENT);
-        final ThemisXAnalysisMavenId myParent = myParentEl == null
-                ? null
-                : new ThemisXAnalysisMavenId(myParentEl);
-
         /* Obtain our mavenId */
-        final ThemisXAnalysisMavenId myId = new ThemisXAnalysisMavenId(myDoc, myParent);
+        final String myId = getElementValue(myDoc, EL_ARTIFACTID);
 
         /* Process modules */
-        final Element myModules = getElement(myDoc, EL_MODULES);
+        final Element myModules = getElement(myDoc);
         processModules(myModules);
-
-        /* Process dependencies */
-        final Element myDependencies = getElement(myDoc, EL_DEPENDENCIES);
-        processDependencies(myDependencies, myId);
 
         /* Return the Id */
         return myId;
@@ -207,11 +181,9 @@ public class ThemisXAnalysisMaven {
     /**
      * Obtain element value.
      * @param pElement the element
-     * @param pValue the value name
      * @return the value
      */
-    static Element getElement(final Element pElement,
-                              final String pValue) {
+    static Element getElement(final Element pElement) {
         /* Return null if no element */
         if (pElement == null) {
             return null;
@@ -223,7 +195,7 @@ public class ThemisXAnalysisMaven {
              myChild = myChild.getNextSibling()) {
             /* Return result if we have a match */
             if (myChild instanceof Element myElement
-                    && pValue.equals(myChild.getNodeName())) {
+                    && EL_MODULES.equals(myChild.getNodeName())) {
                 return myElement;
             }
         }
@@ -250,30 +222,6 @@ public class ThemisXAnalysisMaven {
             if (myChild instanceof Element
                     && EL_MODULE.equals(myChild.getNodeName())) {
                 theModules.add(myChild.getTextContent());
-            }
-        }
-    }
-
-    /**
-     * Process dependencies.
-     * @param pDependencies the dependencies
-     * @param pParent the parentId
-     */
-    private void processDependencies(final Element pDependencies,
-                                     final ThemisXAnalysisMavenId pParent) {
-        /* Return if no element */
-        if (pDependencies == null) {
-            return;
-        }
-
-        /* Loop through the children */
-        for (Node myChild = pDependencies.getFirstChild();
-             myChild != null;
-             myChild = myChild.getNextSibling()) {
-            /* Return result if we have a match */
-            if (myChild instanceof Element myElement
-                    && EL_DEPENDENCY.equals(myChild.getNodeName())) {
-                theDependencies.add(new ThemisXAnalysisMavenId(myElement, pParent));
             }
         }
     }

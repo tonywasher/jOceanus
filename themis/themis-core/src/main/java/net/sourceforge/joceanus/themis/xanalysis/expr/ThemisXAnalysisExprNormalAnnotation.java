@@ -26,7 +26,12 @@ import java.util.List;
  * Normal Annotation Expression Declaration.
  */
 public class ThemisXAnalysisExprNormalAnnotation
-        extends ThemisXAnalysisExprAnnotation<NormalAnnotationExpr> {
+        extends ThemisXAnalysisBaseExpression<NormalAnnotationExpr> {
+    /**
+     * The name of the annotation.
+     */
+    private final ThemisXAnalysisNodeInstance theName;
+
     /**
      * The value pairs.
      */
@@ -41,8 +46,17 @@ public class ThemisXAnalysisExprNormalAnnotation
      */
     ThemisXAnalysisExprNormalAnnotation(final ThemisXAnalysisParser pParser,
                                         final NormalAnnotationExpr pExpression) throws OceanusException {
-        super(pParser, pExpression);
+        super(pExpression);
         thePairs = pParser.parseNodeList(pExpression.getPairs());
+        theName = pParser.parseNode(pExpression.getName());
+    }
+
+    /**
+     * Obtain the name.
+     * @return the name
+     */
+    public ThemisXAnalysisNodeInstance getName() {
+        return theName;
     }
 
     /**

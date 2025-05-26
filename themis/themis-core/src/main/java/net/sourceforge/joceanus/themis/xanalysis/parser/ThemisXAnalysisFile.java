@@ -14,11 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.themis.xanalysis;
+package net.sourceforge.joceanus.themis.xanalysis.parser;
 
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisNodeInstance;
-import net.sourceforge.joceanus.themis.xanalysis.parser.ThemisXAnalysisCodeParser;
 
 import java.io.File;
 
@@ -26,6 +25,11 @@ import java.io.File;
  * Analysis representation of a java file.
  */
 public class ThemisXAnalysisFile {
+    /**
+     * The java suffix.
+     */
+    public static final String SFX_JAVA = ".java";
+
     /**
      * The location of the file.
      */
@@ -37,14 +41,9 @@ public class ThemisXAnalysisFile {
     private final String theName;
 
     /**
-     * The package file.
+     * The package name.
      */
-    private final ThemisXAnalysisPackage thePackage;
-
-    /**
-     * The dataMap.
-     */
-    private final ThemisXAnalysisDataMap theDataMap;
+    private final String thePackage;
 
     /**
      * The contents.
@@ -56,13 +55,12 @@ public class ThemisXAnalysisFile {
      * @param pPackage the package
      * @param pFile the file to analyse
      */
-    ThemisXAnalysisFile(final ThemisXAnalysisPackage pPackage,
+    ThemisXAnalysisFile(final String pPackage,
                         final File pFile) {
         /* Store the parameters */
         thePackage = pPackage;
         theLocation = pFile;
-        theName = pFile.getName().replace(ThemisXAnalysisPackage.SFX_JAVA, "");
-        theDataMap = new ThemisXAnalysisDataMap(thePackage.getDataMap());
+        theName = pFile.getName().replace(SFX_JAVA, "");
     }
 
     /**
@@ -99,7 +97,7 @@ public class ThemisXAnalysisFile {
      * @throws OceanusException on error
      */
     void processFile() throws OceanusException {
-        final ThemisXAnalysisCodeParser myParser = new ThemisXAnalysisCodeParser(theLocation, thePackage.getPackage());
+        final ThemisXAnalysisCodeParser myParser = new ThemisXAnalysisCodeParser(theLocation, thePackage);
         theContents = myParser.parseFile();
-    }
+     }
 }
