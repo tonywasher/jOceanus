@@ -14,10 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.themis.xanalysis.parser;
+package net.sourceforge.joceanus.themis.xanalysis.proj;
 
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.exc.ThemisIOException;
+import net.sourceforge.joceanus.themis.xanalysis.parser.ThemisXAnalysisCodeParser;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -46,6 +47,11 @@ public class ThemisXAnalysisProject {
     private final File theLocation;
 
     /**
+     * The parser.
+     */
+    private final ThemisXAnalysisCodeParser theParser;
+
+    /**
      * The module list.
      */
     private final List<ThemisXAnalysisModule> theModules;
@@ -62,6 +68,9 @@ public class ThemisXAnalysisProject {
     public ThemisXAnalysisProject(final File pLocation) {
         /* Store the name and location */
         theLocation = pLocation;
+
+        /* Create the parser */
+        theParser = new ThemisXAnalysisCodeParser();
 
         /* Create the list */
         theModules = new ArrayList<>();
@@ -177,7 +186,7 @@ public class ThemisXAnalysisProject {
             /* Loop through the modules */
             for (ThemisXAnalysisModule myModule : theModules) {
                 /* Process the module */
-                myModule.performInitialPass();
+                myModule.performInitialPass(theParser);
             }
 
             /* Handle exceptions */

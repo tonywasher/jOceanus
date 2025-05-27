@@ -40,7 +40,7 @@ public class ThemisXAnalysisTypeIntersection
      */
     ThemisXAnalysisTypeIntersection(final ThemisXAnalysisParser pParser,
                                     final IntersectionType pType) throws OceanusException {
-        super(pType);
+        super(pParser, pType);
         theElements = pParser.parseTypeList(pType.getElements());
     }
 

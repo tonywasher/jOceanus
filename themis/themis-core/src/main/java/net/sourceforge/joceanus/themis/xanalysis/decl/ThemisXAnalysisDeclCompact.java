@@ -55,7 +55,7 @@ public class ThemisXAnalysisDeclCompact
      */
     ThemisXAnalysisDeclCompact(final ThemisXAnalysisParser pParser,
                                final CompactConstructorDeclaration pDeclaration) throws OceanusException {
-        super(pDeclaration);
+        super(pParser, pDeclaration);
         theBody = pParser.parseStatement(pDeclaration.getBody());
         theModifiers = pParser.parseNodeList(pDeclaration.getModifiers());
         theName = pParser.parseNode(pDeclaration.getName());

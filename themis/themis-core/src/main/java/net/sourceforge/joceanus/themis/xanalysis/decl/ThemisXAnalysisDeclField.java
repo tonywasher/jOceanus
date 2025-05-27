@@ -45,7 +45,7 @@ public class ThemisXAnalysisDeclField
      */
     ThemisXAnalysisDeclField(final ThemisXAnalysisParser pParser,
                              final FieldDeclaration pDeclaration) throws OceanusException {
-        super(pDeclaration);
+        super(pParser, pDeclaration);
         theModifiers = pParser.parseNodeList(pDeclaration.getModifiers());
         theVariables = pParser.parseNodeList(pDeclaration.getVariables());
     }

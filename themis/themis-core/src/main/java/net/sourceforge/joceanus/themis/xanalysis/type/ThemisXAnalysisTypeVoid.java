@@ -17,6 +17,7 @@
 package net.sourceforge.joceanus.themis.xanalysis.type;
 
 import com.github.javaparser.ast.type.VoidType;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
 
 /**
@@ -28,9 +29,10 @@ public class ThemisXAnalysisTypeVoid
      * Constructor.
      * @param pParser the parser
      * @param pType the type
+     * @throws OceanusException on error
      */
     ThemisXAnalysisTypeVoid(final ThemisXAnalysisParser pParser,
-                            final VoidType pType) {
-        super(pType);
+                            final VoidType pType) throws OceanusException {
+        super(pParser, pType);
     }
 }

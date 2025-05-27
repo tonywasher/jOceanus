@@ -46,7 +46,7 @@ public class ThemisXAnalysisExprNormalAnnotation
      */
     ThemisXAnalysisExprNormalAnnotation(final ThemisXAnalysisParser pParser,
                                         final NormalAnnotationExpr pExpression) throws OceanusException {
-        super(pExpression);
+        super(pParser, pExpression);
         thePairs = pParser.parseNodeList(pExpression.getPairs());
         theName = pParser.parseNode(pExpression.getName());
     }

@@ -14,25 +14,43 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.themis.xanalysis.expr;
+package net.sourceforge.joceanus.themis.xanalysis.base;
 
-import com.github.javaparser.ast.expr.DoubleLiteralExpr;
+import com.github.javaparser.ast.Node;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
 
 /**
- * Double Literal Expression Declaration.
+ * Instance Base Class.
+ * @param <T> the Node
  */
-public class ThemisXAnalysisExprDoubleLit
-        extends ThemisXAnalysisBaseExpression<DoubleLiteralExpr> {
+public abstract class ThemisXAnalysisBaseInstance<T extends Node>
+        implements ThemisXAnalysisInstance {
+    /**
+     * The node.
+     */
+    private final T theNode;
+
     /**
      * Constructor.
      * @param pParser the parser
-     * @param pExpression the expression
+     * @param pNode the node
      * @throws OceanusException on error
      */
-    ThemisXAnalysisExprDoubleLit(final ThemisXAnalysisParser pParser,
-                                 final DoubleLiteralExpr pExpression) throws OceanusException {
-        super(pParser, pExpression);
+    protected ThemisXAnalysisBaseInstance(final ThemisXAnalysisParser pParser,
+                                          final T pNode) throws OceanusException {
+        theNode = pNode;
+    }
+
+    /**
+     * Obtain the node.
+     * @return the node
+     */
+    public T getNode() {
+        return theNode;
+    }
+
+    @Override
+    public String toString() {
+        return theNode.toString();
     }
 }

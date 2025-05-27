@@ -17,7 +17,7 @@
 package net.sourceforge.joceanus.themis.analysis;
 
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.themis.xanalysis.parser.ThemisXAnalysisProject;
+import net.sourceforge.joceanus.themis.xanalysis.proj.ThemisXAnalysisProject;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DynamicNode;
 import org.junit.jupiter.api.DynamicTest;

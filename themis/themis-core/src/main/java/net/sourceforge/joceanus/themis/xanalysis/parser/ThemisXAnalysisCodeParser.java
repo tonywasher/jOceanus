@@ -32,6 +32,7 @@ import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.exc.ThemisDataException;
 import net.sourceforge.joceanus.themis.exc.ThemisIOException;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisChar;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisDeclarationInstance;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisExpressionInstance;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisNodeInstance;
@@ -58,25 +59,53 @@ import java.nio.charset.StandardCharsets;
 public class ThemisXAnalysisCodeParser
         implements ThemisXAnalysisParser {
     /**
-     * The FileName being parsed.
+     * The current module being parsed.
      */
-    private final File theCurrentFile;
+    private String theModule;
 
     /**
      * The current package being parsed.
      */
-    private final String thePackage;
+    private String thePackage;
+
+    /**
+     * The File being parsed.
+     */
+    private File theCurrentFile;
 
     /**
      * Constructor.
-     * @param pFile the file
+     */
+    public ThemisXAnalysisCodeParser() {
+    }
+
+    /**
+     * Set the current module
+     * @param pModule the module
+     */
+    public void setCurrentModule(final String pModule) {
+        theModule = pModule;
+    }
+
+    /**
+     * Set the current package
      * @param pPackage the package
      */
-    public ThemisXAnalysisCodeParser(final File pFile,
-                                     final String pPackage) {
-        theCurrentFile = pFile;
+    public void setCurrentPackage(final String pPackage) {
         thePackage = pPackage;
-     }
+    }
+
+    /**
+     * Set the current file.
+     * @param pFile the file
+     */
+    public void setCurrentFile(final File pFile) {
+        theCurrentFile = pFile;
+    }
+
+    @Override
+    public void registerInstance(final ThemisXAnalysisInstance pInstance) {
+    }
 
     /**
      * Process the file.

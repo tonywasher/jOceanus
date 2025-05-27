@@ -14,10 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.themis.xanalysis.parser;
+package net.sourceforge.joceanus.themis.xanalysis.proj;
 
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisNodeInstance;
+import net.sourceforge.joceanus.themis.xanalysis.parser.ThemisXAnalysisCodeParser;
 
 import java.io.File;
 
@@ -96,8 +97,11 @@ public class ThemisXAnalysisFile {
      * Process the file.
      * @throws OceanusException on error
      */
-    void processFile() throws OceanusException {
-        final ThemisXAnalysisCodeParser myParser = new ThemisXAnalysisCodeParser(theLocation, thePackage);
-        theContents = myParser.parseFile();
+    void processFile(final ThemisXAnalysisCodeParser pParser) throws OceanusException {
+        /* Set the current file */
+        pParser.setCurrentFile(theLocation);
+
+        /* Parse the file */
+        theContents = pParser.parseFile();
      }
 }

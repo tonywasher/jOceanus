@@ -43,7 +43,7 @@ public class ThemisXAnalysisNodeName
      */
     ThemisXAnalysisNodeName(final ThemisXAnalysisParser pParser,
                             final Name pName) throws OceanusException {
-        super(pName);
+        super(pParser, pName);
         theName = pName.getIdentifier();
         theQualifier = pParser.parseNode(pName.getQualifier().orElse(null));
     }

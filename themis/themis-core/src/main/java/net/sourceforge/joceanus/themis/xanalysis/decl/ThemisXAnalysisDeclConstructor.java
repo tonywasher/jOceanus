@@ -55,7 +55,7 @@ public class ThemisXAnalysisDeclConstructor
      */
     ThemisXAnalysisDeclConstructor(final ThemisXAnalysisParser pParser,
                                    final ConstructorDeclaration pDeclaration) throws OceanusException {
-        super(pDeclaration);
+        super(pParser, pDeclaration);
         theBody = pParser.parseStatement(pDeclaration.getBody());
         theModifiers = pParser.parseNodeList(pDeclaration.getModifiers());
         theThrown = pParser.parseTypeList(pDeclaration.getThrownExceptions());

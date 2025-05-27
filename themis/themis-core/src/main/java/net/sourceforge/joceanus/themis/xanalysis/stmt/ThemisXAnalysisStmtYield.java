@@ -17,6 +17,7 @@
 package net.sourceforge.joceanus.themis.xanalysis.stmt;
 
 import com.github.javaparser.ast.stmt.YieldStmt;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
 
 /**
@@ -28,9 +29,10 @@ public class ThemisXAnalysisStmtYield
      * Constructor.
      * @param pParser the parser
      * @param pStatement the statement
+     * @throws OceanusException on error
      */
     ThemisXAnalysisStmtYield(final ThemisXAnalysisParser pParser,
-                             final YieldStmt pStatement) {
-        super(pStatement);
+                             final YieldStmt pStatement) throws OceanusException {
+        super(pParser, pStatement);
     }
 }

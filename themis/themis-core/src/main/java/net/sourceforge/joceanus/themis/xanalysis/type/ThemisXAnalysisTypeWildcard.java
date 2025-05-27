@@ -38,7 +38,7 @@ public class ThemisXAnalysisTypeWildcard
      */
     ThemisXAnalysisTypeWildcard(final ThemisXAnalysisParser pParser,
                                 final WildcardType pType) throws OceanusException {
-        super(pType);
+        super(pParser, pType);
         theExtended = pParser.parseType(pType.getExtendedType().orElse(null));
     }
 

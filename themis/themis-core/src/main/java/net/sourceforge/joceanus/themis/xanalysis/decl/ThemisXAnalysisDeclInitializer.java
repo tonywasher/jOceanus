@@ -43,7 +43,7 @@ public class ThemisXAnalysisDeclInitializer
      */
     ThemisXAnalysisDeclInitializer(final ThemisXAnalysisParser pParser,
                                    final InitializerDeclaration pDeclaration) throws OceanusException {
-        super(pDeclaration);
+        super(pParser, pDeclaration);
         isStatic = pDeclaration.isStatic();
         theBody = pParser.parseStatement(pDeclaration.getBody());
     }

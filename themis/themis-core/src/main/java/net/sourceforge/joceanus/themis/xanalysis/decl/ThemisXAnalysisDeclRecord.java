@@ -71,7 +71,7 @@ public class ThemisXAnalysisDeclRecord
     ThemisXAnalysisDeclRecord(final ThemisXAnalysisParser pParser,
                               final RecordDeclaration pDeclaration) throws OceanusException {
         /* Store values */
-        super(pDeclaration);
+        super(pParser, pDeclaration);
         theShortName = pParser.parseNode(pDeclaration.getName());
         theFullName = pDeclaration.getFullyQualifiedName().orElse(null);
         theModifiers = pParser.parseNodeList(pDeclaration.getModifiers());

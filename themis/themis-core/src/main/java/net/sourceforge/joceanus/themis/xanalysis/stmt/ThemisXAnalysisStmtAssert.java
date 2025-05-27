@@ -17,6 +17,7 @@
 package net.sourceforge.joceanus.themis.xanalysis.stmt;
 
 import com.github.javaparser.ast.stmt.AssertStmt;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
 
 /**
@@ -28,9 +29,10 @@ public class ThemisXAnalysisStmtAssert
      * Constructor.
      * @param pParser the parser
      * @param pStatement the statement
+     * @throws OceanusException on error
      */
     ThemisXAnalysisStmtAssert(final ThemisXAnalysisParser pParser,
-                              final AssertStmt pStatement) {
-        super(pStatement);
+                              final AssertStmt pStatement) throws OceanusException {
+        super(pParser, pStatement);
     }
 }

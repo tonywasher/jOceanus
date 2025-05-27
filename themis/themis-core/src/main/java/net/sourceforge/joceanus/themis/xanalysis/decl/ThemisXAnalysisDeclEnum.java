@@ -66,7 +66,7 @@ public class ThemisXAnalysisDeclEnum
     ThemisXAnalysisDeclEnum(final ThemisXAnalysisParser pParser,
                             final EnumDeclaration pDeclaration) throws OceanusException {
         /* Store values */
-        super(pDeclaration);
+        super(pParser, pDeclaration);
         theShortName = pParser.parseNode(pDeclaration.getName());
         theFullName = pDeclaration.getFullyQualifiedName().orElse(null);
         theModifiers = pParser.parseNodeList(pDeclaration.getModifiers());

@@ -38,7 +38,7 @@ public class ThemisXAnalysisExprName
      */
     ThemisXAnalysisExprName(final ThemisXAnalysisParser pParser,
                             final NameExpr pExpression) throws OceanusException {
-        super(pExpression);
+        super(pParser, pExpression);
         theName = pParser.parseNode(pExpression.getName());
     }
 

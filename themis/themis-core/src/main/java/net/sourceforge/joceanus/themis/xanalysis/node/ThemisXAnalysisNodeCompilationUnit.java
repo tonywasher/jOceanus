@@ -52,7 +52,7 @@ public class ThemisXAnalysisNodeCompilationUnit
      */
     ThemisXAnalysisNodeCompilationUnit(final ThemisXAnalysisParser pParser,
                                        final CompilationUnit pUnit) throws OceanusException {
-        super(pUnit);
+        super(pParser, pUnit);
         thePackageDef = pParser.parseNode(pUnit.getPackageDeclaration().orElse(null));
         theImports = pParser.parseNodeList(pUnit.getImports());
         final NodeList<TypeDeclaration<?>> myTypes = pUnit.getTypes();

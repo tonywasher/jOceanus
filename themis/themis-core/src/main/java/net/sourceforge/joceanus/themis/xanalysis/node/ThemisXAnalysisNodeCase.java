@@ -50,7 +50,7 @@ public class ThemisXAnalysisNodeCase
      */
     ThemisXAnalysisNodeCase(final ThemisXAnalysisParser pParser,
                             final SwitchEntry pCase) throws OceanusException {
-        super(pCase);
+        super(pParser, pCase);
         theGuard = pParser.parseExpression(pCase.getGuard().orElse(null));
         theLabels = pParser.parseExprList(pCase.getLabels());
         theBody = pParser.parseStatementList(pCase.getStatements());

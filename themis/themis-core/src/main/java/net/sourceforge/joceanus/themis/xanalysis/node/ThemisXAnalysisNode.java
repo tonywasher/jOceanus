@@ -158,13 +158,13 @@ public enum ThemisXAnalysisNode {
             case CASE:            return new ThemisXAnalysisNodeCase(pParser, (SwitchEntry) pNode);
             case CATCH:           return new ThemisXAnalysisNodeCatch(pParser, (CatchClause) pNode);
             case COMPILATIONUNIT: return new ThemisXAnalysisNodeCompilationUnit(pParser, (CompilationUnit) pNode);
-            case COMMENT:         return new ThemisXAnalysisNodeComment((Comment) pNode);
+            case COMMENT:         return new ThemisXAnalysisNodeComment(pParser, (Comment) pNode);
             case IMPORT:          return new ThemisXAnalysisNodeImport(pParser, (ImportDeclaration) pNode);
-            case MODIFIER:        return new ThemisXAnalysisNodeModifier((Modifier) pNode);
+            case MODIFIER:        return new ThemisXAnalysisNodeModifier(pParser, (Modifier) pNode);
             case NAME:            return new ThemisXAnalysisNodeName(pParser, (Name) pNode);
             case PACKAGE:         return new ThemisXAnalysisNodePackage(pParser, (PackageDeclaration) pNode);
             case PARAMETER:       return new ThemisXAnalysisNodeParameter(pParser, (Parameter) pNode);
-            case SIMPLENAME:      return new ThemisXAnalysisNodeSimpleName((SimpleName) pNode);
+            case SIMPLENAME:      return new ThemisXAnalysisNodeSimpleName(pParser, (SimpleName) pNode);
             case VALUEPAIR:       return new ThemisXAnalysisNodeValuePair(pParser, (MemberValuePair) pNode);
             case VARIABLE:        return new ThemisXAnalysisNodeVariable(pParser, (VariableDeclarator) pNode);
             default:              throw pParser.buildException("Unsupported Node Type", pNode);

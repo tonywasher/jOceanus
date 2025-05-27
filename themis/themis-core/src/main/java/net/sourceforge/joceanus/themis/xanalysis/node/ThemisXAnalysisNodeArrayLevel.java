@@ -38,7 +38,7 @@ public class ThemisXAnalysisNodeArrayLevel
      */
     ThemisXAnalysisNodeArrayLevel(final ThemisXAnalysisParser pParser,
                                   final ArrayCreationLevel pLevel) throws OceanusException {
-        super(pLevel);
+        super(pParser, pLevel);
         theLevel = pParser.parseExpression(pLevel.getDimension().orElse(null));
     }
 

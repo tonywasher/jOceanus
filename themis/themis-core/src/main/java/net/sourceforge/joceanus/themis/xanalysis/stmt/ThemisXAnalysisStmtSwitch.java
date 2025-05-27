@@ -46,7 +46,7 @@ public class ThemisXAnalysisStmtSwitch
      */
     ThemisXAnalysisStmtSwitch(final ThemisXAnalysisParser pParser,
                               final SwitchStmt pStatement) throws OceanusException {
-        super(pStatement);
+        super(pParser, pStatement);
         theSelector = pParser.parseExpression(pStatement.getSelector());
         theCases = pParser.parseNodeList(pStatement.getEntries());
     }

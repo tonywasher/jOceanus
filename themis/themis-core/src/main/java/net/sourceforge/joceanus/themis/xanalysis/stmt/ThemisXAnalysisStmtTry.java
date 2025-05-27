@@ -55,7 +55,7 @@ public class ThemisXAnalysisStmtTry
      */
     ThemisXAnalysisStmtTry(final ThemisXAnalysisParser pParser,
                            final TryStmt pStatement) throws OceanusException {
-        super(pStatement);
+        super(pParser, pStatement);
         theResources = pParser.parseExprList(pStatement.getResources());
         theTry = pParser.parseStatement(pStatement.getTryBlock());
         theFinally = pParser.parseStatement(pStatement.getFinallyBlock().orElse(null));

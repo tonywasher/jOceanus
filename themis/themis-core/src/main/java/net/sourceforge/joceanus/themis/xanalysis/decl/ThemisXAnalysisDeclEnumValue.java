@@ -49,7 +49,7 @@ public class ThemisXAnalysisDeclEnumValue
      */
     ThemisXAnalysisDeclEnumValue(final ThemisXAnalysisParser pParser,
                                  final EnumConstantDeclaration pDeclaration) throws OceanusException {
-        super(pDeclaration);
+        super(pParser, pDeclaration);
         theName = pParser.parseNode(pDeclaration.getName());
         theArguments = pParser.parseExprList(pDeclaration.getArguments());
         theBody = pParser.parseDeclarationList(pDeclaration.getClassBody());

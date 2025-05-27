@@ -40,7 +40,7 @@ public class ThemisXAnalysisTypeUnion
      */
     ThemisXAnalysisTypeUnion(final ThemisXAnalysisParser pParser,
                              final UnionType pType) throws OceanusException {
-        super(pType);
+        super(pParser, pType);
         theElements = pParser.parseTypeList(pType.getElements());
     }
 

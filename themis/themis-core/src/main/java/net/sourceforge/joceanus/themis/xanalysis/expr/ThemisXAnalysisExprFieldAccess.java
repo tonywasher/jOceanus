@@ -50,7 +50,7 @@ public class ThemisXAnalysisExprFieldAccess
      */
     ThemisXAnalysisExprFieldAccess(final ThemisXAnalysisParser pParser,
                                    final FieldAccessExpr pExpression) throws OceanusException {
-        super(pExpression);
+        super(pParser, pExpression);
         theName = pParser.parseNode(pExpression.getName());
         theScope = pParser.parseExpression(pExpression.getScope());
         theTypes = pParser.parseTypeList(pExpression.getTypeArguments().orElse(null));

@@ -45,7 +45,7 @@ public class ThemisXAnalysisExprSwitch
      */
     ThemisXAnalysisExprSwitch(final ThemisXAnalysisParser pParser,
                               final SwitchExpr pExpression) throws OceanusException {
-        super(pExpression);
+        super(pParser, pExpression);
         theSelector = pParser.parseExpression(pExpression.getSelector());
         theCases = pParser.parseNodeList(pExpression.getEntries());
     }

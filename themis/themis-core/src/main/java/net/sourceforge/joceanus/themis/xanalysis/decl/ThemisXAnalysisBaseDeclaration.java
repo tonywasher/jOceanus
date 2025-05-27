@@ -17,37 +17,25 @@
 package net.sourceforge.joceanus.themis.xanalysis.decl;
 
 import com.github.javaparser.ast.body.BodyDeclaration;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisBaseInstance;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisDeclarationInstance;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
 
 /**
  * Declaration Base Class.
  * @param <T> the Declaration
  */
 public abstract class ThemisXAnalysisBaseDeclaration<T extends BodyDeclaration<T>>
+        extends ThemisXAnalysisBaseInstance<T>
         implements ThemisXAnalysisDeclarationInstance {
-    /**
-     * The declaration.
-     */
-    private final T theDecl;
-
     /**
      * Constructor.
      * @param pDecl the declaration
+     * @throws OceanusException on error
      */
-    protected ThemisXAnalysisBaseDeclaration(final T pDecl) {
-        theDecl = pDecl;
-    }
-
-    /**
-     * Obtain the declaration.
-     * @return the declaration
-     */
-    public T getDeclaration() {
-        return theDecl;
-    }
-
-    @Override
-    public String toString() {
-        return theDecl.toString();
+    ThemisXAnalysisBaseDeclaration(final ThemisXAnalysisParser pParser,
+                                   final T pDecl) throws OceanusException {
+        super(pParser, pDecl);
     }
 }

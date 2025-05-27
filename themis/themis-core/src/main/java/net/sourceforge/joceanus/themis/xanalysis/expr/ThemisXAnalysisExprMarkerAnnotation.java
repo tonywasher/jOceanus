@@ -38,7 +38,7 @@ public class ThemisXAnalysisExprMarkerAnnotation
      */
     ThemisXAnalysisExprMarkerAnnotation(final ThemisXAnalysisParser pParser,
                                         final MarkerAnnotationExpr pExpression) throws OceanusException {
-        super(pExpression);
+        super(pParser, pExpression);
         theName = pParser.parseNode(pExpression.getName());
     }
 

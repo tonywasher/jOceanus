@@ -17,6 +17,7 @@
 package net.sourceforge.joceanus.themis.xanalysis.stmt;
 
 import com.github.javaparser.ast.stmt.ContinueStmt;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
 
 /**
@@ -28,9 +29,10 @@ public class ThemisXAnalysisStmtContinue
      * Constructor.
      * @param pParser the parser
      * @param pStatement the statement
+     * @throws OceanusException on error
      */
     ThemisXAnalysisStmtContinue(final ThemisXAnalysisParser pParser,
-                                final ContinueStmt pStatement) {
-        super(pStatement);
+                                final ContinueStmt pStatement) throws OceanusException {
+        super(pParser, pStatement);
     }
 }

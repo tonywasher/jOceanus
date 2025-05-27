@@ -43,7 +43,7 @@ public class ThemisXAnalysisStmtWhile
      */
     ThemisXAnalysisStmtWhile(final ThemisXAnalysisParser pParser,
                              final WhileStmt pStatement) throws OceanusException {
-        super(pStatement);
+        super(pParser, pStatement);
         theExpression = pParser.parseExpression(pStatement.getCondition());
         theBody = pParser.parseStatement(pStatement.getBody());
     }

@@ -70,7 +70,7 @@ public class ThemisXAnalysisDeclMethod
      */
     ThemisXAnalysisDeclMethod(final ThemisXAnalysisParser pParser,
                               final MethodDeclaration pDeclaration) throws OceanusException {
-        super(pDeclaration);
+        super(pParser, pDeclaration);
         theName = pParser.parseNode(pDeclaration.getName());
         theType = pParser.parseType(pDeclaration.getType());
         theModifiers = pParser.parseNodeList(pDeclaration.getModifiers());

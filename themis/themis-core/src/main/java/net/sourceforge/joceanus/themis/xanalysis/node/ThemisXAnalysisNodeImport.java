@@ -38,7 +38,7 @@ public class ThemisXAnalysisNodeImport
      */
     ThemisXAnalysisNodeImport(final ThemisXAnalysisParser pParser,
                               final ImportDeclaration pImport) throws OceanusException {
-        super(pImport);
+        super(pParser, pImport);
         theImport = pParser.parseNode(pImport.getName());
 
         /* Reject imports of wildcards */

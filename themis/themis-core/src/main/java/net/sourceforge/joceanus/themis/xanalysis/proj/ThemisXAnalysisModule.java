@@ -14,10 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.themis.xanalysis.parser;
+package net.sourceforge.joceanus.themis.xanalysis.proj;
 
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisChar;
+import net.sourceforge.joceanus.themis.xanalysis.parser.ThemisXAnalysisCodeParser;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -142,13 +143,17 @@ public class ThemisXAnalysisModule {
 
     /**
      * initialPass.
+     * @param pParser the parser
      * @throws OceanusException on error
      */
-    void performInitialPass() throws OceanusException {
+    void performInitialPass(final ThemisXAnalysisCodeParser pParser) throws OceanusException {
+        /* Set the current package */
+        pParser.setCurrentModule(theName);
+
         /* Loop through the packages */
         for (ThemisXAnalysisPackage myPackage : thePackages) {
             /* Process the package */
-            myPackage.performInitialPass();
+            myPackage.performInitialPass(pParser);
         }
     }
 }

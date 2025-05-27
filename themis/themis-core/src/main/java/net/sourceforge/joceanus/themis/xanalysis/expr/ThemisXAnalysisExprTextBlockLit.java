@@ -17,6 +17,7 @@
 package net.sourceforge.joceanus.themis.xanalysis.expr;
 
 import com.github.javaparser.ast.expr.TextBlockLiteralExpr;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
 
 /**
@@ -28,9 +29,10 @@ public class ThemisXAnalysisExprTextBlockLit
      * Constructor.
      * @param pParser the parser
      * @param pExpression the expression
+     * @throws OceanusException on error
      */
     ThemisXAnalysisExprTextBlockLit(final ThemisXAnalysisParser pParser,
-                                    final TextBlockLiteralExpr pExpression) {
-        super(pExpression);
+                                    final TextBlockLiteralExpr pExpression) throws OceanusException {
+        super(pParser, pExpression);
     }
 }

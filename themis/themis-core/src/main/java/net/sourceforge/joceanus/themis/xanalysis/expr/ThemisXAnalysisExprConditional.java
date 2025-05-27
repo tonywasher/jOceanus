@@ -48,7 +48,7 @@ public class ThemisXAnalysisExprConditional
      */
     ThemisXAnalysisExprConditional(final ThemisXAnalysisParser pParser,
                                    final ConditionalExpr pExpression) throws OceanusException {
-        super(pExpression);
+        super(pParser, pExpression);
         theCondition = pParser.parseExpression(pExpression.getCondition());
         theThen = pParser.parseExpression(pExpression.getThenExpr());
         theElse = pParser.parseExpression(pExpression.getElseExpr());

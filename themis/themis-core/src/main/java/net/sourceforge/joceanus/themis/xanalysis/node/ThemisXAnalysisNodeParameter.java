@@ -50,7 +50,7 @@ public class ThemisXAnalysisNodeParameter
      */
     ThemisXAnalysisNodeParameter(final ThemisXAnalysisParser pParser,
                                  final Parameter pParameter) throws OceanusException {
-        super(pParameter);
+        super(pParser, pParameter);
         theModifiers = pParser.parseNodeList(pParameter.getModifiers());
         theName = pParser.parseNode(pParameter.getName());
         theType = pParser.parseType(pParameter.getType());

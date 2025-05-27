@@ -43,7 +43,7 @@ public class ThemisXAnalysisNodeValuePair
      */
     ThemisXAnalysisNodeValuePair(final ThemisXAnalysisParser pParser,
                                  final MemberValuePair pPair) throws OceanusException {
-        super(pPair);
+        super(pParser, pPair);
         theName = pParser.parseNode(pPair.getName());
         theValue = pParser.parseExpression(pPair.getValue());
     }

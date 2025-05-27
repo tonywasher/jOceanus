@@ -44,7 +44,7 @@ public class ThemisXAnalysisStmtDo
     ThemisXAnalysisStmtDo(final ThemisXAnalysisParser pParser,
                           final DoStmt pStatement) throws OceanusException {
         /* Store details */
-        super(pStatement);
+        super(pParser, pStatement);
         theExpression = pParser.parseExpression(pStatement.getCondition());
         theBody = pParser.parseStatement(pStatement.getBody());
     }

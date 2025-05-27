@@ -54,7 +54,7 @@ public class ThemisXAnalysisExprInstanceOf
      */
     ThemisXAnalysisExprInstanceOf(final ThemisXAnalysisParser pParser,
                                   final InstanceOfExpr pExpression) throws OceanusException {
-        super(pExpression);
+        super(pParser, pExpression);
         theName = pExpression.getName().map(SimpleName::asString).orElse(null);
         theValue = pParser.parseExpression(pExpression.getExpression());
         theType = pParser.parseType(pExpression.getType());

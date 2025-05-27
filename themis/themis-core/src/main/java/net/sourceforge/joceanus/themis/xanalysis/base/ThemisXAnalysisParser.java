@@ -54,6 +54,13 @@ public interface ThemisXAnalysisParser {
     void checkPackage(PackageDeclaration pPackage) throws OceanusException;
 
     /**
+     * Register Instance.
+     * @param pInstance the instance
+     * @throws OceanusException on error
+     */
+    void registerInstance(ThemisXAnalysisInstance pInstance) throws OceanusException;
+
+    /**
      * Parse a declaration.
      * @param pDecl the declaration
      * @return the parsed declaration

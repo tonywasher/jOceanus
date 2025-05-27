@@ -38,7 +38,7 @@ public class ThemisXAnalysisStmtClass
      */
     ThemisXAnalysisStmtClass(final ThemisXAnalysisParser pParser,
                              final LocalClassDeclarationStmt pStatement) throws OceanusException {
-        super(pStatement);
+        super(pParser, pStatement);
         theClass = pParser.parseDeclaration(pStatement.getClassDeclaration());
     }
 

@@ -55,7 +55,7 @@ public class ThemisXAnalysisExprMethodCall
      */
     ThemisXAnalysisExprMethodCall(final ThemisXAnalysisParser pParser,
                                   final MethodCallExpr pExpression) throws OceanusException {
-        super(pExpression);
+        super(pParser, pExpression);
         theName = pParser.parseNode(pExpression.getName());
         theArguments = pParser.parseExprList(pExpression.getArguments());
         theTypeParams = pParser.parseTypeList(pExpression.getTypeArguments().orElse(null));

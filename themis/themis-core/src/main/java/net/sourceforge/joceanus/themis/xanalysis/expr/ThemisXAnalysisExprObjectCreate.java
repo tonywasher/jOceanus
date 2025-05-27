@@ -45,7 +45,7 @@ public class ThemisXAnalysisExprObjectCreate
      */
     ThemisXAnalysisExprObjectCreate(final ThemisXAnalysisParser pParser,
                                     final ObjectCreationExpr pExpression) throws OceanusException {
-        super(pExpression);
+        super(pParser, pExpression);
         theType = pParser.parseType(pExpression.getType());
         theArgs = pParser.parseExprList(pExpression.getArguments());
     }

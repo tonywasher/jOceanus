@@ -55,7 +55,7 @@ public class ThemisXAnalysisStmtFor
      */
     ThemisXAnalysisStmtFor(final ThemisXAnalysisParser pParser,
                            final ForStmt pStatement) throws OceanusException {
-        super(pStatement);
+        super(pParser, pStatement);
         theInit = pParser.parseExprList(pStatement.getInitialization());
         theCompare = pParser.parseExpression(pStatement.getCompare().orElse(null));
         theUpdates = pParser.parseExprList(pStatement.getUpdate());

@@ -50,7 +50,7 @@ public class ThemisXAnalysisExprMethodRef
      */
     ThemisXAnalysisExprMethodRef(final ThemisXAnalysisParser pParser,
                                  final MethodReferenceExpr pExpression) throws OceanusException {
-        super(pExpression);
+        super(pParser, pExpression);
         theName = pExpression.getIdentifier();
         theScope = pParser.parseExpression(pExpression.getScope());
         theTypeArgs = pParser.parseTypeList(pExpression.getTypeArguments().orElse(null));

@@ -17,6 +17,7 @@
 package net.sourceforge.joceanus.themis.xanalysis.type;
 
 import com.github.javaparser.ast.type.VarType;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
 
 /**
@@ -28,9 +29,10 @@ public class ThemisXAnalysisTypeVar
      * Constructor.
      * @param pParser the parser
      * @param pType the type
+     * @throws OceanusException on error
      */
     ThemisXAnalysisTypeVar(final ThemisXAnalysisParser pParser,
-                           final VarType pType) {
-        super(pType);
+                           final VarType pType) throws OceanusException {
+        super(pParser, pType);
     }
 }

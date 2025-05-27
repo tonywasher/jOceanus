@@ -45,7 +45,7 @@ public class ThemisXAnalysisExprVarDecl
      */
     ThemisXAnalysisExprVarDecl(final ThemisXAnalysisParser pParser,
                                final VariableDeclarationExpr pExpression) throws OceanusException {
-        super(pExpression);
+        super(pParser, pExpression);
         theModifiers = pParser.parseNodeList(pExpression.getModifiers());
         theVariables = pParser.parseNodeList(pExpression.getVariables());
     }

@@ -38,7 +38,7 @@ public class ThemisXAnalysisNodePackage
      */
     ThemisXAnalysisNodePackage(final ThemisXAnalysisParser pParser,
                                final PackageDeclaration pPackage) throws OceanusException {
-        super(pPackage);
+        super(pParser, pPackage);
         thePackage = pParser.parseNode(pPackage.getName());
         pParser.checkPackage(pPackage);
     }

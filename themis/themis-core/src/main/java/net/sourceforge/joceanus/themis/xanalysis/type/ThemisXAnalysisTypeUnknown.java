@@ -17,6 +17,7 @@
 package net.sourceforge.joceanus.themis.xanalysis.type;
 
 import com.github.javaparser.ast.type.UnknownType;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
 
 /**
@@ -28,9 +29,10 @@ public class ThemisXAnalysisTypeUnknown
      * Constructor.
      * @param pParser the parser
      * @param pType the type
+     * @throws OceanusException on error
      */
     ThemisXAnalysisTypeUnknown(final ThemisXAnalysisParser pParser,
-                               final UnknownType pType) {
-        super(pType);
+                               final UnknownType pType) throws OceanusException {
+        super(pParser, pType);
     }
 }

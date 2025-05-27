@@ -38,7 +38,7 @@ public class ThemisXAnalysisStmtExpression
      */
     ThemisXAnalysisStmtExpression(final ThemisXAnalysisParser pParser,
                                   final ExpressionStmt pStatement) throws OceanusException {
-        super(pStatement);
+        super(pParser, pStatement);
         theExpression = pParser.parseExpression(pStatement.getExpression());
     }
 
