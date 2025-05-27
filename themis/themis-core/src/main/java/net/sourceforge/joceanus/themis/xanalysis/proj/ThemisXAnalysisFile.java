@@ -103,5 +103,6 @@ public class ThemisXAnalysisFile {
 
         /* Parse the file */
         theContents = pParser.parseFile();
+        int i = 0;
      }
 }

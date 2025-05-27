@@ -31,6 +31,7 @@ import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.Th
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisTypeInstance;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -123,8 +124,10 @@ public interface ThemisXAnalysisParser {
     default List<ThemisXAnalysisTypeInstance> parseTypeList(final NodeList<? extends Type> pTypeList) throws OceanusException {
         /* Handle null list */
         if (pTypeList == null) {
-            return null;
+            return Collections.emptyList();
         }
+
+        /* Create list of nodes */
         final List<ThemisXAnalysisTypeInstance> myList = new ArrayList<>();
         for (Type myType : pTypeList) {
             final ThemisXAnalysisTypeInstance myParsed = parseType(myType);

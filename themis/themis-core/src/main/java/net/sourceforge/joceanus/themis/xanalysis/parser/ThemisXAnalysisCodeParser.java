@@ -52,12 +52,19 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayDeque;
+import java.util.Deque;
 
 /**
  * Code Parser.
  */
 public class ThemisXAnalysisCodeParser
         implements ThemisXAnalysisParser {
+    /**
+     * The stack of the nodes that are being parsed.
+     */
+    private final Deque<ThemisXAnalysisInstance> theNodes;
+
     /**
      * The current module being parsed.
      */
@@ -77,6 +84,7 @@ public class ThemisXAnalysisCodeParser
      * Constructor.
      */
     public ThemisXAnalysisCodeParser() {
+        theNodes = new ArrayDeque<>();
     }
 
     /**
@@ -105,6 +113,30 @@ public class ThemisXAnalysisCodeParser
 
     @Override
     public void registerInstance(final ThemisXAnalysisInstance pInstance) {
+        /* Register with parent unless top-level node */
+        final ThemisXAnalysisInstance myParent = theNodes.peekLast();
+        if (myParent != null) {
+            myParent.registerChild(pInstance);
+        }
+
+        /* Add to end of queue */
+        theNodes.addLast(pInstance);
+    }
+
+    /**
+     * Deregister instance.
+     * @param pInstance the instance to deRegister
+     */
+    private void deRegisterInstance(final ThemisXAnalysisInstance pInstance) {
+        /* If the instance is non-null */
+        if (pInstance != null) {
+            /* If it matches the current node */
+            final ThemisXAnalysisInstance myCurrent = theNodes.peekLast();
+            if (pInstance.equals(myCurrent)) {
+                /* Remove from queue */
+                theNodes.removeLast();
+            }
+        }
     }
 
     /**
@@ -172,27 +204,37 @@ public class ThemisXAnalysisCodeParser
     }
 
     @Override
-  public ThemisXAnalysisDeclarationInstance parseDeclaration(final BodyDeclaration<?> pDecl) throws OceanusException {
-        return ThemisXAnalysisDeclaration.parseDeclaration(this, pDecl);
+    public ThemisXAnalysisDeclarationInstance parseDeclaration(final BodyDeclaration<?> pDecl) throws OceanusException {
+        final ThemisXAnalysisDeclarationInstance myInstance = ThemisXAnalysisDeclaration.parseDeclaration(this, pDecl);
+        deRegisterInstance(myInstance);
+        return myInstance;
     }
 
     @Override
     public ThemisXAnalysisNodeInstance parseNode(final Node pNode) throws OceanusException {
-        return ThemisXAnalysisNode.parseNode(this, pNode);
+        final ThemisXAnalysisNodeInstance myInstance = ThemisXAnalysisNode.parseNode(this, pNode);
+        deRegisterInstance(myInstance);
+        return myInstance;
     }
 
     @Override
     public ThemisXAnalysisTypeInstance parseType(final Type pType) throws OceanusException {
-        return ThemisXAnalysisType.parseType(this, pType);
+        final ThemisXAnalysisTypeInstance myInstance = ThemisXAnalysisType.parseType(this, pType);
+        deRegisterInstance(myInstance);
+        return myInstance;
     }
 
     @Override
     public ThemisXAnalysisStatementInstance parseStatement(final Statement pStatement) throws OceanusException {
-        return ThemisXAnalysisStatement.parseStatement(this, pStatement);
+        final ThemisXAnalysisStatementInstance myInstance = ThemisXAnalysisStatement.parseStatement(this, pStatement);
+        deRegisterInstance(myInstance);
+        return myInstance;
     }
 
     @Override
     public ThemisXAnalysisExpressionInstance parseExpression(final Expression pExpr) throws OceanusException {
-        return ThemisXAnalysisExpression.parseExpression(this, pExpr);
+        final ThemisXAnalysisExpressionInstance myInstance = ThemisXAnalysisExpression.parseExpression(this, pExpr);
+        deRegisterInstance(myInstance);
+        return myInstance;
     }
 }

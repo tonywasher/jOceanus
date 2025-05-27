@@ -16,10 +16,32 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.themis.xanalysis.base;
 
+import com.github.javaparser.ast.Node;
+
+import java.util.List;
+
 /**
  * Instance definitions.
  */
 public interface ThemisXAnalysisInstance {
+    /**
+     * Obtain the node.
+     * @return the node
+     */
+    Node getNode();
+
+    /**
+     * Register child node.
+     * @param pChild the child node
+     */
+    void registerChild(ThemisXAnalysisInstance pChild);
+
+    /**
+     * Obtain the list of children.
+     * @return the list of children
+     */
+    List<ThemisXAnalysisInstance> getChildren();
+
     /**
      * The base declaration interface.
      */

@@ -17,7 +17,11 @@
 package net.sourceforge.joceanus.themis.xanalysis.base;
 
 import com.github.javaparser.ast.Node;
+import com.github.javaparser.ast.comments.Comment;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Instance Base Class.
@@ -31,6 +35,16 @@ public abstract class ThemisXAnalysisBaseInstance<T extends Node>
     private final T theNode;
 
     /**
+     * The list of children.
+     */
+    private final List<ThemisXAnalysisInstance> theChildren;
+
+    /**
+     * The list of comments.
+     */
+    private final List<ThemisXAnalysisInstance> theComments;
+
+    /**
      * Constructor.
      * @param pParser the parser
      * @param pNode the node
@@ -38,15 +52,45 @@ public abstract class ThemisXAnalysisBaseInstance<T extends Node>
      */
     protected ThemisXAnalysisBaseInstance(final ThemisXAnalysisParser pParser,
                                           final T pNode) throws OceanusException {
+        /* Record the node and lists */
         theNode = pNode;
+        theChildren = new ArrayList<>();
+        theComments = new ArrayList<>();
+
+        /* Register the node */
+        pParser.registerInstance(this);
+
+        /* Parse comments */
+        final Comment myComment = pNode.getComment().orElse(null);
+        if (myComment != null) {
+            theComments.add(pParser.parseNode(myComment));
+        }
+        for(Comment myOrphan : pNode.getOrphanComments()) {
+            theComments.add(pParser.parseNode(myOrphan));
+        }
+    }
+
+    @Override
+    public void registerChild(final ThemisXAnalysisInstance pChild) {
+        theChildren.add(pChild);
+    }
+
+    @Override
+    public T getNode() {
+        return theNode;
+    }
+
+    @Override
+    public List<ThemisXAnalysisInstance> getChildren() {
+        return theChildren;
     }
 
     /**
-     * Obtain the node.
-     * @return the node
+     * Obtain the list of comments.
+     * @return the list of comments
      */
-    public T getNode() {
-        return theNode;
+    public List<ThemisXAnalysisInstance> getComments() {
+        return theComments;
     }
 
     @Override
