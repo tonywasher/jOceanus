@@ -18,7 +18,9 @@ package net.sourceforge.joceanus.themis.xanalysis.decl;
 
 import com.github.javaparser.ast.body.EnumDeclaration;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisClassInstance;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
+import net.sourceforge.joceanus.themis.xanalysis.node.ThemisXAnalysisNodeSimpleName;
 
 import java.util.List;
 
@@ -26,11 +28,12 @@ import java.util.List;
  * Enum Declaration.
  */
 public class ThemisXAnalysisDeclEnum
-        extends ThemisXAnalysisBaseDeclaration<EnumDeclaration> {
+        extends ThemisXAnalysisBaseDeclaration<EnumDeclaration>
+        implements ThemisXAnalysisClassInstance {
     /**
-     * The shortName.
+     * The Name.
      */
-    private final ThemisXAnalysisNodeInstance theShortName;
+    private final String theName;
 
     /**
      * The fullName.
@@ -48,14 +51,19 @@ public class ThemisXAnalysisDeclEnum
     private final List<ThemisXAnalysisDeclarationInstance> theValues;
 
     /**
-     * The members.
+     * The body.
      */
-    private final List<ThemisXAnalysisDeclarationInstance> theMembers;
+    private final List<ThemisXAnalysisDeclarationInstance> theBody;
 
     /**
      * The implements.
      */
     private final List<ThemisXAnalysisTypeInstance> theImplements;
+
+    /**
+     * The annotations.
+     */
+    private final List<ThemisXAnalysisExpressionInstance> theAnnotations;
 
     /**
      * Constructor.
@@ -67,34 +75,26 @@ public class ThemisXAnalysisDeclEnum
                             final EnumDeclaration pDeclaration) throws OceanusException {
         /* Store values */
         super(pParser, pDeclaration);
-        theShortName = pParser.parseNode(pDeclaration.getName());
+        theName = ((ThemisXAnalysisNodeSimpleName) pParser.parseNode(pDeclaration.getName())).getName();
         theFullName = pDeclaration.getFullyQualifiedName().orElse(null);
         theModifiers = pParser.parseNodeList(pDeclaration.getModifiers());
         theImplements = pParser.parseTypeList(pDeclaration.getImplementedTypes());
         theValues = pParser.parseDeclarationList(pDeclaration.getEntries());
-        theMembers = pParser.parseDeclarationList(pDeclaration.getMembers());
+        theBody = pParser.parseDeclarationList(pDeclaration.getMembers());
+        theAnnotations = pParser.parseExprList(pDeclaration.getAnnotations());
     }
 
-    /**
-     * Obtain the short name.
-     * @return the short name
-     */
-    public ThemisXAnalysisNodeInstance getShortName() {
-        return theShortName;
+    @Override
+    public String getName() {
+        return theName;
     }
 
-    /**
-     * Obtain the fullName.
-     * @return the fullName
-     */
+    @Override
     public String getFullName() {
         return theFullName;
     }
 
-    /**
-     * Obtain the modifiers.
-     * @return the modifiers
-     */
+    @Override
     public List<ThemisXAnalysisNodeInstance> getModifiers() {
         return theModifiers;
     }
@@ -107,19 +107,18 @@ public class ThemisXAnalysisDeclEnum
         return theValues;
     }
 
-    /**
-     * Obtain the members.
-     * @return the members
-     */
-    public List<ThemisXAnalysisDeclarationInstance> getMembers() {
-        return theMembers;
+    @Override
+    public List<ThemisXAnalysisDeclarationInstance> getBody() {
+        return theBody;
     }
 
-    /**
-     * Obtain the implements types.
-     * @return the implements
-     */
+    @Override
     public List<ThemisXAnalysisTypeInstance> getImplements() {
         return theImplements;
+    }
+
+    @Override
+    public List<ThemisXAnalysisExpressionInstance> getAnnotations() {
+        return theAnnotations;
     }
 }

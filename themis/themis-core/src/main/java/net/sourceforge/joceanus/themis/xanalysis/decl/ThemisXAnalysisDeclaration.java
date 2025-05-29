@@ -20,6 +20,7 @@ import com.github.javaparser.ast.body.BodyDeclaration;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisDeclarationInstance;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisId;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
 
 import java.util.function.Predicate;
@@ -27,7 +28,8 @@ import java.util.function.Predicate;
 /**
  * Analysis BodyType.
  */
-public enum ThemisXAnalysisDeclaration {
+public enum ThemisXAnalysisDeclaration
+        implements ThemisXAnalysisId {
     /**
      * Annotation.
      */
@@ -41,7 +43,8 @@ public enum ThemisXAnalysisDeclaration {
     /**
      * Class.
      */
-    CLASS(s -> s instanceof ClassOrInterfaceDeclaration cls && !cls.isInterface()),
+    CLASS(s -> s instanceof ClassOrInterfaceDeclaration cls
+            && !cls.isInterface() && !cls.isAbstract()),
 
     /**
      * Compact Constructor.
@@ -76,7 +79,8 @@ public enum ThemisXAnalysisDeclaration {
     /**
      * Interface.
      */
-    INTERFACE(s -> s instanceof ClassOrInterfaceDeclaration cls && cls.isInterface()),
+    INTERFACE(s -> s instanceof ClassOrInterfaceDeclaration cls
+            && (cls.isAbstract() || cls.isInterface())),
 
     /**
      * Method.

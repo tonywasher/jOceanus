@@ -26,6 +26,11 @@ import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
 public class ThemisXAnalysisStmtYield
         extends ThemisXAnalysisBaseStatement<YieldStmt> {
     /**
+     * The expression.
+     */
+    private final ThemisXAnalysisExpressionInstance theExpression;
+
+    /**
      * Constructor.
      * @param pParser the parser
      * @param pStatement the statement
@@ -34,5 +39,14 @@ public class ThemisXAnalysisStmtYield
     ThemisXAnalysisStmtYield(final ThemisXAnalysisParser pParser,
                              final YieldStmt pStatement) throws OceanusException {
         super(pParser, pStatement);
+        theExpression = pParser.parseExpression(pStatement.getExpression());
+    }
+
+    /**
+     * Obtain the expression.
+     * @return the expression
+     */
+    public ThemisXAnalysisExpressionInstance getExpression() {
+        return theExpression;
     }
 }

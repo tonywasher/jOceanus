@@ -38,6 +38,11 @@ public class ThemisXAnalysisDeclField
     private final List<ThemisXAnalysisNodeInstance> theVariables;
 
     /**
+     * The annotations.
+     */
+    private final List<ThemisXAnalysisExpressionInstance> theAnnotations;
+
+    /**
      * Constructor.
      * @param pParser the parser
      * @param pDeclaration the declaration
@@ -48,6 +53,7 @@ public class ThemisXAnalysisDeclField
         super(pParser, pDeclaration);
         theModifiers = pParser.parseNodeList(pDeclaration.getModifiers());
         theVariables = pParser.parseNodeList(pDeclaration.getVariables());
+        theAnnotations = pParser.parseExprList(pDeclaration.getAnnotations());
     }
 
     /**
@@ -64,5 +70,13 @@ public class ThemisXAnalysisDeclField
      */
     public List<ThemisXAnalysisNodeInstance> getVariables() {
         return theVariables;
+    }
+
+    /**
+     * Obtain the annotations.
+     * @return the annotations
+     */
+    public List<ThemisXAnalysisExpressionInstance> getAnnotations() {
+        return theAnnotations;
     }
 }

@@ -20,6 +20,8 @@ import com.github.javaparser.ast.type.ArrayType;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
 
+import java.util.List;
+
 /**
  * Array Type Declaration.
  */
@@ -31,6 +33,11 @@ public class ThemisXAnalysisTypeArray
     private final ThemisXAnalysisTypeInstance theUnderlying;
 
     /**
+     * The annotations.
+     */
+    private final List<ThemisXAnalysisExpressionInstance> theAnnotations;
+
+    /**
      * Constructor.
      * @param pParser the parser
      * @param pType the type
@@ -40,6 +47,7 @@ public class ThemisXAnalysisTypeArray
                              final ArrayType pType) throws OceanusException {
         super(pParser, pType);
         theUnderlying = pParser.parseType(pType.getComponentType());
+        theAnnotations = pParser.parseExprList(pType.getAnnotations());
     }
 
     /**
@@ -48,5 +56,13 @@ public class ThemisXAnalysisTypeArray
      */
     public ThemisXAnalysisTypeInstance getUnderlying() {
         return theUnderlying;
+    }
+
+    /**
+     * Obtain the annotations.
+     * @return the annotations
+     */
+    public List<ThemisXAnalysisExpressionInstance> getAnnotations() {
+        return theAnnotations;
     }
 }

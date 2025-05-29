@@ -18,6 +18,7 @@ package net.sourceforge.joceanus.themis.xanalysis.stmt;
 
 import com.github.javaparser.ast.stmt.Statement;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisId;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisStatementInstance;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
 
@@ -26,7 +27,8 @@ import java.util.function.Predicate;
 /**
  * Analysis StatementType.
  */
-public enum ThemisXAnalysisStatement {
+public enum ThemisXAnalysisStatement
+        implements ThemisXAnalysisId {
     /**
      * Assert.
      */

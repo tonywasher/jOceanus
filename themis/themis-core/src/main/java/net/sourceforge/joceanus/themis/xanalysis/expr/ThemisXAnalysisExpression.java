@@ -19,6 +19,7 @@ package net.sourceforge.joceanus.themis.xanalysis.expr;
 import com.github.javaparser.ast.expr.Expression;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisExpressionInstance;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisId;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
 
 import java.util.function.Predicate;
@@ -26,7 +27,8 @@ import java.util.function.Predicate;
 /**
  * Analysis ExpressionType.
  */
-public enum ThemisXAnalysisExpression {
+public enum ThemisXAnalysisExpression
+        implements ThemisXAnalysisId {
     /**
      * ArrayAccess.
      */

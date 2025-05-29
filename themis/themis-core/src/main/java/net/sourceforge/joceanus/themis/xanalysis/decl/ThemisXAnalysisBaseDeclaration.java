@@ -30,6 +30,11 @@ public abstract class ThemisXAnalysisBaseDeclaration<T extends BodyDeclaration<T
         extends ThemisXAnalysisBaseInstance<T>
         implements ThemisXAnalysisDeclarationInstance {
     /**
+     * The declarationId.
+     */
+    private final ThemisXAnalysisDeclaration theId;
+
+    /**
      * Constructor.
      * @param pDecl the declaration
      * @throws OceanusException on error
@@ -37,5 +42,11 @@ public abstract class ThemisXAnalysisBaseDeclaration<T extends BodyDeclaration<T
     ThemisXAnalysisBaseDeclaration(final ThemisXAnalysisParser pParser,
                                    final T pDecl) throws OceanusException {
         super(pParser, pDecl);
+        theId = ThemisXAnalysisDeclaration.determineDeclaration(pParser, pDecl);
+    }
+
+    @Override
+    public ThemisXAnalysisDeclaration getId() {
+        return theId;
     }
 }

@@ -19,12 +19,30 @@ package net.sourceforge.joceanus.themis.xanalysis.decl;
 import com.github.javaparser.ast.body.AnnotationMemberDeclaration;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
+import net.sourceforge.joceanus.themis.xanalysis.node.ThemisXAnalysisNodeSimpleName;
+
+import java.util.List;
 
 /**
  * Annotation Declaration.
  */
 public class ThemisXAnalysisDeclAnnotationMember
         extends ThemisXAnalysisBaseDeclaration<AnnotationMemberDeclaration> {
+    /**
+     * The name.
+     */
+    private final String theName;
+
+    /**
+     * The type.
+     */
+    private final ThemisXAnalysisTypeInstance theType;
+
+    /**
+     * The annotations.
+     */
+    private final List<ThemisXAnalysisExpressionInstance> theAnnotations;
+
     /**
      * Constructor.
      * @param pParser the parser
@@ -34,5 +52,32 @@ public class ThemisXAnalysisDeclAnnotationMember
     ThemisXAnalysisDeclAnnotationMember(final ThemisXAnalysisParser pParser,
                                         final AnnotationMemberDeclaration pDeclaration) throws OceanusException {
         super(pParser, pDeclaration);
+        theName = ((ThemisXAnalysisNodeSimpleName) pParser.parseNode(pDeclaration.getName())).getName();
+        theType = pParser.parseType(pDeclaration.getType());
+        theAnnotations = pParser.parseExprList(pDeclaration.getAnnotations());
+    }
+
+    /**
+     * Obtain the name.
+     * @return the name
+     */
+    public String getName() {
+        return theName;
+    }
+
+    /**
+     * Obtain the type.
+     * @return the type
+     */
+    public ThemisXAnalysisTypeInstance getType() {
+        return theType;
+    }
+
+    /**
+     * Obtain the annotations.
+     * @return the annotations
+     */
+    public List<ThemisXAnalysisExpressionInstance> getAnnotations() {
+        return theAnnotations;
     }
 }

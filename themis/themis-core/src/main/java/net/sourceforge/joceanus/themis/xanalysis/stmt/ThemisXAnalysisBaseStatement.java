@@ -21,6 +21,7 @@ import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisBaseInstance;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisStatementInstance;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
+import net.sourceforge.joceanus.themis.xanalysis.decl.ThemisXAnalysisDeclaration;
 
 /**
  * Statement Base Class.
@@ -30,6 +31,11 @@ public abstract class ThemisXAnalysisBaseStatement<T extends Statement>
         extends ThemisXAnalysisBaseInstance<T>
         implements ThemisXAnalysisStatementInstance {
     /**
+     * The statementId.
+     */
+    private final ThemisXAnalysisStatement theId;
+
+    /**
      * Constructor.
      * @param pParser the parser
      * @param pStatement the statement
@@ -38,5 +44,11 @@ public abstract class ThemisXAnalysisBaseStatement<T extends Statement>
     ThemisXAnalysisBaseStatement(final ThemisXAnalysisParser pParser,
                                  final T pStatement) throws OceanusException {
         super(pParser, pStatement);
+        theId = ThemisXAnalysisStatement.determineStatement(pParser, pStatement);
+    }
+
+    @Override
+    public ThemisXAnalysisStatement getId() {
+        return theId;
     }
 }

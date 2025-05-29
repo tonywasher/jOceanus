@@ -43,6 +43,11 @@ public class ThemisXAnalysisNodeParameter
     private final List<ThemisXAnalysisNodeInstance> theModifiers;
 
     /**
+     * The annotations.
+     */
+    private final List<ThemisXAnalysisExpressionInstance> theAnnotations;
+
+    /**
      * Constructor.
      * @param pParser the parser
      * @param pParameter the parameter
@@ -54,6 +59,7 @@ public class ThemisXAnalysisNodeParameter
         theModifiers = pParser.parseNodeList(pParameter.getModifiers());
         theName = pParser.parseNode(pParameter.getName());
         theType = pParser.parseType(pParameter.getType());
+        theAnnotations = pParser.parseExprList(pParameter.getAnnotations());
     }
 
     /**
@@ -78,5 +84,13 @@ public class ThemisXAnalysisNodeParameter
      */
     public List<ThemisXAnalysisNodeInstance> getModifiers() {
         return theModifiers;
+    }
+
+    /**
+     * Obtain the annotations.
+     * @return the annotations
+     */
+    public List<ThemisXAnalysisExpressionInstance> getAnnotations() {
+        return theAnnotations;
     }
 }

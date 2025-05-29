@@ -22,6 +22,7 @@ import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
 
 /**
  * Instance Base Class.
@@ -91,6 +92,32 @@ public abstract class ThemisXAnalysisBaseInstance<T extends Node>
      */
     public List<ThemisXAnalysisInstance> getComments() {
         return theComments;
+    }
+
+    @Override
+    public List<ThemisXAnalysisInstance> discoverChildren(final Predicate<ThemisXAnalysisInstance> pTest) {
+        /* Loop adding children to list */
+        final List<ThemisXAnalysisInstance> myList = new ArrayList<>();
+        for(ThemisXAnalysisInstance myChild : theChildren) {
+            if (pTest.test(myChild)) {
+                myList.add(myChild);
+            }
+        }
+        return myList;
+    }
+
+    @Override
+    public void discoverNodes(final List<ThemisXAnalysisInstance> pList,
+                              final Predicate<ThemisXAnalysisInstance> pTest) {
+        /* Add self to list if required */
+        if (pTest.test(this)) {
+            pList.add(this);
+        }
+
+        /* Loop adding children to list */
+        for(ThemisXAnalysisInstance myChild : theChildren) {
+            myChild.discoverNodes(pList, pTest);
+        }
     }
 
     @Override

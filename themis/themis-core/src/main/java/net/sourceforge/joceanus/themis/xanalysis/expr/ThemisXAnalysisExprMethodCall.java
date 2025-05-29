@@ -33,7 +33,7 @@ public class ThemisXAnalysisExprMethodCall
     private final ThemisXAnalysisNodeInstance theName;
 
     /**
-     * The value.
+     * The arguments.
      */
     private final List<ThemisXAnalysisExpressionInstance> theArguments;
 

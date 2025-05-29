@@ -21,6 +21,8 @@ import com.github.javaparser.ast.type.PrimitiveType.Primitive;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
 
+import java.util.List;
+
 /**
  * Primitive Type Declaration.
  */
@@ -32,6 +34,11 @@ public class ThemisXAnalysisTypePrimitive
     private final Primitive thePrimitive;
 
     /**
+     * The annotations.
+     */
+    private final List<ThemisXAnalysisExpressionInstance> theAnnotations;
+
+    /**
      * Constructor.
      * @param pParser the parser
      * @param pType the type
@@ -41,6 +48,7 @@ public class ThemisXAnalysisTypePrimitive
                                  final PrimitiveType pType) throws OceanusException {
         super(pParser, pType);
         thePrimitive = pType.getType();
+        theAnnotations = pParser.parseExprList(pType.getAnnotations());
     }
 
     /**
@@ -49,5 +57,13 @@ public class ThemisXAnalysisTypePrimitive
      */
     public Primitive getPrimitive() {
         return thePrimitive;
+    }
+
+    /**
+     * Obtain the annotations.
+     * @return the annotations
+     */
+    public List<ThemisXAnalysisExpressionInstance> getAnnotations() {
+        return theAnnotations;
     }
 }

@@ -26,6 +26,11 @@ import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
 public class ThemisXAnalysisExprThis
         extends ThemisXAnalysisBaseExpression<ThisExpr> {
     /**
+     * The type name.
+     */
+    private final ThemisXAnalysisNodeInstance theTypeName;
+
+    /**
      * Constructor.
      * @param pParser the parser
      * @param pExpression the expression
@@ -34,5 +39,14 @@ public class ThemisXAnalysisExprThis
     ThemisXAnalysisExprThis(final ThemisXAnalysisParser pParser,
                             final ThisExpr pExpression) throws OceanusException {
         super(pParser, pExpression);
+        theTypeName = pParser.parseNode(pExpression.getTypeName().orElse(null));
+    }
+
+    /**
+     * Obtain the name.
+     * @return the name
+     */
+    public ThemisXAnalysisNodeInstance getTypeName() {
+        return theTypeName;
     }
 }

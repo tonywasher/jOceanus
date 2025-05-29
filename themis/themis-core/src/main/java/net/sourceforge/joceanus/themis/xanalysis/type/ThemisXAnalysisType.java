@@ -18,6 +18,7 @@ package net.sourceforge.joceanus.themis.xanalysis.type;
 
 import com.github.javaparser.ast.type.Type;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisId;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisTypeInstance;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
 
@@ -26,7 +27,8 @@ import java.util.function.Predicate;
 /**
  * Analysis TypeType.
  */
-public enum ThemisXAnalysisType {
+public enum ThemisXAnalysisType
+        implements ThemisXAnalysisId {
     /**
      * Array.
      */

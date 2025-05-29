@@ -31,6 +31,7 @@ import com.github.javaparser.ast.expr.SimpleName;
 import com.github.javaparser.ast.stmt.CatchClause;
 import com.github.javaparser.ast.stmt.SwitchEntry;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisId;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisNodeInstance;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
 
@@ -39,7 +40,8 @@ import java.util.function.Predicate;
 /**
  * Analysis Node.
  */
-public enum ThemisXAnalysisNode {
+public enum ThemisXAnalysisNode
+        implements ThemisXAnalysisId {
     /**
      * ArrayLevel.
      */

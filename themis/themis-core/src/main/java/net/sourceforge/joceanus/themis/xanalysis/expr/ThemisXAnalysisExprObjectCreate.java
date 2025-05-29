@@ -38,6 +38,21 @@ public class ThemisXAnalysisExprObjectCreate
     private final List<ThemisXAnalysisExpressionInstance> theArgs;
 
     /**
+     * The scope.
+     */
+    private final ThemisXAnalysisExpressionInstance theScope;
+
+    /**
+     * The type arguments.
+     */
+    private final List<ThemisXAnalysisTypeInstance> theTypeArguments;
+
+    /**
+     * The bodies.
+     */
+    private final List<ThemisXAnalysisDeclarationInstance> theBodies;
+
+    /**
      * Constructor.
      * @param pParser the parser
      * @param pExpression the expression
@@ -48,6 +63,9 @@ public class ThemisXAnalysisExprObjectCreate
         super(pParser, pExpression);
         theType = pParser.parseType(pExpression.getType());
         theArgs = pParser.parseExprList(pExpression.getArguments());
+        theScope = pParser.parseExpression(pExpression.getScope().orElse(null));
+        theTypeArguments = pParser.parseTypeList(pExpression.getTypeArguments().orElse(null));
+        theBodies = pParser.parseDeclarationList(pExpression.getAnonymousClassBody().orElse(null));
     }
 
     /**
@@ -64,5 +82,29 @@ public class ThemisXAnalysisExprObjectCreate
      */
     public List<ThemisXAnalysisExpressionInstance> getArgs() {
         return theArgs;
+    }
+
+    /**
+     * Obtain the scope.
+     * @return the scope
+     */
+    public ThemisXAnalysisExpressionInstance getScope() {
+        return theScope;
+    }
+
+    /**
+     * Obtain the type arguments.
+     * @return the arguments
+     */
+    public List<ThemisXAnalysisTypeInstance> getTypeArguments() {
+        return theTypeArguments;
+    }
+
+    /**
+     * Obtain the bodies.
+     * @return the bodies
+     */
+    public List<ThemisXAnalysisDeclarationInstance> getBodies() {
+        return theBodies;
     }
 }

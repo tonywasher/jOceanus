@@ -42,7 +42,7 @@ public class ThemisXAnalysisNodeCompilationUnit
     /**
      * The Contents.
      */
-    private final ThemisXAnalysisDeclarationInstance theContents;
+    private final ThemisXAnalysisClassInstance theContents;
 
     /**
      * Constructor.
@@ -56,10 +56,13 @@ public class ThemisXAnalysisNodeCompilationUnit
         thePackageDef = pParser.parseNode(pUnit.getPackageDeclaration().orElse(null));
         theImports = pParser.parseNodeList(pUnit.getImports());
         final NodeList<TypeDeclaration<?>> myTypes = pUnit.getTypes();
-        if (myTypes.size() != 1) {
+        if (myTypes.size() > 1) {
             throw pParser.buildException("More than one class definition in file", pUnit);
         }
-        theContents = pParser.parseDeclaration(pUnit.getType(0));
+        if (myTypes.isEmpty()) {
+            throw pParser.buildException("No class definition found in file", pUnit);
+        }
+        theContents = (ThemisXAnalysisClassInstance) pParser.parseDeclaration(pUnit.getType(0));
     }
 
     /**
@@ -82,7 +85,7 @@ public class ThemisXAnalysisNodeCompilationUnit
      * Obtain the contents.
      * @return the contents
      */
-    public ThemisXAnalysisDeclarationInstance getContents() {
+    public ThemisXAnalysisClassInstance getContents() {
         return theContents;
     }
 }

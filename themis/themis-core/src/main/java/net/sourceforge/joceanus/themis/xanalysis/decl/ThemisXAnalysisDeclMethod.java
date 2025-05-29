@@ -18,7 +18,9 @@ package net.sourceforge.joceanus.themis.xanalysis.decl;
 
 import com.github.javaparser.ast.body.MethodDeclaration;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisMethodInstance;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
+import net.sourceforge.joceanus.themis.xanalysis.node.ThemisXAnalysisNodeSimpleName;
 
 import java.util.List;
 
@@ -26,11 +28,17 @@ import java.util.List;
  * Method Declaration.
  */
 public class ThemisXAnalysisDeclMethod
-        extends ThemisXAnalysisBaseDeclaration<MethodDeclaration> {
+        extends ThemisXAnalysisBaseDeclaration<MethodDeclaration>
+        implements ThemisXAnalysisMethodInstance {
+    /**
+     * The override annotation.
+     */
+    private static final String OVERRIDE_ANNOTATION = "Override";
+
     /**
      * The name.
      */
-    private final ThemisXAnalysisNodeInstance theName;
+    private final String theName;
 
     /**
      * The type.
@@ -63,6 +71,11 @@ public class ThemisXAnalysisDeclMethod
     private final List<ThemisXAnalysisTypeInstance> theThrown;
 
     /**
+     * The annotations.
+     */
+    private final List<ThemisXAnalysisExpressionInstance> theAnnotations;
+
+    /**
      * Constructor.
      * @param pParser the parser
      * @param pDeclaration the declaration
@@ -71,29 +84,24 @@ public class ThemisXAnalysisDeclMethod
     ThemisXAnalysisDeclMethod(final ThemisXAnalysisParser pParser,
                               final MethodDeclaration pDeclaration) throws OceanusException {
         super(pParser, pDeclaration);
-        theName = pParser.parseNode(pDeclaration.getName());
+        theName = ((ThemisXAnalysisNodeSimpleName) pParser.parseNode(pDeclaration.getName())).getName();
         theType = pParser.parseType(pDeclaration.getType());
         theModifiers = pParser.parseNodeList(pDeclaration.getModifiers());
         theBody = pParser.parseStatement(pDeclaration.getBody().orElse(null));
         theTypeParameters = pParser.parseTypeList(pDeclaration.getTypeParameters());
         theThrown = pParser.parseTypeList(pDeclaration.getThrownExceptions());
         theParameters = pParser.parseNodeList(pDeclaration.getParameters());
+        theAnnotations = pParser.parseExprList(pDeclaration.getAnnotations());
     }
 
-    /**
-     * Obtain the modifiers.
-     * @return the modifiers
-     */
+    @Override
+    public String getName() {
+        return theName;
+    }
+
+    @Override
     public List<ThemisXAnalysisNodeInstance> getModifiers() {
         return theModifiers;
-    }
-
-    /**
-     * Obtain the name.
-     * @return the name
-     */
-    public ThemisXAnalysisNodeInstance getName() {
-        return theName;
     }
 
     /**
@@ -105,34 +113,35 @@ public class ThemisXAnalysisDeclMethod
     }
 
     /**
-     * Obtain the parameters.
-     * @return the parameters
+     * Does the method override a previous definition.
+     * @return true/false
      */
+    public boolean isOverride() {
+        return getNode().isAnnotationPresent(OVERRIDE_ANNOTATION);
+    }
+
+    @Override
     public List<ThemisXAnalysisNodeInstance> getParameters() {
         return theParameters;
     }
 
-    /**
-     * Obtain the body.
-     * @return the body
-     */
+    @Override
     public ThemisXAnalysisStatementInstance getBody() {
         return theBody;
     }
 
-    /**
-     * Obtain the type parameters.
-     * @return the parameters
-     */
+    @Override
     public List<ThemisXAnalysisTypeInstance> getTypeParameters() {
         return theTypeParameters;
     }
 
-    /**
-     * Obtain the thrown exceptions.
-     * @return the exceptions
-     */
+    @Override
     public List<ThemisXAnalysisTypeInstance> getThrown() {
         return theThrown;
+    }
+
+    @Override
+    public List<ThemisXAnalysisExpressionInstance> getAnnotations() {
+        return theAnnotations;
     }
 }

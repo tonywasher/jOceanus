@@ -19,12 +19,18 @@ package net.sourceforge.joceanus.themis.xanalysis.stmt;
 import com.github.javaparser.ast.stmt.BreakStmt;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
+import net.sourceforge.joceanus.themis.xanalysis.node.ThemisXAnalysisNodeSimpleName;
 
 /**
  * Break Statement.
  */
 public class ThemisXAnalysisStmtBreak
         extends ThemisXAnalysisBaseStatement<BreakStmt> {
+    /**
+     * The label.
+     */
+    private final String theLabel;
+
     /**
      * Constructor.
      * @param pParser the parser
@@ -34,5 +40,15 @@ public class ThemisXAnalysisStmtBreak
     ThemisXAnalysisStmtBreak(final ThemisXAnalysisParser pParser,
                              final BreakStmt pStatement) throws OceanusException {
         super(pParser, pStatement);
+        final ThemisXAnalysisNodeSimpleName myName = (ThemisXAnalysisNodeSimpleName) pParser.parseNode(pStatement.getLabel().orElse(null));
+        theLabel = myName == null ? null : myName.getName();
+    }
+
+    /**
+     * Obtain the label.
+     * @return the label
+     */
+    public String getLabel() {
+        return theLabel;
     }
 }
