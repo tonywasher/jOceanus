@@ -36,6 +36,7 @@ public abstract class ThemisXAnalysisBaseDeclaration<T extends BodyDeclaration<T
 
     /**
      * Constructor.
+     * @param pParser the parser
      * @param pDecl the declaration
      * @throws OceanusException on error
      */

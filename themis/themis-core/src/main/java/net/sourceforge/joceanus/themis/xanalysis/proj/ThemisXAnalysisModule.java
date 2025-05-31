@@ -142,18 +142,18 @@ public class ThemisXAnalysisModule {
     }
 
     /**
-     * initialPass.
+     * Parse java code.
      * @param pParser the parser
      * @throws OceanusException on error
      */
-    void performInitialPass(final ThemisXAnalysisCodeParser pParser) throws OceanusException {
+    void parseJavaCode(final ThemisXAnalysisCodeParser pParser) throws OceanusException {
         /* Set the current package */
         pParser.setCurrentModule(theName);
 
         /* Loop through the packages */
         for (ThemisXAnalysisPackage myPackage : thePackages) {
             /* Process the package */
-            myPackage.performInitialPass(pParser);
+            myPackage.parseJavaCode(pParser);
         }
     }
 }

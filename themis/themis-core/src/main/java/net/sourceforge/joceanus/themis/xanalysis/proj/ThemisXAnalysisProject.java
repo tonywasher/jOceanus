@@ -78,9 +78,9 @@ public class ThemisXAnalysisProject {
         /* Initiate search for modules */
         theName = parseProjectFile(new File(theLocation, ThemisXAnalysisMaven.POM));
 
-        /* InitialPass */
+        /* Parse the code */
         if (theError == null) {
-            performInitialPass();
+            parseJavaCode();
         }
     }
 
@@ -122,8 +122,9 @@ public class ThemisXAnalysisProject {
     }
 
     /**
-     * Parse the maven top-level project file.
+     * Parse the maven project file.
      * @param pPom the project file
+     * @return the artifact name
      */
     private String parseProjectFile(final File pPom) {
         /* If the pom file does not exist, just return */
@@ -178,15 +179,15 @@ public class ThemisXAnalysisProject {
     }
 
     /**
-     * initialPass.
+     * parse the java code.
      */
-    private void performInitialPass() {
+    private void parseJavaCode() {
         /* Protect against exceptions */
         try {
             /* Loop through the modules */
             for (ThemisXAnalysisModule myModule : theModules) {
                 /* Process the module */
-                myModule.performInitialPass(theParser);
+                myModule.parseJavaCode(theParser);
             }
 
             /* Handle exceptions */

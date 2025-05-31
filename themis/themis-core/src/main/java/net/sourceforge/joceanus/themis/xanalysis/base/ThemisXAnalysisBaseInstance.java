@@ -66,7 +66,7 @@ public abstract class ThemisXAnalysisBaseInstance<T extends Node>
         if (myComment != null) {
             theComments.add(pParser.parseNode(myComment));
         }
-        for(Comment myOrphan : pNode.getOrphanComments()) {
+        for (Comment myOrphan : pNode.getOrphanComments()) {
             theComments.add(pParser.parseNode(myOrphan));
         }
     }
@@ -98,7 +98,7 @@ public abstract class ThemisXAnalysisBaseInstance<T extends Node>
     public List<ThemisXAnalysisInstance> discoverChildren(final Predicate<ThemisXAnalysisInstance> pTest) {
         /* Loop adding children to list */
         final List<ThemisXAnalysisInstance> myList = new ArrayList<>();
-        for(ThemisXAnalysisInstance myChild : theChildren) {
+        for (ThemisXAnalysisInstance myChild : theChildren) {
             if (pTest.test(myChild)) {
                 myList.add(myChild);
             }
@@ -115,7 +115,7 @@ public abstract class ThemisXAnalysisBaseInstance<T extends Node>
         }
 
         /* Loop adding children to list */
-        for(ThemisXAnalysisInstance myChild : theChildren) {
+        for (ThemisXAnalysisInstance myChild : theChildren) {
             myChild.discoverNodes(pList, pTest);
         }
     }

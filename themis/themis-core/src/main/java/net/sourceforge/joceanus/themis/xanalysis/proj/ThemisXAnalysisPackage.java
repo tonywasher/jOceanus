@@ -46,6 +46,7 @@ public class ThemisXAnalysisPackage {
 
     /**
      * Constructor.
+     * @param pLocation the location
      * @param pPackage the package name.
      * @throws OceanusException on error
      */
@@ -60,6 +61,14 @@ public class ThemisXAnalysisPackage {
 
         /* Build list of files */
         theFiles = listFiles(myLocation);
+    }
+
+    /**
+     * Obtain the package.
+     * @return the package
+     */
+    public String getPackage() {
+        return thePackage;
     }
 
     /**
@@ -101,27 +110,19 @@ public class ThemisXAnalysisPackage {
     }
 
     /**
-     * initialPass process files.
+     * parse the Java Code.
      * @param pParser the parser
      * @throws OceanusException on error
      */
-    void performInitialPass(final ThemisXAnalysisCodeParser pParser) throws OceanusException {
+    void parseJavaCode(final ThemisXAnalysisCodeParser pParser) throws OceanusException {
         /* Set the current package */
         pParser.setCurrentPackage(thePackage);
 
         /* Loop through the classes */
         for (ThemisXAnalysisFile myFile : theFiles) {
             /* Process the file */
-            myFile.processFile(pParser);
+            myFile.parseJavaCode(pParser);
         }
-    }
-
-    /**
-     * Obtain the package.
-     * @return the package
-     */
-    public String getPackage() {
-        return thePackage;
     }
 
     @Override

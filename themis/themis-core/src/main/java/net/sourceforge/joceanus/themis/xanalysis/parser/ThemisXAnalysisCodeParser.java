@@ -42,6 +42,7 @@ import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
 import net.sourceforge.joceanus.themis.xanalysis.decl.ThemisXAnalysisDeclaration;
 import net.sourceforge.joceanus.themis.xanalysis.expr.ThemisXAnalysisExpression;
 import net.sourceforge.joceanus.themis.xanalysis.node.ThemisXAnalysisNode;
+import net.sourceforge.joceanus.themis.xanalysis.node.ThemisXAnalysisNodeCompilationUnit;
 import net.sourceforge.joceanus.themis.xanalysis.stmt.ThemisXAnalysisStatement;
 import net.sourceforge.joceanus.themis.xanalysis.type.ThemisXAnalysisType;
 
@@ -88,7 +89,7 @@ public class ThemisXAnalysisCodeParser
     }
 
     /**
-     * Set the current module
+     * Set the current module.
      * @param pModule the module
      */
     public void setCurrentModule(final String pModule) {
@@ -96,7 +97,7 @@ public class ThemisXAnalysisCodeParser
     }
 
     /**
-     * Set the current package
+     * Set the current package.
      * @param pPackage the package
      */
     public void setCurrentPackage(final String pPackage) {
@@ -144,7 +145,7 @@ public class ThemisXAnalysisCodeParser
      * @return the parsed compilation unit
      * @throws OceanusException on error
      */
-    public ThemisXAnalysisNodeInstance parseFile() throws OceanusException {
+    public ThemisXAnalysisNodeCompilationUnit parseFile() throws OceanusException {
         /* Protect against exceptions */
         try (InputStream myStream = new FileInputStream(theCurrentFile);
              InputStreamReader myInputReader = new InputStreamReader(myStream, StandardCharsets.UTF_8);
@@ -158,7 +159,7 @@ public class ThemisXAnalysisCodeParser
                 final Problem myProblem = myUnit.getProblem(0);
                 throw new ThemisDataException(myProblem.getVerboseMessage());
             }
-            return parseNode(myUnit.getResult().orElse(null));
+            return (ThemisXAnalysisNodeCompilationUnit) parseNode(myUnit.getResult().orElse(null));
 
             /* Catch exceptions */
         } catch (IOException e) {

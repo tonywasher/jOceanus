@@ -17,7 +17,8 @@
 package net.sourceforge.joceanus.themis.xanalysis.proj;
 
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisNodeInstance;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisClassInstance;
+import net.sourceforge.joceanus.themis.xanalysis.node.ThemisXAnalysisNodeCompilationUnit;
 import net.sourceforge.joceanus.themis.xanalysis.parser.ThemisXAnalysisCodeParser;
 
 import java.io.File;
@@ -49,7 +50,7 @@ public class ThemisXAnalysisFile {
     /**
      * The contents.
      */
-    private ThemisXAnalysisNodeInstance theContents;
+    private ThemisXAnalysisNodeCompilationUnit theContents;
 
     /**
      * Constructor.
@@ -84,7 +85,7 @@ public class ThemisXAnalysisFile {
      * Obtain the contents.
      * @return the contents
      */
-    public ThemisXAnalysisNodeInstance getContents() {
+    public ThemisXAnalysisNodeCompilationUnit getContents() {
         return theContents;
     }
 
@@ -95,14 +96,20 @@ public class ThemisXAnalysisFile {
 
     /**
      * Process the file.
+     * @param pParser the parser
      * @throws OceanusException on error
      */
-    void processFile(final ThemisXAnalysisCodeParser pParser) throws OceanusException {
+    void parseJavaCode(final ThemisXAnalysisCodeParser pParser) throws OceanusException {
         /* Set the current file */
         pParser.setCurrentFile(theLocation);
 
         /* Parse the file */
         theContents = pParser.parseFile();
-        int i = 0;
+
+        /* Check that we have a class that is the same name as the file */
+        final ThemisXAnalysisClassInstance myClass = theContents.getContents();
+        if (!theName.equals(myClass.getName())) {
+            throw pParser.buildException("Incorrect name for class in file", myClass.getNode());
+        }
      }
 }

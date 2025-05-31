@@ -50,8 +50,4 @@ public class ThemisXAnalysisNodeModifier
     public Keyword getKeyword() {
         return theKeyword;
     }
-
-    /**
-     * The modifier list class
-     */
 }
