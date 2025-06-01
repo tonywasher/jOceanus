@@ -91,4 +91,9 @@ public class ThemisXAnalysisDSMProject {
     public OceanusException getError() {
         return theError;
     }
+
+    @Override
+    public String toString() {
+        return theProject.toString();
+    }
 }

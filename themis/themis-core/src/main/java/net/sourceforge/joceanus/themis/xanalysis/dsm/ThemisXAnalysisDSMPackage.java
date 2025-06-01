@@ -48,11 +48,11 @@ public class ThemisXAnalysisDSMPackage {
         theClasses = new HashMap<>();
 
         /* Populate the classMap */
+        final String myPackage = getPackageName();
         for (ThemisXAnalysisFile myFile : thePackage.getFiles()) {
-            theClasses.put(myFile.getName(), new ThemisXAnalysisDSMClass(myFile));
+            theClasses.put(myFile.getName(), new ThemisXAnalysisDSMClass(myPackage, myFile));
         }
     }
-
 
     /**
      * Obtain the package.
@@ -63,10 +63,47 @@ public class ThemisXAnalysisDSMPackage {
     }
 
     /**
+     * Obtain the package name.
+     * @return the package name
+     */
+    public String getPackageName() {
+        return thePackage.getPackage();
+    }
+
+    /**
      * Obtain the class map.
      * @return the class map
      */
     Map<String, ThemisXAnalysisDSMClass> getClassMap() {
         return theClasses;
+    }
+
+    @Override
+    public boolean equals(final Object pThat) {
+        /* Handle the trivial cases */
+        if (this == pThat) {
+            return true;
+        }
+        if (pThat == null) {
+            return false;
+        }
+
+        /* Make sure that the object is a DSMPackage */
+        if (!(pThat instanceof ThemisXAnalysisDSMPackage myThat)) {
+            return false;
+        }
+
+        /* Check name of package */
+        return getPackageName().equals(myThat.getPackageName());
+    }
+
+    @Override
+    public int hashCode() {
+        return getPackageName().hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return thePackage.toString();
     }
 }

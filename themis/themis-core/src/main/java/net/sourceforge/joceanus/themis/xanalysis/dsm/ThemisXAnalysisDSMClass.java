@@ -20,7 +20,9 @@ import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.Th
 import net.sourceforge.joceanus.themis.xanalysis.node.ThemisXAnalysisNodeCompilationUnit;
 import net.sourceforge.joceanus.themis.xanalysis.proj.ThemisXAnalysisFile;
 
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -28,14 +30,19 @@ import java.util.Map;
  */
 public class ThemisXAnalysisDSMClass {
     /**
-     * The underlying file.
-     */
-    private final ThemisXAnalysisFile theFile;
-
-    /**
      * The fully qualified name of the class.
      */
     private final String theFullName;
+
+    /**
+     * The package containing the class.
+     */
+    private final String thePackage;
+
+    /**
+     * The underlying file.
+     */
+    private final ThemisXAnalysisFile theFile;
 
     /**
      * The contained class.
@@ -43,33 +50,28 @@ public class ThemisXAnalysisDSMClass {
     private final ThemisXAnalysisClassInstance theClass;
 
     /**
-     * The known classes.
+     * The class state.
      */
-    private final Map<String, ThemisXAnalysisDSMClass> theKnownClasses;
+    private final ThemisXAnalysisDSMClassState theState;
 
     /**
      * Constructor.
+     * @param pPackage the package
      * @param pFile the parsed file
      */
-    public ThemisXAnalysisDSMClass(final ThemisXAnalysisFile pFile) {
+    public ThemisXAnalysisDSMClass(final String pPackage,
+                                   final ThemisXAnalysisFile pFile) {
         /* Store the parameters */
+        thePackage = pPackage;
         theFile = pFile;
 
-        /* Create the maps */
-        theKnownClasses = new HashMap<>();
+        /* Create the state */
+        theState = new ThemisXAnalysisDSMClassState(this);
 
         /* Access the class definition */
         final ThemisXAnalysisNodeCompilationUnit myUnit = pFile.getContents();
         theClass = myUnit.getContents();
         theFullName = theClass.getFullName();
-    }
-
-    /**
-     * Obtain the file.
-     * @return the file
-     */
-    public ThemisXAnalysisFile getFile() {
-        return theFile;
     }
 
     /**
@@ -81,13 +83,59 @@ public class ThemisXAnalysisDSMClass {
     }
 
     /**
-     * Declare known class.
-     * @param pName the name of the class.
-     * @param pClass the class
+     * Obtain the package.
+     * @return the package
      */
-    void declareKnownClass(final String pName,
-                           final ThemisXAnalysisDSMClass pClass) {
-        theKnownClasses.put(pName, pClass);
+    public String getPackage() {
+        return thePackage;
+    }
+
+    /**
+     * Obtain the file.
+     * @return the file
+     */
+    public ThemisXAnalysisFile getFile() {
+        return theFile;
+    }
+
+    /**
+     * Obtain the parsed class.
+     * @return the class
+     */
+    public ThemisXAnalysisClassInstance getParsedClass() {
+        return theClass;
+    }
+
+    /**
+     * Obtain the state.
+     * @return the state
+     */
+    public ThemisXAnalysisDSMClassState getState() {
+        return theState;
+    }
+
+    /**
+     * Obtain the list of classes that reference the named package.
+     * @param pPackage the package
+     * @return the list of referencing classes
+     */
+    public List<ThemisXAnalysisDSMClass> getReferencesTo(final String pPackage) {
+        /* Loop through the classes */
+        final List<ThemisXAnalysisDSMClass> myReferences = new ArrayList<>();
+        for (ThemisXAnalysisDSMClass myReference : theState.getReferencedClasses()) {
+            if (pPackage.equals(myReference.getPackage())) {
+                myReferences.add(myReference);
+            }
+        }
+        return myReferences;
+    }
+
+    /**
+     * Obtain the list of local classes that are referenced.
+     * @return the list of referencing classes
+     */
+    private List<ThemisXAnalysisDSMClass> getLocalReferences() {
+        return getReferencesTo(thePackage);
     }
 
     @Override
@@ -112,5 +160,139 @@ public class ThemisXAnalysisDSMClass {
     @Override
     public int hashCode() {
         return theFullName.hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return theFullName;
+    }
+
+    /**
+     * Class state.
+     */
+    public static class ThemisXAnalysisDSMClassState {
+        /**
+         * The class.
+         */
+        private final ThemisXAnalysisDSMClass theClass;
+
+        /**
+         * The known classes.
+         */
+        private final Map<String, ThemisXAnalysisDSMClass> theKnownClasses;
+
+        /**
+         * The fully referenced local classes
+         */
+        private final List<ThemisXAnalysisDSMClass> theLocalReferences;
+
+        /**
+         * The referenced classes.
+         */
+        private final List<ThemisXAnalysisDSMClass> theReferencedClasses;
+
+        /**
+         * Constructor.
+         * @param pClass the class
+         */
+        private ThemisXAnalysisDSMClassState(final ThemisXAnalysisDSMClass pClass) {
+            theClass = pClass;
+            theKnownClasses = new LinkedHashMap<>();
+            theLocalReferences = new ArrayList<>();
+            theReferencedClasses = new ArrayList<>();
+        }
+
+        /**
+         * Obtain the referenced classes.
+         * @return the referenced classes
+         */
+        public List<ThemisXAnalysisDSMClass> getReferencedClasses() {
+            return theReferencedClasses;
+        }
+
+        /**
+         * Declare class that is same package.
+         * @param pName the name of the class.
+         * @param pClass the class
+         */
+        void declarePackageClass(final String pName,
+                                 final ThemisXAnalysisDSMClass pClass) {
+            if (!pClass.equals(theClass)) {
+                theKnownClasses.put(pName, pClass);
+            }
+        }
+
+        /**
+         * process possible reference.
+         * @param pReference the possible reference.
+         */
+        void processPossibleReference(final String pReference) {
+            /* If the reference is interesting */
+            final ThemisXAnalysisDSMClass myReference = theKnownClasses.get(pReference);
+            if (myReference != null) {
+                declareReferencedClass(myReference);
+            }
+        }
+
+        /**
+         * Declare imported class.
+         * @param pName the name of the class.
+         * @param pClass the class
+         */
+        void declareImportedClass(final String pName,
+                                  final ThemisXAnalysisDSMClass pClass) {
+            if (!pClass.equals(theClass)) {
+                theKnownClasses.put(pName, pClass);
+                declareReferencedClass(pClass);
+            }
+        }
+
+        /**
+         * Declare referenced class.
+         * @param pClass the class
+         */
+        void declareReferencedClass(final ThemisXAnalysisDSMClass pClass) {
+            if (!theReferencedClasses.contains(pClass)) {
+                theReferencedClasses.add(pClass);
+            }
+        }
+
+        /**
+         * process local references.
+         */
+        void processLocalReferences() {
+            /* Loop through the referenced local classes */
+            for (ThemisXAnalysisDSMClass myClass : theClass.getLocalReferences()) {
+                /* Process the class */
+                processLocalReferences(myClass);
+            }
+        }
+
+        /**
+         * process local references.
+         * @param pClass the class to process local references for
+         */
+        private void processLocalReferences(final ThemisXAnalysisDSMClass pClass) {
+            /* If this is not already in the local reference list */
+            if (!theLocalReferences.contains(pClass)) {
+                /* Add the class */
+                theLocalReferences.add(pClass);
+
+                /* Loop through the dependencies */
+                for (ThemisXAnalysisDSMClass myClass : theClass.getLocalReferences()) {
+                     /* Process the local references */
+                    processLocalReferences(myClass);
+                }
+            }
+        }
+
+        /**
+         * is this class circularly dependent?
+         * @return true/false
+         */
+        public boolean isCircular() {
+            /* Do we end up referencing ourselves? */
+            return theLocalReferences.contains(theClass);
+        }
     }
 }

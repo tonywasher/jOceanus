@@ -81,4 +81,9 @@ public class ThemisXAnalysisDSMModule {
     public List<ThemisXAnalysisDSMPackage> getPackages() {
         return thePackages;
     }
+
+    @Override
+    public String toString() {
+        return theModule.toString();
+    }
 }

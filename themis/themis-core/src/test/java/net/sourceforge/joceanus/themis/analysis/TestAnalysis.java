@@ -94,7 +94,7 @@ class TestAnalysis {
      * Test dependency analysis of the current project.
      */
     private static void testProjectDependencies() {
-        /* MAke sure previous test executed */
+        /* Make sure previous test executed */
         Assumptions.assumeTrue(PARSED_PROJECT != null);
         Assumptions.assumeTrue(PARSED_PROJECT.getError() == null);
 
