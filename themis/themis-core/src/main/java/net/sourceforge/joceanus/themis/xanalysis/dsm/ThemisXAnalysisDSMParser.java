@@ -29,7 +29,6 @@ import net.sourceforge.joceanus.themis.xanalysis.node.ThemisXAnalysisNodeName;
 import net.sourceforge.joceanus.themis.xanalysis.type.ThemisXAnalysisType;
 import net.sourceforge.joceanus.themis.xanalysis.type.ThemisXAnalysisTypeClassInterface;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -150,8 +149,7 @@ public class ThemisXAnalysisDSMParser {
         final ThemisXAnalysisDSMClassState myState = pClass.getState();
 
         /* Obtain all ClassOrInterface references */
-        final List<ThemisXAnalysisInstance> myReferences= new ArrayList<>();
-        myClass.discoverNodes(myReferences, n -> ThemisXAnalysisType.CLASSINTERFACE.equals(n.getId()));
+        final List<ThemisXAnalysisInstance> myReferences = myClass.discoverNodes(ThemisXAnalysisType.CLASSINTERFACE);
 
         /* Loop through the references */
         for (ThemisXAnalysisInstance myNode : myReferences) {
@@ -170,8 +168,7 @@ public class ThemisXAnalysisDSMParser {
         final ThemisXAnalysisDSMClassState myState = pClass.getState();
 
         /* Obtain all Name expressions */
-        final List<ThemisXAnalysisInstance> myReferences= new ArrayList<>();
-        myClass.discoverNodes(myReferences, n -> ThemisXAnalysisNode.NAME.equals(n.getId()));
+        final List<ThemisXAnalysisInstance> myReferences = myClass.discoverNodes(ThemisXAnalysisNode.NAME);
 
         /* Loop through the references */
         for (ThemisXAnalysisInstance myNode : myReferences) {

@@ -61,7 +61,7 @@ allprojects {
         jetBrainsAnnotationsVersion = "26.0.2"
 
         /* checkStyle config */
-        checkStyleVersion = "10.24.0"
+        checkStyleVersion = "10.25.0"
         checkStyleConfig = "$rootDir/src/main/checkstyle/checks.xml"
 
         /* pmd config */

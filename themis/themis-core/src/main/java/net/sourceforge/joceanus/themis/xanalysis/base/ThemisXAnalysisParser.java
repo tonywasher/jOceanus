@@ -21,11 +21,13 @@ import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.PackageDeclaration;
 import com.github.javaparser.ast.body.BodyDeclaration;
 import com.github.javaparser.ast.expr.Expression;
+import com.github.javaparser.ast.modules.ModuleDirective;
 import com.github.javaparser.ast.stmt.Statement;
 import com.github.javaparser.ast.type.Type;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisDeclarationInstance;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisExpressionInstance;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisModuleInstance;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisNodeInstance;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisStatementInstance;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisTypeInstance;
@@ -201,6 +203,35 @@ public interface ThemisXAnalysisParser {
         final List<ThemisXAnalysisExpressionInstance> myList = new ArrayList<>();
         for (Expression myExpr : pExprList) {
             final ThemisXAnalysisExpressionInstance myParsed = parseExpression(myExpr);
+            myList.add(myParsed);
+        }
+        return myList;
+    }
+
+    /**
+     * Parse a module.
+     * @param pDeclaration the module declaration/directive
+     * @return the parsed declaration/directive
+     * @throws OceanusException on error
+     */
+    ThemisXAnalysisModuleInstance parseModule(Node pDeclaration) throws OceanusException;
+
+    /**
+     * parse a list of module directives.
+     * @param pDirList the list of Directives
+     * @return the list of parsed directives
+     * @throws OceanusException on error
+     */
+    default List<ThemisXAnalysisModuleInstance> parseModuleList(final NodeList<? extends ModuleDirective> pDirList) throws OceanusException {
+        /* Handle null list */
+        if (pDirList == null) {
+            return Collections.emptyList();
+        }
+
+        /* Create list of directives */
+        final List<ThemisXAnalysisModuleInstance> myList = new ArrayList<>();
+        for (ModuleDirective myDir : pDirList) {
+            final ThemisXAnalysisModuleInstance myParsed = parseModule(myDir);
             myList.add(myParsed);
         }
         return myList;

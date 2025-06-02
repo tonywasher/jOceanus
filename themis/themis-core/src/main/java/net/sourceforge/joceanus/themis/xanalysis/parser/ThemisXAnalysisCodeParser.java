@@ -26,6 +26,7 @@ import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.PackageDeclaration;
 import com.github.javaparser.ast.body.BodyDeclaration;
 import com.github.javaparser.ast.expr.Expression;
+import com.github.javaparser.ast.modules.ModuleDeclaration;
 import com.github.javaparser.ast.stmt.Statement;
 import com.github.javaparser.ast.type.Type;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
@@ -35,23 +36,24 @@ import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisChar;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisDeclarationInstance;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisExpressionInstance;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisModuleInstance;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisNodeInstance;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisStatementInstance;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisTypeInstance;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
 import net.sourceforge.joceanus.themis.xanalysis.decl.ThemisXAnalysisDeclaration;
 import net.sourceforge.joceanus.themis.xanalysis.expr.ThemisXAnalysisExpression;
+import net.sourceforge.joceanus.themis.xanalysis.mod.ThemisXAnalysisMod;
+import net.sourceforge.joceanus.themis.xanalysis.mod.ThemisXAnalysisModModule;
 import net.sourceforge.joceanus.themis.xanalysis.node.ThemisXAnalysisNode;
 import net.sourceforge.joceanus.themis.xanalysis.node.ThemisXAnalysisNodeCompilationUnit;
 import net.sourceforge.joceanus.themis.xanalysis.stmt.ThemisXAnalysisStatement;
 import net.sourceforge.joceanus.themis.xanalysis.type.ThemisXAnalysisType;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayDeque;
 import java.util.Deque;
@@ -61,6 +63,11 @@ import java.util.Deque;
  */
 public class ThemisXAnalysisCodeParser
         implements ThemisXAnalysisParser {
+    /**
+     * The parser.
+     */
+    private final JavaParser theParser;
+
     /**
      * The stack of the nodes that are being parsed.
      */
@@ -85,6 +92,8 @@ public class ThemisXAnalysisCodeParser
      * Constructor.
      */
     public ThemisXAnalysisCodeParser() {
+        theParser = new JavaParser();
+        theParser.getParserConfiguration().setLanguageLevel(ParserConfiguration.LanguageLevel.JAVA_21);
         theNodes = new ArrayDeque<>();
     }
 
@@ -141,25 +150,47 @@ public class ThemisXAnalysisCodeParser
     }
 
     /**
-     * Process the file.
+     * Process the file as javaCode.
      * @return the parsed compilation unit
      * @throws OceanusException on error
      */
-    public ThemisXAnalysisNodeCompilationUnit parseFile() throws OceanusException {
+    public ThemisXAnalysisNodeCompilationUnit parseJavaFile() throws OceanusException {
         /* Protect against exceptions */
-        try (InputStream myStream = new FileInputStream(theCurrentFile);
-             InputStreamReader myInputReader = new InputStreamReader(myStream, StandardCharsets.UTF_8);
-             BufferedReader myReader = new BufferedReader(myInputReader)) {
-
+        try (InputStream myStream = new FileInputStream(theCurrentFile)) {
             /* Parse the contents */
-            final JavaParser myParser = new JavaParser();
-            myParser.getParserConfiguration().setLanguageLevel(ParserConfiguration.LanguageLevel.JAVA_21);
-            final ParseResult<CompilationUnit> myUnit = myParser.parse(myStream);
+            final ParseResult<CompilationUnit> myUnit = theParser.parse(myStream);
             if (!myUnit.isSuccessful()) {
                 final Problem myProblem = myUnit.getProblem(0);
                 throw new ThemisDataException(myProblem.getVerboseMessage());
             }
             return (ThemisXAnalysisNodeCompilationUnit) parseNode(myUnit.getResult().orElse(null));
+
+            /* Catch exceptions */
+        } catch (IOException e) {
+            /* Throw an exception */
+            throw new ThemisIOException("Failed to load file "
+                    + theCurrentFile.getAbsolutePath(), e);
+        }
+    }
+
+    /**
+     * Process the file as a module-info instance.
+     * @param pInfoFile the module-info file
+     * @return the parsed moduleInfo
+     * @throws OceanusException on error
+     */
+    public ThemisXAnalysisModModule parseModuleInfo(final File pInfoFile) throws OceanusException {
+        /* Protect against exceptions */
+        setCurrentFile(pInfoFile);
+        try (InputStream myStream = new FileInputStream(theCurrentFile)) {
+            /* Parse the contents */
+            final String myText = new String(myStream.readAllBytes(), StandardCharsets.UTF_8);
+            final ParseResult<ModuleDeclaration> myDecl = theParser.parseModuleDeclaration(myText);
+            if (!myDecl.isSuccessful()) {
+                final Problem myProblem = myDecl.getProblem(0);
+                throw new ThemisDataException(myProblem.getVerboseMessage());
+            }
+            return (ThemisXAnalysisModModule) parseModule(myDecl.getResult().orElse(null));
 
             /* Catch exceptions */
         } catch (IOException e) {
@@ -235,6 +266,13 @@ public class ThemisXAnalysisCodeParser
     @Override
     public ThemisXAnalysisExpressionInstance parseExpression(final Expression pExpr) throws OceanusException {
         final ThemisXAnalysisExpressionInstance myInstance = ThemisXAnalysisExpression.parseExpression(this, pExpr);
+        deRegisterInstance(myInstance);
+        return myInstance;
+    }
+
+    @Override
+    public ThemisXAnalysisModuleInstance parseModule(final Node pDecl) throws OceanusException {
+        final ThemisXAnalysisModuleInstance myInstance = ThemisXAnalysisMod.parseModule(this, pDecl);
         deRegisterInstance(myInstance);
         return myInstance;
     }

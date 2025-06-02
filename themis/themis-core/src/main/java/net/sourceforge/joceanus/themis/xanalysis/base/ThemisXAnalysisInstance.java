@@ -18,6 +18,7 @@ package net.sourceforge.joceanus.themis.xanalysis.base;
 
 import com.github.javaparser.ast.Node;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Predicate;
@@ -58,12 +59,32 @@ public interface ThemisXAnalysisInstance {
     List<ThemisXAnalysisInstance> discoverChildren(Predicate<ThemisXAnalysisInstance> pTest);
 
     /**
-     * Create node list.
+     * Select nodes from tree.
      * @param pList the list to populate
      * @param pTest the predicate to select nodes
      */
     void discoverNodes(List<ThemisXAnalysisInstance> pList,
                        Predicate<ThemisXAnalysisInstance> pTest);
+
+    /**
+     * Select nodes from tree.
+     * @param pId the type of node
+     * @return the list of selected nodes
+     */
+    default List<ThemisXAnalysisInstance> discoverNodes(final ThemisXAnalysisId pId) {
+        return discoverNodes(n -> n.getId().equals(pId));
+    }
+
+    /**
+     * Select nodes from tree.
+     * @param pTest the predicate to select nodes
+     * @return the list of selected nodes
+     */
+    default List<ThemisXAnalysisInstance> discoverNodes(final Predicate<ThemisXAnalysisInstance> pTest) {
+        final List<ThemisXAnalysisInstance> myList = new ArrayList<>();
+        discoverNodes(myList, pTest);
+        return myList;
+    }
 
     /**
      * The id.
@@ -103,6 +124,13 @@ public interface ThemisXAnalysisInstance {
      * The base expression interface.
      */
     interface ThemisXAnalysisExpressionInstance
+            extends ThemisXAnalysisInstance {
+    }
+
+    /**
+     * The base module interface.
+     */
+    interface ThemisXAnalysisModuleInstance
             extends ThemisXAnalysisInstance {
     }
 

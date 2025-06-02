@@ -104,7 +104,7 @@ public class ThemisXAnalysisFile {
         pParser.setCurrentFile(theLocation);
 
         /* Parse the file */
-        theContents = pParser.parseFile();
+        theContents = pParser.parseJavaFile();
 
         /* Check that we have a class that is the same name as the file */
         final ThemisXAnalysisClassInstance myClass = theContents.getContents();

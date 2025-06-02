@@ -18,6 +18,7 @@ package net.sourceforge.joceanus.themis.xanalysis.proj;
 
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisChar;
+import net.sourceforge.joceanus.themis.xanalysis.mod.ThemisXAnalysisModModule;
 import net.sourceforge.joceanus.themis.xanalysis.parser.ThemisXAnalysisCodeParser;
 
 import java.io.File;
@@ -32,7 +33,7 @@ public class ThemisXAnalysisModule {
     /**
      * The path xtra.
      */
-    static final String PATH_XTRA = "/src/main/java";
+    static final String PATH_XTRA = ".src.main.java".replace(ThemisXAnalysisChar.PERIOD, ThemisXAnalysisChar.COMMENT);
 
     /**
      * The module-info file.
@@ -53,6 +54,11 @@ public class ThemisXAnalysisModule {
      * The package list.
      */
     private final List<ThemisXAnalysisPackage> thePackages;
+
+    /**
+     * The module-info declaration.
+     */
+    private ThemisXAnalysisModModule theModuleInfo;
 
     /**
      * Constructor.
@@ -101,6 +107,14 @@ public class ThemisXAnalysisModule {
     }
 
     /**
+     * Obtain the module-info.
+     * @return the module-info
+     */
+    public ThemisXAnalysisModModule getModuleInfo() {
+        return theModuleInfo;
+    }
+
+    /**
      * Check for package.
      * @param pPackage the package name
      * @throws OceanusException on error
@@ -127,7 +141,7 @@ public class ThemisXAnalysisModule {
                 checkForPackage(myPackage);
             }
 
-            /* If this is aAccess file name */
+            /* If this is a Java file name */
             if (myName.endsWith(ThemisXAnalysisFile.SFX_JAVA)
                     && !MODULE_INFO.equals(myName)) {
                 isPackage = pPackage != null;
@@ -154,6 +168,12 @@ public class ThemisXAnalysisModule {
         for (ThemisXAnalysisPackage myPackage : thePackages) {
             /* Process the package */
             myPackage.parseJavaCode(pParser);
+        }
+
+        /* Check for and load the module-info file if found */
+        final File myModuleInfo = new File(theLocation, MODULE_INFO);
+        if (myModuleInfo.exists()) {
+            theModuleInfo = pParser.parseModuleInfo(myModuleInfo);
         }
     }
 }

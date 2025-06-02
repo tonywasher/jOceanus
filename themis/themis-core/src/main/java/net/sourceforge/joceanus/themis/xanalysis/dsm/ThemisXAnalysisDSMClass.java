@@ -170,7 +170,7 @@ public class ThemisXAnalysisDSMClass {
     /**
      * Class state.
      */
-    public static class ThemisXAnalysisDSMClassState {
+    public static final class ThemisXAnalysisDSMClassState {
         /**
          * The class.
          */
@@ -182,7 +182,7 @@ public class ThemisXAnalysisDSMClass {
         private final Map<String, ThemisXAnalysisDSMClass> theKnownClasses;
 
         /**
-         * The fully referenced local classes
+         * The fully referenced local classes.
          */
         private final List<ThemisXAnalysisDSMClass> theLocalReferences;
 
