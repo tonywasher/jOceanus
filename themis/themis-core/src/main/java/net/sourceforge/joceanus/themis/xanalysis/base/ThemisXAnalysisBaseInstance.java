@@ -36,6 +36,11 @@ public abstract class ThemisXAnalysisBaseInstance<T extends Node>
     private final T theNode;
 
     /**
+     * The parent.
+     */
+    private final ThemisXAnalysisInstance theParent;
+
+    /**
      * The list of children.
      */
     private final List<ThemisXAnalysisInstance> theChildren;
@@ -59,7 +64,7 @@ public abstract class ThemisXAnalysisBaseInstance<T extends Node>
         theComments = new ArrayList<>();
 
         /* Register the node */
-        pParser.registerInstance(this);
+        theParent = pParser.registerInstance(this);
 
         /* Parse comments */
         final Comment myComment = pNode.getComment().orElse(null);
@@ -79,6 +84,11 @@ public abstract class ThemisXAnalysisBaseInstance<T extends Node>
     @Override
     public T getNode() {
         return theNode;
+    }
+
+    @Override
+    public ThemisXAnalysisInstance getParent() {
+        return theParent;
     }
 
     @Override

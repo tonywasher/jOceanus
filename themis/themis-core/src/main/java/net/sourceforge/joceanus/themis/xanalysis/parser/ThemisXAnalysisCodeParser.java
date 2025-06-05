@@ -122,7 +122,7 @@ public class ThemisXAnalysisCodeParser
     }
 
     @Override
-    public void registerInstance(final ThemisXAnalysisInstance pInstance) {
+    public ThemisXAnalysisInstance registerInstance(final ThemisXAnalysisInstance pInstance) {
         /* Register with parent unless top-level node */
         final ThemisXAnalysisInstance myParent = theNodes.peekLast();
         if (myParent != null) {
@@ -131,6 +131,7 @@ public class ThemisXAnalysisCodeParser
 
         /* Add to end of queue */
         theNodes.addLast(pInstance);
+        return myParent;
     }
 
     /**

@@ -19,6 +19,7 @@ package net.sourceforge.joceanus.themis.analysis;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.xanalysis.dsm.ThemisXAnalysisDSMProject;
 import net.sourceforge.joceanus.themis.xanalysis.proj.ThemisXAnalysisProject;
+import net.sourceforge.joceanus.themis.xanalysis.stats.ThemisXAnalysisStatsProject;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.DynamicNode;
@@ -34,24 +35,9 @@ import java.util.stream.Stream;
  */
 class TestAnalysis {
     /**
-     * The project.
-     */
-    private static final String PROJECT = "jOceanus";
-
-    /**
      * The path base.
      */
     private static final String PATH_BASE = "../../";
-
-    /**
-     * The path xtra.
-     */
-    private static final String PATH_XTRA = "/src/main/java";
-
-    /**
-     * The package base.
-     */
-    private static final String PACKAGE_BASE = "net.sourceforge.joceanus.";
 
     /**
      * The parsed project.
@@ -67,7 +53,8 @@ class TestAnalysis {
     Stream<DynamicNode> analyseSource() throws OceanusException {
         return Stream.of(
                     DynamicTest.dynamicTest("analyseSource", TestAnalysis::testProjectSource),
-                    DynamicTest.dynamicTest("analyseDependencies", TestAnalysis::testProjectDependencies)
+                    DynamicTest.dynamicTest("analyseDependencies", TestAnalysis::testProjectDependencies),
+                    DynamicTest.dynamicTest("analyseStats", TestAnalysis::testProjectStats)
                 );
     }
 
@@ -84,10 +71,6 @@ class TestAnalysis {
         }
         PARSED_PROJECT = new ThemisXAnalysisProject(new File(PATH_BASE));
         Assertions.assertNull(PARSED_PROJECT.getError(), "Exception analysing project");
-
-        /* Parse the base project */
-        //final ThemisStatsParser myParser = new ThemisStatsParser();
-        //final ThemisStatsProject myProject = myParser.parseProject(myProj);
     }
 
     /**
@@ -102,55 +85,19 @@ class TestAnalysis {
         final ThemisXAnalysisDSMProject myProject  = new ThemisXAnalysisDSMProject(PARSED_PROJECT);
         Assertions.assertNotNull(myProject, "Failed to analyse project");
         Assertions.assertNull(myProject.getError(), "Exception analysing project");
-        //Assertions.assertTrue(myProject.hasModules(), "Project has no modules");
-        //Assertions.assertFalse(myProject.getDefaultModule().isCircular(), "Project has circular dependencies");
-
-        /* Build report of module */
-        //final String myDoc = ThemisDSMReport.reportOnModule(myProject.getDefaultModule());
-        //Assertions.assertNotNull(myProject, "Failed to build report");
     }
 
     /**
-     * Test a module.
-     *
-     * @param pModule  the module name.
+     * Test dependency analysis of the current project.
      */
-    private static void testModule(final String pModule) {
-        /* Determine full module/package names */
-        final String myModule = PATH_BASE + pModule;
+    private static void testProjectStats() {
+        /* Make sure previous test executed */
+        Assumptions.assumeTrue(PARSED_PROJECT != null);
+        Assumptions.assumeTrue(PARSED_PROJECT.getError() == null);
 
-        /* Protect against exceptions */
-        try {
-            final ThemisAnalysisModule myMod = new ThemisAnalysisModule(new File(myModule));
-        } catch (OceanusException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * Test a package.
-     *
-     * @param pModule  the module name.
-     * @param pPackage the package name
-     */
-    private static void testPackage(final String pModule,
-                                    final String pPackage) {
-        /* Determine the module root */
-        final int myIndex = pModule.indexOf('-');
-        final String myRoot = pModule.substring(0, myIndex);
-
-        /* Determine full module/package names */
-        final String myModule = PATH_BASE + myRoot + ThemisAnalysisChar.COMMENT + pModule + PATH_XTRA;
-        final String myPackage = PACKAGE_BASE + myRoot
-                + (pPackage == null
-                   ? ""
-                   : ThemisAnalysisChar.PERIOD + pPackage);
-
-        /* Protect against exceptions */
-        try {
-            final ThemisAnalysisPackage myPack = new ThemisAnalysisPackage(new File(myModule), myPackage);
-        } catch (OceanusException e) {
-            e.printStackTrace();
-        }
+        /* Analyse dependencies of project */
+        final ThemisXAnalysisStatsProject myProject  = new ThemisXAnalysisStatsProject(PARSED_PROJECT);
+        Assertions.assertNotNull(myProject, "Failed to analyse project");
+        Assertions.assertNull(myProject.getError(), "Exception analysing project");
     }
 }

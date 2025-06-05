@@ -59,9 +59,10 @@ public interface ThemisXAnalysisParser {
     /**
      * Register Instance.
      * @param pInstance the instance
+     * @return the parent node
      * @throws OceanusException on error
      */
-    void registerInstance(ThemisXAnalysisInstance pInstance) throws OceanusException;
+    ThemisXAnalysisInstance registerInstance(ThemisXAnalysisInstance pInstance) throws OceanusException;
 
     /**
      * Parse a declaration.

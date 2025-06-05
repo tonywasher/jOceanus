@@ -37,7 +37,7 @@ public class ThemisXAnalysisExprAssign
     private final Operator theOperator;
 
     /**
-     * The target.
+     * The value.
      */
     private final ThemisXAnalysisExpressionInstance theValue;
 

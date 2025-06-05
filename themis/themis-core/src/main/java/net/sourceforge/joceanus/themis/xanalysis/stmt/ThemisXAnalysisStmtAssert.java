@@ -26,6 +26,16 @@ import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
 public class ThemisXAnalysisStmtAssert
         extends ThemisXAnalysisBaseStatement<AssertStmt> {
     /**
+     * The check.
+     */
+    private final ThemisXAnalysisExpressionInstance theCheck;
+
+    /**
+     * The message.
+     */
+    private final ThemisXAnalysisExpressionInstance theMessage;
+
+    /**
      * Constructor.
      * @param pParser the parser
      * @param pStatement the statement
@@ -34,5 +44,23 @@ public class ThemisXAnalysisStmtAssert
     ThemisXAnalysisStmtAssert(final ThemisXAnalysisParser pParser,
                               final AssertStmt pStatement) throws OceanusException {
         super(pParser, pStatement);
+        theCheck = pParser.parseExpression(pStatement.getCheck());
+        theMessage = pParser.parseExpression(pStatement.getMessage().orElse(null));
+    }
+
+    /**
+     * Obtain the check.
+     * @return the check
+     */
+    public ThemisXAnalysisExpressionInstance getCheck() {
+        return theCheck;
+    }
+
+    /**
+     * Obtain the message.
+     * @return the message
+     */
+    public ThemisXAnalysisExpressionInstance getMessage() {
+        return theMessage;
     }
 }

@@ -46,13 +46,19 @@ public interface ThemisXAnalysisInstance {
     void registerChild(ThemisXAnalysisInstance pChild);
 
     /**
+     * Obtain the parent.
+     * @return the parent
+     */
+    ThemisXAnalysisInstance getParent();
+
+    /**
      * Obtain the list of children.
      * @return the list of children
      */
     List<ThemisXAnalysisInstance> getChildren();
 
     /**
-     * Obtain the list of children.
+     * Select children.
      * @param pTest the predicate to select children
      * @return the list of selected children
      */

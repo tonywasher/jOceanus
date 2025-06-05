@@ -14,43 +14,50 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.themis.xanalysis.dsm;
+package net.sourceforge.joceanus.themis.xanalysis.stats;
 
 import net.sourceforge.joceanus.themis.xanalysis.proj.ThemisXAnalysisFile;
 import net.sourceforge.joceanus.themis.xanalysis.proj.ThemisXAnalysisPackage;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * DSM Package.
+ * Statistics Package.
  */
-public class ThemisXAnalysisDSMPackage {
+public class ThemisXAnalysisStatsPackage {
     /**
      * The underlying package.
      */
     private final ThemisXAnalysisPackage thePackage;
 
     /**
-     * The class map.
+     * The stats.
      */
-    private final Map<String, ThemisXAnalysisDSMClass> theClasses;
+    private final ThemisXAnalysisStats theStats;
+
+    /**
+     * The files.
+     */
+    private final List<ThemisXAnalysisStatsFile> theFiles;
 
     /**
      * Constructor.
      * @param pPackage the parsed package
      */
-    ThemisXAnalysisDSMPackage(final ThemisXAnalysisPackage pPackage) {
+    ThemisXAnalysisStatsPackage(final ThemisXAnalysisPackage pPackage) {
         /* Store the package */
         thePackage = pPackage;
 
-        /* Create the Map */
-        theClasses = new HashMap<>();
+        /* Create the stats */
+        theStats = new ThemisXAnalysisStats();
 
-        /* Populate the classMap */
-        final String myPackage = getPackageName();
+        /* Create the List */
+        theFiles = new ArrayList<>();
+
+        /* Populate the fileList */
         for (ThemisXAnalysisFile myFile : thePackage.getFiles()) {
-            theClasses.put(myFile.getName(), new ThemisXAnalysisDSMClass(myPackage, myFile));
+            theFiles.add(new ThemisXAnalysisStatsFile(myFile));
         }
     }
 
@@ -58,8 +65,16 @@ public class ThemisXAnalysisDSMPackage {
      * Obtain the package.
      * @return the package
      */
-    public ThemisXAnalysisPackage getPackage() {
+    public ThemisXAnalysisPackage getUnderlying() {
         return thePackage;
+    }
+
+    /**
+     * Obtain the stats.
+     * @return the stats
+     */
+    public ThemisXAnalysisStats getStats() {
+        return theStats;
     }
 
     /**
@@ -74,8 +89,8 @@ public class ThemisXAnalysisDSMPackage {
      * Obtain the class map.
      * @return the class map
      */
-    Map<String, ThemisXAnalysisDSMClass> getClassMap() {
-        return theClasses;
+    List<ThemisXAnalysisStatsFile> getFiles() {
+        return theFiles;
     }
 
     @Override
@@ -88,8 +103,8 @@ public class ThemisXAnalysisDSMPackage {
             return false;
         }
 
-        /* Make sure that the object is a DSMPackage */
-        if (!(pThat instanceof ThemisXAnalysisDSMPackage myThat)) {
+        /* Make sure that the object is a StatsPackage */
+        if (!(pThat instanceof ThemisXAnalysisStatsPackage myThat)) {
             return false;
         }
 

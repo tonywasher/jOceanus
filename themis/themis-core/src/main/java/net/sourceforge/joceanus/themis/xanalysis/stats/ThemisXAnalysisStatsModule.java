@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.themis.xanalysis.dsm;
+package net.sourceforge.joceanus.themis.xanalysis.stats;
 
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.xanalysis.proj.ThemisXAnalysisModule;
@@ -24,61 +24,67 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * DSM Module.
+ * Statistics Module.
  */
-public class ThemisXAnalysisDSMModule {
+public class ThemisXAnalysisStatsModule {
     /**
      * The underlying module.
      */
     private final ThemisXAnalysisModule theModule;
 
     /**
-     * The list of packages.
+     * The stats.
      */
-    private final List<ThemisXAnalysisDSMPackage> thePackages;
+    private final ThemisXAnalysisStats theStats;
 
     /**
-     * The parser.
+     * The list of packages.
      */
-    private final ThemisXAnalysisDSMParser theParser;
+    private final List<ThemisXAnalysisStatsPackage> thePackages;
 
     /**
      * Constructor.
      * @param pModule the parsed module
      * @throws OceanusException on error
      */
-    ThemisXAnalysisDSMModule(final ThemisXAnalysisModule pModule) throws OceanusException {
+    ThemisXAnalysisStatsModule(final ThemisXAnalysisModule pModule) throws OceanusException {
         /* Store the parameters */
         theModule = pModule;
 
+        /* Create the stats */
+        theStats = new ThemisXAnalysisStats();
+
         /* Create the list and map */
         thePackages = new ArrayList<>();
-        theParser = new ThemisXAnalysisDSMParser();
 
         /* Initialise the packages */
         for (ThemisXAnalysisPackage myPackage : theModule.getPackages()) {
-            final ThemisXAnalysisDSMPackage myDSMPackage = new ThemisXAnalysisDSMPackage(myPackage);
-            thePackages.add(myDSMPackage);
-            theParser.declarePackage(myPackage.getPackage(), myDSMPackage.getClassMap());
+            final ThemisXAnalysisStatsPackage myStatsPackage = new ThemisXAnalysisStatsPackage(myPackage);
+            thePackages.add(myStatsPackage);
         }
-
-        /* Process the packages */
-        theParser.processPackages();
     }
 
     /**
      * Obtain the module.
      * @return the module
      */
-    public ThemisXAnalysisModule getModule() {
+    public ThemisXAnalysisModule getUnderlying() {
         return theModule;
+    }
+
+    /**
+     * Obtain the stats.
+     * @return the stats
+     */
+    public ThemisXAnalysisStats getStats() {
+        return theStats;
     }
 
     /**
      * Obtain the packages.
      * @return the packages
      */
-    public List<ThemisXAnalysisDSMPackage> getPackages() {
+    public List<ThemisXAnalysisStatsPackage> getPackages() {
         return thePackages;
     }
 

@@ -75,6 +75,7 @@ public class ThemisXAnalysisDSMParser {
      * @throws OceanusException on error
      */
     private void processPackage(final String pPackage) throws OceanusException {
+        /* Loop through the classes in the package */
         final Map<String, ThemisXAnalysisDSMClass> myClassMap = thePackageMap.get(pPackage);
         for (ThemisXAnalysisDSMClass myClass : myClassMap.values()) {
             /* Determine the possible references */
@@ -83,6 +84,12 @@ public class ThemisXAnalysisDSMParser {
             /* Detect references */
             detectClassOrInterfaceTypes(myClass);
             detectNameReferences(myClass);
+        }
+
+        /* Re-loop through the classes to detect circular references */
+        for (ThemisXAnalysisDSMClass myClass : myClassMap.values()) {
+            /* Determine the possible references */
+            myClass.getState().processLocalReferences();
         }
     }
 
@@ -154,7 +161,10 @@ public class ThemisXAnalysisDSMParser {
         /* Loop through the references */
         for (ThemisXAnalysisInstance myNode : myReferences) {
             final ThemisXAnalysisTypeClassInterface myReference = (ThemisXAnalysisTypeClassInterface) myNode;
-            myState.processPossibleReference(myReference.getName());
+            final ThemisXAnalysisDSMClass myResolved = myState.processPossibleReference(myReference.getName());
+            if (myResolved != null) {
+                myReference.setClassInstance(myResolved.getParsedClass());
+            }
         }
     }
 

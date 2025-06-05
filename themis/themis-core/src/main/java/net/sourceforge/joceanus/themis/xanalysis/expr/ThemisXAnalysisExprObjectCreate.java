@@ -53,6 +53,11 @@ public class ThemisXAnalysisExprObjectCreate
     private final List<ThemisXAnalysisDeclarationInstance> theBodies;
 
     /**
+     * The method instance.
+     */
+    private ThemisXAnalysisMethodInstance theMethodInstance;
+
+    /**
      * Constructor.
      * @param pParser the parser
      * @param pExpression the expression
@@ -106,5 +111,42 @@ public class ThemisXAnalysisExprObjectCreate
      */
     public List<ThemisXAnalysisDeclarationInstance> getBodies() {
         return theBodies;
+    }
+
+    /**
+     * The class instance.
+     */
+    private ThemisXAnalysisClassInstance theClassInstance;
+
+    /**
+     * Obtain the class instance.
+     * @return the class instance
+     */
+    public ThemisXAnalysisClassInstance getClassInstance() {
+        return theClassInstance;
+    }
+
+    /**
+     * Set the class instance.
+     * @param pClassInstance the class instance
+     */
+    public void setClassInstance(final ThemisXAnalysisClassInstance pClassInstance) {
+        theClassInstance = pClassInstance;
+    }
+
+    /**
+     * Obtain the method instance.
+     * @return the method instance
+     */
+    public ThemisXAnalysisMethodInstance getMethodInstance() {
+        return theMethodInstance;
+    }
+
+    /**
+     * Set the method instance.
+     * @param pMethodInstance the method instance
+     */
+    public void setMethodInstance(final ThemisXAnalysisMethodInstance pMethodInstance) {
+        theMethodInstance = pMethodInstance;
     }
 }

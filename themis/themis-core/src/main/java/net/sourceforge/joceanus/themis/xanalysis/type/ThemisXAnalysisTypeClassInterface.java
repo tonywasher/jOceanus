@@ -49,6 +49,11 @@ public class ThemisXAnalysisTypeClassInterface
     private final List<ThemisXAnalysisExpressionInstance> theAnnotations;
 
     /**
+     * The class instance.
+     */
+    private ThemisXAnalysisClassInstance theClassInstance;
+
+    /**
      * Constructor.
      * @param pParser the parser
      * @param pType the type
@@ -93,5 +98,21 @@ public class ThemisXAnalysisTypeClassInterface
      */
     public List<ThemisXAnalysisExpressionInstance> getAnnotations() {
         return theAnnotations;
+    }
+
+    /**
+     * Obtain the class instance.
+     * @return the class instance
+     */
+    public ThemisXAnalysisClassInstance getClassInstance() {
+        return theClassInstance;
+    }
+
+    /**
+     * Set the class instance.
+     * @param pClassInstance the class instance
+     */
+    public void setClassInstance(final ThemisXAnalysisClassInstance pClassInstance) {
+        theClassInstance = pClassInstance;
     }
 }

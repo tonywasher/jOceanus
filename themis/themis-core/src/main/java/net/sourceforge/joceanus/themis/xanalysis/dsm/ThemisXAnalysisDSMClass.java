@@ -59,8 +59,8 @@ public class ThemisXAnalysisDSMClass {
      * @param pPackage the package
      * @param pFile the parsed file
      */
-    public ThemisXAnalysisDSMClass(final String pPackage,
-                                   final ThemisXAnalysisFile pFile) {
+    ThemisXAnalysisDSMClass(final String pPackage,
+                            final ThemisXAnalysisFile pFile) {
         /* Store the parameters */
         thePackage = pPackage;
         theFile = pFile;
@@ -225,13 +225,15 @@ public class ThemisXAnalysisDSMClass {
         /**
          * process possible reference.
          * @param pReference the possible reference.
+         * @return the resolved class (if found)
          */
-        void processPossibleReference(final String pReference) {
+        ThemisXAnalysisDSMClass processPossibleReference(final String pReference) {
             /* If the reference is interesting */
             final ThemisXAnalysisDSMClass myReference = theKnownClasses.get(pReference);
             if (myReference != null) {
                 declareReferencedClass(myReference);
             }
+            return myReference;
         }
 
         /**
@@ -252,7 +254,9 @@ public class ThemisXAnalysisDSMClass {
          * @param pClass the class
          */
         void declareReferencedClass(final ThemisXAnalysisDSMClass pClass) {
+            /* If this is the first instance of the reference */
             if (!theReferencedClasses.contains(pClass)) {
+                /* Add to the list of referenced classes */
                 theReferencedClasses.add(pClass);
             }
         }
@@ -278,10 +282,13 @@ public class ThemisXAnalysisDSMClass {
                 /* Add the class */
                 theLocalReferences.add(pClass);
 
-                /* Loop through the dependencies */
-                for (ThemisXAnalysisDSMClass myClass : theClass.getLocalReferences()) {
-                     /* Process the local references */
-                    processLocalReferences(myClass);
+                /* Only process further if we have not found circularity */
+                if (!pClass.equals(theClass)) {
+                    /* Loop through the local references */
+                    for (ThemisXAnalysisDSMClass myClass : pClass.getLocalReferences()) {
+                        /* Process the local references */
+                        processLocalReferences(myClass);
+                    }
                 }
             }
         }
