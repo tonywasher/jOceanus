@@ -47,6 +47,7 @@ public final class GordianSignParams {
     /**
      * Create keyPair parameters.
      * @param pKeyPair the keyPair
+     * @return the new params
      */
     public static GordianSignParams keyPair(final GordianKeyPair pKeyPair) {
         return new GordianSignParams(pKeyPair, null);
@@ -56,6 +57,7 @@ public final class GordianSignParams {
      * Create keyPair and context parameters.
      * @param pKeyPair the keyPair
      * @param pContext the context
+     * @return the new params
      */
     public static GordianSignParams keyPair(final GordianKeyPair pKeyPair,
                                             final byte[] pContext) {
@@ -63,7 +65,7 @@ public final class GordianSignParams {
     }
 
     /**
-     * Obtain the keyPair
+     * Obtain the keyPair.
      * @return the keyPair
      */
     public GordianKeyPair getKeyPair() {
@@ -71,7 +73,7 @@ public final class GordianSignParams {
     }
 
     /**
-     * Obtain the context
+     * Obtain the context.
      * @return the context
      */
     public byte[] getContext() {

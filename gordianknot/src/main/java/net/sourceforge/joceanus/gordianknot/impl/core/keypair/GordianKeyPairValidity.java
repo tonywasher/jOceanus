@@ -102,7 +102,7 @@ public final class GordianKeyPairValidity {
         mySigner.initForVerify(myParams);
         mySigner.update(myData);
         if (!mySigner.verify(mySignature)) {
-            throw new GordianDataException(ERRORMSG);
+            throw new GordianDataException(ERRORMSG + " " + pSignSpec);
         }
     }
 
@@ -133,7 +133,7 @@ public final class GordianKeyPairValidity {
 
         /* Check that we have arrived back at the original data */
         if (!Arrays.equals(myData, myResult)) {
-            throw new GordianDataException(ERRORMSG);
+            throw new GordianDataException(ERRORMSG + " " + pEncryptSpec);
         }
     }
 
@@ -162,7 +162,7 @@ public final class GordianKeyPairValidity {
 
         /* Check that we have the same result at either end */
         if (!Arrays.equals(myClient, myServer)) {
-            throw new GordianDataException(ERRORMSG);
+            throw new GordianDataException(ERRORMSG + " " + pAgreeSpec);
         }
     }
 

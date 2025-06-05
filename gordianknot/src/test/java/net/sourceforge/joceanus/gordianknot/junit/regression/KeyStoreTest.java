@@ -383,6 +383,11 @@ class KeyStoreTest {
         final GordianCoreKeyStore myStore = pState.getStore();
         final GordianKeyStorePair myIntermediate = pState.getIntermediate();
 
+        /* Handle a disabled keyPairSpec */
+        if (!myMgr.getKeyStore().getFactory().getKeyPairFactory().supportedKeyPairSpecs().test(pKeyPairSpec)) {
+            return;
+        }
+
         /* Create and configure gateway */
         final GordianKeyStoreGateway myGateway = myStore.getFactory().getKeyPairFactory().getKeyStoreFactory().createKeyStoreGateway(myMgr);
         myGateway.setPasswordResolver(pState::passwordResolver);
@@ -393,7 +398,6 @@ class KeyStoreTest {
         final X500Name mySignName = buildX500Name(KeyStoreAlias.SIGNER);
         final GordianKeyPairUsage myUsage = new GordianKeyPairUsage(GordianKeyPairUse.SIGNATURE);
         myMgr.createKeyPair(pKeyPairSpec, mySignName, myUsage, myIntermediate, KeyStoreAlias.SIGNER.getName(), DEF_PASSWORD);
-
         /* Build the CertificateRequest */
         final ByteArrayOutputStream myOutStream = new ByteArrayOutputStream();
         myGateway.createCertificateRequest(KeyStoreAlias.SIGNER.getName(), myOutStream);

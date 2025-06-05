@@ -238,4 +238,21 @@ public class JcaKeyPairFactory
             throw new GordianCryptoException("Failed to create KeyPairGenerator", e);
         }
     }
+
+    @Override
+    public boolean validAsymKeySpec(final GordianKeyPairSpec pKeySpec) {
+        /* Check standard features */
+        if (!super.validAsymKeySpec(pKeySpec)) {
+            return false;
+        }
+
+        /* Disallow MAYO and SNOVA */
+        switch (pKeySpec.getKeyPairType()) {
+            case MAYO:
+            case SNOVA:
+                return false;
+            default:
+                return true;
+        }
+    }
 }
