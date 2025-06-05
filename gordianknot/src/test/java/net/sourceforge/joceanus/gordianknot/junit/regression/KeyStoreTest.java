@@ -28,7 +28,7 @@ import net.sourceforge.joceanus.gordianknot.api.keypair.GordianDHGroup;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianDSAElliptic;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianDSAKeyType;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianDSTU4145Elliptic;
-import net.sourceforge.joceanus.gordianknot.api.keypair.GordianFALCONSpec;
+import net.sourceforge.joceanus.gordianknot.api.keypair.GordianFalconSpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianFRODOSpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianGOSTElliptic;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianHQCSpec;
@@ -40,16 +40,17 @@ import net.sourceforge.joceanus.gordianknot.api.keypair.GordianLMSKeySpec.Gordia
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianLMSKeySpec.GordianLMSWidth;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianMLDSASpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianMLKEMSpec;
+import net.sourceforge.joceanus.gordianknot.api.keypair.GordianMayoSpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianNTRUPrimeSpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianNTRUPrimeSpec.GordianNTRUPrimeParams;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianNTRUPrimeSpec.GordianNTRUPrimeType;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianNTRUSpec;
-import net.sourceforge.joceanus.gordianknot.api.keypair.GordianPICNICSpec;
+import net.sourceforge.joceanus.gordianknot.api.keypair.GordianPicnicSpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianRSAModulus;
-import net.sourceforge.joceanus.gordianknot.api.keypair.GordianRainbowSpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianSABERSpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianSLHDSASpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianSM2Elliptic;
+import net.sourceforge.joceanus.gordianknot.api.keypair.GordianSnovaSpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianXMSSKeySpec.GordianXMSSDigestType;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianXMSSKeySpec.GordianXMSSHeight;
 import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySetSpec;
@@ -168,9 +169,10 @@ class KeyStoreTest {
             signedKeyPairRequestTest(myState, GordianKeyPairSpecBuilder.sm2(GordianSM2Elliptic.SM2P256V1)),
             signedKeyPairRequestTest(myState, GordianKeyPairSpecBuilder.slhdsa(GordianSLHDSASpec.SHA128F)),
             signedKeyPairRequestTest(myState, GordianKeyPairSpecBuilder.mldsa(GordianMLDSASpec.MLDSA44)),
-            signedKeyPairRequestTest(myState, GordianKeyPairSpecBuilder.falcon(GordianFALCONSpec.FALCON512)),
-            signedKeyPairRequestTest(myState, GordianKeyPairSpecBuilder.picnic(GordianPICNICSpec.L1FS)),
-            signedKeyPairRequestTest(myState, GordianKeyPairSpecBuilder.rainbow(GordianRainbowSpec.CLASSIC3)),
+            signedKeyPairRequestTest(myState, GordianKeyPairSpecBuilder.falcon(GordianFalconSpec.FALCON512)),
+            signedKeyPairRequestTest(myState, GordianKeyPairSpecBuilder.picnic(GordianPicnicSpec.L1FS)),
+            signedKeyPairRequestTest(myState, GordianKeyPairSpecBuilder.mayo(GordianMayoSpec.MAYO1)),
+            signedKeyPairRequestTest(myState, GordianKeyPairSpecBuilder.snova(GordianSnovaSpec.SNOVA24A_SSK)),
             signedKeyPairRequestTest(myState, GordianKeyPairSpecBuilder.xmss(GordianXMSSDigestType.SHA512, GordianXMSSHeight.H10)),
             signedKeyPairRequestTest(myState, GordianKeyPairSpecBuilder.lms(new GordianLMSKeySpec(GordianLMSHash.SHA256, GordianLMSHeight.H5,
                                                                                            GordianLMSWidth.W1, GordianLength.LEN_256))),
@@ -381,6 +383,11 @@ class KeyStoreTest {
         final GordianCoreKeyStore myStore = pState.getStore();
         final GordianKeyStorePair myIntermediate = pState.getIntermediate();
 
+        /* Handle a disabled keyPairSpec */
+        if (!myMgr.getKeyStore().getFactory().getKeyPairFactory().supportedKeyPairSpecs().test(pKeyPairSpec)) {
+            return;
+        }
+
         /* Create and configure gateway */
         final GordianKeyStoreGateway myGateway = myStore.getFactory().getKeyPairFactory().getKeyStoreFactory().createKeyStoreGateway(myMgr);
         myGateway.setPasswordResolver(pState::passwordResolver);
@@ -391,7 +398,6 @@ class KeyStoreTest {
         final X500Name mySignName = buildX500Name(KeyStoreAlias.SIGNER);
         final GordianKeyPairUsage myUsage = new GordianKeyPairUsage(GordianKeyPairUse.SIGNATURE);
         myMgr.createKeyPair(pKeyPairSpec, mySignName, myUsage, myIntermediate, KeyStoreAlias.SIGNER.getName(), DEF_PASSWORD);
-
         /* Build the CertificateRequest */
         final ByteArrayOutputStream myOutStream = new ByteArrayOutputStream();
         myGateway.createCertificateRequest(KeyStoreAlias.SIGNER.getName(), myOutStream);

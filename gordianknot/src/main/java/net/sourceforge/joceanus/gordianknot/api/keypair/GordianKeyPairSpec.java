@@ -299,8 +299,30 @@ public class GordianKeyPairSpec {
      * Obtain the Falcon keySpec.
      * @return the keySpec.
      */
-    public GordianFALCONSpec getFalconKeySpec() {
-        if (theSubKeyType instanceof GordianFALCONSpec mySpec) {
+    public GordianFalconSpec getFalconKeySpec() {
+        if (theSubKeyType instanceof GordianFalconSpec mySpec) {
+            return mySpec;
+        }
+        throw new IllegalArgumentException();
+    }
+
+    /**
+     * Obtain the Mayo keySpec.
+     * @return the keySpec.
+     */
+    public GordianMayoSpec getMayoKeySpec() {
+        if (theSubKeyType instanceof GordianMayoSpec mySpec) {
+            return mySpec;
+        }
+        throw new IllegalArgumentException();
+    }
+
+    /**
+     * Obtain the Snova keySpec.
+     * @return the keySpec.
+     */
+    public GordianSnovaSpec getSnovaKeySpec() {
+        if (theSubKeyType instanceof GordianSnovaSpec mySpec) {
             return mySpec;
         }
         throw new IllegalArgumentException();
@@ -310,19 +332,8 @@ public class GordianKeyPairSpec {
      * Obtain the Picnic keySpec.
      * @return the keySpec.
      */
-    public GordianPICNICSpec getPicnicKeySpec() {
-        if (theSubKeyType instanceof GordianPICNICSpec mySpec) {
-            return mySpec;
-        }
-        throw new IllegalArgumentException();
-    }
-
-    /**
-     * Obtain the Rainbow keySpec.
-     * @return the keySpec.
-     */
-    public GordianRainbowSpec getRainbowKeySpec() {
-        if (theSubKeyType instanceof GordianRainbowSpec mySpec) {
+    public GordianPicnicSpec getPicnicKeySpec() {
+        if (theSubKeyType instanceof GordianPicnicSpec mySpec) {
             return mySpec;
         }
         throw new IllegalArgumentException();
@@ -384,7 +395,7 @@ public class GordianKeyPairSpec {
                     theName = myBuilder.toString();
                     break;
                 default:
-                    theName += SEP + theSubKeyType.toString();
+                    theName += SEP + theSubKeyType;
                     break;
             }
         }
@@ -461,11 +472,13 @@ public class GordianKeyPairSpec {
             case NTRUPRIME:
                 return theSubKeyType instanceof GordianNTRUPrimeSpec;
             case FALCON:
-                return theSubKeyType instanceof GordianFALCONSpec;
+                return theSubKeyType instanceof GordianFalconSpec;
+            case MAYO:
+                return theSubKeyType instanceof GordianMayoSpec;
+            case SNOVA:
+                return theSubKeyType instanceof GordianSnovaSpec;
             case PICNIC:
-                return theSubKeyType instanceof GordianPICNICSpec;
-            case RAINBOW:
-                return theSubKeyType instanceof GordianRainbowSpec;
+                return theSubKeyType instanceof GordianPicnicSpec;
             case NEWHOPE:
                 return theSubKeyType == null;
             case LMS:

@@ -148,6 +148,11 @@ public enum GordianDigestType {
     PHOTONBEETLE(GordianLength.LEN_256),
 
     /**
+     * Romulus.
+     */
+    ROMULUS(GordianLength.LEN_256),
+
+    /**
      * Sparkle.
      */
     SPARKLE(GordianLength.LEN_256, GordianLength.LEN_384),

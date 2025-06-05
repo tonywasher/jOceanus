@@ -19,6 +19,7 @@ package net.sourceforge.joceanus.gordianknot.impl.bc;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
+import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignParams;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignatureSpec;
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPrivateKey;
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPublicKey;
@@ -182,10 +183,9 @@ public final class BouncyEdDSAKeyPair {
          * Constructor.
          * @param pFactory the Security Factory
          * @param pKeySpec the keySpec
-         * @throws GordianException on error
          */
         BouncyEd25519KeyPairGenerator(final BouncyFactory pFactory,
-                                      final GordianKeyPairSpec pKeySpec) throws GordianException {
+                                      final GordianKeyPairSpec pKeySpec) {
             /* Initialise underlying class */
             super(pFactory, pKeySpec);
 
@@ -312,10 +312,9 @@ public final class BouncyEdDSAKeyPair {
          * Constructor.
          * @param pFactory the Security Factory
          * @param pKeySpec the keySpec
-         * @throws GordianException on error
-         */
+        */
         BouncyEd448KeyPairGenerator(final BouncyFactory pFactory,
-                                    final GordianKeyPairSpec pKeySpec) throws GordianException {
+                                    final GordianKeyPairSpec pKeySpec) {
             /* Initialise underlying class */
             super(pFactory, pKeySpec);
 
@@ -417,10 +416,9 @@ public final class BouncyEdDSAKeyPair {
          * Constructor.
          * @param pFactory the factory
          * @param pSpec the signatureSpec.
-         * @throws GordianException on error
          */
         BouncyEdDSASignature(final BouncyFactory pFactory,
-                             final GordianSignatureSpec pSpec) throws GordianException {
+                             final GordianSignatureSpec pSpec) {
             /* Initialise underlying class */
             super(pFactory, pSpec);
         }
@@ -442,25 +440,27 @@ public final class BouncyEdDSAKeyPair {
         }
 
         @Override
-        public void initForSigning(final GordianKeyPair pKeyPair) throws GordianException {
+        public void initForSigning(final GordianSignParams pParams) throws GordianException {
             /* Initialise detail */
-            BouncyKeyPair.checkKeyPair(pKeyPair);
-            super.initForSigning(pKeyPair);
+            super.initForSigning(pParams);
+            final GordianKeyPair myPair = getKeyPair();
+            BouncyKeyPair.checkKeyPair(myPair);
 
             /* Initialise and set the signer */
-            theSigner = createSigner(pKeyPair);
+            theSigner = createSigner(myPair);
             final BouncyPrivateKey<?> myPrivate = getKeyPair().getPrivateKey();
             theSigner.init(true, myPrivate.getPrivateKey());
         }
 
         @Override
-        public void initForVerify(final GordianKeyPair pKeyPair) throws GordianException {
+        public void initForVerify(final GordianSignParams pParams) throws GordianException {
             /* Initialise detail */
-            BouncyKeyPair.checkKeyPair(pKeyPair);
-            super.initForVerify(pKeyPair);
+            super.initForVerify(pParams);
+            final GordianKeyPair myPair = getKeyPair();
+            BouncyKeyPair.checkKeyPair(myPair);
 
             /* Initialise and set the signer */
-            theSigner = createSigner(pKeyPair);
+            theSigner = createSigner(myPair);
             final BouncyPublicKey<?> myPublic = getKeyPair().getPublicKey();
             theSigner.init(false, myPublic.getPublicKey());
         }

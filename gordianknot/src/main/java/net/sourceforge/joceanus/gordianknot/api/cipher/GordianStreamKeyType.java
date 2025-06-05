@@ -114,6 +114,11 @@ public enum GordianStreamKeyType {
     PHOTONBEETLE,
 
     /**
+     * Romulus.
+     */
+    ROMULUS,
+
+    /**
      * Sparkle.
      */
     SPARKLE,
@@ -141,6 +146,7 @@ public enum GordianStreamKeyType {
             case BLAKE2XOF:
             case ELEPHANT:
             case ISAP:
+            case ROMULUS:
             case SPARKLE:
                 return true;
             default:
@@ -180,6 +186,7 @@ public enum GordianStreamKeyType {
             case ELEPHANT:
             case ISAP:
             case PHOTONBEETLE:
+            case ROMULUS:
             case XOODYAK:
                  return GordianLength.LEN_128 == pKeyLen;
             case HC:

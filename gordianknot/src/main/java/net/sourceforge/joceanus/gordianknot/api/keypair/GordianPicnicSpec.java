@@ -24,7 +24,7 @@ import org.bouncycastle.pqc.jcajce.spec.PicnicParameterSpec;
 /**
  * PICNIC KeySpec.
  */
-public enum GordianPICNICSpec {
+public enum GordianPicnicSpec {
     /**
      * l1fs.
      */

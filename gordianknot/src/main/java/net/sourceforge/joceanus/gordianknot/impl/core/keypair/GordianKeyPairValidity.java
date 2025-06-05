@@ -30,6 +30,7 @@ import net.sourceforge.joceanus.gordianknot.api.encrypt.GordianEncryptorSpec;
 import net.sourceforge.joceanus.gordianknot.api.encrypt.GordianEncryptorSpecBuilder;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
+import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignParams;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignature;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignatureFactory;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignatureSpec;
@@ -92,15 +93,16 @@ public final class GordianKeyPairValidity {
         final GordianSignature mySigner = mySigns.createSigner(pSignSpec);
 
         /* Create signature */
-        mySigner.initForSigning(pKeyPair);
+        final GordianSignParams myParams = GordianSignParams.keyPair(pKeyPair);
+        mySigner.initForSigning(myParams);
         mySigner.update(myData);
         final byte[] mySignature = mySigner.sign();
 
         /* Validate signature */
-        mySigner.initForVerify(pKeyPair);
+        mySigner.initForVerify(myParams);
         mySigner.update(myData);
         if (!mySigner.verify(mySignature)) {
-            throw new GordianDataException(ERRORMSG);
+            throw new GordianDataException(ERRORMSG + " " + pSignSpec);
         }
     }
 
@@ -131,7 +133,7 @@ public final class GordianKeyPairValidity {
 
         /* Check that we have arrived back at the original data */
         if (!Arrays.equals(myData, myResult)) {
-            throw new GordianDataException(ERRORMSG);
+            throw new GordianDataException(ERRORMSG + " " + pEncryptSpec);
         }
     }
 
@@ -160,7 +162,7 @@ public final class GordianKeyPairValidity {
 
         /* Check that we have the same result at either end */
         if (!Arrays.equals(myClient, myServer)) {
-            throw new GordianDataException(ERRORMSG);
+            throw new GordianDataException(ERRORMSG + " " + pAgreeSpec);
         }
     }
 
@@ -185,8 +187,9 @@ public final class GordianKeyPairValidity {
             case SLHDSA:
             case MLDSA:
             case FALCON:
+            case MAYO:
+            case SNOVA:
             case PICNIC:
-            case RAINBOW:
             case XMSS:
             case LMS:
                 return pFactory.getKeyPairFactory().getSignatureFactory().defaultForKeyPair(mySpec);

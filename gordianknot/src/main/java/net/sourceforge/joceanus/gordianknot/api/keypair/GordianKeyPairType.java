@@ -143,14 +143,19 @@ public enum GordianKeyPairType {
     PICNIC,
 
     /**
-     * Rainbow.
-     */
-    RAINBOW,
-
-    /**
      * NewHope.
      */
     NEWHOPE,
+
+    /**
+     * Mayo.
+     */
+    MAYO,
+
+    /**
+     * Snova.
+     */
+    SNOVA,
 
     /**
      * Composite.
@@ -164,6 +169,7 @@ public enum GordianKeyPairType {
     public boolean useRandomForSignatures() {
         switch (this) {
             case PICNIC:
+            case LMS:
             case XMSS:
             case EDDSA:
                 return false;
@@ -181,10 +187,11 @@ public enum GordianKeyPairType {
             case SLHDSA:
             case MLDSA:
             case FALCON:
+            case MAYO:
+            case SNOVA:
             case XMSS:
             case EDDSA:
             case LMS:
-            case RAINBOW:
                 return GordianRequired.NEVER;
             case PICNIC:
                 return GordianRequired.POSSIBLE;
@@ -198,7 +205,17 @@ public enum GordianKeyPairType {
      * @return true/false
      */
     public boolean subTypeForSignatures() {
-        return this == XMSS;
+        switch (this) {
+            case MLDSA:
+            case SLHDSA:
+            case FALCON:
+            case MAYO:
+            case SNOVA:
+            case XMSS:
+                return true;
+            default:
+                return false;
+        }
     }
 
     /**
@@ -226,13 +243,15 @@ public enum GordianKeyPairType {
             case SABER:
             case CMCE:
             case FALCON:
-            case RAINBOW:
             case NTRU:
             case NTRUPRIME:
             case HQC:
             case PICNIC:
             case XMSS:
             case LMS:
+            case MAYO:
+            case SNOVA:
+            case NEWHOPE:
             default:
                 return false;
         }

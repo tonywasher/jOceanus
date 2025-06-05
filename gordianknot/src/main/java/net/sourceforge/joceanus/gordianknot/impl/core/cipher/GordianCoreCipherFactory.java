@@ -32,6 +32,7 @@ import net.sourceforge.joceanus.gordianknot.api.cipher.GordianStreamKeySpec.Gord
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianStreamKeySpec.GordianChaCha20Key;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianStreamKeySpec.GordianElephantKey;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianStreamKeySpec.GordianISAPKey;
+import net.sourceforge.joceanus.gordianknot.api.cipher.GordianStreamKeySpec.GordianRomulusKey;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianStreamKeySpec.GordianSalsa20Key;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianStreamKeySpec.GordianSkeinXofKey;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianStreamKeySpec.GordianSparkleKey;
@@ -553,6 +554,8 @@ public abstract class GordianCoreCipherFactory
                 return Arrays.asList(GordianElephantKey.values());
             case ISAP:
                 return Arrays.asList(GordianISAPKey.values());
+            case ROMULUS:
+                return Arrays.asList(GordianRomulusKey.values());
             case SPARKLE:
                 return Arrays.asList(GordianSparkleKey.values());
             default:

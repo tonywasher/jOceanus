@@ -69,10 +69,11 @@ public final class GordianSignatureSpecBuilder {
 
     /**
      * Create SM2Spec.
+     * @param pDigestSpec the digestSpec
      * @return the SignatureSpec
      */
-    public static GordianSignatureSpec sm2() {
-        return new GordianSignatureSpec(GordianKeyPairType.SM2, GordianDigestSpecBuilder.sm3());
+    public static GordianSignatureSpec sm2(final GordianDigestSpec pDigestSpec) {
+        return new GordianSignatureSpec(GordianKeyPairType.SM2, pDigestSpec);
     }
 
     /**
@@ -125,6 +126,22 @@ public final class GordianSignatureSpecBuilder {
     }
 
     /**
+     * Create mayoSpec.
+     * @return the SignatureSpec
+     */
+    public static GordianSignatureSpec mayo() {
+        return new GordianSignatureSpec(GordianKeyPairType.MAYO, GordianSignatureType.NATIVE);
+    }
+
+    /**
+     * Create mayoSpec.
+     * @return the SignatureSpec
+     */
+    public static GordianSignatureSpec snova() {
+        return new GordianSignatureSpec(GordianKeyPairType.SNOVA, GordianSignatureType.NATIVE);
+    }
+
+    /**
      * Create picnicSpec.
      * @return the SignatureSpec
      */
@@ -139,14 +156,6 @@ public final class GordianSignatureSpecBuilder {
      */
     public static GordianSignatureSpec picnic(final GordianDigestSpec pDigest) {
         return new GordianSignatureSpec(GordianKeyPairType.PICNIC, GordianSignatureType.NATIVE, pDigest);
-    }
-
-    /**
-     * Create rainbowSpec.
-     * @return the SignatureSpec
-     */
-    public static GordianSignatureSpec rainbow() {
-        return new GordianSignatureSpec(GordianKeyPairType.RAINBOW, GordianSignatureType.NATIVE);
     }
 
     /**

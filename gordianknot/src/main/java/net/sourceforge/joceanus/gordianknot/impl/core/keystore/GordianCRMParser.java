@@ -32,6 +32,7 @@ import net.sourceforge.joceanus.gordianknot.api.keystore.GordianCertificate;
 import net.sourceforge.joceanus.gordianknot.api.keystore.GordianKeyPairUsage;
 import net.sourceforge.joceanus.gordianknot.api.keystore.GordianKeyStoreEntry;
 import net.sourceforge.joceanus.gordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStorePair;
+import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignParams;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignature;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignatureSpec;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
@@ -311,7 +312,7 @@ public class GordianCRMParser {
 
             /* Verify the signature */
             final byte[] mySignature = mySigning.getSignature().getBytes();
-            myVerifier.initForVerify(myKeyPair);
+            myVerifier.initForVerify(GordianSignParams.keyPair(myKeyPair));
             myVerifier.update(pCertReq.getEncoded());
             if (!myVerifier.verify(mySignature)) {
                 throw new GordianDataException("Verification of keyPair failed");

@@ -19,6 +19,7 @@ package net.sourceforge.joceanus.gordianknot.impl.bc;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
+import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignParams;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignatureSpec;
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPrivateKey;
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPublicKey;
@@ -31,12 +32,12 @@ import org.bouncycastle.crypto.AsymmetricCipherKeyPair;
 import org.bouncycastle.crypto.CipherParameters;
 import org.bouncycastle.crypto.params.AsymmetricKeyParameter;
 import org.bouncycastle.crypto.params.ParametersWithRandom;
-import org.bouncycastle.pqc.crypto.falcon.FalconKeyGenerationParameters;
-import org.bouncycastle.pqc.crypto.falcon.FalconKeyPairGenerator;
-import org.bouncycastle.pqc.crypto.falcon.FalconParameters;
-import org.bouncycastle.pqc.crypto.falcon.FalconPrivateKeyParameters;
-import org.bouncycastle.pqc.crypto.falcon.FalconPublicKeyParameters;
-import org.bouncycastle.pqc.crypto.falcon.FalconSigner;
+import org.bouncycastle.pqc.crypto.mayo.MayoKeyGenerationParameters;
+import org.bouncycastle.pqc.crypto.mayo.MayoKeyPairGenerator;
+import org.bouncycastle.pqc.crypto.mayo.MayoParameters;
+import org.bouncycastle.pqc.crypto.mayo.MayoPrivateKeyParameters;
+import org.bouncycastle.pqc.crypto.mayo.MayoPublicKeyParameters;
+import org.bouncycastle.pqc.crypto.mayo.MayoSigner;
 import org.bouncycastle.pqc.crypto.util.PrivateKeyFactory;
 import org.bouncycastle.pqc.crypto.util.PrivateKeyInfoFactory;
 import org.bouncycastle.pqc.crypto.util.PublicKeyFactory;
@@ -48,35 +49,35 @@ import java.security.spec.X509EncodedKeySpec;
 import java.util.Arrays;
 
 /**
- * FALCON KeyPair classes.
+ * Mayo KeyPair classes.
  */
-public final class BouncyFALCONKeyPair {
+public final class BouncyMayoKeyPair {
     /**
      * Private constructor.
      */
-    private BouncyFALCONKeyPair() {
+    private BouncyMayoKeyPair() {
     }
 
     /**
-     * Bouncy Falcon PublicKey.
+     * Bouncy Mayo PublicKey.
      */
-    public static class BouncyFALCONPublicKey
-            extends BouncyPublicKey<FalconPublicKeyParameters> {
+    public static class BouncyMayoPublicKey
+            extends BouncyPublicKey<MayoPublicKeyParameters> {
         /**
          * Constructor.
          * @param pKeySpec the keySpec
          * @param pPublicKey the public key
          */
-        BouncyFALCONPublicKey(final GordianKeyPairSpec pKeySpec,
-                              final FalconPublicKeyParameters pPublicKey) {
+        BouncyMayoPublicKey(final GordianKeyPairSpec pKeySpec,
+                            final MayoPublicKeyParameters pPublicKey) {
             super(pKeySpec, pPublicKey);
         }
 
         @Override
         protected boolean matchKey(final AsymmetricKeyParameter pThat) {
             /* Access keys */
-            final FalconPublicKeyParameters myThis = getPublicKey();
-            final FalconPublicKeyParameters myThat = (FalconPublicKeyParameters) pThat;
+            final MayoPublicKeyParameters myThis = getPublicKey();
+            final MayoPublicKeyParameters myThat = (MayoPublicKeyParameters) pThat;
 
             /* Compare keys */
             return compareKeys(myThis, myThat);
@@ -88,24 +89,24 @@ public final class BouncyFALCONKeyPair {
          * @param pSecond the second key
          * @return true/false
          */
-        private static boolean compareKeys(final FalconPublicKeyParameters pFirst,
-                                           final FalconPublicKeyParameters pSecond) {
-            return Arrays.equals(pFirst.getH(), pSecond.getH());
+        private static boolean compareKeys(final MayoPublicKeyParameters pFirst,
+                                           final MayoPublicKeyParameters pSecond) {
+            return Arrays.equals(pFirst.getEncoded(), pSecond.getEncoded());
         }
     }
 
     /**
-     * Bouncy Falcon PrivateKey.
+     * Bouncy Mayo PrivateKey.
      */
-    public static class BouncyFALCONPrivateKey
-            extends BouncyPrivateKey<FalconPrivateKeyParameters> {
+    public static class BouncyMayoPrivateKey
+            extends BouncyPrivateKey<MayoPrivateKeyParameters> {
         /**
          * Constructor.
          * @param pKeySpec the keySpec
          * @param pPrivateKey the private key
          */
-        BouncyFALCONPrivateKey(final GordianKeyPairSpec pKeySpec,
-                               final FalconPrivateKeyParameters pPrivateKey) {
+        BouncyMayoPrivateKey(final GordianKeyPairSpec pKeySpec,
+                             final MayoPrivateKeyParameters pPrivateKey) {
             super(pKeySpec, pPrivateKey);
         }
 
@@ -113,8 +114,8 @@ public final class BouncyFALCONKeyPair {
         @Override
         protected boolean matchKey(final AsymmetricKeyParameter pThat) {
             /* Access keys */
-            final FalconPrivateKeyParameters myThis = getPrivateKey();
-            final FalconPrivateKeyParameters myThat = (FalconPrivateKeyParameters) pThat;
+            final MayoPrivateKeyParameters myThis = getPrivateKey();
+            final MayoPrivateKeyParameters myThat = (MayoPrivateKeyParameters) pThat;
 
             /* Compare keys */
             return compareKeys(myThis, myThat);
@@ -126,38 +127,38 @@ public final class BouncyFALCONKeyPair {
          * @param pSecond the second key
          * @return true/false
          */
-        private static boolean compareKeys(final FalconPrivateKeyParameters pFirst,
-                                           final FalconPrivateKeyParameters pSecond) {
+        private static boolean compareKeys(final MayoPrivateKeyParameters pFirst,
+                                           final MayoPrivateKeyParameters pSecond) {
             return Arrays.equals(pFirst.getEncoded(), pSecond.getEncoded());
         }
     }
 
     /**
-     * BouncyCastle Falcon KeyPair generator.
+     * BouncyCastle Mayo KeyPair generator.
      */
-    public static class BouncyFALCONKeyPairGenerator
+    public static class BouncyMayoKeyPairGenerator
             extends BouncyKeyPairGenerator {
         /**
          * Generator.
          */
-        private final FalconKeyPairGenerator theGenerator;
+        private final MayoKeyPairGenerator theGenerator;
 
         /**
          * Constructor.
          * @param pFactory the Security Factory
          * @param pKeySpec the keySpec
          */
-        BouncyFALCONKeyPairGenerator(final BouncyFactory pFactory,
-                                     final GordianKeyPairSpec pKeySpec) {
+        BouncyMayoKeyPairGenerator(final BouncyFactory pFactory,
+                                   final GordianKeyPairSpec pKeySpec) {
             /* Initialise underlying class */
             super(pFactory, pKeySpec);
 
             /* Determine the parameters */
-            final FalconParameters myParms = pKeySpec.getFalconKeySpec().getParameters();
+            final MayoParameters myParms = pKeySpec.getMayoKeySpec().getParameters();
 
             /* Create and initialise the generator */
-            theGenerator = new FalconKeyPairGenerator();
-            final FalconKeyGenerationParameters myParams = new FalconKeyGenerationParameters(getRandom(), myParms);
+            theGenerator = new MayoKeyPairGenerator();
+            final MayoKeyGenerationParameters myParams = new MayoKeyGenerationParameters(getRandom(), myParms);
             theGenerator.init(myParams);
         }
 
@@ -165,8 +166,8 @@ public final class BouncyFALCONKeyPair {
         public BouncyKeyPair generateKeyPair() {
             /* Generate and return the keyPair */
             final AsymmetricCipherKeyPair myPair = theGenerator.generateKeyPair();
-            final BouncyFALCONPublicKey myPublic = new BouncyFALCONPublicKey(getKeySpec(), (FalconPublicKeyParameters) myPair.getPublic());
-            final BouncyFALCONPrivateKey myPrivate = new BouncyFALCONPrivateKey(getKeySpec(), (FalconPrivateKeyParameters) myPair.getPrivate());
+            final BouncyMayoPublicKey myPublic = new BouncyMayoPublicKey(getKeySpec(), (MayoPublicKeyParameters) myPair.getPublic());
+            final BouncyMayoPrivateKey myPrivate = new BouncyMayoPrivateKey(getKeySpec(), (MayoPrivateKeyParameters) myPair.getPrivate());
             return new BouncyKeyPair(myPublic, myPrivate);
         }
 
@@ -178,8 +179,8 @@ public final class BouncyFALCONKeyPair {
                 BouncyKeyPair.checkKeyPair(pKeyPair, getKeySpec());
 
                 /* build and return the encoding */
-                final BouncyFALCONPrivateKey myPrivateKey = (BouncyFALCONPrivateKey) getPrivateKey(pKeyPair);
-                final FalconPrivateKeyParameters myParms = myPrivateKey.getPrivateKey();
+                final BouncyMayoPrivateKey myPrivateKey = (BouncyMayoPrivateKey) getPrivateKey(pKeyPair);
+                final MayoPrivateKeyParameters myParms = myPrivateKey.getPrivateKey();
                 final PrivateKeyInfo myInfo = PrivateKeyInfoFactory.createPrivateKeyInfo(myParms, null);
                 return new PKCS8EncodedKeySpec(myInfo.getEncoded());
 
@@ -197,10 +198,10 @@ public final class BouncyFALCONKeyPair {
                 checkKeySpec(pPrivateKey);
 
                 /* derive keyPair */
-                final BouncyFALCONPublicKey myPublic = derivePublicKey(pPublicKey);
+                final BouncyMayoPublicKey myPublic = derivePublicKey(pPublicKey);
                 final PrivateKeyInfo myInfo = PrivateKeyInfo.getInstance(pPrivateKey.getEncoded());
-                final FalconPrivateKeyParameters myParms = (FalconPrivateKeyParameters) PrivateKeyFactory.createKey(myInfo);
-                final BouncyFALCONPrivateKey myPrivate = new BouncyFALCONPrivateKey(getKeySpec(), myParms);
+                final MayoPrivateKeyParameters myParms = (MayoPrivateKeyParameters) PrivateKeyFactory.createKey(myInfo);
+                final BouncyMayoPrivateKey myPrivate = new BouncyMayoPrivateKey(getKeySpec(), myParms);
                 final BouncyKeyPair myPair = new BouncyKeyPair(myPublic, myPrivate);
 
                 /* Check that we have a matching pair */
@@ -222,8 +223,8 @@ public final class BouncyFALCONKeyPair {
                 BouncyKeyPair.checkKeyPair(pKeyPair, getKeySpec());
 
                 /* build and return the encoding */
-                final BouncyFALCONPublicKey myPublicKey = (BouncyFALCONPublicKey) getPublicKey(pKeyPair);
-                final FalconPublicKeyParameters myParms = myPublicKey.getPublicKey();
+                final BouncyMayoPublicKey myPublicKey = (BouncyMayoPublicKey) getPublicKey(pKeyPair);
+                final MayoPublicKeyParameters myParms = myPublicKey.getPublicKey();
                 final SubjectPublicKeyInfo myInfo = SubjectPublicKeyInfoFactory.createSubjectPublicKeyInfo(myParms);
                 return new X509EncodedKeySpec(myInfo.getEncoded());
 
@@ -234,7 +235,7 @@ public final class BouncyFALCONKeyPair {
 
         @Override
         public BouncyKeyPair derivePublicOnlyKeyPair(final X509EncodedKeySpec pEncodedKey) throws GordianException {
-            final BouncyFALCONPublicKey myPublic = derivePublicKey(pEncodedKey);
+            final BouncyMayoPublicKey myPublic = derivePublicKey(pEncodedKey);
             return new BouncyKeyPair(myPublic);
         }
 
@@ -244,7 +245,7 @@ public final class BouncyFALCONKeyPair {
          * @return the public key
          * @throws GordianException on error
          */
-        private BouncyFALCONPublicKey derivePublicKey(final X509EncodedKeySpec pEncodedKey) throws GordianException {
+        private BouncyMayoPublicKey derivePublicKey(final X509EncodedKeySpec pEncodedKey) throws GordianException {
             /* Protect against exceptions */
             try {
                 /* Check the keySpecs */
@@ -252,8 +253,8 @@ public final class BouncyFALCONKeyPair {
 
                 /* derive publicKey */
                 final SubjectPublicKeyInfo myInfo = SubjectPublicKeyInfo.getInstance(pEncodedKey.getEncoded());
-                final FalconPublicKeyParameters myParms = (FalconPublicKeyParameters) PublicKeyFactory.createKey(myInfo);
-                return new BouncyFALCONPublicKey(getKeySpec(), myParms);
+                final MayoPublicKeyParameters myParms = (MayoPublicKeyParameters) PublicKeyFactory.createKey(myInfo);
+                return new BouncyMayoPublicKey(getKeySpec(), myParms);
 
             } catch (IOException e) {
                 throw new GordianCryptoException(ERROR_PARSE, e);
@@ -262,14 +263,14 @@ public final class BouncyFALCONKeyPair {
     }
 
     /**
-     * Falcon signer.
+     * Mayo signer.
      */
-    public static class BouncyFALCONSignature
+    public static class BouncyMayoSignature
             extends BouncyDigestSignature {
         /**
-         * The SPHINCSPlus Signer.
+         * The Mayo Signer.
          */
-        private final FalconSigner theSigner;
+        private final MayoSigner theSigner;
 
         /**
          * Constructor.
@@ -277,33 +278,33 @@ public final class BouncyFALCONKeyPair {
          * @param pSpec the signatureSpec.
          * @throws GordianException on error
          */
-        BouncyFALCONSignature(final BouncyFactory pFactory,
-                              final GordianSignatureSpec pSpec) throws GordianException {
+        BouncyMayoSignature(final BouncyFactory pFactory,
+                            final GordianSignatureSpec pSpec) throws GordianException {
             /* Initialise underlying class */
             super(pFactory, pSpec);
-            theSigner = new FalconSigner();
+            theSigner = new MayoSigner();
         }
 
         @Override
-        public void initForSigning(final GordianKeyPair pKeyPair) throws GordianException {
+        public void initForSigning(final GordianSignParams pParams) throws GordianException {
             /* Initialise detail */
-            BouncyKeyPair.checkKeyPair(pKeyPair);
-            super.initForSigning(pKeyPair);
+            super.initForSigning(pParams);
+            BouncyKeyPair.checkKeyPair(getKeyPair());
 
             /* Initialise and set the signer */
-            final BouncyFALCONPrivateKey myPrivate = (BouncyFALCONPrivateKey) getKeyPair().getPrivateKey();
+            final BouncyMayoPrivateKey myPrivate = (BouncyMayoPrivateKey) getKeyPair().getPrivateKey();
             final CipherParameters myParms = new ParametersWithRandom(myPrivate.getPrivateKey(), getRandom());
             theSigner.init(true, myParms);
         }
 
         @Override
-        public void initForVerify(final GordianKeyPair pKeyPair) throws GordianException {
+        public void initForVerify(final GordianSignParams pParams) throws GordianException {
             /* Initialise detail */
-            BouncyKeyPair.checkKeyPair(pKeyPair);
-            super.initForVerify(pKeyPair);
+            super.initForVerify(pParams);
+            BouncyKeyPair.checkKeyPair(getKeyPair());
 
             /* Initialise and set the signer */
-            final BouncyFALCONPublicKey myPublic = (BouncyFALCONPublicKey) getKeyPair().getPublicKey();
+            final BouncyMayoPublicKey myPublic = (BouncyMayoPublicKey) getKeyPair().getPublicKey();
             theSigner.init(false, myPublic.getPublicKey());
         }
 

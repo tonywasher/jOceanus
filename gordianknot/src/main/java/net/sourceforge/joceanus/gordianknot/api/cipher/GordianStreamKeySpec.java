@@ -20,6 +20,7 @@ import net.sourceforge.joceanus.gordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
 import org.bouncycastle.crypto.engines.ElephantEngine.ElephantParameters;
 import org.bouncycastle.crypto.engines.ISAPEngine.IsapType;
+import org.bouncycastle.crypto.engines.RomulusEngine.RomulusParameters;
 import org.bouncycastle.crypto.engines.SparkleEngine.SparkleParameters;
 
 import java.util.Objects;
@@ -150,6 +151,9 @@ public class GordianStreamKeySpec
                         && theStreamKeyType.validForKeyLength(theKeyLength);
             case ISAP:
                 return theSubKeyType instanceof GordianISAPKey
+                        && theStreamKeyType.validForKeyLength(theKeyLength);
+            case ROMULUS:
+                return theSubKeyType instanceof GordianRomulusKey
                         && theStreamKeyType.validForKeyLength(theKeyLength);
             case SPARKLE:
                 return checkSparkleValidity();
@@ -308,6 +312,7 @@ public class GordianStreamKeySpec
             case BLAKE2XOF:
             case ELEPHANT:
             case ISAP:
+            case ROMULUS:
             case SPARKLE:
                 return theSubKeyType.toString();
             default:
@@ -333,6 +338,7 @@ public class GordianStreamKeySpec
             case ASCON:
             case ISAP:
             case PHOTONBEETLE:
+            case ROMULUS:
             case XOODYAK:
                 return GordianLength.LEN_128.getByteLength();
             case HC:
@@ -379,6 +385,7 @@ public class GordianStreamKeySpec
             case ELEPHANT:
             case ISAP:
             case PHOTONBEETLE:
+            case ROMULUS:
             case SPARKLE:
             case XOODYAK:
                 return true;
@@ -431,6 +438,8 @@ public class GordianStreamKeySpec
                 return GordianElephantKey.ELEPHANT160;
             case ISAP:
                 return GordianISAPKey.ISAPA128;
+            case ROMULUS:
+                return GordianRomulusKey.ROMULUS_M;
             case SPARKLE:
                 return GordianSparkleKey.SPARKLE128_128;
             default:
@@ -730,6 +739,57 @@ public class GordianStreamKeySpec
                 case ISAPK128A:
                 default:
                     return IsapType.ISAP_K_128A;
+            }
+        }
+    }
+
+    /**
+     * Romulus Key styles.
+     */
+    public enum GordianRomulusKey
+            implements GordianStreamSubKeyType {
+        /**
+         * Romulus-M.
+         */
+        ROMULUS_M,
+
+        /**
+         * Romulus-N.
+         */
+        ROMULUS_N,
+
+        /**
+         * Romulus-T.
+         */
+        ROMULUS_T;
+
+        @Override
+        public String toString() {
+            final String myBase = GordianStreamKeyType.ROMULUS.toString();
+            switch (this) {
+                case ROMULUS_M:
+                    return myBase + "-M";
+                case ROMULUS_N:
+                    return myBase + "-N";
+                case ROMULUS_T:
+                default:
+                    return myBase + "-T";
+            }
+        }
+
+        /**
+         * Obtain the RomulusParameters.
+         * @return the parameters
+         */
+        public RomulusParameters getParameters() {
+            switch (this) {
+                case ROMULUS_M:
+                    return RomulusParameters.RomulusM;
+                case ROMULUS_N:
+                    return RomulusParameters.RomulusN;
+                case ROMULUS_T:
+                default:
+                    return RomulusParameters.RomulusT;
             }
         }
     }

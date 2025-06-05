@@ -33,10 +33,11 @@ import net.sourceforge.joceanus.gordianknot.impl.jca.JcaSignature.JcaFalconSigna
 import net.sourceforge.joceanus.gordianknot.impl.jca.JcaSignature.JcaGOSTSignature;
 import net.sourceforge.joceanus.gordianknot.impl.jca.JcaSignature.JcaLMSSignature;
 import net.sourceforge.joceanus.gordianknot.impl.jca.JcaSignature.JcaMLDSASignature;
+import net.sourceforge.joceanus.gordianknot.impl.jca.JcaSignature.JcaMayoSignature;
 import net.sourceforge.joceanus.gordianknot.impl.jca.JcaSignature.JcaPicnicSignature;
 import net.sourceforge.joceanus.gordianknot.impl.jca.JcaSignature.JcaRSASignature;
-import net.sourceforge.joceanus.gordianknot.impl.jca.JcaSignature.JcaRainbowSignature;
 import net.sourceforge.joceanus.gordianknot.impl.jca.JcaSignature.JcaSLHDSASignature;
+import net.sourceforge.joceanus.gordianknot.impl.jca.JcaSignature.JcaSnovaSignature;
 import net.sourceforge.joceanus.gordianknot.impl.jca.JcaSignature.JcaXMSSSignature;
 
 import java.security.NoSuchAlgorithmException;
@@ -121,10 +122,12 @@ public class JcaSignatureFactory
                 return new JcaMLDSASignature(getFactory(), pSignatureSpec);
             case FALCON:
                 return new JcaFalconSignature(getFactory(), pSignatureSpec);
+            case MAYO:
+                return new JcaMayoSignature(getFactory(), pSignatureSpec);
+            case SNOVA:
+                return new JcaSnovaSignature(getFactory(), pSignatureSpec);
             case PICNIC:
                 return new JcaPicnicSignature(getFactory(), pSignatureSpec);
-            case RAINBOW:
-                return new JcaRainbowSignature(getFactory(), pSignatureSpec);
             case LMS:
                 return new JcaLMSSignature(getFactory(), pSignatureSpec);
             case COMPOSITE:
@@ -157,8 +160,9 @@ public class JcaSignatureFactory
             case SLHDSA:
             case MLDSA:
             case FALCON:
+            case MAYO:
+            case SNOVA:
             case PICNIC:
-            case RAINBOW:
             case EDDSA:
             case LMS:
             case COMPOSITE:

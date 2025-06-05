@@ -210,11 +210,6 @@ public abstract class GordianCoreSignatureFactory
             return validDDSASignature(pSignSpec);
         }
 
-        /* Only allow SM3 for SM2 signature */
-        if (GordianKeyPairType.SM2.equals(myType)) {
-            return GordianDigestType.SM3.equals(mySpec.getDigestType());
-        }
-
         /* Only allow GOST for DSTU signature */
         if (GordianKeyPairType.DSTU4145.equals(myType)) {
             return GordianDigestType.GOST.equals(mySpec.getDigestType());
@@ -373,7 +368,7 @@ public abstract class GordianCoreSignatureFactory
             case EC:
                 return GordianSignatureSpecBuilder.ec(GordianSignatureType.DSA, GordianDigestSpecBuilder.sha3(GordianLength.LEN_512));
             case SM2:
-                return GordianSignatureSpecBuilder.sm2();
+                return GordianSignatureSpecBuilder.sm2(GordianDigestSpecBuilder.sm3());
             case DSTU4145:
                 return GordianSignatureSpecBuilder.dstu4145();
             case GOST2012:
@@ -386,10 +381,12 @@ public abstract class GordianCoreSignatureFactory
                 return GordianSignatureSpecBuilder.mldsa();
             case FALCON:
                 return GordianSignatureSpecBuilder.falcon();
+            case MAYO:
+                return GordianSignatureSpecBuilder.mayo();
+            case SNOVA:
+                return GordianSignatureSpecBuilder.snova();
             case PICNIC:
                 return GordianSignatureSpecBuilder.picnic();
-            case RAINBOW:
-                return GordianSignatureSpecBuilder.rainbow();
             case XMSS:
                 return GordianSignatureSpecBuilder.xmss();
             case LMS:

@@ -24,7 +24,6 @@ module net.sourceforge.joceanus.gordianknot {
     /* External libraries */
     requires org.bouncycastle.provider;
     requires org.bouncycastle.util;
-    requires org.bouncycastle.pg;
 
     /* Exports */
     exports net.sourceforge.joceanus.gordianknot.api.agree;

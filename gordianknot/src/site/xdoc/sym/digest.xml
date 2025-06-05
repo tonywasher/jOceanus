@@ -90,6 +90,7 @@ myDigest.output(myOutput, 100, 100);
                         <tr><td>PhotonBeetle</td><td/><td>256</td><td/><td/><td/></tr>
                         <tr><td>Sparkle</td><td/><td>256, 384</td><td/><td/><td/></tr>
                         <tr><td>Xoodyak</td><td/><td>256</td><td/><td/><td/></tr>
+                        <tr><td>Romulus</td><td/><td>256</td><td/><td/><td/></tr>
                     </table>
                 </subsection>
             </subsection>

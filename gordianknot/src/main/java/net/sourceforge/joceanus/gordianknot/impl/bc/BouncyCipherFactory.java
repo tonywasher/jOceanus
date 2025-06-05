@@ -28,6 +28,7 @@ import net.sourceforge.joceanus.gordianknot.api.cipher.GordianStreamKeySpec.Gord
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianStreamKeySpec.GordianChaCha20Key;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianStreamKeySpec.GordianElephantKey;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianStreamKeySpec.GordianISAPKey;
+import net.sourceforge.joceanus.gordianknot.api.cipher.GordianStreamKeySpec.GordianRomulusKey;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianStreamKeySpec.GordianSalsa20Key;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianStreamKeySpec.GordianSkeinXofKey;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianStreamKeySpec.GordianSparkleKey;
@@ -93,6 +94,7 @@ import org.bouncycastle.crypto.engines.RC4Engine;
 import org.bouncycastle.crypto.engines.RC532Engine;
 import org.bouncycastle.crypto.engines.RC564Engine;
 import org.bouncycastle.crypto.engines.RC6Engine;
+import org.bouncycastle.crypto.engines.RomulusEngine;
 import org.bouncycastle.crypto.engines.SEEDEngine;
 import org.bouncycastle.crypto.engines.SM4Engine;
 import org.bouncycastle.crypto.engines.Salsa20Engine;
@@ -338,6 +340,8 @@ public class BouncyCipherFactory
                 return new ISAPEngine(((GordianISAPKey) mySpec.getSubKeyType()).getType());
             case PHOTONBEETLE:
                 return new PhotonBeetleEngine(PhotonBeetleParameters.pb128);
+            case ROMULUS:
+                return new RomulusEngine(((GordianRomulusKey) mySpec.getSubKeyType()).getParameters());
             case SPARKLE:
                 return new SparkleEngine(((GordianSparkleKey) mySpec.getSubKeyType()).getParameters());
             case XOODYAK:

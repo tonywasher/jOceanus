@@ -158,6 +158,11 @@ public enum GordianDigestResource
     DIGEST_PHOTONBEETLE("PhotonBeetle"),
 
     /**
+     * Digest Romulus.
+     */
+    DIGEST_ROMULUS("Romulus"),
+
+    /**
      * Digest Sparkle.
      */
     DIGEST_SPARKLE("Sparkle"),
@@ -249,6 +254,7 @@ public enum GordianDigestResource
         myMap.put(GordianDigestType.ASCON, DIGEST_ASCON);
         myMap.put(GordianDigestType.ISAP, DIGEST_ISAP);
         myMap.put(GordianDigestType.PHOTONBEETLE, DIGEST_PHOTONBEETLE);
+        myMap.put(GordianDigestType.ROMULUS, DIGEST_ROMULUS);
         myMap.put(GordianDigestType.SPARKLE, DIGEST_SPARKLE);
         myMap.put(GordianDigestType.XOODYAK, DIGEST_XOODYAK);
         return myMap;

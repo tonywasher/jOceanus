@@ -19,6 +19,7 @@ package net.sourceforge.joceanus.gordianknot.impl.bc;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
+import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignParams;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignatureSpec;
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPrivateKey;
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPublicKey;
@@ -28,13 +29,15 @@ import net.sourceforge.joceanus.gordianknot.impl.core.keypair.GordianKeyPairVali
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.bouncycastle.crypto.AsymmetricCipherKeyPair;
+import org.bouncycastle.crypto.CipherParameters;
 import org.bouncycastle.crypto.params.AsymmetricKeyParameter;
-import org.bouncycastle.pqc.crypto.picnic.PicnicKeyGenerationParameters;
-import org.bouncycastle.pqc.crypto.picnic.PicnicKeyPairGenerator;
-import org.bouncycastle.pqc.crypto.picnic.PicnicParameters;
-import org.bouncycastle.pqc.crypto.picnic.PicnicPrivateKeyParameters;
-import org.bouncycastle.pqc.crypto.picnic.PicnicPublicKeyParameters;
-import org.bouncycastle.pqc.crypto.picnic.PicnicSigner;
+import org.bouncycastle.crypto.params.ParametersWithRandom;
+import org.bouncycastle.pqc.crypto.falcon.FalconKeyGenerationParameters;
+import org.bouncycastle.pqc.crypto.falcon.FalconKeyPairGenerator;
+import org.bouncycastle.pqc.crypto.falcon.FalconParameters;
+import org.bouncycastle.pqc.crypto.falcon.FalconPrivateKeyParameters;
+import org.bouncycastle.pqc.crypto.falcon.FalconPublicKeyParameters;
+import org.bouncycastle.pqc.crypto.falcon.FalconSigner;
 import org.bouncycastle.pqc.crypto.util.PrivateKeyFactory;
 import org.bouncycastle.pqc.crypto.util.PrivateKeyInfoFactory;
 import org.bouncycastle.pqc.crypto.util.PublicKeyFactory;
@@ -46,35 +49,35 @@ import java.security.spec.X509EncodedKeySpec;
 import java.util.Arrays;
 
 /**
- * PICNIC KeyPair classes.
+ * FALCON KeyPair classes.
  */
-public final class BouncyPICNICKeyPair {
+public final class BouncyFalconKeyPair {
     /**
      * Private constructor.
      */
-    private BouncyPICNICKeyPair() {
+    private BouncyFalconKeyPair() {
     }
 
     /**
-     * Bouncy Picnic PublicKey.
+     * Bouncy Falcon PublicKey.
      */
-    public static class BouncyPICNICPublicKey
-            extends BouncyPublicKey<PicnicPublicKeyParameters> {
+    public static class BouncyFalconPublicKey
+            extends BouncyPublicKey<FalconPublicKeyParameters> {
         /**
          * Constructor.
          * @param pKeySpec the keySpec
          * @param pPublicKey the public key
          */
-        BouncyPICNICPublicKey(final GordianKeyPairSpec pKeySpec,
-                              final PicnicPublicKeyParameters pPublicKey) {
+        BouncyFalconPublicKey(final GordianKeyPairSpec pKeySpec,
+                              final FalconPublicKeyParameters pPublicKey) {
             super(pKeySpec, pPublicKey);
         }
 
         @Override
         protected boolean matchKey(final AsymmetricKeyParameter pThat) {
             /* Access keys */
-            final PicnicPublicKeyParameters myThis = getPublicKey();
-            final PicnicPublicKeyParameters myThat = (PicnicPublicKeyParameters) pThat;
+            final FalconPublicKeyParameters myThis = getPublicKey();
+            final FalconPublicKeyParameters myThat = (FalconPublicKeyParameters) pThat;
 
             /* Compare keys */
             return compareKeys(myThis, myThat);
@@ -86,24 +89,24 @@ public final class BouncyPICNICKeyPair {
          * @param pSecond the second key
          * @return true/false
          */
-        private static boolean compareKeys(final PicnicPublicKeyParameters pFirst,
-                                           final PicnicPublicKeyParameters pSecond) {
-            return Arrays.equals(pFirst.getEncoded(), pSecond.getEncoded());
+        private static boolean compareKeys(final FalconPublicKeyParameters pFirst,
+                                           final FalconPublicKeyParameters pSecond) {
+            return Arrays.equals(pFirst.getH(), pSecond.getH());
         }
     }
 
     /**
-     * Bouncy Picnic PrivateKey.
+     * Bouncy Falcon PrivateKey.
      */
-    public static class BouncyPICNICPrivateKey
-            extends BouncyPrivateKey<PicnicPrivateKeyParameters> {
+    public static class BouncyFalconPrivateKey
+            extends BouncyPrivateKey<FalconPrivateKeyParameters> {
         /**
          * Constructor.
          * @param pKeySpec the keySpec
          * @param pPrivateKey the private key
          */
-        BouncyPICNICPrivateKey(final GordianKeyPairSpec pKeySpec,
-                               final PicnicPrivateKeyParameters pPrivateKey) {
+        BouncyFalconPrivateKey(final GordianKeyPairSpec pKeySpec,
+                               final FalconPrivateKeyParameters pPrivateKey) {
             super(pKeySpec, pPrivateKey);
         }
 
@@ -111,8 +114,8 @@ public final class BouncyPICNICKeyPair {
         @Override
         protected boolean matchKey(final AsymmetricKeyParameter pThat) {
             /* Access keys */
-            final PicnicPrivateKeyParameters myThis = getPrivateKey();
-            final PicnicPrivateKeyParameters myThat = (PicnicPrivateKeyParameters) pThat;
+            final FalconPrivateKeyParameters myThis = getPrivateKey();
+            final FalconPrivateKeyParameters myThat = (FalconPrivateKeyParameters) pThat;
 
             /* Compare keys */
             return compareKeys(myThis, myThat);
@@ -124,38 +127,38 @@ public final class BouncyPICNICKeyPair {
          * @param pSecond the second key
          * @return true/false
          */
-        private static boolean compareKeys(final PicnicPrivateKeyParameters pFirst,
-                                           final PicnicPrivateKeyParameters pSecond) {
+        private static boolean compareKeys(final FalconPrivateKeyParameters pFirst,
+                                           final FalconPrivateKeyParameters pSecond) {
             return Arrays.equals(pFirst.getEncoded(), pSecond.getEncoded());
         }
     }
 
     /**
-     * BouncyCastle Picnic KeyPair generator.
+     * BouncyCastle Falcon KeyPair generator.
      */
-    public static class BouncyPICNICKeyPairGenerator
+    public static class BouncyFalconKeyPairGenerator
             extends BouncyKeyPairGenerator {
         /**
          * Generator.
          */
-        private final PicnicKeyPairGenerator theGenerator;
+        private final FalconKeyPairGenerator theGenerator;
 
         /**
          * Constructor.
          * @param pFactory the Security Factory
          * @param pKeySpec the keySpec
          */
-        BouncyPICNICKeyPairGenerator(final BouncyFactory pFactory,
+        BouncyFalconKeyPairGenerator(final BouncyFactory pFactory,
                                      final GordianKeyPairSpec pKeySpec) {
             /* Initialise underlying class */
             super(pFactory, pKeySpec);
 
             /* Determine the parameters */
-            final PicnicParameters myParms = pKeySpec.getPicnicKeySpec().getParameters();
+            final FalconParameters myParms = pKeySpec.getFalconKeySpec().getParameters();
 
             /* Create and initialise the generator */
-            theGenerator = new PicnicKeyPairGenerator();
-            final PicnicKeyGenerationParameters myParams = new PicnicKeyGenerationParameters(getRandom(), myParms);
+            theGenerator = new FalconKeyPairGenerator();
+            final FalconKeyGenerationParameters myParams = new FalconKeyGenerationParameters(getRandom(), myParms);
             theGenerator.init(myParams);
         }
 
@@ -163,8 +166,8 @@ public final class BouncyPICNICKeyPair {
         public BouncyKeyPair generateKeyPair() {
             /* Generate and return the keyPair */
             final AsymmetricCipherKeyPair myPair = theGenerator.generateKeyPair();
-            final BouncyPICNICPublicKey myPublic = new BouncyPICNICPublicKey(getKeySpec(), (PicnicPublicKeyParameters) myPair.getPublic());
-            final BouncyPICNICPrivateKey myPrivate = new BouncyPICNICPrivateKey(getKeySpec(), (PicnicPrivateKeyParameters) myPair.getPrivate());
+            final BouncyFalconPublicKey myPublic = new BouncyFalconPublicKey(getKeySpec(), (FalconPublicKeyParameters) myPair.getPublic());
+            final BouncyFalconPrivateKey myPrivate = new BouncyFalconPrivateKey(getKeySpec(), (FalconPrivateKeyParameters) myPair.getPrivate());
             return new BouncyKeyPair(myPublic, myPrivate);
         }
 
@@ -176,8 +179,8 @@ public final class BouncyPICNICKeyPair {
                 BouncyKeyPair.checkKeyPair(pKeyPair, getKeySpec());
 
                 /* build and return the encoding */
-                final BouncyPICNICPrivateKey myPrivateKey = (BouncyPICNICPrivateKey) getPrivateKey(pKeyPair);
-                final PicnicPrivateKeyParameters myParms = myPrivateKey.getPrivateKey();
+                final BouncyFalconPrivateKey myPrivateKey = (BouncyFalconPrivateKey) getPrivateKey(pKeyPair);
+                final FalconPrivateKeyParameters myParms = myPrivateKey.getPrivateKey();
                 final PrivateKeyInfo myInfo = PrivateKeyInfoFactory.createPrivateKeyInfo(myParms, null);
                 return new PKCS8EncodedKeySpec(myInfo.getEncoded());
 
@@ -195,10 +198,10 @@ public final class BouncyPICNICKeyPair {
                 checkKeySpec(pPrivateKey);
 
                 /* derive keyPair */
-                final BouncyPICNICPublicKey myPublic = derivePublicKey(pPublicKey);
+                final BouncyFalconPublicKey myPublic = derivePublicKey(pPublicKey);
                 final PrivateKeyInfo myInfo = PrivateKeyInfo.getInstance(pPrivateKey.getEncoded());
-                final PicnicPrivateKeyParameters myParms = (PicnicPrivateKeyParameters) PrivateKeyFactory.createKey(myInfo);
-                final BouncyPICNICPrivateKey myPrivate = new BouncyPICNICPrivateKey(getKeySpec(), myParms);
+                final FalconPrivateKeyParameters myParms = (FalconPrivateKeyParameters) PrivateKeyFactory.createKey(myInfo);
+                final BouncyFalconPrivateKey myPrivate = new BouncyFalconPrivateKey(getKeySpec(), myParms);
                 final BouncyKeyPair myPair = new BouncyKeyPair(myPublic, myPrivate);
 
                 /* Check that we have a matching pair */
@@ -220,8 +223,8 @@ public final class BouncyPICNICKeyPair {
                 BouncyKeyPair.checkKeyPair(pKeyPair, getKeySpec());
 
                 /* build and return the encoding */
-                final BouncyPICNICPublicKey myPublicKey = (BouncyPICNICPublicKey) getPublicKey(pKeyPair);
-                final PicnicPublicKeyParameters myParms = myPublicKey.getPublicKey();
+                final BouncyFalconPublicKey myPublicKey = (BouncyFalconPublicKey) getPublicKey(pKeyPair);
+                final FalconPublicKeyParameters myParms = myPublicKey.getPublicKey();
                 final SubjectPublicKeyInfo myInfo = SubjectPublicKeyInfoFactory.createSubjectPublicKeyInfo(myParms);
                 return new X509EncodedKeySpec(myInfo.getEncoded());
 
@@ -232,7 +235,7 @@ public final class BouncyPICNICKeyPair {
 
         @Override
         public BouncyKeyPair derivePublicOnlyKeyPair(final X509EncodedKeySpec pEncodedKey) throws GordianException {
-            final BouncyPICNICPublicKey myPublic = derivePublicKey(pEncodedKey);
+            final BouncyFalconPublicKey myPublic = derivePublicKey(pEncodedKey);
             return new BouncyKeyPair(myPublic);
         }
 
@@ -242,7 +245,7 @@ public final class BouncyPICNICKeyPair {
          * @return the public key
          * @throws GordianException on error
          */
-        private BouncyPICNICPublicKey derivePublicKey(final X509EncodedKeySpec pEncodedKey) throws GordianException {
+        private BouncyFalconPublicKey derivePublicKey(final X509EncodedKeySpec pEncodedKey) throws GordianException {
             /* Protect against exceptions */
             try {
                 /* Check the keySpecs */
@@ -250,8 +253,8 @@ public final class BouncyPICNICKeyPair {
 
                 /* derive publicKey */
                 final SubjectPublicKeyInfo myInfo = SubjectPublicKeyInfo.getInstance(pEncodedKey.getEncoded());
-                final PicnicPublicKeyParameters myParms = (PicnicPublicKeyParameters) PublicKeyFactory.createKey(myInfo);
-                return new BouncyPICNICPublicKey(getKeySpec(), myParms);
+                final FalconPublicKeyParameters myParms = (FalconPublicKeyParameters) PublicKeyFactory.createKey(myInfo);
+                return new BouncyFalconPublicKey(getKeySpec(), myParms);
 
             } catch (IOException e) {
                 throw new GordianCryptoException(ERROR_PARSE, e);
@@ -260,14 +263,14 @@ public final class BouncyPICNICKeyPair {
     }
 
     /**
-     * Picnic signer.
+     * Falcon signer.
      */
-    public static class BouncyPICNICSignature
+    public static class BouncyFalconSignature
             extends BouncyDigestSignature {
         /**
-         * The Picnic Signer.
+         * The Falcon Signer.
          */
-        private final PicnicSigner theSigner;
+        private final FalconSigner theSigner;
 
         /**
          * Constructor.
@@ -275,32 +278,35 @@ public final class BouncyPICNICKeyPair {
          * @param pSpec the signatureSpec.
          * @throws GordianException on error
          */
-        BouncyPICNICSignature(final BouncyFactory pFactory,
+        BouncyFalconSignature(final BouncyFactory pFactory,
                               final GordianSignatureSpec pSpec) throws GordianException {
             /* Initialise underlying class */
             super(pFactory, pSpec);
-            theSigner = new PicnicSigner();
+            theSigner = new FalconSigner();
         }
 
         @Override
-        public void initForSigning(final GordianKeyPair pKeyPair) throws GordianException {
+        public void initForSigning(final GordianSignParams pParams) throws GordianException {
             /* Initialise detail */
-            BouncyKeyPair.checkKeyPair(pKeyPair);
-            super.initForSigning(pKeyPair);
+            super.initForSigning(pParams);
+            final BouncyKeyPair myPair = getKeyPair();
+            BouncyKeyPair.checkKeyPair(myPair);
 
             /* Initialise and set the signer */
-            final BouncyPICNICPrivateKey myPrivate = (BouncyPICNICPrivateKey) getKeyPair().getPrivateKey();
-            theSigner.init(true, myPrivate.getPrivateKey());
+            final BouncyFalconPrivateKey myPrivate = (BouncyFalconPrivateKey) myPair.getPrivateKey();
+            final CipherParameters myParms = new ParametersWithRandom(myPrivate.getPrivateKey(), getRandom());
+            theSigner.init(true, myParms);
         }
 
         @Override
-        public void initForVerify(final GordianKeyPair pKeyPair) throws GordianException {
+        public void initForVerify(final GordianSignParams pParams) throws GordianException {
             /* Initialise detail */
-            BouncyKeyPair.checkKeyPair(pKeyPair);
-            super.initForVerify(pKeyPair);
+            super.initForVerify(pParams);
+            final BouncyKeyPair myPair = getKeyPair();
+            BouncyKeyPair.checkKeyPair(myPair);
 
             /* Initialise and set the signer */
-            final BouncyPICNICPublicKey myPublic = (BouncyPICNICPublicKey) getKeyPair().getPublicKey();
+            final BouncyFalconPublicKey myPublic = (BouncyFalconPublicKey) myPair.getPublicKey();
             theSigner.init(false, myPublic.getPublicKey());
         }
 

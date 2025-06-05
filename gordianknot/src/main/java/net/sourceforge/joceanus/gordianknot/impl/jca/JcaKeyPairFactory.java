@@ -33,21 +33,22 @@ import net.sourceforge.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaDSAK
 import net.sourceforge.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaECKeyPairGenerator;
 import net.sourceforge.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaEdKeyPairGenerator;
 import net.sourceforge.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaElGamalKeyPairGenerator;
-import net.sourceforge.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaFALCONKeyPairGenerator;
+import net.sourceforge.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaFalconKeyPairGenerator;
 import net.sourceforge.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaFrodoKeyPairGenerator;
 import net.sourceforge.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaHQCKeyPairGenerator;
 import net.sourceforge.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaLMSKeyPairGenerator;
 import net.sourceforge.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaMLDSAKeyPairGenerator;
 import net.sourceforge.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaMLKEMKeyPairGenerator;
+import net.sourceforge.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaMayoKeyPairGenerator;
 import net.sourceforge.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaNTRUKeyPairGenerator;
 import net.sourceforge.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaNTRULPrimeKeyPairGenerator;
 import net.sourceforge.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaNewHopeKeyPairGenerator;
-import net.sourceforge.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaPICNICKeyPairGenerator;
+import net.sourceforge.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaPicnicKeyPairGenerator;
 import net.sourceforge.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaRSAKeyPairGenerator;
-import net.sourceforge.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaRainbowKeyPairGenerator;
 import net.sourceforge.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaSABERKeyPairGenerator;
 import net.sourceforge.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaSLHDSAKeyPairGenerator;
 import net.sourceforge.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaSNTRUPrimeKeyPairGenerator;
+import net.sourceforge.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaSnovaKeyPairGenerator;
 import net.sourceforge.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaXMSSKeyPairGenerator;
 
 import java.security.KeyFactory;
@@ -176,11 +177,13 @@ public class JcaKeyPairFactory
                         ? new JcaNTRULPrimeKeyPairGenerator(getFactory(), pKeySpec)
                         : new JcaSNTRUPrimeKeyPairGenerator(getFactory(), pKeySpec);
             case FALCON:
-                return new JcaFALCONKeyPairGenerator(getFactory(), pKeySpec);
+                return new JcaFalconKeyPairGenerator(getFactory(), pKeySpec);
+            case MAYO:
+                return new JcaMayoKeyPairGenerator(getFactory(), pKeySpec);
+            case SNOVA:
+                return new JcaSnovaKeyPairGenerator(getFactory(), pKeySpec);
             case PICNIC:
-                return new JcaPICNICKeyPairGenerator(getFactory(), pKeySpec);
-            case RAINBOW:
-                return new JcaRainbowKeyPairGenerator(getFactory(), pKeySpec);
+                return new JcaPicnicKeyPairGenerator(getFactory(), pKeySpec);
             case XMSS:
                 return new JcaXMSSKeyPairGenerator(getFactory(), pKeySpec);
             case LMS:
@@ -233,6 +236,23 @@ public class JcaKeyPairFactory
         } catch (NoSuchAlgorithmException e) {
             /* Throw the exception */
             throw new GordianCryptoException("Failed to create KeyPairGenerator", e);
+        }
+    }
+
+    @Override
+    public boolean validAsymKeySpec(final GordianKeyPairSpec pKeySpec) {
+        /* Check standard features */
+        if (!super.validAsymKeySpec(pKeySpec)) {
+            return false;
+        }
+
+        /* Disallow MAYO and SNOVA */
+        switch (pKeySpec.getKeyPairType()) {
+            case MAYO:
+            case SNOVA:
+                return false;
+            default:
+                return true;
         }
     }
 }

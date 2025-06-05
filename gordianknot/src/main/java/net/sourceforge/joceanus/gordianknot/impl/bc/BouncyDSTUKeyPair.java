@@ -19,6 +19,7 @@ package net.sourceforge.joceanus.gordianknot.impl.bc;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
+import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignParams;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignatureSpec;
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyEllipticKeyPair.BouncyECPrivateKey;
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyEllipticKeyPair.BouncyECPublicKey;
@@ -90,11 +91,6 @@ public final class BouncyDSTUKeyPair {
     public static class BouncyDSTUKeyPairGenerator
             extends BouncyKeyPairGenerator {
         /**
-         * Curve.
-         */
-        private final String theCurve;
-
-        /**
          * Generator.
          */
         private final ECKeyPairGenerator theGenerator;
@@ -113,10 +109,9 @@ public final class BouncyDSTUKeyPair {
          * Constructor.
          * @param pFactory the Security Factory
          * @param pKeySpec the keySpec
-         * @throws GordianException on error
          */
         BouncyDSTUKeyPairGenerator(final BouncyFactory pFactory,
-                                   final GordianKeyPairSpec pKeySpec) throws GordianException {
+                                   final GordianKeyPairSpec pKeySpec) {
             /* Initialise underlying class */
             super(pFactory, pKeySpec);
 
@@ -124,9 +119,9 @@ public final class BouncyDSTUKeyPair {
             theGenerator = new DSTU4145KeyPairGenerator();
 
             /* Determine domain */
-            theCurve = pKeySpec.getElliptic().getCurveName();
-            theDomain = DSTU4145NamedCurves.getByOID(new ASN1ObjectIdentifier(theCurve));
-            theSpec = new ECNamedCurveSpec(theCurve,
+            final String myCurveName = pKeySpec.getElliptic().getCurveName();
+            theDomain = DSTU4145NamedCurves.getByOID(new ASN1ObjectIdentifier(myCurveName));
+            theSpec = new ECNamedCurveSpec(myCurveName,
                     theDomain.getCurve(),
                     theDomain.getG(),
                     theDomain.getN(),
@@ -335,10 +330,9 @@ public final class BouncyDSTUKeyPair {
          * Constructor.
          * @param pFactory the factory
          * @param pSpec the signatureSpec.
-         * @throws GordianException on error
          */
         BouncyDSTUSignature(final BouncyFactory pFactory,
-                            final GordianSignatureSpec pSpec) throws GordianException {
+                            final GordianSignatureSpec pSpec) {
             /* Initialise underlying class */
             super(pFactory, pSpec, newDigest());
 
@@ -348,25 +342,27 @@ public final class BouncyDSTUKeyPair {
         }
 
         @Override
-        public void initForSigning(final GordianKeyPair pKeyPair) throws GordianException {
+        public void initForSigning(final GordianSignParams pParams) throws GordianException {
             /* Initialise detail */
-            BouncyKeyPair.checkKeyPair(pKeyPair);
-            super.initForSigning(pKeyPair);
+            super.initForSigning(pParams);
+            final BouncyKeyPair myPair = getKeyPair();
+            BouncyKeyPair.checkKeyPair(myPair);
 
             /* Initialise and set the signer */
-            final BouncyECPrivateKey myPrivate = (BouncyECPrivateKey) getKeyPair().getPrivateKey();
+            final BouncyECPrivateKey myPrivate = (BouncyECPrivateKey) myPair.getPrivateKey();
             final ParametersWithRandom myParms = new ParametersWithRandom(myPrivate.getPrivateKey(), getRandom());
             theSigner.init(true, myParms);
         }
 
         @Override
-        public void initForVerify(final GordianKeyPair pKeyPair) throws GordianException {
+        public void initForVerify(final GordianSignParams pParams) throws GordianException {
             /* Initialise detail */
-            BouncyKeyPair.checkKeyPair(pKeyPair);
-            super.initForVerify(pKeyPair);
+            super.initForVerify(pParams);
+            final BouncyKeyPair myPair = getKeyPair();
+            BouncyKeyPair.checkKeyPair(myPair);
 
             /* Initialise and set the signer */
-            final BouncyECPublicKey myPublic = (BouncyECPublicKey) getKeyPair().getPublicKey();
+            final BouncyECPublicKey myPublic = (BouncyECPublicKey) myPair.getPublicKey();
             theSigner.init(false, myPublic.getPublicKey());
         }
 

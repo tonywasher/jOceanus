@@ -30,17 +30,14 @@ import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.bouncycastle.crypto.AsymmetricCipherKeyPair;
 import org.bouncycastle.crypto.CipherParameters;
-import org.bouncycastle.crypto.CryptoException;
 import org.bouncycastle.crypto.params.AsymmetricKeyParameter;
-import org.bouncycastle.crypto.params.ParametersWithContext;
 import org.bouncycastle.crypto.params.ParametersWithRandom;
-import org.bouncycastle.pqc.crypto.slhdsa.HashSLHDSASigner;
-import org.bouncycastle.pqc.crypto.slhdsa.SLHDSAKeyGenerationParameters;
-import org.bouncycastle.pqc.crypto.slhdsa.SLHDSAKeyPairGenerator;
-import org.bouncycastle.pqc.crypto.slhdsa.SLHDSAParameters;
-import org.bouncycastle.pqc.crypto.slhdsa.SLHDSAPrivateKeyParameters;
-import org.bouncycastle.pqc.crypto.slhdsa.SLHDSAPublicKeyParameters;
-import org.bouncycastle.pqc.crypto.slhdsa.SLHDSASigner;
+import org.bouncycastle.pqc.crypto.snova.SnovaKeyGenerationParameters;
+import org.bouncycastle.pqc.crypto.snova.SnovaKeyPairGenerator;
+import org.bouncycastle.pqc.crypto.snova.SnovaParameters;
+import org.bouncycastle.pqc.crypto.snova.SnovaPrivateKeyParameters;
+import org.bouncycastle.pqc.crypto.snova.SnovaPublicKeyParameters;
+import org.bouncycastle.pqc.crypto.snova.SnovaSigner;
 import org.bouncycastle.pqc.crypto.util.PrivateKeyFactory;
 import org.bouncycastle.pqc.crypto.util.PrivateKeyInfoFactory;
 import org.bouncycastle.pqc.crypto.util.PublicKeyFactory;
@@ -52,35 +49,35 @@ import java.security.spec.X509EncodedKeySpec;
 import java.util.Arrays;
 
 /**
- * SPHINCSPlus KeyPair classes.
+ * Snova KeyPair classes.
  */
-public final class BouncySLHDSAKeyPair {
+public final class BouncySnovaKeyPair {
     /**
      * Private constructor.
      */
-    private BouncySLHDSAKeyPair() {
+    private BouncySnovaKeyPair() {
     }
 
     /**
-     * Bouncy SLHDSA PublicKey.
+     * Bouncy Snova PublicKey.
      */
-    public static class BouncySLHDSAPublicKey
-            extends BouncyPublicKey<SLHDSAPublicKeyParameters> {
+    public static class BouncySnovaPublicKey
+            extends BouncyPublicKey<SnovaPublicKeyParameters> {
         /**
          * Constructor.
          * @param pKeySpec the keySpec
          * @param pPublicKey the public key
          */
-        BouncySLHDSAPublicKey(final GordianKeyPairSpec pKeySpec,
-                              final SLHDSAPublicKeyParameters pPublicKey) {
+        BouncySnovaPublicKey(final GordianKeyPairSpec pKeySpec,
+                             final SnovaPublicKeyParameters pPublicKey) {
             super(pKeySpec, pPublicKey);
         }
 
         @Override
         protected boolean matchKey(final AsymmetricKeyParameter pThat) {
             /* Access keys */
-            final SLHDSAPublicKeyParameters myThis = getPublicKey();
-            final SLHDSAPublicKeyParameters myThat = (SLHDSAPublicKeyParameters) pThat;
+            final SnovaPublicKeyParameters myThis = getPublicKey();
+            final SnovaPublicKeyParameters myThat = (SnovaPublicKeyParameters) pThat;
 
             /* Compare keys */
             return compareKeys(myThis, myThat);
@@ -92,25 +89,24 @@ public final class BouncySLHDSAKeyPair {
          * @param pSecond the second key
          * @return true/false
          */
-        private static boolean compareKeys(final SLHDSAPublicKeyParameters pFirst,
-                                           final SLHDSAPublicKeyParameters pSecond) {
-            return Arrays.equals(pFirst.getSeed(), pSecond.getSeed())
-                    && Arrays.equals(pFirst.getRoot(), pSecond.getRoot());
+        private static boolean compareKeys(final SnovaPublicKeyParameters pFirst,
+                                           final SnovaPublicKeyParameters pSecond) {
+            return Arrays.equals(pFirst.getEncoded(), pSecond.getEncoded());
         }
     }
 
     /**
-     * Bouncy SLHDSA PrivateKey.
+     * Bouncy Snova PrivateKey.
      */
-    public static class BouncySLHDSAPrivateKey
-            extends BouncyPrivateKey<SLHDSAPrivateKeyParameters> {
+    public static class BouncySnovaPrivateKey
+            extends BouncyPrivateKey<SnovaPrivateKeyParameters> {
         /**
          * Constructor.
          * @param pKeySpec the keySpec
          * @param pPrivateKey the private key
          */
-        BouncySLHDSAPrivateKey(final GordianKeyPairSpec pKeySpec,
-                               final SLHDSAPrivateKeyParameters pPrivateKey) {
+        BouncySnovaPrivateKey(final GordianKeyPairSpec pKeySpec,
+                              final SnovaPrivateKeyParameters pPrivateKey) {
             super(pKeySpec, pPrivateKey);
         }
 
@@ -118,8 +114,8 @@ public final class BouncySLHDSAKeyPair {
         @Override
         protected boolean matchKey(final AsymmetricKeyParameter pThat) {
             /* Access keys */
-            final SLHDSAPrivateKeyParameters myThis = getPrivateKey();
-            final SLHDSAPrivateKeyParameters myThat = (SLHDSAPrivateKeyParameters) pThat;
+            final SnovaPrivateKeyParameters myThis = getPrivateKey();
+            final SnovaPrivateKeyParameters myThat = (SnovaPrivateKeyParameters) pThat;
 
             /* Compare keys */
             return compareKeys(myThis, myThat);
@@ -131,39 +127,38 @@ public final class BouncySLHDSAKeyPair {
          * @param pSecond the second key
          * @return true/false
          */
-        private static boolean compareKeys(final SLHDSAPrivateKeyParameters pFirst,
-                                           final SLHDSAPrivateKeyParameters pSecond) {
-            return Arrays.equals(pFirst.getSeed(), pSecond.getSeed())
-                   && Arrays.equals(pFirst.getPrf(), pSecond.getPrf());
+        private static boolean compareKeys(final SnovaPrivateKeyParameters pFirst,
+                                           final SnovaPrivateKeyParameters pSecond) {
+            return Arrays.equals(pFirst.getEncoded(), pSecond.getEncoded());
         }
     }
 
     /**
-     * BouncyCastle SLHDSA KeyPair generator.
+     * BouncyCastle Snova KeyPair generator.
      */
-    public static class BouncySLHDSAKeyPairGenerator
+    public static class BouncySnovaKeyPairGenerator
             extends BouncyKeyPairGenerator {
         /**
          * Generator.
          */
-        private final SLHDSAKeyPairGenerator theGenerator;
+        private final SnovaKeyPairGenerator theGenerator;
 
         /**
          * Constructor.
          * @param pFactory the Security Factory
          * @param pKeySpec the keySpec
          */
-        BouncySLHDSAKeyPairGenerator(final BouncyFactory pFactory,
-                                     final GordianKeyPairSpec pKeySpec) {
+        BouncySnovaKeyPairGenerator(final BouncyFactory pFactory,
+                                    final GordianKeyPairSpec pKeySpec) {
             /* Initialise underlying class */
             super(pFactory, pKeySpec);
 
             /* Determine the parameters */
-            final SLHDSAParameters myParms = pKeySpec.getSLHDSAKeySpec().getParameters();
+            final SnovaParameters myParms = pKeySpec.getSnovaKeySpec().getParameters();
 
             /* Create and initialise the generator */
-            theGenerator = new SLHDSAKeyPairGenerator();
-            final SLHDSAKeyGenerationParameters myParams = new SLHDSAKeyGenerationParameters(getRandom(), myParms);
+            theGenerator = new SnovaKeyPairGenerator();
+            final SnovaKeyGenerationParameters myParams = new SnovaKeyGenerationParameters(getRandom(), myParms);
             theGenerator.init(myParams);
         }
 
@@ -171,8 +166,8 @@ public final class BouncySLHDSAKeyPair {
         public BouncyKeyPair generateKeyPair() {
             /* Generate and return the keyPair */
             final AsymmetricCipherKeyPair myPair = theGenerator.generateKeyPair();
-            final BouncySLHDSAPublicKey myPublic = new BouncySLHDSAPublicKey(getKeySpec(), (SLHDSAPublicKeyParameters) myPair.getPublic());
-            final BouncySLHDSAPrivateKey myPrivate = new BouncySLHDSAPrivateKey(getKeySpec(), (SLHDSAPrivateKeyParameters) myPair.getPrivate());
+            final BouncySnovaPublicKey myPublic = new BouncySnovaPublicKey(getKeySpec(), (SnovaPublicKeyParameters) myPair.getPublic());
+            final BouncySnovaPrivateKey myPrivate = new BouncySnovaPrivateKey(getKeySpec(), (SnovaPrivateKeyParameters) myPair.getPrivate());
             return new BouncyKeyPair(myPublic, myPrivate);
         }
 
@@ -184,8 +179,8 @@ public final class BouncySLHDSAKeyPair {
                 BouncyKeyPair.checkKeyPair(pKeyPair, getKeySpec());
 
                 /* build and return the encoding */
-                final BouncySLHDSAPrivateKey myPrivateKey = (BouncySLHDSAPrivateKey) getPrivateKey(pKeyPair);
-                final SLHDSAPrivateKeyParameters myParms = myPrivateKey.getPrivateKey();
+                final BouncySnovaPrivateKey myPrivateKey = (BouncySnovaPrivateKey) getPrivateKey(pKeyPair);
+                final SnovaPrivateKeyParameters myParms = myPrivateKey.getPrivateKey();
                 final PrivateKeyInfo myInfo = PrivateKeyInfoFactory.createPrivateKeyInfo(myParms, null);
                 return new PKCS8EncodedKeySpec(myInfo.getEncoded());
 
@@ -203,10 +198,10 @@ public final class BouncySLHDSAKeyPair {
                 checkKeySpec(pPrivateKey);
 
                 /* derive keyPair */
-                final BouncySLHDSAPublicKey myPublic = derivePublicKey(pPublicKey);
+                final BouncySnovaPublicKey myPublic = derivePublicKey(pPublicKey);
                 final PrivateKeyInfo myInfo = PrivateKeyInfo.getInstance(pPrivateKey.getEncoded());
-                final SLHDSAPrivateKeyParameters myParms = (SLHDSAPrivateKeyParameters) PrivateKeyFactory.createKey(myInfo);
-                final BouncySLHDSAPrivateKey myPrivate = new BouncySLHDSAPrivateKey(getKeySpec(), myParms);
+                final SnovaPrivateKeyParameters myParms = (SnovaPrivateKeyParameters) PrivateKeyFactory.createKey(myInfo);
+                final BouncySnovaPrivateKey myPrivate = new BouncySnovaPrivateKey(getKeySpec(), myParms);
                 final BouncyKeyPair myPair = new BouncyKeyPair(myPublic, myPrivate);
 
                 /* Check that we have a matching pair */
@@ -228,8 +223,8 @@ public final class BouncySLHDSAKeyPair {
                 BouncyKeyPair.checkKeyPair(pKeyPair, getKeySpec());
 
                 /* build and return the encoding */
-                final BouncySLHDSAPublicKey myPublicKey = (BouncySLHDSAPublicKey) getPublicKey(pKeyPair);
-                final SLHDSAPublicKeyParameters myParms = myPublicKey.getPublicKey();
+                final BouncySnovaPublicKey myPublicKey = (BouncySnovaPublicKey) getPublicKey(pKeyPair);
+                final SnovaPublicKeyParameters myParms = myPublicKey.getPublicKey();
                 final SubjectPublicKeyInfo myInfo = SubjectPublicKeyInfoFactory.createSubjectPublicKeyInfo(myParms);
                 return new X509EncodedKeySpec(myInfo.getEncoded());
 
@@ -240,7 +235,7 @@ public final class BouncySLHDSAKeyPair {
 
         @Override
         public BouncyKeyPair derivePublicOnlyKeyPair(final X509EncodedKeySpec pEncodedKey) throws GordianException {
-            final BouncySLHDSAPublicKey myPublic = derivePublicKey(pEncodedKey);
+            final BouncySnovaPublicKey myPublic = derivePublicKey(pEncodedKey);
             return new BouncyKeyPair(myPublic);
         }
 
@@ -250,7 +245,7 @@ public final class BouncySLHDSAKeyPair {
          * @return the public key
          * @throws GordianException on error
          */
-        private BouncySLHDSAPublicKey derivePublicKey(final X509EncodedKeySpec pEncodedKey) throws GordianException {
+        private BouncySnovaPublicKey derivePublicKey(final X509EncodedKeySpec pEncodedKey) throws GordianException {
             /* Protect against exceptions */
             try {
                 /* Check the keySpecs */
@@ -258,8 +253,8 @@ public final class BouncySLHDSAKeyPair {
 
                 /* derive publicKey */
                 final SubjectPublicKeyInfo myInfo = SubjectPublicKeyInfo.getInstance(pEncodedKey.getEncoded());
-                final SLHDSAPublicKeyParameters myParms = (SLHDSAPublicKeyParameters) PublicKeyFactory.createKey(myInfo);
-                return new BouncySLHDSAPublicKey(getKeySpec(), myParms);
+                final SnovaPublicKeyParameters myParms = (SnovaPublicKeyParameters) PublicKeyFactory.createKey(myInfo);
+                return new BouncySnovaPublicKey(getKeySpec(), myParms);
 
             } catch (IOException e) {
                 throw new GordianCryptoException(ERROR_PARSE, e);
@@ -268,24 +263,14 @@ public final class BouncySLHDSAKeyPair {
     }
 
     /**
-     * SLHDSA signer.
+     * Snova signer.
      */
-    public static class BouncySLHDSASignature
+    public static class BouncySnovaSignature
             extends BouncyDigestSignature {
         /**
-         * The SLHDSA Signer.
+         * The Snova Signer.
          */
-        private final SLHDSASigner theSigner;
-
-        /**
-         * The SLHDSAHash Signer.
-         */
-        private final HashSLHDSASigner theHashSigner;
-
-        /**
-         * Is this a hash signer?
-         */
-        private boolean isHash;
+        private final SnovaSigner theSigner;
 
         /**
          * Constructor.
@@ -293,12 +278,11 @@ public final class BouncySLHDSAKeyPair {
          * @param pSpec the signatureSpec.
          * @throws GordianException on error
          */
-        BouncySLHDSASignature(final BouncyFactory pFactory,
-                              final GordianSignatureSpec pSpec) throws GordianException {
+        BouncySnovaSignature(final BouncyFactory pFactory,
+                             final GordianSignatureSpec pSpec) throws GordianException {
             /* Initialise underlying class */
             super(pFactory, pSpec);
-            theSigner = new SLHDSASigner();
-            theHashSigner = new HashSLHDSASigner();
+            theSigner = new SnovaSigner();
         }
 
         @Override
@@ -306,23 +290,12 @@ public final class BouncySLHDSAKeyPair {
             /* Initialise detail */
             super.initForSigning(pParams);
             final BouncyKeyPair myPair = getKeyPair();
-            final byte[] myContext = getContext();
             BouncyKeyPair.checkKeyPair(myPair);
 
-            /* Determine whether this is a hashSigner */
-            isHash = myPair.getKeyPairSpec().getSLHDSAKeySpec().isHash();
-
             /* Initialise and set the signer */
-            final BouncySLHDSAPrivateKey myPrivate = (BouncySLHDSAPrivateKey) myPair.getPrivateKey();
-            CipherParameters myParms = new ParametersWithRandom(myPrivate.getPrivateKey(), getRandom());
-            if (myContext != null) {
-                myParms = new ParametersWithContext(myParms, myContext);
-            }
-            if (isHash) {
-                theHashSigner.init(true, myParms);
-            } else {
-                theSigner.init(true, myParms);
-            }
+            final BouncySnovaPrivateKey myPrivate = (BouncySnovaPrivateKey) myPair.getPrivateKey();
+            final CipherParameters myParms = new ParametersWithRandom(myPrivate.getPrivateKey(), getRandom());
+            theSigner.init(true, myParms);
         }
 
         @Override
@@ -330,61 +303,11 @@ public final class BouncySLHDSAKeyPair {
             /* Initialise detail */
             super.initForVerify(pParams);
             final BouncyKeyPair myPair = getKeyPair();
-            final byte[] myContext = getContext();
             BouncyKeyPair.checkKeyPair(myPair);
 
-            /* Determine whether this is a hashSigner */
-            isHash = myPair.getKeyPairSpec().getSLHDSAKeySpec().isHash();
-
             /* Initialise and set the signer */
-            final BouncySLHDSAPublicKey myPublic = (BouncySLHDSAPublicKey) myPair.getPublicKey();
-            CipherParameters myParms = myPublic.getPublicKey();
-            if (myContext != null) {
-                myParms = new ParametersWithContext(myParms, myContext);
-            }
-            if (isHash) {
-                theHashSigner.init(false, myParms);
-            } else {
-                theSigner.init(false, myParms);
-            }
-        }
-
-        @Override
-        public void update(final byte[] pBytes,
-                           final int pOffset,
-                           final int pLength) {
-            if (isHash) {
-                theHashSigner.update(pBytes, pOffset, pLength);
-            } else {
-                super.update(pBytes, pOffset, pLength);
-            }
-        }
-
-        @Override
-        public void update(final byte pByte) {
-            if (isHash) {
-                theHashSigner.update(pByte);
-            } else {
-                super.update(pByte);
-            }
-        }
-
-        @Override
-        public void update(final byte[] pBytes) {
-            if (isHash) {
-                theHashSigner.update(pBytes, 0, pBytes.length);
-            } else {
-                super.update(pBytes);
-            }
-        }
-
-        @Override
-        public void reset() {
-            if (isHash) {
-                theHashSigner.reset();
-            } else {
-                super.reset();
-            }
+            final BouncySnovaPublicKey myPublic = (BouncySnovaPublicKey) myPair.getPublicKey();
+            theSigner.init(false, myPublic.getPublicKey());
         }
 
         @Override
@@ -393,14 +316,8 @@ public final class BouncySLHDSAKeyPair {
             checkMode(GordianSignatureMode.SIGN);
 
             /* Sign the message */
-            try {
-                return isHash
-                        ? theHashSigner.generateSignature()
-                        : theSigner.generateSignature(getDigest());
-            } catch (CryptoException e) {
-                throw new GordianCryptoException("Failed to sign message", e);
-            }
-         }
+            return theSigner.generateSignature(getDigest());
+        }
 
         @Override
         public boolean verify(final byte[] pSignature) throws GordianException {
@@ -408,9 +325,7 @@ public final class BouncySLHDSAKeyPair {
             checkMode(GordianSignatureMode.VERIFY);
 
             /* Verify the message */
-            return isHash
-                    ? theHashSigner.verifySignature(pSignature)
-                    : theSigner.verifySignature(getDigest(), pSignature);
+            return theSigner.verifySignature(getDigest(), pSignature);
         }
     }
 }

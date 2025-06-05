@@ -31,6 +31,7 @@ import net.sourceforge.joceanus.gordianknot.api.keystore.GordianKeyStoreEntry.Go
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMac;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacFactory;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacSpec;
+import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignParams;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignature;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignatureSpec;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianASN1Util;
@@ -266,7 +267,7 @@ public class GordianCRMBuilder {
         /* Protect against exceptions */
         try {
             /* Create the signature */
-            pSigner.initForSigning(pKeyPair);
+            pSigner.initForSigning(GordianSignParams.keyPair(pKeyPair));
             pSigner.update(pCertRequest.getEncoded());
             final byte[] mySignature = pSigner.sign();
 

@@ -19,6 +19,7 @@ package net.sourceforge.joceanus.gordianknot.impl.core.sign;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianKeyPairFactory;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
+import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignParams;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignature;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignatureFactory;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignatureSpec;
@@ -52,6 +53,11 @@ public abstract class GordianCoreSignature
      * The KeyPair.
      */
     private GordianKeyPair theKeyPair;
+
+    /**
+     * The Context.
+     */
+    private byte[] theContext;
 
     /**
      * Constructor.
@@ -102,6 +108,14 @@ public abstract class GordianCoreSignature
     }
 
     /**
+     * Obtain the context.
+     * @return the context
+     */
+    protected byte[] getContext() {
+        return theContext;
+    }
+
+    /**
      * Check that the KeyPair is the correct type.
      * @param pKeyPair the keyPair
      * @throws GordianException on error
@@ -114,29 +128,43 @@ public abstract class GordianCoreSignature
         }
     }
 
-    @Override
-    public void initForSigning(final GordianKeyPair pKeyPair) throws GordianException {
-        /* Check that the keyPair matches */
-        checkKeyPair(pKeyPair);
-
-        /* Check that we have the private key */
-        if (pKeyPair.isPublicOnly()) {
-            throw new GordianDataException("Missing privateKey");
+    /**
+     * Check that the Context is supported.
+     * @param pContext the context
+     * @throws GordianException on error
+     */
+    private void checkContext(final byte[] pContext) throws GordianException {
+        if (pContext != null && !theSpec.supportsContext()) {
+            throw new GordianDataException("Unsupported context");
         }
-
-        /* Store details */
-        theMode = GordianSignatureMode.SIGN;
-        theKeyPair = pKeyPair;
     }
 
     @Override
-    public void initForVerify(final GordianKeyPair pKeyPair) throws GordianException {
-        /* Check that the keyPair matches */
-        checkKeyPair(pKeyPair);
+    public void initForSigning(final GordianSignParams pParams) throws GordianException {
+        /* Store details */
+        theMode = GordianSignatureMode.SIGN;
+        theKeyPair = pParams.getKeyPair();
+        theContext = pParams.getContext();
 
+        /* Check that the keyPair matches and that any context is supported */
+        checkKeyPair(theKeyPair);
+        checkContext(theContext);
+
+        /* Check that we have the private key */
+        if (theKeyPair.isPublicOnly()) {
+            throw new GordianDataException("Missing privateKey");
+        }
+    }
+
+    @Override
+    public void initForVerify(final GordianSignParams pParams) throws GordianException {
         /* Store details */
         theMode = GordianSignatureMode.VERIFY;
-        theKeyPair = pKeyPair;
+        theKeyPair = pParams.getKeyPair();
+        theContext = pParams.getContext();
+
+        /* Check that the keyPair matches */
+        checkKeyPair(theKeyPair);
     }
 
     /**

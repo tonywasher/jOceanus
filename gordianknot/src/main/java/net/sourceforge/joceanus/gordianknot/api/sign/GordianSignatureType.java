@@ -144,7 +144,8 @@ public enum GordianSignatureType {
             case MLDSA:
             case FALCON:
             case PICNIC:
-            case RAINBOW:
+            case MAYO:
+            case SNOVA:
             case XMSS:
             case LMS:
             case COMPOSITE:

@@ -264,6 +264,11 @@ public enum GordianCipherResource
     STREAMKEY_PHOTONBEETLE(GordianDigestResource.DIGEST_PHOTONBEETLE),
 
     /**
+     * StreamKey Romulus.
+     */
+    STREAMKEY_ROMULUS(GordianDigestResource.DIGEST_ROMULUS),
+
+    /**
      * StreamKey Sparkle.
      */
     STREAMKEY_SPARKLE(GordianDigestResource.DIGEST_SPARKLE),
@@ -410,6 +415,7 @@ public enum GordianCipherResource
         myMap.put(GordianStreamKeyType.ELEPHANT, STREAMKEY_ELEPHANT);
         myMap.put(GordianStreamKeyType.ISAP, STREAMKEY_ISAP);
         myMap.put(GordianStreamKeyType.PHOTONBEETLE, STREAMKEY_PHOTONBEETLE);
+        myMap.put(GordianStreamKeyType.ROMULUS, STREAMKEY_ROMULUS);
         myMap.put(GordianStreamKeyType.SPARKLE, STREAMKEY_SPARKLE);
         myMap.put(GordianStreamKeyType.XOODYAK, STREAMKEY_XOODYAK);
         return myMap;

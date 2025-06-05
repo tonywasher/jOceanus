@@ -54,12 +54,13 @@ import org.bouncycastle.pqc.jcajce.spec.FrodoParameterSpec;
 import org.bouncycastle.pqc.jcajce.spec.HQCParameterSpec;
 import org.bouncycastle.pqc.jcajce.spec.LMSHSSKeyGenParameterSpec;
 import org.bouncycastle.pqc.jcajce.spec.LMSKeyGenParameterSpec;
+import org.bouncycastle.pqc.jcajce.spec.MayoParameterSpec;
 import org.bouncycastle.pqc.jcajce.spec.NTRULPRimeParameterSpec;
 import org.bouncycastle.pqc.jcajce.spec.NTRUParameterSpec;
 import org.bouncycastle.pqc.jcajce.spec.PicnicParameterSpec;
-import org.bouncycastle.pqc.jcajce.spec.RainbowParameterSpec;
 import org.bouncycastle.pqc.jcajce.spec.SABERParameterSpec;
 import org.bouncycastle.pqc.jcajce.spec.SNTRUPrimeParameterSpec;
+import org.bouncycastle.pqc.jcajce.spec.SnovaParameterSpec;
 import org.bouncycastle.pqc.jcajce.spec.XMSSMTParameterSpec;
 import org.bouncycastle.pqc.jcajce.spec.XMSSParameterSpec;
 
@@ -955,7 +956,7 @@ public abstract class JcaKeyPairGenerator
     /**
      * Jca Falcon KeyPair generator.
      */
-    public static class JcaFALCONKeyPairGenerator
+    public static class JcaFalconKeyPairGenerator
             extends JcaKeyPairGenerator {
         /**
          * FALCON algorithm.
@@ -973,7 +974,7 @@ public abstract class JcaKeyPairGenerator
          * @param pKeySpec the keySpec
          * @throws GordianException on error
          */
-        JcaFALCONKeyPairGenerator(final JcaFactory pFactory,
+        JcaFalconKeyPairGenerator(final JcaFactory pFactory,
                                   final GordianKeyPairSpec pKeySpec) throws GordianException {
             /* Initialise underlying class */
             super(pFactory, pKeySpec);
@@ -1004,14 +1005,14 @@ public abstract class JcaKeyPairGenerator
     }
 
     /**
-     * Jca Rainbow KeyPair generator.
+     * Jca Mayo KeyPair generator.
      */
-    public static class JcaRainbowKeyPairGenerator
+    public static class JcaMayoKeyPairGenerator
             extends JcaKeyPairGenerator {
         /**
-         * Rainbow algorithm.
+         * Mayo algorithm.
          */
-        private static final String RAINBOW_ALGO = "RAINBOW";
+        private static final String MAYO_ALGO = "MAYO";
 
         /**
          * Generator.
@@ -1024,23 +1025,74 @@ public abstract class JcaKeyPairGenerator
          * @param pKeySpec the keySpec
          * @throws GordianException on error
          */
-        JcaRainbowKeyPairGenerator(final JcaFactory pFactory,
-                                   final GordianKeyPairSpec pKeySpec) throws GordianException {
+        JcaMayoKeyPairGenerator(final JcaFactory pFactory,
+                                final GordianKeyPairSpec pKeySpec) throws GordianException {
             /* Initialise underlying class */
             super(pFactory, pKeySpec);
 
             /* Protect against exceptions */
             try {
                 /* Create and initialise the generator */
-                theGenerator = JcaKeyPairFactory.getJavaKeyPairGenerator(RAINBOW_ALGO, true);
-                final RainbowParameterSpec myParms = pKeySpec.getRainbowKeySpec().getParameterSpec();
+                theGenerator = JcaKeyPairFactory.getJavaKeyPairGenerator(MAYO_ALGO, true);
+                final MayoParameterSpec myParms = pKeySpec.getMayoKeySpec().getParameterSpec();
                 theGenerator.initialize(myParms, getRandom());
 
                 /* Create the factory */
-                setKeyFactory(JcaKeyPairFactory.getJavaKeyFactory(RAINBOW_ALGO, true));
+                setKeyFactory(JcaKeyPairFactory.getJavaKeyFactory(MAYO_ALGO, true));
 
             } catch (InvalidAlgorithmParameterException e) {
-                throw new GordianCryptoException("Failed to create Rainbowgenerator", e);
+                throw new GordianCryptoException("Failed to create MayoGenerator", e);
+            }
+        }
+
+        @Override
+        public JcaKeyPair generateKeyPair() {
+            /* Generate and return the keyPair */
+            final KeyPair myPair = theGenerator.generateKeyPair();
+            final JcaPublicKey myPublic = createPublic(myPair.getPublic());
+            final JcaPrivateKey myPrivate = createPrivate(myPair.getPrivate());
+            return new JcaKeyPair(myPublic, myPrivate);
+        }
+    }
+
+    /**
+     * Jca Snova KeyPair generator.
+     */
+    public static class JcaSnovaKeyPairGenerator
+            extends JcaKeyPairGenerator {
+        /**
+         * Snova algorithm.
+         */
+        private static final String SNOVA_ALGO = "SNOVA";
+
+        /**
+         * Generator.
+         */
+        private final KeyPairGenerator theGenerator;
+
+        /**
+         * Constructor.
+         * @param pFactory the Security Factory
+         * @param pKeySpec the keySpec
+         * @throws GordianException on error
+         */
+        JcaSnovaKeyPairGenerator(final JcaFactory pFactory,
+                                 final GordianKeyPairSpec pKeySpec) throws GordianException {
+            /* Initialise underlying class */
+            super(pFactory, pKeySpec);
+
+            /* Protect against exceptions */
+            try {
+                /* Create and initialise the generator */
+                theGenerator = JcaKeyPairFactory.getJavaKeyPairGenerator(SNOVA_ALGO, true);
+                final SnovaParameterSpec myParms = pKeySpec.getSnovaKeySpec().getParameterSpec();
+                theGenerator.initialize(myParms, getRandom());
+
+                /* Create the factory */
+                setKeyFactory(JcaKeyPairFactory.getJavaKeyFactory(SNOVA_ALGO, true));
+
+            } catch (InvalidAlgorithmParameterException e) {
+                throw new GordianCryptoException("Failed to create SnovaGenerator", e);
             }
         }
 
@@ -1159,7 +1211,7 @@ public abstract class JcaKeyPairGenerator
     /**
      * Jca Picnic KeyPair generator.
      */
-    public static class JcaPICNICKeyPairGenerator
+    public static class JcaPicnicKeyPairGenerator
             extends JcaKeyPairGenerator {
         /**
          * Picnic algorithm.
@@ -1177,7 +1229,7 @@ public abstract class JcaKeyPairGenerator
          * @param pKeySpec the keySpec
          * @throws GordianException on error
          */
-        JcaPICNICKeyPairGenerator(final JcaFactory pFactory,
+        JcaPicnicKeyPairGenerator(final JcaFactory pFactory,
                                   final GordianKeyPairSpec pKeySpec) throws GordianException {
             /* Initialise underlying class */
             super(pFactory, pKeySpec);

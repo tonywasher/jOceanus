@@ -19,6 +19,7 @@ package net.sourceforge.joceanus.gordianknot.impl.core.sign;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
+import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignParams;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignature;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignatureFactory;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignatureSpec;
@@ -84,30 +85,30 @@ public class GordianCompositeSigner
     }
 
     @Override
-    public void initForSigning(final GordianKeyPair pKeyPair) throws GordianException {
+    public void initForSigning(final GordianSignParams pParams) throws GordianException {
         /* Check the keyPairSet */
-        checkKeySpec(pKeyPair);
+        final GordianCompositeKeyPair myCompositePair = (GordianCompositeKeyPair) pParams.getKeyPair();
+        checkKeySpec(myCompositePair);
 
         /* Initialise the signers */
-        final GordianCompositeKeyPair myCompositePair = (GordianCompositeKeyPair) pKeyPair;
         final Iterator<GordianKeyPair> myIterator = myCompositePair.iterator();
         for (GordianSignature mySigner : theSigners) {
             final GordianKeyPair myPair = myIterator.next();
-            mySigner.initForSigning(myPair);
+            mySigner.initForSigning(GordianSignParams.keyPair(myPair));
         }
     }
 
     @Override
-    public void initForVerify(final GordianKeyPair pKeyPair) throws GordianException {
+    public void initForVerify(final GordianSignParams pParams) throws GordianException {
         /* Check the keyPairSet */
-        checkKeySpec(pKeyPair);
+        final GordianCompositeKeyPair myCompositePair = (GordianCompositeKeyPair) pParams.getKeyPair();
+        checkKeySpec(myCompositePair);
 
         /* Initialise the signers */
-        final GordianCompositeKeyPair myCompositePair = (GordianCompositeKeyPair) pKeyPair;
         final Iterator<GordianKeyPair> myIterator = myCompositePair.iterator();
         for (GordianSignature mySigner : theSigners) {
             final GordianKeyPair myPair = myIterator.next();
-            mySigner.initForVerify(myPair);
+            mySigner.initForVerify(GordianSignParams.keyPair(myPair));
         }
     }
 
