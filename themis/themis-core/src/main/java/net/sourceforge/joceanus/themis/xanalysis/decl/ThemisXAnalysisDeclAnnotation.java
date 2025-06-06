@@ -17,20 +17,82 @@
 package net.sourceforge.joceanus.themis.xanalysis.decl;
 
 import com.github.javaparser.ast.body.AnnotationDeclaration;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisClassInstance;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
+import net.sourceforge.joceanus.themis.xanalysis.node.ThemisXAnalysisNodeSimpleName;
+
+import java.util.List;
 
 /**
  * Annotation Declaration.
  */
 public class ThemisXAnalysisDeclAnnotation
-        extends ThemisXAnalysisBaseDeclaration<AnnotationDeclaration> {
+        extends ThemisXAnalysisBaseDeclaration<AnnotationDeclaration>
+        implements ThemisXAnalysisClassInstance {
+    /**
+     * The Name.
+     */
+    private final String theName;
+
+    /**
+     * The fullName.
+     */
+    private final String theFullName;
+
+    /**
+     * The modifiers.
+     */
+    private final List<ThemisXAnalysisNodeInstance> theModifiers;
+
+    /**
+     * The body.
+     */
+    private final List<ThemisXAnalysisDeclarationInstance> theBody;
+
+    /**
+     * The annotations.
+     */
+    private final List<ThemisXAnalysisExpressionInstance> theAnnotations;
+
     /**
      * Constructor.
      * @param pParser the parser
      * @param pDeclaration the declaration
+     * @throws OceanusException on error
      */
     ThemisXAnalysisDeclAnnotation(final ThemisXAnalysisParser pParser,
-                                  final AnnotationDeclaration pDeclaration) {
-        super(pDeclaration);
+                                  final AnnotationDeclaration pDeclaration) throws OceanusException {
+        super(pParser, pDeclaration);
+        theName = ((ThemisXAnalysisNodeSimpleName) pParser.parseNode(pDeclaration.getName())).getName();
+        theFullName = pDeclaration.getFullyQualifiedName().orElse(null);
+        theModifiers = pParser.parseNodeList(pDeclaration.getModifiers());
+        theBody = pParser.parseDeclarationList(pDeclaration.getMembers());
+        theAnnotations = pParser.parseExprList(pDeclaration.getAnnotations());
     }
- }
+
+    @Override
+    public String getName() {
+        return theName;
+    }
+
+    @Override
+    public String getFullName() {
+        return theFullName;
+    }
+
+    @Override
+    public List<ThemisXAnalysisNodeInstance> getModifiers() {
+        return theModifiers;
+    }
+
+    @Override
+    public List<ThemisXAnalysisDeclarationInstance> getBody() {
+        return theBody;
+    }
+
+    @Override
+    public List<ThemisXAnalysisExpressionInstance> getAnnotations() {
+        return theAnnotations;
+    }
+}

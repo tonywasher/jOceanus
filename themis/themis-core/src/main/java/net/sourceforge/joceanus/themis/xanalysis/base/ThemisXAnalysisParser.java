@@ -21,16 +21,19 @@ import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.PackageDeclaration;
 import com.github.javaparser.ast.body.BodyDeclaration;
 import com.github.javaparser.ast.expr.Expression;
+import com.github.javaparser.ast.modules.ModuleDirective;
 import com.github.javaparser.ast.stmt.Statement;
 import com.github.javaparser.ast.type.Type;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisDeclarationInstance;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisExpressionInstance;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisModuleInstance;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisNodeInstance;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisStatementInstance;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisTypeInstance;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -54,6 +57,14 @@ public interface ThemisXAnalysisParser {
     void checkPackage(PackageDeclaration pPackage) throws OceanusException;
 
     /**
+     * Register Instance.
+     * @param pInstance the instance
+     * @return the parent node
+     * @throws OceanusException on error
+     */
+    ThemisXAnalysisInstance registerInstance(ThemisXAnalysisInstance pInstance) throws OceanusException;
+
+    /**
      * Parse a declaration.
      * @param pDecl the declaration
      * @return the parsed declaration
@@ -68,6 +79,12 @@ public interface ThemisXAnalysisParser {
      * @throws OceanusException on error
      */
     default List<ThemisXAnalysisDeclarationInstance> parseDeclarationList(final NodeList<? extends BodyDeclaration<?>> pDeclList) throws OceanusException {
+        /* Handle null list */
+        if (pDeclList == null) {
+            return Collections.emptyList();
+        }
+
+        /* Create list of declarations */
         final List<ThemisXAnalysisDeclarationInstance> myList = new ArrayList<>();
         for (BodyDeclaration<?> myDecl : pDeclList) {
             final ThemisXAnalysisDeclarationInstance myParsed = parseDeclaration(myDecl);
@@ -86,14 +103,20 @@ public interface ThemisXAnalysisParser {
 
     /**
      * parse a list of nodes.
-     * @param pMiscList the list of Nodes
+     * @param pNodeList the list of Nodes
      * @return the list of parsed nodes
      * @throws OceanusException on error
      */
-    default List<ThemisXAnalysisNodeInstance> parseNodeList(final NodeList<? extends Node> pMiscList) throws OceanusException {
+    default List<ThemisXAnalysisNodeInstance> parseNodeList(final NodeList<? extends Node> pNodeList) throws OceanusException {
+        /* Handle null list */
+        if (pNodeList == null) {
+            return Collections.emptyList();
+        }
+
+        /* Create list of nodes */
         final List<ThemisXAnalysisNodeInstance> myList = new ArrayList<>();
-        for (Node myMisc : pMiscList) {
-            final ThemisXAnalysisNodeInstance myParsed = parseNode(myMisc);
+        for (Node myNode : pNodeList) {
+            final ThemisXAnalysisNodeInstance myParsed = parseNode(myNode);
             myList.add(myParsed);
         }
         return myList;
@@ -116,8 +139,10 @@ public interface ThemisXAnalysisParser {
     default List<ThemisXAnalysisTypeInstance> parseTypeList(final NodeList<? extends Type> pTypeList) throws OceanusException {
         /* Handle null list */
         if (pTypeList == null) {
-            return null;
+            return Collections.emptyList();
         }
+
+        /* Create list of nodes */
         final List<ThemisXAnalysisTypeInstance> myList = new ArrayList<>();
         for (Type myType : pTypeList) {
             final ThemisXAnalysisTypeInstance myParsed = parseType(myType);
@@ -141,6 +166,12 @@ public interface ThemisXAnalysisParser {
      * @throws OceanusException on error
      */
     default List<ThemisXAnalysisStatementInstance> parseStatementList(final NodeList<? extends Statement> pStatementList) throws OceanusException {
+        /* Handle null list */
+        if (pStatementList == null) {
+            return Collections.emptyList();
+        }
+
+        /* Create list of statements */
         final List<ThemisXAnalysisStatementInstance> myList = new ArrayList<>();
         for (Statement myStatement : pStatementList) {
             final ThemisXAnalysisStatementInstance myParsed = parseStatement(myStatement);
@@ -164,9 +195,44 @@ public interface ThemisXAnalysisParser {
      * @throws OceanusException on error
      */
     default List<ThemisXAnalysisExpressionInstance> parseExprList(final NodeList<? extends Expression> pExprList) throws OceanusException {
+        /* Handle null list */
+        if (pExprList == null) {
+            return Collections.emptyList();
+        }
+
+        /* Create list of expressions */
         final List<ThemisXAnalysisExpressionInstance> myList = new ArrayList<>();
         for (Expression myExpr : pExprList) {
             final ThemisXAnalysisExpressionInstance myParsed = parseExpression(myExpr);
+            myList.add(myParsed);
+        }
+        return myList;
+    }
+
+    /**
+     * Parse a module.
+     * @param pDeclaration the module declaration/directive
+     * @return the parsed declaration/directive
+     * @throws OceanusException on error
+     */
+    ThemisXAnalysisModuleInstance parseModule(Node pDeclaration) throws OceanusException;
+
+    /**
+     * parse a list of module directives.
+     * @param pDirList the list of Directives
+     * @return the list of parsed directives
+     * @throws OceanusException on error
+     */
+    default List<ThemisXAnalysisModuleInstance> parseModuleList(final NodeList<? extends ModuleDirective> pDirList) throws OceanusException {
+        /* Handle null list */
+        if (pDirList == null) {
+            return Collections.emptyList();
+        }
+
+        /* Create list of directives */
+        final List<ThemisXAnalysisModuleInstance> myList = new ArrayList<>();
+        for (ModuleDirective myDir : pDirList) {
+            final ThemisXAnalysisModuleInstance myParsed = parseModule(myDir);
             myList.add(myParsed);
         }
         return myList;

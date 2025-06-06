@@ -18,7 +18,9 @@ package net.sourceforge.joceanus.themis.xanalysis.decl;
 
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisClassInstance;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
+import net.sourceforge.joceanus.themis.xanalysis.node.ThemisXAnalysisNodeSimpleName;
 
 import java.util.List;
 
@@ -26,11 +28,12 @@ import java.util.List;
  * Interface Declaration.
  */
 public class ThemisXAnalysisDeclInterface
-        extends ThemisXAnalysisBaseDeclaration<ClassOrInterfaceDeclaration> {
+        extends ThemisXAnalysisBaseDeclaration<ClassOrInterfaceDeclaration>
+        implements ThemisXAnalysisClassInstance {
     /**
-     * The shortName.
+     * The Name.
      */
-    private final ThemisXAnalysisNodeInstance theShortName;
+    private final String theName;
 
     /**
      * The fullName.
@@ -43,9 +46,9 @@ public class ThemisXAnalysisDeclInterface
     private final List<ThemisXAnalysisNodeInstance> theModifiers;
 
     /**
-     * The members.
+     * The body.
      */
-    private final List<ThemisXAnalysisDeclarationInstance> theMembers;
+    private final List<ThemisXAnalysisDeclarationInstance> theBody;
 
     /**
      * The extends.
@@ -53,9 +56,19 @@ public class ThemisXAnalysisDeclInterface
     private final List<ThemisXAnalysisTypeInstance> theExtends;
 
     /**
+     * The implements.
+     */
+    private final List<ThemisXAnalysisTypeInstance> theImplements;
+
+    /**
      * The typeParameters.
      */
     private final List<ThemisXAnalysisTypeInstance> theTypeParameters;
+
+    /**
+     * The annotations.
+     */
+    private final List<ThemisXAnalysisExpressionInstance> theAnnotations;
 
     /**
      * Constructor.
@@ -66,60 +79,54 @@ public class ThemisXAnalysisDeclInterface
     ThemisXAnalysisDeclInterface(final ThemisXAnalysisParser pParser,
                                  final ClassOrInterfaceDeclaration pDeclaration) throws OceanusException {
         /* Store values */
-        super(pDeclaration);
-        theShortName = pParser.parseNode(pDeclaration.getName());
+        super(pParser, pDeclaration);
+        theName = ((ThemisXAnalysisNodeSimpleName) pParser.parseNode(pDeclaration.getName())).getName();
         theFullName = pDeclaration.getFullyQualifiedName().orElse(null);
         theModifiers = pParser.parseNodeList(pDeclaration.getModifiers());
         theExtends = pParser.parseTypeList(pDeclaration.getExtendedTypes());
+        theImplements = pParser.parseTypeList(pDeclaration.getImplementedTypes());
         theTypeParameters = pParser.parseTypeList(pDeclaration.getTypeParameters());
-        theMembers = pParser.parseDeclarationList(pDeclaration.getMembers());
+        theBody = pParser.parseDeclarationList(pDeclaration.getMembers());
+        theAnnotations = pParser.parseExprList(pDeclaration.getAnnotations());
     }
 
-    /**
-     * Obtain the short name.
-     * @return the short name
-     */
-    public ThemisXAnalysisNodeInstance getShortName() {
-        return theShortName;
+    @Override
+    public String getName() {
+        return theName;
     }
 
-    /**
-     * Obtain the fullName.
-     * @return the fullName
-     */
+    @Override
     public String getFullName() {
         return theFullName;
     }
 
-    /**
-     * Obtain the modifiers.
-     * @return the modifiers
-     */
+    @Override
     public List<ThemisXAnalysisNodeInstance> getModifiers() {
         return theModifiers;
     }
 
-    /**
-     * Obtain the members.
-     * @return the members
-     */
-    public List<ThemisXAnalysisDeclarationInstance> getMembers() {
-        return theMembers;
+    @Override
+    public List<ThemisXAnalysisDeclarationInstance> getBody() {
+        return theBody;
     }
 
-    /**
-     * Obtain the extends types.
-     * @return the extends
-     */
+    @Override
     public List<ThemisXAnalysisTypeInstance> getExtends() {
         return theExtends;
     }
 
-    /**
-     * Obtain the type parameters.
-     * @return the parameters
-     */
+    @Override
+    public List<ThemisXAnalysisTypeInstance> getImplements() {
+        return theImplements;
+    }
+
+    @Override
     public List<ThemisXAnalysisTypeInstance> getTypeParameters() {
         return theTypeParameters;
+    }
+
+    @Override
+    public List<ThemisXAnalysisExpressionInstance> getAnnotations() {
+        return theAnnotations;
     }
 }

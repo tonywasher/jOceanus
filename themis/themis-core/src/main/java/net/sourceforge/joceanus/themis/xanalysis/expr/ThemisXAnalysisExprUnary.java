@@ -44,7 +44,7 @@ public class ThemisXAnalysisExprUnary
      */
     ThemisXAnalysisExprUnary(final ThemisXAnalysisParser pParser,
                              final UnaryExpr pExpression) throws OceanusException {
-        super(pExpression);
+        super(pParser, pExpression);
         theTarget = pParser.parseExpression(pExpression.getExpression());
         theOperator = pExpression.getOperator();
     }

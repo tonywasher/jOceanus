@@ -38,7 +38,7 @@ public class ThemisXAnalysisStmtThrow
      */
     ThemisXAnalysisStmtThrow(final ThemisXAnalysisParser pParser,
                              final ThrowStmt pStatement) throws OceanusException {
-        super(pStatement);
+        super(pParser, pStatement);
         theThrown = pParser.parseExpression(pStatement.getExpression());
     }
 

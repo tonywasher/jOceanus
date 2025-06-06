@@ -14,10 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.themis.xanalysis;
+package net.sourceforge.joceanus.themis.xanalysis.proj;
 
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisNodeInstance;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisClassInstance;
+import net.sourceforge.joceanus.themis.xanalysis.node.ThemisXAnalysisNodeCompilationUnit;
 import net.sourceforge.joceanus.themis.xanalysis.parser.ThemisXAnalysisCodeParser;
 
 import java.io.File;
@@ -26,6 +27,11 @@ import java.io.File;
  * Analysis representation of a java file.
  */
 public class ThemisXAnalysisFile {
+    /**
+     * The java suffix.
+     */
+    public static final String SFX_JAVA = ".java";
+
     /**
      * The location of the file.
      */
@@ -37,32 +43,26 @@ public class ThemisXAnalysisFile {
     private final String theName;
 
     /**
-     * The package file.
+     * The package name.
      */
-    private final ThemisXAnalysisPackage thePackage;
-
-    /**
-     * The dataMap.
-     */
-    private final ThemisXAnalysisDataMap theDataMap;
+    private final String thePackage;
 
     /**
      * The contents.
      */
-    private ThemisXAnalysisNodeInstance theContents;
+    private ThemisXAnalysisNodeCompilationUnit theContents;
 
     /**
      * Constructor.
      * @param pPackage the package
      * @param pFile the file to analyse
      */
-    ThemisXAnalysisFile(final ThemisXAnalysisPackage pPackage,
+    ThemisXAnalysisFile(final String pPackage,
                         final File pFile) {
         /* Store the parameters */
         thePackage = pPackage;
         theLocation = pFile;
-        theName = pFile.getName().replace(ThemisXAnalysisPackage.SFX_JAVA, "");
-        theDataMap = new ThemisXAnalysisDataMap(thePackage.getDataMap());
+        theName = pFile.getName().replace(SFX_JAVA, "");
     }
 
     /**
@@ -85,7 +85,7 @@ public class ThemisXAnalysisFile {
      * Obtain the contents.
      * @return the contents
      */
-    public ThemisXAnalysisNodeInstance getContents() {
+    public ThemisXAnalysisNodeCompilationUnit getContents() {
         return theContents;
     }
 
@@ -96,10 +96,20 @@ public class ThemisXAnalysisFile {
 
     /**
      * Process the file.
+     * @param pParser the parser
      * @throws OceanusException on error
      */
-    void processFile() throws OceanusException {
-        final ThemisXAnalysisCodeParser myParser = new ThemisXAnalysisCodeParser(theLocation, thePackage.getPackage());
-        theContents = myParser.parseFile();
-    }
+    void parseJavaCode(final ThemisXAnalysisCodeParser pParser) throws OceanusException {
+        /* Set the current file */
+        pParser.setCurrentFile(theLocation);
+
+        /* Parse the file */
+        theContents = pParser.parseJavaFile();
+
+        /* Check that we have a class that is the same name as the file */
+        final ThemisXAnalysisClassInstance myClass = theContents.getContents();
+        if (!theName.equals(myClass.getName())) {
+            throw pParser.buildException("Incorrect name for class in file", myClass.getNode());
+        }
+     }
 }

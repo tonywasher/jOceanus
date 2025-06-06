@@ -43,7 +43,7 @@ public class ThemisXAnalysisExprArrayAccess
      */
     ThemisXAnalysisExprArrayAccess(final ThemisXAnalysisParser pParser,
                                    final ArrayAccessExpr pExpression) throws OceanusException {
-        super(pExpression);
+        super(pParser, pExpression);
         theName = pParser.parseExpression(pExpression.getName());
         theIndex = pParser.parseExpression(pExpression.getIndex());
     }

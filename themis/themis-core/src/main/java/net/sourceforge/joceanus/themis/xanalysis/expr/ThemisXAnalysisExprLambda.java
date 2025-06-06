@@ -45,7 +45,7 @@ public class ThemisXAnalysisExprLambda
      */
     ThemisXAnalysisExprLambda(final ThemisXAnalysisParser pParser,
                               final LambdaExpr pExpression) throws OceanusException {
-        super(pExpression);
+        super(pParser, pExpression);
         theParams = pParser.parseNodeList(pExpression.getParameters());
         theBody = pParser.parseStatement(pExpression.getBody());
     }

@@ -17,37 +17,37 @@
 package net.sourceforge.joceanus.themis.xanalysis.type;
 
 import com.github.javaparser.ast.type.Type;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisBaseInstance;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisTypeInstance;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
 
 /**
  * Type Base Class.
  * @param <T> the Type
  */
 public abstract class ThemisXAnalysisBaseType<T extends Type>
+        extends ThemisXAnalysisBaseInstance<T>
         implements ThemisXAnalysisTypeInstance {
     /**
-     * The type.
+     * The typeId.
      */
-    private final T theType;
+    private final ThemisXAnalysisType theId;
 
     /**
      * Constructor.
+     * @param pParser the parser
      * @param pType the type
+     * @throws OceanusException on error
      */
-    protected ThemisXAnalysisBaseType(final T pType) {
-        theType = pType;
-    }
-
-    /**
-     * Obtain the type.
-     * @return the type
-     */
-    public T getType() {
-        return theType;
+    ThemisXAnalysisBaseType(final ThemisXAnalysisParser pParser,
+                            final T pType) throws OceanusException {
+        super(pParser, pType);
+        theId = ThemisXAnalysisType.determineType(pParser, pType);
     }
 
     @Override
-    public String toString() {
-        return theType.toString();
+    public ThemisXAnalysisType getId() {
+        return theId;
     }
 }

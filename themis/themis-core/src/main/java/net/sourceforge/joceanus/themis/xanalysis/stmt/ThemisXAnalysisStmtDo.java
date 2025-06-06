@@ -26,9 +26,9 @@ import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
 public class ThemisXAnalysisStmtDo
         extends ThemisXAnalysisBaseStatement<DoStmt> {
     /**
-     * The while expression.
+     * The while condition.
      */
-    private final ThemisXAnalysisExpressionInstance theExpression;
+    private final ThemisXAnalysisExpressionInstance theCondition;
 
     /**
      * The body.
@@ -44,17 +44,17 @@ public class ThemisXAnalysisStmtDo
     ThemisXAnalysisStmtDo(final ThemisXAnalysisParser pParser,
                           final DoStmt pStatement) throws OceanusException {
         /* Store details */
-        super(pStatement);
-        theExpression = pParser.parseExpression(pStatement.getCondition());
+        super(pParser, pStatement);
+        theCondition = pParser.parseExpression(pStatement.getCondition());
         theBody = pParser.parseStatement(pStatement.getBody());
     }
 
     /**
-     * Obtain the expression.
-     * @return the expression
+     * Obtain the condition.
+     * @return the condition
      */
-    public ThemisXAnalysisExpressionInstance getExpression() {
-        return theExpression;
+    public ThemisXAnalysisExpressionInstance getCondition() {
+        return theCondition;
     }
 
     /**

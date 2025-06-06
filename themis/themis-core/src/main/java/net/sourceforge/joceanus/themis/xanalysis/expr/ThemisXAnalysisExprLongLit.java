@@ -17,20 +17,22 @@
 package net.sourceforge.joceanus.themis.xanalysis.expr;
 
 import com.github.javaparser.ast.expr.LongLiteralExpr;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
 
 /**
  * Long Literal Expression Declaration.
  */
 public class ThemisXAnalysisExprLongLit
-        extends ThemisXAnalysisExprLiteral<LongLiteralExpr> {
+        extends ThemisXAnalysisBaseExpression<LongLiteralExpr> {
     /**
      * Constructor.
      * @param pParser the parser
      * @param pExpression the expression
+     * @throws OceanusException on error
      */
     ThemisXAnalysisExprLongLit(final ThemisXAnalysisParser pParser,
-                               final LongLiteralExpr pExpression) {
+                               final LongLiteralExpr pExpression) throws OceanusException {
         super(pParser, pExpression);
     }
 }

@@ -33,6 +33,11 @@ public class ThemisXAnalysisTypeIntersection
     private final List<ThemisXAnalysisTypeInstance> theElements;
 
     /**
+     * The annotations.
+     */
+    private final List<ThemisXAnalysisExpressionInstance> theAnnotations;
+
+    /**
      * Constructor.
      * @param pParser the parser
      * @param pType the type
@@ -40,8 +45,9 @@ public class ThemisXAnalysisTypeIntersection
      */
     ThemisXAnalysisTypeIntersection(final ThemisXAnalysisParser pParser,
                                     final IntersectionType pType) throws OceanusException {
-        super(pType);
+        super(pParser, pType);
         theElements = pParser.parseTypeList(pType.getElements());
+        theAnnotations = pParser.parseExprList(pType.getAnnotations());
     }
 
     /**
@@ -50,5 +56,13 @@ public class ThemisXAnalysisTypeIntersection
      */
     public List<ThemisXAnalysisTypeInstance> getElements() {
         return theElements;
+    }
+
+    /**
+     * Obtain the annotations.
+     * @return the annotations
+     */
+    public List<ThemisXAnalysisExpressionInstance> getAnnotations() {
+        return theAnnotations;
     }
 }

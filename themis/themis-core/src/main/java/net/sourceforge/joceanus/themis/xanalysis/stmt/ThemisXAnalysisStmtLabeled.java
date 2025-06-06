@@ -43,7 +43,7 @@ public class ThemisXAnalysisStmtLabeled
      */
     ThemisXAnalysisStmtLabeled(final ThemisXAnalysisParser pParser,
                                final LabeledStmt pStatement) throws OceanusException {
-        super(pStatement);
+        super(pParser, pStatement);
         theLabel = pStatement.getLabel().asString();
         theLabeled = pParser.parseStatement(pStatement.getStatement());
     }

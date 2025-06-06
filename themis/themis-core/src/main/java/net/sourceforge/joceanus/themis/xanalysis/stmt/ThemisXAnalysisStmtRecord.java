@@ -38,7 +38,7 @@ public class ThemisXAnalysisStmtRecord
      */
     ThemisXAnalysisStmtRecord(final ThemisXAnalysisParser pParser,
                               final LocalRecordDeclarationStmt pStatement) throws OceanusException {
-        super(pStatement);
+        super(pParser, pStatement);
         theRecord = pParser.parseDeclaration(pStatement.getRecordDeclaration());
     }
 

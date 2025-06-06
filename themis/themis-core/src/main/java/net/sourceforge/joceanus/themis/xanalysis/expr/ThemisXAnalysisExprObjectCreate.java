@@ -38,6 +38,26 @@ public class ThemisXAnalysisExprObjectCreate
     private final List<ThemisXAnalysisExpressionInstance> theArgs;
 
     /**
+     * The scope.
+     */
+    private final ThemisXAnalysisExpressionInstance theScope;
+
+    /**
+     * The type arguments.
+     */
+    private final List<ThemisXAnalysisTypeInstance> theTypeArguments;
+
+    /**
+     * The bodies.
+     */
+    private final List<ThemisXAnalysisDeclarationInstance> theBodies;
+
+    /**
+     * The method instance.
+     */
+    private ThemisXAnalysisMethodInstance theMethodInstance;
+
+    /**
      * Constructor.
      * @param pParser the parser
      * @param pExpression the expression
@@ -45,9 +65,12 @@ public class ThemisXAnalysisExprObjectCreate
      */
     ThemisXAnalysisExprObjectCreate(final ThemisXAnalysisParser pParser,
                                     final ObjectCreationExpr pExpression) throws OceanusException {
-        super(pExpression);
+        super(pParser, pExpression);
         theType = pParser.parseType(pExpression.getType());
         theArgs = pParser.parseExprList(pExpression.getArguments());
+        theScope = pParser.parseExpression(pExpression.getScope().orElse(null));
+        theTypeArguments = pParser.parseTypeList(pExpression.getTypeArguments().orElse(null));
+        theBodies = pParser.parseDeclarationList(pExpression.getAnonymousClassBody().orElse(null));
     }
 
     /**
@@ -64,5 +87,66 @@ public class ThemisXAnalysisExprObjectCreate
      */
     public List<ThemisXAnalysisExpressionInstance> getArgs() {
         return theArgs;
+    }
+
+    /**
+     * Obtain the scope.
+     * @return the scope
+     */
+    public ThemisXAnalysisExpressionInstance getScope() {
+        return theScope;
+    }
+
+    /**
+     * Obtain the type arguments.
+     * @return the arguments
+     */
+    public List<ThemisXAnalysisTypeInstance> getTypeArguments() {
+        return theTypeArguments;
+    }
+
+    /**
+     * Obtain the bodies.
+     * @return the bodies
+     */
+    public List<ThemisXAnalysisDeclarationInstance> getBodies() {
+        return theBodies;
+    }
+
+    /**
+     * The class instance.
+     */
+    private ThemisXAnalysisClassInstance theClassInstance;
+
+    /**
+     * Obtain the class instance.
+     * @return the class instance
+     */
+    public ThemisXAnalysisClassInstance getClassInstance() {
+        return theClassInstance;
+    }
+
+    /**
+     * Set the class instance.
+     * @param pClassInstance the class instance
+     */
+    public void setClassInstance(final ThemisXAnalysisClassInstance pClassInstance) {
+        theClassInstance = pClassInstance;
+    }
+
+    /**
+     * Obtain the method instance.
+     * @return the method instance
+     */
+    public ThemisXAnalysisMethodInstance getMethodInstance() {
+        return theMethodInstance;
+    }
+
+    /**
+     * Set the method instance.
+     * @param pMethodInstance the method instance
+     */
+    public void setMethodInstance(final ThemisXAnalysisMethodInstance pMethodInstance) {
+        theMethodInstance = pMethodInstance;
     }
 }

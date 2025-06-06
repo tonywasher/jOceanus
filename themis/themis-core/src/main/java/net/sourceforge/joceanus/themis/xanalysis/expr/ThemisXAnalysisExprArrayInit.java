@@ -40,7 +40,7 @@ public class ThemisXAnalysisExprArrayInit
      */
     ThemisXAnalysisExprArrayInit(final ThemisXAnalysisParser pParser,
                                  final ArrayInitializerExpr pExpression) throws OceanusException {
-        super(pExpression);
+        super(pParser, pExpression);
         theInit = pParser.parseExprList(pExpression.getValues());
     }
 

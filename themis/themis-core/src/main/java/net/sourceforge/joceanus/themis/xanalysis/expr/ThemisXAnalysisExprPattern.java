@@ -39,7 +39,7 @@ public abstract class ThemisXAnalysisExprPattern<T extends PatternExpr>
      */
     ThemisXAnalysisExprPattern(final ThemisXAnalysisParser pParser,
                                final T pExpression) throws OceanusException {
-        super(pExpression);
+        super(pParser, pExpression);
         theType = pParser.parseType(pExpression.getType());
     }
 

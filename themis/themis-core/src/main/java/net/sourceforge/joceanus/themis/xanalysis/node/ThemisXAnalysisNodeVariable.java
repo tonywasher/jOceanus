@@ -47,7 +47,7 @@ public class ThemisXAnalysisNodeVariable
      */
     ThemisXAnalysisNodeVariable(final ThemisXAnalysisParser pParser,
                                 final VariableDeclarator pDeclaration) throws OceanusException {
-        super(pDeclaration);
+        super(pParser, pDeclaration);
         theName = pParser.parseNode(pDeclaration.getName());
         theType = pParser.parseType(pDeclaration.getType());
         theInitializer = pParser.parseExpression(pDeclaration.getInitializer().orElse(null));

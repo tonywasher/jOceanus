@@ -40,7 +40,7 @@ public class ThemisXAnalysisStmtBlock
      */
     ThemisXAnalysisStmtBlock(final ThemisXAnalysisParser pParser,
                              final BlockStmt pStatement) throws OceanusException {
-        super(pStatement);
+        super(pParser, pStatement);
         theBody = pParser.parseStatementList(pStatement.getStatements());
     }
 

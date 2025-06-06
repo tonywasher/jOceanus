@@ -14,10 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.themis.xanalysis;
+package net.sourceforge.joceanus.themis.xanalysis.proj;
 
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisChar;
+import net.sourceforge.joceanus.themis.xanalysis.mod.ThemisXAnalysisModModule;
+import net.sourceforge.joceanus.themis.xanalysis.parser.ThemisXAnalysisCodeParser;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -31,12 +33,12 @@ public class ThemisXAnalysisModule {
     /**
      * The path xtra.
      */
-    static final String PATH_XTRA = "/src/main/java";
+    static final String PATH_XTRA = ".src.main.java".replace(ThemisXAnalysisChar.PERIOD, ThemisXAnalysisChar.COMMENT);
 
     /**
      * The module-info file.
      */
-    private static final String MODULE_INFO = "module-info" + ThemisXAnalysisPackage.SFX_JAVA;
+    private static final String MODULE_INFO = "module-info" + ThemisXAnalysisFile.SFX_JAVA;
 
     /**
      * The module name.
@@ -54,21 +56,9 @@ public class ThemisXAnalysisModule {
     private final List<ThemisXAnalysisPackage> thePackages;
 
     /**
-     * The initial dataMap.
+     * The module-info declaration.
      */
-    private final ThemisXAnalysisDataMap theDataMap;
-
-    /**
-     * Constructor.
-     * @param pProject the project
-     * @param pLocation the module location
-     * @throws OceanusException on error
-     */
-    ThemisXAnalysisModule(final ThemisXAnalysisProject pProject,
-                          final File pLocation) throws OceanusException {
-        /* Initialise class */
-        this(pLocation, new ThemisXAnalysisDataMap(pProject.getDataMap()));
-    }
+    private ThemisXAnalysisModModule theModuleInfo;
 
     /**
      * Constructor.
@@ -76,31 +66,9 @@ public class ThemisXAnalysisModule {
      * @throws OceanusException on error
      */
     ThemisXAnalysisModule(final File pLocation) throws OceanusException {
-        /* Initialise class */
-        this(pLocation, new ThemisXAnalysisDataMap());
-
-        /* initialPass */
-        performInitialPass();
-
-        /* consolidationPass */
-        performConsolidationPass();
-
-        /* finalPass */
-        performFinalPass();
-    }
-
-    /**
-     * Constructor.
-     * @param pLocation the module location
-     * @param pDataMap the dataMap
-     * @throws OceanusException on error
-     */
-    private ThemisXAnalysisModule(final File pLocation,
-                                  final ThemisXAnalysisDataMap pDataMap) throws OceanusException {
         /* Store the name and location */
         theLocation = new File(pLocation, PATH_XTRA);
         theName = pLocation.getName();
-        theDataMap = pDataMap;
 
         /* Create the list */
         thePackages = new ArrayList<>();
@@ -139,11 +107,11 @@ public class ThemisXAnalysisModule {
     }
 
     /**
-     * Obtain the dataMap.
-     * @return the map
+     * Obtain the module-info.
+     * @return the module-info
      */
-    ThemisXAnalysisDataMap getDataMap() {
-        return theDataMap;
+    public ThemisXAnalysisModModule getModuleInfo() {
+        return theModuleInfo;
     }
 
     /**
@@ -173,8 +141,8 @@ public class ThemisXAnalysisModule {
                 checkForPackage(myPackage);
             }
 
-            /* If this is aAccess file name */
-            if (myName.endsWith(ThemisXAnalysisPackage.SFX_JAVA)
+            /* If this is a Java file name */
+            if (myName.endsWith(ThemisXAnalysisFile.SFX_JAVA)
                     && !MODULE_INFO.equals(myName)) {
                 isPackage = pPackage != null;
             }
@@ -183,43 +151,29 @@ public class ThemisXAnalysisModule {
         /* If this is a package */
         if (isPackage) {
             /* Add the package to the list */
-            thePackages.add(new ThemisXAnalysisPackage(this, pPackage));
+            thePackages.add(new ThemisXAnalysisPackage(theLocation, pPackage));
         }
     }
 
     /**
-     * initialPass.
+     * Parse java code.
+     * @param pParser the parser
      * @throws OceanusException on error
      */
-    void performInitialPass() throws OceanusException {
-        /* Loop through the packages */
-        for (ThemisXAnalysisPackage myPackage : thePackages) {
-            /* Process the package */
-            myPackage.performInitialPass();
-        }
-    }
+    void parseJavaCode(final ThemisXAnalysisCodeParser pParser) throws OceanusException {
+        /* Set the current package */
+        pParser.setCurrentModule(theName);
 
-    /**
-     * consolidationPass.
-     * @throws OceanusException on error
-     */
-    void performConsolidationPass() throws OceanusException {
         /* Loop through the packages */
         for (ThemisXAnalysisPackage myPackage : thePackages) {
             /* Process the package */
-            myPackage.performConsolidationPass();
+            myPackage.parseJavaCode(pParser);
         }
-    }
 
-    /**
-     * finalPass.
-     * @throws OceanusException on error
-     */
-    void performFinalPass() throws OceanusException {
-        /* Loop through the packages */
-        for (ThemisXAnalysisPackage myPackage : thePackages) {
-            /* Process the package */
-            myPackage.performFinalPass();
+        /* Check for and load the module-info file if found */
+        final File myModuleInfo = new File(theLocation, MODULE_INFO);
+        if (myModuleInfo.exists()) {
+            theModuleInfo = pParser.parseModuleInfo(myModuleInfo);
         }
     }
 }

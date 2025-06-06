@@ -16,6 +16,6 @@
  ******************************************************************************/
 
 /**
- * Code Analysis.
+ * Project structure.
  */
-package net.sourceforge.joceanus.themis.xanalysis;
+package net.sourceforge.joceanus.themis.xanalysis.proj;

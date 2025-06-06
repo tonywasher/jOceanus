@@ -17,20 +17,22 @@
 package net.sourceforge.joceanus.themis.xanalysis.expr;
 
 import com.github.javaparser.ast.expr.CharLiteralExpr;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
 
 /**
  * Char Literal Expression Declaration.
  */
 public class ThemisXAnalysisExprCharLit
-        extends ThemisXAnalysisExprLiteral<CharLiteralExpr> {
+        extends ThemisXAnalysisBaseExpression<CharLiteralExpr> {
     /**
      * Constructor.
      * @param pParser the parser
      * @param pExpression the expression
+     * @throws OceanusException on error
      */
     ThemisXAnalysisExprCharLit(final ThemisXAnalysisParser pParser,
-                               final CharLiteralExpr pExpression) {
+                               final CharLiteralExpr pExpression) throws OceanusException {
         super(pParser, pExpression);
     }
 }

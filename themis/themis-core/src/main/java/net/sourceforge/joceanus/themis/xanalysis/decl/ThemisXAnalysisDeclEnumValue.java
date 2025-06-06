@@ -43,16 +43,22 @@ public class ThemisXAnalysisDeclEnumValue
     private final List<ThemisXAnalysisDeclarationInstance> theBody;
 
     /**
+     * The annotations.
+     */
+    private final List<ThemisXAnalysisExpressionInstance> theAnnotations;
+
+    /**
      * Constructor.
      * @param pParser the parser
      * @param pDeclaration the declaration
      */
     ThemisXAnalysisDeclEnumValue(final ThemisXAnalysisParser pParser,
                                  final EnumConstantDeclaration pDeclaration) throws OceanusException {
-        super(pDeclaration);
+        super(pParser, pDeclaration);
         theName = pParser.parseNode(pDeclaration.getName());
         theArguments = pParser.parseExprList(pDeclaration.getArguments());
         theBody = pParser.parseDeclarationList(pDeclaration.getClassBody());
+        theAnnotations = pParser.parseExprList(pDeclaration.getAnnotations());
     }
 
     /**
@@ -77,5 +83,13 @@ public class ThemisXAnalysisDeclEnumValue
      */
     public List<ThemisXAnalysisDeclarationInstance> getBody() {
         return theBody;
+    }
+
+    /**
+     * Obtain the annotations.
+     * @return the annotations
+     */
+    public List<ThemisXAnalysisExpressionInstance> getAnnotations() {
+        return theAnnotations;
     }
 }

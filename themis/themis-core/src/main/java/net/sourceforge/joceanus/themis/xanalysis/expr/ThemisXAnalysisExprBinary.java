@@ -49,7 +49,7 @@ public class ThemisXAnalysisExprBinary
      */
     ThemisXAnalysisExprBinary(final ThemisXAnalysisParser pParser,
                               final BinaryExpr pExpression) throws OceanusException {
-        super(pExpression);
+        super(pParser, pExpression);
         theLeft = pParser.parseExpression(pExpression.getLeft());
         theOperator = pExpression.getOperator();
         theRight = pParser.parseExpression(pExpression.getRight());

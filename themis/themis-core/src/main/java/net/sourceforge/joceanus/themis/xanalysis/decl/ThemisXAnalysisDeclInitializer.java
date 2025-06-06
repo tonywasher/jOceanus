@@ -20,6 +20,8 @@ import com.github.javaparser.ast.body.InitializerDeclaration;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
 
+import java.util.List;
+
 /**
  * Initializer Declaration.
  */
@@ -36,6 +38,11 @@ public class ThemisXAnalysisDeclInitializer
     private final ThemisXAnalysisStatementInstance theBody;
 
     /**
+     * The annotations.
+     */
+    private final List<ThemisXAnalysisExpressionInstance> theAnnotations;
+
+    /**
      * Constructor.
      * @param pParser the parser
      * @param pDeclaration the declaration
@@ -43,9 +50,10 @@ public class ThemisXAnalysisDeclInitializer
      */
     ThemisXAnalysisDeclInitializer(final ThemisXAnalysisParser pParser,
                                    final InitializerDeclaration pDeclaration) throws OceanusException {
-        super(pDeclaration);
+        super(pParser, pDeclaration);
         isStatic = pDeclaration.isStatic();
         theBody = pParser.parseStatement(pDeclaration.getBody());
+        theAnnotations = pParser.parseExprList(pDeclaration.getAnnotations());
     }
 
     /**
@@ -62,5 +70,13 @@ public class ThemisXAnalysisDeclInitializer
      */
     public ThemisXAnalysisStatementInstance getBody() {
         return theBody;
+    }
+
+    /**
+     * Obtain the annotations.
+     * @return the annotations
+     */
+    public List<ThemisXAnalysisExpressionInstance> getAnnotations() {
+        return theAnnotations;
     }
 }

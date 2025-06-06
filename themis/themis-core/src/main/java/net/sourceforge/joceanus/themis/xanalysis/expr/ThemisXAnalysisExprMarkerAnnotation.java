@@ -24,7 +24,12 @@ import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
  * Marker Annotation Expression Declaration.
  */
 public class ThemisXAnalysisExprMarkerAnnotation
-        extends ThemisXAnalysisExprAnnotation<MarkerAnnotationExpr> {
+        extends ThemisXAnalysisBaseExpression<MarkerAnnotationExpr> {
+    /**
+     * The name of the annotation.
+     */
+    private final ThemisXAnalysisNodeInstance theName;
+
     /**
      * Constructor.
      * @param pParser the parser
@@ -34,5 +39,14 @@ public class ThemisXAnalysisExprMarkerAnnotation
     ThemisXAnalysisExprMarkerAnnotation(final ThemisXAnalysisParser pParser,
                                         final MarkerAnnotationExpr pExpression) throws OceanusException {
         super(pParser, pExpression);
+        theName = pParser.parseNode(pExpression.getName());
+    }
+
+    /**
+     * Obtain the name.
+     * @return the name
+     */
+    public ThemisXAnalysisNodeInstance getName() {
+        return theName;
     }
 }

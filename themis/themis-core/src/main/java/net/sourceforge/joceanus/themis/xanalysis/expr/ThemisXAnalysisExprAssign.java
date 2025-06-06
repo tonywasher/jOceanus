@@ -37,7 +37,7 @@ public class ThemisXAnalysisExprAssign
     private final Operator theOperator;
 
     /**
-     * The target.
+     * The value.
      */
     private final ThemisXAnalysisExpressionInstance theValue;
 
@@ -49,7 +49,7 @@ public class ThemisXAnalysisExprAssign
      */
     ThemisXAnalysisExprAssign(final ThemisXAnalysisParser pParser,
                               final AssignExpr pExpression) throws OceanusException {
-        super(pExpression);
+        super(pParser, pExpression);
         theTarget = pParser.parseExpression(pExpression.getTarget());
         theOperator = pExpression.getOperator();
         theValue = pParser.parseExpression(pExpression.getValue());

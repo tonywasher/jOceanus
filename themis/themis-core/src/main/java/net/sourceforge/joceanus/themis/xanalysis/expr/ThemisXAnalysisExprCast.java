@@ -43,7 +43,7 @@ public class ThemisXAnalysisExprCast
      */
     ThemisXAnalysisExprCast(final ThemisXAnalysisParser pParser,
                             final CastExpr pExpression) throws OceanusException {
-        super(pExpression);
+        super(pParser, pExpression);
         theType = pParser.parseType(pExpression.getType());
         theValue = pParser.parseExpression(pExpression.getExpression());
     }

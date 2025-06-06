@@ -24,12 +24,14 @@ import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.PackageDeclaration;
 import com.github.javaparser.ast.body.Parameter;
 import com.github.javaparser.ast.body.VariableDeclarator;
+import com.github.javaparser.ast.comments.Comment;
 import com.github.javaparser.ast.expr.MemberValuePair;
 import com.github.javaparser.ast.expr.Name;
 import com.github.javaparser.ast.expr.SimpleName;
 import com.github.javaparser.ast.stmt.CatchClause;
 import com.github.javaparser.ast.stmt.SwitchEntry;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisId;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisNodeInstance;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
 
@@ -38,66 +40,72 @@ import java.util.function.Predicate;
 /**
  * Analysis Node.
  */
-public enum ThemisXAnalysisNode {
+public enum ThemisXAnalysisNode
+        implements ThemisXAnalysisId {
     /**
      * ArrayLevel.
      */
-    ARRAYLEVEL(n -> n instanceof ArrayCreationLevel),
+    ARRAYLEVEL(ArrayCreationLevel.class::isInstance),
 
     /**
      * Case.
      */
-    CASE(n -> n instanceof SwitchEntry),
+    CASE(SwitchEntry.class::isInstance),
 
     /**
      * Catch.
      */
-    CATCH(n -> n instanceof CatchClause),
+    CATCH(CatchClause.class::isInstance),
+
+    /**
+     * Comment.
+     */
+    COMMENT(Comment.class::isInstance),
 
     /**
      * Compilation Unit.
      */
-    COMPILATIONUNIT(n -> n instanceof CompilationUnit),
+    COMPILATIONUNIT(CompilationUnit.class::isInstance),
 
     /**
      * Import.
      */
-    IMPORT(n -> n instanceof ImportDeclaration),
+    IMPORT(ImportDeclaration.class::isInstance),
 
     /**
      * Modifier.
      */
-    MODIFIER(n -> n instanceof Modifier),
+    MODIFIER(Modifier.class::isInstance),
 
     /**
      * Name.
      */
-    NAME(n -> n instanceof Name),
+    NAME(Name.class::isInstance),
 
     /**
      * Parameter.
      */
-    PACKAGE(n -> n instanceof PackageDeclaration),
+    PACKAGE(PackageDeclaration.class::isInstance),
 
     /**
      * Parameter.
      */
-    PARAMETER(n -> n instanceof Parameter),
+    PARAMETER(Parameter.class::isInstance),
 
     /**
      * SimpleName.
      */
-    SIMPLENAME(n -> n instanceof SimpleName),
+    SIMPLENAME(SimpleName.class::isInstance),
 
     /**
      * ValuePair.
      */
-    VALUEPAIR(n -> n instanceof MemberValuePair),
+    VALUEPAIR(MemberValuePair.class::isInstance),
 
     /**
      * Variable.
      */
-    VARIABLE(n -> n instanceof VariableDeclarator);
+    VARIABLE(VariableDeclarator.class::isInstance);
 
     /**
      * The test.
@@ -152,12 +160,13 @@ public enum ThemisXAnalysisNode {
             case CASE:            return new ThemisXAnalysisNodeCase(pParser, (SwitchEntry) pNode);
             case CATCH:           return new ThemisXAnalysisNodeCatch(pParser, (CatchClause) pNode);
             case COMPILATIONUNIT: return new ThemisXAnalysisNodeCompilationUnit(pParser, (CompilationUnit) pNode);
+            case COMMENT:         return new ThemisXAnalysisNodeComment(pParser, (Comment) pNode);
             case IMPORT:          return new ThemisXAnalysisNodeImport(pParser, (ImportDeclaration) pNode);
-            case MODIFIER:        return new ThemisXAnalysisNodeModifier((Modifier) pNode);
+            case MODIFIER:        return new ThemisXAnalysisNodeModifier(pParser, (Modifier) pNode);
             case NAME:            return new ThemisXAnalysisNodeName(pParser, (Name) pNode);
             case PACKAGE:         return new ThemisXAnalysisNodePackage(pParser, (PackageDeclaration) pNode);
             case PARAMETER:       return new ThemisXAnalysisNodeParameter(pParser, (Parameter) pNode);
-            case SIMPLENAME:      return new ThemisXAnalysisNodeSimpleName((SimpleName) pNode);
+            case SIMPLENAME:      return new ThemisXAnalysisNodeSimpleName(pParser, (SimpleName) pNode);
             case VALUEPAIR:       return new ThemisXAnalysisNodeValuePair(pParser, (MemberValuePair) pNode);
             case VARIABLE:        return new ThemisXAnalysisNodeVariable(pParser, (VariableDeclarator) pNode);
             default:              throw pParser.buildException("Unsupported Node Type", pNode);

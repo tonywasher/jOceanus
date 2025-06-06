@@ -16,10 +16,88 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.themis.xanalysis.base;
 
+import com.github.javaparser.ast.Node;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.function.Predicate;
+
 /**
  * Instance definitions.
  */
 public interface ThemisXAnalysisInstance {
+    /**
+     * Obtain the node.
+     * @return the node
+     */
+    Node getNode();
+
+    /**
+     * Obtain the id of the node.
+     * @return the id
+     */
+    ThemisXAnalysisId getId();
+
+    /**
+     * Register child node.
+     * @param pChild the child node
+     */
+    void registerChild(ThemisXAnalysisInstance pChild);
+
+    /**
+     * Obtain the parent.
+     * @return the parent
+     */
+    ThemisXAnalysisInstance getParent();
+
+    /**
+     * Obtain the list of children.
+     * @return the list of children
+     */
+    List<ThemisXAnalysisInstance> getChildren();
+
+    /**
+     * Select children.
+     * @param pTest the predicate to select children
+     * @return the list of selected children
+     */
+    List<ThemisXAnalysisInstance> discoverChildren(Predicate<ThemisXAnalysisInstance> pTest);
+
+    /**
+     * Select nodes from tree.
+     * @param pList the list to populate
+     * @param pTest the predicate to select nodes
+     */
+    void discoverNodes(List<ThemisXAnalysisInstance> pList,
+                       Predicate<ThemisXAnalysisInstance> pTest);
+
+    /**
+     * Select nodes from tree.
+     * @param pId the type of node
+     * @return the list of selected nodes
+     */
+    default List<ThemisXAnalysisInstance> discoverNodes(final ThemisXAnalysisId pId) {
+        return discoverNodes(n -> n.getId().equals(pId));
+    }
+
+    /**
+     * Select nodes from tree.
+     * @param pTest the predicate to select nodes
+     * @return the list of selected nodes
+     */
+    default List<ThemisXAnalysisInstance> discoverNodes(final Predicate<ThemisXAnalysisInstance> pTest) {
+        final List<ThemisXAnalysisInstance> myList = new ArrayList<>();
+        discoverNodes(myList, pTest);
+        return myList;
+    }
+
+    /**
+     * The id.
+     */
+    interface ThemisXAnalysisId {
+    }
+
     /**
      * The base declaration interface.
      */
@@ -53,5 +131,130 @@ public interface ThemisXAnalysisInstance {
      */
     interface ThemisXAnalysisExpressionInstance
             extends ThemisXAnalysisInstance {
+    }
+
+    /**
+     * The base module interface.
+     */
+    interface ThemisXAnalysisModuleInstance
+            extends ThemisXAnalysisInstance {
+    }
+
+    /**
+     * The base class interface.
+     */
+    interface ThemisXAnalysisClassInstance
+            extends ThemisXAnalysisDeclarationInstance {
+        /**
+         * Obtain the name.
+         * @return the name
+         */
+        String getName();
+
+        /**
+         * Obtain the fullName.
+         * @return the fullName
+         */
+        String getFullName();
+
+        /**
+         * Obtain the modifiers.
+         * @return the modifiers
+         */
+        List<ThemisXAnalysisNodeInstance> getModifiers();
+
+        /**
+         * Obtain the body.
+         * @return the body
+         */
+        List<ThemisXAnalysisDeclarationInstance> getBody();
+
+        /**
+         * Obtain the extends types.
+         * @return the extends
+         */
+        default List<ThemisXAnalysisTypeInstance> getExtends() {
+            return Collections.emptyList();
+        }
+
+        /**
+         * Obtain the implements types.
+         * @return the implements
+         */
+        default List<ThemisXAnalysisTypeInstance> getImplements() {
+            return Collections.emptyList();
+        }
+
+        /**
+         * Obtain the type parameters.
+         * @return the parameters
+         */
+        default List<ThemisXAnalysisTypeInstance> getTypeParameters() {
+            return Collections.emptyList();
+        }
+
+        /**
+         * Obtain the annotations.
+         * @return the annotations
+         */
+        List<ThemisXAnalysisExpressionInstance> getAnnotations();
+
+        /**
+         * is the class a local declaration?
+         * @return true/false
+         */
+        default boolean isLocalDeclaration() {
+            return false;
+        }
+    }
+
+    /**
+     * The base method interface.
+     */
+    interface ThemisXAnalysisMethodInstance
+            extends ThemisXAnalysisDeclarationInstance {
+        /**
+         * Obtain the name.
+         * @return the name
+         */
+        String getName();
+
+        /**
+         * Obtain the modifiers.
+         * @return the modifiers
+         */
+        List<ThemisXAnalysisNodeInstance> getModifiers();
+
+        /**
+         * Obtain the parameters.
+         * @return the parameters
+         */
+        default List<ThemisXAnalysisNodeInstance> getParameters() {
+            return Collections.emptyList();
+        }
+
+        /**
+         * Obtain the thrown exceptions.
+         * @return the thrown exceptions
+         */
+        List<ThemisXAnalysisTypeInstance> getThrown();
+
+        /**
+         * Obtain the type parameters.
+         * @return the parameters
+         */
+        List<ThemisXAnalysisTypeInstance> getTypeParameters();
+
+        /**
+         * Obtain the body.
+         * @return the body
+         */
+        ThemisXAnalysisStatementInstance getBody();
+
+        /**
+         * Obtain the annotations.
+         * @return the annotations
+         */
+        List<ThemisXAnalysisExpressionInstance> getAnnotations();
     }
 }

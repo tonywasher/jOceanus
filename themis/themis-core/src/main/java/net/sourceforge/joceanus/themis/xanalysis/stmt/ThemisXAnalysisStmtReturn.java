@@ -17,6 +17,7 @@
 package net.sourceforge.joceanus.themis.xanalysis.stmt;
 
 import com.github.javaparser.ast.stmt.ReturnStmt;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
 
 /**
@@ -25,12 +26,27 @@ import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
 public class ThemisXAnalysisStmtReturn
         extends ThemisXAnalysisBaseStatement<ReturnStmt> {
     /**
+     * The expression.
+     */
+    private final ThemisXAnalysisExpressionInstance theExpression;
+
+    /**
      * Constructor.
      * @param pParser the parser
      * @param pStatement the statement
+     * @throws OceanusException on error
      */
     ThemisXAnalysisStmtReturn(final ThemisXAnalysisParser pParser,
-                              final ReturnStmt pStatement) {
-        super(pStatement);
+                              final ReturnStmt pStatement) throws OceanusException {
+        super(pParser, pStatement);
+        theExpression = pParser.parseExpression(pStatement.getExpression().orElse(null));
+    }
+
+    /**
+     * Obtain the expression.
+     * @return the expression
+     */
+    public ThemisXAnalysisExpressionInstance getExpression() {
+        return theExpression;
     }
 }

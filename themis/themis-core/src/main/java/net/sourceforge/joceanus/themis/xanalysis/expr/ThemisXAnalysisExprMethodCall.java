@@ -33,7 +33,7 @@ public class ThemisXAnalysisExprMethodCall
     private final ThemisXAnalysisNodeInstance theName;
 
     /**
-     * The value.
+     * The arguments.
      */
     private final List<ThemisXAnalysisExpressionInstance> theArguments;
 
@@ -48,6 +48,16 @@ public class ThemisXAnalysisExprMethodCall
     private final ThemisXAnalysisExpressionInstance theScope;
 
     /**
+     * The class instance.
+     */
+    private ThemisXAnalysisClassInstance theClassInstance;
+
+    /**
+     * The method instance.
+     */
+    private ThemisXAnalysisMethodInstance theMethodInstance;
+
+    /**
      * Constructor.
      * @param pParser the parser
      * @param pExpression the expression
@@ -55,7 +65,7 @@ public class ThemisXAnalysisExprMethodCall
      */
     ThemisXAnalysisExprMethodCall(final ThemisXAnalysisParser pParser,
                                   final MethodCallExpr pExpression) throws OceanusException {
-        super(pExpression);
+        super(pParser, pExpression);
         theName = pParser.parseNode(pExpression.getName());
         theArguments = pParser.parseExprList(pExpression.getArguments());
         theTypeParams = pParser.parseTypeList(pExpression.getTypeArguments().orElse(null));
@@ -92,5 +102,37 @@ public class ThemisXAnalysisExprMethodCall
      */
     public ThemisXAnalysisExpressionInstance getScope() {
         return theScope;
+    }
+
+    /**
+     * Obtain the class instance.
+     * @return the class instance
+     */
+    public ThemisXAnalysisClassInstance getClassInstance() {
+        return theClassInstance;
+    }
+
+    /**
+     * Set the class instance.
+     * @param pClassInstance the class instance
+     */
+    public void setClassInstance(final ThemisXAnalysisClassInstance pClassInstance) {
+        theClassInstance = pClassInstance;
+    }
+
+    /**
+     * Obtain the method instance.
+     * @return the method instance
+     */
+    public ThemisXAnalysisMethodInstance getMethodInstance() {
+        return theMethodInstance;
+    }
+
+    /**
+     * Set the method instance.
+     * @param pMethodInstance the method instance
+     */
+    public void setMethodInstance(final ThemisXAnalysisMethodInstance pMethodInstance) {
+        theMethodInstance = pMethodInstance;
     }
 }

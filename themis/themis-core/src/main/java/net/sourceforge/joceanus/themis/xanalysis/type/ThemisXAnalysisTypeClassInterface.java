@@ -17,20 +17,102 @@
 package net.sourceforge.joceanus.themis.xanalysis.type;
 
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
+import net.sourceforge.joceanus.themis.xanalysis.node.ThemisXAnalysisNodeSimpleName;
+
+import java.util.List;
 
 /**
  * Class/Interface Type Declaration.
  */
 public class ThemisXAnalysisTypeClassInterface
-        extends ThemisXAnalysisTypeReference<ClassOrInterfaceType> {
+        extends ThemisXAnalysisBaseType<ClassOrInterfaceType> {
+    /**
+     * The name of the class.
+     */
+    private final String theName;
+
+    /**
+     * The scope.
+     */
+    private final ThemisXAnalysisTypeInstance theScope;
+
+    /**
+     * The type.
+     */
+    private final List<ThemisXAnalysisTypeInstance> theTypeParams;
+
+    /**
+     * The annotations.
+     */
+    private final List<ThemisXAnalysisExpressionInstance> theAnnotations;
+
+    /**
+     * The class instance.
+     */
+    private ThemisXAnalysisClassInstance theClassInstance;
+
     /**
      * Constructor.
      * @param pParser the parser
      * @param pType the type
+     * @throws OceanusException on error
      */
     ThemisXAnalysisTypeClassInterface(final ThemisXAnalysisParser pParser,
-                                      final ClassOrInterfaceType pType) {
+                                      final ClassOrInterfaceType pType) throws OceanusException {
         super(pParser, pType);
+        theName = ((ThemisXAnalysisNodeSimpleName) pParser.parseNode(pType.getName())).getName();
+        theScope = pParser.parseType(pType.getScope().orElse(null));
+        theTypeParams = pParser.parseTypeList(pType.getTypeArguments().orElse(null));
+        theAnnotations = pParser.parseExprList(pType.getAnnotations());
+    }
+
+    /**
+     * Obtain the name.
+     * @return the name
+     */
+    public String getName() {
+        return theName;
+    }
+
+    /**
+     * Obtain the scope.
+     * @return the scope
+     */
+    public ThemisXAnalysisTypeInstance getScope() {
+        return theScope;
+    }
+
+    /**
+     * Obtain the typeParams.
+     * @return the typeParams
+     */
+    public List<ThemisXAnalysisTypeInstance> getTypeParams() {
+        return theTypeParams;
+    }
+
+     /**
+     * Obtain the annotations.
+     * @return the annotations
+     */
+    public List<ThemisXAnalysisExpressionInstance> getAnnotations() {
+        return theAnnotations;
+    }
+
+    /**
+     * Obtain the class instance.
+     * @return the class instance
+     */
+    public ThemisXAnalysisClassInstance getClassInstance() {
+        return theClassInstance;
+    }
+
+    /**
+     * Set the class instance.
+     * @param pClassInstance the class instance
+     */
+    public void setClassInstance(final ThemisXAnalysisClassInstance pClassInstance) {
+        theClassInstance = pClassInstance;
     }
 }

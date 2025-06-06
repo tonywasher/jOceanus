@@ -38,7 +38,7 @@ public class ThemisXAnalysisExprEnclosed
      */
     ThemisXAnalysisExprEnclosed(final ThemisXAnalysisParser pParser,
                                 final EnclosedExpr pExpression) throws OceanusException {
-        super(pExpression);
+        super(pParser, pExpression);
         theInner = pParser.parseExpression(pExpression.getInner());
     }
 

@@ -19,6 +19,7 @@ package net.sourceforge.joceanus.themis.xanalysis.type;
 import com.github.javaparser.ast.type.TypeParameter;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
+import net.sourceforge.joceanus.themis.xanalysis.node.ThemisXAnalysisNodeSimpleName;
 
 import java.util.List;
 
@@ -26,11 +27,21 @@ import java.util.List;
  * TypeParameter Declaration.
  */
 public class ThemisXAnalysisTypeParameter
-        extends ThemisXAnalysisTypeReference<TypeParameter> {
+        extends ThemisXAnalysisBaseType<TypeParameter> {
+    /**
+     * The name of the parameter.
+     */
+    private final String theName;
+
     /**
      * The bounds.
      */
     private final List<ThemisXAnalysisTypeInstance> theBounds;
+
+    /**
+     * The annotations.
+     */
+    private final List<ThemisXAnalysisExpressionInstance> theAnnotations;
 
     /**
      * Constructor.
@@ -41,7 +52,17 @@ public class ThemisXAnalysisTypeParameter
     ThemisXAnalysisTypeParameter(final ThemisXAnalysisParser pParser,
                                  final TypeParameter pType) throws OceanusException {
         super(pParser, pType);
+        theName = ((ThemisXAnalysisNodeSimpleName) pParser.parseNode(pType.getName())).getName();
         theBounds = pParser.parseTypeList(pType.getTypeBound());
+        theAnnotations = pParser.parseExprList(pType.getAnnotations());
+    }
+
+    /**
+     * Obtain the name.
+     * @return the name
+     */
+    public String getName() {
+        return theName;
     }
 
     /**
@@ -50,5 +71,13 @@ public class ThemisXAnalysisTypeParameter
      */
     public List<ThemisXAnalysisTypeInstance> getBounds() {
         return theBounds;
+    }
+
+    /**
+     * Obtain the annotations.
+     * @return the annotations
+     */
+    public List<ThemisXAnalysisExpressionInstance> getAnnotations() {
+        return theAnnotations;
     }
 }

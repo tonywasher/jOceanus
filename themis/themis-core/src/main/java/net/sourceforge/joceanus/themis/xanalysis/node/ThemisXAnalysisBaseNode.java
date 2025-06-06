@@ -17,37 +17,36 @@
 package net.sourceforge.joceanus.themis.xanalysis.node;
 
 import com.github.javaparser.ast.Node;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisBaseInstance;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisNodeInstance;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
 
 /**
  * Node Base Class.
  * @param <T> the Node
  */
 public abstract class ThemisXAnalysisBaseNode<T extends Node>
+        extends ThemisXAnalysisBaseInstance<T>
         implements ThemisXAnalysisNodeInstance {
     /**
-     * The node.
+     * The nodeId.
      */
-    private final T theNode;
+    private final ThemisXAnalysisNode theId;
 
     /**
      * Constructor.
+     * @param pParser the parser
      * @param pNode the node
      */
-    protected ThemisXAnalysisBaseNode(final T pNode) {
-        theNode = pNode;
-    }
-
-    /**
-     * Obtain the node.
-     * @return the node
-     */
-    public T getNode() {
-        return theNode;
+    ThemisXAnalysisBaseNode(final ThemisXAnalysisParser pParser,
+                            final T pNode) throws OceanusException {
+        super(pParser, pNode);
+        theId = ThemisXAnalysisNode.determineNode(pParser, pNode);
     }
 
     @Override
-    public String toString() {
-        return theNode.toString();
+    public ThemisXAnalysisNode getId() {
+        return theId;
     }
 }

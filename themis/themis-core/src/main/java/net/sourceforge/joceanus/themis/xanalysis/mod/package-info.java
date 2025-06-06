@@ -1,4 +1,4 @@
-/*******************************************************************************
+/* *****************************************************************************
  * Themis: Java Project Framework
  * Copyright 2012,2025 Tony Washer
  *
@@ -14,22 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.themis.xanalysis;
 
 /**
- * Data Map.
+ * Module-Info Nodes.
  */
-public class ThemisXAnalysisDataMap {
-    /**
-     * Constructor.
-     */
-    ThemisXAnalysisDataMap() {
-    }
-
-    /**
-     * Constructor.
-     * @param pSource the source dataMap
-     */
-    ThemisXAnalysisDataMap(final ThemisXAnalysisDataMap pSource) {
-    }
-}
+package net.sourceforge.joceanus.themis.xanalysis.mod;

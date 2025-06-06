@@ -48,7 +48,7 @@ public class ThemisXAnalysisStmtIf
      */
     ThemisXAnalysisStmtIf(final ThemisXAnalysisParser pParser,
                           final IfStmt pStatement) throws OceanusException {
-        super(pStatement);
+        super(pParser, pStatement);
         theCondition = pParser.parseExpression(pStatement.getCondition());
         theThen = pParser.parseStatement(pStatement.getThenStmt());
         theElse = pParser.parseStatement(pStatement.getElseStmt().orElse(null));

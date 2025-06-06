@@ -17,37 +17,37 @@
 package net.sourceforge.joceanus.themis.xanalysis.stmt;
 
 import com.github.javaparser.ast.stmt.Statement;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisBaseInstance;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisStatementInstance;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
 
 /**
  * Statement Base Class.
  * @param <T> the Statement
  */
 public abstract class ThemisXAnalysisBaseStatement<T extends Statement>
+        extends ThemisXAnalysisBaseInstance<T>
         implements ThemisXAnalysisStatementInstance {
     /**
-     * The statement.
+     * The statementId.
      */
-    private final T theStatement;
+    private final ThemisXAnalysisStatement theId;
 
     /**
      * Constructor.
+     * @param pParser the parser
      * @param pStatement the statement
+     * @throws OceanusException on error
      */
-    protected ThemisXAnalysisBaseStatement(final T pStatement) {
-        theStatement = pStatement;
-    }
-
-    /**
-     * Obtain the statement.
-     * @return the statement
-     */
-    public T getStatement() {
-        return theStatement;
+    ThemisXAnalysisBaseStatement(final ThemisXAnalysisParser pParser,
+                                 final T pStatement) throws OceanusException {
+        super(pParser, pStatement);
+        theId = ThemisXAnalysisStatement.determineStatement(pParser, pStatement);
     }
 
     @Override
-    public String toString() {
-        return theStatement.toString();
+    public ThemisXAnalysisStatement getId() {
+        return theId;
     }
 }

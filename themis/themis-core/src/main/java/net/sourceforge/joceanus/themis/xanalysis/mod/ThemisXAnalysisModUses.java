@@ -14,24 +14,39 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.themis.xanalysis.expr;
+package net.sourceforge.joceanus.themis.xanalysis.mod;
 
-import com.github.javaparser.ast.expr.LiteralExpr;
+import com.github.javaparser.ast.modules.ModuleUsesDirective;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
 
 /**
- * Literal Expression Declaration.
- * @param <T> the expression
+ * Module Uses.
  */
-public abstract class ThemisXAnalysisExprLiteral<T extends LiteralExpr>
-        extends ThemisXAnalysisBaseExpression<T> {
+public class ThemisXAnalysisModUses
+        extends ThemisXAnalysisBaseModule<ModuleUsesDirective> {
+    /**
+     * The Service.
+     */
+    private final ThemisXAnalysisNodeInstance theService;
+
     /**
      * Constructor.
      * @param pParser the parser
-     * @param pExpression the expression
+     * @param pDirective the directive
+     * @throws OceanusException on error
      */
-    ThemisXAnalysisExprLiteral(final ThemisXAnalysisParser pParser,
-                               final T pExpression) {
-        super(pExpression);
+    ThemisXAnalysisModUses(final ThemisXAnalysisParser pParser,
+                           final ModuleUsesDirective pDirective) throws OceanusException {
+        super(pParser, pDirective);
+        theService = pParser.parseNode(pDirective.getName());
+    }
+
+    /**
+     * Obtain the service.
+     * @return the service
+     */
+    public ThemisXAnalysisNodeInstance getName() {
+        return theService;
     }
 }

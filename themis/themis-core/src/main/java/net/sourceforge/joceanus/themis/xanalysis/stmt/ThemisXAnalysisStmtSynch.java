@@ -43,7 +43,7 @@ public class ThemisXAnalysisStmtSynch
      */
     ThemisXAnalysisStmtSynch(final ThemisXAnalysisParser pParser,
                              final SynchronizedStmt pStatement) throws OceanusException {
-        super(pStatement);
+        super(pParser, pStatement);
         theBody = pParser.parseStatement(pStatement.getBody());
         theSynched = pParser.parseExpression(pStatement.getExpression());
     }

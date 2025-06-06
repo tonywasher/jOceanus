@@ -14,40 +14,55 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.themis.xanalysis.expr;
+package net.sourceforge.joceanus.themis.xanalysis.mod;
 
-import com.github.javaparser.ast.expr.AnnotationExpr;
+import com.github.javaparser.ast.modules.ModuleRequiresDirective;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
 
+import java.util.List;
+
 /**
- * Annotation Expression Declaration.
- * @param <T> the expression
+ * Module Requires.
  */
-public abstract class ThemisXAnalysisExprAnnotation<T extends AnnotationExpr>
-        extends ThemisXAnalysisBaseExpression<T> {
+public class ThemisXAnalysisModRequires
+        extends ThemisXAnalysisBaseModule<ModuleRequiresDirective> {
     /**
-     * The name of the annotation.
+     * The Required.
      */
-    private final ThemisXAnalysisNodeInstance theName;
+    private final ThemisXAnalysisNodeInstance theRequired;
+
+    /**
+     * The modifiers.
+     */
+    private final List<ThemisXAnalysisNodeInstance> theModifiers;
 
     /**
      * Constructor.
      * @param pParser the parser
-     * @param pExpression the expression
+     * @param pDirective the directive
      * @throws OceanusException on error
      */
-    ThemisXAnalysisExprAnnotation(final ThemisXAnalysisParser pParser,
-                                  final T pExpression) throws OceanusException {
-        super(pExpression);
-        theName = pParser.parseNode(pExpression.getName());
+    ThemisXAnalysisModRequires(final ThemisXAnalysisParser pParser,
+                               final ModuleRequiresDirective pDirective) throws OceanusException {
+        super(pParser, pDirective);
+        theRequired = pParser.parseNode(pDirective.getName());
+        theModifiers = pParser.parseNodeList(pDirective.getModifiers());
     }
 
     /**
-     * Obtain the name.
-     * @return the name
+     * Obtain the required.
+     * @return the required
      */
     public ThemisXAnalysisNodeInstance getName() {
-        return theName;
+        return theRequired;
+    }
+
+    /**
+     * Obtain the modifiers.
+     * @return the modifiers
+     */
+    public List<ThemisXAnalysisNodeInstance> getModifiers() {
+        return theModifiers;
     }
 }

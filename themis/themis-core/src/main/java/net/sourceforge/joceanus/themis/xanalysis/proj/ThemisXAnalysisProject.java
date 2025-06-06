@@ -14,12 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.themis.xanalysis;
+package net.sourceforge.joceanus.themis.xanalysis.proj;
 
-import com.github.javaparser.ParserConfiguration;
-import com.github.javaparser.StaticJavaParser;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.exc.ThemisIOException;
+import net.sourceforge.joceanus.themis.xanalysis.parser.ThemisXAnalysisCodeParser;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -48,14 +47,14 @@ public class ThemisXAnalysisProject {
     private final File theLocation;
 
     /**
+     * The parser.
+     */
+    private final ThemisXAnalysisCodeParser theParser;
+
+    /**
      * The module list.
      */
     private final List<ThemisXAnalysisModule> theModules;
-
-    /**
-     * The initial dataMap.
-     */
-    private final ThemisXAnalysisDataMap theDataMap;
 
     /**
      * The error.
@@ -70,30 +69,18 @@ public class ThemisXAnalysisProject {
         /* Store the name and location */
         theLocation = pLocation;
 
+        /* Create the parser */
+        theParser = new ThemisXAnalysisCodeParser();
+
         /* Create the list */
         theModules = new ArrayList<>();
 
-        /* Create the dataMap */
-        theDataMap = new ThemisXAnalysisDataMap();
-        StaticJavaParser.getParserConfiguration().setLanguageLevel(ParserConfiguration.LanguageLevel.JAVA_21);
-
         /* Initiate search for modules */
-        final ThemisXAnalysisMavenId myId = parseProjectFile(new File(theLocation, ThemisXAnalysisMaven.POM));
-        theName = myId == null ? null : myId.getArtifactId();
+        theName = parseProjectFile(new File(theLocation, ThemisXAnalysisMaven.POM));
 
-        /* InitialPass */
+        /* Parse the code */
         if (theError == null) {
-            performInitialPass();
-        }
-
-        /* ConsolidationPass */
-        if (theError == null) {
-            performConsolidationPass();
-        }
-
-        /* FinalPass */
-        if (theError == null) {
-            performFinalPass();
+            parseJavaCode();
         }
     }
 
@@ -129,25 +116,17 @@ public class ThemisXAnalysisProject {
         return theModules;
     }
 
-    /**
-     * Obtain the dataMap.
-     * @return the map
-     */
-    ThemisXAnalysisDataMap getDataMap() {
-        return theDataMap;
-    }
-
     @Override
     public String toString() {
         return theName;
     }
 
     /**
-     * Parse the maven top-level project file.
+     * Parse the maven project file.
      * @param pPom the project file
-     * @return the mavenId of the project
+     * @return the artifact name
      */
-    private ThemisXAnalysisMavenId parseProjectFile(final File pPom) {
+    private String parseProjectFile(final File pPom) {
         /* If the pom file does not exist, just return */
         if (!pPom.exists()) {
             return null;
@@ -160,7 +139,7 @@ public class ThemisXAnalysisProject {
             if (mySrc.exists()
                     && mySrc.isDirectory()) {
                 /* Add the module to the list */
-                theModules.add(new ThemisXAnalysisModule(this, new File(pPom.getParent())));
+                theModules.add(new ThemisXAnalysisModule(new File(pPom.getParent())));
             }
 
             /* Handle exceptions */
@@ -188,7 +167,6 @@ public class ThemisXAnalysisProject {
                     break;
                 }
             }
-
             return myPom.getMavenId();
 
             /* Catch exceptions */
@@ -201,59 +179,21 @@ public class ThemisXAnalysisProject {
     }
 
     /**
-     * initialPass.
+     * parse the java code.
      */
-    private void performInitialPass() {
+    private void parseJavaCode() {
         /* Protect against exceptions */
         try {
             /* Loop through the modules */
             for (ThemisXAnalysisModule myModule : theModules) {
                 /* Process the module */
-                myModule.performInitialPass();
+                myModule.parseJavaCode(theParser);
             }
 
             /* Handle exceptions */
         } catch (OceanusException e) {
             /* Save Exception */
             theError = new ThemisIOException(CONSOLIDATION_ERROR, e);
-        }
-    }
-
-    /**
-     * consolidationPass.
-     */
-    private void performConsolidationPass() {
-        /* Protect against exceptions */
-        try {
-            /* Loop through the modules */
-            for (ThemisXAnalysisModule myModule : theModules) {
-                /* Process the module */
-                myModule.performConsolidationPass();
-            }
-
-            /* Handle exceptions */
-        } catch (OceanusException e) {
-            /* Save Exception */
-            theError = new ThemisIOException(CONSOLIDATION_ERROR, e);
-        }
-    }
-
-    /**
-     * finalPass.
-     */
-    private void performFinalPass() {
-        /* Protect against exceptions */
-        try {
-            /* Loop through the modules */
-            for (ThemisXAnalysisModule myModule : theModules) {
-                /* Process the module */
-                myModule.performFinalPass();
-            }
-
-            /* Handle exceptions */
-        } catch (OceanusException e) {
-            /* Save Exception */
-            theError = new ThemisIOException("Failed on final pass", e);
         }
     }
 }

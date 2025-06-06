@@ -17,37 +17,37 @@
 package net.sourceforge.joceanus.themis.xanalysis.expr;
 
 import com.github.javaparser.ast.expr.Expression;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisBaseInstance;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisExpressionInstance;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
 
 /**
  * Expression Base Class.
  * @param <T> the Expression
  */
 public abstract class ThemisXAnalysisBaseExpression<T extends Expression>
+        extends ThemisXAnalysisBaseInstance<T>
         implements ThemisXAnalysisExpressionInstance {
     /**
-     * The expression.
+     * The expressionId.
      */
-    private final T theExpression;
+    private final ThemisXAnalysisExpression theId;
 
     /**
      * Constructor.
+     * @param pParser the parser
      * @param pExpression the expression
+     * @throws OceanusException on error
      */
-    protected ThemisXAnalysisBaseExpression(final T pExpression) {
-        theExpression = pExpression;
-    }
-
-    /**
-     * Obtain the expression.
-     * @return the expression
-     */
-    public T getExpression() {
-        return theExpression;
+    ThemisXAnalysisBaseExpression(final ThemisXAnalysisParser pParser,
+                                  final T pExpression) throws OceanusException {
+        super(pParser, pExpression);
+        theId = ThemisXAnalysisExpression.determineExpression(pParser, pExpression);
     }
 
     @Override
-    public String toString() {
-        return theExpression.toString();
+    public ThemisXAnalysisExpression getId() {
+        return theId;
     }
 }

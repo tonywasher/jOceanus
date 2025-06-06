@@ -20,6 +20,8 @@ import com.github.javaparser.ast.type.WildcardType;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
 
+import java.util.List;
+
 /**
  * Wildcard Type Declaration.
  */
@@ -31,6 +33,16 @@ public class ThemisXAnalysisTypeWildcard
     private final ThemisXAnalysisTypeInstance theExtended;
 
     /**
+     * The super type.
+     */
+    private final ThemisXAnalysisTypeInstance theSuper;
+
+    /**
+     * The annotations.
+     */
+    private final List<ThemisXAnalysisExpressionInstance> theAnnotations;
+
+    /**
      * Constructor.
      * @param pParser the parser
      * @param pType the type
@@ -38,15 +50,33 @@ public class ThemisXAnalysisTypeWildcard
      */
     ThemisXAnalysisTypeWildcard(final ThemisXAnalysisParser pParser,
                                 final WildcardType pType) throws OceanusException {
-        super(pType);
+        super(pParser, pType);
         theExtended = pParser.parseType(pType.getExtendedType().orElse(null));
+        theSuper = pParser.parseType(pType.getSuperType().orElse(null));
+        theAnnotations = pParser.parseExprList(pType.getAnnotations());
     }
 
     /**
-     * Obtain the elements.
-     * @return the elements
+     * Obtain the extended.
+     * @return the extended
      */
     public ThemisXAnalysisTypeInstance getExtended() {
         return theExtended;
+    }
+
+    /**
+     * Obtain the super.
+     * @return the super
+     */
+    public ThemisXAnalysisTypeInstance getSuper() {
+        return theSuper;
+    }
+
+    /**
+     * Obtain the annotations.
+     * @return the annotations
+     */
+    public List<ThemisXAnalysisExpressionInstance> getAnnotations() {
+        return theAnnotations;
     }
 }

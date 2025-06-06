@@ -20,6 +20,8 @@ import com.github.javaparser.ast.ArrayCreationLevel;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
 
+import java.util.List;
+
 /**
  * Array Creation Level.
  */
@@ -31,6 +33,11 @@ public class ThemisXAnalysisNodeArrayLevel
     private final ThemisXAnalysisExpressionInstance theLevel;
 
     /**
+     * The annotations.
+     */
+    private final List<ThemisXAnalysisExpressionInstance> theAnnotations;
+
+    /**
      * Constructor.
      * @param pParser the parser
      * @param pLevel the level
@@ -38,8 +45,9 @@ public class ThemisXAnalysisNodeArrayLevel
      */
     ThemisXAnalysisNodeArrayLevel(final ThemisXAnalysisParser pParser,
                                   final ArrayCreationLevel pLevel) throws OceanusException {
-        super(pLevel);
+        super(pParser, pLevel);
         theLevel = pParser.parseExpression(pLevel.getDimension().orElse(null));
+        theAnnotations = pParser.parseExprList(pLevel.getAnnotations());
     }
 
     /**
@@ -48,5 +56,13 @@ public class ThemisXAnalysisNodeArrayLevel
      */
     public ThemisXAnalysisExpressionInstance getValue() {
         return theLevel;
+    }
+
+    /**
+     * Obtain the annotations.
+     * @return the annotations
+     */
+    public List<ThemisXAnalysisExpressionInstance> getAnnotations() {
+        return theAnnotations;
     }
 }
