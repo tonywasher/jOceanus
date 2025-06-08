@@ -18,6 +18,7 @@ package net.sourceforge.joceanus.themis.xanalysis.proj;
 
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisClassInstance;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisNodeInstance;
 import net.sourceforge.joceanus.themis.xanalysis.node.ThemisXAnalysisNodeCompilationUnit;
 import net.sourceforge.joceanus.themis.xanalysis.parser.ThemisXAnalysisCodeParser;
 
@@ -43,24 +44,16 @@ public class ThemisXAnalysisFile {
     private final String theName;
 
     /**
-     * The package name.
-     */
-    private final String thePackage;
-
-    /**
      * The contents.
      */
     private ThemisXAnalysisNodeCompilationUnit theContents;
 
     /**
      * Constructor.
-     * @param pPackage the package
      * @param pFile the file to analyse
      */
-    ThemisXAnalysisFile(final String pPackage,
-                        final File pFile) {
+    ThemisXAnalysisFile(final File pFile) {
         /* Store the parameters */
-        thePackage = pPackage;
         theLocation = pFile;
         theName = pFile.getName().replace(SFX_JAVA, "");
     }
@@ -91,7 +84,7 @@ public class ThemisXAnalysisFile {
 
     @Override
     public String toString() {
-        return theContents == null ? null : theContents.toString();
+        return theName;
     }
 
     /**
@@ -109,7 +102,7 @@ public class ThemisXAnalysisFile {
         /* Check that we have a class that is the same name as the file */
         final ThemisXAnalysisClassInstance myClass = theContents.getContents();
         if (!theName.equals(myClass.getName())) {
-            throw pParser.buildException("Incorrect name for class in file", myClass.getNode());
+            throw pParser.buildException("Incorrect name for class in file", ((ThemisXAnalysisNodeInstance) myClass).getNode());
         }
      }
 }

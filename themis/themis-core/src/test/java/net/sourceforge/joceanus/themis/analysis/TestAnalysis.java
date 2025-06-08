@@ -42,7 +42,7 @@ class TestAnalysis {
     /**
      * The parsed project.
      */
-    private static ThemisXAnalysisProject PARSED_PROJECT;
+    private ThemisXAnalysisProject theParsedProject;
 
     /**
      * Create the analysis test suite.
@@ -52,16 +52,16 @@ class TestAnalysis {
     @TestFactory
     Stream<DynamicNode> analyseSource() throws OceanusException {
         return Stream.of(
-                    DynamicTest.dynamicTest("analyseSource", TestAnalysis::testProjectSource),
-                    DynamicTest.dynamicTest("analyseDependencies", TestAnalysis::testProjectDependencies),
-                    DynamicTest.dynamicTest("analyseStats", TestAnalysis::testProjectStats)
+                    DynamicTest.dynamicTest("analyseSource", this::testProjectSource),
+                    DynamicTest.dynamicTest("analyseDependencies", this::testProjectDependencies),
+                    DynamicTest.dynamicTest("analyseStats", this::testProjectStats)
                 );
     }
 
     /**
      * Test source analysis of the current project.
      */
-    private static void testProjectSource() {
+    private void testProjectSource() {
         /* Analyse source of project */
         File myLocation = new File(PATH_BASE);
         try {
@@ -69,20 +69,20 @@ class TestAnalysis {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        PARSED_PROJECT = new ThemisXAnalysisProject(new File(PATH_BASE));
-        Assertions.assertNull(PARSED_PROJECT.getError(), "Exception analysing project");
+        theParsedProject = new ThemisXAnalysisProject(new File(PATH_BASE));
+        Assertions.assertNull(theParsedProject.getError(), "Exception analysing project");
     }
 
     /**
      * Test dependency analysis of the current project.
      */
-    private static void testProjectDependencies() {
+    private void testProjectDependencies() {
         /* Make sure previous test executed */
-        Assumptions.assumeTrue(PARSED_PROJECT != null);
-        Assumptions.assumeTrue(PARSED_PROJECT.getError() == null);
+        Assumptions.assumeTrue(theParsedProject != null);
+        Assumptions.assumeTrue(theParsedProject.getError() == null);
 
         /* Analyse dependencies of project */
-        final ThemisXAnalysisDSMProject myProject  = new ThemisXAnalysisDSMProject(PARSED_PROJECT);
+        final ThemisXAnalysisDSMProject myProject  = new ThemisXAnalysisDSMProject(theParsedProject);
         Assertions.assertNotNull(myProject, "Failed to analyse project");
         Assertions.assertNull(myProject.getError(), "Exception analysing project");
     }
@@ -90,13 +90,13 @@ class TestAnalysis {
     /**
      * Test dependency analysis of the current project.
      */
-    private static void testProjectStats() {
+    private void testProjectStats() {
         /* Make sure previous test executed */
-        Assumptions.assumeTrue(PARSED_PROJECT != null);
-        Assumptions.assumeTrue(PARSED_PROJECT.getError() == null);
+        Assumptions.assumeTrue(theParsedProject != null);
+        Assumptions.assumeTrue(theParsedProject.getError() == null);
 
         /* Analyse dependencies of project */
-        final ThemisXAnalysisStatsProject myProject  = new ThemisXAnalysisStatsProject(PARSED_PROJECT);
+        final ThemisXAnalysisStatsProject myProject  = new ThemisXAnalysisStatsProject(theParsedProject);
         Assertions.assertNotNull(myProject, "Failed to analyse project");
         Assertions.assertNull(myProject.getError(), "Exception analysing project");
     }

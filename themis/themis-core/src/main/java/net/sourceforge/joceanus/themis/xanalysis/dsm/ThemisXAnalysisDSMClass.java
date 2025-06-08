@@ -103,7 +103,7 @@ public class ThemisXAnalysisDSMClass {
      * @return the class
      */
     public ThemisXAnalysisClassInstance getParsedClass() {
-        return theClass;
+        return (ThemisXAnalysisClassInstance) theClass;
     }
 
     /**

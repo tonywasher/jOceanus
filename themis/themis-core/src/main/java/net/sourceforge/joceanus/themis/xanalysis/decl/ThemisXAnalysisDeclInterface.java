@@ -19,6 +19,7 @@ package net.sourceforge.joceanus.themis.xanalysis.decl;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisClassInstance;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisDeclarationInstance;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
 import net.sourceforge.joceanus.themis.xanalysis.node.ThemisXAnalysisNodeSimpleName;
 
@@ -29,7 +30,7 @@ import java.util.List;
  */
 public class ThemisXAnalysisDeclInterface
         extends ThemisXAnalysisBaseDeclaration<ClassOrInterfaceDeclaration>
-        implements ThemisXAnalysisClassInstance {
+        implements ThemisXAnalysisDeclarationInstance, ThemisXAnalysisClassInstance {
     /**
      * The Name.
      */

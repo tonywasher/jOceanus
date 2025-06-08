@@ -17,7 +17,6 @@
 package net.sourceforge.joceanus.themis.xanalysis.stats;
 
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisClassInstance;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisMethodInstance;
 
 import java.util.List;
@@ -29,7 +28,7 @@ public class ThemisXAnalysisStatsClass {
     /**
      * The underlying class.
      */
-    private final ThemisXAnalysisClassInstance theClass;
+    private final ThemisXAnalysisInstance theClass;
 
     /**
      * The stats.
@@ -47,7 +46,7 @@ public class ThemisXAnalysisStatsClass {
      */
     ThemisXAnalysisStatsClass(final ThemisXAnalysisInstance pClass) {
         /* Store the class */
-        theClass = (ThemisXAnalysisClassInstance) pClass;
+        theClass = pClass;
 
         /* Create the stats */
         theStats = new ThemisXAnalysisStats();
@@ -61,7 +60,7 @@ public class ThemisXAnalysisStatsClass {
      * Obtain the class.
      * @return the class
      */
-    public ThemisXAnalysisClassInstance getUnderlying() {
+    public ThemisXAnalysisInstance getUnderlying() {
         return theClass;
     }
 

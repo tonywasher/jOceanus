@@ -20,7 +20,6 @@ import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.exc.ThemisDataException;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisChar;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisClassInstance;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisNodeInstance;
 import net.sourceforge.joceanus.themis.xanalysis.dsm.ThemisXAnalysisDSMClass.ThemisXAnalysisDSMClassState;
 import net.sourceforge.joceanus.themis.xanalysis.node.ThemisXAnalysisNode;
@@ -29,7 +28,7 @@ import net.sourceforge.joceanus.themis.xanalysis.node.ThemisXAnalysisNodeName;
 import net.sourceforge.joceanus.themis.xanalysis.type.ThemisXAnalysisType;
 import net.sourceforge.joceanus.themis.xanalysis.type.ThemisXAnalysisTypeClassInterface;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -37,6 +36,11 @@ import java.util.Map;
  * Package Cache.
  */
 public class ThemisXAnalysisDSMParser {
+    /**
+     * The class map.
+     */
+    private final Map<String, ThemisXAnalysisDSMClass> theClassMap;
+
     /**
      * The package map.
      */
@@ -46,7 +50,8 @@ public class ThemisXAnalysisDSMParser {
      * Constructor.
      */
     ThemisXAnalysisDSMParser() {
-        thePackageMap = new HashMap<>();
+        theClassMap = new LinkedHashMap<>();
+        thePackageMap = new LinkedHashMap<>();
     }
 
     /**
@@ -152,7 +157,7 @@ public class ThemisXAnalysisDSMParser {
      */
     private void detectClassOrInterfaceTypes(final ThemisXAnalysisDSMClass pClass) {
         /* Access parsed class and state */
-        final ThemisXAnalysisClassInstance myClass = pClass.getParsedClass();
+        final ThemisXAnalysisInstance myClass = (ThemisXAnalysisInstance) pClass.getParsedClass();
         final ThemisXAnalysisDSMClassState myState = pClass.getState();
 
         /* Obtain all ClassOrInterface references */
@@ -174,7 +179,7 @@ public class ThemisXAnalysisDSMParser {
      */
     private void detectNameReferences(final ThemisXAnalysisDSMClass pClass) {
         /* Access parsed class and state */
-        final ThemisXAnalysisClassInstance myClass = pClass.getParsedClass();
+        final ThemisXAnalysisInstance myClass = (ThemisXAnalysisInstance) pClass.getParsedClass();
         final ThemisXAnalysisDSMClassState myState = pClass.getState();
 
         /* Obtain all Name expressions */

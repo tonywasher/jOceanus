@@ -99,7 +99,7 @@ public class ThemisXAnalysisPackage {
                 if (myName.endsWith(ThemisXAnalysisFile.SFX_JAVA)
                         && !PACKAGE_INFO.equals(myName)) {
                     /* Add the class */
-                    final ThemisXAnalysisFile myClass = new ThemisXAnalysisFile(thePackage, myFile);
+                    final ThemisXAnalysisFile myClass = new ThemisXAnalysisFile(myFile);
                     myClasses.add(myClass);
                 }
             }

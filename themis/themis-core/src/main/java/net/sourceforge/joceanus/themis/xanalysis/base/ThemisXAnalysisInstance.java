@@ -143,8 +143,7 @@ public interface ThemisXAnalysisInstance {
     /**
      * The base class interface.
      */
-    interface ThemisXAnalysisClassInstance
-            extends ThemisXAnalysisDeclarationInstance {
+    interface ThemisXAnalysisClassInstance {
         /**
          * Obtain the name.
          * @return the name
@@ -161,13 +160,17 @@ public interface ThemisXAnalysisInstance {
          * Obtain the modifiers.
          * @return the modifiers
          */
-        List<ThemisXAnalysisNodeInstance> getModifiers();
+        default List<ThemisXAnalysisNodeInstance> getModifiers() {
+            return Collections.emptyList();
+        }
 
         /**
          * Obtain the body.
          * @return the body
          */
-        List<ThemisXAnalysisDeclarationInstance> getBody();
+        default List<ThemisXAnalysisDeclarationInstance> getBody() {
+            return Collections.emptyList();
+        }
 
         /**
          * Obtain the extends types.
@@ -197,7 +200,9 @@ public interface ThemisXAnalysisInstance {
          * Obtain the annotations.
          * @return the annotations
          */
-        List<ThemisXAnalysisExpressionInstance> getAnnotations();
+        default List<ThemisXAnalysisExpressionInstance> getAnnotations() {
+            return Collections.emptyList();
+        }
 
         /**
          * is the class a local declaration?
@@ -211,8 +216,7 @@ public interface ThemisXAnalysisInstance {
     /**
      * The base method interface.
      */
-    interface ThemisXAnalysisMethodInstance
-            extends ThemisXAnalysisDeclarationInstance {
+    interface ThemisXAnalysisMethodInstance {
         /**
          * Obtain the name.
          * @return the name
@@ -223,7 +227,9 @@ public interface ThemisXAnalysisInstance {
          * Obtain the modifiers.
          * @return the modifiers
          */
-        List<ThemisXAnalysisNodeInstance> getModifiers();
+        default List<ThemisXAnalysisNodeInstance> getModifiers() {
+            return Collections.emptyList();
+        }
 
         /**
          * Obtain the parameters.
@@ -237,13 +243,17 @@ public interface ThemisXAnalysisInstance {
          * Obtain the thrown exceptions.
          * @return the thrown exceptions
          */
-        List<ThemisXAnalysisTypeInstance> getThrown();
+        default List<ThemisXAnalysisTypeInstance> getThrown() {
+            return Collections.emptyList();
+        }
 
         /**
          * Obtain the type parameters.
          * @return the parameters
          */
-        List<ThemisXAnalysisTypeInstance> getTypeParameters();
+        default List<ThemisXAnalysisTypeInstance> getTypeParameters() {
+            return Collections.emptyList();
+        }
 
         /**
          * Obtain the body.
@@ -255,6 +265,8 @@ public interface ThemisXAnalysisInstance {
          * Obtain the annotations.
          * @return the annotations
          */
-        List<ThemisXAnalysisExpressionInstance> getAnnotations();
+        default List<ThemisXAnalysisExpressionInstance> getAnnotations() {
+            return Collections.emptyList();
+        }
     }
 }
