@@ -29,7 +29,13 @@ import net.sourceforge.joceanus.themis.xanalysis.decl.ThemisXAnalysisDeclaration
 /**
  * Statement Counter for Declarations.
  */
-public class ThemisXAnalysisStatsStmtDecl {
+public final class ThemisXAnalysisStatsStmtDecl {
+    /**
+     * Private constructor.
+     */
+    private ThemisXAnalysisStatsStmtDecl() {
+    }
+
     /**
      * Obtain the statement count for a declaration.
      *

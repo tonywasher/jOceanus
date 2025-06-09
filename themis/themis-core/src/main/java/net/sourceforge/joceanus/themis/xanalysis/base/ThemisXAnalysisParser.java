@@ -25,6 +25,7 @@ import com.github.javaparser.ast.modules.ModuleDirective;
 import com.github.javaparser.ast.stmt.Statement;
 import com.github.javaparser.ast.type.Type;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisClassInstance;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisDeclarationInstance;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisExpressionInstance;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisModuleInstance;
@@ -63,6 +64,13 @@ public interface ThemisXAnalysisParser {
      * @throws OceanusException on error
      */
     ThemisXAnalysisInstance registerInstance(ThemisXAnalysisInstance pInstance) throws OceanusException;
+
+    /**
+     * Register Class.
+     * @param pClass the class
+     * @return the class name
+     */
+    String registerClass(ThemisXAnalysisClassInstance pClass) throws OceanusException;
 
     /**
      * Parse a declaration.

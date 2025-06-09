@@ -150,4 +150,9 @@ public final class ThemisXAnalysisChar {
      * Or symbol.
      */
     public static final char OR = '|';
+
+    /**
+     * Dollar symbol.
+     */
+    public static final char DOLLAR = '$';
 }

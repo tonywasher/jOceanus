@@ -38,7 +38,13 @@ import net.sourceforge.joceanus.themis.xanalysis.stmt.ThemisXAnalysisStmtYield;
 /**
  * Statement Counter for Statements.
  */
-public class ThemisXAnalysisStatsStmtStmt {
+public final class ThemisXAnalysisStatsStmtStmt {
+    /**
+     * Private constructor.
+     */
+    private ThemisXAnalysisStatsStmtStmt() {
+    }
+
     /**
      * Obtain the statement count for a statement.
      *

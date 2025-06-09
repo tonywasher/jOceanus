@@ -37,7 +37,13 @@ import net.sourceforge.joceanus.themis.xanalysis.expr.ThemisXAnalysisExpression;
 /**
  * Statement Counter for Expressions.
  */
-public class ThemisXAnalysisStatsStmtExpr {
+public final class ThemisXAnalysisStatsStmtExpr {
+    /**
+     * Private constructor.
+     */
+    private ThemisXAnalysisStatsStmtExpr() {
+    }
+
     /**
      * Obtain the statement count for an expression.
      * @param pCounter the counter

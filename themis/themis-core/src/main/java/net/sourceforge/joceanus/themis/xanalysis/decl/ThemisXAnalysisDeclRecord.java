@@ -37,11 +37,6 @@ public class ThemisXAnalysisDeclRecord
     private final String theName;
 
     /**
-     * The fullName.
-     */
-    private final String theFullName;
-
-    /**
      * The modifiers.
      */
     private final List<ThemisXAnalysisNodeInstance> theModifiers;
@@ -72,6 +67,11 @@ public class ThemisXAnalysisDeclRecord
     private final List<ThemisXAnalysisExpressionInstance> theAnnotations;
 
     /**
+     * The fullName.
+     */
+    private String theFullName;
+
+    /**
      * Constructor.
      * @param pParser the parser
      * @param pDeclaration the declaration
@@ -82,13 +82,18 @@ public class ThemisXAnalysisDeclRecord
         /* Store values */
         super(pParser, pDeclaration);
         theName = ((ThemisXAnalysisNodeSimpleName) pParser.parseNode(pDeclaration.getName())).getName();
-        theFullName = pDeclaration.getFullyQualifiedName().orElse(null);
         theModifiers = pParser.parseNodeList(pDeclaration.getModifiers());
         theImplements = pParser.parseTypeList(pDeclaration.getImplementedTypes());
         theTypeParameters = pParser.parseTypeList(pDeclaration.getTypeParameters());
         theParameters = pParser.parseNodeList(pDeclaration.getParameters());
-        theBody = pParser.parseDeclarationList(pDeclaration.getMembers());
         theAnnotations = pParser.parseExprList(pDeclaration.getAnnotations());
+
+        /* Access the intended full name and overwrite it with the correct name */
+        theFullName = pDeclaration.getFullyQualifiedName().orElse(null);
+        theFullName = pParser.registerClass(this);
+
+        /* Finally parse the underlying declarations */
+        theBody = pParser.parseDeclarationList(pDeclaration.getMembers());
     }
 
     @Override
@@ -137,5 +142,10 @@ public class ThemisXAnalysisDeclRecord
     @Override
     public List<ThemisXAnalysisExpressionInstance> getAnnotations() {
         return theAnnotations;
+    }
+
+    @Override
+    public String toString() {
+        return theFullName;
     }
 }

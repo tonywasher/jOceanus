@@ -48,9 +48,9 @@ public class ThemisXAnalysisExprObjectCreate
     private final List<ThemisXAnalysisTypeInstance> theTypeArguments;
 
     /**
-     * The bodies.
+     * The anonymous class.
      */
-    private final List<ThemisXAnalysisDeclarationInstance> theBodies;
+    private final ThemisXAnalysisDeclarationInstance theAnon;
 
     /**
      * The method instance.
@@ -70,7 +70,9 @@ public class ThemisXAnalysisExprObjectCreate
         theArgs = pParser.parseExprList(pExpression.getArguments());
         theScope = pParser.parseExpression(pExpression.getScope().orElse(null));
         theTypeArguments = pParser.parseTypeList(pExpression.getTypeArguments().orElse(null));
-        theBodies = pParser.parseDeclarationList(pExpression.getAnonymousClassBody().orElse(null));
+        theAnon = pExpression.getAnonymousClassBody().isPresent()
+                    ? pParser.parseDeclaration(new ThemisXAnalysisExprAnonClass(pExpression))
+                    : null;
     }
 
     /**
@@ -106,11 +108,11 @@ public class ThemisXAnalysisExprObjectCreate
     }
 
     /**
-     * Obtain the bodies.
-     * @return the bodies
+     * Obtain the body.
+     * @return the body
      */
-    public List<ThemisXAnalysisDeclarationInstance> getBodies() {
-        return theBodies;
+    public ThemisXAnalysisDeclarationInstance getAnonymousClass() {
+        return theAnon;
     }
 
     /**

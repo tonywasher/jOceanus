@@ -20,9 +20,11 @@ import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisClassInstance;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisNodeInstance;
 import net.sourceforge.joceanus.themis.xanalysis.node.ThemisXAnalysisNodeCompilationUnit;
-import net.sourceforge.joceanus.themis.xanalysis.parser.ThemisXAnalysisCodeParser;
+import net.sourceforge.joceanus.themis.xanalysis.parser.ThemisXAnalysisParserImpl;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Analysis representation of a java file.
@@ -49,6 +51,11 @@ public class ThemisXAnalysisFile {
     private ThemisXAnalysisNodeCompilationUnit theContents;
 
     /**
+     * The class list.
+     */
+    private List<ThemisXAnalysisClassInstance> theClasses;
+
+    /**
      * Constructor.
      * @param pFile the file to analyse
      */
@@ -56,6 +63,7 @@ public class ThemisXAnalysisFile {
         /* Store the parameters */
         theLocation = pFile;
         theName = pFile.getName().replace(SFX_JAVA, "");
+        theClasses = new ArrayList<>();
     }
 
     /**
@@ -82,6 +90,14 @@ public class ThemisXAnalysisFile {
         return theContents;
     }
 
+    /**
+     * Obtain the classList.
+     * @return the classList
+     */
+    public List<ThemisXAnalysisClassInstance> getClasses() {
+        return theClasses;
+    }
+
     @Override
     public String toString() {
         return theName;
@@ -92,7 +108,7 @@ public class ThemisXAnalysisFile {
      * @param pParser the parser
      * @throws OceanusException on error
      */
-    void parseJavaCode(final ThemisXAnalysisCodeParser pParser) throws OceanusException {
+    void parseJavaCode(final ThemisXAnalysisParserImpl pParser) throws OceanusException {
         /* Set the current file */
         pParser.setCurrentFile(theLocation);
 
@@ -104,5 +120,8 @@ public class ThemisXAnalysisFile {
         if (!theName.equals(myClass.getName())) {
             throw pParser.buildException("Incorrect name for class in file", ((ThemisXAnalysisNodeInstance) myClass).getNode());
         }
+
+        /* Obtain a copy of the classList from the parser */
+        theClasses.addAll(pParser.getClasses());
      }
 }

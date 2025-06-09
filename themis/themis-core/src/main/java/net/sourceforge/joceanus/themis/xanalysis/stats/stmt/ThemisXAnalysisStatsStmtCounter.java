@@ -33,7 +33,7 @@ public interface ThemisXAnalysisStatsStmtCounter {
      * @param pDecl the declaration
      * @return the count
      */
-    int countDecl(final ThemisXAnalysisDeclarationInstance pDecl);
+    int countDecl(ThemisXAnalysisDeclarationInstance pDecl);
 
     /**
      * Obtain the statement count for a list of declarations.
@@ -51,7 +51,7 @@ public interface ThemisXAnalysisStatsStmtCounter {
      * @param pNode the node
      * @return the count
      */
-    int countNode(final ThemisXAnalysisNodeInstance pNode);
+    int countNode(ThemisXAnalysisNodeInstance pNode);
 
     /**
      * Obtain the statement count for a list of nodes.
@@ -69,7 +69,7 @@ public interface ThemisXAnalysisStatsStmtCounter {
      * @param pExpression the expression
      * @return the count
      */
-    int countExpr(final ThemisXAnalysisExpressionInstance pExpression);
+    int countExpr(ThemisXAnalysisExpressionInstance pExpression);
 
     /**
      * Obtain the statement count for a list of expressions.
@@ -87,7 +87,7 @@ public interface ThemisXAnalysisStatsStmtCounter {
      * @param pStatement the statement
      * @return the count
      */
-    int countStmt(final ThemisXAnalysisStatementInstance pStatement);
+    int countStmt(ThemisXAnalysisStatementInstance pStatement);
 
     /**
      * Obtain the statement count for a list of statements.

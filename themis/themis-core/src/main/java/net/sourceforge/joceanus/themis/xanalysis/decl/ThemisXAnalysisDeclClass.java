@@ -37,11 +37,6 @@ public class ThemisXAnalysisDeclClass
     private final String theName;
 
     /**
-     * The fullName.
-     */
-    private final String theFullName;
-
-    /**
      * The modifiers.
      */
     private final List<ThemisXAnalysisNodeInstance> theModifiers;
@@ -72,6 +67,16 @@ public class ThemisXAnalysisDeclClass
     private final List<ThemisXAnalysisExpressionInstance> theAnnotations;
 
     /**
+     * Is this an anonymous class?
+     */
+    private final boolean isAnonClass;
+
+    /**
+     * The fullName.
+     */
+    private String theFullName;
+
+    /**
      * Constructor.
      * @param pParser the parser
      * @param pDeclaration the declaration
@@ -82,13 +87,19 @@ public class ThemisXAnalysisDeclClass
         /* Store values */
         super(pParser, pDeclaration);
         theName = ((ThemisXAnalysisNodeSimpleName) pParser.parseNode(pDeclaration.getName())).getName();
-        theFullName = pDeclaration.getFullyQualifiedName().orElse(null);
         theModifiers = pParser.parseNodeList(pDeclaration.getModifiers());
         theImplements = pParser.parseTypeList(pDeclaration.getImplementedTypes());
         theExtends = pParser.parseTypeList(pDeclaration.getExtendedTypes());
         theTypeParameters = pParser.parseTypeList(pDeclaration.getTypeParameters());
-        theBody = pParser.parseDeclarationList(pDeclaration.getMembers());
         theAnnotations = pParser.parseExprList(pDeclaration.getAnnotations());
+
+        /* Access the full name and determine whether this is an anonymous class */
+        theFullName = pDeclaration.getFullyQualifiedName().orElse(null);
+        isAnonClass = theFullName == null && !isLocalDeclaration();
+        theFullName = pParser.registerClass(this);
+
+        /* Finally parse the underlying declarations */
+        theBody = pParser.parseDeclarationList(pDeclaration.getMembers());
     }
 
     @Override
@@ -104,6 +115,11 @@ public class ThemisXAnalysisDeclClass
     @Override
     public boolean isLocalDeclaration() {
         return getNode().isLocalClassDeclaration();
+    }
+
+    @Override
+    public boolean isAnonClass() {
+        return isAnonClass;
     }
 
     @Override
@@ -134,5 +150,10 @@ public class ThemisXAnalysisDeclClass
     @Override
     public List<ThemisXAnalysisExpressionInstance> getAnnotations() {
         return theAnnotations;
+    }
+
+    @Override
+    public String toString() {
+        return theFullName;
     }
 }

@@ -68,8 +68,13 @@ public class ThemisXAnalysisDeclAnnotation
         theName = ((ThemisXAnalysisNodeSimpleName) pParser.parseNode(pDeclaration.getName())).getName();
         theFullName = pDeclaration.getFullyQualifiedName().orElse(null);
         theModifiers = pParser.parseNodeList(pDeclaration.getModifiers());
-        theBody = pParser.parseDeclarationList(pDeclaration.getMembers());
         theAnnotations = pParser.parseExprList(pDeclaration.getAnnotations());
+
+        /* Register the class */
+        pParser.registerClass(this);
+
+        /* Finally parse the underlying declarations */
+        theBody = pParser.parseDeclarationList(pDeclaration.getMembers());
     }
 
     @Override
@@ -95,5 +100,10 @@ public class ThemisXAnalysisDeclAnnotation
     @Override
     public List<ThemisXAnalysisExpressionInstance> getAnnotations() {
         return theAnnotations;
+    }
+
+    @Override
+    public String toString() {
+        return theFullName;
     }
 }

@@ -27,7 +27,13 @@ import net.sourceforge.joceanus.themis.xanalysis.node.ThemisXAnalysisNodeVariabl
 /**
  * Statement Counter for Nodes.
  */
-public class ThemisXAnalysisStatsStmtNode {
+public final class ThemisXAnalysisStatsStmtNode {
+    /**
+     * Private constructor.
+     */
+    private ThemisXAnalysisStatsStmtNode() {
+    }
+
     /**
      * Obtain the statement count for a node.
      *

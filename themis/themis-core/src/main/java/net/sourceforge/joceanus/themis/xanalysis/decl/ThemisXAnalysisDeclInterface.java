@@ -87,8 +87,13 @@ public class ThemisXAnalysisDeclInterface
         theExtends = pParser.parseTypeList(pDeclaration.getExtendedTypes());
         theImplements = pParser.parseTypeList(pDeclaration.getImplementedTypes());
         theTypeParameters = pParser.parseTypeList(pDeclaration.getTypeParameters());
-        theBody = pParser.parseDeclarationList(pDeclaration.getMembers());
         theAnnotations = pParser.parseExprList(pDeclaration.getAnnotations());
+
+        /* Register the class */
+        pParser.registerClass(this);
+
+        /* Finally parse the underlying declarations */
+        theBody = pParser.parseDeclarationList(pDeclaration.getMembers());
     }
 
     @Override
@@ -129,5 +134,10 @@ public class ThemisXAnalysisDeclInterface
     @Override
     public List<ThemisXAnalysisExpressionInstance> getAnnotations() {
         return theAnnotations;
+    }
+
+    @Override
+    public String toString() {
+        return theFullName;
     }
 }

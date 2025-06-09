@@ -81,8 +81,13 @@ public class ThemisXAnalysisDeclEnum
         theModifiers = pParser.parseNodeList(pDeclaration.getModifiers());
         theImplements = pParser.parseTypeList(pDeclaration.getImplementedTypes());
         theValues = pParser.parseDeclarationList(pDeclaration.getEntries());
-        theBody = pParser.parseDeclarationList(pDeclaration.getMembers());
         theAnnotations = pParser.parseExprList(pDeclaration.getAnnotations());
+
+        /* Register the class */
+        pParser.registerClass(this);
+
+        /* Finally parse the underlying declarations */
+        theBody = pParser.parseDeclarationList(pDeclaration.getMembers());
     }
 
     @Override
@@ -121,5 +126,10 @@ public class ThemisXAnalysisDeclEnum
     @Override
     public List<ThemisXAnalysisExpressionInstance> getAnnotations() {
         return theAnnotations;
+    }
+
+    @Override
+    public String toString() {
+        return theFullName;
     }
 }

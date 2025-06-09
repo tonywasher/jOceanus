@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.themis.xanalysis.proj;
 
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.exc.ThemisIOException;
-import net.sourceforge.joceanus.themis.xanalysis.parser.ThemisXAnalysisCodeParser;
+import net.sourceforge.joceanus.themis.xanalysis.parser.ThemisXAnalysisParserImpl;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -49,7 +49,7 @@ public class ThemisXAnalysisProject {
     /**
      * The parser.
      */
-    private final ThemisXAnalysisCodeParser theParser;
+    private final ThemisXAnalysisParserImpl theParser;
 
     /**
      * The module list.
@@ -70,7 +70,7 @@ public class ThemisXAnalysisProject {
         theLocation = pLocation;
 
         /* Create the parser */
-        theParser = new ThemisXAnalysisCodeParser();
+        theParser = new ThemisXAnalysisParserImpl();
 
         /* Create the list */
         theModules = new ArrayList<>();

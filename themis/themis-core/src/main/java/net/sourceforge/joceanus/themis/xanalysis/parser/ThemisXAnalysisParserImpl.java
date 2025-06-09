@@ -34,6 +34,7 @@ import net.sourceforge.joceanus.themis.exc.ThemisDataException;
 import net.sourceforge.joceanus.themis.exc.ThemisIOException;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisChar;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisClassInstance;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisDeclarationInstance;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisExpressionInstance;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisModuleInstance;
@@ -56,12 +57,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Deque;
+import java.util.List;
 
 /**
  * Code Parser.
  */
-public class ThemisXAnalysisCodeParser
+public class ThemisXAnalysisParserImpl
         implements ThemisXAnalysisParser {
     /**
      * The parser.
@@ -74,11 +77,6 @@ public class ThemisXAnalysisCodeParser
     private final Deque<ThemisXAnalysisInstance> theNodes;
 
     /**
-     * The current module being parsed.
-     */
-    private String theModule;
-
-    /**
      * The current package being parsed.
      */
     private String thePackage;
@@ -89,20 +87,37 @@ public class ThemisXAnalysisCodeParser
     private File theCurrentFile;
 
     /**
+     * The List of classes in a file.
+     */
+    private final List<ThemisXAnalysisClassInstance> theClasses;
+
+    /**
+     * The Class Stack.
+     */
+    private final Deque<String> theClassStack;
+
+    /**
+     * The Current class index.
+     */
+    private int theClassIndex;
+
+    /**
      * Constructor.
      */
-    public ThemisXAnalysisCodeParser() {
+    public ThemisXAnalysisParserImpl() {
         theParser = new JavaParser();
         theParser.getParserConfiguration().setLanguageLevel(ParserConfiguration.LanguageLevel.JAVA_21);
         theNodes = new ArrayDeque<>();
+        theClassStack = new ArrayDeque<>();
+        theClasses = new ArrayList<>();
     }
 
     /**
-     * Set the current module.
-     * @param pModule the module
+     * Obtain the classList.
+     * @return the classList
      */
-    public void setCurrentModule(final String pModule) {
-        theModule = pModule;
+    public List<ThemisXAnalysisClassInstance> getClasses() {
+        return theClasses;
     }
 
     /**
@@ -119,6 +134,9 @@ public class ThemisXAnalysisCodeParser
      */
     public void setCurrentFile(final File pFile) {
         theCurrentFile = pFile;
+        theClasses.clear();
+        theClassStack.clear();
+        theClassIndex = 0;
     }
 
     @Override
@@ -147,7 +165,35 @@ public class ThemisXAnalysisCodeParser
                 /* Remove from queue */
                 theNodes.removeLast();
             }
+            if (pInstance instanceof ThemisXAnalysisClassInstance) {
+                theClassStack.removeLast();
+            }
         }
+    }
+
+    @Override
+    public String registerClass(final ThemisXAnalysisClassInstance pClass) {
+        /* Add the class to the list */
+        theClasses.add(pClass);
+
+        /* Determine the name of the class */
+        String myFullName = pClass.getFullName();
+        if (myFullName == null) {
+            final String myCurrentName = theClassStack.peekLast();
+            myFullName = myCurrentName
+                    + ThemisXAnalysisChar.PERIOD
+                    + ThemisXAnalysisChar.DOLLAR
+                    + ++theClassIndex;
+            if (pClass.isLocalDeclaration()) {
+                    myFullName += pClass.getName();
+            }
+        }
+
+        /* Add to the class stack */
+        theClassStack.addLast(myFullName);
+
+        /* Return the fullName */
+        return myFullName;
     }
 
     /**

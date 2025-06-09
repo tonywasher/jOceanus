@@ -211,6 +211,14 @@ public interface ThemisXAnalysisInstance {
         default boolean isLocalDeclaration() {
             return false;
         }
+
+        /**
+         * is the class an anonymous class?
+         * @return true/false
+         */
+        default boolean isAnonClass() {
+            return false;
+        }
     }
 
     /**

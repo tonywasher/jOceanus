@@ -40,8 +40,8 @@ allprojects {
     project.ext { 
         /* Dependency versions */
         bouncyCastleVersion = "1.81"
-        jUnitVersion = "5.13.0"
-        jUnitPlatformVersion = "1.13.0"
+        jUnitVersion = "5.13.1"
+        jUnitPlatformVersion = "1.13.1"
         jsonVersion = "20250517"
         mySQLVersion = "9.3.0"
         MariaDBVersion = "3.5.3"
