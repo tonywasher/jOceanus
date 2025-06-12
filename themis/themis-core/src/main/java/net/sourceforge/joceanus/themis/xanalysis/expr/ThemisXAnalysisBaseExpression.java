@@ -20,7 +20,7 @@ import com.github.javaparser.ast.expr.Expression;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisBaseInstance;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisExpressionInstance;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParserDef;
 
 /**
  * Expression Base Class.
@@ -40,7 +40,7 @@ public abstract class ThemisXAnalysisBaseExpression<T extends Expression>
      * @param pExpression the expression
      * @throws OceanusException on error
      */
-    ThemisXAnalysisBaseExpression(final ThemisXAnalysisParser pParser,
+    ThemisXAnalysisBaseExpression(final ThemisXAnalysisParserDef pParser,
                                   final T pExpression) throws OceanusException {
         super(pParser, pExpression);
         theId = ThemisXAnalysisExpression.determineExpression(pParser, pExpression);

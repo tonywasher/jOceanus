@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.themis.xanalysis.type;
 
 import com.github.javaparser.ast.type.UnionType;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParserDef;
 
 import java.util.List;
 
@@ -43,7 +43,7 @@ public class ThemisXAnalysisTypeUnion
      * @param pType the type
      * @throws OceanusException on error
      */
-    ThemisXAnalysisTypeUnion(final ThemisXAnalysisParser pParser,
+    ThemisXAnalysisTypeUnion(final ThemisXAnalysisParserDef pParser,
                              final UnionType pType) throws OceanusException {
         super(pParser, pType);
         theElements = pParser.parseTypeList(pType.getElements());

@@ -21,7 +21,7 @@ import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisDeclarationInstance;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisId;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParserDef;
 
 import java.util.function.Predicate;
 
@@ -112,7 +112,7 @@ public enum ThemisXAnalysisDeclaration
      * @return the declType
      * @throws OceanusException on error
      */
-    public static ThemisXAnalysisDeclaration determineDeclaration(final ThemisXAnalysisParser pParser,
+    public static ThemisXAnalysisDeclaration determineDeclaration(final ThemisXAnalysisParserDef pParser,
                                                                   final BodyDeclaration<?> pDecl) throws OceanusException {
         /* Loop testing each declaration type */
         for (ThemisXAnalysisDeclaration myDecl : values()) {
@@ -132,7 +132,7 @@ public enum ThemisXAnalysisDeclaration
      * @return the parsed declaration
      * @throws OceanusException on error
      */
-    public static ThemisXAnalysisDeclarationInstance parseDeclaration(final ThemisXAnalysisParser pParser,
+    public static ThemisXAnalysisDeclarationInstance parseDeclaration(final ThemisXAnalysisParserDef pParser,
                                                                       final BodyDeclaration<?> pDecl) throws OceanusException {
         /* Handle null Declaration */
         if (pDecl == null) {

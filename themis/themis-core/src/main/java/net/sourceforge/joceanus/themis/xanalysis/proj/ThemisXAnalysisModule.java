@@ -18,8 +18,8 @@ package net.sourceforge.joceanus.themis.xanalysis.proj;
 
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisChar;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParserDef;
 import net.sourceforge.joceanus.themis.xanalysis.mod.ThemisXAnalysisModModule;
-import net.sourceforge.joceanus.themis.xanalysis.parser.ThemisXAnalysisParserImpl;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -160,7 +160,7 @@ public class ThemisXAnalysisModule {
      * @param pParser the parser
      * @throws OceanusException on error
      */
-    void parseJavaCode(final ThemisXAnalysisParserImpl pParser) throws OceanusException {
+    void parseJavaCode(final ThemisXAnalysisParserDef pParser) throws OceanusException {
         /* Loop through the packages */
         for (ThemisXAnalysisPackage myPackage : thePackages) {
             /* Process the package */
@@ -170,7 +170,7 @@ public class ThemisXAnalysisModule {
         /* Check for and load the module-info file if found */
         final File myModuleInfo = new File(theLocation, MODULE_INFO);
         if (myModuleInfo.exists()) {
-            theModuleInfo = pParser.parseModuleInfo(myModuleInfo);
+            theModuleInfo = (ThemisXAnalysisModModule) pParser.parseModuleInfo(myModuleInfo);
         }
     }
 }

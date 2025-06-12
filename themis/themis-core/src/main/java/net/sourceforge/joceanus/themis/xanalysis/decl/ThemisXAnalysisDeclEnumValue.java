@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.themis.xanalysis.decl;
 
 import com.github.javaparser.ast.body.EnumConstantDeclaration;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParserDef;
 
 import java.util.List;
 
@@ -52,7 +52,7 @@ public class ThemisXAnalysisDeclEnumValue
      * @param pParser the parser
      * @param pDeclaration the declaration
      */
-    ThemisXAnalysisDeclEnumValue(final ThemisXAnalysisParser pParser,
+    ThemisXAnalysisDeclEnumValue(final ThemisXAnalysisParserDef pParser,
                                  final EnumConstantDeclaration pDeclaration) throws OceanusException {
         super(pParser, pDeclaration);
         theName = pParser.parseNode(pDeclaration.getName());

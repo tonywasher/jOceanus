@@ -20,7 +20,7 @@ import com.github.javaparser.ast.body.MethodDeclaration;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisDeclarationInstance;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisMethodInstance;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParserDef;
 import net.sourceforge.joceanus.themis.xanalysis.node.ThemisXAnalysisNodeSimpleName;
 
 import java.util.List;
@@ -82,7 +82,7 @@ public class ThemisXAnalysisDeclMethod
      * @param pDeclaration the declaration
      * @throws OceanusException on error
      */
-    ThemisXAnalysisDeclMethod(final ThemisXAnalysisParser pParser,
+    ThemisXAnalysisDeclMethod(final ThemisXAnalysisParserDef pParser,
                               final MethodDeclaration pDeclaration) throws OceanusException {
         super(pParser, pDeclaration);
         theName = ((ThemisXAnalysisNodeSimpleName) pParser.parseNode(pDeclaration.getName())).getName();

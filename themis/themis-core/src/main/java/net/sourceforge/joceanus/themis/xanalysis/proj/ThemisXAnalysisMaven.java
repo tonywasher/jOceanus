@@ -19,6 +19,7 @@ package net.sourceforge.joceanus.themis.xanalysis.proj;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.exc.ThemisDataException;
 import net.sourceforge.joceanus.themis.exc.ThemisIOException;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisChar;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -50,6 +51,11 @@ public class ThemisXAnalysisMaven {
     private static final String DOC_NAME = "project";
 
     /**
+     * Parent element.
+     */
+    private static final String EL_PARENT = "parent";
+
+    /**
      * Modules element.
      */
     private static final String EL_MODULES = "modules";
@@ -60,19 +66,29 @@ public class ThemisXAnalysisMaven {
     private static final String EL_MODULE = "module";
 
     /**
-     * ArtifactId element.
+     * Dependencies element.
      */
-    private static final String EL_ARTIFACTID = "artifactId";
+    private static final String EL_DEPENDENCIES = "dependencies";
+
+    /**
+     * Dependency element.
+     */
+    private static final String EL_DEPENDENCY = "dependency";
 
     /**
      * The Id.
      */
-    private final String theId;
+    private final ThemisXAnalysisMavenId theId;
 
     /**
      * The modules.
      */
     private final List<String> theModules;
+
+    /**
+     * The dependencies.
+     */
+    private final List<ThemisXAnalysisMavenId> theDependencies;
 
     /**
      * Constructor.
@@ -82,6 +98,7 @@ public class ThemisXAnalysisMaven {
     ThemisXAnalysisMaven(final InputStream pInputStream) throws OceanusException {
         /* Create the module list */
         theModules = new ArrayList<>();
+        theDependencies = new ArrayList<>();
 
         /* Protect against exceptions */
         try (BufferedInputStream myInBuffer = new BufferedInputStream(pInputStream)) {
@@ -105,23 +122,31 @@ public class ThemisXAnalysisMaven {
 
     @Override
     public String toString() {
-        return theId;
+        return theId.toString();
     }
 
     /**
      * Obtain the list of modules.
      * @return the list
      */
-    public String getMavenId() {
+    public ThemisXAnalysisMavenId getMavenId() {
         return theId;
     }
 
     /**
      * Obtain the list of modules.
-     * @return the list
+     * @return the modules
      */
     public List<String> getModules() {
         return theModules;
+    }
+
+    /**
+     * Obtain the list of dependencies.
+     * @return the dependencies
+     */
+    public List<ThemisXAnalysisMavenId> getDependencies() {
+        return theDependencies;
     }
 
     /**
@@ -130,7 +155,7 @@ public class ThemisXAnalysisMaven {
      * @return the MavenId
      * @throws OceanusException on error
      */
-    public String parseProjectFile(final Document pDocument) throws OceanusException {
+    public ThemisXAnalysisMavenId parseProjectFile(final Document pDocument) throws OceanusException {
         /* Access the document element */
         final Element myDoc = pDocument.getDocumentElement();
 
@@ -139,12 +164,22 @@ public class ThemisXAnalysisMaven {
             throw new ThemisDataException("Invalid document type");
         }
 
+        /* Obtain parent definition if any */
+        final Element myParentEl = getElement(myDoc, EL_PARENT);
+        final ThemisXAnalysisMavenId myParent = myParentEl == null
+                ? null
+                : new ThemisXAnalysisMavenId(myParentEl);
+
         /* Obtain our mavenId */
-        final String myId = getElementValue(myDoc, EL_ARTIFACTID);
+        final ThemisXAnalysisMavenId myId = new ThemisXAnalysisMavenId(myDoc, myParent);
 
         /* Process modules */
-        final Element myModules = getElement(myDoc);
+        final Element myModules = getElement(myDoc, EL_MODULES);
         processModules(myModules);
+
+        /* Process dependencies */
+        final Element myDependencies = getElement(myDoc, EL_DEPENDENCIES);
+        processDependencies(myDependencies, myId);
 
         /* Return the Id */
         return myId;
@@ -181,9 +216,11 @@ public class ThemisXAnalysisMaven {
     /**
      * Obtain element value.
      * @param pElement the element
+     * @param pValue the value name
      * @return the value
      */
-    static Element getElement(final Element pElement) {
+    static Element getElement(final Element pElement,
+                              final String pValue) {
         /* Return null if no element */
         if (pElement == null) {
             return null;
@@ -195,7 +232,7 @@ public class ThemisXAnalysisMaven {
              myChild = myChild.getNextSibling()) {
             /* Return result if we have a match */
             if (myChild instanceof Element myElement
-                    && EL_MODULES.equals(myChild.getNodeName())) {
+                    && pValue.equals(myChild.getNodeName())) {
                 return myElement;
             }
         }
@@ -223,6 +260,134 @@ public class ThemisXAnalysisMaven {
                     && EL_MODULE.equals(myChild.getNodeName())) {
                 theModules.add(myChild.getTextContent());
             }
+        }
+    }
+
+    /**
+     * Process dependencies.
+     * @param pDependencies the dependencies
+     * @param pParent the parentId
+     */
+    private void processDependencies(final Element pDependencies,
+                                     final ThemisXAnalysisMavenId pParent) {
+        /* Return if no element */
+        if (pDependencies == null) {
+            return;
+        }
+
+        /* Loop through the children */
+        for (Node myChild = pDependencies.getFirstChild();
+             myChild != null;
+             myChild = myChild.getNextSibling()) {
+            /* Return result if we have a match */
+            if (myChild instanceof Element myElement
+                    && EL_DEPENDENCY.equals(myChild.getNodeName())) {
+                theDependencies.add(new ThemisXAnalysisMavenId(myElement, pParent));
+            }
+        }
+    }
+
+    /**
+     * Maven Module Id.
+     */
+    public static class ThemisXAnalysisMavenId {
+        /**
+         * GroupId element.
+         */
+        private static final String EL_GROUPID = "groupId";
+
+        /**
+         * ArtifactId element.
+         */
+        private static final String EL_ARTIFACTID = "artifactId";
+
+        /**
+         * Version element.
+         */
+        private static final String EL_VERSION = "version";
+
+        /**
+         * Parent groupId indication.
+         */
+        private static final String PARENT_GROUP = "${project.groupId}";
+
+        /**
+         * Parent version indication.
+         */
+        private static final String PARENT_VERSION = "${project.version}";
+
+        /**
+         * The artifactId.
+         */
+        private final String theArtifactId;
+
+        /**
+         * The groupId.
+         */
+        private String theGroupId;
+
+        /**
+         * The version.
+         */
+        private String theVersion;
+
+        /**
+         * Constructor.
+         * @param pElement the element containing the values
+         */
+        ThemisXAnalysisMavenId(final Element pElement) {
+            /* Access the values */
+            theGroupId = ThemisXAnalysisMaven.getElementValue(pElement, EL_GROUPID);
+            theArtifactId = ThemisXAnalysisMaven.getElementValue(pElement, EL_ARTIFACTID);
+            theVersion = ThemisXAnalysisMaven.getElementValue(pElement, EL_VERSION);
+        }
+
+        /**
+         * Constructor.
+         * @param pElement the element containing the values
+         * @param pParent the parent Id
+         */
+        ThemisXAnalysisMavenId(final Element pElement,
+                               final ThemisXAnalysisMavenId pParent) {
+            /* Process as much as we can */
+            this(pElement);
+
+            /* Handle missing groupId/version */
+            if (theGroupId == null || PARENT_GROUP.equals(theGroupId)) {
+                theGroupId = pParent.getGroupId();
+            }
+            if (theVersion == null || PARENT_VERSION.equals(theVersion)) {
+                theVersion = pParent.getVersion();
+            }
+        }
+
+        /**
+         * Obtain the groupId.
+         * @return the groupId
+         */
+        public String getGroupId() {
+            return theGroupId;
+        }
+
+        /**
+         * Obtain the artifactId.
+         * @return the artifactId
+         */
+        public String getArtifactId() {
+            return theArtifactId;
+        }
+
+        /**
+         * Obtain the version.
+         * @return the version
+         */
+        public String getVersion() {
+            return theVersion;
+        }
+
+        @Override
+        public String toString() {
+            return theGroupId + ThemisXAnalysisChar.COLON + theArtifactId + ThemisXAnalysisChar.COLON + theVersion;
         }
     }
 }

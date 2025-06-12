@@ -33,6 +33,7 @@ import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.Th
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisStatementInstance;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisTypeInstance;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -40,7 +41,40 @@ import java.util.List;
 /**
  * Parser interface.
  */
-public interface ThemisXAnalysisParser {
+public interface ThemisXAnalysisParserDef {
+    /**
+     * Process the file as javaCode.
+     * @return the parsed compilation unit
+     * @throws OceanusException on error
+     */
+    ThemisXAnalysisNodeInstance parseJavaFile() throws OceanusException;
+
+    /**
+     * Process the file as a module-info instance.
+     * @param pInfoFile the module-info file
+     * @return the parsed moduleInfo
+     * @throws OceanusException on error
+     */
+    ThemisXAnalysisModuleInstance parseModuleInfo(File pInfoFile) throws OceanusException;
+
+    /**
+     * Set the current package.
+     * @param pPackage the package
+     */
+    void setCurrentPackage(String pPackage);
+
+    /**
+     * Set the current file.
+     * @param pFile the file
+     */
+    void setCurrentFile(File pFile);
+
+    /**
+     * Obtain the classList.
+     * @return the classList
+     */
+    List<ThemisXAnalysisClassInstance> getClasses();
+
     /**
      * Build exception.
      * @param pMessage the message

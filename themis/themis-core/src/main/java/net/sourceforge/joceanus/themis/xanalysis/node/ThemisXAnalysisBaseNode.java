@@ -20,7 +20,7 @@ import com.github.javaparser.ast.Node;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisBaseInstance;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisNodeInstance;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParserDef;
 
 /**
  * Node Base Class.
@@ -39,7 +39,7 @@ public abstract class ThemisXAnalysisBaseNode<T extends Node>
      * @param pParser the parser
      * @param pNode the node
      */
-    ThemisXAnalysisBaseNode(final ThemisXAnalysisParser pParser,
+    ThemisXAnalysisBaseNode(final ThemisXAnalysisParserDef pParser,
                             final T pNode) throws OceanusException {
         super(pParser, pNode);
         theId = ThemisXAnalysisNode.determineNode(pParser, pNode);

@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.themis.xanalysis.proj;
 
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisChar;
-import net.sourceforge.joceanus.themis.xanalysis.parser.ThemisXAnalysisParserImpl;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParserDef;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -40,6 +40,11 @@ public class ThemisXAnalysisPackage {
     private final String thePackage;
 
     /**
+     * The location.
+     */
+    private final File theLocation;
+
+    /**
      * The list of files in this package.
      */
     private final List<ThemisXAnalysisFile> theFiles;
@@ -53,6 +58,7 @@ public class ThemisXAnalysisPackage {
     ThemisXAnalysisPackage(final File pLocation,
                            final String pPackage) throws OceanusException {
         /* Store package name */
+        theLocation = pLocation;
         thePackage = pPackage;
 
         /* Create directory path and record the location */
@@ -69,6 +75,14 @@ public class ThemisXAnalysisPackage {
      */
     public String getPackage() {
         return thePackage;
+    }
+
+    /**
+     * Obtain the location.
+     * @return the location
+     */
+    public File getLocation() {
+        return theLocation;
     }
 
     /**
@@ -114,7 +128,7 @@ public class ThemisXAnalysisPackage {
      * @param pParser the parser
      * @throws OceanusException on error
      */
-    void parseJavaCode(final ThemisXAnalysisParserImpl pParser) throws OceanusException {
+    void parseJavaCode(final ThemisXAnalysisParserDef pParser) throws OceanusException {
         /* Set the current package */
         pParser.setCurrentPackage(thePackage);
 

@@ -19,7 +19,7 @@ package net.sourceforge.joceanus.themis.xanalysis.node;
 import com.github.javaparser.ast.Modifier;
 import com.github.javaparser.ast.Modifier.Keyword;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParserDef;
 
 /**
  * Import.
@@ -37,7 +37,7 @@ public class ThemisXAnalysisNodeModifier
      * @param pModifier the modifier
      * @throws OceanusException on error
      */
-    ThemisXAnalysisNodeModifier(final ThemisXAnalysisParser pParser,
+    ThemisXAnalysisNodeModifier(final ThemisXAnalysisParserDef pParser,
                                 final Modifier pModifier) throws OceanusException {
         super(pParser, pModifier);
         theKeyword = pModifier.getKeyword();

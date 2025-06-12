@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.themis.xanalysis.decl;
 
 import com.github.javaparser.ast.body.InitializerDeclaration;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParserDef;
 
 import java.util.List;
 
@@ -48,7 +48,7 @@ public class ThemisXAnalysisDeclInitializer
      * @param pDeclaration the declaration
      * @throws OceanusException on error
      */
-    ThemisXAnalysisDeclInitializer(final ThemisXAnalysisParser pParser,
+    ThemisXAnalysisDeclInitializer(final ThemisXAnalysisParserDef pParser,
                                    final InitializerDeclaration pDeclaration) throws OceanusException {
         super(pParser, pDeclaration);
         isStatic = pDeclaration.isStatic();

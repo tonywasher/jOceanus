@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.themis.xanalysis.expr;
 
 import com.github.javaparser.ast.expr.FieldAccessExpr;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParserDef;
 
 import java.util.List;
 
@@ -48,7 +48,7 @@ public class ThemisXAnalysisExprFieldAccess
      * @param pParser the parser
      * @param pExpression the expression
      */
-    ThemisXAnalysisExprFieldAccess(final ThemisXAnalysisParser pParser,
+    ThemisXAnalysisExprFieldAccess(final ThemisXAnalysisParserDef pParser,
                                    final FieldAccessExpr pExpression) throws OceanusException {
         super(pParser, pExpression);
         theName = pParser.parseNode(pExpression.getName());

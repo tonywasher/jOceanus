@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.themis.xanalysis.node;
 
 import com.github.javaparser.ast.PackageDeclaration;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParserDef;
 
 /**
  * Package.
@@ -36,7 +36,7 @@ public class ThemisXAnalysisNodePackage
      * @param pPackage the package
      * @throws OceanusException on error
      */
-    ThemisXAnalysisNodePackage(final ThemisXAnalysisParser pParser,
+    ThemisXAnalysisNodePackage(final ThemisXAnalysisParserDef pParser,
                                final PackageDeclaration pPackage) throws OceanusException {
         super(pParser, pPackage);
         thePackage = pParser.parseNode(pPackage.getName());

@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.themis.xanalysis.node;
 
 import com.github.javaparser.ast.comments.Comment;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParserDef;
 
 /**
  * Comment.
@@ -31,7 +31,7 @@ public class ThemisXAnalysisNodeComment
      * @param pComment the comment
      * @throws OceanusException on error
      */
-    ThemisXAnalysisNodeComment(final ThemisXAnalysisParser pParser,
+    ThemisXAnalysisNodeComment(final ThemisXAnalysisParserDef pParser,
                                final Comment pComment) throws OceanusException {
         super(pParser, pComment);
     }

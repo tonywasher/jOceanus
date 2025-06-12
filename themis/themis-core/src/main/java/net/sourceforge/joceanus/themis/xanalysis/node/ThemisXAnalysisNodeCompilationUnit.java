@@ -20,7 +20,7 @@ import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.body.TypeDeclaration;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParserDef;
 
 import java.util.List;
 
@@ -50,7 +50,7 @@ public class ThemisXAnalysisNodeCompilationUnit
      * @param pUnit the unit
      * @throws OceanusException on error
      */
-    ThemisXAnalysisNodeCompilationUnit(final ThemisXAnalysisParser pParser,
+    ThemisXAnalysisNodeCompilationUnit(final ThemisXAnalysisParserDef pParser,
                                        final CompilationUnit pUnit) throws OceanusException {
         super(pParser, pUnit);
         thePackageDef = pParser.parseNode(pUnit.getPackageDeclaration().orElse(null));

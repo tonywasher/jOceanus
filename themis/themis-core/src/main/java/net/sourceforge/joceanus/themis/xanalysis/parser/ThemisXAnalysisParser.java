@@ -29,6 +29,10 @@ import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.modules.ModuleDeclaration;
 import com.github.javaparser.ast.stmt.Statement;
 import com.github.javaparser.ast.type.Type;
+import com.github.javaparser.symbolsolver.JavaSymbolSolver;
+import com.github.javaparser.symbolsolver.resolution.typesolvers.CombinedTypeSolver;
+import com.github.javaparser.symbolsolver.resolution.typesolvers.JavaParserTypeSolver;
+import com.github.javaparser.symbolsolver.resolution.typesolvers.ReflectionTypeSolver;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.exc.ThemisDataException;
 import net.sourceforge.joceanus.themis.exc.ThemisIOException;
@@ -41,13 +45,16 @@ import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.Th
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisNodeInstance;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisStatementInstance;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisTypeInstance;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParserDef;
 import net.sourceforge.joceanus.themis.xanalysis.decl.ThemisXAnalysisDeclaration;
 import net.sourceforge.joceanus.themis.xanalysis.expr.ThemisXAnalysisExpression;
 import net.sourceforge.joceanus.themis.xanalysis.mod.ThemisXAnalysisMod;
 import net.sourceforge.joceanus.themis.xanalysis.mod.ThemisXAnalysisModModule;
 import net.sourceforge.joceanus.themis.xanalysis.node.ThemisXAnalysisNode;
 import net.sourceforge.joceanus.themis.xanalysis.node.ThemisXAnalysisNodeCompilationUnit;
+import net.sourceforge.joceanus.themis.xanalysis.proj.ThemisXAnalysisModule;
+import net.sourceforge.joceanus.themis.xanalysis.proj.ThemisXAnalysisPackage;
+import net.sourceforge.joceanus.themis.xanalysis.proj.ThemisXAnalysisProject;
 import net.sourceforge.joceanus.themis.xanalysis.stmt.ThemisXAnalysisStatement;
 import net.sourceforge.joceanus.themis.xanalysis.type.ThemisXAnalysisType;
 
@@ -64,10 +71,10 @@ import java.util.List;
 /**
  * Code Parser.
  */
-public class ThemisXAnalysisParserImpl
-        implements ThemisXAnalysisParser {
+public class ThemisXAnalysisParser
+        implements ThemisXAnalysisParserDef {
     /**
-     * The parser.
+     * The underlying parser.
      */
     private final JavaParser theParser;
 
@@ -102,36 +109,80 @@ public class ThemisXAnalysisParserImpl
     private int theClassIndex;
 
     /**
-     * Constructor.
+     * The project.
      */
-    public ThemisXAnalysisParserImpl() {
+    private ThemisXAnalysisProject theProject;
+
+    /**
+     * The Error.
+     */
+    private OceanusException theError;
+
+    /**
+     * Constructor.
+     * @param pLocation the project location
+     */
+    public ThemisXAnalysisParser(final File pLocation) {
+        /* Initialise the parser */
         theParser = new JavaParser();
         theParser.getParserConfiguration().setLanguageLevel(ParserConfiguration.LanguageLevel.JAVA_21);
         theNodes = new ArrayDeque<>();
         theClassStack = new ArrayDeque<>();
         theClasses = new ArrayList<>();
+
+        /* Protect against exceptions */
+        try {
+            /* Prepare the project */
+            theProject = new ThemisXAnalysisProject(pLocation);
+
+            /* Loop through all the packages */
+            final CombinedTypeSolver combinedSolver = new CombinedTypeSolver();
+            combinedSolver.add(new ReflectionTypeSolver());
+            for (ThemisXAnalysisModule myModule : theProject.getModules()) {
+                for (ThemisXAnalysisPackage myPackage : myModule.getPackages()) {
+                    combinedSolver.add(new JavaParserTypeSolver(myPackage.getLocation()));
+                }
+            }
+            theParser.getParserConfiguration().setSymbolResolver(new JavaSymbolSolver(combinedSolver));
+
+            /* Parse the javaCode */
+            theProject.parseJavaCode(this);
+
+            /* Store any exception */
+        } catch (OceanusException e) {
+            theError = e;
+            theProject = null;
+        }
+    }
+
+
+    /**
+     * Obtain the project
+     * @return the project
+     */
+    public ThemisXAnalysisProject getProject() {
+        return theProject;
     }
 
     /**
-     * Obtain the classList.
-     * @return the classList
+     * Obtain the error
+     * @return the error
      */
+    public OceanusException getError() {
+        return theError;
+    }
+
+    @Override
     public List<ThemisXAnalysisClassInstance> getClasses() {
         return theClasses;
     }
 
-    /**
-     * Set the current package.
-     * @param pPackage the package
-     */
+    @Override
     public void setCurrentPackage(final String pPackage) {
         thePackage = pPackage;
     }
 
-    /**
-     * Set the current file.
-     * @param pFile the file
-     */
+    @Override
     public void setCurrentFile(final File pFile) {
         theCurrentFile = pFile;
         theClasses.clear();
@@ -196,11 +247,7 @@ public class ThemisXAnalysisParserImpl
         return myFullName;
     }
 
-    /**
-     * Process the file as javaCode.
-     * @return the parsed compilation unit
-     * @throws OceanusException on error
-     */
+    @Override
     public ThemisXAnalysisNodeCompilationUnit parseJavaFile() throws OceanusException {
         /* Protect against exceptions */
         try (InputStream myStream = new FileInputStream(theCurrentFile)) {
@@ -220,12 +267,7 @@ public class ThemisXAnalysisParserImpl
         }
     }
 
-    /**
-     * Process the file as a module-info instance.
-     * @param pInfoFile the module-info file
-     * @return the parsed moduleInfo
-     * @throws OceanusException on error
-     */
+    @Override
     public ThemisXAnalysisModModule parseModuleInfo(final File pInfoFile) throws OceanusException {
         /* Protect against exceptions */
         setCurrentFile(pInfoFile);

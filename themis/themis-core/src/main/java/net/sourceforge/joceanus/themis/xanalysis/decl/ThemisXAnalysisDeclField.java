@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.themis.xanalysis.decl;
 
 import com.github.javaparser.ast.body.FieldDeclaration;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParserDef;
 
 import java.util.List;
 
@@ -48,7 +48,7 @@ public class ThemisXAnalysisDeclField
      * @param pDeclaration the declaration
      * @throws OceanusException on error
      */
-    ThemisXAnalysisDeclField(final ThemisXAnalysisParser pParser,
+    ThemisXAnalysisDeclField(final ThemisXAnalysisParserDef pParser,
                              final FieldDeclaration pDeclaration) throws OceanusException {
         super(pParser, pDeclaration);
         theModifiers = pParser.parseNodeList(pDeclaration.getModifiers());

@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.themis.xanalysis.type;
 
 import com.github.javaparser.ast.type.TypeParameter;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParserDef;
 import net.sourceforge.joceanus.themis.xanalysis.node.ThemisXAnalysisNodeSimpleName;
 
 import java.util.List;
@@ -49,7 +49,7 @@ public class ThemisXAnalysisTypeParameter
      * @param pType the type
      * @throws OceanusException on error
      */
-    ThemisXAnalysisTypeParameter(final ThemisXAnalysisParser pParser,
+    ThemisXAnalysisTypeParameter(final ThemisXAnalysisParserDef pParser,
                                  final TypeParameter pType) throws OceanusException {
         super(pParser, pType);
         theName = ((ThemisXAnalysisNodeSimpleName) pParser.parseNode(pType.getName())).getName();

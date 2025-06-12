@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.themis.xanalysis.stmt;
 
 import com.github.javaparser.ast.stmt.EmptyStmt;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParserDef;
 
 /**
  * Empty Statement.
@@ -32,7 +32,7 @@ public class ThemisXAnalysisStmtEmpty
      * @param pStatement the statement
      * @throws OceanusException on error
      */
-    ThemisXAnalysisStmtEmpty(final ThemisXAnalysisParser pParser,
+    ThemisXAnalysisStmtEmpty(final ThemisXAnalysisParserDef pParser,
                              final EmptyStmt pStatement) throws OceanusException {
         super(pParser, pStatement);
     }

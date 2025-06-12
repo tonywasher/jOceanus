@@ -33,7 +33,7 @@ import com.github.javaparser.ast.stmt.SwitchEntry;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisId;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisNodeInstance;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParserDef;
 
 import java.util.function.Predicate;
 
@@ -127,7 +127,7 @@ public enum ThemisXAnalysisNode
      * @return the nodeType
      * @throws OceanusException on error
      */
-    public static ThemisXAnalysisNode determineNode(final ThemisXAnalysisParser pParser,
+    public static ThemisXAnalysisNode determineNode(final ThemisXAnalysisParserDef pParser,
                                                     final Node pNode) throws OceanusException {
         /* Loop testing each node type */
         for (ThemisXAnalysisNode myNode : values()) {
@@ -147,7 +147,7 @@ public enum ThemisXAnalysisNode
      * @return the parsed node
      * @throws OceanusException on error
      */
-    public static ThemisXAnalysisNodeInstance parseNode(final ThemisXAnalysisParser pParser,
+    public static ThemisXAnalysisNodeInstance parseNode(final ThemisXAnalysisParserDef pParser,
                                                         final Node pNode) throws OceanusException {
         /* Handle null Node */
         if (pNode == null) {

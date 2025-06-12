@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.themis.xanalysis.expr;
 
 import com.github.javaparser.ast.expr.StringLiteralExpr;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParserDef;
 
 /**
  * String Literal Expression Declaration.
@@ -31,7 +31,7 @@ public class ThemisXAnalysisExprStringLit
      * @param pExpression the expression
      * @throws OceanusException on error
      */
-    ThemisXAnalysisExprStringLit(final ThemisXAnalysisParser pParser,
+    ThemisXAnalysisExprStringLit(final ThemisXAnalysisParserDef pParser,
                                  final StringLiteralExpr pExpression) throws OceanusException {
         super(pParser, pExpression);
     }

@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.themis.xanalysis.stmt;
 
 import com.github.javaparser.ast.stmt.BreakStmt;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParserDef;
 import net.sourceforge.joceanus.themis.xanalysis.node.ThemisXAnalysisNodeSimpleName;
 
 /**
@@ -37,7 +37,7 @@ public class ThemisXAnalysisStmtBreak
      * @param pStatement the statement
      * @throws OceanusException on error
      */
-    ThemisXAnalysisStmtBreak(final ThemisXAnalysisParser pParser,
+    ThemisXAnalysisStmtBreak(final ThemisXAnalysisParserDef pParser,
                              final BreakStmt pStatement) throws OceanusException {
         super(pParser, pStatement);
         final ThemisXAnalysisNodeSimpleName myName = (ThemisXAnalysisNodeSimpleName) pParser.parseNode(pStatement.getLabel().orElse(null));

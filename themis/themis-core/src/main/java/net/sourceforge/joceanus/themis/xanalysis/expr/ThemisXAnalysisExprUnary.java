@@ -19,7 +19,7 @@ package net.sourceforge.joceanus.themis.xanalysis.expr;
 import com.github.javaparser.ast.expr.UnaryExpr;
 import com.github.javaparser.ast.expr.UnaryExpr.Operator;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParserDef;
 
 /**
  * Unary Expression Declaration.
@@ -42,7 +42,7 @@ public class ThemisXAnalysisExprUnary
      * @param pExpression the expression
      * @throws OceanusException on error
      */
-    ThemisXAnalysisExprUnary(final ThemisXAnalysisParser pParser,
+    ThemisXAnalysisExprUnary(final ThemisXAnalysisParserDef pParser,
                              final UnaryExpr pExpression) throws OceanusException {
         super(pParser, pExpression);
         theTarget = pParser.parseExpression(pExpression.getExpression());

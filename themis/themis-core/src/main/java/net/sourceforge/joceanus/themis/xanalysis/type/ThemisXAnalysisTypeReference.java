@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.themis.xanalysis.type;
 
 import com.github.javaparser.ast.type.ReferenceType;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParserDef;
 
 /**
  * Reference Type Declaration.
@@ -37,7 +37,7 @@ public abstract class ThemisXAnalysisTypeReference<T extends ReferenceType>
      * @param pType the type
      * @throws OceanusException on error
      */
-    ThemisXAnalysisTypeReference(final ThemisXAnalysisParser pParser,
+    ThemisXAnalysisTypeReference(final ThemisXAnalysisParserDef pParser,
                                  final T pType) throws OceanusException {
         super(pParser, pType);
         theName = pType.asString();

@@ -19,7 +19,7 @@ package net.sourceforge.joceanus.themis.xanalysis.expr;
 import com.github.javaparser.ast.expr.BinaryExpr;
 import com.github.javaparser.ast.expr.BinaryExpr.Operator;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParserDef;
 
 /**
  * Binary Expression Declaration.
@@ -47,7 +47,7 @@ public class ThemisXAnalysisExprBinary
      * @param pExpression the expression
      * @throws OceanusException on error
      */
-    ThemisXAnalysisExprBinary(final ThemisXAnalysisParser pParser,
+    ThemisXAnalysisExprBinary(final ThemisXAnalysisParserDef pParser,
                               final BinaryExpr pExpression) throws OceanusException {
         super(pParser, pExpression);
         theLeft = pParser.parseExpression(pExpression.getLeft());

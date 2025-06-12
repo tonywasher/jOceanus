@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.themis.xanalysis.mod;
 
 import com.github.javaparser.ast.modules.ModuleUsesDirective;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParserDef;
 
 /**
  * Module Uses.
@@ -36,7 +36,7 @@ public class ThemisXAnalysisModUses
      * @param pDirective the directive
      * @throws OceanusException on error
      */
-    ThemisXAnalysisModUses(final ThemisXAnalysisParser pParser,
+    ThemisXAnalysisModUses(final ThemisXAnalysisParserDef pParser,
                            final ModuleUsesDirective pDirective) throws OceanusException {
         super(pParser, pDirective);
         theService = pParser.parseNode(pDirective.getName());

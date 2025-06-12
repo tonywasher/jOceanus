@@ -20,7 +20,7 @@ import com.github.javaparser.ast.stmt.Statement;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisId;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisStatementInstance;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParserDef;
 
 import java.util.function.Predicate;
 
@@ -154,7 +154,7 @@ public enum ThemisXAnalysisStatement
      * @return the StatementType
      * @throws OceanusException on error
      */
-    public static ThemisXAnalysisStatement determineStatement(final ThemisXAnalysisParser pParser,
+    public static ThemisXAnalysisStatement determineStatement(final ThemisXAnalysisParserDef pParser,
                                                               final Statement pStatement) throws OceanusException {
         /* Loop testing each statement type */
         for (ThemisXAnalysisStatement myType : values()) {
@@ -174,7 +174,7 @@ public enum ThemisXAnalysisStatement
      * @return the parsed statement
      * @throws OceanusException on error
      */
-    public static ThemisXAnalysisStatementInstance parseStatement(final ThemisXAnalysisParser pParser,
+    public static ThemisXAnalysisStatementInstance parseStatement(final ThemisXAnalysisParserDef pParser,
                                                                   final Statement pStatement) throws OceanusException {
         /* Handle null Statement */
         if (pStatement == null) {

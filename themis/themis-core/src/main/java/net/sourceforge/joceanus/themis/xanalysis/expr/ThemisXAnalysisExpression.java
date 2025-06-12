@@ -20,7 +20,7 @@ import com.github.javaparser.ast.expr.Expression;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisExpressionInstance;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisId;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParserDef;
 
 import java.util.function.Predicate;
 
@@ -224,7 +224,7 @@ public enum ThemisXAnalysisExpression
      * @return the exprType
      * @throws OceanusException on error
      */
-    public static ThemisXAnalysisExpression determineExpression(final ThemisXAnalysisParser pParser,
+    public static ThemisXAnalysisExpression determineExpression(final ThemisXAnalysisParserDef pParser,
                                                                 final Expression pExpr) throws OceanusException {
         /* Loop testing each expr type */
         for (ThemisXAnalysisExpression myExpr : values()) {
@@ -244,7 +244,7 @@ public enum ThemisXAnalysisExpression
      * @return the parsed expression
      * @throws OceanusException on error
      */
-    public static ThemisXAnalysisExpressionInstance parseExpression(final ThemisXAnalysisParser pParser,
+    public static ThemisXAnalysisExpressionInstance parseExpression(final ThemisXAnalysisParserDef pParser,
                                                                     final Expression pExpr) throws OceanusException {
         /* Handle null Expression */
         if (pExpr == null) {

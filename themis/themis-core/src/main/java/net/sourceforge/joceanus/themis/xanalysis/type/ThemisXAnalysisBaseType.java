@@ -20,7 +20,7 @@ import com.github.javaparser.ast.type.Type;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisBaseInstance;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisTypeInstance;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParserDef;
 
 /**
  * Type Base Class.
@@ -40,7 +40,7 @@ public abstract class ThemisXAnalysisBaseType<T extends Type>
      * @param pType the type
      * @throws OceanusException on error
      */
-    ThemisXAnalysisBaseType(final ThemisXAnalysisParser pParser,
+    ThemisXAnalysisBaseType(final ThemisXAnalysisParserDef pParser,
                             final T pType) throws OceanusException {
         super(pParser, pType);
         theId = ThemisXAnalysisType.determineType(pParser, pType);

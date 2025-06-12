@@ -18,7 +18,8 @@ package net.sourceforge.joceanus.themis.xanalysis.proj;
 
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.exc.ThemisIOException;
-import net.sourceforge.joceanus.themis.xanalysis.parser.ThemisXAnalysisParserImpl;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParserDef;
+import net.sourceforge.joceanus.themis.xanalysis.proj.ThemisXAnalysisMaven.ThemisXAnalysisMavenId;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -47,41 +48,25 @@ public class ThemisXAnalysisProject {
     private final File theLocation;
 
     /**
-     * The parser.
-     */
-    private final ThemisXAnalysisParserImpl theParser;
-
-    /**
      * The module list.
      */
     private final List<ThemisXAnalysisModule> theModules;
 
     /**
-     * The error.
-     */
-    private OceanusException theError;
-
-    /**
      * Constructor.
      * @param pLocation the project location
+     * @throws OceanusException on error
      */
-    public ThemisXAnalysisProject(final File pLocation) {
+    public ThemisXAnalysisProject(final File pLocation) throws OceanusException {
         /* Store the name and location */
         theLocation = pLocation;
-
-        /* Create the parser */
-        theParser = new ThemisXAnalysisParserImpl();
 
         /* Create the list */
         theModules = new ArrayList<>();
 
         /* Initiate search for modules */
-        theName = parseProjectFile(new File(theLocation, ThemisXAnalysisMaven.POM));
-
-        /* Parse the code */
-        if (theError == null) {
-            parseJavaCode();
-        }
+        final ThemisXAnalysisMavenId myId = parseProjectFile(new File(theLocation, ThemisXAnalysisMaven.POM));
+        theName = myId == null ? null : myId.getArtifactId();
     }
 
     /**
@@ -101,14 +86,6 @@ public class ThemisXAnalysisProject {
     }
 
     /**
-     * Obtain the error.
-     * @return the error
-     */
-    public OceanusException getError() {
-        return theError;
-    }
-
-    /**
      * Obtain the modules.
      * @return the modules
      */
@@ -125,28 +102,20 @@ public class ThemisXAnalysisProject {
      * Parse the maven project file.
      * @param pPom the project file
      * @return the artifact name
+     * @throws OceanusException on error
      */
-    private String parseProjectFile(final File pPom) {
+    private ThemisXAnalysisMavenId parseProjectFile(final File pPom) throws OceanusException {
         /* If the pom file does not exist, just return */
         if (!pPom.exists()) {
             return null;
         }
 
-        /* Protect against exceptions */
-        try {
-            /* Add module if source directory exists */
-            final File mySrc = new File(pPom.getParent(), ThemisXAnalysisModule.PATH_XTRA);
-            if (mySrc.exists()
-                    && mySrc.isDirectory()) {
-                /* Add the module to the list */
-                theModules.add(new ThemisXAnalysisModule(new File(pPom.getParent())));
-            }
-
-            /* Handle exceptions */
-        } catch (OceanusException e) {
-            /* Save Exception */
-            theError = new ThemisIOException(CONSOLIDATION_ERROR, e);
-            return null;
+        /* Add module if source directory exists */
+        final File mySrc = new File(pPom.getParent(), ThemisXAnalysisModule.PATH_XTRA);
+        if (mySrc.exists()
+                && mySrc.isDirectory()) {
+            /* Add the module to the list */
+            theModules.add(new ThemisXAnalysisModule(new File(pPom.getParent())));
         }
 
         /* Protect against exceptions */
@@ -161,39 +130,26 @@ public class ThemisXAnalysisProject {
 
                 /* Process the project file */
                 parseProjectFile(new File(myModuleDir, ThemisXAnalysisMaven.POM));
-
-                /* Break loop on error */
-                if (theError != null) {
-                    break;
-                }
             }
             return myPom.getMavenId();
 
             /* Catch exceptions */
-        } catch (IOException
-                 | OceanusException e) {
-            /* Save Exception */
-            theError = new ThemisIOException("Failed to parse Project file", e);
-            return null;
+        } catch (IOException e) {
+            /* Convert Exception */
+            throw new ThemisIOException("Failed to parse Project file", e);
         }
     }
 
     /**
      * parse the java code.
+     * @param pParser the parser
+     * @throws OceanusException on error
      */
-    private void parseJavaCode() {
-        /* Protect against exceptions */
-        try {
-            /* Loop through the modules */
-            for (ThemisXAnalysisModule myModule : theModules) {
-                /* Process the module */
-                myModule.parseJavaCode(theParser);
-            }
-
-            /* Handle exceptions */
-        } catch (OceanusException e) {
-            /* Save Exception */
-            theError = new ThemisIOException(CONSOLIDATION_ERROR, e);
+    public void parseJavaCode(final ThemisXAnalysisParserDef pParser) throws OceanusException {
+        /* Loop through the modules */
+        for (ThemisXAnalysisModule myModule : theModules) {
+            /* Process the module */
+            myModule.parseJavaCode(pParser);
         }
     }
 }

@@ -20,7 +20,7 @@ import com.github.javaparser.ast.stmt.Statement;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisBaseInstance;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisStatementInstance;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParserDef;
 
 /**
  * Statement Base Class.
@@ -40,7 +40,7 @@ public abstract class ThemisXAnalysisBaseStatement<T extends Statement>
      * @param pStatement the statement
      * @throws OceanusException on error
      */
-    ThemisXAnalysisBaseStatement(final ThemisXAnalysisParser pParser,
+    ThemisXAnalysisBaseStatement(final ThemisXAnalysisParserDef pParser,
                                  final T pStatement) throws OceanusException {
         super(pParser, pStatement);
         theId = ThemisXAnalysisStatement.determineStatement(pParser, pStatement);

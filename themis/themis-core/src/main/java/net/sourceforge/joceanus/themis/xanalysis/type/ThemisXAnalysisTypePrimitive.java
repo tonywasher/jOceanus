@@ -19,7 +19,7 @@ package net.sourceforge.joceanus.themis.xanalysis.type;
 import com.github.javaparser.ast.type.PrimitiveType;
 import com.github.javaparser.ast.type.PrimitiveType.Primitive;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParserDef;
 
 import java.util.List;
 
@@ -44,7 +44,7 @@ public class ThemisXAnalysisTypePrimitive
      * @param pType the type
      * @throws OceanusException on error
      */
-    ThemisXAnalysisTypePrimitive(final ThemisXAnalysisParser pParser,
+    ThemisXAnalysisTypePrimitive(final ThemisXAnalysisParserDef pParser,
                                  final PrimitiveType pType) throws OceanusException {
         super(pParser, pType);
         thePrimitive = pType.getType();

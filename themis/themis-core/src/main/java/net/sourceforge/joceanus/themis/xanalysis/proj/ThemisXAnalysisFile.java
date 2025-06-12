@@ -19,8 +19,8 @@ package net.sourceforge.joceanus.themis.xanalysis.proj;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisClassInstance;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisNodeInstance;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParserDef;
 import net.sourceforge.joceanus.themis.xanalysis.node.ThemisXAnalysisNodeCompilationUnit;
-import net.sourceforge.joceanus.themis.xanalysis.parser.ThemisXAnalysisParserImpl;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -108,12 +108,12 @@ public class ThemisXAnalysisFile {
      * @param pParser the parser
      * @throws OceanusException on error
      */
-    void parseJavaCode(final ThemisXAnalysisParserImpl pParser) throws OceanusException {
+    void parseJavaCode(final ThemisXAnalysisParserDef pParser) throws OceanusException {
         /* Set the current file */
         pParser.setCurrentFile(theLocation);
 
         /* Parse the file */
-        theContents = pParser.parseJavaFile();
+        theContents = (ThemisXAnalysisNodeCompilationUnit) pParser.parseJavaFile();
 
         /* Check that we have a class that is the same name as the file */
         final ThemisXAnalysisClassInstance myClass = theContents.getContents();

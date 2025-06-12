@@ -56,7 +56,7 @@ public abstract class ThemisXAnalysisBaseInstance<T extends Node>
      * @param pNode the node
      * @throws OceanusException on error
      */
-    protected ThemisXAnalysisBaseInstance(final ThemisXAnalysisParser pParser,
+    protected ThemisXAnalysisBaseInstance(final ThemisXAnalysisParserDef pParser,
                                           final T pNode) throws OceanusException {
         /* Record the node and lists */
         theNode = pNode;

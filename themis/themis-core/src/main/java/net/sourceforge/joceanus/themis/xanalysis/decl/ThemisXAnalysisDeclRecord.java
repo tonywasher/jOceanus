@@ -20,7 +20,7 @@ import com.github.javaparser.ast.body.RecordDeclaration;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisClassInstance;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisDeclarationInstance;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParserDef;
 import net.sourceforge.joceanus.themis.xanalysis.node.ThemisXAnalysisNodeSimpleName;
 
 import java.util.List;
@@ -77,7 +77,7 @@ public class ThemisXAnalysisDeclRecord
      * @param pDeclaration the declaration
      * @throws OceanusException on error
      */
-    ThemisXAnalysisDeclRecord(final ThemisXAnalysisParser pParser,
+    ThemisXAnalysisDeclRecord(final ThemisXAnalysisParserDef pParser,
                               final RecordDeclaration pDeclaration) throws OceanusException {
         /* Store values */
         super(pParser, pDeclaration);

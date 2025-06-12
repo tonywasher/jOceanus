@@ -19,7 +19,7 @@ package net.sourceforge.joceanus.themis.xanalysis.expr;
 import com.github.javaparser.ast.expr.InstanceOfExpr;
 import com.github.javaparser.ast.expr.SimpleName;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParserDef;
 
 /**
  * InstanceOf Expression Declaration.
@@ -52,7 +52,7 @@ public class ThemisXAnalysisExprInstanceOf
      * @param pExpression the expression
      * @throws OceanusException on error
      */
-    ThemisXAnalysisExprInstanceOf(final ThemisXAnalysisParser pParser,
+    ThemisXAnalysisExprInstanceOf(final ThemisXAnalysisParserDef pParser,
                                   final InstanceOfExpr pExpression) throws OceanusException {
         super(pParser, pExpression);
         theName = pExpression.getName().map(SimpleName::asString).orElse(null);

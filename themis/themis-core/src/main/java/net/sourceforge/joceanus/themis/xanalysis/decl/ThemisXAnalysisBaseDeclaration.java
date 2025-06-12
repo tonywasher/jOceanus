@@ -20,7 +20,7 @@ import com.github.javaparser.ast.body.BodyDeclaration;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisBaseInstance;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisDeclarationInstance;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParserDef;
 
 /**
  * Declaration Base Class.
@@ -40,7 +40,7 @@ public abstract class ThemisXAnalysisBaseDeclaration<T extends BodyDeclaration<T
      * @param pDecl the declaration
      * @throws OceanusException on error
      */
-    ThemisXAnalysisBaseDeclaration(final ThemisXAnalysisParser pParser,
+    ThemisXAnalysisBaseDeclaration(final ThemisXAnalysisParserDef pParser,
                                    final T pDecl) throws OceanusException {
         super(pParser, pDecl);
         theId = ThemisXAnalysisDeclaration.determineDeclaration(pParser, pDecl);

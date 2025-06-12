@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.themis.xanalysis.expr;
 
 import com.github.javaparser.ast.expr.EnclosedExpr;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParserDef;
 
 /**
  * Enclosed Expression Declaration.
@@ -36,7 +36,7 @@ public class ThemisXAnalysisExprEnclosed
      * @param pExpression the expression
      * @throws OceanusException on error
      */
-    ThemisXAnalysisExprEnclosed(final ThemisXAnalysisParser pParser,
+    ThemisXAnalysisExprEnclosed(final ThemisXAnalysisParserDef pParser,
                                 final EnclosedExpr pExpression) throws OceanusException {
         super(pParser, pExpression);
         theInner = pParser.parseExpression(pExpression.getInner());

@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.themis.xanalysis.expr;
 
 import com.github.javaparser.ast.expr.SuperExpr;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParserDef;
 
 /**
  * Super Expression Declaration.
@@ -31,7 +31,7 @@ public class ThemisXAnalysisExprSuper
      * @param pExpression the expression
      * @throws OceanusException on error
      */
-    ThemisXAnalysisExprSuper(final ThemisXAnalysisParser pParser,
+    ThemisXAnalysisExprSuper(final ThemisXAnalysisParserDef pParser,
                              final SuperExpr pExpression) throws OceanusException {
         super(pParser, pExpression);
     }

@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.themis.xanalysis.decl;
 
 import com.github.javaparser.ast.body.AnnotationMemberDeclaration;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParserDef;
 import net.sourceforge.joceanus.themis.xanalysis.node.ThemisXAnalysisNodeSimpleName;
 
 import java.util.List;
@@ -49,7 +49,7 @@ public class ThemisXAnalysisDeclAnnotationMember
      * @param pDeclaration the declaration
      * @throws OceanusException on error
      */
-    ThemisXAnalysisDeclAnnotationMember(final ThemisXAnalysisParser pParser,
+    ThemisXAnalysisDeclAnnotationMember(final ThemisXAnalysisParserDef pParser,
                                         final AnnotationMemberDeclaration pDeclaration) throws OceanusException {
         super(pParser, pDeclaration);
         theName = ((ThemisXAnalysisNodeSimpleName) pParser.parseNode(pDeclaration.getName())).getName();

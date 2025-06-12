@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.themis.xanalysis.stmt;
 
 import com.github.javaparser.ast.stmt.DoStmt;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParserDef;
 
 /**
  * Do Statement.
@@ -41,7 +41,7 @@ public class ThemisXAnalysisStmtDo
      * @param pStatement the statement
      * @throws OceanusException on error
      */
-    ThemisXAnalysisStmtDo(final ThemisXAnalysisParser pParser,
+    ThemisXAnalysisStmtDo(final ThemisXAnalysisParserDef pParser,
                           final DoStmt pStatement) throws OceanusException {
         /* Store details */
         super(pParser, pStatement);

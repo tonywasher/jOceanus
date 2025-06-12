@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.themis.xanalysis.stmt;
 
 import com.github.javaparser.ast.stmt.ExplicitConstructorInvocationStmt;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParserDef;
 
 import java.util.List;
 
@@ -47,7 +47,7 @@ public class ThemisXAnalysisStmtConstructor
      * @param pParser the parser
      * @param pStatement the statement
      */
-    ThemisXAnalysisStmtConstructor(final ThemisXAnalysisParser pParser,
+    ThemisXAnalysisStmtConstructor(final ThemisXAnalysisParserDef pParser,
                                    final ExplicitConstructorInvocationStmt pStatement) throws OceanusException {
         super(pParser, pStatement);
         theExpression = pParser.parseExpression(pStatement.getExpression().orElse(null));

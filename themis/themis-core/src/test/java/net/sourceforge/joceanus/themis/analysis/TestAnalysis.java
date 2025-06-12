@@ -18,6 +18,7 @@ package net.sourceforge.joceanus.themis.analysis;
 
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.xanalysis.dsm.ThemisXAnalysisDSMProject;
+import net.sourceforge.joceanus.themis.xanalysis.parser.ThemisXAnalysisParser;
 import net.sourceforge.joceanus.themis.xanalysis.proj.ThemisXAnalysisProject;
 import net.sourceforge.joceanus.themis.xanalysis.stats.ThemisXAnalysisStatsProject;
 import org.junit.jupiter.api.Assertions;
@@ -69,8 +70,9 @@ class TestAnalysis {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        theParsedProject = new ThemisXAnalysisProject(new File(PATH_BASE));
-        Assertions.assertNull(theParsedProject.getError(), "Exception analysing project");
+        final ThemisXAnalysisParser myParser = new ThemisXAnalysisParser(myLocation);
+        Assertions.assertNull(myParser.getError(), "Exception analysing project");
+        theParsedProject = myParser.getProject();
     }
 
     /**
@@ -79,7 +81,6 @@ class TestAnalysis {
     private void testProjectDependencies() {
         /* Make sure previous test executed */
         Assumptions.assumeTrue(theParsedProject != null);
-        Assumptions.assumeTrue(theParsedProject.getError() == null);
 
         /* Analyse dependencies of project */
         final ThemisXAnalysisDSMProject myProject  = new ThemisXAnalysisDSMProject(theParsedProject);
@@ -93,7 +94,6 @@ class TestAnalysis {
     private void testProjectStats() {
         /* Make sure previous test executed */
         Assumptions.assumeTrue(theParsedProject != null);
-        Assumptions.assumeTrue(theParsedProject.getError() == null);
 
         /* Analyse dependencies of project */
         final ThemisXAnalysisStatsProject myProject  = new ThemisXAnalysisStatsProject(theParsedProject);

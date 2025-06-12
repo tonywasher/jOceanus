@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.themis.xanalysis.stmt;
 
 import com.github.javaparser.ast.stmt.LabeledStmt;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParserDef;
 
 /**
  * Labeled Statement.
@@ -41,7 +41,7 @@ public class ThemisXAnalysisStmtLabeled
      * @param pStatement the statement
      * @throws OceanusException on error
      */
-    ThemisXAnalysisStmtLabeled(final ThemisXAnalysisParser pParser,
+    ThemisXAnalysisStmtLabeled(final ThemisXAnalysisParserDef pParser,
                                final LabeledStmt pStatement) throws OceanusException {
         super(pParser, pStatement);
         theLabel = pStatement.getLabel().asString();

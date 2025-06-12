@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.themis.xanalysis.stmt;
 
 import com.github.javaparser.ast.stmt.WhileStmt;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParserDef;
 
 /**
  * While Statement.
@@ -41,7 +41,7 @@ public class ThemisXAnalysisStmtWhile
      * @param pStatement the statement
      * @throws OceanusException on error
      */
-    ThemisXAnalysisStmtWhile(final ThemisXAnalysisParser pParser,
+    ThemisXAnalysisStmtWhile(final ThemisXAnalysisParserDef pParser,
                              final WhileStmt pStatement) throws OceanusException {
         super(pParser, pStatement);
         theCondition = pParser.parseExpression(pStatement.getCondition());

@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.themis.xanalysis.stmt;
 
 import com.github.javaparser.ast.stmt.ForEachStmt;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParserDef;
 
 /**
  * ForEach Statement.
@@ -46,7 +46,7 @@ public class ThemisXAnalysisStmtForEach
      * @param pStatement the statement
      * @throws OceanusException on error
      */
-    ThemisXAnalysisStmtForEach(final ThemisXAnalysisParser pParser,
+    ThemisXAnalysisStmtForEach(final ThemisXAnalysisParserDef pParser,
                                final ForEachStmt pStatement) throws OceanusException {
         super(pParser, pStatement);
         theBody = pParser.parseStatement(pStatement.getBody());

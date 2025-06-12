@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.themis.xanalysis.expr;
 
 import com.github.javaparser.ast.expr.BooleanLiteralExpr;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParserDef;
 
 /**
  * BooleanLiteral Expression Declaration.
@@ -31,7 +31,7 @@ public class ThemisXAnalysisExprBooleanLit
      * @param pExpression the expression
      * @throws OceanusException on error
      */
-    ThemisXAnalysisExprBooleanLit(final ThemisXAnalysisParser pParser,
+    ThemisXAnalysisExprBooleanLit(final ThemisXAnalysisParserDef pParser,
                                   final BooleanLiteralExpr pExpression) throws OceanusException {
         super(pParser, pExpression);
     }

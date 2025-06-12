@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.themis.xanalysis.expr;
 
 import com.github.javaparser.ast.expr.TypeExpr;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParserDef;
 
 /**
  * Type Expression.
@@ -36,7 +36,7 @@ public class ThemisXAnalysisExprType
      * @param pExpression the expression
      * @throws OceanusException on error
      */
-    ThemisXAnalysisExprType(final ThemisXAnalysisParser pParser,
+    ThemisXAnalysisExprType(final ThemisXAnalysisParserDef pParser,
                             final TypeExpr pExpression) throws OceanusException {
         super(pParser, pExpression);
         theType = pParser.parseType(pExpression.getType());

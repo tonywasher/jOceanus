@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.themis.xanalysis.stmt;
 
 import com.github.javaparser.ast.stmt.SwitchStmt;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParserDef;
 
 import java.util.List;
 
@@ -44,7 +44,7 @@ public class ThemisXAnalysisStmtSwitch
      * @param pStatement the statement
      * @throws OceanusException on error
      */
-    ThemisXAnalysisStmtSwitch(final ThemisXAnalysisParser pParser,
+    ThemisXAnalysisStmtSwitch(final ThemisXAnalysisParserDef pParser,
                               final SwitchStmt pStatement) throws OceanusException {
         super(pParser, pStatement);
         theSelector = pParser.parseExpression(pStatement.getSelector());

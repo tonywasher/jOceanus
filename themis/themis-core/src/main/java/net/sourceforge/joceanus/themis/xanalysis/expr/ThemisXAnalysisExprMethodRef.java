@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.themis.xanalysis.expr;
 
 import com.github.javaparser.ast.expr.MethodReferenceExpr;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParserDef;
 
 import java.util.List;
 
@@ -48,7 +48,7 @@ public class ThemisXAnalysisExprMethodRef
      * @param pExpression the expression
      * @throws OceanusException on error
      */
-    ThemisXAnalysisExprMethodRef(final ThemisXAnalysisParser pParser,
+    ThemisXAnalysisExprMethodRef(final ThemisXAnalysisParserDef pParser,
                                  final MethodReferenceExpr pExpression) throws OceanusException {
         super(pParser, pExpression);
         theName = pExpression.getIdentifier();

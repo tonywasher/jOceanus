@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.themis.xanalysis.stmt;
 
 import com.github.javaparser.ast.stmt.LocalRecordDeclarationStmt;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParserDef;
 
 /**
  * Record Statement.
@@ -36,7 +36,7 @@ public class ThemisXAnalysisStmtRecord
      * @param pStatement the statement
      * @throws OceanusException on error
      */
-    ThemisXAnalysisStmtRecord(final ThemisXAnalysisParser pParser,
+    ThemisXAnalysisStmtRecord(final ThemisXAnalysisParserDef pParser,
                               final LocalRecordDeclarationStmt pStatement) throws OceanusException {
         super(pParser, pStatement);
         theRecord = pParser.parseDeclaration(pStatement.getRecordDeclaration());

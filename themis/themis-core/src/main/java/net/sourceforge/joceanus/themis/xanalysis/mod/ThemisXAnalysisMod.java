@@ -26,7 +26,7 @@ import com.github.javaparser.ast.modules.ModuleUsesDirective;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisId;
 import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisModuleInstance;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParserDef;
 
 import java.util.function.Predicate;
 
@@ -85,7 +85,7 @@ public enum ThemisXAnalysisMod
      * @return the nodeType
      * @throws OceanusException on error
      */
-    public static ThemisXAnalysisMod determineModule(final ThemisXAnalysisParser pParser,
+    public static ThemisXAnalysisMod determineModule(final ThemisXAnalysisParserDef pParser,
                                                      final Node pNode) throws OceanusException {
         /* Loop testing each node type */
         for (ThemisXAnalysisMod myNode : values()) {
@@ -105,7 +105,7 @@ public enum ThemisXAnalysisMod
      * @return the parsed node
      * @throws OceanusException on error
      */
-    public static ThemisXAnalysisModuleInstance parseModule(final ThemisXAnalysisParser pParser,
+    public static ThemisXAnalysisModuleInstance parseModule(final ThemisXAnalysisParserDef pParser,
                                                             final Node pNode) throws OceanusException {
         /* Handle null Node */
         if (pNode == null) {

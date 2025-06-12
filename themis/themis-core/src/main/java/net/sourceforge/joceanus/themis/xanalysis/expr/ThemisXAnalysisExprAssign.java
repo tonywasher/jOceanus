@@ -19,7 +19,7 @@ package net.sourceforge.joceanus.themis.xanalysis.expr;
 import com.github.javaparser.ast.expr.AssignExpr;
 import com.github.javaparser.ast.expr.AssignExpr.Operator;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParserDef;
 
 /**
  * Assign Expression Declaration.
@@ -47,7 +47,7 @@ public class ThemisXAnalysisExprAssign
      * @param pExpression the expression
      * @throws OceanusException on error
      */
-    ThemisXAnalysisExprAssign(final ThemisXAnalysisParser pParser,
+    ThemisXAnalysisExprAssign(final ThemisXAnalysisParserDef pParser,
                               final AssignExpr pExpression) throws OceanusException {
         super(pParser, pExpression);
         theTarget = pParser.parseExpression(pExpression.getTarget());

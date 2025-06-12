@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.themis.xanalysis.expr;
 
 import com.github.javaparser.ast.expr.ObjectCreationExpr;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParserDef;
 
 import java.util.List;
 
@@ -63,7 +63,7 @@ public class ThemisXAnalysisExprObjectCreate
      * @param pExpression the expression
      * @throws OceanusException on error
      */
-    ThemisXAnalysisExprObjectCreate(final ThemisXAnalysisParser pParser,
+    ThemisXAnalysisExprObjectCreate(final ThemisXAnalysisParserDef pParser,
                                     final ObjectCreationExpr pExpression) throws OceanusException {
         super(pParser, pExpression);
         theType = pParser.parseType(pExpression.getType());

@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.themis.xanalysis.expr;
 
 import com.github.javaparser.ast.expr.NameExpr;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParser;
+import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParserDef;
 
 /**
  * Name Expression Declaration.
@@ -36,7 +36,7 @@ public class ThemisXAnalysisExprName
      * @param pExpression the expression
      * @throws OceanusException on error
      */
-    ThemisXAnalysisExprName(final ThemisXAnalysisParser pParser,
+    ThemisXAnalysisExprName(final ThemisXAnalysisParserDef pParser,
                             final NameExpr pExpression) throws OceanusException {
         super(pParser, pExpression);
         theName = pParser.parseNode(pExpression.getName());
