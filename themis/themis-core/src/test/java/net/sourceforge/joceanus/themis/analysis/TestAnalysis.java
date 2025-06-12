@@ -19,7 +19,7 @@ package net.sourceforge.joceanus.themis.analysis;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.xanalysis.dsm.ThemisXAnalysisDSMProject;
 import net.sourceforge.joceanus.themis.xanalysis.parser.ThemisXAnalysisParser;
-import net.sourceforge.joceanus.themis.xanalysis.proj.ThemisXAnalysisProject;
+import net.sourceforge.joceanus.themis.xanalysis.parser.proj.ThemisXAnalysisProject;
 import net.sourceforge.joceanus.themis.xanalysis.stats.ThemisXAnalysisStatsProject;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Assumptions;

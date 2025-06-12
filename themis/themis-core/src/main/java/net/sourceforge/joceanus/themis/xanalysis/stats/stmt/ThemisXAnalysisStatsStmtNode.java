@@ -16,13 +16,13 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.themis.xanalysis.stats.stmt;
 
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisNodeInstance;
-import net.sourceforge.joceanus.themis.xanalysis.node.ThemisXAnalysisNode;
-import net.sourceforge.joceanus.themis.xanalysis.node.ThemisXAnalysisNodeArrayLevel;
-import net.sourceforge.joceanus.themis.xanalysis.node.ThemisXAnalysisNodeCase;
-import net.sourceforge.joceanus.themis.xanalysis.node.ThemisXAnalysisNodeCatch;
-import net.sourceforge.joceanus.themis.xanalysis.node.ThemisXAnalysisNodeCompilationUnit;
-import net.sourceforge.joceanus.themis.xanalysis.node.ThemisXAnalysisNodeVariable;
+import net.sourceforge.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance.ThemisXAnalysisNodeInstance;
+import net.sourceforge.joceanus.themis.xanalysis.parser.node.ThemisXAnalysisNode;
+import net.sourceforge.joceanus.themis.xanalysis.parser.node.ThemisXAnalysisNodeArrayLevel;
+import net.sourceforge.joceanus.themis.xanalysis.parser.node.ThemisXAnalysisNodeCase;
+import net.sourceforge.joceanus.themis.xanalysis.parser.node.ThemisXAnalysisNodeCatch;
+import net.sourceforge.joceanus.themis.xanalysis.parser.node.ThemisXAnalysisNodeCompilationUnit;
+import net.sourceforge.joceanus.themis.xanalysis.parser.node.ThemisXAnalysisNodeVariable;
 
 /**
  * Statement Counter for Nodes.

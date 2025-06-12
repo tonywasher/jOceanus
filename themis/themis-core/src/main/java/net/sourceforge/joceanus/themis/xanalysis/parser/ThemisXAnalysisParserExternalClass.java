@@ -16,10 +16,10 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.themis.xanalysis.parser;
 
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisChar;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisClassInstance;
-import net.sourceforge.joceanus.themis.xanalysis.node.ThemisXAnalysisNodeImport;
-import net.sourceforge.joceanus.themis.xanalysis.node.ThemisXAnalysisNodeName;
+import net.sourceforge.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisChar;
+import net.sourceforge.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance.ThemisXAnalysisClassInstance;
+import net.sourceforge.joceanus.themis.xanalysis.parser.node.ThemisXAnalysisNodeImport;
+import net.sourceforge.joceanus.themis.xanalysis.parser.node.ThemisXAnalysisNodeName;
 
 /**
  * External Class representation.

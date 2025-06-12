@@ -18,15 +18,15 @@ package net.sourceforge.joceanus.themis.xanalysis.dsm;
 
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.exc.ThemisDataException;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisChar;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisNodeInstance;
+import net.sourceforge.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisChar;
+import net.sourceforge.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance;
+import net.sourceforge.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance.ThemisXAnalysisNodeInstance;
 import net.sourceforge.joceanus.themis.xanalysis.dsm.ThemisXAnalysisDSMClass.ThemisXAnalysisDSMClassState;
-import net.sourceforge.joceanus.themis.xanalysis.node.ThemisXAnalysisNode;
-import net.sourceforge.joceanus.themis.xanalysis.node.ThemisXAnalysisNodeImport;
-import net.sourceforge.joceanus.themis.xanalysis.node.ThemisXAnalysisNodeName;
-import net.sourceforge.joceanus.themis.xanalysis.type.ThemisXAnalysisType;
-import net.sourceforge.joceanus.themis.xanalysis.type.ThemisXAnalysisTypeClassInterface;
+import net.sourceforge.joceanus.themis.xanalysis.parser.node.ThemisXAnalysisNode;
+import net.sourceforge.joceanus.themis.xanalysis.parser.node.ThemisXAnalysisNodeImport;
+import net.sourceforge.joceanus.themis.xanalysis.parser.node.ThemisXAnalysisNodeName;
+import net.sourceforge.joceanus.themis.xanalysis.parser.type.ThemisXAnalysisType;
+import net.sourceforge.joceanus.themis.xanalysis.parser.type.ThemisXAnalysisTypeClassInterface;
 
 import java.util.LinkedHashMap;
 import java.util.List;

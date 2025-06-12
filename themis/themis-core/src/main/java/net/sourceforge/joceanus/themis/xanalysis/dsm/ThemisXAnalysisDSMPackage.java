@@ -16,8 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.themis.xanalysis.dsm;
 
-import net.sourceforge.joceanus.themis.xanalysis.proj.ThemisXAnalysisFile;
-import net.sourceforge.joceanus.themis.xanalysis.proj.ThemisXAnalysisPackage;
+import net.sourceforge.joceanus.themis.xanalysis.parser.proj.ThemisXAnalysisFile;
+import net.sourceforge.joceanus.themis.xanalysis.parser.proj.ThemisXAnalysisPackage;
 
 import java.util.HashMap;
 import java.util.Map;

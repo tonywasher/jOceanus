@@ -31,32 +31,34 @@ import com.github.javaparser.ast.stmt.Statement;
 import com.github.javaparser.ast.type.Type;
 import com.github.javaparser.symbolsolver.JavaSymbolSolver;
 import com.github.javaparser.symbolsolver.resolution.typesolvers.CombinedTypeSolver;
+import com.github.javaparser.symbolsolver.resolution.typesolvers.JarTypeSolver;
 import com.github.javaparser.symbolsolver.resolution.typesolvers.JavaParserTypeSolver;
 import com.github.javaparser.symbolsolver.resolution.typesolvers.ReflectionTypeSolver;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.exc.ThemisDataException;
 import net.sourceforge.joceanus.themis.exc.ThemisIOException;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisChar;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisClassInstance;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisDeclarationInstance;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisExpressionInstance;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisModuleInstance;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisNodeInstance;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisStatementInstance;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisTypeInstance;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisParserDef;
-import net.sourceforge.joceanus.themis.xanalysis.decl.ThemisXAnalysisDeclaration;
-import net.sourceforge.joceanus.themis.xanalysis.expr.ThemisXAnalysisExpression;
-import net.sourceforge.joceanus.themis.xanalysis.mod.ThemisXAnalysisMod;
-import net.sourceforge.joceanus.themis.xanalysis.mod.ThemisXAnalysisModModule;
-import net.sourceforge.joceanus.themis.xanalysis.node.ThemisXAnalysisNode;
-import net.sourceforge.joceanus.themis.xanalysis.node.ThemisXAnalysisNodeCompilationUnit;
-import net.sourceforge.joceanus.themis.xanalysis.proj.ThemisXAnalysisModule;
-import net.sourceforge.joceanus.themis.xanalysis.proj.ThemisXAnalysisPackage;
-import net.sourceforge.joceanus.themis.xanalysis.proj.ThemisXAnalysisProject;
-import net.sourceforge.joceanus.themis.xanalysis.stmt.ThemisXAnalysisStatement;
-import net.sourceforge.joceanus.themis.xanalysis.type.ThemisXAnalysisType;
+import net.sourceforge.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisChar;
+import net.sourceforge.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance;
+import net.sourceforge.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance.ThemisXAnalysisClassInstance;
+import net.sourceforge.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance.ThemisXAnalysisDeclarationInstance;
+import net.sourceforge.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance.ThemisXAnalysisExpressionInstance;
+import net.sourceforge.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance.ThemisXAnalysisModuleInstance;
+import net.sourceforge.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance.ThemisXAnalysisNodeInstance;
+import net.sourceforge.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance.ThemisXAnalysisStatementInstance;
+import net.sourceforge.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance.ThemisXAnalysisTypeInstance;
+import net.sourceforge.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisParserDef;
+import net.sourceforge.joceanus.themis.xanalysis.parser.decl.ThemisXAnalysisDeclaration;
+import net.sourceforge.joceanus.themis.xanalysis.parser.expr.ThemisXAnalysisExpression;
+import net.sourceforge.joceanus.themis.xanalysis.parser.mod.ThemisXAnalysisMod;
+import net.sourceforge.joceanus.themis.xanalysis.parser.mod.ThemisXAnalysisModModule;
+import net.sourceforge.joceanus.themis.xanalysis.parser.node.ThemisXAnalysisNode;
+import net.sourceforge.joceanus.themis.xanalysis.parser.node.ThemisXAnalysisNodeCompilationUnit;
+import net.sourceforge.joceanus.themis.xanalysis.parser.proj.ThemisXAnalysisMaven.ThemisXAnalysisMavenId;
+import net.sourceforge.joceanus.themis.xanalysis.parser.proj.ThemisXAnalysisModule;
+import net.sourceforge.joceanus.themis.xanalysis.parser.proj.ThemisXAnalysisPackage;
+import net.sourceforge.joceanus.themis.xanalysis.parser.proj.ThemisXAnalysisProject;
+import net.sourceforge.joceanus.themis.xanalysis.parser.stmt.ThemisXAnalysisStatement;
+import net.sourceforge.joceanus.themis.xanalysis.parser.type.ThemisXAnalysisType;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -125,7 +127,6 @@ public class ThemisXAnalysisParser
     public ThemisXAnalysisParser(final File pLocation) {
         /* Initialise the parser */
         theParser = new JavaParser();
-        theParser.getParserConfiguration().setLanguageLevel(ParserConfiguration.LanguageLevel.JAVA_21);
         theNodes = new ArrayDeque<>();
         theClassStack = new ArrayDeque<>();
         theClasses = new ArrayList<>();
@@ -135,15 +136,8 @@ public class ThemisXAnalysisParser
             /* Prepare the project */
             theProject = new ThemisXAnalysisProject(pLocation);
 
-            /* Loop through all the packages */
-            final CombinedTypeSolver combinedSolver = new CombinedTypeSolver();
-            combinedSolver.add(new ReflectionTypeSolver());
-            for (ThemisXAnalysisModule myModule : theProject.getModules()) {
-                for (ThemisXAnalysisPackage myPackage : myModule.getPackages()) {
-                    combinedSolver.add(new JavaParserTypeSolver(myPackage.getLocation()));
-                }
-            }
-            theParser.getParserConfiguration().setSymbolResolver(new JavaSymbolSolver(combinedSolver));
+            /* Configure the parser */
+            configureParser();
 
             /* Parse the javaCode */
             theProject.parseJavaCode(this);
@@ -154,7 +148,6 @@ public class ThemisXAnalysisParser
             theProject = null;
         }
     }
-
 
     /**
      * Obtain the project
@@ -175,6 +168,41 @@ public class ThemisXAnalysisParser
     @Override
     public List<ThemisXAnalysisClassInstance> getClasses() {
         return theClasses;
+    }
+
+    /**
+     * Configure the parser.
+     * @throws OceanusException on error
+     */
+    private void configureParser() throws OceanusException {
+        /* Access the parser */
+        final ParserConfiguration myConfig = theParser.getParserConfiguration();
+        myConfig.setLanguageLevel(ParserConfiguration.LanguageLevel.JAVA_21);
+
+        /* Protect against exceptions */
+        try {
+            /* Create a combined solver and add a reflectionSolver */
+            final CombinedTypeSolver mySolver = new CombinedTypeSolver();
+            mySolver.add(new ReflectionTypeSolver());
+
+            /* Loop through all the packages adding each source directory to the solver */
+            for (ThemisXAnalysisModule myModule : theProject.getModules()) {
+                for (ThemisXAnalysisPackage myPackage : myModule.getPackages()) {
+                    mySolver.add(new JavaParserTypeSolver(myPackage.getLocation()));
+                }
+            }
+
+            /* Loop through the dependencies */
+            for (ThemisXAnalysisMavenId myId : theProject.getDependencies()) {
+                final File myJar = myId.getMavenJarPath();
+                mySolver.add(new JarTypeSolver(myJar));
+            }
+            myConfig.setSymbolResolver(new JavaSymbolSolver(mySolver));
+
+        /* Handle IO exception on jar */
+        } catch (IOException e) {
+            throw new ThemisIOException("Failed to parse Jar file", e);
+        }
     }
 
     @Override

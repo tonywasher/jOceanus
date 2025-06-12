@@ -16,15 +16,15 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.themis.xanalysis.stats.stmt;
 
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisClassInstance;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisDeclarationInstance;
-import net.sourceforge.joceanus.themis.xanalysis.decl.ThemisXAnalysisDeclCompact;
-import net.sourceforge.joceanus.themis.xanalysis.decl.ThemisXAnalysisDeclConstructor;
-import net.sourceforge.joceanus.themis.xanalysis.decl.ThemisXAnalysisDeclEnumValue;
-import net.sourceforge.joceanus.themis.xanalysis.decl.ThemisXAnalysisDeclField;
-import net.sourceforge.joceanus.themis.xanalysis.decl.ThemisXAnalysisDeclInitializer;
-import net.sourceforge.joceanus.themis.xanalysis.decl.ThemisXAnalysisDeclMethod;
-import net.sourceforge.joceanus.themis.xanalysis.decl.ThemisXAnalysisDeclaration;
+import net.sourceforge.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance.ThemisXAnalysisClassInstance;
+import net.sourceforge.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance.ThemisXAnalysisDeclarationInstance;
+import net.sourceforge.joceanus.themis.xanalysis.parser.decl.ThemisXAnalysisDeclCompact;
+import net.sourceforge.joceanus.themis.xanalysis.parser.decl.ThemisXAnalysisDeclConstructor;
+import net.sourceforge.joceanus.themis.xanalysis.parser.decl.ThemisXAnalysisDeclEnumValue;
+import net.sourceforge.joceanus.themis.xanalysis.parser.decl.ThemisXAnalysisDeclField;
+import net.sourceforge.joceanus.themis.xanalysis.parser.decl.ThemisXAnalysisDeclInitializer;
+import net.sourceforge.joceanus.themis.xanalysis.parser.decl.ThemisXAnalysisDeclMethod;
+import net.sourceforge.joceanus.themis.xanalysis.parser.decl.ThemisXAnalysisDeclaration;
 
 /**
  * Statement Counter for Declarations.

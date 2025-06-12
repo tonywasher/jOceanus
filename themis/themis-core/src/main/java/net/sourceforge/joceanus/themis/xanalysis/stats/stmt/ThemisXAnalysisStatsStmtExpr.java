@@ -16,23 +16,23 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.themis.xanalysis.stats.stmt;
 
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisExpressionInstance;
-import net.sourceforge.joceanus.themis.xanalysis.expr.ThemisXAnalysisExprArrayAccess;
-import net.sourceforge.joceanus.themis.xanalysis.expr.ThemisXAnalysisExprArrayCreation;
-import net.sourceforge.joceanus.themis.xanalysis.expr.ThemisXAnalysisExprArrayInit;
-import net.sourceforge.joceanus.themis.xanalysis.expr.ThemisXAnalysisExprAssign;
-import net.sourceforge.joceanus.themis.xanalysis.expr.ThemisXAnalysisExprBinary;
-import net.sourceforge.joceanus.themis.xanalysis.expr.ThemisXAnalysisExprCast;
-import net.sourceforge.joceanus.themis.xanalysis.expr.ThemisXAnalysisExprConditional;
-import net.sourceforge.joceanus.themis.xanalysis.expr.ThemisXAnalysisExprEnclosed;
-import net.sourceforge.joceanus.themis.xanalysis.expr.ThemisXAnalysisExprInstanceOf;
-import net.sourceforge.joceanus.themis.xanalysis.expr.ThemisXAnalysisExprLambda;
-import net.sourceforge.joceanus.themis.xanalysis.expr.ThemisXAnalysisExprMethodCall;
-import net.sourceforge.joceanus.themis.xanalysis.expr.ThemisXAnalysisExprObjectCreate;
-import net.sourceforge.joceanus.themis.xanalysis.expr.ThemisXAnalysisExprSwitch;
-import net.sourceforge.joceanus.themis.xanalysis.expr.ThemisXAnalysisExprUnary;
-import net.sourceforge.joceanus.themis.xanalysis.expr.ThemisXAnalysisExprVarDecl;
-import net.sourceforge.joceanus.themis.xanalysis.expr.ThemisXAnalysisExpression;
+import net.sourceforge.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance.ThemisXAnalysisExpressionInstance;
+import net.sourceforge.joceanus.themis.xanalysis.parser.expr.ThemisXAnalysisExprArrayAccess;
+import net.sourceforge.joceanus.themis.xanalysis.parser.expr.ThemisXAnalysisExprArrayCreation;
+import net.sourceforge.joceanus.themis.xanalysis.parser.expr.ThemisXAnalysisExprArrayInit;
+import net.sourceforge.joceanus.themis.xanalysis.parser.expr.ThemisXAnalysisExprAssign;
+import net.sourceforge.joceanus.themis.xanalysis.parser.expr.ThemisXAnalysisExprBinary;
+import net.sourceforge.joceanus.themis.xanalysis.parser.expr.ThemisXAnalysisExprCast;
+import net.sourceforge.joceanus.themis.xanalysis.parser.expr.ThemisXAnalysisExprConditional;
+import net.sourceforge.joceanus.themis.xanalysis.parser.expr.ThemisXAnalysisExprEnclosed;
+import net.sourceforge.joceanus.themis.xanalysis.parser.expr.ThemisXAnalysisExprInstanceOf;
+import net.sourceforge.joceanus.themis.xanalysis.parser.expr.ThemisXAnalysisExprLambda;
+import net.sourceforge.joceanus.themis.xanalysis.parser.expr.ThemisXAnalysisExprMethodCall;
+import net.sourceforge.joceanus.themis.xanalysis.parser.expr.ThemisXAnalysisExprObjectCreate;
+import net.sourceforge.joceanus.themis.xanalysis.parser.expr.ThemisXAnalysisExprSwitch;
+import net.sourceforge.joceanus.themis.xanalysis.parser.expr.ThemisXAnalysisExprUnary;
+import net.sourceforge.joceanus.themis.xanalysis.parser.expr.ThemisXAnalysisExprVarDecl;
+import net.sourceforge.joceanus.themis.xanalysis.parser.expr.ThemisXAnalysisExpression;
 
 /**
  * Statement Counter for Expressions.

@@ -16,24 +16,24 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.themis.xanalysis.stats.stmt;
 
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisStatementInstance;
-import net.sourceforge.joceanus.themis.xanalysis.stmt.ThemisXAnalysisStatement;
-import net.sourceforge.joceanus.themis.xanalysis.stmt.ThemisXAnalysisStmtAssert;
-import net.sourceforge.joceanus.themis.xanalysis.stmt.ThemisXAnalysisStmtBlock;
-import net.sourceforge.joceanus.themis.xanalysis.stmt.ThemisXAnalysisStmtConstructor;
-import net.sourceforge.joceanus.themis.xanalysis.stmt.ThemisXAnalysisStmtDo;
-import net.sourceforge.joceanus.themis.xanalysis.stmt.ThemisXAnalysisStmtExpression;
-import net.sourceforge.joceanus.themis.xanalysis.stmt.ThemisXAnalysisStmtFor;
-import net.sourceforge.joceanus.themis.xanalysis.stmt.ThemisXAnalysisStmtForEach;
-import net.sourceforge.joceanus.themis.xanalysis.stmt.ThemisXAnalysisStmtIf;
-import net.sourceforge.joceanus.themis.xanalysis.stmt.ThemisXAnalysisStmtLabeled;
-import net.sourceforge.joceanus.themis.xanalysis.stmt.ThemisXAnalysisStmtReturn;
-import net.sourceforge.joceanus.themis.xanalysis.stmt.ThemisXAnalysisStmtSwitch;
-import net.sourceforge.joceanus.themis.xanalysis.stmt.ThemisXAnalysisStmtSynch;
-import net.sourceforge.joceanus.themis.xanalysis.stmt.ThemisXAnalysisStmtThrow;
-import net.sourceforge.joceanus.themis.xanalysis.stmt.ThemisXAnalysisStmtTry;
-import net.sourceforge.joceanus.themis.xanalysis.stmt.ThemisXAnalysisStmtWhile;
-import net.sourceforge.joceanus.themis.xanalysis.stmt.ThemisXAnalysisStmtYield;
+import net.sourceforge.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance.ThemisXAnalysisStatementInstance;
+import net.sourceforge.joceanus.themis.xanalysis.parser.stmt.ThemisXAnalysisStatement;
+import net.sourceforge.joceanus.themis.xanalysis.parser.stmt.ThemisXAnalysisStmtAssert;
+import net.sourceforge.joceanus.themis.xanalysis.parser.stmt.ThemisXAnalysisStmtBlock;
+import net.sourceforge.joceanus.themis.xanalysis.parser.stmt.ThemisXAnalysisStmtConstructor;
+import net.sourceforge.joceanus.themis.xanalysis.parser.stmt.ThemisXAnalysisStmtDo;
+import net.sourceforge.joceanus.themis.xanalysis.parser.stmt.ThemisXAnalysisStmtExpression;
+import net.sourceforge.joceanus.themis.xanalysis.parser.stmt.ThemisXAnalysisStmtFor;
+import net.sourceforge.joceanus.themis.xanalysis.parser.stmt.ThemisXAnalysisStmtForEach;
+import net.sourceforge.joceanus.themis.xanalysis.parser.stmt.ThemisXAnalysisStmtIf;
+import net.sourceforge.joceanus.themis.xanalysis.parser.stmt.ThemisXAnalysisStmtLabeled;
+import net.sourceforge.joceanus.themis.xanalysis.parser.stmt.ThemisXAnalysisStmtReturn;
+import net.sourceforge.joceanus.themis.xanalysis.parser.stmt.ThemisXAnalysisStmtSwitch;
+import net.sourceforge.joceanus.themis.xanalysis.parser.stmt.ThemisXAnalysisStmtSynch;
+import net.sourceforge.joceanus.themis.xanalysis.parser.stmt.ThemisXAnalysisStmtThrow;
+import net.sourceforge.joceanus.themis.xanalysis.parser.stmt.ThemisXAnalysisStmtTry;
+import net.sourceforge.joceanus.themis.xanalysis.parser.stmt.ThemisXAnalysisStmtWhile;
+import net.sourceforge.joceanus.themis.xanalysis.parser.stmt.ThemisXAnalysisStmtYield;
 
 /**
  * Statement Counter for Statements.

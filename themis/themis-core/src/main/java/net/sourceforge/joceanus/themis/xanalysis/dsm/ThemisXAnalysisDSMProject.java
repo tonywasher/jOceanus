@@ -18,8 +18,8 @@ package net.sourceforge.joceanus.themis.xanalysis.dsm;
 
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.exc.ThemisIOException;
-import net.sourceforge.joceanus.themis.xanalysis.proj.ThemisXAnalysisModule;
-import net.sourceforge.joceanus.themis.xanalysis.proj.ThemisXAnalysisProject;
+import net.sourceforge.joceanus.themis.xanalysis.parser.proj.ThemisXAnalysisModule;
+import net.sourceforge.joceanus.themis.xanalysis.parser.proj.ThemisXAnalysisProject;
 
 import java.util.ArrayList;
 import java.util.List;

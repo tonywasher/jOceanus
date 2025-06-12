@@ -4,6 +4,7 @@ dependencies {
     implementation project(':tethys-core')
     implementation project(':oceanus')
     implementation "com.github.javaparser:javaparser-core:$javaParserVersion"
+    implementation "com.github.javaparser:javaparser-symbol-solver-core:$javaParserVersion"
     testImplementation "org.junit.jupiter:junit-jupiter:$jUnitVersion"
 }
 

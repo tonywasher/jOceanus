@@ -16,9 +16,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.themis.xanalysis.dsm;
 
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisClassInstance;
-import net.sourceforge.joceanus.themis.xanalysis.node.ThemisXAnalysisNodeCompilationUnit;
-import net.sourceforge.joceanus.themis.xanalysis.proj.ThemisXAnalysisFile;
+import net.sourceforge.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance.ThemisXAnalysisClassInstance;
+import net.sourceforge.joceanus.themis.xanalysis.parser.node.ThemisXAnalysisNodeCompilationUnit;
+import net.sourceforge.joceanus.themis.xanalysis.parser.proj.ThemisXAnalysisFile;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
