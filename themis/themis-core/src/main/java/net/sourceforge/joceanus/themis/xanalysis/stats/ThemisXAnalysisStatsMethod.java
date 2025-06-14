@@ -16,8 +16,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.themis.xanalysis.stats;
 
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance;
-import net.sourceforge.joceanus.themis.xanalysis.base.ThemisXAnalysisInstance.ThemisXAnalysisMethodInstance;
+import net.sourceforge.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance;
+import net.sourceforge.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance.ThemisXAnalysisMethodInstance;
 
 /**
  * Statistics Method.

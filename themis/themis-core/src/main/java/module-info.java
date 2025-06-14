@@ -28,6 +28,7 @@ module net.sourceforge.joceanus.themis.core {
     requires net.sourceforge.joceanus.tethys.core;
     requires net.sourceforge.joceanus.oceanus;
     requires com.github.javaparser.core;
+    requires com.github.javaparser.symbolsolver.core;
 
     /* Exports */
     exports net.sourceforge.joceanus.themis.ui.launch;

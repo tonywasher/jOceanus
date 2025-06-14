@@ -76,13 +76,13 @@
     <appBinDir>bin/</appBinDir>
     <appLibDir>lib/</appLibDir>
     <BouncyCastleVersion>1.81</BouncyCastleVersion>
-    <JUnitVersion>5.13.0</JUnitVersion>
-    <JUnitPlatformVersion>1.13.0</JUnitPlatformVersion>
+    <JUnitVersion>5.13.1</JUnitVersion>
+    <JUnitPlatformVersion>1.13.1</JUnitPlatformVersion>
     <JSONVersion>20250517</JSONVersion>
     <ApacheMavenVersion>3.9.9</ApacheMavenVersion>
     <MySQLVersion>9.3.0</MySQLVersion>
     <MariaDBVersion>3.5.3</MariaDBVersion>
-    <PostGreSQLVersion>42.7.6</PostGreSQLVersion>
+    <PostGreSQLVersion>42.7.7</PostGreSQLVersion>
     <MSSQLVersion>12.10.0.jre11</MSSQLVersion>
     <H2Version>2.3.232</H2Version>
     <ApachePOIVersion>5.4.1</ApachePOIVersion>
