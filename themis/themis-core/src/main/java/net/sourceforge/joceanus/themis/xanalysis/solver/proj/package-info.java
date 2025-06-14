@@ -16,6 +16,6 @@
  ******************************************************************************/
 
 /**
- * DSM Analysis.
+ * Solver Project.
  */
-package net.sourceforge.joceanus.themis.xanalysis.dsm;
+package net.sourceforge.joceanus.themis.xanalysis.solver.proj;

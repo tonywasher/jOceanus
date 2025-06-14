@@ -14,19 +14,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.themis.xanalysis.dsm;
+package net.sourceforge.joceanus.themis.xanalysis.solver.proj;
 
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.xanalysis.parser.proj.ThemisXAnalysisModule;
 import net.sourceforge.joceanus.themis.xanalysis.parser.proj.ThemisXAnalysisPackage;
+import net.sourceforge.joceanus.themis.xanalysis.solver.proj.ThemisXAnalysisSolverDef.ThemisXAnalysisSolverModuleDef;
+import net.sourceforge.joceanus.themis.xanalysis.solver.proj.ThemisXAnalysisSolverDef.ThemisXAnalysisSolverProjectDef;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * DSM Module.
+ * Solver Module.
  */
-public class ThemisXAnalysisDSMModule {
+public class ThemisXAnalysisSolverModule
+        implements ThemisXAnalysisSolverModuleDef {
+    /**
+     * The owning project.
+     */
+    private final ThemisXAnalysisSolverProjectDef theProject;
+
     /**
      * The underlying module.
      */
@@ -35,42 +42,34 @@ public class ThemisXAnalysisDSMModule {
     /**
      * The list of packages.
      */
-    private final List<ThemisXAnalysisDSMPackage> thePackages;
-
-    /**
-     * The parser.
-     */
-    private final ThemisXAnalysisDSMParser theParser;
+    private final List<ThemisXAnalysisSolverPackage> thePackages;
 
     /**
      * Constructor.
+     * @param pProject the owning project
      * @param pModule the parsed module
-     * @throws OceanusException on error
      */
-    ThemisXAnalysisDSMModule(final ThemisXAnalysisModule pModule) throws OceanusException {
+    ThemisXAnalysisSolverModule(final ThemisXAnalysisSolverProjectDef pProject,
+                                final ThemisXAnalysisModule pModule) {
         /* Store the parameters */
+        theProject = pProject;
         theModule = pModule;
 
-        /* Create the list and map */
-        thePackages = new ArrayList<>();
-        theParser = new ThemisXAnalysisDSMParser();
-
         /* Initialise the packages */
+        thePackages = new ArrayList<>();
         for (ThemisXAnalysisPackage myPackage : theModule.getPackages()) {
-            final ThemisXAnalysisDSMPackage myDSMPackage = new ThemisXAnalysisDSMPackage(myPackage);
-            thePackages.add(myDSMPackage);
-            theParser.declarePackage(myPackage.getPackage(), myDSMPackage.getClassMap());
+            final ThemisXAnalysisSolverPackage mySolverPackage = new ThemisXAnalysisSolverPackage(this, myPackage);
+            thePackages.add(mySolverPackage);
         }
-
-        /* Process the packages */
-        theParser.processPackages();
     }
 
-    /**
-     * Obtain the module.
-     * @return the module
-     */
-    public ThemisXAnalysisModule getModule() {
+    @Override
+    public ThemisXAnalysisSolverProjectDef getOwningProject() {
+        return theProject;
+    }
+
+    @Override
+    public ThemisXAnalysisModule getUnderlyingModule() {
         return theModule;
     }
 
@@ -78,7 +77,7 @@ public class ThemisXAnalysisDSMModule {
      * Obtain the packages.
      * @return the packages
      */
-    public List<ThemisXAnalysisDSMPackage> getPackages() {
+    public List<ThemisXAnalysisSolverPackage> getPackages() {
         return thePackages;
     }
 

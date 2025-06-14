@@ -113,6 +113,16 @@ public class ThemisXAnalysisDeclClass
     }
 
     @Override
+    public boolean isTopLevel() {
+        return getNode().isTopLevelType();
+    }
+
+    @Override
+    public boolean isInner() {
+        return getNode().isInnerClass();
+    }
+
+    @Override
     public boolean isLocalDeclaration() {
         return getNode().isLocalClassDeclaration();
     }

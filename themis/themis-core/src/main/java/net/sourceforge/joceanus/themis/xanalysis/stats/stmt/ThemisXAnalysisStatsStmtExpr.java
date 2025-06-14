@@ -76,6 +76,7 @@ public final class ThemisXAnalysisStatsStmtExpr {
             case VARIABLE:        return countVarDecl(pCounter, (ThemisXAnalysisExprVarDecl) pExpression);
             case MARKER:
             case FIELDACCESS:
+            case METHODREFERENCE:
             case NORMAL:
             case SINGLEMEMBER:    return pCounter.fixedCount(1);
             case BOOLEAN:
@@ -86,7 +87,6 @@ public final class ThemisXAnalysisStatsStmtExpr {
             case NULL:
             case STRING:
             case TEXTBLOCK:
-            case METHODREFERENCE:
             case NAME:
             case CLASS:
             case THIS:
@@ -244,9 +244,9 @@ public final class ThemisXAnalysisStatsStmtExpr {
      */
     private static int countObjectCreate(final ThemisXAnalysisStatsStmtCounter pCounter,
                                          final ThemisXAnalysisExprObjectCreate pObjCreate) {
+        /* Note that anonymous class is handled elsewhere */
         return pCounter.fixedCount(1)
                 + pCounter.countExprList(pObjCreate.getArgs());
-        //TODO handle Anonymous class
     }
 
     /**

@@ -26,6 +26,21 @@ import net.sourceforge.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisPars
 public class ThemisXAnalysisNodeImport
         extends ThemisXAnalysisBaseNode<ImportDeclaration> {
     /**
+     * The shortName of the import.
+     */
+    private final String theShortName;
+
+    /**
+     * The fullName of the import.
+     */
+    private final String theFullName;
+
+    /**
+     * The package of the import.
+     */
+    private final String thePackage;
+
+    /**
      * The Import.
      */
     private final ThemisXAnalysisNodeInstance theImport;
@@ -40,11 +55,40 @@ public class ThemisXAnalysisNodeImport
                               final ImportDeclaration pImport) throws OceanusException {
         super(pParser, pImport);
         theImport = pParser.parseNode(pImport.getName());
+        final ThemisXAnalysisNodeName myName = (ThemisXAnalysisNodeName) theImport;
+        theShortName = myName.getName();
+        final ThemisXAnalysisNodeName myQualifier = ((ThemisXAnalysisNodeName) myName.getQualifier());
+        thePackage = myQualifier.getNode().asString();
+        theFullName = myName.getNode().asString();
 
         /* Reject imports of wildcards */
         if (pImport.isAsterisk()) {
             throw pParser.buildException("Wildcard in import", pImport);
         }
+    }
+
+    /**
+     * Obtain the shortName.
+     * @return the shortName
+     */
+    public String getShortName() {
+        return theShortName;
+    }
+
+    /**
+     * Obtain the fullName.
+     * @return the fullName
+     */
+    public String getFullName() {
+        return theFullName;
+    }
+
+    /**
+     * Obtain the package.
+     * @return the package
+     */
+    public String getPackage() {
+        return thePackage;
     }
 
     /**

@@ -17,6 +17,7 @@
 package net.sourceforge.joceanus.themis.xanalysis.stats;
 
 import net.sourceforge.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance;
+import net.sourceforge.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance.ThemisXAnalysisClassInstance;
 import net.sourceforge.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance.ThemisXAnalysisMethodInstance;
 
 import java.util.List;
@@ -28,7 +29,7 @@ public class ThemisXAnalysisStatsClass {
     /**
      * The underlying class.
      */
-    private final ThemisXAnalysisInstance theClass;
+    private final ThemisXAnalysisClassInstance theClass;
 
     /**
      * The stats.
@@ -44,7 +45,7 @@ public class ThemisXAnalysisStatsClass {
      * Constructor.
      * @param pClass the parsed class
      */
-    ThemisXAnalysisStatsClass(final ThemisXAnalysisInstance pClass) {
+    ThemisXAnalysisStatsClass(final ThemisXAnalysisClassInstance pClass) {
         /* Store the class */
         theClass = pClass;
 
@@ -52,7 +53,8 @@ public class ThemisXAnalysisStatsClass {
         theStats = new ThemisXAnalysisStats();
 
         /* Populate the methodList */
-        final List<ThemisXAnalysisInstance> myMethods = theClass.discoverNodes(ThemisXAnalysisMethodInstance.class::isInstance);
+        final ThemisXAnalysisInstance myClass = (ThemisXAnalysisInstance) theClass;
+        final List<ThemisXAnalysisInstance> myMethods = myClass.discoverChildren(ThemisXAnalysisMethodInstance.class::isInstance);
         theMethods = myMethods.stream().map(ThemisXAnalysisStatsMethod::new).toList();
     }
 
@@ -60,7 +62,7 @@ public class ThemisXAnalysisStatsClass {
      * Obtain the class.
      * @return the class
      */
-    public ThemisXAnalysisInstance getUnderlying() {
+    public ThemisXAnalysisClassInstance getUnderlying() {
         return theClass;
     }
 

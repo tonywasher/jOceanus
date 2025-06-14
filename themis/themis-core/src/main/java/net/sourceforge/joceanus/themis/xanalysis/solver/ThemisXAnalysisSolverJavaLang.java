@@ -14,17 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.themis.xanalysis.parser;
-
-import net.sourceforge.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance.ThemisXAnalysisClassInstance;
-
-import java.util.LinkedHashMap;
-import java.util.Map;
+package net.sourceforge.joceanus.themis.xanalysis.solver;
 
 /**
  * Well-known java.lang classes.
  */
-public enum ThemisXAnalysisParserJavaLang {
+public enum ThemisXAnalysisSolverJavaLang {
     /**
      * Boolean.
      */
@@ -223,7 +218,7 @@ public enum ThemisXAnalysisParserJavaLang {
     /**
      * InterruptedException.
      */
-    INTERRUPTED("InterruptedException"),
+    INTERRUPTEDEXCEPTION("InterruptedException"),
 
     /**
      * NumberFormatException.
@@ -261,11 +256,6 @@ public enum ThemisXAnalysisParserJavaLang {
     SUPPRESSWARNINGS("SuppressWarnings");
 
     /**
-     * The javaLang prefix.
-     */
-    private static final String JAVALANG = "java.lang.";
-
-    /**
      * The class name.
      */
     private final String theName;
@@ -274,7 +264,7 @@ public enum ThemisXAnalysisParserJavaLang {
      * Constructor.
      * @param pName the className
      */
-    ThemisXAnalysisParserJavaLang(final String pName) {
+    ThemisXAnalysisSolverJavaLang(final String pName) {
         theName = pName;
     }
 
@@ -289,17 +279,5 @@ public enum ThemisXAnalysisParserJavaLang {
     @Override
     public String toString() {
         return getName();
-    }
-
-    /**
-     * Obtain map of java.lang classes.
-     * @return the map
-     */
-    public static Map<String, ThemisXAnalysisClassInstance> getClassMap() {
-        final Map<String, ThemisXAnalysisClassInstance> myMap = new LinkedHashMap<>();
-        for (ThemisXAnalysisParserJavaLang myLang : values()) {
-            myMap.put(myLang.getName(), new ThemisXAnalysisParserExternalClass(JAVALANG, myLang.getName()));
-        }
-        return myMap;
     }
 }

@@ -14,20 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.themis.xanalysis.dsm;
+package net.sourceforge.joceanus.themis.xanalysis.solver.proj;
 
-import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.themis.exc.ThemisIOException;
 import net.sourceforge.joceanus.themis.xanalysis.parser.proj.ThemisXAnalysisModule;
 import net.sourceforge.joceanus.themis.xanalysis.parser.proj.ThemisXAnalysisProject;
+import net.sourceforge.joceanus.themis.xanalysis.solver.proj.ThemisXAnalysisSolverDef.ThemisXAnalysisSolverProjectDef;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * DSM Project.
+ * Solver Project.
  */
-public class ThemisXAnalysisDSMProject {
+public class ThemisXAnalysisSolverProject
+        implements ThemisXAnalysisSolverProjectDef {
     /**
      * The underlying project.
      */
@@ -36,43 +36,30 @@ public class ThemisXAnalysisDSMProject {
     /**
      * The list of modules.
      */
-    private final List<ThemisXAnalysisDSMModule> theModules;
-
-    /**
-     * The error.
-     */
-    private OceanusException theError;
+    private final List<ThemisXAnalysisSolverModule> theModules;
 
     /**
      * Constructor.
      * @param pProject the parsed project
      */
-    public ThemisXAnalysisDSMProject(final ThemisXAnalysisProject pProject) {
+    public ThemisXAnalysisSolverProject(final ThemisXAnalysisProject pProject) {
         /* Store the parameters */
         theProject = pProject;
 
-        /* Create the Module list */
+        /* Create the Module list and parser */
         theModules = new ArrayList<>();
 
-        /* Protect against exceptions */
-        try {
-            /* Initialise the modules */
-            for (ThemisXAnalysisModule myModule : theProject.getModules()) {
-                theModules.add(new ThemisXAnalysisDSMModule(myModule));
-            }
+        /* Create the parser */
+        //final ThemisXAnalysisSolver myParser = new ThemisXAnalysisSolver();
 
-            /* Handle exceptions */
-        } catch (OceanusException e) {
-            /* Save Exception */
-            theError = new ThemisIOException("Failed to parse DSM project", e);
+        /* Initialise the modules */
+        for (ThemisXAnalysisModule myModule : theProject.getModules()) {
+            theModules.add(new ThemisXAnalysisSolverModule(this, myModule));
         }
     }
 
-    /**
-     * Obtain the project.
-     * @return the project
-     */
-    public ThemisXAnalysisProject getProject() {
+    @Override
+    public ThemisXAnalysisProject getUnderlyingProject() {
         return theProject;
     }
 
@@ -80,16 +67,8 @@ public class ThemisXAnalysisDSMProject {
      * Obtain the modules.
      * @return the modules
      */
-    public List<ThemisXAnalysisDSMModule> getModules() {
+    public List<ThemisXAnalysisSolverModule> getModules() {
         return theModules;
-    }
-
-    /**
-     * Obtain the error.
-     * @return the error
-     */
-    public OceanusException getError() {
-        return theError;
     }
 
     @Override

@@ -335,10 +335,11 @@ public class ThemisXAnalysisMaven {
         }
         return theParent != null ? theParent.replaceProperty(pValue) : pValue;
     }
+
     /**
      * Maven Module Id.
      */
-    public class ThemisXAnalysisMavenId {
+    public final class ThemisXAnalysisMavenId {
         /**
          * GroupId element.
          */

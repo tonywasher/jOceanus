@@ -107,6 +107,16 @@ public class ThemisXAnalysisDeclInterface
     }
 
     @Override
+    public boolean isTopLevel() {
+        return getNode().isTopLevelType();
+    }
+
+    @Override
+    public boolean isInner() {
+        return getNode().isInnerClass();
+    }
+
+    @Override
     public List<ThemisXAnalysisNodeInstance> getModifiers() {
         return theModifiers;
     }

@@ -77,6 +77,7 @@ public final class ThemisXAnalysisStatsStmtDecl {
      */
     private static int countClass(final ThemisXAnalysisStatsStmtCounter pCounter,
                                   final ThemisXAnalysisClassInstance pClass) {
+        /* Ignore nested classes, they will be handled elsewhere */
         int myCount = 0;
         for (ThemisXAnalysisDeclarationInstance myMember : pClass.getBody()) {
             if (!(myMember instanceof ThemisXAnalysisClassInstance)) {

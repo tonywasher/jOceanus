@@ -58,6 +58,15 @@ public interface ThemisXAnalysisInstance {
     List<ThemisXAnalysisInstance> getChildren();
 
     /**
+     * Select children from tree.
+     * @param pId the type of node
+     * @return the list of selected children
+     */
+    default List<ThemisXAnalysisInstance> discoverChildren(final ThemisXAnalysisId pId) {
+        return discoverChildren(n -> n.getId().equals(pId));
+    }
+
+    /**
      * Select children.
      * @param pTest the predicate to select children
      * @return the list of selected children
@@ -202,6 +211,20 @@ public interface ThemisXAnalysisInstance {
          */
         default List<ThemisXAnalysisExpressionInstance> getAnnotations() {
             return Collections.emptyList();
+        }
+
+        /**
+         * is the class a top-level class?
+         * @return true/false
+         */
+        boolean isTopLevel();
+
+        /**
+         * is the class an inner class?
+         * @return true/false
+         */
+        default boolean isInner() {
+            return false;
         }
 
         /**

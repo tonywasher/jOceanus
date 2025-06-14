@@ -16,8 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.themis.xanalysis.stats;
 
-import net.sourceforge.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance;
-import net.sourceforge.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance.ThemisXAnalysisClassInstance;
 import net.sourceforge.joceanus.themis.xanalysis.parser.proj.ThemisXAnalysisFile;
 
 import java.util.List;
@@ -53,8 +51,7 @@ public class ThemisXAnalysisStatsFile {
         theStats = new ThemisXAnalysisStats();
 
         /* Populate the classList */
-        final List<ThemisXAnalysisInstance> myClasses = theFile.getContents().discoverNodes(ThemisXAnalysisClassInstance.class::isInstance);
-        theClasses = myClasses.stream().map(ThemisXAnalysisStatsClass::new).toList();
+        theClasses = theFile.getClasses().stream().map(ThemisXAnalysisStatsClass::new).toList();
     }
 
     /**

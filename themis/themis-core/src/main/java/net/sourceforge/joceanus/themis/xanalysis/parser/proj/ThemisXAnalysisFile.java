@@ -46,14 +46,14 @@ public class ThemisXAnalysisFile {
     private final String theName;
 
     /**
+     * The class list.
+     */
+    private final List<ThemisXAnalysisClassInstance> theClasses;
+
+    /**
      * The contents.
      */
     private ThemisXAnalysisNodeCompilationUnit theContents;
-
-    /**
-     * The class list.
-     */
-    private List<ThemisXAnalysisClassInstance> theClasses;
 
     /**
      * Constructor.

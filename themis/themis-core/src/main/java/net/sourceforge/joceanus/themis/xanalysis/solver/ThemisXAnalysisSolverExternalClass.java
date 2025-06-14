@@ -14,18 +14,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.themis.xanalysis.parser;
+package net.sourceforge.joceanus.themis.xanalysis.solver;
 
-import net.sourceforge.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisChar;
 import net.sourceforge.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance.ThemisXAnalysisClassInstance;
 import net.sourceforge.joceanus.themis.xanalysis.parser.node.ThemisXAnalysisNodeImport;
-import net.sourceforge.joceanus.themis.xanalysis.parser.node.ThemisXAnalysisNodeName;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * External Class representation.
  */
-public class ThemisXAnalysisParserExternalClass
+public class ThemisXAnalysisSolverExternalClass
         implements ThemisXAnalysisClassInstance {
+    /**
+     * The javaLang prefix.
+     */
+    private static final String JAVALANG = "java.lang.";
+
     /**
      * The name of the class.
      */
@@ -40,21 +46,18 @@ public class ThemisXAnalysisParserExternalClass
      * Constructor.
      * @param pImport the import definition
      */
-    public ThemisXAnalysisParserExternalClass(final ThemisXAnalysisNodeImport pImport) {
-        final ThemisXAnalysisNodeName myName = ((ThemisXAnalysisNodeName) pImport.getImport());
-        theName = myName.getName();
-        theFullName = myName.getQualifier().toString() + ThemisXAnalysisChar.PERIOD + theName;
+    ThemisXAnalysisSolverExternalClass(final ThemisXAnalysisNodeImport pImport) {
+        theName = pImport.getShortName();
+        theFullName = pImport.getFullName();
     }
 
     /**
      * Constructor.
-     * @param pPrefix the prefix
-     * @param pName the name
+     * @param pLang the javaLang class
      */
-    ThemisXAnalysisParserExternalClass(final String pPrefix,
-                                       final String pName) {
-        theName = pName;
-        theFullName = pPrefix + theName;
+    private ThemisXAnalysisSolverExternalClass(final ThemisXAnalysisSolverJavaLang pLang) {
+        theName = pLang.getName();
+        theFullName = JAVALANG + theName;
     }
 
     @Override
@@ -65,5 +68,22 @@ public class ThemisXAnalysisParserExternalClass
     @Override
     public String getFullName() {
         return theFullName;
+    }
+
+    @Override
+    public boolean isTopLevel() {
+        return true;
+    }
+
+    /**
+     * Obtain map of java.lang classes.
+     * @return the map
+     */
+    public static Map<String, ThemisXAnalysisClassInstance> getJavaLangMap() {
+        final Map<String, ThemisXAnalysisClassInstance> myMap = new LinkedHashMap<>();
+        for (ThemisXAnalysisSolverJavaLang myLang : ThemisXAnalysisSolverJavaLang.values()) {
+            myMap.put(myLang.getName(), new ThemisXAnalysisSolverExternalClass(myLang));
+        }
+        return myMap;
     }
 }

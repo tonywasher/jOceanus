@@ -107,6 +107,11 @@ public class ThemisXAnalysisDeclRecord
     }
 
     @Override
+    public boolean isTopLevel() {
+        return getNode().isTopLevelType();
+    }
+
+    @Override
     public boolean isLocalDeclaration() {
         return getNode().isLocalRecordDeclaration();
     }

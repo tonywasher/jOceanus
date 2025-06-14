@@ -150,7 +150,7 @@ public class ThemisXAnalysisParser
     }
 
     /**
-     * Obtain the project
+     * Obtain the project.
      * @return the project
      */
     public ThemisXAnalysisProject getProject() {
@@ -158,7 +158,7 @@ public class ThemisXAnalysisParser
     }
 
     /**
-     * Obtain the error
+     * Obtain the error.
      * @return the error
      */
     public OceanusException getError() {
@@ -264,7 +264,7 @@ public class ThemisXAnalysisParser
                     + ThemisXAnalysisChar.DOLLAR
                     + ++theClassIndex;
             if (pClass.isLocalDeclaration()) {
-                    myFullName += pClass.getName();
+                myFullName += pClass.getName();
             }
         }
 

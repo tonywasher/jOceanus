@@ -88,6 +88,11 @@ public class ThemisXAnalysisDeclAnnotation
     }
 
     @Override
+    public boolean isTopLevel() {
+        return getNode().isTopLevelType();
+    }
+
+    @Override
     public List<ThemisXAnalysisNodeInstance> getModifiers() {
         return theModifiers;
     }
