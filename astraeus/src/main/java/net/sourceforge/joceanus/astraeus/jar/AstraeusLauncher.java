@@ -17,6 +17,7 @@
 package net.sourceforge.joceanus.astraeus.jar;
 
 import net.sourceforge.joceanus.astraeus.exc.AstraeusException;
+import net.sourceforge.joceanus.oceanus.base.OceanusSystem;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -39,7 +40,7 @@ public final class AstraeusLauncher {
     /**
      * Are we windows?
      */
-    private static final boolean OS_WINDOWS = System.getProperty("os.name").startsWith("Windows");
+    private static final boolean OS_WINDOWS = OceanusSystem.WINDOWS.equals(OceanusSystem.determineSystem());
 
     /**
      * NewLine character.

@@ -29,11 +29,6 @@ import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.modules.ModuleDeclaration;
 import com.github.javaparser.ast.stmt.Statement;
 import com.github.javaparser.ast.type.Type;
-import com.github.javaparser.symbolsolver.JavaSymbolSolver;
-import com.github.javaparser.symbolsolver.resolution.typesolvers.CombinedTypeSolver;
-import com.github.javaparser.symbolsolver.resolution.typesolvers.JarTypeSolver;
-import com.github.javaparser.symbolsolver.resolution.typesolvers.JavaParserTypeSolver;
-import com.github.javaparser.symbolsolver.resolution.typesolvers.ReflectionTypeSolver;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.exc.ThemisDataException;
 import net.sourceforge.joceanus.themis.exc.ThemisIOException;
@@ -53,9 +48,6 @@ import net.sourceforge.joceanus.themis.xanalysis.parser.mod.ThemisXAnalysisMod;
 import net.sourceforge.joceanus.themis.xanalysis.parser.mod.ThemisXAnalysisModModule;
 import net.sourceforge.joceanus.themis.xanalysis.parser.node.ThemisXAnalysisNode;
 import net.sourceforge.joceanus.themis.xanalysis.parser.node.ThemisXAnalysisNodeCompilationUnit;
-import net.sourceforge.joceanus.themis.xanalysis.parser.proj.ThemisXAnalysisMaven.ThemisXAnalysisMavenId;
-import net.sourceforge.joceanus.themis.xanalysis.parser.proj.ThemisXAnalysisModule;
-import net.sourceforge.joceanus.themis.xanalysis.parser.proj.ThemisXAnalysisPackage;
 import net.sourceforge.joceanus.themis.xanalysis.parser.proj.ThemisXAnalysisProject;
 import net.sourceforge.joceanus.themis.xanalysis.parser.stmt.ThemisXAnalysisStatement;
 import net.sourceforge.joceanus.themis.xanalysis.parser.type.ThemisXAnalysisType;
@@ -172,38 +164,12 @@ public class ThemisXAnalysisParser
 
     /**
      * Configure the parser.
-     * @throws OceanusException on error
      */
-    private void configureParser() throws OceanusException {
+    private void configureParser() {
         /* Access the parser */
         final ParserConfiguration myConfig = theParser.getParserConfiguration();
         myConfig.setLanguageLevel(ParserConfiguration.LanguageLevel.JAVA_21);
-
-        /* Protect against exceptions */
-        try {
-            /* Create a combined solver and add a reflectionSolver */
-            final CombinedTypeSolver mySolver = new CombinedTypeSolver();
-            mySolver.add(new ReflectionTypeSolver());
-
-            /* Loop through all the packages adding each source directory to the solver */
-            for (ThemisXAnalysisModule myModule : theProject.getModules()) {
-                for (ThemisXAnalysisPackage myPackage : myModule.getPackages()) {
-                    mySolver.add(new JavaParserTypeSolver(myPackage.getLocation()));
-                }
-            }
-
-            /* Loop through the dependencies */
-            for (ThemisXAnalysisMavenId myId : theProject.getDependencies()) {
-                final File myJar = myId.getMavenJarPath();
-                mySolver.add(new JarTypeSolver(myJar));
-            }
-            myConfig.setSymbolResolver(new JavaSymbolSolver(mySolver));
-
-        /* Handle IO exception on jar */
-        } catch (IOException e) {
-            throw new ThemisIOException("Failed to parse Jar file", e);
-        }
-    }
+   }
 
     @Override
     public void setCurrentPackage(final String pPackage) {

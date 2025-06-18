@@ -118,6 +118,11 @@ public class ThemisXAnalysisSolverFile
         return isCircular;
     }
 
+    @Override
+    public String toString() {
+        return theFile.toString();
+    }
+
     /**
      * Obtain the list of classes that reference the named package.
      * @param pPackage the package

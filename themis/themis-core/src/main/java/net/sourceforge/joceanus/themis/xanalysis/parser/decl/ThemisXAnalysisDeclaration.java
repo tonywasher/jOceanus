@@ -44,7 +44,7 @@ public enum ThemisXAnalysisDeclaration
      * Class.
      */
     CLASS(s -> s instanceof ClassOrInterfaceDeclaration cls
-            && !cls.isInterface() && !cls.isAbstract()),
+            && !cls.isInterface()),
 
     /**
      * Compact Constructor.
@@ -80,7 +80,7 @@ public enum ThemisXAnalysisDeclaration
      * Interface.
      */
     INTERFACE(s -> s instanceof ClassOrInterfaceDeclaration cls
-            && (cls.isAbstract() || cls.isInterface())),
+            && cls.isInterface()),
 
     /**
      * Method.

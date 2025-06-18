@@ -24,6 +24,11 @@
       <artifactId>poi</artifactId>
       <version>${ApachePOIVersion}</version>
     </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-api</artifactId>
+      <version>${Log4jVersion}</version>
+    </dependency>
   </dependencies>
   <properties>
     <moduleName>${packageName}.sheet.hssf</moduleName>

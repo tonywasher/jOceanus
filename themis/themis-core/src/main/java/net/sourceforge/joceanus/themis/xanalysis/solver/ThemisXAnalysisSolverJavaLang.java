@@ -161,6 +161,11 @@ public enum ThemisXAnalysisSolverJavaLang {
     THROWABLE("Throwable"),
 
     /**
+     * Void.
+     */
+    VOID("Void"),
+
+    /**
      * Appendable.
      */
     APPENDABLE("Appendable"),
