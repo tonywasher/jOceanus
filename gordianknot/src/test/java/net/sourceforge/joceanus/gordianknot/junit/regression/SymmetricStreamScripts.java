@@ -245,7 +245,9 @@ public class SymmetricStreamScripts {
         myCipher1.initForEncrypt(GordianCipherParameters.keyWithRandomNonce(myKey));
         byte[] myEncrypt = new byte[myCipher1.getOutputLength(myBytes.length)];
         int myOut = myCipher1.update(myBytes, 0, myBytes.length, myEncrypt, 0);
+        int myXpected = myOut + myCipher1.getOutputLength(0);
         myOut += myCipher1.finish(myEncrypt, myOut);
+        Assertions.assertEquals(myOut, myXpected, "Output length fails on encryption");
         myEncrypt = Arrays.copyOf(myEncrypt, myOut);
 
         /* Decrypt the data as partial blocks */
@@ -277,7 +279,9 @@ public class SymmetricStreamScripts {
         myCipher1.initForDecrypt(GordianCipherParameters.keyAndNonce(myKey, myCipher2.getInitVector()));
         byte[] mySingle = new byte[myCipher1.getOutputLength(myEncrypt.length)];
         myOut = myCipher1.update(myEncrypt, 0, myEncrypt.length, mySingle, 0);
+        myXpected = myOut + myCipher1.getOutputLength(0);
         myOut += myCipher1.finish(mySingle, myOut);
+        Assertions.assertEquals(myOut, myXpected, "Output length fails on decryption");
         mySingle = Arrays.copyOf(mySingle, myOut);
 
         /* Check that the results are identical */
