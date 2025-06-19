@@ -7,3 +7,5 @@ It is named after the titaness Tethys who was the embodiment of the waters of th
 provided via the <<OceanusEvent>> interface and all differences between javaFX and Swing implementations are hidden.
 
   This allows applications to be written without references to either Swing or javaFX implementation details.
+
+  Since threading is integrated into the swing and javaFX environments, threading support is also provided.

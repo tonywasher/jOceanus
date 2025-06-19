@@ -2,8 +2,6 @@
 dependencies {
     testImplementation project(':moneywise-swing')
     testImplementation project(':moneywise-javafx')
-    testImplementation project(':coeus-swing')
-    testImplementation project(':coeus-javafx')
     testImplementation project(':themis-javafx')
     testImplementation "org.junit.jupiter:junit-jupiter:$jUnitVersion"
 }
