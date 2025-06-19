@@ -39,6 +39,8 @@ import net.sourceforge.joceanus.gordianknot.impl.ext.digests.GordianSkeinDigest;
 import net.sourceforge.joceanus.gordianknot.impl.ext.digests.GordianSkeinXof;
 import org.bouncycastle.crypto.Digest;
 import org.bouncycastle.crypto.Xof;
+import org.bouncycastle.crypto.digests.AsconHash256;
+import org.bouncycastle.crypto.digests.AsconXof128;
 import org.bouncycastle.crypto.digests.DSTU7564Digest;
 import org.bouncycastle.crypto.digests.GOST3411Digest;
 import org.bouncycastle.crypto.digests.GOST3411_2012_256Digest;
@@ -69,8 +71,6 @@ import org.bouncycastle.crypto.digests.SparkleDigest.SparkleParameters;
 import org.bouncycastle.crypto.digests.TigerDigest;
 import org.bouncycastle.crypto.digests.WhirlpoolDigest;
 import org.bouncycastle.crypto.digests.XoodyakDigest;
-import org.bouncycastle.crypto.patch.digests.GordianAsconHash256;
-import org.bouncycastle.crypto.patch.digests.GordianAsconXof128;
 
 /**
  * BouncyCastle Digest Factory.
@@ -262,8 +262,8 @@ public class BouncyDigestFactory
      * @return the digest
      */
     private static Digest getAsconDigest(final GordianDigestSpec pSpec) {
-        return pSpec.isXofMode() ? new GordianAsconXof128()
-                                 : new GordianAsconHash256();
+        return pSpec.isXofMode() ? new AsconXof128()
+                                 : new AsconHash256();
     }
 
     /**
