@@ -25,6 +25,8 @@ the <<BigDecimal>> class
 
   * A set of classes providing triple encryption and extended support for encrypted zipFiles.
 
+  * a set of classes providing generic thread support on top of both javaFX and Swing
+
 * Data classes (<<Metis>>/<<Prometheus>>)
 
   * Access classes for MySQL/PostgreSQL/SQLServer/MariaDB databases as well as OpenOffice/Excel spreadsheets.
@@ -37,21 +39,6 @@ the <<BigDecimal>> class
 
   * Secure Preferences Support.
 
-  * a set of classes providing generic thread support on top of both javaFX and Swing
-
 * Analysis classes (<<Themis>>)
 
   * Classes for analysing a source tree.
-
-* Peer2Peer classes (<<Coeus>>)
-
-  * Classes for analysing peer2peer financial statements.
-
-
-
-
-
-
-
-
-

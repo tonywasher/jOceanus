@@ -35,7 +35,6 @@ module net.sourceforge.joceanus.metis {
     exports net.sourceforge.joceanus.metis.field;
     exports net.sourceforge.joceanus.metis.help;
     exports net.sourceforge.joceanus.metis.http;
-    exports net.sourceforge.joceanus.metis.lethe.list;
     exports net.sourceforge.joceanus.metis.parser;
     exports net.sourceforge.joceanus.metis.preference;
     exports net.sourceforge.joceanus.metis.profile;
