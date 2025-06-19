@@ -1,4 +1,4 @@
-/*******************************************************************************
+/* *****************************************************************************
  * Themis: Java Project Framework
  * Copyright 2012,2025 Tony Washer
  *
@@ -14,24 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-
 /**
- * Themis code analysis.
+ * Package to handle user interface for Themis DSM.
  */
-module net.sourceforge.joceanus.themis.core {
-    /* java */
-    requires java.desktop;
-    requires java.prefs;
-
-    /* Oceanus */
-    requires net.sourceforge.joceanus.metis;
-    requires net.sourceforge.joceanus.tethys.core;
-    requires net.sourceforge.joceanus.oceanus;
-    requires com.github.javaparser.core;
-
-    /* Exports */
-    exports net.sourceforge.joceanus.themis.lethe.ui.launch;
-
-    /* Allow properties to be read */
-    opens net.sourceforge.joceanus.themis.lethe.ui to net.sourceforge.joceanus.metis;
-}
+package net.sourceforge.joceanus.themis.lethe.ui;

@@ -14,24 +14,42 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
+package net.sourceforge.joceanus.themis.lethe.ui;
+
+import java.io.InputStream;
+
+import net.sourceforge.joceanus.tethys.api.control.TethysUIHTMLManager.TethysUIStyleSheetId;
 
 /**
- * Themis code analysis.
+ * Report StyleSheets.
  */
-module net.sourceforge.joceanus.themis.core {
-    /* java */
-    requires java.desktop;
-    requires java.prefs;
+public enum ThemisDSMStyleSheet
+        implements TethysUIStyleSheetId {
+    /**
+     * DSM StyleSheet.
+     */
+    CSS_DSM("dsm.css");
 
-    /* Oceanus */
-    requires net.sourceforge.joceanus.metis;
-    requires net.sourceforge.joceanus.tethys.core;
-    requires net.sourceforge.joceanus.oceanus;
-    requires com.github.javaparser.core;
+    /**
+     * The Source.
+     */
+    private String theSource;
 
-    /* Exports */
-    exports net.sourceforge.joceanus.themis.lethe.ui.launch;
+    /**
+     * Constructor.
+     * @param pSource the source
+     */
+    ThemisDSMStyleSheet(final String pSource) {
+        theSource = pSource;
+    }
 
-    /* Allow properties to be read */
-    opens net.sourceforge.joceanus.themis.lethe.ui to net.sourceforge.joceanus.metis;
+    @Override
+    public String getSourceName() {
+        return theSource;
+    }
+
+    @Override
+    public InputStream getInputStream() {
+        return ThemisDSMStyleSheet.class.getResourceAsStream(theSource);
+    }
 }

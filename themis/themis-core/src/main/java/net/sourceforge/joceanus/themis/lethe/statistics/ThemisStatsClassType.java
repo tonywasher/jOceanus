@@ -1,4 +1,4 @@
-/*******************************************************************************
+/* *****************************************************************************
  * Themis: Java Project Framework
  * Copyright 2012,2025 Tony Washer
  *
@@ -14,24 +14,48 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
+package net.sourceforge.joceanus.themis.lethe.statistics;
 
 /**
- * Themis code analysis.
+ * ClassType.
  */
-module net.sourceforge.joceanus.themis.core {
-    /* java */
-    requires java.desktop;
-    requires java.prefs;
+public enum ThemisStatsClassType {
+    /**
+     * Class.
+     */
+    CLASS("Class"),
 
-    /* Oceanus */
-    requires net.sourceforge.joceanus.metis;
-    requires net.sourceforge.joceanus.tethys.core;
-    requires net.sourceforge.joceanus.oceanus;
-    requires com.github.javaparser.core;
+    /**
+     * Interface.
+     */
+    INTERFACE("Interface"),
 
-    /* Exports */
-    exports net.sourceforge.joceanus.themis.lethe.ui.launch;
+    /**
+     * Enum.
+     */
+    ENUM("Enum"),
 
-    /* Allow properties to be read */
-    opens net.sourceforge.joceanus.themis.lethe.ui to net.sourceforge.joceanus.metis;
+    /**
+     * Annotation.
+     */
+    ANNOTATION("Annotation");
+
+    /**
+     * The name.
+     */
+    private final String theName;
+
+    /**
+     * Constructor.
+     * @param pName the name
+     */
+    ThemisStatsClassType(final String pName) {
+        theName = pName;
+    }
+
+    @Override
+    public String toString() {
+        return theName;
+    }
 }
+

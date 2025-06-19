@@ -14,24 +14,48 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
+package net.sourceforge.joceanus.themis.lethe.statements;
 
 /**
- * Themis code analysis.
+ * Logical operators.
  */
-module net.sourceforge.joceanus.themis.core {
-    /* java */
-    requires java.desktop;
-    requires java.prefs;
+public enum ThemisStatementLogical
+    implements ThemisStatementOperator {
+    /**
+     * Logical OR.
+     */
+    OR("||"),
 
-    /* Oceanus */
-    requires net.sourceforge.joceanus.metis;
-    requires net.sourceforge.joceanus.tethys.core;
-    requires net.sourceforge.joceanus.oceanus;
-    requires com.github.javaparser.core;
+    /**
+     * Logical AND.
+     */
+    AND("&&"),
 
-    /* Exports */
-    exports net.sourceforge.joceanus.themis.lethe.ui.launch;
+    /**
+     * Ternary Then.
+     */
+    THEN("?"),
 
-    /* Allow properties to be read */
-    opens net.sourceforge.joceanus.themis.lethe.ui to net.sourceforge.joceanus.metis;
+    /**
+     * Ternary Else.
+     */
+    ELSE(":");
+
+    /**
+     * The sequence.
+     */
+    private final String theSequence;
+
+    /**
+     * Constructor.
+     * @param pSequence the sequence
+     */
+    ThemisStatementLogical(final String pSequence) {
+        theSequence = pSequence;
+    }
+
+    @Override
+    public String toString() {
+        return theSequence;
+    }
 }

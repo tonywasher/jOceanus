@@ -14,24 +14,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
+package net.sourceforge.joceanus.themis.lethe.statistics;
+
+import java.util.Iterator;
 
 /**
- * Themis code analysis.
+ * Statistics owner.
  */
-module net.sourceforge.joceanus.themis.core {
-    /* java */
-    requires java.desktop;
-    requires java.prefs;
+public interface ThemisStatsOwner {
+    /**
+     * Obtain class iterator.
+     * @return the iterator
+     */
+    Iterator<ThemisStatsClass> classIterator();
 
-    /* Oceanus */
-    requires net.sourceforge.joceanus.metis;
-    requires net.sourceforge.joceanus.tethys.core;
-    requires net.sourceforge.joceanus.oceanus;
-    requires com.github.javaparser.core;
+    /**
+     * Add class to list.
+     * @param pClass the class
+     */
+    void addClass(ThemisStatsClass pClass);
 
-    /* Exports */
-    exports net.sourceforge.joceanus.themis.lethe.ui.launch;
+    /**
+     * Obtain class iterator.
+     * @return the iterator
+     */
+    Iterator<ThemisStatsMethod> methodIterator();
 
-    /* Allow properties to be read */
-    opens net.sourceforge.joceanus.themis.lethe.ui to net.sourceforge.joceanus.metis;
+    /**
+     * Add method to list.
+     * @param pMethod the method
+     */
+    void addMethod(ThemisStatsMethod pMethod);
 }

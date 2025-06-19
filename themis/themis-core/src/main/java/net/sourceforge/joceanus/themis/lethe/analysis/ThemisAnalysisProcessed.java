@@ -14,24 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
+package net.sourceforge.joceanus.themis.lethe.analysis;
 
 /**
- * Themis code analysis.
+ * Interface for elements that require no postProcessing.
  */
-module net.sourceforge.joceanus.themis.core {
-    /* java */
-    requires java.desktop;
-    requires java.prefs;
-
-    /* Oceanus */
-    requires net.sourceforge.joceanus.metis;
-    requires net.sourceforge.joceanus.tethys.core;
-    requires net.sourceforge.joceanus.oceanus;
-    requires com.github.javaparser.core;
-
-    /* Exports */
-    exports net.sourceforge.joceanus.themis.lethe.ui.launch;
-
-    /* Allow properties to be read */
-    opens net.sourceforge.joceanus.themis.lethe.ui to net.sourceforge.joceanus.metis;
+public interface ThemisAnalysisProcessed
+    extends ThemisAnalysisElement {
+    /**
+     * Obtain the number of lines.
+     * @return the number of lines
+     */
+    int getNumLines();
 }

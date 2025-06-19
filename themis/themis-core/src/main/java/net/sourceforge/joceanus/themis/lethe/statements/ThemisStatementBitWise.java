@@ -14,24 +14,45 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
+package net.sourceforge.joceanus.themis.lethe.statements;
+
+import net.sourceforge.joceanus.themis.lethe.statements.ThemisStatementAssign.ThemisStatementAssignModifier;
 
 /**
- * Themis code analysis.
+ * BitWise Operators.
  */
-module net.sourceforge.joceanus.themis.core {
-    /* java */
-    requires java.desktop;
-    requires java.prefs;
+public enum ThemisStatementBitWise
+    implements ThemisStatementOperator, ThemisStatementAssignModifier {
+    /**
+     * BitWise OR.
+     */
+    OR("|"),
 
-    /* Oceanus */
-    requires net.sourceforge.joceanus.metis;
-    requires net.sourceforge.joceanus.tethys.core;
-    requires net.sourceforge.joceanus.oceanus;
-    requires com.github.javaparser.core;
+    /**
+     * BitWise AND.
+     */
+    AND("&"),
 
-    /* Exports */
-    exports net.sourceforge.joceanus.themis.lethe.ui.launch;
+    /**
+     * BitWise XOR.
+     */
+    XOR("^");
 
-    /* Allow properties to be read */
-    opens net.sourceforge.joceanus.themis.lethe.ui to net.sourceforge.joceanus.metis;
+    /**
+     * The sequence.
+     */
+    private final String theSequence;
+
+    /**
+     * Constructor.
+     * @param pSequence the sequence
+     */
+    ThemisStatementBitWise(final String pSequence) {
+        theSequence = pSequence;
+    }
+
+    @Override
+    public String toString() {
+        return theSequence;
+    }
 }
