@@ -19,6 +19,7 @@ package net.sourceforge.joceanus.themis.xanalysis.parser.decl;
 import com.github.javaparser.ast.body.CompactConstructorDeclaration;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance.ThemisXAnalysisMethodInstance;
+import net.sourceforge.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisModifierList;
 import net.sourceforge.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisParserDef;
 import net.sourceforge.joceanus.themis.xanalysis.parser.node.ThemisXAnalysisNodeSimpleName;
 
@@ -38,7 +39,7 @@ public class ThemisXAnalysisDeclCompact
     /**
      * The modifiers.
      */
-    private final List<ThemisXAnalysisNodeInstance> theModifiers;
+    private final ThemisXAnalysisModifierList theModifiers;
 
     /**
      * The typeParameters.
@@ -71,7 +72,7 @@ public class ThemisXAnalysisDeclCompact
         super(pParser, pDeclaration);
         theName = ((ThemisXAnalysisNodeSimpleName) pParser.parseNode(pDeclaration.getName())).getName();
         theBody = pParser.parseStatement(pDeclaration.getBody());
-        theModifiers = pParser.parseNodeList(pDeclaration.getModifiers());
+        theModifiers = pParser.parseModifierList(pDeclaration.getModifiers());
         theTypeParameters = pParser.parseTypeList(pDeclaration.getTypeParameters());
         theThrown = pParser.parseTypeList(pDeclaration.getThrownExceptions());
         theAnnotations = pParser.parseExprList(pDeclaration.getAnnotations());
@@ -83,7 +84,7 @@ public class ThemisXAnalysisDeclCompact
     }
 
     @Override
-    public List<ThemisXAnalysisNodeInstance> getModifiers() {
+    public ThemisXAnalysisModifierList getModifiers() {
         return theModifiers;
     }
 

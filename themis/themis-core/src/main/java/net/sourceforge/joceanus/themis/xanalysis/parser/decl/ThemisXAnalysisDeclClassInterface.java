@@ -20,6 +20,7 @@ import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance.ThemisXAnalysisClassInstance;
 import net.sourceforge.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance.ThemisXAnalysisDeclarationInstance;
+import net.sourceforge.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisModifierList;
 import net.sourceforge.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisParserDef;
 import net.sourceforge.joceanus.themis.xanalysis.parser.node.ThemisXAnalysisNodeSimpleName;
 
@@ -39,7 +40,7 @@ public class ThemisXAnalysisDeclClassInterface
     /**
      * The modifiers.
      */
-    private final List<ThemisXAnalysisNodeInstance> theModifiers;
+    private final ThemisXAnalysisModifierList theModifiers;
 
     /**
      * The body.
@@ -87,7 +88,7 @@ public class ThemisXAnalysisDeclClassInterface
         /* Store values */
         super(pParser, pDeclaration);
         theName = ((ThemisXAnalysisNodeSimpleName) pParser.parseNode(pDeclaration.getName())).getName();
-        theModifiers = pParser.parseNodeList(pDeclaration.getModifiers());
+        theModifiers = pParser.parseModifierList(pDeclaration.getModifiers());
         theImplements = pParser.parseTypeList(pDeclaration.getImplementedTypes());
         theExtends = pParser.parseTypeList(pDeclaration.getExtendedTypes());
         theTypeParameters = pParser.parseTypeList(pDeclaration.getTypeParameters());
@@ -138,7 +139,7 @@ public class ThemisXAnalysisDeclClassInterface
     }
 
     @Override
-    public List<ThemisXAnalysisNodeInstance> getModifiers() {
+    public ThemisXAnalysisModifierList getModifiers() {
         return theModifiers;
     }
 

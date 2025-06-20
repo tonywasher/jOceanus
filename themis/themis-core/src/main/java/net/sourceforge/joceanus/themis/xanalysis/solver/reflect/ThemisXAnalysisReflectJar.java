@@ -74,6 +74,7 @@ public class ThemisXAnalysisReflectJar
     /**
      * determine the URL List.
      * @param pProject the project
+     * @return the URL List
      * @throws OceanusException on error
      */
     private URL[] determineURLList(final ThemisXAnalysisProject pProject) throws OceanusException {
@@ -116,13 +117,13 @@ public class ThemisXAnalysisReflectJar
     }
 
     /**
-     * Change class name to make last class subClass
+     * Change class name to make last class subClass.
      * @param pClassName the class name
      * @return the subClass name or null
      */
     private static String trySubClass(final String pClassName) {
         /* Swap last period for dollar */
-        int myLastIndex = pClassName.lastIndexOf(ThemisXAnalysisChar.PERIOD);
+        final int myLastIndex = pClassName.lastIndexOf(ThemisXAnalysisChar.PERIOD);
         return myLastIndex != -1
                 ? pClassName.substring(0, myLastIndex) + ThemisXAnalysisChar.DOLLAR + pClassName.substring(myLastIndex + 1)
                 : null;

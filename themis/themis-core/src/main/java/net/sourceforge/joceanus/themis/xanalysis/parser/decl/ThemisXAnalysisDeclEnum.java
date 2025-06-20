@@ -20,6 +20,7 @@ import com.github.javaparser.ast.body.EnumDeclaration;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance.ThemisXAnalysisClassInstance;
 import net.sourceforge.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance.ThemisXAnalysisDeclarationInstance;
+import net.sourceforge.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisModifierList;
 import net.sourceforge.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisParserDef;
 import net.sourceforge.joceanus.themis.xanalysis.parser.node.ThemisXAnalysisNodeSimpleName;
 
@@ -44,7 +45,7 @@ public class ThemisXAnalysisDeclEnum
     /**
      * The modifiers.
      */
-    private final List<ThemisXAnalysisNodeInstance> theModifiers;
+    private final ThemisXAnalysisModifierList theModifiers;
 
     /**
      * The enumConstants.
@@ -78,7 +79,7 @@ public class ThemisXAnalysisDeclEnum
         super(pParser, pDeclaration);
         theName = ((ThemisXAnalysisNodeSimpleName) pParser.parseNode(pDeclaration.getName())).getName();
         theFullName = pDeclaration.getFullyQualifiedName().orElse(null);
-        theModifiers = pParser.parseNodeList(pDeclaration.getModifiers());
+        theModifiers = pParser.parseModifierList(pDeclaration.getModifiers());
         theImplements = pParser.parseTypeList(pDeclaration.getImplementedTypes());
         theValues = pParser.parseDeclarationList(pDeclaration.getEntries());
         theAnnotations = pParser.parseExprList(pDeclaration.getAnnotations());
@@ -106,7 +107,7 @@ public class ThemisXAnalysisDeclEnum
     }
 
     @Override
-    public List<ThemisXAnalysisNodeInstance> getModifiers() {
+    public ThemisXAnalysisModifierList getModifiers() {
         return theModifiers;
     }
 

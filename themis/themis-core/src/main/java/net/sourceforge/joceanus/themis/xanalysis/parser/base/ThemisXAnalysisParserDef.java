@@ -165,6 +165,14 @@ public interface ThemisXAnalysisParserDef {
     }
 
     /**
+     * parse a list of modifiers.
+     * @param pNodeList the list of Modifiers
+     * @return the list of parsed modifiers
+     * @throws OceanusException on error
+     */
+    ThemisXAnalysisModifierList parseModifierList(NodeList<? extends Node> pNodeList) throws OceanusException;
+
+    /**
      * Parse a type.
      * @param pType the type
      * @return the parsed type

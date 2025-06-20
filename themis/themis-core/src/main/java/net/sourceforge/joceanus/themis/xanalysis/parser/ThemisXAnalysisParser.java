@@ -23,6 +23,7 @@ import com.github.javaparser.Position;
 import com.github.javaparser.Problem;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
+import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.PackageDeclaration;
 import com.github.javaparser.ast.body.BodyDeclaration;
 import com.github.javaparser.ast.expr.Expression;
@@ -41,6 +42,7 @@ import net.sourceforge.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInst
 import net.sourceforge.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance.ThemisXAnalysisNodeInstance;
 import net.sourceforge.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance.ThemisXAnalysisStatementInstance;
 import net.sourceforge.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance.ThemisXAnalysisTypeInstance;
+import net.sourceforge.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisModifierList;
 import net.sourceforge.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisParserDef;
 import net.sourceforge.joceanus.themis.xanalysis.parser.decl.ThemisXAnalysisDeclParser;
 import net.sourceforge.joceanus.themis.xanalysis.parser.expr.ThemisXAnalysisExprParser;
@@ -358,5 +360,10 @@ public class ThemisXAnalysisParser
         final ThemisXAnalysisModuleInstance myInstance = ThemisXAnalysisModParser.parseModule(this, pMod);
         deRegisterInstance(myInstance);
         return myInstance;
+    }
+
+    @Override
+    public ThemisXAnalysisModifierList parseModifierList(final NodeList<? extends Node> pNodeList) throws OceanusException {
+        return ThemisXAnalysisNodeParser.parseModifierList(this, pNodeList);
     }
 }

@@ -21,6 +21,7 @@ import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.ImportDeclaration;
 import com.github.javaparser.ast.Modifier;
 import com.github.javaparser.ast.Node;
+import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.PackageDeclaration;
 import com.github.javaparser.ast.body.Parameter;
 import com.github.javaparser.ast.body.VariableDeclarator;
@@ -31,8 +32,11 @@ import com.github.javaparser.ast.expr.SimpleName;
 import com.github.javaparser.ast.stmt.CatchClause;
 import com.github.javaparser.ast.stmt.SwitchEntry;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisModifierList;
 import net.sourceforge.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance.ThemisXAnalysisNodeInstance;
 import net.sourceforge.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisParserDef;
+
+import java.util.List;
 
 /**
  * Analysis Node Parser.
@@ -75,5 +79,18 @@ public final class ThemisXAnalysisNodeParser {
             case VARIABLE:        return new ThemisXAnalysisNodeVariable(pParser, (VariableDeclarator) pNode);
             default:              throw pParser.buildException("Unsupported Node Type", pNode);
         }
+    }
+
+    /**
+     * parse a list of modifiers.
+     * @param pParser the parser
+     * @param pNodeList the list of Modifiers
+     * @return the list of parsed modifiers
+     * @throws OceanusException on error
+     */
+    public static ThemisXAnalysisModifierList parseModifierList(final ThemisXAnalysisParserDef pParser,
+                                                                final NodeList<? extends Node> pNodeList) throws OceanusException {
+        final List<ThemisXAnalysisNodeInstance> myList = pParser.parseNodeList(pNodeList);
+        return new ThemisXAnalysisNodeModifierList(myList);
     }
 }

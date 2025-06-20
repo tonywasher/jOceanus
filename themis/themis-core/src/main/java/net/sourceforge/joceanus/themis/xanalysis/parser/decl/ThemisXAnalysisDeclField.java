@@ -18,6 +18,7 @@ package net.sourceforge.joceanus.themis.xanalysis.parser.decl;
 
 import com.github.javaparser.ast.body.FieldDeclaration;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisModifierList;
 import net.sourceforge.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisParserDef;
 
 import java.util.List;
@@ -30,7 +31,7 @@ public class ThemisXAnalysisDeclField
     /**
      * The modifiers.
      */
-    private final List<ThemisXAnalysisNodeInstance> theModifiers;
+    private final ThemisXAnalysisModifierList theModifiers;
 
     /**
      * The variables.
@@ -51,7 +52,7 @@ public class ThemisXAnalysisDeclField
     ThemisXAnalysisDeclField(final ThemisXAnalysisParserDef pParser,
                              final FieldDeclaration pDeclaration) throws OceanusException {
         super(pParser, pDeclaration);
-        theModifiers = pParser.parseNodeList(pDeclaration.getModifiers());
+        theModifiers = pParser.parseModifierList(pDeclaration.getModifiers());
         theVariables = pParser.parseNodeList(pDeclaration.getVariables());
         theAnnotations = pParser.parseExprList(pDeclaration.getAnnotations());
     }
@@ -60,7 +61,7 @@ public class ThemisXAnalysisDeclField
      * Obtain the modifiers.
      * @return the modifiers
      */
-    public List<ThemisXAnalysisNodeInstance> getModifiers() {
+    public ThemisXAnalysisModifierList getModifiers() {
         return theModifiers;
     }
 
