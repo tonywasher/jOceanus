@@ -42,15 +42,15 @@ import net.sourceforge.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInst
 import net.sourceforge.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance.ThemisXAnalysisStatementInstance;
 import net.sourceforge.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance.ThemisXAnalysisTypeInstance;
 import net.sourceforge.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisParserDef;
-import net.sourceforge.joceanus.themis.xanalysis.parser.decl.ThemisXAnalysisDeclaration;
-import net.sourceforge.joceanus.themis.xanalysis.parser.expr.ThemisXAnalysisExpression;
-import net.sourceforge.joceanus.themis.xanalysis.parser.mod.ThemisXAnalysisMod;
+import net.sourceforge.joceanus.themis.xanalysis.parser.decl.ThemisXAnalysisDeclParser;
+import net.sourceforge.joceanus.themis.xanalysis.parser.expr.ThemisXAnalysisExprParser;
 import net.sourceforge.joceanus.themis.xanalysis.parser.mod.ThemisXAnalysisModModule;
-import net.sourceforge.joceanus.themis.xanalysis.parser.node.ThemisXAnalysisNode;
+import net.sourceforge.joceanus.themis.xanalysis.parser.mod.ThemisXAnalysisModParser;
 import net.sourceforge.joceanus.themis.xanalysis.parser.node.ThemisXAnalysisNodeCompilationUnit;
+import net.sourceforge.joceanus.themis.xanalysis.parser.node.ThemisXAnalysisNodeParser;
 import net.sourceforge.joceanus.themis.xanalysis.parser.proj.ThemisXAnalysisProject;
-import net.sourceforge.joceanus.themis.xanalysis.parser.stmt.ThemisXAnalysisStatement;
-import net.sourceforge.joceanus.themis.xanalysis.parser.type.ThemisXAnalysisType;
+import net.sourceforge.joceanus.themis.xanalysis.parser.stmt.ThemisXAnalysisStmtParser;
+import net.sourceforge.joceanus.themis.xanalysis.parser.type.ThemisXAnalysisTypeParser;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -320,42 +320,42 @@ public class ThemisXAnalysisParser
 
     @Override
     public ThemisXAnalysisDeclarationInstance parseDeclaration(final BodyDeclaration<?> pDecl) throws OceanusException {
-        final ThemisXAnalysisDeclarationInstance myInstance = ThemisXAnalysisDeclaration.parseDeclaration(this, pDecl);
+        final ThemisXAnalysisDeclarationInstance myInstance = ThemisXAnalysisDeclParser.parseDeclaration(this, pDecl);
         deRegisterInstance(myInstance);
         return myInstance;
     }
 
     @Override
     public ThemisXAnalysisNodeInstance parseNode(final Node pNode) throws OceanusException {
-        final ThemisXAnalysisNodeInstance myInstance = ThemisXAnalysisNode.parseNode(this, pNode);
+        final ThemisXAnalysisNodeInstance myInstance = ThemisXAnalysisNodeParser.parseNode(this, pNode);
         deRegisterInstance(myInstance);
         return myInstance;
     }
 
     @Override
     public ThemisXAnalysisTypeInstance parseType(final Type pType) throws OceanusException {
-        final ThemisXAnalysisTypeInstance myInstance = ThemisXAnalysisType.parseType(this, pType);
+        final ThemisXAnalysisTypeInstance myInstance = ThemisXAnalysisTypeParser.parseType(this, pType);
         deRegisterInstance(myInstance);
         return myInstance;
     }
 
     @Override
     public ThemisXAnalysisStatementInstance parseStatement(final Statement pStatement) throws OceanusException {
-        final ThemisXAnalysisStatementInstance myInstance = ThemisXAnalysisStatement.parseStatement(this, pStatement);
+        final ThemisXAnalysisStatementInstance myInstance = ThemisXAnalysisStmtParser.parseStatement(this, pStatement);
         deRegisterInstance(myInstance);
         return myInstance;
     }
 
     @Override
     public ThemisXAnalysisExpressionInstance parseExpression(final Expression pExpr) throws OceanusException {
-        final ThemisXAnalysisExpressionInstance myInstance = ThemisXAnalysisExpression.parseExpression(this, pExpr);
+        final ThemisXAnalysisExpressionInstance myInstance = ThemisXAnalysisExprParser.parseExpression(this, pExpr);
         deRegisterInstance(myInstance);
         return myInstance;
     }
 
     @Override
-    public ThemisXAnalysisModuleInstance parseModule(final Node pDecl) throws OceanusException {
-        final ThemisXAnalysisModuleInstance myInstance = ThemisXAnalysisMod.parseModule(this, pDecl);
+    public ThemisXAnalysisModuleInstance parseModule(final Node pMod) throws OceanusException {
+        final ThemisXAnalysisModuleInstance myInstance = ThemisXAnalysisModParser.parseModule(this, pMod);
         deRegisterInstance(myInstance);
         return myInstance;
     }

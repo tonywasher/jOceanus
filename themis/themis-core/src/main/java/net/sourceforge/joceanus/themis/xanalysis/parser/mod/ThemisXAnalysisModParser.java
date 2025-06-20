@@ -24,76 +24,42 @@ import com.github.javaparser.ast.modules.ModuleProvidesDirective;
 import com.github.javaparser.ast.modules.ModuleRequiresDirective;
 import com.github.javaparser.ast.modules.ModuleUsesDirective;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
-import net.sourceforge.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance.ThemisXAnalysisId;
+import net.sourceforge.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance.ThemisXAnalysisModuleInstance;
 import net.sourceforge.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisParserDef;
 
-import java.util.function.Predicate;
-
 /**
- * Analysis Module.
+ * Analysis Module Parser.
  */
-public enum ThemisXAnalysisMod
-        implements ThemisXAnalysisId {
+public final class ThemisXAnalysisModParser {
     /**
-     * Exports.
+     * Private Constructor.
      */
-    EXPORTS(ModuleExportsDirective.class::isInstance),
-
-    /**
-     * Module.
-     */
-    MODULE(ModuleDeclaration.class::isInstance),
-
-    /**
-     * Opens.
-     */
-    OPENS(ModuleOpensDirective.class::isInstance),
-
-    /**
-     * Provides.
-     */
-    PROVIDES(ModuleProvidesDirective.class::isInstance),
-
-    /**
-     * Requires.
-     */
-    REQUIRES(ModuleRequiresDirective.class::isInstance),
-
-    /**
-     * Uses.
-     */
-    USES(ModuleUsesDirective.class::isInstance);
-
-    /**
-     * The test.
-     */
-    private final Predicate<Node> theTester;
-
-    /**
-     * Constructor.
-     * @param pTester the test method
-     */
-    ThemisXAnalysisMod(final Predicate<Node> pTester) {
-        theTester = pTester;
+    private ThemisXAnalysisModParser() {
     }
 
     /**
-     * Determine type of module.
+     * Parse a module.
      * @param pParser the parser
      * @param pMod the module
-     * @return the modType
+     * @return the parsed module
      * @throws OceanusException on error
      */
-    public static ThemisXAnalysisMod determineModule(final ThemisXAnalysisParserDef pParser,
-                                                     final Node pMod) throws OceanusException {
-        /* Loop testing each node type */
-        for (ThemisXAnalysisMod myMod : values()) {
-            if (myMod.theTester.test(pMod)) {
-                return myMod;
-            }
+    public static ThemisXAnalysisModuleInstance parseModule(final ThemisXAnalysisParserDef pParser,
+                                                            final Node pMod) throws OceanusException {
+        /* Handle null Module */
+        if (pMod == null) {
+            return null;
         }
 
-        /* Unrecognised moduleType */
-        throw pParser.buildException("Unexpected Module", pMod);
+        /* Create appropriate node */
+        switch (ThemisXAnalysisMod.determineModule(pParser, pMod)) {
+            case EXPORTS:   return new ThemisXAnalysisModExports(pParser, (ModuleExportsDirective) pMod);
+            case MODULE:    return new ThemisXAnalysisModModule(pParser, (ModuleDeclaration) pMod);
+            case OPENS:     return new ThemisXAnalysisModOpens(pParser, (ModuleOpensDirective) pMod);
+            case PROVIDES:  return new ThemisXAnalysisModProvides(pParser, (ModuleProvidesDirective) pMod);
+            case REQUIRES:  return new ThemisXAnalysisModRequires(pParser, (ModuleRequiresDirective) pMod);
+            case USES:      return new ThemisXAnalysisModUses(pParser, (ModuleUsesDirective) pMod);
+            default:        throw pParser.buildException("Unsupported Module Type", pMod);
+        }
     }
 }

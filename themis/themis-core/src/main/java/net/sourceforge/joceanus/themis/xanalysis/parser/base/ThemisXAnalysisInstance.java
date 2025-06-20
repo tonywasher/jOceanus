@@ -220,6 +220,14 @@ public interface ThemisXAnalysisInstance {
         boolean isTopLevel();
 
         /**
+         * is the class an interface?
+         * @return true/false
+         */
+        default boolean isInterface() {
+            return false;
+        }
+
+        /**
          * is the class an inner class?
          * @return true/false
          */

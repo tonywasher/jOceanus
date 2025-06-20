@@ -19,7 +19,6 @@ package net.sourceforge.joceanus.themis.xanalysis.parser.type;
 import com.github.javaparser.ast.type.Type;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance.ThemisXAnalysisId;
-import net.sourceforge.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance.ThemisXAnalysisTypeInstance;
 import net.sourceforge.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisParserDef;
 
 import java.util.function.Predicate;
@@ -110,35 +109,5 @@ public enum ThemisXAnalysisType
 
         /* Unrecognised Type */
         throw pParser.buildException("Unexpected Type", pType);
-    }
-
-    /**
-     * Parse a type.
-     * @param pParser the parser
-     * @param pType the type
-     * @return the parsed type
-     * @throws OceanusException on error
-     */
-    public static ThemisXAnalysisTypeInstance parseType(final ThemisXAnalysisParserDef pParser,
-                                                        final Type pType) throws OceanusException {
-        /* Handle null Type */
-        if (pType == null) {
-            return null;
-        }
-
-        /* Allocate correct Type */
-        switch (ThemisXAnalysisType.determineType(pParser, pType)) {
-            case ARRAY:          return new ThemisXAnalysisTypeArray(pParser, pType.asArrayType());
-            case CLASSINTERFACE: return new ThemisXAnalysisTypeClassInterface(pParser, pType.asClassOrInterfaceType());
-            case INTERSECTION:   return new ThemisXAnalysisTypeIntersection(pParser, pType.asIntersectionType());
-            case PARAMETER:      return new ThemisXAnalysisTypeParameter(pParser, pType.asTypeParameter());
-            case PRIMITIVE:      return new ThemisXAnalysisTypePrimitive(pParser, pType.asPrimitiveType());
-            case UNION:          return new ThemisXAnalysisTypeUnion(pParser, pType.asUnionType());
-            case UNKNOWN:        return new ThemisXAnalysisTypeUnknown(pParser, pType.asUnknownType());
-            case VAR:            return new ThemisXAnalysisTypeVar(pParser, pType.asVarType());
-            case VOID:           return new ThemisXAnalysisTypeVoid(pParser, pType.asVoidType());
-            case WILDCARD:       return new ThemisXAnalysisTypeWildcard(pParser, pType.asWildcardType());
-            default:             throw pParser.buildException("Unsupported Type", pType);
-        }
     }
 }

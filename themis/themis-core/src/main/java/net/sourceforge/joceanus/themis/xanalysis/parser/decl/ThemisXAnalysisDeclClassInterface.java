@@ -26,20 +26,15 @@ import net.sourceforge.joceanus.themis.xanalysis.parser.node.ThemisXAnalysisNode
 import java.util.List;
 
 /**
- * Interface Declaration.
+ * Class Declaration.
  */
-public class ThemisXAnalysisDeclInterface
+public class ThemisXAnalysisDeclClassInterface
         extends ThemisXAnalysisBaseDeclaration<ClassOrInterfaceDeclaration>
         implements ThemisXAnalysisDeclarationInstance, ThemisXAnalysisClassInstance {
     /**
-     * The Name.
+     * The shortName.
      */
     private final String theName;
-
-    /**
-     * The fullName.
-     */
-    private final String theFullName;
 
     /**
      * The modifiers.
@@ -72,25 +67,36 @@ public class ThemisXAnalysisDeclInterface
     private final List<ThemisXAnalysisExpressionInstance> theAnnotations;
 
     /**
+     * Is this an anonymous class?
+     */
+    private final boolean isAnonClass;
+
+    /**
+     * The fullName.
+     */
+    private String theFullName;
+
+    /**
      * Constructor.
      * @param pParser the parser
      * @param pDeclaration the declaration
      * @throws OceanusException on error
      */
-    ThemisXAnalysisDeclInterface(final ThemisXAnalysisParserDef pParser,
-                                 final ClassOrInterfaceDeclaration pDeclaration) throws OceanusException {
+    ThemisXAnalysisDeclClassInterface(final ThemisXAnalysisParserDef pParser,
+                                      final ClassOrInterfaceDeclaration pDeclaration) throws OceanusException {
         /* Store values */
         super(pParser, pDeclaration);
         theName = ((ThemisXAnalysisNodeSimpleName) pParser.parseNode(pDeclaration.getName())).getName();
-        theFullName = pDeclaration.getFullyQualifiedName().orElse(null);
         theModifiers = pParser.parseNodeList(pDeclaration.getModifiers());
-        theExtends = pParser.parseTypeList(pDeclaration.getExtendedTypes());
         theImplements = pParser.parseTypeList(pDeclaration.getImplementedTypes());
+        theExtends = pParser.parseTypeList(pDeclaration.getExtendedTypes());
         theTypeParameters = pParser.parseTypeList(pDeclaration.getTypeParameters());
         theAnnotations = pParser.parseExprList(pDeclaration.getAnnotations());
 
-        /* Register the class */
-        pParser.registerClass(this);
+        /* Access the full name and determine whether this is an anonymous class */
+        theFullName = pDeclaration.getFullyQualifiedName().orElse(null);
+        isAnonClass = theFullName == null && !isLocalDeclaration();
+        theFullName = pParser.registerClass(this);
 
         /* Finally parse the underlying declarations */
         theBody = pParser.parseDeclarationList(pDeclaration.getMembers());
@@ -114,6 +120,21 @@ public class ThemisXAnalysisDeclInterface
     @Override
     public boolean isInner() {
         return getNode().isInnerClass();
+    }
+
+    @Override
+    public boolean isLocalDeclaration() {
+        return getNode().isLocalClassDeclaration();
+    }
+
+    @Override
+    public boolean isAnonClass() {
+        return isAnonClass;
+    }
+
+    @Override
+    public boolean isInterface() {
+        return getNode().isInterface();
     }
 
     @Override
