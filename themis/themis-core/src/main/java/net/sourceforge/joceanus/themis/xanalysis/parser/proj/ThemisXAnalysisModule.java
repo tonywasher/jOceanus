@@ -46,7 +46,7 @@ public class ThemisXAnalysisModule {
     private final String theName;
 
     /**
-     * The location.
+     * The locations.
      */
     private final File theLocation;
 
@@ -62,19 +62,27 @@ public class ThemisXAnalysisModule {
 
     /**
      * Constructor.
-     * @param pLocation the module location
+     * @param pLocation the location of the module
+     * @param pPom the module Pom
      * @throws OceanusException on error
      */
-    ThemisXAnalysisModule(final File pLocation) throws OceanusException {
+    ThemisXAnalysisModule(final File pLocation,
+                          final ThemisXAnalysisMaven pPom) throws OceanusException {
+        /* Create the list */
+        thePackages = new ArrayList<>();
+
         /* Store the name and location */
         theLocation = new File(pLocation, PATH_XTRA);
         theName = pLocation.getName();
 
-        /* Create the list */
-        thePackages = new ArrayList<>();
-
         /* Initiate search for packages */
-        checkForPackage(null);
+        checkForPackage(theLocation, null);
+
+        /* Add any extraDirs */
+        for (String myXtra : pPom.getXtraDirs()) {
+            final File myXtraDir = new File(pLocation, myXtra);
+            checkForPackage(myXtraDir, null);
+        }
     }
 
     /**
@@ -88,14 +96,6 @@ public class ThemisXAnalysisModule {
     @Override
     public String toString() {
         return getName();
-    }
-
-    /**
-     * Obtain the location.
-     * @return the location
-     */
-    File getLocation() {
-        return theLocation;
     }
 
     /**
@@ -116,17 +116,19 @@ public class ThemisXAnalysisModule {
 
     /**
      * Check for package.
+     * @param pLocation the location to search
      * @param pPackage the package name
      * @throws OceanusException on error
      */
-    void checkForPackage(final String pPackage) throws OceanusException {
+    void checkForPackage(final File pLocation,
+                         final String pPackage) throws OceanusException {
         /* Assume not a package */
         boolean isPackage = false;
 
         /* Determine the location to search */
         final File myLocation = pPackage == null
-                ? theLocation
-                : new File(theLocation, pPackage.replace(ThemisXAnalysisChar.PERIOD, ThemisXAnalysisChar.COMMENT));
+                ? pLocation
+                : new File(pLocation, pPackage.replace(ThemisXAnalysisChar.PERIOD, ThemisXAnalysisChar.COMMENT));
 
         /* Look for java files or further packages */
         for (File myFile: Objects.requireNonNull(myLocation.listFiles())) {
@@ -138,7 +140,7 @@ public class ThemisXAnalysisModule {
                 final String myPackage = pPackage == null
                         ? myName
                         : pPackage + ThemisXAnalysisChar.PERIOD + myName;
-                checkForPackage(myPackage);
+                checkForPackage(pLocation, myPackage);
             }
 
             /* If this is a Java file name */
@@ -151,7 +153,7 @@ public class ThemisXAnalysisModule {
         /* If this is a package */
         if (isPackage) {
             /* Add the package to the list */
-            thePackages.add(new ThemisXAnalysisPackage(theLocation, pPackage));
+            thePackages.add(new ThemisXAnalysisPackage(pLocation, pPackage));
         }
     }
 

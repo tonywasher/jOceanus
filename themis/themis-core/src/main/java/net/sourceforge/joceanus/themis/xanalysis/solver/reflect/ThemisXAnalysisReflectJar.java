@@ -111,8 +111,7 @@ public class ThemisXAnalysisReflectJar
             if (mySubClass != null) {
                 return loadClass(mySubClass);
             }
-            System.out.println("Failed to find class " + pClassName);
-            return null;
+            throw new ThemisDataException("Failed to find class " + pClassName, e);
         }
     }
 

@@ -172,7 +172,7 @@ public class ThemisXAnalysisProject {
             if (mySrc.exists()
                     && mySrc.isDirectory()) {
                 /* Add the module to the list */
-                theModules.put(myPom.getMavenId(), new ThemisXAnalysisModule(new File(pPom.getParent())));
+                theModules.put(myPom.getMavenId(), new ThemisXAnalysisModule(new File(pPom.getParent()), myPom));
 
                 /* Add any unique dependencies */
                 for (final ThemisXAnalysisMavenId myDepId : myPom.getDependencies()) {

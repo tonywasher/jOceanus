@@ -30,6 +30,10 @@ import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -55,14 +59,30 @@ public class ThemisXAnalysisMaven {
     private static final String DOC_NAME = "project";
 
     /**
-     * Parent element.
+     * Properties XPath.
      */
-    private static final String EL_PARENT = "parent";
+    private static final String XPATH_PROPERTIES = "/project/properties";
 
     /**
-     * Modules element.
+     * Parent XPath.
      */
-    private static final String EL_MODULES = "modules";
+    private static final String XPATH_PARENT = "/project/parent";
+
+    /**
+     * Modules XPath.
+     */
+    private static final String XPATH_MODULES = "/project/modules";
+
+    /**
+     * Dependencies XPath.
+     */
+    private static final String XPATH_DEPENDENCIES = "/project/dependencies";
+
+    /**
+     * XtraDirs XPath.
+     */
+    private static final String XPATH_XTRADIRS = "/project/build/plugins/plugin[artifactId='build-helper-maven-plugin']"
+            + "/executions/execution/configuration/sources";
 
     /**
      * Module element.
@@ -70,19 +90,24 @@ public class ThemisXAnalysisMaven {
     private static final String EL_MODULE = "module";
 
     /**
-     * Dependencies element.
-     */
-    private static final String EL_DEPENDENCIES = "dependencies";
-
-    /**
      * Dependency element.
      */
     private static final String EL_DEPENDENCY = "dependency";
 
     /**
-     * Properties element.
+     * Source element.
      */
-    private static final String EL_PROPERTIES = "properties";
+    private static final String EL_SOURCE = "source";
+
+    /**
+     * The XPath.
+     */
+    private final XPath theXPath;
+
+    /**
+     * The Document.
+     */
+    private final Document theDoc;
 
     /**
      * The Id.
@@ -98,6 +123,11 @@ public class ThemisXAnalysisMaven {
      * The dependencies.
      */
     private final List<ThemisXAnalysisMavenId> theDependencies;
+
+    /**
+     * The xtraDirs.
+     */
+    private final List<String> theXtraDirs;
 
     /**
      * The parent.
@@ -128,6 +158,7 @@ public class ThemisXAnalysisMaven {
         /* Create the module list */
         theModules = new ArrayList<>();
         theDependencies = new ArrayList<>();
+        theXtraDirs = new ArrayList<>();
         theProperties = new LinkedHashMap<>();
         theProperties.put("${javafx.platform}", OceanusSystem.determineSystem().getClassifier());
 
@@ -139,9 +170,12 @@ public class ThemisXAnalysisMaven {
             myFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
             final DocumentBuilder myBuilder = myFactory.newDocumentBuilder();
 
+            /* Create the XPath */
+            theXPath = XPathFactory.newInstance().newXPath();
+
             /* Build the document from the input stream */
-            final Document myDocument = myBuilder.parse(myInBuffer);
-            theId = parseProjectFile(myDocument);
+            theDoc = myBuilder.parse(myInBuffer);
+            theId = parseProjectFile();
 
             /* Handle exceptions */
         } catch (IOException
@@ -181,14 +215,21 @@ public class ThemisXAnalysisMaven {
     }
 
     /**
+     * Obtain the list of extra directories.
+     * @return the modules
+     */
+    public List<String> getXtraDirs() {
+        return theXtraDirs;
+    }
+
+    /**
      * Parse the project file.
-     * @param pDocument the document
      * @return the MavenId
      * @throws OceanusException on error
      */
-    public ThemisXAnalysisMavenId parseProjectFile(final Document pDocument) throws OceanusException {
+    public ThemisXAnalysisMavenId parseProjectFile() throws OceanusException {
         /* Access the document element */
-        final Element myDoc = pDocument.getDocumentElement();
+        final Element myDoc = theDoc.getDocumentElement();
 
         /* Check that the document name is correct */
         if (!Objects.equals(myDoc.getNodeName(), DOC_NAME)) {
@@ -196,19 +237,10 @@ public class ThemisXAnalysisMaven {
         }
 
         /* Process any properties */
-        final Element myProperties = getElement(myDoc, EL_PROPERTIES);
-        if (myProperties != null) {
-            for (Node myChild = myProperties.getFirstChild();
-                myChild != null;
-                myChild = myChild.getNextSibling()) {
-                if (myChild instanceof Element myElement) {
-                    theProperties.put("${" + myElement.getNodeName() + "}", myElement.getTextContent());
-                }
-            }
-        }
+        processProperties();
 
         /* Obtain parent definition if any */
-        final Element myParentEl = getElement(myDoc, EL_PARENT);
+        final Element myParentEl = (Element) findNode(XPATH_PARENT);
         final ThemisXAnalysisMavenId myParent = myParentEl == null
                 ? null
                 : new ThemisXAnalysisMavenId(myParentEl);
@@ -218,12 +250,13 @@ public class ThemisXAnalysisMaven {
         idFound = true;
 
         /* Process modules */
-        final Element myModules = getElement(myDoc, EL_MODULES);
-        processModules(myModules);
+        processModules();
 
         /* Process dependencies */
-        final Element myDependencies = getElement(myDoc, EL_DEPENDENCIES);
-        processDependencies(myDependencies, myId);
+        processDependencies(myId);
+
+        /* Process extra directories */
+        processXtraDirs();
 
         /* Return the Id */
         return myId;
@@ -258,78 +291,98 @@ public class ThemisXAnalysisMaven {
     }
 
     /**
-     * Obtain element value.
-     * @param pElement the element
-     * @param pValue the value name
-     * @return the value
+     * Obtain the XPath node
+     * @param pPath the Path
+     * @return the Node (or null if not found)
+     * @throws OceanusException on error
      */
-    static Element getElement(final Element pElement,
-                              final String pValue) {
-        /* Return null if no element */
-        if (pElement == null) {
-            return null;
+    private Node findNode(final String pPath) throws OceanusException {
+        /* Protect against exceptions */
+        try {
+            return (Node) theXPath.compile(pPath).evaluate(theDoc, XPathConstants.NODE);
+        } catch (XPathExpressionException e) {
+            throw new ThemisDataException("Exception locating XPath: " + pPath, e);
         }
+    }
 
-        /* Loop through the children */
-        for (Node myChild = pElement.getFirstChild();
-             myChild != null;
-             myChild = myChild.getNextSibling()) {
-            /* Return result if we have a match */
-            if (myChild instanceof Element myElement
-                    && pValue.equals(myChild.getNodeName())) {
-                return myElement;
+    /**
+     * Process properties.
+     * @throws OceanusException on error
+     */
+    private void processProperties() throws OceanusException {
+        /* Process any properties */
+        final Node myProps = findNode(XPATH_PROPERTIES);
+        if (myProps != null) {
+            for (Node myNode = myProps.getFirstChild(); myNode != null; myNode = myNode.getNextSibling()) {
+                if (myNode instanceof Element myElement) {
+                    theProperties.put("${" + myElement.getNodeName() + "}", myElement.getTextContent());
+                }
             }
         }
-
-        /* Not found */
-        return null;
     }
 
     /**
      * Process modules.
-     * @param pModules the modules
+     * @throws OceanusException on error
      */
-    private void processModules(final Element pModules) {
-        /* Return if no element */
-        if (pModules == null) {
-            return;
-        }
-
-        /* Loop through the children */
-        for (Node myChild = pModules.getFirstChild();
-             myChild != null;
-             myChild = myChild.getNextSibling()) {
-            /* Return result if we have a match */
-            if (myChild instanceof Element
+    private void processModules() throws OceanusException {
+        /* Process any modules */
+        final Node myModules = findNode(XPATH_MODULES);
+        if (myModules != null) {
+            /* Loop through the children */
+            for (Node myChild = myModules.getFirstChild();
+                 myChild != null;
+                 myChild = myChild.getNextSibling()) {
+                /* Return result if we have a match */
+                if (myChild instanceof Element
                     && EL_MODULE.equals(myChild.getNodeName())) {
-                theModules.add(myChild.getTextContent());
+                    theModules.add(myChild.getTextContent());
+                }
             }
         }
     }
 
     /**
      * Process dependencies.
-     * @param pDependencies the dependencies
      * @param pParent the parentId
      * @throws OceanusException on error
      */
-    private void processDependencies(final Element pDependencies,
-                                     final ThemisXAnalysisMavenId pParent) throws OceanusException {
-        /* Return if no element */
-        if (pDependencies == null) {
-            return;
-        }
-
-        /* Loop through the children */
-        for (Node myChild = pDependencies.getFirstChild();
-             myChild != null;
-             myChild = myChild.getNextSibling()) {
-            /* Return result if we have a match */
-            if (myChild instanceof Element myElement
+    private void processDependencies(final ThemisXAnalysisMavenId pParent) throws OceanusException {
+        /* Process any dependencies */
+        final Node myDependencies = findNode(XPATH_DEPENDENCIES);
+        if (myDependencies != null) {
+            /* Loop through the children */
+            for (Node myChild = myDependencies.getFirstChild();
+                 myChild != null;
+                 myChild = myChild.getNextSibling()) {
+                /* Return result if we have a match */
+                if (myChild instanceof Element myElement
                     && EL_DEPENDENCY.equals(myChild.getNodeName())) {
-                final ThemisXAnalysisMavenId myId = new ThemisXAnalysisMavenId(myElement, pParent);
-                if (!myId.isSkippable()) {
-                    theDependencies.add(new ThemisXAnalysisMavenId(myElement, pParent));
+                    final ThemisXAnalysisMavenId myId = new ThemisXAnalysisMavenId(myElement, pParent);
+                    if (!myId.isSkippable()) {
+                        theDependencies.add(new ThemisXAnalysisMavenId(myElement, pParent));
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Process extra directories.
+     * @throws OceanusException on error
+     */
+    private void processXtraDirs() throws OceanusException {
+        /* Process any modules */
+        final Node myXtraDirs = findNode(XPATH_XTRADIRS);
+        if (myXtraDirs != null) {
+            /* Loop through the children */
+            for (Node myChild = myXtraDirs.getFirstChild();
+                 myChild != null;
+                 myChild = myChild.getNextSibling()) {
+                /* Return result if we have a match */
+                if (myChild instanceof Element
+                        && EL_SOURCE.equals(myChild.getNodeName())) {
+                    theXtraDirs.add(myChild.getTextContent());
                 }
             }
         }

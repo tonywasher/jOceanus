@@ -211,6 +211,11 @@ public enum ThemisXAnalysisSolverJavaLang {
     EXCEPT("Exception"),
 
     /**
+     * ArithmeticException.
+     */
+    ARITHMETICEXC("ArithmeticException"),
+
+    /**
      * IllegalArgumentException.
      */
     ILLEGALARGEXC("IllegalArgumentException"),
@@ -218,27 +223,27 @@ public enum ThemisXAnalysisSolverJavaLang {
     /**
      * IllegalStateException.
      */
-    ILLEGALSTATEEXCEPTION("IllegalStateException"),
+    ILLEGALSTATEEXC("IllegalStateException"),
 
     /**
      * InterruptedException.
      */
-    INTERRUPTEDEXCEPTION("InterruptedException"),
+    INTERRUPTEDEXC("InterruptedException"),
 
     /**
      * NumberFormatException.
      */
-    NUMBERFORMATEXCEPTION("NumberFormatException"),
+    NUMBERFORMATEXC("NumberFormatException"),
 
     /**
      * RunTimeException.
      */
-    RUNTIMEXCEPT("RuntimeException"),
+    RUNTIMEXC("RuntimeException"),
 
     /**
      * UnsupportedOperationException.
      */
-    UNSUPPORTEDEXCEPT("UnsupportedOperationException"),
+    UNSUPPORTEDEXC("UnsupportedOperationException"),
 
     /**
      * Deprecated.
