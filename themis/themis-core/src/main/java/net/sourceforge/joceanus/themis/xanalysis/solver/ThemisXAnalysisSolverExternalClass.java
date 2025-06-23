@@ -17,8 +17,11 @@
 package net.sourceforge.joceanus.themis.xanalysis.solver;
 
 import net.sourceforge.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance.ThemisXAnalysisClassInstance;
+import net.sourceforge.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisModifierList;
 import net.sourceforge.joceanus.themis.xanalysis.parser.node.ThemisXAnalysisNodeImport;
+import net.sourceforge.joceanus.themis.xanalysis.parser.node.ThemisXAnalysisNodeModifierList;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -43,12 +46,18 @@ public class ThemisXAnalysisSolverExternalClass
     private final String theFullName;
 
     /**
+     * The modifierList.
+     */
+    private final ThemisXAnalysisModifierList theModifiers;
+
+    /**
      * Constructor.
      * @param pImport the import definition
      */
     ThemisXAnalysisSolverExternalClass(final ThemisXAnalysisNodeImport pImport) {
         theName = pImport.getShortName();
         theFullName = pImport.getFullName();
+        theModifiers = new ThemisXAnalysisNodeModifierList(new ArrayList<>());
     }
 
     /**
@@ -58,6 +67,7 @@ public class ThemisXAnalysisSolverExternalClass
     private ThemisXAnalysisSolverExternalClass(final ThemisXAnalysisSolverJavaLang pLang) {
         theName = pLang.getName();
         theFullName = JAVALANG + theName;
+        theModifiers = new ThemisXAnalysisNodeModifierList(new ArrayList<>());
     }
 
     @Override
@@ -68,6 +78,11 @@ public class ThemisXAnalysisSolverExternalClass
     @Override
     public String getFullName() {
         return theFullName;
+    }
+
+    @Override
+    public ThemisXAnalysisModifierList getModifiers() {
+        return theModifiers;
     }
 
     @Override

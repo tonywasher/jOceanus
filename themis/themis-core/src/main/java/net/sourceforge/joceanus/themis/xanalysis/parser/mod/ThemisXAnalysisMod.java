@@ -25,13 +25,12 @@ import com.github.javaparser.ast.modules.ModuleRequiresDirective;
 import com.github.javaparser.ast.modules.ModuleUsesDirective;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance.ThemisXAnalysisId;
-import net.sourceforge.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance.ThemisXAnalysisModuleInstance;
 import net.sourceforge.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisParserDef;
 
 import java.util.function.Predicate;
 
 /**
- * Analysis Node.
+ * Analysis Module.
  */
 public enum ThemisXAnalysisMod
         implements ThemisXAnalysisId {
@@ -79,48 +78,22 @@ public enum ThemisXAnalysisMod
     }
 
     /**
-     * Determine type of node.
+     * Determine type of module.
      * @param pParser the parser
-     * @param pNode the node
-     * @return the nodeType
+     * @param pMod the module
+     * @return the modType
      * @throws OceanusException on error
      */
     public static ThemisXAnalysisMod determineModule(final ThemisXAnalysisParserDef pParser,
-                                                     final Node pNode) throws OceanusException {
+                                                     final Node pMod) throws OceanusException {
         /* Loop testing each node type */
-        for (ThemisXAnalysisMod myNode : values()) {
-            if (myNode.theTester.test(pNode)) {
-                return myNode;
+        for (ThemisXAnalysisMod myMod : values()) {
+            if (myMod.theTester.test(pMod)) {
+                return myMod;
             }
         }
 
-        /* Unrecognised nodeType */
-        throw pParser.buildException("Unexpected Node", pNode);
-    }
-
-    /**
-     * Parse a node.
-     * @param pParser the parser
-     * @param pNode the node
-     * @return the parsed node
-     * @throws OceanusException on error
-     */
-    public static ThemisXAnalysisModuleInstance parseModule(final ThemisXAnalysisParserDef pParser,
-                                                            final Node pNode) throws OceanusException {
-        /* Handle null Node */
-        if (pNode == null) {
-            return null;
-        }
-
-        /* Create appropriate node */
-        switch (ThemisXAnalysisMod.determineModule(pParser, pNode)) {
-            case EXPORTS:   return new ThemisXAnalysisModExports(pParser, (ModuleExportsDirective) pNode);
-            case MODULE:    return new ThemisXAnalysisModModule(pParser, (ModuleDeclaration) pNode);
-            case OPENS:     return new ThemisXAnalysisModOpens(pParser, (ModuleOpensDirective) pNode);
-            case PROVIDES:  return new ThemisXAnalysisModProvides(pParser, (ModuleProvidesDirective) pNode);
-            case REQUIRES:  return new ThemisXAnalysisModRequires(pParser, (ModuleRequiresDirective) pNode);
-            case USES:      return new ThemisXAnalysisModUses(pParser, (ModuleUsesDirective) pNode);
-            default:        throw pParser.buildException("Unsupported Module Type", pNode);
-        }
+        /* Unrecognised moduleType */
+        throw pParser.buildException("Unexpected Module", pMod);
     }
 }

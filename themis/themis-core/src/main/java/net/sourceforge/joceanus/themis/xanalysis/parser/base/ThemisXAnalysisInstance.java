@@ -169,9 +169,7 @@ public interface ThemisXAnalysisInstance {
          * Obtain the modifiers.
          * @return the modifiers
          */
-        default List<ThemisXAnalysisNodeInstance> getModifiers() {
-            return Collections.emptyList();
-        }
+        ThemisXAnalysisModifierList getModifiers();
 
         /**
          * Obtain the body.
@@ -220,6 +218,14 @@ public interface ThemisXAnalysisInstance {
         boolean isTopLevel();
 
         /**
+         * is the class an interface?
+         * @return true/false
+         */
+        default boolean isInterface() {
+            return false;
+        }
+
+        /**
          * is the class an inner class?
          * @return true/false
          */
@@ -258,9 +264,7 @@ public interface ThemisXAnalysisInstance {
          * Obtain the modifiers.
          * @return the modifiers
          */
-        default List<ThemisXAnalysisNodeInstance> getModifiers() {
-            return Collections.emptyList();
-        }
+        ThemisXAnalysisModifierList getModifiers();
 
         /**
          * Obtain the parameters.

@@ -78,6 +78,37 @@ public class ThemisXAnalysisProject {
 
         /* Remove own mavenIds from dependency list */
         theDependencies.removeIf(theModules::containsKey);
+
+        /* For all dependencies */
+        final List<ThemisXAnalysisMavenId> myDependencies = new ArrayList<>(theDependencies);
+        for (ThemisXAnalysisMavenId myId : myDependencies) {
+            processDependency(myId);
+        }
+    }
+
+    /**
+     * Process dependency.
+     * @param pId the maven id
+     */
+    private void processDependency(final ThemisXAnalysisMavenId pId) throws OceanusException {
+        final File myFile = pId.getMavenPomPath();
+        /* Protect against exceptions */
+        try (InputStream myInStream = new FileInputStream(myFile)) {
+            /* Parse the Project definition file */
+            final ThemisXAnalysisMaven myPom = new ThemisXAnalysisMaven(null, myInStream);
+
+            /* Add any unique dependencies */
+            for (final ThemisXAnalysisMavenId myDepId : myPom.getDependencies()) {
+                if (!theDependencies.contains(myDepId)) {
+                    theDependencies.add(myDepId);
+                    if (myDepId.getClassifier() == null) {
+                        processDependency(myDepId);
+                    }
+                }
+            }
+        } catch (IOException e) {
+            throw new ThemisIOException("Failed to parse pom file", e);
+        }
     }
 
     /**
@@ -105,8 +136,8 @@ public class ThemisXAnalysisProject {
     }
 
     /**
-     * Obtain the modules.
-     * @return the modules
+     * Obtain the dependencies.
+     * @return the dependencies
      */
     public List<ThemisXAnalysisMavenId> getDependencies() {
         return theDependencies;
@@ -141,7 +172,7 @@ public class ThemisXAnalysisProject {
             if (mySrc.exists()
                     && mySrc.isDirectory()) {
                 /* Add the module to the list */
-                theModules.put(myPom.getMavenId(), new ThemisXAnalysisModule(new File(pPom.getParent())));
+                theModules.put(myPom.getMavenId(), new ThemisXAnalysisModule(new File(pPom.getParent()), myPom));
 
                 /* Add any unique dependencies */
                 for (final ThemisXAnalysisMavenId myDepId : myPom.getDependencies()) {

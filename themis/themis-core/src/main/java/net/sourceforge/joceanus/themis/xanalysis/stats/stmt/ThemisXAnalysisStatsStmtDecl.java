@@ -53,9 +53,8 @@ public final class ThemisXAnalysisStatsStmtDecl {
         /* Switch on declaration id */
         switch ((ThemisXAnalysisDeclaration) pDecl.getId()) {
             case ANNOTATION:
-            case CLASS:
+            case CLASSINTERFACE:
             case ENUM:
-            case INTERFACE:
             case RECORD:           return countClass(pCounter, (ThemisXAnalysisClassInstance) pDecl);
             case COMPACT:          return countCompact(pCounter, (ThemisXAnalysisDeclCompact) pDecl);
             case CONSTRUCTOR:      return countConstructor(pCounter, (ThemisXAnalysisDeclConstructor) pDecl);

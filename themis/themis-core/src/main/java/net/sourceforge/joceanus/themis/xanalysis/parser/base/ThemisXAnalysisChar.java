@@ -155,4 +155,9 @@ public final class ThemisXAnalysisChar {
      * Dollar symbol.
      */
     public static final char DOLLAR = '$';
+
+    /**
+     * Hyphen.
+     */
+    public static final char HYPHEN = '-';
 }

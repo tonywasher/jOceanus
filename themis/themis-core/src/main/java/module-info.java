@@ -28,11 +28,10 @@ module net.sourceforge.joceanus.themis.core {
     requires net.sourceforge.joceanus.tethys.core;
     requires net.sourceforge.joceanus.oceanus;
     requires com.github.javaparser.core;
-    requires com.github.javaparser.symbolsolver.core;
 
     /* Exports */
-    exports net.sourceforge.joceanus.themis.ui.launch;
+    exports net.sourceforge.joceanus.themis.lethe.ui.launch;
 
     /* Allow properties to be read */
-    opens net.sourceforge.joceanus.themis.ui to net.sourceforge.joceanus.metis;
+    opens net.sourceforge.joceanus.themis.lethe.ui to net.sourceforge.joceanus.metis;
 }

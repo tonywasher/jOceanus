@@ -16,6 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.themis.xanalysis.solver;
 
+import com.github.javaparser.ast.Node;
 import net.sourceforge.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance;
 import net.sourceforge.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance.ThemisXAnalysisClassInstance;
 import net.sourceforge.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance.ThemisXAnalysisNodeInstance;
@@ -80,6 +81,14 @@ public class ThemisXAnalysisSolverState {
         theExternalClasses = new LinkedHashMap<>();
         theKnownClasses = new LinkedHashMap<>();
         theReferenced = new ArrayList<>();
+    }
+
+    /**
+     * Obtain the external classes.
+     * @return the external classes.
+     */
+    Map<String, ThemisXAnalysisClassInstance> getExternalClassMap() {
+        return theExternalClasses;
     }
 
     /**
@@ -149,13 +158,6 @@ public class ThemisXAnalysisSolverState {
 
         /* Loop through the files in the package */
         for (ThemisXAnalysisSolverFile myFile : pPackage.getFiles()) {
-            /* Determine the possible references */
-            determineKnownClasses(myFile);
-
-            /* Detect references */
-            detectClassOrInterfaceTypes(myFile);
-            detectNameReferences(myFile);
-
             /* Process local references */
             myFile.processLocalReferences();
         }
@@ -214,6 +216,8 @@ public class ThemisXAnalysisSolverState {
             final ThemisXAnalysisClassInstance myResolved = processPossibleReference(myReference.getName());
             if (myResolved != null) {
                 myReference.setClassInstance(myResolved);
+            } else {
+                System.out.println(myReference.getName() + ":" + pFile.toString());
             }
         }
     }
@@ -233,9 +237,24 @@ public class ThemisXAnalysisSolverState {
         for (ThemisXAnalysisInstance myNode : myReferences) {
             final ThemisXAnalysisNodeName myReference = (ThemisXAnalysisNodeName) myNode;
             if (myReference.getQualifier() == null) {
-                processPossibleReference(myReference.getName());
+                final ThemisXAnalysisClassInstance myResolved = processPossibleReference(myReference.getName());
+                if (myResolved == null) {
+                    look4Name(myReference);
+                }
             }
         }
+    }
+
+    /**
+     * Look4Name.
+     * @param pName the name
+     */
+    private void look4Name(final ThemisXAnalysisNodeName pName) {
+        final String myName = pName.getName();
+        final Node myParent = pName.getNode().getParentNode().orElse(null);
+        //if (myParent != null) {
+//
+        //}
     }
 
     /**

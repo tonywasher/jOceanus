@@ -16,9 +16,11 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.themis.xanalysis.solver;
 
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.xanalysis.solver.proj.ThemisXAnalysisSolverModule;
 import net.sourceforge.joceanus.themis.xanalysis.solver.proj.ThemisXAnalysisSolverPackage;
 import net.sourceforge.joceanus.themis.xanalysis.solver.proj.ThemisXAnalysisSolverProject;
+import net.sourceforge.joceanus.themis.xanalysis.solver.reflect.ThemisXAnalysisReflectJar;
 
 /**
  * Solver.
@@ -43,5 +45,11 @@ public class ThemisXAnalysisSolver {
                 theState.processPackage(myPackage);
             }
         }
-    }
+
+        try (ThemisXAnalysisReflectJar myJar = new ThemisXAnalysisReflectJar(pProject.getUnderlyingProject())) {
+            myJar.processExternalClasses(theState.getExternalClassMap());
+        } catch (OceanusException e) {
+            int i = 0;
+        }
+     }
 }

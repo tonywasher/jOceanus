@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.themis.ui.javafx;
 
 import net.sourceforge.joceanus.tethys.api.factory.TethysUILaunchProgram;
 import net.sourceforge.joceanus.tethys.javafx.launch.TethysUIFXPreLoader;
-import net.sourceforge.joceanus.themis.ui.launch.ThemisApp;
+import net.sourceforge.joceanus.themis.lethe.ui.launch.ThemisApp;
 
 /**
  * Coeus javaFX preLoader.

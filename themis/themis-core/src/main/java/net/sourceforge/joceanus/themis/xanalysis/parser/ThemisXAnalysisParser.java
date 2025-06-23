@@ -23,17 +23,13 @@ import com.github.javaparser.Position;
 import com.github.javaparser.Problem;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
+import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.PackageDeclaration;
 import com.github.javaparser.ast.body.BodyDeclaration;
 import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.modules.ModuleDeclaration;
 import com.github.javaparser.ast.stmt.Statement;
 import com.github.javaparser.ast.type.Type;
-import com.github.javaparser.symbolsolver.JavaSymbolSolver;
-import com.github.javaparser.symbolsolver.resolution.typesolvers.CombinedTypeSolver;
-import com.github.javaparser.symbolsolver.resolution.typesolvers.JarTypeSolver;
-import com.github.javaparser.symbolsolver.resolution.typesolvers.JavaParserTypeSolver;
-import com.github.javaparser.symbolsolver.resolution.typesolvers.ReflectionTypeSolver;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.exc.ThemisDataException;
 import net.sourceforge.joceanus.themis.exc.ThemisIOException;
@@ -46,19 +42,17 @@ import net.sourceforge.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInst
 import net.sourceforge.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance.ThemisXAnalysisNodeInstance;
 import net.sourceforge.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance.ThemisXAnalysisStatementInstance;
 import net.sourceforge.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance.ThemisXAnalysisTypeInstance;
+import net.sourceforge.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisModifierList;
 import net.sourceforge.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisParserDef;
-import net.sourceforge.joceanus.themis.xanalysis.parser.decl.ThemisXAnalysisDeclaration;
-import net.sourceforge.joceanus.themis.xanalysis.parser.expr.ThemisXAnalysisExpression;
-import net.sourceforge.joceanus.themis.xanalysis.parser.mod.ThemisXAnalysisMod;
+import net.sourceforge.joceanus.themis.xanalysis.parser.decl.ThemisXAnalysisDeclParser;
+import net.sourceforge.joceanus.themis.xanalysis.parser.expr.ThemisXAnalysisExprParser;
 import net.sourceforge.joceanus.themis.xanalysis.parser.mod.ThemisXAnalysisModModule;
-import net.sourceforge.joceanus.themis.xanalysis.parser.node.ThemisXAnalysisNode;
+import net.sourceforge.joceanus.themis.xanalysis.parser.mod.ThemisXAnalysisModParser;
 import net.sourceforge.joceanus.themis.xanalysis.parser.node.ThemisXAnalysisNodeCompilationUnit;
-import net.sourceforge.joceanus.themis.xanalysis.parser.proj.ThemisXAnalysisMaven.ThemisXAnalysisMavenId;
-import net.sourceforge.joceanus.themis.xanalysis.parser.proj.ThemisXAnalysisModule;
-import net.sourceforge.joceanus.themis.xanalysis.parser.proj.ThemisXAnalysisPackage;
+import net.sourceforge.joceanus.themis.xanalysis.parser.node.ThemisXAnalysisNodeParser;
 import net.sourceforge.joceanus.themis.xanalysis.parser.proj.ThemisXAnalysisProject;
-import net.sourceforge.joceanus.themis.xanalysis.parser.stmt.ThemisXAnalysisStatement;
-import net.sourceforge.joceanus.themis.xanalysis.parser.type.ThemisXAnalysisType;
+import net.sourceforge.joceanus.themis.xanalysis.parser.stmt.ThemisXAnalysisStmtParser;
+import net.sourceforge.joceanus.themis.xanalysis.parser.type.ThemisXAnalysisTypeParser;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -172,38 +166,12 @@ public class ThemisXAnalysisParser
 
     /**
      * Configure the parser.
-     * @throws OceanusException on error
      */
-    private void configureParser() throws OceanusException {
+    private void configureParser() {
         /* Access the parser */
         final ParserConfiguration myConfig = theParser.getParserConfiguration();
         myConfig.setLanguageLevel(ParserConfiguration.LanguageLevel.JAVA_21);
-
-        /* Protect against exceptions */
-        try {
-            /* Create a combined solver and add a reflectionSolver */
-            final CombinedTypeSolver mySolver = new CombinedTypeSolver();
-            mySolver.add(new ReflectionTypeSolver());
-
-            /* Loop through all the packages adding each source directory to the solver */
-            for (ThemisXAnalysisModule myModule : theProject.getModules()) {
-                for (ThemisXAnalysisPackage myPackage : myModule.getPackages()) {
-                    mySolver.add(new JavaParserTypeSolver(myPackage.getLocation()));
-                }
-            }
-
-            /* Loop through the dependencies */
-            for (ThemisXAnalysisMavenId myId : theProject.getDependencies()) {
-                final File myJar = myId.getMavenJarPath();
-                mySolver.add(new JarTypeSolver(myJar));
-            }
-            myConfig.setSymbolResolver(new JavaSymbolSolver(mySolver));
-
-        /* Handle IO exception on jar */
-        } catch (IOException e) {
-            throw new ThemisIOException("Failed to parse Jar file", e);
-        }
-    }
+   }
 
     @Override
     public void setCurrentPackage(final String pPackage) {
@@ -354,43 +322,48 @@ public class ThemisXAnalysisParser
 
     @Override
     public ThemisXAnalysisDeclarationInstance parseDeclaration(final BodyDeclaration<?> pDecl) throws OceanusException {
-        final ThemisXAnalysisDeclarationInstance myInstance = ThemisXAnalysisDeclaration.parseDeclaration(this, pDecl);
+        final ThemisXAnalysisDeclarationInstance myInstance = ThemisXAnalysisDeclParser.parseDeclaration(this, pDecl);
         deRegisterInstance(myInstance);
         return myInstance;
     }
 
     @Override
     public ThemisXAnalysisNodeInstance parseNode(final Node pNode) throws OceanusException {
-        final ThemisXAnalysisNodeInstance myInstance = ThemisXAnalysisNode.parseNode(this, pNode);
+        final ThemisXAnalysisNodeInstance myInstance = ThemisXAnalysisNodeParser.parseNode(this, pNode);
         deRegisterInstance(myInstance);
         return myInstance;
     }
 
     @Override
     public ThemisXAnalysisTypeInstance parseType(final Type pType) throws OceanusException {
-        final ThemisXAnalysisTypeInstance myInstance = ThemisXAnalysisType.parseType(this, pType);
+        final ThemisXAnalysisTypeInstance myInstance = ThemisXAnalysisTypeParser.parseType(this, pType);
         deRegisterInstance(myInstance);
         return myInstance;
     }
 
     @Override
     public ThemisXAnalysisStatementInstance parseStatement(final Statement pStatement) throws OceanusException {
-        final ThemisXAnalysisStatementInstance myInstance = ThemisXAnalysisStatement.parseStatement(this, pStatement);
+        final ThemisXAnalysisStatementInstance myInstance = ThemisXAnalysisStmtParser.parseStatement(this, pStatement);
         deRegisterInstance(myInstance);
         return myInstance;
     }
 
     @Override
     public ThemisXAnalysisExpressionInstance parseExpression(final Expression pExpr) throws OceanusException {
-        final ThemisXAnalysisExpressionInstance myInstance = ThemisXAnalysisExpression.parseExpression(this, pExpr);
+        final ThemisXAnalysisExpressionInstance myInstance = ThemisXAnalysisExprParser.parseExpression(this, pExpr);
         deRegisterInstance(myInstance);
         return myInstance;
     }
 
     @Override
-    public ThemisXAnalysisModuleInstance parseModule(final Node pDecl) throws OceanusException {
-        final ThemisXAnalysisModuleInstance myInstance = ThemisXAnalysisMod.parseModule(this, pDecl);
+    public ThemisXAnalysisModuleInstance parseModule(final Node pMod) throws OceanusException {
+        final ThemisXAnalysisModuleInstance myInstance = ThemisXAnalysisModParser.parseModule(this, pMod);
         deRegisterInstance(myInstance);
         return myInstance;
+    }
+
+    @Override
+    public ThemisXAnalysisModifierList parseModifierList(final NodeList<? extends Node> pNodeList) throws OceanusException {
+        return ThemisXAnalysisNodeParser.parseModifierList(this, pNodeList);
     }
 }

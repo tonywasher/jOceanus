@@ -20,6 +20,7 @@ import com.github.javaparser.ast.body.MethodDeclaration;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance.ThemisXAnalysisDeclarationInstance;
 import net.sourceforge.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance.ThemisXAnalysisMethodInstance;
+import net.sourceforge.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisModifierList;
 import net.sourceforge.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisParserDef;
 import net.sourceforge.joceanus.themis.xanalysis.parser.node.ThemisXAnalysisNodeSimpleName;
 
@@ -49,7 +50,7 @@ public class ThemisXAnalysisDeclMethod
     /**
      * The modifiers.
      */
-    private final List<ThemisXAnalysisNodeInstance> theModifiers;
+    private final ThemisXAnalysisModifierList theModifiers;
 
     /**
      * The parameters.
@@ -87,7 +88,7 @@ public class ThemisXAnalysisDeclMethod
         super(pParser, pDeclaration);
         theName = ((ThemisXAnalysisNodeSimpleName) pParser.parseNode(pDeclaration.getName())).getName();
         theType = pParser.parseType(pDeclaration.getType());
-        theModifiers = pParser.parseNodeList(pDeclaration.getModifiers());
+        theModifiers = pParser.parseModifierList(pDeclaration.getModifiers());
         theBody = pParser.parseStatement(pDeclaration.getBody().orElse(null));
         theTypeParameters = pParser.parseTypeList(pDeclaration.getTypeParameters());
         theThrown = pParser.parseTypeList(pDeclaration.getThrownExceptions());
@@ -101,7 +102,7 @@ public class ThemisXAnalysisDeclMethod
     }
 
     @Override
-    public List<ThemisXAnalysisNodeInstance> getModifiers() {
+    public ThemisXAnalysisModifierList getModifiers() {
         return theModifiers;
     }
 
