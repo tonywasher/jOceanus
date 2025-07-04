@@ -30,6 +30,7 @@ import net.sourceforge.joceanus.themis.xanalysis.solver.proj.ThemisXAnalysisSolv
 import net.sourceforge.joceanus.themis.xanalysis.solver.proj.ThemisXAnalysisSolverModule;
 import net.sourceforge.joceanus.themis.xanalysis.solver.proj.ThemisXAnalysisSolverPackage;
 import net.sourceforge.joceanus.themis.xanalysis.solver.proj.ThemisXAnalysisSolverProject;
+import net.sourceforge.joceanus.themis.xanalysis.solver.reflect.ThemisXAnalysisReflectExternal;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -43,7 +44,7 @@ public class ThemisXAnalysisSolverState {
     /**
      * Map of all java.lang classes.
      */
-    private final Map<String, ThemisXAnalysisClassInstance> theJavaLang;
+    private final Map<String, ThemisXAnalysisReflectExternal> theJavaLang;
 
     /**
      * Map of all classes defined in the project.
@@ -53,7 +54,7 @@ public class ThemisXAnalysisSolverState {
     /**
      * Map of all external classes referenced in the project.
      */
-    private final Map<String, ThemisXAnalysisClassInstance> theExternalClasses;
+    private final Map<String, ThemisXAnalysisReflectExternal> theExternalClasses;
 
     /**
      * Map of all known short names in file.
@@ -71,14 +72,17 @@ public class ThemisXAnalysisSolverState {
      */
     ThemisXAnalysisSolverState(final ThemisXAnalysisSolverProject pProject) {
         /* Build the javaLang map */
-        theJavaLang = ThemisXAnalysisSolverExternalClass.getJavaLangMap();
+        theJavaLang = ThemisXAnalysisReflectExternal.getJavaLangMap();
 
         /* build the project classMap */
         theProjectClasses = new LinkedHashMap<>();
         buildProjectClassMap(pProject);
 
-        /* Create the maps and lists */
+        /* build the external classMap */
         theExternalClasses = new LinkedHashMap<>();
+        buildExternalClassMap(pProject);
+
+        /* Create the maps and lists */
         theKnownClasses = new LinkedHashMap<>();
         theReferenced = new ArrayList<>();
     }
@@ -87,7 +91,7 @@ public class ThemisXAnalysisSolverState {
      * Obtain the external classes.
      * @return the external classes.
      */
-    Map<String, ThemisXAnalysisClassInstance> getExternalClassMap() {
+    Map<String, ThemisXAnalysisReflectExternal> getExternalClassMap() {
         return theExternalClasses;
     }
 
@@ -96,9 +100,9 @@ public class ThemisXAnalysisSolverState {
      * @param pProject the project
      */
     private void buildProjectClassMap(final ThemisXAnalysisSolverProject pProject) {
-        /* Loop through all packages */
-        final Map<String, ThemisXAnalysisSolverClass> myMap = new LinkedHashMap<>();
+        /* Loop through all modules */
         for (ThemisXAnalysisSolverModule myModule : pProject.getModules()) {
+            /* Loop through all packages */
             for (ThemisXAnalysisSolverPackage myPackage : myModule.getPackages()) {
                 buildProjectClassMap(myPackage);
             }
@@ -110,13 +114,56 @@ public class ThemisXAnalysisSolverState {
      * @param pPackage the package
      */
     private void buildProjectClassMap(final ThemisXAnalysisSolverPackage pPackage) {
-        /* Loop through all classes */
+        /* Loop through all files */
         for (ThemisXAnalysisSolverFile myFile : pPackage.getFiles()) {
+            /* Loop through all classes */
             for (ThemisXAnalysisSolverClass myClass : myFile.getClasses()) {
                 final ThemisXAnalysisClassInstance myInstance = myClass.getUnderlyingClass();
                 /* Ignore local and anonymous classes */
                 if (!myInstance.isLocalDeclaration() && !myInstance.isAnonClass()) {
                     theProjectClasses.put(myClass.getFullName(), myClass);
+                }
+            }
+        }
+    }
+
+    /**
+     * Build external classMap.
+     * @param pProject the project
+     */
+    private void buildExternalClassMap(final ThemisXAnalysisSolverProject pProject) {
+        /* Initialise the map with the javaLang classes */
+        for (ThemisXAnalysisReflectExternal myClass : theJavaLang.values()) {
+            theExternalClasses.put(myClass.getFullName(), myClass);
+        }
+
+        /* Loop through all modules */
+        for (ThemisXAnalysisSolverModule myModule : pProject.getModules()) {
+            /* Loop through all packages */
+            for (ThemisXAnalysisSolverPackage myPackage : myModule.getPackages()) {
+                buildExternalClassMap(myPackage);
+            }
+        }
+    }
+
+    /**
+     * Build external classMap.
+     * @param pPackage the package to process.
+     */
+    private void buildExternalClassMap(final ThemisXAnalysisSolverPackage pPackage) {
+        /* Loop through all files */
+        for (ThemisXAnalysisSolverFile myFile : pPackage.getFiles()) {
+            /* Process the imports */
+            for (ThemisXAnalysisNodeInstance myInstance : myFile.getUnderlyingFile().getContents().getImports()) {
+                /* Determine full name */
+                final ThemisXAnalysisNodeImport myImport = (ThemisXAnalysisNodeImport) myInstance;
+                final String myFullName = myImport.getFullName();
+
+                /* If this is a previously unseen class */
+                if (!theProjectClasses.containsKey(myFullName)
+                    && !theExternalClasses.containsKey(myFullName)) {
+                    /* Add to map of external classes */
+                    theExternalClasses.put(myFullName, new ThemisXAnalysisReflectExternal(myImport));
                 }
             }
         }
@@ -135,7 +182,7 @@ public class ThemisXAnalysisSolverState {
         final ThemisXAnalysisSolverClass myClass = theProjectClasses.get(myFullName);
         return myClass != null
                 ? myClass.getUnderlyingClass()
-                : theExternalClasses.computeIfAbsent(myFullName, s -> new ThemisXAnalysisSolverExternalClass(pImport));
+                : theExternalClasses.get(myFullName);
     }
 
     /**

@@ -89,10 +89,10 @@ public class ThemisXAnalysisDeclClassInterface
         super(pParser, pDeclaration);
         theName = ((ThemisXAnalysisNodeSimpleName) pParser.parseNode(pDeclaration.getName())).getName();
         theModifiers = pParser.parseModifierList(pDeclaration.getModifiers());
+        theAnnotations = pParser.parseExprList(pDeclaration.getAnnotations());
+        theTypeParameters = pParser.parseTypeList(pDeclaration.getTypeParameters());
         theImplements = pParser.parseTypeList(pDeclaration.getImplementedTypes());
         theExtends = pParser.parseTypeList(pDeclaration.getExtendedTypes());
-        theTypeParameters = pParser.parseTypeList(pDeclaration.getTypeParameters());
-        theAnnotations = pParser.parseExprList(pDeclaration.getAnnotations());
 
         /* Access the full name and determine whether this is an anonymous class */
         theFullName = pDeclaration.getFullyQualifiedName().orElse(null);

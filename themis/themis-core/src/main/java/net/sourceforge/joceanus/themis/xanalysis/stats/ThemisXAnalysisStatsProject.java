@@ -18,6 +18,7 @@ package net.sourceforge.joceanus.themis.xanalysis.stats;
 
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.exc.ThemisIOException;
+import net.sourceforge.joceanus.themis.xanalysis.parser.ThemisXAnalysisParser;
 import net.sourceforge.joceanus.themis.xanalysis.parser.proj.ThemisXAnalysisModule;
 import net.sourceforge.joceanus.themis.xanalysis.parser.proj.ThemisXAnalysisProject;
 
@@ -50,11 +51,11 @@ public class ThemisXAnalysisStatsProject {
 
     /**
      * Constructor.
-     * @param pProject the parsed project
+     * @param pParser the project parser
      */
-    public ThemisXAnalysisStatsProject(final ThemisXAnalysisProject pProject) {
+    public ThemisXAnalysisStatsProject(final ThemisXAnalysisParser pParser) {
         /* Store the parameters */
-        theProject = pProject;
+        theProject = pParser.getProject();
 
         /* Create the stats */
         theStats = new ThemisXAnalysisStats();

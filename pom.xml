@@ -106,7 +106,7 @@
     <DependencyPluginVersion>3.8.1</DependencyPluginVersion>
     <SurefirePluginVersion>3.5.4</SurefirePluginVersion>
     <BuildNumberPluginVersion>3.2.1</BuildNumberPluginVersion>
-    <BuildHelperPluginVersion>3.6.0</BuildHelperPluginVersion>
+    <BuildHelperPluginVersion>3.6.1</BuildHelperPluginVersion>
     <JarPluginVersion>3.4.2</JarPluginVersion>
     <ProjectInfoPluginVersion>3.9.0</ProjectInfoPluginVersion>
     <JxrPluginVersion>3.6.0</JxrPluginVersion>

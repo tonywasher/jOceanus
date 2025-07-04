@@ -66,6 +66,11 @@ allprojects {
 
         /* pmd config */
         pmdVersion = "7.17.0"
+        checkStyleVersion = "10.26.1"
+        checkStyleConfig = "$rootDir/src/main/checkstyle/checks.xml"
+
+        /* pmd config */
+        pmdVersion = "7.15.0"
 
         /* jacoco config */
         jacocoVersion = "0.8.12"

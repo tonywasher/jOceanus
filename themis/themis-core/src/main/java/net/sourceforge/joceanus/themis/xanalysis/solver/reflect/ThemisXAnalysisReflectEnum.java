@@ -20,6 +20,7 @@ import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.body.EnumConstantDeclaration;
 import com.github.javaparser.ast.body.EnumDeclaration;
 import com.github.javaparser.ast.expr.SimpleName;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 import java.util.Optional;
 
@@ -41,8 +42,9 @@ public class ThemisXAnalysisReflectEnum
     /**
      * Constructor.
      * @param pClazz the class definition.
+     * @throws OceanusException on error
      */
-    ThemisXAnalysisReflectEnum(final Class<?> pClazz) {
+    ThemisXAnalysisReflectEnum(final Class<?> pClazz) throws OceanusException {
         /* Store the class */
         theClass = pClazz;
 
@@ -67,7 +69,7 @@ public class ThemisXAnalysisReflectEnum
         setEntries(myEnums);
 
         /* Set members */
-        setMembers(ThemisXAnalysisReflectUtils.buildMembers(theClass));
+        setMembers(ThemisXAnalysisReflectMemberUtils.buildMembers(theClass));
     }
 
     @Override

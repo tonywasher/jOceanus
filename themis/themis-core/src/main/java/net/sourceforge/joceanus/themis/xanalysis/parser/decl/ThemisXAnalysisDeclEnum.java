@@ -80,9 +80,9 @@ public class ThemisXAnalysisDeclEnum
         theName = ((ThemisXAnalysisNodeSimpleName) pParser.parseNode(pDeclaration.getName())).getName();
         theFullName = pDeclaration.getFullyQualifiedName().orElse(null);
         theModifiers = pParser.parseModifierList(pDeclaration.getModifiers());
+        theAnnotations = pParser.parseExprList(pDeclaration.getAnnotations());
         theImplements = pParser.parseTypeList(pDeclaration.getImplementedTypes());
         theValues = pParser.parseDeclarationList(pDeclaration.getEntries());
-        theAnnotations = pParser.parseExprList(pDeclaration.getAnnotations());
 
         /* Register the class */
         pParser.registerClass(this);

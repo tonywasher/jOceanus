@@ -84,10 +84,10 @@ public class ThemisXAnalysisDeclRecord
         super(pParser, pDeclaration);
         theName = ((ThemisXAnalysisNodeSimpleName) pParser.parseNode(pDeclaration.getName())).getName();
         theModifiers = pParser.parseModifierList(pDeclaration.getModifiers());
-        theImplements = pParser.parseTypeList(pDeclaration.getImplementedTypes());
-        theTypeParameters = pParser.parseTypeList(pDeclaration.getTypeParameters());
-        theParameters = pParser.parseNodeList(pDeclaration.getParameters());
         theAnnotations = pParser.parseExprList(pDeclaration.getAnnotations());
+        theTypeParameters = pParser.parseTypeList(pDeclaration.getTypeParameters());
+        theImplements = pParser.parseTypeList(pDeclaration.getImplementedTypes());
+        theParameters = pParser.parseNodeList(pDeclaration.getParameters());
 
         /* Access the intended full name and overwrite it with the correct name */
         theFullName = pDeclaration.getFullyQualifiedName().orElse(null);

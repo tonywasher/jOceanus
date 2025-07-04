@@ -16,13 +16,16 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.themis.xanalysis.solver.reflect;
 
-import com.github.javaparser.ast.Node;
+import com.github.javaparser.ast.body.BodyDeclaration;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.exc.ThemisDataException;
+import net.sourceforge.joceanus.themis.xanalysis.parser.ThemisXAnalysisParser;
 import net.sourceforge.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisChar;
 import net.sourceforge.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance.ThemisXAnalysisClassInstance;
+import net.sourceforge.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance.ThemisXAnalysisTypeInstance;
 import net.sourceforge.joceanus.themis.xanalysis.parser.proj.ThemisXAnalysisMaven.ThemisXAnalysisMavenId;
 import net.sourceforge.joceanus.themis.xanalysis.parser.proj.ThemisXAnalysisProject;
+import net.sourceforge.joceanus.themis.xanalysis.parser.type.ThemisXAnalysisTypeClassInterface;
 
 import java.io.File;
 import java.io.IOException;
@@ -39,18 +42,29 @@ import java.util.Map;
 public class ThemisXAnalysisReflectJar
         implements AutoCloseable {
     /**
-     * The JARClass Loader.
+     * The Project parser.
+     */
+    private final ThemisXAnalysisParser theProjectParser;
+
+    /**
+     * The JarClass Loader.
      */
     private final URLClassLoader theClassLoader;
 
     /**
+     * The External Classes map.
+     */
+    private Map<String, ThemisXAnalysisReflectExternal> theExternalClasses;
+
+    /**
      * Constructor.
-     * @param pProject the underlying project.
+     * @param pParser the project parser.
      * @throws OceanusException on error
      */
-    public ThemisXAnalysisReflectJar(final ThemisXAnalysisProject pProject) throws OceanusException {
+    public ThemisXAnalysisReflectJar(final ThemisXAnalysisParser pParser) throws OceanusException {
         /* Create URL list and create URL Loader */
-        final URL[] myUrls = determineURLList(pProject);
+        theProjectParser = pParser;
+        final URL[] myUrls = determineURLList(pParser.getProject());
         theClassLoader = URLClassLoader.newInstance(myUrls);
     }
 
@@ -59,15 +73,73 @@ public class ThemisXAnalysisReflectJar
      * @param pExternalClasses the external classes.
      * @throws OceanusException on error
      */
-    public void processExternalClasses(final Map<String, ThemisXAnalysisClassInstance> pExternalClasses) throws OceanusException {
+    public void processExternalClasses(final Map<String, ThemisXAnalysisReflectExternal> pExternalClasses) throws OceanusException {
         /* Extract the values as a separate list */
-        final List<ThemisXAnalysisClassInstance> myExternals = new ArrayList<>(pExternalClasses.values());
-        for (ThemisXAnalysisClassInstance myClass : myExternals) {
+        theExternalClasses = pExternalClasses;
+        final List<ThemisXAnalysisReflectExternal> myExternals = new ArrayList<>(pExternalClasses.values());
+
+        /* Loop through the list */
+        for (ThemisXAnalysisReflectExternal myClass : myExternals) {
+            /* Load the external class */
             final Class<?> myLoaded = loadClass(myClass.getFullName());
-            if (myLoaded != null) {
-                final Node myResolved = buildClass(myLoaded);
-                int i = 0;
-            }
+
+            /* Create a resolved class based on the loaded class */
+            final BodyDeclaration<?> myResolved = buildClass(myLoaded);
+            final ThemisXAnalysisClassInstance myInstance = (ThemisXAnalysisClassInstance) theProjectParser.parseDeclaration(myResolved);
+            myClass.setClassInstance(myInstance);
+
+            /* Process ancestors */
+            processAncestors(myInstance);
+        }
+    }
+
+    /**
+     * Process external class list.
+     * @param pExternal the external classes.
+     * @throws OceanusException on error
+     */
+    private void processAncestors(final ThemisXAnalysisClassInstance pExternal) throws OceanusException {
+        /* Process all the extended classes */
+        for (ThemisXAnalysisTypeInstance myAncestor : pExternal.getExtends()) {
+            /* Process the ancestor */
+            processAncestor((ThemisXAnalysisTypeClassInterface) myAncestor);
+        }
+
+        /* Process all the implemented classes */
+        for (ThemisXAnalysisTypeInstance myAncestor : pExternal.getImplements()) {
+            /* Process the ancestor */
+            processAncestor((ThemisXAnalysisTypeClassInterface) myAncestor);
+        }
+    }
+
+    /**
+     * Process an ancestor.
+     * @param pAncestor the ancestor.
+     * @throws OceanusException on error
+     */
+    private void processAncestor(final ThemisXAnalysisTypeClassInterface pAncestor) throws OceanusException {
+        /* Access the name of the class and convert to period format */
+        final String myFullName = pAncestor.getFullName().replace(ThemisXAnalysisChar.DOLLAR, ThemisXAnalysisChar.PERIOD);
+
+        /* See whether we have seen this class before */
+        ThemisXAnalysisReflectExternal myExternal = theExternalClasses.get(myFullName);
+        if (myExternal == null) {
+            /* Load the external class */
+            final Class<?> myLoaded = loadClass(myFullName);
+
+            /* Create a resolved class based on the loaded class */
+            final BodyDeclaration<?> myResolved = buildClass(myLoaded);
+            final ThemisXAnalysisClassInstance myInstance = (ThemisXAnalysisClassInstance) theProjectParser.parseDeclaration(myResolved);
+            myExternal = new ThemisXAnalysisReflectExternal(myInstance);
+            theExternalClasses.put(myFullName, myExternal);
+
+            /* Process ancestors */
+            processAncestors(myInstance);
+
+            /* else known class */
+        } else {
+            /* Add link */
+            pAncestor.setClassInstance(myExternal);
         }
     }
 
@@ -104,13 +176,19 @@ public class ThemisXAnalysisReflectJar
      * @throws OceanusException on error
      */
     private Class<?> loadClass(final String pClassName) throws OceanusException {
+        /* Protect against exceptions */
         try {
             return theClassLoader.loadClass(pClassName);
+
+            /* If we failed to find the class */
         } catch (ClassNotFoundException e) {
+            /* Try again with the canonical name converted to a subClass */
             final String mySubClass = trySubClass(pClassName);
             if (mySubClass != null) {
                 return loadClass(mySubClass);
             }
+
+            /* Failed to find the class */
             throw new ThemisDataException("Failed to find class " + pClassName, e);
         }
     }
@@ -132,8 +210,10 @@ public class ThemisXAnalysisReflectJar
      * build class.
      * @param pSource the source class
      * @return the parsed class
+     * @throws OceanusException on error
      */
-    private Node buildClass(final Class<?> pSource) {
+    private BodyDeclaration<?> buildClass(final Class<?> pSource) throws OceanusException {
+        /* Build the relevant class type */
         if (pSource.isAnnotation()) {
             return new ThemisXAnalysisReflectAnnotation(pSource);
         } else if (pSource.isEnum()) {

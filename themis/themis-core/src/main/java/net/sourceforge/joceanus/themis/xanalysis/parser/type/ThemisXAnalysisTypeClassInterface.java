@@ -34,6 +34,11 @@ public class ThemisXAnalysisTypeClassInterface
     private final String theName;
 
     /**
+     * The full name of the class.
+     */
+    private final String theFullName;
+
+    /**
      * The scope.
      */
     private final ThemisXAnalysisTypeInstance theScope;
@@ -63,6 +68,7 @@ public class ThemisXAnalysisTypeClassInterface
                                       final ClassOrInterfaceType pType) throws OceanusException {
         super(pParser, pType);
         theName = ((ThemisXAnalysisNodeSimpleName) pParser.parseNode(pType.getName())).getName();
+        theFullName = pType.getNameWithScope();
         theScope = pParser.parseType(pType.getScope().orElse(null));
         theTypeParams = pParser.parseTypeList(pType.getTypeArguments().orElse(null));
         theAnnotations = pParser.parseExprList(pType.getAnnotations());
@@ -74,6 +80,14 @@ public class ThemisXAnalysisTypeClassInterface
      */
     public String getName() {
         return theName;
+    }
+
+    /**
+     * Obtain the full name.
+     * @return the full name
+     */
+    public String getFullName() {
+        return theFullName;
     }
 
     /**

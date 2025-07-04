@@ -32,6 +32,11 @@ public class ThemisXAnalysisSolver {
     private final ThemisXAnalysisSolverState theState;
 
     /**
+     * The error.
+     */
+    private OceanusException theError;
+
+    /**
      * Constructor.
      * @param pProject the project
      */
@@ -39,17 +44,31 @@ public class ThemisXAnalysisSolver {
         /* Create the state */
         theState = new ThemisXAnalysisSolverState(pProject);
 
-        /* Loop through all packages */
-        for (ThemisXAnalysisSolverModule myModule : pProject.getModules()) {
-            for (ThemisXAnalysisSolverPackage myPackage : myModule.getPackages()) {
-                theState.processPackage(myPackage);
-            }
-        }
-
-        try (ThemisXAnalysisReflectJar myJar = new ThemisXAnalysisReflectJar(pProject.getUnderlyingProject())) {
+        /* Process external classes */
+        try (ThemisXAnalysisReflectJar myJar = new ThemisXAnalysisReflectJar(pProject.getProjectParser())) {
+            /* Process javaLang and other external classes */
             myJar.processExternalClasses(theState.getExternalClassMap());
         } catch (OceanusException e) {
-            int i = 0;
+            theError = e;
+        }
+
+        /* If we have no error */
+        if (theError == null) {
+            /* Loop through all packages */
+            for (ThemisXAnalysisSolverModule myModule : pProject.getModules()) {
+                for (ThemisXAnalysisSolverPackage myPackage : myModule.getPackages()) {
+                    /* Process each package */
+                    theState.processPackage(myPackage);
+                }
+            }
         }
      }
+
+    /**
+     * Obtain the error.
+     * @return the error
+     */
+    public OceanusException getError() {
+        return theError;
+    }
 }

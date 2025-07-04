@@ -14,12 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.themis.xanalysis.solver;
+package net.sourceforge.joceanus.themis.xanalysis.solver.reflect;
 
 /**
  * Well-known java.lang classes.
  */
-public enum ThemisXAnalysisSolverJavaLang {
+public enum ThemisXAnalysisReflectJavaLang {
     /**
      * Boolean.
      */
@@ -274,7 +274,7 @@ public enum ThemisXAnalysisSolverJavaLang {
      * Constructor.
      * @param pName the className
      */
-    ThemisXAnalysisSolverJavaLang(final String pName) {
+    ThemisXAnalysisReflectJavaLang(final String pName) {
         theName = pName;
     }
 
