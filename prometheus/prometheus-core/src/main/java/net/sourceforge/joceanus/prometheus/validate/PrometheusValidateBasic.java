@@ -25,6 +25,12 @@ import net.sourceforge.joceanus.prometheus.data.PrometheusDataValidator;
  */
 public class PrometheusValidateBasic
         implements PrometheusDataValidator {
+    /**
+     * Constructor.
+     */
+    public PrometheusValidateBasic() {
+    }
+
 
     @Override
     public void validate(final PrometheusDataItem pItem) {

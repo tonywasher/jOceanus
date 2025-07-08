@@ -25,6 +25,12 @@ import net.sourceforge.joceanus.tethys.javafx.launch.TethysUIFXLaunch;
  */
 public class TethysTestFX
     extends TethysUIFXLaunch {
+    /**
+     * Constructor.
+     */
+    public TethysTestFX() {
+    }
+
     @Override
     protected TethysUILaunchProgram getProgramInfo() {
         return new TethysTest();

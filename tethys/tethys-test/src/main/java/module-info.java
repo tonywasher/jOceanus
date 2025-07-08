@@ -35,9 +35,6 @@ module net.sourceforge.joceanus.tethys.test.core {
     requires net.sourceforge.joceanus.tethys.javafx;
     requires net.sourceforge.joceanus.tethys.swing;
 
-    /* Exports */
-    exports net.sourceforge.joceanus.tethys.test.ui;
-
     /* Main classes */
     exports net.sourceforge.joceanus.tethys.test.ui.javafx to javafx.graphics;
 }

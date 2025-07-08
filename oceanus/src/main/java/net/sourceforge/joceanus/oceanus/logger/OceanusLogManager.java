@@ -200,6 +200,12 @@ public final class OceanusLogManager {
          */
         private final PrintStream theOutput = System.out;
 
+        /**
+         * Constructor.
+         */
+        private OceanusLogStdOut() {
+        }
+
         @Override
         public void writeLogMessage(final String pMessage) {
             theOutput.println(pMessage);

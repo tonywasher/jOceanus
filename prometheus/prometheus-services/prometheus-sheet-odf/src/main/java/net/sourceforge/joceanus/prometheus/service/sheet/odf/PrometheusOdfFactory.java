@@ -30,6 +30,12 @@ import java.io.InputStream;
 @PrometheusSheetService(PrometheusSheetWorkBookType.OASIS)
 public class PrometheusOdfFactory
         implements PrometheusSheetFactory {
+    /**
+     * Constructor.
+     */
+    public PrometheusOdfFactory() {
+    }
+
     @Override
     public PrometheusSheetWorkBook loadFromStream(final InputStream pInput) throws OceanusException {
         return new PrometheusOdfWorkBook(pInput);

@@ -114,6 +114,12 @@ public abstract class PrometheusMainWindow
     private TethysUIThreadStatusManager theStatusBar;
 
     /**
+     * Constructor.
+     */
+    protected PrometheusMainWindow() {
+    }
+
+    /**
      * Get the data view.
      *
      * @return the data view

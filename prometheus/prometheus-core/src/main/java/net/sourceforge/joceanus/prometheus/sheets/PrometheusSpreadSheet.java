@@ -37,6 +37,12 @@ public abstract class PrometheusSpreadSheet {
     public static final String FILE_NAME = "zipData";
 
     /**
+     * Constructor.
+     */
+    protected PrometheusSpreadSheet() {
+    }
+
+    /**
      * Obtain a sheet reader.
      * @param pReport the report
      * @param pPasswordMgr the password manager

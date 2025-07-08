@@ -16,16 +16,16 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.moneywise.tax.uk;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTaxClass;
 import net.sourceforge.joceanus.moneywise.tax.MoneyWiseTaxBandSet.MoneyWiseTaxBand;
 import net.sourceforge.joceanus.moneywise.tax.MoneyWiseTaxResource;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusRate;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Dividend Tax Scheme.
@@ -193,6 +193,12 @@ public abstract class MoneyWiseUKDividendScheme
          * Local Report fields.
          */
         private static final MetisFieldSet<MoneyWiseUKDividendAsIncomeScheme> FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseUKDividendAsIncomeScheme.class);
+
+        /**
+         * Constructor.
+         */
+        protected MoneyWiseUKDividendAsIncomeScheme() {
+        }
 
         @Override
         protected OceanusRate getTaxCreditRate(final MoneyWiseUKTaxYear pTaxYear) {

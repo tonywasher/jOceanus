@@ -30,6 +30,12 @@ import java.io.InputStream;
 @PrometheusSheetService(PrometheusSheetWorkBookType.EXCELXLS)
 public class PrometheusExcelHSSFFactory
         implements PrometheusSheetFactory {
+    /**
+     * Constructor.
+     */
+    public PrometheusExcelHSSFFactory() {
+    }
+
     @Override
     public PrometheusSheetWorkBook loadFromStream(final InputStream pInput) throws OceanusException {
         return new PrometheusExcelHSSFWorkBook(pInput);

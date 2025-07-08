@@ -16,9 +16,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.tethys.core.dialog;
 
-import java.io.File;
-
 import net.sourceforge.joceanus.tethys.api.dialog.TethysUIFileSelector;
+
+import java.io.File;
 
 /**
  * File Selector.
@@ -49,6 +49,12 @@ public abstract class TethysUICoreFileSelector
      * The useSave.
      */
     private boolean useSave;
+
+    /**
+     * Constructor.
+     */
+    protected TethysUICoreFileSelector() {
+    }
 
     /**
      * Obtain the title.

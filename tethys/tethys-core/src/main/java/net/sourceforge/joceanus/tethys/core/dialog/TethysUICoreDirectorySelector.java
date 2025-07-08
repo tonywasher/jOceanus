@@ -16,9 +16,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.tethys.core.dialog;
 
-import java.io.File;
-
 import net.sourceforge.joceanus.tethys.api.dialog.TethysUIDirectorySelector;
+
+import java.io.File;
 
 /**
  * Directory Selector.
@@ -34,6 +34,12 @@ public abstract class TethysUICoreDirectorySelector
      * The initial directory.
      */
     private File theInitialDir;
+
+    /**
+     * Constructor.
+     */
+    protected TethysUICoreDirectorySelector() {
+    }
 
     /**
      * Obtain the title.
