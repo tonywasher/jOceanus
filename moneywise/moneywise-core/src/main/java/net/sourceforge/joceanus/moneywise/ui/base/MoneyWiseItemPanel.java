@@ -149,6 +149,9 @@ public abstract class MoneyWiseItemPanel<T extends PrometheusDataItem>
         theGoToFilterList.clear();
         theGoToItemList.clear();
 
+        /* Clear the menu */
+        pMenu.removeAllItems();
+
         /* Declare the goTo items */
         declareGoToItems(getEditSet().hasUpdates());
 

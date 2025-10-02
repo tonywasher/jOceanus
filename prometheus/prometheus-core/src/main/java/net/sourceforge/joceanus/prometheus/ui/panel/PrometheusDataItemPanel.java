@@ -465,22 +465,22 @@ public abstract class PrometheusDataItemPanel<T extends PrometheusTableItem & Co
      * Request cancel.
      */
     private void requestCancel() {
-        /* Stop element being editable */
-        final int myEditVersion = theEditVersion;
-        setEditable(false);
-        theEditSet.setEditing(Boolean.FALSE);
-
         /* If we have any updates */
         if (isNew) {
             /* Rewind any changes to before the new item */
-            theEditSet.processEditCommand(PrometheusUIEvent.REWIND, myEditVersion - 1, theError);
+            theEditSet.processEditCommand(PrometheusUIEvent.REWIND, theEditVersion - 1, theError);
             theItem = null;
         } else if (hasUpdates()) {
             /* Rewind any changes that have been made */
-            theEditSet.processEditCommand(PrometheusUIEvent.REWIND, myEditVersion, theError);
+            theEditSet.processEditCommand(PrometheusUIEvent.REWIND, theEditVersion, theError);
         }
 
+        /* Stop element being editable */
+        setEditable(false);
+        theEditSet.setEditing(Boolean.FALSE);
+
         /* Note status has changed */
+        theEditSet.setEditing(Boolean.FALSE);
         theEventManager.fireEvent(PrometheusDataEvent.ADJUSTVISIBILITY);
     }
 
