@@ -89,6 +89,7 @@ public class MoneyWiseValidateTransaction
     @Override
     public void setEditSet(final PrometheusEditSet pEditSet) {
         theEditSet = pEditSet;
+        theInfoSet.storeEditSet(pEditSet);
     }
 
     /**
@@ -818,10 +819,13 @@ public class MoneyWiseValidateTransaction
 
     /**
      * Determine if an infoSet class is required.
+     * @param pTrans the transaction
      * @param pClass the infoSet class
      * @return the status
      */
-    public MetisFieldRequired isClassRequired(final MoneyWiseTransInfoClass pClass) {
+    public MetisFieldRequired isClassRequired(final MoneyWiseTransaction pTrans,
+                                              final MoneyWiseTransInfoClass pClass) {
+        theInfoSet.storeInfoSet(pTrans.getInfoSet());
         return theInfoSet.isClassRequired(pClass);
     }
 

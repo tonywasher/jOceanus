@@ -698,6 +698,7 @@ public class MoneyWiseXEventTable
 
             /* Notify the builder */
             theTransactions.getValidator().setRange(theRange);
+            theTransactions.getValidator().setEditSet(theEditSet);
         }
 
         /* Update lists */

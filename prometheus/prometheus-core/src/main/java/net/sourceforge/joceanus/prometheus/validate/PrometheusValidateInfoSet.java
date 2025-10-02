@@ -82,7 +82,7 @@ public abstract class PrometheusValidateInfoSet<T extends PrometheusDataInfoItem
      * Store InfoSet details.
      * @param pInfoSet the infoSet
      */
-    private void storeInfoSet(final PrometheusDataInfoSet<T> pInfoSet) {
+    public void storeInfoSet(final PrometheusDataInfoSet<T> pInfoSet) {
         /* Store the infoSet details */
         theInfoSet = pInfoSet;
         theOwner = pInfoSet.getOwner();
@@ -179,24 +179,25 @@ public abstract class PrometheusValidateInfoSet<T extends PrometheusDataInfoItem
 
             /* Access value and requirement */
             final MetisFieldRequired myState = isClassRequired(myClass);
+            final boolean isExisting = pInfoSet.isExisting(myClass);
 
             /* Switch on required state */
             switch (myState) {
                 case MUSTEXIST:
-                    if (theInfoSet.getInfo(myClass) == null) {
-                        setDefault(myClass);
-                    } else {
+                    if (isExisting) {
                         autoCorrect(myClass);
+                    } else {
+                        setDefault(myClass);
                     }
                     break;
                 case NOTALLOWED:
-                    if (theInfoSet.getInfo(myClass) != null) {
+                    if (isExisting) {
                         theInfoSet.setValue(myClass, null);
                     }
                     break;
                 case CANEXIST:
                 default:
-                    if (theInfoSet.getInfo(myClass) != null) {
+                    if (isExisting) {
                         autoCorrect(myClass);
                     }
                     break;
