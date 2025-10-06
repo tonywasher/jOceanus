@@ -855,7 +855,12 @@ public enum MoneyWiseCurrencyClass
     /**
      * Carribean Guilder.
      */
-    XCG(166, 165);
+    XCG(166, 165),
+
+    /**
+     * Arab Accounting Dinar.
+     */
+    XAD(167, 166);
 
     /**
      * Class Id.

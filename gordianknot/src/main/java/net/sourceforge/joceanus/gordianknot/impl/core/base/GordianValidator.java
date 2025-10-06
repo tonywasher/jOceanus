@@ -184,7 +184,7 @@ public class GordianValidator {
      * @return true/false
      */
     public boolean validStreamKeyType(final GordianStreamKeyType pKeyType) {
-        return pKeyType != null && !GordianStreamKeyType.ROMULUS.equals(pKeyType);
+        return pKeyType != null;
     }
 
     /**
