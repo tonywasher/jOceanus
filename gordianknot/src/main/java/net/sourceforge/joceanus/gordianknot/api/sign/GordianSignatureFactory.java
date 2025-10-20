@@ -60,8 +60,8 @@ public interface GordianSignatureFactory {
      * @param pSignSpec the signSpec
      * @return true/false
      */
-    default boolean validSignatureSpecForKeyPair(GordianKeyPair pKeyPair,
-                                                 GordianSignatureSpec pSignSpec) {
+    default boolean validSignatureSpecForKeyPair(final GordianKeyPair pKeyPair,
+                                                 final GordianSignatureSpec pSignSpec) {
         return validSignatureSpecForKeyPairSpec(pKeyPair.getKeyPairSpec(), pSignSpec);
     }
 

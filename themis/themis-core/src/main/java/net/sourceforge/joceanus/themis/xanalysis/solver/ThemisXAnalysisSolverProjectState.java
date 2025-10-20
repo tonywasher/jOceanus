@@ -40,7 +40,7 @@ import java.util.Map;
 /**
  * State for solver.
  */
-public class ThemisXAnalysisSolverState {
+public class ThemisXAnalysisSolverProjectState {
     /**
      * Map of all java.lang classes.
      */
@@ -70,7 +70,7 @@ public class ThemisXAnalysisSolverState {
      * Constructor.
      * @param pProject the project
      */
-    ThemisXAnalysisSolverState(final ThemisXAnalysisSolverProject pProject) {
+    ThemisXAnalysisSolverProjectState(final ThemisXAnalysisSolverProject pProject) {
         /* Build the javaLang map */
         theJavaLang = ThemisXAnalysisReflectExternal.getJavaLangMap();
 
@@ -160,10 +160,9 @@ public class ThemisXAnalysisSolverState {
                 final String myFullName = myImport.getFullName();
 
                 /* If this is a previously unseen class */
-                if (!theProjectClasses.containsKey(myFullName)
-                    && !theExternalClasses.containsKey(myFullName)) {
-                    /* Add to map of external classes */
-                    theExternalClasses.put(myFullName, new ThemisXAnalysisReflectExternal(myImport));
+                if (!theProjectClasses.containsKey(myFullName)) {
+                    /* Ensure the external class map */
+                    theExternalClasses.computeIfAbsent(myFullName, n -> new ThemisXAnalysisReflectExternal(myImport));
                 }
             }
         }
@@ -264,7 +263,7 @@ public class ThemisXAnalysisSolverState {
             if (myResolved != null) {
                 myReference.setClassInstance(myResolved);
             } else {
-                System.out.println(myReference.getName() + ":" + pFile.toString());
+                System.out.println(myReference.getName() + ":" + pFile);
             }
         }
     }

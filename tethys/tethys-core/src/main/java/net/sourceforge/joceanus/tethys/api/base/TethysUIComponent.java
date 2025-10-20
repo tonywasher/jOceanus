@@ -46,7 +46,7 @@ public interface TethysUIComponent {
      * Set Enabled status.
      * @param pEnabled true/false
      */
-    default void setEnabled(boolean pEnabled) {
+    default void setEnabled(final boolean pEnabled) {
         getUnderlying().setEnabled(pEnabled);
     }
 
@@ -54,7 +54,7 @@ public interface TethysUIComponent {
      * Set Visible.
      * @param pVisible true/false
      */
-    default void setVisible(boolean pVisible) {
+    default void setVisible(final boolean pVisible) {
         getUnderlying().setVisible(pVisible);
     }
 
@@ -78,7 +78,7 @@ public interface TethysUIComponent {
      * Set the Border Padding.
      * @param pPadding the border padding
      */
-    default void setBorderPadding(Integer pPadding) {
+    default void setBorderPadding(final Integer pPadding) {
         getUnderlying().setBorderPadding(pPadding);
     }
 
@@ -86,7 +86,7 @@ public interface TethysUIComponent {
      * Set the Border Title.
      * @param pTitle the border title
      */
-    default void setBorderTitle(String pTitle) {
+    default void setBorderTitle(final String pTitle) {
         getUnderlying().setBorderTitle(pTitle);
     }
 
@@ -94,7 +94,7 @@ public interface TethysUIComponent {
      * Set the Preferred Width.
      * @param pWidth the width
      */
-    default void setPreferredWidth(Integer pWidth) {
+    default void setPreferredWidth(final Integer pWidth) {
         getUnderlying().setPreferredWidth(pWidth);
     }
 
@@ -102,7 +102,7 @@ public interface TethysUIComponent {
      * Set the Preferred Height.
      * @param pHeight the height
      */
-    default void setPreferredHeight(Integer pHeight) {
+    default void setPreferredHeight(final Integer pHeight) {
         getUnderlying().setPreferredHeight(pHeight);
     }
 }

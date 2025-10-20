@@ -193,7 +193,7 @@ public final class OceanusLogManager {
     /**
      * Default Log Sink.
      */
-    static class OceanusLogStdOut
+    static final class OceanusLogStdOut
             implements OceanusLogSink {
         /**
          * The output stream.

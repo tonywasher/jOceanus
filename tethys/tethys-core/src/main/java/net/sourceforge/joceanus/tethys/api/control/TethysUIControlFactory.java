@@ -31,7 +31,7 @@ public interface TethysUIControlFactory {
      * @param pText the label text
      * @return the new label
      */
-    default TethysUILabel newLabel(String pText) {
+    default TethysUILabel newLabel(final String pText) {
         final TethysUILabel myLabel = newLabel();
         myLabel.setText(pText);
         return myLabel;
@@ -48,7 +48,7 @@ public interface TethysUIControlFactory {
      * @param pText the checkBox text
      * @return the new check box
      */
-    default TethysUICheckBox newCheckBox(String pText) {
+    default TethysUICheckBox newCheckBox(final String pText) {
         final TethysUICheckBox myCheckBox = newCheckBox();
         myCheckBox.setText(pText);
         return myCheckBox;

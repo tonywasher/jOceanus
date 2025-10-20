@@ -60,8 +60,8 @@ public interface GordianEncryptorFactory {
      * @param pEncryptorSpec the macSpec
      * @return true/false
      */
-    default boolean validEncryptorSpecForKeyPair(GordianKeyPair pKeyPair,
-                                                 GordianEncryptorSpec pEncryptorSpec) {
+    default boolean validEncryptorSpecForKeyPair(final GordianKeyPair pKeyPair,
+                                                 final GordianEncryptorSpec pEncryptorSpec) {
         return validEncryptorSpecForKeyPairSpec(pKeyPair.getKeyPairSpec(), pEncryptorSpec);
     }
 

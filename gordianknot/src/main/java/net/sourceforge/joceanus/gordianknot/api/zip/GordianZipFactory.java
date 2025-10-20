@@ -55,7 +55,7 @@ public interface GordianZipFactory {
      * @return the zipLock
      * @throws GordianException on error
      */
-    default GordianZipLock factoryZipLock(char[] pPassword) throws GordianException {
+    default GordianZipLock factoryZipLock(final char[] pPassword) throws GordianException {
         return factoryZipLock(new GordianPasswordLockSpec(), pPassword);
     }
 
@@ -76,8 +76,8 @@ public interface GordianZipFactory {
      * @return the zipLock
      * @throws GordianException on error
      */
-    default GordianZipLock keyPairZipLock(GordianKeyPair pKeyPair,
-                                          char[] pPassword) throws GordianException {
+    default GordianZipLock keyPairZipLock(final GordianKeyPair pKeyPair,
+                                          final char[] pPassword) throws GordianException {
         return keyPairZipLock(new GordianPasswordLockSpec(), pKeyPair, pPassword);
     }
 

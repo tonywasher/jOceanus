@@ -34,8 +34,8 @@ public interface GordianLockFactory {
      * @return the factoryLock
      * @throws GordianException on error
      */
-    default GordianFactoryLock newFactoryLock(GordianFactory pFactoryToLock,
-                                              char[] pPassword) throws GordianException {
+    default GordianFactoryLock newFactoryLock(final GordianFactory pFactoryToLock,
+                                              final char[] pPassword) throws GordianException {
         /* Create the factoryLock */
         return newFactoryLock(pFactoryToLock, new GordianPasswordLockSpec(), pPassword);
     }
@@ -59,8 +59,8 @@ public interface GordianLockFactory {
      * @return the factoryLock
      * @throws GordianException on error
      */
-    default GordianFactoryLock newFactoryLock(GordianFactoryType pFactoryType,
-                                              char[] pPassword) throws GordianException {
+    default GordianFactoryLock newFactoryLock(final GordianFactoryType pFactoryType,
+                                              final char[] pPassword) throws GordianException {
         /* Create the factoryLock */
         return newFactoryLock(new GordianPasswordLockSpec(), pFactoryType, pPassword);
     }

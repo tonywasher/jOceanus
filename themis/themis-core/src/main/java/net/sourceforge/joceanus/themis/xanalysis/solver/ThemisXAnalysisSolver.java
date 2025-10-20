@@ -29,7 +29,7 @@ public class ThemisXAnalysisSolver {
     /**
      * The state.
      */
-    private final ThemisXAnalysisSolverState theState;
+    private final ThemisXAnalysisSolverProjectState theState;
 
     /**
      * The error.
@@ -42,7 +42,7 @@ public class ThemisXAnalysisSolver {
      */
     public ThemisXAnalysisSolver(final ThemisXAnalysisSolverProject pProject) {
         /* Create the state */
-        theState = new ThemisXAnalysisSolverState(pProject);
+        theState = new ThemisXAnalysisSolverProjectState(pProject);
 
         /* Process external classes */
         try (ThemisXAnalysisReflectJar myJar = new ThemisXAnalysisReflectJar(pProject.getProjectParser())) {
