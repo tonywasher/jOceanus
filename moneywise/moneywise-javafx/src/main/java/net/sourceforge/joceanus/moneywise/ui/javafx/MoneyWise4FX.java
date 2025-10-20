@@ -25,6 +25,12 @@ import net.sourceforge.joceanus.tethys.javafx.launch.TethysUIFXLaunch;
  */
 public class MoneyWise4FX
         extends TethysUIFXLaunch {
+    /**
+     * Constructor.
+     */
+    public MoneyWise4FX() {
+    }
+
     @Override
     protected TethysUILaunchProgram getProgramInfo() {
         return new MoneyWiseApp();

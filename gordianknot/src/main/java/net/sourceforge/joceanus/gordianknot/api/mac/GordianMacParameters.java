@@ -216,6 +216,12 @@ public final class GordianMacParameters {
         private int theLeafLen;
 
         /**
+         * Constructor.
+         */
+        public GordianMacParametersBuilder() {
+        }
+
+        /**
          * Set the key.
          * @param pKey the key
          * @return the Builder

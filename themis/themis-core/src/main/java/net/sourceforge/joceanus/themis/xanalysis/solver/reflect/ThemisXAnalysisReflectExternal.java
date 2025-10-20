@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.themis.xanalysis.solver;
+package net.sourceforge.joceanus.themis.xanalysis.solver.reflect;
 
 import net.sourceforge.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisInstance.ThemisXAnalysisClassInstance;
 import net.sourceforge.joceanus.themis.xanalysis.parser.base.ThemisXAnalysisModifierList;
@@ -28,7 +28,7 @@ import java.util.Map;
 /**
  * External Class representation.
  */
-public class ThemisXAnalysisSolverExternalClass
+public class ThemisXAnalysisReflectExternal
         implements ThemisXAnalysisClassInstance {
     /**
      * The javaLang prefix.
@@ -51,10 +51,15 @@ public class ThemisXAnalysisSolverExternalClass
     private final ThemisXAnalysisModifierList theModifiers;
 
     /**
+     * The class instance.
+     */
+    private ThemisXAnalysisClassInstance theClassInstance;
+
+    /**
      * Constructor.
      * @param pImport the import definition
      */
-    ThemisXAnalysisSolverExternalClass(final ThemisXAnalysisNodeImport pImport) {
+    public ThemisXAnalysisReflectExternal(final ThemisXAnalysisNodeImport pImport) {
         theName = pImport.getShortName();
         theFullName = pImport.getFullName();
         theModifiers = new ThemisXAnalysisNodeModifierList(new ArrayList<>());
@@ -62,9 +67,20 @@ public class ThemisXAnalysisSolverExternalClass
 
     /**
      * Constructor.
+     * @param pClazz the loaded class instance
+     */
+    ThemisXAnalysisReflectExternal(final ThemisXAnalysisClassInstance pClazz) {
+        theName = pClazz.getName();
+        theFullName = pClazz.getFullName();
+        theModifiers = pClazz.getModifiers();
+        theClassInstance = pClazz;
+    }
+
+    /**
+     * Constructor.
      * @param pLang the javaLang class
      */
-    private ThemisXAnalysisSolverExternalClass(final ThemisXAnalysisSolverJavaLang pLang) {
+    private ThemisXAnalysisReflectExternal(final ThemisXAnalysisReflectJavaLang pLang) {
         theName = pLang.getName();
         theFullName = JAVALANG + theName;
         theModifiers = new ThemisXAnalysisNodeModifierList(new ArrayList<>());
@@ -94,11 +110,27 @@ public class ThemisXAnalysisSolverExternalClass
      * Obtain map of java.lang classes.
      * @return the map
      */
-    public static Map<String, ThemisXAnalysisClassInstance> getJavaLangMap() {
-        final Map<String, ThemisXAnalysisClassInstance> myMap = new LinkedHashMap<>();
-        for (ThemisXAnalysisSolverJavaLang myLang : ThemisXAnalysisSolverJavaLang.values()) {
-            myMap.put(myLang.getName(), new ThemisXAnalysisSolverExternalClass(myLang));
+    public static Map<String, ThemisXAnalysisReflectExternal> getJavaLangMap() {
+        final Map<String, ThemisXAnalysisReflectExternal> myMap = new LinkedHashMap<>();
+        for (ThemisXAnalysisReflectJavaLang myLang : ThemisXAnalysisReflectJavaLang.values()) {
+            myMap.put(myLang.getName(), new ThemisXAnalysisReflectExternal(myLang));
         }
         return myMap;
+    }
+
+    /**
+     * Obtain the class instance.
+     * @return the class instance
+     */
+    public ThemisXAnalysisClassInstance getClassInstance() {
+        return theClassInstance;
+    }
+
+    /**
+     * Set the class instance.
+     * @param pClassInstance the class instance
+     */
+    public void setClassInstance(final ThemisXAnalysisClassInstance pClassInstance) {
+        theClassInstance = pClassInstance;
     }
 }

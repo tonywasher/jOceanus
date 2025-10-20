@@ -20,6 +20,7 @@ import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.expr.SimpleName;
 import com.github.javaparser.ast.type.TypeParameter;
+import net.sourceforge.joceanus.oceanus.base.OceanusException;
 
 import java.util.Optional;
 
@@ -41,8 +42,9 @@ public class ThemisXAnalysisReflectClass
     /**
      * Constructor.
      * @param pClazz the class definition.
+     * @throws OceanusException on error
      */
-    ThemisXAnalysisReflectClass(final Class<?> pClazz) {
+    ThemisXAnalysisReflectClass(final Class<?> pClazz) throws OceanusException {
         /* Store the class */
         theClass = pClazz;
 
@@ -63,7 +65,7 @@ public class ThemisXAnalysisReflectClass
         setImplementedTypes(ThemisXAnalysisReflectUtils.buildImplements(theClass));
 
         /* Set members */
-        setMembers(ThemisXAnalysisReflectUtils.buildMembers(theClass));
+        setMembers(ThemisXAnalysisReflectMemberUtils.buildMembers(theClass));
 
         /* Map the type parameters */
         final NodeList<TypeParameter> myParams = ThemisXAnalysisReflectBaseUtils.buildTypeParams(theClass.getTypeParameters());

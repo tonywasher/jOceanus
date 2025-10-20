@@ -43,7 +43,7 @@ public final class MetisDataItem {
          * @param pFormatter the data formatter
          * @return the display summary of the object
          */
-        default String formatObject(OceanusDataFormatter pFormatter) {
+        default String formatObject(final OceanusDataFormatter pFormatter) {
             return toString();
         }
     }

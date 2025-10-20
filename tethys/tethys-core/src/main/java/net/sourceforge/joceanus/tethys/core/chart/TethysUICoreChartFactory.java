@@ -29,6 +29,12 @@ import net.sourceforge.joceanus.tethys.core.chart.TethysUICorePieChart.TethysUIC
  */
 public abstract class TethysUICoreChartFactory
         implements TethysUIChartFactory {
+    /**
+     * Constructor.
+     */
+    protected TethysUICoreChartFactory() {
+    }
+
     @Override
     public TethysUIAreaChartData newAreaData(final String pTitle) {
         return new TethysUICoreAreaChartData(pTitle);

@@ -193,12 +193,18 @@ public final class OceanusLogManager {
     /**
      * Default Log Sink.
      */
-    static class OceanusLogStdOut
+    static final class OceanusLogStdOut
             implements OceanusLogSink {
         /**
          * The output stream.
          */
         private final PrintStream theOutput = System.out;
+
+        /**
+         * Constructor.
+         */
+        private OceanusLogStdOut() {
+        }
 
         @Override
         public void writeLogMessage(final String pMessage) {

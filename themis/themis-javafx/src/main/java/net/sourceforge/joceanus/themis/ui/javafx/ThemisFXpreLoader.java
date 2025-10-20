@@ -25,6 +25,12 @@ import net.sourceforge.joceanus.themis.lethe.ui.launch.ThemisApp;
  */
 public class ThemisFXpreLoader
         extends TethysUIFXPreLoader {
+    /**
+     * Constructor.
+     */
+    public ThemisFXpreLoader() {
+    }
+
     @Override
     protected TethysUILaunchProgram getProgramInfo() {
         return new ThemisApp();

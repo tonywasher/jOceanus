@@ -20,7 +20,7 @@ import net.sourceforge.joceanus.prometheus.database.PrometheusDatabase.Prometheu
 import net.sourceforge.joceanus.prometheus.database.PrometheusDatabase.PrometheusDatabasePreferences;
 
 /**
- * Databse config.
+ * Database config.
  */
 public class PrometheusDBConfig {
     /**
@@ -77,6 +77,12 @@ public class PrometheusDBConfig {
      * BatchSize.
      */
     private int theBatch;
+
+    /**
+     * Constructor.
+     */
+    public PrometheusDBConfig() {
+    }
 
     /**
      * Set the driver.

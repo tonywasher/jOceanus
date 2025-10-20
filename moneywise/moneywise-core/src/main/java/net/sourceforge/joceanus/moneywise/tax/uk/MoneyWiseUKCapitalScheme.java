@@ -16,16 +16,16 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.moneywise.tax.uk;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
 import net.sourceforge.joceanus.metis.field.MetisFieldSet;
 import net.sourceforge.joceanus.moneywise.data.statics.MoneyWiseTaxClass;
 import net.sourceforge.joceanus.moneywise.tax.MoneyWiseTaxBandSet.MoneyWiseTaxBand;
 import net.sourceforge.joceanus.moneywise.tax.MoneyWiseTaxResource;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusMoney;
 import net.sourceforge.joceanus.oceanus.decimal.OceanusRate;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Capital Gains Tax Scheme.
@@ -37,6 +37,12 @@ public abstract class MoneyWiseUKCapitalScheme
      */
     static {
         MetisFieldSet.newFieldSet(MoneyWiseUKCapitalScheme.class);
+    }
+
+    /**
+     * Constructor.
+     */
+    protected MoneyWiseUKCapitalScheme() {
     }
 
     @Override
@@ -210,6 +216,12 @@ public abstract class MoneyWiseUKCapitalScheme
          * Local Report fields.
          */
         private static final MetisFieldSet<MoneyWiseUKCapitalAsIncomeScheme> FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseUKCapitalAsIncomeScheme.class);
+
+        /**
+         * Constructor.
+         */
+        public MoneyWiseUKCapitalAsIncomeScheme() {
+        }
 
         @Override
         public MetisFieldSet<MoneyWiseUKCapitalAsIncomeScheme> getDataFieldSet() {

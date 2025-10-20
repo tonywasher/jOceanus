@@ -61,9 +61,9 @@ public interface TethysUIControl {
          * @param pNext the next value for value
          * @param pTooltip the toolTip
          */
-        default void setMappingsForValue(T pValue,
-                                         T pNext,
-                                         String pTooltip) {
+        default void setMappingsForValue(final T pValue,
+                                         final T pNext,
+                                         final String pTooltip) {
             setMappingsForValue(pValue, pNext, null, pTooltip);
         }
 

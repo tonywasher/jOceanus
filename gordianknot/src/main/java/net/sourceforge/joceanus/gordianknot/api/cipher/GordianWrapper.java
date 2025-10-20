@@ -84,7 +84,7 @@ public interface GordianWrapper {
      * @return the derivedBytes
      * @throws GordianException on error
      */
-    default byte[] deriveBytes(byte[] pSecuredBytes) throws GordianException {
+    default byte[] deriveBytes(final byte[] pSecuredBytes) throws GordianException {
         return deriveBytes(pSecuredBytes, 0);
     }
 

@@ -94,4 +94,12 @@ public class ThemisXAnalysisNodeParameter
     public List<ThemisXAnalysisExpressionInstance> getAnnotations() {
         return theAnnotations;
     }
+
+    /**
+     * Is the parameter varArgs?
+     * @return true/false
+     */
+    public boolean isVarArgs() {
+        return getNode().isVarArgs();
+    }
 }

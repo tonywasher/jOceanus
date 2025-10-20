@@ -89,11 +89,11 @@ public class ThemisXAnalysisDeclMethod
         theName = ((ThemisXAnalysisNodeSimpleName) pParser.parseNode(pDeclaration.getName())).getName();
         theType = pParser.parseType(pDeclaration.getType());
         theModifiers = pParser.parseModifierList(pDeclaration.getModifiers());
-        theBody = pParser.parseStatement(pDeclaration.getBody().orElse(null));
-        theTypeParameters = pParser.parseTypeList(pDeclaration.getTypeParameters());
-        theThrown = pParser.parseTypeList(pDeclaration.getThrownExceptions());
-        theParameters = pParser.parseNodeList(pDeclaration.getParameters());
         theAnnotations = pParser.parseExprList(pDeclaration.getAnnotations());
+        theTypeParameters = pParser.parseTypeList(pDeclaration.getTypeParameters());
+        theParameters = pParser.parseNodeList(pDeclaration.getParameters());
+        theThrown = pParser.parseTypeList(pDeclaration.getThrownExceptions());
+        theBody = pParser.parseStatement(pDeclaration.getBody().orElse(null));
     }
 
     @Override

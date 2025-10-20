@@ -48,6 +48,12 @@ public abstract class TethysUIFXLaunch
      */
     protected abstract TethysUILaunchProgram getProgramInfo();
 
+    /**
+     * Constructor.
+     */
+    public TethysUIFXLaunch() {
+    }
+
     @Override
     public void setProgramState(final TethysUIFXLaunchState pState) {
         theState = pState;

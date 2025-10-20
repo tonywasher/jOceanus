@@ -16,13 +16,13 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.metis.field;
 
-import java.util.Iterator;
-
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataIndexedItem;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataObjectFormat;
 import net.sourceforge.joceanus.metis.data.MetisDataType;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
+
+import java.util.Iterator;
 
 /**
  * FieldItem Interface.
@@ -278,7 +278,7 @@ public interface MetisFieldItem
          * @param pField the field
          * @return true/false
          */
-        default boolean skipField(MetisDataFieldId pField) {
+        default boolean skipField(final MetisDataFieldId pField) {
             return false;
         }
     }

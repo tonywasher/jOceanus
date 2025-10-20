@@ -33,6 +33,12 @@ public abstract class TethysUICoreComponent
      */
     private String theTitle;
 
+    /**
+     * Constructor.
+     */
+    protected TethysUICoreComponent() {
+    }
+
     @Override
     public Integer getBorderPadding() {
         return thePadding;

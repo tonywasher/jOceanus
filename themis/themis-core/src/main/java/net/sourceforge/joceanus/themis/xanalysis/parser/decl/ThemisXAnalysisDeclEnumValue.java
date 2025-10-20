@@ -56,9 +56,9 @@ public class ThemisXAnalysisDeclEnumValue
                                  final EnumConstantDeclaration pDeclaration) throws OceanusException {
         super(pParser, pDeclaration);
         theName = pParser.parseNode(pDeclaration.getName());
+        theAnnotations = pParser.parseExprList(pDeclaration.getAnnotations());
         theArguments = pParser.parseExprList(pDeclaration.getArguments());
         theBody = pParser.parseDeclarationList(pDeclaration.getClassBody());
-        theAnnotations = pParser.parseExprList(pDeclaration.getAnnotations());
     }
 
     /**

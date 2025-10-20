@@ -215,7 +215,9 @@ public interface ThemisXAnalysisInstance {
          * is the class a top-level class?
          * @return true/false
          */
-        boolean isTopLevel();
+        default boolean isTopLevel() {
+            return false;
+        }
 
         /**
          * is the class an interface?

@@ -70,7 +70,7 @@ public interface GordianKeySet {
      * @return the encrypted bytes
      * @throws GordianException on error
      */
-    default byte[] encryptAADBytes(byte[] pBytesToEncrypt) throws GordianException {
+    default byte[] encryptAADBytes(final byte[] pBytesToEncrypt) throws GordianException {
         return encryptAADBytes(pBytesToEncrypt, null);
     }
 
@@ -90,7 +90,7 @@ public interface GordianKeySet {
      * @return the decrypted bytes
      * @throws GordianException on error
      */
-    default byte[] decryptAADBytes(byte[] pBytesToDecrypt) throws GordianException {
+    default byte[] decryptAADBytes(final byte[] pBytesToDecrypt) throws GordianException {
         return decryptAADBytes(pBytesToDecrypt, null);
     }
 

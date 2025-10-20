@@ -52,8 +52,8 @@ public class ThemisXAnalysisDeclInitializer
                                    final InitializerDeclaration pDeclaration) throws OceanusException {
         super(pParser, pDeclaration);
         isStatic = pDeclaration.isStatic();
-        theBody = pParser.parseStatement(pDeclaration.getBody());
         theAnnotations = pParser.parseExprList(pDeclaration.getAnnotations());
+        theBody = pParser.parseStatement(pDeclaration.getBody());
     }
 
     /**

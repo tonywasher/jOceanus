@@ -34,6 +34,13 @@ public class ThemisXAnalysisNodeModifierList
 
     /**
      * Constructor.
+     */
+    public ThemisXAnalysisNodeModifierList() {
+        this(null);
+    }
+
+    /**
+     * Constructor.
      * @param pModifiers the Modifiers.
      */
     public ThemisXAnalysisNodeModifierList(final List<ThemisXAnalysisNodeInstance> pModifiers) {

@@ -47,6 +47,12 @@ public abstract class PrometheusValidateInfoSet<T extends PrometheusDataInfoItem
     private PrometheusDataItem theOwner;
 
     /**
+     * Constructor.
+     */
+    protected PrometheusValidateInfoSet() {
+    }
+
+    /**
      * Obtain the owner.
      * @return the owner
      */

@@ -291,7 +291,7 @@ public class ThemisXAnalysisMaven {
     }
 
     /**
-     * Obtain the XPath node
+     * Obtain the XPath node.
      * @param pPath the Path
      * @return the Node (or null if not found)
      * @throws OceanusException on error

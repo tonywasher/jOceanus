@@ -25,6 +25,12 @@ import net.sourceforge.joceanus.tethys.swing.launch.TethysUISwingLaunch;
 public final class MoneyWise4Swing
         extends TethysUISwingLaunch {
     /**
+     * Private constructor.
+     */
+    private MoneyWise4Swing() {
+    }
+
+    /**
      * launch program.
      *
      * @param pArgs the arguments

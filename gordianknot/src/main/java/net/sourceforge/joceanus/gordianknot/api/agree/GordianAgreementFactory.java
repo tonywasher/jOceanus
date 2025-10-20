@@ -55,8 +55,8 @@ public interface GordianAgreementFactory {
      * @param pAgreementSpec the macSpec
      * @return true/false
      */
-    default boolean validAgreementSpecForKeyPair(GordianKeyPair pKeyPair,
-                                                 GordianAgreementSpec pAgreementSpec) {
+    default boolean validAgreementSpecForKeyPair(final GordianKeyPair pKeyPair,
+                                                 final GordianAgreementSpec pAgreementSpec) {
         return validAgreementSpecForKeyPairSpec(pKeyPair.getKeyPairSpec(), pAgreementSpec);
     }
 

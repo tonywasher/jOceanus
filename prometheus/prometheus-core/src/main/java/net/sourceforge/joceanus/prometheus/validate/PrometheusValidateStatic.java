@@ -28,6 +28,11 @@ import net.sourceforge.joceanus.prometheus.data.PrometheusStaticDataItem.Prometh
  */
 public class PrometheusValidateStatic
         implements PrometheusDataValidator {
+    /**
+     * Constructor.
+     */
+    public PrometheusValidateStatic() {
+    }
 
     @Override
     public void validate(final PrometheusDataItem pStatic) {

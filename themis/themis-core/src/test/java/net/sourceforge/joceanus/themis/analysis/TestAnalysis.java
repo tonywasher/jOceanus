@@ -18,7 +18,6 @@ package net.sourceforge.joceanus.themis.analysis;
 
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
 import net.sourceforge.joceanus.themis.xanalysis.parser.ThemisXAnalysisParser;
-import net.sourceforge.joceanus.themis.xanalysis.parser.proj.ThemisXAnalysisProject;
 import net.sourceforge.joceanus.themis.xanalysis.solver.ThemisXAnalysisSolver;
 import net.sourceforge.joceanus.themis.xanalysis.solver.proj.ThemisXAnalysisSolverProject;
 import net.sourceforge.joceanus.themis.xanalysis.stats.ThemisXAnalysisStatsProject;
@@ -42,9 +41,9 @@ class TestAnalysis {
     private static final String PATH_BASE = "../../";
 
     /**
-     * The parsed project.
+     * The project parser.
      */
-    private ThemisXAnalysisProject theParsedProject;
+    private ThemisXAnalysisParser theProjectParser;
 
     /**
      * Create the analysis test suite.
@@ -71,9 +70,8 @@ class TestAnalysis {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        final ThemisXAnalysisParser myParser = new ThemisXAnalysisParser(myLocation);
-        Assertions.assertNull(myParser.getError(), "Exception analysing project");
-        theParsedProject = myParser.getProject();
+        theProjectParser = new ThemisXAnalysisParser(myLocation);
+        Assertions.assertNull(theProjectParser.getError(), "Exception analysing project");
     }
 
     /**
@@ -81,10 +79,11 @@ class TestAnalysis {
      */
     private void testProjectDependencies() {
         /* Make sure previous test executed */
-        Assumptions.assumeTrue(theParsedProject != null);
+        Assumptions.assumeTrue(theProjectParser != null);
+        Assumptions.assumeTrue(theProjectParser.getError() == null);
 
         /* Analyse dependencies of project */
-        final ThemisXAnalysisSolverProject myProject  = new ThemisXAnalysisSolverProject(theParsedProject);
+        final ThemisXAnalysisSolverProject myProject  = new ThemisXAnalysisSolverProject(theProjectParser);
         final ThemisXAnalysisSolver mySolver  = new ThemisXAnalysisSolver(myProject);
         Assertions.assertNotNull(mySolver, "Failed to analyse project");
         //Assertions.assertNull(myProject.getError(), "Exception analysing project");
@@ -95,10 +94,11 @@ class TestAnalysis {
      */
     private void testProjectStats() {
         /* Make sure previous test executed */
-        Assumptions.assumeTrue(theParsedProject != null);
+        Assumptions.assumeTrue(theProjectParser != null);
+        Assumptions.assumeTrue(theProjectParser.getError() == null);
 
         /* Analyse dependencies of project */
-        final ThemisXAnalysisStatsProject myProject  = new ThemisXAnalysisStatsProject(theParsedProject);
+        final ThemisXAnalysisStatsProject myProject  = new ThemisXAnalysisStatsProject(theProjectParser);
         Assertions.assertNotNull(myProject, "Failed to analyse project");
         Assertions.assertNull(myProject.getError(), "Exception analysing project");
     }

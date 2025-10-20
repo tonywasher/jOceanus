@@ -18,9 +18,6 @@ package net.sourceforge.joceanus.themis.xanalysis.solver.reflect;
 
 import com.github.javaparser.ast.Modifier;
 import com.github.javaparser.ast.NodeList;
-import com.github.javaparser.ast.body.BodyDeclaration;
-import com.github.javaparser.ast.body.ConstructorDeclaration;
-import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.Parameter;
 import com.github.javaparser.ast.expr.SimpleName;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
@@ -112,28 +109,6 @@ public final class ThemisXAnalysisReflectUtils {
             myModifiers.add(Modifier.abstractModifier());
         }
         return myModifiers;
-    }
-
-    /**
-     * Build the methods.
-     * @param pClass the class
-     * @return the method list
-     */
-    static NodeList<BodyDeclaration<?>> buildMembers(final Class<?> pClass) {
-        final NodeList<BodyDeclaration<?>> myMembers = new NodeList<>();
-        try {
-            for (Constructor<?> myConstructor : pClass.getConstructors()) {
-                final ConstructorDeclaration myParsed = new ThemisXAnalysisReflectConstructor(myConstructor);
-                myMembers.add(myParsed);
-            }
-            for (Method myMethod : pClass.getMethods()) {
-                final MethodDeclaration myParsed = new ThemisXAnalysisReflectMethod(myMethod);
-                myMembers.add(myParsed);
-            }
-        } catch (NoClassDefFoundError e) {
-            int i = 0;
-        }
-        return myMembers;
     }
 
     /**

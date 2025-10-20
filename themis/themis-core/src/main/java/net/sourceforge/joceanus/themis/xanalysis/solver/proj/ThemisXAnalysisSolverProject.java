@@ -16,6 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.themis.xanalysis.solver.proj;
 
+import net.sourceforge.joceanus.themis.xanalysis.parser.ThemisXAnalysisParser;
 import net.sourceforge.joceanus.themis.xanalysis.parser.proj.ThemisXAnalysisModule;
 import net.sourceforge.joceanus.themis.xanalysis.parser.proj.ThemisXAnalysisProject;
 import net.sourceforge.joceanus.themis.xanalysis.solver.proj.ThemisXAnalysisSolverDef.ThemisXAnalysisSolverProjectDef;
@@ -29,6 +30,11 @@ import java.util.List;
 public class ThemisXAnalysisSolverProject
         implements ThemisXAnalysisSolverProjectDef {
     /**
+     * The project parser.
+     */
+    private final ThemisXAnalysisParser theParser;
+
+    /**
      * The underlying project.
      */
     private final ThemisXAnalysisProject theProject;
@@ -40,22 +46,28 @@ public class ThemisXAnalysisSolverProject
 
     /**
      * Constructor.
-     * @param pProject the parsed project
+     * @param pParser the analysis parser
      */
-    public ThemisXAnalysisSolverProject(final ThemisXAnalysisProject pProject) {
+    public ThemisXAnalysisSolverProject(final ThemisXAnalysisParser pParser) {
         /* Store the parameters */
-        theProject = pProject;
+        theParser = pParser;
+        theProject = theParser.getProject();
 
         /* Create the Module list and parser */
         theModules = new ArrayList<>();
-
-        /* Create the parser */
-        //final ThemisXAnalysisSolver myParser = new ThemisXAnalysisSolver();
 
         /* Initialise the modules */
         for (ThemisXAnalysisModule myModule : theProject.getModules()) {
             theModules.add(new ThemisXAnalysisSolverModule(this, myModule));
         }
+    }
+
+    /**
+     * Obtain the project parser.
+     * @return the parser
+     */
+    public ThemisXAnalysisParser getProjectParser() {
+        return theParser;
     }
 
     @Override

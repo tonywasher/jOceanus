@@ -77,12 +77,12 @@ public class ThemisXAnalysisDeclConstructor
                                    final ConstructorDeclaration pDeclaration) throws OceanusException {
         super(pParser, pDeclaration);
         theName = ((ThemisXAnalysisNodeSimpleName) pParser.parseNode(pDeclaration.getName())).getName();
-        theBody = pParser.parseStatement(pDeclaration.getBody());
-        theTypeParameters = pParser.parseTypeList(pDeclaration.getTypeParameters());
         theModifiers = pParser.parseModifierList(pDeclaration.getModifiers());
-        theThrown = pParser.parseTypeList(pDeclaration.getThrownExceptions());
-        theParameters = pParser.parseNodeList(pDeclaration.getParameters());
         theAnnotations = pParser.parseExprList(pDeclaration.getAnnotations());
+        theTypeParameters = pParser.parseTypeList(pDeclaration.getTypeParameters());
+        theParameters = pParser.parseNodeList(pDeclaration.getParameters());
+        theThrown = pParser.parseTypeList(pDeclaration.getThrownExceptions());
+        theBody = pParser.parseStatement(pDeclaration.getBody());
     }
 
     @Override

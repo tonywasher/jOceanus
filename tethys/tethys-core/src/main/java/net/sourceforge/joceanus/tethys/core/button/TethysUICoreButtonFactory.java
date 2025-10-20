@@ -26,6 +26,12 @@ import net.sourceforge.joceanus.tethys.core.button.TethysUICoreIconButtonManager
  */
 public abstract class TethysUICoreButtonFactory<C>
         implements TethysUIButtonFactory<C> {
+    /**
+     * Constructor.
+     */
+    protected TethysUICoreButtonFactory() {
+    }
+
     @Override
     public <T> TethysUIIconMapSet<T> newIconMapSet() {
         return new TethysUICoreIconMapSet<>();
