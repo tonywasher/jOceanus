@@ -50,4 +50,35 @@
     <packageName>${packageKey}.${scmComponent}</packageName>
     <moduleName>${packageName}</moduleName>
   </properties>
+    <build>
+      <plugins>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>exec-maven-plugin</artifactId>
+          <version>${ExecPluginVersion}</version>
+          <executions>
+            <execution>
+              <phase>package</phase>
+                <goals>
+                  <goal>exec</goal>
+                </goals>
+              </execution>
+            </executions>
+            <configuration>
+              <executable>jlink</executable>
+              <workingDirectory>${appDir}</workingDirectory>
+              <arguments>
+                <argument>--no-header-files</argument>
+                <argument>--no-man-pages</argument>
+                <argument>--vendor-version</argument>
+                <argument>jOceanus-${version}</argument>
+                <argument>--output</argument>
+                <argument>java</argument>
+                <argument>--add-modules</argument>
+                <argument>java.base,java.xml,java.net.http,java.prefs,java.sql,java.desktop,java.logging,java.security.jgss,jdk.net,jdk.unsupported,java.datatransfer,java.naming,java.management,jdk.net,jdk.crypto.ec,jdk.jsobject,jdk.xml.dom</argument>
+              </arguments>
+            </configuration>
+          </plugin>
+        </plugins>
+    </build>
 </project>

@@ -121,14 +121,18 @@ public final class AstraeusLauncher {
             myBuilder.append(getComment("build the modulePath from the classPath"));
             myBuilder.append(setVariable("JARS")).append(myClasses[0]).append(NEWLINE);
             for (int i = 1; i < myClasses.length; i++) {
-                myBuilder.append(setVariable("JARS")).append(getValue("JARS")).append(File.pathSeparator).append(myClasses[i]).append(NEWLINE);
+                myBuilder.append(setVariable("JARS")).append(getValue("JARS")).append(File.pathSeparatorChar).append(myClasses[i]).append(NEWLINE);
             }
             myBuilder.append(NEWLINE);
         }
 
         /* Output the commandLine */
         myBuilder.append(getComment("run the jar"));
-        myBuilder.append("java ");
+        if (OS_WINDOWS) {
+            myBuilder.append("start /B ");
+        }
+        myBuilder.append("..").append(File.separatorChar).append("java").append(File.separatorChar)
+                .append("bin").append(File.separatorChar).append("java ");
         if (myPreLoader != null) {
             myBuilder.append("-Djavafx.preloader=").append(getValue("PRELOADER")).append(" ");
         }
@@ -137,9 +141,12 @@ public final class AstraeusLauncher {
         }
         myBuilder.append("-p ").append(getValue("JARFILE"));
         if (myClassPath != null) {
-            myBuilder.append(File.pathSeparator).append(getValue("JARS"));
+            myBuilder.append(File.pathSeparatorChar).append(getValue("JARS"));
         }
-        myBuilder.append(" -m ").append(getValue("MODULE")).append("/").append(getValue("MAIN")).append(" &");
+        myBuilder.append(" -m ").append(getValue("MODULE")).append("/").append(getValue("MAIN"));
+        if (!OS_WINDOWS) {
+            myBuilder.append(" &");
+        }
         myBuilder.append(getBatchTrailer());
 
         /* determine the launch file name */
