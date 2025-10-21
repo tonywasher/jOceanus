@@ -177,6 +177,7 @@
           <target>${JavaLanguageVersion}</target>
           <compilerArgs>
             <arg>-Xlint:unchecked</arg>
+            <arg>-Xlint:deprecation</arg>
           </compilerArgs>
           <annotationProcessorPaths>
             <annotationProcessorPath>

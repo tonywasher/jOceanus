@@ -6,29 +6,19 @@ buildscript {
             url = uri('https://repo.maven.apache.org/maven2/')
         }
     }
-
-    tasks.withType(JavaCompile) {
-        options.encoding = 'UTF-8'
-    }
 }
 
 /* project-wise setup */
 allprojects {
     /* Standard plugins */
-    apply plugin: 'java-library'
+    apply plugin: 'java'
     apply plugin: 'maven-publish'
-    apply plugin: 'checkstyle'
-    //apply plugin: 'pmd'
     apply plugin: 'jacoco'
     apply plugin: 'signing'
 
     /* general identity */
     group = 'net.sourceforge.joceanus'
-    version = '1.6.3-b4'
-
-    /* java compatibility */
-    java.sourceCompatibility = JavaVersion.VERSION_17
-    java.targetCompatibility = JavaVersion.VERSION_17
+    version = '1.6.3-SNAPSHOT'
 
     /* Maven repositories */
     repositories {
@@ -60,13 +50,6 @@ allprojects {
         /* Annotation versions */
         jetBrainsAnnotationsVersion = "26.0.2"
 
-        /* checkStyle config */
-        checkStyleVersion = "12.1.0"
-        checkStyleConfig = "$rootDir/src/main/checkstyle/checks.xml"
-
-        /* pmd config */
-        pmdVersion = "7.17.0"
-
         /* jacoco config */
         jacocoVersion = "0.8.14"
 
@@ -83,9 +66,6 @@ ext {
     gitRepo = getGitRepo()
     gitBranch = getGitBranch()
     gitRev = getGitRev()
-
-    /* Load the pmd ruleSet once only */
-    pmdRuleSet = resources.text.fromFile("$rootDir/src/main/pmd/pmd.xml")
 
     /* Distribution mappings */
     distributionMap = [:];
@@ -106,9 +86,18 @@ ext {
 
 /* sub-project setup */
 subprojects {
+    tasks.withType(JavaCompile) {
+        options.deprecation = true
+        options.encoding = 'UTF-8'
+        options.release = 17
+    }
+    tasks.withType(Javadoc).all {
+        enabled = false
+    }
+
     /* Build source and javaDoc jars */
     java {
-        withJavadocJar()
+        //withJavadocJar()
         withSourcesJar()
     }
 
@@ -139,11 +128,6 @@ subprojects {
         options.compilerArgs += ["-Xlint:unchecked"]
     }
 
-    //signing {
-    //    useGpgCmd()
-    //    sign configurations.archives
-    //}
-
     /* Maven publishing */
     publishing {
         publications {
@@ -152,21 +136,6 @@ subprojects {
             }
         }
     }
-
-    /* CheckStyle config */ 
-    checkstyle {
-        toolVersion = "$checkStyleVersion"
-        configFile = file("$checkStyleConfig")
-        ignoreFailures = true
-    }
-
-    /* PMD config */ 
-    //pmd {
-    //    toolVersion = "$pmdVersion"
-    //    ruleSets = []
-    //    ruleSetConfig = rootProject.ext.pmdRuleSet
-    //    ignoreFailures = true
-    //}
 
     /* Jacoco */
     test {
@@ -375,9 +344,9 @@ boolean shouldCopy(String pSource, String pTarget) {
 
 /* Build the JRE */
 void buildJRE() {
-    def MODS = "java.base,java.xml,java.net.http,java.prefs,java.sql,java.desktop,java.logging,java.security.jgss,jdk.net,jdk.unsupported,java.datatransfer,java.naming,java.management,jdk.net,jdk.crypto.ec,jdk.jsobject,jdk.xml.dom"
-
-    def bldCmd = 'jlink --no-header-files --no-man-pages --vendor-version jOceanus --output ${appDir}/java --add-modules ${MODS}'
+    def projectDirFile = new File("$projectDir")
+    def MODS = 'java.base,java.xml,java.net.http,java.prefs,java.sql,java.desktop,java.logging,java.security.jgss,jdk.net,jdk.unsupported,java.datatransfer,java.naming,java.management,jdk.net,jdk.crypto.ec,jdk.jsobject,jdk.xml.dom'
+    def bldCmd = 'jlink --no-header-files --no-man-pages --vendor-version jOceanus --output ' + "$appDir" + '/java --add-modules ' + MODS
     def bldProc = bldCmd.execute(null, projectDirFile)
     bldProc.waitForOrKill(10 * 1000)
 }

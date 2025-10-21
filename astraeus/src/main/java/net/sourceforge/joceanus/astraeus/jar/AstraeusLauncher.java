@@ -245,7 +245,7 @@ public final class AstraeusLauncher {
                                        final String pText) throws AstraeusException {
         try (FileOutputStream myOutput = new FileOutputStream(pTarget);
              BufferedOutputStream myBuffer = new BufferedOutputStream(myOutput);
-             OutputStreamWriter myWriter = new OutputStreamWriter(myBuffer, StandardCharsets.ISO_8859_1)) {
+             OutputStreamWriter myWriter = new OutputStreamWriter(myBuffer, StandardCharsets.UTF_8)) {
             /* Write the text to the file */
             myWriter.write(pText);
 

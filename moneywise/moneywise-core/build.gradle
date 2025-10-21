@@ -28,6 +28,3 @@ jar {
         attributes(manifestAttrs)
     }
 }
-
-checkstyleTest
-        .exclude('**/test/**/*.java')

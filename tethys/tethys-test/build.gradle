@@ -22,9 +22,6 @@ description = 'Tethys UI Test'
 /* Register the project */
 registerProject(project) 
 
-/* disable checkstyle */
-checkstyleMain.enabled = false
-
 /* Specific Manifest details */
 jar {
     manifest {

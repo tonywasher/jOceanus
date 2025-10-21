@@ -1,5 +1,6 @@
 /* Dependencies */
 dependencies {
+    implementation project(':oceanus')
     testImplementation project(':moneywise-swing')
     testImplementation project(':moneywise-javafx')
     testImplementation project(':themis-javafx')
