@@ -203,6 +203,7 @@ task distribute {
                 }
             }	
         }
+        buildJRE()
     }        
 }
 distribute.dependsOn ":moneywise-swing:jar", ":moneywise-javafx:jar", ":themis-javafx:jar", ":prometheus-sheet-odf:jar", ":prometheus-sheet-hssf:jar"
@@ -219,7 +220,6 @@ jar.enabled = false
 /* Obtain gitBranch details */
 String getGitBranch() {
     def projectDirFile = new File("$projectDir")
-    def dotGit = new File("$projectDir/.git")
 
     def srCmd = 'git symbolic-ref --short HEAD'
     def srProc = srCmd.execute(null, projectDirFile)
@@ -233,7 +233,6 @@ String getGitBranch() {
 /* Obtain gitRevision details */
 String getGitRev() {
     def projectDirFile = new File("$projectDir")
-    def dotGit = new File("$projectDir/.git")
 
     def rpCmd = 'git rev-parse --short=12 HEAD'
     def rpProc = rpCmd.execute(null, projectDirFile)
@@ -247,7 +246,6 @@ String getGitRev() {
 /* Obtain gitRepository details */
 String getGitRepo() {
     def projectDirFile = new File("$projectDir")
-    def dotGit = new File("$projectDir/.git")
 
     def rmCmd = 'git remote get-url origin'
     def rmProc = rmCmd.execute(null, projectDirFile)
@@ -375,3 +373,11 @@ boolean shouldCopy(String pSource, String pTarget) {
     return mySrc.lastModified() > myTgt.lastModified();
 }
 
+/* Build the JRE */
+void buildJRE() {
+    def MODS = "java.base,java.xml,java.net.http,java.prefs,java.sql,java.desktop,java.logging,java.security.jgss,jdk.net,jdk.unsupported,java.datatransfer,java.naming,java.management,jdk.net,jdk.crypto.ec,jdk.jsobject,jdk.xml.dom"
+
+    def bldCmd = 'jlink --no-header-files --no-man-pages --vendor-version jOceanus --output ${appDir}/java --add-modules ${MODS}'
+    def bldProc = bldCmd.execute(null, projectDirFile)
+    bldProc.waitForOrKill(10 * 1000)
+}

@@ -51,19 +51,12 @@ The underlying projects are as follows.
 
     * Classes for analysing a source tree.
 
-* Peer2Peer classes (**Coeus**)
-
-    * Classes for analysing peer2peer financial statements.
-
 ## Building the project
 
 The project is built via **Maven** and requires **Java17**. 
 
 There is additional support for a gradle build, but this will not build the webSite.
 
-
-
-
-
-
-
+A distribution directory is created as part of the build process including run scripts for windows/linux together with a cut-down JRE runtime.
+The runtime is currently created from a hard-coded list, since jdeps does not seem to provide a complete list of java dependencies in a complex 
+multi-module modular system. It is an ongoing task to look to improve this situation in order to automatically build this list.
