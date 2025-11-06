@@ -529,25 +529,30 @@ public abstract class GordianKangarooDigest
                 throw new IllegalStateException("attempt to absorb while squeezing");
             }
 
+            /* Loop through bytes */
             int count = 0;
             while (count < len) {
+                /* Handle full buffer */
+                if (bytesInQueue == theRateBytes) {
+                    kangarooAbsorb(theQueue, 0);
+                    bytesInQueue = 0;
+                }
+
+                /* If we have full blocks */
                 if (bytesInQueue == 0 && count <= (len - theRateBytes)) {
+                    /* Process full blocks */
                     do {
                         kangarooAbsorb(data, off + count);
                         count += theRateBytes;
                     } while (count <= (len - theRateBytes));
 
+                    /* else process partial blocks */
                 } else {
                     final int partialBlock = Math.min(theRateBytes - bytesInQueue, len - count);
                     System.arraycopy(data, off + count, theQueue, bytesInQueue, partialBlock);
 
                     bytesInQueue += partialBlock;
                     count += partialBlock;
-
-                    if (bytesInQueue == theRateBytes) {
-                        kangarooAbsorb(theQueue, 0);
-                        bytesInQueue = 0;
-                    }
                 }
             }
         }

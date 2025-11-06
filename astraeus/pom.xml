@@ -71,7 +71,7 @@
                 <argument>--no-header-files</argument>
                 <argument>--no-man-pages</argument>
                 <argument>--vendor-version</argument>
-                <argument>jOceanus-${version}</argument>
+                <argument>jOceanus-${project.version}</argument>
                 <argument>--output</argument>
                 <argument>java</argument>
                 <argument>--add-modules</argument>

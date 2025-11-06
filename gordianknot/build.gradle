@@ -4,7 +4,7 @@ dependencies {
     implementation "org.bouncycastle:bcutil-jdk18on:$bouncyCastleVersion"
     testImplementation "org.bouncycastle:bcpg-jdk18on:$bouncyCastleVersion"
     testImplementation "org.junit.jupiter:junit-jupiter:$jUnitVersion"
-    testImplementation "org.junit.platform:junit-platform-suite:$jUnitPlatformVersion"
+    testImplementation "org.junit.platform:junit-platform-suite:$jUnitVersion"
 }
 
 /* Description */
