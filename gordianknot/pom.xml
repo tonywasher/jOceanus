@@ -56,7 +56,7 @@
     <dependency>
       <groupId>org.junit.platform</groupId>
       <artifactId>junit-platform-suite</artifactId>
-      <version>${JUnitPlatformVersion}</version>
+      <version>${JUnitVersion}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

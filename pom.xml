@@ -75,11 +75,10 @@
     <appBinDir>bin/</appBinDir>
     <appLibDir>lib/</appLibDir>
     <BouncyCastleVersion>1.82</BouncyCastleVersion>
-    <JUnitVersion>6.0.0</JUnitVersion>
-    <JUnitPlatformVersion>6.0.0</JUnitPlatformVersion>
+    <JUnitVersion>6.0.1</JUnitVersion>
     <JSONVersion>20250517</JSONVersion>
     <ApacheMavenVersion>3.9.9</ApacheMavenVersion>
-    <MySQLVersion>9.4.0</MySQLVersion>
+    <MySQLVersion>9.5.0</MySQLVersion>
     <MariaDBVersion>3.5.6</MariaDBVersion>
     <PostGreSQLVersion>42.7.8</PostGreSQLVersion>
     <MSSQLVersion>13.2.1.jre11</MSSQLVersion>
@@ -91,10 +90,10 @@
     <Log4jVersion>2.25.2</Log4jVersion>
     <ZipSDKVersion>9.20</ZipSDKVersion>
     <JavaVersion>17</JavaVersion>
-    <JavaFXVersion>17.0.16</JavaFXVersion>
+    <JavaFXVersion>17.0.17</JavaFXVersion>
     <JavaLanguageVersion>17</JavaLanguageVersion>
-    <CheckStyleVersion>12.1.0</CheckStyleVersion>
-    <PMDVersion>7.17.0</PMDVersion>
+    <CheckStyleVersion>12.1.1</CheckStyleVersion>
+    <PMDVersion>7.18.0</PMDVersion>
     <CleanPluginVersion>3.5.0</CleanPluginVersion>
     <ResourcesPluginVersion>3.3.1</ResourcesPluginVersion>
     <InstallPluginVersion>3.1.4</InstallPluginVersion>
