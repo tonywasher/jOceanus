@@ -14,14 +14,14 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.gordianknot.impl.core.keystore;
+package net.sourceforge.joceanus.gordianknot.impl.core.cert;
 
 import java.util.Objects;
 
 import org.bouncycastle.asn1.DERBitString;
 import org.bouncycastle.asn1.x500.X500Name;
 
-import net.sourceforge.joceanus.gordianknot.api.keystore.GordianCertificateId;
+import net.sourceforge.joceanus.gordianknot.api.cert.GordianCertificateId;
 
 /**
  * Certificate Id implementation.

@@ -1,4 +1,4 @@
-/*******************************************************************************
+/* *****************************************************************************
  * GordianKnot: Security Suite
  * Copyright 2012,2025 Tony Washer
  *
@@ -14,26 +14,8 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.gordianknot.api.keystore;
-
-import org.bouncycastle.asn1.DERBitString;
-import org.bouncycastle.asn1.x500.X500Name;
 
 /**
- * Certificate Id API.
+ * Certificate API.
  */
-public interface GordianCertificateId {
-    /**
-     * Obtain the name.
-     *
-     * @return the name
-     */
-    X500Name getName();
-
-    /**
-     * Obtain the id.
-     *
-     * @return the Id
-     */
-    DERBitString getId();
-}
+package net.sourceforge.joceanus.gordianknot.api.cert;

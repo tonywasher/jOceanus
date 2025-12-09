@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.gordianknot.impl.core.keystore;
+package net.sourceforge.joceanus.gordianknot.impl.core.cert;
 
 import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigest;
@@ -24,10 +24,10 @@ import net.sourceforge.joceanus.gordianknot.api.factory.GordianKeyPairFactory;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairGenerator;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
-import net.sourceforge.joceanus.gordianknot.api.keystore.GordianCertificate;
-import net.sourceforge.joceanus.gordianknot.api.keystore.GordianCertificateId;
-import net.sourceforge.joceanus.gordianknot.api.keystore.GordianKeyPairUsage;
-import net.sourceforge.joceanus.gordianknot.api.keystore.GordianKeyPairUse;
+import net.sourceforge.joceanus.gordianknot.api.cert.GordianCertificate;
+import net.sourceforge.joceanus.gordianknot.api.cert.GordianCertificateId;
+import net.sourceforge.joceanus.gordianknot.api.cert.GordianKeyPairUsage;
+import net.sourceforge.joceanus.gordianknot.api.cert.GordianKeyPairUse;
 import net.sourceforge.joceanus.gordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStorePair;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignParams;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignature;
@@ -338,7 +338,7 @@ public class GordianCoreCertificate
      *
      * @return the subject
      */
-    X500Name getSubjectName() {
+    public X500Name getSubjectName() {
         return theTbsCertificate.getSubject();
     }
 
@@ -461,7 +461,7 @@ public class GordianCoreCertificate
      * @param pKeyPair the key pair
      * @return matches true/false
      */
-    boolean checkMatchingPublicKey(final GordianKeyPair pKeyPair) {
+    public boolean checkMatchingPublicKey(final GordianKeyPair pKeyPair) {
         return pKeyPair instanceof GordianCompositeKeyPair myComposite
                 ? myComposite.checkMatchingPublicKey(getKeyPair())
                 : ((GordianCoreKeyPair) pKeyPair).checkMatchingPublicKey(getKeyPair());
@@ -525,7 +525,7 @@ public class GordianCoreCertificate
      * @param pExtensions the extensions.
      * @return the usage
      */
-    static GordianKeyPairUsage determineUsage(final Extensions pExtensions) {
+    public static GordianKeyPairUsage determineUsage(final Extensions pExtensions) {
         /* Access details */
         final KeyUsage myUsage = KeyUsage.fromExtensions(pExtensions);
         final BasicConstraints myConstraint = BasicConstraints.fromExtensions(pExtensions);
@@ -775,7 +775,7 @@ public class GordianCoreCertificate
      * @return the keySpec
      * @throws GordianException on error
      */
-    X509EncodedKeySpec getX509KeySpec() throws GordianException {
+    public X509EncodedKeySpec getX509KeySpec() throws GordianException {
         /* Protect against exceptions */
         try {
             /* Obtain the X509 keySpec */

@@ -63,7 +63,7 @@ import java.util.Objects;
 public class GordianKeySetASN1
         extends GordianASN1Object {
     /**
-     * The keySet.
+     * The keySetSpec.
      */
     private final GordianKeySetSpec theSpec;
 
