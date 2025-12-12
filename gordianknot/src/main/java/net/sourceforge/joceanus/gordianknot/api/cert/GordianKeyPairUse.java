@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.gordianknot.api.keystore;
+package net.sourceforge.joceanus.gordianknot.api.cert;
 
 import org.bouncycastle.asn1.x509.KeyUsage;
 

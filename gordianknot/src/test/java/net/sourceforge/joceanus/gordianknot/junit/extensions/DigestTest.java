@@ -1162,7 +1162,7 @@ class DigestTest {
                 "711835517A182DD4BC0E816BF5C72A278B227AE0B3D68F82577F97AD3CBFCA6A",
                 "640728E5B4BE29F04A4FFFA645CB308102170F4D2B69D61F030CDC569BC74BAC",
                 "5D7D68B49A5D999B8699FC4EDBEF0F0B4E4E7E904FE4B2B6B10C7C922407CF66"
-    };
+        };
 
         /**
          * Test digests.
@@ -1187,7 +1187,8 @@ class DigestTest {
             testKangaroo(167, true, 0, EXPECTED[16]);
             testKangaroo(8192 + 165, false, 0, EXPECTED[17]);
             testKangaroo(8192 + 166, false, 0, EXPECTED[18]);
-            testKangaroo(8192 + 167, false, 0, EXPECTED[19]);        }
+            testKangaroo(8192 + 167, false, 0, EXPECTED[19]);
+        }
     }
 
     /**

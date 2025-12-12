@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  build_and_test:
+  build_linux:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -28,5 +28,22 @@ jobs:
       - name: Package distribution directory
         uses: actions/upload-artifact@v4
         with:
-          name: Distribution
+          name: LinuxDist
+          path: dist
+  build_windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: maven
+      - name: Build project with Maven
+        run: mvn -B package --file pom.xml
+      - name: Package distribution directory
+        uses: actions/upload-artifact@v4
+        with:
+          name: WindowsDist
           path: dist

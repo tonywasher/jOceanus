@@ -23,10 +23,11 @@ import net.sourceforge.joceanus.gordianknot.api.factory.GordianLockFactory;
 import net.sourceforge.joceanus.gordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySet;
-import net.sourceforge.joceanus.gordianknot.api.keystore.GordianCertificate;
-import net.sourceforge.joceanus.gordianknot.api.keystore.GordianCertificateId;
+import net.sourceforge.joceanus.gordianknot.api.cert.GordianCertificate;
+import net.sourceforge.joceanus.gordianknot.api.cert.GordianCertificateId;
 import net.sourceforge.joceanus.gordianknot.api.lock.GordianKeySetLock;
 import net.sourceforge.joceanus.gordianknot.api.lock.GordianPasswordLockSpec;
+import net.sourceforge.joceanus.gordianknot.impl.core.cert.GordianCoreCertificate;
 
 import java.time.LocalDate;
 import java.util.ArrayList;

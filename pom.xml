@@ -74,16 +74,16 @@
     <appDir>${session.executionRootDirectory}/dist</appDir>
     <appBinDir>bin/</appBinDir>
     <appLibDir>lib/</appLibDir>
-    <BouncyCastleVersion>1.82</BouncyCastleVersion>
+    <BouncyCastleVersion>1.83</BouncyCastleVersion>
     <JUnitVersion>6.0.1</JUnitVersion>
     <JSONVersion>20250517</JSONVersion>
-    <ApacheMavenVersion>3.9.9</ApacheMavenVersion>
+    <ApacheMavenVersion>3.9.11</ApacheMavenVersion>
     <MySQLVersion>9.5.0</MySQLVersion>
     <MariaDBVersion>3.5.6</MariaDBVersion>
     <PostGreSQLVersion>42.7.8</PostGreSQLVersion>
     <MSSQLVersion>13.2.1.jre11</MSSQLVersion>
     <H2Version>2.4.240</H2Version>
-    <ApachePOIVersion>5.4.1</ApachePOIVersion>
+    <ApachePOIVersion>5.5.1</ApachePOIVersion>
     <JSoupVersion>1.21.2</JSoupVersion>
     <JFreeChartVersion>1.5.6</JFreeChartVersion>
     <JavaParserVersion>3.27.1</JavaParserVersion>
@@ -92,10 +92,10 @@
     <JavaVersion>17</JavaVersion>
     <JavaFXVersion>17.0.17</JavaFXVersion>
     <JavaLanguageVersion>17</JavaLanguageVersion>
-    <CheckStyleVersion>12.1.1</CheckStyleVersion>
-    <PMDVersion>7.18.0</PMDVersion>
+    <CheckStyleVersion>12.2.0</CheckStyleVersion>
+    <PMDVersion>7.19.0</PMDVersion>
     <CleanPluginVersion>3.5.0</CleanPluginVersion>
-    <ResourcesPluginVersion>3.3.1</ResourcesPluginVersion>
+    <ResourcesPluginVersion>3.4.0</ResourcesPluginVersion>
     <InstallPluginVersion>3.1.4</InstallPluginVersion>
     <SitePluginVersion>3.21.0</SitePluginVersion>
     <DeployPluginVersion>3.1.4</DeployPluginVersion>
@@ -106,18 +106,18 @@
     <SurefirePluginVersion>3.5.4</SurefirePluginVersion>
     <BuildNumberPluginVersion>3.2.1</BuildNumberPluginVersion>
     <BuildHelperPluginVersion>3.6.1</BuildHelperPluginVersion>
-    <JarPluginVersion>3.4.2</JarPluginVersion>
+    <JarPluginVersion>3.5.0</JarPluginVersion>
     <ProjectInfoPluginVersion>3.9.0</ProjectInfoPluginVersion>
     <JxrPluginVersion>3.6.0</JxrPluginVersion>
     <JavaDocPluginVersion>3.12.0</JavaDocPluginVersion>
     <JavaNCSSPluginVersion>2.1</JavaNCSSPluginVersion>
-    <SourcePluginVersion>3.3.1</SourcePluginVersion>
-    <SonarQubePluginVersion>5.2.0.4988</SonarQubePluginVersion>
+    <SourcePluginVersion>3.4.0</SourcePluginVersion>
+    <SonarQubePluginVersion>5.5.0.6356</SonarQubePluginVersion>
     <CheckStylePluginVersion>3.6.0</CheckStylePluginVersion>
     <PMDPluginVersion>3.28.0</PMDPluginVersion>
     <JacocoPluginVersion>0.8.14</JacocoPluginVersion>
     <JetBrainsAnnotationsVersion>26.0.2</JetBrainsAnnotationsVersion>
-    <VersionsPluginVersion>2.19.1</VersionsPluginVersion>
+    <VersionsPluginVersion>2.20.1</VersionsPluginVersion>
     <ExecPluginVersion>3.6.2</ExecPluginVersion>
     <sonar.organization>tonywasher</sonar.organization>
     <sonar.projectKey>jOceanus</sonar.projectKey>

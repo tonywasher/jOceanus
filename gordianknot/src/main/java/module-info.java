@@ -42,5 +42,6 @@ module net.sourceforge.joceanus.gordianknot {
     exports net.sourceforge.joceanus.gordianknot.api.sign;
     exports net.sourceforge.joceanus.gordianknot.api.zip;
     exports net.sourceforge.joceanus.gordianknot.util;
+    exports net.sourceforge.joceanus.gordianknot.api.cert;
 }
 
