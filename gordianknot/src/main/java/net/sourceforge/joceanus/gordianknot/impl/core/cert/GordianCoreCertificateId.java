@@ -16,12 +16,11 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.core.cert;
 
-import java.util.Objects;
-
+import net.sourceforge.joceanus.gordianknot.api.cert.GordianCertificateId;
 import org.bouncycastle.asn1.DERBitString;
 import org.bouncycastle.asn1.x500.X500Name;
 
-import net.sourceforge.joceanus.gordianknot.api.cert.GordianCertificateId;
+import java.util.Objects;
 
 /**
  * Certificate Id implementation.
@@ -43,8 +42,8 @@ public final class GordianCoreCertificateId
      * @param pName the name
      * @param pId the id
      */
-    GordianCoreCertificateId(final X500Name pName,
-                             final DERBitString pId) {
+    public GordianCoreCertificateId(final X500Name pName,
+                                    final DERBitString pId) {
         theName = pName;
         theId = pId;
     }
