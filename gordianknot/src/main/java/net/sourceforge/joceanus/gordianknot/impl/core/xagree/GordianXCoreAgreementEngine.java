@@ -39,8 +39,8 @@ public abstract class GordianXCoreAgreementEngine {
      * @param pSpec the agreementSpec
      * @throws GordianException on error
      */
-    GordianXCoreAgreementEngine(final GordianXCoreAgreementSupplier pSupplier,
-                                final GordianAgreementSpec pSpec) throws GordianException {
+    protected GordianXCoreAgreementEngine(final GordianXCoreAgreementSupplier pSupplier,
+                                          final GordianAgreementSpec pSpec) throws GordianException {
         theSupplier = pSupplier;
         theBuilder = new GordianXCoreAgreementBuilder(pSupplier, pSpec);
     }

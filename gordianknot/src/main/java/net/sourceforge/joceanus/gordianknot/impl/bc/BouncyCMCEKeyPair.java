@@ -313,4 +313,54 @@ public final class BouncyCMCEKeyPair {
             storeSecret(myExtractor.extractSecret(myMessage));
         }
     }
+
+    /**
+     * CMCE XAgreement Engine.
+     */
+    public static class BouncyCMCEXAgreementEngine
+            extends BouncyXAgreementBase {
+        /**
+         * Constructor.
+         * @param pFactory the security factory
+         * @param pSpec the agreementSpec
+         * @throws GordianException on error
+         */
+        BouncyCMCEXAgreementEngine(final BouncyXAgreementFactory pFactory,
+                                   final GordianAgreementSpec pSpec) throws GordianException {
+            /* Initialize underlying class */
+            super(pFactory, pSpec);
+        }
+
+        @Override
+        public void buildClientHello() throws GordianException {
+            /* Protect against exceptions */
+            try {
+                /* Create encapsulation */
+                final BouncyCMCEPublicKey myPublic = (BouncyCMCEPublicKey) getPublicKey(getServerKeyPair());
+                final CMCEKEMGenerator myGenerator = new CMCEKEMGenerator(getRandom());
+                final SecretWithEncapsulation myResult = myGenerator.generateEncapsulated(myPublic.getPublicKey());
+
+                /* Store the encapsulation */
+                setEncapsulated(myResult.getEncapsulation());
+
+                /* Store secret and create initVector */
+                storeSecret(myResult.getSecret());
+                myResult.destroy();
+
+            } catch (DestroyFailedException e) {
+                throw new GordianIOException("Failed to destroy secret", e);
+            }
+        }
+
+        @Override
+        public void processClientHello() throws GordianException {
+            /* Create encapsulation */
+            final BouncyCMCEPrivateKey myPrivate = (BouncyCMCEPrivateKey) getPrivateKey(getServerKeyPair());
+            final CMCEKEMExtractor myExtractor = new CMCEKEMExtractor(myPrivate.getPrivateKey());
+
+            /* Parse encapsulated message and store secret */
+            final byte[] myMessage = getEncapsulated();
+            storeSecret(myExtractor.extractSecret(myMessage));
+        }
+    }
 }

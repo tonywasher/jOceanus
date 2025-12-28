@@ -116,8 +116,16 @@ public class GordianXCoreAgreementBuilder {
      * Obtain the state.
      * @return the state
      */
-    GordianXCoreAgreementState getState() {
+    public GordianXCoreAgreementState getState() {
         return theState;
+    }
+
+    /**
+     * Obtain the random.
+     * @return the random
+     */
+    public SecureRandom getRandom() {
+        return theFactory.getRandomSource().getRandom();
     }
 
     /**
@@ -191,7 +199,7 @@ public class GordianXCoreAgreementBuilder {
      * @param pSecret the secret
      * @throws GordianException on error
      */
-    void storeSecret(final byte[] pSecret) throws GordianException {
+    public void storeSecret(final byte[] pSecret) throws GordianException {
         /* Protect against failure */
         try {
             /* Just process the secret */

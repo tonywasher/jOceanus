@@ -82,7 +82,7 @@ public class GordianXCoreAgreementParticipant {
      * Obtain the keyPair.
      * @return the keyPair
      */
-    GordianKeyPair getKeyPair() {
+    public GordianKeyPair getKeyPair() {
         return theKeyPair;
     }
 
@@ -99,7 +99,7 @@ public class GordianXCoreAgreementParticipant {
      * Obtain the ephemeral keyPair.
      * @return the keyPair
      */
-    GordianKeyPair getEphemeralKeyPair() {
+    public GordianKeyPair getEphemeralKeyPair() {
         return theEphemeral;
     }
 
@@ -171,7 +171,7 @@ public class GordianXCoreAgreementParticipant {
      * Obtain the confirmation.
      * @return the confirmation
      */
-    byte[] getConfirm() {
+    public byte[] getConfirm() {
         return theConfirm;
     }
 

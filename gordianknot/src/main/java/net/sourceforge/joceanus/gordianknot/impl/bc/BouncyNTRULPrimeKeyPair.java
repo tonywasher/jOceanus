@@ -313,4 +313,54 @@ public final class BouncyNTRULPrimeKeyPair {
             storeSecret(myExtractor.extractSecret(myMessage));
         }
     }
+
+    /**
+     * NTRULPrime XAgreement Engine.
+     */
+    public static class BouncyNTRULPrimeXAgreementEngine
+            extends BouncyXAgreementBase {
+        /**
+         * Constructor.
+         * @param pFactory the security factory
+         * @param pSpec the agreementSpec
+         * @throws GordianException on error
+         */
+        BouncyNTRULPrimeXAgreementEngine(final BouncyXAgreementFactory pFactory,
+                                         final GordianAgreementSpec pSpec) throws GordianException {
+            /* Initialize underlying class */
+            super(pFactory, pSpec);
+        }
+
+        @Override
+        public void buildClientHello() throws GordianException {
+            /* Protect against exceptions */
+            try {
+                /* Create encapsulation */
+                final BouncyNTRULPrimePublicKey myPublic = (BouncyNTRULPrimePublicKey) getPublicKey(getServerKeyPair());
+                final NTRULPRimeKEMGenerator myGenerator = new NTRULPRimeKEMGenerator(getRandom());
+                final SecretWithEncapsulation myResult = myGenerator.generateEncapsulated(myPublic.getPublicKey());
+
+                /* Store the encapsulation */
+                setEncapsulated(myResult.getEncapsulation());
+
+                /* Store secret and create initVector */
+                storeSecret(myResult.getSecret());
+                myResult.destroy();
+
+            } catch (DestroyFailedException e) {
+                throw new GordianIOException("Failed to destroy secret", e);
+            }
+        }
+
+        @Override
+        public void processClientHello() throws GordianException {
+            /* Create encapsulation */
+            final BouncyNTRULPrimePrivateKey myPrivate = (BouncyNTRULPrimePrivateKey) getPrivateKey(getServerKeyPair());
+            final NTRULPRimeKEMExtractor myExtractor = new NTRULPRimeKEMExtractor(myPrivate.getPrivateKey());
+
+            /* Parse encapsulated message and store secret */
+            final byte[] myMessage = getEncapsulated();
+            storeSecret(myExtractor.extractSecret(myMessage));
+        }
+    }
 }

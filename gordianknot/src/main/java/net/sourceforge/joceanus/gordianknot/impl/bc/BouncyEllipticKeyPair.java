@@ -865,6 +865,69 @@ public final class BouncyEllipticKeyPair {
     }
 
     /**
+     * EC XAgreement Engine.
+     */
+    public static class BouncyECXAgreementEngine
+            extends BouncyXAgreementBase {
+        /**
+         * Key Length.
+         */
+        private static final int KEYLEN = 32;
+
+        /**
+         * Derivation function.
+         */
+        private final DerivationFunction theDerivation;
+
+        /**
+         * Constructor.
+         * @param pFactory the security factory
+         * @param pSpec the agreementSpec
+         * @throws GordianException on error
+         */
+        BouncyECXAgreementEngine(final BouncyXAgreementFactory pFactory,
+                                 final GordianAgreementSpec pSpec) throws GordianException {
+            /* Initialize underlying class */
+            super(pFactory, pSpec);
+
+            /* Initialise the derivation function */
+            theDerivation = newDerivationFunction();
+        }
+
+        @Override
+        public void buildClientHello() throws GordianException {
+            /* Protect against exceptions */
+            try {
+                /* Create encapsulation */
+                final BouncyECPublicKey myPublic = (BouncyECPublicKey) getPublicKey(getServerKeyPair());
+                final ECIESKEMGenerator myGenerator = new ECIESKEMGenerator(KEYLEN, theDerivation, getRandom());
+                final SecretWithEncapsulation myResult = myGenerator.generateEncapsulated(myPublic.getPublicKey());
+
+                /* Store the encapsulation */
+                setEncapsulated(myResult.getEncapsulation());
+
+                /* Store secret and create initVector */
+                storeSecret(myResult.getSecret());
+                myResult.destroy();
+
+            } catch (DestroyFailedException e) {
+                throw new GordianIOException("Failed to destroy secret", e);
+            }
+        }
+
+        @Override
+        public void processClientHello() throws GordianException {
+            /* Create encapsulation */
+            final BouncyECPrivateKey myPrivate = (BouncyECPrivateKey) getPrivateKey(getServerKeyPair());
+            final ECIESKEMExtractor myExtractor = new ECIESKEMExtractor(myPrivate.getPrivateKey(), KEYLEN, theDerivation);
+
+            /* Parse encapsulated message and store secret */
+            final byte[] myMessage = getEncapsulated();
+            storeSecret(myExtractor.extractSecret(myMessage));
+        }
+    }
+
+    /**
      * EC Encryptor.
      */
     public static class BouncyECEncryptor

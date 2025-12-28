@@ -87,7 +87,7 @@ public class GordianXCoreAgreementState {
      * Obtain the Agreement Spec.
      * @return the agreementSpec
      */
-    GordianAgreementSpec getSpec() {
+    public GordianAgreementSpec getSpec() {
         return theSpec;
     }
 
@@ -149,7 +149,7 @@ public class GordianXCoreAgreementState {
      * Obtain the clientState.
      * @return the state
      */
-    GordianXCoreAgreementParticipant getClient() {
+    public GordianXCoreAgreementParticipant getClient() {
         return theClient;
     }
 
@@ -157,7 +157,7 @@ public class GordianXCoreAgreementState {
      * Obtain the serverState.
      * @return the state
      */
-    GordianXCoreAgreementParticipant getServer() {
+    public GordianXCoreAgreementParticipant getServer() {
         return theServer;
     }
 
@@ -165,7 +165,7 @@ public class GordianXCoreAgreementState {
      * Obtain the encapsulated.
      * @return the encapsulated
      */
-    byte[] getEncapsulated() {
+    public byte[] getEncapsulated() {
         return theEncapsulated;
     }
 
@@ -174,7 +174,7 @@ public class GordianXCoreAgreementState {
      * @param pEncapsulated the encapsulated
      * @return the state
      */
-    GordianXCoreAgreementState setEncapsulated(final byte[] pEncapsulated) {
+    public GordianXCoreAgreementState setEncapsulated(final byte[] pEncapsulated) {
         theEncapsulated = pEncapsulated;
         return this;
     }
