@@ -27,6 +27,7 @@ import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianCoreAnonymous
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianIOException;
 import net.sourceforge.joceanus.gordianknot.impl.core.keypair.GordianKeyPairValidity;
+import net.sourceforge.joceanus.gordianknot.impl.core.xagree.GordianXCoreAgreementFactory;
 import org.bouncycastle.asn1.ASN1Encoding;
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
@@ -325,7 +326,7 @@ public final class BouncyBIKEKeyPair {
          * @param pSpec the agreementSpec
          * @throws GordianException on error
          */
-        BouncyBIKEXAgreementEngine(final BouncyXAgreementFactory pFactory,
+        BouncyBIKEXAgreementEngine(final GordianXCoreAgreementFactory pFactory,
                                    final GordianAgreementSpec pSpec) throws GordianException {
             /* Initialize underlying class */
             super(pFactory, pSpec);
@@ -343,7 +344,7 @@ public final class BouncyBIKEKeyPair {
                 /* Store the encapsulation */
                 setEncapsulated(myResult.getEncapsulation());
 
-                /* Store secret and create initVector */
+                /* Store secret */
                 storeSecret(myResult.getSecret());
                 myResult.destroy();
 
@@ -354,7 +355,7 @@ public final class BouncyBIKEKeyPair {
 
         @Override
         public void processClientHello() throws GordianException {
-            /* Create encapsulation */
+            /* Create extractor */
             final BouncyBIKEPrivateKey myPrivate = (BouncyBIKEPrivateKey) getPrivateKey(getServerKeyPair());
             final BIKEKEMExtractor myExtractor = new BIKEKEMExtractor(myPrivate.getPrivateKey());
 

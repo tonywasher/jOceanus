@@ -27,6 +27,7 @@ import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianCoreAnonymous
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianIOException;
 import net.sourceforge.joceanus.gordianknot.impl.core.keypair.GordianKeyPairValidity;
+import net.sourceforge.joceanus.gordianknot.impl.core.xagree.GordianXCoreAgreementFactory;
 import org.bouncycastle.asn1.ASN1Encoding;
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
@@ -325,7 +326,7 @@ public final class BouncyMLKEMKeyPair {
          * @param pSpec the agreementSpec
          * @throws GordianException on error
          */
-        BouncyMLKEMXAgreementEngine(final BouncyXAgreementFactory pFactory,
+        BouncyMLKEMXAgreementEngine(final GordianXCoreAgreementFactory pFactory,
                                     final GordianAgreementSpec pSpec) throws GordianException {
             /* Initialize underlying class */
             super(pFactory, pSpec);
