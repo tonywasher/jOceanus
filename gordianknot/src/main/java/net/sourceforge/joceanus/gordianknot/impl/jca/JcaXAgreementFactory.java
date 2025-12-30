@@ -24,6 +24,7 @@ import net.sourceforge.joceanus.gordianknot.api.keypair.GordianNTRUPrimeSpec;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
 import net.sourceforge.joceanus.gordianknot.impl.core.xagree.GordianXCoreAgreementEngine;
 import net.sourceforge.joceanus.gordianknot.impl.core.xagree.GordianXCoreAgreementFactory;
+import net.sourceforge.joceanus.gordianknot.impl.jca.JcaXAgreement.JcaNewHopeXAgreement;
 import net.sourceforge.joceanus.gordianknot.impl.jca.JcaXAgreement.JcaPostQuantumXAgreement;
 
 import javax.crypto.KeyAgreement;
@@ -55,8 +56,7 @@ public class JcaXAgreementFactory
             //    return getBCECEngine(pSpec);
             //case DH:
             //    return getBCDHEngine(pSpec);
-            //case NEWHOPE:
-            //    return new BouncyNewHopeAgreement(getFactory(), pSpec);
+            case NEWHOPE:   return getNHAgreement(pSpec);
             case CMCE:
             case FRODO:
             case SABER:
@@ -81,6 +81,16 @@ public class JcaXAgreementFactory
      */
     private GordianXCoreAgreementEngine getPostQuantumAgreement(final GordianAgreementSpec pAgreementSpec) throws GordianException {
         return new JcaPostQuantumXAgreement(this, pAgreementSpec, getJavaKeyGenerator(pAgreementSpec.getKeyPairSpec()));
+    }
+
+    /**
+     * Create the NewHope Agreement.
+     * @param pAgreementSpec the agreementSpec
+     * @return the Agreement
+     * @throws GordianException on error
+     */
+    private GordianXCoreAgreementEngine getNHAgreement(final GordianAgreementSpec pAgreementSpec) throws GordianException {
+        return new JcaNewHopeXAgreement(this, pAgreementSpec, getJavaKeyAgreement("NH", true));
     }
 
     /**

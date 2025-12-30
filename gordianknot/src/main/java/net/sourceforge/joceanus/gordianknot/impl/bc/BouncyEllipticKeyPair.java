@@ -867,7 +867,7 @@ public final class BouncyEllipticKeyPair {
     /**
      * EC XAgreement Engine.
      */
-    public static class BouncyECXAgreementEngine
+    public static class BouncyECIESXAgreementEngine
             extends BouncyXAgreementBase {
         /**
          * Key Length.
@@ -885,8 +885,8 @@ public final class BouncyEllipticKeyPair {
          * @param pSpec the agreementSpec
          * @throws GordianException on error
          */
-        BouncyECXAgreementEngine(final BouncyXAgreementFactory pFactory,
-                                 final GordianAgreementSpec pSpec) throws GordianException {
+        BouncyECIESXAgreementEngine(final BouncyXAgreementFactory pFactory,
+                                    final GordianAgreementSpec pSpec) throws GordianException {
             /* Initialize underlying class */
             super(pFactory, pSpec);
 

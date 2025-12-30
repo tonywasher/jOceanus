@@ -331,6 +331,16 @@ public class GordianXCoreAgreementBuilder {
      * Create a new client ephemeral.
      * @throws GordianException on error
      */
+    public void setClientEphemeral(final GordianKeyPair pEphemeral) throws GordianException {
+        theState.getClient()
+                .setEphemeralKeyPair(pEphemeral)
+                .setEphemeralKeySpec(theKeyPairGenerator.getX509Encoding(pEphemeral));
+    }
+
+    /**
+     * Create a new client ephemeral.
+     * @throws GordianException on error
+     */
     public void newServerEphemeral() throws GordianException {
         final GordianKeyPair myPair = theKeyPairGenerator.generateKeyPair();
         theState.getServer()

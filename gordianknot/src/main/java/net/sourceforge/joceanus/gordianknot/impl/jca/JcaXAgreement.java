@@ -21,6 +21,7 @@ import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymKeyType;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
+import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairType;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
@@ -38,9 +39,12 @@ import org.bouncycastle.jcajce.SecretKeyWithEncapsulation;
 import org.bouncycastle.jcajce.spec.KEMExtractSpec;
 import org.bouncycastle.jcajce.spec.KEMGenerateSpec;
 
+import javax.crypto.KeyAgreement;
 import javax.crypto.KeyGenerator;
 import javax.security.auth.DestroyFailedException;
 import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.PublicKey;
 
 /**
  * Agreement classes.
@@ -129,6 +133,74 @@ public final class JcaXAgreement {
 
             } catch (DestroyFailedException e) {
                 throw new GordianIOException("Failed to destroy secret", e);
+            }
+        }
+    }
+
+    /**
+     * Jca NewHope Agreement.
+     */
+    public static class JcaNewHopeXAgreement
+            extends JcaXAgreementBase {
+        /**
+         * Key Agreement.
+         */
+        private final KeyAgreement theAgreement;
+
+        /**
+         * Constructor.
+         * @param pFactory the security factory
+         * @param pSpec the agreementSpec
+         * @param pAgreement the agreement
+         */
+        JcaNewHopeXAgreement(final GordianXCoreAgreementFactory pFactory,
+                             final GordianAgreementSpec pSpec,
+                             final KeyAgreement pAgreement) throws GordianException {
+            /* Initialize underlying class */
+            super(pFactory, pSpec);
+
+            /* Store the agreement */
+            theAgreement = pAgreement;
+        }
+
+        @Override
+        public void buildClientHello() throws GordianException {
+            /* Protect against exceptions */
+            try {
+                /* Derive the secret */
+                theAgreement.init(null, getRandom());
+                final JcaPublicKey myTarget = (JcaPublicKey) getPublicKey(getServerKeyPair());
+                final PublicKey myKey = (PublicKey) theAgreement.doPhase(myTarget.getPublicKey(), true);
+
+                /* Store the ephemeral */
+                final GordianKeyPairSpec mySpec = getSpec().getKeyPairSpec();
+                final JcaPublicKey myPublic = new JcaPublicKey(mySpec, myKey);
+                final JcaKeyPair myEphemeral = new JcaKeyPair(myPublic);
+                setClientEphemeral(myEphemeral);
+
+                /* Store secret */
+                storeSecret(theAgreement.generateSecret());
+
+            } catch (InvalidKeyException e) {
+                throw new GordianCryptoException(ERR_AGREEMENT, e);
+            }
+        }
+
+        @Override
+        public void processClientHello() throws GordianException {
+            /* Protect against exceptions */
+            try {
+                /* Derive the secret */
+                final JcaPrivateKey myPrivate = (JcaPrivateKey) getPrivateKey(getServerKeyPair());
+                final JcaPublicKey myPublic = (JcaPublicKey) getPublicKey(getClientEphemeral());
+                theAgreement.init(myPrivate.getPrivateKey());
+                theAgreement.doPhase(myPublic.getPublicKey(), true);
+
+                /* Store secret */
+                storeSecret(theAgreement.generateSecret());
+
+            } catch (InvalidKeyException e) {
+                throw new GordianCryptoException(ERR_AGREEMENT, e);
             }
         }
     }

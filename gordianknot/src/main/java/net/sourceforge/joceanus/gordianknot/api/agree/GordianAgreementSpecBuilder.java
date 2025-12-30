@@ -27,6 +27,7 @@ public final class GordianAgreementSpecBuilder {
      */
     private GordianAgreementSpecBuilder() {
     }
+
     /**
      * Create the KEM agreementSpec.
      * @param pKeyPairSpec the keyPairSpec

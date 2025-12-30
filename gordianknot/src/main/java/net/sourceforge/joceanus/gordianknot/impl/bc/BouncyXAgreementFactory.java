@@ -22,12 +22,13 @@ import net.sourceforge.joceanus.gordianknot.api.keypair.GordianNTRUPrimeSpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianNTRUPrimeSpec.GordianNTRUPrimeType;
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyBIKEKeyPair.BouncyBIKEXAgreementEngine;
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyCMCEKeyPair.BouncyCMCEXAgreementEngine;
-import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyEllipticKeyPair.BouncyECXAgreementEngine;
+import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyEllipticKeyPair.BouncyECIESXAgreementEngine;
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyFrodoKeyPair.BouncyFrodoXAgreementEngine;
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyHQCKeyPair.BouncyHQCXAgreementEngine;
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyMLKEMKeyPair.BouncyMLKEMXAgreementEngine;
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyNTRUKeyPair.BouncyNTRUXAgreementEngine;
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyNTRULPrimeKeyPair.BouncyNTRULPrimeXAgreementEngine;
+import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyNewHopeKeyPair.BouncyNewHopeXAgreementEngine;
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyRSAKeyPair.BouncyRSAXAgreementEngine;
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncySABERKeyPair.BouncySABERXAgreementEngine;
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncySNTRUPrimeKeyPair.BouncySNTRUPrimeXAgreementEngine;
@@ -55,19 +56,18 @@ import net.sourceforge.joceanus.gordianknot.impl.core.xagree.GordianXCoreAgreeme
             case EC:
             case GOST2012:
             case DSTU4145:
-            case SM2:   return new BouncyECXAgreementEngine(this, pSpec);
+            case SM2:   return new BouncyECIESXAgreementEngine(this, pSpec);
             //    return getBCECEngine(pSpec);
             //case DH:
             //    return getBCDHEngine(pSpec);
-            //case NEWHOPE:
-            //    return new BouncyNewHopeAgreement(getFactory(), pSpec);
-            case CMCE:  return new BouncyCMCEXAgreementEngine(this, pSpec);
-            case FRODO: return new BouncyFrodoXAgreementEngine(this, pSpec);
-            case SABER: return new BouncySABERXAgreementEngine(this, pSpec);
-            case MLKEM: return new BouncyMLKEMXAgreementEngine(this, pSpec);
-            case HQC:   return new BouncyHQCXAgreementEngine(this, pSpec);
-            case BIKE:  return new BouncyBIKEXAgreementEngine(this, pSpec);
-            case NTRU:  return new BouncyNTRUXAgreementEngine(this, pSpec);
+            case NEWHOPE:   return new BouncyNewHopeXAgreementEngine(this, pSpec);
+            case CMCE:      return new BouncyCMCEXAgreementEngine(this, pSpec);
+            case FRODO:     return new BouncyFrodoXAgreementEngine(this, pSpec);
+            case SABER:     return new BouncySABERXAgreementEngine(this, pSpec);
+            case MLKEM:     return new BouncyMLKEMXAgreementEngine(this, pSpec);
+            case HQC:       return new BouncyHQCXAgreementEngine(this, pSpec);
+            case BIKE:      return new BouncyBIKEXAgreementEngine(this, pSpec);
+            case NTRU:      return new BouncyNTRUXAgreementEngine(this, pSpec);
             case NTRUPRIME:
                 final GordianNTRUPrimeSpec mySpec = pSpec.getKeyPairSpec().getNTRUPrimeKeySpec();
                 return mySpec.getType() == GordianNTRUPrimeType.NTRUL

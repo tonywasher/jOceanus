@@ -141,6 +141,15 @@ public abstract class GordianXCoreAgreementEngine {
     }
 
     /**
+     * Set client ephemeral keyPair.
+     * @param pEphemeral the ephemeral keyPair
+     * @throws GordianException on error
+     */
+    public void setClientEphemeral(final GordianKeyPair pEphemeral) throws GordianException {
+        theBuilder.setClientEphemeral(pEphemeral);
+    }
+
+    /**
      * Obtain server keyPair.
      * @return the server keyPair
      */
@@ -168,6 +177,7 @@ public abstract class GordianXCoreAgreementEngine {
      * Obtain public key from pair.
      * @param pKeyPair the keyPair
      * @return the public key
+     * @throws GordianException on error
      */
     protected GordianPublicKey getPublicKey(final GordianKeyPair pKeyPair) throws GordianException {
         /* Access public key */
