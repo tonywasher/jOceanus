@@ -20,6 +20,7 @@ import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementSpec;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.cert.GordianCertificate;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
+import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairType;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignatureSpec;
 import net.sourceforge.joceanus.gordianknot.api.xagree.GordianXAgreement;
 import net.sourceforge.joceanus.gordianknot.api.xagree.GordianXAgreementStatus;
@@ -262,6 +263,11 @@ public class GordianXCoreAgreement
         }
         theBuilder.newClientIV();
 
+        /* Create clientEphemeral if needed */
+        if (needClientEphemeral()) {
+            theBuilder.newClientEphemeral();
+        }
+
         /* Create the new ClientHello */
         theEngine.buildClientHello();
         final GordianXCoreAgreementMessageASN1 myMsg = theBuilder.newClientHello();
@@ -299,6 +305,11 @@ public class GordianXCoreAgreement
             theBuilder.newServerId();
         }
         theBuilder.newServerIV();
+
+        /* Create serverEphemeral if needed */
+        if (needServerEphemeral()) {
+            theBuilder.newServerEphemeral();
+        }
 
         /* Process the clientHello */
         theEngine.processClientHello();
@@ -370,5 +381,39 @@ public class GordianXCoreAgreement
 
         /* remove from cache */
         theSupplier.removeAgreement(pClientConfirm.getServerId());
+    }
+
+    /**
+     * Do we need a client ephemeral?
+     * @return true/false
+     */
+    private boolean needClientEphemeral() {
+        switch (theSpec.getAgreementType()) {
+            case SIGNED:
+            case SM2:
+            case MQV:
+            case UNIFIED: return true;
+            case ANON: return !GordianKeyPairType.NEWHOPE.equals(theSpec.getKeyPairSpec().getKeyPairType());
+            case KEM:
+            case BASIC:
+            default: return false;
+        }
+    }
+
+    /**
+     * Do we need a server ephemeral?
+     * @return true/false
+     */
+    private boolean needServerEphemeral() {
+        switch (theSpec.getAgreementType()) {
+            case SIGNED:
+            case SM2:
+            case MQV:
+            case UNIFIED: return true;
+            case ANON:
+            case KEM:
+            case BASIC:
+            default: return false;
+        }
     }
 }

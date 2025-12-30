@@ -361,7 +361,7 @@ public class GordianXCoreAgreementBuilder {
      * @param pConfirm the clientConfirm
      * @throws GordianException on error
      */
-    public void setClientConfirm(final byte[] pConfirm) throws GordianException {
+    void setClientConfirm(final byte[] pConfirm) throws GordianException {
         /* Access any expected value */
         final GordianXCoreAgreementParticipant myClient = theState.getClient();
         final byte[] myExpected = myClient.getConfirm();
@@ -379,7 +379,7 @@ public class GordianXCoreAgreementBuilder {
      * @param pConfirm the clientConfirm
      * @throws GordianException on error
      */
-    public void setServerConfirm(final byte[] pConfirm) throws GordianException {
+    void setServerConfirm(final byte[] pConfirm) throws GordianException {
         /* Access any expected value */
         final GordianXCoreAgreementParticipant myServer = theState.getServer();
         final byte[] myExpected = myServer.getConfirm();

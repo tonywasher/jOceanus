@@ -174,6 +174,32 @@ public abstract class GordianXCoreAgreementEngine {
     }
 
     /**
+     * Set the client confirm.
+     * @param pConfirm the clientConfirm
+     * @throws GordianException on error
+     */
+    public void setClientConfirm(final byte[] pConfirm) throws GordianException {
+        setClientConfirm(pConfirm);
+    }
+
+    /**
+     * Obtain encapsulation.
+     * @return the encapsulation
+     */
+    public byte[] getServerConfirm() {
+        return theServer.getConfirm();
+    }
+
+    /**
+     * Set the client confirm.
+     * @param pConfirm the clientConfirm
+     * @throws GordianException on error
+     */
+    public void setServerConfirm(final byte[] pConfirm) throws GordianException {
+        theBuilder.setServerConfirm(pConfirm);
+    }
+
+    /**
      * Obtain public key from pair.
      * @param pKeyPair the keyPair
      * @return the public key
@@ -204,7 +230,9 @@ public abstract class GordianXCoreAgreementEngine {
      * Build the clientHello.
      * @throws GordianException on error
      */
-    public abstract void buildClientHello() throws GordianException;
+    public void buildClientHello() throws GordianException {
+        /* NoOp */
+    }
 
     /**
      * Process the clientHello.
@@ -217,14 +245,6 @@ public abstract class GordianXCoreAgreementEngine {
      * @throws GordianException on error
      */
     public void processServerHello() throws GordianException {
-        /* NoOp */
-    }
-
-    /**
-     * Process the clientConfirm.
-     * @throws GordianException on error
-     */
-    public void processClientConfirm() throws GordianException {
         /* NoOp */
     }
 
