@@ -115,8 +115,8 @@ public class JcaXAgreementFactory
     private GordianXCoreAgreementEngine getDHEngine(final GordianAgreementSpec pAgreementSpec) throws GordianException {
         switch (pAgreementSpec.getAgreementType()) {
             case ANON:      return new JcaAnonXEngine(this, pAgreementSpec, getJavaKeyAgreement(getFullAgreementName(DH_ALGO, pAgreementSpec), false));
+            case SIGNED:
             case BASIC:     return new JcaBasicXEngine(this, pAgreementSpec, getJavaKeyAgreement(getFullAgreementName(DH_ALGO, pAgreementSpec), false));
-            //case SIGNED:  return new JcaSignedAgreement(getFactory(), pAgreementSpec, getJavaKeyAgreement(getFullAgreementName(DH_ALGO, pAgreementSpec), false));
             case UNIFIED:   return new JcaUnifiedXEngine(this, pAgreementSpec, getJavaKeyAgreement(getFullAgreementName(DH_ALGO + "U", pAgreementSpec), false));
             case MQV:       return new JcaMQVXEngine(this, pAgreementSpec, getJavaKeyAgreement(getFullAgreementName("MQV", pAgreementSpec), false));
             default:        throw new GordianDataException(GordianCoreFactory.getInvalidText(pAgreementSpec));
@@ -133,9 +133,9 @@ public class JcaXAgreementFactory
         switch (pAgreementSpec.getAgreementType()) {
             case ANON:      return new JcaAnonXEngine(this, pAgreementSpec,
                     getJavaKeyAgreement(getFullAgreementName(ECCDH_ALGO, pAgreementSpec), false));
+            case SIGNED:
             case BASIC:     return new JcaBasicXEngine(this, pAgreementSpec,
                     getJavaKeyAgreement(getFullAgreementName(ECCDH_ALGO, pAgreementSpec), false));
-            //case SIGNED:  return new JcaSignedAgreement(this, pAgreementSpec, getJavaKeyAgreement(getFullAgreementName(ECCDH_ALGO, pAgreementSpec), false));
             case UNIFIED:   return new JcaUnifiedXEngine(this, pAgreementSpec,
                     getJavaKeyAgreement(getFullAgreementName(ECCDH_ALGO + "U", pAgreementSpec), false));
             case MQV:       return new JcaMQVXEngine(this, pAgreementSpec,
@@ -153,8 +153,8 @@ public class JcaXAgreementFactory
     private GordianXCoreAgreementEngine getXDHEngine(final GordianAgreementSpec pAgreementSpec) throws GordianException {
         switch (pAgreementSpec.getAgreementType()) {
             case ANON:      return new JcaAnonXEngine(this, pAgreementSpec, null);
+            case SIGNED:
             case BASIC:     return new JcaBasicXEngine(this, pAgreementSpec, null);
-            //case SIGNED:  return new JcaSignedAgreement(getFactory(), pAgreementSpec, null);
             case UNIFIED:   return new JcaUnifiedXEngine(this, pAgreementSpec, null);
             default:        throw new GordianDataException(GordianCoreFactory.getInvalidText(pAgreementSpec));
         }

@@ -104,21 +104,14 @@ public enum GordianAgreementType {
             return true;
         }
         switch (this) {
-            case KEM:
-                return hasKEM(pKeyPairType);
-            case ANON:
-                return hasAnon(pKeyPairType);
+            case KEM:       return hasKEM(pKeyPairType);
+            case ANON:      return hasAnon(pKeyPairType);
             case BASIC:
-            case SIGNED:
-                return hasBasic(pKeyPairType);
-            case SM2:
-                return hasSM2(pKeyPairType);
-            case MQV:
-                return hasMQV(pKeyPairType);
-            case UNIFIED:
-                return hasUnified(pKeyPairType);
-            default:
-                return false;
+            case SIGNED:    return hasBasic(pKeyPairType);
+            case SM2:       return hasSM2(pKeyPairType);
+            case MQV:       return hasMQV(pKeyPairType);
+            case UNIFIED:   return hasUnified(pKeyPairType);
+            default:        return false;
         }
     }
 
@@ -134,7 +127,6 @@ public enum GordianAgreementType {
             case GOST2012:
             case DSTU4145:
             case SM2:
-            case NEWHOPE:
             case CMCE:
             case FRODO:
             case SABER:
@@ -162,6 +154,7 @@ public enum GordianAgreementType {
             case GOST2012:
             case DSTU4145:
             case XDH:
+            case NEWHOPE:
                 return true;
             default:
                 return false;

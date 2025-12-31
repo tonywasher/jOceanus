@@ -311,6 +311,11 @@ public class GordianXCoreAgreement
             theBuilder.newServerEphemeral();
         }
 
+        /* Copy ephemerals to keyPairs for signed */
+        if (theSpec.getAgreementType().isSigned()) {
+            theBuilder.copyEphemerals();
+        }
+
         /* Process the clientHello */
         theEngine.processClientHello();
 
@@ -346,6 +351,11 @@ public class GordianXCoreAgreement
 
         /* Parse the serverHello */
         theBuilder.parseServerHello(pServerHello);
+
+        /* Copy ephemerals to keyPairs for signed */
+        if (theSpec.getAgreementType().isSigned()) {
+            theBuilder.copyEphemerals();
+        }
 
         /* If we have no error */
         theEngine.processServerHello();

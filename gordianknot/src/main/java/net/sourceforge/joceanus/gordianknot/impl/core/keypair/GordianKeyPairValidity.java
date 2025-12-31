@@ -196,12 +196,12 @@ public final class GordianKeyPairValidity {
             case ELGAMAL:
                 return GordianEncryptorSpecBuilder.elGamal(GordianDigestSpecBuilder.sha2(GordianLength.LEN_512));
             case DH:
+            case NEWHOPE:
                 return GordianAgreementSpecBuilder.anon(mySpec, GordianKDFType.SHA256KDF);
             case XDH:
                 return mySpec.getEdwardsElliptic().is25519()
                         ? GordianAgreementSpecBuilder.anon(mySpec, GordianKDFType.SHA256KDF)
                         : GordianAgreementSpecBuilder.anon(mySpec, GordianKDFType.SHA512KDF);
-            case NEWHOPE:
             case CMCE:
             case FRODO:
             case SABER:

@@ -164,8 +164,8 @@ public final class GordianAgreementSpec {
             }
         }
 
-        /* Valid */
-        return true;
+        /* Valid if supported */
+        return isSupported();
     }
 
     @Override

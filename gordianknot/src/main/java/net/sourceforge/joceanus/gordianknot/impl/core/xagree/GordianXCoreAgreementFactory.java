@@ -58,7 +58,7 @@ public abstract class GordianXCoreAgreementFactory
     /**
      * The algorithm Ids.
      */
-    private final GordianXCoreAgreementAlgId theAlgIds;
+    private GordianXCoreAgreementAlgId theAlgIds;
 
     /**
      * The signer certificate.
@@ -77,7 +77,6 @@ public abstract class GordianXCoreAgreementFactory
      */
     protected GordianXCoreAgreementFactory(final GordianCoreFactory pFactory) {
         theFactory = pFactory;
-        theAlgIds = new GordianXCoreAgreementAlgId(theFactory);
         theCache = new GordianXCoreAgreementCache(theFactory.getRandomSource());
     }
 
@@ -332,6 +331,10 @@ public abstract class GordianXCoreAgreementFactory
                     && !pAgreementSpec.getAgreementType().canConfirm()) {
                 return false;
             }
+
+            /* Disallow SM2 with confirm */
+            return pAgreementSpec.getAgreementType() != GordianAgreementType.SM2
+                    || !pAgreementSpec.withConfirm();
         }
 
         /* OK */
@@ -340,22 +343,33 @@ public abstract class GordianXCoreAgreementFactory
 
     @Override
     public AlgorithmIdentifier getIdentifierForSpec(final GordianAgreementSpec pSpec) {
-        return theAlgIds.determineIdentifier(pSpec);
+        return getAlgorithmIds().determineIdentifier(pSpec);
     }
 
     @Override
     public GordianAgreementSpec getSpecForIdentifier(final AlgorithmIdentifier pIdentifier) {
-        return theAlgIds.determineAgreementSpec(pIdentifier);
+        return getAlgorithmIds().determineAgreementSpec(pIdentifier);
     }
 
     @Override
     public AlgorithmIdentifier getIdentifierForResultType(final Object pResult) throws GordianException {
-        return theAlgIds.getIdentifierForResult(pResult);
+        return getAlgorithmIds().getIdentifierForResult(pResult);
     }
 
     @Override
     public Object getResultTypeForIdentifier(final AlgorithmIdentifier pIdentifier) throws GordianException {
-        return theAlgIds.processResultIdentifier(pIdentifier);
+        return getAlgorithmIds().processResultIdentifier(pIdentifier);
+    }
+
+    /**
+     * Obtain the agreement algorithm Ids.
+     * @return the agreement Algorithm Ids
+     */
+    private GordianXCoreAgreementAlgId getAlgorithmIds() {
+        if (theAlgIds == null) {
+            theAlgIds = new GordianXCoreAgreementAlgId(theFactory);
+        }
+        return theAlgIds;
     }
 
     @Override
@@ -387,7 +401,7 @@ public abstract class GordianXCoreAgreementFactory
                 myAgreements.addAll(listAllKDFs(pKeyPairSpec, GordianAgreementType.KEM));
                 break;
             case NEWHOPE:
-                myAgreements.addAll(listAllKDFs(pKeyPairSpec, GordianAgreementType.KEM));
+                myAgreements.addAll(listAllKDFs(pKeyPairSpec, GordianAgreementType.ANON));
                 break;
             case CMCE:
             case FRODO:

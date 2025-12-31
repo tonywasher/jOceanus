@@ -350,6 +350,14 @@ public class GordianXCoreAgreementBuilder {
      }
 
     /**
+     * Copy ephemeral keyPairs to main keyPairs.
+     */
+    void copyEphemerals() {
+        theState.getClient().copyEphemeral();
+        theState.getServer().copyEphemeral();
+    }
+
+    /**
      * Set the encapsulated message.
      * @param pEncapsulated the message
      */

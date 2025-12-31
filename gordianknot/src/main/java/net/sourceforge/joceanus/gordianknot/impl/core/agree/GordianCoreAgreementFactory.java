@@ -269,7 +269,7 @@ public abstract class GordianCoreAgreementFactory
                 myAgreements.addAll(listAllKDFs(pKeyPairSpec, GordianAgreementType.KEM));
                 break;
             case NEWHOPE:
-                myAgreements.addAll(listAllKDFs(pKeyPairSpec, GordianAgreementType.KEM));
+                myAgreements.addAll(listAllKDFs(pKeyPairSpec, GordianAgreementType.ANON));
                 break;
             case CMCE:
             case FRODO:

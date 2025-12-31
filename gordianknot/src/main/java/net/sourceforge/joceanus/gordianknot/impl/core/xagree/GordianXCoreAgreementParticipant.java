@@ -134,6 +134,13 @@ public class GordianXCoreAgreementParticipant {
     }
 
     /**
+     * Copy ephemeral keyPair to main keyPair.
+     */
+    void copyEphemeral() {
+        theKeyPair = theEphemeral;
+     }
+
+    /**
      * Obtain the certificate.
      * @return the certificate
      */

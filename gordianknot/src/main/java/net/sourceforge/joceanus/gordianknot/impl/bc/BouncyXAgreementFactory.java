@@ -103,9 +103,8 @@ import net.sourceforge.joceanus.gordianknot.impl.core.xagree.GordianXCoreAgreeme
         switch (pSpec.getAgreementType()) {
             case KEM:       return new BouncyECIESXAgreementEngine(this, pSpec);
             case ANON:      return new BouncyECAnonXAgreementEngine(this, pSpec);
+            case SIGNED:
             case BASIC:     return new BouncyECBasicXAgreementEngine(this, pSpec);
-            //case SIGNED:
-            //    return new BouncyECSignedAgreement(getFactory(), pSpec);
             case MQV:       return new BouncyECMQVXAgreementEngine(this, pSpec);
             case UNIFIED:   return new BouncyECUnifiedXAgreementEngine(this, pSpec);
             case SM2:       return new BouncySM2XAgreementEngine(this, pSpec);
@@ -123,9 +122,8 @@ import net.sourceforge.joceanus.gordianknot.impl.core.xagree.GordianXCoreAgreeme
     private GordianXCoreAgreementEngine getBCDHEngine(final GordianAgreementSpec pSpec) throws GordianException {
         switch (pSpec.getAgreementType()) {
             case ANON:      return new BouncyDHAnonXAgreementEngine(this, pSpec);
+            case SIGNED:
             case BASIC:     return new BouncyDHBasicXAgreementEngine(this, pSpec);
-            //case SIGNED:
-            //    return new BouncyDHSignedAgreement(getFactory(), pSpec);
             case MQV:       return new BouncyDHMQVXAgreementEngine(this, pSpec);
             case UNIFIED:   return new BouncyDHUnifiedXAgreementEngine(this, pSpec);
             default:
@@ -143,9 +141,8 @@ import net.sourceforge.joceanus.gordianknot.impl.core.xagree.GordianXCoreAgreeme
     private GordianXCoreAgreementEngine getBCXDHEngine(final GordianAgreementSpec pSpec) throws GordianException {
         switch (pSpec.getAgreementType()) {
             case ANON:      return new BouncyXDHAnonXAgreementEngine(this, pSpec);
+            case SIGNED:
             case BASIC:     return new BouncyXDHBasicXAgreementEngine(this, pSpec);
-            //case SIGNED:
-            //    return new BouncyXDHSignedAgreement(getFactory(), pSpec);
             case UNIFIED:   return new BouncyXDHUnifiedXAgreementEngine(this, pSpec);
             default:        throw new GordianDataException(GordianCoreFactory.getInvalidText(pSpec));
         }
