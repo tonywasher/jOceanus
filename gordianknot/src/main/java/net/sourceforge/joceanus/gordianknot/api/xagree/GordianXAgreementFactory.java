@@ -38,9 +38,9 @@ public interface GordianXAgreementFactory {
      * @return the Agreement
      * @throws GordianException on error
      */
-    default GordianXAgreement createAgreement(GordianAgreementSpec pSpec,
-                                              GordianCertificate pServer,
-                                              Object pResultType) throws GordianException {
+    default GordianXAgreement createAgreement(final GordianAgreementSpec pSpec,
+                                              final GordianCertificate pServer,
+                                              final Object pResultType) throws GordianException {
         return createAgreement(pSpec, null, pServer);
     }
 
@@ -78,7 +78,7 @@ public interface GordianXAgreementFactory {
      * @param pSigner the certificate
      * @throws GordianException on error
      */
-    void setSigner(final GordianCertificate pSigner) throws GordianException;
+    void setSigner(GordianCertificate pSigner) throws GordianException;
 
     /**
      * Declare signer certificate an specification.
@@ -86,8 +86,8 @@ public interface GordianXAgreementFactory {
      * @param pSignSpec the signSpec
      * @throws GordianException on error
      */
-    void setSigner(final GordianCertificate pSigner,
-                   final GordianSignatureSpec pSignSpec) throws GordianException;
+    void setSigner(GordianCertificate pSigner,
+                   GordianSignatureSpec pSignSpec) throws GordianException;
 
     /**
      * Obtain predicate for keyAgreement.
@@ -101,8 +101,8 @@ public interface GordianXAgreementFactory {
      * @param pAgreementSpec the macSpec
      * @return true/false
      */
-    default boolean validAgreementSpecForKeyPair(GordianKeyPair pKeyPair,
-                                                 GordianAgreementSpec pAgreementSpec) {
+    default boolean validAgreementSpecForKeyPair(final GordianKeyPair pKeyPair,
+                                                 final GordianAgreementSpec pAgreementSpec) {
         return validAgreementSpecForKeyPairSpec(pKeyPair.getKeyPairSpec(), pAgreementSpec);
     }
 

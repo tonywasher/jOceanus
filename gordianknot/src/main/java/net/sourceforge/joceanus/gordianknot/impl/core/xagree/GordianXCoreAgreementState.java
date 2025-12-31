@@ -190,6 +190,7 @@ public class GordianXCoreAgreementState {
     /**
      * Set the signer certificate.
      * @param pCertificate the certificate
+     * @return the state
      */
     GordianXCoreAgreementState setSignerCertificate(final GordianCertificate pCertificate) {
         theSignerCertificate = pCertificate;

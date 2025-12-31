@@ -78,15 +78,15 @@ public interface GordianXCoreAgreementSupplier
     Long getNextId();
 
     /**
-     * Store agreement under id
+     * Store agreement under id.
      * @param pId the id
      * @param pAgreement the agreement
      */
     void storeAgreement(Long pId,
-                        final GordianXAgreement pAgreement);
+                        GordianXAgreement pAgreement);
 
     /**
-     * Remove agreement under id
+     * Remove agreement under id.
      * @param pId the id
      */
     void removeAgreement(Long pId);

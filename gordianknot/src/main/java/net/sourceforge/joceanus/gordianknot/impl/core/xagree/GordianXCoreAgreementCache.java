@@ -37,7 +37,7 @@ public class GordianXCoreAgreementCache {
     private final AtomicLong theNextId;
 
     /**
-     * The map of id to agreement
+     * The map of id to agreement.
      */
     private final Map<Long, GordianXCoreAgreement> theMap;
 
@@ -87,7 +87,7 @@ public class GordianXCoreAgreementCache {
     }
 
     /**
-     * Store agreement under id
+     * Store agreement under id.
      * @param pId the id
      * @param pAgreement the agreement
      */
@@ -97,7 +97,7 @@ public class GordianXCoreAgreementCache {
     }
 
     /**
-     * Release agreement
+     * Release agreement.
      * @param pId the id
      */
     void removeAgreement(final Long pId) {

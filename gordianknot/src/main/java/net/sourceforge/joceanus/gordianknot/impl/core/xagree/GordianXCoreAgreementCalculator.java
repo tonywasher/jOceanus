@@ -63,6 +63,7 @@ public class GordianXCoreAgreementCalculator {
     /**
      * constructor.
      * @param pFactory the factory
+     * @param pState the state
      */
     GordianXCoreAgreementCalculator(final GordianCoreFactory pFactory,
                                     final GordianXCoreAgreementState pState) {
@@ -122,7 +123,7 @@ public class GordianXCoreAgreementCalculator {
         byte[] mySeed = null;
         try {
             /* Calculate the seed */
-            mySeed = calculateDerivedSecret(pSecret, GordianDerivationId.FACTORY, GordianParameters.SEED_LEN.getByteLength());
+            mySeed = calculateDerivedSecret(pSecret, GordianXDerivationId.FACTORY, GordianParameters.SEED_LEN.getByteLength());
 
             /* Create a new Factory using the phrase */
             final GordianParameters myParams = new GordianParameters(pFactoryType, mySeed);
@@ -152,7 +153,7 @@ public class GordianXCoreAgreementCalculator {
         byte[] mySecret = null;
         try {
             /* Calculate the secret */
-            mySecret = calculateDerivedSecret(pSecret, GordianDerivationId.KEYSET, GordianParameters.SECRET_LEN.getByteLength());
+            mySecret = calculateDerivedSecret(pSecret, GordianXDerivationId.KEYSET, GordianParameters.SECRET_LEN.getByteLength());
 
             /* Derive the keySet */
             final GordianCoreKeySetFactory myKeySets = (GordianCoreKeySetFactory) myFactory.getKeySetFactory();
@@ -262,7 +263,7 @@ public class GordianXCoreAgreementCalculator {
         byte[] myKey = null;
         try {
             /* Calculate the secret */
-            myKey = calculateDerivedSecret(pSecret, GordianDerivationId.KEY, pKeyType.getKeyLength().getByteLength());
+            myKey = calculateDerivedSecret(pSecret, GordianXDerivationId.KEY, pKeyType.getKeyLength().getByteLength());
 
             /* Derive the key */
             final GordianCipherFactory myCiphers = pFactory.getCipherFactory();
@@ -287,7 +288,7 @@ public class GordianXCoreAgreementCalculator {
     private byte[] deriveIV(final byte[] pSecret,
                             final int pIVLen) throws GordianException {
         /* Calculate the secret */
-        return calculateDerivedSecret(pSecret, GordianDerivationId.IV, pIVLen);
+        return calculateDerivedSecret(pSecret, GordianXDerivationId.IV, pIVLen);
     }
 
     /**
@@ -300,7 +301,7 @@ public class GordianXCoreAgreementCalculator {
     private byte[] deriveBytes(final byte[] pSecret,
                                final int pLength) throws GordianException {
         /* Return the secret */
-        return calculateDerivedSecret(pSecret, GordianDerivationId.BYTES, pLength);
+        return calculateDerivedSecret(pSecret, GordianXDerivationId.BYTES, pLength);
     }
 
     /**
@@ -312,7 +313,7 @@ public class GordianXCoreAgreementCalculator {
      * @throws GordianException on error
      */
     byte[] calculateDerivedSecret(final byte[] pSecret,
-                                  final GordianDerivationId pId,
+                                  final GordianXDerivationId pId,
                                   final int pResultLen) throws GordianException {
         /* Build the 64-bit seed and create the seeded random */
         final long mySeed = GordianDataConverter.byteArrayToLong(pSecret);
@@ -342,7 +343,7 @@ public class GordianXCoreAgreementCalculator {
     /**
      * Derived secret id.
      */
-    public enum GordianDerivationId {
+    public enum GordianXDerivationId {
         /**
          * Factory.
          */
@@ -387,7 +388,7 @@ public class GordianXCoreAgreementCalculator {
          * Constructor.
          * @param pId the id
          */
-        GordianDerivationId(final String pId) {
+        GordianXDerivationId(final String pId) {
             theId = pId.getBytes(StandardCharsets.UTF_8);
         }
 

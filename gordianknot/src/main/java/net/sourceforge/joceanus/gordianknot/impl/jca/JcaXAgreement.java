@@ -492,7 +492,7 @@ public final class JcaXAgreement {
     }
 
     /**
-     * Base Agreement Engine class
+     * Base Agreement Engine class.
      */
     public abstract static class JcaXAgreementBase
             extends GordianXCoreAgreementEngine {
@@ -539,16 +539,17 @@ public final class JcaXAgreement {
 
         /**
          * Initialise agreement.
+         * @param pAgreement the agreement
          * @param pPrivate the private key
          */
-        void initAgreement(final KeyAgreement theAgreement,
+        void initAgreement(final KeyAgreement pAgreement,
                            final JcaPrivateKey pPrivate) throws GordianException {
             /* Protect against exceptions */
             try {
                 if (getSpec().getKDFType() == GordianKDFType.NONE) {
-                    theAgreement.init(pPrivate.getPrivateKey(), getRandom());
+                    pAgreement.init(pPrivate.getPrivateKey(), getRandom());
                 } else {
-                    theAgreement.init(pPrivate.getPrivateKey(), new UserKeyingMaterialSpec(new byte[0]), getRandom());
+                    pAgreement.init(pPrivate.getPrivateKey(), new UserKeyingMaterialSpec(new byte[0]), getRandom());
                 }
             } catch (InvalidKeyException
                      | InvalidAlgorithmParameterException e) {
@@ -558,8 +559,9 @@ public final class JcaXAgreement {
 
         /**
          * adjust agreement if necessary.
+         * @param pCurrent the current agreement
          * @param pKeyPair the keyPair
-         * @param pKeyPair the keyPair
+         * @return the adjusted agreement
          * @throws GordianException on error
          */
         KeyAgreement adjustAgreement(final KeyAgreement pCurrent,

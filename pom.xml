@@ -79,7 +79,7 @@
     <JSONVersion>20250517</JSONVersion>
     <ApacheMavenVersion>3.9.11</ApacheMavenVersion>
     <MySQLVersion>9.5.0</MySQLVersion>
-    <MariaDBVersion>3.5.6</MariaDBVersion>
+    <MariaDBVersion>3.5.7</MariaDBVersion>
     <PostGreSQLVersion>42.7.8</PostGreSQLVersion>
     <MSSQLVersion>13.2.1.jre11</MSSQLVersion>
     <H2Version>2.4.240</H2Version>
@@ -92,8 +92,8 @@
     <JavaVersion>17</JavaVersion>
     <JavaFXVersion>17.0.17</JavaFXVersion>
     <JavaLanguageVersion>17</JavaLanguageVersion>
-    <CheckStyleVersion>12.2.0</CheckStyleVersion>
-    <PMDVersion>7.19.0</PMDVersion>
+    <CheckStyleVersion>12.3.0</CheckStyleVersion>
+    <PMDVersion>7.20.0</PMDVersion>
     <CleanPluginVersion>3.5.0</CleanPluginVersion>
     <ResourcesPluginVersion>3.4.0</ResourcesPluginVersion>
     <InstallPluginVersion>3.1.4</InstallPluginVersion>
@@ -118,7 +118,7 @@
     <JacocoPluginVersion>0.8.14</JacocoPluginVersion>
     <JetBrainsAnnotationsVersion>26.0.2</JetBrainsAnnotationsVersion>
     <VersionsPluginVersion>2.20.1</VersionsPluginVersion>
-    <ExecPluginVersion>3.6.2</ExecPluginVersion>
+    <ExecPluginVersion>3.6.3</ExecPluginVersion>
     <sonar.organization>tonywasher</sonar.organization>
     <sonar.projectKey>jOceanus</sonar.projectKey>
     <sonar.host.url>https://sonarcloud.io</sonar.host.url>

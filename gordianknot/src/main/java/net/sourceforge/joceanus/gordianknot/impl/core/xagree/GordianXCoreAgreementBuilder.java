@@ -43,7 +43,7 @@ import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianLogicException;
 import net.sourceforge.joceanus.gordianknot.impl.core.keyset.GordianCoreKeySetFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.sign.GordianCoreSignatureFactory;
-import net.sourceforge.joceanus.gordianknot.impl.core.xagree.GordianXCoreAgreementCalculator.GordianDerivationId;
+import net.sourceforge.joceanus.gordianknot.impl.core.xagree.GordianXCoreAgreementCalculator.GordianXDerivationId;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.asn1.x509.Certificate;
 import org.bouncycastle.util.Arrays;
@@ -328,7 +328,8 @@ public class GordianXCoreAgreementBuilder {
     }
 
     /**
-     * Create a new client ephemeral.
+     * Set the client ephemeral.
+     * @param pEphemeral the keyPair
      * @throws GordianException on error
      */
     public void setClientEphemeral(final GordianKeyPair pEphemeral) throws GordianException {
@@ -610,11 +611,11 @@ public class GordianXCoreAgreementBuilder {
         final GordianXCoreAgreementParticipant myServer = theState.getServer();
 
         /* Derive the key */
-        final byte[] myKey = theResultCalc.calculateDerivedSecret(pSecret, GordianDerivationId.TAGS, GordianLength.LEN_512.getByteLength());
+        final byte[] myKey = theResultCalc.calculateDerivedSecret(pSecret, GordianXDerivationId.TAGS, GordianLength.LEN_512.getByteLength());
 
         /* Create the hMac and initialize with the key */
         final GordianMacFactory myMacs = theFactory.getMacFactory();
-        final GordianMacSpec mySpec = GordianMacSpecBuilder.hMac(GordianDerivationId.TAGS.getDigestType());
+        final GordianMacSpec mySpec = GordianMacSpecBuilder.hMac(GordianXDerivationId.TAGS.getDigestType());
         final GordianMac myMac = myMacs.createMac(mySpec);
         myMac.initKeyBytes(myKey);
 

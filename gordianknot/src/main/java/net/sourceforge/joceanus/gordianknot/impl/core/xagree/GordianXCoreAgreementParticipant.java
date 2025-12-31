@@ -71,6 +71,7 @@ public class GordianXCoreAgreementParticipant {
     /**
      * Set the certificate.
      * @param pCertificate the certificate
+     * @return the state
      */
     GordianXCoreAgreementParticipant setCertificate(final GordianCertificate pCertificate) {
         theCertificate = pCertificate;
@@ -89,6 +90,7 @@ public class GordianXCoreAgreementParticipant {
     /**
      * Set the keyPair.
      * @param pKeyPair the keyPair
+     * @return the state
      */
     GordianXCoreAgreementParticipant setKeyPair(final GordianKeyPair pKeyPair) {
         theKeyPair = pKeyPair;

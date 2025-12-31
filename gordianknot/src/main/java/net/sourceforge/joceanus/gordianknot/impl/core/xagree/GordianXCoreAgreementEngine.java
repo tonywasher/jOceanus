@@ -179,7 +179,7 @@ public abstract class GordianXCoreAgreementEngine {
      * @throws GordianException on error
      */
     public void setClientConfirm(final byte[] pConfirm) throws GordianException {
-        setClientConfirm(pConfirm);
+        theBuilder.setClientConfirm(pConfirm);
     }
 
     /**
@@ -245,6 +245,14 @@ public abstract class GordianXCoreAgreementEngine {
      * @throws GordianException on error
      */
     public void processServerHello() throws GordianException {
+        /* NoOp */
+    }
+
+    /**
+     * Process the clientConfirm.
+     * @throws GordianException on error
+     */
+    public void processClientConfirm() throws GordianException {
         /* NoOp */
     }
 

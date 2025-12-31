@@ -26,7 +26,7 @@ import net.sourceforge.joceanus.gordianknot.impl.core.xagree.GordianXCoreAgreeme
 import net.sourceforge.joceanus.gordianknot.impl.core.xagree.GordianXCoreAgreementFactory;
 
 /**
- * Base Agreement Engine class
+ * Base Agreement Engine class.
  */
 public abstract class BouncyXAgreementBase
         extends GordianXCoreAgreementEngine {

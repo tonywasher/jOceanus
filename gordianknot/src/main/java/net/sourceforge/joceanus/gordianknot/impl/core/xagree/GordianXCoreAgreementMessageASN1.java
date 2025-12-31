@@ -134,7 +134,7 @@ public final class GordianXCoreAgreementMessageASN1
     /**
      * The MessageType.
      */
-    private final GordianMessageType theMessageType;
+    private final GordianXMessageType theMessageType;
 
     /**
      * The ClientId.
@@ -205,7 +205,7 @@ public final class GordianXCoreAgreementMessageASN1
      * Constructor.
      * @param pType the messageType
      */
-    private GordianXCoreAgreementMessageASN1(final GordianMessageType pType) {
+    private GordianXCoreAgreementMessageASN1(final GordianXMessageType pType) {
         theMessageType = pType;
     }
 
@@ -224,7 +224,7 @@ public final class GordianXCoreAgreementMessageASN1
             /* Access id element */
             final ASN1Sequence myId = ASN1Sequence.getInstance(en.nextElement());
             final Enumeration<?> enIds = myId.getObjects();
-            theMessageType = GordianMessageType.determineType(ASN1Integer.getInstance(enIds.nextElement()).intValueExact());
+            theMessageType = GordianXMessageType.determineType(ASN1Integer.getInstance(enIds.nextElement()).intValueExact());
 
             /* Loop through the optional id elements */
             while (enIds.hasMoreElements()) {
@@ -306,7 +306,7 @@ public final class GordianXCoreAgreementMessageASN1
      * @return the clientHello
      */
     public static GordianXCoreAgreementMessageASN1 newClientHello()  {
-        return new GordianXCoreAgreementMessageASN1(GordianMessageType.CLIENTHELLO);
+        return new GordianXCoreAgreementMessageASN1(GordianXMessageType.CLIENTHELLO);
     }
 
     /**
@@ -314,7 +314,7 @@ public final class GordianXCoreAgreementMessageASN1
      * @return the serverHello
      */
     public static GordianXCoreAgreementMessageASN1 newServerHello()  {
-        return new GordianXCoreAgreementMessageASN1(GordianMessageType.SERVERHELLO);
+        return new GordianXCoreAgreementMessageASN1(GordianXMessageType.SERVERHELLO);
     }
 
     /**
@@ -322,7 +322,7 @@ public final class GordianXCoreAgreementMessageASN1
      * @return the clientConfirm
      */
     public static GordianXCoreAgreementMessageASN1 newClientConfirm()  {
-        return new GordianXCoreAgreementMessageASN1(GordianMessageType.CLIENTCONFIRM);
+        return new GordianXCoreAgreementMessageASN1(GordianXMessageType.CLIENTCONFIRM);
     }
 
     /**
@@ -344,7 +344,7 @@ public final class GordianXCoreAgreementMessageASN1
      * Get the messageType.
      * @return the messageType
      */
-    GordianMessageType getMessageType() {
+    GordianXMessageType getMessageType() {
         return theMessageType;
     }
 
@@ -353,7 +353,7 @@ public final class GordianXCoreAgreementMessageASN1
      * @param pMessageType the message type
      * @throws GordianException on error
      */
-    public void checkMessageType(final GordianMessageType pMessageType) throws GordianException {
+    public void checkMessageType(final GordianXMessageType pMessageType) throws GordianException {
         if (!theMessageType.equals(pMessageType)) {
             throw new GordianDataException("Unexpected Message type: " + pMessageType);
         }
@@ -685,7 +685,7 @@ public final class GordianXCoreAgreementMessageASN1
     /**
      * The messageType.
      */
-    public enum GordianMessageType {
+    public enum GordianXMessageType {
         /**
          * ClientHello.
          */
@@ -710,7 +710,7 @@ public final class GordianXCoreAgreementMessageASN1
          * Constructor.
          * @param pId the id
          */
-        GordianMessageType(final int pId) {
+        GordianXMessageType(final int pId) {
             theId = pId;
         }
 
@@ -728,8 +728,8 @@ public final class GordianXCoreAgreementMessageASN1
          * @return the messageType
          * @throws GordianException on error
          */
-        private static GordianMessageType determineType(final int pId) throws GordianException {
-            for (GordianMessageType myType : values()) {
+        private static GordianXMessageType determineType(final int pId) throws GordianException {
+            for (GordianXMessageType myType : values()) {
                 if (pId == myType.getId()) {
                     return myType;
                 }

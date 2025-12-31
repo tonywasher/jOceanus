@@ -126,7 +126,7 @@ public class GordianXCoreAgreement
     }
 
     /**
-     * Set the client certificate
+     * Set the client certificate.
      * @param pClient the client certificate
      * @throws GordianException on error
      */
@@ -159,7 +159,7 @@ public class GordianXCoreAgreement
     }
 
     /**
-     * Set the server certificate
+     * Set the server certificate.
      * @param pServer the server certificate
      * @throws GordianException on error
      */
@@ -191,7 +191,7 @@ public class GordianXCoreAgreement
     }
 
     /**
-     * Set the signer details
+     * Set the signer details.
      * @param pSignSpec the signature spec
      * @param pSigner the signer certificate
      * @throws GordianException on error
@@ -203,7 +203,7 @@ public class GordianXCoreAgreement
     }
 
     @Override
-    public GordianXAgreement forServer(GordianCertificate pServer) throws GordianException {
+    public GordianXAgreement forServer(final GordianCertificate pServer) throws GordianException {
         /* Must be looking for serverPrivate */
         checkStatus(GordianXAgreementStatus.AWAITING_SERVERPRIVATE);
 
@@ -226,7 +226,7 @@ public class GordianXCoreAgreement
     }
 
     @Override
-    public void setError(String pError) throws GordianException {
+    public void setError(final String pError) throws GordianException {
         /* Only allowed while awaiting ServerPrivate */
         checkStatus(GordianXAgreementStatus.AWAITING_SERVERPRIVATE);
         theBuilder.setError(pError);
@@ -239,7 +239,7 @@ public class GordianXCoreAgreement
     }
 
     /**
-     * Set the next message (or null)
+     * Set the next message (or null).
      * @param pMessage the next message
      * @throws GordianException on error
      */
@@ -374,6 +374,9 @@ public class GordianXCoreAgreement
 
         /* Parse the clientConfirm */
         theBuilder.parseClientConfirm(pClientConfirm);
+
+        /* If we have no error */
+        theEngine.processClientConfirm();
 
         /* Update status */
         setNextMessage(null);
