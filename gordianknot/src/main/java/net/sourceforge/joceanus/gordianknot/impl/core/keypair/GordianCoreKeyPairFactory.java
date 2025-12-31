@@ -50,6 +50,7 @@ import net.sourceforge.joceanus.gordianknot.api.keypair.GordianSnovaSpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianXMSSKeySpec;
 import net.sourceforge.joceanus.gordianknot.api.keystore.GordianKeyStoreFactory;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignatureFactory;
+import net.sourceforge.joceanus.gordianknot.api.xagree.GordianXAgreementFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 
@@ -91,6 +92,11 @@ public abstract class GordianCoreKeyPairFactory
      * The agreement factory.
      */
     private GordianAgreementFactory theAgreementFactory;
+
+    /**
+     * The Xagreement factory.
+     */
+    private GordianXAgreementFactory theXAgreementFactory;
 
     /**
      * The encryptor factory.
@@ -140,6 +146,19 @@ public abstract class GordianCoreKeyPairFactory
      */
     protected void setAgreementFactory(final GordianAgreementFactory pFactory) {
         theAgreementFactory = pFactory;
+    }
+
+    @Override
+    public GordianXAgreementFactory getXAgreementFactory() {
+        return theXAgreementFactory;
+    }
+
+    /**
+     * Set the agreement factory.
+     * @param pFactory the factory
+     */
+    protected void setXAgreementFactory(final GordianXAgreementFactory pFactory) {
+        theXAgreementFactory = pFactory;
     }
 
     @Override

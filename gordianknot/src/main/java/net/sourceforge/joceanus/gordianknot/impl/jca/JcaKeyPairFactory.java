@@ -82,6 +82,7 @@ public class JcaKeyPairFactory
         /* Create factories */
         setSignatureFactory(new JcaSignatureFactory(pFactory));
         setAgreementFactory(new JcaAgreementFactory(pFactory));
+        setXAgreementFactory(new JcaXAgreementFactory(pFactory));
         setEncryptorFactory(new JcaEncryptorFactory(pFactory));
         setKeyStoreFactory(new GordianCoreKeyStoreFactory(this));
     }

@@ -24,6 +24,7 @@ import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairType;
 import net.sourceforge.joceanus.gordianknot.api.keystore.GordianKeyStoreFactory;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignatureFactory;
+import net.sourceforge.joceanus.gordianknot.api.xagree.GordianXAgreementFactory;
 
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
@@ -75,6 +76,12 @@ public interface GordianKeyPairFactory {
      * @return the agreement factory
      */
     GordianAgreementFactory getAgreementFactory();
+
+    /**
+     * Obtain the XagreementFactory.
+     * @return the agreement factory
+     */
+    GordianXAgreementFactory getXAgreementFactory();
 
     /**
      * Obtain the encryptorFactory.
