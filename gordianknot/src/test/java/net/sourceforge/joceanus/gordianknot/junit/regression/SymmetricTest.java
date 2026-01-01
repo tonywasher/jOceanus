@@ -128,15 +128,23 @@ class SymmetricTest {
     private static byte[] theAADData;
 
     /**
-     * Create the symmetric test suite.
+     * Create the bouncyCastle symmetric test suite.
      * @return the test stream
      */
     @TestFactory
-    Stream<DynamicNode> symmetricTests() {
+    Stream<DynamicNode> bouncyCastle() {
         /* Create tests */
-        final Stream<DynamicNode> myBC = symmetricTests(fcBCFACTORY, fcJCAFACTORY);
-        final Stream<DynamicNode> myJCA = symmetricTests(fcJCAFACTORY, fcBCFACTORY);
-        return Stream.concat(myBC, myJCA);
+        return symmetricTests(fcBCFACTORY, fcJCAFACTORY);
+    }
+
+    /**
+     * Create the jca symmetric test suite.
+     * @return the test stream
+     */
+    @TestFactory
+    Stream<DynamicNode> jca() {
+        /* Create tests */
+        return symmetricTests(fcJCAFACTORY, fcBCFACTORY);
     }
 
     /**
@@ -173,8 +181,6 @@ class SymmetricTest {
         myStream = Stream.concat(myStream, mySubStream);
 
         /* Return the stream */
-        final String myName = pFactory.getFactoryType().toString();
-        myStream = Stream.of(DynamicContainer.dynamicContainer(myName, myStream));
         return myStream;
     }
 

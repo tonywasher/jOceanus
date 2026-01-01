@@ -81,15 +81,21 @@ class AsymmetricTest {
     }
 
     /**
-     * Create the asymmetric test suite.
+     * Create the bouncyCastle asymmetric test suite.
      * @return the test stream
      */
     @TestFactory
-    Stream<DynamicNode> asymmetricTests() {
-        /* Create tests */
-        final Stream<DynamicNode> myBC = asymmetricTests(fcBCFACTORY, fcJCAFACTORY);
-        final Stream<DynamicNode> myJCA = asymmetricTests(fcJCAFACTORY, fcBCFACTORY);
-        return Stream.concat(myBC, myJCA);
+    Stream<DynamicNode> bouncycastle() {
+        return asymmetricTests(fcBCFACTORY, fcJCAFACTORY);
+    }
+
+    /**
+     * Create the jca asymmetric test suite.
+     * @return the test stream
+     */
+    @TestFactory
+    Stream<DynamicNode> jca() {
+        return asymmetricTests(fcJCAFACTORY, fcBCFACTORY);
     }
 
     /**
@@ -142,7 +148,6 @@ class AsymmetricTest {
         }
 
         /* Return the stream */
-        myStream = Stream.of(DynamicContainer.dynamicContainer(pFactory.getFactoryType().toString(), myStream));
         return myStream;
     }
 
