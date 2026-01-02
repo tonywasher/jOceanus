@@ -21,13 +21,9 @@ import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementType;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.gordianknot.api.cert.GordianCertificate;
-import net.sourceforge.joceanus.gordianknot.api.cipher.GordianStreamCipherSpec;
-import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymCipherSpec;
-import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactoryType;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianKeyPairFactory;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairGenerator;
-import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySetSpec;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMac;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacFactory;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacSpec;
@@ -38,10 +34,7 @@ import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignatureSpec;
 import net.sourceforge.joceanus.gordianknot.api.xagree.GordianXAgreementStatus;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.cert.GordianCoreCertificate;
-import net.sourceforge.joceanus.gordianknot.impl.core.cipher.GordianCoreCipherFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
-import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianLogicException;
-import net.sourceforge.joceanus.gordianknot.impl.core.keyset.GordianCoreKeySetFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.sign.GordianCoreSignatureFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.xagree.GordianXCoreAgreementCalculator.GordianXDerivationId;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
@@ -113,6 +106,14 @@ public class GordianXCoreAgreementBuilder {
     }
 
     /**
+     * Obtain the supplier.
+     * @return the supplier
+     */
+    public GordianXCoreAgreementSupplier getSupplier() {
+        return theSupplier;
+    }
+
+    /**
      * Obtain the state.
      * @return the state
      */
@@ -142,56 +143,7 @@ public class GordianXCoreAgreementBuilder {
      * @throws GordianException on error
      */
     void setResultType(final Object pResultType) throws GordianException {
-        checkResultType(pResultType);
         theState.setResultType(pResultType);
-    }
-
-    /**
-     * Check the resultType is valid.
-     * @param pResultType the resultType
-     * @throws GordianException on error
-     */
-    private void checkResultType(final Object pResultType) throws GordianException {
-        /* No need to check FactoryType or null */
-        if (pResultType instanceof GordianFactoryType
-                || pResultType == null) {
-            return;
-        }
-
-        /* Validate a keySetSpec */
-        if (pResultType instanceof GordianKeySetSpec mySpec) {
-            /* Check Spec */
-            final GordianCoreKeySetFactory myKeySetFactory = (GordianCoreKeySetFactory) theFactory.getKeySetFactory();
-            myKeySetFactory.checkKeySetSpec(mySpec);
-            return;
-        }
-
-        /* Validate a symCipherSpec */
-        if (pResultType instanceof GordianSymCipherSpec mySpec) {
-            /* Check Spec */
-            final GordianCoreCipherFactory myCipherFactory = (GordianCoreCipherFactory) theFactory.getCipherFactory();
-            myCipherFactory.checkSymCipherSpec(mySpec);
-            return;
-        }
-
-        /* Validate a streamCipherSpec */
-        if (pResultType instanceof GordianStreamCipherSpec mySpec) {
-            /* Check Spec */
-            final GordianCoreCipherFactory myCipherFactory = (GordianCoreCipherFactory) theFactory.getCipherFactory();
-            myCipherFactory.checkStreamCipherSpec(mySpec);
-            return;
-        }
-
-        /* Validate a byte array */
-        if (pResultType instanceof Integer myInt) {
-            if (myInt <= 0) {
-                throw new GordianLogicException("Invalid length for byteArray");
-            }
-            return;
-        }
-
-        /* Invalid resultType */
-        throw new GordianLogicException("Invalid resultType");
     }
 
     /**

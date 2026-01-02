@@ -30,6 +30,7 @@ import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairType;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignatureFactory;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignatureSpec;
 import net.sourceforge.joceanus.gordianknot.api.xagree.GordianXAgreement;
+import net.sourceforge.joceanus.gordianknot.api.xagree.GordianXAgreementParams;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianLogicException;
@@ -86,21 +87,27 @@ public abstract class GordianXCoreAgreementFactory
     }
 
     @Override
-    public GordianXAgreement createAgreement(final GordianAgreementSpec pSpec,
-                                             final GordianCertificate pClient,
-                                             final GordianCertificate pServer,
-                                             final Object pResultType) throws GordianException {
+    public GordianXAgreementParams newAgreementParams(final GordianAgreementSpec pSpec,
+                                                      final Object pResultType) throws GordianException {
+        return new GordianXCoreAgreementParams(this, pSpec, pResultType);
+    }
+
+    @Override
+    public GordianXAgreement createAgreement(final GordianXAgreementParams pParams) throws GordianException {
         /* Check validity of Agreement */
-        checkAgreementSpec(pSpec);
+        final GordianAgreementSpec mySpec = pParams.getAgreementSpec();
+        checkAgreementSpec(mySpec);
 
         /* Create the agreement */
-        final GordianXCoreAgreementEngine myEngine = createEngine(pSpec);
+        final GordianXCoreAgreementEngine myEngine = createEngine(mySpec);
         final GordianXCoreAgreement myAgreement = new GordianXCoreAgreement(myEngine);
 
         /* Set the details */
-        myAgreement.setClientCertificate(pClient);
-        myAgreement.setServerCertificate(pServer);
-        myAgreement.setResultType(pResultType);
+        myAgreement.setClientCertificate(pParams.getClientCertificate());
+        myAgreement.setServerCertificate(pParams.getServerCertificate());
+        myAgreement.setResultType(pParams.getResultType());
+
+        /* Store the parameters */
 
         /* Build the clientHello */
         myAgreement.buildClientHello();

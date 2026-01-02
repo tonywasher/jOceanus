@@ -16,19 +16,17 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.api.xagree;
 
-import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementSpec;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
-import net.sourceforge.joceanus.gordianknot.api.cert.GordianCertificate;
 
 /**
  * Key Agreement Specification.
  */
 public interface GordianXAgreement {
     /**
-     * Obtain the agreementSpec.
-     * @return the spec
+     * Obtain the agreementParameters.
+     * @return the parameters
      */
-    GordianAgreementSpec getAgreementSpec();
+    GordianXAgreementParams getAgreementParams();
 
     /**
      * Obtain agreement status.
@@ -52,30 +50,12 @@ public interface GordianXAgreement {
     Object getResult() throws GordianException;
 
     /**
-     * Obtain the clientCertificate.
-     * @return the certificate
-     */
-    GordianCertificate getClientCertificate();
-
-    /**
-     * Obtain the serverCertificate.
-     * @return the certificate
-     */
-    GordianCertificate getServerCertificate();
-
-    /**
-     * Obtain the signerCertificate.
-     * @return the certificate
-     */
-    GordianCertificate getSignerCertificate();
-
-    /**
-     * Set server Certificate to declare privateKey.
-     * @param pServer the server certificate
+     * Update parameters.
+     * @param pParams the updated parameters
      * @return the agreement
      * @throws GordianException on error
      */
-    GordianXAgreement forServer(GordianCertificate pServer) throws GordianException;
+    GordianXAgreement updateParams(GordianXAgreementParams pParams) throws GordianException;
 
     /**
      * Reject the agreement with error message.

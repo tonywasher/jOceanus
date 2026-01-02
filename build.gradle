@@ -31,14 +31,14 @@ allprojects {
         /* Dependency versions */
         bouncyCastleVersion = "1.83"
         jUnitVersion = "6.0.1"
-        jsonVersion = "20250517"
+        jsonVersion = "20251224"
         mySQLVersion = "9.5.0"
         MariaDBVersion = "3.5.7"
         postGreSQLVersion = "42.7.8"
         mssqlVersion = "13.2.1.jre11"
         h2Version = "2.4.240"
         apachePOIVersion = "5.5.1"
-        jsoupVersion = "1.21.2"
+        jsoupVersion = "1.22.1"
         jFreeChartVersion = "1.5.6"
         javaParserVersion = "3.27.1"
 

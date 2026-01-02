@@ -888,7 +888,7 @@ public final class BouncyEllipticKeyPair {
          * @param pSpec the agreementSpec
          * @throws GordianException on error
          */
-        BouncyECIESXAgreementEngine(final BouncyXAgreementFactory pFactory,
+        BouncyECIESXAgreementEngine(final GordianXCoreAgreementFactory pFactory,
                                     final GordianAgreementSpec pSpec) throws GordianException {
             /* Initialize underlying class */
             super(pFactory, pSpec);
@@ -1059,7 +1059,7 @@ public final class BouncyEllipticKeyPair {
          * @throws GordianException on error
          */
         BouncyECUnifiedXAgreementEngine(final GordianXCoreAgreementFactory pFactory,
-                                         final GordianAgreementSpec pSpec) throws GordianException {
+                                        final GordianAgreementSpec pSpec) throws GordianException {
             /* Initialize underlying class */
             super(pFactory, pSpec);
 

@@ -31,24 +31,8 @@ import java.util.function.Predicate;
  */
 public interface GordianXAgreementFactory {
     /**
-     * Create Anonymous Agreement.
+     * Create new AgreementParams.
      * @param pSpec the agreementSpec
-     * @param pServer the server Certificate
-     * @param pResultType the result type
-     * @return the Agreement
-     * @throws GordianException on error
-     */
-    default GordianXAgreement createAgreement(final GordianAgreementSpec pSpec,
-                                              final GordianCertificate pServer,
-                                              final Object pResultType) throws GordianException {
-        return createAgreement(pSpec, null, pServer);
-    }
-
-    /**
-     * Create Handshake Agreement.
-     * @param pSpec the agreementSpec
-     * @param pClient the client Certificate
-     * @param pServer the server Certificate
      * @param pResultType the result type
      * <table>
      *     <tr><td>GordianFactoryType</td><td>To agree a Factory</td></tr>
@@ -57,13 +41,19 @@ public interface GordianXAgreementFactory {
      *     <tr><td>GordianKeySetSpec</td><td>To agree a KeySet</td></tr>
      *     <tr><td>Integer</td><td>To agree a defined length byte array</td></tr>
      * </table>
+     * @return the Params
+     * @throws GordianException on error
+     */
+    GordianXAgreementParams newAgreementParams(GordianAgreementSpec pSpec,
+                                               Object pResultType) throws GordianException;
+
+    /**
+     * CreateAgreement.
+     * @param pParams the agreementParams
      * @return the Agreement
      * @throws GordianException on error
      */
-    GordianXAgreement createAgreement(GordianAgreementSpec pSpec,
-                                      GordianCertificate pClient,
-                                      GordianCertificate pServer,
-                                      Object pResultType) throws GordianException;
+    GordianXAgreement createAgreement(GordianXAgreementParams pParams) throws GordianException;
 
     /**
      * Create/Locate Agreement for incoming message.
@@ -81,7 +71,7 @@ public interface GordianXAgreementFactory {
     void setSigner(GordianCertificate pSigner) throws GordianException;
 
     /**
-     * Declare signer certificate an specification.
+     * Declare signer certificate and specification.
      * @param pSigner the certificate
      * @param pSignSpec the signSpec
      * @throws GordianException on error

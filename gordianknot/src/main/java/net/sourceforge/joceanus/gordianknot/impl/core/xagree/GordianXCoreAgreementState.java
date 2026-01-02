@@ -71,6 +71,11 @@ public class GordianXCoreAgreementState {
     private GordianSignatureSpec theSignSpec;
 
     /**
+     * The additional data.
+     */
+    private byte[] theAdditional;
+
+    /**
      * Constructor.
      * @param pSpec the agreementSpec
      */
@@ -212,6 +217,24 @@ public class GordianXCoreAgreementState {
      */
     GordianXCoreAgreementState setSignSpec(final GordianSignatureSpec pSignSpec) {
         theSignSpec = pSignSpec;
+        return this;
+    }
+
+    /**
+     * Obtain the additional Data.
+     * @return the data
+     */
+    public byte[] getAdditionalData() {
+        return theAdditional;
+    }
+
+    /**
+     * Set the encapsulated.
+     * @param pAdditional the encapsulated
+     * @return the state
+     */
+    public GordianXCoreAgreementState setAdditionalData(final byte[] pAdditional) {
+        theAdditional = pAdditional;
         return this;
     }
 }

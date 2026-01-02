@@ -431,6 +431,11 @@ public class ThemisXAnalysisMaven {
         private static final String EL_CLASSIFIER = "classifier";
 
         /**
+         * Optional element.
+         */
+        private static final String EL_OPTIONAL = "optional";
+
+        /**
          * Parent groupId indication.
          */
         private static final String PARENT_GROUP = "${project.groupId}";
@@ -466,6 +471,11 @@ public class ThemisXAnalysisMaven {
         private final String theClassifier;
 
         /**
+         * Optional.
+         */
+        private final String isOptional;
+
+        /**
          * Constructor.
          * @param pElement the element containing the values
          */
@@ -476,6 +486,7 @@ public class ThemisXAnalysisMaven {
             theVersion = getElementValue(pElement, EL_VERSION);
             theScope = getElementValue(pElement, EL_SCOPE);
             theClassifier = getElementValue(pElement, EL_CLASSIFIER);
+            isOptional = getElementValue(pElement, EL_OPTIONAL);
         }
 
         /**
@@ -546,6 +557,14 @@ public class ThemisXAnalysisMaven {
         }
 
         /**
+         * Obtain the optional.
+         * @return the optional
+         */
+        public String isOptional() {
+            return isOptional;
+        }
+
+        /**
          * is the dependency skippable?
          * @return true/false
          */
@@ -553,7 +572,8 @@ public class ThemisXAnalysisMaven {
             return "test".equals(theScope)
                     || "runtime".equals(theScope)
                     || "provided".equals(theScope)
-                    || theVersion == null;
+                    || theVersion == null
+                    || isOptional != null;
         }
 
         @Override

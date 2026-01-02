@@ -17,17 +17,17 @@
 package net.sourceforge.joceanus.gordianknot.impl.core.xagree;
 
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementSpec;
+import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementType;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.cert.GordianCertificate;
-import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairType;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignatureSpec;
 import net.sourceforge.joceanus.gordianknot.api.xagree.GordianXAgreement;
+import net.sourceforge.joceanus.gordianknot.api.xagree.GordianXAgreementParams;
 import net.sourceforge.joceanus.gordianknot.api.xagree.GordianXAgreementStatus;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianLogicException;
 
-import java.util.Arrays;
 import java.util.Objects;
 
 /**
@@ -61,6 +61,11 @@ public class GordianXCoreAgreement
     private final GordianAgreementSpec theSpec;
 
     /**
+     * The Parameters.
+     */
+    private GordianXCoreAgreementParams theParams;
+
+    /**
      * The Next Message.
      */
     private byte[] theNextMsg;
@@ -80,8 +85,16 @@ public class GordianXCoreAgreement
     }
 
     @Override
-    public GordianAgreementSpec getAgreementSpec() {
-        return theState.getSpec();
+    public GordianXAgreementParams getAgreementParams() {
+        return new GordianXCoreAgreementParams(theParams);
+    }
+
+    /**
+     * Obtain the spec.
+     * @return the spec
+     */
+    GordianAgreementSpec getAgreementSpec() {
+        return theSpec;
     }
 
     /**
@@ -132,30 +145,16 @@ public class GordianXCoreAgreement
      */
     void setClientCertificate(final GordianCertificate pClient) throws GordianException {
         /* Handle null client certificate */
-        final GordianAgreementSpec mySpec = getAgreementSpec();
         if (pClient == null) {
-            if (!mySpec.getAgreementType().isAnonymous()) {
+            final GordianAgreementType myType = theSpec.getAgreementType();
+            if (!myType.isAnonymous() && !myType.isSigned()) {
                 throw new GordianDataException("Client Certificate must be provided");
             }
             return;
         }
 
-        /* Check that the keySpec matches the agreement and that we have a private key */
-        final GordianKeyPair myKeyPair = pClient.getKeyPair();
-        if (!Objects.equals(mySpec.getKeyPairSpec(), myKeyPair.getKeyPairSpec())) {
-            throw new GordianDataException("Client Certificate not valid for agreement");
-        }
-        if (myKeyPair.isPublicOnly()) {
-            throw new GordianDataException("Client Certificate must supply privateKey");
-        }
-
         /* Store the certificate */
         theBuilder.setClientCertificate(pClient);
-    }
-
-    @Override
-    public GordianCertificate getClientCertificate() {
-        return theState.getClient().getCertificate();
     }
 
     /**
@@ -166,28 +165,14 @@ public class GordianXCoreAgreement
     void setServerCertificate(final GordianCertificate pServer) throws GordianException {
         /* Check that we have a certificate */
         if (pServer == null) {
-            throw new GordianDataException("Server Certificate must be provided");
-        }
-
-        /* Check that the keySpec matches the agreement */
-        final GordianAgreementSpec mySpec = getAgreementSpec();
-        final GordianKeyPair myKeyPair = pServer.getKeyPair();
-        if (!Objects.equals(mySpec.getKeyPairSpec(), myKeyPair.getKeyPairSpec())) {
-            throw new GordianDataException("Server Certificate not valid for agreement");
+            final GordianAgreementType myType = theSpec.getAgreementType();
+            if (!myType.isSigned()) {
+                throw new GordianDataException("Server Certificate must be provided");
+            }
         }
 
         /* Store the certificate */
         theBuilder.setServerCertificate(pServer);
-    }
-
-    @Override
-    public GordianCertificate getServerCertificate() {
-        return theState.getServer().getCertificate();
-    }
-
-    @Override
-    public GordianCertificate getSignerCertificate() {
-        return theState.getSignerCertificate();
     }
 
     /**
@@ -202,23 +187,61 @@ public class GordianXCoreAgreement
                 .setSignerCertificate(pSigner);
     }
 
+    /**
+     * Set parameters.
+     * @param pParams the parameters
+     * @throws GordianException on error
+     */
+    void setParameters(final GordianXCoreAgreementParams pParams) throws GordianException {
+        /* Set the details */
+        setClientCertificate(pParams.getClientCertificate());
+        setServerCertificate(pParams.getServerCertificate());
+        setResultType(pParams.getResultType());
+
+        /* Store additional data */
+        theState.setAdditionalData(pParams.getAdditionalData());
+
+        /* Update the parameters */
+        theParams = new GordianXCoreAgreementParams(pParams);
+    }
+
     @Override
-    public GordianXAgreement forServer(final GordianCertificate pServer) throws GordianException {
+    public GordianXAgreement updateParams(final GordianXAgreementParams pParams) throws GordianException {
         /* Must be looking for serverPrivate */
         checkStatus(GordianXAgreementStatus.AWAITING_SERVERPRIVATE);
 
-        /* Handle null or public-only certificate */
-        if (pServer == null) {
-            throw new GordianDataException("Server Certificate must be provided");
-        }
-        if (pServer.getKeyPair().isPublicOnly()) {
-            throw new GordianDataException("Server Certificate must supply privateKey");
+        /* Ensure that we are updating from correct parameters */
+        if (Objects.equals(theParams.getId(), ((GordianXCoreAgreementParams) pParams).getId())) {
+            throw new GordianDataException("Invalid parameters provided");
         }
 
-        /* Check that we match the existing server certificate */
-        if (!Arrays.equals(theState.getServer().getCertificate().getEncoded(), pServer.getEncoded())) {
-            throw new GordianDataException("Server Certificate must match requested certificate");
+        /* Ensure that the server has a private key */
+        final GordianAgreementSpec mySpec = theState.getSpec();
+        final GordianCertificate myServerCert = pParams.getSignerCertificate();
+        if (myServerCert.getKeyPair().isPublicOnly()) {
+            throw new GordianDataException("Server Certificate is Public Only");
         }
+
+        /* Update the server certificate */
+        setServerCertificate(myServerCert);
+
+        /* Store additional data */
+        theState.setAdditionalData(pParams.getAdditionalData());
+
+        /* If this is a signed agreement */
+        if (GordianAgreementType.SIGNED.equals(mySpec.getAgreementType())) {
+             /* Handle no signer certificate */
+            final GordianCertificate mySignerCert = pParams.getSignerCertificate();
+            if (mySignerCert == null) {
+                throw new GordianLogicException("No signer declared for Signed agreement");
+            }
+
+            /* Declare the signer */
+            setSignerCertificate(pParams.getSignatureSpec(), mySignerCert);
+        }
+
+        /* Update the parameters */
+        theParams = new GordianXCoreAgreementParams((GordianXCoreAgreementParams) pParams);
 
         /* Process the augmented clientHello and return the agreement */
         processClientHello();
@@ -292,6 +315,7 @@ public class GordianXCoreAgreement
     void parseClientHello(final GordianXCoreAgreementMessageASN1 pClientHello) throws GordianException {
         /* Parse the clientHello */
         theBuilder.parseClientHello(pClientHello);
+        theParams = new GordianXCoreAgreementParams(theBuilder);
         theBuilder.setStatus(GordianXAgreementStatus.AWAITING_SERVERPRIVATE);
     }
 
