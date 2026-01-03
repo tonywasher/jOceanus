@@ -287,7 +287,7 @@ public class MoneyWiseDataTestCategories {
      * @throws OceanusException on error
      */
     private void buildStatic() throws OceanusException {
-        theStaticBuilder.buildBasic();
+        theStaticBuilder.buildBasic(MoneyWiseCurrencyClass.GBP);
         theStaticBuilder.buildCurrency(MoneyWiseCurrencyClass.EUR);
         theStaticBuilder.buildCurrency(MoneyWiseCurrencyClass.USD);
     }

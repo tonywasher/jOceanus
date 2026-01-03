@@ -87,6 +87,16 @@ public class MoneyWiseStaticBuilder {
      * @throws OceanusException on error
      * @return the builder
      */
+    public MoneyWiseStaticBuilder buildBasic(final MoneyWiseCurrencyClass pDefault) throws OceanusException {
+        return buildBasic(pDefault.getCurrency());
+    }
+
+    /**
+     * build basic Static.
+     * @param pDefault the default currency
+     * @throws OceanusException on error
+     * @return the builder
+     */
     public MoneyWiseStaticBuilder buildBasic(final Currency pDefault) throws OceanusException {
         /* Create reporting currency */
         buildReportingCurrency(pDefault);
