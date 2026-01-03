@@ -27,6 +27,7 @@ import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianCoreAnonymous
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianIOException;
 import net.sourceforge.joceanus.gordianknot.impl.core.keypair.GordianKeyPairValidity;
+import net.sourceforge.joceanus.gordianknot.impl.core.xagree.GordianXCoreAgreementFactory;
 import org.bouncycastle.asn1.ASN1Encoding;
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
@@ -310,6 +311,56 @@ public final class BouncyNTRUKeyPair {
 
             /* Parse clientHello message and store secret */
             final byte[] myMessage = pClientHello.getEncapsulated();
+            storeSecret(myExtractor.extractSecret(myMessage));
+        }
+    }
+
+    /**
+     * NTRU XAgreement Engine.
+     */
+    public static class BouncyNTRUXAgreementEngine
+            extends BouncyXAgreementBase {
+        /**
+         * Constructor.
+         * @param pFactory the security factory
+         * @param pSpec the agreementSpec
+         * @throws GordianException on error
+         */
+        BouncyNTRUXAgreementEngine(final GordianXCoreAgreementFactory pFactory,
+                                   final GordianAgreementSpec pSpec) throws GordianException {
+            /* Initialize underlying class */
+            super(pFactory, pSpec);
+        }
+
+        @Override
+        public void buildClientHello() throws GordianException {
+            /* Protect against exceptions */
+            try {
+                /* Create encapsulation */
+                final BouncyNTRUPublicKey myPublic = (BouncyNTRUPublicKey) getPublicKey(getServerKeyPair());
+                final NTRUKEMGenerator myGenerator = new NTRUKEMGenerator(getRandom());
+                final SecretWithEncapsulation myResult = myGenerator.generateEncapsulated(myPublic.getPublicKey());
+
+                /* Store the encapsulation */
+                setEncapsulated(myResult.getEncapsulation());
+
+                /* Store secret and create initVector */
+                storeSecret(myResult.getSecret());
+                myResult.destroy();
+
+            } catch (DestroyFailedException e) {
+                throw new GordianIOException("Failed to destroy secret", e);
+            }
+        }
+
+        @Override
+        public void processClientHello() throws GordianException {
+            /* Create encapsulation */
+            final BouncyNTRUPrivateKey myPrivate = (BouncyNTRUPrivateKey) getPrivateKey(getServerKeyPair());
+            final NTRUKEMExtractor myExtractor = new NTRUKEMExtractor(myPrivate.getPrivateKey());
+
+            /* Parse encapsulated message and store secret */
+            final byte[] myMessage = getEncapsulated();
             storeSecret(myExtractor.extractSecret(myMessage));
         }
     }

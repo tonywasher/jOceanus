@@ -86,6 +86,7 @@ public class BouncyKeyPairFactory
         /* Create factories */
         setSignatureFactory(new BouncySignatureFactory(pFactory));
         setAgreementFactory(new BouncyAgreementFactory(pFactory));
+        setXAgreementFactory(new BouncyXAgreementFactory(pFactory));
         setEncryptorFactory(new BouncyEncryptorFactory(pFactory));
         setKeyStoreFactory(new GordianCoreKeyStoreFactory(this));
     }

@@ -27,6 +27,7 @@ import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianCoreAnonymous
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianIOException;
 import net.sourceforge.joceanus.gordianknot.impl.core.keypair.GordianKeyPairValidity;
+import net.sourceforge.joceanus.gordianknot.impl.core.xagree.GordianXCoreAgreementFactory;
 import org.bouncycastle.asn1.ASN1Encoding;
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
@@ -264,7 +265,7 @@ public final class BouncyBIKEKeyPair {
          */
         BouncyBIKEAgreement(final BouncyFactory pFactory,
                             final GordianAgreementSpec pSpec) {
-            /* Initialise underlying class */
+            /* Initialize underlying class */
             super(pFactory, pSpec);
 
             /* Create Agreement */
@@ -310,6 +311,56 @@ public final class BouncyBIKEKeyPair {
 
             /* Parse clientHello message and store secret */
             final byte[] myMessage = pClientHello.getEncapsulated();
+            storeSecret(myExtractor.extractSecret(myMessage));
+        }
+    }
+
+    /**
+     * BIKE XAgreement Engine.
+     */
+    public static class BouncyBIKEXAgreementEngine
+            extends BouncyXAgreementBase {
+        /**
+         * Constructor.
+         * @param pFactory the security factory
+         * @param pSpec the agreementSpec
+         * @throws GordianException on error
+         */
+        BouncyBIKEXAgreementEngine(final GordianXCoreAgreementFactory pFactory,
+                                   final GordianAgreementSpec pSpec) throws GordianException {
+            /* Initialize underlying class */
+            super(pFactory, pSpec);
+        }
+
+        @Override
+        public void buildClientHello() throws GordianException {
+            /* Protect against exceptions */
+            try {
+                /* Create encapsulation */
+                final BouncyBIKEPublicKey myPublic = (BouncyBIKEPublicKey) getPublicKey(getServerKeyPair());
+                final BIKEKEMGenerator myGenerator = new BIKEKEMGenerator(getRandom());
+                final SecretWithEncapsulation myResult = myGenerator.generateEncapsulated(myPublic.getPublicKey());
+
+                /* Store the encapsulation */
+                setEncapsulated(myResult.getEncapsulation());
+
+                /* Store secret */
+                storeSecret(myResult.getSecret());
+                myResult.destroy();
+
+            } catch (DestroyFailedException e) {
+                throw new GordianIOException("Failed to destroy secret", e);
+            }
+        }
+
+        @Override
+        public void processClientHello() throws GordianException {
+            /* Create extractor */
+            final BouncyBIKEPrivateKey myPrivate = (BouncyBIKEPrivateKey) getPrivateKey(getServerKeyPair());
+            final BIKEKEMExtractor myExtractor = new BIKEKEMExtractor(myPrivate.getPrivateKey());
+
+            /* Parse encapsulated message and store secret */
+            final byte[] myMessage = getEncapsulated();
             storeSecret(myExtractor.extractSecret(myMessage));
         }
     }

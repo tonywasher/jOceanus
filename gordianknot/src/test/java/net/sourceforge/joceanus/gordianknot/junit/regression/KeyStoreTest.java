@@ -119,10 +119,18 @@ class KeyStoreTest {
      * @throws GordianException on error
      */
     @TestFactory
-    Stream<DynamicNode> keyStoreTests() throws GordianException {
-        /* Create tests */
-        Stream<DynamicNode> myStream = keyStoreTests(GordianFactoryType.BC);
-        return Stream.concat(myStream, keyStoreTests(GordianFactoryType.JCA));
+    Stream<DynamicNode> bouncyCastle() throws GordianException {
+        return keyStoreTests(GordianFactoryType.BC);
+    }
+
+    /**
+     * Create the jca keyStore test suite.
+     * @return the test stream
+     * @throws GordianException on error
+     */
+    @TestFactory
+    Stream<DynamicNode> jca() throws GordianException {
+         return keyStoreTests(GordianFactoryType.JCA);
     }
 
     /**
@@ -141,11 +149,11 @@ class KeyStoreTest {
         final GordianKeyStoreManager myMgr = myKSFactory.createKeyStoreManager(myStore);
 
         /* Return the stream */
-        return Stream.of(DynamicContainer.dynamicContainer(pFactoryType.toString(), Stream.of(
+        return Stream.of(
                 DynamicTest.dynamicTest("symmetric", () -> symmetric(myMgr)),
                 DynamicTest.dynamicTest("keyPair", () -> keyPairs(myMgr)),
                 keyPairRequestTest(myMgr)
-        )));
+        );
     }
 
     /**

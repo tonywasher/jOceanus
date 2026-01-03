@@ -29,6 +29,7 @@ import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianAgreementMess
 import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianCoreAnonymousAgreement;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
 import net.sourceforge.joceanus.gordianknot.impl.core.keypair.GordianKeyPairValidity;
+import net.sourceforge.joceanus.gordianknot.impl.core.xagree.GordianXCoreAgreementFactory;
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.bouncycastle.crypto.AsymmetricCipherKeyPair;
@@ -307,6 +308,56 @@ public final class BouncyNewHopeKeyPair {
 
             /* Derive the secret */
             final BouncyNewHopePrivateKey myPrivate = (BouncyNewHopePrivateKey) getPrivateKey(pServer);
+            final NHAgreement myAgreement = new NHAgreement();
+            myAgreement.init(myPrivate.getPrivateKey());
+            final byte[] mySecret = myAgreement.calculateAgreement(myPublic.getPublicKey());
+
+            /* Store secret */
+            storeSecret(mySecret);
+        }
+    }
+
+    /**
+     * NewHope XAgreement Engine.
+     */
+    public static class BouncyNewHopeXAgreementEngine
+            extends BouncyXAgreementBase {
+        /**
+         * Constructor.
+         * @param pFactory the security factory
+         * @param pSpec the agreementSpec
+         * @throws GordianException on error
+         */
+        BouncyNewHopeXAgreementEngine(final GordianXCoreAgreementFactory pFactory,
+                                      final GordianAgreementSpec pSpec) throws GordianException {
+            /* Initialize underlying class */
+            super(pFactory, pSpec);
+        }
+
+        @Override
+        public void buildClientHello() throws GordianException {
+            /* Generate an Exchange KeyPair */
+            final NHExchangePairGenerator myGenerator = new NHExchangePairGenerator(getRandom());
+            final BouncyNewHopePublicKey myTarget = (BouncyNewHopePublicKey) getPublicKey(getServerKeyPair());
+            final ExchangePair myPair = myGenerator.GenerateExchange(myTarget.getPublicKey());
+
+            /* Store the ephemeral keyPair */
+            final GordianKeyPairSpec mySpec = getSpec().getKeyPairSpec();
+            final BouncyNewHopePublicKey myPublic = new BouncyNewHopePublicKey(mySpec, (NHPublicKeyParameters) myPair.getPublicKey());
+            final BouncyKeyPair myEphemeral = new BouncyKeyPair(myPublic);
+            setClientEphemeral(myEphemeral);
+
+            /* Store secret */
+            storeSecret(myPair.getSharedValue());
+        }
+
+        @Override
+        public void processClientHello() throws GordianException {
+            /* Create extractor */
+            final BouncyNewHopePublicKey myPublic = (BouncyNewHopePublicKey) getPublicKey(getClientEphemeral());
+            final BouncyNewHopePrivateKey myPrivate = (BouncyNewHopePrivateKey) getPrivateKey(getServerKeyPair());
+
+            /* Create agreement */
             final NHAgreement myAgreement = new NHAgreement();
             myAgreement.init(myPrivate.getPrivateKey());
             final byte[] mySecret = myAgreement.calculateAgreement(myPublic.getPublicKey());

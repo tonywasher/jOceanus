@@ -144,9 +144,9 @@ public class GordianCoreCertificate
      * @param pSubject the name of the entity
      * @throws GordianException on error
      */
-    GordianCoreCertificate(final GordianCoreFactory pFactory,
-                           final GordianKeyPair pKeyPair,
-                           final X500Name pSubject) throws GordianException {
+    public GordianCoreCertificate(final GordianCoreFactory pFactory,
+                                  final GordianKeyPair pKeyPair,
+                                  final X500Name pSubject) throws GordianException {
         /* Check that the keyPair is OK */
         if (isPublicOnly(pKeyPair)) {
             throw new GordianLogicException("Invalid keyPair");
@@ -190,11 +190,11 @@ public class GordianCoreCertificate
      * @param pUsage   the key usage
      * @throws GordianException on error
      */
-    GordianCoreCertificate(final GordianCoreFactory pFactory,
-                           final GordianKeyStorePair pSigner,
-                           final GordianKeyPair pKeyPair,
-                           final X500Name pSubject,
-                           final GordianKeyPairUsage pUsage) throws GordianException {
+    public GordianCoreCertificate(final GordianCoreFactory pFactory,
+                                  final GordianKeyStorePair pSigner,
+                                  final GordianKeyPair pKeyPair,
+                                  final X500Name pSubject,
+                                  final GordianKeyPairUsage pUsage) throws GordianException {
         /* Store the parameters */
         theFactory = pFactory;
         theKeyPair = getPublicOnly(pKeyPair);
@@ -241,8 +241,8 @@ public class GordianCoreCertificate
      * @param pSequence   the DER representation of the certificate
      * @throws GordianException on error
      */
-    protected GordianCoreCertificate(final GordianCoreFactory pFactory,
-                                     final byte[] pSequence) throws GordianException {
+    public GordianCoreCertificate(final GordianCoreFactory pFactory,
+                                  final byte[] pSequence) throws GordianException {
         this(pFactory, Certificate.getInstance(pSequence));
     }
 

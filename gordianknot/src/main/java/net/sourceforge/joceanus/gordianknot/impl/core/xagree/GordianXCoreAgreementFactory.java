@@ -14,105 +14,212 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.gordianknot.impl.core.agree;
+package net.sourceforge.joceanus.gordianknot.impl.core.xagree;
 
-import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreement;
-import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementFactory;
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementSpec;
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementSpecBuilder;
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementType;
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianKDFType;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
+import net.sourceforge.joceanus.gordianknot.api.cert.GordianCertificate;
+import net.sourceforge.joceanus.gordianknot.api.cert.GordianKeyPairUse;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianEdwardsElliptic;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairType;
-import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianAgreementMessageASN1.GordianMessageType;
-import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianCompositeAgreement.GordianCompositeAnonymousAgreement;
-import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianCompositeAgreement.GordianCompositeBasicAgreement;
-import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianCompositeAgreement.GordianCompositeHandshakeAgreement;
-import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianCompositeAgreement.GordianCompositeSignedAgreement;
+import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignatureFactory;
+import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignatureSpec;
+import net.sourceforge.joceanus.gordianknot.api.xagree.GordianXAgreement;
+import net.sourceforge.joceanus.gordianknot.api.xagree.GordianXAgreementParams;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
+import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianLogicException;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Predicate;
 
 /**
- * GordianKnot base for encryptorFactory.
+ * Core agreement factory.
  */
-public abstract class GordianCoreAgreementFactory
-        implements GordianAgreementFactory {
+public abstract class GordianXCoreAgreementFactory
+        implements GordianXCoreAgreementSupplier {
     /**
      * The factory.
      */
     private final GordianCoreFactory theFactory;
 
     /**
-     * The id control.
+     * The id cache.
      */
-    private final AtomicInteger theNextId;
+    private final GordianXCoreAgreementCache theCache;
 
     /**
      * The algorithm Ids.
      */
-    private GordianAgreementAlgId theAlgIds;
+    private GordianXCoreAgreementAlgId theAlgIds;
+
+    /**
+     * The signer certificate.
+     */
+    private GordianCertificate theSignerCertificate;
+
+    /**
+     * The signatureSpec.
+     */
+    private GordianSignatureSpec theSignSpec;
 
     /**
      * Constructor.
      *
      * @param pFactory the factory
      */
-    protected GordianCoreAgreementFactory(final GordianCoreFactory pFactory) {
+    protected GordianXCoreAgreementFactory(final GordianCoreFactory pFactory) {
         theFactory = pFactory;
-        theNextId = new AtomicInteger();
+        theCache = new GordianXCoreAgreementCache(theFactory.getRandomSource());
     }
 
-    /**
-     * Obtain the factory.
-     * @return the factory
-     */
-    protected GordianCoreFactory getFactory() {
+    @Override
+    public GordianCoreFactory getFactory() {
         return theFactory;
     }
 
     @Override
-    public GordianAgreement createAgreement(final byte[] pClientHello) throws GordianException {
-        /* Parse the client hello message */
-        final GordianAgreementMessageASN1 myASN1 = GordianAgreementMessageASN1.getInstance(pClientHello);
-        myASN1.checkMessageType(GordianMessageType.CLIENTHELLO);
-        final AlgorithmIdentifier myAlgId = myASN1.getAgreementId();
-        final GordianAgreementSpec mySpec = getSpecForIdentifier(myAlgId);
-        return createAgreement(mySpec);
+    public GordianXAgreementParams newAgreementParams(final GordianAgreementSpec pSpec,
+                                                      final Object pResultType) throws GordianException {
+        return new GordianXCoreAgreementParams(this, pSpec, pResultType);
+    }
+
+    @Override
+    public GordianXAgreement createAgreement(final GordianXAgreementParams pParams) throws GordianException {
+        /* Check validity of Agreement */
+        final GordianAgreementSpec mySpec = pParams.getAgreementSpec();
+        checkAgreementSpec(mySpec);
+
+        /* Create the agreement */
+        final GordianXCoreAgreementEngine myEngine = createEngine(mySpec);
+        final GordianXCoreAgreement myAgreement = new GordianXCoreAgreement(myEngine);
+
+        /* Set the details */
+        myAgreement.setClientCertificate(pParams.getClientCertificate());
+        myAgreement.setServerCertificate(pParams.getServerCertificate());
+        myAgreement.setResultType(pParams.getResultType());
+
+        /* Store the parameters */
+
+        /* Build the clientHello */
+        myAgreement.buildClientHello();
+
+        /* Return the agreement */
+        return myAgreement;
+    }
+
+    @Override
+    public GordianXAgreement parseAgreementMessage(final byte[] pMessage) throws GordianException {
+        /* Parse the message */
+        final GordianXCoreAgreementMessageASN1 myASN1 = GordianXCoreAgreementMessageASN1.getInstance(pMessage);
+
+        /* Switch on the messageType */
+        switch (myASN1.getMessageType()) {
+            case CLIENTHELLO:
+                return parseClientHello(myASN1);
+            case SERVERHELLO:
+                return parseServerHello(myASN1);
+            case CLIENTCONFIRM:
+                return parseClientConfirm(myASN1);
+            default:
+                throw new GordianDataException("Unexpected MessageType: " +  myASN1.getMessageType());
+        }
     }
 
     /**
-     * Create the BouncyCastle Agreement.
-     *
-     * @param pSpec the agreementSpec
-     * @return the Agreement
+     * Parse a clientHello message.
+     * @param pClientHello the message
+     * @return the agreement
+     * @throws GordianException error
+     */
+    private GordianXAgreement parseClientHello(final GordianXCoreAgreementMessageASN1 pClientHello) throws GordianException {
+        /* Create a new agreement */
+        final GordianAgreementSpec mySpec = getSpecForIdentifier(pClientHello.getAgreementId());
+        final GordianXCoreAgreementEngine myEngine = createEngine(mySpec);
+        final GordianXCoreAgreement myAgreement = new GordianXCoreAgreement(myEngine);
+
+        /* If this is a signed agreement */
+        if (GordianAgreementType.SIGNED.equals(mySpec.getAgreementType())) {
+            /* Handle no signer certificate */
+            if (theSignerCertificate == null) {
+                throw new GordianLogicException("No signer declared for Signed agreement");
+            }
+
+            /* Declare the signer */
+            myAgreement.setSignerCertificate(theSignSpec, theSignerCertificate);
+        }
+
+        /* Parse the clientHello */
+        myAgreement.parseClientHello(pClientHello);
+
+        /* Return the agreement */
+        return myAgreement;
+    }
+
+    /**
+     * Parse a serverHello message.
+     * @param pServerHello the message
+     * @return the agreement
+     * @throws GordianException error
+     */
+    private GordianXAgreement parseServerHello(final GordianXCoreAgreementMessageASN1 pServerHello) throws GordianException {
+        /* Look up the agreement in the cache */
+        final GordianAgreementSpec mySpec = getSpecForIdentifier(pServerHello.getAgreementId());
+        final GordianXCoreAgreement myAgreement = theCache.lookUpAgreement(pServerHello.getClientId(), mySpec);
+
+        /* Process the serverHello */
+        myAgreement.processServerHello(pServerHello);
+
+        /* Return the agreement */
+        return myAgreement;
+    }
+
+    /**
+     * Parse a clientConfirm message.
+     * @param pClientConfirm the message
+     * @return the agreement
+     * @throws GordianException error
+     */
+    private GordianXAgreement parseClientConfirm(final GordianXCoreAgreementMessageASN1 pClientConfirm) throws GordianException {
+        /* Look up the agreement in the cache */
+        final GordianAgreementSpec mySpec = getSpecForIdentifier(pClientConfirm.getAgreementId());
+        final GordianXCoreAgreement myAgreement = theCache.lookUpAgreement(pClientConfirm.getServerId(), mySpec);
+
+        /* Process the clientConfirm */
+        myAgreement.processClientConfirm(pClientConfirm);
+
+        /* Return the agreement */
+        return myAgreement;
+    }
+
+    /**
+     * Create engine.
+     * @param pSpec the agreement Spec
+     * @return the engine
      * @throws GordianException on error
      */
-    protected GordianAgreement getCompositeAgreement(final GordianAgreementSpec pSpec) throws GordianException {
-        switch (pSpec.getAgreementType()) {
-            case KEM:
-            case ANON:
-                return new GordianCompositeAnonymousAgreement(getFactory(), pSpec);
-            case BASIC:
-                return new GordianCompositeBasicAgreement(getFactory(), pSpec);
-            case SIGNED:
-                return new GordianCompositeSignedAgreement(getFactory(), pSpec);
-            case MQV:
-            case UNIFIED:
-            case SM2:
-                return new GordianCompositeHandshakeAgreement(getFactory(), pSpec);
-            default:
-                throw new GordianDataException(GordianCoreFactory.getInvalidText(pSpec));
+    protected GordianXCoreAgreementEngine createEngine(final GordianAgreementSpec pSpec) throws GordianException {
+        /* If this is a composite agreement */
+        if (pSpec.getKeyPairSpec().getKeyPairType() == GordianKeyPairType.COMPOSITE) {
+            /* Create an engine for each sub-agreement */
+            final List<GordianAgreementSpec> mySpecs = GordianXCoreAgreementComposite.getSubAgreements(pSpec);
+            final List<GordianXCoreAgreementEngine> myEngines = new ArrayList<>();
+            for (GordianAgreementSpec mySpec : mySpecs) {
+                myEngines.add(createEngine(mySpec));
+            }
+            return new GordianXCoreAgreementComposite(this, pSpec, myEngines);
         }
+
+        /* Unsupported spec */
+        throw new GordianDataException(GordianCoreFactory.getInvalidText(pSpec));
     }
 
     @Override
@@ -120,24 +227,54 @@ public abstract class GordianCoreAgreementFactory
         return this::validAgreementSpec;
     }
 
-    /**
-     * Check the agreementSpec.
-     * @param pAgreementSpec the agreementSpec
-     * @throws GordianException on error
-     */
-    protected void checkAgreementSpec(final GordianAgreementSpec pAgreementSpec) throws GordianException {
+    @Override
+    public void checkAgreementSpec(final GordianAgreementSpec pAgreementSpec) throws GordianException {
         /* Check validity of agreement */
         if (!validAgreementSpec(pAgreementSpec)) {
             throw new GordianDataException(GordianCoreFactory.getInvalidText(pAgreementSpec));
         }
     }
 
-    /**
-     * Obtain the nextId.
-     * @return the nextId
-     */
-    Integer getNextId() {
-        return theNextId.incrementAndGet();
+    @Override
+    public Long getNextId() {
+        return theCache.getNextId();
+    }
+
+    @Override
+    public void storeAgreement(final Long pId,
+                               final GordianXAgreement pAgreement) {
+        theCache.storeAgreement(pId, pAgreement);
+    }
+
+    @Override
+    public void removeAgreement(final Long pId) {
+        theCache.removeAgreement(pId);
+    }
+
+    @Override
+    public void setSigner(final GordianCertificate pSigner) throws GordianException {
+        final GordianSignatureFactory mySignFactory = theFactory.getKeyPairFactory().getSignatureFactory();
+        final GordianSignatureSpec mySignSpec = pSigner == null ? null : mySignFactory.defaultForKeyPair(pSigner.getKeyPair().getKeyPairSpec());
+        setSigner(pSigner, mySignSpec);
+    }
+
+    @Override
+    public void setSigner(final GordianCertificate pSigner,
+                          final GordianSignatureSpec pSignSpec) throws GordianException {
+        /* Check that certificate can sign data */
+        if (pSigner == null || !pSigner.getUsage().hasUse(GordianKeyPairUse.SIGNATURE)) {
+            throw new GordianDataException("Certificate must be capable of signing data");
+        }
+
+        /* Check that certificate can sign data */
+        final GordianSignatureFactory mySignFactory = theFactory.getKeyPairFactory().getSignatureFactory();
+        if (!mySignFactory.validSignatureSpecForKeyPair(pSigner.getKeyPair(), pSignSpec)) {
+            throw new GordianDataException(GordianCoreFactory.getInvalidText(pSignSpec));
+        }
+
+        /* Store parameters */
+        theSignerCertificate = pSigner;
+        theSignSpec = pSignSpec;
     }
 
     /**
@@ -187,7 +324,7 @@ public abstract class GordianCoreAgreementFactory
         /* For Composite AgreementSpec */
         if (pKeyPairSpec.getKeyPairType() == GordianKeyPairType.COMPOSITE) {
             /* Access the subSpecs  */
-            final List<GordianAgreementSpec> mySubAgrees = GordianCompositeAgreement.getSubAgreements(pAgreementSpec);
+            final List<GordianAgreementSpec> mySubAgrees = GordianXCoreAgreementComposite.getSubAgreements(pAgreementSpec);
 
             /* Loop through the subAgreements */
             for (GordianAgreementSpec mySpec : mySubAgrees) {
@@ -198,7 +335,7 @@ public abstract class GordianCoreAgreementFactory
 
             /* Check confirmation */
             if (Boolean.TRUE.equals(pAgreementSpec.withConfirm())
-                && !pAgreementSpec.getAgreementType().canConfirm()) {
+                    && !pAgreementSpec.getAgreementType().canConfirm()) {
                 return false;
             }
 
@@ -211,31 +348,33 @@ public abstract class GordianCoreAgreementFactory
         return true;
     }
 
-    /**
-     * Obtain Identifier for AgreementSpec.
-     * @param pSpec the agreementSpec.
-     * @return the Identifier
-     */
+    @Override
     public AlgorithmIdentifier getIdentifierForSpec(final GordianAgreementSpec pSpec) {
         return getAlgorithmIds().determineIdentifier(pSpec);
     }
 
-    /**
-     * Obtain AgreementSpec for Identifier.
-     * @param pIdentifier the identifier.
-     * @return the agreementSpec (or null if not found)
-     */
+    @Override
     public GordianAgreementSpec getSpecForIdentifier(final AlgorithmIdentifier pIdentifier) {
         return getAlgorithmIds().determineAgreementSpec(pIdentifier);
+    }
+
+    @Override
+    public AlgorithmIdentifier getIdentifierForResultType(final Object pResult) throws GordianException {
+        return getAlgorithmIds().getIdentifierForResult(pResult);
+    }
+
+    @Override
+    public Object getResultTypeForIdentifier(final AlgorithmIdentifier pIdentifier) throws GordianException {
+        return getAlgorithmIds().processResultIdentifier(pIdentifier);
     }
 
     /**
      * Obtain the agreement algorithm Ids.
      * @return the agreement Algorithm Ids
      */
-    public GordianAgreementAlgId getAlgorithmIds() {
+    private GordianXCoreAgreementAlgId getAlgorithmIds() {
         if (theAlgIds == null) {
-            theAlgIds = new GordianAgreementAlgId(theFactory);
+            theAlgIds = new GordianXCoreAgreementAlgId(theFactory);
         }
         return theAlgIds;
     }
@@ -259,7 +398,7 @@ public abstract class GordianCoreAgreementFactory
      * @param pKeyPairSpec the keyPairSpec
      * @return the list
      */
-    public List<GordianAgreementSpec> listPossibleAgreements(final GordianKeyPairSpec pKeyPairSpec) {
+    private List<GordianAgreementSpec> listPossibleAgreements(final GordianKeyPairSpec pKeyPairSpec) {
         /* Create list */
         final List<GordianAgreementSpec> myAgreements = new ArrayList<>();
 
@@ -337,8 +476,8 @@ public abstract class GordianCoreAgreementFactory
      * @param pAgreementType the agreementType
      * @return the list
      */
-    public static List<GordianAgreementSpec> listAllKDFs(final GordianKeyPairSpec pKeyPairSpec,
-                                                         final GordianAgreementType pAgreementType) {
+    private static List<GordianAgreementSpec> listAllKDFs(final GordianKeyPairSpec pKeyPairSpec,
+                                                          final GordianAgreementType pAgreementType) {
         return listAllKDFs(pKeyPairSpec, pAgreementType, Boolean.FALSE);
     }
 

@@ -38,6 +38,7 @@ import net.sourceforge.joceanus.gordianknot.impl.core.encrypt.GordianCoreEncrypt
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianIOException;
 import net.sourceforge.joceanus.gordianknot.impl.core.sign.GordianCoreSignature;
+import net.sourceforge.joceanus.gordianknot.impl.core.xagree.GordianXCoreAgreementFactory;
 import org.bouncycastle.crypto.CryptoException;
 import org.bouncycastle.crypto.InvalidCipherTextException;
 import org.bouncycastle.crypto.agreement.SM2KeyExchange;
@@ -312,6 +313,114 @@ public final class BouncySM2KeyPair {
 
             /* Return confirmation if needed */
             return buildClientConfirmASN1();
+        }
+    }
+
+    /**
+     * SM2 XAgreement Engine.
+     */
+    public static class BouncySM2XAgreementEngine
+            extends BouncyXAgreementBase {
+        /**
+         * Key length.
+         */
+        private static final int KEYLEN = 64;
+
+        /**
+         * The agreement.
+         */
+        private final SM2KeyExchange theAgreement;
+
+        /**
+         * Constructor.
+         * @param pFactory the security factory
+         * @param pSpec the agreementSpec
+         * @throws GordianException on error
+         */
+        BouncySM2XAgreementEngine(final GordianXCoreAgreementFactory pFactory,
+                                  final GordianAgreementSpec pSpec) throws GordianException {
+            /* Initialize underlying class */
+            super(pFactory, pSpec);
+
+            /* Create the agreement */
+            theAgreement = new SM2KeyExchange();
+        }
+
+        @Override
+        public void processClientHello() throws GordianException {
+            /* Access keys */
+            final BouncyECPublicKey myClientPublic = (BouncyECPublicKey) getPublicKey(getClientKeyPair());
+            final BouncyECPublicKey myClientEphPublic = (BouncyECPublicKey) getPublicKey(getClientEphemeral());
+            final BouncyECPrivateKey myPrivate = (BouncyECPrivateKey) getPrivateKey(getServerKeyPair());
+            final BouncyECPrivateKey myEphPrivate = (BouncyECPrivateKey) getPrivateKey(getServerEphemeral());
+
+            /* Derive the secret */
+            final SM2KeyExchangePrivateParameters myPrivParams = new SM2KeyExchangePrivateParameters(false,
+                    myPrivate.getPrivateKey(), myEphPrivate.getPrivateKey());
+            theAgreement.init(myPrivParams);
+            final SM2KeyExchangePublicParameters myPubParams = new SM2KeyExchangePublicParameters(myClientPublic.getPublicKey(),
+                    myClientEphPublic.getPublicKey());
+
+            /* If we are confirming */
+            if (Boolean.TRUE.equals(getSpec().withConfirm())) {
+                /* Create agreement and confirmation tags */
+                final byte[][] myResults = theAgreement.calculateKeyWithConfirmation(KEYLEN, null, myPubParams);
+
+                /* Store the confirmationTags */
+                setServerConfirm(myResults[1]);
+                setClientConfirm(myResults[2]);
+
+                /* Store the secret */
+                storeSecret(myResults[0]);
+
+                /* else standard agreement */
+            } else {
+                /* Calculate and store the secret */
+                storeSecret(theAgreement.calculateKey(KEYLEN, myPubParams));
+            }
+        }
+
+        @Override
+        public void processServerHello() throws GordianException {
+            /* Access keys */
+            final BouncyECPublicKey myServerPublic = (BouncyECPublicKey) getPublicKey(getServerKeyPair());
+            final BouncyECPublicKey myServerEphPublic = (BouncyECPublicKey) getPublicKey(getServerEphemeral());
+            final BouncyECPrivateKey myPrivate = (BouncyECPrivateKey) getPrivateKey(getClientKeyPair());
+            final BouncyECPrivateKey myEphPrivate = (BouncyECPrivateKey) getPrivateKey(getClientEphemeral());
+
+            /* Derive the secret */
+            final SM2KeyExchangePrivateParameters myPrivParams = new SM2KeyExchangePrivateParameters(true,
+                    myPrivate.getPrivateKey(), myEphPrivate.getPrivateKey());
+            theAgreement.init(myPrivParams);
+            final SM2KeyExchangePublicParameters myPubParams = new SM2KeyExchangePublicParameters(myServerPublic.getPublicKey(),
+                    myServerEphPublic.getPublicKey());
+
+            /* If we are confirming */
+            if (Boolean.TRUE.equals(getSpec().withConfirm())) {
+                /* Obtain confirmationTag in serverHello */
+                final byte[] myConfirm = getServerConfirm();
+
+                /* Protect against exception */
+                try {
+                    /* Create agreement and confirmation tags */
+                    final byte[][] myResults = theAgreement.calculateKeyWithConfirmation(KEYLEN, myConfirm, myPubParams);
+
+                    /* Store the confirmationTag */
+                    setClientConfirm(myResults[1]);
+
+                    /* Store the secret */
+                    storeSecret(myResults[0]);
+
+                    /* Catch mismatch on confirmation tag */
+                } catch (IllegalStateException e) {
+                    throw new GordianIOException("Confirmation failed", e);
+                }
+
+                /* else standard agreement */
+            } else {
+                /* Calculate and store the secret */
+                storeSecret(theAgreement.calculateKey(KEYLEN, myPubParams));
+            }
         }
     }
 

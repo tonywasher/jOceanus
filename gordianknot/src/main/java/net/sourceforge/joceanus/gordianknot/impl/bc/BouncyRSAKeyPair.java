@@ -34,6 +34,7 @@ import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianCryptoException
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianIOException;
 import net.sourceforge.joceanus.gordianknot.impl.core.keypair.GordianKeyPairValidity;
 import net.sourceforge.joceanus.gordianknot.impl.core.sign.GordianCoreSignature;
+import net.sourceforge.joceanus.gordianknot.impl.core.xagree.GordianXCoreAgreementFactory;
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.bouncycastle.crypto.AsymmetricBlockCipher;
@@ -551,6 +552,69 @@ public final class BouncyRSAKeyPair {
 
             /* Parse clientHello message and store secret */
             final byte[] myMessage = pClientHello.getEncapsulated();
+            storeSecret(myExtractor.extractSecret(myMessage));
+        }
+    }
+
+    /**
+     * RSA XAgreement Engine.
+     */
+    public static class BouncyRSAXAgreementEngine
+            extends BouncyXAgreementBase {
+        /**
+         * Key Length.
+         */
+        private static final int KEYLEN = 32;
+
+        /**
+         * Derivation function.
+         */
+        private final DerivationFunction theDerivation;
+
+        /**
+         * Constructor.
+         * @param pFactory the security factory
+         * @param pSpec the agreementSpec
+         * @throws GordianException on error
+         */
+        BouncyRSAXAgreementEngine(final GordianXCoreAgreementFactory pFactory,
+                                  final GordianAgreementSpec pSpec) throws GordianException {
+            /* Initialize underlying class */
+            super(pFactory, pSpec);
+
+            /* Initialise the derivation function */
+            theDerivation = newDerivationFunction();
+        }
+
+        @Override
+        public void buildClientHello() throws GordianException {
+            /* Protect against exceptions */
+            try {
+                /* Create encapsulation */
+                final BouncyRSAPublicKey myPublic = (BouncyRSAPublicKey) getPublicKey(getServerKeyPair());
+                final RSAKEMGenerator myGenerator = new RSAKEMGenerator(KEYLEN, theDerivation, getRandom());
+                final SecretWithEncapsulation myResult = myGenerator.generateEncapsulated(myPublic.getPublicKey());
+
+                /* Store the encapsulation */
+                setEncapsulated(myResult.getEncapsulation());
+
+                /* Store secret and create initVector */
+                storeSecret(myResult.getSecret());
+                myResult.destroy();
+
+            } catch (DestroyFailedException e) {
+                throw new GordianIOException("Failed to destroy secret", e);
+            }
+        }
+
+        @Override
+        public void processClientHello() throws GordianException {
+            /* Create encapsulation */
+            final BouncyRSAPrivateKey myPrivate = (BouncyRSAPrivateKey) getPrivateKey(getServerKeyPair());
+            final RSAKEMExtractor myExtractor = new RSAKEMExtractor(myPrivate.getPrivateKey(), KEYLEN, theDerivation);
+
+            /* Parse encapsulated message and store secret */
+            final byte[] myMessage = getEncapsulated();
             storeSecret(myExtractor.extractSecret(myMessage));
         }
     }
