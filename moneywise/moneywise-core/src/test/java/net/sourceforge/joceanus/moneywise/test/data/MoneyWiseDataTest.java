@@ -54,6 +54,7 @@ import org.junit.jupiter.api.DynamicNode;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 
+import java.util.Locale;
 import java.util.stream.Stream;
 
 /**
@@ -67,6 +68,9 @@ public class MoneyWiseDataTest {
      */
     @TestFactory
     Stream<DynamicNode> dataTests() throws OceanusException {
+        /* Force the local locale to be UK */
+        Locale.setDefault(Locale.UK);
+
         /* Create the data */
         final TethysUIHelperFactory myFactory = new TethysUIHelperFactory();
         final PrometheusToolkit myToolkit = new PrometheusToolkit(myFactory);
