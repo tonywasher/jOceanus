@@ -41,11 +41,6 @@ public class JcaDigestFactory
     }
 
     @Override
-    public JcaFactory getFactory() {
-        return (JcaFactory) super.getFactory();
-    }
-
-    @Override
     public JcaDigest createDigest(final GordianDigestSpec pDigestSpec) throws GordianException {
         /* Check validity of DigestSpec */
         checkDigestSpec(pDigestSpec);
@@ -65,7 +60,7 @@ public class JcaDigestFactory
         /* Protect against exceptions */
         try {
             /* Return a digest for the algorithm */
-            return MessageDigest.getInstance(JcaDigest.getFullAlgorithm(pDigestSpec), JcaFactory.BCPROV);
+            return MessageDigest.getInstance(JcaDigest.getFullAlgorithm(pDigestSpec), JcaProvider.BCPROV);
 
             /* Catch exceptions */
         } catch (NoSuchAlgorithmException e) {

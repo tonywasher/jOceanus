@@ -25,35 +25,12 @@ import net.sourceforge.joceanus.gordianknot.impl.core.keyset.GordianCoreKeySetFa
 import net.sourceforge.joceanus.gordianknot.impl.core.lock.GordianCoreLockFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.random.GordianCoreRandomFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.zip.GordianCoreZipFactory;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
-
-import java.security.Provider;
-import java.security.Security;
 
 /**
  * Jca Factory.
  */
 public class JcaFactory
     extends GordianCoreFactory {
-    /*
-     * Static Constructor.
-     */
-    static {
-        /* Select unlimited security */
-        Security.setProperty("crypto.policy", "unlimited");
-    }
-
-    /**
-     * Note the standard provider.
-     */
-    static final Provider BCPROV = new BouncyCastleProvider();
-
-    /**
-     * Note the post quantum provider.
-     */
-    static final Provider BCPQPROV = new BouncyCastlePQCProvider();
-
     /**
      * Zip Factory.
      */

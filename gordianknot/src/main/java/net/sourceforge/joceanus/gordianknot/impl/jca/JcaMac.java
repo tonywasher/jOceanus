@@ -20,6 +20,7 @@ import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacParameters;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacSpec;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacType;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
 import net.sourceforge.joceanus.gordianknot.impl.core.mac.GordianCoreMac;
 import org.bouncycastle.jcajce.spec.SkeinParameterSpec.Builder;
@@ -47,7 +48,7 @@ public final class JcaMac
      * @param pMacSpec the MacSpec
      * @param pMac the MAC
      */
-    JcaMac(final JcaFactory pFactory,
+    JcaMac(final GordianCoreFactory pFactory,
            final GordianMacSpec pMacSpec,
            final Mac pMac) {
         super(pFactory, pMacSpec);

@@ -66,7 +66,7 @@ public abstract class JcaCipher<T extends GordianKeySpec>
      * @param pCipherSpec the cipherSpec
      * @param pCipher the cipher
      */
-    JcaCipher(final JcaFactory pFactory,
+    JcaCipher(final GordianCoreFactory pFactory,
               final GordianCipherSpec<T> pCipherSpec,
               final Cipher pCipher) {
         super(pFactory, pCipherSpec);
@@ -196,7 +196,7 @@ public abstract class JcaCipher<T extends GordianKeySpec>
          * @param pCipherSpec the cipherSpec
          * @param pCipher the cipher
          */
-        JcaSymCipher(final JcaFactory pFactory,
+        JcaSymCipher(final GordianCoreFactory pFactory,
                      final GordianSymCipherSpec pCipherSpec,
                      final Cipher pCipher) {
             super(pFactory, pCipherSpec, pCipher);
@@ -215,7 +215,7 @@ public abstract class JcaCipher<T extends GordianKeySpec>
          * @param pCipherSpec the cipherSpec
          * @param pCipher the cipher
          */
-        JcaStreamCipher(final JcaFactory pFactory,
+        JcaStreamCipher(final GordianCoreFactory pFactory,
                         final GordianStreamCipherSpec pCipherSpec,
                         final Cipher pCipher) {
             super(pFactory, pCipherSpec, pCipher);

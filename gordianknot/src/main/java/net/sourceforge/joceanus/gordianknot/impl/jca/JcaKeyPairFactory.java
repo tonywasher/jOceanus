@@ -22,7 +22,6 @@ import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairType;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianNTRUPrimeSpec.GordianNTRUPrimeType;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
-import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.keypair.GordianCoreKeyPairFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.keystore.GordianCoreKeyStoreFactory;
@@ -51,9 +50,6 @@ import net.sourceforge.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaSNTR
 import net.sourceforge.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaSnovaKeyPairGenerator;
 import net.sourceforge.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaXMSSKeyPairGenerator;
 
-import java.security.KeyFactory;
-import java.security.KeyPairGenerator;
-import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -72,7 +68,7 @@ public class JcaKeyPairFactory
      *
      * @param pFactory the factory
      */
-    JcaKeyPairFactory(final JcaFactory pFactory) {
+    JcaKeyPairFactory(final GordianCoreFactory pFactory) {
         /* Initialise underlying class */
         super(pFactory);
 
@@ -85,11 +81,6 @@ public class JcaKeyPairFactory
         setXAgreementFactory(new JcaXAgreementFactory(pFactory));
         setEncryptorFactory(new JcaEncryptorFactory(pFactory));
         setKeyStoreFactory(new GordianCoreKeyStoreFactory(this));
-    }
-
-    @Override
-    public JcaFactory getFactory() {
-        return (JcaFactory) super.getFactory();
     }
 
     @Override
@@ -191,52 +182,6 @@ public class JcaKeyPairFactory
                 return new JcaLMSKeyPairGenerator(getFactory(), pKeySpec);
             default:
                 throw new GordianDataException(GordianCoreFactory.getInvalidText(pKeySpec.getKeyPairType()));
-        }
-    }
-
-    /**
-     * Create the BouncyCastle KeyFactory via JCA.
-     * @param pAlgorithm the Algorithm
-     * @param postQuantum is this a postQuantum algorithm?
-     * @return the KeyFactory
-     * @throws GordianException on error
-     */
-    static KeyFactory getJavaKeyFactory(final String pAlgorithm,
-                                        final boolean postQuantum) throws GordianException {
-        /* Protect against exceptions */
-        try {
-            /* Return a KeyFactory for the algorithm */
-            return KeyFactory.getInstance(pAlgorithm, postQuantum
-                                                      ? JcaFactory.BCPQPROV
-                                                      : JcaFactory.BCPROV);
-
-            /* Catch exceptions */
-        } catch (NoSuchAlgorithmException e) {
-            /* Throw the exception */
-            throw new GordianCryptoException("Failed to create KeyFactory", e);
-        }
-    }
-
-    /**
-     * Create the BouncyCastle KeyPairGenerator via JCA.
-     * @param pAlgorithm the Algorithm
-     * @param postQuantum is this a postQuantum algorithm?
-     * @return the KeyPairGenerator
-     * @throws GordianException on error
-     */
-    static KeyPairGenerator getJavaKeyPairGenerator(final String pAlgorithm,
-                                                    final boolean postQuantum) throws GordianException {
-        /* Protect against exceptions */
-        try {
-            /* Return a KeyPairGenerator for the algorithm */
-            return KeyPairGenerator.getInstance(pAlgorithm, postQuantum
-                                                            ? JcaFactory.BCPQPROV
-                                                            : JcaFactory.BCPROV);
-
-            /* Catch exceptions */
-        } catch (NoSuchAlgorithmException e) {
-            /* Throw the exception */
-            throw new GordianCryptoException("Failed to create KeyPairGenerator", e);
         }
     }
 }

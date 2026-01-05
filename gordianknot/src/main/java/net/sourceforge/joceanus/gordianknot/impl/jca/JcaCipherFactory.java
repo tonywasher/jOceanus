@@ -85,11 +85,6 @@ public class JcaCipherFactory
     }
 
     @Override
-    public JcaFactory getFactory() {
-        return (JcaFactory) super.getFactory();
-    }
-
-    @Override
     @SuppressWarnings("unchecked")
     public <T extends GordianKeySpec> GordianKeyGenerator<T> getKeyGenerator(final T pKeySpec) throws GordianException {
         /* Look up in the cache */
@@ -184,7 +179,7 @@ public class JcaCipherFactory
             }
 
             /* Return a KeyGenerator for the algorithm */
-            return KeyGenerator.getInstance(myAlgorithm, JcaFactory.BCPROV);
+            return KeyGenerator.getInstance(myAlgorithm, JcaProvider.BCPROV);
 
             /* Catch exceptions */
         } catch (NoSuchAlgorithmException e) {
@@ -234,7 +229,7 @@ public class JcaCipherFactory
         /* Protect against exceptions */
         try {
             /* Return a Cipher for the algorithm */
-            return Cipher.getInstance(pAlgorithm, JcaFactory.BCPROV);
+            return Cipher.getInstance(pAlgorithm, JcaProvider.BCPROV);
 
             /* Catch exceptions */
         } catch (NoSuchAlgorithmException

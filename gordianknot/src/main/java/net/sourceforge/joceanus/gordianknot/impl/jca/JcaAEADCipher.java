@@ -27,6 +27,7 @@ import net.sourceforge.joceanus.gordianknot.api.cipher.GordianStreamKeySpec;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymAEADCipher;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymCipherSpec;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymKeySpec;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.cipher.GordianCoreCipher;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
 import org.bouncycastle.jcajce.spec.AEADParameterSpec;
@@ -65,7 +66,7 @@ public class JcaAEADCipher<T extends GordianKeySpec>
      * @param pCipherSpec the cipherSpec
      * @param pCipher the cipher
      */
-    JcaAEADCipher(final JcaFactory pFactory,
+    JcaAEADCipher(final GordianCoreFactory pFactory,
                   final GordianCipherSpec<T> pCipherSpec,
                   final Cipher pCipher) {
         super(pFactory, pCipherSpec);
@@ -176,7 +177,7 @@ public class JcaAEADCipher<T extends GordianKeySpec>
          * @param pCipherSpec the cipherSpec
          * @param pCipher the cipher
          */
-        JcaSymAEADCipher(final JcaFactory pFactory,
+        JcaSymAEADCipher(final GordianCoreFactory pFactory,
                          final GordianSymCipherSpec pCipherSpec,
                          final Cipher pCipher) {
             super(pFactory, pCipherSpec, pCipher);
@@ -195,7 +196,7 @@ public class JcaAEADCipher<T extends GordianKeySpec>
          * @param pCipherSpec the cipherSpec
          * @param pCipher the cipher
          */
-        JcaStreamAEADCipher(final JcaFactory pFactory,
+        JcaStreamAEADCipher(final GordianCoreFactory pFactory,
                             final GordianStreamCipherSpec pCipherSpec,
                             final Cipher pCipher) {
             super(pFactory, pCipherSpec, pCipher);

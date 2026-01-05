@@ -75,11 +75,6 @@ public class JcaMacFactory
     }
 
     @Override
-    public JcaFactory getFactory() {
-        return (JcaFactory) super.getFactory();
-    }
-
-    @Override
     @SuppressWarnings("unchecked")
     public <T extends GordianKeySpec> GordianKeyGenerator<T> getKeyGenerator(final T pMacSpec) throws GordianException {
         /* Look up in the cache */
@@ -159,7 +154,7 @@ public class JcaMacFactory
         /* Protect against exceptions */
         try {
             /* Return a MAC for the algorithm */
-            return Mac.getInstance(pAlgorithm, JcaFactory.BCPROV);
+            return Mac.getInstance(pAlgorithm, JcaProvider.BCPROV);
 
             /* Catch exceptions */
         } catch (NoSuchAlgorithmException e) {
@@ -196,7 +191,7 @@ public class JcaMacFactory
             }
 
             /* Return a KeyGenerator for the algorithm */
-            return KeyGenerator.getInstance(myAlgorithm, JcaFactory.BCPROV);
+            return KeyGenerator.getInstance(myAlgorithm, JcaProvider.BCPROV);
 
             /* Catch exceptions */
         } catch (NoSuchAlgorithmException e) {

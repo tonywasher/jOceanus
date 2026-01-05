@@ -19,10 +19,7 @@ package net.sourceforge.joceanus.gordianknot.impl.jca;
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementSpec;
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementType;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
-import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
-import net.sourceforge.joceanus.gordianknot.api.keypair.GordianNTRUPrimeSpec;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
-import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.xagree.GordianXCoreAgreementEngine;
 import net.sourceforge.joceanus.gordianknot.impl.core.xagree.GordianXCoreAgreementFactory;
@@ -32,11 +29,6 @@ import net.sourceforge.joceanus.gordianknot.impl.jca.JcaXAgreement.JcaMQVXEngine
 import net.sourceforge.joceanus.gordianknot.impl.jca.JcaXAgreement.JcaNewHopeXEngine;
 import net.sourceforge.joceanus.gordianknot.impl.jca.JcaXAgreement.JcaPostQuantumXEngine;
 import net.sourceforge.joceanus.gordianknot.impl.jca.JcaXAgreement.JcaUnifiedXEngine;
-
-import javax.crypto.KeyAgreement;
-import javax.crypto.KeyGenerator;
-import java.security.NoSuchAlgorithmException;
-import java.security.Provider;
 
 /**
  * Jca Agreement Factory.
@@ -58,7 +50,7 @@ public class JcaXAgreementFactory
      *
      * @param pFactory the factory
      */
-    JcaXAgreementFactory(final JcaFactory pFactory) {
+    JcaXAgreementFactory(final GordianCoreFactory pFactory) {
         super(pFactory);
     }
 
@@ -93,7 +85,7 @@ public class JcaXAgreementFactory
      * @throws GordianException on error
      */
     private GordianXCoreAgreementEngine getPostQuantumEngine(final GordianAgreementSpec pAgreementSpec) throws GordianException {
-        return new JcaPostQuantumXEngine(this, pAgreementSpec, getJavaKeyGenerator(pAgreementSpec.getKeyPairSpec()));
+        return new JcaPostQuantumXEngine(this, pAgreementSpec, JcaXAgreement.getJavaKeyGenerator(pAgreementSpec.getKeyPairSpec()));
     }
 
     /**
@@ -103,7 +95,7 @@ public class JcaXAgreementFactory
      * @throws GordianException on error
      */
     private GordianXCoreAgreementEngine getNHEngine(final GordianAgreementSpec pAgreementSpec) throws GordianException {
-        return new JcaNewHopeXEngine(this, pAgreementSpec, getJavaKeyAgreement("NH", true));
+        return new JcaNewHopeXEngine(this, pAgreementSpec, JcaXAgreement.getJavaKeyAgreement("NH", true));
     }
 
     /**
@@ -114,11 +106,15 @@ public class JcaXAgreementFactory
      */
     private GordianXCoreAgreementEngine getDHEngine(final GordianAgreementSpec pAgreementSpec) throws GordianException {
         switch (pAgreementSpec.getAgreementType()) {
-            case ANON:      return new JcaAnonXEngine(this, pAgreementSpec, getJavaKeyAgreement(getFullAgreementName(DH_ALGO, pAgreementSpec), false));
+            case ANON:      return new JcaAnonXEngine(this, pAgreementSpec,
+                    JcaXAgreement.getJavaKeyAgreement(JcaXAgreement.getFullAgreementName(DH_ALGO, pAgreementSpec), false));
             case SIGNED:
-            case BASIC:     return new JcaBasicXEngine(this, pAgreementSpec, getJavaKeyAgreement(getFullAgreementName(DH_ALGO, pAgreementSpec), false));
-            case UNIFIED:   return new JcaUnifiedXEngine(this, pAgreementSpec, getJavaKeyAgreement(getFullAgreementName(DH_ALGO + "U", pAgreementSpec), false));
-            case MQV:       return new JcaMQVXEngine(this, pAgreementSpec, getJavaKeyAgreement(getFullAgreementName("MQV", pAgreementSpec), false));
+            case BASIC:     return new JcaBasicXEngine(this, pAgreementSpec,
+                    JcaXAgreement.getJavaKeyAgreement(JcaXAgreement.getFullAgreementName(DH_ALGO, pAgreementSpec), false));
+            case UNIFIED:   return new JcaUnifiedXEngine(this, pAgreementSpec,
+                    JcaXAgreement.getJavaKeyAgreement(JcaXAgreement.getFullAgreementName(DH_ALGO + "U", pAgreementSpec), false));
+            case MQV:       return new JcaMQVXEngine(this, pAgreementSpec,
+                    JcaXAgreement.getJavaKeyAgreement(JcaXAgreement.getFullAgreementName("MQV", pAgreementSpec), false));
             default:        throw new GordianDataException(GordianCoreFactory.getInvalidText(pAgreementSpec));
         }
     }
@@ -132,14 +128,14 @@ public class JcaXAgreementFactory
     private GordianXCoreAgreementEngine getECEngine(final GordianAgreementSpec pAgreementSpec) throws GordianException {
         switch (pAgreementSpec.getAgreementType()) {
             case ANON:      return new JcaAnonXEngine(this, pAgreementSpec,
-                    getJavaKeyAgreement(getFullAgreementName(ECCDH_ALGO, pAgreementSpec), false));
+                    JcaXAgreement.getJavaKeyAgreement(JcaXAgreement.getFullAgreementName(ECCDH_ALGO, pAgreementSpec), false));
             case SIGNED:
             case BASIC:     return new JcaBasicXEngine(this, pAgreementSpec,
-                    getJavaKeyAgreement(getFullAgreementName(ECCDH_ALGO, pAgreementSpec), false));
+                    JcaXAgreement.getJavaKeyAgreement(JcaXAgreement.getFullAgreementName(ECCDH_ALGO, pAgreementSpec), false));
             case UNIFIED:   return new JcaUnifiedXEngine(this, pAgreementSpec,
-                    getJavaKeyAgreement(getFullAgreementName(ECCDH_ALGO + "U", pAgreementSpec), false));
+                    JcaXAgreement.getJavaKeyAgreement(JcaXAgreement.getFullAgreementName(ECCDH_ALGO + "U", pAgreementSpec), false));
             case MQV:       return new JcaMQVXEngine(this, pAgreementSpec,
-                    getJavaKeyAgreement(getFullAgreementName("ECMQV", pAgreementSpec), false));
+                    JcaXAgreement.getJavaKeyAgreement(JcaXAgreement.getFullAgreementName("ECMQV", pAgreementSpec), false));
             default:        throw new GordianDataException(GordianCoreFactory.getInvalidText(pAgreementSpec));
         }
     }
@@ -157,90 +153,6 @@ public class JcaXAgreementFactory
             case BASIC:     return new JcaBasicXEngine(this, pAgreementSpec, null);
             case UNIFIED:   return new JcaUnifiedXEngine(this, pAgreementSpec, null);
             default:        throw new GordianDataException(GordianCoreFactory.getInvalidText(pAgreementSpec));
-        }
-    }
-
-    /**
-     * Create the BouncyCastle KeyFactory via JCA.
-     * @param pAlgorithm the Algorithm
-     * @param postQuantum is this a postQuantum algorithm?
-     * @return the KeyFactory
-     * @throws GordianException on error
-     */
-    static KeyAgreement getJavaKeyAgreement(final String pAlgorithm,
-                                            final boolean postQuantum) throws GordianException {
-        /* Protect against exceptions */
-        try {
-            /* Return a KeyAgreement for the algorithm */
-            return KeyAgreement.getInstance(pAlgorithm, postQuantum
-                    ? JcaFactory.BCPQPROV
-                    : JcaFactory.BCPROV);
-
-            /* Catch exceptions */
-        } catch (NoSuchAlgorithmException e) {
-            /* Throw the exception */
-            throw new GordianCryptoException("Failed to create KeyAgreement", e);
-        }
-    }
-
-    /**
-     * Create the BouncyCastle KeyGenerator via JCA.
-     * @param pSpec the KeySpec
-     * @return the KeyFactory
-     * @throws GordianException on error
-     */
-    private static KeyGenerator getJavaKeyGenerator(final GordianKeyPairSpec pSpec) throws GordianException {
-        /* Protect against exceptions */
-        try {
-            /* Determine the algorithm name */
-            String myName = pSpec.getKeyPairType().toString();
-            switch (pSpec.getKeyPairType()) {
-                case NTRUPRIME:
-                    final GordianNTRUPrimeSpec myNTRUSpec = pSpec.getNTRUPrimeKeySpec();
-                    myName = myNTRUSpec.getType() + "PRIME";
-                    break;
-                case MLKEM:
-                    myName = "ML-KEM";
-                    break;
-                default:
-                    break;
-            }
-
-            /* Determine source of keyGenerator */
-            final Provider myProvider = pSpec.getKeyPairType().isStandardJca() ? JcaFactory.BCPROV : JcaFactory.BCPQPROV;
-
-            /* Return a KeyAgreement for the algorithm */
-            return KeyGenerator.getInstance(myName, myProvider);
-
-            /* Catch exceptions */
-        } catch (NoSuchAlgorithmException e) {
-            /* Throw the exception */
-            throw new GordianCryptoException("Failed to create KeyGenerator", e);
-        }
-    }
-
-    /**
-     * Obtain the agreement name.
-     * @param pBase the base agreement
-     * @param pAgreementSpec the agreementSpec
-     * @return the full agreement name
-     * @throws GordianException on error
-     */
-    private static String getFullAgreementName(final String pBase,
-                                               final GordianAgreementSpec pAgreementSpec) throws GordianException {
-        switch (pAgreementSpec.getKDFType()) {
-            case NONE:
-                return pBase;
-            case SHA256KDF:
-                return pBase + "withSHA256KDF";
-            case SHA512KDF:
-                return pBase + "withSHA512KDF";
-            case SHA256CKDF:
-                return pBase + "withSHA256CKDF";
-            case SHA512CKDF:
-                return pBase + "withSHA512CKDF";
-            default:
-                throw new GordianDataException(GordianCoreFactory.getInvalidText(pAgreementSpec));
         }
     }
 

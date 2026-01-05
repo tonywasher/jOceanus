@@ -38,14 +38,9 @@ public class JcaEncryptorFactory
      *
      * @param pFactory the factory
      */
-    JcaEncryptorFactory(final JcaFactory pFactory) {
+    JcaEncryptorFactory(final GordianCoreFactory pFactory) {
         /* Initialise underlying class */
         super(pFactory);
-    }
-
-    @Override
-    public JcaFactory getFactory() {
-        return (JcaFactory) super.getFactory();
     }
 
     @Override

@@ -34,6 +34,7 @@ import org.bouncycastle.jcajce.spec.ContextParameterSpec;
 
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.security.Signature;
 import java.security.SignatureException;
 
@@ -289,7 +290,7 @@ public abstract class JcaSignature
 
             /* Create the signature class */
             final String myDigest = JcaDigest.getSignAlgorithm(pSignatureSpec.getDigestSpec());
-            setSigner(JcaSignatureFactory.getJavaSignature(myDigest + getSignatureBase(pSignatureSpec), false));
+            setSigner(getJavaSignature(myDigest + getSignatureBase(pSignatureSpec), false));
         }
     }
 
@@ -355,7 +356,7 @@ public abstract class JcaSignature
 
             /* Create the signature class */
             final String myDigest = JcaDigest.getSignAlgorithm(pSignatureSpec.getDigestSpec());
-            setSigner(JcaSignatureFactory.getJavaSignature(myDigest + getSignatureBase(pSignatureSpec), false));
+            setSigner(getJavaSignature(myDigest + getSignatureBase(pSignatureSpec), false));
         }
     }
 
@@ -376,7 +377,7 @@ public abstract class JcaSignature
             super(pFactory, pSignatureSpec);
 
             /* Create the signature class */
-            setSigner(JcaSignatureFactory.getJavaSignature(getSignature(pSignatureSpec), false));
+            setSigner(getJavaSignature(getSignature(pSignatureSpec), false));
         }
 
         /**
@@ -428,7 +429,7 @@ public abstract class JcaSignature
             final GordianKeyPair myPair = pParams.getKeyPair();
             JcaKeyPair.checkKeyPair(myPair);
             final String mySignName = getAlgorithmForKeyPair(myPair);
-            setSigner(JcaSignatureFactory.getJavaSignature(mySignName, false));
+            setSigner(getJavaSignature(mySignName, false));
 
             /* pass on call */
             super.initForSigning(pParams);
@@ -440,7 +441,7 @@ public abstract class JcaSignature
             final GordianKeyPair myPair = pParams.getKeyPair();
             JcaKeyPair.checkKeyPair(myPair);
             final String mySignName = getAlgorithmForKeyPair(myPair);
-            setSigner(JcaSignatureFactory.getJavaSignature(mySignName, false));
+            setSigner(getJavaSignature(mySignName, false));
 
             /* pass on call */
             super.initForVerify(pParams);
@@ -485,7 +486,7 @@ public abstract class JcaSignature
             final GordianKeyPair myPair = pParams.getKeyPair();
             JcaKeyPair.checkKeyPair(myPair);
             final String mySignName = getAlgorithmForKeyPair(myPair);
-            setSigner(JcaSignatureFactory.getJavaSignature(mySignName, false));
+            setSigner(getJavaSignature(mySignName, false));
 
             /* pass on call */
             super.initForSigning(pParams);
@@ -497,7 +498,7 @@ public abstract class JcaSignature
             final GordianKeyPair myPair = pParams.getKeyPair();
             JcaKeyPair.checkKeyPair(myPair);
             final String mySignName = getAlgorithmForKeyPair(myPair);
-            setSigner(JcaSignatureFactory.getJavaSignature(mySignName, false));
+            setSigner(getJavaSignature(mySignName, false));
 
             /* pass on call */
             super.initForVerify(pParams);
@@ -532,7 +533,7 @@ public abstract class JcaSignature
             super(pFactory, pSignatureSpec);
 
             /* Create the signature class */
-            setSigner(JcaSignatureFactory.getJavaSignature("FALCON", true));
+            setSigner(getJavaSignature("FALCON", true));
         }
     }
 
@@ -553,7 +554,7 @@ public abstract class JcaSignature
             super(pFactory, pSignatureSpec);
 
             /* Create the signature class */
-            setSigner(JcaSignatureFactory.getJavaSignature("MAYO", true));
+            setSigner(getJavaSignature("MAYO", true));
         }
     }
 
@@ -574,7 +575,7 @@ public abstract class JcaSignature
             super(pFactory, pSignatureSpec);
 
             /* Create the signature class */
-            setSigner(JcaSignatureFactory.getJavaSignature("SNOVA", true));
+            setSigner(getJavaSignature("SNOVA", true));
         }
     }
 
@@ -601,7 +602,7 @@ public abstract class JcaSignature
 
             /* Create the signature class */
             final String myName = determineSignatureName(pSignatureSpec);
-            setSigner(JcaSignatureFactory.getJavaSignature(myName, true));
+            setSigner(getJavaSignature(myName, true));
         }
 
         /**
@@ -660,7 +661,7 @@ public abstract class JcaSignature
             final GordianKeyPair myPair = pParams.getKeyPair();
             JcaKeyPair.checkKeyPair(myPair);
             final String mySignName = getAlgorithmForKeyPair(myPair);
-            setSigner(JcaSignatureFactory.getJavaSignature(mySignName, true));
+            setSigner(getJavaSignature(mySignName, true));
 
             /* pass on call */
             super.initForSigning(pParams);
@@ -672,7 +673,7 @@ public abstract class JcaSignature
             final GordianKeyPair myPair = pParams.getKeyPair();
             JcaKeyPair.checkKeyPair(myPair);
             final String mySignName = getAlgorithmForKeyPair(myPair);
-            setSigner(JcaSignatureFactory.getJavaSignature(mySignName, true));
+            setSigner(getJavaSignature(mySignName, true));
 
             /* pass on call */
             super.initForVerify(pParams);
@@ -727,7 +728,7 @@ public abstract class JcaSignature
             final GordianKeyPair myPair = pParams.getKeyPair();
             JcaKeyPair.checkKeyPair(myPair);
             final String mySignName = getAlgorithmForKeyPair(myPair);
-            setSigner(JcaSignatureFactory.getJavaSignature(mySignName, false));
+            setSigner(getJavaSignature(mySignName, false));
 
             /* pass on call */
             super.initForSigning(pParams);
@@ -739,7 +740,7 @@ public abstract class JcaSignature
             final GordianKeyPair myPair = pParams.getKeyPair();
             JcaKeyPair.checkKeyPair(myPair);
             final String mySignName = getAlgorithmForKeyPair(myPair);
-            setSigner(JcaSignatureFactory.getJavaSignature(mySignName, false));
+            setSigner(getJavaSignature(mySignName, false));
 
             /* pass on call */
             super.initForVerify(pParams);
@@ -777,7 +778,30 @@ public abstract class JcaSignature
             super(pFactory, pSignatureSpec);
 
             /* Create the signature class */
-            setSigner(JcaSignatureFactory.getJavaSignature("LMS", true));
+            setSigner(getJavaSignature("LMS", true));
+        }
+    }
+
+    /**
+     * Create the BouncyCastle Signature via JCA.
+     * @param pAlgorithm the Algorithm
+     * @param postQuantum is this a postQuantum algorithm?
+     * @return the KeyPairGenerator
+     * @throws GordianException on error
+     */
+    private static Signature getJavaSignature(final String pAlgorithm,
+                                              final boolean postQuantum) throws GordianException {
+        /* Protect against exceptions */
+        try {
+            /* Return a Signature for the algorithm */
+            return Signature.getInstance(pAlgorithm, postQuantum
+                    ? JcaProvider.BCPQPROV
+                    : JcaProvider.BCPROV);
+
+            /* Catch exceptions */
+        } catch (NoSuchAlgorithmException e) {
+            /* Throw the exception */
+            throw new GordianCryptoException("Failed to create Signature", e);
         }
     }
 }
