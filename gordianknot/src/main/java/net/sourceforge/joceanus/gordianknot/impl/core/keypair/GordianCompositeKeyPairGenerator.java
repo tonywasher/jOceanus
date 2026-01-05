@@ -53,7 +53,7 @@ public class GordianCompositeKeyPairGenerator
     /**
      * The keyPairFactory.
      */
-    private final GordianCoreKeyPairFactory theFactory;
+    private final GordianKeyPairFactory theFactory;
 
     /**
      * The list of generators.
@@ -75,7 +75,7 @@ public class GordianCompositeKeyPairGenerator
                                      final GordianKeyPairSpec pSpec) throws GordianException {
         /* Store the spec. */
         theSpec = pSpec;
-        theFactory = (GordianCoreKeyPairFactory) pFactory;
+        theFactory = pFactory;
         theGenerators = new ArrayList<>();
         boolean stateAware = false;
 

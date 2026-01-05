@@ -24,14 +24,9 @@ import net.sourceforge.joceanus.gordianknot.api.encrypt.GordianSM2EncryptionSpec
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.encrypt.GordianCompositeEncryptor;
 import net.sourceforge.joceanus.gordianknot.impl.core.encrypt.GordianCoreEncryptorFactory;
-import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.jca.JcaEncryptor.JcaBlockEncryptor;
 import net.sourceforge.joceanus.gordianknot.impl.jca.JcaEncryptor.JcaHybridEncryptor;
-
-import javax.crypto.Cipher;
-import javax.crypto.NoSuchPaddingException;
-import java.security.NoSuchAlgorithmException;
 
 /**
  * Jca Encryptor Factory.
@@ -79,30 +74,6 @@ public class JcaEncryptorFactory
                 return new GordianCompositeEncryptor(getFactory(), pEncryptorSpec);
             default:
                 throw new GordianDataException(GordianCoreFactory.getInvalidText(pEncryptorSpec.getKeyPairType()));
-        }
-    }
-
-    /**
-     * Create the BouncyCastle KeyFactory via JCA.
-     * @param pAlgorithm the Algorithm
-     * @param postQuantum is this a postQuantum algorithm?
-     * @return the KeyFactory
-     * @throws GordianException on error
-     */
-    static Cipher getJavaEncryptor(final String pAlgorithm,
-                                   final boolean postQuantum) throws GordianException {
-        /* Protect against exceptions */
-        try {
-            /* Return a Cipher for the algorithm */
-            return Cipher.getInstance(pAlgorithm, postQuantum
-                                                  ? JcaFactory.BCPQPROV
-                                                  : JcaFactory.BCPROV);
-
-            /* Catch exceptions */
-        } catch (NoSuchAlgorithmException
-                | NoSuchPaddingException e) {
-            /* Throw the exception */
-            throw new GordianCryptoException("Failed to create Cipher", e);
         }
     }
 

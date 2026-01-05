@@ -19,9 +19,6 @@ package net.sourceforge.joceanus.gordianknot.api.factory;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianBundleLoader;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianBundleLoader.GordianBundleId;
 
-import java.util.EnumMap;
-import java.util.Map;
-
 /**
  * Resource IDs for Factory package.
  */
@@ -38,14 +35,9 @@ public enum GordianFactoryResource
     FACTORY_JCA("JCA");
 
     /**
-     * The Factory Map.
-     */
-    private static final Map<GordianFactoryType, GordianBundleId> FACTORY_MAP = buildFactoryMap();
-
-    /**
      * The Resource Loader.
      */
-    private static final GordianBundleLoader LOADER = GordianBundleLoader.getLoader(GordianFactory.class.getCanonicalName());
+    private static final GordianBundleLoader LOADER = GordianBundleLoader.getLoader(GordianFactoryResource.class.getCanonicalName());
 
     /**
      * The Id.
@@ -77,7 +69,7 @@ public enum GordianFactoryResource
 
     @Override
     public String getValue() {
-        /* If we have not initialised the value */
+        /* If we have not initialized the value */
         if (theValue == null) {
             /* Derive the value */
             theValue = LOADER.getValue(this);
@@ -85,26 +77,5 @@ public enum GordianFactoryResource
 
         /* return the value */
         return theValue;
-    }
-
-    /**
-     * Build factory map.
-     * @return the map
-     */
-    private static Map<GordianFactoryType, GordianBundleId> buildFactoryMap() {
-        /* Create the map and return it */
-        final Map<GordianFactoryType, GordianBundleId> myMap = new EnumMap<>(GordianFactoryType.class);
-        myMap.put(GordianFactoryType.BC, FACTORY_BC);
-        myMap.put(GordianFactoryType.JCA, FACTORY_JCA);
-        return myMap;
-    }
-
-    /**
-     * Obtain key for Factory.
-     * @param pFactoryType the factoryType
-     * @return the resource key
-     */
-    static GordianBundleId getKeyForFactoryType(final GordianFactoryType pFactoryType) {
-        return GordianBundleLoader.getKeyForEnum(FACTORY_MAP, pFactoryType);
     }
 }

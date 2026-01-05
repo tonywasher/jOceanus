@@ -16,7 +16,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.api.mac;
 
+import net.sourceforge.joceanus.gordianknot.api.base.GordianBundleLoader.GordianBundleId;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
+import net.sourceforge.joceanus.gordianknot.api.cipher.GordianCipherResource;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymKeyType;
 
 /**
@@ -113,7 +115,7 @@ public enum GordianMacType {
         /* If we have not yet loaded the name */
         if (theName == null) {
             /* Load the name */
-            theName = GordianMacResource.getKeyForMac(this).getValue();
+            theName = bundleIdForMacType().getValue();
         }
 
         /* return the name */
@@ -156,6 +158,34 @@ public enum GordianMacType {
                 return GordianLength.LEN_128 == pKeyLen;
             default:
                 return true;
+        }
+    }
+
+    /**
+     * Obtain the resource bundleId for this macType.
+     * @return the resource bundleId
+     */
+    private GordianBundleId bundleIdForMacType() {
+        /* Create the map and return it */
+        switch (this) {
+            case HMAC: return GordianMacResource.MAC_HMAC;
+            case GMAC: return GordianMacResource.MAC_GMAC;
+            case CMAC: return GordianMacResource.MAC_CMAC;
+            case KMAC: return GordianMacResource.MAC_KMAC;
+            case POLY1305: return GordianMacResource.MAC_POLY;
+            case SKEIN: return GordianMacResource.MAC_SKEIN;
+            case KALYNA: return GordianMacResource.MAC_KALYNA;
+            case KUPYNA: return GordianMacResource.MAC_KUPYNA;
+            case BLAKE2: return GordianMacResource.MAC_BLAKE2;
+            case BLAKE3: return GordianMacResource.MAC_BLAKE3;
+            case VMPC: return GordianMacResource.MAC_VMPC;
+            case ZUC: return GordianCipherResource.STREAMKEY_ZUC;
+            case CBCMAC: return GordianMacResource.MAC_CBC;
+            case CFBMAC: return GordianMacResource.MAC_CFB;
+            case SIPHASH: return GordianMacResource.MAC_SIPHASH;
+            case GOST: return GordianMacResource.MAC_GOST;
+            default:
+                throw new IllegalArgumentException();
         }
     }
 }

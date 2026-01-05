@@ -19,9 +19,6 @@ package net.sourceforge.joceanus.gordianknot.api.digest;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianBundleLoader;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianBundleLoader.GordianBundleId;
 
-import java.util.EnumMap;
-import java.util.Map;
-
 /**
  * Resource IDs for Digests package.
  */
@@ -173,14 +170,9 @@ public enum GordianDigestResource
     DIGEST_XOODYAK("Xoodyak");
 
     /**
-     * The Digest Map.
-     */
-    private static final Map<GordianDigestType, GordianBundleId> DIGEST_MAP = buildDigestMap();
-
-    /**
      * The Resource Loader.
      */
-    private static final GordianBundleLoader LOADER = GordianBundleLoader.getLoader(GordianDigest.class.getCanonicalName());
+    private static final GordianBundleLoader LOADER = GordianBundleLoader.getLoader(GordianDigestResource.class.getCanonicalName());
 
     /**
      * The Id.
@@ -220,52 +212,5 @@ public enum GordianDigestResource
 
         /* return the value */
         return theValue;
-    }
-
-    /**
-     * Build digest map.
-     * @return the map
-     */
-    private static Map<GordianDigestType, GordianBundleId> buildDigestMap() {
-        /* Create the map and return it */
-        final Map<GordianDigestType, GordianBundleId> myMap = new EnumMap<>(GordianDigestType.class);
-        myMap.put(GordianDigestType.SHA2, DIGEST_SHA2);
-        myMap.put(GordianDigestType.TIGER, DIGEST_TIGER);
-        myMap.put(GordianDigestType.WHIRLPOOL, DIGEST_WHIRLPOOL);
-        myMap.put(GordianDigestType.RIPEMD, DIGEST_RIPEMD);
-        myMap.put(GordianDigestType.STREEBOG, DIGEST_STREEBOG);
-        myMap.put(GordianDigestType.GOST, DIGEST_GOST);
-        myMap.put(GordianDigestType.SHA3, DIGEST_SHA3);
-        myMap.put(GordianDigestType.SHAKE, DIGEST_SHAKE);
-        myMap.put(GordianDigestType.SKEIN, DIGEST_SKEIN);
-        myMap.put(GordianDigestType.SM3, DIGEST_SM3);
-        myMap.put(GordianDigestType.BLAKE2, DIGEST_BLAKE2);
-        myMap.put(GordianDigestType.BLAKE3, DIGEST_BLAKE3);
-        myMap.put(GordianDigestType.KUPYNA, DIGEST_KUPYNA);
-        myMap.put(GordianDigestType.SHA1, DIGEST_SHA1);
-        myMap.put(GordianDigestType.MD5, DIGEST_MD5);
-        myMap.put(GordianDigestType.MD4, DIGEST_MD4);
-        myMap.put(GordianDigestType.MD2, DIGEST_MD2);
-        myMap.put(GordianDigestType.JH, DIGEST_JH);
-        myMap.put(GordianDigestType.GROESTL, DIGEST_GROESTL);
-        myMap.put(GordianDigestType.CUBEHASH, DIGEST_CUBEHASH);
-        myMap.put(GordianDigestType.KANGAROO, DIGEST_KANGAROO);
-        myMap.put(GordianDigestType.HARAKA, DIGEST_HARAKA);
-        myMap.put(GordianDigestType.ASCON, DIGEST_ASCON);
-        myMap.put(GordianDigestType.ISAP, DIGEST_ISAP);
-        myMap.put(GordianDigestType.PHOTONBEETLE, DIGEST_PHOTONBEETLE);
-        myMap.put(GordianDigestType.ROMULUS, DIGEST_ROMULUS);
-        myMap.put(GordianDigestType.SPARKLE, DIGEST_SPARKLE);
-        myMap.put(GordianDigestType.XOODYAK, DIGEST_XOODYAK);
-        return myMap;
-    }
-
-    /**
-     * Obtain key for Digest.
-     * @param pDigest the DigestType
-     * @return the resource key
-     */
-    static GordianBundleId getKeyForDigest(final GordianDigestType pDigest) {
-        return GordianBundleLoader.getKeyForEnum(DIGEST_MAP, pDigest);
     }
 }

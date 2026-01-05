@@ -173,8 +173,8 @@ public class GordianCoreCertificate
         isSelfSigned = true;
 
         /* Create the ids */
-        theSubject = GordianCoreCertificateId.getSubjectId(this);
-        theIssuer = GordianCoreCertificateId.getIssuerId(this);
+        theSubject = buildSubjectId();
+        theIssuer = buildIssuerId();
 
         /* Store the encoded representation */
         theEncoded = encodeCertificate();
@@ -227,8 +227,8 @@ public class GordianCoreCertificate
         isSelfSigned = false;
 
         /* Create the ids */
-        theSubject = GordianCoreCertificateId.getSubjectId(this);
-        theIssuer = GordianCoreCertificateId.getIssuerId(this);
+        theSubject = buildSubjectId();
+        theIssuer = buildIssuerId();
 
         /* Store the encoded representation */
         theEncoded = encodeCertificate();
@@ -284,8 +284,8 @@ public class GordianCoreCertificate
             isSelfSigned = mySignerName.equals(getIssuerName());
 
             /* Create the ids */
-            theSubject = GordianCoreCertificateId.getSubjectId(this);
-            theIssuer = GordianCoreCertificateId.getIssuerId(this);
+            theSubject = buildSubjectId();
+            theIssuer = buildIssuerId();
             theSerialNo = theTbsCertificate.getSerialNumber().getValue();
 
             /* Store the encoded representation */
@@ -301,6 +301,22 @@ public class GordianCoreCertificate
      */
     protected GordianCoreFactory getFactory() {
         return theFactory;
+    }
+
+    /**
+     * Build the issuer Id for a certificate.
+     * @return get the issuer id
+     */
+    private GordianCoreCertificateId buildSubjectId() {
+        return new GordianCoreCertificateId(getSubjectName(), DERBitString.convert(getSubjectId()));
+    }
+
+    /**
+     * Build the issuer Id for a certificate.
+      * @return get the issuer id
+     */
+    private GordianCoreCertificateId buildIssuerId() {
+        return new GordianCoreCertificateId(getIssuerName(), DERBitString.convert(getIssuerId()));
     }
 
     @Override
