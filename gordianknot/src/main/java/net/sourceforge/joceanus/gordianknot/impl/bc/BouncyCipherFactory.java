@@ -164,11 +164,6 @@ public class BouncyCipherFactory
     }
 
     @Override
-    public BouncyFactory getFactory() {
-        return (BouncyFactory) super.getFactory();
-    }
-
-    @Override
     @SuppressWarnings("unchecked")
     public <T extends GordianKeySpec> BouncyKeyGenerator<T> getKeyGenerator(final T pKeySpec) throws GordianException {
         /* Look up in the cache */

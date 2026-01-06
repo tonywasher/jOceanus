@@ -51,14 +51,9 @@ public class BouncySignatureFactory
      *
      * @param pFactory the factory
      */
-    BouncySignatureFactory(final BouncyFactory pFactory) {
+    BouncySignatureFactory(final GordianCoreFactory pFactory) {
         /* Initialise underlying class */
         super(pFactory);
-    }
-
-    @Override
-    protected BouncyFactory getFactory() {
-        return (BouncyFactory) super.getFactory();
     }
 
     @Override

@@ -59,7 +59,7 @@ import net.sourceforge.joceanus.gordianknot.impl.core.xagree.GordianXCoreAgreeme
      *
      * @param pFactory the factory
      */
-    BouncyXAgreementFactory(final BouncyFactory pFactory) {
+    BouncyXAgreementFactory(final GordianCoreFactory pFactory) {
         super(pFactory);
     }
 

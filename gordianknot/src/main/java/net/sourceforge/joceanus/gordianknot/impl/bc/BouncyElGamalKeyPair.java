@@ -24,6 +24,7 @@ import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPrivateKey;
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPublicKey;
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyRSAKeyPair.BouncyCoreEncryptor;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
 import net.sourceforge.joceanus.gordianknot.impl.core.keypair.GordianKeyPairValidity;
 import org.bouncycastle.asn1.ASN1Integer;
@@ -157,7 +158,7 @@ public final class BouncyElGamalKeyPair {
          * @param pFactory the Security Factory
          * @param pKeySpec the keySpec
          */
-        BouncyElGamalKeyPairGenerator(final BouncyFactory pFactory,
+        BouncyElGamalKeyPairGenerator(final GordianCoreFactory pFactory,
                                       final GordianKeyPairSpec pKeySpec) {
             /* Initialise underlying class */
             super(pFactory, pKeySpec);
@@ -295,7 +296,7 @@ public final class BouncyElGamalKeyPair {
          * @param pSpec the encryptorSpec
          * @throws GordianException on error
          */
-        BouncyElGamalEncryptor(final BouncyFactory pFactory,
+        BouncyElGamalEncryptor(final GordianCoreFactory pFactory,
                                final GordianEncryptorSpec pSpec) throws GordianException {
             /* Initialise underlying cipher */
             super(pFactory, pSpec, new ElGamalEngine());

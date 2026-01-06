@@ -88,11 +88,6 @@ public class BouncyDigestFactory
     }
 
     @Override
-    public BouncyFactory getFactory() {
-        return (BouncyFactory) super.getFactory();
-    }
-
-    @Override
     public BouncyDigest createDigest(final GordianDigestSpec pDigestSpec) throws GordianException {
         /* Check validity of DigestSpec */
         checkDigestSpec(pDigestSpec);

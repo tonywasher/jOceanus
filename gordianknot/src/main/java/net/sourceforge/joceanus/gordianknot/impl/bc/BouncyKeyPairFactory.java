@@ -76,7 +76,7 @@ public class BouncyKeyPairFactory
      *
      * @param pFactory the factory
      */
-    BouncyKeyPairFactory(final BouncyFactory pFactory) {
+    BouncyKeyPairFactory(final GordianCoreFactory pFactory) {
         /* Initialise underlying class */
         super(pFactory);
 
@@ -89,11 +89,6 @@ public class BouncyKeyPairFactory
         setXAgreementFactory(new BouncyXAgreementFactory(pFactory));
         setEncryptorFactory(new BouncyEncryptorFactory(pFactory));
         setKeyStoreFactory(new GordianCoreKeyStoreFactory(this));
-    }
-
-    @Override
-    public BouncyFactory getFactory() {
-        return (BouncyFactory) super.getFactory();
     }
 
     @Override

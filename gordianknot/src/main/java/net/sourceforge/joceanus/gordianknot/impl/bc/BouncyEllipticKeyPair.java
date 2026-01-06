@@ -37,6 +37,7 @@ import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianCoreAnonymous
 import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianCoreBasicAgreement;
 import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianCoreEphemeralAgreement;
 import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianCoreSignedAgreement;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.encrypt.GordianCoreEncryptor;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianIOException;
@@ -195,7 +196,7 @@ public final class BouncyEllipticKeyPair {
          * @param pKeySpec the keySpec
          * @throws GordianException on error
          */
-        BouncyECKeyPairGenerator(final BouncyFactory pFactory,
+        BouncyECKeyPairGenerator(final GordianCoreFactory pFactory,
                                  final GordianKeyPairSpec pKeySpec) throws GordianException {
             /* Initialise underlying class */
             super(pFactory, pKeySpec);
@@ -349,7 +350,7 @@ public final class BouncyEllipticKeyPair {
          * @param pSpec the signatureSpec.
          * @throws GordianException on error
          */
-        BouncyECSignature(final BouncyFactory pFactory,
+        BouncyECSignature(final GordianCoreFactory pFactory,
                           final GordianSignatureSpec pSpec) throws GordianException {
             /* Initialise underlying class */
             super(pFactory, pSpec);
@@ -430,7 +431,7 @@ public final class BouncyEllipticKeyPair {
          * @param pFactory the security factory
          * @param pSpec the agreementSpec
          */
-        BouncyECIESAgreement(final BouncyFactory pFactory,
+        BouncyECIESAgreement(final GordianCoreFactory pFactory,
                              final GordianAgreementSpec pSpec) {
             /* Initialise underlying class */
             super(pFactory, pSpec);
@@ -498,7 +499,7 @@ public final class BouncyEllipticKeyPair {
          * @param pFactory the security factory
          * @param pSpec the agreementSpec
          */
-        BouncyECAnonymousAgreement(final BouncyFactory pFactory,
+        BouncyECAnonymousAgreement(final GordianCoreFactory pFactory,
                                    final GordianAgreementSpec pSpec) {
             /* Initialise underlying class */
             super(pFactory, pSpec);
@@ -575,7 +576,7 @@ public final class BouncyEllipticKeyPair {
          * @param pFactory the security factory
          * @param pSpec the agreementSpec
          */
-        BouncyECBasicAgreement(final BouncyFactory pFactory,
+        BouncyECBasicAgreement(final GordianCoreFactory pFactory,
                                final GordianAgreementSpec pSpec) {
             /* Initialise underlying class */
             super(pFactory, pSpec);
@@ -647,7 +648,7 @@ public final class BouncyEllipticKeyPair {
          * @param pFactory the security factory
          * @param pSpec the agreementSpec
          */
-        BouncyECSignedAgreement(final BouncyFactory pFactory,
+        BouncyECSignedAgreement(final GordianCoreFactory pFactory,
                                 final GordianAgreementSpec pSpec) {
             /* Initialise underlying class */
             super(pFactory, pSpec);
@@ -712,7 +713,7 @@ public final class BouncyEllipticKeyPair {
          * @param pFactory the security factory
          * @param pSpec the agreementSpec
          */
-        BouncyECUnifiedAgreement(final BouncyFactory pFactory,
+        BouncyECUnifiedAgreement(final GordianCoreFactory pFactory,
                                  final GordianAgreementSpec pSpec) {
             /* Initialise underlying class */
             super(pFactory, pSpec);
@@ -797,7 +798,7 @@ public final class BouncyEllipticKeyPair {
          * @param pFactory the security factory
          * @param pSpec the agreementSpec
          */
-        BouncyECMQVAgreement(final BouncyFactory pFactory,
+        BouncyECMQVAgreement(final GordianCoreFactory pFactory,
                              final GordianAgreementSpec pSpec) {
             /* Initialise underlying class */
             super(pFactory, pSpec);
@@ -1181,7 +1182,7 @@ public final class BouncyEllipticKeyPair {
          * @param pFactory the factory
          * @param pSpec the encryptorSpec
          */
-        BouncyECEncryptor(final BouncyFactory pFactory,
+        BouncyECEncryptor(final GordianCoreFactory pFactory,
                           final GordianEncryptorSpec pSpec) {
             /* Initialise underlying cipher */
             super(pFactory, pSpec);

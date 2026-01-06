@@ -20,6 +20,7 @@ import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairType;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignatureSpec;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
 import net.sourceforge.joceanus.gordianknot.impl.core.sign.GordianCoreSignature;
 import org.bouncycastle.asn1.ASN1EncodableVector;
@@ -75,7 +76,7 @@ public final class BouncySignature {
          * @param pSpec the signatureSpec.
          * @throws GordianException on error
          */
-        BouncyDigestSignature(final BouncyFactory pFactory,
+        BouncyDigestSignature(final GordianCoreFactory pFactory,
                               final GordianSignatureSpec pSpec) throws GordianException {
             super(pFactory, pSpec);
             theDigest = pSpec.getSignatureSpec() == null
@@ -89,7 +90,7 @@ public final class BouncySignature {
          * @param pSpec the signatureSpec.
          * @param pDigest the digest
          */
-        BouncyDigestSignature(final BouncyFactory pFactory,
+        BouncyDigestSignature(final GordianCoreFactory pFactory,
                               final GordianSignatureSpec pSpec,
                               final Digest pDigest) {
             super(pFactory, pSpec);
@@ -138,8 +139,8 @@ public final class BouncySignature {
         }
 
         @Override
-        public BouncyFactory getFactory() {
-            return (BouncyFactory) super.getFactory();
+        public GordianCoreFactory getFactory() {
+            return (GordianCoreFactory) super.getFactory();
         }
     }
 
@@ -209,7 +210,7 @@ public final class BouncySignature {
      * @return the ECSigner
      * @throws GordianException on error
      */
-    static DSA getDSASigner(final BouncyFactory pFactory,
+    static DSA getDSASigner(final GordianCoreFactory pFactory,
                             final GordianSignatureSpec pSpec) throws GordianException {
         /* Note if we are DSA */
         final boolean isDSA = GordianKeyPairType.DSA.equals(pSpec.getKeyPairType());
@@ -217,7 +218,7 @@ public final class BouncySignature {
         /* Switch on signature type */
         switch (pSpec.getSignatureType()) {
             case DDSA:
-                final BouncyDigest myDigest = pFactory.getDigestFactory().createDigest(pSpec.getDigestSpec());
+                final BouncyDigest myDigest = (BouncyDigest) pFactory.getDigestFactory().createDigest(pSpec.getDigestSpec());
                 final HMacDSAKCalculator myCalc = new HMacDSAKCalculator(myDigest.getDigest());
                 return isDSA
                        ? new DSASigner(myCalc)

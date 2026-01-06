@@ -38,14 +38,9 @@ public class BouncyEncryptorFactory
      *
      * @param pFactory the factory
      */
-    BouncyEncryptorFactory(final BouncyFactory pFactory) {
+    BouncyEncryptorFactory(final GordianCoreFactory pFactory) {
         /* Initialise underlying class */
         super(pFactory);
-    }
-
-    @Override
-    protected BouncyFactory getFactory() {
-        return (BouncyFactory) super.getFactory();
     }
 
     @Override

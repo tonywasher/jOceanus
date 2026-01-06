@@ -55,7 +55,7 @@ public final class BouncySymKeyCipher
      * @param pCipherSpec the cipherSpec
      * @param pCipher the cipher
      */
-    protected BouncySymKeyCipher(final BouncyFactory pFactory,
+    protected BouncySymKeyCipher(final GordianCoreFactory pFactory,
                                  final GordianSymCipherSpec pCipherSpec,
                                  final BufferedBlockCipher pCipher) {
         super(pFactory, pCipherSpec);

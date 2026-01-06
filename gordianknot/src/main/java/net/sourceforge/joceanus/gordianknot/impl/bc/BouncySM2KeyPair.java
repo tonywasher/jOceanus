@@ -18,6 +18,7 @@ package net.sourceforge.joceanus.gordianknot.impl.bc;
 
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementSpec;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
+import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestFactory;
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestType;
 import net.sourceforge.joceanus.gordianknot.api.encrypt.GordianEncryptorSpec;
@@ -34,6 +35,7 @@ import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPrivateK
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPublicKey;
 import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianAgreementMessageASN1;
 import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianCoreEphemeralAgreement;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.encrypt.GordianCoreEncryptor;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianIOException;
@@ -71,7 +73,7 @@ public final class BouncySM2KeyPair {
          * @param pKeySpec the keySpec
          * @throws GordianException on error
          */
-        BouncySM2KeyPairGenerator(final BouncyFactory pFactory,
+        BouncySM2KeyPairGenerator(final GordianCoreFactory pFactory,
                                   final GordianKeyPairSpec pKeySpec) throws GordianException {
             /* Initialise underlying class */
             super(pFactory, pKeySpec);
@@ -99,7 +101,7 @@ public final class BouncySM2KeyPair {
          * @param pSpec the signatureSpec.
          * @throws GordianException on error
          */
-        BouncySM2Signature(final BouncyFactory pFactory,
+        BouncySM2Signature(final GordianCoreFactory pFactory,
                            final GordianSignatureSpec pSpec) throws GordianException {
             /* Initialise underlying class */
             super(pFactory, pSpec);
@@ -109,7 +111,7 @@ public final class BouncySM2KeyPair {
             if (GordianDigestType.SM3.equals(mySpec.getDigestType())) {
                 theSigner = new SM2Signer();
             } else {
-                final BouncyDigest myDigest = pFactory.getDigestFactory().createDigest(mySpec);
+                final BouncyDigest myDigest = (BouncyDigest) pFactory.getDigestFactory().createDigest(mySpec);
                 theSigner = new SM2Signer(myDigest.getDigest());
             }
         }
@@ -209,7 +211,7 @@ public final class BouncySM2KeyPair {
          * @param pFactory the security factory
          * @param pSpec the agreementSpec
          */
-        BouncyECSM2Agreement(final BouncyFactory pFactory,
+        BouncyECSM2Agreement(final GordianCoreFactory pFactory,
                              final GordianAgreementSpec pSpec) {
             /* Initialise underlying class */
             super(pFactory, pSpec);
@@ -440,13 +442,13 @@ public final class BouncySM2KeyPair {
          * @param pSpec the encryptorSpec
          * @throws GordianException on error
          */
-        BouncySM2Encryptor(final BouncyFactory pFactory,
+        BouncySM2Encryptor(final GordianCoreFactory pFactory,
                            final GordianEncryptorSpec pSpec) throws GordianException {
             /* Initialise underlying cipher */
             super(pFactory, pSpec);
-            final BouncyDigestFactory myFactory = pFactory.getDigestFactory();
+            final GordianDigestFactory myFactory = pFactory.getDigestFactory();
             final GordianSM2EncryptionSpec mySpec = pSpec.getSM2EncryptionSpec();
-            final BouncyDigest myDigest = myFactory.createDigest(mySpec.getDigestSpec());
+            final BouncyDigest myDigest = (BouncyDigest) myFactory.createDigest(mySpec.getDigestSpec());
             final Mode mySM2Mode = mySpec.getEncryptionType() == GordianSM2EncryptionType.C1C2C3
                                    ? Mode.C1C2C3 : Mode.C1C3C2;
             theEncryptor = new SM2Engine(myDigest.getDigest(), mySM2Mode);

@@ -23,6 +23,7 @@ import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignParams;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignatureSpec;
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPrivateKey;
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPublicKey;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
 import net.sourceforge.joceanus.gordianknot.impl.core.keypair.GordianKeyPairValidity;
 import net.sourceforge.joceanus.gordianknot.impl.core.sign.GordianCoreSignature;
@@ -184,7 +185,7 @@ public final class BouncyEdDSAKeyPair {
          * @param pFactory the Security Factory
          * @param pKeySpec the keySpec
          */
-        BouncyEd25519KeyPairGenerator(final BouncyFactory pFactory,
+        BouncyEd25519KeyPairGenerator(final GordianCoreFactory pFactory,
                                       final GordianKeyPairSpec pKeySpec) {
             /* Initialise underlying class */
             super(pFactory, pKeySpec);
@@ -313,7 +314,7 @@ public final class BouncyEdDSAKeyPair {
          * @param pFactory the Security Factory
          * @param pKeySpec the keySpec
         */
-        BouncyEd448KeyPairGenerator(final BouncyFactory pFactory,
+        BouncyEd448KeyPairGenerator(final GordianCoreFactory pFactory,
                                     final GordianKeyPairSpec pKeySpec) {
             /* Initialise underlying class */
             super(pFactory, pKeySpec);
@@ -417,7 +418,7 @@ public final class BouncyEdDSAKeyPair {
          * @param pFactory the factory
          * @param pSpec the signatureSpec.
          */
-        BouncyEdDSASignature(final BouncyFactory pFactory,
+        BouncyEdDSASignature(final GordianCoreFactory pFactory,
                              final GordianSignatureSpec pSpec) {
             /* Initialise underlying class */
             super(pFactory, pSpec);
@@ -493,8 +494,8 @@ public final class BouncyEdDSAKeyPair {
         }
 
         @Override
-        public BouncyFactory getFactory() {
-            return (BouncyFactory) super.getFactory();
+        public GordianCoreFactory getFactory() {
+            return (GordianCoreFactory) super.getFactory();
         }
 
         @Override

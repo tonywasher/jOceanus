@@ -16,11 +16,11 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.bc;
 
-import org.bouncycastle.crypto.Mac;
-import org.bouncycastle.crypto.Xof;
-
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianXof;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacSpec;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
+import org.bouncycastle.crypto.Mac;
+import org.bouncycastle.crypto.Xof;
 
 /**
  * BouncyCastle Mac Xof.
@@ -38,7 +38,7 @@ public class BouncyMacXof
      * @param pMacSpec the MacSpec
      * @param pXof the MACXof
      */
-    BouncyMacXof(final BouncyFactory pFactory,
+    BouncyMacXof(final GordianCoreFactory pFactory,
                  final GordianMacSpec pMacSpec,
                  final Xof pXof) {
         super(pFactory, pMacSpec, (Mac) pXof);

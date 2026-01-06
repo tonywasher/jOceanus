@@ -24,6 +24,7 @@ import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignatureSpec;
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPrivateKey;
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPublicKey;
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncySignature.BouncyDigestSignature;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
 import net.sourceforge.joceanus.gordianknot.impl.core.keypair.GordianKeyPairValidity;
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
@@ -148,7 +149,7 @@ public final class BouncySnovaKeyPair {
          * @param pFactory the Security Factory
          * @param pKeySpec the keySpec
          */
-        BouncySnovaKeyPairGenerator(final BouncyFactory pFactory,
+        BouncySnovaKeyPairGenerator(final GordianCoreFactory pFactory,
                                     final GordianKeyPairSpec pKeySpec) {
             /* Initialise underlying class */
             super(pFactory, pKeySpec);
@@ -278,7 +279,7 @@ public final class BouncySnovaKeyPair {
          * @param pSpec the signatureSpec.
          * @throws GordianException on error
          */
-        BouncySnovaSignature(final BouncyFactory pFactory,
+        BouncySnovaSignature(final GordianCoreFactory pFactory,
                              final GordianSignatureSpec pSpec) throws GordianException {
             /* Initialise underlying class */
             super(pFactory, pSpec);

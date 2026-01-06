@@ -84,11 +84,6 @@ public class BouncyMacFactory
     }
 
     @Override
-    public BouncyFactory getFactory() {
-        return (BouncyFactory) super.getFactory();
-    }
-
-    @Override
     @SuppressWarnings("unchecked")
     public <T extends GordianKeySpec> BouncyKeyGenerator<T> getKeyGenerator(final T pMacSpec) throws GordianException {
         /* Look up in the cache */

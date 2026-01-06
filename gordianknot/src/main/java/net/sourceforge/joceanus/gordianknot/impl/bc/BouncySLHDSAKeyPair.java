@@ -24,6 +24,7 @@ import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignatureSpec;
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPrivateKey;
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPublicKey;
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncySignature.BouncyDigestSignature;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
 import net.sourceforge.joceanus.gordianknot.impl.core.keypair.GordianKeyPairValidity;
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
@@ -153,7 +154,7 @@ public final class BouncySLHDSAKeyPair {
          * @param pFactory the Security Factory
          * @param pKeySpec the keySpec
          */
-        BouncySLHDSAKeyPairGenerator(final BouncyFactory pFactory,
+        BouncySLHDSAKeyPairGenerator(final GordianCoreFactory pFactory,
                                      final GordianKeyPairSpec pKeySpec) {
             /* Initialise underlying class */
             super(pFactory, pKeySpec);
@@ -293,7 +294,7 @@ public final class BouncySLHDSAKeyPair {
          * @param pSpec the signatureSpec.
          * @throws GordianException on error
          */
-        BouncySLHDSASignature(final BouncyFactory pFactory,
+        BouncySLHDSASignature(final GordianCoreFactory pFactory,
                               final GordianSignatureSpec pSpec) throws GordianException {
             /* Initialise underlying class */
             super(pFactory, pSpec);
