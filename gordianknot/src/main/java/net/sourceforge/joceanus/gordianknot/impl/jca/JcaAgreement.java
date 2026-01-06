@@ -21,7 +21,7 @@ import net.sourceforge.joceanus.gordianknot.api.agree.GordianKDFType;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymKeyType;
-import net.sourceforge.joceanus.gordianknot.api.factory.GordianKeyPairFactory;
+import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairFactory;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairGenerator;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
@@ -132,7 +132,7 @@ public final class JcaAgreement {
                 final X509EncodedKeySpec myKeySpec = pClientHello.getEphemeral();
 
                 /* Derive ephemeral Public key */
-                final GordianKeyPairFactory myFactory = getFactory().getKeyPairFactory();
+                final GordianKeyPairFactory myFactory = getFactory().getAsyncFactory().getKeyPairFactory();
                 final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(pServer.getKeyPairSpec());
                 final GordianKeyPair myPair = myGenerator.derivePublicOnlyKeyPair(myKeySpec);
                 final JcaPublicKey myPublic = (JcaPublicKey) getPublicKey(myPair);
@@ -264,7 +264,7 @@ public final class JcaAgreement {
                 establishAgreement(pServer);
 
                 /* Create an ephemeral keyPair */
-                final GordianKeyPairFactory myFactory = getFactory().getKeyPairFactory();
+                final GordianKeyPairFactory myFactory = getFactory().getAsyncFactory().getKeyPairFactory();
                 final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(pServer.getKeyPairSpec());
                 final GordianKeyPair myPair = myGenerator.generateKeyPair();
 
@@ -309,7 +309,7 @@ public final class JcaAgreement {
                 final X509EncodedKeySpec myKeySpec = pClientHello.getEphemeral();
 
                 /* Derive ephemeral Public key */
-                final GordianKeyPairFactory myFactory = getFactory().getKeyPairFactory();
+                final GordianKeyPairFactory myFactory = getFactory().getAsyncFactory().getKeyPairFactory();
                 final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(pServer.getKeyPairSpec());
                 final GordianKeyPair myPair = myGenerator.derivePublicOnlyKeyPair(myKeySpec);
 

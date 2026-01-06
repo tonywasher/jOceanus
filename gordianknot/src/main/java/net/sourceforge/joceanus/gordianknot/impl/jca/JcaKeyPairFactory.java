@@ -24,7 +24,6 @@ import net.sourceforge.joceanus.gordianknot.api.keypair.GordianNTRUPrimeSpec.Gor
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.keypair.GordianCoreKeyPairFactory;
-import net.sourceforge.joceanus.gordianknot.impl.core.keystore.GordianCoreKeyStoreFactory;
 import net.sourceforge.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaBIKEKeyPairGenerator;
 import net.sourceforge.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaCMCEKeyPairGenerator;
 import net.sourceforge.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaDHKeyPairGenerator;
@@ -59,6 +58,11 @@ import java.util.Map;
 public class JcaKeyPairFactory
     extends GordianCoreKeyPairFactory {
     /**
+     * Factory.
+     */
+    private final GordianCoreFactory theFactory;
+
+    /**
      * KeyPairGenerator Cache.
      */
     private final Map<GordianKeyPairSpec, JcaKeyPairGenerator> theCache;
@@ -69,33 +73,12 @@ public class JcaKeyPairFactory
      * @param pFactory the factory
      */
     JcaKeyPairFactory(final GordianCoreFactory pFactory) {
-        /* Initialise underlying class */
+        /* Initialize underlying class */
         super(pFactory);
+        theFactory = pFactory;
 
         /* Create the cache */
         theCache = new HashMap<>();
-
-        /* Create factories */
-        setSignatureFactory(new JcaSignatureFactory(pFactory));
-        setAgreementFactory(new JcaAgreementFactory(pFactory));
-        setXAgreementFactory(new JcaXAgreementFactory(pFactory));
-        setEncryptorFactory(new JcaEncryptorFactory(pFactory));
-        setKeyStoreFactory(new GordianCoreKeyStoreFactory(this));
-    }
-
-    @Override
-    public JcaSignatureFactory getSignatureFactory() {
-        return (JcaSignatureFactory) super.getSignatureFactory();
-    }
-
-    @Override
-    public JcaAgreementFactory getAgreementFactory() {
-        return (JcaAgreementFactory) super.getAgreementFactory();
-    }
-
-    @Override
-    public JcaEncryptorFactory getEncryptorFactory() {
-        return (JcaEncryptorFactory) super.getEncryptorFactory();
     }
 
     @Override
@@ -129,57 +112,57 @@ public class JcaKeyPairFactory
     private JcaKeyPairGenerator getJcaKeyPairGenerator(final GordianKeyPairSpec pKeySpec) throws GordianException {
         switch (pKeySpec.getKeyPairType()) {
             case RSA:
-                return new JcaRSAKeyPairGenerator(getFactory(), pKeySpec);
+                return new JcaRSAKeyPairGenerator(theFactory, pKeySpec);
             case ELGAMAL:
-                return new JcaElGamalKeyPairGenerator(getFactory(), pKeySpec);
+                return new JcaElGamalKeyPairGenerator(theFactory, pKeySpec);
             case EC:
             case SM2:
             case DSTU4145:
             case GOST2012:
-                return new JcaECKeyPairGenerator(getFactory(), pKeySpec);
+                return new JcaECKeyPairGenerator(theFactory, pKeySpec);
             case DSA:
-                return new JcaDSAKeyPairGenerator(getFactory(), pKeySpec);
+                return new JcaDSAKeyPairGenerator(theFactory, pKeySpec);
             case XDH:
             case EDDSA:
-                return new JcaEdKeyPairGenerator(getFactory(), pKeySpec);
+                return new JcaEdKeyPairGenerator(theFactory, pKeySpec);
             case DH:
-                return new JcaDHKeyPairGenerator(getFactory(), pKeySpec);
+                return new JcaDHKeyPairGenerator(theFactory, pKeySpec);
             case NEWHOPE:
-                return new JcaNewHopeKeyPairGenerator(getFactory(), pKeySpec);
+                return new JcaNewHopeKeyPairGenerator(theFactory, pKeySpec);
             case SLHDSA:
-                return new JcaSLHDSAKeyPairGenerator(getFactory(), pKeySpec);
+                return new JcaSLHDSAKeyPairGenerator(theFactory, pKeySpec);
             case CMCE:
-                return new JcaCMCEKeyPairGenerator(getFactory(), pKeySpec);
+                return new JcaCMCEKeyPairGenerator(theFactory, pKeySpec);
             case FRODO:
-                return new JcaFrodoKeyPairGenerator(getFactory(), pKeySpec);
+                return new JcaFrodoKeyPairGenerator(theFactory, pKeySpec);
             case SABER:
-                return new JcaSABERKeyPairGenerator(getFactory(), pKeySpec);
+                return new JcaSABERKeyPairGenerator(theFactory, pKeySpec);
             case MLKEM:
-                return new JcaMLKEMKeyPairGenerator(getFactory(), pKeySpec);
+                return new JcaMLKEMKeyPairGenerator(theFactory, pKeySpec);
             case MLDSA:
-                return new JcaMLDSAKeyPairGenerator(getFactory(), pKeySpec);
+                return new JcaMLDSAKeyPairGenerator(theFactory, pKeySpec);
             case HQC:
-                return new JcaHQCKeyPairGenerator(getFactory(), pKeySpec);
+                return new JcaHQCKeyPairGenerator(theFactory, pKeySpec);
             case BIKE:
-                return new JcaBIKEKeyPairGenerator(getFactory(), pKeySpec);
+                return new JcaBIKEKeyPairGenerator(theFactory, pKeySpec);
             case NTRU:
-                return new JcaNTRUKeyPairGenerator(getFactory(), pKeySpec);
+                return new JcaNTRUKeyPairGenerator(theFactory, pKeySpec);
             case NTRUPRIME:
                 return pKeySpec.getNTRUPrimeKeySpec().getType() == GordianNTRUPrimeType.NTRUL
-                        ? new JcaNTRULPrimeKeyPairGenerator(getFactory(), pKeySpec)
-                        : new JcaSNTRUPrimeKeyPairGenerator(getFactory(), pKeySpec);
+                        ? new JcaNTRULPrimeKeyPairGenerator(theFactory, pKeySpec)
+                        : new JcaSNTRUPrimeKeyPairGenerator(theFactory, pKeySpec);
             case FALCON:
-                return new JcaFalconKeyPairGenerator(getFactory(), pKeySpec);
+                return new JcaFalconKeyPairGenerator(theFactory, pKeySpec);
             case MAYO:
-                return new JcaMayoKeyPairGenerator(getFactory(), pKeySpec);
+                return new JcaMayoKeyPairGenerator(theFactory, pKeySpec);
             case SNOVA:
-                return new JcaSnovaKeyPairGenerator(getFactory(), pKeySpec);
+                return new JcaSnovaKeyPairGenerator(theFactory, pKeySpec);
             case PICNIC:
-                return new JcaPicnicKeyPairGenerator(getFactory(), pKeySpec);
+                return new JcaPicnicKeyPairGenerator(theFactory, pKeySpec);
             case XMSS:
-                return new JcaXMSSKeyPairGenerator(getFactory(), pKeySpec);
+                return new JcaXMSSKeyPairGenerator(theFactory, pKeySpec);
             case LMS:
-                return new JcaLMSKeyPairGenerator(getFactory(), pKeySpec);
+                return new JcaLMSKeyPairGenerator(theFactory, pKeySpec);
             default:
                 throw new GordianDataException(GordianCoreFactory.getInvalidText(pKeySpec.getKeyPairType()));
         }

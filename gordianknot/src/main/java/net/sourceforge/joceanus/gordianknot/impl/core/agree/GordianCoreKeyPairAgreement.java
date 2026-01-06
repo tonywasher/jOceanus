@@ -73,7 +73,7 @@ public abstract class GordianCoreKeyPairAgreement
      * @return the factory
      */
     protected GordianCoreAgreementFactory getAgreementFactory() {
-        return (GordianCoreAgreementFactory) getFactory().getKeyPairFactory().getAgreementFactory();
+        return (GordianCoreAgreementFactory) getFactory().getAsyncFactory().getAgreementFactory();
     }
 
     /**

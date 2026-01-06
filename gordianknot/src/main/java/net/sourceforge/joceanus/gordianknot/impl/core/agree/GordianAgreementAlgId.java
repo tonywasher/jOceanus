@@ -174,7 +174,7 @@ public class GordianAgreementAlgId {
      */
     private void addAllKeyPairs() {
         /* Loop through all the Agreement types */
-        for (GordianKeyPairSpec mySpec : theFactory.getKeyPairFactory().listPossibleKeySpecs()) {
+        for (GordianKeyPairSpec mySpec : theFactory.getAsyncFactory().getKeyPairFactory().listPossibleKeySpecs()) {
             /* Add agreements */
             addKeyPair(mySpec);
         }

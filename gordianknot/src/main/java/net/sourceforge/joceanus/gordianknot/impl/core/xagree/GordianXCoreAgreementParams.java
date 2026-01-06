@@ -264,6 +264,9 @@ public class GordianXCoreAgreementParams
             if (!Objects.equals(mySpec.getKeyPairSpec(), myKeyPair.getKeyPairSpec())) {
                 throw new GordianDataException("Client Certificate not valid for agreement");
             }
+            if (!pClient.getUsage().hasUse(GordianKeyPairUse.AGREEMENT)) {
+                throw new GordianDataException("Client Certificate must be capable of keyAgreement");
+            }
             if (myKeyPair.isPublicOnly()) {
                 throw new GordianDataException("Client Certificate must supply privateKey");
             }
@@ -289,6 +292,9 @@ public class GordianXCoreAgreementParams
             }
             if (!Objects.equals(mySpec.getKeyPairSpec(), myKeyPair.getKeyPairSpec())) {
                 throw new GordianDataException("Server Certificate not valid for agreement");
+            }
+            if (!pServer.getUsage().hasUse(GordianKeyPairUse.AGREEMENT)) {
+                throw new GordianDataException("Server Certificate must be capable of keyAgreement");
             }
 
             /* If we are a server */
@@ -316,7 +322,7 @@ public class GordianXCoreAgreementParams
 
     @Override
     public void setSigner(final GordianCertificate pSigner) throws GordianException {
-        final GordianSignatureFactory mySignFactory = theFactory.getKeyPairFactory().getSignatureFactory();
+        final GordianSignatureFactory mySignFactory = theFactory.getAsyncFactory().getSignatureFactory();
         final GordianSignatureSpec mySignSpec = pSigner == null ? null : mySignFactory.defaultForKeyPair(pSigner.getKeyPair().getKeyPairSpec());
         setSigner(pSigner, mySignSpec);
     }
@@ -343,7 +349,7 @@ public class GordianXCoreAgreementParams
             }
 
             /* Check that signSpec is valid for keyPair */
-            final GordianSignatureFactory mySignFactory = theFactory.getKeyPairFactory().getSignatureFactory();
+            final GordianSignatureFactory mySignFactory = theFactory.getAsyncFactory().getSignatureFactory();
             if (!mySignFactory.validSignatureSpecForKeyPair(pSigner.getKeyPair(), pSignSpec)) {
                 throw new GordianDataException(GordianCoreFactory.getInvalidText(pSignSpec));
             }

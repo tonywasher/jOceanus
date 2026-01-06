@@ -20,17 +20,17 @@ import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementSpec;
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianAnonymousAgreement;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
+import net.sourceforge.joceanus.gordianknot.api.cert.GordianCertificate;
+import net.sourceforge.joceanus.gordianknot.api.cert.GordianKeyPairUsage;
+import net.sourceforge.joceanus.gordianknot.api.cert.GordianKeyPairUse;
 import net.sourceforge.joceanus.gordianknot.api.encrypt.GordianEncryptor;
 import net.sourceforge.joceanus.gordianknot.api.encrypt.GordianEncryptorSpec;
+import net.sourceforge.joceanus.gordianknot.api.factory.GordianAsyncFactory;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactory;
-import net.sourceforge.joceanus.gordianknot.api.factory.GordianKeyPairFactory;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySet;
 import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySetSpec;
-import net.sourceforge.joceanus.gordianknot.api.cert.GordianCertificate;
-import net.sourceforge.joceanus.gordianknot.api.cert.GordianKeyPairUsage;
-import net.sourceforge.joceanus.gordianknot.api.cert.GordianKeyPairUse;
 import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianCoreAgreementFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianParameters;
@@ -94,13 +94,13 @@ public class GordianCRMEncryptor {
         /* Try to send an encrypted proof */
         final GordianKeyPair myKeyPair = pCertificate.getKeyPair();
         final GordianKeyPairSpec mySpec = myKeyPair.getKeyPairSpec();
-        final GordianEncryptorSpec myEncSpec = theFactory.getKeyPairFactory().getEncryptorFactory().defaultForKeyPair(mySpec);
+        final GordianEncryptorSpec myEncSpec = theFactory.getAsyncFactory().getEncryptorFactory().defaultForKeyPair(mySpec);
         if (myEncSpec != null) {
             return prepareForEncryption(myEncSpec, pCertificate);
         }
 
         /* Try to send an agreed proof */
-        final GordianAgreementSpec myAgreeSpec = theFactory.getKeyPairFactory().getAgreementFactory().defaultForKeyPair(mySpec);
+        final GordianAgreementSpec myAgreeSpec = theFactory.getAsyncFactory().getAgreementFactory().defaultForKeyPair(mySpec);
         if (myAgreeSpec != null) {
             return prepareAgreedEncryption(myAgreeSpec, pCertificate);
         }
@@ -119,7 +119,7 @@ public class GordianCRMEncryptor {
     private GordianCRMResult prepareAgreedEncryption(final GordianAgreementSpec pAgreeSpec,
                                                      final GordianCoreCertificate pCertificate) throws GordianException {
         /* Create the agreement */
-        final GordianKeyPairFactory myFactory = theFactory.getKeyPairFactory();
+        final GordianAsyncFactory myFactory = theFactory.getAsyncFactory();
         final GordianCoreAgreementFactory myAgreeFactory = (GordianCoreAgreementFactory) myFactory.getAgreementFactory();
         final GordianAnonymousAgreement myAgree = (GordianAnonymousAgreement) myAgreeFactory.createAgreement(pAgreeSpec);
         myAgree.setResultType(new GordianKeySetSpec());
@@ -193,8 +193,8 @@ public class GordianCRMEncryptor {
                                               final GordianCoreCertificate pCertificate,
                                               final GordianEncryptorSpec pSpec) throws GordianException {
         /* Create the encrypted key */
-        final GordianKeyPairFactory myKPFactory = theFactory.getKeyPairFactory();
-        final GordianCoreEncryptorFactory myEncFactory = (GordianCoreEncryptorFactory) myKPFactory.getEncryptorFactory();
+        final GordianAsyncFactory myFactory = theFactory.getAsyncFactory();
+        final GordianCoreEncryptorFactory myEncFactory = (GordianCoreEncryptorFactory) myFactory.getEncryptorFactory();
         final GordianEncryptor myEncryptor = myEncFactory.createEncryptor(pSpec);
 
         /* Create the encrypted key */
@@ -285,8 +285,8 @@ public class GordianCRMEncryptor {
                                                 final AlgorithmIdentifier pAlgId,
                                                 final byte[] pEncryptedKey) throws GordianException {
         /* Handle decryption */
-        final GordianKeyPairFactory myKPFactory = theFactory.getKeyPairFactory();
-        final GordianCoreEncryptorFactory myEncFactory = (GordianCoreEncryptorFactory) myKPFactory.getEncryptorFactory();
+        final GordianAsyncFactory myFactory = theFactory.getAsyncFactory();
+        final GordianCoreEncryptorFactory myEncFactory = (GordianCoreEncryptorFactory) myFactory.getEncryptorFactory();
         final GordianEncryptorSpec myEncSpec = myEncFactory.getSpecForIdentifier(pAlgId);
         final GordianEncryptor myEncryptor = myEncFactory.createEncryptor(myEncSpec);
         myEncryptor.initForDecrypt(pKeyPair);
@@ -306,8 +306,8 @@ public class GordianCRMEncryptor {
    private GordianKeySet deriveAgreedKeySet(final GordianKeyPair pKeyPair,
                                             final byte[] pHello) throws GordianException {
         /* Handle agreement */
-        final GordianKeyPairFactory myKPFactory = theFactory.getKeyPairFactory();
-        final GordianCoreAgreementFactory myAgreeFactory = (GordianCoreAgreementFactory) myKPFactory.getAgreementFactory();
+        final GordianAsyncFactory myFactory = theFactory.getAsyncFactory();
+        final GordianCoreAgreementFactory myAgreeFactory = (GordianCoreAgreementFactory) myFactory.getAgreementFactory();
         final GordianAnonymousAgreement myAgree = (GordianAnonymousAgreement) myAgreeFactory.createAgreement(pHello);
         myAgree.acceptClientHello(pKeyPair, pHello);
         return (GordianKeySet) myAgree.getResult();

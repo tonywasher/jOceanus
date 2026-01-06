@@ -21,7 +21,7 @@ import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementType;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.gordianknot.api.cert.GordianCertificate;
-import net.sourceforge.joceanus.gordianknot.api.factory.GordianKeyPairFactory;
+import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairFactory;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairGenerator;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMac;
@@ -98,7 +98,7 @@ public class GordianXCoreAgreementBuilder {
 
         /* Create the state */
         theState = new GordianXCoreAgreementState(pSpec);
-        final GordianKeyPairFactory myFactory = theFactory.getKeyPairFactory();
+        final GordianKeyPairFactory myFactory = theFactory.getAsyncFactory().getKeyPairFactory();
         theKeyPairGenerator = myFactory.getKeyPairGenerator(pSpec.getKeyPairSpec());
 
         /* Create the result calculator */
@@ -413,7 +413,7 @@ public class GordianXCoreAgreementBuilder {
         final GordianCoreCertificate mySignerCert = (GordianCoreCertificate) theState.getSignerCertificate();
         if (mySignerCert != null) {
             /* Access details */
-            final GordianCoreSignatureFactory mySigns = (GordianCoreSignatureFactory) theFactory.getKeyPairFactory().getSignatureFactory();
+            final GordianCoreSignatureFactory mySigns = (GordianCoreSignatureFactory) theFactory.getAsyncFactory().getSignatureFactory();
             final GordianSignatureSpec mySignSpec = theState.getSignSpec();
             final GordianKeyPair mySignerPair = mySignerCert.getKeyPair();
             final AlgorithmIdentifier myAlgId = mySigns.getIdentifierForSpecAndKeyPair(mySignSpec, mySignerPair);
@@ -520,7 +520,7 @@ public class GordianXCoreAgreementBuilder {
         final Certificate mySignerCert = pServerHello.getSignerCertificate();
         if (mySignerCert != null) {
             /* Access details */
-            final GordianCoreSignatureFactory mySigns = (GordianCoreSignatureFactory) theFactory.getKeyPairFactory().getSignatureFactory();
+            final GordianCoreSignatureFactory mySigns = (GordianCoreSignatureFactory) theFactory.getAsyncFactory().getSignatureFactory();
             final GordianSignatureSpec mySignSpec = mySigns.getSpecForIdentifier(pServerHello.getSignatureId());
             final GordianCoreCertificate myCert = new GordianCoreCertificate(theFactory, mySignerCert);
             final GordianKeyPair mySignerPair = myCert.getKeyPair();

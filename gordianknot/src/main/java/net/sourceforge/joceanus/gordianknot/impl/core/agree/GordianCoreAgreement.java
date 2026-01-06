@@ -94,7 +94,7 @@ public abstract class GordianCoreAgreement
         theFactory = pFactory;
         theSpec = pSpec;
         theStatus = GordianAgreementStatus.CLEAN;
-        theAlgIds = ((GordianCoreAgreementFactory) pFactory.getKeyPairFactory().getAgreementFactory()).getAlgorithmIds();
+        theAlgIds = ((GordianCoreAgreementFactory) pFactory.getAsyncFactory().getAgreementFactory()).getAlgorithmIds();
         theResultCalc = new GordianAgreementResult(pFactory);
     }
 

@@ -144,7 +144,7 @@ class KeyStoreTest {
         final GordianFactory myFactory = GordianGenerator.createRandomFactory(pFactoryType);
 
         /* Access keyStoreFactory and create a keyStore */
-        final GordianKeyStoreFactory myKSFactory = myFactory.getKeyPairFactory().getKeyStoreFactory();
+        final GordianKeyStoreFactory myKSFactory = myFactory.getAsyncFactory().getKeyStoreFactory();
         final GordianKeyStore myStore = myKSFactory.createKeyStore(KEYSETLOCKSPEC);
         final GordianKeyStoreManager myMgr = myKSFactory.createKeyStoreManager(myStore);
 
@@ -256,7 +256,7 @@ class KeyStoreTest {
     private void symmetric(final GordianKeyStoreManager pManager) throws GordianException {
         /* Access details */
         final GordianCoreKeyStore myStore = (GordianCoreKeyStore) pManager.getKeyStore();
-        final GordianKeyStoreFactory myFactory = myStore.getFactory().getKeyPairFactory().getKeyStoreFactory();
+        final GordianKeyStoreFactory myFactory = myStore.getFactory().getAsyncFactory().getKeyStoreFactory();
         final GordianKeyStoreGateway myGateway = myFactory.createKeyStoreGateway(pManager);
 
         /* Create the keySet */
@@ -301,7 +301,7 @@ class KeyStoreTest {
     private void keyPairs(final GordianKeyStoreManager pManager) throws GordianException {
         /* Access details */
         final GordianCoreKeyStore myStore = (GordianCoreKeyStore) pManager.getKeyStore();
-        final GordianKeyStoreFactory myFactory = myStore.getFactory().getKeyPairFactory().getKeyStoreFactory();
+        final GordianKeyStoreFactory myFactory = myStore.getFactory().getAsyncFactory().getKeyStoreFactory();
         final GordianKeyStoreGateway myGateway = myFactory.createKeyStoreGateway(pManager);
 
         /* Create root certificates */
@@ -392,12 +392,12 @@ class KeyStoreTest {
         final GordianKeyStorePair myIntermediate = pState.getIntermediate();
 
         /* Handle a disabled keyPairSpec */
-        if (!myMgr.getKeyStore().getFactory().getKeyPairFactory().supportedKeyPairSpecs().test(pKeyPairSpec)) {
+        if (!myMgr.getKeyStore().getFactory().getAsyncFactory().getKeyPairFactory().supportedKeyPairSpecs().test(pKeyPairSpec)) {
             return;
         }
 
         /* Create and configure gateway */
-        final GordianKeyStoreGateway myGateway = myStore.getFactory().getKeyPairFactory().getKeyStoreFactory().createKeyStoreGateway(myMgr);
+        final GordianKeyStoreGateway myGateway = myStore.getFactory().getAsyncFactory().getKeyStoreFactory().createKeyStoreGateway(myMgr);
         myGateway.setPasswordResolver(pState::passwordResolver);
         myGateway.setCertifier(KeyStoreAlias.CERTIFIER.getName());
         myGateway.setMACSecretResolver(n -> DEF_MACSECRET);
@@ -448,7 +448,7 @@ class KeyStoreTest {
         myMgr.createKeyPair(pKeyPairSpec, myCertName, pUsage, myIntermediate, myAlias.getName(), DEF_PASSWORD);
 
         /* Create and configure gateway */
-        final GordianKeyStoreGateway myGateway = myStore.getFactory().getKeyPairFactory().getKeyStoreFactory().createKeyStoreGateway(myMgr);
+        final GordianKeyStoreGateway myGateway = myStore.getFactory().getAsyncFactory().getKeyStoreFactory().createKeyStoreGateway(myMgr);
         myGateway.setPasswordResolver(pState::passwordResolver);
         myGateway.setCertifier(KeyStoreAlias.CERTIFIER.getName());
         myGateway.setMACSecretResolver(n -> DEF_MACSECRET);

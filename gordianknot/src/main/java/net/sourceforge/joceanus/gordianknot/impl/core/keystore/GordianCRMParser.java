@@ -23,7 +23,8 @@ import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.encrypt.GordianEncryptor;
 import net.sourceforge.joceanus.gordianknot.api.encrypt.GordianEncryptorFactory;
 import net.sourceforge.joceanus.gordianknot.api.encrypt.GordianEncryptorSpec;
-import net.sourceforge.joceanus.gordianknot.api.factory.GordianKeyPairFactory;
+import net.sourceforge.joceanus.gordianknot.api.factory.GordianAsyncFactory;
+import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairFactory;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairGenerator;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
@@ -298,10 +299,11 @@ public class GordianCRMParser {
         /* Protect against exceptions */
         try {
             /* Derive the public Key */
-            final GordianKeyPairFactory myFactory = theGateway.getFactory().getKeyPairFactory();
+            final GordianAsyncFactory myFactory = theGateway.getFactory().getAsyncFactory();
+            final GordianKeyPairFactory myKPFactory = myFactory.getKeyPairFactory();
             final X509EncodedKeySpec myX509Spec = new X509EncodedKeySpec(pPublicKey.getEncoded());
-            final GordianKeyPairSpec myKeySpec = myFactory.determineKeyPairSpec(myX509Spec);
-            final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(myKeySpec);
+            final GordianKeyPairSpec myKeySpec = myKPFactory.determineKeyPairSpec(myX509Spec);
+            final GordianKeyPairGenerator myGenerator = myKPFactory.getKeyPairGenerator(myKeySpec);
             final GordianKeyPair myKeyPair = myGenerator.derivePublicOnlyKeyPair(myX509Spec);
 
             /* Access the verifier */
@@ -339,7 +341,7 @@ public class GordianCRMParser {
         /* Protect against exceptions */
         try {
             /* Access the generator */
-            final GordianKeyPairFactory myFactory = theGateway.getFactory().getKeyPairFactory();
+            final GordianKeyPairFactory myFactory = theGateway.getFactory().getAsyncFactory().getKeyPairFactory();
             final X509EncodedKeySpec myX509Spec = new X509EncodedKeySpec(pPublicKey.getEncoded());
             final GordianKeyPairSpec myKeySpec = myFactory.determineKeyPairSpec(myX509Spec);
             final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(myKeySpec);
@@ -376,7 +378,7 @@ public class GordianCRMParser {
      */
     private void checkPrivateKey(final GordianKeyPair pKeyPair) throws GordianException {
         /* Access details */
-        final GordianKeyPairFactory myFactory = theGateway.getFactory().getKeyPairFactory();
+        final GordianAsyncFactory myFactory = theGateway.getFactory().getAsyncFactory();
         final GordianKeyPairSpec mySpec = pKeyPair.getKeyPairSpec();
 
         /* Check for encryption private key */
@@ -409,7 +411,7 @@ public class GordianCRMParser {
         myFactory.getRandomSource().getRandom().nextBytes(mySrc);
 
         /* Access details */
-        final GordianEncryptorFactory myEncFactory = myFactory.getKeyPairFactory().getEncryptorFactory();
+        final GordianEncryptorFactory myEncFactory = myFactory.getAsyncFactory().getEncryptorFactory();
         final GordianKeyPairSpec mySpec = pKeyPair.getKeyPairSpec();
         final GordianEncryptorSpec myEncSpec = myEncFactory.defaultForKeyPair(mySpec);
 
@@ -439,7 +441,7 @@ public class GordianCRMParser {
     private void checkAgreementPrivateKey(final GordianKeyPair pKeyPair) throws GordianException {
         /* Access details */
         final GordianCoreFactory myFactory = theGateway.getFactory();
-        final GordianAgreementFactory myAgreeFactory = myFactory.getKeyPairFactory().getAgreementFactory();
+        final GordianAgreementFactory myAgreeFactory = myFactory.getAsyncFactory().getAgreementFactory();
         final GordianKeyPairSpec mySpec = pKeyPair.getKeyPairSpec();
         final GordianAgreementSpec myAgreeSpec = myAgreeFactory.defaultForKeyPair(mySpec);
 

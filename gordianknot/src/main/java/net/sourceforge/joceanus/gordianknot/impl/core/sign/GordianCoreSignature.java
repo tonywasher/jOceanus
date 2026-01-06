@@ -17,7 +17,7 @@
 package net.sourceforge.joceanus.gordianknot.impl.core.sign;
 
 import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
-import net.sourceforge.joceanus.gordianknot.api.factory.GordianKeyPairFactory;
+import net.sourceforge.joceanus.gordianknot.api.factory.GordianAsyncFactory;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignParams;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignature;
@@ -121,7 +121,7 @@ public abstract class GordianCoreSignature
      * @throws GordianException on error
      */
     private void checkKeyPair(final GordianKeyPair pKeyPair) throws GordianException {
-        final GordianKeyPairFactory myFactory = theFactory.getKeyPairFactory();
+        final GordianAsyncFactory myFactory = theFactory.getAsyncFactory();
         final GordianSignatureFactory mySigns = myFactory.getSignatureFactory();
         if (!mySigns.validSignatureSpecForKeyPair(pKeyPair, theSpec)) {
             throw new GordianDataException("Incorrect KeyPair type");

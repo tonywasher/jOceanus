@@ -20,7 +20,7 @@ import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementSpec;
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementStatus;
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianSignedAgreement;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
-import net.sourceforge.joceanus.gordianknot.api.factory.GordianKeyPairFactory;
+import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairFactory;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairGenerator;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
@@ -118,7 +118,7 @@ public abstract class GordianCoreSignedAgreement
      */
     public GordianAgreementMessageASN1 createClientHelloASN1() throws GordianException {
         /* Create ephemeral key */
-        final GordianKeyPairFactory myFactory = getFactory().getKeyPairFactory();
+        final GordianKeyPairFactory myFactory = getFactory().getAsyncFactory().getKeyPairFactory();
         final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(getAgreementSpec().getKeyPairSpec());
         theClientEphemeral = myGenerator.generateKeyPair();
         final X509EncodedKeySpec myKeySpec = myGenerator.getX509Encoding(theClientEphemeral);
@@ -171,7 +171,7 @@ public abstract class GordianCoreSignedAgreement
         final X509EncodedKeySpec myEncodedKeySpec = pClientHello.getEphemeral();
 
         /* Create ephemeral key */
-        final GordianKeyPairFactory myFactory = getFactory().getKeyPairFactory();
+        final GordianKeyPairFactory myFactory = getFactory().getAsyncFactory().getKeyPairFactory();
         final GordianKeyPairSpec myKeySpec = myFactory.determineKeyPairSpec(myEncodedKeySpec);
         final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(myKeySpec);
         theServerEphemeral = myGenerator.generateKeyPair();
@@ -191,14 +191,14 @@ public abstract class GordianCoreSignedAgreement
      */
     protected GordianAgreementMessageASN1 buildServerHelloASN1(final GordianKeyPair pServer) throws GordianException {
         /* Obtain the encoding for the server ephemeral publicKey */
-        final GordianKeyPairFactory myFactory = getFactory().getKeyPairFactory();
+        final GordianKeyPairFactory myFactory = getFactory().getAsyncFactory().getKeyPairFactory();
         final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(theServerEphemeral.getKeyPairSpec());
         final byte[] myClientEncoded = myGenerator.getX509Encoding(theClientEphemeral).getEncoded();
         final X509EncodedKeySpec myServerKeySpec = myGenerator.getX509Encoding(theServerEphemeral);
 
         /* Create the signer */
-        final GordianSignatureSpec mySpec = getFactory().getKeyPairFactory().getSignatureFactory().defaultForKeyPair(pServer.getKeyPairSpec());
-        final GordianCoreSignatureFactory mySigns = (GordianCoreSignatureFactory) myFactory.getSignatureFactory();
+        final GordianSignatureSpec mySpec = getFactory().getAsyncFactory().getSignatureFactory().defaultForKeyPair(pServer.getKeyPairSpec());
+        final GordianCoreSignatureFactory mySigns = (GordianCoreSignatureFactory) getFactory().getAsyncFactory().getSignatureFactory();
         final AlgorithmIdentifier myAlgId = mySigns.getIdentifierForSpecAndKeyPair(mySpec, pServer);
         final GordianSignature mySigner = mySigns.createSigner(mySpec);
 
@@ -250,13 +250,13 @@ public abstract class GordianCoreSignedAgreement
         final X509EncodedKeySpec myKeySpec = pServerHello.getEphemeral();
 
         /* Derive partner ephemeral key */
-        final GordianKeyPairFactory myFactory = getFactory().getKeyPairFactory();
+        final GordianKeyPairFactory myFactory = getFactory().getAsyncFactory().getKeyPairFactory();
         final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(theClientEphemeral.getKeyPairSpec());
         theServerEphemeral = myGenerator.derivePublicOnlyKeyPair(myKeySpec);
         final byte[] myClientEncoded = myGenerator.getX509Encoding(theClientEphemeral).getEncoded();
 
         /* Create the signer */
-        final GordianCoreSignatureFactory mySigns = (GordianCoreSignatureFactory) myFactory.getSignatureFactory();
+        final GordianCoreSignatureFactory mySigns = (GordianCoreSignatureFactory) getFactory().getAsyncFactory().getSignatureFactory();
         final AlgorithmIdentifier myAlgId = pServerHello.getSignatureId();
         final byte[] mySignature = pServerHello.getSignature();
         final GordianSignatureSpec mySignSpec = mySigns.getSpecForIdentifier(myAlgId);

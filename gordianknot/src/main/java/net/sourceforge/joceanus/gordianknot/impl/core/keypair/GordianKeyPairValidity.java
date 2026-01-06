@@ -89,7 +89,7 @@ public final class GordianKeyPairValidity {
         final byte[] myData = pFactory.getRandomSource().defaultPersonalisation();
 
         /* Create signer */
-        final GordianSignatureFactory mySigns = pFactory.getKeyPairFactory().getSignatureFactory();
+        final GordianSignatureFactory mySigns = pFactory.getAsyncFactory().getSignatureFactory();
         final GordianSignature mySigner = mySigns.createSigner(pSignSpec);
 
         /* Create signature */
@@ -120,7 +120,7 @@ public final class GordianKeyPairValidity {
         final byte[] myData = pFactory.getRandomSource().defaultPersonalisation();
 
         /* Create encryptor */
-        final GordianEncryptorFactory myEncrypts = pFactory.getKeyPairFactory().getEncryptorFactory();
+        final GordianEncryptorFactory myEncrypts = pFactory.getAsyncFactory().getEncryptorFactory();
         final GordianEncryptor myEncryptor = myEncrypts.createEncryptor(pEncryptSpec);
 
         /* Encrypt data */
@@ -148,7 +148,7 @@ public final class GordianKeyPairValidity {
                                       final GordianKeyPair pKeyPair,
                                       final GordianAgreementSpec pAgreeSpec) throws GordianException {
         /* Create agreement on client side */
-        final GordianAgreementFactory myAgrees = pFactory.getKeyPairFactory().getAgreementFactory();
+        final GordianAgreementFactory myAgrees = pFactory.getAsyncFactory().getAgreementFactory();
         GordianAnonymousAgreement myAgreement
                 = (GordianAnonymousAgreement) myAgrees.createAgreement(pAgreeSpec);
         final byte[] myHello = myAgreement.createClientHello(pKeyPair);
@@ -192,7 +192,7 @@ public final class GordianKeyPairValidity {
             case PICNIC:
             case XMSS:
             case LMS:
-                return pFactory.getKeyPairFactory().getSignatureFactory().defaultForKeyPair(mySpec);
+                return pFactory.getAsyncFactory().getSignatureFactory().defaultForKeyPair(mySpec);
             case ELGAMAL:
                 return GordianEncryptorSpecBuilder.elGamal(GordianDigestSpecBuilder.sha2(GordianLength.LEN_512));
             case DH:

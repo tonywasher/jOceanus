@@ -17,7 +17,7 @@
 package net.sourceforge.joceanus.gordianknot.junit.regression;
 
 import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
-import net.sourceforge.joceanus.gordianknot.api.factory.GordianKeyPairFactory;
+import net.sourceforge.joceanus.gordianknot.api.factory.GordianAsyncFactory;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignParams;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignature;
@@ -56,7 +56,7 @@ public final class AsymmetricSignScripts {
         myTests = Stream.concat(myTests, Stream.of(DynamicTest.dynamicTest("checkAlgId", () -> checkSignatureAlgId(pSignature))));
 
         /* Check that the partner supports this keySpec*/
-        final GordianKeyPairFactory myTgtAsym = pSignature.getOwner().getPartner();
+        final GordianAsyncFactory myTgtAsym = pSignature.getOwner().getPartner();
         if (myTgtAsym != null) {
             /* Add partner test if the partner supports this signature */
             final GordianSignatureFactory myTgtSigns = myTgtAsym.getSignatureFactory();

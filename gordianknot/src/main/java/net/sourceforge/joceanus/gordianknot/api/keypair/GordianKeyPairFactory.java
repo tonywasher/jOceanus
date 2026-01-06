@@ -14,17 +14,9 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.gordianknot.api.factory;
+package net.sourceforge.joceanus.gordianknot.api.keypair;
 
-import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementFactory;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
-import net.sourceforge.joceanus.gordianknot.api.encrypt.GordianEncryptorFactory;
-import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairGenerator;
-import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
-import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairType;
-import net.sourceforge.joceanus.gordianknot.api.keystore.GordianKeyStoreFactory;
-import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignatureFactory;
-import net.sourceforge.joceanus.gordianknot.api.xagree.GordianXAgreementFactory;
 
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
@@ -58,42 +50,6 @@ public interface GordianKeyPairFactory {
      * @throws GordianException on error
      */
     GordianKeyPairSpec determineKeyPairSpec(X509EncodedKeySpec pEncoded) throws GordianException;
-
-    /**
-     * Obtain the underlying Factory.
-     * @return the factory
-     */
-    GordianFactory getFactory();
-
-    /**
-     * Obtain the signatureFactory.
-     * @return the signature factory
-     */
-    GordianSignatureFactory getSignatureFactory();
-
-    /**
-     * Obtain the agreementFactory.
-     * @return the agreement factory
-     */
-    GordianAgreementFactory getAgreementFactory();
-
-    /**
-     * Obtain the XagreementFactory.
-     * @return the agreement factory
-     */
-    GordianXAgreementFactory getXAgreementFactory();
-
-    /**
-     * Obtain the encryptorFactory.
-     * @return the encryptor factory
-     */
-    GordianEncryptorFactory getEncryptorFactory();
-
-    /**
-     * Obtain the keyStore Factory.
-     * @return the keyStore factory
-     */
-    GordianKeyStoreFactory getKeyStoreFactory();
 
     /**
      * Obtain predicate for keyPairSpecs.

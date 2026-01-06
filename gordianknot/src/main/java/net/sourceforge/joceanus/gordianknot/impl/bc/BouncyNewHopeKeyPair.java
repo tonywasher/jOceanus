@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.gordianknot.impl.bc;
 
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementSpec;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
-import net.sourceforge.joceanus.gordianknot.api.factory.GordianKeyPairFactory;
+import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairFactory;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairGenerator;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
@@ -302,7 +302,7 @@ public final class BouncyNewHopeKeyPair {
             final X509EncodedKeySpec myKeySpec = pClientHello.getEphemeral();
 
             /* Derive ephemeral Public key */
-            final GordianKeyPairFactory myFactory = getFactory().getKeyPairFactory();
+            final GordianKeyPairFactory myFactory = getFactory().getAsyncFactory().getKeyPairFactory();
             final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(pServer.getKeyPairSpec());
             final GordianKeyPair myPair = myGenerator.derivePublicOnlyKeyPair(myKeySpec);
             final BouncyNewHopePublicKey myPublic = (BouncyNewHopePublicKey) getPublicKey(myPair);

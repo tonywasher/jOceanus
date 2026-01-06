@@ -104,7 +104,7 @@ public class GordianSignatureAlgId {
         theIdentifierMap = new HashMap<>();
 
         /* Access the asymFactory and digests */
-        theFactory = pFactory.getKeyPairFactory().getSignatureFactory();
+        theFactory = pFactory.getAsyncFactory().getSignatureFactory();
 
         /* Populate with the public standards */
         addRSASignatures();

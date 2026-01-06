@@ -23,7 +23,7 @@ import net.sourceforge.joceanus.gordianknot.api.cipher.GordianCipherFactory;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymKeySpec;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymKeyType;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactory;
-import net.sourceforge.joceanus.gordianknot.api.factory.GordianKeyPairFactory;
+import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairFactory;
 import net.sourceforge.joceanus.gordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.gordianknot.api.key.GordianKeyGenerator;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
@@ -215,7 +215,7 @@ public final class GordianCoreKeySet
     @Override
     public int getPrivateKeyWrapLength(final GordianKeyPair pKeyPair) throws GordianException {
         /* Determine and check the keySpec */
-        final GordianKeyPairFactory myFactory = theFactory.getKeyPairFactory();
+        final GordianKeyPairFactory myFactory = theFactory.getAsyncFactory().getKeyPairFactory();
         final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(pKeyPair.getKeyPairSpec());
         final PKCS8EncodedKeySpec myPrivateKey = myGenerator.getPKCS8Encoding(pKeyPair);
         return getDataWrapLength(myPrivateKey.getEncoded().length);
@@ -382,7 +382,7 @@ public final class GordianCoreKeySet
         final PKCS8EncodedKeySpec myPrivate = derivePrivateKeySpec(pSecuredPrivateKey);
 
         /* Determine and check the keySpec */
-        final GordianKeyPairFactory myFactory = theFactory.getKeyPairFactory();
+        final GordianKeyPairFactory myFactory = theFactory.getAsyncFactory().getKeyPairFactory();
         final GordianKeyPairSpec myKeySpec = myFactory.determineKeyPairSpec(pPublicKeySpec);
         if (!myKeySpec.equals(myFactory.determineKeyPairSpec(myPrivate))) {
             throw new GordianLogicException("Mismatch on keySpecs");

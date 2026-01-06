@@ -37,9 +37,9 @@ public class JcaFactory
     private GordianCoreZipFactory theZipFactory;
 
     /**
-     * keyPair Factory.
+     * Async Factory.
      */
-    private JcaKeyPairFactory theKeyPairFactory;
+    private JcaAsyncFactory theAsyncFactory;
 
     /**
      * Constructor.
@@ -89,10 +89,10 @@ public class JcaFactory
     }
 
     @Override
-    public JcaKeyPairFactory getKeyPairFactory() {
-        if (theKeyPairFactory == null) {
-            theKeyPairFactory = new JcaKeyPairFactory(this);
+    public JcaAsyncFactory getAsyncFactory() {
+        if (theAsyncFactory == null) {
+            theAsyncFactory = new JcaAsyncFactory(this);
         }
-        return theKeyPairFactory;
+        return theAsyncFactory;
     }
 }

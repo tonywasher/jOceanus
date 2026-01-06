@@ -20,7 +20,7 @@ import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactoryType;
-import net.sourceforge.joceanus.gordianknot.api.factory.GordianKeyPairFactory;
+import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairFactory;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairGenerator;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairSpecBuilder;
@@ -87,7 +87,7 @@ class ZipFileTest {
         final GordianFactory myFactory = GordianGenerator.createRandomFactory(pType);
 
         /* Create the keyPair */
-        final GordianKeyPairFactory myAsymFactory = myFactory.getKeyPairFactory();
+        final GordianKeyPairFactory myAsymFactory = myFactory.getAsyncFactory().getKeyPairFactory();
         GordianKeyPairGenerator myPairGenerator = myAsymFactory.getKeyPairGenerator(GordianKeyPairSpecBuilder.x448());
         final GordianKeyPair myKeyPair1 = myPairGenerator.generateKeyPair();
         myPairGenerator = myAsymFactory.getKeyPairGenerator(GordianKeyPairSpecBuilder.mlkem(GordianMLKEMSpec.MLKEM512));

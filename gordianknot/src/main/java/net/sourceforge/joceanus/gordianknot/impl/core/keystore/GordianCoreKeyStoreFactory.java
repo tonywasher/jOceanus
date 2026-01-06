@@ -29,7 +29,6 @@ import net.sourceforge.joceanus.gordianknot.api.zip.GordianZipReadFile;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianIOException;
-import net.sourceforge.joceanus.gordianknot.impl.core.keypair.GordianCoreKeyPairFactory;
 import org.w3c.dom.Document;
 
 import java.io.File;
@@ -51,8 +50,8 @@ public class GordianCoreKeyStoreFactory
      * Constructor.
      * @param pFactory the factory
      */
-    public GordianCoreKeyStoreFactory(final GordianCoreKeyPairFactory pFactory) {
-        theFactory = pFactory.getFactory();
+    public GordianCoreKeyStoreFactory(final GordianCoreFactory pFactory) {
+        theFactory = pFactory;
     }
 
     @Override

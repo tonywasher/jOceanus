@@ -14,8 +14,9 @@
                 <source>
 /* Access factory */
 final GordianFactory myBaseFactory = GordianGenerator.createFactory();
-final GordianKeyPairFactory myKeyPairFactory = myBase.getKeyPairFactory();
-final GordianEncryptorFactory myEncryptorFactory = myKeyPairFactory.getEncryptorFactory();
+final GordianAsyncFactory myAsyncFactory = myBase.getAsyncFactory();
+final GordianKeyPairFactory myKeyPairFactory = myAsyncFactory.getKeyPairFactory();
+final GordianEncryptorFactory myEncryptorFactory = myAsyncFactory.getEncryptorFactory();
 
 /* Access keyPairGenerator */
 final GordianKeyPairSpec mySpec = GordianKeyPairSpecBuilder.rsa(GordianRSAModulus.MOD2048);
@@ -42,8 +43,9 @@ final byte[] myResult = myEncryptor.decrypt(myEncrypted);
                     <source>
 /* Access factory */
 final GordianFactory myBaseFactory = GordianGenerator.createFactory();
-final GordianKeyPairFactory myKeyPairFactory = myBase.getKeyPairFactory();
-final GordianEncryptorFactory myEncryptorFactory = myKeyPairFactory.getEncryptorFactory();
+final GordianAsyncFactory myAsyncFactory = myBase.getAsyncFactory();
+final GordianKeyPairFactory myKeyPairFactory = myAsyncFactory.getKeyPairFactory();
+final GordianEncryptorFactory myEncryptorFactory = myAsyncFactory.getEncryptorFactory();
 
 /* Access keyPairGenerator */
 final GordianKeyPairSpec mySpec = GordianKeyPairSpecBuilder.composite(GordianKeyPairSpecBuilder.rsa(GordianRSAModulus.MOD2048),

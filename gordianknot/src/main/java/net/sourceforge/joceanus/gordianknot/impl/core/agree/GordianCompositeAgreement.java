@@ -24,8 +24,9 @@ import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementType;
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianKDFType;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestSpec;
-import net.sourceforge.joceanus.gordianknot.api.factory.GordianKeyPairFactory;
+import net.sourceforge.joceanus.gordianknot.api.factory.GordianAsyncFactory;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
+import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairFactory;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairGenerator;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianAgreementResult.GordianDerivationId;
@@ -233,7 +234,7 @@ public final class GordianCompositeAgreement {
 
             /* Create the list */
             theAgreements = new ArrayList<>();
-            final GordianAgreementFactory myFactory = pFactory.getKeyPairFactory().getAgreementFactory();
+            final GordianAgreementFactory myFactory = pFactory.getAsyncFactory().getAgreementFactory();
             final List<GordianAgreementSpec> mySubAgrees = getSubAgreements(pSpec);
             for (GordianAgreementSpec mySpec : mySubAgrees) {
                 theAgreements.add(myFactory.createAgreement(mySpec));
@@ -395,7 +396,7 @@ public final class GordianCompositeAgreement {
 
             /* Create the list */
             theAgreements = new ArrayList<>();
-            final GordianAgreementFactory myFactory = pFactory.getKeyPairFactory().getAgreementFactory();
+            final GordianAgreementFactory myFactory = pFactory.getAsyncFactory().getAgreementFactory();
             final List<GordianAgreementSpec> mySubAgrees = getSubAgreements(pSpec);
             for (GordianAgreementSpec mySpec : mySubAgrees) {
                 theAgreements.add(myFactory.createAgreement(mySpec));
@@ -408,7 +409,7 @@ public final class GordianCompositeAgreement {
             checkKeyPair(pClient);
 
             /* Create ephemeral key */
-            final GordianKeyPairFactory myFactory = getFactory().getKeyPairFactory();
+            final GordianAsyncFactory myFactory = getFactory().getAsyncFactory();
             final GordianCompositeKeyPair myClient = (GordianCompositeKeyPair) pClient;
             final Iterator<GordianKeyPair> pairIterator = myClient.iterator();
 
@@ -526,7 +527,7 @@ public final class GordianCompositeAgreement {
 
             /* Create the list */
             theAgreements = new ArrayList<>();
-            final GordianAgreementFactory myFactory = pFactory.getKeyPairFactory().getAgreementFactory();
+            final GordianAgreementFactory myFactory = pFactory.getAsyncFactory().getAgreementFactory();
             final List<GordianAgreementSpec> mySubAgrees = getSubAgreements(pSpec);
             for (GordianAgreementSpec mySpec : mySubAgrees) {
                 theAgreements.add(myFactory.createAgreement(mySpec));
@@ -536,8 +537,9 @@ public final class GordianCompositeAgreement {
         @Override
         public GordianAgreementMessageASN1 createClientHelloASN1() throws GordianException {
             /* Create ephemeral key */
-            final GordianKeyPairFactory myFactory = getFactory().getKeyPairFactory();
-            final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(getAgreementSpec().getKeyPairSpec());
+            final GordianAsyncFactory myFactory = getFactory().getAsyncFactory();
+            final GordianKeyPairFactory myKPFactory = myFactory.getKeyPairFactory();
+            final GordianKeyPairGenerator myGenerator = myKPFactory.getKeyPairGenerator(getAgreementSpec().getKeyPairSpec());
             final GordianCompositeKeyPair myEphemeral = (GordianCompositeKeyPair) myGenerator.generateKeyPair();
             final X509EncodedKeySpec myKeySpec = myGenerator.getX509Encoding(myEphemeral);
             final Iterator<GordianKeyPair> pairIterator = myEphemeral.iterator();
@@ -568,7 +570,7 @@ public final class GordianCompositeAgreement {
         public GordianAgreementMessageASN1 acceptClientHelloASN1(final GordianKeyPair pSigner,
                                                                  final GordianAgreementMessageASN1 pClientHello) throws GordianException {
             /* Create ephemeral key */
-            final GordianKeyPairFactory myFactory = getFactory().getKeyPairFactory();
+            final GordianKeyPairFactory myFactory = getFactory().getAsyncFactory().getKeyPairFactory();
             final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(getAgreementSpec().getKeyPairSpec());
             final GordianCompositeKeyPair myEphemeral = (GordianCompositeKeyPair) myGenerator.generateKeyPair();
             final X509EncodedKeySpec myKeySpec = myGenerator.getX509Encoding(myEphemeral);
@@ -616,7 +618,7 @@ public final class GordianCompositeAgreement {
         public void acceptServerHelloASN1(final GordianKeyPair pServer,
                                           final GordianAgreementMessageASN1 pServerHello) throws GordianException {
             /* Access the composite client key  */
-            final GordianKeyPairFactory myFactory = getFactory().getKeyPairFactory();
+            final GordianKeyPairFactory myFactory = getFactory().getAsyncFactory().getKeyPairFactory();
             final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(getAgreementSpec().getKeyPairSpec());
             final X509EncodedKeySpec myClientSpec = pServerHello.getEphemeral();
             final GordianCompositeKeyPair myComposite = (GordianCompositeKeyPair) myGenerator.derivePublicOnlyKeyPair(myClientSpec);
@@ -666,7 +668,7 @@ public final class GordianCompositeAgreement {
 
             /* Create the list */
             theAgreements = new ArrayList<>();
-            final GordianAgreementFactory myFactory = pFactory.getKeyPairFactory().getAgreementFactory();
+            final GordianAgreementFactory myFactory = pFactory.getAsyncFactory().getAgreementFactory();
             final List<GordianAgreementSpec> mySubAgrees = getSubAgreements(pSpec);
             for (GordianAgreementSpec mySpec : mySubAgrees) {
                 theAgreements.add(myFactory.createAgreement(mySpec));
@@ -679,8 +681,9 @@ public final class GordianCompositeAgreement {
             checkKeyPair(pClient);
 
             /* Access subKeys */
-            final GordianKeyPairFactory myFactory = getFactory().getKeyPairFactory();
-            final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(getAgreementSpec().getKeyPairSpec());
+            final GordianAsyncFactory myFactory = getFactory().getAsyncFactory();
+            final GordianKeyPairFactory myKPFactory = myFactory.getKeyPairFactory();
+            final GordianKeyPairGenerator myGenerator = myKPFactory.getKeyPairGenerator(getAgreementSpec().getKeyPairSpec());
             final GordianCompositeKeyPair myClient = (GordianCompositeKeyPair) pClient;
             final Iterator<GordianKeyPair> pairIterator = myClient.iterator();
 
@@ -731,7 +734,7 @@ public final class GordianCompositeAgreement {
 
             /* Create a new serverIV */
             newServerIV();
-            final GordianKeyPairFactory myFactory = getFactory().getKeyPairFactory();
+            final GordianKeyPairFactory myFactory = getFactory().getAsyncFactory().getKeyPairFactory();
             final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(getAgreementSpec().getKeyPairSpec());
             storeClientEphemeral(myGenerator.derivePublicOnlyKeyPair(pClientHello.getEphemeral()));
             storeClient(pClient);

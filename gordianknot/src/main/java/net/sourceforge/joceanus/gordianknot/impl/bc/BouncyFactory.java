@@ -38,9 +38,9 @@ public class BouncyFactory
     private GordianCoreZipFactory theZipFactory;
 
     /**
-     * keyPair Factory.
+     * async Factory.
      */
-    private BouncyKeyPairFactory theKeyPairFactory;
+    private BouncyAsyncFactory theAsyncFactory;
 
     /**
      * Constructor.
@@ -90,10 +90,10 @@ public class BouncyFactory
     }
 
     @Override
-    public BouncyKeyPairFactory getKeyPairFactory() {
-        if (theKeyPairFactory == null) {
-            theKeyPairFactory = new BouncyKeyPairFactory(this);
+    public BouncyAsyncFactory getAsyncFactory() {
+        if (theAsyncFactory == null) {
+            theAsyncFactory = new BouncyAsyncFactory(this);
         }
-        return theKeyPairFactory;
+        return theAsyncFactory;
     }
 }

@@ -20,7 +20,7 @@ import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.encrypt.GordianEncryptor;
 import net.sourceforge.joceanus.gordianknot.api.encrypt.GordianEncryptorFactory;
 import net.sourceforge.joceanus.gordianknot.api.encrypt.GordianEncryptorSpec;
-import net.sourceforge.joceanus.gordianknot.api.factory.GordianKeyPairFactory;
+import net.sourceforge.joceanus.gordianknot.api.factory.GordianAsyncFactory;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
@@ -93,7 +93,7 @@ public abstract class GordianCoreEncryptor
      * @throws GordianException on error
      */
     protected void checkKeyPair(final GordianKeyPair pKeyPair) throws GordianException {
-        final GordianKeyPairFactory myFactory = theFactory.getKeyPairFactory();
+        final GordianAsyncFactory myFactory = theFactory.getAsyncFactory();
         final GordianEncryptorFactory myEncrypts = myFactory.getEncryptorFactory();
         if (!myEncrypts.validEncryptorSpecForKeyPair(pKeyPair, theSpec)) {
             throw new GordianDataException("Incorrect KeyPair type");

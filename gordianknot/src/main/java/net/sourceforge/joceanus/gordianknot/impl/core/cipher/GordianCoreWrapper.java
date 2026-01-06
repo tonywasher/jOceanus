@@ -22,7 +22,7 @@ import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianCipherParameters;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymKeySpec;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianWrapper;
-import net.sourceforge.joceanus.gordianknot.api.factory.GordianKeyPairFactory;
+import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairFactory;
 import net.sourceforge.joceanus.gordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
@@ -169,7 +169,7 @@ public class GordianCoreWrapper
     @Override
     public byte[] securePrivateKey(final GordianKeyPair pKeyPairToSecure) throws GordianException {
         /* Access the KeyPair Generator */
-        final GordianKeyPairFactory myFactory = theFactory.getKeyPairFactory();
+        final GordianKeyPairFactory myFactory = theFactory.getAsyncFactory().getKeyPairFactory();
         final GordianCoreKeyPairGenerator myGenerator = (GordianCoreKeyPairGenerator) myFactory.getKeyPairGenerator(pKeyPairToSecure.getKeyPairSpec());
         final PKCS8EncodedKeySpec myPKCS8Key = myGenerator.getPKCS8Encoding(pKeyPairToSecure);
         return secureBytes(myPKCS8Key.getEncoded());
@@ -182,7 +182,7 @@ public class GordianCoreWrapper
         final PKCS8EncodedKeySpec myPrivate = derivePrivateKeySpec(pSecuredPrivateKey);
 
         /* Determine and check the keyPairSpec */
-        final GordianKeyPairFactory myFactory = theFactory.getKeyPairFactory();
+        final GordianKeyPairFactory myFactory = theFactory.getAsyncFactory().getKeyPairFactory();
         final GordianKeyPairSpec myKeySpec = myFactory.determineKeyPairSpec(pPublicKeySpec);
         if (!myKeySpec.equals(myFactory.determineKeyPairSpec(myPrivate))) {
             throw new GordianLogicException("Mismatch on keySpecs");
@@ -437,7 +437,7 @@ public class GordianCoreWrapper
     @Override
     public int getPrivateKeyWrapLength(final GordianKeyPair pKeyPair) throws GordianException {
         /* Determine and check the keySpec */
-        final GordianKeyPairFactory myFactory = theFactory.getKeyPairFactory();
+        final GordianKeyPairFactory myFactory = theFactory.getAsyncFactory().getKeyPairFactory();
         final GordianCoreKeyPairGenerator myGenerator = (GordianCoreKeyPairGenerator) myFactory.getKeyPairGenerator(pKeyPair.getKeyPairSpec());
         final PKCS8EncodedKeySpec myPrivateKey = myGenerator.getPKCS8Encoding(pKeyPair);
         return getDataWrapLength(myPrivateKey.getEncoded().length);

@@ -28,7 +28,7 @@ import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymCipher;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymCipherSpecBuilder;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymKeySpec;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymKeyType;
-import net.sourceforge.joceanus.gordianknot.api.factory.GordianKeyPairFactory;
+import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairFactory;
 import net.sourceforge.joceanus.gordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairGenerator;
@@ -443,7 +443,7 @@ public final class GordianMultiCipher
         checkParameters(pParams);
 
         /* Secure the key */
-        final GordianKeyPairFactory myFactory = theFactory.getKeyPairFactory();
+        final GordianKeyPairFactory myFactory = theFactory.getAsyncFactory().getKeyPairFactory();
         final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(pKeyPairToSecure.getKeyPairSpec());
         final PKCS8EncodedKeySpec myPKCS8Key = myGenerator.getPKCS8Encoding(pKeyPairToSecure);
         return secureBytes(pParams, myPKCS8Key.getEncoded());

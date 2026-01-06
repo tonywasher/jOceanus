@@ -22,8 +22,8 @@ import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementType;
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianAnonymousAgreement;
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianKDFType;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
+import net.sourceforge.joceanus.gordianknot.api.factory.GordianAsyncFactory;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactoryType;
-import net.sourceforge.joceanus.gordianknot.api.factory.GordianKeyPairFactory;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianEdwardsElliptic;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
@@ -82,8 +82,8 @@ public class GordianKeyPairLockImpl
         byte[] myPassword = null;
         try {
             /* Create the agreement and derive the factory */
-            final GordianKeyPairFactory myKeyPairFactory = pLockingFactory.getKeyPairFactory();
-            final GordianAgreementFactory myAgreeFactory = myKeyPairFactory.getAgreementFactory();
+            final GordianAsyncFactory myAsyncFactory = pLockingFactory.getAsyncFactory();
+            final GordianAgreementFactory myAgreeFactory = myAsyncFactory.getAgreementFactory();
             final GordianAgreementSpec mySpec = getAgreementSpec(pKeyPair.getKeyPairSpec());
             final GordianAnonymousAgreement myAgreement = (GordianAnonymousAgreement) myAgreeFactory.createAgreement(mySpec);
             myAgreement.setResultType(GordianFactoryType.BC);
@@ -165,8 +165,8 @@ public class GordianKeyPairLockImpl
             theKeyPair = pKeyPair;
 
             /* Resolve the agreement */
-            final GordianKeyPairFactory myKeyPairFactory = pLockingFactory.getKeyPairFactory();
-            final GordianAgreementFactory myAgreeFactory = myKeyPairFactory.getAgreementFactory();
+            final GordianAsyncFactory myAsyncFactory = pLockingFactory.getAsyncFactory();
+            final GordianAgreementFactory myAgreeFactory = myAsyncFactory.getAgreementFactory();
             final byte[] myClientHello = theLockASN1.getAgreement().getEncodedBytes();
             final GordianAnonymousAgreement myAgreement = (GordianAnonymousAgreement) myAgreeFactory.createAgreement(myClientHello);
             myAgreement.acceptClientHello(pKeyPair, myClientHello);

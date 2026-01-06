@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.gordianknot.impl.bc;
 
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementSpec;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
-import net.sourceforge.joceanus.gordianknot.api.factory.GordianKeyPairFactory;
+import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairFactory;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairGenerator;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
@@ -481,7 +481,7 @@ public final class BouncyXDHKeyPair {
             theAgreement = establishAgreement(pServer);
 
             /* Create an ephemeral keyPair */
-            final GordianKeyPairFactory myFactory = getFactory().getKeyPairFactory();
+            final GordianKeyPairFactory myFactory = getFactory().getAsyncFactory().getKeyPairFactory();
             final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(pServer.getKeyPairSpec());
             final GordianKeyPair myPair = myGenerator.generateKeyPair();
             final BouncyPrivateKey<?> myPrivate = (BouncyPrivateKey<?>) getPrivateKey(myPair);
@@ -512,7 +512,7 @@ public final class BouncyXDHKeyPair {
             /* Parse request */
             final BouncyPrivateKey<?> myPrivate = (BouncyPrivateKey<?>) getPrivateKey(pServer);
             final X509EncodedKeySpec myKeySpec = pClientHello.getEphemeral();
-            final GordianKeyPairFactory myFactory = getFactory().getKeyPairFactory();
+            final GordianKeyPairFactory myFactory = getFactory().getAsyncFactory().getKeyPairFactory();
             final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(pServer.getKeyPairSpec());
 
             /* Derive partner key */
