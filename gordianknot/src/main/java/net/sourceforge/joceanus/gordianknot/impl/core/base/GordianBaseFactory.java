@@ -18,7 +18,6 @@ package net.sourceforge.joceanus.gordianknot.impl.core.base;
 
 import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianKeySpec;
-import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySet;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
@@ -77,17 +76,4 @@ public interface GordianBaseFactory
      * @return the keySpec (or null if not found)
      */
     GordianKeySpec getKeySpecForIdentifier(AlgorithmIdentifier pIdentifier);
-
-    /**
-     * Obtain Identifier for DigestSpec.
-     * @param pSpec the digestSpec.
-     * @return the Identifier
-     */
-    AlgorithmIdentifier getIdentifierForSpec(GordianDigestSpec pSpec);
-    /**
-     * Obtain DigestSpec for Identifier.
-     * @param pIdentifier the identifier.
-     * @return the digestSpec (or null if not found)
-     */
-    GordianDigestSpec getDigestSpecForIdentifier(AlgorithmIdentifier pIdentifier);
 }

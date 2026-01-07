@@ -29,7 +29,7 @@ import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymKeySpecBuilder;
 import net.sourceforge.joceanus.gordianknot.api.key.GordianKeyLengths;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianASN1Util;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianKeyAlgId;
+import net.sourceforge.joceanus.gordianknot.impl.core.key.GordianKeyAlgId;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.DERNull;
 import org.bouncycastle.asn1.gm.GMObjectIdentifiers;

@@ -26,7 +26,7 @@ import net.sourceforge.joceanus.gordianknot.api.encrypt.GordianSM2EncryptionSpec
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairType;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianASN1Util;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianDigestAlgId;
+import net.sourceforge.joceanus.gordianknot.impl.core.digest.GordianDigestAlgId;
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.ASN1Sequence;

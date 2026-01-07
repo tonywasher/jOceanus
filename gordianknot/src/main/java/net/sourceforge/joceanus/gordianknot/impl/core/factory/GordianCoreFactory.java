@@ -21,7 +21,6 @@ import net.sourceforge.joceanus.gordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianCipherFactory;
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestFactory;
-import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianAsyncFactory;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactoryType;
@@ -33,10 +32,9 @@ import net.sourceforge.joceanus.gordianknot.api.random.GordianRandomFactory;
 import net.sourceforge.joceanus.gordianknot.api.zip.GordianZipFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreKnuthObfuscater;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianDigestAlgId;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianFactoryGenerator;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianIdManager;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianKeyAlgId;
+import net.sourceforge.joceanus.gordianknot.impl.core.key.GordianKeyAlgId;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianParameters;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianPersonalisation;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianRandomSource;
@@ -140,11 +138,6 @@ public abstract class GordianCoreFactory
      * The Key AlgIds.
      */
     private GordianKeyAlgId theKeyAlgIds;
-
-    /**
-     * The Digest AlgIds.
-     */
-    private GordianDigestAlgId theDigestAlgIds;
 
     /**
      * Async Factory.
@@ -406,35 +399,6 @@ public abstract class GordianCoreFactory
             theKeyAlgIds = new GordianKeyAlgId(this);
         }
         return theKeyAlgIds;
-    }
-
-    /**
-     * Obtain Identifier for DigestSpec.
-     * @param pSpec the digestSpec.
-     * @return the Identifier
-     */
-    public AlgorithmIdentifier getIdentifierForSpec(final GordianDigestSpec pSpec) {
-        return getDigestAlgIds().getIdentifierForSpec(pSpec);
-    }
-
-    /**
-     * Obtain DigestSpec for Identifier.
-     * @param pIdentifier the identifier.
-     * @return the digestSpec (or null if not found)
-     */
-    public GordianDigestSpec getDigestSpecForIdentifier(final AlgorithmIdentifier pIdentifier) {
-        return getDigestAlgIds().getSpecForIdentifier(pIdentifier);
-    }
-
-    /**
-     * Obtain the digest algorithm Ids.
-     * @return the digest Algorithm Ids
-     */
-    private GordianDigestAlgId getDigestAlgIds() {
-        if (theDigestAlgIds == null) {
-            theDigestAlgIds = new GordianDigestAlgId(this);
-        }
-        return theDigestAlgIds;
     }
 
     @Override
