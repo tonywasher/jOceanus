@@ -29,7 +29,8 @@ import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySetSpec;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignatureFactory;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignatureSpec;
 import net.sourceforge.joceanus.gordianknot.api.xagree.GordianXAgreementParams;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseData;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.cipher.GordianCoreCipherFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianLogicException;
@@ -46,7 +47,7 @@ public class GordianXCoreAgreementParams
     /**
      * The factory.
      */
-    private final GordianCoreFactory theFactory;
+    private final GordianBaseFactory theFactory;
 
     /**
      * Is this a client or server parameters.
@@ -351,7 +352,7 @@ public class GordianXCoreAgreementParams
             /* Check that signSpec is valid for keyPair */
             final GordianSignatureFactory mySignFactory = theFactory.getAsyncFactory().getSignatureFactory();
             if (!mySignFactory.validSignatureSpecForKeyPair(pSigner.getKeyPair(), pSignSpec)) {
-                throw new GordianDataException(GordianCoreFactory.getInvalidText(pSignSpec));
+                throw new GordianDataException(GordianBaseData.getInvalidText(pSignSpec));
             }
 
         } else if (mySpec.getAgreementType().isSigned()) {

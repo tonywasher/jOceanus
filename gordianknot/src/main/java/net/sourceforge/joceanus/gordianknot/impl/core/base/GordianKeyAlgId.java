@@ -85,7 +85,7 @@ public class GordianKeyAlgId {
      *
      * @param pFactory the factory
      */
-    GordianKeyAlgId(final GordianCoreFactory pFactory) {
+    public GordianKeyAlgId(final GordianBaseFactory pFactory) {
         /* Create the maps */
         theSpecMap = new HashMap<>();
         theIdentifierMap = new HashMap<>();

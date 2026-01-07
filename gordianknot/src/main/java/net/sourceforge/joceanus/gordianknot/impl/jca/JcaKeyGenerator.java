@@ -19,7 +19,7 @@ package net.sourceforge.joceanus.gordianknot.impl.jca;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMac;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.key.GordianCoreKeyGenerator;
 
 import javax.crypto.KeyGenerator;
@@ -44,7 +44,7 @@ public final class JcaKeyGenerator<T extends GordianKeySpec>
      * @param pKeyType the keyType
      * @param pGenerator the key generator
      */
-    JcaKeyGenerator(final GordianCoreFactory pFactory,
+    JcaKeyGenerator(final GordianBaseFactory pFactory,
                     final T pKeyType,
                     final KeyGenerator pGenerator) {
         /* Initialise underlying class */

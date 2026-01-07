@@ -23,7 +23,7 @@ import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignParams;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignature;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignatureFactory;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignatureSpec;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.digest.GordianCoreDigestFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 
@@ -37,7 +37,7 @@ public abstract class GordianCoreSignature
     /**
      * The Factory.
      */
-    private final GordianCoreFactory theFactory;
+    private final GordianBaseFactory theFactory;
 
     /**
      * The Signature Spec.
@@ -64,7 +64,7 @@ public abstract class GordianCoreSignature
      * @param pFactory the factory
      * @param pSpec the signature Spec
      */
-    protected GordianCoreSignature(final GordianCoreFactory pFactory,
+    protected GordianCoreSignature(final GordianBaseFactory pFactory,
                                    final GordianSignatureSpec pSpec) {
         theFactory = pFactory;
         theSpec = pSpec;
@@ -74,7 +74,7 @@ public abstract class GordianCoreSignature
      * Obtain the factory.
      * @return the factory
      */
-    public GordianCoreFactory getFactory() {
+    public GordianBaseFactory getFactory() {
         return theFactory;
     }
 

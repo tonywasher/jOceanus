@@ -28,7 +28,7 @@ import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignParams;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignature;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignatureSpec;
 import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianAgreementMessageASN1.GordianMessageType;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.sign.GordianCoreSignatureFactory;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
@@ -56,7 +56,7 @@ public abstract class GordianCoreSignedAgreement
      * @param pFactory the factory
      * @param pSpec the agreementSpec
      */
-    protected GordianCoreSignedAgreement(final GordianCoreFactory pFactory,
+    protected GordianCoreSignedAgreement(final GordianBaseFactory pFactory,
                                          final GordianAgreementSpec pSpec) {
         super(pFactory, pSpec);
     }

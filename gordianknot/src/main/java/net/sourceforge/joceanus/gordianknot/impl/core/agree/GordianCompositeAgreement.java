@@ -30,7 +30,7 @@ import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairFactory;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairGenerator;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianAgreementResult.GordianDerivationId;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianDataConverter;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianIOException;
 import net.sourceforge.joceanus.gordianknot.impl.core.kdf.GordianHKDFEngine;
@@ -173,7 +173,7 @@ public final class GordianCompositeAgreement {
      * @return the merged result
      * @throws GordianException on error
      */
-    private static byte[] mergeResults(final GordianCoreFactory pFactory,
+    private static byte[] mergeResults(final GordianBaseFactory pFactory,
                                        final List<GordianAgreement> pSubs) throws GordianException {
         /* Protect against exceptions */
         final GordianHKDFParams myParams = GordianHKDFParams.extractOnly();
@@ -227,7 +227,7 @@ public final class GordianCompositeAgreement {
          * @param pSpec the agreementSpec
          * @throws GordianException on error
          */
-        GordianCompositeAnonymousAgreement(final GordianCoreFactory pFactory,
+        GordianCompositeAnonymousAgreement(final GordianBaseFactory pFactory,
                                            final GordianAgreementSpec pSpec) throws GordianException {
             /* Initialise super class */
             super(pFactory, pSpec);
@@ -389,7 +389,7 @@ public final class GordianCompositeAgreement {
          * @param pSpec the agreementSpec
          * @throws GordianException on error
          */
-        GordianCompositeBasicAgreement(final GordianCoreFactory pFactory,
+        GordianCompositeBasicAgreement(final GordianBaseFactory pFactory,
                                        final GordianAgreementSpec pSpec) throws GordianException {
             /* Initialise super class */
             super(pFactory, pSpec);
@@ -520,7 +520,7 @@ public final class GordianCompositeAgreement {
          * @param pSpec the agreementSpec
          * @throws GordianException on error
          */
-        GordianCompositeSignedAgreement(final GordianCoreFactory pFactory,
+        GordianCompositeSignedAgreement(final GordianBaseFactory pFactory,
                                         final GordianAgreementSpec pSpec) throws GordianException {
             /* Initialise super class */
             super(pFactory, pSpec);
@@ -661,7 +661,7 @@ public final class GordianCompositeAgreement {
          * @param pSpec the agreementSpec
          * @throws GordianException on error
          */
-        GordianCompositeHandshakeAgreement(final GordianCoreFactory pFactory,
+        GordianCompositeHandshakeAgreement(final GordianBaseFactory pFactory,
                                            final GordianAgreementSpec pSpec) throws GordianException {
             /* Initialise super class */
             super(pFactory, pSpec);

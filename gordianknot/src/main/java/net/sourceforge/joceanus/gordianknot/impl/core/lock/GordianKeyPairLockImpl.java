@@ -32,7 +32,7 @@ import net.sourceforge.joceanus.gordianknot.api.lock.GordianKeyPairLock;
 import net.sourceforge.joceanus.gordianknot.api.lock.GordianPasswordLockSpec;
 import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianAgreementMessageASN1;
 import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianAgreementMessageASN1.GordianMessageType;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianDataConverter;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianParameters;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianLogicException;
@@ -74,7 +74,7 @@ public class GordianKeyPairLockImpl
      * @param pPassword the password
      * @throws GordianException on error
      */
-    public GordianKeyPairLockImpl(final GordianCoreFactory pLockingFactory,
+    public GordianKeyPairLockImpl(final GordianBaseFactory pLockingFactory,
                                   final GordianPasswordLockSpec pLockSpec,
                                   final GordianKeyPair pKeyPair,
                                   final char[] pPassword) throws GordianException {
@@ -90,7 +90,7 @@ public class GordianKeyPairLockImpl
             final byte[] myClientHello = myAgreement.createClientHello(pKeyPair);
             final GordianAgreementMessageASN1 myHelloASN = GordianAgreementMessageASN1.getInstance(myClientHello);
             myHelloASN.checkMessageType(GordianMessageType.CLIENTHELLO);
-            final GordianCoreFactory myFactory = (GordianCoreFactory) myAgreement.getResult();
+            final GordianBaseFactory myFactory = (GordianBaseFactory) myAgreement.getResult();
 
             /* Create a recipe */
             final GordianPasswordLockRecipe myRecipe = new GordianPasswordLockRecipe(pLockingFactory, pLockSpec);
@@ -120,7 +120,7 @@ public class GordianKeyPairLockImpl
      * @param pPassword the password
      * @throws GordianException on error
      */
-    public GordianKeyPairLockImpl(final GordianCoreFactory pLockingFactory,
+    public GordianKeyPairLockImpl(final GordianBaseFactory pLockingFactory,
                                   final byte[] pLockBytes,
                                   final GordianKeyPair pKeyPair,
                                   final char[] pPassword) throws GordianException {
@@ -135,7 +135,7 @@ public class GordianKeyPairLockImpl
      * @param pPassword the password
      * @throws GordianException on error
      */
-    public GordianKeyPairLockImpl(final GordianCoreFactory pLockingFactory,
+    public GordianKeyPairLockImpl(final GordianBaseFactory pLockingFactory,
                                   final GordianKeyPairLockASN1 pLockASN1,
                                   final GordianKeyPair pKeyPair,
                                   final char[] pPassword) throws GordianException {
@@ -151,7 +151,7 @@ public class GordianKeyPairLockImpl
      * @param pPassword the password
      * @throws GordianException on error
      */
-    public GordianKeyPairLockImpl(final GordianCoreFactory pLockingFactory,
+    public GordianKeyPairLockImpl(final GordianBaseFactory pLockingFactory,
                                   final GordianKeyPairLockASN1 pLockASN1,
                                   final byte[] pLockBytes,
                                   final GordianKeyPair pKeyPair,
@@ -170,7 +170,7 @@ public class GordianKeyPairLockImpl
             final byte[] myClientHello = theLockASN1.getAgreement().getEncodedBytes();
             final GordianAnonymousAgreement myAgreement = (GordianAnonymousAgreement) myAgreeFactory.createAgreement(myClientHello);
             myAgreement.acceptClientHello(pKeyPair, myClientHello);
-            final GordianCoreFactory myFactory = (GordianCoreFactory) myAgreement.getResult();
+            final GordianBaseFactory myFactory = (GordianBaseFactory) myAgreement.getResult();
 
             /* Resolve the recipe */
             myPassword = GordianDataConverter.charsToByteArray(pPassword);

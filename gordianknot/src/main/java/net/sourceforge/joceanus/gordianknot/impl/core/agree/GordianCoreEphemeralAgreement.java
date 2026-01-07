@@ -32,7 +32,7 @@ import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacSpec;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacSpecBuilder;
 import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianAgreementMessageASN1.GordianMessageType;
 import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianAgreementResult.GordianDerivationId;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.util.Arrays;
@@ -86,7 +86,7 @@ public abstract class GordianCoreEphemeralAgreement
      * @param pFactory the factory
      * @param pSpec the agreementSpec
      */
-    protected GordianCoreEphemeralAgreement(final GordianCoreFactory pFactory,
+    protected GordianCoreEphemeralAgreement(final GordianBaseFactory pFactory,
                                             final GordianAgreementSpec pSpec) {
         super(pFactory, pSpec);
     }

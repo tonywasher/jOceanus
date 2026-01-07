@@ -25,7 +25,7 @@ import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyEllipticKeyPair.Bouncy
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyEllipticKeyPair.BouncyECPublicKey;
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncySignature.BouncyDSACoder;
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncySignature.BouncyDigestSignature;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianDataConverter;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianIOException;
@@ -111,7 +111,7 @@ public final class BouncyDSTUKeyPair {
          * @param pFactory the Security Factory
          * @param pKeySpec the keySpec
          */
-        BouncyDSTUKeyPairGenerator(final GordianCoreFactory pFactory,
+        BouncyDSTUKeyPairGenerator(final GordianBaseFactory pFactory,
                                    final GordianKeyPairSpec pKeySpec) {
             /* Initialise underlying class */
             super(pFactory, pKeySpec);
@@ -332,7 +332,7 @@ public final class BouncyDSTUKeyPair {
          * @param pFactory the factory
          * @param pSpec the signatureSpec.
          */
-        BouncyDSTUSignature(final GordianCoreFactory pFactory,
+        BouncyDSTUSignature(final GordianBaseFactory pFactory,
                             final GordianSignatureSpec pSpec) {
             /* Initialise underlying class */
             super(pFactory, pSpec, newDigest());

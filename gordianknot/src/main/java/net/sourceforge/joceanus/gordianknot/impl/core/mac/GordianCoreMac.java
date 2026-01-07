@@ -21,7 +21,7 @@ import net.sourceforge.joceanus.gordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMac;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacParameters;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacSpec;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianLogicException;
 
 /**
@@ -45,7 +45,7 @@ public abstract class GordianCoreMac
      * @param pFactory the Security Factory
      * @param pMacSpec the macSpec
      */
-    protected GordianCoreMac(final GordianCoreFactory pFactory,
+    protected GordianCoreMac(final GordianBaseFactory pFactory,
                              final GordianMacSpec pMacSpec) {
         theMacSpec = pMacSpec;
         theParameters = new GordianCoreMacParameters(pFactory, theMacSpec);

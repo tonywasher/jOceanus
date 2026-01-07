@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.gordianknot.impl.jca;
 
 import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestSpec;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.digest.GordianCoreDigestFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
 
@@ -35,7 +35,7 @@ public class JcaDigestFactory
      *
      * @param pFactory the factory
      */
-    JcaDigestFactory(final GordianCoreFactory pFactory) {
+    JcaDigestFactory(final GordianBaseFactory pFactory) {
         /* Initialise underlying class */
         super(pFactory);
     }

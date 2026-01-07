@@ -20,7 +20,7 @@ import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySet;
 import net.sourceforge.joceanus.gordianknot.api.lock.GordianKeySetLock;
 import net.sourceforge.joceanus.gordianknot.api.lock.GordianPasswordLockSpec;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianDataConverter;
 import net.sourceforge.joceanus.gordianknot.impl.core.keyset.GordianCoreKeySet;
 
@@ -55,7 +55,7 @@ public class GordianKeySetLockImpl
      * @param pPassword the password
      * @throws GordianException on error
      */
-    public GordianKeySetLockImpl(final GordianCoreFactory pLockingFactory,
+    public GordianKeySetLockImpl(final GordianBaseFactory pLockingFactory,
                                  final GordianCoreKeySet pKeySetToLock,
                                  final GordianPasswordLockSpec pLockSpec,
                                  final char[] pPassword) throws GordianException {
@@ -89,7 +89,7 @@ public class GordianKeySetLockImpl
      * @param pPassword the password
      * @throws GordianException on error
      */
-    public GordianKeySetLockImpl(final GordianCoreFactory pLockingFactory,
+    public GordianKeySetLockImpl(final GordianBaseFactory pLockingFactory,
                                  final byte[] pLockBytes,
                                  final char[] pPassword) throws GordianException {
         this(pLockingFactory, GordianPasswordLockASN1.getInstance(pLockBytes), pLockBytes, pPassword);
@@ -102,7 +102,7 @@ public class GordianKeySetLockImpl
      * @param pPassword the password
      * @throws GordianException on error
      */
-    public GordianKeySetLockImpl(final GordianCoreFactory pLockingFactory,
+    public GordianKeySetLockImpl(final GordianBaseFactory pLockingFactory,
                                  final GordianPasswordLockASN1 pLockASN1,
                                  final char[] pPassword) throws GordianException {
         this(pLockingFactory, pLockASN1, pLockASN1.getEncodedBytes(), pPassword);
@@ -116,7 +116,7 @@ public class GordianKeySetLockImpl
      * @param pPassword the password
      * @throws GordianException on error
      */
-    public GordianKeySetLockImpl(final GordianCoreFactory pLockingFactory,
+    public GordianKeySetLockImpl(final GordianBaseFactory pLockingFactory,
                                  final GordianPasswordLockASN1 pLockASN1,
                                  final byte[] pLockBytes,
                                  final char[] pPassword) throws GordianException {

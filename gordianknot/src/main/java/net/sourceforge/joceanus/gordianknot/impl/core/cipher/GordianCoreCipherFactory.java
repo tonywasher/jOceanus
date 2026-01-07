@@ -47,7 +47,8 @@ import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestSpecBuilder;
 import net.sourceforge.joceanus.gordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.gordianknot.api.key.GordianKeyLengths;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseData;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 
@@ -66,7 +67,7 @@ public abstract class GordianCoreCipherFactory
     /**
      * The factory.
      */
-    private final GordianCoreFactory theFactory;
+    private final GordianBaseFactory theFactory;
 
     /**
      * The Cipher AlgIds.
@@ -77,7 +78,7 @@ public abstract class GordianCoreCipherFactory
      * Constructor.
      * @param pFactory the factory.
      */
-    protected GordianCoreCipherFactory(final GordianCoreFactory pFactory) {
+    protected GordianCoreCipherFactory(final GordianBaseFactory pFactory) {
         theFactory = pFactory;
     }
 
@@ -85,7 +86,7 @@ public abstract class GordianCoreCipherFactory
      * Obtain the factory.
      * @return the factory
      */
-    protected GordianCoreFactory getFactory() {
+    protected GordianBaseFactory getFactory() {
         return theFactory;
     }
 
@@ -232,7 +233,7 @@ public abstract class GordianCoreCipherFactory
 
         /* Report error */
         if (!bValid) {
-            throw new GordianDataException(GordianCoreFactory.getInvalidText(pKeySpec));
+            throw new GordianDataException(GordianBaseData.getInvalidText(pKeySpec));
         }
     }
 
@@ -244,7 +245,7 @@ public abstract class GordianCoreCipherFactory
     public void checkSymKeySpec(final GordianSymKeySpec pKeySpec) throws GordianException {
         /* Check validity of SymKey */
         if (!supportedSymKeySpecs().test(pKeySpec)) {
-            throw new GordianDataException(GordianCoreFactory.getInvalidText(pKeySpec));
+            throw new GordianDataException(GordianBaseData.getInvalidText(pKeySpec));
         }
     }
 
@@ -256,18 +257,18 @@ public abstract class GordianCoreCipherFactory
     public void checkSymCipherSpec(final GordianSymCipherSpec pCipherSpec) throws GordianException {
         /* Reject invalid cipherSpec */
         if (pCipherSpec == null || !pCipherSpec.isValid()) {
-            throw new GordianDataException(GordianCoreFactory.getInvalidText(pCipherSpec));
+            throw new GordianDataException(GordianBaseData.getInvalidText(pCipherSpec));
         }
 
         /* Check validity of SymKey */
         final GordianSymKeySpec myKeySpec = pCipherSpec.getKeyType();
         if (!supportedSymKeySpecs().test(myKeySpec)) {
-            throw new GordianDataException(GordianCoreFactory.getInvalidText(pCipherSpec));
+            throw new GordianDataException(GordianBaseData.getInvalidText(pCipherSpec));
         }
 
         /* Check validity of Mode */
         if (!validSymCipherSpec(pCipherSpec)) {
-            throw new GordianDataException(GordianCoreFactory.getInvalidText(pCipherSpec));
+            throw new GordianDataException(GordianBaseData.getInvalidText(pCipherSpec));
         }
     }
 
@@ -279,18 +280,18 @@ public abstract class GordianCoreCipherFactory
     public void checkStreamCipherSpec(final GordianStreamCipherSpec pCipherSpec) throws GordianException {
         /* Reject invalid cipherSpec */
         if (pCipherSpec == null || !pCipherSpec.isValid()) {
-            throw new GordianDataException(GordianCoreFactory.getInvalidText(pCipherSpec));
+            throw new GordianDataException(GordianBaseData.getInvalidText(pCipherSpec));
         }
 
         /* Check validity of StreamKey */
         final GordianStreamKeySpec myKeySpec = pCipherSpec.getKeyType();
         if (!supportedStreamKeySpecs().test(myKeySpec)) {
-            throw new GordianDataException(GordianCoreFactory.getInvalidText(myKeySpec));
+            throw new GordianDataException(GordianBaseData.getInvalidText(myKeySpec));
         }
 
         /* Check validity of Mode */
         if (!validStreamCipherSpec(pCipherSpec)) {
-            throw new GordianDataException(GordianCoreFactory.getInvalidText(pCipherSpec));
+            throw new GordianDataException(GordianBaseData.getInvalidText(pCipherSpec));
         }
     }
 

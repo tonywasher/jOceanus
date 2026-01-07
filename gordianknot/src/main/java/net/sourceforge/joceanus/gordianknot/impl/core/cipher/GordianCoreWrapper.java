@@ -27,7 +27,7 @@ import net.sourceforge.joceanus.gordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacSpec;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianDataConverter;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianLogicException;
@@ -71,7 +71,7 @@ public class GordianCoreWrapper
     /**
      * The Security Factory.
      */
-    private final GordianCoreFactory theFactory;
+    private final GordianBaseFactory theFactory;
 
     /**
      * Underlying key.
@@ -94,7 +94,7 @@ public class GordianCoreWrapper
      * @param pKey the key
      * @param pCipher the underlying cipher
      */
-    GordianCoreWrapper(final GordianCoreFactory pFactory,
+    GordianCoreWrapper(final GordianBaseFactory pFactory,
                        final GordianKey<GordianSymKeySpec> pKey,
                        final GordianCoreCipher<GordianSymKeySpec> pCipher) {
         theFactory = pFactory;
@@ -108,7 +108,7 @@ public class GordianCoreWrapper
      * @param pFactory the Security Factory
      * @param pBlockLen the blockLength
      */
-    protected GordianCoreWrapper(final GordianCoreFactory pFactory,
+    protected GordianCoreWrapper(final GordianBaseFactory pFactory,
                                  final int pBlockLen) {
         theFactory = pFactory;
         theKey = null;
@@ -125,7 +125,7 @@ public class GordianCoreWrapper
      * Obtain the factory.
      * @return the factory
      */
-    protected GordianCoreFactory getFactory() {
+    protected GordianBaseFactory getFactory() {
         return theFactory;
     }
 

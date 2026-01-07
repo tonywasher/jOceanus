@@ -62,7 +62,7 @@ public class GordianDigestAlgId {
      *
      * @param pFactory the factory
      */
-    GordianDigestAlgId(final GordianCoreFactory pFactory) {
+    public GordianDigestAlgId(final GordianBaseFactory pFactory) {
         /* Create the maps */
         theSpecMap = new HashMap<>();
         theIdentifierMap = new HashMap<>();

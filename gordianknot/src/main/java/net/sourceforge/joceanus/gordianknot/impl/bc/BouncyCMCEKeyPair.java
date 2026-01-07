@@ -24,7 +24,7 @@ import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPrivateK
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPublicKey;
 import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianAgreementMessageASN1;
 import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianCoreAnonymousAgreement;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianIOException;
 import net.sourceforge.joceanus.gordianknot.impl.core.keypair.GordianKeyPairValidity;
@@ -132,7 +132,7 @@ public final class BouncyCMCEKeyPair {
          * @param pKeySpec the keySpec
          * @throws GordianException on error
          */
-        BouncyCMCEKeyPairGenerator(final GordianCoreFactory pFactory,
+        BouncyCMCEKeyPairGenerator(final GordianBaseFactory pFactory,
                                    final GordianKeyPairSpec pKeySpec) throws GordianException {
             /* Initialise underlying class */
             super(pFactory, pKeySpec);
@@ -264,7 +264,7 @@ public final class BouncyCMCEKeyPair {
          * @param pFactory the security factory
          * @param pSpec the agreementSpec
          */
-        BouncyCMCEAgreement(final GordianCoreFactory pFactory,
+        BouncyCMCEAgreement(final GordianBaseFactory pFactory,
                             final GordianAgreementSpec pSpec) {
             /* Initialise underlying class */
             super(pFactory, pSpec);

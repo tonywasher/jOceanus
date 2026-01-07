@@ -35,7 +35,7 @@ import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairGenerator;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacFactory;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacSpec;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacSpecBuilder;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.key.GordianCoreKey;
 import net.sourceforge.joceanus.gordianknot.impl.core.key.GordianCoreKeyGenerator;
@@ -59,7 +59,7 @@ public final class GordianMultiCipher
     /**
      * The factory.
      */
-    private final GordianCoreFactory theFactory;
+    private final GordianBaseFactory theFactory;
 
     /**
      * The number of steps.
@@ -617,7 +617,7 @@ public final class GordianMultiCipher
          * @param pKey the key
          * @throws GordianException on error
          */
-        GordianSymKeyCipherSet(final GordianCoreFactory pFactory,
+        GordianSymKeyCipherSet(final GordianBaseFactory pFactory,
                                final GordianKey<GordianSymKeySpec> pKey) throws GordianException {
             /* Store parameters */
             theKey = pKey;

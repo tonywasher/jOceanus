@@ -25,7 +25,7 @@ import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymCipherSpec;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactoryType;
 import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySetSpec;
 import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianAgreementResult.GordianDerivationId;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.cipher.GordianCoreCipherFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianLogicException;
 import net.sourceforge.joceanus.gordianknot.impl.core.keyset.GordianCoreKeySetFactory;
@@ -52,7 +52,7 @@ public abstract class GordianCoreAgreement
     /**
      * The factory.
      */
-    private final GordianCoreFactory theFactory;
+    private final GordianBaseFactory theFactory;
 
     /**
      * The algorithmId factory.
@@ -89,7 +89,7 @@ public abstract class GordianCoreAgreement
      * @param pFactory the factory
      * @param pSpec the agreementSpec
      */
-    protected GordianCoreAgreement(final GordianCoreFactory pFactory,
+    protected GordianCoreAgreement(final GordianBaseFactory pFactory,
                                    final GordianAgreementSpec pSpec) {
         theFactory = pFactory;
         theSpec = pSpec;
@@ -102,7 +102,7 @@ public abstract class GordianCoreAgreement
      * Obtain the factory.
      * @return the factory
      */
-    protected GordianCoreFactory getFactory() {
+    protected GordianBaseFactory getFactory() {
         return theFactory;
     }
 

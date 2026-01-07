@@ -50,7 +50,7 @@ public class GordianRandomSource {
      * Constructor.
      * @throws GordianException on error
      */
-    GordianRandomSource() throws GordianException {
+    public GordianRandomSource() throws GordianException {
         theRandom = getStrongRandom();
     }
 

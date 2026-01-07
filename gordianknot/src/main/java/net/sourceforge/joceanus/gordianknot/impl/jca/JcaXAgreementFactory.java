@@ -19,7 +19,8 @@ package net.sourceforge.joceanus.gordianknot.impl.jca;
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementSpec;
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementType;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseData;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.xagree.GordianXCoreAgreementEngine;
 import net.sourceforge.joceanus.gordianknot.impl.core.xagree.GordianXCoreAgreementFactory;
@@ -50,7 +51,7 @@ public class JcaXAgreementFactory
      *
      * @param pFactory the factory
      */
-    JcaXAgreementFactory(final GordianCoreFactory pFactory) {
+    JcaXAgreementFactory(final GordianBaseFactory pFactory) {
         super(pFactory);
     }
 
@@ -115,7 +116,7 @@ public class JcaXAgreementFactory
                     JcaXAgreement.getJavaKeyAgreement(JcaXAgreement.getFullAgreementName(DH_ALGO + "U", pAgreementSpec), false));
             case MQV:       return new JcaMQVXEngine(this, pAgreementSpec,
                     JcaXAgreement.getJavaKeyAgreement(JcaXAgreement.getFullAgreementName("MQV", pAgreementSpec), false));
-            default:        throw new GordianDataException(GordianCoreFactory.getInvalidText(pAgreementSpec));
+            default:        throw new GordianDataException(GordianBaseData.getInvalidText(pAgreementSpec));
         }
     }
 
@@ -136,7 +137,7 @@ public class JcaXAgreementFactory
                     JcaXAgreement.getJavaKeyAgreement(JcaXAgreement.getFullAgreementName(ECCDH_ALGO + "U", pAgreementSpec), false));
             case MQV:       return new JcaMQVXEngine(this, pAgreementSpec,
                     JcaXAgreement.getJavaKeyAgreement(JcaXAgreement.getFullAgreementName("ECMQV", pAgreementSpec), false));
-            default:        throw new GordianDataException(GordianCoreFactory.getInvalidText(pAgreementSpec));
+            default:        throw new GordianDataException(GordianBaseData.getInvalidText(pAgreementSpec));
         }
     }
 
@@ -152,7 +153,7 @@ public class JcaXAgreementFactory
             case SIGNED:
             case BASIC:     return new JcaBasicXEngine(this, pAgreementSpec, null);
             case UNIFIED:   return new JcaUnifiedXEngine(this, pAgreementSpec, null);
-            default:        throw new GordianDataException(GordianCoreFactory.getInvalidText(pAgreementSpec));
+            default:        throw new GordianDataException(GordianBaseData.getInvalidText(pAgreementSpec));
         }
     }
 

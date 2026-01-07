@@ -29,7 +29,7 @@ import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPrivateK
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPublicKey;
 import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianAgreementMessageASN1;
 import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianCoreAnonymousAgreement;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.encrypt.GordianCoreEncryptor;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianIOException;
@@ -207,7 +207,7 @@ public final class BouncyRSAKeyPair {
          * @param pFactory the Security Factory
          * @param pKeySpec the keySpec
          */
-        BouncyRSAKeyPairGenerator(final GordianCoreFactory pFactory,
+        BouncyRSAKeyPairGenerator(final GordianBaseFactory pFactory,
                                   final GordianKeyPairSpec pKeySpec) {
             /* Initialise underlying class */
             super(pFactory, pKeySpec);
@@ -335,7 +335,7 @@ public final class BouncyRSAKeyPair {
          * @param pSpec the signatureSpec.
          * @throws GordianException on error
          */
-        BouncyPSSSignature(final GordianCoreFactory pFactory,
+        BouncyPSSSignature(final GordianBaseFactory pFactory,
                            final GordianSignatureSpec pSpec) throws GordianException {
             super(pFactory, pSpec);
             theSigner = getRSASigner(pFactory, pSpec);
@@ -378,7 +378,7 @@ public final class BouncyRSAKeyPair {
          * @return the RSASigner
          * @throws GordianException on error
          */
-        private static Signer getRSASigner(final GordianCoreFactory pFactory,
+        private static Signer getRSASigner(final GordianBaseFactory pFactory,
                                            final GordianSignatureSpec pSpec) throws GordianException {
             /* Create the digest */
             final GordianDigestSpec myDigestSpec = pSpec.getDigestSpec();
@@ -417,7 +417,7 @@ public final class BouncyRSAKeyPair {
          * @param pSpec the signatureSpec
          * @throws GordianException on error
          */
-        BouncyRSASignature(final GordianCoreFactory pFactory,
+        BouncyRSASignature(final GordianBaseFactory pFactory,
                            final GordianSignatureSpec pSpec) throws GordianException {
             /* Initialise underlying class */
             super(pFactory, pSpec);
@@ -504,7 +504,7 @@ public final class BouncyRSAKeyPair {
          * @param pFactory the security factory
          * @param pSpec the agreementSpec
          */
-        BouncyRSAEncapsulationAgreement(final GordianCoreFactory pFactory,
+        BouncyRSAEncapsulationAgreement(final GordianBaseFactory pFactory,
                                         final GordianAgreementSpec pSpec) {
             /* Initialise underlying class */
             super(pFactory, pSpec);
@@ -631,7 +631,7 @@ public final class BouncyRSAKeyPair {
          * @param pSpec the encryptorSpec
          * @throws GordianException on error
          */
-        BouncyRSAEncryptor(final GordianCoreFactory pFactory,
+        BouncyRSAEncryptor(final GordianBaseFactory pFactory,
                            final GordianEncryptorSpec pSpec) throws GordianException {
             /* Initialise underlying cipher */
             super(pFactory, pSpec, new RSABlindedEngine());
@@ -665,7 +665,7 @@ public final class BouncyRSAKeyPair {
          * @param pEngine the underlying engine
          * @throws GordianException on error
          */
-        protected BouncyCoreEncryptor(final GordianCoreFactory pFactory,
+        protected BouncyCoreEncryptor(final GordianBaseFactory pFactory,
                                       final GordianEncryptorSpec pSpec,
                                       final AsymmetricBlockCipher pEngine) throws GordianException {
             /* Initialise underlying cipher */

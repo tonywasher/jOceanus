@@ -26,7 +26,8 @@ import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySet;
 import net.sourceforge.joceanus.gordianknot.api.lock.GordianKeyPairLock;
 import net.sourceforge.joceanus.gordianknot.api.lock.GordianKeySetLock;
 import net.sourceforge.joceanus.gordianknot.api.lock.GordianPasswordLockSpec;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseData;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianParameters;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.keyset.GordianCoreKeySet;
@@ -43,19 +44,19 @@ public class GordianCoreLockFactory
     /**
      * The factory.
      */
-    private final GordianCoreFactory theFactory;
+    private final GordianBaseFactory theFactory;
 
     /**
      * Locking factory.
      */
-    private GordianCoreFactory lockFactory;
+    private GordianBaseFactory lockFactory;
 
     /**
      * Constructor.
      * @param pFactory the factory
      */
     public GordianCoreLockFactory(final GordianFactory pFactory) {
-        theFactory = (GordianCoreFactory) pFactory;
+        theFactory = (GordianBaseFactory) pFactory;
     }
 
     @Override
@@ -66,7 +67,7 @@ public class GordianCoreLockFactory
         checkPasswordLockSpec(pLockSpec);
 
         /* Create the factoryLock */
-        return new GordianFactoryLockImpl(getLockingFactory(), (GordianCoreFactory) pFactoryToLock, pLockSpec, pPassword);
+        return new GordianFactoryLockImpl(getLockingFactory(), (GordianBaseFactory) pFactoryToLock, pLockSpec, pPassword);
     }
 
     @Override
@@ -182,7 +183,7 @@ public class GordianCoreLockFactory
      * @return the locking factory
      * @throws GordianException on error
      */
-    private GordianCoreFactory getLockingFactory() throws GordianException {
+    private GordianBaseFactory getLockingFactory() throws GordianException {
         /* Return lockFactory (if created) */
         if (lockFactory != null) {
             return lockFactory;
@@ -194,7 +195,7 @@ public class GordianCoreLockFactory
             if (lockFactory == null) {
                 /* Create the lockFactory */
                 final GordianParameters myParams = new GordianParameters(GordianFactoryType.BC, getHostName());
-                lockFactory = (GordianCoreFactory) theFactory.newFactory(myParams);
+                lockFactory = (GordianBaseFactory) theFactory.newFactory(myParams);
             }
 
             /* Return the lockFactory */
@@ -226,7 +227,7 @@ public class GordianCoreLockFactory
     public void checkPasswordLockSpec(final GordianPasswordLockSpec pSpec) throws GordianException {
         /* Check validity of PasswordLockSpec */
         if (!validPasswordLockSpec(pSpec)) {
-            throw new GordianDataException(GordianCoreFactory.getInvalidText(pSpec));
+            throw new GordianDataException(GordianBaseData.getInvalidText(pSpec));
         }
     }
 

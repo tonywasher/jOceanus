@@ -25,7 +25,7 @@ import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairType;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianNTRUPrimeSpec;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseData;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianIOException;
@@ -678,7 +678,7 @@ public final class JcaXAgreement {
             case SHA512CKDF:
                 return pBase + "withSHA512CKDF";
             default:
-                throw new GordianDataException(GordianCoreFactory.getInvalidText(pAgreementSpec));
+                throw new GordianDataException(GordianBaseData.getInvalidText(pAgreementSpec));
         }
     }
 }

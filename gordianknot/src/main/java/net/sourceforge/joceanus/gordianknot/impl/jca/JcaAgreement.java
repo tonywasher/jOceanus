@@ -32,7 +32,8 @@ import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianCoreAnonymous
 import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianCoreBasicAgreement;
 import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianCoreEphemeralAgreement;
 import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianCoreSignedAgreement;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseData;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.jca.JcaKeyPair.JcaPrivateKey;
@@ -84,7 +85,7 @@ public final class JcaAgreement {
          * @param pSpec the agreementSpec
          * @param pAgreement the agreement
          */
-        JcaEncapsulationAgreement(final GordianCoreFactory pFactory,
+        JcaEncapsulationAgreement(final GordianBaseFactory pFactory,
                                   final GordianAgreementSpec pSpec,
                                   final KeyAgreement pAgreement) {
             /* Initialise underlying class */
@@ -166,7 +167,7 @@ public final class JcaAgreement {
          * @param pSpec the agreementSpec
          * @param pGenerator the generator
          */
-        JcaPostQuantumAgreement(final GordianCoreFactory pFactory,
+        JcaPostQuantumAgreement(final GordianBaseFactory pFactory,
                                 final GordianAgreementSpec pSpec,
                                 final KeyGenerator pGenerator) {
             /* Initialise underlying class */
@@ -242,7 +243,7 @@ public final class JcaAgreement {
          * @param pSpec the agreementSpec
          * @param pAgreement the agreement
          */
-        JcaAnonymousAgreement(final GordianCoreFactory pFactory,
+        JcaAnonymousAgreement(final GordianBaseFactory pFactory,
                               final GordianAgreementSpec pSpec,
                               final KeyAgreement pAgreement) {
             /* Initialise underlying class */
@@ -362,7 +363,7 @@ public final class JcaAgreement {
          * @param pSpec the agreementSpec
          * @param pAgreement the agreement
          */
-        JcaBasicAgreement(final GordianCoreFactory pFactory,
+        JcaBasicAgreement(final GordianBaseFactory pFactory,
                           final GordianAgreementSpec pSpec,
                           final KeyAgreement pAgreement) {
             /* Initialise underlying class */
@@ -476,7 +477,7 @@ public final class JcaAgreement {
          * @param pSpec the agreementSpec
          * @param pAgreement the agreement
          */
-        JcaSignedAgreement(final GordianCoreFactory pFactory,
+        JcaSignedAgreement(final GordianBaseFactory pFactory,
                            final GordianAgreementSpec pSpec,
                            final KeyAgreement pAgreement) {
             /* Initialise underlying class */
@@ -581,7 +582,7 @@ public final class JcaAgreement {
          * @param pSpec the agreementSpec
          * @param pAgreement the agreement
          */
-        JcaUnifiedAgreement(final GordianCoreFactory pFactory,
+        JcaUnifiedAgreement(final GordianBaseFactory pFactory,
                             final GordianAgreementSpec pSpec,
                             final KeyAgreement pAgreement) {
             /* Initialise underlying class */
@@ -695,7 +696,7 @@ public final class JcaAgreement {
          * @param pSpec the agreementSpec
          * @param pAgreement the agreement
          */
-        JcaMQVAgreement(final GordianCoreFactory pFactory,
+        JcaMQVAgreement(final GordianBaseFactory pFactory,
                         final GordianAgreementSpec pSpec,
                         final KeyAgreement pAgreement) {
             /* Initialise underlying class */
@@ -795,7 +796,7 @@ public final class JcaAgreement {
             case SHA512CKDF:
                 return pBase + "withSHA512CKDF";
             default:
-                throw new GordianDataException(GordianCoreFactory.getInvalidText(pAgreementSpec));
+                throw new GordianDataException(GordianBaseData.getInvalidText(pAgreementSpec));
         }
     }
 

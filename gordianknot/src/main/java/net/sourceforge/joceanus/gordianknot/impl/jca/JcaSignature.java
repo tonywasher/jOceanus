@@ -27,7 +27,7 @@ import net.sourceforge.joceanus.gordianknot.api.keypair.GordianXMSSKeySpec;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignParams;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignatureSpec;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignatureType;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
 import net.sourceforge.joceanus.gordianknot.impl.core.sign.GordianCoreSignature;
 import org.bouncycastle.jcajce.spec.ContextParameterSpec;
@@ -133,7 +133,7 @@ public abstract class JcaSignature
      * @param pFactory the factory
      * @param pSpec the signature Spec
      */
-    JcaSignature(final GordianCoreFactory pFactory,
+    JcaSignature(final GordianBaseFactory pFactory,
                  final GordianSignatureSpec pSpec) {
         super(pFactory, pSpec);
     }
@@ -283,7 +283,7 @@ public abstract class JcaSignature
          * @param pSignatureSpec the signatureSpec
          * @throws GordianException on error
          */
-        JcaRSASignature(final GordianCoreFactory pFactory,
+        JcaRSASignature(final GordianBaseFactory pFactory,
                         final GordianSignatureSpec pSignatureSpec) throws GordianException {
             /* Initialise class */
             super(pFactory, pSignatureSpec);
@@ -349,7 +349,7 @@ public abstract class JcaSignature
          * @param pSignatureSpec the signatureSpec
          * @throws GordianException on error
          */
-        JcaDSASignature(final GordianCoreFactory pFactory,
+        JcaDSASignature(final GordianBaseFactory pFactory,
                         final GordianSignatureSpec pSignatureSpec) throws GordianException {
             /* Initialise class */
             super(pFactory, pSignatureSpec);
@@ -371,7 +371,7 @@ public abstract class JcaSignature
          * @param pSignatureSpec the signatureSpec
          * @throws GordianException on error
          */
-        JcaGOSTSignature(final GordianCoreFactory pFactory,
+        JcaGOSTSignature(final GordianBaseFactory pFactory,
                          final GordianSignatureSpec pSignatureSpec) throws GordianException {
             /* Initialise class */
             super(pFactory, pSignatureSpec);
@@ -417,7 +417,7 @@ public abstract class JcaSignature
          * @param pFactory the factory
          * @param pSignatureSpec the signatureSpec
         */
-        JcaSLHDSASignature(final GordianCoreFactory pFactory,
+        JcaSLHDSASignature(final GordianBaseFactory pFactory,
                            final GordianSignatureSpec pSignatureSpec) {
             /* Initialise class */
             super(pFactory, pSignatureSpec);
@@ -474,7 +474,7 @@ public abstract class JcaSignature
          * @param pFactory the factory
          * @param pSignatureSpec the signatureSpec
          */
-        JcaMLDSASignature(final GordianCoreFactory pFactory,
+        JcaMLDSASignature(final GordianBaseFactory pFactory,
                           final GordianSignatureSpec pSignatureSpec) {
             /* Initialise class */
             super(pFactory, pSignatureSpec);
@@ -527,7 +527,7 @@ public abstract class JcaSignature
          * @param pSignatureSpec the signatureSpec
          * @throws GordianException on error
          */
-        JcaFalconSignature(final GordianCoreFactory pFactory,
+        JcaFalconSignature(final GordianBaseFactory pFactory,
                            final GordianSignatureSpec pSignatureSpec) throws GordianException {
             /* Initialise class */
             super(pFactory, pSignatureSpec);
@@ -548,7 +548,7 @@ public abstract class JcaSignature
          * @param pSignatureSpec the signatureSpec
          * @throws GordianException on error
          */
-        JcaMayoSignature(final GordianCoreFactory pFactory,
+        JcaMayoSignature(final GordianBaseFactory pFactory,
                          final GordianSignatureSpec pSignatureSpec) throws GordianException {
             /* Initialise class */
             super(pFactory, pSignatureSpec);
@@ -569,7 +569,7 @@ public abstract class JcaSignature
          * @param pSignatureSpec the signatureSpec
          * @throws GordianException on error
          */
-        JcaSnovaSignature(final GordianCoreFactory pFactory,
+        JcaSnovaSignature(final GordianBaseFactory pFactory,
                           final GordianSignatureSpec pSignatureSpec) throws GordianException {
             /* Initialise class */
             super(pFactory, pSignatureSpec);
@@ -595,7 +595,7 @@ public abstract class JcaSignature
          * @param pSignatureSpec the signatureSpec
          * @throws GordianException on error
          */
-        JcaPicnicSignature(final GordianCoreFactory pFactory,
+        JcaPicnicSignature(final GordianBaseFactory pFactory,
                            final GordianSignatureSpec pSignatureSpec) throws GordianException {
             /* Initialise class */
             super(pFactory, pSignatureSpec);
@@ -646,7 +646,7 @@ public abstract class JcaSignature
          * @param pFactory the factory
          * @param pSignatureSpec the signatureSpec
          */
-        JcaXMSSSignature(final GordianCoreFactory pFactory,
+        JcaXMSSSignature(final GordianBaseFactory pFactory,
                          final GordianSignatureSpec pSignatureSpec) {
             /* Initialise class */
             super(pFactory, pSignatureSpec);
@@ -716,7 +716,7 @@ public abstract class JcaSignature
          * @param pFactory the factory
          * @param pSignatureSpec the signatureSpec
          */
-        JcaEdDSASignature(final GordianCoreFactory pFactory,
+        JcaEdDSASignature(final GordianBaseFactory pFactory,
                           final GordianSignatureSpec pSignatureSpec) {
             /* Initialise class */
             super(pFactory, pSignatureSpec);
@@ -772,7 +772,7 @@ public abstract class JcaSignature
          * @param pSignatureSpec the signatureSpec
          * @throws GordianException on error
          */
-        JcaLMSSignature(final GordianCoreFactory pFactory,
+        JcaLMSSignature(final GordianBaseFactory pFactory,
                         final GordianSignatureSpec pSignatureSpec) throws GordianException {
             /* Initialise class */
             super(pFactory, pSignatureSpec);

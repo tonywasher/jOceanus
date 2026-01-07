@@ -22,7 +22,7 @@ import net.sourceforge.joceanus.gordianknot.api.encrypt.GordianEncryptorFactory;
 import net.sourceforge.joceanus.gordianknot.api.encrypt.GordianEncryptorSpec;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianAsyncFactory;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.keypair.GordianCoreKeyPair;
 import net.sourceforge.joceanus.gordianknot.impl.core.keypair.GordianPrivateKey;
@@ -38,7 +38,7 @@ public abstract class GordianCoreEncryptor
     /**
      * The Factory.
      */
-    private final GordianCoreFactory theFactory;
+    private final GordianBaseFactory theFactory;
 
     /**
      * The encryptorSpec.
@@ -60,7 +60,7 @@ public abstract class GordianCoreEncryptor
      * @param pFactory the factory
      * @param pSpec the encryptorSpec
      */
-    protected GordianCoreEncryptor(final GordianCoreFactory pFactory,
+    protected GordianCoreEncryptor(final GordianBaseFactory pFactory,
                                    final GordianEncryptorSpec pSpec) {
         theFactory = pFactory;
         theSpec = pSpec;
@@ -70,7 +70,7 @@ public abstract class GordianCoreEncryptor
      * Obtain the factory.
      * @return the factory
      */
-    public GordianCoreFactory getFactory() {
+    public GordianBaseFactory getFactory() {
         return theFactory;
     }
 

@@ -35,7 +35,7 @@ import net.sourceforge.joceanus.gordianknot.api.keypair.GordianNTRUPrimeSpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianSM2Elliptic;
 import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySetSpec;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianASN1Util;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseData;
 import net.sourceforge.joceanus.gordianknot.impl.core.cipher.GordianCoreCipherFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.keyset.GordianKeySetSpecASN1;
@@ -339,8 +339,8 @@ public class GordianAgreementAlgId {
     protected AlgorithmIdentifier getIdentifierForResult(final Object pResultType) throws GordianException {
         if (pResultType instanceof GordianFactoryType) {
             final ASN1ObjectIdentifier myOID = pResultType == GordianFactoryType.BC
-                    ? GordianCoreFactory.BCFACTORYOID
-                    : GordianCoreFactory.JCAFACTORYOID;
+                    ? GordianBaseData.BCFACTORYOID
+                    : GordianBaseData.JCAFACTORYOID;
             return new AlgorithmIdentifier(myOID, null);
         }
         if (pResultType instanceof GordianKeySetSpec mySpec) {
@@ -373,10 +373,10 @@ public class GordianAgreementAlgId {
     public Object  processResultIdentifier(final AlgorithmIdentifier pResId) throws GordianException {
         /* Look for a Factory */
         final ASN1ObjectIdentifier myAlgId = pResId.getAlgorithm();
-        if (GordianCoreFactory.BCFACTORYOID.equals(myAlgId)) {
+        if (GordianBaseData.BCFACTORYOID.equals(myAlgId)) {
             return GordianFactoryType.BC;
         }
-        if (GordianCoreFactory.JCAFACTORYOID.equals(myAlgId)) {
+        if (GordianBaseData.JCAFACTORYOID.equals(myAlgId)) {
             return GordianFactoryType.JCA;
         }
 

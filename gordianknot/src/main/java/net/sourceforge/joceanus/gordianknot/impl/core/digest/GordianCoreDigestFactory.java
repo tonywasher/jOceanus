@@ -23,7 +23,8 @@ import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestSubSpec;
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestSubSpec.GordianDigestState;
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestType;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseData;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 
 import java.util.ArrayList;
@@ -40,13 +41,13 @@ public abstract class GordianCoreDigestFactory
     /**
      * The factory.
      */
-    private final GordianCoreFactory theFactory;
+    private final GordianBaseFactory theFactory;
 
     /**
      * Constructor.
      * @param pFactory the factory.
      */
-    protected GordianCoreDigestFactory(final GordianCoreFactory pFactory) {
+    protected GordianCoreDigestFactory(final GordianBaseFactory pFactory) {
         theFactory = pFactory;
     }
 
@@ -54,7 +55,7 @@ public abstract class GordianCoreDigestFactory
      * Obtain the factory.
      * @return the factory
      */
-    protected GordianCoreFactory getFactory() {
+    protected GordianBaseFactory getFactory() {
         return theFactory;
     }
 
@@ -76,7 +77,7 @@ public abstract class GordianCoreDigestFactory
     public void checkDigestSpec(final GordianDigestSpec pDigestSpec) throws GordianException {
         /* Check validity of DigestType */
         if (!supportedDigestSpecs().test(pDigestSpec)) {
-            throw new GordianDataException(GordianCoreFactory.getInvalidText(pDigestSpec));
+            throw new GordianDataException(GordianBaseData.getInvalidText(pDigestSpec));
         }
     }
 

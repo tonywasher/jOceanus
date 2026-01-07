@@ -21,8 +21,9 @@ import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySet;
 import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySetFactory;
 import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySetSpec;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianASN1Util;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory.GordianKeySetGenerate;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseData;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory.GordianKeySetGenerate;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 
@@ -41,14 +42,14 @@ public class GordianCoreKeySetFactory
     /**
      * The factory.
      */
-    private final GordianCoreFactory theFactory;
+    private final GordianBaseFactory theFactory;
 
     /**
      * Constructor.
      * @param pFactory the factory.
      * @throws GordianException on error
      */
-    public GordianCoreKeySetFactory(final GordianCoreFactory pFactory) throws GordianException {
+    public GordianCoreKeySetFactory(final GordianBaseFactory pFactory) throws GordianException {
         theFactory = pFactory;
     }
 
@@ -56,7 +57,7 @@ public class GordianCoreKeySetFactory
      * Obtain the factory.
      * @return the factory
      */
-    public GordianCoreFactory getFactory() {
+    public GordianBaseFactory getFactory() {
         return theFactory;
     }
 
@@ -105,7 +106,7 @@ public class GordianCoreKeySetFactory
     public void checkKeySetSpec(final GordianKeySetSpec pSpec) throws GordianException {
         /* Check validity of KeySet */
         if (!supportedKeySetSpecs().test(pSpec)) {
-            throw new GordianDataException(GordianCoreFactory.getInvalidText(pSpec));
+            throw new GordianDataException(GordianBaseData.getInvalidText(pSpec));
         }
     }
 

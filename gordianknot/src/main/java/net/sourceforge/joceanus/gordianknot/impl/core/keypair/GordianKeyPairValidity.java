@@ -34,7 +34,7 @@ import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignParams;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignature;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignatureFactory;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignatureSpec;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianLogicException;
 
@@ -61,7 +61,7 @@ public final class GordianKeyPairValidity {
      * @param pKeyPair the keyPair
      * @throws GordianException on error
      */
-    public static void checkValidity(final GordianCoreFactory pFactory,
+    public static void checkValidity(final GordianBaseFactory pFactory,
                                      final GordianKeyPair pKeyPair) throws GordianException {
         final Object myCheck = getValidityCheck(pFactory, pKeyPair);
         if (myCheck instanceof GordianSignatureSpec mySpec) {
@@ -82,7 +82,7 @@ public final class GordianKeyPairValidity {
      * @param pSignSpec the signature spec
      * @throws GordianException on error
      */
-    private static void checkValidity(final GordianCoreFactory pFactory,
+    private static void checkValidity(final GordianBaseFactory pFactory,
                                       final GordianKeyPair pKeyPair,
                                       final GordianSignatureSpec pSignSpec) throws GordianException {
         /* Use default personalisation as the data to sign */
@@ -113,7 +113,7 @@ public final class GordianKeyPairValidity {
      * @param pEncryptSpec the encryption spec
      * @throws GordianException on error
      */
-    private static void checkValidity(final GordianCoreFactory pFactory,
+    private static void checkValidity(final GordianBaseFactory pFactory,
                                       final GordianKeyPair pKeyPair,
                                       final GordianEncryptorSpec pEncryptSpec) throws GordianException {
         /* Use default personalisation as the data to encrypt */
@@ -144,7 +144,7 @@ public final class GordianKeyPairValidity {
      * @param pAgreeSpec the agreementSpec
      * @throws GordianException on error
      */
-    private static void checkValidity(final GordianCoreFactory pFactory,
+    private static void checkValidity(final GordianBaseFactory pFactory,
                                       final GordianKeyPair pKeyPair,
                                       final GordianAgreementSpec pAgreeSpec) throws GordianException {
         /* Create agreement on client side */
@@ -172,7 +172,7 @@ public final class GordianKeyPairValidity {
      * @param pKeyPair the keyPair
      * @return the validity check
      */
-    private static Object getValidityCheck(final GordianCoreFactory pFactory,
+    private static Object getValidityCheck(final GordianBaseFactory pFactory,
                                            final GordianKeyPair pKeyPair) {
         /* Switch on keyType */
         final GordianKeyPairSpec mySpec = pKeyPair.getKeyPairSpec();

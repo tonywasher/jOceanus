@@ -49,7 +49,8 @@ import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyXDHKeyPair.BouncyXDHBa
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyXDHKeyPair.BouncyXDHSignedAgreement;
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyXDHKeyPair.BouncyXDHUnifiedAgreement;
 import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianCoreAgreementFactory;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseData;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 
 /**
@@ -62,7 +63,7 @@ public class BouncyAgreementFactory
      *
      * @param pFactory the factory
      */
-    BouncyAgreementFactory(final GordianCoreFactory pFactory) {
+    BouncyAgreementFactory(final GordianBaseFactory pFactory) {
         /* Initialise underlying class */
         super(pFactory);
     }
@@ -120,7 +121,7 @@ public class BouncyAgreementFactory
             case COMPOSITE:
                 return getCompositeAgreement(pSpec);
             default:
-                throw new GordianDataException(GordianCoreFactory.getInvalidText(pSpec));
+                throw new GordianDataException(GordianBaseData.getInvalidText(pSpec));
         }
     }
 
@@ -148,7 +149,7 @@ public class BouncyAgreementFactory
             case SM2:
                 return new BouncyECSM2Agreement(getFactory(), pSpec);
             default:
-                throw new GordianDataException(GordianCoreFactory.getInvalidText(pSpec));
+                throw new GordianDataException(GordianBaseData.getInvalidText(pSpec));
         }
     }
 
@@ -172,7 +173,7 @@ public class BouncyAgreementFactory
             case UNIFIED:
                 return new BouncyDHUnifiedAgreement(getFactory(), pSpec);
             default:
-                throw new GordianDataException(GordianCoreFactory.getInvalidText(pSpec));
+                throw new GordianDataException(GordianBaseData.getInvalidText(pSpec));
         }
     }
 
@@ -194,7 +195,7 @@ public class BouncyAgreementFactory
             case UNIFIED:
                 return new BouncyXDHUnifiedAgreement(getFactory(), pSpec);
             default:
-                throw new GordianDataException(GordianCoreFactory.getInvalidText(pSpec));
+                throw new GordianDataException(GordianBaseData.getInvalidText(pSpec));
         }
     }
 }

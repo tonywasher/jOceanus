@@ -23,7 +23,7 @@ import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestType;
 import net.sourceforge.joceanus.gordianknot.api.encrypt.GordianEncryptorSpec;
 import net.sourceforge.joceanus.gordianknot.api.encrypt.GordianSM2EncryptionSpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.encrypt.GordianCoreEncryptor;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
 import net.sourceforge.joceanus.gordianknot.impl.jca.JcaKeyPair.JcaPrivateKey;
@@ -68,7 +68,7 @@ public final class JcaEncryptor {
          * @param pSpec the encryptorSpec
          * @throws GordianException on error
          */
-        JcaBlockEncryptor(final GordianCoreFactory pFactory,
+        JcaBlockEncryptor(final GordianBaseFactory pFactory,
                           final GordianEncryptorSpec pSpec) throws GordianException {
             /* Initialise underlying cipher */
             super(pFactory, pSpec);
@@ -232,7 +232,7 @@ public final class JcaEncryptor {
          * @param pSpec the encryptorSpec
          * @throws GordianException on error
          */
-        JcaHybridEncryptor(final GordianCoreFactory pFactory,
+        JcaHybridEncryptor(final GordianBaseFactory pFactory,
                            final GordianEncryptorSpec pSpec) throws GordianException {
             /* Initialise underlying cipher */
             super(pFactory, pSpec);

@@ -16,9 +16,13 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.jca;
 
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementFactory;
+import net.sourceforge.joceanus.gordianknot.api.encrypt.GordianEncryptorFactory;
+import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairFactory;
+import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignatureFactory;
+import net.sourceforge.joceanus.gordianknot.api.xagree.GordianXAgreementFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.factory.GordianCoreAsyncFactory;
-import net.sourceforge.joceanus.gordianknot.impl.core.keystore.GordianCoreKeyStoreFactory;
 
 /**
  * Jca Async Factory.
@@ -30,16 +34,33 @@ public class JcaAsyncFactory
      *
      * @param pFactory the factory
      */
-    JcaAsyncFactory(final GordianCoreFactory pFactory) {
+    JcaAsyncFactory(final GordianBaseFactory pFactory) {
         /* Initialize underlying class */
         super(pFactory);
+    }
 
-        /* Create factories */
-        setKeyPairFactory(new JcaKeyPairFactory(pFactory));
-        setSignatureFactory(new JcaSignatureFactory(pFactory));
-        setAgreementFactory(new JcaAgreementFactory(pFactory));
-        setXAgreementFactory(new JcaXAgreementFactory(pFactory));
-        setEncryptorFactory(new JcaEncryptorFactory(pFactory));
-        setKeyStoreFactory(new GordianCoreKeyStoreFactory(pFactory));
+    @Override
+    public GordianKeyPairFactory newKeyPairFactory(final GordianBaseFactory pFactory) {
+        return new JcaKeyPairFactory(pFactory);
+    }
+
+    @Override
+    public GordianSignatureFactory newSignatureFactory(final GordianBaseFactory pFactory) {
+        return new JcaSignatureFactory(pFactory);
+    }
+
+    @Override
+    public GordianAgreementFactory newAgreementFactory(final GordianBaseFactory pFactory) {
+        return new JcaAgreementFactory(pFactory);
+    }
+
+    @Override
+    public GordianXAgreementFactory newXAgreementFactory(final GordianBaseFactory pFactory) {
+        return new JcaXAgreementFactory(pFactory);
+    }
+
+    @Override
+    public GordianEncryptorFactory newEncryptorFactory(final GordianBaseFactory pFactory) {
+        return new JcaEncryptorFactory(pFactory);
     }
 }

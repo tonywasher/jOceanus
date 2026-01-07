@@ -23,7 +23,7 @@ import net.sourceforge.joceanus.gordianknot.api.keystore.GordianKeyStoreEntry;
 import net.sourceforge.joceanus.gordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStorePair;
 import net.sourceforge.joceanus.gordianknot.api.keystore.GordianKeyStoreGateway;
 import net.sourceforge.joceanus.gordianknot.api.zip.GordianZipLock;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianDataConverter;
 import net.sourceforge.joceanus.gordianknot.impl.core.cert.GordianCoreCertificate;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
@@ -52,7 +52,7 @@ public class GordianCoreKeyStoreGateway
     /**
      * The factory.
      */
-    private final GordianCoreFactory theFactory;
+    private final GordianBaseFactory theFactory;
 
     /**
      * The keyStoreMgr.
@@ -124,7 +124,7 @@ public class GordianCoreKeyStoreGateway
      * @param pFactory the factory
      * @param pKeyStoreMgr the keyStoreMgr
      */
-    GordianCoreKeyStoreGateway(final GordianCoreFactory pFactory,
+    GordianCoreKeyStoreGateway(final GordianBaseFactory pFactory,
                                final GordianCoreKeyStoreManager pKeyStoreMgr) {
         /* Store parameters */
         theFactory = pFactory;
@@ -144,7 +144,7 @@ public class GordianCoreKeyStoreGateway
      * Obtain the factory.
      * @return the factory
      */
-    GordianCoreFactory getFactory() {
+    GordianBaseFactory getFactory() {
         return theFactory;
     }
 

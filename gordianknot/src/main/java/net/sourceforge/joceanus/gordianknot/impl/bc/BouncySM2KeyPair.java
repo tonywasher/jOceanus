@@ -35,7 +35,7 @@ import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPrivateK
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPublicKey;
 import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianAgreementMessageASN1;
 import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianCoreEphemeralAgreement;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.encrypt.GordianCoreEncryptor;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianIOException;
@@ -73,7 +73,7 @@ public final class BouncySM2KeyPair {
          * @param pKeySpec the keySpec
          * @throws GordianException on error
          */
-        BouncySM2KeyPairGenerator(final GordianCoreFactory pFactory,
+        BouncySM2KeyPairGenerator(final GordianBaseFactory pFactory,
                                   final GordianKeyPairSpec pKeySpec) throws GordianException {
             /* Initialise underlying class */
             super(pFactory, pKeySpec);
@@ -101,7 +101,7 @@ public final class BouncySM2KeyPair {
          * @param pSpec the signatureSpec.
          * @throws GordianException on error
          */
-        BouncySM2Signature(final GordianCoreFactory pFactory,
+        BouncySM2Signature(final GordianBaseFactory pFactory,
                            final GordianSignatureSpec pSpec) throws GordianException {
             /* Initialise underlying class */
             super(pFactory, pSpec);
@@ -211,7 +211,7 @@ public final class BouncySM2KeyPair {
          * @param pFactory the security factory
          * @param pSpec the agreementSpec
          */
-        BouncyECSM2Agreement(final GordianCoreFactory pFactory,
+        BouncyECSM2Agreement(final GordianBaseFactory pFactory,
                              final GordianAgreementSpec pSpec) {
             /* Initialise underlying class */
             super(pFactory, pSpec);
@@ -442,7 +442,7 @@ public final class BouncySM2KeyPair {
          * @param pSpec the encryptorSpec
          * @throws GordianException on error
          */
-        BouncySM2Encryptor(final GordianCoreFactory pFactory,
+        BouncySM2Encryptor(final GordianBaseFactory pFactory,
                            final GordianEncryptorSpec pSpec) throws GordianException {
             /* Initialise underlying cipher */
             super(pFactory, pSpec);

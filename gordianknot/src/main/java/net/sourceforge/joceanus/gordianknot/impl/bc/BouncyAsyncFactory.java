@@ -16,9 +16,13 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.bc;
 
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementFactory;
+import net.sourceforge.joceanus.gordianknot.api.encrypt.GordianEncryptorFactory;
+import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairFactory;
+import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignatureFactory;
+import net.sourceforge.joceanus.gordianknot.api.xagree.GordianXAgreementFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.factory.GordianCoreAsyncFactory;
-import net.sourceforge.joceanus.gordianknot.impl.core.keystore.GordianCoreKeyStoreFactory;
 
 /**
  * Bouncy Async Factory.
@@ -30,16 +34,33 @@ public class BouncyAsyncFactory
      *
      * @param pFactory the factory
      */
-    BouncyAsyncFactory(final GordianCoreFactory pFactory) {
+    BouncyAsyncFactory(final GordianBaseFactory pFactory) {
         /* Initialize underlying class */
         super(pFactory);
+    }
 
-        /* Create factories */
-        setKeyPairFactory(new BouncyKeyPairFactory(pFactory));
-        setSignatureFactory(new BouncySignatureFactory(pFactory));
-        setAgreementFactory(new BouncyAgreementFactory(pFactory));
-        setXAgreementFactory(new BouncyXAgreementFactory(pFactory));
-        setEncryptorFactory(new BouncyEncryptorFactory(pFactory));
-        setKeyStoreFactory(new GordianCoreKeyStoreFactory(pFactory));
+    @Override
+    public GordianKeyPairFactory newKeyPairFactory(final GordianBaseFactory pFactory) {
+        return new BouncyKeyPairFactory(pFactory);
+    }
+
+    @Override
+    public GordianSignatureFactory newSignatureFactory(final GordianBaseFactory pFactory) {
+        return new BouncySignatureFactory(pFactory);
+    }
+
+    @Override
+    public GordianAgreementFactory newAgreementFactory(final GordianBaseFactory pFactory) {
+        return new BouncyAgreementFactory(pFactory);
+    }
+
+    @Override
+    public GordianXAgreementFactory newXAgreementFactory(final GordianBaseFactory pFactory) {
+        return new BouncyXAgreementFactory(pFactory);
+    }
+
+    @Override
+    public GordianEncryptorFactory newEncryptorFactory(final GordianBaseFactory pFactory) {
+        return new BouncyEncryptorFactory(pFactory);
     }
 }

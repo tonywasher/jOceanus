@@ -32,7 +32,8 @@ import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianCompositeAgre
 import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianCompositeAgreement.GordianCompositeBasicAgreement;
 import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianCompositeAgreement.GordianCompositeHandshakeAgreement;
 import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianCompositeAgreement.GordianCompositeSignedAgreement;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseData;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 
@@ -50,7 +51,7 @@ public abstract class GordianCoreAgreementFactory
     /**
      * The factory.
      */
-    private final GordianCoreFactory theFactory;
+    private final GordianBaseFactory theFactory;
 
     /**
      * The id control.
@@ -67,7 +68,7 @@ public abstract class GordianCoreAgreementFactory
      *
      * @param pFactory the factory
      */
-    protected GordianCoreAgreementFactory(final GordianCoreFactory pFactory) {
+    protected GordianCoreAgreementFactory(final GordianBaseFactory pFactory) {
         theFactory = pFactory;
         theNextId = new AtomicInteger();
     }
@@ -76,7 +77,7 @@ public abstract class GordianCoreAgreementFactory
      * Obtain the factory.
      * @return the factory
      */
-    protected GordianCoreFactory getFactory() {
+    protected GordianBaseFactory getFactory() {
         return theFactory;
     }
 
@@ -111,7 +112,7 @@ public abstract class GordianCoreAgreementFactory
             case SM2:
                 return new GordianCompositeHandshakeAgreement(getFactory(), pSpec);
             default:
-                throw new GordianDataException(GordianCoreFactory.getInvalidText(pSpec));
+                throw new GordianDataException(GordianBaseData.getInvalidText(pSpec));
         }
     }
 
@@ -128,7 +129,7 @@ public abstract class GordianCoreAgreementFactory
     protected void checkAgreementSpec(final GordianAgreementSpec pAgreementSpec) throws GordianException {
         /* Check validity of agreement */
         if (!validAgreementSpec(pAgreementSpec)) {
-            throw new GordianDataException(GordianCoreFactory.getInvalidText(pAgreementSpec));
+            throw new GordianDataException(GordianBaseData.getInvalidText(pAgreementSpec));
         }
     }
 

@@ -30,7 +30,7 @@ import net.sourceforge.joceanus.gordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMac;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacParameters;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacSpec;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreKnuthObfuscater;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianDataConverter;
 import net.sourceforge.joceanus.gordianknot.impl.core.cipher.GordianCoreCipher;
@@ -113,8 +113,8 @@ public final class GordianStreamDefinition {
     GordianStreamDefinition(final GordianCoreKeySet pKeySet,
                             final GordianDigestOutputStream pStream) throws GordianException {
         /* Access factory */
-        final GordianCoreFactory myFactory = pKeySet.getFactory();
-        final GordianCoreKnuthObfuscater myKnuth = myFactory.getObfuscater();
+        final GordianBaseFactory myFactory = pKeySet.getFactory();
+        final GordianCoreKnuthObfuscater myKnuth = (GordianCoreKnuthObfuscater) myFactory.getObfuscater();
 
         /* Access DigestType */
         theType = GordianStreamType.DIGEST;
@@ -137,8 +137,8 @@ public final class GordianStreamDefinition {
     GordianStreamDefinition(final GordianCoreKeySet pKeySet,
                             final GordianMacOutputStream pStream) throws GordianException {
         /* Access factory */
-        final GordianCoreFactory myFactory = pKeySet.getFactory();
-        final GordianCoreKnuthObfuscater myKnuth = myFactory.getObfuscater();
+        final GordianBaseFactory myFactory = pKeySet.getFactory();
+        final GordianCoreKnuthObfuscater myKnuth = (GordianCoreKnuthObfuscater) myFactory.getObfuscater();
 
         /* Access MacType */
         theType = GordianStreamType.MAC;
@@ -161,8 +161,8 @@ public final class GordianStreamDefinition {
     GordianStreamDefinition(final GordianCoreKeySet pKeySet,
                             final GordianCipherOutputStream<?> pStream) throws GordianException {
         /* Access factory */
-        final GordianCoreFactory myFactory = pKeySet.getFactory();
-        final GordianCoreKnuthObfuscater myKnuth = myFactory.getObfuscater();
+        final GordianBaseFactory myFactory = pKeySet.getFactory();
+        final GordianCoreKnuthObfuscater myKnuth = (GordianCoreKnuthObfuscater) myFactory.getObfuscater();
 
         /* Access CipherType */
         final GordianCoreCipher<?> myCipher = pStream.getCipher();
@@ -292,8 +292,8 @@ public final class GordianStreamDefinition {
                                                final InputStream pCurrent,
                                                final GordianMacInputStream pMacStream) throws GordianException {
         /* Access factory */
-        final GordianCoreFactory myFactory = pKeySet.getFactory();
-        final GordianCoreKnuthObfuscater myKnuth = myFactory.getObfuscater();
+        final GordianBaseFactory myFactory = pKeySet.getFactory();
+        final GordianCoreKnuthObfuscater myKnuth = (GordianCoreKnuthObfuscater) myFactory.getObfuscater();
 
         /* Parse the TypeId */
         final GordianDigestSpec mySpec = (GordianDigestSpec) myKnuth.deriveTypeFromExternalId(theTypeId);
@@ -316,8 +316,8 @@ public final class GordianStreamDefinition {
     private InputStream buildMacInputStream(final GordianCoreKeySet pKeySet,
                                             final InputStream pCurrent) throws GordianException {
         /* Access factory */
-        final GordianCoreFactory myFactory = pKeySet.getFactory();
-        final GordianCoreKnuthObfuscater myKnuth = myFactory.getObfuscater();
+        final GordianBaseFactory myFactory = pKeySet.getFactory();
+        final GordianCoreKnuthObfuscater myKnuth = (GordianCoreKnuthObfuscater) myFactory.getObfuscater();
 
         /* Parse the TypeId */
         final GordianMacSpec mySpec = (GordianMacSpec) myKnuth.deriveTypeFromExternalId(theTypeId);
@@ -342,8 +342,8 @@ public final class GordianStreamDefinition {
     private InputStream buildSymKeyInputStream(final GordianCoreKeySet pKeySet,
                                                final InputStream pCurrent) throws GordianException {
         /* Access factory */
-        final GordianCoreFactory myFactory = pKeySet.getFactory();
-        final GordianCoreKnuthObfuscater myKnuth = myFactory.getObfuscater();
+        final GordianBaseFactory myFactory = pKeySet.getFactory();
+        final GordianCoreKnuthObfuscater myKnuth = (GordianCoreKnuthObfuscater) myFactory.getObfuscater();
 
         /* Parse the TypeId */
         final GordianSymCipherSpec mySpec = (GordianSymCipherSpec) myKnuth.deriveTypeFromExternalId(theTypeId);
@@ -369,8 +369,8 @@ public final class GordianStreamDefinition {
     private InputStream buildStreamKeyInputStream(final GordianCoreKeySet pKeySet,
                                                   final InputStream pCurrent) throws GordianException {
         /* Access factory */
-        final GordianCoreFactory myFactory = pKeySet.getFactory();
-        final GordianCoreKnuthObfuscater myKnuth = myFactory.getObfuscater();
+        final GordianBaseFactory myFactory = pKeySet.getFactory();
+        final GordianCoreKnuthObfuscater myKnuth = (GordianCoreKnuthObfuscater) myFactory.getObfuscater();
 
         /* Parse the TypeId */
         final GordianStreamCipherSpec mySpec = (GordianStreamCipherSpec) myKnuth.deriveTypeFromExternalId(theTypeId);

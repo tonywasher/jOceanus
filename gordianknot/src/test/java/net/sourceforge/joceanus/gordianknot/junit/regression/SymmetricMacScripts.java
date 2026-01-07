@@ -29,7 +29,7 @@ import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacFactory;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacParameters;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacSpec;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacType;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import net.sourceforge.joceanus.gordianknot.junit.regression.SymmetricStore.FactoryMacSpec;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.util.Arrays;
@@ -304,7 +304,7 @@ public final class SymmetricMacScripts {
      */
     private static void checkMacAlgId(final FactoryMacSpec pSpec) {
         /* Access the factory */
-        final GordianCoreFactory myFactory = (GordianCoreFactory) pSpec.getFactory();
+        final GordianBaseFactory myFactory = (GordianBaseFactory) pSpec.getFactory();
 
         /* Check that we have an id */
         final AlgorithmIdentifier myId = myFactory.getIdentifierForSpec(pSpec.getSpec());

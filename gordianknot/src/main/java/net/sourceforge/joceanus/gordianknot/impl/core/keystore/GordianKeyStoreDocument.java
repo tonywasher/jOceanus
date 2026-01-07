@@ -22,7 +22,7 @@ import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianKnuthObfuscater;
 import net.sourceforge.joceanus.gordianknot.api.cert.GordianCertificate;
 import net.sourceforge.joceanus.gordianknot.api.cert.GordianCertificateId;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianDataConverter;
 import net.sourceforge.joceanus.gordianknot.impl.core.cert.GordianCoreCertificate;
 import net.sourceforge.joceanus.gordianknot.impl.core.cert.GordianCoreCertificateId;
@@ -217,7 +217,7 @@ public final class GordianKeyStoreDocument {
         final GordianPasswordLockSpecASN1 mySpecASN1 = GordianPasswordLockSpecASN1.getInstance(myAttrArray);
 
         /* Create the empty keyStore */
-        theKeyStore = new GordianCoreKeyStore((GordianCoreFactory) pFactory, mySpecASN1.getLockSpec());
+        theKeyStore = new GordianCoreKeyStore((GordianBaseFactory) pFactory, mySpecASN1.getLockSpec());
         theDocument = pDocument;
 
         /* Loop through the nodes */

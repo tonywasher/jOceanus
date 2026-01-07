@@ -22,7 +22,8 @@ import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestSubSpec.Gord
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignature;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignatureSpec;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignatureType;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseData;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.sign.GordianCompositeSigner;
 import net.sourceforge.joceanus.gordianknot.impl.core.sign.GordianCoreSignatureFactory;
@@ -49,7 +50,7 @@ public class JcaSignatureFactory
      *
      * @param pFactory the factory
      */
-    JcaSignatureFactory(final GordianCoreFactory pFactory) {
+    JcaSignatureFactory(final GordianBaseFactory pFactory) {
         /* Initialise underlying class */
         super(pFactory);
     }
@@ -101,7 +102,7 @@ public class JcaSignatureFactory
             case COMPOSITE:
                 return new GordianCompositeSigner(getFactory(), pSignatureSpec);
             default:
-                throw new GordianDataException(GordianCoreFactory.getInvalidText(pSignatureSpec.getKeyPairType()));
+                throw new GordianDataException(GordianBaseData.getInvalidText(pSignatureSpec.getKeyPairType()));
         }
     }
 

@@ -21,7 +21,8 @@ import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestSubSpec.GordianDigestState;
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestType;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseData;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.digest.GordianCoreDigestFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.ext.digests.GordianBlake2Base;
@@ -82,8 +83,8 @@ public class BouncyDigestFactory
      *
      * @param pFactory the factory
      */
-    BouncyDigestFactory(final GordianCoreFactory pFactory) {
-        /* Initialise underlying class */
+    BouncyDigestFactory(final GordianBaseFactory pFactory) {
+        /* Initialize underlying class */
         super(pFactory);
     }
 
@@ -174,7 +175,7 @@ public class BouncyDigestFactory
             case XOODYAK:
                 return new XoodyakDigest();
             default:
-                throw new GordianDataException(GordianCoreFactory.getInvalidText(pDigestSpec.toString()));
+                throw new GordianDataException(GordianBaseData.getInvalidText(pDigestSpec.toString()));
         }
     }
 

@@ -21,7 +21,8 @@ import net.sourceforge.joceanus.gordianknot.api.encrypt.GordianEncryptor;
 import net.sourceforge.joceanus.gordianknot.api.encrypt.GordianEncryptorSpec;
 import net.sourceforge.joceanus.gordianknot.api.encrypt.GordianSM2EncryptionSpec;
 import net.sourceforge.joceanus.gordianknot.api.encrypt.GordianSM2EncryptionSpec.GordianSM2EncryptionType;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseData;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.encrypt.GordianCompositeEncryptor;
 import net.sourceforge.joceanus.gordianknot.impl.core.encrypt.GordianCoreEncryptorFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
@@ -38,7 +39,7 @@ public class JcaEncryptorFactory
      *
      * @param pFactory the factory
      */
-    JcaEncryptorFactory(final GordianCoreFactory pFactory) {
+    JcaEncryptorFactory(final GordianBaseFactory pFactory) {
         /* Initialise underlying class */
         super(pFactory);
     }
@@ -68,7 +69,7 @@ public class JcaEncryptorFactory
             case COMPOSITE:
                 return new GordianCompositeEncryptor(getFactory(), pEncryptorSpec);
             default:
-                throw new GordianDataException(GordianCoreFactory.getInvalidText(pEncryptorSpec.getKeyPairType()));
+                throw new GordianDataException(GordianBaseData.getInvalidText(pEncryptorSpec.getKeyPairType()));
         }
     }
 

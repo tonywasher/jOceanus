@@ -53,7 +53,8 @@ import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyXDHKeyPair.BouncyX2551
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyXDHKeyPair.BouncyX448KeyPairGenerator;
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyXMSSKeyPair.BouncyXMSSKeyPairGenerator;
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyXMSSKeyPair.BouncyXMSSMTKeyPairGenerator;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseData;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.keypair.GordianCoreKeyPairFactory;
 
@@ -68,7 +69,7 @@ public class BouncyKeyPairFactory
     /**
      * Factory.
      */
-    private final GordianCoreFactory theFactory;
+    private final GordianBaseFactory theFactory;
 
     /**
      * KeyPairGenerator Cache.
@@ -80,7 +81,7 @@ public class BouncyKeyPairFactory
      *
      * @param pFactory the factory
      */
-    BouncyKeyPairFactory(final GordianCoreFactory pFactory) {
+    BouncyKeyPairFactory(final GordianBaseFactory pFactory) {
         /* Initialise underlying class */
         super(pFactory);
         theFactory = pFactory;
@@ -184,7 +185,7 @@ public class BouncyKeyPairFactory
                        ? new BouncyHSSKeyPairGenerator(theFactory, pKeySpec)
                        : new BouncyLMSKeyPairGenerator(theFactory, pKeySpec);
             default:
-                throw new GordianDataException(GordianCoreFactory.getInvalidText(pKeySpec.getKeyPairType()));
+                throw new GordianDataException(GordianBaseData.getInvalidText(pKeySpec.getKeyPairType()));
         }
     }
 }

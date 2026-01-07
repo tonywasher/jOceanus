@@ -21,7 +21,8 @@ import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairGenerator;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairType;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianNTRUPrimeSpec.GordianNTRUPrimeType;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseData;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.keypair.GordianCoreKeyPairFactory;
 import net.sourceforge.joceanus.gordianknot.impl.jca.JcaKeyPairGenerator.JcaBIKEKeyPairGenerator;
@@ -60,7 +61,7 @@ public class JcaKeyPairFactory
     /**
      * Factory.
      */
-    private final GordianCoreFactory theFactory;
+    private final GordianBaseFactory theFactory;
 
     /**
      * KeyPairGenerator Cache.
@@ -72,7 +73,7 @@ public class JcaKeyPairFactory
      *
      * @param pFactory the factory
      */
-    JcaKeyPairFactory(final GordianCoreFactory pFactory) {
+    JcaKeyPairFactory(final GordianBaseFactory pFactory) {
         /* Initialize underlying class */
         super(pFactory);
         theFactory = pFactory;
@@ -164,7 +165,7 @@ public class JcaKeyPairFactory
             case LMS:
                 return new JcaLMSKeyPairGenerator(theFactory, pKeySpec);
             default:
-                throw new GordianDataException(GordianCoreFactory.getInvalidText(pKeySpec.getKeyPairType()));
+                throw new GordianDataException(GordianBaseData.getInvalidText(pKeySpec.getKeyPairType()));
         }
     }
 }

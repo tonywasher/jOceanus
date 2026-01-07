@@ -25,7 +25,8 @@ import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.gordianknot.api.key.GordianKeyGenerator;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacSpec;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacType;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseData;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.mac.GordianCoreMacFactory;
@@ -66,7 +67,7 @@ public class JcaMacFactory
      *
      * @param pFactory the factory
      */
-    JcaMacFactory(final GordianCoreFactory pFactory) {
+    JcaMacFactory(final GordianBaseFactory pFactory) {
         /* Initialise underlying class */
         super(pFactory);
 
@@ -140,7 +141,7 @@ public class JcaMacFactory
             case VMPC:
                 return getJavaMac("VMPC-MAC");
             default:
-                throw new GordianDataException(GordianCoreFactory.getInvalidText(pMacSpec));
+                throw new GordianDataException(GordianBaseData.getInvalidText(pMacSpec));
         }
     }
 
@@ -231,7 +232,7 @@ public class JcaMacFactory
             case VMPC:
                 return "VMPC-KSA3";
             default:
-                throw new GordianDataException(GordianCoreFactory.getInvalidText(pMacSpec));
+                throw new GordianDataException(GordianBaseData.getInvalidText(pMacSpec));
         }
     }
 

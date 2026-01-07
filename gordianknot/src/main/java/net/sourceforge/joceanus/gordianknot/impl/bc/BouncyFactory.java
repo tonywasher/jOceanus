@@ -17,31 +17,20 @@
 package net.sourceforge.joceanus.gordianknot.impl.bc;
 
 import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
-import net.sourceforge.joceanus.gordianknot.api.zip.GordianZipFactory;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.gordianknot.api.cipher.GordianCipherFactory;
+import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestFactory;
+import net.sourceforge.joceanus.gordianknot.api.factory.GordianAsyncFactory;
+import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianFactoryGenerator;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianParameters;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianValidator;
-import net.sourceforge.joceanus.gordianknot.impl.core.keyset.GordianCoreKeySetFactory;
-import net.sourceforge.joceanus.gordianknot.impl.core.lock.GordianCoreLockFactory;
-import net.sourceforge.joceanus.gordianknot.impl.core.random.GordianCoreRandomFactory;
-import net.sourceforge.joceanus.gordianknot.impl.core.zip.GordianCoreZipFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.factory.GordianCoreFactory;
 
 /**
  * BouncyCastle Factory.
  */
 public class BouncyFactory
     extends GordianCoreFactory {
-    /**
-     * Zip Factory.
-     */
-    private GordianCoreZipFactory theZipFactory;
-
-    /**
-     * async Factory.
-     */
-    private BouncyAsyncFactory theAsyncFactory;
-
     /**
      * Constructor.
      * @param pGenerator the factory generator
@@ -50,50 +39,27 @@ public class BouncyFactory
      */
     public BouncyFactory(final GordianFactoryGenerator pGenerator,
                          final GordianParameters pParameters) throws GordianException {
-        /* initialise underlying factory */
+        /* initialize underlying factory */
         super(pGenerator, pParameters);
     }
 
     @Override
-    protected void declareFactories() throws GordianException {
-        /* Create the factories */
-        setValidator(new GordianValidator());
-        setDigestFactory(new BouncyDigestFactory(this));
-        setCipherFactory(new BouncyCipherFactory(this));
-        setMacFactory(new BouncyMacFactory(this));
-        setRandomFactory(new GordianCoreRandomFactory(this));
-        setKeySetFactory(new GordianCoreKeySetFactory(this));
-        setLockFactory(new GordianCoreLockFactory(this));
+    public GordianDigestFactory newDigestFactory(final GordianBaseFactory pFactory) {
+        return new BouncyDigestFactory(this);
     }
 
     @Override
-    public BouncyDigestFactory getDigestFactory() {
-        return (BouncyDigestFactory) super.getDigestFactory();
+    public GordianCipherFactory newCipherFactory(final GordianBaseFactory pFactory) {
+        return new BouncyCipherFactory(this);
     }
 
     @Override
-    public BouncyCipherFactory getCipherFactory() {
-        return (BouncyCipherFactory) super.getCipherFactory();
+    public GordianMacFactory newMacFactory(final GordianBaseFactory pFactory) {
+        return new BouncyMacFactory(this);
     }
 
     @Override
-    public BouncyMacFactory getMacFactory() {
-        return (BouncyMacFactory) super.getMacFactory();
-    }
-
-    @Override
-    public GordianZipFactory getZipFactory() {
-        if (theZipFactory == null) {
-            theZipFactory = new GordianCoreZipFactory(this);
-        }
-        return theZipFactory;
-    }
-
-    @Override
-    public BouncyAsyncFactory getAsyncFactory() {
-        if (theAsyncFactory == null) {
-            theAsyncFactory = new BouncyAsyncFactory(this);
-        }
-        return theAsyncFactory;
+    public GordianAsyncFactory newAsyncFactory(final GordianBaseFactory pFactory) {
+        return new BouncyAsyncFactory(this);
     }
 }

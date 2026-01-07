@@ -28,7 +28,7 @@ import net.sourceforge.joceanus.gordianknot.api.mac.GordianMac;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacFactory;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacSpec;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacSpecBuilder;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianDataConverter;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianIdManager;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianPersonalisation;
@@ -114,7 +114,7 @@ public final class GordianPasswordLockRecipe {
      * @param pFactory the factory
      * @param pLockSpec the passwordLockSpec
      */
-    GordianPasswordLockRecipe(final GordianCoreFactory pFactory,
+    GordianPasswordLockRecipe(final GordianBaseFactory pFactory,
                               final GordianPasswordLockSpec pLockSpec) {
         /* Access the secureRandom */
         final SecureRandom myRandom = pFactory.getRandomSource().getRandom();
@@ -141,7 +141,7 @@ public final class GordianPasswordLockRecipe {
      * @param pPassLength the password length
      * @param pLockASN1 the lockASN1
      */
-    GordianPasswordLockRecipe(final GordianCoreFactory pFactory,
+    GordianPasswordLockRecipe(final GordianBaseFactory pFactory,
                               final int pPassLength,
                               final GordianPasswordLockASN1 pLockASN1)  {
         /* Parse the ASN1 external form */
@@ -227,7 +227,7 @@ public final class GordianPasswordLockRecipe {
      * @return the locking KeySet
      * @throws GordianException on error
      */
-    GordianCoreKeySet processPassword(final GordianCoreFactory pFactory,
+    GordianCoreKeySet processPassword(final GordianBaseFactory pFactory,
                                       final byte[] pPassword) throws GordianException {
         /* Obtain configuration details */
         final GordianPersonalisation myPersonal = pFactory.getPersonalisation();
@@ -401,7 +401,7 @@ public final class GordianPasswordLockRecipe {
          * Construct the parameters from random.
          * @param pFactory the factory
          */
-        GordianPasswordLockParams(final GordianCoreFactory pFactory) {
+        GordianPasswordLockParams(final GordianBaseFactory pFactory) {
             /* Obtain Id manager and random */
             final GordianIdManager myManager = pFactory.getIdManager();
             final GordianPersonalisation myPersonal = pFactory.getPersonalisation();
@@ -424,7 +424,7 @@ public final class GordianPasswordLockRecipe {
          * @param pFactory the factory
          * @param pRecipe the recipe bytes
          */
-        GordianPasswordLockParams(final GordianCoreFactory pFactory,
+        GordianPasswordLockParams(final GordianBaseFactory pFactory,
                                   final byte[] pRecipe) {
             /* Obtain Id manager */
             final GordianIdManager myManager = pFactory.getIdManager();

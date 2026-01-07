@@ -36,7 +36,7 @@ import net.sourceforge.joceanus.gordianknot.api.keystore.GordianKeyStoreEntry.Go
 import net.sourceforge.joceanus.gordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStoreSet;
 import net.sourceforge.joceanus.gordianknot.api.keystore.GordianKeyStoreManager;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacSpec;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.cert.GordianCoreCertificate;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianLogicException;
@@ -56,7 +56,7 @@ public class GordianCoreKeyStoreManager
     /**
      * The factory.
      */
-    private final GordianCoreFactory theFactory;
+    private final GordianBaseFactory theFactory;
 
     /**
      * The keyStore.
@@ -68,7 +68,7 @@ public class GordianCoreKeyStoreManager
      * @param pFactory the factory
      * @param pKeyStore the keyStore
      */
-    GordianCoreKeyStoreManager(final GordianCoreFactory pFactory,
+    GordianCoreKeyStoreManager(final GordianBaseFactory pFactory,
                                final GordianCoreKeyStore pKeyStore) {
         theFactory = pFactory;
         theKeyStore = pKeyStore;

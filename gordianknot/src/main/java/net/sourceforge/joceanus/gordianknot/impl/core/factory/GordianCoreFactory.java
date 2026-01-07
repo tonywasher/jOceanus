@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.gordianknot.impl.core.base;
+package net.sourceforge.joceanus.gordianknot.impl.core.factory;
 
 import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianKeySpec;
@@ -22,6 +22,7 @@ import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianCipherFactory;
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestFactory;
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestSpec;
+import net.sourceforge.joceanus.gordianknot.api.factory.GordianAsyncFactory;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactoryType;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianLockFactory;
@@ -29,49 +30,32 @@ import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySet;
 import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySetFactory;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacFactory;
 import net.sourceforge.joceanus.gordianknot.api.random.GordianRandomFactory;
+import net.sourceforge.joceanus.gordianknot.api.zip.GordianZipFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreKnuthObfuscater;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianDigestAlgId;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianFactoryGenerator;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianIdManager;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianKeyAlgId;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianParameters;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianPersonalisation;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianRandomSource;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianSeededRandom;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianValidator;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
-import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import net.sourceforge.joceanus.gordianknot.impl.core.keyset.GordianCoreKeySetFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.lock.GordianCoreLockFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.random.GordianCoreRandomFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.zip.GordianCoreZipFactory;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 
 import java.security.SecureRandom;
 
 /**
- * Base factory.
+ * Core factory.
  */
 public abstract class GordianCoreFactory
-    implements GordianFactory, GordianFactoryGenerator {
-    /**  * CreateKeySet interface.
-     */
-    public interface GordianKeySetGenerate {
-        /**
-         * create and build a keySet from seed.
-         * @param pSeed the base seed
-         * @return the keySet
-         * @throws GordianException on error
-         */
-        GordianKeySet generateKeySet(byte[] pSeed) throws GordianException;
-    }
-
-    /**
-     *  BCFactoryOID.
-     */
-    public static final ASN1ObjectIdentifier BCFACTORYOID = GordianASN1Util.FACTORYOID.branch("1");
-
-    /**
-     *  JCAFactoryOID.
-     */
-    public static final ASN1ObjectIdentifier JCAFACTORYOID = GordianASN1Util.FACTORYOID.branch("2");
-
-    /**
-     * The prime hash.
-     */
-    public static final int HASH_PRIME = 47;
-
-    /**
-     * RC5 rounds.
-     */
-    public static final int RC5_ROUNDS = 12;
-
+        implements GordianBaseFactory {
     /**
      * The number of seed bytes.
      */
@@ -110,42 +94,47 @@ public abstract class GordianCoreFactory
     /**
      * Embedded KeySet.
      */
-    private GordianKeySet theKeySet;
+    private final GordianKeySet theKeySet;
 
     /**
      * Digest Factory.
      */
-    private GordianDigestFactory theDigestFactory;
+    private final GordianDigestFactory theDigestFactory;
 
     /**
      * Cipher Factory.
      */
-    private GordianCipherFactory theCipherFactory;
+    private final GordianCipherFactory theCipherFactory;
 
     /**
      * Mac Factory.
      */
-    private GordianMacFactory theMacFactory;
+    private final GordianMacFactory theMacFactory;
 
     /**
      * Random Factory.
      */
-    private GordianRandomFactory theRandomFactory;
+    private final GordianRandomFactory theRandomFactory;
 
     /**
      * KeySet Factory.
      */
-    private GordianKeySetFactory theKeySetFactory;
+    private final GordianKeySetFactory theKeySetFactory;
 
     /**
      * Lock Factory.
      */
-    private GordianLockFactory theLockFactory;
+    private final GordianLockFactory theLockFactory;
+
+    /**
+     * Zip Factory.
+     */
+    private final GordianCoreZipFactory theZipFactory;
 
     /**
      * The validator.
      */
-    private GordianValidator theValidator;
+    private final GordianValidator theValidator;
 
     /**
      * The Key AlgIds.
@@ -156,6 +145,11 @@ public abstract class GordianCoreFactory
      * The Digest AlgIds.
      */
     private GordianDigestAlgId theDigestAlgIds;
+
+    /**
+     * Async Factory.
+     */
+    private GordianAsyncFactory theAsyncFactory;
 
     /**
      * Constructor.
@@ -178,7 +172,14 @@ public abstract class GordianCoreFactory
         theRandom = new GordianRandomSource();
 
         /* Declare factories */
-        declareFactories();
+        theValidator = newValidator();
+        theDigestFactory = newDigestFactory(this);
+        theCipherFactory = newCipherFactory(this);
+        theMacFactory = newMacFactory(this);
+        theRandomFactory = new GordianCoreRandomFactory(this);
+        theKeySetFactory = new GordianCoreKeySetFactory(this);
+        theLockFactory = new GordianCoreLockFactory(this);
+        theZipFactory = new GordianCoreZipFactory(this);
 
         /* Declare personalisation */
         thePersonalisation = new GordianPersonalisation(this);
@@ -186,12 +187,6 @@ public abstract class GordianCoreFactory
         theObfuscater = new GordianCoreKnuthObfuscater(this);
         theKeySet = createEmbeddedKeySet();
     }
-
-    /**
-     * Declare factories.
-     * @throws GordianException on error
-     */
-    protected abstract void declareFactories() throws GordianException;
 
     @Override
     public GordianFactory newFactory(final GordianParameters pParameters) throws GordianException {
@@ -270,18 +265,12 @@ public abstract class GordianCoreFactory
         return myKeySets.generateKeySet(mySeed);
     }
 
-    /**
-     * Obtain the personalisation.
-     * @return the personalisation
-     */
+    @Override
     public GordianPersonalisation getPersonalisation() {
         return thePersonalisation;
     }
 
-    /**
-     * Obtain the idManager.
-     * @return the idManager
-     */
+    @Override
     public GordianIdManager getIdManager() {
         return theIdManager;
     }
@@ -309,12 +298,11 @@ public abstract class GordianCoreFactory
     }
 
     /**
-     * Set the digest factory.
-     * @param pFactory the digest factory.
+     * Create a new digest factory.
+     * @param pFactory the factory
+     * @return the new digest factory
      */
-    protected void setDigestFactory(final GordianDigestFactory pFactory)  {
-        theDigestFactory = pFactory;
-     }
+    public abstract GordianDigestFactory newDigestFactory(final GordianBaseFactory pFactory);
 
     @Override
     public GordianCipherFactory getCipherFactory() {
@@ -322,12 +310,11 @@ public abstract class GordianCoreFactory
     }
 
     /**
-     * Set the cipher factory.
-     * @param pFactory the cipher factory.
+     * Create a new cipher factory.
+     * @param pFactory the factory
+     * @return the new cipher factory
      */
-    protected void setCipherFactory(final GordianCipherFactory pFactory) {
-        theCipherFactory = pFactory;
-    }
+    public abstract GordianCipherFactory newCipherFactory(final GordianBaseFactory pFactory);
 
     @Override
     public GordianMacFactory getMacFactory() {
@@ -335,24 +322,15 @@ public abstract class GordianCoreFactory
     }
 
     /**
-     * Set the mac factory.
-     * @param pFactory the mac factory.
+     * Create a new MAC factory.
+     * @param pFactory the factory
+     * @return the new MAC factory
      */
-    protected void setMacFactory(final GordianMacFactory pFactory) {
-        theMacFactory = pFactory;
-    }
+    public abstract GordianMacFactory newMacFactory(final GordianBaseFactory pFactory);
 
     @Override
     public GordianRandomFactory getRandomFactory() {
         return theRandomFactory;
-    }
-
-    /**
-     * Set the random factory.
-     * @param pFactory the random factory.
-     */
-    protected void setRandomFactory(final GordianRandomFactory pFactory) {
-        theRandomFactory = pFactory;
     }
 
     @Override
@@ -360,25 +338,9 @@ public abstract class GordianCoreFactory
         return theKeySetFactory;
     }
 
-    /**
-     * Set the keySet factory.
-     * @param pFactory the keySet factory.
-     */
-    protected void setKeySetFactory(final GordianKeySetFactory pFactory) {
-        theKeySetFactory = pFactory;
-    }
-
     @Override
     public GordianLockFactory getLockFactory() {
         return theLockFactory;
-    }
-
-    /**
-     * Set the lock factory.
-     * @param pFactory the lock factory.
-     */
-    protected void setLockFactory(final GordianLockFactory pFactory) {
-        theLockFactory = pFactory;
     }
 
     /**
@@ -390,14 +352,34 @@ public abstract class GordianCoreFactory
     }
 
     /**
-     * Set the validator.
-     * @param pValidator the validator.
+     * Create a new validator.
+     * @return the new validator
      */
-    protected void setValidator(final GordianValidator pValidator) {
-        theValidator = pValidator;
+    public GordianValidator newValidator() {
+        return new GordianValidator();
     }
 
-        /**
+    @Override
+    public GordianZipFactory getZipFactory() {
+        return theZipFactory;
+    }
+
+    @Override
+    public GordianAsyncFactory getAsyncFactory() {
+        if (theAsyncFactory == null) {
+            theAsyncFactory = newAsyncFactory(this);
+        }
+        return theAsyncFactory;
+    }
+
+    /**
+     * Create a new Async factory.
+     * @param pFactory the factory
+     * @return the new Async factory
+     */
+    public abstract GordianAsyncFactory newAsyncFactory(GordianBaseFactory pFactory);
+
+    /**
      * Obtain Identifier for keySpec.
      * @param pSpec the keySpec.
      * @return the Identifier
@@ -466,12 +448,9 @@ public abstract class GordianCoreFactory
         }
 
         /* Make sure that the object is the same class */
-        if (!(pThat instanceof GordianCoreFactory)) {
+        if (!(pThat instanceof GordianCoreFactory myThat)) {
             return false;
         }
-
-        /* Access the target field */
-        final GordianCoreFactory myThat = (GordianCoreFactory) pThat;
 
         /* Check Differences */
         return theParameters.equals(myThat.theParameters);
@@ -480,28 +459,5 @@ public abstract class GordianCoreFactory
     @Override
     public int hashCode() {
         return theParameters.hashCode();
-    }
-
-    /**
-     * Build Invalid text string.
-     * @param pValue the parameter
-     * @return the text
-     */
-    public static String getInvalidText(final Object pValue) {
-        /* Create initial string */
-        final StringBuilder myBuilder = new StringBuilder();
-        myBuilder.append("Invalid ");
-
-        /* Build details */
-        if (pValue != null) {
-            myBuilder.append(pValue.getClass().getSimpleName());
-            myBuilder.append(" :- ");
-            myBuilder.append(pValue);
-        } else {
-            myBuilder.append("null value");
-        }
-
-        /* Return the string */
-        return myBuilder.toString();
     }
 }

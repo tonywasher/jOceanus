@@ -36,7 +36,7 @@ import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignParams;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignature;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignatureSpec;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianASN1Util;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianRandomSource;
 import net.sourceforge.joceanus.gordianknot.impl.core.cert.GordianCoreCertificate;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
@@ -363,7 +363,7 @@ public class GordianCRMBuilder {
      * @return the PKMacValue
      * @throws GordianException on error
      */
-    private static PKMACValue calculatePKMacValue(final GordianCoreFactory pFactory,
+    private static PKMACValue calculatePKMacValue(final GordianBaseFactory pFactory,
                                                   final byte[] pSecret,
                                                   final ASN1Object pObject,
                                                   final PBMParameter pParams) throws GordianException {
@@ -415,7 +415,7 @@ public class GordianCRMBuilder {
         final byte[] myMACSecret = theGateway.getMACSecret(mySubject);
 
         /* Create the digest */
-        final GordianCoreFactory myFactory = theGateway.getFactory();
+        final GordianBaseFactory myFactory = theGateway.getFactory();
         final GordianDigestFactory myDigests = myFactory.getDigestFactory();
         final GordianDigest myDigest = myDigests.createDigest(GordianDigestSpecBuilder.sha2(GordianLength.LEN_256));
 

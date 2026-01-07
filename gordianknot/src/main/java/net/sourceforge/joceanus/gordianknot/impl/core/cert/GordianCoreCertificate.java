@@ -32,7 +32,7 @@ import net.sourceforge.joceanus.gordianknot.api.keystore.GordianKeyStoreEntry.Go
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignParams;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignature;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignatureSpec;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianIOException;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianLogicException;
@@ -74,7 +74,7 @@ public class GordianCoreCertificate
     /**
      * The Factory.
      */
-    private final GordianCoreFactory theFactory;
+    private final GordianBaseFactory theFactory;
 
     /**
      * The Subject.
@@ -144,7 +144,7 @@ public class GordianCoreCertificate
      * @param pSubject the name of the entity
      * @throws GordianException on error
      */
-    public GordianCoreCertificate(final GordianCoreFactory pFactory,
+    public GordianCoreCertificate(final GordianBaseFactory pFactory,
                                   final GordianKeyPair pKeyPair,
                                   final X500Name pSubject) throws GordianException {
         /* Check that the keyPair is OK */
@@ -190,7 +190,7 @@ public class GordianCoreCertificate
      * @param pUsage   the key usage
      * @throws GordianException on error
      */
-    public GordianCoreCertificate(final GordianCoreFactory pFactory,
+    public GordianCoreCertificate(final GordianBaseFactory pFactory,
                                   final GordianKeyStorePair pSigner,
                                   final GordianKeyPair pKeyPair,
                                   final X500Name pSubject,
@@ -241,7 +241,7 @@ public class GordianCoreCertificate
      * @param pSequence   the DER representation of the certificate
      * @throws GordianException on error
      */
-    public GordianCoreCertificate(final GordianCoreFactory pFactory,
+    public GordianCoreCertificate(final GordianBaseFactory pFactory,
                                   final byte[] pSequence) throws GordianException {
         this(pFactory, Certificate.getInstance(pSequence));
     }
@@ -253,7 +253,7 @@ public class GordianCoreCertificate
      * @param pCertificate the certificate
      * @throws GordianException on error
      */
-    public GordianCoreCertificate(final GordianCoreFactory pFactory,
+    public GordianCoreCertificate(final GordianBaseFactory pFactory,
                                   final Certificate pCertificate) throws GordianException {
         /* Protect against exceptions */
         try {
@@ -299,7 +299,7 @@ public class GordianCoreCertificate
      * Obtain the factory.
      * @return the factory
      */
-    protected GordianCoreFactory getFactory() {
+    protected GordianBaseFactory getFactory() {
         return theFactory;
     }
 

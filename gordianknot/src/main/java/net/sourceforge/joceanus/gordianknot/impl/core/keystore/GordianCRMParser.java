@@ -36,7 +36,7 @@ import net.sourceforge.joceanus.gordianknot.api.keystore.GordianKeyStoreEntry.Go
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignParams;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignature;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignatureSpec;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.cert.GordianCoreCertificate;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianIOException;
@@ -407,7 +407,7 @@ public class GordianCRMParser {
     private void checkEncryptionPrivateKey(final GordianKeyPair pKeyPair) throws GordianException {
         /* Create the data to encrypt */
         final byte[] mySrc = new byte[TESTLEN];
-        final GordianCoreFactory myFactory = theGateway.getFactory();
+        final GordianBaseFactory myFactory = theGateway.getFactory();
         myFactory.getRandomSource().getRandom().nextBytes(mySrc);
 
         /* Access details */
@@ -440,7 +440,7 @@ public class GordianCRMParser {
      */
     private void checkAgreementPrivateKey(final GordianKeyPair pKeyPair) throws GordianException {
         /* Access details */
-        final GordianCoreFactory myFactory = theGateway.getFactory();
+        final GordianBaseFactory myFactory = theGateway.getFactory();
         final GordianAgreementFactory myAgreeFactory = myFactory.getAsyncFactory().getAgreementFactory();
         final GordianKeyPairSpec mySpec = pKeyPair.getKeyPairSpec();
         final GordianAgreementSpec myAgreeSpec = myAgreeFactory.defaultForKeyPair(mySpec);

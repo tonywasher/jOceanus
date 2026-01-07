@@ -28,7 +28,8 @@ import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignatureFactory;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignatureSpec;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignatureSpecBuilder;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignatureType;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseData;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.digest.GordianCoreDigestFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
@@ -46,7 +47,7 @@ public abstract class GordianCoreSignatureFactory
     /**
      * The factory.
      */
-    private final GordianCoreFactory theFactory;
+    private final GordianBaseFactory theFactory;
 
     /**
      * The algorithm Ids.
@@ -57,7 +58,7 @@ public abstract class GordianCoreSignatureFactory
      * Constructor.
      * @param pFactory the factory
      */
-    protected GordianCoreSignatureFactory(final GordianCoreFactory pFactory) {
+    protected GordianCoreSignatureFactory(final GordianBaseFactory pFactory) {
         theFactory = pFactory;
     }
 
@@ -65,7 +66,7 @@ public abstract class GordianCoreSignatureFactory
      * Obtain the factory.
      * @return the factory
      */
-    protected GordianCoreFactory getFactory() {
+    protected GordianBaseFactory getFactory() {
         return theFactory;
     }
 
@@ -82,7 +83,7 @@ public abstract class GordianCoreSignatureFactory
     protected void checkSignatureSpec(final GordianSignatureSpec pSignatureSpec) throws GordianException {
         /* Check validity of signature */
         if (!validSignatureSpec(pSignatureSpec)) {
-            throw new GordianDataException(GordianCoreFactory.getInvalidText(pSignatureSpec));
+            throw new GordianDataException(GordianBaseData.getInvalidText(pSignatureSpec));
         }
     }
 

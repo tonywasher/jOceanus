@@ -24,7 +24,7 @@ import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestType;
 import net.sourceforge.joceanus.gordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.gordianknot.api.key.GordianKeyGenerator;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMac;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianDataConverter;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianRandomSource;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
@@ -54,7 +54,7 @@ public abstract class GordianCoreKeyGenerator<T extends GordianKeySpec>
     /**
      * The Security Factory.
      */
-    private final GordianCoreFactory theFactory;
+    private final GordianBaseFactory theFactory;
 
     /**
      * The Random Source.
@@ -66,7 +66,7 @@ public abstract class GordianCoreKeyGenerator<T extends GordianKeySpec>
      * @param pFactory the Security Factory
      * @param pKeyType the keyType
      */
-    protected GordianCoreKeyGenerator(final GordianCoreFactory pFactory,
+    protected GordianCoreKeyGenerator(final GordianBaseFactory pFactory,
                                       final T pKeyType) {
         /* Store parameters */
         theKeyType = pKeyType;
@@ -94,7 +94,7 @@ public abstract class GordianCoreKeyGenerator<T extends GordianKeySpec>
      * Obtain factory.
      * @return the factory
      */
-    protected GordianCoreFactory getFactory() {
+    protected GordianBaseFactory getFactory() {
         return theFactory;
     }
 

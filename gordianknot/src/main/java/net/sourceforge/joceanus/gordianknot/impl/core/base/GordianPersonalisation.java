@@ -89,7 +89,7 @@ public class GordianPersonalisation {
      * @param pFactory the factory
      * @throws GordianException on error
      */
-    GordianPersonalisation(final GordianCoreFactory pFactory) throws GordianException {
+    public GordianPersonalisation(final GordianBaseSupplier pFactory) throws GordianException {
         /* Calculate personalisation bytes */
         final byte[][] myArrays = personalise(pFactory);
         thePersonalisation = myArrays[0];
@@ -130,7 +130,7 @@ public class GordianPersonalisation {
      * Obtain the keySetVector.
      * @return the keySetVector
      */
-    byte[] getKeySetVector() {
+    public byte[] getKeySetVector() {
         return theKeySetVector;
     }
 
@@ -155,7 +155,7 @@ public class GordianPersonalisation {
      * @return the hashes
      * @throws GordianException on error
      */
-    private static byte[][] personalise(final GordianCoreFactory pFactory) throws GordianException {
+    private static byte[][] personalise(final GordianBaseSupplier pFactory) throws GordianException {
         /* Determine the digests */
         final GordianDigest[] myDigests = determineDigests(pFactory);
 
@@ -360,14 +360,14 @@ public class GordianPersonalisation {
      * @param pBaseSeed the seed.
      * @return the digestSpec
      */
-    private static GordianDigestSpec determineHKDFDigestSpec(final GordianFactory pFactory,
+    private static GordianDigestSpec determineHKDFDigestSpec(final GordianBaseSupplier pFactory,
                                                              final byte[] pBaseSeed) {
         /* Build the 64-bit seed and create the seeded random */
         final long mySeed = GordianDataConverter.byteArrayToLong(pBaseSeed);
         final Random myRandom = new Random(mySeed);
 
         /* Access the list to select from */
-        final GordianValidator myValidator = ((GordianCoreFactory) pFactory).getValidator();
+        final GordianValidator myValidator = pFactory.getValidator();
         final List<GordianDigestType> myTypes = myValidator.listAllExternalDigestTypes();
 
         /* Select from the list */

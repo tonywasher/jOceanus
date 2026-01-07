@@ -33,7 +33,7 @@ import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySet;
 import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySetAADCipher;
 import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySetCipher;
 import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySetSpec;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianParameters;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianPersonalisation.GordianPersonalId;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianValidator;
@@ -67,7 +67,7 @@ public final class GordianCoreKeySet
     /**
      * The factory.
      */
-    private final GordianCoreFactory theFactory;
+    private final GordianBaseFactory theFactory;
 
     /**
      * The keySetSpec.
@@ -91,7 +91,7 @@ public final class GordianCoreKeySet
      * @param pSpec the keySetSpec
      * @throws GordianException on error
      */
-    GordianCoreKeySet(final GordianCoreFactory pFactory,
+    GordianCoreKeySet(final GordianBaseFactory pFactory,
                       final GordianKeySetSpec pSpec) throws GordianException {
         /* Store parameters */
         theFactory = pFactory;
@@ -126,7 +126,7 @@ public final class GordianCoreKeySet
      * Obtain the factory.
      * @return the factory
      */
-    public GordianCoreFactory getFactory() {
+    public GordianBaseFactory getFactory() {
         return theFactory;
     }
 
@@ -446,7 +446,7 @@ public final class GordianCoreKeySet
         byte[] myBuffer = null;
         try {
             /* Access the parameters */
-            final GordianParameters myParams = ((GordianCoreFactory) pFactoryToSecure).getParameters();
+            final GordianParameters myParams = ((GordianBaseFactory) pFactoryToSecure).getParameters();
 
             /* Reject request if this is a namedFactory */
             if (!myParams.isInternal()) {

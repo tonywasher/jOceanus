@@ -46,7 +46,8 @@ import net.sourceforge.joceanus.gordianknot.api.keypair.GordianSLHDSASpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianSM2Elliptic;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianSnovaSpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianXMSSKeySpec;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseData;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 
 import java.security.spec.PKCS8EncodedKeySpec;
@@ -77,7 +78,7 @@ public abstract class GordianCoreKeyPairFactory
      * Constructor.
      * @param pFactory the factory
      */
-    protected GordianCoreKeyPairFactory(final GordianCoreFactory pFactory) {
+    protected GordianCoreKeyPairFactory(final GordianBaseFactory pFactory) {
         theCache = new HashMap<>();
     }
 
@@ -116,7 +117,7 @@ public abstract class GordianCoreKeyPairFactory
     protected void checkAsymKeySpec(final GordianKeyPairSpec pKeySpec) throws GordianException {
         /* Check validity of keySpec */
         if (pKeySpec == null || !pKeySpec.isValid()) {
-            throw new GordianDataException(GordianCoreFactory.getInvalidText(pKeySpec));
+            throw new GordianDataException(GordianBaseData.getInvalidText(pKeySpec));
         }
     }
 

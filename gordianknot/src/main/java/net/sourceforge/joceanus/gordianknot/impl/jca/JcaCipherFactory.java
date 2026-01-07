@@ -35,7 +35,8 @@ import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymKeySpec;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianWrapper;
 import net.sourceforge.joceanus.gordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.gordianknot.api.key.GordianKeyGenerator;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseData;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.cipher.GordianCoreCipherFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
@@ -76,7 +77,7 @@ public class JcaCipherFactory
      *
      * @param pFactory the factory
      */
-    JcaCipherFactory(final GordianCoreFactory pFactory) {
+    JcaCipherFactory(final GordianBaseFactory pFactory) {
         /* Initialise underlying class */
         super(pFactory);
 
@@ -158,7 +159,7 @@ public class JcaCipherFactory
         if (pKeySpec instanceof GordianSymKeySpec) {
             return getSymKeyAlgorithm((GordianSymKeySpec) pKeySpec);
         }
-        throw new GordianDataException(GordianCoreFactory.getInvalidText(pKeySpec));
+        throw new GordianDataException(GordianBaseData.getInvalidText(pKeySpec));
     }
 
     /**
@@ -283,7 +284,7 @@ public class JcaCipherFactory
             case DESEDE:
                 return pKeySpec.getSymKeyType().name();
             default:
-                throw new GordianDataException(GordianCoreFactory.getInvalidText(pKeySpec));
+                throw new GordianDataException(GordianBaseData.getInvalidText(pKeySpec));
         }
     }
 
@@ -324,7 +325,7 @@ public class JcaCipherFactory
             case KGCM:
                 return GordianCipherMode.GCM.name();
             default:
-                throw new GordianDataException(GordianCoreFactory.getInvalidText(myMode));
+                throw new GordianDataException(GordianBaseData.getInvalidText(myMode));
         }
     }
 
@@ -385,7 +386,7 @@ public class JcaCipherFactory
             case RC4:
                 return pKeySpec.getStreamKeyType().name();
             default:
-                throw new GordianDataException(GordianCoreFactory.getInvalidText(pKeySpec));
+                throw new GordianDataException(GordianBaseData.getInvalidText(pKeySpec));
         }
     }
 

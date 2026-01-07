@@ -26,7 +26,7 @@ import net.sourceforge.joceanus.gordianknot.api.zip.GordianZipFactory;
 import net.sourceforge.joceanus.gordianknot.api.zip.GordianZipFileEntry;
 import net.sourceforge.joceanus.gordianknot.api.zip.GordianZipLock;
 import net.sourceforge.joceanus.gordianknot.api.zip.GordianZipReadFile;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianIOException;
 import org.w3c.dom.Document;
@@ -44,13 +44,13 @@ public class GordianCoreKeyStoreFactory
     /**
      * The factory.
      */
-    private final GordianCoreFactory theFactory;
+    private final GordianBaseFactory theFactory;
 
     /**
      * Constructor.
      * @param pFactory the factory
      */
-    public GordianCoreKeyStoreFactory(final GordianCoreFactory pFactory) {
+    public GordianCoreKeyStoreFactory(final GordianBaseFactory pFactory) {
         theFactory = pFactory;
     }
 

@@ -21,7 +21,7 @@ import net.sourceforge.joceanus.gordianknot.api.cipher.GordianCipherParameters;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymAEADCipher;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymCipherSpec;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymKeySpec;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.cipher.GordianCoreCipher;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
 import org.bouncycastle.crypto.CipherParameters;
@@ -56,7 +56,7 @@ public class BouncySymKeyAEADCipher
      * @param pCipherSpec the cipherSpec
      * @param pCipher the cipher
      */
-    BouncySymKeyAEADCipher(final GordianCoreFactory pFactory,
+    BouncySymKeyAEADCipher(final GordianBaseFactory pFactory,
                            final GordianSymCipherSpec pCipherSpec,
                            final AEADBlockCipher pCipher) {
         super(pFactory, pCipherSpec);

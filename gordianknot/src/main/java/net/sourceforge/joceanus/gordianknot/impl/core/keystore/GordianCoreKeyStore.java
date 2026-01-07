@@ -33,7 +33,7 @@ import net.sourceforge.joceanus.gordianknot.api.lock.GordianPasswordLockSpec;
 import net.sourceforge.joceanus.gordianknot.api.zip.GordianZipFactory;
 import net.sourceforge.joceanus.gordianknot.api.zip.GordianZipLock;
 import net.sourceforge.joceanus.gordianknot.api.zip.GordianZipWriteFile;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.cert.GordianCoreCertificate;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianIOException;
@@ -84,7 +84,7 @@ public class GordianCoreKeyStore
     /**
      * The factory.
      */
-    private final GordianCoreFactory theFactory;
+    private final GordianBaseFactory theFactory;
 
     /**
      * The passwordLockSpec.
@@ -111,7 +111,7 @@ public class GordianCoreKeyStore
      * @param pFactory the factory
      * @param pSpec the passwordLockSpec
      */
-    GordianCoreKeyStore(final GordianCoreFactory pFactory,
+    GordianCoreKeyStore(final GordianBaseFactory pFactory,
                         final GordianPasswordLockSpec pSpec) {
         /* Store parameters */
         theFactory = pFactory;
@@ -127,7 +127,7 @@ public class GordianCoreKeyStore
      * Obtain the factory.
      * @return the factory
      */
-    public GordianCoreFactory getFactory() {
+    public GordianBaseFactory getFactory() {
         return theFactory;
     }
 

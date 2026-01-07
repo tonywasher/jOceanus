@@ -29,7 +29,7 @@ import net.sourceforge.joceanus.gordianknot.api.cipher.GordianStreamKeySpec.Gord
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianStreamKeySpec.GordianSparkleKey;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymCipherSpec;
 import net.sourceforge.joceanus.gordianknot.api.key.GordianKey;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianRandomSource;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianLogicException;
 
@@ -63,7 +63,7 @@ public abstract class GordianCoreCipher<T extends GordianKeySpec>
      * @param pFactory the Security Factory
      * @param pCipherSpec the cipherSpec
      */
-    protected GordianCoreCipher(final GordianCoreFactory pFactory,
+    protected GordianCoreCipher(final GordianBaseFactory pFactory,
                                 final GordianCipherSpec<T> pCipherSpec) {
         theCipherSpec = pCipherSpec;
         theRandom = pFactory.getRandomSource();
