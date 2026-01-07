@@ -22,8 +22,9 @@ import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigest;
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestFactory;
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestSpecBuilder;
-import net.sourceforge.joceanus.gordianknot.api.factory.GordianKeyPairFactory;
+import net.sourceforge.joceanus.gordianknot.api.factory.GordianAsyncFactory;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
+import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairFactory;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairGenerator;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySet;
@@ -35,9 +36,10 @@ import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignParams;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignature;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignatureSpec;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianASN1Util;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianRandomSource;
 import net.sourceforge.joceanus.gordianknot.impl.core.cert.GordianCoreCertificate;
+import net.sourceforge.joceanus.gordianknot.impl.core.digest.GordianCoreDigestFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianIOException;
 import net.sourceforge.joceanus.gordianknot.impl.core.keystore.GordianCRMEncryptor.GordianCRMResult;
@@ -96,13 +98,13 @@ public class GordianCRMBuilder {
     /**
      * The gateway.
      */
-    private final GordianCoreKeyStoreGateway theGateway;
+    private final GordianBaseKeyStoreGateway theGateway;
 
     /**
      * Constructor.
      * @param pGateway the gateway
      */
-    GordianCRMBuilder(final GordianCoreKeyStoreGateway pGateway) {
+    GordianCRMBuilder(final GordianBaseKeyStoreGateway pGateway) {
         theGateway = pGateway;
     }
 
@@ -188,7 +190,7 @@ public class GordianCRMBuilder {
         /* Try to send a signed proof */
         final GordianKeyPair myKeyPair = pKeyPair.getKeyPair();
         final GordianKeyPairSpec mySpec = myKeyPair.getKeyPairSpec();
-        final GordianSignatureSpec mySignSpec = theGateway.getFactory().getKeyPairFactory().getSignatureFactory().defaultForKeyPair(mySpec);
+        final GordianSignatureSpec mySignSpec = theGateway.getFactory().getAsyncFactory().getSignatureFactory().defaultForKeyPair(mySpec);
         if (mySignSpec != null) {
             return createKeyPairSignedProof(myKeyPair, mySignSpec, pCertRequest);
         }
@@ -210,7 +212,7 @@ public class GordianCRMBuilder {
     private ProofOfPossession createTargetedProofOfPossession(final GordianKeyPair pKeyPair,
                                                               final GordianCoreCertificate pCertificate) throws GordianException {
         /* Obtain the PKCS8Encoding of the private key */
-        final GordianKeyPairFactory myFactory = theGateway.getFactory().getKeyPairFactory();
+        final GordianKeyPairFactory myFactory = theGateway.getFactory().getAsyncFactory().getKeyPairFactory();
         final GordianKeyPairSpec mySpec = pKeyPair.getKeyPairSpec();
         final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(mySpec);
         final PKCS8EncodedKeySpec myPKCS8Encoding = myGenerator.getPKCS8Encoding(pKeyPair);
@@ -243,7 +245,7 @@ public class GordianCRMBuilder {
                                                final GordianSignatureSpec pSignSpec,
                                                final CertRequest pCertRequest) throws GordianException {
         /* Create the signer */
-        final GordianKeyPairFactory myFactory = theGateway.getFactory().getKeyPairFactory();
+        final GordianAsyncFactory myFactory = theGateway.getFactory().getAsyncFactory();
         final GordianCoreSignatureFactory mySignFactory = (GordianCoreSignatureFactory) myFactory.getSignatureFactory();
         final GordianSignature mySigner = mySignFactory.createSigner(pSignSpec);
         final AlgorithmIdentifier myAlgId = mySignFactory.getIdentifierForSpecAndKeyPair(pSignSpec, pKeyPair);
@@ -362,15 +364,15 @@ public class GordianCRMBuilder {
      * @return the PKMacValue
      * @throws GordianException on error
      */
-    private static PKMACValue calculatePKMacValue(final GordianCoreFactory pFactory,
+    private static PKMACValue calculatePKMacValue(final GordianBaseFactory pFactory,
                                                   final byte[] pSecret,
                                                   final ASN1Object pObject,
                                                   final PBMParameter pParams) throws GordianException {
         /* Protect against exceptions */
         try {
             /* Create the digest */
-            final GordianDigestFactory myDigests = pFactory.getDigestFactory();
-            final GordianDigestSpec myDigestSpec = pFactory.getDigestSpecForIdentifier(pParams.getOwf());
+            final GordianCoreDigestFactory myDigests = (GordianCoreDigestFactory) pFactory.getDigestFactory();
+            final GordianDigestSpec myDigestSpec = myDigests.getDigestSpecForIdentifier(pParams.getOwf());
             final GordianDigest myDigest = myDigests.createDigest(myDigestSpec);
 
             /* Run through the first iteration */
@@ -414,7 +416,7 @@ public class GordianCRMBuilder {
         final byte[] myMACSecret = theGateway.getMACSecret(mySubject);
 
         /* Create the digest */
-        final GordianCoreFactory myFactory = theGateway.getFactory();
+        final GordianBaseFactory myFactory = theGateway.getFactory();
         final GordianDigestFactory myDigests = myFactory.getDigestFactory();
         final GordianDigest myDigest = myDigests.createDigest(GordianDigestSpecBuilder.sha2(GordianLength.LEN_256));
 

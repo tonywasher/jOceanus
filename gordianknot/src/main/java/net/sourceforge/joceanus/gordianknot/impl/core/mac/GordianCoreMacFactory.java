@@ -31,7 +31,8 @@ import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacSpec;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacSpecBuilder;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacType;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianSipHashSpec;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseData;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.cipher.GordianCoreCipherFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 
@@ -49,13 +50,13 @@ public abstract class GordianCoreMacFactory
     /**
      * The factory.
      */
-    private final GordianCoreFactory theFactory;
+    private final GordianBaseFactory theFactory;
 
     /**
      * Constructor.
      * @param pFactory the factory.
      */
-    protected GordianCoreMacFactory(final GordianCoreFactory pFactory) {
+    protected GordianCoreMacFactory(final GordianBaseFactory pFactory) {
         theFactory = pFactory;
     }
 
@@ -63,7 +64,7 @@ public abstract class GordianCoreMacFactory
      * Obtain the factory.
      * @return the factory
      */
-    protected GordianCoreFactory getFactory() {
+    protected GordianBaseFactory getFactory() {
         return theFactory;
     }
 
@@ -130,7 +131,7 @@ public abstract class GordianCoreMacFactory
         /* Check validity of MacSpec */
         if (!(pMacSpec instanceof GordianMacSpec mySpec)
                 || !supportedMacSpecs().test(mySpec)) {
-            throw new GordianDataException(GordianCoreFactory.getInvalidText(pMacSpec));
+            throw new GordianDataException(GordianBaseData.getInvalidText(pMacSpec));
         }
     }
 

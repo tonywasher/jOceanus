@@ -21,9 +21,8 @@ import net.sourceforge.joceanus.gordianknot.api.cert.GordianCertificate;
 import net.sourceforge.joceanus.gordianknot.api.cert.GordianKeyPairUse;
 import net.sourceforge.joceanus.gordianknot.api.keystore.GordianKeyStoreEntry;
 import net.sourceforge.joceanus.gordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStorePair;
-import net.sourceforge.joceanus.gordianknot.api.keystore.GordianKeyStoreGateway;
 import net.sourceforge.joceanus.gordianknot.api.zip.GordianZipLock;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianDataConverter;
 import net.sourceforge.joceanus.gordianknot.impl.core.cert.GordianCoreCertificate;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
@@ -48,11 +47,11 @@ import java.util.function.Function;
  * keyStoreGateway implementation.
  */
 public class GordianCoreKeyStoreGateway
-        implements GordianKeyStoreGateway {
+        implements GordianBaseKeyStoreGateway {
     /**
      * The factory.
      */
-    private final GordianCoreFactory theFactory;
+    private final GordianBaseFactory theFactory;
 
     /**
      * The keyStoreMgr.
@@ -124,7 +123,7 @@ public class GordianCoreKeyStoreGateway
      * @param pFactory the factory
      * @param pKeyStoreMgr the keyStoreMgr
      */
-    GordianCoreKeyStoreGateway(final GordianCoreFactory pFactory,
+    GordianCoreKeyStoreGateway(final GordianBaseFactory pFactory,
                                final GordianCoreKeyStoreManager pKeyStoreMgr) {
         /* Store parameters */
         theFactory = pFactory;
@@ -140,11 +139,8 @@ public class GordianCoreKeyStoreGateway
         theResponseMap = new HashMap<>();
     }
 
-    /**
-     * Obtain the factory.
-     * @return the factory
-     */
-    GordianCoreFactory getFactory() {
+    @Override
+    public GordianBaseFactory getFactory() {
         return theFactory;
     }
 
@@ -158,45 +154,29 @@ public class GordianCoreKeyStoreGateway
         return theKeyStoreMgr;
     }
 
-    /**
-     * Obtain the encryptor.
-     * @return the encryptor
-     */
-    GordianCRMEncryptor getEncryptor() {
+    @Override
+    public GordianCRMEncryptor getEncryptor() {
         return theEncryptor;
     }
 
-    /**
-     * Obtain the signer.
-     * @return the signer
-     */
-    GordianKeyStorePair getSigner() {
+    @Override
+    public GordianKeyStorePair getSigner() {
         return theKeyPairCertifier;
     }
 
-    /**
-     * Obtain the MACSecret.
-     * @param pName the name to resolve for
-     * @return the secret
-     */
-    byte[] getMACSecret(final X500Name pName) {
+    @Override
+    public byte[] getMACSecret(final X500Name pName) {
         final String mySecret = theMACSecretResolver.apply(pName);
         return mySecret == null ? null : GordianDataConverter.stringToByteArray(mySecret);
     }
 
-    /**
-     * Obtain the EncryptionTarget.
-     * @return the target
-     */
-    GordianCoreCertificate getTarget() {
+    @Override
+    public GordianCoreCertificate getTarget() {
         return theTarget;
     }
 
-    /**
-     * Obtain the PasswordResolver.
-     * @return the passwordResolver
-     */
-    Function<String, char[]> getPasswordResolver() {
+    @Override
+    public Function<String, char[]> getPasswordResolver() {
         return thePasswordResolver;
     }
 

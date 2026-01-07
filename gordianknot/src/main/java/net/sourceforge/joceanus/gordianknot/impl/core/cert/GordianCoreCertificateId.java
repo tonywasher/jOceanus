@@ -48,24 +48,6 @@ public final class GordianCoreCertificateId
         theId = pId;
     }
 
-    /**
-     * Obtain the issuer Id for a certificate.
-     * @param pCertificate the certificate
-     * @return get the issuer id
-     */
-    public static GordianCoreCertificateId getSubjectId(final GordianCoreCertificate pCertificate) {
-        return new GordianCoreCertificateId(pCertificate.getSubjectName(), DERBitString.convert(pCertificate.getSubjectId()));
-    }
-
-    /**
-     * Obtain the issuer Id for a certificate.
-     * @param pCertificate the certificate
-     * @return get the issuer id
-     */
-    public static GordianCoreCertificateId getIssuerId(final GordianCoreCertificate pCertificate) {
-        return new GordianCoreCertificateId(pCertificate.getIssuerName(), DERBitString.convert(pCertificate.getIssuerId()));
-    }
-
     @Override
     public X500Name getName() {
         return theName;
@@ -99,9 +81,6 @@ public final class GordianCoreCertificateId
 
     @Override
     public int hashCode() {
-        return theName.hashCode()
-                + (theId == null
-                   ? 0
-                   : theId.hashCode());
+        return Objects.hash(theName, theId);
     }
 }

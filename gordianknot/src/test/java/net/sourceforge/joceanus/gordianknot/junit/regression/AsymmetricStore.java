@@ -23,14 +23,15 @@ import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.gordianknot.api.encrypt.GordianEncryptorFactory;
 import net.sourceforge.joceanus.gordianknot.api.encrypt.GordianEncryptorSpec;
+import net.sourceforge.joceanus.gordianknot.api.factory.GordianAsyncFactory;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactoryType;
-import net.sourceforge.joceanus.gordianknot.api.factory.GordianKeyPairFactory;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianCMCESpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianDHGroup;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianDSAElliptic;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianFRODOSpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
+import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairFactory;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairGenerator;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairSpecBuilder;
@@ -129,12 +130,12 @@ class AsymmetricStore {
         /**
          * The Factory.
          */
-        private final GordianKeyPairFactory theFactory;
+        private final GordianAsyncFactory theFactory;
 
         /**
          * The partner Factory.
          */
-        private final GordianKeyPairFactory thePartner;
+        private final GordianAsyncFactory thePartner;
 
         /**
          * The KeySpec.
@@ -172,7 +173,7 @@ class AsymmetricStore {
                        final GordianKeyPairSpec pKeySpec) {
             /* Store parameters */
             theFactoryType = pFactory.getFactoryType();
-            theFactory = pFactory.getKeyPairFactory();
+            theFactory = pFactory.getAsyncFactory();
             theKeySpec = pKeySpec;
 
             /* Initialise data */
@@ -182,8 +183,8 @@ class AsymmetricStore {
             theEncryptors = new ArrayList<>();
 
             /* Check whether the keySpec is supported by the partner */
-            thePartner = pPartner.getKeyPairFactory().supportedKeyPairSpecs().test(pKeySpec)
-                         ? pPartner.getKeyPairFactory()
+            thePartner = pPartner.getAsyncFactory().getKeyPairFactory().supportedKeyPairSpecs().test(pKeySpec)
+                         ? pPartner.getAsyncFactory()
                          : null;
         }
 
@@ -199,7 +200,7 @@ class AsymmetricStore {
          * Obtain the factory.
          * @return the factory
          */
-        GordianKeyPairFactory getFactory() {
+        GordianAsyncFactory getFactory() {
             return theFactory;
         }
 
@@ -207,7 +208,7 @@ class AsymmetricStore {
          * Obtain the partner factory.
          * @return the factory
          */
-        GordianKeyPairFactory getPartner() {
+        GordianAsyncFactory getPartner() {
             return thePartner;
         }
 
@@ -326,7 +327,7 @@ class AsymmetricStore {
          * @throws GordianException on error
          */
         GordianKeyPair getKeyPair() throws GordianException {
-            /* If the keyPair has not yet been initialised */
+            /* If the keyPair has not yet been initialized */
             GordianKeyPair myKeyPair = theKeyPair;
             if (myKeyPair != null) {
                 return myKeyPair;
@@ -341,8 +342,8 @@ class AsymmetricStore {
                 }
 
                 /* Generate the keyPair */
-                final GordianKeyPairFactory myFactory = theOwner.getFactory();
-                final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(theOwner.getKeySpec());
+                final GordianAsyncFactory myFactory = theOwner.getFactory();
+                final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairFactory().getKeyPairGenerator(theOwner.getKeySpec());
                 myKeyPair = myGenerator.generateKeyPair();
                 theKeyPair = myKeyPair;
                 return myKeyPair;
@@ -355,7 +356,7 @@ class AsymmetricStore {
          * @throws GordianException on error
          */
         X509EncodedKeySpec getX509Encoding() throws GordianException {
-            final GordianKeyPairFactory myFactory = theOwner.getFactory();
+            final GordianKeyPairFactory myFactory = theOwner.getFactory().getKeyPairFactory();
             final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(theOwner.getKeySpec());
             return myGenerator.getX509Encoding(getKeyPair());
         }
@@ -366,7 +367,7 @@ class AsymmetricStore {
          * @throws GordianException on error
          */
         PKCS8EncodedKeySpec getPKCS8Encoding() throws GordianException {
-            final GordianKeyPairFactory myFactory = theOwner.getFactory();
+            final GordianKeyPairFactory myFactory = theOwner.getFactory().getKeyPairFactory();
             final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(theOwner.getKeySpec());
             return myGenerator.getPKCS8Encoding(getKeyPair());
         }
@@ -392,7 +393,7 @@ class AsymmetricStore {
                 }
 
                 /* Generate the keyPair */
-                final GordianKeyPairFactory myFactory = theOwner.getFactory();
+                final GordianKeyPairFactory myFactory = theOwner.getFactory().getKeyPairFactory();
                 final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(theOwner.getKeySpec());
                 myTarget = myGenerator.generateKeyPair();
                 theTarget = myTarget;
@@ -424,7 +425,7 @@ class AsymmetricStore {
                 GordianKeyPair myPair = getKeyPair();
 
                 /* Generate the keyPair */
-                final GordianKeyPairFactory myFactory = theOwner.getFactory();
+                final GordianKeyPairFactory myFactory = theOwner.getFactory().getKeyPairFactory();
                 final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(theOwner.getKeySpec());
                 final X509EncodedKeySpec myPublic = myGenerator.getX509Encoding(myPair);
                 final PKCS8EncodedKeySpec myPrivate = myGenerator.getPKCS8Encoding(myPair);
@@ -457,13 +458,13 @@ class AsymmetricStore {
 
                 /* Access the keyPair */
                 GordianKeyPair myPair = getKeyPair();
-                GordianKeyPairFactory myFactory = theOwner.getFactory();
+                GordianKeyPairFactory myFactory = theOwner.getFactory().getKeyPairFactory();
                 GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(theOwner.getKeySpec());
                 final X509EncodedKeySpec myPublic = myGenerator.getX509Encoding(myPair);
                 final PKCS8EncodedKeySpec myPrivate = myGenerator.getPKCS8Encoding(myPair);
 
                 /* Derive the partner keyPair */
-                myFactory = theOwner.getPartner();
+                myFactory = theOwner.getPartner().getKeyPairFactory();
                 myGenerator = myFactory.getKeyPairGenerator(theOwner.getKeySpec());
                 myPartnerSelf = myGenerator.deriveKeyPair(myPublic, myPrivate);
                 thePartnerSelf = myPartnerSelf;
@@ -494,13 +495,13 @@ class AsymmetricStore {
 
                 /* Access the target keyPair */
                 GordianKeyPair myPair = getTargetKeyPair();
-                GordianKeyPairFactory myFactory = theOwner.getFactory();
+                GordianKeyPairFactory myFactory = theOwner.getFactory().getKeyPairFactory();
                 GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(theOwner.getKeySpec());
                 final X509EncodedKeySpec myPublic = myGenerator.getX509Encoding(myPair);
                 final PKCS8EncodedKeySpec myPrivate = myGenerator.getPKCS8Encoding(myPair);
 
                 /* Derive the keyPair */
-                myFactory = theOwner.getPartner();
+                myFactory = theOwner.getPartner().getKeyPairFactory();
                 myGenerator = myFactory.getKeyPairGenerator(theOwner.getKeySpec());
                 myPartnerTarget = myGenerator.deriveKeyPair(myPublic, myPrivate);
                 thePartnerTarget = myPartnerTarget;
@@ -687,7 +688,7 @@ class AsymmetricStore {
                                                         final GordianKeyPairType pKeyType) {
         /* Loop through all the possible specs for this keyType */
         final List<FactoryKeySpec> myResult = new ArrayList<>();
-        final GordianCoreKeyPairFactory myFactory = (GordianCoreKeyPairFactory) pFactory.getKeyPairFactory();
+        final GordianCoreKeyPairFactory myFactory = (GordianCoreKeyPairFactory) pFactory.getAsyncFactory().getKeyPairFactory();
         List<GordianKeyPairSpec> mySpecs = pKeyType == GordianKeyPairType.COMPOSITE
                    ? compositeKeySpecProvider()
                    : myFactory.listAllSupportedKeyPairSpecs(pKeyType);
@@ -736,7 +737,7 @@ class AsymmetricStore {
         List<AsymmetricStore.FactorySignature> myResult = pKeySpec.theSignatures;
 
         /* Access the list of possible signatures */
-        final GordianKeyPairFactory myFactory = pKeySpec.theFactory;
+        final GordianAsyncFactory myFactory = pKeySpec.theFactory;
         final GordianSignatureFactory mySignFactory = myFactory.getSignatureFactory();
         final List<GordianSignatureSpec> mySignSpecs = pKeySpec.getKeySpec().getKeyPairType() == GordianKeyPairType.COMPOSITE
                       ? compositeSignatureSpecProvider(pKeySpec)
@@ -771,7 +772,7 @@ class AsymmetricStore {
         List<AsymmetricStore.FactoryAgreement> myResult = pKeySpec.theAgreements;
 
         /* Access the list of possible agreements */
-        final GordianKeyPairFactory myFactory = pKeySpec.theFactory;
+        final GordianAsyncFactory myFactory = pKeySpec.theFactory;
         final GordianAgreementFactory myAgreeFactory = myFactory.getAgreementFactory();
         final List<GordianAgreementSpec> myAgreeSpecs = pKeySpec.getKeySpec().getKeyPairType() == GordianKeyPairType.COMPOSITE
                 ? compositeAgreementSpecProvider(pKeySpec)
@@ -800,7 +801,7 @@ class AsymmetricStore {
         List<AsymmetricStore.FactoryEncryptor> myResult = pKeySpec.theEncryptors;
 
         /* Access the list of possible encryptors */
-        final GordianKeyPairFactory myFactory = pKeySpec.theFactory;
+        final GordianAsyncFactory myFactory = pKeySpec.theFactory;
         final GordianEncryptorFactory myEncryptFactory = myFactory.getEncryptorFactory();
         final List<GordianEncryptorSpec> mySpecs = pKeySpec.getKeySpec().getKeyPairType() == GordianKeyPairType.COMPOSITE
                 ? compositeEncryptorSpecProvider(pKeySpec)

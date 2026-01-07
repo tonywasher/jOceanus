@@ -25,7 +25,8 @@ import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.gordianknot.api.key.GordianKeyGenerator;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacSpec;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacType;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseData;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.mac.GordianCoreMacFactory;
@@ -66,17 +67,12 @@ public class JcaMacFactory
      *
      * @param pFactory the factory
      */
-    JcaMacFactory(final GordianCoreFactory pFactory) {
+    JcaMacFactory(final GordianBaseFactory pFactory) {
         /* Initialise underlying class */
         super(pFactory);
 
         /* Create the cache */
         theCache = new HashMap<>();
-    }
-
-    @Override
-    public JcaFactory getFactory() {
-        return (JcaFactory) super.getFactory();
     }
 
     @Override
@@ -145,7 +141,7 @@ public class JcaMacFactory
             case VMPC:
                 return getJavaMac("VMPC-MAC");
             default:
-                throw new GordianDataException(GordianCoreFactory.getInvalidText(pMacSpec));
+                throw new GordianDataException(GordianBaseData.getInvalidText(pMacSpec));
         }
     }
 
@@ -159,7 +155,7 @@ public class JcaMacFactory
         /* Protect against exceptions */
         try {
             /* Return a MAC for the algorithm */
-            return Mac.getInstance(pAlgorithm, JcaFactory.BCPROV);
+            return Mac.getInstance(pAlgorithm, JcaProvider.BCPROV);
 
             /* Catch exceptions */
         } catch (NoSuchAlgorithmException e) {
@@ -196,7 +192,7 @@ public class JcaMacFactory
             }
 
             /* Return a KeyGenerator for the algorithm */
-            return KeyGenerator.getInstance(myAlgorithm, JcaFactory.BCPROV);
+            return KeyGenerator.getInstance(myAlgorithm, JcaProvider.BCPROV);
 
             /* Catch exceptions */
         } catch (NoSuchAlgorithmException e) {
@@ -236,7 +232,7 @@ public class JcaMacFactory
             case VMPC:
                 return "VMPC-KSA3";
             default:
-                throw new GordianDataException(GordianCoreFactory.getInvalidText(pMacSpec));
+                throw new GordianDataException(GordianBaseData.getInvalidText(pMacSpec));
         }
     }
 

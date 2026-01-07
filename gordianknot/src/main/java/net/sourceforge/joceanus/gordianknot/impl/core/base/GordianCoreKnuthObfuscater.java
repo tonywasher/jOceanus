@@ -83,7 +83,7 @@ public class GordianCoreKnuthObfuscater
      * @param pFactory the factory
      * @throws GordianException on error
      */
-    GordianCoreKnuthObfuscater(final GordianCoreFactory pFactory) throws GordianException {
+    public GordianCoreKnuthObfuscater(final GordianBaseFactory pFactory) throws GordianException {
         /* Generate Knuth Prime/Inverse */
         final GordianPersonalisation myPersonal = pFactory.getPersonalisation();
         final BigInteger[] myKnuth = generatePrime(myPersonal.getPersonalisedInteger(GordianPersonalId.KNUTHPRIME));

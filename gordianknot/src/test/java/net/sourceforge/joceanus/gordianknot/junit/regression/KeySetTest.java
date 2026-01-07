@@ -21,9 +21,9 @@ import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianStreamKeySpec;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymKeySpec;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactory;
-import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactoryLock;
+import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactory.GordianFactoryLock;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactoryType;
-import net.sourceforge.joceanus.gordianknot.api.factory.GordianLockFactory;
+import net.sourceforge.joceanus.gordianknot.api.lock.GordianLockFactory;
 import net.sourceforge.joceanus.gordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySet;
 import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySetAADCipher;
@@ -38,6 +38,7 @@ import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianDataConverter;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianLogicException;
 import net.sourceforge.joceanus.gordianknot.impl.core.keyset.GordianCoreKeySet;
+import net.sourceforge.joceanus.gordianknot.impl.core.keyset.GordianKeySetData;
 import net.sourceforge.joceanus.gordianknot.util.GordianGenerator;
 import net.sourceforge.joceanus.gordianknot.util.GordianUtilities;
 import org.junit.jupiter.api.Assertions;
@@ -486,7 +487,7 @@ class KeySetTest {
         final byte[] myEncrypted = myKeySet.encryptBytes(myBytes);
 
         /* Check encryption length */
-        Assertions.assertEquals(GordianCoreKeySet.getEncryptionLength(myBytes.length),
+        Assertions.assertEquals(GordianKeySetData.getEncryptionLength(myBytes.length),
                 myEncrypted.length, "Incorrect encrypted length");
 
         /* return the result */
@@ -512,7 +513,7 @@ class KeySetTest {
         final byte[] myEncrypted = myCipher.finish(myBytes, 0, myBytes.length);
 
         /* Check encryption length */
-        Assertions.assertEquals(GordianCoreKeySet.getEncryptionLength(myBytes.length),
+        Assertions.assertEquals(GordianKeySetData.getEncryptionLength(myBytes.length),
                 myEncrypted.length, "Incorrect encrypted length");
 
         /* return the result */
@@ -540,7 +541,7 @@ class KeySetTest {
         final byte[] myEncrypted2 = myCipher.finish(myBytes, 0, myBytes.length);
 
         /* Check encryption length */
-        Assertions.assertEquals(GordianCoreKeySet.getEncryptionLength(myBytes.length),
+        Assertions.assertEquals(GordianKeySetData.getEncryptionLength(myBytes.length),
                 myEncrypted.length, "Incorrect encrypted length");
 
         /* Check for short output buffer */
@@ -833,9 +834,8 @@ class KeySetTest {
     private void testRandomFactory() throws GordianException {
         /* Create the random factory */
         final GordianFactory myFactory = GordianGenerator.createRandomFactory(GordianFactoryType.BC);
-        final GordianLockFactory myLockFactory = myFactory.getLockFactory();
-        final GordianFactoryLock mySecured = myLockFactory.newFactoryLock(myFactory, DEF_PASSWORD.clone());
-        final GordianFactoryLock myResolved = myLockFactory.resolveFactoryLock(mySecured.getLockBytes(), DEF_PASSWORD.clone());
+        final GordianFactoryLock mySecured = myFactory.newFactoryLock(myFactory, DEF_PASSWORD.clone());
+        final GordianFactoryLock myResolved = myFactory.resolveFactoryLock(mySecured.getLockBytes(), DEF_PASSWORD.clone());
         Assertions.assertEquals(myFactory, myResolved.getFactory(), "Failed to lock/resolve factory");
         Assertions.assertEquals(GordianUtilities.getFactoryLockLen(), mySecured.getLockBytes().length, "Incorrect factoryLockLength");
     }

@@ -20,9 +20,6 @@ import net.sourceforge.joceanus.gordianknot.api.base.GordianBundleLoader;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianBundleLoader.GordianBundleId;
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestResource;
 
-import java.util.EnumMap;
-import java.util.Map;
-
 /**
  * Resource IDs for Cipher package.
  */
@@ -279,19 +276,9 @@ public enum GordianCipherResource
     STREAMKEY_XOODYAK(GordianDigestResource.DIGEST_XOODYAK);
 
     /**
-     * The SymKey Map.
-     */
-    private static final Map<GordianSymKeyType, GordianBundleId> SYM_MAP = buildSymKeyMap();
-
-    /**
-     * The StreamKey Map.
-     */
-    private static final Map<GordianStreamKeyType, GordianBundleId> STREAM_MAP = buildStreamKeyMap();
-
-    /**
      * The Resource Loader.
      */
-    private static final GordianBundleLoader LOADER = GordianBundleLoader.getLoader(GordianCipher.class.getCanonicalName());
+    private static final GordianBundleLoader LOADER = GordianBundleLoader.getLoader(GordianCipherResource.class.getCanonicalName());
 
     /**
      * The Id.
@@ -332,7 +319,7 @@ public enum GordianCipherResource
 
     @Override
     public String getValue() {
-        /* If we have not initialised the value */
+        /* If we have not initialized the value */
         if (theValue == null) {
             /* Derive the value */
             theValue = LOADER.getValue(this);
@@ -340,93 +327,5 @@ public enum GordianCipherResource
 
         /* return the value */
         return theValue;
-    }
-
-    /**
-     * Build SymKey map.
-     * @return the map
-     */
-    private static Map<GordianSymKeyType, GordianBundleId> buildSymKeyMap() {
-        /* Create the map and return it */
-        final Map<GordianSymKeyType, GordianBundleId> myMap = new EnumMap<>(GordianSymKeyType.class);
-        myMap.put(GordianSymKeyType.AES, SYMKEY_AES);
-        myMap.put(GordianSymKeyType.SERPENT, SYMKEY_SERPENT);
-        myMap.put(GordianSymKeyType.TWOFISH, SYMKEY_TWOFISH);
-        myMap.put(GordianSymKeyType.CAMELLIA, SYMKEY_CAMELLIA);
-        myMap.put(GordianSymKeyType.RC6, SYMKEY_RC6);
-        myMap.put(GordianSymKeyType.CAST6, SYMKEY_CAST6);
-        myMap.put(GordianSymKeyType.ARIA, SYMKEY_ARIA);
-        myMap.put(GordianSymKeyType.THREEFISH, SYMKEY_THREEFISH);
-        myMap.put(GordianSymKeyType.NOEKEON, SYMKEY_NOEKEON);
-        myMap.put(GordianSymKeyType.SEED, SYMKEY_SEED);
-        myMap.put(GordianSymKeyType.SM4, SYMKEY_SM4);
-        myMap.put(GordianSymKeyType.RC2, SYMKEY_RC2);
-        myMap.put(GordianSymKeyType.RC5, SYMKEY_RC5);
-        myMap.put(GordianSymKeyType.CAST5, SYMKEY_CAST5);
-        myMap.put(GordianSymKeyType.TEA, SYMKEY_TEA);
-        myMap.put(GordianSymKeyType.XTEA, SYMKEY_XTEA);
-        myMap.put(GordianSymKeyType.IDEA, SYMKEY_IDEA);
-        myMap.put(GordianSymKeyType.SKIPJACK, SYMKEY_SKIPJACK);
-        myMap.put(GordianSymKeyType.BLOWFISH, SYMKEY_BLOWFISH);
-        myMap.put(GordianSymKeyType.DESEDE, SYMKEY_DESEDE);
-        myMap.put(GordianSymKeyType.GOST, SYMKEY_GOST);
-        myMap.put(GordianSymKeyType.KUZNYECHIK, SYMKEY_KUZNYECHIK);
-        myMap.put(GordianSymKeyType.KALYNA, SYMKEY_KALYNA);
-        myMap.put(GordianSymKeyType.SHACAL2, SYMKEY_SHACAL2);
-        myMap.put(GordianSymKeyType.SPECK, SYMKEY_SPECK);
-        myMap.put(GordianSymKeyType.ANUBIS, SYMKEY_ANUBIS);
-        myMap.put(GordianSymKeyType.SIMON, SYMKEY_SIMON);
-        myMap.put(GordianSymKeyType.MARS, SYMKEY_MARS);
-        myMap.put(GordianSymKeyType.LEA, SYMKEY_LEA);
-        return myMap;
-    }
-
-    /**
-     * Obtain key for SymKey.
-     * @param pKeyType the keyType
-     * @return the resource key
-     */
-    static GordianBundleId getKeyForSym(final GordianSymKeyType pKeyType) {
-        return GordianBundleLoader.getKeyForEnum(SYM_MAP, pKeyType);
-    }
-
-    /**
-     * Build StreamKey map.
-     * @return the map
-     */
-    private static Map<GordianStreamKeyType, GordianBundleId> buildStreamKeyMap() {
-        /* Create the map and return it */
-        final Map<GordianStreamKeyType, GordianBundleId> myMap = new EnumMap<>(GordianStreamKeyType.class);
-        myMap.put(GordianStreamKeyType.SALSA20, STREAMKEY_SALSA20);
-        myMap.put(GordianStreamKeyType.HC, STREAMKEY_HC);
-        myMap.put(GordianStreamKeyType.CHACHA20, STREAMKEY_CHACHA);
-        myMap.put(GordianStreamKeyType.VMPC, STREAMKEY_VMPC);
-        myMap.put(GordianStreamKeyType.ISAAC, STREAMKEY_ISAAC);
-        myMap.put(GordianStreamKeyType.GRAIN, STREAMKEY_GRAIN);
-        myMap.put(GordianStreamKeyType.RC4, STREAMKEY_RC4);
-        myMap.put(GordianStreamKeyType.SOSEMANUK, STREAMKEY_SOSEMANUK);
-        myMap.put(GordianStreamKeyType.RABBIT, STREAMKEY_RABBIT);
-        myMap.put(GordianStreamKeyType.SNOW3G, STREAMKEY_SNOW3G);
-        myMap.put(GordianStreamKeyType.ZUC, STREAMKEY_ZUC);
-        myMap.put(GordianStreamKeyType.SKEINXOF, STREAMKEY_SKEIN);
-        myMap.put(GordianStreamKeyType.BLAKE2XOF, STREAMKEY_BLAKE2);
-        myMap.put(GordianStreamKeyType.BLAKE3XOF, STREAMKEY_BLAKE3);
-        myMap.put(GordianStreamKeyType.ASCON, STREAMKEY_ASCON);
-        myMap.put(GordianStreamKeyType.ELEPHANT, STREAMKEY_ELEPHANT);
-        myMap.put(GordianStreamKeyType.ISAP, STREAMKEY_ISAP);
-        myMap.put(GordianStreamKeyType.PHOTONBEETLE, STREAMKEY_PHOTONBEETLE);
-        myMap.put(GordianStreamKeyType.ROMULUS, STREAMKEY_ROMULUS);
-        myMap.put(GordianStreamKeyType.SPARKLE, STREAMKEY_SPARKLE);
-        myMap.put(GordianStreamKeyType.XOODYAK, STREAMKEY_XOODYAK);
-        return myMap;
-    }
-
-    /**
-     * Obtain key for StreamKey.
-     * @param pKeyType the keyType
-     * @return the resource key
-     */
-    static GordianBundleId getKeyForStream(final GordianStreamKeyType pKeyType) {
-        return GordianBundleLoader.getKeyForEnum(STREAM_MAP, pKeyType);
     }
 }

@@ -17,7 +17,7 @@
 package net.sourceforge.joceanus.gordianknot.impl.core.keypair;
 
 import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
-import net.sourceforge.joceanus.gordianknot.api.factory.GordianKeyPairFactory;
+import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairFactory;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairGenerator;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
@@ -53,7 +53,7 @@ public class GordianCompositeKeyPairGenerator
     /**
      * The keyPairFactory.
      */
-    private final GordianCoreKeyPairFactory theFactory;
+    private final GordianKeyPairFactory theFactory;
 
     /**
      * The list of generators.
@@ -75,7 +75,7 @@ public class GordianCompositeKeyPairGenerator
                                      final GordianKeyPairSpec pSpec) throws GordianException {
         /* Store the spec. */
         theSpec = pSpec;
-        theFactory = (GordianCoreKeyPairFactory) pFactory;
+        theFactory = pFactory;
         theGenerators = new ArrayList<>();
         boolean stateAware = false;
 

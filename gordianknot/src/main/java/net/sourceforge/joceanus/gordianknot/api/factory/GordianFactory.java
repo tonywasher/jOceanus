@@ -16,10 +16,14 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.api.factory;
 
+import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianCipherFactory;
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestFactory;
 import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySet;
 import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySetFactory;
+import net.sourceforge.joceanus.gordianknot.api.lock.GordianLock;
+import net.sourceforge.joceanus.gordianknot.api.lock.GordianLockFactory;
+import net.sourceforge.joceanus.gordianknot.api.lock.GordianPasswordLockSpec;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacFactory;
 import net.sourceforge.joceanus.gordianknot.api.random.GordianRandomFactory;
 import net.sourceforge.joceanus.gordianknot.api.zip.GordianZipFactory;
@@ -77,10 +81,10 @@ public interface GordianFactory {
     GordianZipFactory getZipFactory();
 
     /**
-     * Obtain the keyPair Factory.
-     * @return the keyPair factory
+     * Obtain the async Factory.
+     * @return the async factory
      */
-    GordianKeyPairFactory getKeyPairFactory();
+    GordianAsyncFactory getAsyncFactory();
 
     /**
      * ReSeed the random number generator.
@@ -98,4 +102,78 @@ public interface GordianFactory {
      * @return the keySet (or null)
      */
     GordianKeySet getEmbeddedKeySet();
+
+    /**
+     * Create a new factoryLock.
+     * @param pFactoryToLock the factory to lock
+     * @param pPassword the password
+     * @return the factoryLock
+     * @throws GordianException on error
+     */
+    default GordianFactoryLock newFactoryLock(final GordianFactory pFactoryToLock,
+                                              final char[] pPassword) throws GordianException {
+        /* Create the factoryLock */
+        return newFactoryLock(pFactoryToLock, new GordianPasswordLockSpec(), pPassword);
+    }
+
+    /**
+     * Create a new factoryLock for a factory.
+     * @param pFactoryToLock the factory to lock
+     * @param pLockSpec the locking spec
+     * @param pPassword the password
+     * @return the factoryLock
+     * @throws GordianException on error
+     */
+    GordianFactoryLock newFactoryLock(GordianFactory pFactoryToLock,
+                                      GordianPasswordLockSpec pLockSpec,
+                                      char[] pPassword) throws GordianException;
+
+    /**
+     * Create a new factoryLock.
+     * @param pFactoryType the factoryType
+     * @param pPassword the password
+     * @return the factoryLock
+     * @throws GordianException on error
+     */
+    default GordianFactoryLock newFactoryLock(final GordianFactoryType pFactoryType,
+                                              final char[] pPassword) throws GordianException {
+        /* Create the factoryLock */
+        return newFactoryLock(new GordianPasswordLockSpec(), pFactoryType, pPassword);
+    }
+
+    /**
+     * Create a new factoryLock for a new random factory.
+     * @param pLockSpec the locking spec
+     * @param pFactoryType the factoryType
+     * @param pPassword the password
+     * @return the factoryLock
+     * @throws GordianException on error
+     */
+    GordianFactoryLock newFactoryLock(GordianPasswordLockSpec pLockSpec,
+                                      GordianFactoryType pFactoryType,
+                                      char[] pPassword) throws GordianException;
+
+    /**
+     * Resolve a factoryLock.
+     * @param pLockBytes the lockBytes
+     * @param pPassword the password
+     * @return the resolved factoryLock
+     * @throws GordianException on error
+     */
+    GordianFactoryLock resolveFactoryLock(byte[] pLockBytes,
+                                          char[] pPassword) throws GordianException;
+
+    /**
+     * Factory Lock.
+     */
+    interface GordianFactoryLock
+            extends GordianLock<GordianFactory> {
+        /**
+         * Obtain the factory.
+         * @return the factory
+         */
+        default GordianFactory getFactory() {
+            return getLockedObject();
+        }
+    }
 }

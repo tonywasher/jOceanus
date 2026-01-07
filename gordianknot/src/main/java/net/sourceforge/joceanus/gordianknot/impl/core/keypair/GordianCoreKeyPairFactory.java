@@ -16,10 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.impl.core.keypair;
 
-import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementFactory;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
-import net.sourceforge.joceanus.gordianknot.api.encrypt.GordianEncryptorFactory;
-import net.sourceforge.joceanus.gordianknot.api.factory.GordianKeyPairFactory;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianBIKESpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianCMCESpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianDHGroup;
@@ -30,6 +27,7 @@ import net.sourceforge.joceanus.gordianknot.api.keypair.GordianFRODOSpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianFalconSpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianGOSTElliptic;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianHQCSpec;
+import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairFactory;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairGenerator;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairSpecBuilder;
@@ -48,10 +46,8 @@ import net.sourceforge.joceanus.gordianknot.api.keypair.GordianSLHDSASpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianSM2Elliptic;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianSnovaSpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianXMSSKeySpec;
-import net.sourceforge.joceanus.gordianknot.api.keystore.GordianKeyStoreFactory;
-import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignatureFactory;
-import net.sourceforge.joceanus.gordianknot.api.xagree.GordianXAgreementFactory;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseData;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 
 import java.security.spec.PKCS8EncodedKeySpec;
@@ -79,112 +75,11 @@ public abstract class GordianCoreKeyPairFactory
     private final Map<GordianKeyPairSpec, GordianCompositeKeyPairGenerator> theCache;
 
     /**
-     * The factory.
-     */
-    private final GordianCoreFactory theFactory;
-
-    /**
-     * The signature factory.
-     */
-    private GordianSignatureFactory theSignatureFactory;
-
-    /**
-     * The agreement factory.
-     */
-    private GordianAgreementFactory theAgreementFactory;
-
-    /**
-     * The Xagreement factory.
-     */
-    private GordianXAgreementFactory theXAgreementFactory;
-
-    /**
-     * The encryptor factory.
-     */
-    private GordianEncryptorFactory theEncryptorFactory;
-
-    /**
-     * The keyStore factory.
-     */
-    private GordianKeyStoreFactory theKeyStoreFactory;
-
-    /**
      * Constructor.
      * @param pFactory the factory
      */
-    protected GordianCoreKeyPairFactory(final GordianCoreFactory pFactory) {
-        theFactory = pFactory;
+    protected GordianCoreKeyPairFactory(final GordianBaseFactory pFactory) {
         theCache = new HashMap<>();
-    }
-
-    @Override
-    public GordianCoreFactory getFactory() {
-        return theFactory;
-    }
-
-    @Override
-    public GordianSignatureFactory getSignatureFactory() {
-        return theSignatureFactory;
-    }
-
-    /**
-     * Set the signature factory.
-     * @param pFactory the factory
-     */
-    protected void setSignatureFactory(final GordianSignatureFactory pFactory) {
-        theSignatureFactory = pFactory;
-    }
-
-    @Override
-    public GordianAgreementFactory getAgreementFactory() {
-        return theAgreementFactory;
-    }
-
-    /**
-     * Set the agreement factory.
-     * @param pFactory the factory
-     */
-    protected void setAgreementFactory(final GordianAgreementFactory pFactory) {
-        theAgreementFactory = pFactory;
-    }
-
-    @Override
-    public GordianXAgreementFactory getXAgreementFactory() {
-        return theXAgreementFactory;
-    }
-
-    /**
-     * Set the agreement factory.
-     * @param pFactory the factory
-     */
-    protected void setXAgreementFactory(final GordianXAgreementFactory pFactory) {
-        theXAgreementFactory = pFactory;
-    }
-
-    @Override
-    public GordianEncryptorFactory getEncryptorFactory() {
-        return theEncryptorFactory;
-    }
-
-    /**
-     * Set the encryptor factory.
-     * @param pFactory the factory
-     */
-    protected void setEncryptorFactory(final GordianEncryptorFactory pFactory) {
-        theEncryptorFactory = pFactory;
-    }
-
-    @Override
-    public GordianKeyStoreFactory getKeyStoreFactory() {
-        return theKeyStoreFactory;
-    }
-
-    /**
-     * Set the keyStore factory.
-     * @param pFactory the factory
-     */
-    protected void setKeyStoreFactory(final GordianKeyStoreFactory pFactory) {
-        theKeyStoreFactory = pFactory;
     }
 
     @Override
@@ -222,7 +117,7 @@ public abstract class GordianCoreKeyPairFactory
     protected void checkAsymKeySpec(final GordianKeyPairSpec pKeySpec) throws GordianException {
         /* Check validity of keySpec */
         if (pKeySpec == null || !pKeySpec.isValid()) {
-            throw new GordianDataException(GordianCoreFactory.getInvalidText(pKeySpec));
+            throw new GordianDataException(GordianBaseData.getInvalidText(pKeySpec));
         }
     }
 

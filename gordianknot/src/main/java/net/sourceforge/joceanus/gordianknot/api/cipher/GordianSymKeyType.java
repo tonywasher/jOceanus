@@ -16,6 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.api.cipher;
 
+import net.sourceforge.joceanus.gordianknot.api.base.GordianBundleLoader.GordianBundleId;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.gordianknot.api.key.GordianKeyLengths;
 
@@ -191,7 +192,7 @@ public enum GordianSymKeyType {
         /* If we have not yet loaded the name */
         if (theName == null) {
             /* Load the name */
-            theName = GordianCipherResource.getKeyForSym(this).getValue();
+            theName = bundleIdForSymKeyType().getValue();
         }
 
         /* return the name */
@@ -319,6 +320,47 @@ public enum GordianSymKeyType {
                         || GordianLength.LEN_512 != pKeyLen;
             default:
                 return true;
+        }
+    }
+
+    /**
+     * Obtain the resource bundleId for this symKeyType.
+     * @return the resource bundleId
+     */
+    private GordianBundleId bundleIdForSymKeyType() {
+        /* Create the map and return it */
+        switch (this) {
+            case AES: return GordianCipherResource.SYMKEY_AES;
+            case SERPENT: return GordianCipherResource.SYMKEY_SERPENT;
+            case TWOFISH: return GordianCipherResource.SYMKEY_TWOFISH;
+            case CAMELLIA: return GordianCipherResource.SYMKEY_CAMELLIA;
+            case RC6: return GordianCipherResource.SYMKEY_RC6;
+            case CAST6: return GordianCipherResource.SYMKEY_CAST6;
+            case ARIA: return GordianCipherResource.SYMKEY_ARIA;
+            case THREEFISH: return GordianCipherResource.SYMKEY_THREEFISH;
+            case NOEKEON: return GordianCipherResource.SYMKEY_NOEKEON;
+            case SEED: return GordianCipherResource.SYMKEY_SEED;
+            case SM4: return GordianCipherResource.SYMKEY_SM4;
+            case RC2: return GordianCipherResource.SYMKEY_RC2;
+            case RC5: return GordianCipherResource.SYMKEY_RC5;
+            case CAST5: return GordianCipherResource.SYMKEY_CAST5;
+            case TEA: return GordianCipherResource.SYMKEY_TEA;
+            case XTEA: return GordianCipherResource.SYMKEY_XTEA;
+            case IDEA: return GordianCipherResource.SYMKEY_IDEA;
+            case SKIPJACK: return GordianCipherResource.SYMKEY_SKIPJACK;
+            case BLOWFISH: return GordianCipherResource.SYMKEY_BLOWFISH;
+            case DESEDE: return GordianCipherResource.SYMKEY_DESEDE;
+            case GOST: return GordianCipherResource.SYMKEY_GOST;
+            case KUZNYECHIK: return GordianCipherResource.SYMKEY_KUZNYECHIK;
+            case KALYNA: return GordianCipherResource.SYMKEY_KALYNA;
+            case SHACAL2: return GordianCipherResource.SYMKEY_SHACAL2;
+            case SPECK: return GordianCipherResource.SYMKEY_SPECK;
+            case ANUBIS: return GordianCipherResource.SYMKEY_ANUBIS;
+            case SIMON: return GordianCipherResource.SYMKEY_SIMON;
+            case MARS: return GordianCipherResource.SYMKEY_MARS;
+            case LEA: return GordianCipherResource.SYMKEY_LEA;
+            default:
+                throw new IllegalArgumentException();
         }
     }
 }

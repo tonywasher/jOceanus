@@ -20,7 +20,7 @@ import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementSpec;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.xagree.GordianXAgreement;
 import net.sourceforge.joceanus.gordianknot.api.xagree.GordianXAgreementFactory;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 
 /**
@@ -32,7 +32,7 @@ public interface GordianXCoreAgreementSupplier
      * Obtain the factory.
      * @return the factory
      */
-    GordianCoreFactory getFactory();
+    GordianBaseFactory getFactory();
 
     /**
      * Check the agreementSpec.

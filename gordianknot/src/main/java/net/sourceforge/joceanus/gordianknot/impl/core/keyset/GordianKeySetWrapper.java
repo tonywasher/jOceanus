@@ -19,9 +19,8 @@ package net.sourceforge.joceanus.gordianknot.impl.core.keyset;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianCipherParameters;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.cipher.GordianCoreWrapper;
-import net.sourceforge.joceanus.gordianknot.impl.core.keyset.GordianMultiCipher.GordianSymKeyCipherSet;
 
 /**
  * GordianKnot base for KeySetWrapper.
@@ -40,7 +39,7 @@ public class GordianKeySetWrapper
      * @param pFactory the Security Factory
      * @param pCiphers the CipherSets
      */
-    GordianKeySetWrapper(final GordianCoreFactory pFactory,
+    GordianKeySetWrapper(final GordianBaseFactory pFactory,
                          final GordianSymKeyCipherSet[] pCiphers) {
         super(pFactory, GordianLength.LEN_128.getByteLength());
         theCiphers = pCiphers;

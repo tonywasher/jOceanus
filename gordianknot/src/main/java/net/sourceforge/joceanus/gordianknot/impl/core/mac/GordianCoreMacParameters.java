@@ -21,7 +21,7 @@ import net.sourceforge.joceanus.gordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacFactory;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacParameters;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacSpec;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianRandomSource;
 import net.sourceforge.joceanus.gordianknot.impl.core.key.GordianCoreKeyGenerator;
 
@@ -32,7 +32,7 @@ public class GordianCoreMacParameters {
     /**
      * The factory.
      */
-    private final GordianCoreFactory theFactory;
+    private final GordianBaseFactory theFactory;
 
     /**
      * The macSpec.
@@ -64,7 +64,7 @@ public class GordianCoreMacParameters {
      * @param pFactory the factory
      * @param pMacSpec the CipherSpec
      */
-    GordianCoreMacParameters(final GordianCoreFactory pFactory,
+    GordianCoreMacParameters(final GordianBaseFactory pFactory,
                              final GordianMacSpec pMacSpec) {
         theFactory = pFactory;
         theSpec = pMacSpec;

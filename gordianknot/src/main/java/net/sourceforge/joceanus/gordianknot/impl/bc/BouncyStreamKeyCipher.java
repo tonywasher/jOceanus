@@ -21,6 +21,7 @@ import net.sourceforge.joceanus.gordianknot.api.cipher.GordianCipherParameters;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianStreamCipher;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianStreamCipherSpec;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianStreamKeySpec;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.cipher.GordianCoreCipher;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
 import org.bouncycastle.crypto.CipherParameters;
@@ -51,7 +52,7 @@ public class BouncyStreamKeyCipher
      * @param pCipherSpec the cipherSpec
      * @param pCipher the cipher
      */
-    protected BouncyStreamKeyCipher(final BouncyFactory pFactory,
+    protected BouncyStreamKeyCipher(final GordianBaseFactory pFactory,
                                     final GordianStreamCipherSpec pCipherSpec,
                                     final StreamCipher pCipher) {
         super(pFactory, pCipherSpec);

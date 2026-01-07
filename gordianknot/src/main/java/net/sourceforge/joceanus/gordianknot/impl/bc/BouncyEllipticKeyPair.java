@@ -19,7 +19,7 @@ package net.sourceforge.joceanus.gordianknot.impl.bc;
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementSpec;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.encrypt.GordianEncryptorSpec;
-import net.sourceforge.joceanus.gordianknot.api.factory.GordianKeyPairFactory;
+import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairFactory;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianElliptic;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairGenerator;
@@ -37,6 +37,7 @@ import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianCoreAnonymous
 import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianCoreBasicAgreement;
 import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianCoreEphemeralAgreement;
 import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianCoreSignedAgreement;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.encrypt.GordianCoreEncryptor;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianIOException;
@@ -195,7 +196,7 @@ public final class BouncyEllipticKeyPair {
          * @param pKeySpec the keySpec
          * @throws GordianException on error
          */
-        BouncyECKeyPairGenerator(final BouncyFactory pFactory,
+        BouncyECKeyPairGenerator(final GordianBaseFactory pFactory,
                                  final GordianKeyPairSpec pKeySpec) throws GordianException {
             /* Initialise underlying class */
             super(pFactory, pKeySpec);
@@ -349,7 +350,7 @@ public final class BouncyEllipticKeyPair {
          * @param pSpec the signatureSpec.
          * @throws GordianException on error
          */
-        BouncyECSignature(final BouncyFactory pFactory,
+        BouncyECSignature(final GordianBaseFactory pFactory,
                           final GordianSignatureSpec pSpec) throws GordianException {
             /* Initialise underlying class */
             super(pFactory, pSpec);
@@ -430,7 +431,7 @@ public final class BouncyEllipticKeyPair {
          * @param pFactory the security factory
          * @param pSpec the agreementSpec
          */
-        BouncyECIESAgreement(final BouncyFactory pFactory,
+        BouncyECIESAgreement(final GordianBaseFactory pFactory,
                              final GordianAgreementSpec pSpec) {
             /* Initialise underlying class */
             super(pFactory, pSpec);
@@ -498,7 +499,7 @@ public final class BouncyEllipticKeyPair {
          * @param pFactory the security factory
          * @param pSpec the agreementSpec
          */
-        BouncyECAnonymousAgreement(final BouncyFactory pFactory,
+        BouncyECAnonymousAgreement(final GordianBaseFactory pFactory,
                                    final GordianAgreementSpec pSpec) {
             /* Initialise underlying class */
             super(pFactory, pSpec);
@@ -517,7 +518,7 @@ public final class BouncyEllipticKeyPair {
             checkKeyPair(pServer);
 
             /* Create an ephemeral keyPair */
-            final GordianKeyPairFactory myFactory = getFactory().getKeyPairFactory();
+            final GordianKeyPairFactory myFactory = getFactory().getAsyncFactory().getKeyPairFactory();
             final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(pServer.getKeyPairSpec());
             final GordianKeyPair myPair = myGenerator.generateKeyPair();
             final BouncyECPrivateKey myPrivate = (BouncyECPrivateKey) getPrivateKey(myPair);
@@ -544,7 +545,7 @@ public final class BouncyEllipticKeyPair {
             /* Obtain source keySpec */
             final BouncyECPrivateKey myPrivate = (BouncyECPrivateKey) getPrivateKey(pSelf);
             final X509EncodedKeySpec myKeySpec = pClientHello.getEphemeral();
-            final GordianKeyPairFactory myFactory = getFactory().getKeyPairFactory();
+            final GordianKeyPairFactory myFactory = getFactory().getAsyncFactory().getKeyPairFactory();
             final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(pSelf.getKeyPairSpec());
 
             /* Derive partner key */
@@ -575,7 +576,7 @@ public final class BouncyEllipticKeyPair {
          * @param pFactory the security factory
          * @param pSpec the agreementSpec
          */
-        BouncyECBasicAgreement(final BouncyFactory pFactory,
+        BouncyECBasicAgreement(final GordianBaseFactory pFactory,
                                final GordianAgreementSpec pSpec) {
             /* Initialise underlying class */
             super(pFactory, pSpec);
@@ -647,7 +648,7 @@ public final class BouncyEllipticKeyPair {
          * @param pFactory the security factory
          * @param pSpec the agreementSpec
          */
-        BouncyECSignedAgreement(final BouncyFactory pFactory,
+        BouncyECSignedAgreement(final GordianBaseFactory pFactory,
                                 final GordianAgreementSpec pSpec) {
             /* Initialise underlying class */
             super(pFactory, pSpec);
@@ -712,7 +713,7 @@ public final class BouncyEllipticKeyPair {
          * @param pFactory the security factory
          * @param pSpec the agreementSpec
          */
-        BouncyECUnifiedAgreement(final BouncyFactory pFactory,
+        BouncyECUnifiedAgreement(final GordianBaseFactory pFactory,
                                  final GordianAgreementSpec pSpec) {
             /* Initialise underlying class */
             super(pFactory, pSpec);
@@ -797,7 +798,7 @@ public final class BouncyEllipticKeyPair {
          * @param pFactory the security factory
          * @param pSpec the agreementSpec
          */
-        BouncyECMQVAgreement(final BouncyFactory pFactory,
+        BouncyECMQVAgreement(final GordianBaseFactory pFactory,
                              final GordianAgreementSpec pSpec) {
             /* Initialise underlying class */
             super(pFactory, pSpec);
@@ -1181,7 +1182,7 @@ public final class BouncyEllipticKeyPair {
          * @param pFactory the factory
          * @param pSpec the encryptorSpec
          */
-        BouncyECEncryptor(final BouncyFactory pFactory,
+        BouncyECEncryptor(final GordianBaseFactory pFactory,
                           final GordianEncryptorSpec pSpec) {
             /* Initialise underlying cipher */
             super(pFactory, pSpec);

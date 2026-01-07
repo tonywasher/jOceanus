@@ -18,14 +18,14 @@ package net.sourceforge.joceanus.prometheus.security;
 
 import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactory;
-import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactoryLock;
+import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactory.GordianFactoryLock;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactoryType;
-import net.sourceforge.joceanus.gordianknot.api.factory.GordianLockFactory;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.gordianknot.api.keyset.GordianBadCredentialsException;
 import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySet;
 import net.sourceforge.joceanus.gordianknot.api.lock.GordianKeyPairLock;
 import net.sourceforge.joceanus.gordianknot.api.lock.GordianKeySetLock;
+import net.sourceforge.joceanus.gordianknot.api.lock.GordianLockFactory;
 import net.sourceforge.joceanus.gordianknot.api.lock.GordianPasswordLockSpec;
 import net.sourceforge.joceanus.gordianknot.api.zip.GordianZipLock;
 import net.sourceforge.joceanus.gordianknot.util.GordianGenerator;
@@ -506,7 +506,7 @@ public class PrometheusSecurityPasswordManager {
                                                  final char[] pPassword) throws OceanusException {
         /* Protect against exceptions */
         try {
-            final GordianFactoryLock myLock = theLockFactory.newFactoryLock(pFactory, theLockSpec, pPassword);
+            final GordianFactoryLock myLock = theFactory.newFactoryLock(pFactory, theLockSpec, pPassword);
             theCache.addResolvedFactory(myLock, pPassword);
             return myLock;
 
@@ -526,7 +526,7 @@ public class PrometheusSecurityPasswordManager {
                                                   final char[] pPassword) throws OceanusException {
         /* Protect against exceptions */
         try {
-            final GordianFactoryLock myFactory = theLockFactory.resolveFactoryLock(pLockBytes, pPassword);
+            final GordianFactoryLock myFactory = theFactory.resolveFactoryLock(pLockBytes, pPassword);
             theCache.addResolvedFactory(myFactory, pPassword);
             return myFactory;
 

@@ -44,7 +44,8 @@ import net.sourceforge.joceanus.gordianknot.impl.bc.BouncySNTRUPrimeKeyPair.Boun
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyXDHKeyPair.BouncyXDHAnonXAgreementEngine;
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyXDHKeyPair.BouncyXDHBasicXAgreementEngine;
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyXDHKeyPair.BouncyXDHUnifiedXAgreementEngine;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseData;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.xagree.GordianXCoreAgreementEngine;
 import net.sourceforge.joceanus.gordianknot.impl.core.xagree.GordianXCoreAgreementFactory;
@@ -59,7 +60,7 @@ import net.sourceforge.joceanus.gordianknot.impl.core.xagree.GordianXCoreAgreeme
      *
      * @param pFactory the factory
      */
-    BouncyXAgreementFactory(final BouncyFactory pFactory) {
+    BouncyXAgreementFactory(final GordianBaseFactory pFactory) {
         super(pFactory);
     }
 
@@ -108,7 +109,7 @@ import net.sourceforge.joceanus.gordianknot.impl.core.xagree.GordianXCoreAgreeme
             case MQV:       return new BouncyECMQVXAgreementEngine(this, pSpec);
             case UNIFIED:   return new BouncyECUnifiedXAgreementEngine(this, pSpec);
             case SM2:       return new BouncySM2XAgreementEngine(this, pSpec);
-            default:        throw new GordianDataException(GordianCoreFactory.getInvalidText(pSpec));
+            default:        throw new GordianDataException(GordianBaseData.getInvalidText(pSpec));
         }
     }
 
@@ -127,7 +128,7 @@ import net.sourceforge.joceanus.gordianknot.impl.core.xagree.GordianXCoreAgreeme
             case MQV:       return new BouncyDHMQVXAgreementEngine(this, pSpec);
             case UNIFIED:   return new BouncyDHUnifiedXAgreementEngine(this, pSpec);
             default:
-                throw new GordianDataException(GordianCoreFactory.getInvalidText(pSpec));
+                throw new GordianDataException(GordianBaseData.getInvalidText(pSpec));
         }
     }
 
@@ -144,7 +145,7 @@ import net.sourceforge.joceanus.gordianknot.impl.core.xagree.GordianXCoreAgreeme
             case SIGNED:
             case BASIC:     return new BouncyXDHBasicXAgreementEngine(this, pSpec);
             case UNIFIED:   return new BouncyXDHUnifiedXAgreementEngine(this, pSpec);
-            default:        throw new GordianDataException(GordianCoreFactory.getInvalidText(pSpec));
+            default:        throw new GordianDataException(GordianBaseData.getInvalidText(pSpec));
         }
     }
 }

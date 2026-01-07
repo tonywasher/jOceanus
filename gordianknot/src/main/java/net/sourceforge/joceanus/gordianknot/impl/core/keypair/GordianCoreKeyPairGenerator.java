@@ -17,11 +17,11 @@
 package net.sourceforge.joceanus.gordianknot.impl.core.keypair;
 
 import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
-import net.sourceforge.joceanus.gordianknot.api.factory.GordianKeyPairFactory;
+import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairFactory;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairGenerator;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianRandomSource;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 
@@ -42,7 +42,7 @@ public abstract class GordianCoreKeyPairGenerator
     /**
      * The Security Factory.
      */
-    private final GordianCoreFactory theFactory;
+    private final GordianBaseFactory theFactory;
 
     /**
      * The Random Generator.
@@ -54,7 +54,7 @@ public abstract class GordianCoreKeyPairGenerator
      * @param pFactory the Security Factory
      * @param pKeySpec the keySpec
      */
-    protected GordianCoreKeyPairGenerator(final GordianCoreFactory pFactory,
+    protected GordianCoreKeyPairGenerator(final GordianBaseFactory pFactory,
                                           final GordianKeyPairSpec pKeySpec) {
         /* Store parameters */
         theKeySpec = pKeySpec;
@@ -81,7 +81,7 @@ public abstract class GordianCoreKeyPairGenerator
      * Obtain factory.
      * @return the factory
      */
-    protected GordianCoreFactory getFactory() {
+    protected GordianBaseFactory getFactory() {
         return theFactory;
     }
 
@@ -109,7 +109,7 @@ public abstract class GordianCoreKeyPairGenerator
      * @throws GordianException on error
      */
     protected void checkKeySpec(final PKCS8EncodedKeySpec pKeySpec) throws GordianException {
-        final GordianKeyPairFactory myFactory = theFactory.getKeyPairFactory();
+        final GordianKeyPairFactory myFactory = theFactory.getAsyncFactory().getKeyPairFactory();
         final GordianKeyPairSpec myKeySpec = myFactory.determineKeyPairSpec(pKeySpec);
         if (!theKeySpec.equals(myKeySpec)) {
             throw new GordianDataException("KeySpec not supported by this KeyPairGenerator");
@@ -122,7 +122,7 @@ public abstract class GordianCoreKeyPairGenerator
      * @throws GordianException on error
      */
     protected void checkKeySpec(final X509EncodedKeySpec pKeySpec) throws GordianException {
-        final GordianKeyPairFactory myFactory = theFactory.getKeyPairFactory();
+        final GordianKeyPairFactory myFactory = theFactory.getAsyncFactory().getKeyPairFactory();
         final GordianKeyPairSpec myKeySpec = myFactory.determineKeyPairSpec(pKeySpec);
         if (!theKeySpec.equals(myKeySpec)) {
             throw new GordianDataException("KeySpec not supported by this KeyPairGenerator");

@@ -22,7 +22,7 @@ import net.sourceforge.joceanus.gordianknot.api.agree.GordianHandshakeAgreement;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianAgreementMessageASN1.GordianMessageType;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 
 /**
  * New Handshake Basic Agreement.
@@ -40,7 +40,7 @@ public abstract class GordianCoreBasicAgreement
      * @param pFactory the factory
      * @param pSpec the agreementSpec
      */
-    protected GordianCoreBasicAgreement(final GordianCoreFactory pFactory,
+    protected GordianCoreBasicAgreement(final GordianBaseFactory pFactory,
                                         final GordianAgreementSpec pSpec) {
         super(pFactory, pSpec);
     }

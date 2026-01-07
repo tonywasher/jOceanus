@@ -16,6 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.api.cipher;
 
+import net.sourceforge.joceanus.gordianknot.api.base.GordianBundleLoader.GordianBundleId;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.gordianknot.api.key.GordianKeyLengths;
 
@@ -159,7 +160,7 @@ public enum GordianStreamKeyType {
         /* If we have not yet loaded the name */
         if (theName == null) {
             /* Load the name */
-            theName = GordianCipherResource.getKeyForStream(this).getValue();
+            theName = bundleIdForStreamKeyType().getValue();
         }
 
         /* return the name */
@@ -234,6 +235,39 @@ public enum GordianStreamKeyType {
                 return true;
             default:
                 return false;
+        }
+    }
+
+    /**
+     * Obtain the resource bundleId for this streamKeyType.
+     * @return the resource bundleId
+     */
+    private GordianBundleId bundleIdForStreamKeyType() {
+        /* Create the map and return it */
+        switch (this) {
+            case SALSA20: return GordianCipherResource.STREAMKEY_SALSA20;
+            case HC: return GordianCipherResource.STREAMKEY_HC;
+            case CHACHA20: return GordianCipherResource.STREAMKEY_CHACHA;
+            case VMPC: return GordianCipherResource.STREAMKEY_VMPC;
+            case ISAAC: return GordianCipherResource.STREAMKEY_ISAAC;
+            case GRAIN: return GordianCipherResource.STREAMKEY_GRAIN;
+            case RC4: return GordianCipherResource.STREAMKEY_RC4;
+            case SOSEMANUK: return GordianCipherResource.STREAMKEY_SOSEMANUK;
+            case RABBIT: return GordianCipherResource.STREAMKEY_RABBIT;
+            case SNOW3G: return GordianCipherResource.STREAMKEY_SNOW3G;
+            case ZUC: return GordianCipherResource.STREAMKEY_ZUC;
+            case SKEINXOF: return GordianCipherResource.STREAMKEY_SKEIN;
+            case BLAKE2XOF: return GordianCipherResource.STREAMKEY_BLAKE2;
+            case BLAKE3XOF: return GordianCipherResource.STREAMKEY_BLAKE3;
+            case ASCON: return GordianCipherResource.STREAMKEY_ASCON;
+            case ELEPHANT: return GordianCipherResource.STREAMKEY_ELEPHANT;
+            case ISAP: return GordianCipherResource.STREAMKEY_ISAP;
+            case PHOTONBEETLE: return GordianCipherResource.STREAMKEY_PHOTONBEETLE;
+            case ROMULUS: return GordianCipherResource.STREAMKEY_ROMULUS;
+            case SPARKLE: return GordianCipherResource.STREAMKEY_SPARKLE;
+            case XOODYAK: return GordianCipherResource.STREAMKEY_XOODYAK;
+            default:
+                throw new IllegalArgumentException();
         }
     }
 }

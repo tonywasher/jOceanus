@@ -28,7 +28,8 @@ import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymCipher;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymCipherSpec;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymKeySpec;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymKeyType;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseData;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.cipher.GordianCoreCipher;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
 
@@ -66,7 +67,7 @@ public abstract class JcaCipher<T extends GordianKeySpec>
      * @param pCipherSpec the cipherSpec
      * @param pCipher the cipher
      */
-    JcaCipher(final JcaFactory pFactory,
+    JcaCipher(final GordianBaseFactory pFactory,
               final GordianCipherSpec<T> pCipherSpec,
               final Cipher pCipher) {
         super(pFactory, pCipherSpec);
@@ -131,8 +132,8 @@ public abstract class JcaCipher<T extends GordianKeySpec>
             }
             if (GordianSymKeyType.RC5.equals(myType)) {
                 return pIV == null
-                       ? new RC5ParameterSpec(1, GordianCoreFactory.RC5_ROUNDS, myLen.getLength() >> 1)
-                       : new RC5ParameterSpec(1, GordianCoreFactory.RC5_ROUNDS, myLen.getLength() >> 1, pIV);
+                       ? new RC5ParameterSpec(1, GordianBaseData.RC5_ROUNDS, myLen.getLength() >> 1)
+                       : new RC5ParameterSpec(1, GordianBaseData.RC5_ROUNDS, myLen.getLength() >> 1, pIV);
             }
         }
         return new IvParameterSpec(pIV);
@@ -196,7 +197,7 @@ public abstract class JcaCipher<T extends GordianKeySpec>
          * @param pCipherSpec the cipherSpec
          * @param pCipher the cipher
          */
-        JcaSymCipher(final JcaFactory pFactory,
+        JcaSymCipher(final GordianBaseFactory pFactory,
                      final GordianSymCipherSpec pCipherSpec,
                      final Cipher pCipher) {
             super(pFactory, pCipherSpec, pCipher);
@@ -215,7 +216,7 @@ public abstract class JcaCipher<T extends GordianKeySpec>
          * @param pCipherSpec the cipherSpec
          * @param pCipher the cipher
          */
-        JcaStreamCipher(final JcaFactory pFactory,
+        JcaStreamCipher(final GordianBaseFactory pFactory,
                         final GordianStreamCipherSpec pCipherSpec,
                         final Cipher pCipher) {
             super(pFactory, pCipherSpec, pCipher);

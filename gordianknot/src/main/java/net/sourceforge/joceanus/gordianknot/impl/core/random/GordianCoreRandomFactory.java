@@ -43,7 +43,8 @@ import net.sourceforge.joceanus.gordianknot.api.random.GordianRandomFactory;
 import net.sourceforge.joceanus.gordianknot.api.random.GordianRandomSpec;
 import net.sourceforge.joceanus.gordianknot.api.random.GordianRandomSpecBuilder;
 import net.sourceforge.joceanus.gordianknot.api.random.GordianRandomType;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseData;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianIdManager;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianRandomSource;
 import net.sourceforge.joceanus.gordianknot.impl.core.cipher.GordianCoreCipher;
@@ -111,7 +112,7 @@ public class GordianCoreRandomFactory
     /**
      * The factory.
      */
-    private final GordianCoreFactory theFactory;
+    private final GordianBaseFactory theFactory;
 
     /**
      * The Secure Random source.
@@ -133,7 +134,7 @@ public class GordianCoreRandomFactory
      * @param pFactory the factory
      * @throws GordianException on error
      */
-    public GordianCoreRandomFactory(final GordianCoreFactory pFactory) throws GordianException {
+    public GordianCoreRandomFactory(final GordianBaseFactory pFactory) throws GordianException {
         /* Access the initial stringRandom */
         theFactory = pFactory;
         theRandomSource = theFactory.getRandomSource();
@@ -150,7 +151,7 @@ public class GordianCoreRandomFactory
     public GordianSecureRandom createRandom(final GordianRandomSpec pRandomSpec) throws GordianException {
         /* Check validity of RandomSpec */
         if (!supportedRandomSpecs().test(pRandomSpec)) {
-            throw new GordianDataException(GordianCoreFactory.getInvalidText(pRandomSpec));
+            throw new GordianDataException(GordianBaseData.getInvalidText(pRandomSpec));
         }
 
         /* Access factories */
@@ -174,7 +175,7 @@ public class GordianCoreRandomFactory
                 myCipherSpec = GordianSymCipherSpecBuilder.ecb(pRandomSpec.getSymKeySpec(), GordianPadding.NONE);
                 return buildX931(myCiphers.createSymKeyCipher(myCipherSpec), isResistent);
             default:
-                throw new GordianDataException(GordianCoreFactory.getInvalidText(pRandomSpec));
+                throw new GordianDataException(GordianBaseData.getInvalidText(pRandomSpec));
         }
     }
 
@@ -183,7 +184,7 @@ public class GordianCoreRandomFactory
                                               final GordianRandomSpec pHashSpec) throws GordianException {
         /* Check validity of ctrSpecs */
         if (!validCombinedSpec(pCtrSpec, pHashSpec)) {
-            throw new GordianDataException(GordianCoreFactory.getInvalidText(pCtrSpec)
+            throw new GordianDataException(GordianBaseData.getInvalidText(pCtrSpec)
                     + "-" + pHashSpec);
         }
 

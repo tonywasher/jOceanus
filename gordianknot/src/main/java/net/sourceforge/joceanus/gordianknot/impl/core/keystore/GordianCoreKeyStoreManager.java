@@ -18,24 +18,24 @@ package net.sourceforge.joceanus.gordianknot.impl.core.keystore;
 
 import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianKeySpec;
-import net.sourceforge.joceanus.gordianknot.api.factory.GordianKeyPairFactory;
+import net.sourceforge.joceanus.gordianknot.api.cert.GordianCertificate;
+import net.sourceforge.joceanus.gordianknot.api.cert.GordianKeyPairUsage;
+import net.sourceforge.joceanus.gordianknot.api.cert.GordianKeyPairUse;
+import net.sourceforge.joceanus.gordianknot.api.factory.GordianAsyncFactory;
 import net.sourceforge.joceanus.gordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.gordianknot.api.key.GordianKeyGenerator;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
+import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairFactory;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairGenerator;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySet;
 import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySetFactory;
 import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySetSpec;
-import net.sourceforge.joceanus.gordianknot.api.cert.GordianCertificate;
-import net.sourceforge.joceanus.gordianknot.api.cert.GordianKeyPairUsage;
-import net.sourceforge.joceanus.gordianknot.api.cert.GordianKeyPairUse;
 import net.sourceforge.joceanus.gordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStoreKey;
 import net.sourceforge.joceanus.gordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStorePair;
 import net.sourceforge.joceanus.gordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStoreSet;
-import net.sourceforge.joceanus.gordianknot.api.keystore.GordianKeyStoreManager;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacSpec;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.cert.GordianCoreCertificate;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianLogicException;
@@ -51,11 +51,11 @@ import java.util.List;
  * KeyStore Manager implementation.
  */
 public class GordianCoreKeyStoreManager
-        implements GordianKeyStoreManager {
+        implements GordianBaseKeyStoreManager {
     /**
      * The factory.
      */
-    private final GordianCoreFactory theFactory;
+    private final GordianBaseFactory theFactory;
 
     /**
      * The keyStore.
@@ -67,7 +67,7 @@ public class GordianCoreKeyStoreManager
      * @param pFactory the factory
      * @param pKeyStore the keyStore
      */
-    GordianCoreKeyStoreManager(final GordianCoreFactory pFactory,
+    GordianCoreKeyStoreManager(final GordianBaseFactory pFactory,
                                final GordianCoreKeyStore pKeyStore) {
         theFactory = pFactory;
         theKeyStore = pKeyStore;
@@ -110,12 +110,12 @@ public class GordianCoreKeyStoreManager
                                                      final String pAlias,
                                                      final char[] pPassword) throws GordianException {
         /* Check that the keySpec can provide a signature */
-        if (theFactory.getKeyPairFactory().getSignatureFactory().defaultForKeyPair(pKeySpec) == null) {
+        if (theFactory.getAsyncFactory().getSignatureFactory().defaultForKeyPair(pKeySpec) == null) {
             throw new GordianDataException("Root keyPair must be capable of signing");
         }
 
         /* Create the new keyPair */
-        final GordianKeyPairFactory myFactory = theFactory.getKeyPairFactory();
+        final GordianKeyPairFactory myFactory = theFactory.getAsyncFactory().getKeyPairFactory();
         final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(pKeySpec);
         final GordianCoreKeyPair myKeyPair = (GordianCoreKeyPair) myGenerator.generateKeyPair();
 
@@ -138,7 +138,7 @@ public class GordianCoreKeyStoreManager
                                                  final char[] pPassword) throws GordianException {
         /* Create the new keyPair */
         checkKeyPairUsage(pKeySpec, pUsage);
-        final GordianKeyPairFactory myFactory = theFactory.getKeyPairFactory();
+        final GordianKeyPairFactory myFactory = theFactory.getAsyncFactory().getKeyPairFactory();
         final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(pKeySpec);
         final GordianKeyPair myKeyPair = myGenerator.generateKeyPair();
 
@@ -179,19 +179,11 @@ public class GordianCoreKeyStoreManager
         return (GordianCoreKeyStorePair) theKeyStore.getEntry(pAlias, pPassword);
     }
 
-    /**
-     * Sign keyPair.
-     * @param pKeyPair the keyPair
-     * @param pSubject the name of the entity
-     * @param pUsage   the key usage
-     * @param pSigner the signer
-     * @return the certificate chain
-     * @throws GordianException on error
-     */
-    List<GordianCertificate> signKeyPair(final GordianKeyPair pKeyPair,
-                                         final X500Name pSubject,
-                                         final GordianKeyPairUsage pUsage,
-                                         final GordianKeyStorePair pSigner) throws GordianException {
+    @Override
+    public List<GordianCertificate> signKeyPair(final GordianKeyPair pKeyPair,
+                                                final X500Name pSubject,
+                                                final GordianKeyPairUsage pUsage,
+                                                final GordianKeyStorePair pSigner) throws GordianException {
         /* Create the certificate */
         final GordianCoreCertificate myCert = new GordianCoreCertificate(theFactory, pSigner, pKeyPair, pSubject, pUsage);
 
@@ -218,10 +210,10 @@ public class GordianCoreKeyStoreManager
         final boolean needsAgree = pUsage.hasUse(GordianKeyPairUse.AGREEMENT);
 
         /* Validate keyPairSpec against requirements */
-        final GordianKeyPairFactory myKPFactory = theFactory.getKeyPairFactory();
-        final boolean bFail = (needsSign && myKPFactory.getSignatureFactory().defaultForKeyPair(pKeyPairSpec) == null)
-                || (needsEnc && myKPFactory.getEncryptorFactory().defaultForKeyPair(pKeyPairSpec) == null)
-                || (needsAgree && myKPFactory.getAgreementFactory().defaultForKeyPair(pKeyPairSpec) == null);
+        final GordianAsyncFactory myAsyncFactory = theFactory.getAsyncFactory();
+        final boolean bFail = (needsSign && myAsyncFactory.getSignatureFactory().defaultForKeyPair(pKeyPairSpec) == null)
+                || (needsEnc && myAsyncFactory.getEncryptorFactory().defaultForKeyPair(pKeyPairSpec) == null)
+                || (needsAgree && myAsyncFactory.getAgreementFactory().defaultForKeyPair(pKeyPairSpec) == null);
 
         /* Handle failure */
         if (bFail) {

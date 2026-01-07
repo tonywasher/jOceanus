@@ -23,7 +23,7 @@ import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianXof;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactoryType;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.digest.GordianCoreDigestFactory;
 import net.sourceforge.joceanus.gordianknot.junit.regression.SymmetricStore.FactoryDigestSpec;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.util.Arrays;
@@ -228,7 +228,7 @@ public class SymmetricDigestScripts {
      */
     private static void checkDigestAlgId(final FactoryDigestSpec pSpec) {
         /* Access the factory */
-        final GordianCoreFactory myFactory = (GordianCoreFactory) pSpec.getFactory();
+        final GordianCoreDigestFactory myFactory = (GordianCoreDigestFactory) pSpec.getFactory().getDigestFactory();
 
         /* Check that we have an id */
         final AlgorithmIdentifier myId = myFactory.getIdentifierForSpec(pSpec.getSpec());

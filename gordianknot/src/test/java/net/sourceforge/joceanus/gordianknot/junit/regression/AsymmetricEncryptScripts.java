@@ -20,7 +20,7 @@ import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.encrypt.GordianEncryptor;
 import net.sourceforge.joceanus.gordianknot.api.encrypt.GordianEncryptorFactory;
 import net.sourceforge.joceanus.gordianknot.api.encrypt.GordianEncryptorSpec;
-import net.sourceforge.joceanus.gordianknot.api.factory.GordianKeyPairFactory;
+import net.sourceforge.joceanus.gordianknot.api.factory.GordianAsyncFactory;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.gordianknot.impl.core.encrypt.GordianCoreEncryptorFactory;
 import net.sourceforge.joceanus.gordianknot.junit.regression.AsymmetricStore.FactoryEncryptor;
@@ -56,7 +56,7 @@ public final class AsymmetricEncryptScripts {
         myTests = Stream.concat(myTests, Stream.of(DynamicTest.dynamicTest("checkAlgId", () -> checkEncryptorAlgId(pEncryptor))));
 
         /* Check that the partner supports this keySpec*/
-        final GordianKeyPairFactory myTgtAsym = pEncryptor.getOwner().getPartner();
+        final GordianAsyncFactory myTgtAsym = pEncryptor.getOwner().getPartner();
         if (myTgtAsym != null) {
             /* Add partner test if the partner supports this encryptore */
             final GordianEncryptorFactory myTgtEncrypts = pEncryptor.getOwner().getPartner().getEncryptorFactory();

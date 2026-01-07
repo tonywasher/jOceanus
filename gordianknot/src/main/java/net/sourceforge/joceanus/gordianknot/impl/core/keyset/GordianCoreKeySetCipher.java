@@ -20,7 +20,7 @@ import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySetCipher;
 import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySetSpec;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianLogicException;
 import net.sourceforge.joceanus.gordianknot.impl.core.keyset.GordianKeySetRecipe.GordianKeySetParameters;
@@ -33,7 +33,7 @@ public class GordianCoreKeySetCipher
     /**
      * The factory.
      */
-    private final GordianCoreFactory theFactory;
+    private final GordianBaseFactory theFactory;
 
     /**
      * The keySetSpec.
@@ -81,7 +81,7 @@ public class GordianCoreKeySetCipher
      * @param pAead are we in AEAD mode
      * @throws GordianException on error
      */
-    public GordianCoreKeySetCipher(final GordianCoreKeySet pKeySet,
+    public GordianCoreKeySetCipher(final GordianBaseKeySet pKeySet,
                                    final boolean pAead) throws GordianException  {
         theFactory = pKeySet.getFactory();
         aead = pAead;
@@ -171,7 +171,7 @@ public class GordianCoreKeySetCipher
         /* Handle encryption */
         if (encrypting) {
             return hdrProcessed ? theCipher.getOutputLength(pLength)
-                                : GordianCoreKeySet.getEncryptionLength(pLength);
+                                : GordianKeySetData.getEncryptionLength(pLength);
         }
 
         /* Allow for cacheSpace */

@@ -23,8 +23,10 @@ import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestSubSpec;
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestSubSpec.GordianDigestState;
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestType;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseData;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
+import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -40,13 +42,18 @@ public abstract class GordianCoreDigestFactory
     /**
      * The factory.
      */
-    private final GordianCoreFactory theFactory;
+    private final GordianBaseFactory theFactory;
+
+    /**
+     * The Digest AlgIds.
+     */
+    private GordianDigestAlgId theDigestAlgIds;
 
     /**
      * Constructor.
      * @param pFactory the factory.
      */
-    protected GordianCoreDigestFactory(final GordianCoreFactory pFactory) {
+    protected GordianCoreDigestFactory(final GordianBaseFactory pFactory) {
         theFactory = pFactory;
     }
 
@@ -54,8 +61,38 @@ public abstract class GordianCoreDigestFactory
      * Obtain the factory.
      * @return the factory
      */
-    protected GordianCoreFactory getFactory() {
+    protected GordianBaseFactory getFactory() {
         return theFactory;
+    }
+
+
+    /**
+     * Obtain Identifier for DigestSpec.
+     * @param pSpec the digestSpec.
+     * @return the Identifier
+     */
+    public AlgorithmIdentifier getIdentifierForSpec(final GordianDigestSpec pSpec) {
+        return getDigestAlgIds().getIdentifierForSpec(pSpec);
+    }
+
+    /**
+     * Obtain DigestSpec for Identifier.
+     * @param pIdentifier the identifier.
+     * @return the digestSpec (or null if not found)
+     */
+    public GordianDigestSpec getDigestSpecForIdentifier(final AlgorithmIdentifier pIdentifier) {
+        return getDigestAlgIds().getSpecForIdentifier(pIdentifier);
+    }
+
+    /**
+     * Obtain the digest algorithm Ids.
+     * @return the digest Algorithm Ids
+     */
+    private GordianDigestAlgId getDigestAlgIds() {
+        if (theDigestAlgIds == null) {
+            theDigestAlgIds = new GordianDigestAlgId(theFactory);
+        }
+        return theDigestAlgIds;
     }
 
     @Override
@@ -76,7 +113,7 @@ public abstract class GordianCoreDigestFactory
     public void checkDigestSpec(final GordianDigestSpec pDigestSpec) throws GordianException {
         /* Check validity of DigestType */
         if (!supportedDigestSpecs().test(pDigestSpec)) {
-            throw new GordianDataException(GordianCoreFactory.getInvalidText(pDigestSpec));
+            throw new GordianDataException(GordianBaseData.getInvalidText(pDigestSpec));
         }
     }
 

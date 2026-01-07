@@ -34,7 +34,8 @@ import net.sourceforge.joceanus.gordianknot.impl.bc.BouncySLHDSAKeyPair.BouncySL
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncySM2KeyPair.BouncySM2Signature;
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncySnovaKeyPair.BouncySnovaSignature;
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyXMSSKeyPair.BouncyXMSSSignature;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseData;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.sign.GordianCompositeSigner;
 import net.sourceforge.joceanus.gordianknot.impl.core.sign.GordianCoreSignatureFactory;
@@ -51,14 +52,9 @@ public class BouncySignatureFactory
      *
      * @param pFactory the factory
      */
-    BouncySignatureFactory(final BouncyFactory pFactory) {
+    BouncySignatureFactory(final GordianBaseFactory pFactory) {
         /* Initialise underlying class */
         super(pFactory);
-    }
-
-    @Override
-    protected BouncyFactory getFactory() {
-        return (BouncyFactory) super.getFactory();
     }
 
     @Override
@@ -117,7 +113,7 @@ public class BouncySignatureFactory
             case COMPOSITE:
                 return new GordianCompositeSigner(getFactory(), pSignatureSpec);
             default:
-                throw new GordianDataException(GordianCoreFactory.getInvalidText(pSignatureSpec.getKeyPairType()));
+                throw new GordianDataException(GordianBaseData.getInvalidText(pSignatureSpec.getKeyPairType()));
         }
     }
 }

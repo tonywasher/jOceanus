@@ -31,7 +31,8 @@ import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignatureFactory;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignatureSpec;
 import net.sourceforge.joceanus.gordianknot.api.xagree.GordianXAgreement;
 import net.sourceforge.joceanus.gordianknot.api.xagree.GordianXAgreementParams;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseData;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianLogicException;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
@@ -49,7 +50,7 @@ public abstract class GordianXCoreAgreementFactory
     /**
      * The factory.
      */
-    private final GordianCoreFactory theFactory;
+    private final GordianBaseFactory theFactory;
 
     /**
      * The id cache.
@@ -76,13 +77,13 @@ public abstract class GordianXCoreAgreementFactory
      *
      * @param pFactory the factory
      */
-    protected GordianXCoreAgreementFactory(final GordianCoreFactory pFactory) {
+    protected GordianXCoreAgreementFactory(final GordianBaseFactory pFactory) {
         theFactory = pFactory;
         theCache = new GordianXCoreAgreementCache(theFactory.getRandomSource());
     }
 
     @Override
-    public GordianCoreFactory getFactory() {
+    public GordianBaseFactory getFactory() {
         return theFactory;
     }
 
@@ -219,7 +220,7 @@ public abstract class GordianXCoreAgreementFactory
         }
 
         /* Unsupported spec */
-        throw new GordianDataException(GordianCoreFactory.getInvalidText(pSpec));
+        throw new GordianDataException(GordianBaseData.getInvalidText(pSpec));
     }
 
     @Override
@@ -231,7 +232,7 @@ public abstract class GordianXCoreAgreementFactory
     public void checkAgreementSpec(final GordianAgreementSpec pAgreementSpec) throws GordianException {
         /* Check validity of agreement */
         if (!validAgreementSpec(pAgreementSpec)) {
-            throw new GordianDataException(GordianCoreFactory.getInvalidText(pAgreementSpec));
+            throw new GordianDataException(GordianBaseData.getInvalidText(pAgreementSpec));
         }
     }
 
@@ -253,7 +254,7 @@ public abstract class GordianXCoreAgreementFactory
 
     @Override
     public void setSigner(final GordianCertificate pSigner) throws GordianException {
-        final GordianSignatureFactory mySignFactory = theFactory.getKeyPairFactory().getSignatureFactory();
+        final GordianSignatureFactory mySignFactory = theFactory.getAsyncFactory().getSignatureFactory();
         final GordianSignatureSpec mySignSpec = pSigner == null ? null : mySignFactory.defaultForKeyPair(pSigner.getKeyPair().getKeyPairSpec());
         setSigner(pSigner, mySignSpec);
     }
@@ -267,9 +268,9 @@ public abstract class GordianXCoreAgreementFactory
         }
 
         /* Check that certificate can sign data */
-        final GordianSignatureFactory mySignFactory = theFactory.getKeyPairFactory().getSignatureFactory();
+        final GordianSignatureFactory mySignFactory = theFactory.getAsyncFactory().getSignatureFactory();
         if (!mySignFactory.validSignatureSpecForKeyPair(pSigner.getKeyPair(), pSignSpec)) {
-            throw new GordianDataException(GordianCoreFactory.getInvalidText(pSignSpec));
+            throw new GordianDataException(GordianBaseData.getInvalidText(pSignSpec));
         }
 
         /* Store parameters */

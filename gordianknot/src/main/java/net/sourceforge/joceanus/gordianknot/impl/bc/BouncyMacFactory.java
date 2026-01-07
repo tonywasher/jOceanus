@@ -25,7 +25,8 @@ import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacSpec;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacType;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianSipHashSpec;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseData;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.mac.GordianCoreMacFactory;
 import net.sourceforge.joceanus.gordianknot.impl.ext.digests.GordianBlake3Digest;
@@ -75,17 +76,12 @@ public class BouncyMacFactory
      *
      * @param pFactory the factory
      */
-    BouncyMacFactory(final GordianCoreFactory pFactory) {
+    BouncyMacFactory(final GordianBaseFactory pFactory) {
         /* Initialise underlying class */
         super(pFactory);
 
         /* Create the cache */
         theCache = new HashMap<>();
-    }
-
-    @Override
-    public BouncyFactory getFactory() {
-        return (BouncyFactory) super.getFactory();
     }
 
     @Override
@@ -173,7 +169,7 @@ public class BouncyMacFactory
             case ZUC:
                 return getBCZucMac(pMacSpec);
             default:
-                throw new GordianDataException(GordianCoreFactory.getInvalidText(pMacSpec));
+                throw new GordianDataException(GordianBaseData.getInvalidText(pMacSpec));
         }
     }
 

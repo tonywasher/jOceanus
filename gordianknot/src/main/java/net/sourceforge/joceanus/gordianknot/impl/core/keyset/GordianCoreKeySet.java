@@ -23,7 +23,7 @@ import net.sourceforge.joceanus.gordianknot.api.cipher.GordianCipherFactory;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymKeySpec;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymKeyType;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactory;
-import net.sourceforge.joceanus.gordianknot.api.factory.GordianKeyPairFactory;
+import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairFactory;
 import net.sourceforge.joceanus.gordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.gordianknot.api.key.GordianKeyGenerator;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
@@ -33,7 +33,7 @@ import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySet;
 import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySetAADCipher;
 import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySetCipher;
 import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySetSpec;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianParameters;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianPersonalisation.GordianPersonalId;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianValidator;
@@ -58,16 +58,11 @@ import java.util.function.Predicate;
  * A full set of symmetric keys, subject to the relevant predicate.
  */
 public final class GordianCoreKeySet
-    implements GordianKeySet {
-    /**
-     * Initialisation Vector size.
-     */
-    private static final GordianLength BLOCKLEN = GordianLength.LEN_128;
-
+    implements GordianBaseKeySet {
     /**
      * The factory.
      */
-    private final GordianCoreFactory theFactory;
+    private final GordianBaseFactory theFactory;
 
     /**
      * The keySetSpec.
@@ -91,7 +86,7 @@ public final class GordianCoreKeySet
      * @param pSpec the keySetSpec
      * @throws GordianException on error
      */
-    GordianCoreKeySet(final GordianCoreFactory pFactory,
+    GordianCoreKeySet(final GordianBaseFactory pFactory,
                       final GordianKeySetSpec pSpec) throws GordianException {
         /* Store parameters */
         theFactory = pFactory;
@@ -126,7 +121,7 @@ public final class GordianCoreKeySet
      * Obtain the factory.
      * @return the factory
      */
-    public GordianCoreFactory getFactory() {
+    public GordianBaseFactory getFactory() {
         return theFactory;
     }
 
@@ -135,12 +130,8 @@ public final class GordianCoreKeySet
         return theSpec;
     }
 
-    /**
-     * Obtain the symKeySet.
-     *
-     * @return the keySet
-     */
-    Map<GordianSymKeySpec, GordianKey<GordianSymKeySpec>> getSymKeyMap() {
+    @Override
+    public Map<GordianSymKeySpec, GordianKey<GordianSymKeySpec>> getSymKeyMap() {
         return theSymKeyMap;
     }
 
@@ -152,29 +143,10 @@ public final class GordianCoreKeySet
     /**
      * Obtain the encryption length for a length of data.
      * @param pDataLength the dataLength
-     * @return the enctyption length
-     */
-    public static int getEncryptionLength(final int pDataLength) {
-        final int iBlocks = 1 + (pDataLength / BLOCKLEN.getByteLength());
-        return iBlocks * BLOCKLEN.getByteLength()
-                + getEncryptionOverhead();
-    }
-
-    /**
-     * Obtain the encryption length for a length of data.
-     * @param pDataLength the dataLength
      * @return the encryption length
      */
     public static int getAADEncryptionLength(final int pDataLength) {
-        return getEncryptionLength(pDataLength) + GordianCoreKeySetAADCipher.MACSIZE;
-    }
-
-    /**
-     * Encryption overhead.
-     * @return the encryption overhead
-     */
-    private static int getEncryptionOverhead() {
-        return GordianKeySetRecipe.HDRLEN;
+        return GordianKeySetData.getEncryptionLength(pDataLength) + GordianCoreKeySetAADCipher.MACSIZE;
     }
 
     @Override
@@ -188,9 +160,9 @@ public final class GordianCoreKeySet
      * @return the wrapped length
      */
     public static int getDataWrapLength(final int pDataLength) {
-        return GordianCoreWrapper.getKeyWrapLength(pDataLength, BLOCKLEN)
-                + getEncryptionOverhead()
-                + GordianCoreWrapper.getKeyWrapExpansion(BLOCKLEN);
+        return GordianCoreWrapper.getKeyWrapLength(pDataLength, GordianKeySetData.BLOCKLEN)
+                + GordianKeySetData.getEncryptionOverhead()
+                + GordianCoreWrapper.getKeyWrapExpansion(GordianKeySetData.BLOCKLEN);
     }
 
     /**
@@ -215,7 +187,7 @@ public final class GordianCoreKeySet
     @Override
     public int getPrivateKeyWrapLength(final GordianKeyPair pKeyPair) throws GordianException {
         /* Determine and check the keySpec */
-        final GordianKeyPairFactory myFactory = theFactory.getKeyPairFactory();
+        final GordianKeyPairFactory myFactory = theFactory.getAsyncFactory().getKeyPairFactory();
         final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(pKeyPair.getKeyPairSpec());
         final PKCS8EncodedKeySpec myPrivateKey = myGenerator.getPKCS8Encoding(pKeyPair);
         return getDataWrapLength(myPrivateKey.getEncoded().length);
@@ -382,7 +354,7 @@ public final class GordianCoreKeySet
         final PKCS8EncodedKeySpec myPrivate = derivePrivateKeySpec(pSecuredPrivateKey);
 
         /* Determine and check the keySpec */
-        final GordianKeyPairFactory myFactory = theFactory.getKeyPairFactory();
+        final GordianKeyPairFactory myFactory = theFactory.getAsyncFactory().getKeyPairFactory();
         final GordianKeyPairSpec myKeySpec = myFactory.determineKeyPairSpec(pPublicKeySpec);
         if (!myKeySpec.equals(myFactory.determineKeyPairSpec(myPrivate))) {
             throw new GordianLogicException("Mismatch on keySpecs");
@@ -432,7 +404,7 @@ public final class GordianCoreKeySet
         final GordianKeySetASN1 myEncoded = GordianKeySetASN1.getInstance(mySecuredBytes);
 
         /* Build the keySet and return it */
-        return myEncoded.buildKeySet(theFactory);
+        return (GordianCoreKeySet) myEncoded.buildKeySet(theFactory);
     }
 
     /**
@@ -446,7 +418,7 @@ public final class GordianCoreKeySet
         byte[] myBuffer = null;
         try {
             /* Access the parameters */
-            final GordianParameters myParams = ((GordianCoreFactory) pFactoryToSecure).getParameters();
+            final GordianParameters myParams = ((GordianBaseFactory) pFactoryToSecure).getParameters();
 
             /* Reject request if this is a namedFactory */
             if (!myParams.isInternal()) {
@@ -500,12 +472,8 @@ public final class GordianCoreKeySet
         return myOutput;
     }
 
-    /**
-     * Declare symmetricKey.
-     * @param pKey the key
-     * @throws GordianException on error
-     */
-    void declareSymKey(final GordianKey<GordianSymKeySpec> pKey) throws GordianException {
+    @Override
+    public void declareSymKey(final GordianKey<GordianSymKeySpec> pKey) throws GordianException {
         /* Access keyType */
         final GordianSymKeySpec myKeyType = pKey.getKeyType();
 

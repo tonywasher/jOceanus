@@ -19,6 +19,7 @@ package net.sourceforge.joceanus.gordianknot.impl.bc;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMac;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.key.GordianCoreKeyGenerator;
 import org.bouncycastle.crypto.CipherKeyGenerator;
 import org.bouncycastle.crypto.KeyGenerationParameters;
@@ -42,7 +43,7 @@ public final class BouncyKeyGenerator<T extends GordianKeySpec>
      * @param pKeyType the keyType
      * @param pGenerator the key generator
      */
-    BouncyKeyGenerator(final BouncyFactory pFactory,
+    BouncyKeyGenerator(final GordianBaseFactory pFactory,
                        final T pKeyType,
                        final CipherKeyGenerator pGenerator) {
         /* Initialise underlying class */

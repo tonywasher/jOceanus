@@ -28,13 +28,6 @@ public interface GordianZipFileEntry {
     String getFileName();
 
     /**
-     * Obtain the parent contents.
-     *
-     * @return the parent of the fileEntry
-     */
-    GordianZipFileContents getParent();
-
-    /**
      * Set User String property.
      *
      * @param pPropertyName  the property name

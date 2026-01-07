@@ -23,6 +23,7 @@ import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestType;
 import net.sourceforge.joceanus.gordianknot.api.encrypt.GordianEncryptorSpec;
 import net.sourceforge.joceanus.gordianknot.api.encrypt.GordianSM2EncryptionSpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.encrypt.GordianCoreEncryptor;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
 import net.sourceforge.joceanus.gordianknot.impl.jca.JcaKeyPair.JcaPrivateKey;
@@ -31,7 +32,9 @@ import net.sourceforge.joceanus.gordianknot.impl.jca.JcaKeyPair.JcaPublicKey;
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 
 /**
@@ -65,11 +68,11 @@ public final class JcaEncryptor {
          * @param pSpec the encryptorSpec
          * @throws GordianException on error
          */
-        JcaBlockEncryptor(final JcaFactory pFactory,
+        JcaBlockEncryptor(final GordianBaseFactory pFactory,
                           final GordianEncryptorSpec pSpec) throws GordianException {
             /* Initialise underlying cipher */
             super(pFactory, pSpec);
-            theEncryptor = JcaEncryptorFactory.getJavaEncryptor(getAlgorithmName(pSpec), false);
+            theEncryptor = getJavaEncryptor(getAlgorithmName(pSpec), false);
         }
 
         @Override
@@ -229,11 +232,11 @@ public final class JcaEncryptor {
          * @param pSpec the encryptorSpec
          * @throws GordianException on error
          */
-        JcaHybridEncryptor(final JcaFactory pFactory,
+        JcaHybridEncryptor(final GordianBaseFactory pFactory,
                            final GordianEncryptorSpec pSpec) throws GordianException {
             /* Initialise underlying cipher */
             super(pFactory, pSpec);
-            theEncryptor = JcaEncryptorFactory.getJavaEncryptor(getAlgorithmName(pSpec), false);
+            theEncryptor = getJavaEncryptor(getAlgorithmName(pSpec), false);
         }
 
         @Override
@@ -327,6 +330,30 @@ public final class JcaEncryptor {
                 default:
                     return "SM2with" +  myDigestType;
             }
+        }
+    }
+
+    /**
+     * Create the BouncyCastle KeyFactory via JCA.
+     * @param pAlgorithm the Algorithm
+     * @param postQuantum is this a postQuantum algorithm?
+     * @return the KeyFactory
+     * @throws GordianException on error
+     */
+    private static Cipher getJavaEncryptor(final String pAlgorithm,
+                                           final boolean postQuantum) throws GordianException {
+        /* Protect against exceptions */
+        try {
+            /* Return a Cipher for the algorithm */
+            return Cipher.getInstance(pAlgorithm, postQuantum
+                    ? JcaProvider.BCPQPROV
+                    : JcaProvider.BCPROV);
+
+            /* Catch exceptions */
+        } catch (NoSuchAlgorithmException
+                 | NoSuchPaddingException e) {
+            /* Throw the exception */
+            throw new GordianCryptoException("Failed to create Cipher", e);
         }
     }
 }

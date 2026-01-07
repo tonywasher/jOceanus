@@ -18,9 +18,9 @@ package net.sourceforge.joceanus.gordianknot.impl.core.zip;
 
 import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactory;
-import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactoryLock;
+import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactory.GordianFactoryLock;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactoryType;
-import net.sourceforge.joceanus.gordianknot.api.factory.GordianLockFactory;
+import net.sourceforge.joceanus.gordianknot.api.lock.GordianLockFactory;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.gordianknot.api.lock.GordianKeyPairLock;
 import net.sourceforge.joceanus.gordianknot.api.lock.GordianKeySetLock;
@@ -74,8 +74,7 @@ public class GordianCoreZipFactory
     @Override
     public GordianZipLock factoryZipLock(final GordianPasswordLockSpec pLockSpec,
                                          final char[] pPassword) throws GordianException {
-        final GordianLockFactory myLockFactory = theFactory.getLockFactory();
-        final GordianFactoryLock myLock = myLockFactory.newFactoryLock(pLockSpec, GordianFactoryType.BC, pPassword);
+        final GordianFactoryLock myLock = theFactory.newFactoryLock(pLockSpec, GordianFactoryType.BC, pPassword);
         return zipLock(myLock);
     }
 

@@ -23,6 +23,7 @@ import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignParams;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignatureSpec;
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPrivateKey;
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPublicKey;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
 import net.sourceforge.joceanus.gordianknot.impl.core.keypair.GordianKeyPairValidity;
 import net.sourceforge.joceanus.gordianknot.impl.core.sign.GordianCoreSignature;
@@ -152,7 +153,7 @@ public final class BouncyMLDSAKeyPair {
          * @param pFactory the Security Factory
          * @param pKeySpec the keySpec
          */
-        BouncyMLDSAKeyPairGenerator(final BouncyFactory pFactory,
+        BouncyMLDSAKeyPairGenerator(final GordianBaseFactory pFactory,
                                     final GordianKeyPairSpec pKeySpec) {
             /* Initialise underlying class */
             super(pFactory, pKeySpec);
@@ -281,7 +282,7 @@ public final class BouncyMLDSAKeyPair {
          * @param pFactory the factory
          * @param pSpec the signatureSpec.
          */
-        BouncyMLDSASignature(final BouncyFactory pFactory,
+        BouncyMLDSASignature(final GordianBaseFactory pFactory,
                              final GordianSignatureSpec pSpec) {
             /* Initialise underlying class */
             super(pFactory, pSpec);
@@ -366,8 +367,8 @@ public final class BouncyMLDSAKeyPair {
         }
 
         @Override
-        public BouncyFactory getFactory() {
-            return (BouncyFactory) super.getFactory();
+        public GordianBaseFactory getFactory() {
+            return (GordianBaseFactory) super.getFactory();
         }
 
         @Override

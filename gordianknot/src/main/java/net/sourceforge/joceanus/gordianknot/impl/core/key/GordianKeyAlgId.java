@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.gordianknot.impl.core.base;
+package net.sourceforge.joceanus.gordianknot.impl.core.key;
 
 import net.sourceforge.joceanus.gordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
@@ -32,6 +32,9 @@ import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacSpec;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacSpecBuilder;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacType;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianSipHashSpec;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianASN1Util;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.digest.GordianDigestAlgId;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.DERNull;
 import org.bouncycastle.asn1.cryptopro.CryptoProObjectIdentifiers;
@@ -85,7 +88,7 @@ public class GordianKeyAlgId {
      *
      * @param pFactory the factory
      */
-    GordianKeyAlgId(final GordianCoreFactory pFactory) {
+    public GordianKeyAlgId(final GordianBaseFactory pFactory) {
         /* Create the maps */
         theSpecMap = new HashMap<>();
         theIdentifierMap = new HashMap<>();

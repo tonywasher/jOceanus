@@ -21,7 +21,7 @@ import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymKeyType;
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestType;
 import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySetSpec;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianDataConverter;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianIdManager;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianPersonalisation;
@@ -67,7 +67,7 @@ public final class GordianKeySetRecipe {
      * @param pSpec the keySetSpec
      * @param pAEAD true/false is AEAD in use?
      */
-    private GordianKeySetRecipe(final GordianCoreFactory pFactory,
+    private GordianKeySetRecipe(final GordianBaseFactory pFactory,
                                 final GordianKeySetSpec pSpec,
                                 final boolean pAEAD) {
         /* Allocate new set of parameters */
@@ -82,7 +82,7 @@ public final class GordianKeySetRecipe {
      * @param pHeader the header
      * @param pAEAD true/false is AEAD in use?
      */
-    private GordianKeySetRecipe(final GordianCoreFactory pFactory,
+    private GordianKeySetRecipe(final GordianBaseFactory pFactory,
                                 final GordianKeySetSpec pSpec,
                                 final byte[] pHeader,
                                 final boolean pAEAD) {
@@ -105,7 +105,7 @@ public final class GordianKeySetRecipe {
      * @param pAEAD true/false is AEAD in use?
      * @return the recipe
      */
-    static GordianKeySetRecipe newRecipe(final GordianCoreFactory pFactory,
+    static GordianKeySetRecipe newRecipe(final GordianBaseFactory pFactory,
                                          final GordianKeySetSpec pSpec,
                                          final boolean pAEAD) {
         return new GordianKeySetRecipe(pFactory, pSpec, pAEAD);
@@ -120,7 +120,7 @@ public final class GordianKeySetRecipe {
      * @return the recipe
      * @throws GordianException on error
      */
-    static GordianKeySetRecipe parseRecipe(final GordianCoreFactory pFactory,
+    static GordianKeySetRecipe parseRecipe(final GordianBaseFactory pFactory,
                                            final GordianKeySetSpec pSpec,
                                            final byte[] pHeader,
                                            final boolean pAEAD) throws GordianException {
@@ -191,7 +191,7 @@ public final class GordianKeySetRecipe {
          * @param pSpec the keySetSpec
          * @param pAEAD true/false is AEAD in use?
          */
-        GordianKeySetParameters(final GordianCoreFactory pFactory,
+        GordianKeySetParameters(final GordianBaseFactory pFactory,
                                 final GordianKeySetSpec pSpec,
                                 final boolean pAEAD) {
             /* Obtain random */
@@ -217,7 +217,7 @@ public final class GordianKeySetRecipe {
          * @param pSalt the salt
          * @param pAEAD true/false is AEAD in use?
          */
-        GordianKeySetParameters(final GordianCoreFactory pFactory,
+        GordianKeySetParameters(final GordianBaseFactory pFactory,
                                 final GordianKeySetSpec pSpec,
                                 final byte[] pRecipe,
                                 final byte[] pSalt,
@@ -236,7 +236,7 @@ public final class GordianKeySetRecipe {
          * @param pSpec the keySetSpec
          * @param pAEAD true/false is AEAD in use?
          */
-        private void processRecipe(final GordianCoreFactory pFactory,
+        private void processRecipe(final GordianBaseFactory pFactory,
                                    final GordianKeySetSpec pSpec,
                                    final boolean pAEAD) {
             /* Obtain Id manager and random */

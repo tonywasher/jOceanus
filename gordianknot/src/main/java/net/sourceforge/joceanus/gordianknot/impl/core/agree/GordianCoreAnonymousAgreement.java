@@ -22,7 +22,7 @@ import net.sourceforge.joceanus.gordianknot.api.agree.GordianAnonymousAgreement;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianAgreementMessageASN1.GordianMessageType;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 
 /**
  * Encapsulation Agreement.
@@ -35,7 +35,7 @@ public abstract class GordianCoreAnonymousAgreement
      * @param pFactory the factory
      * @param pSpec the agreementSpec
      */
-    protected GordianCoreAnonymousAgreement(final GordianCoreFactory pFactory,
+    protected GordianCoreAnonymousAgreement(final GordianBaseFactory pFactory,
                                             final GordianAgreementSpec pSpec) {
         super(pFactory, pSpec);
     }

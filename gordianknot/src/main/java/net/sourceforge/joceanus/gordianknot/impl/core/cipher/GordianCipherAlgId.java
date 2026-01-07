@@ -17,6 +17,7 @@
 package net.sourceforge.joceanus.gordianknot.impl.core.cipher;
 
 import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
+import net.sourceforge.joceanus.gordianknot.api.cipher.GordianCipherFactory;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianCipherMode;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianCipherSpec;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianPadding;
@@ -28,8 +29,8 @@ import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymKeySpec;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymKeySpecBuilder;
 import net.sourceforge.joceanus.gordianknot.api.key.GordianKeyLengths;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianASN1Util;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianKeyAlgId;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.key.GordianKeyAlgId;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.DERNull;
 import org.bouncycastle.asn1.gm.GMObjectIdentifiers;
@@ -67,13 +68,13 @@ public class GordianCipherAlgId {
      *
      * @param pFactory the factory
      */
-    GordianCipherAlgId(final GordianCoreFactory pFactory) {
+    GordianCipherAlgId(final GordianBaseFactory pFactory) {
         /* Create the maps */
         theSpecMap = new HashMap<>();
         theIdentifierMap = new HashMap<>();
 
         /* Access the cipherFactory  */
-        final GordianCoreCipherFactory myFactory = (GordianCoreCipherFactory) pFactory.getCipherFactory();
+        final GordianCipherFactory myFactory = pFactory.getCipherFactory();
 
         /* Populate with the public standards */
         addWellKnownCiphers128();

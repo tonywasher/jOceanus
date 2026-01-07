@@ -29,7 +29,8 @@ import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySetSpec;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignatureFactory;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignatureSpec;
 import net.sourceforge.joceanus.gordianknot.api.xagree.GordianXAgreementParams;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseData;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.cipher.GordianCoreCipherFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianLogicException;
@@ -46,7 +47,7 @@ public class GordianXCoreAgreementParams
     /**
      * The factory.
      */
-    private final GordianCoreFactory theFactory;
+    private final GordianBaseFactory theFactory;
 
     /**
      * Is this a client or server parameters.
@@ -264,6 +265,9 @@ public class GordianXCoreAgreementParams
             if (!Objects.equals(mySpec.getKeyPairSpec(), myKeyPair.getKeyPairSpec())) {
                 throw new GordianDataException("Client Certificate not valid for agreement");
             }
+            if (!pClient.getUsage().hasUse(GordianKeyPairUse.AGREEMENT)) {
+                throw new GordianDataException("Client Certificate must be capable of keyAgreement");
+            }
             if (myKeyPair.isPublicOnly()) {
                 throw new GordianDataException("Client Certificate must supply privateKey");
             }
@@ -289,6 +293,9 @@ public class GordianXCoreAgreementParams
             }
             if (!Objects.equals(mySpec.getKeyPairSpec(), myKeyPair.getKeyPairSpec())) {
                 throw new GordianDataException("Server Certificate not valid for agreement");
+            }
+            if (!pServer.getUsage().hasUse(GordianKeyPairUse.AGREEMENT)) {
+                throw new GordianDataException("Server Certificate must be capable of keyAgreement");
             }
 
             /* If we are a server */
@@ -316,7 +323,7 @@ public class GordianXCoreAgreementParams
 
     @Override
     public void setSigner(final GordianCertificate pSigner) throws GordianException {
-        final GordianSignatureFactory mySignFactory = theFactory.getKeyPairFactory().getSignatureFactory();
+        final GordianSignatureFactory mySignFactory = theFactory.getAsyncFactory().getSignatureFactory();
         final GordianSignatureSpec mySignSpec = pSigner == null ? null : mySignFactory.defaultForKeyPair(pSigner.getKeyPair().getKeyPairSpec());
         setSigner(pSigner, mySignSpec);
     }
@@ -343,9 +350,9 @@ public class GordianXCoreAgreementParams
             }
 
             /* Check that signSpec is valid for keyPair */
-            final GordianSignatureFactory mySignFactory = theFactory.getKeyPairFactory().getSignatureFactory();
+            final GordianSignatureFactory mySignFactory = theFactory.getAsyncFactory().getSignatureFactory();
             if (!mySignFactory.validSignatureSpecForKeyPair(pSigner.getKeyPair(), pSignSpec)) {
-                throw new GordianDataException(GordianCoreFactory.getInvalidText(pSignSpec));
+                throw new GordianDataException(GordianBaseData.getInvalidText(pSignSpec));
             }
 
         } else if (mySpec.getAgreementType().isSigned()) {

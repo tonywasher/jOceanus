@@ -44,14 +44,14 @@ public class GordianIdManager {
     /**
      * The Factory.
      */
-    private final GordianCoreFactory theFactory;
+    private final GordianBaseSupplier theFactory;
 
     /**
      * Constructor.
      * @param pFactory the security factory
      * @throws GordianException on error
      */
-    GordianIdManager(final GordianCoreFactory pFactory) throws GordianException  {
+    public GordianIdManager(final GordianBaseSupplier pFactory) throws GordianException  {
         /* Store the factory */
         theFactory = pFactory;
     }

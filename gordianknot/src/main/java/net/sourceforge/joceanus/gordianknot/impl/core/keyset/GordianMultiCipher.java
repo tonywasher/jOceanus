@@ -20,22 +20,19 @@ import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianCipher;
-import net.sourceforge.joceanus.gordianknot.api.cipher.GordianCipherFactory;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianCipherParameters;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianCipherParameters.GordianKeyCipherParameters;
-import net.sourceforge.joceanus.gordianknot.api.cipher.GordianPadding;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymCipher;
-import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymCipherSpecBuilder;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymKeySpec;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymKeyType;
-import net.sourceforge.joceanus.gordianknot.api.factory.GordianKeyPairFactory;
 import net.sourceforge.joceanus.gordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
+import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairFactory;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairGenerator;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacFactory;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacSpec;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacSpecBuilder;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.key.GordianCoreKey;
 import net.sourceforge.joceanus.gordianknot.impl.core.key.GordianCoreKeyGenerator;
@@ -59,7 +56,7 @@ public final class GordianMultiCipher
     /**
      * The factory.
      */
-    private final GordianCoreFactory theFactory;
+    private final GordianBaseFactory theFactory;
 
     /**
      * The number of steps.
@@ -86,7 +83,7 @@ public final class GordianMultiCipher
      * @param pKeySet the keySet
      * @throws GordianException on error
      */
-    GordianMultiCipher(final GordianCoreKeySet pKeySet) throws GordianException {
+    GordianMultiCipher(final GordianBaseKeySet pKeySet) throws GordianException {
         /* Access the factory and determine number of steps */
         theFactory = pKeySet.getFactory();
         theNumSteps = pKeySet.getKeySetSpec().getCipherSteps();
@@ -443,7 +440,7 @@ public final class GordianMultiCipher
         checkParameters(pParams);
 
         /* Secure the key */
-        final GordianKeyPairFactory myFactory = theFactory.getKeyPairFactory();
+        final GordianKeyPairFactory myFactory = theFactory.getAsyncFactory().getKeyPairFactory();
         final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(pKeyPairToSecure.getKeyPairSpec());
         final PKCS8EncodedKeySpec myPKCS8Key = myGenerator.getPKCS8Encoding(pKeyPairToSecure);
         return secureBytes(pParams, myPKCS8Key.getEncoded());
@@ -585,81 +582,5 @@ public final class GordianMultiCipher
 
         /* encrypt the mac*/
         return myCipher.finish(pMac);
-    }
-
-    /**
-     * Class to contain the symmetric key ciphers.
-     */
-    static final class GordianSymKeyCipherSet {
-        /**
-         * Key.
-         */
-        private final GordianKey<GordianSymKeySpec> theKey;
-
-        /**
-         * ECB Cipher (padding).
-         */
-        private final GordianSymCipher thePaddingCipher;
-
-        /**
-         * ECB Cipher (noPadding).
-         */
-        private final GordianSymCipher theStandardCipher;
-
-        /**
-         * Stream Cipher.
-         */
-        private final GordianSymCipher theStreamCipher;
-
-        /**
-         * Constructor.
-         * @param pFactory the factory
-         * @param pKey the key
-         * @throws GordianException on error
-         */
-        GordianSymKeyCipherSet(final GordianCoreFactory pFactory,
-                               final GordianKey<GordianSymKeySpec> pKey) throws GordianException {
-            /* Store parameters */
-            theKey = pKey;
-            final GordianSymKeySpec myKeySpec = theKey.getKeyType();
-            final GordianCipherFactory myFactory = pFactory.getCipherFactory();
-
-            /* Create the standard ciphers */
-            thePaddingCipher = myFactory.createSymKeyCipher(GordianSymCipherSpecBuilder.ecb(myKeySpec, GordianPadding.PKCS7));
-            theStandardCipher = myFactory.createSymKeyCipher(GordianSymCipherSpecBuilder.ecb(myKeySpec, GordianPadding.NONE));
-            theStreamCipher = myFactory.createSymKeyCipher(GordianSymCipherSpecBuilder.sic(myKeySpec));
-        }
-
-        /**
-         * Obtain the key.
-         * @return the Key
-         */
-        GordianKey<GordianSymKeySpec> getKey() {
-            return theKey;
-        }
-
-        /**
-         * Obtain the Padding cipher.
-         * @return the Padding Cipher
-         */
-        GordianSymCipher getPaddingCipher() {
-            return thePaddingCipher;
-        }
-
-        /**
-         * Obtain the Stream cipher.
-         * @return the Stream Cipher
-         */
-        GordianSymCipher getStreamCipher() {
-            return theStreamCipher;
-        }
-
-        /**
-         * Obtain the Standard cipher.
-         * @return the Standard Cipher
-         */
-        GordianSymCipher getStandardCipher() {
-            return theStandardCipher;
-        }
     }
 }

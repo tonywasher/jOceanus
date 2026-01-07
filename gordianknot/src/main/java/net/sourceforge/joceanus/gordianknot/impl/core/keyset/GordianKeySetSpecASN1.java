@@ -49,7 +49,7 @@ public class GordianKeySetSpecASN1
     /**
      * KeySetSpecOID.
      */
-    public static final ASN1ObjectIdentifier KEYSETALGID = GordianCoreKeySetFactory.KEYSETOID.branch("1");
+    public static final ASN1ObjectIdentifier KEYSETALGID = GordianKeySetData.KEYSETOID.branch("1");
 
     /**
      * The KeySetSpec.

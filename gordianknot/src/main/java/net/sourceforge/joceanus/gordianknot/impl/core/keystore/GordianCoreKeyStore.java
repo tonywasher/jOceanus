@@ -18,12 +18,11 @@ package net.sourceforge.joceanus.gordianknot.impl.core.keystore;
 
 import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianKeySpec;
+import net.sourceforge.joceanus.gordianknot.api.cert.GordianCertificate;
+import net.sourceforge.joceanus.gordianknot.api.cert.GordianCertificateId;
 import net.sourceforge.joceanus.gordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySet;
-import net.sourceforge.joceanus.gordianknot.api.cert.GordianCertificate;
-import net.sourceforge.joceanus.gordianknot.api.cert.GordianCertificateId;
-import net.sourceforge.joceanus.gordianknot.api.keystore.GordianKeyStore;
 import net.sourceforge.joceanus.gordianknot.api.keystore.GordianKeyStoreEntry;
 import net.sourceforge.joceanus.gordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStoreCertificate;
 import net.sourceforge.joceanus.gordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStoreKey;
@@ -33,14 +32,13 @@ import net.sourceforge.joceanus.gordianknot.api.lock.GordianPasswordLockSpec;
 import net.sourceforge.joceanus.gordianknot.api.zip.GordianZipFactory;
 import net.sourceforge.joceanus.gordianknot.api.zip.GordianZipLock;
 import net.sourceforge.joceanus.gordianknot.api.zip.GordianZipWriteFile;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.cert.GordianCoreCertificate;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianIOException;
 import net.sourceforge.joceanus.gordianknot.impl.core.keystore.GordianCoreKeyStoreEntry.GordianCoreKeyStoreCertificate;
 import net.sourceforge.joceanus.gordianknot.impl.core.keystore.GordianKeyStoreElement.GordianKeyStoreCertificateElement;
 import net.sourceforge.joceanus.gordianknot.impl.core.keystore.GordianKeyStoreElement.GordianKeyStoreCertificateHolder;
-import net.sourceforge.joceanus.gordianknot.impl.core.keystore.GordianKeyStoreElement.GordianKeyStoreCertificateKey;
 import net.sourceforge.joceanus.gordianknot.impl.core.keystore.GordianKeyStoreElement.GordianKeyStoreKeyElement;
 import net.sourceforge.joceanus.gordianknot.impl.core.keystore.GordianKeyStoreElement.GordianKeyStorePairElement;
 import net.sourceforge.joceanus.gordianknot.impl.core.keystore.GordianKeyStoreElement.GordianKeyStoreSetElement;
@@ -75,7 +73,7 @@ import java.util.Objects;
  * </ol>
  */
 public class GordianCoreKeyStore
-        implements GordianKeyStore {
+        implements GordianBaseKeyStore {
     /**
      * The ZipFile entry name.
      */
@@ -84,7 +82,7 @@ public class GordianCoreKeyStore
     /**
      * The factory.
      */
-    private final GordianCoreFactory theFactory;
+    private final GordianBaseFactory theFactory;
 
     /**
      * The passwordLockSpec.
@@ -104,14 +102,14 @@ public class GordianCoreKeyStore
     /**
      * The aliases.
      */
-    private final Map<String, GordianCoreKeyStoreEntry> theAliases;
+    private final Map<String, GordianKeyStoreEntry> theAliases;
 
     /**
      * Constructor.
      * @param pFactory the factory
      * @param pSpec the passwordLockSpec
      */
-    GordianCoreKeyStore(final GordianCoreFactory pFactory,
+    GordianCoreKeyStore(final GordianBaseFactory pFactory,
                         final GordianPasswordLockSpec pSpec) {
         /* Store parameters */
         theFactory = pFactory;
@@ -123,11 +121,8 @@ public class GordianCoreKeyStore
         theAliases = new LinkedHashMap<>();
     }
 
-    /**
-     * Obtain the factory.
-     * @return the factory
-     */
-    public GordianCoreFactory getFactory() {
+    @Override
+    public GordianBaseFactory getFactory() {
         return theFactory;
     }
 
@@ -139,11 +134,8 @@ public class GordianCoreKeyStore
         return thePasswordLockSpec;
     }
 
-    /**
-     * Obtain the subjectMapOfMaps.
-     * @return the map
-     */
-    Map<GordianCertificateId, Map<GordianCertificateId, GordianCertificate>> getSubjectMapOfMaps() {
+    @Override
+    public Map<GordianCertificateId, Map<GordianCertificateId, GordianCertificate>> getSubjectMapOfMaps() {
         return theSubjectCerts;
     }
 
@@ -155,20 +147,13 @@ public class GordianCoreKeyStore
         return theIssuerCerts;
     }
 
-    /**
-     * Obtain the issuerMapofMaps.
-     * @return the map
-     */
-    Map<String, GordianCoreKeyStoreEntry> getAliasMap() {
+    @Override
+    public Map<String, GordianKeyStoreEntry> getAliasMap() {
         return theAliases;
     }
 
-    /**
-     * Obtain the certificate.
-     * @param pKey the key of the certificate
-     * @return the certificate
-     */
-    GordianCertificate getCertificate(final GordianKeyStoreCertificateKey pKey) {
+    @Override
+    public GordianCertificate getCertificate(final GordianKeyStoreCertificateKey pKey) {
         final Map<GordianCertificateId, GordianCertificate> myCertMap = theSubjectCerts.get(pKey.getSubject());
         return myCertMap == null ? null : myCertMap.get(pKey.getIssuer());
     }
@@ -191,7 +176,7 @@ public class GordianCoreKeyStore
     @Override
     public void deleteEntry(final String pAlias) {
         /* Remove the existing entry */
-        final GordianCoreKeyStoreEntry myEntry = theAliases.remove(pAlias);
+        final GordianKeyStoreEntry myEntry = theAliases.remove(pAlias);
 
         /* Nothing more to do unless we are removing a certificate */
         if (!(myEntry instanceof GordianKeyStoreCertificateHolder)) {
@@ -343,7 +328,7 @@ public class GordianCoreKeyStore
     public void updateCertificateChain(final String pAlias,
                                        final List<GordianCertificate> pCertificateChain) throws GordianException {
         /* Obtain the keyStore Entry */
-        final GordianCoreKeyStoreEntry myEntry = theAliases.get(pAlias);
+        final GordianKeyStoreEntry myEntry = theAliases.get(pAlias);
         if (!(myEntry instanceof GordianKeyStorePairElement)) {
             throw new GordianDataException("Entry not found");
         }
@@ -485,7 +470,7 @@ public class GordianCoreKeyStore
      * @return the certificate entry (or null)
      */
     private GordianKeyStoreCertificate getKeyStoreCertificate(final String pAlias) {
-        final GordianCoreKeyStoreEntry myEntry = theAliases.get(pAlias);
+        final GordianKeyStoreEntry myEntry = theAliases.get(pAlias);
         return myEntry instanceof GordianKeyStoreCertificateElement myElement
                 ? myElement.buildEntry(this)
                 : null;
@@ -500,7 +485,7 @@ public class GordianCoreKeyStore
 
     @Override
     public List<GordianCertificate> getCertificateChain(final String pAlias) {
-        final GordianCoreKeyStoreEntry myEntry = theAliases.get(pAlias);
+        final GordianKeyStoreEntry myEntry = theAliases.get(pAlias);
         return myEntry instanceof GordianKeyStorePairElement myElement
                 ? myElement.buildChain(this)
                 : null;
@@ -514,7 +499,7 @@ public class GordianCoreKeyStore
      */
     private GordianKeyStorePair getKeyStorePair(final String pAlias,
                                                 final char[] pPassword) throws GordianException {
-        final GordianCoreKeyStoreEntry myEntry = theAliases.get(pAlias);
+        final GordianKeyStoreEntry myEntry = theAliases.get(pAlias);
         return myEntry instanceof GordianKeyStorePairElement myElement
                 ? myElement.buildEntry(this, pPassword)
                 : null;
@@ -537,7 +522,7 @@ public class GordianCoreKeyStore
     @SuppressWarnings("unchecked")
     private <T extends GordianKeySpec> GordianKeyStoreKey<T> getKeyStoreKey(final String pAlias,
                                                                             final char[] pPassword) throws GordianException {
-        final GordianCoreKeyStoreEntry myEntry = theAliases.get(pAlias);
+        final GordianKeyStoreEntry myEntry = theAliases.get(pAlias);
         return myEntry instanceof GordianKeyStoreKeyElement
                 ? ((GordianKeyStoreKeyElement<T>) myEntry).buildEntry(this, pPassword)
                 : null;
@@ -558,7 +543,7 @@ public class GordianCoreKeyStore
      */
     private GordianKeyStoreSet getKeyStoreSet(final String pAlias,
                                               final char[] pPassword) throws GordianException {
-        final GordianCoreKeyStoreEntry myEntry = theAliases.get(pAlias);
+        final GordianKeyStoreEntry myEntry = theAliases.get(pAlias);
         return myEntry instanceof GordianKeyStoreSetElement myElement
                 ? myElement.buildEntry(this, pPassword)
                 : null;
@@ -566,14 +551,14 @@ public class GordianCoreKeyStore
 
     @Override
     public LocalDate getCreationDate(final String pAlias) {
-        final GordianCoreKeyStoreEntry myEntry = theAliases.get(pAlias);
+        final GordianKeyStoreEntry myEntry = theAliases.get(pAlias);
         return myEntry != null ? myEntry.getCreationDate() : null;
     }
 
     @Override
     public String getCertificateAlias(final GordianCertificate pCertificate) {
         /* Loop through the alias entries */
-        for (Entry<String, GordianCoreKeyStoreEntry> myRecord : theAliases.entrySet()) {
+        for (Entry<String, GordianKeyStoreEntry> myRecord : theAliases.entrySet()) {
             /* Check for match on certificate entry */
             final GordianKeyStoreEntry myEntry = myRecord.getValue();
             if (myEntry instanceof GordianKeyStoreCertificateHolder myHolder) {
@@ -589,11 +574,8 @@ public class GordianCoreKeyStore
         return null;
     }
 
-    /**
-     * Store certificate.
-     * @param pCertificate the certificate
-     */
-    void storeCertificate(final GordianCertificate pCertificate) {
+    @Override
+    public void storeCertificate(final GordianCertificate pCertificate) {
         /* Access the ids */
         final GordianCertificateId mySubjectId = pCertificate.getSubject();
         final GordianCertificateId myIssuerId = pCertificate.getIssuer();
@@ -660,17 +642,12 @@ public class GordianCoreKeyStore
         }
     }
 
-    /**
-     * find the alias for a keyPair(Set) entry for issuer/serial#.
-     * @param pIssuer the issuer
-     * @return the alias if found
-     * @throws GordianException on error
-     */
-    String findIssuerCert(final IssuerAndSerialNumber pIssuer) throws GordianException {
+    @Override
+    public String findIssuerCert(final IssuerAndSerialNumber pIssuer) throws GordianException {
         /* Loop through the alias entries */
         final X500Name myIssuer = pIssuer.getName();
         final BigInteger mySerial = pIssuer.getSerialNumber().getValue();
-        for (Entry<String, GordianCoreKeyStoreEntry> myEntry : theAliases.entrySet()) {
+        for (Entry<String, GordianKeyStoreEntry> myEntry : theAliases.entrySet()) {
             /* If this is a keyPair(Set) entry */
             if (myEntry.getValue() instanceof GordianKeyStorePairElement myPair) {
                 /* Access details */

@@ -33,7 +33,7 @@ import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymKeySpec;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.gordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.gordianknot.api.key.GordianKeyLengths;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.cipher.GordianCoreCipherFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.cipher.GordianCoreWrapper;
 import net.sourceforge.joceanus.gordianknot.junit.regression.SymmetricStore.FactorySymCipherSpec;
@@ -546,7 +546,7 @@ public class SymmetricSymScripts {
      */
     private static void checkSymKeyAlgId(final FactorySymKeySpec pSpec) {
         /* Access the factory */
-        final GordianCoreFactory myFactory = (GordianCoreFactory) pSpec.getFactory();
+        final GordianBaseFactory myFactory = (GordianBaseFactory) pSpec.getFactory();
 
         /* Check that we have an id */
         final AlgorithmIdentifier myId = myFactory.getIdentifierForSpec(pSpec.getSpec());

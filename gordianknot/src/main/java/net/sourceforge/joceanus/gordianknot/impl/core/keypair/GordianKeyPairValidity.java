@@ -34,7 +34,7 @@ import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignParams;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignature;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignatureFactory;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignatureSpec;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianLogicException;
 
@@ -61,7 +61,7 @@ public final class GordianKeyPairValidity {
      * @param pKeyPair the keyPair
      * @throws GordianException on error
      */
-    public static void checkValidity(final GordianCoreFactory pFactory,
+    public static void checkValidity(final GordianBaseFactory pFactory,
                                      final GordianKeyPair pKeyPair) throws GordianException {
         final Object myCheck = getValidityCheck(pFactory, pKeyPair);
         if (myCheck instanceof GordianSignatureSpec mySpec) {
@@ -82,14 +82,14 @@ public final class GordianKeyPairValidity {
      * @param pSignSpec the signature spec
      * @throws GordianException on error
      */
-    private static void checkValidity(final GordianCoreFactory pFactory,
+    private static void checkValidity(final GordianBaseFactory pFactory,
                                       final GordianKeyPair pKeyPair,
                                       final GordianSignatureSpec pSignSpec) throws GordianException {
         /* Use default personalisation as the data to sign */
         final byte[] myData = pFactory.getRandomSource().defaultPersonalisation();
 
         /* Create signer */
-        final GordianSignatureFactory mySigns = pFactory.getKeyPairFactory().getSignatureFactory();
+        final GordianSignatureFactory mySigns = pFactory.getAsyncFactory().getSignatureFactory();
         final GordianSignature mySigner = mySigns.createSigner(pSignSpec);
 
         /* Create signature */
@@ -113,14 +113,14 @@ public final class GordianKeyPairValidity {
      * @param pEncryptSpec the encryption spec
      * @throws GordianException on error
      */
-    private static void checkValidity(final GordianCoreFactory pFactory,
+    private static void checkValidity(final GordianBaseFactory pFactory,
                                       final GordianKeyPair pKeyPair,
                                       final GordianEncryptorSpec pEncryptSpec) throws GordianException {
         /* Use default personalisation as the data to encrypt */
         final byte[] myData = pFactory.getRandomSource().defaultPersonalisation();
 
         /* Create encryptor */
-        final GordianEncryptorFactory myEncrypts = pFactory.getKeyPairFactory().getEncryptorFactory();
+        final GordianEncryptorFactory myEncrypts = pFactory.getAsyncFactory().getEncryptorFactory();
         final GordianEncryptor myEncryptor = myEncrypts.createEncryptor(pEncryptSpec);
 
         /* Encrypt data */
@@ -144,11 +144,11 @@ public final class GordianKeyPairValidity {
      * @param pAgreeSpec the agreementSpec
      * @throws GordianException on error
      */
-    private static void checkValidity(final GordianCoreFactory pFactory,
+    private static void checkValidity(final GordianBaseFactory pFactory,
                                       final GordianKeyPair pKeyPair,
                                       final GordianAgreementSpec pAgreeSpec) throws GordianException {
         /* Create agreement on client side */
-        final GordianAgreementFactory myAgrees = pFactory.getKeyPairFactory().getAgreementFactory();
+        final GordianAgreementFactory myAgrees = pFactory.getAsyncFactory().getAgreementFactory();
         GordianAnonymousAgreement myAgreement
                 = (GordianAnonymousAgreement) myAgrees.createAgreement(pAgreeSpec);
         final byte[] myHello = myAgreement.createClientHello(pKeyPair);
@@ -172,7 +172,7 @@ public final class GordianKeyPairValidity {
      * @param pKeyPair the keyPair
      * @return the validity check
      */
-    private static Object getValidityCheck(final GordianCoreFactory pFactory,
+    private static Object getValidityCheck(final GordianBaseFactory pFactory,
                                            final GordianKeyPair pKeyPair) {
         /* Switch on keyType */
         final GordianKeyPairSpec mySpec = pKeyPair.getKeyPairSpec();
@@ -192,7 +192,7 @@ public final class GordianKeyPairValidity {
             case PICNIC:
             case XMSS:
             case LMS:
-                return pFactory.getKeyPairFactory().getSignatureFactory().defaultForKeyPair(mySpec);
+                return pFactory.getAsyncFactory().getSignatureFactory().defaultForKeyPair(mySpec);
             case ELGAMAL:
                 return GordianEncryptorSpecBuilder.elGamal(GordianDigestSpecBuilder.sha2(GordianLength.LEN_512));
             case DH:

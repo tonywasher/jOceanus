@@ -34,7 +34,7 @@ import net.sourceforge.joceanus.gordianknot.api.key.GordianKeyGenerator;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMac;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacParameters;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacSpec;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianIdManager;
 import net.sourceforge.joceanus.gordianknot.impl.core.cipher.GordianCoreCipherFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.digest.GordianCoreDigestFactory;
@@ -150,7 +150,7 @@ public final class GordianStreamManager {
         OutputStream myCurrent = pBaseStream;
 
         /* Access factory and bump the random engine */
-        final GordianCoreFactory myFactory = theKeySet.getFactory();
+        final GordianBaseFactory myFactory = theKeySet.getFactory();
         final GordianCoreCipherFactory myCiphers = (GordianCoreCipherFactory) myFactory.getCipherFactory();
         final GordianCoreMacFactory myMacs = (GordianCoreMacFactory) myFactory.getMacFactory();
         final GordianIdManager myIdMgr = myFactory.getIdManager();
@@ -227,7 +227,7 @@ public final class GordianStreamManager {
      */
     private GordianDigest generateRandomDigest() throws GordianException {
         /* Access factory */
-        final GordianCoreFactory myFactory = theKeySet.getFactory();
+        final GordianBaseFactory myFactory = theKeySet.getFactory();
         final GordianCoreDigestFactory myDigests = (GordianCoreDigestFactory) myFactory.getDigestFactory();
         final GordianIdManager myIdMgr = myFactory.getIdManager();
 
@@ -243,7 +243,7 @@ public final class GordianStreamManager {
      */
     public List<GordianKey<GordianSymKeySpec>> generateRandomSymKeyList() throws GordianException {
         /* Access factory */
-        final GordianCoreFactory myFactory = theKeySet.getFactory();
+        final GordianBaseFactory myFactory = theKeySet.getFactory();
         final GordianCoreCipherFactory myCiphers = (GordianCoreCipherFactory) myFactory.getCipherFactory();
         final GordianIdManager myIdMgr = myFactory.getIdManager();
 

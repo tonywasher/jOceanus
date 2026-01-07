@@ -18,18 +18,18 @@ package net.sourceforge.joceanus.gordianknot.impl.core.keystore;
 
 import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianKeySpec;
-import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactory;
-import net.sourceforge.joceanus.gordianknot.api.factory.GordianKnuthObfuscater;
 import net.sourceforge.joceanus.gordianknot.api.cert.GordianCertificate;
 import net.sourceforge.joceanus.gordianknot.api.cert.GordianCertificateId;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactory;
+import net.sourceforge.joceanus.gordianknot.api.factory.GordianKnuthObfuscater;
+import net.sourceforge.joceanus.gordianknot.api.keystore.GordianKeyStoreEntry;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianDataConverter;
 import net.sourceforge.joceanus.gordianknot.impl.core.cert.GordianCoreCertificate;
 import net.sourceforge.joceanus.gordianknot.impl.core.cert.GordianCoreCertificateId;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianIOException;
+import net.sourceforge.joceanus.gordianknot.impl.core.keystore.GordianBaseKeyStore.GordianKeyStoreCertificateKey;
 import net.sourceforge.joceanus.gordianknot.impl.core.keystore.GordianKeyStoreElement.GordianKeyStoreCertificateElement;
-import net.sourceforge.joceanus.gordianknot.impl.core.keystore.GordianKeyStoreElement.GordianKeyStoreCertificateKey;
 import net.sourceforge.joceanus.gordianknot.impl.core.keystore.GordianKeyStoreElement.GordianKeyStoreKeyElement;
 import net.sourceforge.joceanus.gordianknot.impl.core.keystore.GordianKeyStoreElement.GordianKeyStoreLockElement;
 import net.sourceforge.joceanus.gordianknot.impl.core.keystore.GordianKeyStoreElement.GordianKeyStorePairElement;
@@ -146,7 +146,7 @@ public final class GordianKeyStoreDocument {
     /**
      * The keyStore.
      */
-    private final GordianCoreKeyStore theKeyStore;
+    private final GordianBaseKeyStore theKeyStore;
 
     /**
      * The document.
@@ -158,7 +158,7 @@ public final class GordianKeyStoreDocument {
      * @param pKeyStore the keyStore
      * @throws GordianException on error
      */
-    public GordianKeyStoreDocument(final GordianCoreKeyStore pKeyStore) throws GordianException {
+    public GordianKeyStoreDocument(final GordianBaseKeyStore pKeyStore) throws GordianException {
         try {
             /* Store the keyStore */
             theKeyStore = pKeyStore;
@@ -217,7 +217,7 @@ public final class GordianKeyStoreDocument {
         final GordianPasswordLockSpecASN1 mySpecASN1 = GordianPasswordLockSpecASN1.getInstance(myAttrArray);
 
         /* Create the empty keyStore */
-        theKeyStore = new GordianCoreKeyStore((GordianCoreFactory) pFactory, mySpecASN1.getLockSpec());
+        theKeyStore = (GordianBaseKeyStore) pFactory.getAsyncFactory().getKeyStoreFactory().createKeyStore(mySpecASN1.getLockSpec());
         theDocument = pDocument;
 
         /* Loop through the nodes */
@@ -247,7 +247,7 @@ public final class GordianKeyStoreDocument {
      * Obtain the keyStore.
      * @return the keyStore
      */
-    public GordianCoreKeyStore getKeyStore() {
+    public GordianBaseKeyStore getKeyStore() {
         return theKeyStore;
     }
 
@@ -266,9 +266,9 @@ public final class GordianKeyStoreDocument {
      */
     private void buildAliases(final Node pAliases) throws GordianException {
         /* Access the Alias entries */
-        for (Entry<String, GordianCoreKeyStoreEntry> myEntry : theKeyStore.getAliasMap().entrySet()) {
+        for (Entry<String, GordianKeyStoreEntry> myEntry : theKeyStore.getAliasMap().entrySet()) {
             /* Determine the entry type */
-            final GordianCoreKeyStoreEntry myElement = myEntry.getValue();
+            final GordianKeyStoreEntry myElement = myEntry.getValue();
             final GordianStoreEntryType myType = GordianStoreEntryType.determineEntryType(myElement);
 
             /* Build alias entry */
@@ -880,7 +880,7 @@ public final class GordianKeyStoreDocument {
          * @param pEntry the entry
          * @return the entry type
          */
-        public static GordianStoreEntryType determineEntryType(final GordianCoreKeyStoreEntry pEntry) {
+        public static GordianStoreEntryType determineEntryType(final GordianKeyStoreEntry pEntry) {
             if (pEntry instanceof GordianKeyStoreSetElement) {
                 return KEYSET;
             }

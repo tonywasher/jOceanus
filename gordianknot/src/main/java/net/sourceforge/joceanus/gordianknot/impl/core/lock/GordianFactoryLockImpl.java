@@ -18,13 +18,14 @@ package net.sourceforge.joceanus.gordianknot.impl.core.lock;
 
 import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactory;
-import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactoryLock;
+import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactory.GordianFactoryLock;
 import net.sourceforge.joceanus.gordianknot.api.lock.GordianPasswordLockSpec;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianDataConverter;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianParameters;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.keyset.GordianCoreKeySet;
+import net.sourceforge.joceanus.gordianknot.impl.core.keyset.GordianKeySetData;
 
 import java.util.Arrays;
 import java.util.Objects;
@@ -37,7 +38,7 @@ public class GordianFactoryLockImpl
     /**
      * The factory.
      */
-    private final GordianCoreFactory theFactory;
+    private final GordianBaseFactory theFactory;
 
     /**
      * The lockASN1.
@@ -57,8 +58,8 @@ public class GordianFactoryLockImpl
      * @param pPassword the password
      * @throws GordianException on error
      */
-    public GordianFactoryLockImpl(final GordianCoreFactory pLockingFactory,
-                                  final GordianCoreFactory pFactoryToLock,
+    public GordianFactoryLockImpl(final GordianBaseFactory pLockingFactory,
+                                  final GordianBaseFactory pFactoryToLock,
                                   final GordianPasswordLockSpec pLockSpec,
                                   final char[] pPassword) throws GordianException {
         /* Protect from exceptions */
@@ -96,7 +97,7 @@ public class GordianFactoryLockImpl
      * @param pPassword the password
      * @throws GordianException on error
      */
-    public GordianFactoryLockImpl(final GordianCoreFactory pLockingFactory,
+    public GordianFactoryLockImpl(final GordianBaseFactory pLockingFactory,
                                   final byte[] pLockBytes,
                                   final char[] pPassword) throws GordianException {
         this(pLockingFactory, GordianPasswordLockASN1.getInstance(pLockBytes), pPassword);
@@ -109,7 +110,7 @@ public class GordianFactoryLockImpl
      * @param pPassword the password
      * @throws GordianException on error
      */
-    public GordianFactoryLockImpl(final GordianCoreFactory pLockingFactory,
+    public GordianFactoryLockImpl(final GordianBaseFactory pLockingFactory,
                                   final GordianPasswordLockASN1 pLockASN1,
                                   final char[] pPassword) throws GordianException {
         this(pLockingFactory, pLockASN1, pLockASN1.getEncodedBytes(), pPassword);
@@ -123,7 +124,7 @@ public class GordianFactoryLockImpl
      * @param pPassword the password
      * @throws GordianException on error
      */
-    public GordianFactoryLockImpl(final GordianCoreFactory pLockingFactory,
+    public GordianFactoryLockImpl(final GordianBaseFactory pLockingFactory,
                                   final GordianPasswordLockASN1 pLockASN1,
                                   final byte[] pLockBytes,
                                   final char[] pPassword) throws GordianException {
@@ -140,7 +141,7 @@ public class GordianFactoryLockImpl
 
             /* Process the password, create parameters and factory */
             final GordianCoreKeySet myKeySet = myRecipe.processPassword(pLockingFactory, myPassword);
-            theFactory = (GordianCoreFactory) myKeySet.deriveFactory(myRecipe.getPayload());
+            theFactory = (GordianBaseFactory) myKeySet.deriveFactory(myRecipe.getPayload());
 
         } finally {
             if (myPassword != null) {
@@ -169,7 +170,7 @@ public class GordianFactoryLockImpl
      * @return the byte length
      */
     public static int getEncodedLength() {
-        return GordianPasswordLockASN1.getEncodedLength(GordianCoreKeySet.getEncryptionLength(GordianParameters.SEED_LEN.getByteLength()));
+        return GordianPasswordLockASN1.getEncodedLength(GordianKeySetData.getEncryptionLength(GordianParameters.SEED_LEN.getByteLength()));
     }
 
     @Override

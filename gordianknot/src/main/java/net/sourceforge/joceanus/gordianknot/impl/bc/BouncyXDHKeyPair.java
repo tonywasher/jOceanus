@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.gordianknot.impl.bc;
 
 import net.sourceforge.joceanus.gordianknot.api.agree.GordianAgreementSpec;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
-import net.sourceforge.joceanus.gordianknot.api.factory.GordianKeyPairFactory;
+import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairFactory;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairGenerator;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
@@ -29,6 +29,7 @@ import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianCoreAnonymous
 import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianCoreBasicAgreement;
 import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianCoreEphemeralAgreement;
 import net.sourceforge.joceanus.gordianknot.impl.core.agree.GordianCoreSignedAgreement;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
 import net.sourceforge.joceanus.gordianknot.impl.core.keypair.GordianKeyPairValidity;
 import net.sourceforge.joceanus.gordianknot.impl.core.xagree.GordianXCoreAgreementFactory;
@@ -192,7 +193,7 @@ public final class BouncyXDHKeyPair {
          * @param pFactory the Security Factory
          * @param pKeySpec the keySpec
          */
-        BouncyX25519KeyPairGenerator(final BouncyFactory pFactory,
+        BouncyX25519KeyPairGenerator(final GordianBaseFactory pFactory,
                                      final GordianKeyPairSpec pKeySpec) {
             /* Initialise underlying class */
             super(pFactory, pKeySpec);
@@ -321,7 +322,7 @@ public final class BouncyXDHKeyPair {
          * @param pFactory the Security Factory
          * @param pKeySpec the keySpec
          */
-        BouncyX448KeyPairGenerator(final BouncyFactory pFactory,
+        BouncyX448KeyPairGenerator(final GordianBaseFactory pFactory,
                                    final GordianKeyPairSpec pKeySpec) {
             /* Initialise underlying class */
             super(pFactory, pKeySpec);
@@ -461,7 +462,7 @@ public final class BouncyXDHKeyPair {
          * @param pFactory the security factory
          * @param pSpec the agreementSpec
          */
-        BouncyXDHAnonymousAgreement(final BouncyFactory pFactory,
+        BouncyXDHAnonymousAgreement(final GordianBaseFactory pFactory,
                                     final GordianAgreementSpec pSpec) {
             /* Initialise underlying class */
             super(pFactory, pSpec);
@@ -480,7 +481,7 @@ public final class BouncyXDHKeyPair {
             theAgreement = establishAgreement(pServer);
 
             /* Create an ephemeral keyPair */
-            final GordianKeyPairFactory myFactory = getFactory().getKeyPairFactory();
+            final GordianKeyPairFactory myFactory = getFactory().getAsyncFactory().getKeyPairFactory();
             final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(pServer.getKeyPairSpec());
             final GordianKeyPair myPair = myGenerator.generateKeyPair();
             final BouncyPrivateKey<?> myPrivate = (BouncyPrivateKey<?>) getPrivateKey(myPair);
@@ -511,7 +512,7 @@ public final class BouncyXDHKeyPair {
             /* Parse request */
             final BouncyPrivateKey<?> myPrivate = (BouncyPrivateKey<?>) getPrivateKey(pServer);
             final X509EncodedKeySpec myKeySpec = pClientHello.getEphemeral();
-            final GordianKeyPairFactory myFactory = getFactory().getKeyPairFactory();
+            final GordianKeyPairFactory myFactory = getFactory().getAsyncFactory().getKeyPairFactory();
             final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(pServer.getKeyPairSpec());
 
             /* Derive partner key */
@@ -541,7 +542,7 @@ public final class BouncyXDHKeyPair {
          * @param pFactory the security factory
          * @param pSpec the agreementSpec
          */
-        BouncyXDHBasicAgreement(final BouncyFactory pFactory,
+        BouncyXDHBasicAgreement(final GordianBaseFactory pFactory,
                                 final GordianAgreementSpec pSpec) {
             /* Initialise underlying class */
             super(pFactory, pSpec);
@@ -616,7 +617,7 @@ public final class BouncyXDHKeyPair {
          * @param pFactory the security factory
          * @param pSpec the agreementSpec
          */
-        BouncyXDHSignedAgreement(final BouncyFactory pFactory,
+        BouncyXDHSignedAgreement(final GordianBaseFactory pFactory,
                                  final GordianAgreementSpec pSpec) {
             /* Initialise underlying class */
             super(pFactory, pSpec);
@@ -682,7 +683,7 @@ public final class BouncyXDHKeyPair {
          * @param pFactory the security factory
          * @param pSpec the agreementSpec
          */
-        BouncyXDHUnifiedAgreement(final BouncyFactory pFactory,
+        BouncyXDHUnifiedAgreement(final GordianBaseFactory pFactory,
                                   final GordianAgreementSpec pSpec) {
             /* Initialise underlying class */
             super(pFactory, pSpec);

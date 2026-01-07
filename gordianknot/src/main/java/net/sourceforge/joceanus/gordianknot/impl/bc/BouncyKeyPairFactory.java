@@ -53,10 +53,10 @@ import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyXDHKeyPair.BouncyX2551
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyXDHKeyPair.BouncyX448KeyPairGenerator;
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyXMSSKeyPair.BouncyXMSSKeyPairGenerator;
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyXMSSKeyPair.BouncyXMSSMTKeyPairGenerator;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseData;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.keypair.GordianCoreKeyPairFactory;
-import net.sourceforge.joceanus.gordianknot.impl.core.keystore.GordianCoreKeyStoreFactory;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -67,6 +67,11 @@ import java.util.Map;
 public class BouncyKeyPairFactory
         extends GordianCoreKeyPairFactory {
     /**
+     * Factory.
+     */
+    private final GordianBaseFactory theFactory;
+
+    /**
      * KeyPairGenerator Cache.
      */
     private final Map<GordianKeyPairSpec, BouncyKeyPairGenerator> theCache;
@@ -76,39 +81,13 @@ public class BouncyKeyPairFactory
      *
      * @param pFactory the factory
      */
-    BouncyKeyPairFactory(final BouncyFactory pFactory) {
+    BouncyKeyPairFactory(final GordianBaseFactory pFactory) {
         /* Initialise underlying class */
         super(pFactory);
+        theFactory = pFactory;
 
         /* Create the cache */
         theCache = new HashMap<>();
-
-        /* Create factories */
-        setSignatureFactory(new BouncySignatureFactory(pFactory));
-        setAgreementFactory(new BouncyAgreementFactory(pFactory));
-        setXAgreementFactory(new BouncyXAgreementFactory(pFactory));
-        setEncryptorFactory(new BouncyEncryptorFactory(pFactory));
-        setKeyStoreFactory(new GordianCoreKeyStoreFactory(this));
-    }
-
-    @Override
-    public BouncyFactory getFactory() {
-        return (BouncyFactory) super.getFactory();
-    }
-
-    @Override
-    public BouncySignatureFactory getSignatureFactory() {
-        return (BouncySignatureFactory) super.getSignatureFactory();
-    }
-
-    @Override
-    public BouncyAgreementFactory getAgreementFactory() {
-        return (BouncyAgreementFactory) super.getAgreementFactory();
-    }
-
-    @Override
-    public BouncyEncryptorFactory getEncryptorFactory() {
-        return (BouncyEncryptorFactory) super.getEncryptorFactory();
     }
 
     @Override
@@ -143,70 +122,70 @@ public class BouncyKeyPairFactory
     private BouncyKeyPairGenerator getBCKeyPairGenerator(final GordianKeyPairSpec pKeySpec) throws GordianException {
         switch (pKeySpec.getKeyPairType()) {
             case RSA:
-                return new BouncyRSAKeyPairGenerator(getFactory(), pKeySpec);
+                return new BouncyRSAKeyPairGenerator(theFactory, pKeySpec);
             case ELGAMAL:
-                return new BouncyElGamalKeyPairGenerator(getFactory(), pKeySpec);
+                return new BouncyElGamalKeyPairGenerator(theFactory, pKeySpec);
             case EC:
             case SM2:
-                return new BouncyECKeyPairGenerator(getFactory(), pKeySpec);
+                return new BouncyECKeyPairGenerator(theFactory, pKeySpec);
             case DSTU4145:
-                return new BouncyDSTUKeyPairGenerator(getFactory(), pKeySpec);
+                return new BouncyDSTUKeyPairGenerator(theFactory, pKeySpec);
             case GOST2012:
-                return new BouncyGOSTKeyPairGenerator(getFactory(), pKeySpec);
+                return new BouncyGOSTKeyPairGenerator(theFactory, pKeySpec);
             case XDH:
                 return pKeySpec.getEdwardsElliptic().is25519()
-                       ?  new BouncyX25519KeyPairGenerator(getFactory(), pKeySpec)
-                       :  new BouncyX448KeyPairGenerator(getFactory(), pKeySpec);
+                       ?  new BouncyX25519KeyPairGenerator(theFactory, pKeySpec)
+                       :  new BouncyX448KeyPairGenerator(theFactory, pKeySpec);
             case EDDSA:
                 return pKeySpec.getEdwardsElliptic().is25519()
-                       ? new BouncyEd25519KeyPairGenerator(getFactory(), pKeySpec)
-                       : new BouncyEd448KeyPairGenerator(getFactory(), pKeySpec);
+                       ? new BouncyEd25519KeyPairGenerator(theFactory, pKeySpec)
+                       : new BouncyEd448KeyPairGenerator(theFactory, pKeySpec);
             case DSA:
-                return new BouncyDSAKeyPairGenerator(getFactory(), pKeySpec);
+                return new BouncyDSAKeyPairGenerator(theFactory, pKeySpec);
             case DH:
-                return new BouncyDHKeyPairGenerator(getFactory(), pKeySpec);
+                return new BouncyDHKeyPairGenerator(theFactory, pKeySpec);
             case SLHDSA:
-                return new BouncySLHDSAKeyPairGenerator(getFactory(), pKeySpec);
+                return new BouncySLHDSAKeyPairGenerator(theFactory, pKeySpec);
             case CMCE:
-                return new BouncyCMCEKeyPairGenerator(getFactory(), pKeySpec);
+                return new BouncyCMCEKeyPairGenerator(theFactory, pKeySpec);
             case FRODO:
-                return new BouncyFrodoKeyPairGenerator(getFactory(), pKeySpec);
+                return new BouncyFrodoKeyPairGenerator(theFactory, pKeySpec);
             case SABER:
-                return new BouncySABERKeyPairGenerator(getFactory(), pKeySpec);
+                return new BouncySABERKeyPairGenerator(theFactory, pKeySpec);
             case MLKEM:
-                return new BouncyMLKEMKeyPairGenerator(getFactory(), pKeySpec);
+                return new BouncyMLKEMKeyPairGenerator(theFactory, pKeySpec);
             case MLDSA:
-                return new BouncyMLDSAKeyPairGenerator(getFactory(), pKeySpec);
+                return new BouncyMLDSAKeyPairGenerator(theFactory, pKeySpec);
             case HQC:
-                return new BouncyHQCKeyPairGenerator(getFactory(), pKeySpec);
+                return new BouncyHQCKeyPairGenerator(theFactory, pKeySpec);
             case BIKE:
-                return new BouncyBIKEKeyPairGenerator(getFactory(), pKeySpec);
+                return new BouncyBIKEKeyPairGenerator(theFactory, pKeySpec);
             case NTRU:
-                return new BouncyNTRUKeyPairGenerator(getFactory(), pKeySpec);
+                return new BouncyNTRUKeyPairGenerator(theFactory, pKeySpec);
             case NTRUPRIME:
                 return pKeySpec.getNTRUPrimeKeySpec().getType() == GordianNTRUPrimeType.NTRUL
-                            ? new BouncyNTRULPrimeKeyPairGenerator(getFactory(), pKeySpec)
-                            : new BouncySNTRUPrimeKeyPairGenerator(getFactory(), pKeySpec);
+                            ? new BouncyNTRULPrimeKeyPairGenerator(theFactory, pKeySpec)
+                            : new BouncySNTRUPrimeKeyPairGenerator(theFactory, pKeySpec);
             case FALCON:
-                return new BouncyFalconKeyPairGenerator(getFactory(), pKeySpec);
+                return new BouncyFalconKeyPairGenerator(theFactory, pKeySpec);
             case MAYO:
-                return new BouncyMayoKeyPairGenerator(getFactory(), pKeySpec);
+                return new BouncyMayoKeyPairGenerator(theFactory, pKeySpec);
             case SNOVA:
-                return new BouncySnovaKeyPairGenerator(getFactory(), pKeySpec);
+                return new BouncySnovaKeyPairGenerator(theFactory, pKeySpec);
             case PICNIC:
-                return new BouncyPicnicKeyPairGenerator(getFactory(), pKeySpec);
+                return new BouncyPicnicKeyPairGenerator(theFactory, pKeySpec);
             case NEWHOPE:
-                return new BouncyNewHopeKeyPairGenerator(getFactory(), pKeySpec);
+                return new BouncyNewHopeKeyPairGenerator(theFactory, pKeySpec);
             case XMSS:
                 return pKeySpec.getXMSSKeySpec().isMT()
-                       ? new BouncyXMSSMTKeyPairGenerator(getFactory(), pKeySpec)
-                       : new BouncyXMSSKeyPairGenerator(getFactory(), pKeySpec);
+                       ? new BouncyXMSSMTKeyPairGenerator(theFactory, pKeySpec)
+                       : new BouncyXMSSKeyPairGenerator(theFactory, pKeySpec);
             case LMS:
                 return pKeySpec.getSubKeyType() instanceof GordianHSSKeySpec
-                       ? new BouncyHSSKeyPairGenerator(getFactory(), pKeySpec)
-                       : new BouncyLMSKeyPairGenerator(getFactory(), pKeySpec);
+                       ? new BouncyHSSKeyPairGenerator(theFactory, pKeySpec)
+                       : new BouncyLMSKeyPairGenerator(theFactory, pKeySpec);
             default:
-                throw new GordianDataException(GordianCoreFactory.getInvalidText(pKeySpec.getKeyPairType()));
+                throw new GordianDataException(GordianBaseData.getInvalidText(pKeySpec.getKeyPairType()));
         }
     }
 }

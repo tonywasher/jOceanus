@@ -31,7 +31,8 @@ import net.sourceforge.joceanus.gordianknot.api.cipher.GordianPBESpec.GordianPBE
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianPBESpec.GordianPBEDigestAndCountSpec;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianPBESpec.GordianPBESCryptSpec;
 import net.sourceforge.joceanus.gordianknot.api.key.GordianKey;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseData;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianRandomSource;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.key.GordianCoreKeyGenerator;
@@ -61,7 +62,7 @@ public class GordianCoreCipherParameters<T extends GordianKeySpec> {
     /**
      * The factory.
      */
-    private final GordianCoreFactory theFactory;
+    private final GordianBaseFactory theFactory;
 
     /**
      * The cipherSpec.
@@ -108,7 +109,7 @@ public class GordianCoreCipherParameters<T extends GordianKeySpec> {
      * @param pFactory the factory
      * @param pCipherSpec the CipherSpec
      */
-    GordianCoreCipherParameters(final GordianCoreFactory pFactory,
+    GordianCoreCipherParameters(final GordianBaseFactory pFactory,
                                 final GordianCipherSpec<T> pCipherSpec) {
         theFactory = pFactory;
         theSpec = pCipherSpec;
@@ -189,9 +190,9 @@ public class GordianCoreCipherParameters<T extends GordianKeySpec> {
         /* Check that the PBE parameters are supported */
         final GordianPBESpec myPBESpec = pParams.getPBESpec();
         final GordianPBECipherSpec<T> myPBECipherSpec = new GordianPBECipherSpec<>(myPBESpec, theSpec);
-        final GordianCoreCipherFactory myCipherFactory = (GordianCoreCipherFactory) theFactory.getCipherFactory();
+        final GordianBaseCipherFactory myCipherFactory = (GordianBaseCipherFactory) theFactory.getCipherFactory();
         if (!myCipherFactory.supportedPBECipherSpecs().test(myPBECipherSpec)) {
-            throw new GordianDataException(GordianCoreFactory.getInvalidText(myPBECipherSpec));
+            throw new GordianDataException(GordianBaseData.getInvalidText(myPBECipherSpec));
         }
 
         /* Access PBE details */

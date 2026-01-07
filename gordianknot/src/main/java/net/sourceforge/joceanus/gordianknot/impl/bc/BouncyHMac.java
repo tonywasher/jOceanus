@@ -18,6 +18,7 @@ package net.sourceforge.joceanus.gordianknot.impl.bc;
 
 import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
+import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestFactory;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacSpec;
 import org.bouncycastle.crypto.CipherParameters;
 import org.bouncycastle.crypto.Digest;
@@ -89,10 +90,10 @@ public class BouncyHMac
      * @param pFactory the DigestFactory
      * @param pMacSpec the MacSpec
      */
-    BouncyHMac(final BouncyDigestFactory pFactory,
+    BouncyHMac(final GordianDigestFactory pFactory,
                final GordianMacSpec pMacSpec) throws GordianException {
         theMacSpec = pMacSpec;
-        theDigest = pFactory.createDigest(pMacSpec.getDigestSpec()).getDigest();
+        theDigest = ((BouncyDigest) pFactory.createDigest(pMacSpec.getDigestSpec())).getDigest();
         theDigestLen = theMacSpec.getMacLength().getByteLength();
         final int myBlockLen = theDigest instanceof ExtendedDigest xd
                 ? xd.getByteLength()

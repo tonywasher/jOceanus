@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.gordianknot.impl.core.base;
+package net.sourceforge.joceanus.gordianknot.impl.core.digest;
 
 import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestFactory;
@@ -22,6 +22,8 @@ import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestSpec;
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestSpecBuilder;
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestSubSpec.GordianDigestState;
 import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestType;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianASN1Util;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.DERNull;
 import org.bouncycastle.asn1.cryptopro.CryptoProObjectIdentifiers;
@@ -62,7 +64,7 @@ public class GordianDigestAlgId {
      *
      * @param pFactory the factory
      */
-    GordianDigestAlgId(final GordianCoreFactory pFactory) {
+    public GordianDigestAlgId(final GordianBaseFactory pFactory) {
         /* Create the maps */
         theSpecMap = new HashMap<>();
         theIdentifierMap = new HashMap<>();

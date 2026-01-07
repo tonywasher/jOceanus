@@ -14,79 +14,16 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.gordianknot.api.factory;
+package net.sourceforge.joceanus.gordianknot.api.lock;
 
 import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySet;
-import net.sourceforge.joceanus.gordianknot.api.lock.GordianKeyPairLock;
-import net.sourceforge.joceanus.gordianknot.api.lock.GordianKeySetLock;
-import net.sourceforge.joceanus.gordianknot.api.lock.GordianPasswordLockSpec;
 
 /**
  * Lock Factory API.
  */
 public interface GordianLockFactory {
-    /**
-     * Create a new factoryLock.
-     * @param pFactoryToLock the factory to lock
-     * @param pPassword the password
-     * @return the factoryLock
-     * @throws GordianException on error
-     */
-    default GordianFactoryLock newFactoryLock(final GordianFactory pFactoryToLock,
-                                              final char[] pPassword) throws GordianException {
-        /* Create the factoryLock */
-        return newFactoryLock(pFactoryToLock, new GordianPasswordLockSpec(), pPassword);
-    }
-
-    /**
-     * Create a new factoryLock for a factory.
-     * @param pFactoryToLock the factory to lock
-     * @param pLockSpec the locking spec
-     * @param pPassword the password
-     * @return the factoryLock
-     * @throws GordianException on error
-     */
-    GordianFactoryLock newFactoryLock(GordianFactory pFactoryToLock,
-                                      GordianPasswordLockSpec pLockSpec,
-                                      char[] pPassword) throws GordianException;
-
-    /**
-     * Create a new factoryLock.
-     * @param pFactoryType the factoryType
-     * @param pPassword the password
-     * @return the factoryLock
-     * @throws GordianException on error
-     */
-    default GordianFactoryLock newFactoryLock(final GordianFactoryType pFactoryType,
-                                              final char[] pPassword) throws GordianException {
-        /* Create the factoryLock */
-        return newFactoryLock(new GordianPasswordLockSpec(), pFactoryType, pPassword);
-    }
-
-    /**
-     * Create a new factoryLock for a new random factory.
-     * @param pLockSpec the locking spec
-     * @param pFactoryType the factoryType
-     * @param pPassword the password
-     * @return the factoryLock
-     * @throws GordianException on error
-     */
-    GordianFactoryLock newFactoryLock(GordianPasswordLockSpec pLockSpec,
-                                      GordianFactoryType pFactoryType,
-                                      char[] pPassword) throws GordianException;
-
-    /**
-     * Resolve a factoryLock.
-     * @param pLockBytes the lockBytes
-     * @param pPassword the password
-     * @return the resolved factoryLock
-     * @throws GordianException on error
-     */
-    GordianFactoryLock resolveFactoryLock(byte[] pLockBytes,
-                                          char[] pPassword) throws GordianException;
-
     /**
      * Create a new keySetLock for a keySet.
      * @param pKeySetToLock the keySet to lock

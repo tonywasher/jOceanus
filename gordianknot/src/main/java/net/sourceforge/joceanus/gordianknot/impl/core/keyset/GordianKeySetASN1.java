@@ -25,7 +25,7 @@ import net.sourceforge.joceanus.gordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySetSpec;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianASN1Util;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianASN1Util.GordianASN1Object;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianIOException;
 import net.sourceforge.joceanus.gordianknot.impl.core.key.GordianCoreKey;
@@ -76,7 +76,7 @@ public class GordianKeySetASN1
      * Create the ASN1 sequence.
      * @param pKeySet the keySet
      */
-    GordianKeySetASN1(final GordianCoreKeySet pKeySet) {
+    GordianKeySetASN1(final GordianBaseKeySet pKeySet) {
         /* Store the KeySetSpec */
         theSpec = pKeySet.getKeySetSpec();
 
@@ -166,11 +166,11 @@ public class GordianKeySetASN1
      * @return the new keySet
      * @throws GordianException on error
      */
-    GordianCoreKeySet buildKeySet(final GordianCoreFactory pFactory) throws GordianException {
+    GordianBaseKeySet buildKeySet(final GordianBaseFactory pFactory) throws GordianException {
         /* Create the new keySet */
-        final GordianCoreKeySetFactory myKeySetFactory = (GordianCoreKeySetFactory) pFactory.getKeySetFactory();
+        final GordianBaseKeySetFactory myKeySetFactory = (GordianBaseKeySetFactory) pFactory.getKeySetFactory();
         final GordianCipherFactory myCipherFactory = pFactory.getCipherFactory();
-        final GordianCoreKeySet myKeySet = myKeySetFactory.createKeySet(theSpec);
+        final GordianBaseKeySet myKeySet = myKeySetFactory.createKeySet(theSpec);
 
         /* Declare the keys */
         for (Entry<Integer, byte[]> myEntry : theMap.entrySet()) {

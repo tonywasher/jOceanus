@@ -30,9 +30,10 @@ import net.sourceforge.joceanus.gordianknot.api.cipher.GordianStreamKeySpecBuild
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymCipherSpec;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymCipherSpecBuilder;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymKeySpecBuilder;
+import net.sourceforge.joceanus.gordianknot.api.factory.GordianAsyncFactory;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactoryType;
-import net.sourceforge.joceanus.gordianknot.api.factory.GordianKeyPairFactory;
+import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairFactory;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairGenerator;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
@@ -100,14 +101,14 @@ public final class AsymmetricAgreeScripts {
                                       final GordianFactory pJCAFactory) throws GordianException {
         /* Create the BC Signer */
         final GordianKeyPairSpec mySpec = GordianKeyPairSpecBuilder.ed448();
-        GordianKeyPairFactory myFactory = pBCFactory.getKeyPairFactory();
+        GordianKeyPairFactory myFactory = pBCFactory.getAsyncFactory().getKeyPairFactory();
         GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(mySpec);
         sgBCSIGNER = myGenerator.generateKeyPair();
 
         /* Derive the JCASigner */
         final X509EncodedKeySpec myPublic = myGenerator.getX509Encoding(sgBCSIGNER);
         final PKCS8EncodedKeySpec myPrivate = myGenerator.getPKCS8Encoding(sgBCSIGNER);
-        myFactory = pJCAFactory.getKeyPairFactory();
+        myFactory = pJCAFactory.getAsyncFactory().getKeyPairFactory();
         myGenerator = myFactory.getKeyPairGenerator(mySpec);
         sgJCASIGNER = myGenerator.deriveKeyPair(myPublic, myPrivate);
     }
@@ -149,7 +150,7 @@ public final class AsymmetricAgreeScripts {
         myTests = Stream.concat(myTests, Stream.of(DynamicTest.dynamicTest("checkAlgId", () -> checkAgreementAlgId(pAgreement))));
 
         /* Check that the partner supports this keySpec*/
-        final GordianKeyPairFactory myTgtAsym = pAgreement.getOwner().getPartner();
+        final GordianAsyncFactory myTgtAsym = pAgreement.getOwner().getPartner();
         if (myTgtAsym != null) {
             /* Add partner test if the partner supports this agreement */
             final GordianAgreementFactory myTgtAgrees = pAgreement.getOwner().getPartner().getAgreementFactory();

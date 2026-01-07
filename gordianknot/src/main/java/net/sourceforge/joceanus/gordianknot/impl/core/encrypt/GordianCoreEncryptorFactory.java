@@ -26,7 +26,8 @@ import net.sourceforge.joceanus.gordianknot.api.encrypt.GordianSM2EncryptionSpec
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairType;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseData;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 
@@ -43,7 +44,7 @@ public abstract class GordianCoreEncryptorFactory
     /**
      * The factory.
      */
-    private final GordianCoreFactory theFactory;
+    private final GordianBaseFactory theFactory;
 
     /**
      * The algorithm Ids.
@@ -54,7 +55,7 @@ public abstract class GordianCoreEncryptorFactory
      * Constructor.
      * @param pFactory the factory
      */
-    protected GordianCoreEncryptorFactory(final GordianCoreFactory pFactory) {
+    protected GordianCoreEncryptorFactory(final GordianBaseFactory pFactory) {
         theFactory = pFactory;
     }
 
@@ -62,7 +63,7 @@ public abstract class GordianCoreEncryptorFactory
      * Obtain the factory.
      * @return the factory
      */
-    protected GordianCoreFactory getFactory() {
+    protected GordianBaseFactory getFactory() {
         return theFactory;
     }
 
@@ -79,7 +80,7 @@ public abstract class GordianCoreEncryptorFactory
     protected void checkEncryptorSpec(final GordianEncryptorSpec pEncryptorSpec) throws GordianException {
         /* Check validity of encryptor */
         if (!validEncryptorSpec(pEncryptorSpec)) {
-            throw new GordianDataException(GordianCoreFactory.getInvalidText(pEncryptorSpec));
+            throw new GordianDataException(GordianBaseData.getInvalidText(pEncryptorSpec));
         }
     }
 

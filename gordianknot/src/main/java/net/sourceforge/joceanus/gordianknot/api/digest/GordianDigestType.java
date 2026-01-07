@@ -16,6 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.gordianknot.api.digest;
 
+import net.sourceforge.joceanus.gordianknot.api.base.GordianBundleLoader.GordianBundleId;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
 
 /**
@@ -178,17 +179,13 @@ public enum GordianDigestType {
      */
     GordianDigestType(final GordianLength... pLengths) {
         theLengths = pLengths;
-    }
+     }
 
     @Override
     public String toString() {
-        /* If we have not yet loaded the name */
         if (theName == null) {
-            /* Load the name */
-            theName = GordianDigestResource.getKeyForDigest(this).getValue();
+            theName = bundleIdForDigestType().getValue();
         }
-
-        /* return the name */
         return theName;
     }
 
@@ -274,6 +271,74 @@ public enum GordianDigestType {
                 return true;
             default:
                 return false;
+        }
+    }
+
+    /**
+     * Obtain the resource bundleId for this digestType.
+     * @return the resource bundleId
+     */
+    private GordianBundleId bundleIdForDigestType() {
+        /* Create the map and return it */
+        switch (this) {
+            case SHA2:
+                return GordianDigestResource.DIGEST_SHA2;
+            case TIGER:
+                return GordianDigestResource.DIGEST_TIGER;
+            case WHIRLPOOL:
+                return GordianDigestResource.DIGEST_WHIRLPOOL;
+            case RIPEMD:
+                return GordianDigestResource.DIGEST_RIPEMD;
+            case STREEBOG:
+                return GordianDigestResource.DIGEST_STREEBOG;
+            case GOST:
+                return GordianDigestResource.DIGEST_GOST;
+            case SHA3:
+                return GordianDigestResource.DIGEST_SHA3;
+            case SHAKE:
+                return GordianDigestResource.DIGEST_SHAKE;
+            case SKEIN:
+                return GordianDigestResource.DIGEST_SKEIN;
+            case SM3:
+                return GordianDigestResource.DIGEST_SM3;
+            case BLAKE2:
+                return GordianDigestResource.DIGEST_BLAKE2;
+            case BLAKE3:
+                return GordianDigestResource.DIGEST_BLAKE3;
+            case KUPYNA:
+                return GordianDigestResource.DIGEST_KUPYNA;
+            case SHA1:
+                return GordianDigestResource.DIGEST_SHA1;
+            case MD5:
+                return GordianDigestResource.DIGEST_MD5;
+            case MD4:
+                return GordianDigestResource.DIGEST_MD4;
+            case MD2:
+                return GordianDigestResource.DIGEST_MD2;
+            case JH:
+                return GordianDigestResource.DIGEST_JH;
+            case GROESTL:
+                return GordianDigestResource.DIGEST_GROESTL;
+            case CUBEHASH:
+                return GordianDigestResource.DIGEST_CUBEHASH;
+            case KANGAROO:
+                return GordianDigestResource.DIGEST_KANGAROO;
+            case HARAKA:
+                return GordianDigestResource.DIGEST_HARAKA;
+            case ASCON:
+                return GordianDigestResource.DIGEST_ASCON;
+            case ISAP:
+                return GordianDigestResource.DIGEST_ISAP;
+            case PHOTONBEETLE:
+                return GordianDigestResource.DIGEST_PHOTONBEETLE;
+            case ROMULUS:
+                return GordianDigestResource.DIGEST_ROMULUS;
+            case SPARKLE:
+                return GordianDigestResource.DIGEST_SPARKLE;
+            case XOODYAK:
+                return GordianDigestResource.DIGEST_XOODYAK;
+            default:
+                throw new IllegalArgumentException();
         }
     }
 }

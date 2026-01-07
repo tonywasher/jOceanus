@@ -30,6 +30,7 @@ import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyPublicKe
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyStateAwareKeyPair;
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyKeyPair.BouncyStateAwarePrivateKey;
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncySignature.BouncyDigestSignature;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
 import net.sourceforge.joceanus.gordianknot.impl.core.keypair.GordianKeyPairValidity;
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
@@ -190,7 +191,7 @@ public final class BouncyXMSSKeyPair {
          * @param pFactory the Security Factory
          * @param pKeySpec the keySpec
          */
-        BouncyXMSSKeyPairGenerator(final BouncyFactory pFactory,
+        BouncyXMSSKeyPairGenerator(final GordianBaseFactory pFactory,
                                    final GordianKeyPairSpec pKeySpec) {
             /* Initialise underlying class */
             super(pFactory, pKeySpec);
@@ -450,7 +451,7 @@ public final class BouncyXMSSKeyPair {
          * @param pFactory the Security Factory
          * @param pKeySpec the keySpec
          */
-        BouncyXMSSMTKeyPairGenerator(final BouncyFactory pFactory,
+        BouncyXMSSMTKeyPairGenerator(final GordianBaseFactory pFactory,
                                      final GordianKeyPairSpec pKeySpec) {
             /* Initialise underlying class */
             super(pFactory, pKeySpec);
@@ -605,7 +606,7 @@ public final class BouncyXMSSKeyPair {
          * @param pSpec the signatureSpec.
          * @throws GordianException on error
          */
-        BouncyXMSSSignature(final BouncyFactory pFactory,
+        BouncyXMSSSignature(final GordianBaseFactory pFactory,
                             final GordianSignatureSpec pSpec) throws GordianException {
             /* Initialise underlying class */
             super(pFactory, pSpec);

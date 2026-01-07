@@ -21,7 +21,8 @@
                     <source>
 /* Access factory */
 final GordianFactory myBaseFactory = GordianGenerator.createFactory();
-final GordianKeyPairFactory myKeyPairFactory = myBaseFactory.getKeyPairFactory();
+final GordianAsyncFactory myAsyncFactory = myBase.getAsyncFactory();
+final GordianKeyPairFactory myKeyPairFactory = myAsyncFactory.getKeyPairFactory();
 
 /* Access keyPairGenerator */
 final GordianKeyPairSpec mySpec = GordianKeyPairSpecBuilder.rsa(GordianRSAModulus.MOD2048);
@@ -90,7 +91,8 @@ final GordianKeyPair myDerived = myGenerator.deriveKeyPair(myX509, myPKCS8);
                     <source>
 /* Access factory */
 final GordianFactory myBaseFactory = GordianGenerator.createFactory();
-final GordianKeyPairFactory myKeyPairFactory = myBaseFactory.getKeyPairFactory();
+final GordianAsyncFactory myAsyncFactory = myBase.getAsyncFactory();
+final GordianKeyPairFactory myKeyPairFactory = myAsyncFactory.getKeyPairFactory();
 
 /* Access keyPairGenerator */
 final GordianKeyPairSpec mySpec = GordianKeyPairSpecBuilder.composite(GordianKeyPairSpecBuilder.rsa(GordianRSAModulus.MOD2048),

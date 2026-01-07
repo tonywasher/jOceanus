@@ -19,12 +19,13 @@ package net.sourceforge.joceanus.gordianknot.junit.regression;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactoryType;
-import net.sourceforge.joceanus.gordianknot.api.factory.GordianKeyPairFactory;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
+import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairFactory;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianStateAwareKeyPair;
 import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySet;
 import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySetFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.factory.GordianCoreAsyncFactory;
 import net.sourceforge.joceanus.gordianknot.junit.regression.AsymmetricStore.FactoryKeyPairs;
 import net.sourceforge.joceanus.gordianknot.junit.regression.AsymmetricStore.FactoryKeySpec;
 import net.sourceforge.joceanus.gordianknot.util.GordianGenerator;
@@ -176,7 +177,7 @@ class AsymmetricTest {
     private void checkKeyPair(final FactoryKeySpec pKeySpec) throws GordianException {
         /* Access the keyPairs */
         final FactoryKeyPairs myPairs = pKeySpec.getKeyPairs();
-        final GordianKeyPairFactory myFactory = pKeySpec.getFactory();
+        final GordianKeyPairFactory myFactory = pKeySpec.getFactory().getKeyPairFactory();
         final GordianKeyPairSpec mySpec = pKeySpec.getKeySpec();
 
         /* Check X509Encodings */
@@ -211,7 +212,7 @@ class AsymmetricTest {
     private void checkKeyWrap(final FactoryKeySpec pKeySpec) throws GordianException {
         /* Access the keyPairs */
         final FactoryKeyPairs myPairs = pKeySpec.getKeyPairs();
-        final GordianKeyPairFactory myFactory = pKeySpec.getFactory();
+        final GordianCoreAsyncFactory myFactory = (GordianCoreAsyncFactory) pKeySpec.getFactory();
         final GordianKeyPair myPair = myPairs.getKeyPair();
         final X509EncodedKeySpec myPublic = myPairs.getX509Encoding();
 

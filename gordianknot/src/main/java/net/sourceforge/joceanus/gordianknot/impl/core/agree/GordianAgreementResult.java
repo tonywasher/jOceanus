@@ -33,7 +33,7 @@ import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactoryType;
 import net.sourceforge.joceanus.gordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySet;
 import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySetSpec;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianDataConverter;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianParameters;
 import net.sourceforge.joceanus.gordianknot.impl.core.kdf.GordianHKDFEngine;
@@ -53,7 +53,7 @@ public class GordianAgreementResult {
     /**
      * The factory.
      */
-    private final GordianCoreFactory theFactory;
+    private final GordianBaseFactory theFactory;
 
     /**
      * The client initVector.
@@ -69,7 +69,7 @@ public class GordianAgreementResult {
      * constructor.
      * @param pFactory the factory
      */
-    GordianAgreementResult(final GordianCoreFactory pFactory) {
+    GordianAgreementResult(final GordianBaseFactory pFactory) {
         theFactory = pFactory;
     }
 

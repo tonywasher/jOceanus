@@ -23,7 +23,8 @@ import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.encrypt.GordianEncryptor;
 import net.sourceforge.joceanus.gordianknot.api.encrypt.GordianEncryptorFactory;
 import net.sourceforge.joceanus.gordianknot.api.encrypt.GordianEncryptorSpec;
-import net.sourceforge.joceanus.gordianknot.api.factory.GordianKeyPairFactory;
+import net.sourceforge.joceanus.gordianknot.api.factory.GordianAsyncFactory;
+import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairFactory;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairGenerator;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairSpec;
@@ -35,7 +36,7 @@ import net.sourceforge.joceanus.gordianknot.api.keystore.GordianKeyStoreEntry.Go
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignParams;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignature;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignatureSpec;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.cert.GordianCoreCertificate;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianIOException;
@@ -82,7 +83,7 @@ public class GordianCRMParser {
     /**
      * The gateway.
      */
-    private final GordianCoreKeyStoreGateway theGateway;
+    private final GordianBaseKeyStoreGateway theGateway;
 
     /**
      * The builder.
@@ -94,7 +95,7 @@ public class GordianCRMParser {
      * @param pGateway the gateway
      * @param pBuilder the builder
      */
-    GordianCRMParser(final GordianCoreKeyStoreGateway pGateway,
+    GordianCRMParser(final GordianBaseKeyStoreGateway pGateway,
                      final GordianCRMBuilder pBuilder) {
         /* Store parameters */
         theGateway = pGateway;
@@ -141,7 +142,7 @@ public class GordianCRMParser {
 
         /* Derive keyPair and create certificate chain */
         final GordianKeyPair myPair = deriveKeyPair(myProof, myCertReq, mySubject, myPublic);
-        final GordianCoreKeyStoreManager myKeyStoreMgr = theGateway.getKeyStoreManager();
+        final GordianBaseKeyStoreManager myKeyStoreMgr = (GordianBaseKeyStoreManager) theGateway.getKeyStoreManager();
         final GordianKeyStorePair mySigner = theGateway.getSigner();
         if (mySigner == null) {
             throw new GordianLogicException("Null keyPairSigner");
@@ -243,7 +244,7 @@ public class GordianCRMParser {
         final IssuerAndSerialNumber myIssId = (IssuerAndSerialNumber) pRecInfo.getRecipientIdentifier().getId();
 
         /* Locate issuer */
-        final GordianCoreKeyStore myKeyStore = theGateway.getKeyStore();
+        final GordianBaseKeyStore myKeyStore = (GordianBaseKeyStore) theGateway.getKeyStore();
         final String myAlias = myKeyStore.findIssuerCert(myIssId);
         final Function<String, char[]> myResolver = theGateway.getPasswordResolver();
         final char[] myPassword = myResolver.apply(myAlias);
@@ -298,10 +299,11 @@ public class GordianCRMParser {
         /* Protect against exceptions */
         try {
             /* Derive the public Key */
-            final GordianKeyPairFactory myFactory = theGateway.getFactory().getKeyPairFactory();
+            final GordianAsyncFactory myFactory = theGateway.getFactory().getAsyncFactory();
+            final GordianKeyPairFactory myKPFactory = myFactory.getKeyPairFactory();
             final X509EncodedKeySpec myX509Spec = new X509EncodedKeySpec(pPublicKey.getEncoded());
-            final GordianKeyPairSpec myKeySpec = myFactory.determineKeyPairSpec(myX509Spec);
-            final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(myKeySpec);
+            final GordianKeyPairSpec myKeySpec = myKPFactory.determineKeyPairSpec(myX509Spec);
+            final GordianKeyPairGenerator myGenerator = myKPFactory.getKeyPairGenerator(myKeySpec);
             final GordianKeyPair myKeyPair = myGenerator.derivePublicOnlyKeyPair(myX509Spec);
 
             /* Access the verifier */
@@ -339,7 +341,7 @@ public class GordianCRMParser {
         /* Protect against exceptions */
         try {
             /* Access the generator */
-            final GordianKeyPairFactory myFactory = theGateway.getFactory().getKeyPairFactory();
+            final GordianKeyPairFactory myFactory = theGateway.getFactory().getAsyncFactory().getKeyPairFactory();
             final X509EncodedKeySpec myX509Spec = new X509EncodedKeySpec(pPublicKey.getEncoded());
             final GordianKeyPairSpec myKeySpec = myFactory.determineKeyPairSpec(myX509Spec);
             final GordianKeyPairGenerator myGenerator = myFactory.getKeyPairGenerator(myKeySpec);
@@ -376,7 +378,7 @@ public class GordianCRMParser {
      */
     private void checkPrivateKey(final GordianKeyPair pKeyPair) throws GordianException {
         /* Access details */
-        final GordianKeyPairFactory myFactory = theGateway.getFactory().getKeyPairFactory();
+        final GordianAsyncFactory myFactory = theGateway.getFactory().getAsyncFactory();
         final GordianKeyPairSpec mySpec = pKeyPair.getKeyPairSpec();
 
         /* Check for encryption private key */
@@ -405,11 +407,11 @@ public class GordianCRMParser {
     private void checkEncryptionPrivateKey(final GordianKeyPair pKeyPair) throws GordianException {
         /* Create the data to encrypt */
         final byte[] mySrc = new byte[TESTLEN];
-        final GordianCoreFactory myFactory = theGateway.getFactory();
+        final GordianBaseFactory myFactory = theGateway.getFactory();
         myFactory.getRandomSource().getRandom().nextBytes(mySrc);
 
         /* Access details */
-        final GordianEncryptorFactory myEncFactory = myFactory.getKeyPairFactory().getEncryptorFactory();
+        final GordianEncryptorFactory myEncFactory = myFactory.getAsyncFactory().getEncryptorFactory();
         final GordianKeyPairSpec mySpec = pKeyPair.getKeyPairSpec();
         final GordianEncryptorSpec myEncSpec = myEncFactory.defaultForKeyPair(mySpec);
 
@@ -438,8 +440,8 @@ public class GordianCRMParser {
      */
     private void checkAgreementPrivateKey(final GordianKeyPair pKeyPair) throws GordianException {
         /* Access details */
-        final GordianCoreFactory myFactory = theGateway.getFactory();
-        final GordianAgreementFactory myAgreeFactory = myFactory.getKeyPairFactory().getAgreementFactory();
+        final GordianBaseFactory myFactory = theGateway.getFactory();
+        final GordianAgreementFactory myAgreeFactory = myFactory.getAsyncFactory().getAgreementFactory();
         final GordianKeyPairSpec mySpec = pKeyPair.getKeyPairSpec();
         final GordianAgreementSpec myAgreeSpec = myAgreeFactory.defaultForKeyPair(mySpec);
 

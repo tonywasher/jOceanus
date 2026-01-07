@@ -17,53 +17,21 @@
 package net.sourceforge.joceanus.gordianknot.impl.jca;
 
 import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
-import net.sourceforge.joceanus.gordianknot.api.zip.GordianZipFactory;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.gordianknot.api.cipher.GordianCipherFactory;
+import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestFactory;
+import net.sourceforge.joceanus.gordianknot.api.factory.GordianAsyncFactory;
+import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianFactoryGenerator;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianParameters;
-import net.sourceforge.joceanus.gordianknot.impl.core.keyset.GordianCoreKeySetFactory;
-import net.sourceforge.joceanus.gordianknot.impl.core.lock.GordianCoreLockFactory;
-import net.sourceforge.joceanus.gordianknot.impl.core.random.GordianCoreRandomFactory;
-import net.sourceforge.joceanus.gordianknot.impl.core.zip.GordianCoreZipFactory;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
-
-import java.security.Provider;
-import java.security.Security;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianValidator;
+import net.sourceforge.joceanus.gordianknot.impl.core.factory.GordianCoreFactory;
 
 /**
  * Jca Factory.
  */
 public class JcaFactory
     extends GordianCoreFactory {
-    /*
-     * Static Constructor.
-     */
-    static {
-        /* Select unlimited security */
-        Security.setProperty("crypto.policy", "unlimited");
-    }
-
-    /**
-     * Note the standard provider.
-     */
-    static final Provider BCPROV = new BouncyCastleProvider();
-
-    /**
-     * Note the post quantum provider.
-     */
-    static final Provider BCPQPROV = new BouncyCastlePQCProvider();
-
-    /**
-     * Zip Factory.
-     */
-    private GordianCoreZipFactory theZipFactory;
-
-    /**
-     * keyPair Factory.
-     */
-    private JcaKeyPairFactory theKeyPairFactory;
-
     /**
      * Constructor.
      * @param pGenerator the factory generator
@@ -72,50 +40,32 @@ public class JcaFactory
      */
     public JcaFactory(final GordianFactoryGenerator pGenerator,
                       final GordianParameters pParameters) throws GordianException {
-        /* initialise underlying factory */
+        /* initialize underlying factory */
         super(pGenerator, pParameters);
     }
 
     @Override
-    protected void declareFactories() throws GordianException {
-        /* Create the factories */
-        setValidator(new JcaValidator());
-        setDigestFactory(new JcaDigestFactory(this));
-        setCipherFactory(new JcaCipherFactory(this));
-        setMacFactory(new JcaMacFactory(this));
-        setRandomFactory(new GordianCoreRandomFactory(this));
-        setKeySetFactory(new GordianCoreKeySetFactory(this));
-        setLockFactory(new GordianCoreLockFactory(this));
+    public GordianDigestFactory newDigestFactory(final GordianBaseFactory pFactory) {
+        return new JcaDigestFactory(this);
     }
 
     @Override
-    public JcaDigestFactory getDigestFactory() {
-        return (JcaDigestFactory) super.getDigestFactory();
+    public GordianCipherFactory newCipherFactory(final GordianBaseFactory pFactory) {
+        return new JcaCipherFactory(this);
     }
 
     @Override
-    public JcaCipherFactory getCipherFactory() {
-        return (JcaCipherFactory) super.getCipherFactory();
+    public GordianMacFactory newMacFactory(final GordianBaseFactory pFactory) {
+        return new JcaMacFactory(this);
     }
 
     @Override
-    public JcaMacFactory getMacFactory() {
-        return (JcaMacFactory) super.getMacFactory();
+    public GordianValidator newValidator() {
+        return new JcaValidator();
     }
 
     @Override
-    public GordianZipFactory getZipFactory() {
-        if (theZipFactory == null) {
-            theZipFactory = new GordianCoreZipFactory(this);
-        }
-        return theZipFactory;
-    }
-
-    @Override
-    public JcaKeyPairFactory getKeyPairFactory() {
-        if (theKeyPairFactory == null) {
-            theKeyPairFactory = new JcaKeyPairFactory(this);
-        }
-        return theKeyPairFactory;
+    public GordianAsyncFactory newAsyncFactory(final GordianBaseFactory pFactory) {
+        return new JcaAsyncFactory(this);
     }
 }

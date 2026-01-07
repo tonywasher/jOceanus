@@ -23,7 +23,8 @@ import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyElGamalKeyPair.BouncyE
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyEllipticKeyPair.BouncyECEncryptor;
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncyRSAKeyPair.BouncyRSAEncryptor;
 import net.sourceforge.joceanus.gordianknot.impl.bc.BouncySM2KeyPair.BouncySM2Encryptor;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseData;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.encrypt.GordianCompositeEncryptor;
 import net.sourceforge.joceanus.gordianknot.impl.core.encrypt.GordianCoreEncryptorFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
@@ -38,14 +39,9 @@ public class BouncyEncryptorFactory
      *
      * @param pFactory the factory
      */
-    BouncyEncryptorFactory(final BouncyFactory pFactory) {
+    BouncyEncryptorFactory(final GordianBaseFactory pFactory) {
         /* Initialise underlying class */
         super(pFactory);
-    }
-
-    @Override
-    protected BouncyFactory getFactory() {
-        return (BouncyFactory) super.getFactory();
     }
 
     @Override
@@ -77,7 +73,7 @@ public class BouncyEncryptorFactory
             case COMPOSITE:
                 return new GordianCompositeEncryptor(getFactory(), pSpec);
             default:
-                throw new GordianDataException(GordianCoreFactory.getInvalidText(pSpec));
+                throw new GordianDataException(GordianBaseData.getInvalidText(pSpec));
         }
     }
 }

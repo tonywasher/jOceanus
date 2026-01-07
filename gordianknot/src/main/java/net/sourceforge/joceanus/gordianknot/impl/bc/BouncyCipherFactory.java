@@ -40,7 +40,8 @@ import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymKeySpec;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymKeyType;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianWrapper;
 import net.sourceforge.joceanus.gordianknot.api.key.GordianKey;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseData;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.cipher.GordianCoreCipherFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.ext.digests.GordianBlake2bDigest;
@@ -155,17 +156,12 @@ public class BouncyCipherFactory
      *
      * @param pFactory the factory
      */
-    BouncyCipherFactory(final GordianCoreFactory pFactory) {
+    BouncyCipherFactory(final GordianBaseFactory pFactory) {
         /* Initialise underlying class */
         super(pFactory);
 
         /* Create the cache */
         theCache = new HashMap<>();
-    }
-
-    @Override
-    public BouncyFactory getFactory() {
-        return (BouncyFactory) super.getFactory();
     }
 
     @Override
@@ -310,7 +306,7 @@ public class BouncyCipherFactory
             case BLAKE3XOF:
                 return new GordianBlake3Engine();
             default:
-                throw new GordianDataException(GordianCoreFactory.getInvalidText(pCipherSpec));
+                throw new GordianDataException(GordianBaseData.getInvalidText(pCipherSpec));
         }
     }
 
@@ -347,7 +343,7 @@ public class BouncyCipherFactory
             case XOODYAK:
                 return new XoodyakEngine();
             default:
-                throw new GordianDataException(GordianCoreFactory.getInvalidText(pCipherSpec));
+                throw new GordianDataException(GordianBaseData.getInvalidText(pCipherSpec));
         }
     }
 
@@ -421,7 +417,7 @@ public class BouncyCipherFactory
             case LEA:
                 return new GordianLeaEngine();
             default:
-                throw new GordianDataException(GordianCoreFactory.getInvalidText(pKeySpec));
+                throw new GordianDataException(GordianBaseData.getInvalidText(pKeySpec));
         }
     }
 
@@ -465,7 +461,7 @@ public class BouncyCipherFactory
             case G3413OFB:
                 return new G3413OFBBlockCipher(pEngine);
             default:
-                throw new GordianDataException(GordianCoreFactory.getInvalidText(pMode));
+                throw new GordianDataException(GordianBaseData.getInvalidText(pMode));
         }
     }
 
@@ -494,7 +490,7 @@ public class BouncyCipherFactory
             case OCB:
                 return new OCBBlockCipher(getBCSymEngine(mySpec), getBCSymEngine(mySpec));
             default:
-                throw new GordianDataException(GordianCoreFactory.getInvalidText(pCipherSpec));
+                throw new GordianDataException(GordianBaseData.getInvalidText(pCipherSpec));
         }
     }
 

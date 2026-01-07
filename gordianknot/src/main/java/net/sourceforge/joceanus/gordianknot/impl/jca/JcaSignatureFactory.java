@@ -22,8 +22,8 @@ import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestSubSpec.Gord
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignature;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignatureSpec;
 import net.sourceforge.joceanus.gordianknot.api.sign.GordianSignatureType;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
-import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianCryptoException;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseData;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.sign.GordianCompositeSigner;
 import net.sourceforge.joceanus.gordianknot.impl.core.sign.GordianCoreSignatureFactory;
@@ -40,9 +40,6 @@ import net.sourceforge.joceanus.gordianknot.impl.jca.JcaSignature.JcaSLHDSASigna
 import net.sourceforge.joceanus.gordianknot.impl.jca.JcaSignature.JcaSnovaSignature;
 import net.sourceforge.joceanus.gordianknot.impl.jca.JcaSignature.JcaXMSSSignature;
 
-import java.security.NoSuchAlgorithmException;
-import java.security.Signature;
-
 /**
  * Jca Signature Factory.
  */
@@ -53,14 +50,9 @@ public class JcaSignatureFactory
      *
      * @param pFactory the factory
      */
-    JcaSignatureFactory(final JcaFactory pFactory) {
+    JcaSignatureFactory(final GordianBaseFactory pFactory) {
         /* Initialise underlying class */
         super(pFactory);
-    }
-
-    @Override
-    public JcaFactory getFactory() {
-        return (JcaFactory) super.getFactory();
     }
 
     @Override
@@ -70,29 +62,6 @@ public class JcaSignatureFactory
 
         /* Create the signer */
         return getJcaSigner(pSignatureSpec);
-    }
-
-    /**
-     * Create the BouncyCastle Signature via JCA.
-     * @param pAlgorithm the Algorithm
-     * @param postQuantum is this a postQuantum algorithm?
-     * @return the KeyPairGenerator
-     * @throws GordianException on error
-     */
-    static Signature getJavaSignature(final String pAlgorithm,
-                                      final boolean postQuantum) throws GordianException {
-        /* Protect against exceptions */
-        try {
-            /* Return a Signature for the algorithm */
-            return Signature.getInstance(pAlgorithm, postQuantum
-                                                     ? JcaFactory.BCPQPROV
-                                                     : JcaFactory.BCPROV);
-
-            /* Catch exceptions */
-        } catch (NoSuchAlgorithmException e) {
-            /* Throw the exception */
-            throw new GordianCryptoException("Failed to create Signature", e);
-        }
     }
 
     /**
@@ -133,7 +102,7 @@ public class JcaSignatureFactory
             case COMPOSITE:
                 return new GordianCompositeSigner(getFactory(), pSignatureSpec);
             default:
-                throw new GordianDataException(GordianCoreFactory.getInvalidText(pSignatureSpec.getKeyPairType()));
+                throw new GordianDataException(GordianBaseData.getInvalidText(pSignatureSpec.getKeyPairType()));
         }
     }
 

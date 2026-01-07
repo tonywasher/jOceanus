@@ -25,8 +25,8 @@ import net.sourceforge.joceanus.gordianknot.api.encrypt.GordianEncryptorSpecBuil
 import net.sourceforge.joceanus.gordianknot.api.encrypt.GordianSM2EncryptionSpec;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPairType;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianASN1Util;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreFactory;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianDigestAlgId;
+import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
+import net.sourceforge.joceanus.gordianknot.impl.core.digest.GordianDigestAlgId;
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.ASN1Sequence;
@@ -72,13 +72,13 @@ public class GordianEncryptorAlgId {
      *
      * @param pFactory the factory
      */
-    GordianEncryptorAlgId(final GordianCoreFactory pFactory) {
+    GordianEncryptorAlgId(final GordianBaseFactory pFactory) {
         /* Create the maps */
         theSpecMap = new HashMap<>();
         theIdentifierMap = new HashMap<>();
 
         /* Access the encryptorFactory  */
-        theFactory = pFactory.getKeyPairFactory().getEncryptorFactory();
+        theFactory = pFactory.getAsyncFactory().getEncryptorFactory();
 
         /* Populate with the public standards */
         addWellKnownEncryptors();
