@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.prometheus.junit;
 
 import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactory;
-import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactoryLock;
+import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactory.GordianFactoryLock;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactoryType;
 import net.sourceforge.joceanus.gordianknot.api.lock.GordianKeySetLock;
 import net.sourceforge.joceanus.gordianknot.util.GordianGenerator;

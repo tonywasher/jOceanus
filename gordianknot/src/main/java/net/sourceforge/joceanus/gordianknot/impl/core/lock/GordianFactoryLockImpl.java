@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.gordianknot.impl.core.lock;
 
 import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactory;
-import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactoryLock;
+import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactory.GordianFactoryLock;
 import net.sourceforge.joceanus.gordianknot.api.lock.GordianPasswordLockSpec;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianDataConverter;

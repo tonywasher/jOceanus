@@ -18,9 +18,9 @@ package net.sourceforge.joceanus.gordianknot.impl.core.lock;
 
 import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactory;
-import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactoryLock;
+import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactory.GordianFactoryLock;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactoryType;
-import net.sourceforge.joceanus.gordianknot.api.factory.GordianLockFactory;
+import net.sourceforge.joceanus.gordianknot.api.lock.GordianLockFactory;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySet;
 import net.sourceforge.joceanus.gordianknot.api.lock.GordianKeyPairLock;
@@ -59,7 +59,14 @@ public class GordianCoreLockFactory
         theFactory = (GordianBaseFactory) pFactory;
     }
 
-    @Override
+    /**
+     * Create a new factoryLock for an existing factory.
+     * @param pFactoryToLock the factory to lock
+     * @param pLockSpec the lockSpec
+     * @param pPassword the password
+     * @return the new factoryLock
+     * @throws GordianException on error
+     */
     public GordianFactoryLock newFactoryLock(final GordianFactory pFactoryToLock,
                                              final GordianPasswordLockSpec pLockSpec,
                                              final char[] pPassword) throws GordianException {
@@ -70,7 +77,14 @@ public class GordianCoreLockFactory
         return new GordianFactoryLockImpl(getLockingFactory(), (GordianBaseFactory) pFactoryToLock, pLockSpec, pPassword);
     }
 
-    @Override
+    /**
+     * Create a new factoryLock for a new factory.
+     * @param pLockSpec the lockSpec
+     * @param pFactoryType the factoryType
+     * @param pPassword the password
+     * @return the factoryLock
+     * @throws GordianException on error
+     */
     public GordianFactoryLock newFactoryLock(final GordianPasswordLockSpec pLockSpec,
                                              final GordianFactoryType pFactoryType,
                                              final char[] pPassword) throws GordianException {
@@ -82,7 +96,13 @@ public class GordianCoreLockFactory
         return newFactoryLock(myFactory, pLockSpec, pPassword);
     }
 
-    @Override
+    /**
+     * Resolve the factoryLock.
+     * @param pLockBytes the lockBytes
+     * @param pPassword the password
+     * @return the factoryLock
+     * @throws GordianException on error
+     */
     public GordianFactoryLock resolveFactoryLock(final byte[] pLockBytes,
                                                  final char[] pPassword) throws GordianException {
         /* Create the factoryLock */

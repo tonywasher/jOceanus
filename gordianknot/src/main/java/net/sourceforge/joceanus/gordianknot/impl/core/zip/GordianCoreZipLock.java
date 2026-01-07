@@ -18,7 +18,7 @@ package net.sourceforge.joceanus.gordianknot.impl.core.zip;
 
 import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactory;
-import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactoryLock;
+import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactory.GordianFactoryLock;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySet;
 import net.sourceforge.joceanus.gordianknot.api.lock.GordianKeyPairLock;

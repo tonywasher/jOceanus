@@ -17,7 +17,7 @@
 package net.sourceforge.joceanus.prometheus.data;
 
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactory;
-import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactoryLock;
+import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactory.GordianFactoryLock;
 import net.sourceforge.joceanus.gordianknot.util.GordianUtilities;
 import net.sourceforge.joceanus.metis.data.MetisDataItem.MetisDataList;
 import net.sourceforge.joceanus.metis.data.MetisDataResource;

@@ -17,7 +17,7 @@
 package net.sourceforge.joceanus.prometheus.data;
 
 import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
-import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactoryLock;
+import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactory.GordianFactoryLock;
 import net.sourceforge.joceanus.gordianknot.api.zip.GordianZipFactory;
 import net.sourceforge.joceanus.gordianknot.api.zip.GordianZipFileContents;
 import net.sourceforge.joceanus.gordianknot.api.zip.GordianZipFileEntry;

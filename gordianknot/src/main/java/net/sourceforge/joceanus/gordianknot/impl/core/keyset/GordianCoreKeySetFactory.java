@@ -19,12 +19,10 @@ package net.sourceforge.joceanus.gordianknot.impl.core.keyset;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySet;
 import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySetSpec;
-import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianASN1Util;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseData;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory.GordianKeySetGenerate;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
-import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 
 import java.util.function.Predicate;
 

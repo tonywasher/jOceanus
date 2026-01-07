@@ -21,9 +21,9 @@ import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianStreamKeySpec;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianSymKeySpec;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactory;
-import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactoryLock;
+import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactory.GordianFactoryLock;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactoryType;
-import net.sourceforge.joceanus.gordianknot.api.factory.GordianLockFactory;
+import net.sourceforge.joceanus.gordianknot.api.lock.GordianLockFactory;
 import net.sourceforge.joceanus.gordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySet;
 import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySetAADCipher;
@@ -834,9 +834,8 @@ class KeySetTest {
     private void testRandomFactory() throws GordianException {
         /* Create the random factory */
         final GordianFactory myFactory = GordianGenerator.createRandomFactory(GordianFactoryType.BC);
-        final GordianLockFactory myLockFactory = myFactory.getLockFactory();
-        final GordianFactoryLock mySecured = myLockFactory.newFactoryLock(myFactory, DEF_PASSWORD.clone());
-        final GordianFactoryLock myResolved = myLockFactory.resolveFactoryLock(mySecured.getLockBytes(), DEF_PASSWORD.clone());
+        final GordianFactoryLock mySecured = myFactory.newFactoryLock(myFactory, DEF_PASSWORD.clone());
+        final GordianFactoryLock myResolved = myFactory.resolveFactoryLock(mySecured.getLockBytes(), DEF_PASSWORD.clone());
         Assertions.assertEquals(myFactory, myResolved.getFactory(), "Failed to lock/resolve factory");
         Assertions.assertEquals(GordianUtilities.getFactoryLockLen(), mySecured.getLockBytes().length, "Incorrect factoryLockLength");
     }

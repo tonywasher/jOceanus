@@ -18,8 +18,7 @@ package net.sourceforge.joceanus.prometheus.security;
 
 import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactory;
-import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactoryLock;
-import net.sourceforge.joceanus.gordianknot.api.factory.GordianLockFactory;
+import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactory.GordianFactoryLock;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.gordianknot.api.keyset.GordianBadCredentialsException;
 import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySet;
@@ -27,9 +26,10 @@ import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySetFactory;
 import net.sourceforge.joceanus.gordianknot.api.lock.GordianKeyPairLock;
 import net.sourceforge.joceanus.gordianknot.api.lock.GordianKeySetLock;
 import net.sourceforge.joceanus.gordianknot.api.lock.GordianLock;
+import net.sourceforge.joceanus.gordianknot.api.lock.GordianLockFactory;
 import net.sourceforge.joceanus.gordianknot.api.lock.GordianPasswordLockSpec;
-import net.sourceforge.joceanus.oceanus.convert.OceanusDataConverter;
 import net.sourceforge.joceanus.oceanus.base.OceanusException;
+import net.sourceforge.joceanus.oceanus.convert.OceanusDataConverter;
 import net.sourceforge.joceanus.oceanus.logger.OceanusLogManager;
 import net.sourceforge.joceanus.oceanus.logger.OceanusLogger;
 import net.sourceforge.joceanus.prometheus.exc.PrometheusDataException;
@@ -66,6 +66,11 @@ public class PrometheusSecurityPasswordCache {
     private final List<ByteBuffer> thePasswords;
 
     /**
+     * The Factory.
+     */
+    private final GordianFactory theFactory;
+
+    /**
      * The KeySet Factory.
      */
     private final GordianKeySetFactory theKeySetFactory;
@@ -96,9 +101,9 @@ public class PrometheusSecurityPasswordCache {
         /* Protect against exceptions */
         try {
             /* Store factory and lockSpec*/
-            final GordianFactory myFactory = pManager.getSecurityFactory();
-            theKeySetFactory = myFactory.getKeySetFactory();
-            theLockFactory = myFactory.getLockFactory();
+            theFactory = pManager.getSecurityFactory();
+            theKeySetFactory = theFactory.getKeySetFactory();
+            theLockFactory = theFactory.getLockFactory();
             theLockSpec = pLockSpec;
 
             /* Create a keySet */
@@ -327,7 +332,7 @@ public class PrometheusSecurityPasswordCache {
             myPasswordChars = OceanusDataConverter.bytesToCharArray(myPasswordBytes);
 
             /* Try to resolve the lock and return it */
-            return theLockFactory.resolveFactoryLock(pLockBytes, myPasswordChars);
+            return theFactory.resolveFactoryLock(pLockBytes, myPasswordChars);
 
             /* Catch Exceptions */
         } catch (GordianException
@@ -495,7 +500,7 @@ public class PrometheusSecurityPasswordCache {
             myPasswordChars = OceanusDataConverter.bytesToCharArray(myPasswordBytes);
 
             /* Create the new lock */
-            final GordianFactoryLock myLock = theLockFactory.newFactoryLock(pFactory, theLockSpec, myPasswordChars);
+            final GordianFactoryLock myLock = theFactory.newFactoryLock(pFactory, theLockSpec, myPasswordChars);
 
             /* Add the entry to the list and return the hash */
             theLocks.add(new PrometheusLockCache<>(myLock, pPassword));

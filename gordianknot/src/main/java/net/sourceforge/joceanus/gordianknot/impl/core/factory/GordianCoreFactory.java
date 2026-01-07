@@ -24,9 +24,10 @@ import net.sourceforge.joceanus.gordianknot.api.digest.GordianDigestFactory;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianAsyncFactory;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactoryType;
-import net.sourceforge.joceanus.gordianknot.api.factory.GordianLockFactory;
+import net.sourceforge.joceanus.gordianknot.api.lock.GordianLockFactory;
 import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySet;
 import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySetFactory;
+import net.sourceforge.joceanus.gordianknot.api.lock.GordianPasswordLockSpec;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacFactory;
 import net.sourceforge.joceanus.gordianknot.api.random.GordianRandomFactory;
 import net.sourceforge.joceanus.gordianknot.api.zip.GordianZipFactory;
@@ -34,13 +35,13 @@ import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianCoreKnuthObfuscater;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianFactoryGenerator;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianIdManager;
-import net.sourceforge.joceanus.gordianknot.impl.core.key.GordianKeyAlgId;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianParameters;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianPersonalisation;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianRandomSource;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianSeededRandom;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianValidator;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
+import net.sourceforge.joceanus.gordianknot.impl.core.key.GordianKeyAlgId;
 import net.sourceforge.joceanus.gordianknot.impl.core.keyset.GordianCoreKeySetFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.lock.GordianCoreLockFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.random.GordianCoreRandomFactory;
@@ -122,7 +123,7 @@ public abstract class GordianCoreFactory
     /**
      * Lock Factory.
      */
-    private final GordianLockFactory theLockFactory;
+    private final GordianCoreLockFactory theLockFactory;
 
     /**
      * Zip Factory.
@@ -334,6 +335,26 @@ public abstract class GordianCoreFactory
     @Override
     public GordianLockFactory getLockFactory() {
         return theLockFactory;
+    }
+
+    @Override
+    public GordianFactoryLock newFactoryLock(final GordianFactory pFactoryToLock,
+                                             final GordianPasswordLockSpec pLockSpec,
+                                             final char[] pPassword) throws GordianException {
+        return theLockFactory.newFactoryLock(pFactoryToLock, pLockSpec, pPassword);
+    }
+
+    @Override
+    public GordianFactoryLock newFactoryLock(final GordianPasswordLockSpec pLockSpec,
+                                             final GordianFactoryType pFactoryType,
+                                             final char[] pPassword) throws GordianException {
+        return theLockFactory.newFactoryLock(pLockSpec, pFactoryType, pPassword);
+    }
+
+    @Override
+    public GordianFactoryLock resolveFactoryLock(final byte[] pLockBytes,
+                                                 final char[] pPassword) throws GordianException {
+        return theLockFactory.resolveFactoryLock(pLockBytes, pPassword);
     }
 
     /**
