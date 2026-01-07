@@ -237,7 +237,7 @@ public class GordianCoreZipReadFile
     @Override
     public InputStream createInputStream(final GordianZipFileEntry pFile) throws GordianException {
         /* Check that entry belongs to this zip file */
-        if (!pFile.getParent().equals(theContents)) {
+        if (!((GordianCoreZipFileEntry) pFile).getParent().equals(theContents)) {
             throw new GordianDataException("File does not belong to Zip file");
         }
 

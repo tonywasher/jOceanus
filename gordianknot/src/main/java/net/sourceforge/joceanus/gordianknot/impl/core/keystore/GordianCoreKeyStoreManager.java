@@ -34,7 +34,6 @@ import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySetSpec;
 import net.sourceforge.joceanus.gordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStoreKey;
 import net.sourceforge.joceanus.gordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStorePair;
 import net.sourceforge.joceanus.gordianknot.api.keystore.GordianKeyStoreEntry.GordianKeyStoreSet;
-import net.sourceforge.joceanus.gordianknot.api.keystore.GordianKeyStoreManager;
 import net.sourceforge.joceanus.gordianknot.api.mac.GordianMacSpec;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseFactory;
 import net.sourceforge.joceanus.gordianknot.impl.core.cert.GordianCoreCertificate;
@@ -52,7 +51,7 @@ import java.util.List;
  * KeyStore Manager implementation.
  */
 public class GordianCoreKeyStoreManager
-        implements GordianKeyStoreManager {
+        implements GordianBaseKeyStoreManager {
     /**
      * The factory.
      */
@@ -180,19 +179,11 @@ public class GordianCoreKeyStoreManager
         return (GordianCoreKeyStorePair) theKeyStore.getEntry(pAlias, pPassword);
     }
 
-    /**
-     * Sign keyPair.
-     * @param pKeyPair the keyPair
-     * @param pSubject the name of the entity
-     * @param pUsage   the key usage
-     * @param pSigner the signer
-     * @return the certificate chain
-     * @throws GordianException on error
-     */
-    List<GordianCertificate> signKeyPair(final GordianKeyPair pKeyPair,
-                                         final X500Name pSubject,
-                                         final GordianKeyPairUsage pUsage,
-                                         final GordianKeyStorePair pSigner) throws GordianException {
+    @Override
+    public List<GordianCertificate> signKeyPair(final GordianKeyPair pKeyPair,
+                                                final X500Name pSubject,
+                                                final GordianKeyPairUsage pUsage,
+                                                final GordianKeyStorePair pSigner) throws GordianException {
         /* Create the certificate */
         final GordianCoreCertificate myCert = new GordianCoreCertificate(theFactory, pSigner, pKeyPair, pSubject, pUsage);
 

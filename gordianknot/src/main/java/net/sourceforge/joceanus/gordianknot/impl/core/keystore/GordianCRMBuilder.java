@@ -98,13 +98,13 @@ public class GordianCRMBuilder {
     /**
      * The gateway.
      */
-    private final GordianCoreKeyStoreGateway theGateway;
+    private final GordianBaseKeyStoreGateway theGateway;
 
     /**
      * Constructor.
      * @param pGateway the gateway
      */
-    GordianCRMBuilder(final GordianCoreKeyStoreGateway pGateway) {
+    GordianCRMBuilder(final GordianBaseKeyStoreGateway pGateway) {
         theGateway = pGateway;
     }
 

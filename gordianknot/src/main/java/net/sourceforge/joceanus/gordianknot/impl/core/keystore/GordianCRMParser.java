@@ -83,7 +83,7 @@ public class GordianCRMParser {
     /**
      * The gateway.
      */
-    private final GordianCoreKeyStoreGateway theGateway;
+    private final GordianBaseKeyStoreGateway theGateway;
 
     /**
      * The builder.
@@ -95,7 +95,7 @@ public class GordianCRMParser {
      * @param pGateway the gateway
      * @param pBuilder the builder
      */
-    GordianCRMParser(final GordianCoreKeyStoreGateway pGateway,
+    GordianCRMParser(final GordianBaseKeyStoreGateway pGateway,
                      final GordianCRMBuilder pBuilder) {
         /* Store parameters */
         theGateway = pGateway;
@@ -142,7 +142,7 @@ public class GordianCRMParser {
 
         /* Derive keyPair and create certificate chain */
         final GordianKeyPair myPair = deriveKeyPair(myProof, myCertReq, mySubject, myPublic);
-        final GordianCoreKeyStoreManager myKeyStoreMgr = theGateway.getKeyStoreManager();
+        final GordianBaseKeyStoreManager myKeyStoreMgr = (GordianBaseKeyStoreManager) theGateway.getKeyStoreManager();
         final GordianKeyStorePair mySigner = theGateway.getSigner();
         if (mySigner == null) {
             throw new GordianLogicException("Null keyPairSigner");
@@ -244,7 +244,7 @@ public class GordianCRMParser {
         final IssuerAndSerialNumber myIssId = (IssuerAndSerialNumber) pRecInfo.getRecipientIdentifier().getId();
 
         /* Locate issuer */
-        final GordianCoreKeyStore myKeyStore = theGateway.getKeyStore();
+        final GordianBaseKeyStore myKeyStore = (GordianBaseKeyStore) theGateway.getKeyStore();
         final String myAlias = myKeyStore.findIssuerCert(myIssId);
         final Function<String, char[]> myResolver = theGateway.getPasswordResolver();
         final char[] myPassword = myResolver.apply(myAlias);

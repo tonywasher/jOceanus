@@ -162,7 +162,11 @@ public class GordianCoreZipFileEntry
         return theFileName;
     }
 
-    @Override
+    /**
+     * Obtain the parent contents.
+     *
+     * @return the parent of the fileEntry
+     */
     public GordianZipFileContents getParent() {
         return theParent;
     }

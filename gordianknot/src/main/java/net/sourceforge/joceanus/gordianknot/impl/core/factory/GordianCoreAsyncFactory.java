@@ -98,7 +98,7 @@ public abstract class GordianCoreAsyncFactory
      * @param pFactory the factory
      * @return the new keyPair factory
      */
-    public abstract GordianKeyPairFactory newKeyPairFactory(final GordianBaseFactory pFactory);
+    public abstract GordianKeyPairFactory newKeyPairFactory(GordianBaseFactory pFactory);
 
     @Override
     public GordianSignatureFactory getSignatureFactory() {
@@ -110,7 +110,7 @@ public abstract class GordianCoreAsyncFactory
      * @param pFactory the factory
      * @return the new keyPair factory
      */
-    public abstract GordianSignatureFactory newSignatureFactory(final GordianBaseFactory pFactory);
+    public abstract GordianSignatureFactory newSignatureFactory(GordianBaseFactory pFactory);
 
     @Override
     public GordianAgreementFactory getAgreementFactory() {
@@ -122,7 +122,7 @@ public abstract class GordianCoreAsyncFactory
      * @param pFactory the factory
      * @return the new agreement factory
      */
-    public abstract GordianAgreementFactory newAgreementFactory(final GordianBaseFactory pFactory);
+    public abstract GordianAgreementFactory newAgreementFactory(GordianBaseFactory pFactory);
 
     @Override
     public GordianXAgreementFactory getXAgreementFactory() {
@@ -134,7 +134,7 @@ public abstract class GordianCoreAsyncFactory
      * @param pFactory the factory
      * @return the new agreement factory
      */
-    public abstract GordianXAgreementFactory newXAgreementFactory(final GordianBaseFactory pFactory);
+    public abstract GordianXAgreementFactory newXAgreementFactory(GordianBaseFactory pFactory);
 
     @Override
     public GordianEncryptorFactory getEncryptorFactory() {
@@ -146,7 +146,7 @@ public abstract class GordianCoreAsyncFactory
      * @param pFactory the factory
      * @return the new encryptor factory
      */
-    public abstract GordianEncryptorFactory newEncryptorFactory(final GordianBaseFactory pFactory);
+    public abstract GordianEncryptorFactory newEncryptorFactory(GordianBaseFactory pFactory);
 
     @Override
     public GordianKeyStoreFactory getKeyStoreFactory() {

@@ -45,31 +45,6 @@ import java.util.Random;
  */
 public final class GordianPasswordLockRecipe {
     /**
-     * Number of digests.
-     */
-    private static final int NUM_DIGESTS = 3;
-
-    /**
-     * Recipe length (Integer).
-     */
-    private static final int RECIPELEN = Integer.BYTES;
-
-    /**
-     * Salt length.
-     */
-    private static final int SALTLEN = GordianLength.LEN_256.getByteLength();
-
-    /**
-     * Hash Length.
-     */
-    private static final int HASHLEN = GordianLength.LEN_512.getByteLength();
-
-    /**
-     * HashSize.
-     */
-    static final int HASHSIZE = RECIPELEN + SALTLEN + HASHLEN;
-
-    /**
      * Hash margins.
      */
     private static final int HASH_MARGIN = 4;
@@ -120,7 +95,7 @@ public final class GordianPasswordLockRecipe {
         final SecureRandom myRandom = pFactory.getRandomSource().getRandom();
 
         /* Create the Salt vector */
-        theSalt = new byte[SALTLEN];
+        theSalt = new byte[GordianLockData.SALTLEN];
         myRandom.nextBytes(theSalt);
 
         /* Calculate the initVector */
@@ -150,23 +125,23 @@ public final class GordianPasswordLockRecipe {
         thePayload = pLockASN1.getPayload();
 
         /* Create the byte arrays */
-        theRecipe = new byte[RECIPELEN];
-        theSalt = new byte[SALTLEN];
-        theHashBytes = new byte[HASHLEN];
+        theRecipe = new byte[GordianLockData.RECIPELEN];
+        theSalt = new byte[GordianLockData.SALTLEN];
+        theHashBytes = new byte[GordianLockData.HASHLEN];
 
         /* Determine offset position */
         int myOffSet = Math.max(pPassLength, HASH_MARGIN);
-        myOffSet = Math.min(myOffSet, HASHLEN
+        myOffSet = Math.min(myOffSet, GordianLockData.HASHLEN
                 - HASH_MARGIN);
 
         /* Copy Data into buffers */
         System.arraycopy(myHashBytes, 0, theHashBytes, 0, myOffSet);
-        System.arraycopy(myHashBytes, myOffSet, theRecipe, 0, RECIPELEN);
+        System.arraycopy(myHashBytes, myOffSet, theRecipe, 0, GordianLockData.RECIPELEN);
         System.arraycopy(myHashBytes, myOffSet
-                + RECIPELEN, theSalt, 0, SALTLEN);
+                + GordianLockData.RECIPELEN, theSalt, 0, GordianLockData.SALTLEN);
         System.arraycopy(myHashBytes, myOffSet
-                + RECIPELEN
-                + SALTLEN, theHashBytes, myOffSet, HASHLEN
+                + GordianLockData.RECIPELEN
+                + GordianLockData.SALTLEN, theHashBytes, myOffSet, GordianLockData.HASHLEN
                 - myOffSet);
 
         /* Calculate the initVector */
@@ -195,8 +170,8 @@ public final class GordianPasswordLockRecipe {
                                           final byte[] pPayload) {
         /* Allocate the new buffer */
         final int myHashLen = theHashBytes.length;
-        final int myLen = RECIPELEN
-                + SALTLEN
+        final int myLen = GordianLockData.RECIPELEN
+                + GordianLockData.SALTLEN
                 + myHashLen;
         final byte[] myBuffer = new byte[myLen];
 
@@ -207,12 +182,12 @@ public final class GordianPasswordLockRecipe {
 
         /* Copy Data into buffer */
         System.arraycopy(theHashBytes, 0, myBuffer, 0, myOffSet);
-        System.arraycopy(theRecipe, 0, myBuffer, myOffSet, RECIPELEN);
+        System.arraycopy(theRecipe, 0, myBuffer, myOffSet, GordianLockData.RECIPELEN);
         System.arraycopy(theSalt, 0, myBuffer, myOffSet
-                + RECIPELEN, SALTLEN);
+                + GordianLockData.RECIPELEN, GordianLockData.SALTLEN);
         System.arraycopy(theHashBytes, myOffSet, myBuffer, myOffSet
-                + RECIPELEN
-                + SALTLEN, myHashLen
+                + GordianLockData.RECIPELEN
+                + GordianLockData.SALTLEN, myHashLen
                 - myOffSet);
 
         /* Build the ASN1 form */
@@ -412,7 +387,7 @@ public final class GordianPasswordLockRecipe {
             theRecipe = GordianDataConverter.integerToByteArray(mySeed);
             final Random mySeededRandom = myPersonal.getSeededRandom(GordianPersonalId.LOCKRANDOM, theRecipe);
             theSecretDigest = myManager.deriveLockSecretTypeFromSeed(mySeededRandom);
-            theDigests = myManager.deriveLockDigestTypesFromSeed(mySeededRandom, NUM_DIGESTS);
+            theDigests = myManager.deriveLockDigestTypesFromSeed(mySeededRandom, GordianLockData.NUM_DIGESTS);
             theExternalDigest = myManager.deriveExternalDigestTypeFromSeed(mySeededRandom);
 
             /* Derive random adjustment value */
@@ -434,7 +409,7 @@ public final class GordianPasswordLockRecipe {
             theRecipe = pRecipe;
             final Random mySeededRandom = myPersonal.getSeededRandom(GordianPersonalId.LOCKRANDOM, theRecipe);
             theSecretDigest = myManager.deriveLockSecretTypeFromSeed(mySeededRandom);
-            theDigests = myManager.deriveLockDigestTypesFromSeed(mySeededRandom, NUM_DIGESTS);
+            theDigests = myManager.deriveLockDigestTypesFromSeed(mySeededRandom, GordianLockData.NUM_DIGESTS);
             theExternalDigest = myManager.deriveExternalDigestTypeFromSeed(mySeededRandom);
 
             /* Derive random adjustment value */

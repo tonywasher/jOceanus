@@ -18,16 +18,16 @@ package net.sourceforge.joceanus.gordianknot.impl.core.keystore;
 
 import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianKeySpec;
+import net.sourceforge.joceanus.gordianknot.api.cert.GordianCertificate;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianFactory;
 import net.sourceforge.joceanus.gordianknot.api.factory.GordianLockFactory;
 import net.sourceforge.joceanus.gordianknot.api.key.GordianKey;
 import net.sourceforge.joceanus.gordianknot.api.keypair.GordianKeyPair;
 import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySet;
-import net.sourceforge.joceanus.gordianknot.api.cert.GordianCertificate;
-import net.sourceforge.joceanus.gordianknot.api.cert.GordianCertificateId;
 import net.sourceforge.joceanus.gordianknot.api.lock.GordianKeySetLock;
 import net.sourceforge.joceanus.gordianknot.api.lock.GordianPasswordLockSpec;
 import net.sourceforge.joceanus.gordianknot.impl.core.cert.GordianCoreCertificate;
+import net.sourceforge.joceanus.gordianknot.impl.core.keystore.GordianBaseKeyStore.GordianKeyStoreCertificateKey;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -41,84 +41,6 @@ import java.util.List;
  * </p>
  */
 public interface GordianKeyStoreElement {
-    /**
-     * KeyStore Certificate Key.
-     */
-    class GordianKeyStoreCertificateKey {
-        /**
-         * The issuer Id.
-         */
-        private final GordianCertificateId theIssuer;
-
-        /**
-         * The certificate Id.
-         */
-        private final GordianCertificateId theSubject;
-
-        /**
-         * Constructor.
-         * @param pCertificate the certificate.
-         */
-        GordianKeyStoreCertificateKey(final GordianCertificate pCertificate) {
-            theIssuer = pCertificate.getIssuer();
-            theSubject = pCertificate.getSubject();
-        }
-
-        /**
-         * Constructor.
-         * @param pIssuer the issuer.
-         * @param pSubject the subject.
-         */
-        GordianKeyStoreCertificateKey(final GordianCertificateId pIssuer,
-                                      final GordianCertificateId pSubject) {
-            theIssuer = pIssuer;
-            theSubject = pSubject;
-        }
-
-        /**
-         * Obtain the issuer.
-         * @return the issuer
-         */
-        public GordianCertificateId getIssuer() {
-            return theIssuer;
-        }
-
-        /**
-         * Obtain the subject.
-         * @return the subject
-         */
-        public GordianCertificateId getSubject() {
-            return theSubject;
-        }
-
-        @Override
-        public boolean equals(final Object pThat) {
-            /* Handle the trivial case */
-            if (pThat == this) {
-                return true;
-            }
-            if (pThat == null) {
-                return false;
-            }
-
-            /* Ensure object is correct class */
-            if (!(pThat instanceof GordianKeyStoreCertificateKey)) {
-                return false;
-            }
-            final GordianKeyStoreCertificateKey myThat = (GordianKeyStoreCertificateKey) pThat;
-
-            /* Check that the subject and issuers match */
-            return theSubject.equals(myThat.getSubject())
-                    && theIssuer.equals(myThat.getIssuer());
-        }
-
-        @Override
-        public int hashCode() {
-            return theSubject.hashCode()
-                    + theIssuer.hashCode();
-        }
-    }
-
     /**
      * KeyStore Certificate.
      */
@@ -170,7 +92,7 @@ public interface GordianKeyStoreElement {
          * @param pKeyStore the keyStore
          * @return the keyStore certificate entry
          */
-        GordianCoreKeyStoreCertificate buildEntry(final GordianCoreKeyStore pKeyStore) {
+        GordianCoreKeyStoreCertificate buildEntry(final GordianBaseKeyStore pKeyStore) {
             final GordianCoreCertificate myCert = (GordianCoreCertificate) pKeyStore.getCertificate(getCertificateKey());
             return new GordianCoreKeyStoreCertificate(myCert, getCreationDate());
         }
@@ -337,7 +259,7 @@ public interface GordianKeyStoreElement {
          * @param pKeyStore the keyStore
          * @return the certificate chain
          */
-        List<GordianCertificate> buildChain(final GordianCoreKeyStore pKeyStore) {
+        List<GordianCertificate> buildChain(final GordianBaseKeyStore pKeyStore) {
             /* Create the chain */
             final List<GordianKeyStoreCertificateKey> myKeys = getCertificateChain();
             final List<GordianCertificate> myChain = new ArrayList<>();
@@ -354,7 +276,7 @@ public interface GordianKeyStoreElement {
          * @return the keyStorePair entry
          * @throws GordianException on error
          */
-        GordianCoreKeyStorePair buildEntry(final GordianCoreKeyStore pKeyStore,
+        GordianCoreKeyStorePair buildEntry(final GordianBaseKeyStore pKeyStore,
                                            final char[] pPassword) throws GordianException {
             /* Create the chain */
             final List<GordianCertificate> myChain = buildChain(pKeyStore);
@@ -449,7 +371,7 @@ public interface GordianKeyStoreElement {
          * @return the keyStore certificate entry
          * @throws GordianException on error
          */
-        GordianKeySetLock buildEntry(final GordianCoreKeyStore pKeyStore,
+        GordianKeySetLock buildEntry(final GordianBaseKeyStore pKeyStore,
                                      final char[] pPassword) throws GordianException {
             /* Resolve the hash */
             final GordianLockFactory myFactory = pKeyStore.getFactory().getLockFactory();
@@ -585,7 +507,7 @@ public interface GordianKeyStoreElement {
          * @return the keyStore certificate entry
          * @throws GordianException on error
          */
-        GordianCoreKeyStoreKey<T> buildEntry(final GordianCoreKeyStore pKeyStore,
+        GordianCoreKeyStoreKey<T> buildEntry(final GordianBaseKeyStore pKeyStore,
                                              final char[] pPassword) throws GordianException {
             /* Resolve securing lock */
             final GordianKeySetLock myLock = theSecuringLock.buildEntry(pKeyStore, pPassword);
@@ -711,7 +633,7 @@ public interface GordianKeyStoreElement {
          * @return the keyStore certificate entry
          * @throws GordianException on error
          */
-        GordianCoreKeyStoreSet buildEntry(final GordianCoreKeyStore pKeyStore,
+        GordianCoreKeyStoreSet buildEntry(final GordianBaseKeyStore pKeyStore,
                                           final char[] pPassword) throws GordianException {
             /* Resolve the lock */
             final GordianKeySetLock myLock = theSecuringLock.buildEntry(pKeyStore, pPassword);

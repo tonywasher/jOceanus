@@ -160,7 +160,7 @@ public class GordianPasswordLockASN1
     static int getEncodedLength(final int pPayloadLen) {
         /* KeyType has type + length + value (all single byte) + value */
         int myLength  = GordianPasswordLockSpecASN1.getEncodedLength();
-        myLength += GordianASN1Util.getLengthByteArrayField(GordianPasswordLockRecipe.HASHSIZE);
+        myLength += GordianASN1Util.getLengthByteArrayField(GordianLockData.HASHSIZE);
         myLength += GordianASN1Util.getLengthByteArrayField(pPayloadLen);
 
         /* Calculate the length of the sequence */

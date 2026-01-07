@@ -295,7 +295,7 @@ public abstract class GordianCoreFactory
      * @param pFactory the factory
      * @return the new digest factory
      */
-    public abstract GordianDigestFactory newDigestFactory(final GordianBaseFactory pFactory);
+    public abstract GordianDigestFactory newDigestFactory(GordianBaseFactory pFactory);
 
     @Override
     public GordianCipherFactory getCipherFactory() {
@@ -307,7 +307,7 @@ public abstract class GordianCoreFactory
      * @param pFactory the factory
      * @return the new cipher factory
      */
-    public abstract GordianCipherFactory newCipherFactory(final GordianBaseFactory pFactory);
+    public abstract GordianCipherFactory newCipherFactory(GordianBaseFactory pFactory);
 
     @Override
     public GordianMacFactory getMacFactory() {
@@ -319,7 +319,7 @@ public abstract class GordianCoreFactory
      * @param pFactory the factory
      * @return the new MAC factory
      */
-    public abstract GordianMacFactory newMacFactory(final GordianBaseFactory pFactory);
+    public abstract GordianMacFactory newMacFactory(GordianBaseFactory pFactory);
 
     @Override
     public GordianRandomFactory getRandomFactory() {

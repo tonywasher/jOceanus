@@ -61,7 +61,7 @@ public interface GordianBaseFactory
      * Obtain the parameters.
      * @return the parameters
      */
-    public GordianParameters getParameters();
+    GordianParameters getParameters();
 
     /**
      * Obtain Identifier for keySpec.

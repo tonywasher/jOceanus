@@ -92,7 +92,7 @@
     <JavaVersion>17</JavaVersion>
     <JavaFXVersion>17.0.17</JavaFXVersion>
     <JavaLanguageVersion>17</JavaLanguageVersion>
-    <CheckStyleVersion>12.3.1</CheckStyleVersion>
+    <CheckStyleVersion>13.0.0</CheckStyleVersion>
     <PMDVersion>7.20.0</PMDVersion>
     <CleanPluginVersion>3.5.0</CleanPluginVersion>
     <ResourcesPluginVersion>3.4.0</ResourcesPluginVersion>
