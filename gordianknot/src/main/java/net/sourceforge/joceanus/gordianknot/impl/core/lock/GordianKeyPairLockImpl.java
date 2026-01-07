@@ -37,6 +37,7 @@ import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianDataConverter;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianParameters;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianLogicException;
 import net.sourceforge.joceanus.gordianknot.impl.core.keyset.GordianCoreKeySet;
+import net.sourceforge.joceanus.gordianknot.impl.core.keyset.GordianKeySetData;
 
 import java.util.Arrays;
 import java.util.Objects;
@@ -233,7 +234,7 @@ public class GordianKeyPairLockImpl
      * @return the byte length
      */
     public static int getEncodedLength() {
-        return GordianPasswordLockASN1.getEncodedLength(GordianCoreKeySet.getEncryptionLength(GordianParameters.SEED_LEN.getByteLength()));
+        return GordianPasswordLockASN1.getEncodedLength(GordianKeySetData.getEncryptionLength(GordianParameters.SEED_LEN.getByteLength()));
     }
 
     @Override

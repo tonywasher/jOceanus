@@ -18,6 +18,7 @@ package net.sourceforge.joceanus.gordianknot.util;
 
 import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
 import net.sourceforge.joceanus.gordianknot.impl.core.keyset.GordianCoreKeySet;
+import net.sourceforge.joceanus.gordianknot.impl.core.keyset.GordianKeySetData;
 import net.sourceforge.joceanus.gordianknot.impl.core.lock.GordianFactoryLockImpl;
 
 /**
@@ -73,6 +74,6 @@ public final class GordianUtilities {
      * @return the length of encrypted data
      */
     public static int getKeySetEncryptionLength(final int pDataLength) {
-        return GordianCoreKeySet.getEncryptionLength(pDataLength);
+        return GordianKeySetData.getEncryptionLength(pDataLength);
     }
 }

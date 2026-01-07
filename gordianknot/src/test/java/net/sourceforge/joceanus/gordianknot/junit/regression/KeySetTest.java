@@ -38,6 +38,7 @@ import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianDataConverter;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianDataException;
 import net.sourceforge.joceanus.gordianknot.impl.core.exc.GordianLogicException;
 import net.sourceforge.joceanus.gordianknot.impl.core.keyset.GordianCoreKeySet;
+import net.sourceforge.joceanus.gordianknot.impl.core.keyset.GordianKeySetData;
 import net.sourceforge.joceanus.gordianknot.util.GordianGenerator;
 import net.sourceforge.joceanus.gordianknot.util.GordianUtilities;
 import org.junit.jupiter.api.Assertions;
@@ -486,7 +487,7 @@ class KeySetTest {
         final byte[] myEncrypted = myKeySet.encryptBytes(myBytes);
 
         /* Check encryption length */
-        Assertions.assertEquals(GordianCoreKeySet.getEncryptionLength(myBytes.length),
+        Assertions.assertEquals(GordianKeySetData.getEncryptionLength(myBytes.length),
                 myEncrypted.length, "Incorrect encrypted length");
 
         /* return the result */
@@ -512,7 +513,7 @@ class KeySetTest {
         final byte[] myEncrypted = myCipher.finish(myBytes, 0, myBytes.length);
 
         /* Check encryption length */
-        Assertions.assertEquals(GordianCoreKeySet.getEncryptionLength(myBytes.length),
+        Assertions.assertEquals(GordianKeySetData.getEncryptionLength(myBytes.length),
                 myEncrypted.length, "Incorrect encrypted length");
 
         /* return the result */
@@ -540,7 +541,7 @@ class KeySetTest {
         final byte[] myEncrypted2 = myCipher.finish(myBytes, 0, myBytes.length);
 
         /* Check encryption length */
-        Assertions.assertEquals(GordianCoreKeySet.getEncryptionLength(myBytes.length),
+        Assertions.assertEquals(GordianKeySetData.getEncryptionLength(myBytes.length),
                 myEncrypted.length, "Incorrect encrypted length");
 
         /* Check for short output buffer */

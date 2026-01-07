@@ -81,7 +81,7 @@ public class GordianCoreKeySetCipher
      * @param pAead are we in AEAD mode
      * @throws GordianException on error
      */
-    public GordianCoreKeySetCipher(final GordianCoreKeySet pKeySet,
+    public GordianCoreKeySetCipher(final GordianBaseKeySet pKeySet,
                                    final boolean pAead) throws GordianException  {
         theFactory = pKeySet.getFactory();
         aead = pAead;
@@ -171,7 +171,7 @@ public class GordianCoreKeySetCipher
         /* Handle encryption */
         if (encrypting) {
             return hdrProcessed ? theCipher.getOutputLength(pLength)
-                                : GordianCoreKeySet.getEncryptionLength(pLength);
+                                : GordianKeySetData.getEncryptionLength(pLength);
         }
 
         /* Allow for cacheSpace */

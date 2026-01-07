@@ -114,7 +114,7 @@ public class GordianCoreKeySetAADCipher
      * @param pKeySet the keySet.
      * @throws GordianException on error
      */
-    public GordianCoreKeySetAADCipher(final GordianCoreKeySet pKeySet) throws GordianException {
+    public GordianCoreKeySetAADCipher(final GordianBaseKeySet pKeySet) throws GordianException {
         /* Initialise underlying class */
         super(pKeySet, true);
 

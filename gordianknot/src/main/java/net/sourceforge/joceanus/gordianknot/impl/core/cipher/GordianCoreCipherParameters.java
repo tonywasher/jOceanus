@@ -190,7 +190,7 @@ public class GordianCoreCipherParameters<T extends GordianKeySpec> {
         /* Check that the PBE parameters are supported */
         final GordianPBESpec myPBESpec = pParams.getPBESpec();
         final GordianPBECipherSpec<T> myPBECipherSpec = new GordianPBECipherSpec<>(myPBESpec, theSpec);
-        final GordianCoreCipherFactory myCipherFactory = (GordianCoreCipherFactory) theFactory.getCipherFactory();
+        final GordianBaseCipherFactory myCipherFactory = (GordianBaseCipherFactory) theFactory.getCipherFactory();
         if (!myCipherFactory.supportedPBECipherSpecs().test(myPBECipherSpec)) {
             throw new GordianDataException(GordianBaseData.getInvalidText(myPBECipherSpec));
         }

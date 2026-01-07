@@ -18,7 +18,6 @@ package net.sourceforge.joceanus.gordianknot.impl.core.keyset;
 
 import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySet;
-import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySetFactory;
 import net.sourceforge.joceanus.gordianknot.api.keyset.GordianKeySetSpec;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianASN1Util;
 import net.sourceforge.joceanus.gordianknot.impl.core.base.GordianBaseData;
@@ -33,12 +32,7 @@ import java.util.function.Predicate;
  * GordianKnot Core KeySet Factory.
  */
 public class GordianCoreKeySetFactory
-    implements GordianKeySetFactory, GordianKeySetGenerate {
-    /**
-     * KeySetOID branch.
-     */
-    static final ASN1ObjectIdentifier KEYSETOID = GordianASN1Util.EXTOID.branch("1");
-
+    implements GordianBaseKeySetFactory, GordianKeySetGenerate {
     /**
      * The factory.
      */
@@ -61,12 +55,7 @@ public class GordianCoreKeySetFactory
         return theFactory;
     }
 
-    /**
-     * create an empty keySet.
-     * @param pSpec the keySetSpec
-     * @return the empty keySedt
-     * @throws GordianException on error
-     */
+    @Override
     public GordianCoreKeySet createKeySet(final GordianKeySetSpec pSpec) throws GordianException {
         /* Check Spec */
         checkKeySetSpec(pSpec);

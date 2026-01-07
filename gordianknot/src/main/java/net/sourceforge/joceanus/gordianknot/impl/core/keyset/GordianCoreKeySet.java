@@ -58,12 +58,7 @@ import java.util.function.Predicate;
  * A full set of symmetric keys, subject to the relevant predicate.
  */
 public final class GordianCoreKeySet
-    implements GordianKeySet {
-    /**
-     * Initialisation Vector size.
-     */
-    private static final GordianLength BLOCKLEN = GordianLength.LEN_128;
-
+    implements GordianBaseKeySet {
     /**
      * The factory.
      */
@@ -135,12 +130,8 @@ public final class GordianCoreKeySet
         return theSpec;
     }
 
-    /**
-     * Obtain the symKeySet.
-     *
-     * @return the keySet
-     */
-    Map<GordianSymKeySpec, GordianKey<GordianSymKeySpec>> getSymKeyMap() {
+    @Override
+    public Map<GordianSymKeySpec, GordianKey<GordianSymKeySpec>> getSymKeyMap() {
         return theSymKeyMap;
     }
 
@@ -152,29 +143,10 @@ public final class GordianCoreKeySet
     /**
      * Obtain the encryption length for a length of data.
      * @param pDataLength the dataLength
-     * @return the enctyption length
-     */
-    public static int getEncryptionLength(final int pDataLength) {
-        final int iBlocks = 1 + (pDataLength / BLOCKLEN.getByteLength());
-        return iBlocks * BLOCKLEN.getByteLength()
-                + getEncryptionOverhead();
-    }
-
-    /**
-     * Obtain the encryption length for a length of data.
-     * @param pDataLength the dataLength
      * @return the encryption length
      */
     public static int getAADEncryptionLength(final int pDataLength) {
-        return getEncryptionLength(pDataLength) + GordianCoreKeySetAADCipher.MACSIZE;
-    }
-
-    /**
-     * Encryption overhead.
-     * @return the encryption overhead
-     */
-    private static int getEncryptionOverhead() {
-        return GordianKeySetRecipe.HDRLEN;
+        return GordianKeySetData.getEncryptionLength(pDataLength) + GordianCoreKeySetAADCipher.MACSIZE;
     }
 
     @Override
@@ -188,9 +160,9 @@ public final class GordianCoreKeySet
      * @return the wrapped length
      */
     public static int getDataWrapLength(final int pDataLength) {
-        return GordianCoreWrapper.getKeyWrapLength(pDataLength, BLOCKLEN)
-                + getEncryptionOverhead()
-                + GordianCoreWrapper.getKeyWrapExpansion(BLOCKLEN);
+        return GordianCoreWrapper.getKeyWrapLength(pDataLength, GordianKeySetData.BLOCKLEN)
+                + GordianKeySetData.getEncryptionOverhead()
+                + GordianCoreWrapper.getKeyWrapExpansion(GordianKeySetData.BLOCKLEN);
     }
 
     /**
@@ -432,7 +404,7 @@ public final class GordianCoreKeySet
         final GordianKeySetASN1 myEncoded = GordianKeySetASN1.getInstance(mySecuredBytes);
 
         /* Build the keySet and return it */
-        return myEncoded.buildKeySet(theFactory);
+        return (GordianCoreKeySet) myEncoded.buildKeySet(theFactory);
     }
 
     /**
@@ -500,12 +472,8 @@ public final class GordianCoreKeySet
         return myOutput;
     }
 
-    /**
-     * Declare symmetricKey.
-     * @param pKey the key
-     * @throws GordianException on error
-     */
-    void declareSymKey(final GordianKey<GordianSymKeySpec> pKey) throws GordianException {
+    @Override
+    public void declareSymKey(final GordianKey<GordianSymKeySpec> pKey) throws GordianException {
         /* Access keyType */
         final GordianSymKeySpec myKeyType = pKey.getKeyType();
 

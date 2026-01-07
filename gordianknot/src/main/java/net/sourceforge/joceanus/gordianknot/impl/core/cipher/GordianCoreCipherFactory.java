@@ -19,7 +19,6 @@ package net.sourceforge.joceanus.gordianknot.impl.core.cipher;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianException;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianKeySpec;
 import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
-import net.sourceforge.joceanus.gordianknot.api.cipher.GordianCipherFactory;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianCipherMode;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianCipherSpec;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianPBESpec;
@@ -63,7 +62,7 @@ import java.util.stream.Collectors;
  * Core Cipher factory.
  */
 public abstract class GordianCoreCipherFactory
-    implements GordianCipherFactory {
+    implements GordianBaseCipherFactory {
     /**
      * The factory.
      */
@@ -120,10 +119,7 @@ public abstract class GordianCoreCipherFactory
         return t -> theFactory.getValidator().validStreamKeyType(t);
     }
 
-    /**
-     * Obtain predicate for supported PBECipherSpecs.
-     * @return the predicate
-     */
+    @Override
     public Predicate<GordianPBECipherSpec<? extends GordianKeySpec>> supportedPBECipherSpecs() {
         return this::validPBECipherSpec;
     }

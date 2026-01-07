@@ -17,6 +17,7 @@
 package net.sourceforge.joceanus.gordianknot.impl.core.cipher;
 
 import net.sourceforge.joceanus.gordianknot.api.base.GordianLength;
+import net.sourceforge.joceanus.gordianknot.api.cipher.GordianCipherFactory;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianCipherMode;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianCipherSpec;
 import net.sourceforge.joceanus.gordianknot.api.cipher.GordianPadding;
@@ -73,7 +74,7 @@ public class GordianCipherAlgId {
         theIdentifierMap = new HashMap<>();
 
         /* Access the cipherFactory  */
-        final GordianCoreCipherFactory myFactory = (GordianCoreCipherFactory) pFactory.getCipherFactory();
+        final GordianCipherFactory myFactory = pFactory.getCipherFactory();
 
         /* Populate with the public standards */
         addWellKnownCiphers128();
