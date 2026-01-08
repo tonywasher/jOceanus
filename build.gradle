@@ -43,7 +43,7 @@ allprojects {
         javaParserVersion = "3.27.1"
 
         /* javaFX versions */
-        javaFXVersion = "17"
+        javaFXVersion = "21"
         javaFXPluginVersion = "0.1.0"
 
         /* Annotation versions */
@@ -88,7 +88,7 @@ subprojects {
     tasks.withType(JavaCompile) {
         options.deprecation = true
         options.encoding = 'UTF-8'
-        options.release = 17
+        options.release = 21
     }
     tasks.withType(Javadoc).all {
         enabled = false
